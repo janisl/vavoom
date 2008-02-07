@@ -75,23 +75,23 @@ int VEntity::FIndex_GetStateTime;
 void VEntity::InitFuncIndexes()
 {
 	guard(VEntity::InitFuncIndexes);
-	FIndex_OnMapSpawn = StaticClass()->GetFunctionIndex(NAME_OnMapSpawn);
-	FIndex_BeginPlay = StaticClass()->GetFunctionIndex(NAME_BeginPlay);
-	FIndex_Destroyed = StaticClass()->GetFunctionIndex(NAME_Destroyed);
-	FIndex_Touch = StaticClass()->GetFunctionIndex(NAME_Touch);
-	FIndex_BlockedByLine = StaticClass()->GetFunctionIndex(NAME_BlockedByLine);
-	FIndex_ApplyFriction = StaticClass()->GetFunctionIndex(NAME_ApplyFriction);
-	FIndex_PushLine = StaticClass()->GetFunctionIndex(NAME_PushLine);
-	FIndex_HandleFloorclip = StaticClass()->GetFunctionIndex(NAME_HandleFloorclip);
-	FIndex_CrossSpecialLine = StaticClass()->GetFunctionIndex(NAME_CrossSpecialLine);
-	FIndex_SectorChanged = StaticClass()->GetFunctionIndex(NAME_SectorChanged);
-	FIndex_RoughCheckThing = StaticClass()->GetFunctionIndex(NAME_RoughCheckThing);
-	FIndex_GiveInventory = StaticClass()->GetFunctionIndex(NAME_GiveInventory);
-	FIndex_TakeInventory = StaticClass()->GetFunctionIndex(NAME_TakeInventory);
-	FIndex_CheckInventory = StaticClass()->GetFunctionIndex(NAME_CheckInventory);
-	FIndex_GetSigilPieces = StaticClass()->GetFunctionIndex(NAME_GetSigilPieces);
-	FIndex_MoveThing = StaticClass()->GetFunctionIndex(NAME_MoveThing);
-	FIndex_GetStateTime = StaticClass()->GetFunctionIndex(NAME_GetStateTime);
+	FIndex_OnMapSpawn = StaticClass()->GetMethodIndex(NAME_OnMapSpawn);
+	FIndex_BeginPlay = StaticClass()->GetMethodIndex(NAME_BeginPlay);
+	FIndex_Destroyed = StaticClass()->GetMethodIndex(NAME_Destroyed);
+	FIndex_Touch = StaticClass()->GetMethodIndex(NAME_Touch);
+	FIndex_BlockedByLine = StaticClass()->GetMethodIndex(NAME_BlockedByLine);
+	FIndex_ApplyFriction = StaticClass()->GetMethodIndex(NAME_ApplyFriction);
+	FIndex_PushLine = StaticClass()->GetMethodIndex(NAME_PushLine);
+	FIndex_HandleFloorclip = StaticClass()->GetMethodIndex(NAME_HandleFloorclip);
+	FIndex_CrossSpecialLine = StaticClass()->GetMethodIndex(NAME_CrossSpecialLine);
+	FIndex_SectorChanged = StaticClass()->GetMethodIndex(NAME_SectorChanged);
+	FIndex_RoughCheckThing = StaticClass()->GetMethodIndex(NAME_RoughCheckThing);
+	FIndex_GiveInventory = StaticClass()->GetMethodIndex(NAME_GiveInventory);
+	FIndex_TakeInventory = StaticClass()->GetMethodIndex(NAME_TakeInventory);
+	FIndex_CheckInventory = StaticClass()->GetMethodIndex(NAME_CheckInventory);
+	FIndex_GetSigilPieces = StaticClass()->GetMethodIndex(NAME_GetSigilPieces);
+	FIndex_MoveThing = StaticClass()->GetMethodIndex(NAME_MoveThing);
+	FIndex_GetStateTime = StaticClass()->GetMethodIndex(NAME_GetStateTime);
 	unguard;
 }
 
@@ -276,7 +276,8 @@ bool VEntity::AdvanceState(float deltaTime)
 VState* VEntity::FindState(VName StateName)
 {
 	guard(VEntity::FindState);
-	return GetClass()->FindStateLabel(StateName);
+	VStateLabel* Lbl = GetClass()->FindStateLabel(StateName);
+	return Lbl ? Lbl->State : NULL;
 	unguard;
 }
 

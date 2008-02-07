@@ -335,6 +335,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_class.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_constant.h"
 				>
 			</File>

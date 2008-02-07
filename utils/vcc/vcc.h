@@ -60,6 +60,7 @@ typedef void (*builtin_t)();
 #include "../../source/vc_constant.h"
 #include "../../source/vc_struct.h"
 #include "../../source/vc_state.h"
+#include "../../source/vc_class.h"
 #include "../../source/vc_emit_context.h"
 #include "../../source/vc_expr_base.h"
 #include "../../source/vc_expr_literal.h"
@@ -160,92 +161,6 @@ struct mobjinfo_t
 	int			DoomEdNum;
 	int			GameFilter;
 	VClass*		Class;
-};
-
-struct VRepField
-{
-	VName			Name;
-	TLocation		Loc;
-	VMemberBase*	Member;
-};
-
-struct VRepInfo
-{
-	bool				Reliable;
-	VMethod*			Cond;
-	TArray<VRepField>	RepFields;
-};
-
-struct VStateLabel
-{
-	TLocation	Loc;
-	VName		Name;
-	VState*		State;
-	VName		GotoLabel;
-	vint32		GotoOffset;
-
-	VStateLabel()
-	: Name(NAME_None)
-	, State(NULL)
-	, GotoLabel(NAME_None)
-	, GotoOffset(0)
-	{}
-
-	friend VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
-	{
-		return Strm << Lbl.Name << Lbl.State;
-	}
-};
-
-class VClass : public VMemberBase
-{
-public:
-	enum { AllowedModifiers = TModifiers::Native | TModifiers::Abstract };
-
-	VClass*		ParentClass;
-	VField*		Fields;
-	VState*		States;
-	VMethod*	DefaultProperties;
-
-	VName					ParentClassName;
-	TLocation				ParentClassLoc;
-	int						Modifiers;
-	VExpression*			GameExpr;
-	VExpression*			MobjInfoExpr;
-	VExpression*			ScriptIdExpr;
-	TArray<VStruct*>		Structs;
-	TArray<VConstant*>		Constants;
-	TArray<VProperty*>		Properties;
-	TArray<VMethod*>		Methods;
-	bool					Defined;
-	TArray<VRepInfo>		RepInfos;
-	TArray<VStateLabel>		StateLabels;
-
-	VClass(VName, VMemberBase*, TLocation);
-	~VClass();
-
-	void Serialise(VStream&);
-
-	void AddConstant(VConstant*);
-	void AddField(VField*);
-	void AddProperty(VProperty*);
-	void AddState(VState*);
-	void AddMethod(VMethod*);
-
-	VMethod* CheckForFunction(VName);
-	VMethod* CheckForMethod(VName);
-	VConstant* CheckForConstant(VName);
-	VField* CheckForField(TLocation, VName, VClass*, bool = true);
-	VProperty* CheckForProperty(VName);
-	VStateLabel* CheckForStateLabel(VName, bool = true);
-	VState* ResolveStateLabel(TLocation, VName, int);
-
-	bool Define();
-	bool DefineMembers();
-	void Emit();
-
-	friend VStream& operator<<(VStream& Strm, VClass*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
 };
 
 struct VImportedPackage

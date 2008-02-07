@@ -121,13 +121,13 @@ void VStruct::AddField(VField* f)
 
 //==========================================================================
 //
-//	VStruct::CheckForField
+//	VStruct::FindField
 //
 //==========================================================================
 
-VField* VStruct::CheckForField(VName FieldName)
+VField* VStruct::FindField(VName FieldName)
 {
-	guard(VStruct::CheckForField);
+	guard(VStruct::FindField);
 	for (VField* fi = Fields; fi; fi = fi->Next)
 	{
 		if (fi->Name == FieldName)
@@ -137,7 +137,7 @@ VField* VStruct::CheckForField(VName FieldName)
 	}
 	if (ParentStruct)
 	{
-		return ParentStruct->CheckForField(FieldName);
+		return ParentStruct->FindField(FieldName);
 	}
 	return NULL;
 	unguard;

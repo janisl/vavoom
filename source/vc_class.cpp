@@ -28,20 +28,19 @@
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
 #else
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 #endif
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
-#ifndef IN_VCC
-class DummyClass1 : public VVirtualObjectBase
+class DummyClass1
 {
 public:
 	void*		Pointer;
 	vuint8		Byte1;
+	virtual ~DummyClass1() {}
 	virtual void Dummy() = 0;
 };
 
@@ -50,7 +49,6 @@ class DummyClass2 : public DummyClass1
 public:
 	vuint8		Byte2;
 };
-#endif
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
@@ -62,11 +60,9 @@ public:
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifndef IN_VCC
 TArray<mobjinfo_t>		VClass::GMobjInfos;
 TArray<mobjinfo_t>		VClass::GScriptIds;
 TArray<VName>			VClass::GSpriteNames;
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -80,26 +76,30 @@ TArray<VName>			VClass::GSpriteNames;
 
 VClass::VClass(VName AName, VMemberBase* AOuter, TLocation ALoc)
 : VMemberBase(MEMBER_Class, AName, AOuter, ALoc)
-#ifndef IN_VCC
+, ParentClass(NULL)
+, Fields(NULL)
+, States(NULL)
+, DefaultProperties(NULL)
+, ParentClassName(NAME_None)
+, GameExpr(NULL)
+, MobjInfoExpr(NULL)
+, ScriptIdExpr(NULL)
+, Defined(true)
 , ObjectFlags(0)
-, LinkNext(0)
-, ParentClass(0)
+, LinkNext(NULL)
 , ClassSize(0)
 , ClassUnalignedSize(0)
 , ClassFlags(0)
-, ClassVTable(0)
-, ClassConstructor(0)
+, ClassVTable(NULL)
+, ClassConstructor(NULL)
 , ClassNumMethods(0)
-, Fields(0)
-, ReferenceFields(0)
-, DestructorFields(0)
-, NetFields(0)
-, NetMethods(0)
-, States(0)
-, DefaultProperties(0)
-, Defaults(0)
+, ReferenceFields(NULL)
+, DestructorFields(NULL)
+, NetFields(NULL)
+, NetMethods(NULL)
+, Defaults(NULL)
 , NetId(-1)
-, NetStates(0)
+, NetStates(NULL)
 , NumNetFields(0)
 , Replacement(NULL)
 , Replacee(NULL)
@@ -109,20 +109,6 @@ VClass::VClass(VName AName, VMemberBase* AOuter, TLocation ALoc)
 	GClasses = this;
 	unguard;
 }
-#else
-, ParentClass(NULL)
-, Fields(NULL)
-, States(NULL)
-, DefaultProperties(NULL)
-, ParentClassName(NAME_None)
-, Modifiers(0)
-, GameExpr(NULL)
-, MobjInfoExpr(NULL)
-, ScriptIdExpr(NULL)
-, Defined(true)
-{
-}
-#endif
 
 //==========================================================================
 //
@@ -130,30 +116,34 @@ VClass::VClass(VName AName, VMemberBase* AOuter, TLocation ALoc)
 //
 //==========================================================================
 
-#ifndef IN_VCC
 VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags, 
 	VClass *AParent, EName AName, void(*ACtor)())
 : VMemberBase(MEMBER_Class, AName, NULL, TLocation())
-, ObjectFlags(CLASSOF_Native)
-, LinkNext(0)
 , ParentClass(AParent)
+, Fields(NULL)
+, States(NULL)
+, DefaultProperties(NULL)
+, ParentClassName(NAME_None)
+, GameExpr(NULL)
+, MobjInfoExpr(NULL)
+, ScriptIdExpr(NULL)
+, Defined(true)
+, ObjectFlags(CLASSOF_Native)
+, LinkNext(NULL)
 , ClassSize(ASize)
 , ClassUnalignedSize(ASize)
 , ClassFlags(AClassFlags)
-, ClassVTable(0)
+, ClassVTable(NULL)
 , ClassConstructor(ACtor)
 , ClassNumMethods(0)
-, Fields(0)
-, ReferenceFields(0)
-, DestructorFields(0)
-, NetFields(0)
-, NetMethods(0)
-, States(0)
-, DefaultProperties(0)
-, Defaults(0)
+, ReferenceFields(NULL)
+, DestructorFields(NULL)
+, NetFields(NULL)
+, NetMethods(NULL)
 , NetId(-1)
-, NetStates(0)
+, NetStates(NULL)
 , NumNetFields(0)
+, Defaults(NULL)
 , Replacement(NULL)
 , Replacee(NULL)
 {
@@ -162,7 +152,6 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 	GClasses = this;
 	unguard;
 }
-#endif
 
 //==========================================================================
 //
@@ -173,16 +162,30 @@ VClass::VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
 VClass::~VClass()
 {
 	guard(VClass::~VClass);
-#ifndef IN_VCC
+	if (GameExpr)
+	{
+		delete GameExpr;
+	}
+	if (MobjInfoExpr)
+	{
+		delete MobjInfoExpr;
+	}
+	if (ScriptIdExpr)
+	{
+		delete ScriptIdExpr;
+	}
+
 	if (ClassVTable)
 	{
 		delete[] ClassVTable;
 	}
+#ifndef IN_VCC
 	if (Defaults)
 	{
 		DestructObject((VObject*)Defaults);
 		delete[] Defaults;
 	}
+#endif
 
 	if (!GObjInitialised)
 	{
@@ -206,15 +209,127 @@ VClass::~VClass()
 		}
 		else
 		{
+#ifndef IN_VCC
 			GCon->Log(NAME_Dev, "VClass Unlink: Class not in list");
+#endif
 		}
 	}
-#else
-	if (MobjInfoExpr)
-		delete MobjInfoExpr;
-	if (ScriptIdExpr)
-		delete ScriptIdExpr;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindClass
+//
+//==========================================================================
+
+VClass *VClass::FindClass(const char *AName)
+{
+	VName TempName(AName, VName::Find);
+	if (TempName == NAME_None)
+	{
+		// No such name, no chance to find a class
+		return NULL;
+	}
+	for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
+	{
+		if (Cls->GetVName() == TempName)
+		{
+			return Cls;
+		}
+	}
+	return NULL;
+}
+
+//==========================================================================
+//
+//	VClass::FindSprite
+//
+//==========================================================================
+
+int VClass::FindSprite(VName Name)
+{
+	guard(VClass::FindSprite);
+	for (int i = 0; i < GSpriteNames.Num(); i++)
+		if (GSpriteNames[i] == Name)
+			return i;
+	return GSpriteNames.Append(Name);
+	unguard;
+}
+
+#ifndef IN_VCC
+
+//==========================================================================
+//
+//	VClass::GetSpriteNames
+//
+//==========================================================================
+
+void VClass::GetSpriteNames(TArray<FReplacedString>& List)
+{
+	guard(VClass::GetSpriteNames);
+	for (int i = 0; i < GSpriteNames.Num(); i++)
+	{
+		FReplacedString&R = List.Alloc();
+		R.Index = i;
+		R.Replaced = false;
+		R.Old = VStr(*GSpriteNames[i]).ToUpper();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::ReplaceSpriteNames
+//
+//==========================================================================
+
+void VClass::ReplaceSpriteNames(TArray<FReplacedString>& List)
+{
+	guard(VClass::ReplaceSpriteNames);
+	for (int i = 0; i < List.Num(); i++)
+	{
+		if (!List[i].Replaced)
+		{
+			continue;
+		}
+		GSpriteNames[List[i].Index] = *List[i].New.ToLower();
+	}
+
+	//	Update sprite names in states.
+	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
+	{
+		if (GMembers[i] && GMembers[i]->MemberType == MEMBER_State)
+		{
+			VState* S = (VState*)GMembers[i];
+			S->SpriteName = GSpriteNames[S->SpriteIndex];
+		}
+	}
+	unguard;
+}
+
 #endif
+
+//==========================================================================
+//
+//	VClass::StaticReinitStatesLookup
+//
+//==========================================================================
+
+void VClass::StaticReinitStatesLookup()
+{
+	guard(VClass::StaticReinitStatesLookup);
+	//	Clear states lookup tables.
+	for (VClass* C = GClasses; C; C = C->LinkNext)
+	{
+		C->StatesLookup.Clear();
+	}
+
+	//	Now init states lookup tables again.
+	for (VClass* C = GClasses; C; C = C->LinkNext)
+	{
+		C->InitStatesLookup();
+	}
 	unguard;
 }
 
@@ -257,18 +372,6 @@ void VClass::Serialise(VStream& Strm)
 	for (int i = 0; i < RepInfos.Num(); i++)
 	{
 		Strm << RepInfos[i].Cond;
-#ifndef IN_VCC
-		int NumRepMembers = RepInfos[i].RepMembers.Num();
-		Strm << STRM_INDEX(NumRepMembers);
-		if (Strm.IsLoading())
-		{
-			RepInfos[i].RepMembers.SetNum(NumRepMembers);
-		}
-		for (int j = 0; j < RepInfos[i].RepMembers.Num(); j++)
-		{
-			Strm << RepInfos[i].RepMembers[j];
-		}
-#else
 		int NumRepFields = RepInfos[i].RepFields.Num();
 		Strm << STRM_INDEX(NumRepFields);
 		if (Strm.IsLoading())
@@ -279,7 +382,6 @@ void VClass::Serialise(VStream& Strm)
 		{
 			Strm << RepInfos[i].RepFields[j].Member;
 		}
-#endif
 	}
 
 	int NumStateLabels = StateLabels.Num();
@@ -295,7 +397,32 @@ void VClass::Serialise(VStream& Strm)
 	unguard;
 }
 
-#ifdef IN_VCC
+//==========================================================================
+//
+//	VClass::Shutdown
+//
+//==========================================================================
+
+void VClass::Shutdown()
+{
+	guard(VClass::Shutdown);
+	if (ClassVTable)
+	{
+		delete[] ClassVTable;
+		ClassVTable = NULL;
+	}
+#ifndef IN_VCC
+	if (Defaults)
+	{
+		DestructObject((VObject*)Defaults);
+		delete[] Defaults;
+		Defaults = NULL;
+	}
+#endif
+	StatesLookup.Clear();
+	RepInfos.Clear();
+	unguard;
+}
 
 //==========================================================================
 //
@@ -305,7 +432,9 @@ void VClass::Serialise(VStream& Strm)
 
 void VClass::AddConstant(VConstant* c)
 {
+	guard(VClass::AddConstant);
 	Constants.Append(c);
+	unguard;
 }
 
 //==========================================================================
@@ -316,16 +445,22 @@ void VClass::AddConstant(VConstant* c)
 
 void VClass::AddField(VField* f)
 {
+	guard(VClass::AddField);
 	if (!Fields)
+	{
 		Fields = f;
+	}
 	else
 	{
 		VField* Prev = Fields;
 		while (Prev->Next)
+		{
 			Prev = Prev->Next;
+		}
 		Prev->Next = f;
 	}
 	f->Next = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -336,7 +471,9 @@ void VClass::AddField(VField* f)
 
 void VClass::AddProperty(VProperty* p)
 {
+	guard(VClass::AddProperty);
 	Properties.Append(p);
+	unguard;
 }
 
 //==========================================================================
@@ -347,16 +484,22 @@ void VClass::AddProperty(VProperty* p)
 
 void VClass::AddState(VState* s)
 {
+	guard(VClass::AddState);
 	if (!States)
+	{
 		States = s;
+	}
 	else
 	{
 		VState* Prev = States;
 		while (Prev->Next)
+		{
 			Prev = Prev->Next;
+		}
 		Prev->Next = s;
 	}
 	s->Next = NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -367,56 +510,20 @@ void VClass::AddState(VState* s)
 
 void VClass::AddMethod(VMethod* m)
 {
+	guard(VClass::AddMethod);
 	Methods.Append(m);
+	unguard;
 }
 
 //==========================================================================
 //
-//	CheckForFunction
+//	VClass::FindConstant
 //
 //==========================================================================
 
-VMethod* VClass::CheckForFunction(VName Name)
+VConstant* VClass::FindConstant(VName Name)
 {
-	if (Name == NAME_None)
-	{
-		return NULL;
-	}
-	return (VMethod*)StaticFindMember(Name, this, MEMBER_Method);
-}
-
-//==========================================================================
-//
-//	VClass::CheckForMethod
-//
-//==========================================================================
-
-VMethod* VClass::CheckForMethod(VName Name)
-{
-	if (Name == NAME_None)
-	{
-		return NULL;
-	}
-	VMethod* M = (VMethod*)StaticFindMember(Name, this, MEMBER_Method);
-	if (M)
-	{
-		return M;
-	}
-	if (ParentClass)
-	{
-		return ParentClass->CheckForMethod(Name);
-	}
-	return NULL;
-}
-
-//==========================================================================
-//
-//	VClass::CheckForConstant
-//
-//==========================================================================
-
-VConstant* VClass::CheckForConstant(VName Name)
-{
+	guard(VClass::FindConstant);
 	VMemberBase* m = StaticFindMember(Name, this, MEMBER_Const);
 	if (m)
 	{
@@ -424,50 +531,85 @@ VConstant* VClass::CheckForConstant(VName Name)
 	}
 	if (ParentClass)
 	{
-		return ParentClass->CheckForConstant(Name);
+		return ParentClass->FindConstant(Name);
 	}
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
 //
-//	VClass::CheckForField
+//	VClass::FindField
 //
 //==========================================================================
 
-VField* VClass::CheckForField(TLocation l, VName Name, VClass* SelfClass, bool CheckPrivate)
+VField* VClass::FindField(VName Name)
 {
+	guard(VClass::FindField);
 	if (Name == NAME_None)
 	{
 		return NULL;
 	}
-	for (VField *fi = Fields; fi; fi = fi->Next)
+	for (VField *F = Fields; F; F = F->Next)
 	{
-		if (Name == fi->Name)
+		if (Name == F->Name)
 		{
-			if (CheckPrivate && fi->Flags & FIELD_Private &&
-				this != SelfClass)
-			{
-				ParseError(l, "Field %s is private", *fi->Name);
-			}
-			return fi;
+			return F;
 		}
 	}
 	if (ParentClass)
 	{
-		return ParentClass->CheckForField(l, Name, SelfClass, CheckPrivate);
+		return ParentClass->FindField(Name);
 	}
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
 //
-//	VClass::CheckForProperty
+//	VClass::FindField
 //
 //==========================================================================
 
-VProperty* VClass::CheckForProperty(VName Name)
+VField* VClass::FindField(VName Name, TLocation l, VClass* SelfClass)
 {
+	guard(VClass::FindField);
+	VField* F = FindField(Name);
+	if (F && (F->Flags & FIELD_Private) && this != SelfClass)
+	{
+		ParseError(l, "Field %s is private", *F->Name);
+	}
+	return F;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindFieldChecked
+//
+//==========================================================================
+
+VField* VClass::FindFieldChecked(VName AName)
+{
+	guard(VClass::FindFieldChecked);
+	VField* F = FindField(AName);
+	if (!F)
+	{
+		Sys_Error("Field %s not found", *AName);
+	}
+	return F;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindProperty
+//
+//==========================================================================
+
+VProperty* VClass::FindProperty(VName Name)
+{
+	guard(VClass::FindProperty);
 	if (Name == NAME_None)
 	{
 		return NULL;
@@ -479,9 +621,158 @@ VProperty* VClass::CheckForProperty(VName Name)
 	}
 	if (ParentClass)
 	{
-		return ParentClass->CheckForProperty(Name);
+		return ParentClass->FindProperty(Name);
 	}
 	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindMethod
+//
+//==========================================================================
+
+VMethod* VClass::FindMethod(VName Name, bool bRecursive)
+{
+	guard(VClass::FindMethod);
+	if (Name == NAME_None)
+	{
+		return NULL;
+	}
+	VMethod* M = (VMethod*)StaticFindMember(Name, this, MEMBER_Method);
+	if (M)
+	{
+		return M;
+	}
+	if (bRecursive && ParentClass)
+	{
+		return ParentClass->FindMethod(Name);
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindMethodChecked
+//
+//==========================================================================
+
+VMethod *VClass::FindMethodChecked(VName AName)
+{
+	guard(VClass::FindMethodChecked);
+	VMethod *func = FindMethod(AName);
+	if (!func)
+	{
+		Sys_Error("Function %s not found", *AName);
+	}
+	return func;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::GetMethodIndex
+//
+//==========================================================================
+
+int VClass::GetMethodIndex(VName AName)
+{
+	guard(VClass::GetMethodIndex);
+	for (int i = 0; i < ClassNumMethods; i++)
+	{
+		if (ClassVTable[i]->Name == AName)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindState
+//
+//==========================================================================
+
+VState* VClass::FindState(VName AName)
+{
+	guard(VClass::FindState);
+	for (VState* s = States; s; s = s->Next)
+	{
+		if (s->Name == AName)
+		{
+			return s;
+		}
+	}
+	if (ParentClass)
+	{
+		return ParentClass->FindState(AName);
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindStateChecked
+//
+//==========================================================================
+
+VState* VClass::FindStateChecked(VName AName)
+{
+	guard(VClass::FindStateChecked);
+	VState* s = FindState(AName);
+	if (!s)
+	{
+		Sys_Error("State %s not found", *AName);
+	}
+	return s;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindStateLabel
+//
+//==========================================================================
+
+VStateLabel* VClass::FindStateLabel(VName AName, bool CheckParent)
+{
+	guard(VClass::FindStateLabel);
+	for (int i = 0; i < StateLabels.Num(); i++)
+	{
+		if (StateLabels[i].Name == AName)
+		{
+			return &StateLabels[i];
+		}
+	}
+	if (CheckParent && ParentClass)
+	{
+		return ParentClass->FindStateLabel(AName);
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindStateLabelChecked
+//
+//==========================================================================
+
+VStateLabel* VClass::FindStateLabelChecked(VName AName)
+{
+	guard(VClass::FindStateLabelChecked);
+	VStateLabel* Lbl = FindStateLabel(AName);
+	if (!Lbl)
+	{
+		Sys_Error("State %s not found", *AName);
+	}
+	return Lbl;
+	unguard;
 }
 
 //==========================================================================
@@ -492,9 +783,7 @@ VProperty* VClass::CheckForProperty(VName Name)
 
 bool VClass::Define()
 {
-	Modifiers = TModifiers::Check(Modifiers, AllowedModifiers, Loc);
-	int ClassAttr = TModifiers::ClassAttr(Modifiers);
-
+	guard(VClass::Define);
 	if (ParentClassName != NAME_None)
 	{
 		ParentClass = StaticFindClass(ParentClassName);
@@ -546,10 +835,12 @@ bool VClass::Define()
 			ParseError(MobjInfoExpr->Loc, "Integer constant expected");
 			return false;
 		}
+#ifdef IN_VCC
 		mobjinfo_t& mi = ec.Package->MobjInfo.Alloc();
 		mi.DoomEdNum = MobjInfoExpr->GetIntConst();
 		mi.GameFilter = GameFilter;
 		mi.Class = this;
+#endif
 	}
 
 	if (ScriptIdExpr)
@@ -565,14 +856,17 @@ bool VClass::Define()
 			ParseError(ScriptIdExpr->Loc, "Integer constant expected");
 			return false;
 		}
+#ifdef IN_VCC
 		mobjinfo_t& mi = ec.Package->ScriptIds.Alloc();
 		mi.DoomEdNum = ScriptIdExpr->GetIntConst();
 		mi.GameFilter = GameFilter;
 		mi.Class = this;
+#endif
 	}
 
 	Defined = true;
 	return true;
+	unguard;
 }
 
 //==========================================================================
@@ -583,6 +877,7 @@ bool VClass::Define()
 
 bool VClass::DefineMembers()
 {
+	guard(VClass::DefineMembers);
 	bool Ret = true;
 
 	for (int i = 0; i < Constants.Num(); i++)
@@ -709,6 +1004,7 @@ bool VClass::DefineMembers()
 	}
 
 	return Ret;
+	unguard;
 }
 
 //==========================================================================
@@ -719,6 +1015,7 @@ bool VClass::DefineMembers()
 
 void VClass::Emit()
 {
+	guard(VClass::Emit);
 	//	Emit method code.
 	for (int i = 0; i < Methods.Num(); i++)
 	{
@@ -747,28 +1044,7 @@ void VClass::Emit()
 	}
 
 	DefaultProperties->Emit();
-}
-
-//==========================================================================
-//
-//	VClass::CheckForStateLabel
-//
-//==========================================================================
-
-VStateLabel* VClass::CheckForStateLabel(VName LblName, bool CheckParent)
-{
-	for (int i = 0; i < StateLabels.Num(); i++)
-	{
-		if (StateLabels[i].Name == LblName)
-		{
-			return &StateLabels[i];
-		}
-	}
-	if (CheckParent && ParentClass)
-	{
-		return ParentClass->CheckForStateLabel(LblName);
-	}
-	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -805,7 +1081,7 @@ VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 		CheckName = DCol + 2;
 	}
 
-	VStateLabel* Lbl = CheckClass->CheckForStateLabel(CheckName, false);
+	VStateLabel* Lbl = CheckClass->FindStateLabel(CheckName, false);
 	if (!Lbl)
 	{
 		ParseError(Loc, "No such state %s", *LabelName);
@@ -824,331 +1100,6 @@ VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 		State = State->Next;
 	}
 	return State;
-}
-
-#else
-
-//==========================================================================
-//
-//	VClass::Shutdown
-//
-//==========================================================================
-
-void VClass::Shutdown()
-{
-	guard(VClass::Shutdown);
-	if (ClassVTable)
-	{
-		delete[] ClassVTable;
-		ClassVTable = NULL;
-	}
-	if (Defaults)
-	{
-		DestructObject((VObject*)Defaults);
-		delete[] Defaults;
-		Defaults = NULL;
-	}
-	StatesLookup.Clear();
-	RepInfos.Clear();
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindClass
-//
-//==========================================================================
-
-VClass *VClass::FindClass(const char *AName)
-{
-	VName TempName(AName, VName::Find);
-	if (TempName == NAME_None)
-	{
-		// No such name, no chance to find a class
-		return NULL;
-	}
-	for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
-	{
-		if (Cls->GetVName() == TempName)
-		{
-			return Cls;
-		}
-	}
-	return NULL;
-}
-
-//==========================================================================
-//
-//	VClass::FindSprite
-//
-//==========================================================================
-
-int VClass::FindSprite(VName Name)
-{
-	guard(VClass::FindSprite);
-	for (int i = 0; i < GSpriteNames.Num(); i++)
-		if (GSpriteNames[i] == Name)
-			return i;
-	return GSpriteNames.Append(Name);
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::GetSpriteNames
-//
-//==========================================================================
-
-void VClass::GetSpriteNames(TArray<FReplacedString>& List)
-{
-	guard(VClass::GetSpriteNames);
-	for (int i = 0; i < GSpriteNames.Num(); i++)
-	{
-		FReplacedString&R = List.Alloc();
-		R.Index = i;
-		R.Replaced = false;
-		R.Old = VStr(*GSpriteNames[i]).ToUpper();
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::ReplaceSpriteNames
-//
-//==========================================================================
-
-void VClass::ReplaceSpriteNames(TArray<FReplacedString>& List)
-{
-	guard(VClass::ReplaceSpriteNames);
-	for (int i = 0; i < List.Num(); i++)
-	{
-		if (!List[i].Replaced)
-		{
-			continue;
-		}
-		GSpriteNames[List[i].Index] = *List[i].New.ToLower();
-	}
-
-	//	Update sprite names in states.
-	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
-	{
-		if (GMembers[i] && GMembers[i]->MemberType == MEMBER_State)
-		{
-			VState* S = (VState*)GMembers[i];
-			S->SpriteName = GSpriteNames[S->SpriteIndex];
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::StaticReinitStatesLookup
-//
-//==========================================================================
-
-void VClass::StaticReinitStatesLookup()
-{
-	guard(VClass::StaticReinitStatesLookup);
-	//	Clear states lookup tables.
-	for (VClass* C = GClasses; C; C = C->LinkNext)
-	{
-		C->StatesLookup.Clear();
-	}
-
-	//	Now init states lookup tables again.
-	for (VClass* C = GClasses; C; C = C->LinkNext)
-	{
-		C->InitStatesLookup();
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindField
-//
-//==========================================================================
-
-VField* VClass::FindField(VName AName)
-{
-	guard(VClass::FindField);
-	for (VField* F = Fields; F; F = F->Next)
-	{
-		if (F->Name == AName)
-		{
-			return F;
-		}
-	}
-	if (ParentClass)
-	{
-		return ParentClass->FindField(AName);
-	}
-	return NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindFieldChecked
-//
-//==========================================================================
-
-VField* VClass::FindFieldChecked(VName AName)
-{
-	guard(VClass::FindFieldChecked);
-	VField* F = FindField(AName);
-	if (!F)
-	{
-		Sys_Error("Field %s not found", *AName);
-	}
-	return F;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindFunction
-//
-//==========================================================================
-
-VMethod *VClass::FindFunction(VName AName)
-{
-	guard(VClass::FindFunction);
-	VMethod* M = (VMethod*)StaticFindMember(AName, this, MEMBER_Method);
-	if (M)
-	{
-		return M;
-	}
-	if (ParentClass)
-	{
-		return ParentClass->FindFunction(AName);
-	}
-	return NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindFunctionChecked
-//
-//==========================================================================
-
-VMethod *VClass::FindFunctionChecked(VName AName)
-{
-	guard(VClass::FindFunctionChecked);
-	VMethod *func = FindFunction(AName);
-	if (!func)
-	{
-		Sys_Error("Function %s not found", *AName);
-	}
-	return func;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::GetFunctionIndex
-//
-//==========================================================================
-
-int VClass::GetFunctionIndex(VName AName)
-{
-	guard(VClass::GetFunctionIndex);
-	for (int i = 0; i < ClassNumMethods; i++)
-	{
-		if (ClassVTable[i]->Name == AName)
-		{
-			return i;
-		}
-	}
-	return -1;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindState
-//
-//==========================================================================
-
-VState* VClass::FindState(VName AName)
-{
-	guard(VClass::FindState);
-	for (VState* s = States; s; s = s->Next)
-	{
-		if (s->Name == AName)
-		{
-			return s;
-		}
-	}
-	if (ParentClass)
-	{
-		return ParentClass->FindState(AName);
-	}
-	return NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindStateChecked
-//
-//==========================================================================
-
-VState* VClass::FindStateChecked(VName AName)
-{
-	guard(VClass::FindStateChecked);
-	VState* s = FindState(AName);
-	if (!s)
-	{
-		Sys_Error("State %s not found", *AName);
-	}
-	return s;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindStateLabel
-//
-//==========================================================================
-
-VState* VClass::FindStateLabel(VName AName)
-{
-	guard(VClass::FindStateLabel);
-	for (int i = 0; i < StateLabels.Num(); i++)
-	{
-		if (StateLabels[i].Name == AName)
-		{
-			return StateLabels[i].State;
-		}
-	}
-	if (ParentClass)
-	{
-		return ParentClass->FindStateLabel(AName);
-	}
-	return NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VClass::FindStateLabelChecked
-//
-//==========================================================================
-
-VState* VClass::FindStateLabelChecked(VName AName)
-{
-	guard(VClass::FindStateLabelChecked);
-	VState* s = FindStateLabel(AName);
-	if (!s)
-	{
-		Sys_Error("State %s not found", *AName);
-	}
-	return s;
-	unguard;
 }
 
 //==========================================================================
@@ -1255,7 +1206,7 @@ void VClass::CalcFieldOffsets()
 		int MOfs = -1;
 		if (ParentClass)
 		{
-			MOfs = ParentClass->GetFunctionIndex(M->Name);
+			MOfs = ParentClass->GetMethodIndex(M->Name);
 		}
 		if (MOfs == -1 && !(M->Flags & FUNC_Final))
 		{
@@ -1359,7 +1310,7 @@ void VClass::InitNetFields()
 		VMethod* MPrev = NULL;
 		if (ParentClass)
 		{
-			MPrev = ParentClass->FindFunction(M->Name);
+			MPrev = ParentClass->FindMethod(M->Name);
 		}
 		if (MPrev)
 		{
@@ -1555,6 +1506,8 @@ void VClass::InitStatesLookup()
 	unguard;
 }
 
+#ifndef IN_VCC
+
 //==========================================================================
 //
 //	VClass::CreateDefaults
@@ -1692,6 +1645,8 @@ VClass* VClass::CreateDerivedClass(VName AName, VMemberBase* AOuter,
 	unguard;
 }
 
+#endif
+
 //==========================================================================
 //
 //	VClass::GetReplacement
@@ -1735,5 +1690,3 @@ VClass* VClass::GetReplacee()
 	return Ret;
 	unguard;
 }
-
-#endif

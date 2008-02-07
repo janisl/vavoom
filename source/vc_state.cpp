@@ -157,11 +157,7 @@ void VState::Emit()
 	}
 	else if (FunctionName != NAME_None)
 	{
-#ifdef IN_VCC
-		Function = ((VClass*)Outer)->CheckForMethod(FunctionName);
-#else
-		Function = ((VClass*)Outer)->FindFunction(FunctionName);
-#endif
+		Function = ((VClass*)Outer)->FindMethod(FunctionName);
 		if (!Function)
 		{
 			ParseError(Loc, "No such method %s", *FunctionName);

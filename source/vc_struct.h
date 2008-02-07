@@ -58,7 +58,7 @@ public:
 	void PostLoad();
 
 	void AddField(VField* f);
-	VField* CheckForField(VName);
+	VField* FindField(VName);
 	bool NeedsDestructor() const;
 	bool Define();
 	bool DefineMembers();

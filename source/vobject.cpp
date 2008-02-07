@@ -205,7 +205,7 @@ VObject* VObject::StaticSpawnObject(VClass* AClass)
 
 	//	Find native class.
 	VClass* NativeClass = AClass;
-	while (NativeClass && !(NativeClass->GetFlags() & CLASSOF_Native))
+	while (NativeClass && !(NativeClass->ObjectFlags & CLASSOF_Native))
 	{
 		NativeClass = NativeClass->GetSuperClass();
 	}
@@ -303,7 +303,7 @@ bool VObject::IsA(VClass *SomeBaseClass) const
 VMethod *VObject::GetVFunction(VName FuncName) const
 {
 	guardSlow(VObject::GetVFunction);
-	return vtable[Class->GetFunctionIndex(FuncName)];
+	return vtable[Class->GetMethodIndex(FuncName)];
 	unguardSlow;
 }
 

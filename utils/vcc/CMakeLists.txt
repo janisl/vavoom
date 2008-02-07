@@ -16,6 +16,7 @@ add_executable(vcc
 	../../source/stream.cpp
 	../../source/stream.h
 	../../source/vc_class.cpp
+	../../source/vc_class.h
 	../../source/vc_constant.cpp
 	../../source/vc_constant.h
 	../../source/vc_emit_context.cpp

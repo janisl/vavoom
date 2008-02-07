@@ -366,11 +366,7 @@ bool VMethod::Define()
 	if (Outer->MemberType == MEMBER_Class && Name != NAME_None &&
 		((VClass*)Outer)->ParentClass)
 	{
-#ifdef IN_VCC
-		SuperMethod = ((VClass*)Outer)->ParentClass->CheckForMethod(Name);
-#else
-		SuperMethod = ((VClass*)Outer)->ParentClass->FindFunction(Name);
-#endif
+		SuperMethod = ((VClass*)Outer)->ParentClass->FindMethod(Name);
 	}
 	if (SuperMethod)
 	{

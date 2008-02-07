@@ -1242,7 +1242,7 @@ VExpression* VParser::ParseType()
 void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 	TLocation MethodLoc, VClass* InClass, vint32 Modifiers, bool Iterator)
 {
-	if (InClass->CheckForFunction(MName))
+	if (InClass->FindMethod(MName, false))
 	{
 		ParseError(MethodLoc, "Redeclared method %s.%s", *InClass->Name, *MName);
 	}
@@ -1919,7 +1919,9 @@ void VParser::ParseClass()
 		ParseError(Lex.Location, "Parent class expected");
 	}
 
-	Class->Modifiers = TModifiers::Parse(Lex);
+	int ClassAttr = TModifiers::ClassAttr(TModifiers::Check(
+		TModifiers::Parse(Lex), TModifiers::Native | TModifiers::Abstract,
+		Lex.Location));
 	do
 	{
 		if (Lex.Check(TK_MobjInfo))
@@ -2003,7 +2005,7 @@ void VParser::ParseClass()
 					Lex.NextToken();
 					continue;
 				}
-				if (Class->CheckForConstant(Lex.Name))
+				if (Class->FindConstant(Lex.Name))
 				{
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
@@ -2062,7 +2064,7 @@ void VParser::ParseClass()
 					Lex.NextToken();
 					continue;
 				}
-				if (Class->CheckForConstant(Lex.Name))
+				if (Class->FindConstant(Lex.Name))
 				{
 					ParseError(Lex.Location, "Redefined identifier %s", *Lex.Name);
 				}
@@ -2113,8 +2115,7 @@ void VParser::ParseClass()
 				continue;
 			}
 			VField* fi = new VField(Lex.Name, Class, Lex.Location);
-			if (Class->CheckForField(Lex.Location, Lex.Name, false) ||
-				Class->CheckForMethod(Lex.Name))
+			if (Class->FindField(Lex.Name) || Class->FindMethod(Lex.Name))
 			{
 				ParseError(Lex.Location, "Redeclared field");
 			}
@@ -2174,7 +2175,7 @@ void VParser::ParseClass()
 			TLocation FieldLoc = Lex.Location;
 			Lex.NextToken();
 
-			if (Class->CheckForField(FieldLoc, FieldName, false))
+			if (Class->FindField(FieldName))
 			{
 				ParseError(Lex.Location, "Redeclared field");
 				continue;

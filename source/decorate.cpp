@@ -532,7 +532,7 @@ static VState* ResolveStateLabel(VScriptParser* sc, VClass* Class,
 		CheckName = DCol + 2;
 	}
 
-	VState* State = CheckClass->FindStateLabelChecked(CheckName/*, false*/);
+	VState* State = CheckClass->FindStateLabelChecked(CheckName/*, false*/)->State;
 	int Count = Offset;
 	while (Count--)
 	{
@@ -724,7 +724,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class, int SrcIndex,
 				sc->SetCMode(false);
 				return false;
 			}
-			VMethod* Func = Class->FindFunction(*FuncName);
+			VMethod* Func = Class->FindMethod(*FuncName);
 			if (!Func)
 			{
 				GCon->Logf("Unknown state action %s", *FuncName);
@@ -1972,7 +1972,8 @@ static void ParseOldDecoration(VScriptParser* sc, int Type, int SrcIndex)
 	}
 	else if (GenericIceDeath)
 	{
-		Class->SetStateLabel("Ice", Class->FindStateLabel("GenericIceDeath"));
+		VStateLabel* Lbl = Class->FindStateLabel("GenericIceDeath");
+		Class->SetStateLabel("Ice", Lbl ? Lbl->State : NULL);
 	}
 	unguard;
 }
@@ -2056,12 +2057,12 @@ void ProcessDecorateScripts()
 	ActorClass = VClass::FindClass("Actor");
 	ScriptedEntityClass = VClass::FindClass("ScriptedEntity");
 	FakeInventoryClass = VClass::FindClass("FakeInventory");
-	FuncA_Scream = ActorClass->FindFunctionChecked("A_Scream");
-	FuncA_NoBlocking = ActorClass->FindFunctionChecked("A_NoBlocking");
-	FuncA_ScreamAndUnblock = ActorClass->FindFunctionChecked("A_ScreamAndUnblock");
-	FuncA_ActiveSound = ActorClass->FindFunctionChecked("A_ActiveSound");
-	FuncA_ActiveAndUnblock = ActorClass->FindFunctionChecked("A_ActiveAndUnblock");
-	FuncA_ExplodeParms = ActorClass->FindFunctionChecked("A_ExplodeParms");
+	FuncA_Scream = ActorClass->FindMethodChecked("A_Scream");
+	FuncA_NoBlocking = ActorClass->FindMethodChecked("A_NoBlocking");
+	FuncA_ScreamAndUnblock = ActorClass->FindMethodChecked("A_ScreamAndUnblock");
+	FuncA_ActiveSound = ActorClass->FindMethodChecked("A_ActiveSound");
+	FuncA_ActiveAndUnblock = ActorClass->FindMethodChecked("A_ActiveAndUnblock");
+	FuncA_ExplodeParms = ActorClass->FindMethodChecked("A_ExplodeParms");
 
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))

@@ -122,12 +122,8 @@ bool VProperty::Define()
 
 	if (DefaultFieldName != NAME_None)
 	{
-#ifdef IN_VCC
-		DefaultField = ((VClass*)Outer)->CheckForField(Loc, DefaultFieldName,
-			(VClass*)Outer, true);
-#else
-		DefaultField = ((VClass*)Outer)->FindField(DefaultFieldName);
-#endif
+		DefaultField = ((VClass*)Outer)->FindField(DefaultFieldName, Loc,
+			(VClass*)Outer);
 		if (!DefaultField)
 		{
 			ParseError(Loc, "No such field %s", *DefaultFieldName);
@@ -138,9 +134,7 @@ bool VProperty::Define()
 	VProperty* BaseProp = NULL;
 	if (((VClass*)Outer)->ParentClass)
 	{
-#ifdef IN_VCC
-		BaseProp = ((VClass*)Outer)->ParentClass->CheckForProperty(Name);
-#endif
+		BaseProp = ((VClass*)Outer)->ParentClass->FindProperty(Name);
 	}
 	if (BaseProp)
 	{

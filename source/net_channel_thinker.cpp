@@ -156,11 +156,11 @@ void VThinkerChannel::EvalCondValues(VObject* Obj, VClass* Class, vuint8* Values
 	{
 		P_PASS_REF(Obj);
 		bool Val = !!VObject::ExecuteFunction(Class->RepInfos[i].Cond).i;
-		for (int j = 0; j < Class->RepInfos[i].RepMembers.Num(); j++)
+		for (int j = 0; j < Class->RepInfos[i].RepFields.Num(); j++)
 		{
-			if (Class->RepInfos[i].RepMembers[j]->MemberType != MEMBER_Field)
+			if (Class->RepInfos[i].RepFields[j].Member->MemberType != MEMBER_Field)
 				continue;
-			Values[((VField*)Class->RepInfos[i].RepMembers[j])->NetIndex] = Val;
+			Values[((VField*)Class->RepInfos[i].RepFields[j].Member)->NetIndex] = Val;
 		}
 	}
 	unguard;

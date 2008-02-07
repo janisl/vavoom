@@ -23,17 +23,6 @@
 //**
 //**************************************************************************
 
-//
-// Flags describing an class instance.
-//
-enum EClassObjectFlags
-{
-	CLASSOF_Native			= 0x00000001,   // Native
-	CLASSOF_PostLoaded		= 0x00000002,	// PostLoad has been called
-};
-
-enum ENativeConstructor		{EC_NativeConstructor};
-
 //==========================================================================
 //
 //	VPackage
@@ -58,26 +47,6 @@ public:
 
 //==========================================================================
 //
-//	VStateLabel
-//
-//==========================================================================
-
-struct VStateLabel
-{
-	VName		Name;
-	VState*		State;
-
-	VName		GotoLabel;
-	vint32		GotoOffset;
-
-	friend VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
-	{
-		return Strm << Lbl.Name << Lbl.State;
-	}
-};
-
-//==========================================================================
-//
 //	mobjinfo_t
 //
 //==========================================================================
@@ -89,140 +58,4 @@ struct mobjinfo_t
 	VClass*		class_id;
 
 	friend VStream& operator<<(VStream&, mobjinfo_t&);
-};
-
-//==========================================================================
-//
-//	VClass
-//
-//==========================================================================
-
-struct VRepInfo
-{
-	VMethod*				Cond;
-	TArray<VMemberBase*>	RepMembers;
-};
-
-class VClass : public VMemberBase
-{
-private:
-	// Internal per-object variables.
-	vuint32			ObjectFlags;		// Private EObjectFlags used by object manager.
-
-	friend class VMemberBase;
-public:
-	VClass*			LinkNext;			// Next class in linked list
-	VClass*			ParentClass;
-
-	vint32			ClassSize;
-	vint32			ClassUnalignedSize;
-	vuint32			ClassFlags;
-	VMethod**		ClassVTable;
-	void			(*ClassConstructor)();
-
-	vint32			ClassNumMethods;
-
-	VField*			Fields;
-	VField*			ReferenceFields;
-	VField*			DestructorFields;
-	VField*			NetFields;
-	VMethod*		NetMethods;
-	VState*			States;
-	VMethod*		DefaultProperties;
-
-	vuint8*			Defaults;
-
-	vint32				NetId;
-	VState*				NetStates;
-	TArray<VState*>		StatesLookup;
-	vint32				NumNetFields;
-	TArray<VRepInfo>	RepInfos;
-	TArray<VStateLabel>	StateLabels;
-
-	VClass*			Replacement;
-	VClass*			Replacee;
-
-	static TArray<mobjinfo_t>	GMobjInfos;
-	static TArray<mobjinfo_t>	GScriptIds;
-	static TArray<VName>		GSpriteNames;
-
-	// Constructors.
-	VClass(VName, VMemberBase*, TLocation);
-	VClass(ENativeConstructor, size_t ASize, vuint32 AClassFlags,
-		VClass *AParent, EName AName, void(*ACtor)());
-
-	// Destructors.
-	~VClass();
-
-	bool IsChildOf(const VClass *SomeBaseClass) const
-	{
-		for (const VClass *c = this; c; c = c->GetSuperClass())
-		{
-			if (SomeBaseClass == c)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	// Systemwide functions.
-	static VClass *FindClass(const char *);
-	static int FindSprite(VName);
-	static void GetSpriteNames(TArray<FReplacedString>&);
-	static void ReplaceSpriteNames(TArray<FReplacedString>&);
-	static void StaticReinitStatesLookup();
-
-	// Accessors.
-	vuint32 GetFlags() const
-	{
-		return ObjectFlags;
-	}
-	void SetFlags(vuint32 NewFlags)
-	{
-		ObjectFlags |= NewFlags;
-	}
-	void ClearFlags(vuint32 NewFlags)
-	{
-		ObjectFlags &= ~NewFlags;
-	}
-	VClass *GetSuperClass() const
-	{
-		return ParentClass;
-	}
-
-	VField* FindField(VName);
-	VField* FindFieldChecked(VName);
-	VMethod* FindFunction(VName);
-	VMethod* FindFunctionChecked(VName);
-	int GetFunctionIndex(VName);
-	VState* FindState(VName);
-	VState* FindStateChecked(VName);
-	VState* FindStateLabel(VName);
-	VState* FindStateLabelChecked(VName);
-	void SetStateLabel(VName, VState*);
-	void CopyObject(const vuint8*, vuint8*);
-	void SerialiseObject(VStream&, VObject*);
-	void CleanObject(VObject*);
-	void DestructObject(VObject*);
-	VClass* CreateDerivedClass(VName, VMemberBase*, TLocation);
-	VClass* GetReplacement();
-	VClass* GetReplacee();
-
-	void Serialise(VStream&);
-	void PostLoad();
-	void Shutdown();
-
-private:
-	void CalcFieldOffsets();
-	void InitNetFields();
-	void InitReferences();
-	void InitDestructorFields();
-	void CreateVTable();
-	void InitStatesLookup();
-	void CreateDefaults();
-
-public:
-	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
-	{ return Strm << *(VMemberBase**)&Obj; }
 };

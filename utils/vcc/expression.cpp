@@ -388,7 +388,7 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 
 	if (ec.SelfClass)
 	{
-		VConstant* Const = ec.SelfClass->CheckForConstant(Name);
+		VConstant* Const = ec.SelfClass->FindConstant(Name);
 		if (Const)
 		{
 			VExpression* e = new VConstantValue(Const, Loc);
@@ -396,7 +396,7 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 			return e->Resolve(ec);
 		}
 
-		VMethod* M = ec.SelfClass->CheckForMethod(Name);
+		VMethod* M = ec.SelfClass->FindMethod(Name);
 		if (M)
 		{
 			VExpression* e = new VDelegateVal((new VSelf(Loc))->Resolve(ec), M, Loc);
@@ -404,7 +404,7 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 			return e->Resolve(ec);
 		}
 
-		VField* field = ec.SelfClass->CheckForField(Loc, Name, ec.SelfClass);
+		VField* field = ec.SelfClass->FindField(Name, Loc, ec.SelfClass);
 		if (field)
 		{
 			VExpression* e = new VFieldAccess((new VSelf(Loc))->Resolve(ec), field, Loc, 0);
@@ -412,7 +412,7 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 			return e->Resolve(ec);
 		}
 
-		VProperty* Prop = ec.SelfClass->CheckForProperty(Name);
+		VProperty* Prop = ec.SelfClass->FindProperty(Name);
 		if (Prop)
 		{
 			if (AssignTarget)
@@ -599,7 +599,7 @@ VExpression* VDoubleName::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	VConstant* Const = Class->CheckForConstant(Name2);
+	VConstant* Const = Class->FindConstant(Name2);
 	if (Const)
 	{
 		VExpression* e = new VConstantValue(Const, Loc);
@@ -732,7 +732,7 @@ VExpression* VPointerField::DoResolve(VEmitContext& ec)
 		delete this;
 		return NULL;
 	}
-	VField* field = type.Struct->CheckForField(FieldName);
+	VField* field = type.Struct->FindField(FieldName);
 	if (!field)
 	{
 		ParseError(Loc, "No such field %s", *FieldName);
@@ -803,7 +803,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 
 	if (op->Type.Type == TYPE_Reference)
 	{
-		VMethod* M = op->Type.Class->CheckForMethod(FieldName);
+		VMethod* M = op->Type.Class->FindMethod(FieldName);
 		if (M)
 		{
 			VExpression* e = new VDelegateVal(op, M, Loc);
@@ -812,7 +812,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 			return e->Resolve(ec);
 		}
 
-		VField* field = op->Type.Class->CheckForField(Loc, FieldName, ec.SelfClass);
+		VField* field = op->Type.Class->FindField(FieldName, Loc, ec.SelfClass);
 		if (field)
 		{
 			VExpression* e = new VFieldAccess(op, field, Loc,
@@ -822,7 +822,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 			return e->Resolve(ec);
 		}
 
-		VProperty* Prop = op->Type.Class->CheckForProperty(FieldName);
+		VProperty* Prop = op->Type.Class->FindProperty(FieldName);
 		if (Prop)
 		{
 			if (AssignTarget)
@@ -882,7 +882,7 @@ VExpression* VDotField::IntResolve(VEmitContext& ec, bool AssignTarget)
 		int Flags = op->Flags;
 		op->Flags &= ~FIELD_ReadOnly;
 		op->RequestAddressOf();
-		VField* field = type.Struct->CheckForField(FieldName);
+		VField* field = type.Struct->FindField(FieldName);
 		if (!field)
 		{
 			ParseError(Loc, "No such field %s", *FieldName);
@@ -1252,7 +1252,7 @@ VExpression* VBaseInvocation::DoResolve(VEmitContext& ec)
 		delete this;
 		return NULL;
 	}
-	VMethod* Func = ec.SelfClass->ParentClass->CheckForMethod(Name);
+	VMethod* Func = ec.SelfClass->ParentClass->FindMethod(Name);
 	if (!Func)
 	{
 		ParseError(Loc, "No such method %s", *Name);
@@ -1336,7 +1336,7 @@ VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 
 	if (ec.SelfClass)
 	{
-		VMethod* M = ec.SelfClass->CheckForMethod(Name);
+		VMethod* M = ec.SelfClass->FindMethod(Name);
 		if (M)
 		{
 			if (M->Flags & FUNC_Iterator)
@@ -1351,7 +1351,7 @@ VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 			delete this;
 			return e->Resolve(ec);
 		}
-		VField* field = ec.SelfClass->CheckForField(Loc, Name, ec.SelfClass);
+		VField* field = ec.SelfClass->FindField(Name, Loc, ec.SelfClass);
 		if (field && field->Type.Type == TYPE_Delegate)
 		{
 			VExpression* e = new VInvocation(NULL, field->Func, field,
@@ -1375,7 +1375,7 @@ VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 
 VExpression* VCastOrInvocation::ResolveIterator(VEmitContext& ec)
 {
-	VMethod* M = ec.SelfClass->CheckForMethod(Name);
+	VMethod* M = ec.SelfClass->FindMethod(Name);
 	if (!M)
 	{
 		ParseError(Loc, "Unknown method %s", *Name);
@@ -1514,7 +1514,7 @@ VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	VMethod* M = SelfExpr->Type.Class->CheckForMethod(MethodName);
+	VMethod* M = SelfExpr->Type.Class->FindMethod(MethodName);
 	if (M)
 	{
 		if (M->Flags & FUNC_Iterator)
@@ -1531,7 +1531,7 @@ VExpression* VDotInvocation::DoResolve(VEmitContext& ec)
 		return e->Resolve(ec);
 	}
 
-	VField* field = SelfExpr->Type.Class->CheckForField(Loc, MethodName,
+	VField* field = SelfExpr->Type.Class->FindField(MethodName, Loc,
 		ec.SelfClass);
 	if (field && field->Type.Type == TYPE_Delegate)
 	{
@@ -1571,7 +1571,7 @@ VExpression* VDotInvocation::ResolveIterator(VEmitContext& ec)
 		return NULL;
 	}
 
-	VMethod* M = SelfExpr->Type.Class->CheckForMethod(MethodName);
+	VMethod* M = SelfExpr->Type.Class->FindMethod(MethodName);
 	if (!M)
 	{
 		ParseError(Loc, "No such method %s", *MethodName);

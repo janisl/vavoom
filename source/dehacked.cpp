@@ -1746,6 +1746,18 @@ static void LoadDehackedFile(VStream* Strm)
 //
 //==========================================================================
 
+static void CopyStateLabel(VClass* C, VName Name)
+{
+	VStateLabel* Lbl = C->FindStateLabel(Name);
+	C->SetStateLabel(Name, Lbl ? Lbl->State : NULL);
+}
+
+//==========================================================================
+//
+//	ProcessDehackedFiles
+//
+//==========================================================================
+
 void ProcessDehackedFiles()
 {
 	guard(ProcessDehackedFiles);
@@ -1807,12 +1819,13 @@ void ProcessDehackedFiles()
 		else
 		{
 			sc->ExpectString();
-			S = StatesClass->FindStateLabel(*sc->String);
-			if (!S)
+			VStateLabel* Lbl = StatesClass->FindStateLabel(*sc->String);
+			if (!Lbl)
 			{
 				sc->Error(va("No such state %s in class %s",
 					*sc->String, StatesClass->GetName()));
 			}
+			S = Lbl->State;
 			pState = &StatesClass->NetStates;
 			while (*pState && *pState != S)
 			{
@@ -1874,7 +1887,7 @@ void ProcessDehackedFiles()
 		{
 			sc->Error("No such class");
 		}
-		VMethod* Method = Class->FindFunction(*MethodName);
+		VMethod* Method = Class->FindMethod(*MethodName);
 		if (!Method)
 		{
 			sc->Error(va("No such method %s", *MethodName));
@@ -1907,14 +1920,14 @@ void ProcessDehackedFiles()
 		}
 		EntClasses.Append(C);
 		//	Make sure class has it's own copy of all used state labels.
-		C->SetStateLabel("Spawn", C->FindStateLabel("Spawn"));
-		C->SetStateLabel("See", C->FindStateLabel("See"));
-		C->SetStateLabel("Melee", C->FindStateLabel("Melee"));
-		C->SetStateLabel("Missile", C->FindStateLabel("Missile"));
-		C->SetStateLabel("Pain", C->FindStateLabel("Pain"));
-		C->SetStateLabel("Death", C->FindStateLabel("Death"));
-		C->SetStateLabel("XDeath", C->FindStateLabel("XDeath"));
-		C->SetStateLabel("Raise", C->FindStateLabel("Raise"));
+		CopyStateLabel(C, "Spawn");
+		CopyStateLabel(C, "See");
+		CopyStateLabel(C, "Melee");
+		CopyStateLabel(C, "Missile");
+		CopyStateLabel(C, "Pain");
+		CopyStateLabel(C, "Death");
+		CopyStateLabel(C, "XDeath");
+		CopyStateLabel(C, "Raise");
 	}
 
 	//	Create list of weapon classes.
@@ -1929,11 +1942,11 @@ void ProcessDehackedFiles()
 			sc->Error(va("No such class %s", *sc->String));
 		}
 		WeaponClasses.Append(C);
-		C->SetStateLabel("Select", C->FindStateLabel("Select"));
-		C->SetStateLabel("Deselect", C->FindStateLabel("Deselect"));
-		C->SetStateLabel("Ready", C->FindStateLabel("Ready"));
-		C->SetStateLabel("Fire", C->FindStateLabel("Fire"));
-		C->SetStateLabel("Flash", C->FindStateLabel("Flash"));
+		CopyStateLabel(C, "Select");
+		CopyStateLabel(C, "Deselect");
+		CopyStateLabel(C, "Ready");
+		CopyStateLabel(C, "Fire");
+		CopyStateLabel(C, "Flash");
 	}
 
 	//	Create list of ammo classes.
