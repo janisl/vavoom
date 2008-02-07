@@ -2044,6 +2044,9 @@ static void BuildPrintString(void)
 			case 'f': // [RH] fixed point
 				printCmd = PCD_PRINTFIXED;
 				break;
+			case 'k': // [GRB] key binding
+				printCmd = PCD_PRINTBIND;
+				break;
 			default:
 				printCmd = PCD_PRINTSTRING;
 				ERR_Error(ERR_UNKNOWN_PRTYPE, YES);
@@ -3428,6 +3431,10 @@ static void ConstExprFactor(void)
 			tk_Token != TK_SEMICOLON &&
 			tk_Token != TK_RPAREN)
 		{
+			if(tk_Token == TK_EOF)
+			{
+				ERR_Exit(ERR_EOF, YES);
+			}
 			TK_NextToken();
 		}
 		break;
@@ -3731,10 +3738,10 @@ static void ParseArrayIndices(symbolNode_t *sym, int requiredIndices)
 		TK_NextToken();
 	}
 	// if there were unspecified indices, multiply the offset by their sizes [JB]
-	if(requiredIndices < sym->info.array.ndim)
+	if(requiredIndices < sym->info.array.ndim - 1)
 	{
 		int i, mult = 1;
-		for(i = 0; i < sym->info.array.ndim - requiredIndices; ++i)
+		for(i = 0; i < sym->info.array.ndim - requiredIndices - 1; ++i)
 		{
 			mult *= sym->info.array.dimensions[sym->info.array.ndim - 2 - i];
 		}
