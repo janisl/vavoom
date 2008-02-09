@@ -227,12 +227,24 @@ set(MAIN_COMMON_SOURCES
 	vc_constant.h
 	vc_emit_context.cpp
 	vc_emit_context.h
+	vc_expr_array.cpp
+	vc_expr_array.h
+	vc_expr_assign.cpp
+	vc_expr_assign.h
 	vc_expr_base.cpp
 	vc_expr_base.h
 	vc_expr_cast.cpp
 	vc_expr_cast.h
+	vc_expr_field.cpp
+	vc_expr_field.h
+	vc_expr_invoke.cpp
+	vc_expr_invoke.h
 	vc_expr_literal.cpp
 	vc_expr_literal.h
+	vc_expr_local.cpp
+	vc_expr_local.h
+	vc_expr_misc.cpp
+	vc_expr_misc.h
 	vc_expr_type.cpp
 	vc_expr_type.h
 	vc_expr_unary_binary.cpp
@@ -479,9 +491,15 @@ set(SERVER_COMMON_SOURCES
 	vc_class.cpp
 	vc_constant.cpp
 	vc_emit_context.cpp
+	vc_expr_array.cpp
+	vc_expr_assign.cpp
 	vc_expr_base.cpp
 	vc_expr_cast.cpp
+	vc_expr_field.cpp
+	vc_expr_invoke.cpp
 	vc_expr_literal.cpp
+	vc_expr_local.cpp
+	vc_expr_misc.cpp
 	vc_expr_type.cpp
 	vc_expr_unary_binary.cpp
 	vc_field.cpp

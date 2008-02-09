@@ -190,7 +190,6 @@ public:
 	void DoEmit(VEmitContext&);
 };
 
-#ifdef IN_VCC
 class VLocalVarStatement : public VStatement
 {
 public:
@@ -201,7 +200,6 @@ public:
 	bool Resolve(VEmitContext&);
 	void DoEmit(VEmitContext&);
 };
-#endif
 
 class VCompound : public VStatement
 {

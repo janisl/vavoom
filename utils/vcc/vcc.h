@@ -68,6 +68,13 @@ typedef void (*builtin_t)();
 #include "../../source/vc_expr_unary_binary.h"
 #include "../../source/vc_expr_cast.h"
 #include "../../source/vc_expr_type.h"
+#include "../../source/vc_expr_field.h"
+#include "../../source/vc_expr_array.h"
+#include "../../source/vc_expr_invoke.h"
+#include "../../source/vc_expr_assign.h"
+#include "../../source/vc_expr_local.h"
+#include "../../source/vc_expr_misc.h"
+#include "../../source/vc_statement.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -153,9 +160,6 @@ class VStruct;
 class VMethod;
 class VEmitContext;
 class VPackage;
-
-#include "expression.h"
-#include "../../source/vc_statement.h"
 
 class VParser
 {

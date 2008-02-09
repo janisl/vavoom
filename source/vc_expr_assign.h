@@ -23,32 +23,49 @@
 //**
 //**************************************************************************
 
-#ifndef __vc_local_h__
-#define __vc_local_h__
+//==========================================================================
+//
+//	VAssignment
+//
+//==========================================================================
 
-#include "gamedefs.h"
-#include "progdefs.h"
+class VAssignment : public VExpression
+{
+public:
+	enum EAssignOper
+	{
+		Assign,
+		AddAssign,
+		MinusAssign,
+		MultiplyAssign,
+		DivideAssign,
+		ModAssign,
+		AndAssign,
+		OrAssign,
+		XOrAssign,
+		LShiftAssign,
+		RShiftAssign,
+	};
+	EAssignOper		Oper;
+	VExpression*	op1;
+	VExpression*	op2;
 
-#include "vc_emit_context.h"
-#include "vc_expr_base.h"
-#include "vc_expr_literal.h"
-#include "vc_expr_unary_binary.h"
-#include "vc_expr_cast.h"
-#include "vc_expr_type.h"
-#include "vc_expr_field.h"
-#include "vc_expr_array.h"
-#include "vc_expr_invoke.h"
-#include "vc_expr_assign.h"
-#include "vc_expr_local.h"
-#include "vc_expr_misc.h"
-#include "vc_statement.h"
+	VAssignment(EAssignOper, VExpression*, VExpression*, const TLocation&);
+	~VAssignment();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
 
-#define FatalError	Sys_Error
+//==========================================================================
+//
+//	VPropertyAssign
+//
+//==========================================================================
 
-void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void BailOut() __attribute__((noreturn));
-
-extern int				NumErrors;
-
-#endif
+class VPropertyAssign : public VInvocation
+{
+public:
+	VPropertyAssign(VExpression* ASelfExpr, VMethod* AFunc, bool AHaveSelf,
+		const TLocation& ALoc);
+	bool IsPropertyAssign() const;
+};

@@ -194,10 +194,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\expression.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\utils\vcc\lexer.cpp"
 				>
 			</File>
@@ -234,6 +230,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_expr_array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_assign.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_expr_base.cpp"
 				>
 			</File>
@@ -242,7 +246,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_expr_field.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_invoke.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_expr_literal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_local.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_misc.cpp"
 				>
 			</File>
 			<File
@@ -311,10 +331,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\expression.h"
-				>
-			</File>
-			<File
 				RelativePath="..\utils\vcc\lexer.h"
 				>
 			</File>
@@ -347,6 +363,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_expr_array.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_assign.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_expr_base.h"
 				>
 			</File>
@@ -355,7 +379,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_expr_field.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_invoke.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_expr_literal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_local.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_expr_misc.h"
 				>
 			</File>
 			<File

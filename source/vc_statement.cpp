@@ -1040,8 +1040,6 @@ void VExpressionStatement::DoEmit(VEmitContext& ec)
 	Expr->Emit(ec);
 }
 
-#ifdef IN_VCC
-
 //==========================================================================
 //
 //	VLocalVarStatement::VLocalVarStatement
@@ -1089,8 +1087,6 @@ void VLocalVarStatement::DoEmit(VEmitContext& ec)
 {
 	Decl->EmitInitialisations(ec);
 }
-
-#endif
 
 //==========================================================================
 //
