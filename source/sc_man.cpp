@@ -90,6 +90,7 @@ VScriptParser::VScriptParser(const VStr& name, VStream* Strm)
 , AlreadyGot(false)
 , CMode(false)
 , Escape(true)
+, SrcIdx(-1)
 {
 	guard(VScriptParser::VScriptParser);
 	ScriptSize = Strm->TotalSize();
@@ -635,6 +636,23 @@ void VScriptParser::Error(const char* message)
 	const char* Msg = message ? message : "Bad syntax.";
 	Sys_Error("Script error, \"%s\" line %d: %s", *ScriptName, Line, Msg);
 	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::GetLoc
+//
+//==========================================================================
+
+TLocation VScriptParser::GetLoc()
+{
+	guardSlow(VScriptParser::GetLoc);
+	if (SrcIdx == -1)
+	{
+		SrcIdx = TLocation::AddSourceFile(ScriptName);
+	}
+	return TLocation(SrcIdx, Line);
+	unguardSlow;
 }
 
 //==========================================================================

@@ -54,6 +54,7 @@ public:
 	void ExpectFloat();
 	void UnGet();
 	void Error(const char*);
+	TLocation GetLoc();
 
 private:
 	VStr		ScriptName;
@@ -61,6 +62,7 @@ private:
 	char*		ScriptPtr;
 	char*		ScriptEndPtr;
 	int			ScriptSize;
+	int			SrcIdx;
 	bool		AlreadyGot;
 	bool		CMode;
 	bool		Escape;

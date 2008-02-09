@@ -59,7 +59,6 @@
 #include "system.h"		//	System specific routines
 #include "files.h"		//	File I/O routines
 #include "wad.h"		//	WAD file I/O routines
-#include "scripts.h"	//	Script parsing
 #include "xml.h"		//	XML file parsing
 #include "decorate.h"	//	Decorate scripts
 #include "dehacked.h"	//	DeHackEd support
@@ -76,6 +75,7 @@
 #include "vc_class.h"
 #include "vc_package.h"
 #include "vobject.h"
+#include "scripts.h"	//	Script parsing
 #include "input.h"		//	Input from keyboard, mouse and joystick
 #include "waddefs.h"    // 	External data types
 #include "video.h"		//	Graphics
