@@ -44,6 +44,7 @@ defaultproperties
 	MissileDamage = 500;
 	bActivateImpact = true;
 	bNoExtremeDeath = true;
+	bStrifeDamage = true;
 	SightSound = 'misc/swish';
 	ActiveSound = 'misc/swish';
 }

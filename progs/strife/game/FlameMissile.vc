@@ -60,6 +60,7 @@ defaultproperties
 	bNoGravity = false;
 	DamageType = 'Fire';
 	bActivateImpact = true;
+	bStrifeDamage = true;
 	SightSound = 'weapons/flamethrower';
 	bDynamicLight = true;
 	DLightColour = RGB(211, 131, 0);

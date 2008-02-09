@@ -28,4 +28,5 @@ class SpectralLightningH2 : SpectralLightningH1;
 defaultproperties
 {
 	MissileDamage = 20;
+	bStrifeDamage = true;
 }

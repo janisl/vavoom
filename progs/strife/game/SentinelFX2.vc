@@ -34,6 +34,7 @@ Death:
 defaultproperties
 {
 	MissileDamage = 1;
+	bStrifeDamage = true;
 	DLightRadius = 66.0;
 	SightSound = 'sentinel/plasma';
 }

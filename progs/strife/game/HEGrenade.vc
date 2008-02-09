@@ -64,6 +64,7 @@ defaultproperties
 	bNoBounceSound = true;
 	bExplodeOnWater = true;
 	bExplodeParticles = true;
+	bStrifeDamage = true;
 	BounceType = BOUNCE_Doom;
 	BounceCount = 2;
 	BounceFactor = 0.5;

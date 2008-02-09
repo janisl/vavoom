@@ -49,6 +49,7 @@ defaultproperties
 	DeathSound = 'crusader/mislx';
 	bExplodeParticles = true;
 	bDynamicLight = true;
+	bStrifeDamage = true;
 	DLightColour = RGB(215, 179, 0);
 	DLightRadius = 200.0;
 }

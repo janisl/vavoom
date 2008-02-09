@@ -30,5 +30,6 @@ defaultproperties
 	Mass = 50.0;
 	Speed = 1225.0;
 	MissileDamage = 1;
+	bStrifeDamage = true;
 	bActivateImpact = false;
 }

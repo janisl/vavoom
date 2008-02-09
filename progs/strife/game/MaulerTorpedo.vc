@@ -75,6 +75,7 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	bActivateImpact = true;
 	bDynamicLight = true;
+	bStrifeDamage = true;
 	DamageType = 'Disintegrate';
 	SightSound = 'weapons/mauler2fire';
 	DeathSound = 'weapons/mauler2hit';

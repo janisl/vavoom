@@ -46,6 +46,7 @@ defaultproperties
 	bActivateImpact = true;
 	DamageType = 'Disintegrate';
 	bDynamicLight = true;
+	bStrifeDamage = true;
 	DLightColour = RGB(63, 123, 35);
 	DLightRadius = 126.0;
 }

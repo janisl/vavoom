@@ -47,6 +47,7 @@ defaultproperties
 	bNoTeleport = true;
 	bDynamicLight = true;
 	bActivateImpact = true;
+	bStrifeDamage = true;
 	DLightColour = RGB(123, 127, 171);
 	DLightRadius = 86.0;
 	SightSound = 'misc/swish';

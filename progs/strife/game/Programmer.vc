@@ -157,6 +157,7 @@ defaultproperties
 	bNoBlood = true;
 	bNoDeathmatch = true;
 	bNoBlockMonst = true;
+	bStrifeDamage = true;
 	ActiveSound = 'programmer/active';
 	AttackSound = 'programmer/attack';
 	PainSound = 'programmer/pain';

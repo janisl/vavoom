@@ -222,6 +222,7 @@ bool bExplosionDontHurtSelf;// For A_Explodearms
 bool bNoSightCheck;		// Go after target without checking sight.
 bool bHuntPlayers;		// With TIDToHate, hate players too.
 bool bNoHatePlayers;	// Ignore player attacks.
+bool bStrifeDamage;		// Missiles do 4x damage instead of 8x
 
 //  Params
 float			Speed;
@@ -4773,7 +4774,7 @@ bool Touch(Entity InOther)
 				SpawnRipperBlood();
 			}
 			PlaySound('misc/ripslop', CHAN_BODY);
-			damage = ((P_Random() & 3) + 2) * MissileDamage;
+			damage = GetMissileDamage(3, 2);
 			Other.Damage(self, Target, damage, DamageType);
 			if (Other.bPushable && !bCannotPush)
 			{
@@ -4786,7 +4787,7 @@ bool Touch(Entity InOther)
 		}
 
 		// damage / explode
-		damage = ((P_Random() % 8) + 1) * MissileDamage;
+		damage = GetMissileDamage(bStrifeDamage ? 3 : 7, 1);
 		if (damage > 0)
 		{
 			if (LineSpecialGameInfo(Level.Game).bBloodSplatter &&
@@ -4852,7 +4853,7 @@ bool Slam(EntityEx Other)
 	Velocity = vector(0.0, 0.0, 0.0);
 	if (!bDormant)
 	{
-		int damage = ((P_Random() % 8) + 1) * MissileDamage;
+		int damage = GetMissileDamage(7, 1);
 		Other.Damage(self, self, damage, 'Melee');
 		SetState(SeeState ? SeeState : IdleState);
 	}
@@ -4862,6 +4863,25 @@ bool Slam(EntityEx Other)
 		StateTime = -1.0;
 	}
 	return false;	// stop moving
+}
+
+//==========================================================================
+//
+//	GetMissileDamage
+//
+//==========================================================================
+
+int GetMissileDamage(int Mask, int Add)
+{
+	if (!MissileDamage)
+	{
+		return 0;
+	}
+	if (!Mask)
+	{
+		return Add * MissileDamage;
+	}
+	return ((P_Random() & Mask) + Add) * MissileDamage;
 }
 
 //==========================================================================

@@ -28,4 +28,5 @@ class SpectralLightningV2 : SpectralLightningV1;
 defaultproperties
 {
 	MissileDamage = 50;
+	bStrifeDamage = true;
 }

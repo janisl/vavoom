@@ -28,4 +28,5 @@ class SpectralLightningBigBall2 : SpectralLightningBigBall1;
 defaultproperties
 {
 	MissileDamage = 30;
+	bStrifeDamage = true;
 }
