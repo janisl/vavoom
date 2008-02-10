@@ -25,8 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "gamedefs.h"
-#include "progdefs.h"
+#include "vc_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -53,6 +52,8 @@ enum
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+static VExpression* ParseExpressionPriority13(VScriptParser* sc);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
@@ -213,6 +214,491 @@ static void SkipBlock(VScriptParser* sc, int Level)
 
 //==========================================================================
 //
+//	ParseExpressionPriority0
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority0(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority0);
+	TLocation l = sc->GetLoc();
+	if (sc->CheckNumber())
+	{
+		vint32 Val = sc->Number;
+		return new VIntLiteral(Val, l);
+	}
+
+	if (sc->CheckFloat())
+	{
+		float Val = sc->Float;
+		return new VFloatLiteral(Val, l);
+	}
+
+	if (sc->CheckQuotedString())
+	{
+		int Val = DecPkg->FindString(*sc->String);
+		return new VStringLiteral(Val, l);
+	}
+
+	if (sc->Check("false"))
+	{
+		return new VIntLiteral(0, l);
+	}
+
+	if (sc->Check("true"))
+	{
+		return new VIntLiteral(1, l);
+	}
+
+	if (sc->Check("none"))
+	{
+		return new VNoneLiteral(l);
+	}
+
+	if (sc->Check("("))
+	{
+		VExpression* op = ParseExpressionPriority13(sc);
+		if (!op)
+		{
+			ParseError(l, "Expression expected");
+		}
+		sc->Expect(")");
+		return op;
+	}
+
+	if (sc->CheckIdentifier())
+	{
+		return new VSingleName(*sc->String, l);
+	}
+
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority1
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority1(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority1);
+	return ParseExpressionPriority0(sc);
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority2
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority2(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority2);
+	VExpression*	op;
+
+	TLocation l = sc->GetLoc();
+
+	if (sc->Check("+"))
+	{
+		op = ParseExpressionPriority2(sc);
+		return new VUnary(VUnary::Plus, op, l);
+	}
+
+	if (sc->Check("-"))
+	{
+		op = ParseExpressionPriority2(sc);
+		return new VUnary(VUnary::Minus, op, l);
+	}
+
+	if (sc->Check("!"))
+	{
+		op = ParseExpressionPriority2(sc);
+		return new VUnary(VUnary::Not, op, l);
+	}
+
+	if (sc->Check("~"))
+	{
+		op = ParseExpressionPriority2(sc);
+		return new VUnary(VUnary::BitInvert, op, l);
+	}
+
+	return ParseExpressionPriority1(sc);
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority3
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority3(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority3);
+	VExpression* op1 = ParseExpressionPriority2(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	bool done = false;
+	do
+	{
+		TLocation l = sc->GetLoc();
+		if (sc->Check("*"))
+		{
+			VExpression* op2 = ParseExpressionPriority2(sc);
+			op1 = new VBinary(VBinary::Multiply, op1, op2, l);
+		}
+		else if (sc->Check("/"))
+		{
+			VExpression* op2 = ParseExpressionPriority2(sc);
+			op1 = new VBinary(VBinary::Divide, op1, op2, l);
+		}
+		else if (sc->Check("%"))
+		{
+			VExpression* op2 = ParseExpressionPriority2(sc);
+			op1 = new VBinary(VBinary::Modulus, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority4
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority4(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority4);
+	VExpression* op1 = ParseExpressionPriority3(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	bool done = false;
+	do
+	{
+		TLocation l = sc->GetLoc();
+		if (sc->Check("+"))
+		{
+			VExpression* op2 = ParseExpressionPriority3(sc);
+			op1 = new VBinary(VBinary::Add, op1, op2, l);
+		}
+		else if (sc->Check("-"))
+		{
+			VExpression* op2 = ParseExpressionPriority3(sc);
+			op1 = new VBinary(VBinary::Subtract, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority5
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority5(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority5);
+	VExpression* op1 = ParseExpressionPriority4(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	bool done = false;
+	do
+	{
+		TLocation l = sc->GetLoc();
+		if (sc->Check("<<"))
+		{
+			VExpression* op2 = ParseExpressionPriority4(sc);
+			op1 = new VBinary(VBinary::LShift, op1, op2, l);
+		}
+		else if (sc->Check(">>"))
+		{
+			VExpression* op2 = ParseExpressionPriority4(sc);
+			op1 = new VBinary(VBinary::RShift, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority6
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority6(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority6);
+	VExpression* op1 = ParseExpressionPriority5(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	bool done = false;
+	do
+	{
+		TLocation l = sc->GetLoc();
+		if (sc->Check("<"))
+		{
+			VExpression* op2 = ParseExpressionPriority5(sc);
+			op1 = new VBinary(VBinary::Less, op1, op2, l);
+		}
+		else if (sc->Check("<="))
+		{
+			VExpression* op2 = ParseExpressionPriority5(sc);
+			op1 = new VBinary(VBinary::LessEquals, op1, op2, l);
+		}
+		else if (sc->Check(">"))
+		{
+			VExpression* op2 = ParseExpressionPriority5(sc);
+			op1 = new VBinary(VBinary::Greater, op1, op2, l);
+		}
+		else if (sc->Check(">="))
+		{
+			VExpression* op2 = ParseExpressionPriority5(sc);
+			op1 = new VBinary(VBinary::GreaterEquals, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	}
+	while (!done);
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority7
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority7(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority7);
+	VExpression* op1 = ParseExpressionPriority6(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	bool done = false;
+	do
+	{
+		TLocation l = sc->GetLoc();
+		if (sc->Check("=="))
+		{
+			VExpression* op2 = ParseExpressionPriority6(sc);
+			op1 = new VBinary(VBinary::Equals, op1, op2, l);
+		}
+		else if (sc->Check("!="))
+		{
+			VExpression* op2 = ParseExpressionPriority6(sc);
+			op1 = new VBinary(VBinary::NotEquals, op1, op2, l);
+		}
+		else
+		{
+			done = true;
+		}
+	} while (!done);
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority8
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority8(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority8);
+	VExpression* op1 = ParseExpressionPriority7(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	TLocation l = sc->GetLoc();
+	while (sc->Check("&"))
+	{
+		VExpression* op2 = ParseExpressionPriority7(sc);
+		op1 = new VBinary(VBinary::And, op1, op2, l);
+		l = sc->GetLoc();
+	}
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority9
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority9(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority9);
+	VExpression* op1 = ParseExpressionPriority8(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	TLocation l = sc->GetLoc();
+	while (sc->Check("^"))
+	{
+		VExpression* op2 = ParseExpressionPriority8(sc);
+		op1 = new VBinary(VBinary::XOr, op1, op2, l);
+		l = sc->GetLoc();
+	}
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority10
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority10(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority10);
+	VExpression* op1 = ParseExpressionPriority9(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	TLocation l = sc->GetLoc();
+	while (sc->Check("|"))
+	{
+		VExpression* op2 = ParseExpressionPriority9(sc);
+		op1 = new VBinary(VBinary::Or, op1, op2, l);
+		l = sc->GetLoc();
+	}
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority11
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority11(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority11);
+	VExpression* op1 = ParseExpressionPriority10(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	TLocation l = sc->GetLoc();
+	while (sc->Check("&&"))
+	{
+		VExpression* op2 = ParseExpressionPriority10(sc);
+		op1 = new VBinaryLogical(VBinaryLogical::And, op1, op2, l);
+		l = sc->GetLoc();
+	}
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpressionPriority12
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority12(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority12);
+	VExpression* op1 = ParseExpressionPriority11(sc);
+	if (!op1)
+	{
+		return NULL;
+	}
+	TLocation l = sc->GetLoc();
+	while (sc->Check("||"))
+	{
+		VExpression* op2 = ParseExpressionPriority11(sc);
+		op1 = new VBinaryLogical(VBinaryLogical::Or, op1, op2, l);
+		l = sc->GetLoc();
+	}
+	return op1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VParser::ParseExpressionPriority13
+//
+//==========================================================================
+
+static VExpression* ParseExpressionPriority13(VScriptParser* sc)
+{
+	guard(ParseExpressionPriority13);
+	VExpression* op = ParseExpressionPriority12(sc);
+	if (!op)
+	{
+		return NULL;
+	}
+	TLocation l = sc->GetLoc();
+	if (sc->Check("?"))
+	{
+		VExpression* op1 = ParseExpressionPriority13(sc);
+		sc->Expect(":");
+		VExpression* op2 = ParseExpressionPriority13(sc);
+		op = new VConditional(op, op1, op2, l);
+	}
+	return op;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseExpression
+//
+//==========================================================================
+
+static VExpression* ParseExpression(VScriptParser* sc)
+{
+	guard(ParseExpression);
+	return ParseExpressionPriority13(sc);
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseConst
 //
 //==========================================================================
@@ -223,12 +709,25 @@ static void ParseConst(VScriptParser* sc)
 	sc->SetCMode(true);
 	sc->Expect("int");
 	sc->ExpectString();
+	TLocation Loc = sc->GetLoc();
 	VStr Name = sc->String;
 	sc->Expect("=");
-	sc->ExpectString();
-	VStr Val = sc->String;
+
+	VExpression* Expr = ParseExpression(sc);
+	if (!Expr)
+	{
+		sc->Error("Constant value expected");
+	}
+	else
+	{
+		int Val = Expr->GetIntConst();
+		delete Expr;
+		GCon->Logf("Constant %s with value %d", *Name, Val);
+		VConstant* C = new VConstant(*Name, DecPkg, Loc);
+		C->Type = TYPE_Int;
+		C->Value = Val;
+	}
 	sc->Expect(";");
-	GCon->Logf("Constant %s with value %s", *Name, *Val);
 	sc->SetCMode(false);
 	unguard;
 }

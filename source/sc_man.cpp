@@ -459,6 +459,28 @@ void VScriptParser::Expect(const char* name)
 
 //==========================================================================
 //
+//	VScriptParser::CheckQuotedString
+//
+//==========================================================================
+
+bool VScriptParser::CheckQuotedString()
+{
+	guard(VScriptParser::CheckQuotedString);
+	if (!GetString())
+	{
+		return false;
+	}
+	if (!QuotedString)
+	{
+		UnGet();
+		return false;
+	}
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VScriptParser::CheckIdentifier
 //
 //==========================================================================
@@ -466,34 +488,43 @@ void VScriptParser::Expect(const char* name)
 bool VScriptParser::CheckIdentifier()
 {
 	guard(VScriptParser::CheckIdentifier);
-	//	Quted strings are not valid identifiers.
-	if (GetString() && !QuotedString)
+	if (!GetString())
 	{
-		if (String.Length() < 1)
-		{
-			return false;
-		}
-
-		//	Identifier must start with a letter or underscore.
-		char c = String[0];
-		if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'))
-		{
-			return false;
-		}
-
-		//	It must be followed by letters, numbers and underscores.
-		for (size_t i = 1; i < String.Length(); i++)
-		{
-			c = String[i];
-			if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
-				(c >= '0' && c <= '9') || c == '_'))
-			{
-				return false;
-			}
-		}
-		return true;
+		return false;
 	}
-	return false;
+	//	Quted strings are not valid identifiers.
+	if (QuotedString)
+	{
+		UnGet();
+		return false;
+	}
+
+	if (String.Length() < 1)
+	{
+		UnGet();
+		return false;
+	}
+
+	//	Identifier must start with a letter or underscore.
+	char c = String[0];
+	if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'))
+	{
+		UnGet();
+		return false;
+	}
+
+	//	It must be followed by letters, numbers and underscores.
+	for (size_t i = 1; i < String.Length(); i++)
+	{
+		c = String[i];
+		if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+			(c >= '0' && c <= '9') || c == '_'))
+		{
+			UnGet();
+			return false;
+		}
+	}
+	return true;
 	unguard;
 }
 

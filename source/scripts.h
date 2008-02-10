@@ -47,6 +47,7 @@ public:
 	void ExpectIdentifier();
 	bool Check(const char*);
 	void Expect(const char*);
+	bool CheckQuotedString();
 	bool CheckIdentifier();
 	bool CheckNumber();
 	void ExpectNumber();
