@@ -1659,7 +1659,7 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 		}
 
 		//	Check for actors that take no damage from concussion.
-		if (bNoRadiusDamage)
+		if (Other.bNoRadiusDamage)
 		{
 			continue;
 		}
