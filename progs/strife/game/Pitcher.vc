@@ -29,7 +29,7 @@ class Pitcher : Decoration
 states
 {
 Spawn:
-	VASE B -1
+	VAZE B -1
 	Stop
 }
 

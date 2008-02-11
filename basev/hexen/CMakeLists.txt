@@ -15,6 +15,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		mapinfo.txt
 		skyboxes.txt
 		sndinfo.txt
+		sprite_rename.txt
 		terrain.txt
 		${CMAKE_CURRENT_BINARY_DIR}/progs/shared.dat
 		${CMAKE_CURRENT_BINARY_DIR}/progs/clprogs.dat

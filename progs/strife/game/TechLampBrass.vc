@@ -29,7 +29,7 @@ class TechLampBrass : Decoration
 states
 {
 Spawn:
-	TLMP B -1
+	TECH B -1
 	Stop
 }
 

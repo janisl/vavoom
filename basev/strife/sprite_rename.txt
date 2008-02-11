@@ -1,0 +1,19 @@
+MISL SMIS	// MiniMissile and CrusaderMissile
+ARM1 ARM3	// MetalArmor
+ARM2 ARM4	// LeatherArmor
+PMAP SMAP	// StrifeMap
+TLMP TECH	// TechLampSilver and TechLampBrass
+TRE1 TRET	// TreeStub
+BAR1 BARC	// BarricadeColumn
+SHT2 MPUF	// MaulerPuff
+BARL BBAR	// StrifeBurningBarrel
+TRCH TRHL	// SmallTorchLit
+SHRD SHAR	// glass shards
+BLST MAUL	// Mauler
+LOGG LOGW	// StickInWater
+VASE VAZE	// Pot and Pitcher
+CNDL KNDL	// Candle
+POT1 MPOT	// MetalPot
+SPID STLK	// Stalker
+
+always BLOD BLUD

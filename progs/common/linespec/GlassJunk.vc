@@ -28,17 +28,17 @@ class GlassJunk : ScriptedEntity;
 states
 {
 Spawn:
-	SHRD A 128
+	SHAR A 128
 	Stop
-	SHRD B 128
+	SHAR B 128
 	Stop
-	SHRD C 128
+	SHAR C 128
 	Stop
-	SHRD D 128
+	SHAR D 128
 	Stop
-	SHRD E 128
+	SHAR E 128
 	Stop
-	SHRD F 128
+	SHAR F 128
 	Stop
 }
 

@@ -30,7 +30,7 @@ class MetalArmor : BasicArmorPickup
 states
 {
 Spawn:
-	ARM1 A -1
+	ARM3 A -1
 	Stop
 }
 

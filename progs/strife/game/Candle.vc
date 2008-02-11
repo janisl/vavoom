@@ -29,7 +29,7 @@ class Candle : Decoration
 states
 {
 Spawn:
-	CNDL A -1 Bright
+	KNDL A -1 Bright
 	Stop
 }
 

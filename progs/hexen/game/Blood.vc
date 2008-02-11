@@ -28,7 +28,7 @@ class Blood : Effect;
 states
 {
 Spawn:
-	BLOD CBA 8
+	BLUD CBA 8
 	Stop
 }
 

@@ -29,7 +29,7 @@ class SmallTorchLit : Decoration
 states
 {
 Spawn:
-	TRCH ABCD 4 Bright
+	TRHL ABCD 4 Bright
 	Loop
 }
 

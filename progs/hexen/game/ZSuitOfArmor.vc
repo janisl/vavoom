@@ -68,10 +68,10 @@ final void A_SoAExplode()
 states
 {
 Spawn:
-	SUIT A -1
+	ZSUI A -1
 	Stop
 Death:
-	SUIT A 1 A_SoAExplode
+	ZSUI A 1 A_SoAExplode
 	Stop
 }
 

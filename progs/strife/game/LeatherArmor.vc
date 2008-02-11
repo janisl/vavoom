@@ -30,7 +30,7 @@ class LeatherArmor : BasicArmorPickup
 states
 {
 Spawn:
-	ARM2 A -1
+	ARM4 A -1
 	Stop
 }
 

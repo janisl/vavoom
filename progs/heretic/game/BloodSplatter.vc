@@ -28,10 +28,10 @@ class BloodSplatter : Actor;
 states
 {
 Spawn:
-	BLOD CBS 8
+	BLUD CBS 8
 	Stop
 Death:
-	BLOD A 6
+	BLUD A 6
 	Stop
 }
 

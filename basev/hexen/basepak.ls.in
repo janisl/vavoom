@@ -20,6 +20,7 @@ lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
 mapinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/mapinfo.txt
 sndinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndinfo.txt
 skyboxes.txt			@CMAKE_CURRENT_SOURCE_DIR@/skyboxes.txt
+sprite_rename.txt		@CMAKE_CURRENT_SOURCE_DIR@/sprite_rename.txt
 terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
 
 $load @CMAKE_CURRENT_SOURCE_DIR@/palette.pcx

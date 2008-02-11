@@ -31,10 +31,10 @@ Spawn:
 	MICR A 6 Bright A_SpawnPuff
 	Loop
 Death:
-	MISL A 5 Bright { 	RenderStyle = STYLE_Add; }
-	MISL B 5 Bright
-	MISL C 4 Bright
-	MISL DEFG 2 Bright
+	SMIS A 5 Bright { 	RenderStyle = STYLE_Add; }
+	SMIS B 5 Bright
+	SMIS C 4 Bright
+	SMIS DEFG 2 Bright
 	Stop
 }
 

@@ -2891,4 +2891,67 @@
 
 22.01.2008
   I decided not to support DOS anymore, so I removed all DOS specific source
+ files. In Windows version I removed support for IPX network driver.
+  I decided to switch to CMake. I stared by creating CMake list files for
+ utilities.
+23.01.2008
+  I created initial version of CMake lists file for main executable.
+24.01.2008
+  In CMake file for main executable I added most of the library checks.
+25.01.2008
+  I completed writing CMake file for main executable, some other fixes. I
+ changed main executable to use SDL by default.
+26.01.2008
+  I created CMake list files for progs and data. After that I could get rid of
+ autoconf and automake files. Then I added installation commands and other
+ things to make CMake support complete.
+  I renamed bHiddenflag back to bNoSector and added bInvisible flag which has
+ a bit different use.
+27.01.2008
+  I fixed a crash when actor is being linked to a sector that is used as a
+ source of 3D water.
+  I changed no pass mobj flag back to pass mobj and changed it not to be set
+ by default.
+28.01.2008
+  I made all actors that have missile flag to also do z checking, just like
+ pass mobj does. After that I could remove pass mobj flags from all missile
+ objects.
+  I added don't overlap flag that is used by some Heretic and Hexen monsters
+ to prevent flying over/under each other.
+  I merged Speed and StepSpeed variables.
+  I changed loading of model definition files to process all model definition
  files.
+  I made engine and compiler share name, stream and array template class files.
+ I made vcc use it's own copy of cmdlib. I added string class to compiler and
+ made use of it in many places.
+29.01.2008
+  I made vcc use engine's common.h, got rid of cmdlib header file.
+30.01.2008
+  I fixed compilation using Allegro.
+02.02.2008
+  I added support for customiseable DATADIR and BINDIR.
+  I split implementation of member classes into multiple files that are shared
+ by engine and compiler. I renamed field type class to a common name. Then I
+ made member class constructors have the same arguments as in compiler.
+03.02.2008
+  I merged field type classes and added emit context to the engine.
+04.02.2008
+  I adde many of the expression classes to the engine, adde statement classes,
+ merged member base classes.
+05.02.2008
+  I merged most of the member classes.
+06.02.2008
+  I continued merging member classes.
+07.02.2008
+  I finished merging member classes.
+09.02.2008
+  I made remaining expression classes available in engine.
+10.02.2008
+  I implemented simple decorate expression parser.
+11.02.2008
+  I fixed some wrong line special translations
+  I fixed cyberdemons getting hurt by explosions.
+  I changed DECORATE constants to be lower cased, I added special expression
+ class for DECORATE identifiers.
+  OS X/Darwin desn't have __unix__ defined, so I changed checks wether to use
+ $HOME/.vavoom directory to just check if it's not Windows.

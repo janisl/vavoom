@@ -30,7 +30,7 @@ class AmuletOfWarding : HexenArmor
 states
 {
 Spawn:
-	ARM4 A -1
+	AR_4 A -1
 	Stop
 }
 

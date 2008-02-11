@@ -28,10 +28,10 @@ class BloodSplatter : Fragment;
 states
 {
 Spawn:
-	BLOD CBA 8
+	BLUD CBA 8
 	Stop
 Death:
-	BLOD A 6
+	BLUD A 6
 	Stop
 }
 

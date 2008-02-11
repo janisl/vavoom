@@ -1,0 +1,15 @@
+BARL ZBAR	// ZBarrel
+ARM1 AR_1	// MeshArmor
+ARM2 AR_2	// FalconShield
+ARM3 AR_3	// PlatinumHelm
+ARM4 AR_4	// AmuletOfWarding
+SUIT ZSUI	// ZSuitOfArmor and ZArmorChunk
+TRE1 ZTRE	// ZTree and ZTreeDead
+TRE2 TRES	// ZTreeSwamp150
+CAND BCAN	// ZBlueCandle
+ROCK ROKK	// rocks and dirt
+WATR HWAT	// Strife also has WATR
+GIBS POL5	// RealGibs
+EGGM PRKM	// PorkFX
+
+always BLOD BLUD

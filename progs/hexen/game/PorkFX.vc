@@ -150,7 +150,7 @@ final bool MorphPlayer(Actor victim)
 states
 {
 Spawn:
-	EGGM ABCDE 4
+	PRKM ABCDE 4
 	Loop
 Death:
 	FHFX IJKL 3 Bright

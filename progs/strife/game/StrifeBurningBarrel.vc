@@ -29,7 +29,7 @@ class StrifeBurningBarrel : Decoration
 states
 {
 Spawn:
-	BARL ABCD 4 Bright
+	BBAR ABCD 4 Bright
 	Loop
 }
 

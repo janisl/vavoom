@@ -28,7 +28,7 @@ class MaulerPuff : Effect;
 states
 {
 Spawn:
-	SHT2 AB 5
+	MPUF AB 5
 	POW1 ABCDE 4
 	Stop
 }

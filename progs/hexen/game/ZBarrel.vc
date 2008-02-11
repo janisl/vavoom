@@ -29,7 +29,7 @@ class ZBarrel : Decoration
 states
 {
 Spawn:
-	BARL A -1
+	ZBAR A -1
 	Stop
 }
 

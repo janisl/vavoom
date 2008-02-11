@@ -29,7 +29,7 @@ class BarricadeColumn : Decoration
 states
 {
 Spawn:
-	BAR1 A -1
+	BARC A -1
 	Stop
 }
 

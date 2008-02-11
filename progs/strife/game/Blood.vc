@@ -29,7 +29,7 @@ class Blood : Actor
 states
 {
 Spawn:
-	BLOD CBA 8
+	BLUD CBA 8
 	Stop
 Spray:
 	SPRY ABCDEF 3

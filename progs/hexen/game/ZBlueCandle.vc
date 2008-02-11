@@ -29,7 +29,7 @@ class ZBlueCandle : Decoration
 states
 {
 Spawn:
-	CAND ABCDE 5 Bright
+	BCAN ABCDE 5 Bright
 	Loop
 }
 

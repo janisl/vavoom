@@ -29,7 +29,7 @@ class ZTreeSwamp150 : Decoration
 states
 {
 Spawn:
-	TRE2 A -1
+	TRES A -1
 	Stop
 }
 

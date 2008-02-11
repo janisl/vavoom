@@ -28,22 +28,22 @@ class Mauler2 : Mauler;
 states
 {
 Ready:
-	BLST IJKL 7 A_WeaponReady
+	MAUL IJKL 7 A_WeaponReady
 	Loop
 Deselect:
-	BLST I 1 A_Lower
+	MAUL I 1 A_Lower
 	Loop
 Select:
-	BLST I 1 A_Raise
+	MAUL I 1 A_Raise
 	Loop
 Fire:
-	BLST I 20 A_FireBlasterSound
-	BLST J 10 A_Light1
+	MAUL I 20 A_FireBlasterSound
+	MAUL J 10 A_Light1
 	BLSF A 10 Bright A_FireBlaster2
-	BLST B 3 Bright A_Light2
-	BLST C 2
-	BLST D 2 A_Light0
-	BLST E 2 A_ReFire
+	MAUL B 3 Bright A_Light2
+	MAUL C 2
+	MAUL D 2 A_Light0
+	MAUL E 2 A_ReFire
 	Goto Ready
 }
 

@@ -29,7 +29,7 @@ class MetalPot : Decoration
 states
 {
 Spawn:
-	POT1 A -1
+	MPOT A -1
 	Stop
 }
 

@@ -29,10 +29,10 @@ class Dirt4 : Fragment
 states
 {
 Spawn:
-	ROCK G 20
+	ROKK G 20
 	Loop
 Death:
-	ROCK G 10
+	ROKK G 10
 	Stop
 }
 

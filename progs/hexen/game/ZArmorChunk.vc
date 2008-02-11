@@ -28,25 +28,25 @@ class ZArmorChunk : Decoration;
 states
 {
 Spawn:
-	SUIT B -1
+	ZSUI B -1
 	Stop
-	SUIT C -1
+	ZSUI C -1
 	Stop
-	SUIT D -1
+	ZSUI D -1
 	Stop
-	SUIT E -1
+	ZSUI E -1
 	Stop
-	SUIT F -1
+	ZSUI F -1
 	Stop
-	SUIT G -1
+	ZSUI G -1
 	Stop
-	SUIT H -1
+	ZSUI H -1
 	Stop
-	SUIT I -1
+	ZSUI I -1
 	Stop
-	SUIT J -1
+	ZSUI J -1
 	Stop
-	SUIT K -1
+	ZSUI K -1
 	Stop
 }
 

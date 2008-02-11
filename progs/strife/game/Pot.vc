@@ -29,7 +29,7 @@ class Pot : Decoration
 states
 {
 Spawn:
-	VASE A -1
+	VAZE A -1
 	Stop
 }
 

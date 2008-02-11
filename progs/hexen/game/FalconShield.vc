@@ -30,7 +30,7 @@ class FalconShield : HexenArmor
 states
 {
 Spawn:
-	ARM2 A -1
+	AR_2 A -1
 	Stop
 }
 

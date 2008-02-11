@@ -29,7 +29,7 @@ class HWaterDrip : Fragment
 states
 {
 Spawn:
-	WATR A 5
+	HWAT A 5
 	Loop
 }
 

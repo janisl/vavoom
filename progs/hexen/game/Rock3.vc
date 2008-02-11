@@ -29,10 +29,10 @@ class Rock3 : Fragment
 states
 {
 Spawn:
-	ROCK C 20
+	ROKK C 20
 	Loop
 Death:
-	ROCK C 10
+	ROKK C 10
 	Stop
 }
 

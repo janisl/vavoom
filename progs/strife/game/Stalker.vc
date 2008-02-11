@@ -170,47 +170,47 @@ final void A_Lights()
 states
 {
 Spawn:
-	SPID A 1 A_StalkerLook
+	STLK A 1 A_StalkerLook
 	Loop
 LookCeiling:
-	SPID A 10 A_Look
+	STLK A 10 A_Look
 	Loop
 LookFloor:
-	SPID J 10 A_Look
+	STLK J 10 A_Look
 	Loop
 See:
-	SPID A 1 A_StalkerChase2
-	SPID ABB 3 A_Chase
-	SPID C 3 A_StalkerChase
-	SPID C 3 A_Chase
+	STLK A 1 A_StalkerChase2
+	STLK ABB 3 A_Chase
+	STLK C 3 A_StalkerChase
+	STLK C 3 A_Chase
 	Loop
 Melee:
-	SPID J 3 A_FaceTarget
-	SPID K 3 A_StalkerAttack
+	STLK J 3 A_FaceTarget
+	STLK K 3 A_StalkerAttack
 	Goto SeeFloor
 Land:
-	SPID C 2 A_StalkerLand
-	SPID IHGFED 3
+	STLK C 2 A_StalkerLand
+	STLK IHGFED 3
 	Goto Melee
 SeeFloor:
-	SPID J 3 A_StalkerChase
-	SPID JKK 3 A_Chase
-	SPID L 3 A_StalkerChase
-	SPID L 3 A_Chase
+	STLK J 3 A_StalkerChase
+	STLK JKK 3 A_Chase
+	STLK L 3 A_StalkerChase
+	STLK L 3 A_Chase
 	Loop
 Pain:
-	SPID L 1 A_Pain
+	STLK L 1 A_Pain
 	Goto See
 Death:
-	SPID O 4
-	SPID P 4 A_Scream
-	SPID QRST 4
-	SPID U 4 A_Fall
-	SPID VW 4
-	SPID X 4 Bright
-	SPID Y 4 Bright A_Lights
-	SPID Z 4 Bright
-	SPID "[" 4 Bright
+	STLK O 4
+	STLK P 4 A_Scream
+	STLK QRST 4
+	STLK U 4 A_Fall
+	STLK VW 4
+	STLK X 4 Bright
+	STLK Y 4 Bright A_Lights
+	STLK Z 4 Bright
+	STLK "[" 4 Bright
 	Stop
 }
 

@@ -29,7 +29,7 @@ class StickInWater : Decoration
 states
 {
 Spawn:
-	LOGG ABCD 5 A_ActiveSound
+	LOGW ABCD 5 A_ActiveSound
 	Loop
 }
 

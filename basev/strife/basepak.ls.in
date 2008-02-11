@@ -22,6 +22,7 @@ mapinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/mapinfo.txt
 skyboxes.txt			@CMAKE_CURRENT_SOURCE_DIR@/skyboxes.txt
 sndinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndinfo.txt
 sndseq.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndseq.txt
+sprite_rename.txt		@CMAKE_CURRENT_SOURCE_DIR@/sprite_rename.txt
 terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
 
 //	Big font

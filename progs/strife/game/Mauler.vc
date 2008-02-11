@@ -91,22 +91,22 @@ final void A_FireBlaster2()
 states
 {
 Ready:
-	BLST FGHA 6 A_WeaponReady
+	MAUL FGHA 6 A_WeaponReady
 	Loop
 Deselect:
-	BLST A 1 A_Lower
+	MAUL A 1 A_Lower
 	Loop
 Select:
-	BLST A 1 A_Raise
+	MAUL A 1 A_Raise
 	Loop
 Fire:
 	BLSF A 5 Bright A_FireBlaster1
-	BLST B 3 Bright A_Light1
-	BLST C 2 A_Light2
-	BLST DE 2
-	BLST A 7 A_Light0
-	BLST H 7
-	BLST G 7 A_CheckReload
+	MAUL B 3 Bright A_Light1
+	MAUL C 2 A_Light2
+	MAUL DE 2
+	MAUL A 7 A_Light0
+	MAUL H 7
+	MAUL G 7 A_CheckReload
 	Goto Ready
 Spawn:
 	TRPD A -1

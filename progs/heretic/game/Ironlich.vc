@@ -132,27 +132,27 @@ final void A_Lights()
 states
 {
 Spawn:
-	HEAD A 10 A_Look
+	LICH A 10 A_Look
 	Loop
 See:
-	HEAD A 4 A_Chase
+	LICH A 4 A_Chase
 	Loop
 Missile:
-	HEAD A 5 A_FaceTarget
-	HEAD B 20 A_HeadAttack
+	LICH A 5 A_FaceTarget
+	LICH B 20 A_HeadAttack
 	Goto See
 Pain:
-	HEAD A 4
-	HEAD A 4 A_Pain
+	LICH A 4
+	LICH A 4 A_Pain
 	Goto See
 Death:
-	HEAD C 7
-	HEAD D 7 { A_Scream(); A_Lights(); }
-	HEAD E 7
-	HEAD F 7
-	HEAD G 7 A_NoBlocking
-	HEAD H 7
-	HEAD I -1 A_BossDeath
+	LICH C 7
+	LICH D 7 { A_Scream(); A_Lights(); }
+	LICH E 7
+	LICH F 7
+	LICH G 7 A_NoBlocking
+	LICH H 7
+	LICH I -1 A_BossDeath
 	Stop
 }
 

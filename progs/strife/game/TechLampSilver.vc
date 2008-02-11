@@ -29,7 +29,7 @@ class TechLampSilver : Decoration
 states
 {
 Spawn:
-	TLMP A -1
+	TECH A -1
 	Stop
 }
 

@@ -30,7 +30,7 @@ class StrifeMap : MapRevealer
 states
 {
 Spawn:
-	PMAP AB 6 Bright
+	SMAP AB 6 Bright
 	Loop
 }
 

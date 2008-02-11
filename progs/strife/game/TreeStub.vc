@@ -29,7 +29,7 @@ class TreeStub : Decoration
 states
 {
 Spawn:
-	TRE1 A -1
+	TRET A -1
 	Stop
 }
 

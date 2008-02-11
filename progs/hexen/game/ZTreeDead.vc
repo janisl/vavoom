@@ -29,7 +29,7 @@ class ZTreeDead : Decoration
 states
 {
 Spawn:
-	TRE1 A -1
+	ZTRE A -1
 	Stop
 }
 
