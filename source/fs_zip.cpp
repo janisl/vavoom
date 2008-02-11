@@ -549,6 +549,43 @@ VStream* VZipFile::CreateLumpReaderNum(int Lump)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VZipFile::RenameSprites
+//
+//==========================================================================
+
+void VZipFile::RenameSprites(const TArray<VSpriteRename>& A)
+{
+	guard(VZipFile::RenameSprites);
+	for (int i = 0; i < NumFiles; i++)
+	{
+		VZipFileInfo& L = Files[i];
+		if (L.LumpNamespace != WADNS_Sprites)
+		{
+			continue;
+		}
+		for (int j = 0; j < A.Num(); j++)
+		{
+			if ((*L.LumpName)[0] != A[j].Old[0] ||
+				(*L.LumpName)[1] != A[j].Old[1] ||
+				(*L.LumpName)[2] != A[j].Old[2] ||
+				(*L.LumpName)[3] != A[j].Old[3])
+			{
+				continue;
+			}
+			char NewName[12];
+			VStr::Cpy(NewName, *L.LumpName);
+			NewName[0] = A[j].New[0];
+			NewName[1] = A[j].New[1];
+			NewName[2] = A[j].New[2];
+			NewName[3] = A[j].New[3];
+			L.LumpName = NewName;
+		}
+	}
+	unguard;
+}
+
 void VZipFile::BuildGLNodes(VSearchPath*)
 {
 }

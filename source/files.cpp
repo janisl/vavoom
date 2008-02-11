@@ -66,6 +66,7 @@ TArray<VSearchPath*>	SearchPaths;
 TArray<VStr>			wadfiles;
 static bool				bIwadAdded;
 static TArray<VStr>		IWadDirs;
+static int				IWadIndex;
 
 // CODE --------------------------------------------------------------------
 
@@ -293,6 +294,7 @@ static void ParseBase(const VStr& name)
 			{
 				if (!bIwadAdded)
 				{
+					IWadIndex = SearchPaths.Num();
 					VStr MainWadPath = FindMainWad(fl_mainwad);
 					W_AddFile(MainWadPath, fl_savedir, G.FixVoices);
 					bIwadAdded = true;
@@ -319,6 +321,7 @@ static void ParseBase(const VStr& name)
 			fl_mainwad = G.MainWad;
 			if (!bIwadAdded)
 			{
+				IWadIndex = SearchPaths.Num();
 				W_AddFile(MainWadPath, fl_savedir, G.FixVoices);
 				bIwadAdded = true;
 			}
@@ -354,6 +357,66 @@ static void SetupGameDir(const VStr& dirname)
 	guard(SetupGameDir);
 	ParseBase(dirname + "/base.txt");
 	AddGameDir(dirname);
+	unguard;
+}
+
+//==========================================================================
+//
+//	RenameSprites
+//
+//==========================================================================
+
+static void RenameSprites()
+{
+	guard(RenameSprites);
+	VStream* Strm = FL_OpenFileRead("sprite_rename.txt");
+	if (!Strm)
+	{
+		return;
+	}
+
+	VScriptParser* sc = new VScriptParser("sprite_rename.txt", Strm);
+	TArray<VSpriteRename> Renames;
+	TArray<VSpriteRename> AlwaysRenames;
+	while (!sc->AtEnd())
+	{
+		bool Always = sc->Check("always");
+
+		sc->ExpectString();
+		if (sc->String.Length() != 4)
+		{
+			sc->Error("Sprite name must be 4 chars long");
+		}
+		VStr Old = sc->String.ToLower();
+
+		sc->ExpectString();
+		if (sc->String.Length() != 4)
+		{
+			sc->Error("Sprite name must be 4 chars long");
+		}
+		VStr New = sc->String.ToLower();
+
+		VSpriteRename& R = Always ? AlwaysRenames.Alloc() : Renames.Alloc();
+		R.Old[0] = Old[0];
+		R.Old[1] = Old[1];
+		R.Old[2] = Old[2];
+		R.Old[3] = Old[3];
+		R.New[0] = New[0];
+		R.New[1] = New[1];
+		R.New[2] = New[2];
+		R.New[3] = New[3];
+	}
+	delete sc;
+
+	bool RenameAll = !!GArgs.CheckParm("-oldsprites");
+	for (int i = 0; i < SearchPaths.Num(); i++)
+	{
+		if (RenameAll || i == IWadIndex)
+		{
+			SearchPaths[i]->RenameSprites(Renames);
+		}
+		SearchPaths[i]->RenameSprites(AlwaysRenames);
+	}
 	unguard;
 }
 
@@ -446,6 +509,8 @@ void FL_Init()
 				W_AddFile(GArgs[fp], VStr(), false);
 		}
 	}
+
+	RenameSprites();
 	unguard;
 }
 

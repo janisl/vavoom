@@ -509,6 +509,41 @@ VStream* VWadFile::CreateLumpReaderNum(int lump)
 	unguard;
 }
 
+//==========================================================================
+//
+//	VWadFile::RenameSprites
+//
+//==========================================================================
+
+void VWadFile::RenameSprites(const TArray<VSpriteRename>& A)
+{
+	guard(VWadFile::RenameSprites);
+	for (int i = 0; i < NumLumps; i++)
+	{
+		lumpinfo_t& L = LumpInfo[i];
+		if (L.Namespace != WADNS_Sprites)
+		{
+			continue;
+		}
+		for (int j = 0; j < A.Num(); j++)
+		{
+			if ((*L.Name)[0] != A[j].Old[0] || (*L.Name)[1] != A[j].Old[1] ||
+				(*L.Name)[2] != A[j].Old[2] || (*L.Name)[3] != A[j].Old[3])
+			{
+				continue;
+			}
+			char NewName[12];
+			VStr::Cpy(NewName, *L.Name);
+			NewName[0] = A[j].New[0];
+			NewName[1] = A[j].New[1];
+			NewName[2] = A[j].New[2];
+			NewName[3] = A[j].New[3];
+			L.Name = NewName;
+		}
+	}
+	unguard;
+}
+
 int VWadFile::CheckNumForFileName(VStr)
 {
 	return -1;

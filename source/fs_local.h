@@ -27,6 +27,16 @@
 #define __FS_LOCAL_H__
 
 //==========================================================================
+//	VSpriteRename
+//==========================================================================
+
+struct VSpriteRename
+{
+	char	Old[4];
+	char	New[4];
+};
+
+//==========================================================================
 //	VSearchPath
 //==========================================================================
 
@@ -46,6 +56,7 @@ public:
 	virtual void BuildGLNodes(VSearchPath*) = 0;
 	virtual void BuildPVS(VSearchPath*) = 0;
 	virtual VStream* CreateLumpReaderNum(int) = 0;
+	virtual void RenameSprites(const TArray<VSpriteRename>&) = 0;
 };
 
 //==========================================================================
@@ -74,6 +85,7 @@ public:
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);
 	VStream* CreateLumpReaderNum(int);
+	void RenameSprites(const TArray<VSpriteRename>&);
 };
 
 //==========================================================================
@@ -113,6 +125,7 @@ public:
 	bool FileExists(const VStr&);
 	VStream* OpenFileRead(const VStr&);
 	VStream* CreateLumpReaderNum(int);
+	void RenameSprites(const TArray<VSpriteRename>&);
 };
 
 //==========================================================================
@@ -147,6 +160,7 @@ public:
 	VName LumpName(int);
 	int IterateNS(int, EWadNamespace);
 	VStream* CreateLumpReaderNum(int);
+	void RenameSprites(const TArray<VSpriteRename>&);
 
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);
