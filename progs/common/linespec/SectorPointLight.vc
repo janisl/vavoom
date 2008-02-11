@@ -1,4 +1,4 @@
-﻿//**************************************************************************
+//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -53,10 +53,10 @@
 //** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //**************************************************************************
 
-class DynFlickerLight : DynPointLight
-	__mobjinfo__(9802);
+class SectorPointLight : DynamicLight
+	__mobjinfo__(9803);
 
-bool bFlickerLight;
+bool bScaleLight;
 
 //==========================================================================
 //
@@ -66,7 +66,7 @@ bool bFlickerLight;
 
 bool Activate()
 {
-	bFlickerLight = true;
+	bScaleLight = true;
 	return true;
 }
 
@@ -79,7 +79,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetUp = false;
-	bFlickerLight = false;
+	bScaleLight = false;
 	return true;
 }
 
@@ -95,9 +95,21 @@ void BeginPlay()
 
 	if (!bDormant)
 	{
-		LastUpdate = Angles.yaw;
-		bFlickerLight = true;
+		bScaleLight = true;
 	}
+}
+
+//==========================================================================
+//
+//	Clamp
+//
+//	Clamps in to the range [min,max].
+//
+//==========================================================================
+
+float Clamp (float in, float min, float max)
+{
+	return in <= min ? min : in >= max ? max : in;
 }
 
 //==========================================================================
@@ -110,7 +122,7 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if(bFlickerLight)
+	if(bScaleLight)
 	{
 		if(!SetUp)
 		{
@@ -119,11 +131,17 @@ void ClientTick(float deltaTime)
 			dl->colour = RGB(Args[0], Args[1], Args[2]);
 			SetUp = true;
 		}
-		float rnd = itof(P_Random());
-		float pct = Angles.yaw / 360.0;
+		float rad;
+		float scale = itof(Args[3]) / 8.0;
+		
+		if (scale < 1.0)
+			scale = 1.0;
 
-		Intensity = rnd >= pct * 255.0 ? itof(Args[3]) : itof(Args[4]);
-		dl->radius = Intensity;
+		rad = itof(Sector->params.lightlevel) * scale;
+		rad = Clamp(rad, 0.0, 255.0);
+		
+		Intensity = rad;
+		dl->radius = Intensity < 16.0 ? Intensity * 8.0 : Intensity;
 	}
 }
 

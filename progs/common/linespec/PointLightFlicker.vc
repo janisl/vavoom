@@ -1,4 +1,4 @@
-﻿//**************************************************************************
+//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -53,10 +53,10 @@
 //** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //**************************************************************************
 
-class DynPulseLight : DynPointLight
-	__mobjinfo__(9801);
+class PointLightFlicker : DynamicLight
+	__mobjinfo__(9802);
 
-bool bPulseLight;
+bool bFlickerLight;
 
 //==========================================================================
 //
@@ -66,7 +66,7 @@ bool bPulseLight;
 
 bool Activate()
 {
-	bPulseLight = true;
+	bFlickerLight = true;
 	return true;
 }
 
@@ -79,7 +79,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetUp = false;
-	bPulseLight = false;
+	bFlickerLight = false;
 	return true;
 }
 
@@ -95,14 +95,7 @@ void BeginPlay()
 
 	if (!bDormant)
 	{
-		float pulseTime = Angles.yaw;
-
-		LastUpdate = Level.XLevel.Time;
-		SetParams(itof(Args[3]), itof(Args[4]), pulseTime);
-		ShouldCycle(true);
-		SetCycleType(CYCLE_Sin);
-		Intensity = GetVal();
-		bPulseLight = true;
+		bFlickerLight = true;
 	}
 }
 
@@ -114,26 +107,21 @@ void BeginPlay()
 
 void ClientTick(float deltaTime)
 {
-	float diff;
-
 	::ClientTick(deltaTime);
 
-	if(bPulseLight)
+	if(bFlickerLight)
 	{
 		if(!SetUp)
 		{
 			dl = AllocDlight(self);
 			dl->origin = Origin;
 			dl->colour = RGB(Args[0], Args[1], Args[2]);
-			LastUpdate = Angles.yaw;
 			SetUp = true;
 		}
-		dl->die = Level.XLevel.Time + 0.1;
-		diff = (Level.XLevel.Time - LastUpdate) / deltaTime * 35.0;
+		float rnd = itof(P_Random());
+		float pct = Angles.yaw / 360.0;
 
-		LastUpdate = Level.XLevel.Time;
-		Update(diff);
-		Intensity = GetVal();
+		Intensity = rnd >= pct * 255.0 ? itof(Args[3]) : itof(Args[4]);
 		dl->radius = Intensity;
 	}
 }

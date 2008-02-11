@@ -159,11 +159,12 @@ enum
 
 #include "StaticLightSource.vc"
 #include "StaticRGBLightSource.vc"
-#include "DynPointLight.vc"
-#include "DynPulseLight.vc"
-#include "DynFlickerLight.vc"
-#include "DynFlickerRandomLight.vc"
-#include "DynSectorLight.vc"
+#include "DynamicLight.vc"
+#include "PointLight.vc"
+#include "PointLightPulse.vc"
+#include "PointLightFlicker.vc"
+#include "PointLightFlickerRandom.vc"
+#include "SectorPointLight.vc"
 
 #include "WaterSplash.vc"
 #include "WaterSplashBase.vc"

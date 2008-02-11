@@ -1,4 +1,4 @@
-﻿//**************************************************************************
+//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -53,10 +53,11 @@
 //** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //**************************************************************************
 
-class DynSectorLight : DynPointLight
-	__mobjinfo__(9803);
+class PointLightFlickerRandom : DynamicLight
+	__mobjinfo__(9804);
 
-bool bScaleLight;
+bool bFlickerRandLight;
+int TickCount;
 
 //==========================================================================
 //
@@ -66,7 +67,7 @@ bool bScaleLight;
 
 bool Activate()
 {
-	bScaleLight = true;
+	bFlickerRandLight = true;
 	return true;
 }
 
@@ -79,7 +80,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetUp = false;
-	bScaleLight = false;
+	bFlickerRandLight = false;
 	return true;
 }
 
@@ -95,22 +96,8 @@ void BeginPlay()
 
 	if (!bDormant)
 	{
-		LastUpdate = Angles.yaw;
-		bScaleLight = true;
+		bFlickerRandLight = true;
 	}
-}
-
-//==========================================================================
-//
-//	Clamp
-//
-//	Clamps in to the range [min,max].
-//
-//==========================================================================
-
-float Clamp (float in, float min, float max)
-{
-	return in <= min ? min : in >= max ? max : in;
 }
 
 //==========================================================================
@@ -123,7 +110,7 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if(bScaleLight)
+	if(bFlickerRandLight)
 	{
 		if(!SetUp)
 		{
@@ -132,17 +119,17 @@ void ClientTick(float deltaTime)
 			dl->colour = RGB(Args[0], Args[1], Args[2]);
 			SetUp = true;
 		}
-		float rad;
-		float scale = itof(Args[3]) / 8.0;
+		float flickerRange = itof(Args[4]) - itof(Args[3]);
+		float amt = itof(P_Random()) / 255.0;
 		
-		if (scale < 1.0)
-			scale = 1.0;
-
-		rad = itof(Sector->params.lightlevel) * scale;
-		rad = Clamp(rad, 0.0, 255.0);
+		TickCount++;
 		
-		Intensity = rad;
-		dl->radius = Intensity < 16.0 ? Intensity * 8.0 : Intensity;
+		if (itof(TickCount) > Angles.yaw)
+		{
+			Intensity = itof(Args[3]) + (amt * flickerRange);
+			TickCount = 0;
+		}
+		dl->radius = Intensity;
 	}
 }
 

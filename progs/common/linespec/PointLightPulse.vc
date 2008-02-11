@@ -1,4 +1,4 @@
-﻿//**************************************************************************
+//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -53,11 +53,153 @@
 //** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //**************************************************************************
 
-class DynFlickerRandomLight : DynPointLight
-	__mobjinfo__(9804);
+class PointLightPulse : DynamicLight
+	__mobjinfo__(9801);
 
-bool bFlickerRandLight;
-int TickCount;
+enum
+{
+   CYCLE_Linear,
+   CYCLE_Sin,
+   CYCLE_Cos,
+   CYCLE_SawTooth,
+   CYCLE_Square
+};
+
+struct Cycler
+{
+	float		Start;
+	float		End;
+	float		Current;
+	float		Time;
+	float		Cycle;
+	bool		bIncrement;
+	bool		bCycle;
+	int			CycleType;
+};
+
+bool bPulseLight;
+
+float			LastUpdate;
+Cycler			Cycler;
+
+//==========================================================================
+//
+//	SetParams
+//
+//==========================================================================
+
+final void SetParams(float start, float end, float cycle)
+{
+	Cycler.Cycle = cycle;
+	Cycler.Time = 0.0;
+	Cycler.Start = start;
+	Cycler.Current = start;
+	Cycler.End = end;
+	Cycler.bIncrement = true;
+}
+
+//==========================================================================
+//
+//	SetCycleType
+//
+//==========================================================================
+
+final void SetCycleType(int ct)
+{
+	Cycler.CycleType = ct;
+}
+
+//==========================================================================
+//
+//	ShouldCycle
+//
+//==========================================================================
+
+final void ShouldCycle(bool sc)
+{
+	Cycler.bCycle = sc;
+}
+
+//==========================================================================
+//
+//	GetVal
+//
+//==========================================================================
+
+final float GetVal()
+{
+	return Cycler.Current;
+}
+
+//==========================================================================
+//
+//	Update
+//
+//==========================================================================
+
+final void Update(float diff)
+{
+	float mult, angle;
+	float step = Cycler.End - Cycler.Start;
+	
+	if (!Cycler.bCycle)
+	{
+		return;
+	}
+	
+	Cycler.Time += diff;
+	if (Cycler.Time >= Cycler.Cycle)
+	{
+		Cycler.Time = Cycler.Cycle;
+	}
+	
+	mult = Cycler.Time / Cycler.Cycle;
+	
+	switch (Cycler.CycleType)
+	{
+	case CYCLE_Linear:
+		if (Cycler.bIncrement)
+		{
+			Cycler.Current = Cycler.Start + (step * mult);
+		}
+		else
+		{
+			Cycler.Current = Cycler.End - (step * mult);
+		}
+		break;
+	case CYCLE_Sin:
+		angle = 360.0 * mult;
+		mult = sin(angle);
+		mult = (mult + 1.0) / 2.0;
+		Cycler.Current = Cycler.Start + (step * mult);
+		break;
+	case CYCLE_Cos:
+		angle = 360.0 * mult;
+		mult = cos(angle);
+		mult = (mult + 1.0) / 2.0;
+		Cycler.Current = Cycler.Start + (step * mult);
+		break;
+	case CYCLE_SawTooth:
+		Cycler.Current = Cycler.Start + (step * mult);
+		break;
+	case CYCLE_Square:
+		if (Cycler.bIncrement)
+		{
+			Cycler.Current = Cycler.Start;
+		}
+		else
+		{
+			Cycler.Current = Cycler.End;
+		}
+		break;
+	}
+	
+	if (Cycler.Time == Cycler.Cycle)
+	{
+		Cycler.Time = 0.0;
+		Cycler.bIncrement = !Cycler.bIncrement;
+	}
+}
 
 //==========================================================================
 //
@@ -67,7 +209,7 @@ int TickCount;
 
 bool Activate()
 {
-	bFlickerRandLight = true;
+	bPulseLight = true;
 	return true;
 }
 
@@ -80,7 +222,7 @@ bool Activate()
 bool Deactivate()
 {
 	SetUp = false;
-	bFlickerRandLight = false;
+	bPulseLight = false;
 	return true;
 }
 
@@ -96,8 +238,14 @@ void BeginPlay()
 
 	if (!bDormant)
 	{
-		LastUpdate = Angles.yaw;
-		bFlickerRandLight = true;
+		float pulseTime = Angles.yaw;
+
+		LastUpdate = Level.XLevel.Time;
+		SetParams(itof(Args[3]), itof(Args[4]), pulseTime);
+		ShouldCycle(true);
+		SetCycleType(CYCLE_Sin);
+		Intensity = GetVal();
+		bPulseLight = true;
 	}
 }
 
@@ -109,27 +257,26 @@ void BeginPlay()
 
 void ClientTick(float deltaTime)
 {
+	float diff;
+
 	::ClientTick(deltaTime);
 
-	if(bFlickerRandLight)
+	if(bPulseLight)
 	{
 		if(!SetUp)
 		{
 			dl = AllocDlight(self);
 			dl->origin = Origin;
 			dl->colour = RGB(Args[0], Args[1], Args[2]);
+			LastUpdate = Angles.yaw;
 			SetUp = true;
 		}
-		float flickerRange = itof(Args[4]) - itof(Args[3]);
-		float amt = itof(P_Random()) / 255.0;
-		
-		TickCount++;
-		
-		if (itof(TickCount) > Angles.yaw)
-		{
-			Intensity = itof(Args[3]) + (amt * flickerRange);
-			TickCount = 0;
-		}
+		dl->die = Level.XLevel.Time + 0.1;
+		diff = (Level.XLevel.Time - LastUpdate) / deltaTime * 35.0;
+
+		LastUpdate = Level.XLevel.Time;
+		Update(diff);
+		Intensity = GetVal();
 		dl->radius = Intensity;
 	}
 }
