@@ -241,7 +241,7 @@ void InitTranslationTables()
 	SetLineTrans(38, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(39, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, false);
 
-	SetLineTrans(40, LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(40, LNSPEC_CeilingGeneric, -1, 8, 0, 1, 8, SPAC_CROSS, false);
 	SetLineTrans(41, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false);
 	SetLineTrans(42, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, true);
 	SetLineTrans(43, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true);
