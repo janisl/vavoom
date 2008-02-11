@@ -118,12 +118,12 @@ void Host_Init()
 	//  Memory must be initialised before anything else
 	Z_Init();
 
-#if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
+#if !defined(_WIN32)
 	const char* HomeDir = getenv("HOME");
 	if (HomeDir)
 	{
 		Sys_CreateDirectory(va("%s/.vavoom", HomeDir));
-		OpenDebugFile(va("%s/.vavoom/debug.txt", getenv("HOME")));
+		OpenDebugFile(va("%s/.vavoom/debug.txt", HomeDir));
 	}
 	else
 	{

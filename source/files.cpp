@@ -382,7 +382,7 @@ void FL_Init()
 	{
 		fl_savedir = p;
 	}
-#if defined(__unix__) && !defined(DJGPP) && !defined(_WIN32)
+#if !defined(_WIN32)
 	else
 	{
 		const char* HomeDir = getenv("HOME");
