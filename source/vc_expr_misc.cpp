@@ -35,42 +35,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-//==========================================================================
-//
-//	VClassConstant
-//
-//==========================================================================
-
-class VClassConstant : public VExpression
-{
-public:
-	VClass*		Class;
-
-	VClassConstant(VClass* AClass, const TLocation& ALoc);
-	VExpression* DoResolve(VEmitContext&);
-	void Emit(VEmitContext&);
-};
-
-//==========================================================================
-//
-//	VConstantValue
-//
-//==========================================================================
-
-class VConstantValue : public VExpression
-{
-public:
-	VConstant*		Const;
-
-	VConstantValue(VConstant* AConst, const TLocation& ALoc);
-	VExpression* DoResolve(VEmitContext&);
-	void Emit(VEmitContext&);
-	bool IsIntConst() const;
-	bool IsFloatConst() const;
-	vint32 GetIntConst() const;
-	float GetFloatConst() const;
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

@@ -47,6 +47,22 @@ enum
 	BOUNCE_Hexen
 };
 
+//==========================================================================
+//
+//	VDecorateSingleName
+//
+//==========================================================================
+
+class VDecorateSingleName : public VExpression
+{
+public:
+	VName			Name;
+
+	VDecorateSingleName(VName, const TLocation&);
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -73,6 +89,51 @@ static VMethod*			FuncA_ActiveAndUnblock;
 static VMethod*			FuncA_ExplodeParms;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	VDecorateSingleName::VDecorateSingleName
+//
+//==========================================================================
+
+VDecorateSingleName::VDecorateSingleName(VName AName, const TLocation& ALoc)
+: VExpression(ALoc)
+, Name(AName)
+{
+}
+
+//==========================================================================
+//
+//	VDecorateSingleName::DoResolve
+//
+//==========================================================================
+
+VExpression* VDecorateSingleName::DoResolve(VEmitContext& ec)
+{
+	//	Look only for constants defined in DECORATE scripts.
+	VConstant* Const = ec.Package->FindConstant(Name);
+	if (Const)
+	{
+		VExpression* e = new VConstantValue(Const, Loc);
+		delete this;
+		return e->Resolve(ec);
+	}
+
+	ParseError(Loc, "Illegal expression identifier %s", *Name);
+	delete this;
+	return NULL;
+}
+
+//==========================================================================
+//
+//	VDecorateSingleName::Emit
+//
+//==========================================================================
+
+void VDecorateSingleName::Emit(VEmitContext&)
+{
+	ParseError(Loc, "Should not happen");
+}
 
 //==========================================================================
 //
@@ -268,7 +329,7 @@ static VExpression* ParseExpressionPriority0(VScriptParser* sc)
 
 	if (sc->CheckIdentifier())
 	{
-		return new VSingleName(*sc->String, l);
+		return new VDecorateSingleName(*sc->String.ToLower(), l);
 	}
 
 	return NULL;
@@ -710,7 +771,7 @@ static void ParseConst(VScriptParser* sc)
 	sc->Expect("int");
 	sc->ExpectString();
 	TLocation Loc = sc->GetLoc();
-	VStr Name = sc->String;
+	VStr Name = sc->String.ToLower();
 	sc->Expect("=");
 
 	VExpression* Expr = ParseExpression(sc);
@@ -720,12 +781,17 @@ static void ParseConst(VScriptParser* sc)
 	}
 	else
 	{
-		int Val = Expr->GetIntConst();
-		delete Expr;
-		GCon->Logf("Constant %s with value %d", *Name, Val);
-		VConstant* C = new VConstant(*Name, DecPkg, Loc);
-		C->Type = TYPE_Int;
-		C->Value = Val;
+		VEmitContext ec(DecPkg);
+		Expr = Expr->Resolve(ec);
+		if (Expr)
+		{
+			int Val = Expr->GetIntConst();
+			delete Expr;
+			GCon->Logf("Constant %s with value %d", *Name, Val);
+			VConstant* C = new VConstant(*Name, DecPkg, Loc);
+			C->Type = TYPE_Int;
+			C->Value = Val;
+		}
 	}
 	sc->Expect(";");
 	sc->SetCMode(false);
