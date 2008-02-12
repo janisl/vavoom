@@ -30,6 +30,6 @@ float			Intensity;
 defaultproperties
 {
 	bNoBlockmap = true;
-	bNoSector = true;
+	bInvisible = true;
 	bNoGravity = true;
 }

@@ -77,8 +77,6 @@ struct Cycler
 	int			CycleType;
 };
 
-bool bPulseLight;
-
 float			LastUpdate;
 Cycler			Cycler;
 
@@ -209,7 +207,7 @@ final void Update(float diff)
 
 bool Activate()
 {
-	bPulseLight = true;
+	bDormant = false;
 	return true;
 }
 
@@ -221,7 +219,7 @@ bool Activate()
 
 bool Deactivate()
 {
-	bPulseLight = false;
+	bDormant = true;
 	return true;
 }
 
@@ -243,8 +241,6 @@ void BeginPlay()
 		SetParams(itof(Args[3]), itof(Args[4]), pulseTime);
 		ShouldCycle(true);
 		SetCycleType(CYCLE_Sin);
-		Intensity = GetVal();
-		bPulseLight = true;
 	}
 }
 
@@ -256,24 +252,23 @@ void BeginPlay()
 
 void ClientTick(float deltaTime)
 {
-	float diff;
-
 	::ClientTick(deltaTime);
 
-	if (bPulseLight)
+	if (bDormant)
 	{
-		diff = (Level.XLevel.Time - LastUpdate) / deltaTime * 35.0;
-
-		LastUpdate = Level.XLevel.Time;
-		Update(diff);
-		Intensity = GetVal();
-
-		dlight_t* dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->colour = RGB(Args[0], Args[1], Args[2]);
-		dl->die = Level.XLevel.Time + 0.01;
-		dl->radius = Intensity;
+		return;
 	}
+
+	float diff = Level.XLevel.Time - LastUpdate;
+	LastUpdate = Level.XLevel.Time;
+	Update(diff);
+	Intensity = GetVal();
+
+	dlight_t* dl = AllocDlight(self);
+	dl->origin = Origin;
+	dl->colour = RGB(Args[0], Args[1], Args[2]);
+	dl->die = Level.XLevel.Time + 0.01;
+	dl->radius = Intensity;
 }
 
 defaultproperties

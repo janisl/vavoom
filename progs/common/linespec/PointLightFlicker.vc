@@ -56,8 +56,6 @@
 class PointLightFlicker : DynamicLight
 	__mobjinfo__(9802);
 
-bool bFlickerLight;
-
 //==========================================================================
 //
 //	Activate
@@ -66,7 +64,7 @@ bool bFlickerLight;
 
 bool Activate()
 {
-	bFlickerLight = true;
+	bDormant = false;
 	return true;
 }
 
@@ -78,24 +76,8 @@ bool Activate()
 
 bool Deactivate()
 {
-	bFlickerLight = false;
+	bDormant = true;
 	return true;
-}
-
-//==========================================================================
-//
-//	BeginPlay
-//
-//==========================================================================
-
-void BeginPlay()
-{
-	::BeginPlay();
-
-	if (!bDormant)
-	{
-		bFlickerLight = true;
-	}
 }
 
 //==========================================================================
@@ -108,18 +90,20 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if (bFlickerLight)
+	if (bDormant)
 	{
-		float rnd = itof(P_Random());
-		float pct = Angles.yaw / 360.0;
-		Intensity = rnd >= pct * 255.0 ? itof(Args[3]) : itof(Args[4]);
-
-		dlight_t*dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->colour = RGB(Args[0], Args[1], Args[2]);
-		dl->die = Level.XLevel.Time + 0.01;
-		dl->radius = Intensity;
+		return;
 	}
+
+	float rnd = itof(P_Random());
+	float pct = Angles.yaw / 360.0;
+	Intensity = rnd >= pct * 255.0 ? itof(Args[3]) : itof(Args[4]);
+
+	dlight_t*dl = AllocDlight(self);
+	dl->origin = Origin;
+	dl->colour = RGB(Args[0], Args[1], Args[2]);
+	dl->die = Level.XLevel.Time + 0.01;
+	dl->radius = Intensity;
 }
 
 defaultproperties

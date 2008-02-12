@@ -56,10 +56,6 @@
 class PointLight : DynamicLight
 	__mobjinfo__(9800);
 
-bool bPointLight;
-
-// ** ---------------------------------------------------------------------------------------------------
-
 //==========================================================================
 //
 //	OnMapSpawn
@@ -70,7 +66,7 @@ void OnMapSpawn(mthing_t* mthing)
 {
 	::OnMapSpawn(mthing);
 
-	if (bPointLight && mthing)
+	if (!bDormant && mthing)
 	{
 		if (!TID)
 		{
@@ -95,7 +91,7 @@ void OnMapSpawn(mthing_t* mthing)
 
 bool Activate()
 {
-	bPointLight = true;
+	bDormant = false;
 	return true;
 }
 
@@ -107,24 +103,8 @@ bool Activate()
 
 bool Deactivate()
 {
-	bPointLight = false;
+	bDormant = true;
 	return true;
-}
-
-//==========================================================================
-//
-//	BeginPlay
-//
-//==========================================================================
-
-void BeginPlay()
-{
-	::BeginPlay();
-
-	if (!bDormant)
-	{
-		bPointLight = true;
-	}
 }
 
 //==========================================================================
@@ -137,14 +117,16 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if (bPointLight)
+	if (bDormant)
 	{
-		dlight_t*dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->radius = itof(Args[3]) < 16.0 ? itof(Args[3]) * 8.0 : itof(Args[3]);
-		dl->colour = RGB(Args[0], Args[1], Args[2]);
-		dl->die = XLevel.Time + 0.01;
+		return;
 	}
+
+	dlight_t*dl = AllocDlight(self);
+	dl->origin = Origin;
+	dl->radius = itof(Args[3]) < 16.0 ? itof(Args[3]) * 8.0 : itof(Args[3]);
+	dl->colour = RGB(Args[0], Args[1], Args[2]);
+	dl->die = XLevel.Time + 0.01;
 }
 
 defaultproperties

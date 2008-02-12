@@ -56,7 +56,6 @@
 class PointLightFlickerRandom : DynamicLight
 	__mobjinfo__(9804);
 
-bool bFlickerRandLight;
 int TickCount;
 
 //==========================================================================
@@ -67,7 +66,7 @@ int TickCount;
 
 bool Activate()
 {
-	bFlickerRandLight = true;
+	bDormant = false;
 	return true;
 }
 
@@ -79,24 +78,8 @@ bool Activate()
 
 bool Deactivate()
 {
-	bFlickerRandLight = false;
+	bDormant = true;
 	return true;
-}
-
-//==========================================================================
-//
-//	BeginPlay
-//
-//==========================================================================
-
-void BeginPlay()
-{
-	::BeginPlay();
-
-	if (!bDormant)
-	{
-		bFlickerRandLight = true;
-	}
 }
 
 //==========================================================================
@@ -109,25 +92,27 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if (bFlickerRandLight)
+	if (bDormant)
 	{
-		float flickerRange = itof(Args[4]) - itof(Args[3]);
-		float amt = itof(P_Random()) / 255.0;
-		
-		TickCount++;
-		
-		if (itof(TickCount) > Angles.yaw)
-		{
-			Intensity = itof(Args[3]) + (amt * flickerRange);
-			TickCount = 0;
-		}
-
-		dlight_t*dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->colour = RGB(Args[0], Args[1], Args[2]);
-		dl->die = Level.XLevel.Time + 0.01;
-		dl->radius = Intensity;
+		return;
 	}
+
+	float flickerRange = itof(Args[4]) - itof(Args[3]);
+	float amt = itof(P_Random()) / 255.0;
+	
+	TickCount++;
+	
+	if (itof(TickCount) > Angles.yaw)
+	{
+		Intensity = itof(Args[3]) + (amt * flickerRange);
+		TickCount = 0;
+	}
+
+	dlight_t*dl = AllocDlight(self);
+	dl->origin = Origin;
+	dl->colour = RGB(Args[0], Args[1], Args[2]);
+	dl->die = Level.XLevel.Time + 0.01;
+	dl->radius = Intensity;
 }
 
 defaultproperties

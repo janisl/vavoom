@@ -56,8 +56,6 @@
 class SectorPointLight : DynamicLight
 	__mobjinfo__(9803);
 
-bool bScaleLight;
-
 //==========================================================================
 //
 //	Activate
@@ -66,7 +64,7 @@ bool bScaleLight;
 
 bool Activate()
 {
-	bScaleLight = true;
+	bDormant = false;
 	return true;
 }
 
@@ -78,24 +76,8 @@ bool Activate()
 
 bool Deactivate()
 {
-	bScaleLight = false;
+	bDormant = true;
 	return true;
-}
-
-//==========================================================================
-//
-//	BeginPlay
-//
-//==========================================================================
-
-void BeginPlay()
-{
-	::BeginPlay();
-
-	if (!bDormant)
-	{
-		bScaleLight = true;
-	}
 }
 
 //==========================================================================
@@ -121,25 +103,27 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if (bScaleLight)
+	if (bDormant)
 	{
-		float rad;
-		float scale = itof(Args[3]) / 8.0;
-		
-		if (scale < 1.0)
-			scale = 1.0;
-
-		rad = itof(Sector->params.lightlevel) * scale;
-		rad = Clamp(rad, 0.0, 255.0);
-		
-		Intensity = rad;
-
-		dlight_t*dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->colour = RGB(Args[0], Args[1], Args[2]);
-		dl->die = Level.XLevel.Time + 0.01;
-		dl->radius = Intensity < 16.0 ? Intensity * 8.0 : Intensity;
+		return;
 	}
+
+	float rad;
+	float scale = itof(Args[3]) / 8.0;
+	
+	if (scale < 1.0)
+		scale = 1.0;
+
+	rad = itof(Sector->params.lightlevel) * scale;
+	rad = Clamp(rad, 0.0, 255.0);
+	
+	Intensity = rad;
+
+	dlight_t*dl = AllocDlight(self);
+	dl->origin = Origin;
+	dl->colour = RGB(Args[0], Args[1], Args[2]);
+	dl->die = Level.XLevel.Time + 0.01;
+	dl->radius = Intensity < 16.0 ? Intensity * 8.0 : Intensity;
 }
 
 defaultproperties
