@@ -79,7 +79,6 @@ bool Activate()
 
 bool Deactivate()
 {
-	SetUp = false;
 	bFlickerRandLight = false;
 	return true;
 }
@@ -110,15 +109,8 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if(bFlickerRandLight)
+	if (bFlickerRandLight)
 	{
-		if(!SetUp)
-		{
-			dl = AllocDlight(self);
-			dl->origin = Origin;
-			dl->colour = RGB(Args[0], Args[1], Args[2]);
-			SetUp = true;
-		}
 		float flickerRange = itof(Args[4]) - itof(Args[3]);
 		float amt = itof(P_Random()) / 255.0;
 		
@@ -129,6 +121,11 @@ void ClientTick(float deltaTime)
 			Intensity = itof(Args[3]) + (amt * flickerRange);
 			TickCount = 0;
 		}
+
+		dlight_t*dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->colour = RGB(Args[0], Args[1], Args[2]);
+		dl->die = Level.XLevel.Time + 0.01;
 		dl->radius = Intensity;
 	}
 }

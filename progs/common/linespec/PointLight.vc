@@ -137,13 +137,13 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if(bPointLight)
+	if (bPointLight)
 	{
-		dl = AllocDlight(self);
+		dlight_t*dl = AllocDlight(self);
 		dl->origin = Origin;
 		dl->radius = itof(Args[3]) < 16.0 ? itof(Args[3]) * 8.0 : itof(Args[3]);
 		dl->colour = RGB(Args[0], Args[1], Args[2]);
-		dl->die = XLevel.Time + 0.1;
+		dl->die = XLevel.Time + 0.01;
 	}
 }
 

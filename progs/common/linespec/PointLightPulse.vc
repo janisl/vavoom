@@ -221,7 +221,6 @@ bool Activate()
 
 bool Deactivate()
 {
-	SetUp = false;
 	bPulseLight = false;
 	return true;
 }
@@ -261,22 +260,18 @@ void ClientTick(float deltaTime)
 
 	::ClientTick(deltaTime);
 
-	if(bPulseLight)
+	if (bPulseLight)
 	{
-		if(!SetUp)
-		{
-			dl = AllocDlight(self);
-			dl->origin = Origin;
-			dl->colour = RGB(Args[0], Args[1], Args[2]);
-			LastUpdate = Angles.yaw;
-			SetUp = true;
-		}
-		dl->die = Level.XLevel.Time + 0.1;
 		diff = (Level.XLevel.Time - LastUpdate) / deltaTime * 35.0;
 
 		LastUpdate = Level.XLevel.Time;
 		Update(diff);
 		Intensity = GetVal();
+
+		dlight_t* dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->colour = RGB(Args[0], Args[1], Args[2]);
+		dl->die = Level.XLevel.Time + 0.01;
 		dl->radius = Intensity;
 	}
 }

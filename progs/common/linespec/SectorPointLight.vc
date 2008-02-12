@@ -78,7 +78,6 @@ bool Activate()
 
 bool Deactivate()
 {
-	SetUp = false;
 	bScaleLight = false;
 	return true;
 }
@@ -122,15 +121,8 @@ void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
 
-	if(bScaleLight)
+	if (bScaleLight)
 	{
-		if(!SetUp)
-		{
-			dl = AllocDlight(self);
-			dl->origin = Origin;
-			dl->colour = RGB(Args[0], Args[1], Args[2]);
-			SetUp = true;
-		}
 		float rad;
 		float scale = itof(Args[3]) / 8.0;
 		
@@ -141,6 +133,11 @@ void ClientTick(float deltaTime)
 		rad = Clamp(rad, 0.0, 255.0);
 		
 		Intensity = rad;
+
+		dlight_t*dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->colour = RGB(Args[0], Args[1], Args[2]);
+		dl->die = Level.XLevel.Time + 0.01;
 		dl->radius = Intensity < 16.0 ? Intensity * 8.0 : Intensity;
 	}
 }
