@@ -22,100 +22,11 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//**
-//**	Based on code from GZDoom with following notice:
-//**
-//** Copyright 2003 Timothy Stump
-//** Copyright 2005 Christoph Oelckers
-//** All rights reserved.
-//**
-//** Redistribution and use in source and binary forms, with or without
-//** modification, are permitted provided that the following conditions
-//** are met:
-//**
-//** 1. Redistributions of source code must retain the above copyright
-//**    notice, this list of conditions and the following disclaimer.
-//** 2. Redistributions in binary form must reproduce the above copyright
-//**    notice, this list of conditions and the following disclaimer in the
-//**    documentation and/or other materials provided with the distribution.
-//** 3. The name of the author may not be used to endorse or promote products
-//**    derived from this software without specific prior written permission.
-//**
-//** THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
-//** IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-//** OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-//** IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
-//** INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-//** NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-//** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-//** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-//** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-//** THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//**************************************************************************
 
 class PointLightFlickerRandom : DynamicLight
 	__mobjinfo__(9804);
 
-float		FlickerTime;
-
-//==========================================================================
-//
-//	Activate
-//
-//==========================================================================
-
-bool Activate()
-{
-	bDormant = false;
-	Intensity = itof(Args[3]);
-	return true;
-}
-
-//==========================================================================
-//
-//	Deactivate
-//
-//==========================================================================
-
-bool Deactivate()
-{
-	bDormant = true;
-	return true;
-}
-
-//==========================================================================
-//
-//	ClientTick
-//
-//==========================================================================
-
-void ClientTick(float deltaTime)
-{
-	::ClientTick(deltaTime);
-
-	if (bDormant)
-	{
-		return;
-	}
-
-	float flickerRange = itof(Args[4]) - itof(Args[3]);
-	float amt = Random();
-	
-	FlickerTime += deltaTime;
-	
-	if (FlickerTime > Angles.yaw / 35.0)
-	{
-		Intensity = itof(Args[3]) + (amt * flickerRange);
-		FlickerTime = 0.0;
-	}
-
-	dlight_t*dl = AllocDlight(self);
-	dl->origin = Origin;
-	dl->colour = RGB(Args[0], Args[1], Args[2]);
-	dl->die = Level.XLevel.Time + 0.01;
-	dl->radius = IntensityToRadius(Intensity);
-}
-
 defaultproperties
 {
+	LightType = DLTYPE_FlickerRandom;
 }

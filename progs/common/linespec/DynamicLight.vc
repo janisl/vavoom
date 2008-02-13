@@ -25,7 +25,162 @@
 
 class DynamicLight : ScriptedEntity;
 
+enum
+{
+	DLTYPE_Point,
+	DLTYPE_Pulse,
+	DLTYPE_Flicker,
+	DLTYPE_FlickerRandom,
+	DLTYPE_Sector
+};
+
+byte			LightType;
+float			LightTime;
 float			Intensity;
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+	::OnMapSpawn(mthing);
+
+	//	Use static light for placed point lights that cannot be deactivated.
+	if (LightType == DLTYPE_Point && mthing && !TID && !bDormant)
+	{
+		if (mthing->arg1 == 255 && mthing->arg2 == 255 && mthing->arg3)
+		{
+			Level.AddStaticLight(Origin,
+				StaticIntensityToRadius(itof(mthing->arg4)));
+		}
+		else
+		{
+			Level.AddStaticLightRGB(Origin,
+				StaticIntensityToRadius(itof(mthing->arg4)),
+				RGB(mthing->arg1, mthing->arg2, mthing->arg3));
+		}
+		Destroy();
+	}
+}
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+
+	if (!bDormant)
+	{
+		Activate();
+	}
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	bDormant = false;
+	LightTime = 0.0;
+	Intensity = itof(Args[3]);
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	bDormant = true;
+	return true;
+}
+
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float DeltaTime)
+{
+	::ClientTick(DeltaTime);
+
+	if (bDormant)
+	{
+		return;
+	}
+
+	switch (LightType)
+	{
+	case DLTYPE_Point:
+		Intensity = itof(Args[3]);
+		break;
+
+	case DLTYPE_Pulse:
+	{
+		float PulseCycle = Angles.yaw / 35.0;
+		LightTime += DeltaTime;
+		if (LightTime >= PulseCycle)
+		{
+			LightTime = 0.0;
+		}
+		float Frac = (1.0 + sin(360.0 * LightTime / PulseCycle)) * 0.5;
+		Intensity = itof(Args[3]) + Frac * itof(Args[4] - Args[3]);
+		break;
+	}
+
+	case DLTYPE_Flicker:
+		Intensity = itof(Random() >= Angles.yaw / 360.0 ? Args[4] : Args[3]);
+		break;
+
+	case DLTYPE_FlickerRandom:
+		LightTime += DeltaTime;
+		if (LightTime > Angles.yaw / 35.0)
+		{
+			LightTime = 0.0;
+			Intensity = itof(Args[3]) + Random() * itof(Args[4] - Args[3]);
+		}
+		break;
+
+	case DLTYPE_Sector:
+	{
+		float Scale = itof(Args[3]) * 0.125;
+		if (!Scale)
+		{
+			Scale = 1.0;
+		}
+		Intensity = itof(Sector->params.lightlevel) * Scale;
+		if (Intensity < 0.0)
+		{
+			Intensity = 0.0;
+		}
+		if (Intensity > 255.0)
+		{
+			Intensity = 255.0;
+		}
+		break;
+	}
+	}
+
+	dlight_t* dl = AllocDlight(self);
+	dl->origin = Origin;
+	dl->colour = RGB(Args[0], Args[1], Args[2]);
+	dl->radius = IntensityToRadius(Intensity);
+	dl->die = XLevel.Time + 0.01;
+}
 
 //==========================================================================
 //
@@ -33,25 +188,25 @@ float			Intensity;
 //
 //==========================================================================
 
-float StaticIntensityToRadius(float Val)
+final float StaticIntensityToRadius(float Val)
 {
 	if (Val <= 20.0)
 	{
-		return Val * 2.0;
+		return Val * 3.5;
 	}
 	if (Val <= 30.0)
 	{
-		return Val * 1.5;
+		return Val * 3.0;
 	}
 	if (Val <= 40.0)
 	{
-		return Val * 1.2;
+		return Val * 2.8;
 	}
 	if (Val <= 60.0)
 	{
-		return Val * 1.1;
+		return Val * 2.4;
 	}
-	return Val;
+	return Val * 2.0;
 }
 
 //==========================================================================
@@ -60,7 +215,7 @@ float StaticIntensityToRadius(float Val)
 //
 //==========================================================================
 
-float IntensityToRadius(float Val)
+final float IntensityToRadius(float Val)
 {
 	if (Val <= 20.0)
 	{
@@ -83,6 +238,8 @@ float IntensityToRadius(float Val)
 
 defaultproperties
 {
+	Height = 0.0;
+	Radius = 0.1;
 	bNoBlockmap = true;
 	bInvisible = true;
 	bNoGravity = true;
