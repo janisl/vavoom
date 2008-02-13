@@ -27,6 +27,60 @@ class DynamicLight : ScriptedEntity;
 
 float			Intensity;
 
+//==========================================================================
+//
+//	StaticIntensityToRadius
+//
+//==========================================================================
+
+float StaticIntensityToRadius(float Val)
+{
+	if (Val <= 20.0)
+	{
+		return Val * 2.0;
+	}
+	if (Val <= 30.0)
+	{
+		return Val * 1.5;
+	}
+	if (Val <= 40.0)
+	{
+		return Val * 1.2;
+	}
+	if (Val <= 60.0)
+	{
+		return Val * 1.1;
+	}
+	return Val;
+}
+
+//==========================================================================
+//
+//	IntensityToRadius
+//
+//==========================================================================
+
+float IntensityToRadius(float Val)
+{
+	if (Val <= 20.0)
+	{
+		return Val * 4.5;
+	}
+	if (Val <= 30.0)
+	{
+		return Val * 3.6;
+	}
+	if (Val <= 40.0)
+	{
+		return Val * 3.3;
+	}
+	if (Val <= 60.0)
+	{
+		return Val * 2.8;
+	}
+	return Val * 2.5;
+}
+
 defaultproperties
 {
 	bNoBlockmap = true;

@@ -56,7 +56,7 @@
 class PointLightFlickerRandom : DynamicLight
 	__mobjinfo__(9804);
 
-int TickCount;
+float		FlickerTime;
 
 //==========================================================================
 //
@@ -67,6 +67,7 @@ int TickCount;
 bool Activate()
 {
 	bDormant = false;
+	Intensity = itof(Args[3]);
 	return true;
 }
 
@@ -98,21 +99,21 @@ void ClientTick(float deltaTime)
 	}
 
 	float flickerRange = itof(Args[4]) - itof(Args[3]);
-	float amt = itof(P_Random()) / 255.0;
+	float amt = Random();
 	
-	TickCount++;
+	FlickerTime += deltaTime;
 	
-	if (itof(TickCount) > Angles.yaw)
+	if (FlickerTime > Angles.yaw / 35.0)
 	{
 		Intensity = itof(Args[3]) + (amt * flickerRange);
-		TickCount = 0;
+		FlickerTime = 0.0;
 	}
 
 	dlight_t*dl = AllocDlight(self);
 	dl->origin = Origin;
 	dl->colour = RGB(Args[0], Args[1], Args[2]);
 	dl->die = Level.XLevel.Time + 0.01;
-	dl->radius = Intensity;
+	dl->radius = IntensityToRadius(Intensity);
 }
 
 defaultproperties

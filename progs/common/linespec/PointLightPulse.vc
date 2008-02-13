@@ -208,6 +208,12 @@ final void Update(float diff)
 bool Activate()
 {
 	bDormant = false;
+	float pulseTime = Angles.yaw / 35.0;
+
+	LastUpdate = Level.XLevel.Time;
+	SetParams(itof(Args[3]), itof(Args[4]), pulseTime);
+	ShouldCycle(true);
+	SetCycleType(CYCLE_Sin);
 	return true;
 }
 
@@ -235,12 +241,7 @@ void BeginPlay()
 
 	if (!bDormant)
 	{
-		float pulseTime = Angles.yaw;
-
-		LastUpdate = Level.XLevel.Time;
-		SetParams(itof(Args[3]), itof(Args[4]), pulseTime);
-		ShouldCycle(true);
-		SetCycleType(CYCLE_Sin);
+		Activate();
 	}
 }
 
@@ -268,7 +269,7 @@ void ClientTick(float deltaTime)
 	dl->origin = Origin;
 	dl->colour = RGB(Args[0], Args[1], Args[2]);
 	dl->die = Level.XLevel.Time + 0.01;
-	dl->radius = Intensity;
+	dl->radius = IntensityToRadius(Intensity);
 }
 
 defaultproperties

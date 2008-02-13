@@ -72,11 +72,13 @@ void OnMapSpawn(mthing_t* mthing)
 		{
 			if (RGB(mthing->arg1, mthing->arg2, mthing->arg3) == 0xffffffff)
 			{
-				Level.AddStaticLight(Origin, itof(mthing->arg4) * 8.0);
+				Level.AddStaticLight(Origin,
+					StaticIntensityToRadius(itof(mthing->arg4)));
 			}
 			else
 			{
-				Level.AddStaticLightRGB(Origin, itof(mthing->arg4) * 8.0,
+				Level.AddStaticLightRGB(Origin,
+					StaticIntensityToRadius(itof(mthing->arg4)),
 					RGB(mthing->arg1, mthing->arg2, mthing->arg3));
 			}
 		}
@@ -122,9 +124,10 @@ void ClientTick(float deltaTime)
 		return;
 	}
 
+
 	dlight_t*dl = AllocDlight(self);
 	dl->origin = Origin;
-	dl->radius = itof(Args[3]) < 16.0 ? itof(Args[3]) * 8.0 : itof(Args[3]);
+	dl->radius = IntensityToRadius(itof(Args[3]));
 	dl->colour = RGB(Args[0], Args[1], Args[2]);
 	dl->die = XLevel.Time + 0.01;
 }

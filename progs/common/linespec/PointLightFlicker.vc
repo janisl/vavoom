@@ -95,15 +95,15 @@ void ClientTick(float deltaTime)
 		return;
 	}
 
-	float rnd = itof(P_Random());
+	float rnd = Random();
 	float pct = Angles.yaw / 360.0;
-	Intensity = rnd >= pct * 255.0 ? itof(Args[3]) : itof(Args[4]);
+	Intensity = rnd >= pct ? itof(Args[3]) : itof(Args[4]);
 
 	dlight_t*dl = AllocDlight(self);
 	dl->origin = Origin;
 	dl->colour = RGB(Args[0], Args[1], Args[2]);
 	dl->die = Level.XLevel.Time + 0.01;
-	dl->radius = Intensity;
+	dl->radius = IntensityToRadius(Intensity);
 }
 
 defaultproperties
