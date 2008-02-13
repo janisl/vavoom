@@ -56,148 +56,7 @@
 class PointLightPulse : DynamicLight
 	__mobjinfo__(9801);
 
-enum
-{
-   CYCLE_Linear,
-   CYCLE_Sin,
-   CYCLE_Cos,
-   CYCLE_SawTooth,
-   CYCLE_Square
-};
-
-struct Cycler
-{
-	float		Start;
-	float		End;
-	float		Current;
-	float		Time;
-	float		Cycle;
-	bool		bIncrement;
-	bool		bCycle;
-	int			CycleType;
-};
-
-float			LastUpdate;
-Cycler			Cycler;
-
-//==========================================================================
-//
-//	SetParams
-//
-//==========================================================================
-
-final void SetParams(float start, float end, float cycle)
-{
-	Cycler.Cycle = cycle;
-	Cycler.Time = 0.0;
-	Cycler.Start = start;
-	Cycler.Current = start;
-	Cycler.End = end;
-	Cycler.bIncrement = true;
-}
-
-//==========================================================================
-//
-//	SetCycleType
-//
-//==========================================================================
-
-final void SetCycleType(int ct)
-{
-	Cycler.CycleType = ct;
-}
-
-//==========================================================================
-//
-//	ShouldCycle
-//
-//==========================================================================
-
-final void ShouldCycle(bool sc)
-{
-	Cycler.bCycle = sc;
-}
-
-//==========================================================================
-//
-//	GetVal
-//
-//==========================================================================
-
-final float GetVal()
-{
-	return Cycler.Current;
-}
-
-//==========================================================================
-//
-//	Update
-//
-//==========================================================================
-
-final void Update(float diff)
-{
-	float mult, angle;
-	float step = Cycler.End - Cycler.Start;
-	
-	if (!Cycler.bCycle)
-	{
-		return;
-	}
-	
-	Cycler.Time += diff;
-	if (Cycler.Time >= Cycler.Cycle)
-	{
-		Cycler.Time = Cycler.Cycle;
-	}
-	
-	mult = Cycler.Time / Cycler.Cycle;
-	
-	switch (Cycler.CycleType)
-	{
-	case CYCLE_Linear:
-		if (Cycler.bIncrement)
-		{
-			Cycler.Current = Cycler.Start + (step * mult);
-		}
-		else
-		{
-			Cycler.Current = Cycler.End - (step * mult);
-		}
-		break;
-	case CYCLE_Sin:
-		angle = 360.0 * mult;
-		mult = sin(angle);
-		mult = (mult + 1.0) / 2.0;
-		Cycler.Current = Cycler.Start + (step * mult);
-		break;
-	case CYCLE_Cos:
-		angle = 360.0 * mult;
-		mult = cos(angle);
-		mult = (mult + 1.0) / 2.0;
-		Cycler.Current = Cycler.Start + (step * mult);
-		break;
-	case CYCLE_SawTooth:
-		Cycler.Current = Cycler.Start + (step * mult);
-		break;
-	case CYCLE_Square:
-		if (Cycler.bIncrement)
-		{
-			Cycler.Current = Cycler.Start;
-		}
-		else
-		{
-			Cycler.Current = Cycler.End;
-		}
-		break;
-	}
-	
-	if (Cycler.Time == Cycler.Cycle)
-	{
-		Cycler.Time = 0.0;
-		Cycler.bIncrement = !Cycler.bIncrement;
-	}
-}
+float			LightTime;
 
 //==========================================================================
 //
@@ -208,12 +67,7 @@ final void Update(float diff)
 bool Activate()
 {
 	bDormant = false;
-	float pulseTime = Angles.yaw / 35.0;
-
-	LastUpdate = Level.XLevel.Time;
-	SetParams(itof(Args[3]), itof(Args[4]), pulseTime);
-	ShouldCycle(true);
-	SetCycleType(CYCLE_Sin);
+	LightTime = 0.0;
 	return true;
 }
 
@@ -260,10 +114,16 @@ void ClientTick(float deltaTime)
 		return;
 	}
 
-	float diff = Level.XLevel.Time - LastUpdate;
-	LastUpdate = Level.XLevel.Time;
-	Update(diff);
-	Intensity = GetVal();
+	LightTime += deltaTime;
+	if (LightTime >= Angles.yaw / 35.0)
+	{
+		LightTime = 0.0;
+	}
+
+	float step = itof(Args[4]) - itof(Args[3]);
+	float mult = sin(360.0 * LightTime / (Angles.yaw / 35.0));
+	mult = (mult + 1.0) / 2.0;
+	Intensity = itof(Args[3]) + (step * mult);
 
 	dlight_t* dl = AllocDlight(self);
 	dl->origin = Origin;
