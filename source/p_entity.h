@@ -452,10 +452,8 @@ class VEntity : public VThinker
 
 private:
 	//	World iterator callbacks
-	static bool PIT_CrossLine(void*, line_t*);
 	static bool PIT_CheckThing(void*, VEntity*);
 	static bool PIT_CheckLine(void*, line_t*);
-	static void PIT_AvoidDropoff(void*, line_t*);
 	static bool PIT_CheckRelThing(void*, VEntity*);
 	static bool PIT_CheckRelLine(void*, line_t*);
 	static TVec ClipVelocity(const TVec&, const TVec&, float);
@@ -463,6 +461,7 @@ private:
 	static void SlidePathTraverse(VLevel*, struct slidetrace_t&, float, float);
 	static bool PTR_BounceTraverse(void*, intercept_t*);
 	static bool PIT_CheckOnmobjZ(void*, VEntity*);
+	static bool PIT_CrossLine(void*, line_t*);
 
 	void CreateSecNodeList();
 

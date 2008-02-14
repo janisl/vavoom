@@ -58,18 +58,6 @@ struct cptrace_t
 	sec_plane_t *Ceiling;
 };
 
-struct avoiddropoff_t
-{
-	VEntity *thing;
-	float angle;
-	float deltax;
-	float deltay;
-	float floorx;
-	float floory;
-	float floorz;
-	float t_bbox[4];
-};
-
 struct tmtrace_t
 {
 	VEntity *Thing;
@@ -1927,78 +1915,23 @@ bool VEntity::CheckSides(TVec lsPos)
 
 //=============================================================================
 //
-//	VEntity::PIT_AvoidDropoff
+//	CheckDropOff
 //
-// killough 11/98:
+//	killough 11/98:
 //
-// Monsters try to move away from tall dropoffs.
+//	Monsters try to move away from tall dropoffs.
 //
-// In Doom, they were never allowed to hang over dropoffs,
-// and would remain stuck if involuntarily forced over one.
-// This logic, combined with p_map.c (P_TryMove), allows
-// monsters to free themselves without making them tend to
-// hang over dropoffs.
-//=============================================================================
-
-void VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
-{
-	guard(VEntity::PIT_AvoidDropoff);
-	float				front;
-	float				back;
-	sec_region_t*		FrontReg;
-	sec_region_t*		BackReg;
-	avoiddropoff_t&		a = *(avoiddropoff_t*)arg;
-
-	if (line->backsector && // Ignore one-sided linedefs
-		a.t_bbox[BOXRIGHT] > line->bbox[BOXLEFT] &&
-		a.t_bbox[BOXLEFT] < line->bbox[BOXRIGHT] &&
-		a.t_bbox[BOXTOP] > line->bbox[BOXBOTTOM] && // Linedef must be contacted
-		a.t_bbox[BOXBOTTOM] < line->bbox[BOXTOP] &&
-		P_BoxOnLineSide(&a.t_bbox[0], line) == -1)
-	{
-		// New logic for 3D Floors
-		FrontReg = SV_FindThingGap(line->frontsector->botregion,
-			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
-		BackReg = SV_FindThingGap(line->backsector->botregion,
-			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
-		front = FrontReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
-		back = BackReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
-		// The monster must contact one of the two floors,
-		// and the other must be a tall dropoff.
-		if ((back == a.floorz) && (front < a.floorz - a.thing->MaxDropoffHeight))
-		{
-			// front side dropoff
-			a.angle = matan(-line->normal.y, -line->normal.x);
-		}
-		else if ((front == a.floorz) && (back < a.floorz - a.thing->MaxDropoffHeight))
-		{
-			// back side dropoff
-			a.angle = matan(line->normal.y, line->normal.x);
-		}
-		else
-		{
-			return;
-		}
-		// Move away from dropoff at a standard speed.
-		// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
-		a.deltax -= msin(a.angle) * 32.0;
-		a.deltay += mcos(a.angle) * 32.0;
-	}
-	unguard;
-}
-
-//=============================================================================
-//
-// CheckDropOff
-//
-// Creates a bounding box for an actor and checks for a dropoff
+//	In Doom, they were never allowed to hang over dropoffs, and would remain
+// stuck if involuntarily forced over one. This logic, combined with P_TryMove,
+// allows monsters to free themselves without making them tend to hang over
+// dropoffs.
 //
 //=============================================================================
 
 void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 {
 	guard(VEntity::CheckDropOff);
-	avoiddropoff_t a;
+	float t_bbox[4];
 	int xl;
 	int xh;
 	int yl;
@@ -2007,22 +1940,18 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 	int by;
 
 	// Try to move away from a dropoff
-	a.thing = this;
-	a.floorx = Origin.x;
-	a.floory = Origin.y;
-	a.floorz = Origin.z;
-	a.deltax = 0;
-	a.deltay = 0;
+	DeltaX = 0;
+	DeltaY = 0;
 
-	a.t_bbox[BOXTOP]   = Origin.y + Radius;
-	a.t_bbox[BOXBOTTOM]= Origin.y - Radius;
-	a.t_bbox[BOXRIGHT] = Origin.x + Radius;
-	a.t_bbox[BOXLEFT]  = Origin.x - Radius;
+	t_bbox[BOXTOP]   = Origin.y + Radius;
+	t_bbox[BOXBOTTOM]= Origin.y - Radius;
+	t_bbox[BOXRIGHT] = Origin.x + Radius;
+	t_bbox[BOXLEFT]  = Origin.x - Radius;
 
-	xl = MapBlock(a.t_bbox[BOXLEFT] - XLevel->BlockMapOrgX);
-	xh = MapBlock(a.t_bbox[BOXRIGHT] - XLevel->BlockMapOrgX);
-	yl = MapBlock(a.t_bbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
-	yh = MapBlock(a.t_bbox[BOXTOP] - XLevel->BlockMapOrgY);
+	xl = MapBlock(t_bbox[BOXLEFT] - XLevel->BlockMapOrgX);
+	xh = MapBlock(t_bbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+	yl = MapBlock(t_bbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+	yh = MapBlock(t_bbox[BOXTOP] - XLevel->BlockMapOrgY);
 
 	// check lines
 	validcount++;
@@ -2030,16 +1959,59 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 	{
 		for (by = yl; by <= yh; by++)
 		{
-			line_t*		ld;
-			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			line_t* line;
+			for (VBlockLinesIterator It(this, bx, by, &line); It.GetNext(); )
 			{
-				PIT_AvoidDropoff(&a, ld);
+				// Ignore one-sided linedefs
+				if (!line->backsector)
+				{
+					continue;
+				}
+				// Linedef must be contacted
+				if (t_bbox[BOXRIGHT] > line->bbox[BOXLEFT] &&
+					t_bbox[BOXLEFT] < line->bbox[BOXRIGHT] &&
+					t_bbox[BOXTOP] > line->bbox[BOXBOTTOM] && 
+					t_bbox[BOXBOTTOM] < line->bbox[BOXTOP] &&
+					P_BoxOnLineSide(t_bbox, line) == -1)
+				{
+					// New logic for 3D Floors
+					sec_region_t*FrontReg = SV_FindThingGap(
+						line->frontsector->botregion,
+						Origin, Origin.z, Origin.z + Height);
+					sec_region_t*BackReg = SV_FindThingGap(
+						line->backsector->botregion,
+						Origin, Origin.z, Origin.z + Height);
+					float front = FrontReg->floor->GetPointZ(Origin);
+					float back = BackReg->floor->GetPointZ(Origin);
+
+					// The monster must contact one of the two floors,
+					// and the other must be a tall dropoff.
+					float angle;
+					if (back == Origin.z &&
+						front < Origin.z - MaxDropoffHeight)
+					{
+						// front side dropoff
+						angle = matan(-line->normal.y, -line->normal.x);
+					}
+					else if (front == Origin.z &&
+						back < Origin.z - MaxDropoffHeight)
+					{
+						// back side dropoff
+						angle = matan(line->normal.y, line->normal.x);
+					}
+					else
+					{
+						continue;
+					}
+					// Move away from dropoff at a standard speed.
+					// Multiple contacted linedefs are cumulative
+					// (e.g. hanging over corner)
+					DeltaX -= msin(angle) * 32.0;
+					DeltaY += mcos(angle) * 32.0;
+				}
 			}
 		}
 	}
-
-	DeltaX = a.deltax;
-	DeltaY = a.deltay;
 	unguard;
 }
 
