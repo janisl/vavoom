@@ -303,10 +303,14 @@ void VEntity::UnlinkFromWorld()
 		//	Inert things don't need to be in blockmap
 		//	Unlink from block map
 		if (BlockMapNext)
+		{
 			BlockMapNext->BlockMapPrev = BlockMapPrev;
+		}
 	
 		if (BlockMapPrev)
+		{
 			BlockMapPrev->BlockMapNext = BlockMapNext;
+		}
 		else
 		{
 			int blockx = MapBlock(Origin.x - XLevel->BlockMapOrgX);
@@ -465,7 +469,9 @@ bool VEntity::CheckWater()
 				point = Player->ViewOrg;
 				cont = SV_PointContents(Sector, point);
 				if (cont > 0)
+				{
 					WaterLevel = 3;
+				}
 			}
 		}
 	}
@@ -493,7 +499,15 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 
 	// can't hit thing
 	if (!(Other->EntityFlags & EF_Solid))
+	{
 		return true;
+	}
+
+	// don't clip against self
+	if (Other == cptrace.Thing)
+	{
+		return true;
+	}
 
 	blockdist = Other->Radius + cptrace.Thing->Radius;
 
@@ -503,10 +517,6 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 		// didn't hit it
 		return true;
 	}
-
-	// don't clip against self
-	if (Other == cptrace.Thing)
-		return true;
 
 	if ((cptrace.Thing->EntityFlags & EF_PassMobj) ||
 		(cptrace.Thing->EntityFlags & EF_Missile))
@@ -551,10 +561,14 @@ bool VEntity::PIT_CheckLine(void* arg, line_t * ld)
 		cptrace.bbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
 		cptrace.bbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
 		cptrace.bbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+	{
 		return true;
+	}
 
 	if (P_BoxOnLineSide(&cptrace.bbox[0], ld) != -1)
+	{
 		return true;
+	}
 
 	// A line has been hit
 	if (!ld->backsector)
@@ -617,7 +631,9 @@ bool VEntity::PIT_CheckLine(void* arg, line_t * ld)
 		}
 
 		if (open->lowfloor < cptrace.DropOffZ)
+		{
 			cptrace.DropOffZ = open->lowfloor;
+		}
 
 		if (ld->flags & ML_RAILING)
 		{
@@ -677,13 +693,17 @@ bool VEntity::CheckPosition(TVec Pos)
 		Pos.z, Pos.z + Height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
+	{
 		reg = reg->prev;
+	}
 	cptrace.Floor = reg->floor;
 	cptrace.FloorZ = reg->floor->GetPointZ(Pos);
 	cptrace.DropOffZ = cptrace.FloorZ;
 	reg = gap;
 	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
+	{
 		reg = reg->next;
+	}
 	cptrace.Ceiling = reg->ceiling;
 	cptrace.CeilingZ = reg->ceiling->GetPointZ(Pos);
 
@@ -763,6 +783,12 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 	float blockdist;
 	tmtrace_t& tmtrace = *(tmtrace_t*)arg;
 
+	// don't clip against self
+	if (Other == tmtrace.Thing)
+	{
+		return true;
+	}
+
 	blockdist = Other->Radius + tmtrace.Thing->Radius;
 
 	if (fabs(Other->Origin.x - tmtrace.End.x) >= blockdist ||
@@ -771,10 +797,6 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 		// didn't hit it
 		return true;
 	}
-
-	// don't clip against self
-	if (Other == tmtrace.Thing)
-		return true;
 
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
 	if ((tmtrace.Thing->EntityFlags & EF_PassMobj) ||
@@ -820,10 +842,14 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 		tmtrace.BBox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
 		tmtrace.BBox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
 		tmtrace.BBox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+	{
 		return true;
+	}
 
 	if (P_BoxOnLineSide(&tmtrace.BBox[0], ld) != -1)
+	{
 		return true;
+	}
 
 	// A line has been hit
 
@@ -902,7 +928,9 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 		}
 
 		if (open->lowfloor < tmtrace.DropOffZ)
+		{
 			tmtrace.DropOffZ = open->lowfloor;
+		}
 
 		if (ld->flags & ML_RAILING)
 		{
@@ -985,13 +1013,17 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 		tmtrace.End.z, tmtrace.End.z + Height);
 	reg = gap;
 	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
+	{
 		reg = reg->prev;
+	}
 	tmtrace.Floor = reg->floor;
 	tmtrace.FloorZ = reg->floor->GetPointZ(tmtrace.End);
 	tmtrace.DropOffZ = tmtrace.FloorZ;
 	reg = gap;
 	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
+	{
 		reg = reg->next;
+	}
 	tmtrace.Ceiling = reg->ceiling;
 	tmtrace.CeilingZ = reg->ceiling->GetPointZ(tmtrace.End);
 
@@ -1289,7 +1321,9 @@ bool VEntity::PTR_SlideTraverse(void* arg, intercept_t* in)
 	slidetrace_t& trace = *(slidetrace_t*)arg;
 
 	if (!(in->Flags & intercept_t::IF_IsALine))
+	{
 		Host_Error("PTR_SlideTraverse: not a line?");
+	}
 
 	li = in->line;
 
@@ -1398,8 +1432,12 @@ void VEntity::SlideMove()
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
-				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y *
+				host_frametime, Origin.z)))
+			{
+				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime,
+					Origin.y, Origin.z));
+			}
 			return;
 		}
 
@@ -1436,8 +1474,12 @@ void VEntity::SlideMove()
 		if (trace.bestslidefrac == 1.00001f)
 		{
 			// the move most have hit the middle, so stairstep
-			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
-				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y *
+				host_frametime, Origin.z)))
+			{
+				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime,
+					Origin.y, Origin.z));
+			}
 			return;
 		}
 
@@ -1448,10 +1490,15 @@ void VEntity::SlideMove()
 			newx = Velocity.x * host_frametime * trace.bestslidefrac;
 			newy = Velocity.y * host_frametime * trace.bestslidefrac;
 
-			if (!TryMove(tmtrace, TVec(Origin.x + newx, Origin.y + newy, Origin.z)))
+			if (!TryMove(tmtrace, TVec(Origin.x + newx, Origin.y + newy,
+				Origin.z)))
 			{
-				if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y * host_frametime, Origin.z)))
-					TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime, Origin.y, Origin.z));
+				if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y *
+					host_frametime, Origin.z)))
+				{
+					TryMove(tmtrace, TVec(Origin.x + Velocity.x *
+						host_frametime, Origin.y, Origin.z));
+				}
 				return;
 			}
 		}
@@ -1461,10 +1508,14 @@ void VEntity::SlideMove()
 		trace.bestslidefrac = 1.0 - (trace.bestslidefrac + 0.03125);
 
 		if (trace.bestslidefrac > 1.0)
+		{
 			trace.bestslidefrac = 1.0;
+		}
 
 		if (trace.bestslidefrac <= 0.0)
+		{
 			return;
+		}
 
 		// clip the moves
 		Velocity = ClipVelocity(Velocity * trace.bestslidefrac,
@@ -1472,7 +1523,7 @@ void VEntity::SlideMove()
 
 	}
 	while (!TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime,
-			Origin.y + Velocity.y * host_frametime, Origin.z)));
+		Origin.y + Velocity.y * host_frametime, Origin.z)));
 	unguard;
 }
 
@@ -1499,7 +1550,9 @@ bool VEntity::PTR_BounceTraverse(void* arg, intercept_t* in)
 	slidetrace_t& trace = *(slidetrace_t*)arg;
 
 	if (!(in->Flags & intercept_t::IF_IsALine))
+	{
 		Host_Error("PTR_BounceTraverse: not a line?");
+	}
 
 	li = in->line;
 	if (li->flags & ML_TWOSIDED)
@@ -1597,7 +1650,8 @@ void VEntity::UpdateVelocity()
 
 	//  Don't add gravity if standing on slope with normal.z > 0.7 (aprox
 	// 45 degrees)
-	if (!(EntityFlags & EF_NoGravity) && (Origin.z > FloorZ || Floor->normal.z < 0.7))
+	if (!(EntityFlags & EF_NoGravity) && (Origin.z > FloorZ ||
+		Floor->normal.z < 0.7))
 	{
 		//	Add gravity
 		if (WaterLevel < 2)
@@ -1841,12 +1895,19 @@ bool VEntity::PIT_CrossLine(void* arg, line_t* ld)
 	sidestrace_t* trace = (sidestrace_t*)arg;
 	if ((ld->flags & ML_BLOCKING) || (ld->flags & ML_BLOCKMONSTERS) ||
 		(ld->flags & ML_BLOCKEVERYTHING))
+	{
 		if (!(trace->tmbbox[BOXLEFT] > ld->bbox[BOXRIGHT] ||
 			trace->tmbbox[BOXRIGHT] < ld->bbox[BOXLEFT] ||
 			trace->tmbbox[BOXTOP] < ld->bbox[BOXBOTTOM] ||
 			trace->tmbbox[BOXBOTTOM] > ld->bbox[BOXTOP]))
-			if (ld->PointOnSide(trace->pe_pos) != ld->PointOnSide(trace->ls_pos))
+		{
+			if (ld->PointOnSide(trace->pe_pos) !=
+				ld->PointOnSide(trace->ls_pos))
+			{
 					return false;  // line blocks trajectory
+			}
+		}
+	}
 
 	return true; // line doesn't block trajectory
 	unguardSlow;
