@@ -968,8 +968,8 @@ void VEntity::CheckDropOff(avoiddropoff_t& a)
 			{
 				// Move away from dropoff at a standard speed.
 				// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
-				a.deltax -= sin(PIT_AvoidDropoff(&a, ld)) * 32.0;
-				a.deltay += cos(PIT_AvoidDropoff(&a, ld)) * 32.0;
+				a.deltax -= msin(PIT_AvoidDropoff(&a, ld)) * 32.0;
+				a.deltay += mcos(PIT_AvoidDropoff(&a, ld)) * 32.0;
 			}
 		}
 	}
