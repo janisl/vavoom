@@ -878,7 +878,7 @@ bool VEntity::CheckPosition(TVec Pos)
 // hang over dropoffs.
 //=============================================================================
 
-float VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
+void VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
 {
 	guard(VEntity::PIT_AvoidDropoff);
 	float				front;
@@ -915,15 +915,13 @@ float VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
 		}
 		else
 		{
-			return 0.0;
+			return;
 		}
 		// Move away from dropoff at a standard speed.
 		// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
 		a.deltax -= msin(a.angle) * 32.0;
 		a.deltay += mcos(a.angle) * 32.0;
 	}
-
-	return 0.0;
 	unguard;
 }
 
@@ -935,9 +933,10 @@ float VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
 //
 //=============================================================================
 
-void VEntity::CheckDropOff(avoiddropoff_t& a)
+void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 {
 	guard(VEntity::CheckDropOff);
+	avoiddropoff_t a;
 	int xl;
 	int xh;
 	int yl;
@@ -977,7 +976,8 @@ void VEntity::CheckDropOff(avoiddropoff_t& a)
 		}
 	}
 
-	return;
+	DeltaX = a.deltax;
+	DeltaY = a.deltay;
 	unguard;
 }
 
@@ -2289,10 +2289,10 @@ IMPLEMENT_FUNCTION(VEntity, CheckWater)
 
 IMPLEMENT_FUNCTION(VEntity, CheckDropOff)
 {
-	P_GET_PTR(avoiddropoff_t, a);
+	P_GET_PTR(float, DeltaX);
+	P_GET_PTR(float, DeltaY);
 	P_GET_SELF;
-//	RET_BOOL(Self->CheckDropOff(*a));
-	Self->CheckDropOff(*a);
+	Self->CheckDropOff(*DeltaX, *DeltaY);
 }
 
 IMPLEMENT_FUNCTION(VEntity, CheckPosition)

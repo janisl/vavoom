@@ -3470,12 +3470,13 @@ final void NewChaseDir()
 	if (FloorZ - DropOffZ > MaxDropoffHeight &&
 		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
 	{
-		avoiddropoff_t a;
+		float AvoidDeltaX;
+		float AvoidDeltaY;
 		// We call CheckDropoff here to determine if the
 		// bounding box actually needs to be used below
-		CheckDropOff(&a);
+		CheckDropOff(AvoidDeltaX, AvoidDeltaY);
 
-		if (a.deltax || a.deltay)
+		if (AvoidDeltaX || AvoidDeltaY)
 		{
 			// [Graf Zahl] I have changed TryMove to only apply this logic when
 			// being called from here. bAavoidingDropoff activates the code that
@@ -3485,20 +3486,19 @@ final void NewChaseDir()
 
 			// use different dropoff movement logic in TryMove
 			bAvoidingDropoff = true;
-			DO_NewChaseDir(a.deltax, a.deltay);
+			DO_NewChaseDir(AvoidDeltaX, AvoidDeltaY);
+			bAvoidingDropoff = false;
 
 			// If moving away from dropoff, set movecount to 1 so that
 			// small steps are taken to get monster away from dropoff.
 			MoveCount = 1;
 			return;
 		}
-		else
-			bAvoidingDropoff = false;
 	}
 	else
 	{
 		float dist;
-		
+
 		dist = DistTo(Target);
 
 		if (Target.Health > 0)
@@ -3520,7 +3520,9 @@ final void NewChaseDir()
 	// If strafing, set movecount to strafecount so that old Doom
 	// logic still works the same, except in the strafing part
 	if (strafecount)
+	{
 		MoveCount = strafecount;
+	}
 }
 
 //==========================================================================

@@ -265,7 +265,7 @@ native final void AddSoundSequenceChoice(name Choice);
 native final void StopSoundSequence();
 
 native final bool CheckSides(TVec lsPos);
-native final void CheckDropOff(avoiddropoff_t* a);
+native final void CheckDropOff(out float DeltaX, out float DeltaY);
 native final bool CheckPosition(TVec Pos);
 native final bool CheckRelPosition(tmtrace_t* tmtrace, TVec Pos);
 native final bool TryMove(TVec newPos);

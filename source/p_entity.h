@@ -79,7 +79,6 @@
 
 struct tztrace_t;
 struct tmtrace_t;
-struct avoiddropoff_t;
 
 enum
 {
@@ -438,7 +437,7 @@ class VEntity : public VThinker
 
 	bool CheckWater();
 	bool CheckSides(TVec);
-	void CheckDropOff(avoiddropoff_t&);
+	void CheckDropOff(float&, float&);
 	bool CheckPosition(TVec);
 	bool CheckRelPosition(tmtrace_t&, TVec);
 	bool TryMove(tmtrace_t&, TVec);
@@ -456,7 +455,7 @@ private:
 	static bool PIT_CrossLine(void*, line_t*);
 	static bool PIT_CheckThing(void*, VEntity*);
 	static bool PIT_CheckLine(void*, line_t*);
-	static float PIT_AvoidDropoff(void*, line_t*);
+	static void PIT_AvoidDropoff(void*, line_t*);
 	static bool PIT_CheckRelThing(void*, VEntity*);
 	static bool PIT_CheckRelLine(void*, line_t*);
 	static TVec ClipVelocity(const TVec&, const TVec&, float);

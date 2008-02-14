@@ -1047,18 +1047,6 @@ struct tmtrace_t
 	Entity BlockingMobj;
 };
 
-struct avoiddropoff_t
-{
-	Entity thing;
-	float angle;
-	float deltax;
-	float deltay;
-	float floorx;
-	float floory;
-	float floorz;
-	float t_bbox[4];
-};
-
 struct VAnimDoorDef
 {
 	int			Texture;
