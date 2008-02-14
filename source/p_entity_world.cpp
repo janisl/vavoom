@@ -906,15 +906,21 @@ float VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
 		if ((back == a.floorz) && (front < a.floorz - a.thing->MaxDropoffHeight))
 		{
 			// front side dropoff
-			return a.angle = matan(-line->normal.y, -line->normal.x);
+			a.angle = matan(-line->normal.y, -line->normal.x);
 		}
 		else if ((front == a.floorz) && (back < a.floorz - a.thing->MaxDropoffHeight))
 		{
 			// back side dropoff
-			return a.angle = matan(line->normal.y, line->normal.x);
+			a.angle = matan(line->normal.y, line->normal.x);
 		}
 		else
+		{
 			return 0.0;
+		}
+		// Move away from dropoff at a standard speed.
+		// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
+		a.deltax -= msin(a.angle) * 32.0;
+		a.deltay += mcos(a.angle) * 32.0;
 	}
 
 	return 0.0;
@@ -966,10 +972,7 @@ void VEntity::CheckDropOff(avoiddropoff_t& a)
 			line_t*		ld;
 			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
 			{
-				// Move away from dropoff at a standard speed.
-				// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
-				a.deltax -= msin(PIT_AvoidDropoff(&a, ld)) * 32.0;
-				a.deltay += mcos(PIT_AvoidDropoff(&a, ld)) * 32.0;
+				PIT_AvoidDropoff(&a, ld);
 			}
 		}
 	}
