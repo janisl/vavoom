@@ -1986,18 +1986,18 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 
 					// The monster must contact one of the two floors,
 					// and the other must be a tall dropoff.
-					float angle;
+					TVec Dir;
 					if (back == Origin.z &&
 						front < Origin.z - MaxDropoffHeight)
 					{
 						// front side dropoff
-						angle = matan(-line->normal.y, -line->normal.x);
+						Dir = -line->normal;
 					}
 					else if (front == Origin.z &&
 						back < Origin.z - MaxDropoffHeight)
 					{
 						// back side dropoff
-						angle = matan(line->normal.y, line->normal.x);
+						Dir = line->normal;
 					}
 					else
 					{
@@ -2006,8 +2006,8 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 					// Move away from dropoff at a standard speed.
 					// Multiple contacted linedefs are cumulative
 					// (e.g. hanging over corner)
-					DeltaX -= msin(angle) * 32.0;
-					DeltaY += mcos(angle) * 32.0;
+					DeltaX += Dir.x * 32.0;
+					DeltaY += Dir.y * 32.0;
 				}
 			}
 		}
