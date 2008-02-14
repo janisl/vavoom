@@ -492,106 +492,6 @@ bool VEntity::CheckWater()
 //**************************************************************************
 
 //==========================================================================
-//																	// phares
-//	VEntity::PIT_CrossLine											//   |
-//																	//   V
-// Checks to see if a PE->LS trajectory line crosses a blocking
-// line. Returns false if it does.
-//
-// tmbbox holds the bounding box of the trajectory. If that box
-// does not touch the bounding box of the line in question,
-// then the trajectory is not blocked. If the PE is on one side
-// of the line and the LS is on the other side, then the
-// trajectory is blocked.
-//
-// Currently this assumes an infinite line, which is not quite
-// correct. A more correct solution would be to check for an
-// intersection of the trajectory and the line, but that takes
-// longer and probably really isn't worth the effort.
-//
-//==========================================================================
-
-// killough 3/26/98: make static
-bool VEntity::PIT_CrossLine(void* arg, line_t* ld)
-{
-	guardSlow(VEntity::PIT_CrossLine);
-
-	sidestrace_t* trace = (sidestrace_t*)arg;
-	if ((ld->flags & ML_BLOCKING) || (ld->flags & ML_BLOCKMONSTERS) ||
-		(ld->flags & ML_BLOCKEVERYTHING))
-		if (!(trace->tmbbox[BOXLEFT] > ld->bbox[BOXRIGHT] ||
-			trace->tmbbox[BOXRIGHT] < ld->bbox[BOXLEFT] ||
-			trace->tmbbox[BOXTOP] < ld->bbox[BOXBOTTOM] ||
-			trace->tmbbox[BOXBOTTOM] > ld->bbox[BOXTOP]))
-			if (ld->PointOnSide(trace->pe_pos) != ld->PointOnSide(trace->ls_pos))
-					return false;  // line blocks trajectory
-
-	return true; // line doesn't block trajectory
-	unguardSlow;
-}
-
-//==========================================================================
-//
-//  VEntity::CheckSides
-//
-// This routine checks for Lost Souls trying to be spawned		// phares
-// across 1-sided lines, impassible lines, or "monsters can't	//   |
-// cross" lines. Draw an imaginary line between the PE			//   V
-// and the new Lost Soul spawn spot. If that line crosses
-// a 'blocking' line, then disallow the spawn. Only search
-// lines in the blocks of the blockmap where the bounding box
-// of the trajectory line resides. Then check bounding box
-// of the trajectory vs. the bounding box of each blocking
-// line to see if the trajectory and the blocking line cross.
-// Then check the PE and LS to see if they're on different
-// sides of the blocking line. If so, return true, otherwise
-// false.
-//
-//==========================================================================
-
-bool VEntity::CheckSides(TVec lsPos)
-{
-	guard(VEntity::CheckSides);
-	int bx,by,xl,xh,yl,yh;
-	sidestrace_t trace;
-
-	trace.pe_pos = Origin;
-	trace.ls_pos = lsPos;
-
-	// Here is the bounding box of the trajectory
-	trace.tmbbox[BOXLEFT] = MIN(trace.pe_pos.x, trace.ls_pos.x);
-	trace.tmbbox[BOXRIGHT] = MAX(trace.pe_pos.x, trace.ls_pos.x);
-	trace.tmbbox[BOXTOP] = MAX(trace.pe_pos.y, trace.ls_pos.y);
-	trace.tmbbox[BOXBOTTOM] = MIN(trace.pe_pos.y, trace.ls_pos.y);
-
-	// Determine which blocks to look in for blocking lines
-	xl = MapBlock(trace.tmbbox[BOXLEFT] - XLevel->BlockMapOrgX);
-	xh = MapBlock(trace.tmbbox[BOXRIGHT] - XLevel->BlockMapOrgX);
-	yl = MapBlock(trace.tmbbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
-	yh = MapBlock(trace.tmbbox[BOXTOP] - XLevel->BlockMapOrgY);
-
-	// xl->xh, yl->yh determine the mapblock set to search
-	validcount++; // prevents checking same line twice
-	for (bx = xl; bx <= xh; bx++)
-	{
-		for (by = yl; by <= yh; by++)
-		{
-			line_t*		ld;
-			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
-			{
-				if (!PIT_CrossLine(&trace, ld))
-				{
-					return true;
-				}
-			}
-		}
-	}
-
-	return false;
-	unguard;
-}
-
-//==========================================================================
 //
 //	VEntity::PIT_CheckThing
 //
@@ -862,124 +762,6 @@ bool VEntity::CheckPosition(TVec Pos)
 //  MOVEMENT CLIPPING
 //
 //**************************************************************************
-
-//=============================================================================
-//
-//	VEntity::PIT_AvoidDropoff
-//
-// killough 11/98:
-//
-// Monsters try to move away from tall dropoffs.
-//
-// In Doom, they were never allowed to hang over dropoffs,
-// and would remain stuck if involuntarily forced over one.
-// This logic, combined with p_map.c (P_TryMove), allows
-// monsters to free themselves without making them tend to
-// hang over dropoffs.
-//=============================================================================
-
-void VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
-{
-	guard(VEntity::PIT_AvoidDropoff);
-	float				front;
-	float				back;
-	sec_region_t*		FrontReg;
-	sec_region_t*		BackReg;
-	avoiddropoff_t&		a = *(avoiddropoff_t*)arg;
-
-	if (line->backsector && // Ignore one-sided linedefs
-		a.t_bbox[BOXRIGHT] > line->bbox[BOXLEFT] &&
-		a.t_bbox[BOXLEFT] < line->bbox[BOXRIGHT] &&
-		a.t_bbox[BOXTOP] > line->bbox[BOXBOTTOM] && // Linedef must be contacted
-		a.t_bbox[BOXBOTTOM] < line->bbox[BOXTOP] &&
-		P_BoxOnLineSide(&a.t_bbox[0], line) == -1)
-	{
-		// New logic for 3D Floors
-		FrontReg = SV_FindThingGap(line->frontsector->botregion,
-			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
-		BackReg = SV_FindThingGap(line->backsector->botregion,
-			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
-		front = FrontReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
-		back = BackReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
-		// The monster must contact one of the two floors,
-		// and the other must be a tall dropoff.
-		if ((back == a.floorz) && (front < a.floorz - a.thing->MaxDropoffHeight))
-		{
-			// front side dropoff
-			a.angle = matan(-line->normal.y, -line->normal.x);
-		}
-		else if ((front == a.floorz) && (back < a.floorz - a.thing->MaxDropoffHeight))
-		{
-			// back side dropoff
-			a.angle = matan(line->normal.y, line->normal.x);
-		}
-		else
-		{
-			return;
-		}
-		// Move away from dropoff at a standard speed.
-		// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
-		a.deltax -= msin(a.angle) * 32.0;
-		a.deltay += mcos(a.angle) * 32.0;
-	}
-	unguard;
-}
-
-//=============================================================================
-//
-// CheckDropOff
-//
-// Creates a bounding box for an actor and checks for a dropoff
-//
-//=============================================================================
-
-void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
-{
-	guard(VEntity::CheckDropOff);
-	avoiddropoff_t a;
-	int xl;
-	int xh;
-	int yl;
-	int yh;
-	int bx;
-	int by;
-
-	// Try to move away from a dropoff
-	a.thing = this;
-	a.floorx = Origin.x;
-	a.floory = Origin.y;
-	a.floorz = Origin.z;
-	a.deltax = 0;
-	a.deltay = 0;
-
-	a.t_bbox[BOXTOP]   = Origin.y + Radius;
-	a.t_bbox[BOXBOTTOM]= Origin.y - Radius;
-	a.t_bbox[BOXRIGHT] = Origin.x + Radius;
-	a.t_bbox[BOXLEFT]  = Origin.x - Radius;
-
-	xl = MapBlock(a.t_bbox[BOXLEFT] - XLevel->BlockMapOrgX);
-	xh = MapBlock(a.t_bbox[BOXRIGHT] - XLevel->BlockMapOrgX);
-	yl = MapBlock(a.t_bbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
-	yh = MapBlock(a.t_bbox[BOXTOP] - XLevel->BlockMapOrgY);
-
-	// check lines
-	validcount++;
-	for (bx = xl; bx <= xh; bx++)
-	{
-		for (by = yl; by <= yh; by++)
-		{
-			line_t*		ld;
-			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
-			{
-				PIT_AvoidDropoff(&a, ld);
-			}
-		}
-	}
-
-	DeltaX = a.deltax;
-	DeltaY = a.deltay;
-	unguard;
-}
 
 //==========================================================================
 //
@@ -2040,6 +1822,224 @@ VEntity* VEntity::CheckOnmobj()
 	bool good = TestMobjZ(tztrace, true);
 
 	return good ? NULL : tztrace.onmobj;
+	unguard;
+}
+
+//==========================================================================
+//																	// phares
+//	VEntity::PIT_CrossLine											//   |
+//																	//   V
+// Checks to see if a PE->LS trajectory line crosses a blocking
+// line. Returns false if it does.
+//
+// tmbbox holds the bounding box of the trajectory. If that box
+// does not touch the bounding box of the line in question,
+// then the trajectory is not blocked. If the PE is on one side
+// of the line and the LS is on the other side, then the
+// trajectory is blocked.
+//
+// Currently this assumes an infinite line, which is not quite
+// correct. A more correct solution would be to check for an
+// intersection of the trajectory and the line, but that takes
+// longer and probably really isn't worth the effort.
+//
+//==========================================================================
+
+// killough 3/26/98: make static
+bool VEntity::PIT_CrossLine(void* arg, line_t* ld)
+{
+	guardSlow(VEntity::PIT_CrossLine);
+
+	sidestrace_t* trace = (sidestrace_t*)arg;
+	if ((ld->flags & ML_BLOCKING) || (ld->flags & ML_BLOCKMONSTERS) ||
+		(ld->flags & ML_BLOCKEVERYTHING))
+		if (!(trace->tmbbox[BOXLEFT] > ld->bbox[BOXRIGHT] ||
+			trace->tmbbox[BOXRIGHT] < ld->bbox[BOXLEFT] ||
+			trace->tmbbox[BOXTOP] < ld->bbox[BOXBOTTOM] ||
+			trace->tmbbox[BOXBOTTOM] > ld->bbox[BOXTOP]))
+			if (ld->PointOnSide(trace->pe_pos) != ld->PointOnSide(trace->ls_pos))
+					return false;  // line blocks trajectory
+
+	return true; // line doesn't block trajectory
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//  VEntity::CheckSides
+//
+// This routine checks for Lost Souls trying to be spawned		// phares
+// across 1-sided lines, impassible lines, or "monsters can't	//   |
+// cross" lines. Draw an imaginary line between the PE			//   V
+// and the new Lost Soul spawn spot. If that line crosses
+// a 'blocking' line, then disallow the spawn. Only search
+// lines in the blocks of the blockmap where the bounding box
+// of the trajectory line resides. Then check bounding box
+// of the trajectory vs. the bounding box of each blocking
+// line to see if the trajectory and the blocking line cross.
+// Then check the PE and LS to see if they're on different
+// sides of the blocking line. If so, return true, otherwise
+// false.
+//
+//==========================================================================
+
+bool VEntity::CheckSides(TVec lsPos)
+{
+	guard(VEntity::CheckSides);
+	int bx,by,xl,xh,yl,yh;
+	sidestrace_t trace;
+
+	trace.pe_pos = Origin;
+	trace.ls_pos = lsPos;
+
+	// Here is the bounding box of the trajectory
+	trace.tmbbox[BOXLEFT] = MIN(trace.pe_pos.x, trace.ls_pos.x);
+	trace.tmbbox[BOXRIGHT] = MAX(trace.pe_pos.x, trace.ls_pos.x);
+	trace.tmbbox[BOXTOP] = MAX(trace.pe_pos.y, trace.ls_pos.y);
+	trace.tmbbox[BOXBOTTOM] = MIN(trace.pe_pos.y, trace.ls_pos.y);
+
+	// Determine which blocks to look in for blocking lines
+	xl = MapBlock(trace.tmbbox[BOXLEFT] - XLevel->BlockMapOrgX);
+	xh = MapBlock(trace.tmbbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+	yl = MapBlock(trace.tmbbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+	yh = MapBlock(trace.tmbbox[BOXTOP] - XLevel->BlockMapOrgY);
+
+	// xl->xh, yl->yh determine the mapblock set to search
+	validcount++; // prevents checking same line twice
+	for (bx = xl; bx <= xh; bx++)
+	{
+		for (by = yl; by <= yh; by++)
+		{
+			line_t*		ld;
+			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			{
+				if (!PIT_CrossLine(&trace, ld))
+				{
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
+	unguard;
+}
+
+//=============================================================================
+//
+//	VEntity::PIT_AvoidDropoff
+//
+// killough 11/98:
+//
+// Monsters try to move away from tall dropoffs.
+//
+// In Doom, they were never allowed to hang over dropoffs,
+// and would remain stuck if involuntarily forced over one.
+// This logic, combined with p_map.c (P_TryMove), allows
+// monsters to free themselves without making them tend to
+// hang over dropoffs.
+//=============================================================================
+
+void VEntity::PIT_AvoidDropoff(void* arg, line_t* line)
+{
+	guard(VEntity::PIT_AvoidDropoff);
+	float				front;
+	float				back;
+	sec_region_t*		FrontReg;
+	sec_region_t*		BackReg;
+	avoiddropoff_t&		a = *(avoiddropoff_t*)arg;
+
+	if (line->backsector && // Ignore one-sided linedefs
+		a.t_bbox[BOXRIGHT] > line->bbox[BOXLEFT] &&
+		a.t_bbox[BOXLEFT] < line->bbox[BOXRIGHT] &&
+		a.t_bbox[BOXTOP] > line->bbox[BOXBOTTOM] && // Linedef must be contacted
+		a.t_bbox[BOXBOTTOM] < line->bbox[BOXTOP] &&
+		P_BoxOnLineSide(&a.t_bbox[0], line) == -1)
+	{
+		// New logic for 3D Floors
+		FrontReg = SV_FindThingGap(line->frontsector->botregion,
+			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
+		BackReg = SV_FindThingGap(line->backsector->botregion,
+			TVec(a.floorx, a.floory, a.floorz), a.floorz, a.floorz + a.thing->Height);
+		front = FrontReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
+		back = BackReg->floor->GetPointZ(TVec(a.floorx, a.floory, a.floorz));
+		// The monster must contact one of the two floors,
+		// and the other must be a tall dropoff.
+		if ((back == a.floorz) && (front < a.floorz - a.thing->MaxDropoffHeight))
+		{
+			// front side dropoff
+			a.angle = matan(-line->normal.y, -line->normal.x);
+		}
+		else if ((front == a.floorz) && (back < a.floorz - a.thing->MaxDropoffHeight))
+		{
+			// back side dropoff
+			a.angle = matan(line->normal.y, line->normal.x);
+		}
+		else
+		{
+			return;
+		}
+		// Move away from dropoff at a standard speed.
+		// Multiple contacted linedefs are cumulative (e.g. hanging over corner)
+		a.deltax -= msin(a.angle) * 32.0;
+		a.deltay += mcos(a.angle) * 32.0;
+	}
+	unguard;
+}
+
+//=============================================================================
+//
+// CheckDropOff
+//
+// Creates a bounding box for an actor and checks for a dropoff
+//
+//=============================================================================
+
+void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
+{
+	guard(VEntity::CheckDropOff);
+	avoiddropoff_t a;
+	int xl;
+	int xh;
+	int yl;
+	int yh;
+	int bx;
+	int by;
+
+	// Try to move away from a dropoff
+	a.thing = this;
+	a.floorx = Origin.x;
+	a.floory = Origin.y;
+	a.floorz = Origin.z;
+	a.deltax = 0;
+	a.deltay = 0;
+
+	a.t_bbox[BOXTOP]   = Origin.y + Radius;
+	a.t_bbox[BOXBOTTOM]= Origin.y - Radius;
+	a.t_bbox[BOXRIGHT] = Origin.x + Radius;
+	a.t_bbox[BOXLEFT]  = Origin.x - Radius;
+
+	xl = MapBlock(a.t_bbox[BOXLEFT] - XLevel->BlockMapOrgX);
+	xh = MapBlock(a.t_bbox[BOXRIGHT] - XLevel->BlockMapOrgX);
+	yl = MapBlock(a.t_bbox[BOXBOTTOM] - XLevel->BlockMapOrgY);
+	yh = MapBlock(a.t_bbox[BOXTOP] - XLevel->BlockMapOrgY);
+
+	// check lines
+	validcount++;
+	for (bx = xl; bx <= xh; bx++)
+	{
+		for (by = yl; by <= yh; by++)
+		{
+			line_t*		ld;
+			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			{
+				PIT_AvoidDropoff(&a, ld);
+			}
+		}
+	}
+
+	DeltaX = a.deltax;
+	DeltaY = a.deltay;
 	unguard;
 }
 

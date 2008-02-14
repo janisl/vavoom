@@ -436,8 +436,6 @@ class VEntity : public VThinker
 	VState* FindState(VName);
 
 	bool CheckWater();
-	bool CheckSides(TVec);
-	void CheckDropOff(float&, float&);
 	bool CheckPosition(TVec);
 	bool CheckRelPosition(tmtrace_t&, TVec);
 	bool TryMove(tmtrace_t&, TVec);
@@ -447,6 +445,8 @@ class VEntity : public VThinker
 	void UpdateVelocity();
 	void FakeZMovement(tztrace_t&);
 	VEntity *CheckOnmobj();
+	bool CheckSides(TVec);
+	void CheckDropOff(float&, float&);
 	VEntity *RoughBlockCheck(int);
 	VEntity *RoughMonsterSearch(int);
 
