@@ -134,7 +134,10 @@ bool ChangeColour(Object Sender, float newValue)
 	SetCvarS('colour', va("%x %x %x", ftoi(r * 255.0), ftoi(g * 255.0),
 		ftoi(b * 255.0)));
 	Anim.Colour = Col;
-	Mdl.Colour = Col;
+	if (Mdl)
+	{
+		Mdl.Colour = Col;
+	}
 	return true;
 }
 
