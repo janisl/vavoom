@@ -69,7 +69,4 @@ defaultproperties
 	DamageType = 'Fire';
 	DeathSound = 'minotaur/fx3hit';
 	bIgnoreFloorStep = true;
-	bDynamicLight = true;
-	DLightColour = RGB(255, 128, 0);
-	DLightRadius = 126.0;
 }

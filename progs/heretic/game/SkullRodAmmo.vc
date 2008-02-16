@@ -42,7 +42,4 @@ defaultproperties
 	BackpackMaxAmount = 400;
 	PickupMessage = "$txt_ammoskullrod1";
 	IconName = 'inamram';
-	bDynamicLight = true;
-	DLightColour = RGB(255, 0, 0);
-	DLightRadius = 66.0;
 }

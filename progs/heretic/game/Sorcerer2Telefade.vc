@@ -29,14 +29,11 @@ states
 {
 Spawn:
 	SOR2 G 8
-	SOR2 HIJK 6
-	SOR2 L 6 A_Lights
+	SOR2 HIJKL 6
 	Stop
 }
 
 defaultproperties
 {
 	bNoGravity = false;
-	bDynamicLight = true;
-	DLightColour = RGB(192, 95, 21);
 }

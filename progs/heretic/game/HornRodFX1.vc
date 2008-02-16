@@ -49,7 +49,4 @@ defaultproperties
 	bActivateImpact = true;
 	SightSound = 'weapons/hornrodshoot';
 	DeathSound = 'weapons/hornrodhit';
-	bDynamicLight = true;
-	DLightColour = RGB(255, 74, 74);
-	DLightRadius = 126.0;
 }

@@ -83,7 +83,4 @@ defaultproperties
 	MissileDamage = 1;
 	RenderStyle = STYLE_Add;
 	bThruGhost = true;
-	bDynamicLight = true;
-	DLightColour = RGB(6, 9, 159);
-	DLightRadius = 126.0;
 }

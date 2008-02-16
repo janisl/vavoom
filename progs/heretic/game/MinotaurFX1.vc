@@ -57,7 +57,4 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
 	bLeaveTrail = true;
-	bDynamicLight = true;
-	DLightColour = RGB(255, 128, 0);
-	DLightRadius = 126.0;
 }

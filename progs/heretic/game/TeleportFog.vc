@@ -28,16 +28,11 @@ class TeleportFog : Effect;
 states
 {
 Spawn:
-	TELE ABCDEFG 6 Bright
-	TELE H 6 Bright A_Lights
-	TELE GFEDC 6 Bright
+	TELE ABCDEFGHGFEDC 6 Bright
 	Stop
 }
 
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
-	bDynamicLight = true;
-	DLightColour = RGB(105, 88, 183);
-	DLightRadius = 200.0;
 }

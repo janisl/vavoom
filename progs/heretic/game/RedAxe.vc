@@ -73,8 +73,5 @@ defaultproperties
 	Speed = 315.0;
 	MissileDamage = 7;
 	bThruGhost = true;
-	bDynamicLight = true;
 	DeathSound = 'hknight/hit';
-	DLightColour = RGB(239, 0, 0);
-	DLightRadius = 118.0;
 }

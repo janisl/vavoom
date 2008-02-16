@@ -35,7 +35,6 @@ class Clink : Pawn
 
 void NoBlockingSet()
 {
-	A_Lights();
 	DropItem(SkullRodAmmo, 20, 0.328125);
 }
 
@@ -61,20 +60,6 @@ final void A_ClinkAttack()
 	}
 }
 
-//==========================================================================
-//
-//  A_Lights
-//
-//  Just spawn some dynamic light
-//
-//==========================================================================
-
-final void A_Lights()
-{
-	SendExplosion(DLightColour, DLightRadius, Origin);
-	bDynamicLight = false;
-}
-
 states
 {
 Spawn:
@@ -94,7 +79,7 @@ Pain:
 	Goto See
 Death:
 	CLNK IJ 6
-	CLNK K 5 { A_Scream(); A_Lights(); }
+	CLNK K 5 A_Scream
 	CLNK L 5 A_NoBlocking
 	CLNK MN 5
 	CLNK O -1
@@ -115,6 +100,4 @@ defaultproperties
 	AttackSound = 'clink/attack';
 	PainSound = 'clink/pain';
 	DeathSound = 'clink/death';
-	DLightColour = RGB(255, 95, 0);
-	DLightRadius = 86.0;
 }

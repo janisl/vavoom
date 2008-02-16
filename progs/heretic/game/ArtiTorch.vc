@@ -42,7 +42,4 @@ defaultproperties
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
- 	bDynamicLight = true;
-	DLightColour = RGB(255, 127, 0);
-	DLightRadius = 86.0;
 }

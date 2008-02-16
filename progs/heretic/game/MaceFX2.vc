@@ -96,5 +96,4 @@ defaultproperties
 {
 	Speed = 350.0;
 	MissileDamage = 6;
-	bDynamicLight = false;
 }

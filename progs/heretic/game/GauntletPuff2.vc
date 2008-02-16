@@ -28,8 +28,7 @@ class GauntletPuff2 : Effect;
 states
 {
 Spawn:
-	PUF1 E 4 Bright A_Lights
-	PUF1 FGH 4
+	PUF1 EFGH 4 Bright
 	Stop
 }
 
@@ -39,7 +38,4 @@ defaultproperties
 	Alpha = 0.666;
 	PuffVelZ = 0.8 * 35.0;
 	bPuffOnActors = true;
-	bDynamicLight = true;
-	DLightColour = RGB(239, 0, 0);
-	DLightRadius = 86.0;
 }

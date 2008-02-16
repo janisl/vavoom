@@ -70,7 +70,4 @@ defaultproperties
 	bWindThrust = true;
 	bThruGhost = true;
 	DeathSound = 'hknight/hit';
-	bDynamicLight = true;
-	DLightColour = RGB(67, 147, 55);
-	DLightRadius = 118.0;
 }

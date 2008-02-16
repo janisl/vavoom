@@ -46,7 +46,4 @@ defaultproperties
 	bWindThrust = true;
 	bThruGhost = true;
 	DeathSound = 'weapons/bowhit';
-	bDynamicLight = true;
-	DLightColour = RGB(91, 191, 79);
-	DLightRadius = 118.0;
 }

@@ -1,0 +1,677 @@
+//------------------------------------------------------------------------------
+pointlight StaffPuff2_X1
+{
+	colour 1 1 1
+	radius 240
+}
+
+pointlight StaffPuff2_X2
+{
+	colour 1 1 1
+	radius 200
+}
+
+pointlight StaffPuff2_X3
+{
+	colour 1 1 1
+	radius 160
+}
+
+pointlight StaffPuff2_X4
+{
+	colour 1 1 1
+	radius 120
+}
+
+pointlight StaffPuff2_X5
+{
+	colour 1 1 1
+	radius 80
+}
+
+pointlight StaffPuff2_X6
+{
+	colour 1 1 1
+	radius 40
+}
+
+class StaffPuff2
+{
+	frame PUF4A { light StaffPuff2_X1 }
+	frame PUF4B { light StaffPuff2_X2 }
+	frame PUF4C { light StaffPuff2_X3 }
+	frame PUF4D { light StaffPuff2_X4 }
+	frame PUF4E { light StaffPuff2_X5 }
+	frame PUF4F { light StaffPuff2_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight GauntletPuff1_X1
+{
+	colour 0.35 0.75 0.3
+	radius 200
+}
+
+pointlight GauntletPuff1_X2
+{
+	colour 0.35 0.75 0.3
+	radius 150
+}
+
+pointlight GauntletPuff1_X3
+{
+	colour 0.35 0.75 0.3
+	radius 100
+}
+
+pointlight GauntletPuff1_X4
+{
+	colour 0.35 0.75 0.3
+	radius 50
+}
+
+class GauntletPuff1
+{
+	frame PUF1A { light GauntletPuff1_X1 }
+	frame PUF1B { light GauntletPuff1_X2 }
+	frame PUF1C { light GauntletPuff1_X3 }
+	frame PUF1D { light GauntletPuff1_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight GauntletPuff2_X1
+{
+	colour 1 0 0
+	radius 200
+}
+
+pointlight GauntletPuff2_X2
+{
+	colour 1 0 0
+	radius 150
+}
+
+pointlight GauntletPuff2_X3
+{
+	colour 1 0 0
+	radius 100
+}
+
+pointlight GauntletPuff2_X4
+{
+	colour 1 0 0
+	radius 50
+}
+
+class GauntletPuff2
+{
+	frame PUF1E { light GauntletPuff2_X1 }
+	frame PUF1F { light GauntletPuff2_X2 }
+	frame PUF1G { light GauntletPuff2_X3 }
+	frame PUF1H { light GauntletPuff2_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight GoldWandPuff1_X1
+{
+	colour 1 0.7 0.2
+	radius 200
+}
+
+pointlight GoldWandPuff1_X2
+{
+	colour 1 0.7 0.2
+	radius 160
+}
+
+pointlight GoldWandPuff1_X3
+{
+	colour 1 0.7 0.2
+	radius 120
+}
+
+pointlight GoldWandPuff1_X4
+{
+	colour 1 0.7 0.2
+	radius 80
+}
+
+pointlight GoldWandPuff1_X5
+{
+	colour 1 0.7 0.2
+	radius 40
+}
+
+class GoldWandPuff1
+{
+	frame PUF2A { light GoldWandPuff1_X1 }
+	frame PUF2B { light GoldWandPuff1_X2 }
+	frame PUF2C { light GoldWandPuff1_X3 }
+	frame PUF2D { light GoldWandPuff1_X4 }
+	frame PUF2E { light GoldWandPuff1_X5 }
+}
+
+class GoldWandPuff2
+{
+	frame PUF2E { light GoldWandPuff1_X2 }
+	frame PUF2F { light GoldWandPuff1_X3 }
+	frame PUF2G { light GoldWandPuff1_X4 }
+	frame PUF2H { light GoldWandPuff1_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight GoldWandFX2
+{
+	colour 1 0.7 0.2
+	radius 118
+}
+
+pointlight GoldWandFX2_X1
+{
+	colour 1 0.7 0.2
+	radius 250
+}
+
+pointlight GoldWandFX2_X2
+{
+	colour 1 0.7 0.2
+	radius 190
+}
+
+pointlight GoldWandFX2_X3
+{
+	colour 1 0.7 0.2
+	radius 130
+}
+
+pointlight GoldWandFX2_X4
+{
+	colour 1 0.7 0.2
+	radius 70
+}
+
+class GoldWandFX2
+{
+	frame FX01C { light GoldWandFX2 }
+	frame FX01D { light GoldWandFX2 }
+	frame FX01E { light GoldWandFX2_X1 }
+	frame FX01F { light GoldWandFX2_X2 }
+	frame FX01G { light GoldWandFX2_X3 }
+	frame FX01H { light GoldWandFX2_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CrossbowFX1
+{
+	colour 0.35 0.75 0.3
+	radius 126
+}
+
+pointlight CrossbowFX1_X1
+{
+	colour 0.35 0.75 0.3
+	radius 250
+}
+
+pointlight CrossbowFX1_X2
+{
+	colour 0.35 0.75 0.3
+	radius 170
+}
+
+pointlight CrossbowFX1_X3
+{
+	colour 0.35 0.75 0.3
+	radius 90
+}
+
+class CrossbowFX1
+{
+	frame FX03B { light CrossbowFX1 }
+	frame FX03H { light CrossbowFX1_X1 }
+	frame FX03I { light CrossbowFX1_X2 }
+	frame FX03J { light CrossbowFX1_X3 }
+}
+
+class CrossbowFX2
+{
+	frame FX03B { light CrossbowFX1 }
+	frame FX03H { light CrossbowFX1_X1 }
+	frame FX03I { light CrossbowFX1_X2 }
+	frame FX03J { light CrossbowFX1_X3 }
+}
+
+class CrossbowFX3
+{
+	frame FX03A { light CrossbowFX1 }
+	frame FX03C { light CrossbowFX1_X1 }
+	frame FX03D { light CrossbowFX1_X2 }
+	frame FX03E { light CrossbowFX1_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BlasterPuff_X1
+{
+	colour 0.3 0.65 1
+	radius 200
+}
+
+pointlight BlasterPuff_X2
+{
+	colour 0.3 0.65 1
+	radius 160
+}
+
+pointlight BlasterPuff_X3
+{
+	colour 0.3 0.65 1
+	radius 120
+}
+
+pointlight BlasterPuff_X4
+{
+	colour 0.3 0.65 1
+	radius 80
+}
+
+pointlight BlasterPuff_X5
+{
+	colour 0.3 0.65 1
+	radius 40
+}
+
+class BlasterPuff
+{
+	frame FX17A { light BlasterPuff_X1 }
+	frame FX17B { light BlasterPuff_X2 }
+	frame FX17C { light BlasterPuff_X3 }
+	frame FX17D { light BlasterPuff_X4 }
+	frame FX17E { light BlasterPuff_X5 }
+	frame FX17F { light BlasterPuff_X1 }
+	frame FX17G { light BlasterPuff_X1 }
+	frame FX17H { light BlasterPuff_X2 }
+	frame FX17I { light BlasterPuff_X2 }
+	frame FX17J { light BlasterPuff_X3 }
+	frame FX17K { light BlasterPuff_X4 }
+	frame FX17L { light BlasterPuff_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BlasterFX1
+{
+	colour 0.3 0.65 1
+	radius 118
+}
+
+pointlight BlasterFX1_X1
+{
+	colour 0.3 0.65 1
+	radius 250
+}
+
+pointlight BlasterFX1_X2
+{
+	colour 0.3 0.65 1
+	radius 210
+}
+
+pointlight BlasterFX1_X3
+{
+	colour 0.3 0.65 1
+	radius 170
+}
+
+pointlight BlasterFX1_X4
+{
+	colour 0.3 0.65 1
+	radius 130
+}
+
+pointlight BlasterFX1_X5
+{
+	colour 0.3 0.65 1
+	radius 90
+}
+
+pointlight BlasterFX1_X6
+{
+	colour 0.3 0.65 1
+	radius 50
+}
+
+pointlight BlasterFX1_X7
+{
+	colour 0.3 0.65 1
+	radius 10
+}
+
+class BlasterFX1
+{
+	frame ACLO { light BlasterFX1 }
+	frame FX18A { light BlasterFX1_X1 }
+	frame FX18B { light BlasterFX1_X2 }
+	frame FX18C { light BlasterFX1_X3 }
+	frame FX18D { light BlasterFX1_X4 }
+	frame FX18E { light BlasterFX1_X5 }
+	frame FX18F { light BlasterFX1_X6 }
+	frame FX18G { light BlasterFX1_X7 }
+}
+
+//------------------------------------------------------------------------------
+pointlight HornRodFX1
+{
+	colour 1 0.3 0.3
+	radius 126
+}
+
+pointlight HornRodFX1_X1
+{
+	colour 1 0.3 0.3
+	radius 250
+}
+
+pointlight HornRodFX1_X2
+{
+	colour 1 0.3 0.3
+	radius 210
+}
+
+pointlight HornRodFX1_X3
+{
+	colour 1 0.3 0.3
+	radius 170
+}
+
+pointlight HornRodFX1_X4
+{
+	colour 1 0.3 0.3
+	radius 130
+}
+
+pointlight HornRodFX1_X5
+{
+	colour 1 0.3 0.3
+	radius 90
+}
+
+pointlight HornRodFX1_X6
+{
+	colour 1 0.3 0.3
+	radius 50
+}
+
+class HornRodFX1
+{
+	frame FX00A { light HornRodFX1 }
+	frame FX00B { light HornRodFX1 }
+	frame FX00H { light HornRodFX1_X1 }
+	frame FX00I { light HornRodFX1_X2 }
+	frame FX00J { light HornRodFX1_X3 }
+	frame FX00K { light HornRodFX1_X4 }
+	frame FX00L { light HornRodFX1_X5 }
+	frame FX00M { light HornRodFX1_X6 }
+}
+
+class HornRodFX2
+{
+	frame FX00C { light HornRodFX1 }
+	frame FX00D { light HornRodFX1 }
+	frame FX00E { light HornRodFX1 }
+	frame FX00F { light HornRodFX1 }
+	frame FX00H { light HornRodFX1_X1 }
+	frame FX00I { light HornRodFX1_X2 }
+	frame FX00J { light HornRodFX1_X3 }
+	frame FX00K { light HornRodFX1_X4 }
+	frame FX00L { light HornRodFX1_X5 }
+	frame FX00M { light HornRodFX1_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight RainPillar
+{
+	colour 0.35 0.8 0.35
+	radius 100
+}
+
+pointlight RainPillar_X1
+{
+	colour 0.35 0.8 0.35
+	radius 120
+}
+
+pointlight RainPillar_X2
+{
+	colour 0.35 0.8 0.35
+	radius 80
+}
+
+pointlight RainPillar_X3
+{
+	colour 0.35 0.8 0.35
+	radius 40
+}
+
+class RainPillar
+{
+	frame FX20A { light RainPillar }
+	frame FX20B { light RainPillar_X1 }
+	frame FX20C { light RainPillar_X2 }
+	frame FX20D { light RainPillar_X3 }
+	frame FX20G { light RainPillar_X1 }
+	frame FX20H { light RainPillar_X2 }
+	frame FX20I { light RainPillar_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight RainPlayer2
+{
+	colour 0.9 0.65 0
+	radius 100
+}
+
+pointlight RainPlayer2_X1
+{
+	colour 0.9 0.65 0
+	radius 120
+}
+
+pointlight RainPlayer2_X2
+{
+	colour 0.9 0.65 0
+	radius 80
+}
+
+pointlight RainPlayer2_X3
+{
+	colour 0.9 0.65 0
+	radius 40
+}
+
+class RainPlayer2
+{
+	frame FX21A { light RainPlayer2 }
+	frame FX21B { light RainPlayer2_X1 }
+	frame FX21C { light RainPlayer2_X2 }
+	frame FX21D { light RainPlayer2_X3 }
+	frame FX21G { light RainPlayer2_X1 }
+	frame FX21H { light RainPlayer2_X2 }
+	frame FX21I { light RainPlayer2_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight RainPlayer3
+{
+	colour 1 0.3 0.3
+	radius 100
+}
+
+pointlight RainPlayer3_X1
+{
+	colour 1 0.3 0.3
+	radius 120
+}
+
+pointlight RainPlayer3_X2
+{
+	colour 1 0.3 0.3
+	radius 80
+}
+
+pointlight RainPlayer3_X3
+{
+	colour 1 0.3 0.3
+	radius 40
+}
+
+class RainPlayer3
+{
+	frame FX22A { light RainPlayer3 }
+	frame FX22B { light RainPlayer3_X1 }
+	frame FX22C { light RainPlayer3_X2 }
+	frame FX22D { light RainPlayer3_X3 }
+	frame FX22G { light RainPlayer3_X1 }
+	frame FX22H { light RainPlayer3_X2 }
+	frame FX22I { light RainPlayer3_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight RainPlayer4
+{
+	colour 0.3 0.3 1
+	radius 100
+}
+
+pointlight RainPlayer4_X1
+{
+	colour 0.3 0.3 1
+	radius 120
+}
+
+pointlight RainPlayer4_X2
+{
+	colour 0.3 0.3 1
+	radius 80
+}
+
+pointlight RainPlayer4_X3
+{
+	colour 0.3 0.3 1
+	radius 40
+}
+
+class RainPlayer4
+{
+	frame FX23A { light RainPlayer4 }
+	frame FX23B { light RainPlayer4_X1 }
+	frame FX23C { light RainPlayer4_X2 }
+	frame FX23D { light RainPlayer4_X3 }
+	frame FX23G { light RainPlayer4_X1 }
+	frame FX23H { light RainPlayer4_X2 }
+	frame FX23I { light RainPlayer4_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight PhoenixFX1
+{
+	colour 1 0.35 0
+	radius 126
+}
+
+pointlight PhoenixFX1_X1
+{
+	colour 1 0.35 0
+	radius 250
+}
+
+pointlight PhoenixFX1_X2
+{
+	colour 1 0.35 0
+	radius 210
+}
+
+pointlight PhoenixFX1_X3
+{
+	colour 1 0.35 0
+	radius 170
+}
+
+pointlight PhoenixFX1_X4
+{
+	colour 1 0.35 0
+	radius 130
+}
+
+pointlight PhoenixFX1_X5
+{
+	colour 1 0.35 0
+	radius 90
+}
+
+pointlight PhoenixFX1_X6
+{
+	colour 1 0.35 0
+	radius 50
+}
+
+class PhoenixFX1
+{
+	frame FX04A { light PhoenixFX1 }
+	frame FX08A { light PhoenixFX1_X1 }
+	frame FX08B { light PhoenixFX1_X2 }
+	frame FX08C { light PhoenixFX1_X3 }
+	frame FX08D { light PhoenixFX1_X4 }
+	frame FX08E { light PhoenixFX1_X5 }
+	frame FX08F { light PhoenixFX1_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight PhoenixFX2
+{
+	colour 1 0.6 0
+	radius 118
+}
+
+pointlight PhoenixFX2_X1
+{
+	colour 1 0.6 0
+	radius 250
+}
+
+pointlight PhoenixFX2_X2
+{
+	colour 1 0.6 0
+	radius 200
+}
+
+pointlight PhoenixFX2_X3
+{
+	colour 1 0.6 0
+	radius 150
+}
+
+pointlight PhoenixFX2_X4
+{
+	colour 1 0.6 0
+	radius 100
+}
+
+pointlight PhoenixFX2_X5
+{
+	colour 1 0.6 0
+	radius 50
+}
+
+class PhoenixFX2
+{
+	frame FX09A { light PhoenixFX2 }
+	frame FX09B { light PhoenixFX2 }
+	frame FX09C { light PhoenixFX2 }
+	frame FX09D { light PhoenixFX2 }
+	frame FX09E { light PhoenixFX2 }
+	frame FX09F { light PhoenixFX2 }
+	frame FX09G { light PhoenixFX2_X1 }
+	frame FX09H { light PhoenixFX2_X2 }
+	frame FX09I { light PhoenixFX2_X3 }
+	frame FX09J { light PhoenixFX2_X4 }
+	frame FX09K { light PhoenixFX2_X5 }
+}

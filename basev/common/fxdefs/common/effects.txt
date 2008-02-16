@@ -35,6 +35,42 @@ pointlight TeleportFog_6
 	radius 240
 }
 
+pointlight TeleportFog2_1
+{
+	colour 0.4 0.35 0.7
+	radius 40
+}
+
+pointlight TeleportFog2_2
+{
+	colour 0.4 0.35 0.7
+	radius 80
+}
+
+pointlight TeleportFog2_3
+{
+	colour 0.4 0.35 0.7
+	radius 120
+}
+
+pointlight TeleportFog2_4
+{
+	colour 0.4 0.35 0.7
+	radius 160
+}
+
+pointlight TeleportFog2_5
+{
+	colour 0.4 0.35 0.7
+	radius 200
+}
+
+pointlight TeleportFog2_6
+{
+	colour 0.4 0.35 0.7
+	radius 240
+}
+
 class TeleportFog
 {
 	frame TFOGA { light TeleportFog_2 }
@@ -47,4 +83,11 @@ class TeleportFog
 	frame TFOGH { light TeleportFog_3 }
 	frame TFOGI { light TeleportFog_2 }
 	frame TFOGJ { light TeleportFog_1 }
+
+	frame TELEC { light TeleportFog2_1 }
+	frame TELED { light TeleportFog2_2 }
+	frame TELEE { light TeleportFog2_3 }
+	frame TELEF { light TeleportFog2_4 }
+	frame TELEG { light TeleportFog2_5 }
+	frame TELEH { light TeleportFog2_6 }
 }

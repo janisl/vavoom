@@ -45,7 +45,4 @@ defaultproperties
 	MissileDamage = 1;
 	DamageType = 'Fire';
 	bNoGravity = false;
-	bDynamicLight = true;
-	DLightColour = RGB(255, 128, 0);
-	DLightRadius = 118.0;
 }

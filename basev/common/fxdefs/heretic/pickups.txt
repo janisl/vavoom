@@ -1,0 +1,71 @@
+//------------------------------------------------------------------------------
+pointlight KeyYellow
+{
+	colour 1 1 0
+	radius 66
+}
+
+class KeyYellow
+{
+	frame CKYY { light KeyYellow }
+}
+
+//------------------------------------------------------------------------------
+pointlight KeyGreen
+{
+	colour 0 1 0
+	radius 66
+}
+
+class KeyGreen
+{
+	frame AKYY { light KeyGreen }
+}
+
+//------------------------------------------------------------------------------
+pointlight KeyBlue
+{
+	colour 0 0 1
+	radius 66
+}
+
+class KeyBlue
+{
+	frame BKYY { light KeyBlue }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArtiInvisibility
+{
+	colour 0.4 0.5 0.4
+	radius 86
+}
+
+class ArtiInvisibility
+{
+	frame INVS { light ArtiInvisibility }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArtiTorch
+{
+	colour 1 0.5 0
+	radius 86
+}
+
+class ArtiTorch
+{
+	frame TRCH { light ArtiTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArtiInvulnerability
+{
+	colour 1 1 1
+	radius 86
+}
+
+class ArtiInvulnerability
+{
+	frame INVU { light ArtiInvulnerability }
+}

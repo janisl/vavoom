@@ -39,5 +39,4 @@ Spawn:
 
 defaultproperties
 {
-	DLightColour = RGB(192, 196, 208);
 }

@@ -71,7 +71,4 @@ defaultproperties
 	Speed = 210.0;
 	MissileDamage = 10;
 	RenderStyle = STYLE_Add;
-	bDynamicLight = true;
-	DLightColour = RGB(80, 80, 253);
-	DLightRadius = 118.0;
 }

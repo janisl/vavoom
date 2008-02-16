@@ -37,7 +37,4 @@ Spawn:
 defaultproperties
 {
 	PickupMessage = "$txt_gotbluekey";
-	bDynamicLight = true;
-	DLightColour = RGB(0, 0, 255);
-	DLightRadius = 66.0;
 }

@@ -88,7 +88,4 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
 	bActivateImpact = true;
-	bDynamicLight = true;
-	DLightColour = RGB(255, 159, 0);
-	DLightRadius = 118.0;
 }

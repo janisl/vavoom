@@ -1,0 +1,781 @@
+//------------------------------------------------------------------------------
+pointlight HereticImpBall
+{
+	colour 0.85 0.45 0.05
+	radius 118
+}
+
+pointlight HereticImpBall_X1
+{
+	colour 0.85 0.45 0.05
+	radius 250
+}
+
+pointlight HereticImpBall_X2
+{
+	colour 0.85 0.45 0.05
+	radius 190
+}
+
+pointlight HereticImpBall_X3
+{
+	colour 0.85 0.45 0.05
+	radius 130
+}
+
+pointlight HereticImpBall_X4
+{
+	colour 0.85 0.45 0.05
+	radius 70
+}
+
+class HereticImpBall
+{
+	frame FX10A { light HereticImpBall }
+	frame FX10B { light HereticImpBall }
+	frame FX10C { light HereticImpBall }
+	frame FX10D { light HereticImpBall_X1 }
+	frame FX10E { light HereticImpBall_X2 }
+	frame FX10F { light HereticImpBall_X3 }
+	frame FX10G { light HereticImpBall_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight MummyFX1
+{
+	colour 1 0.9 0.5
+	radius 118
+}
+
+pointlight MummyFX1_X1
+{
+	colour 1 0.9 0.5
+	radius 250
+}
+
+pointlight MummyFX1_X2
+{
+	colour 1 0.9 0.5
+	radius 190
+}
+
+pointlight MummyFX1_X3
+{
+	colour 1 0.9 0.5
+	radius 130
+}
+
+pointlight MummyFX1_X4
+{
+	colour 1 0.9 0.5
+	radius 70
+}
+
+class MummyFX1
+{
+	frame FX15A { light MummyFX1 }
+	frame FX15B { light MummyFX1 }
+	frame FX15C { light MummyFX1 }
+	frame FX15D { light MummyFX1_X1 }
+	frame FX15E { light MummyFX1_X2 }
+	frame FX15F { light MummyFX1_X3 }
+	frame FX15G { light MummyFX1_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight KnightAxe
+{
+	colour 0.25 0.6 0.2
+	radius 118
+}
+
+pointlight KnightAxe_X1
+{
+	colour 0.25 0.6 0.2
+	radius 250
+}
+
+pointlight KnightAxe_X2
+{
+	colour 0.25 0.6 0.2
+	radius 170
+}
+
+pointlight KnightAxe_X3
+{
+	colour 0.25 0.6 0.2
+	radius 90
+}
+
+class KnightAxe
+{
+	frame SPAXA { light KnightAxe }
+	frame SPAXB { light KnightAxe }
+	frame SPAXC { light KnightAxe }
+	frame SPAXD { light KnightAxe_X1 }
+	frame SPAXE { light KnightAxe_X2 }
+	frame SPAXF { light KnightAxe_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight RedAxe
+{
+	colour 1 0 0
+	radius 118
+}
+
+pointlight RedAxe_X1
+{
+	colour 1 0 0
+	radius 250
+}
+
+pointlight RedAxe_X2
+{
+	colour 1 0 0
+	radius 170
+}
+
+pointlight RedAxe_X3
+{
+	colour 1 0 0
+	radius 90
+}
+
+class RedAxe
+{
+	frame RAXEA { light RedAxe }
+	frame RAXEB { light RedAxe }
+	frame RAXEC { light RedAxe_X1 }
+	frame RAXED { light RedAxe_X2 }
+	frame RAXEE { light RedAxe_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Wizard_X1
+{
+	colour 0.6 0 0.75
+	radius 250
+}
+
+pointlight Wizard_X2
+{
+	colour 0.6 0 0.75
+	radius 210
+}
+
+pointlight Wizard_X3
+{
+	colour 0.6 0 0.75
+	radius 170
+}
+
+pointlight Wizard_X4
+{
+	colour 0.6 0 0.75
+	radius 130
+}
+
+pointlight Wizard_X5
+{
+	colour 0.6 0 0.75
+	radius 90
+}
+
+pointlight Wizard_X6
+{
+	colour 0.6 0 0.75
+	radius 50
+}
+
+class Wizard
+{
+	frame WZRDF { light Wizard_X1 }
+	frame WZRDG { light Wizard_X2 }
+	frame WZRDH { light Wizard_X3 }
+	frame WZRDI { light Wizard_X4 }
+	frame WZRDJ { light Wizard_X5 }
+	frame WZRDK { light Wizard_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight WizardFX1
+{
+	colour 0.6 0.05 0.75
+	radius 118
+}
+
+pointlight WizardFX1_X1
+{
+	colour 0.6 0.05 0.75
+	radius 250
+}
+
+pointlight WizardFX1_X2
+{
+	colour 0.6 0.05 0.75
+	radius 200
+}
+
+pointlight WizardFX1_X3
+{
+	colour 0.6 0.05 0.75
+	radius 150
+}
+
+pointlight WizardFX1_X4
+{
+	colour 0.6 0.05 0.75
+	radius 100
+}
+
+pointlight WizardFX1_X5
+{
+	colour 0.6 0.05 0.75
+	radius 50
+}
+
+class WizardFX1
+{
+	frame FX11A { light WizardFX1 }
+	frame FX11B { light WizardFX1 }
+	frame FX11C { light WizardFX1_X1 }
+	frame FX11D { light WizardFX1_X2 }
+	frame FX11E { light WizardFX1_X3 }
+	frame FX11F { light WizardFX1_X4 }
+	frame FX11G { light WizardFX1_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Clink_X1
+{
+	colour 1 0.4 0
+	radius 200
+}
+
+pointlight Clink_X2
+{
+	colour 1 0.4 0
+	radius 150
+}
+
+pointlight Clink_X3
+{
+	colour 1 0.4 0
+	radius 100
+}
+
+pointlight Clink_X4
+{
+	colour 1 0.4 0
+	radius 50
+}
+
+class Clink
+{
+	frame CLNKK { light Clink_X1 }
+	frame CLNKL { light Clink_X2 }
+	frame CLNKM { light Clink_X3 }
+	frame CLNKN { light Clink_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BeastBall
+{
+	colour 1 0.5 0
+	radius 126
+}
+
+pointlight BeastBall_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight BeastBall_X2
+{
+	colour 1 0.5 0
+	radius 200
+}
+
+pointlight BeastBall_X3
+{
+	colour 1 0.5 0
+	radius 150
+}
+
+pointlight BeastBall_X4
+{
+	colour 1 0.5 0
+	radius 100
+}
+
+pointlight BeastBall_X5
+{
+	colour 1 0.5 0
+	radius 50
+}
+
+class BeastBall
+{
+	frame FRB1A { light BeastBall }
+	frame FRB1B { light BeastBall }
+	frame FRB1C { light BeastBall }
+	frame FRB1D { light BeastBall_X1 }
+	frame FRB1E { light BeastBall_X2 }
+	frame FRB1F { light BeastBall_X3 }
+	frame FRB1G { light BeastBall_X4 }
+	frame FRB1H { light BeastBall_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SnakeProjA
+{
+	colour 0.6 0.55 0.85
+	radius 118
+}
+
+pointlight SnakeProjA_X1
+{
+	colour 0.6 0.55 0.85
+	radius 250
+}
+
+pointlight SnakeProjA_X2
+{
+	colour 0.6 0.55 0.85
+	radius 200
+}
+
+pointlight SnakeProjA_X3
+{
+	colour 0.6 0.55 0.85
+	radius 150
+}
+
+pointlight SnakeProjA_X4
+{
+	colour 0.6 0.55 0.85
+	radius 100
+}
+
+pointlight SnakeProjA_X5
+{
+	colour 0.6 0.55 0.85
+	radius 50
+}
+
+class SnakeProjA
+{
+	frame SNFXA { light SnakeProjA }
+	frame SNFXB { light SnakeProjA }
+	frame SNFXC { light SnakeProjA }
+	frame SNFXD { light SnakeProjA }
+	frame SNFXE { light SnakeProjA_X1 }
+	frame SNFXF { light SnakeProjA_X2 }
+	frame SNFXG { light SnakeProjA_X3 }
+	frame SNFXH { light SnakeProjA_X4 }
+	frame SNFXI { light SnakeProjA_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SnakeProjB
+{
+	colour 1 0.5 0
+	radius 126
+}
+
+pointlight SnakeProjB_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight SnakeProjB_X2
+{
+	colour 1 0.5 0
+	radius 190
+}
+
+pointlight SnakeProjB_X3
+{
+	colour 1 0.5 0
+	radius 130
+}
+
+pointlight SnakeProjB_X4
+{
+	colour 1 0.5 0
+	radius 70
+}
+
+class SnakeProjB
+{
+	frame SNFXJ { light SnakeProjB }
+	frame SNFXK { light SnakeProjB }
+	frame SNFXL { light SnakeProjB_X1 }
+	frame SNFXM { light SnakeProjB_X2 }
+	frame SNFXN { light SnakeProjB_X3 }
+	frame SNFXO { light SnakeProjB_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Ironlich_X1
+{
+	colour 1 0.4 0
+	radius 250
+}
+
+pointlight Ironlich_X2
+{
+	colour 1 0.4 0
+	radius 200
+}
+
+pointlight Ironlich_X3
+{
+	colour 1 0.4 0
+	radius 150
+}
+
+pointlight Ironlich_X4
+{
+	colour 1 0.4 0
+	radius 100
+}
+
+pointlight Ironlich_X5
+{
+	colour 1 0.4 0
+	radius 50
+}
+
+class Ironlich
+{
+	frame LICHD { light Ironlich_X1 }
+	frame LICHE { light Ironlich_X2 }
+	frame LICHF { light Ironlich_X3 }
+	frame LICHG { light Ironlich_X4 }
+	frame LICHH { light Ironlich_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight HeadFX1
+{
+	colour 0.05 0.05 0.6
+	radius 126
+}
+
+pointlight HeadFX1_X1
+{
+	colour 0.05 0.05 0.6
+	radius 250
+}
+
+pointlight HeadFX1_X2
+{
+	colour 0.05 0.05 0.6
+	radius 190
+}
+
+pointlight HeadFX1_X3
+{
+	colour 0.05 0.05 0.6
+	radius 120
+}
+
+pointlight HeadFX1_X4
+{
+	colour 0.05 0.05 0.6
+	radius 60
+}
+
+class HeadFX1
+{
+	frame FX05A { light HeadFX1 }
+	frame FX05B { light HeadFX1 }
+	frame FX05C { light HeadFX1 }
+	frame FX05D { light HeadFX1_X1 }
+	frame FX05E { light HeadFX1_X2 }
+	frame FX05F { light HeadFX1_X3 }
+	frame FX05G { light HeadFX1_X4 }
+}
+
+class HeadFX2
+{
+	frame FX05H { light HeadFX1 }
+	frame FX05I { light HeadFX1 }
+	frame FX05J { light HeadFX1 }
+	frame FX05D { light HeadFX1_X1 }
+	frame FX05E { light HeadFX1_X2 }
+	frame FX05F { light HeadFX1_X3 }
+	frame FX05G { light HeadFX1_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight HeadFX3
+{
+	colour 1 0.35 0
+	radius 134
+}
+
+pointlight HeadFX3_X1
+{
+	colour 1 0.35 0
+	radius 250
+}
+
+pointlight HeadFX3_X2
+{
+	colour 1 0.35 0
+	radius 190
+}
+
+pointlight HeadFX3_X3
+{
+	colour 1 0.35 0
+	radius 130
+}
+
+pointlight HeadFX3_X4
+{
+	colour 1 0.35 0
+	radius 70
+}
+
+class HeadFX3
+{
+	frame FX06A { light HeadFX3 }
+	frame FX06B { light HeadFX3 }
+	frame FX06C { light HeadFX3 }
+	frame FX06D { light HeadFX3_X1 }
+	frame FX06E { light HeadFX3_X2 }
+	frame FX06F { light HeadFX3_X3 }
+	frame FX06G { light HeadFX3_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight MinotaurFX1
+{
+	colour 1 0.5 0
+	radius 126
+}
+
+pointlight MinotaurFX1_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight MinotaurFX1_X2
+{
+	colour 1 0.5 0
+	radius 210
+}
+
+pointlight MinotaurFX1_X3
+{
+	colour 1 0.5 0
+	radius 170
+}
+
+pointlight MinotaurFX1_X4
+{
+	colour 1 0.5 0
+	radius 130
+}
+
+pointlight MinotaurFX1_X5
+{
+	colour 1 0.5 0
+	radius 90
+}
+
+pointlight MinotaurFX1_X6
+{
+	colour 1 0.5 0
+	radius 50
+}
+
+class MinotaurFX1
+{
+	frame FX12A { light MinotaurFX1 }
+	frame FX12B { light MinotaurFX1 }
+	frame FX12C { light MinotaurFX1_X1 }
+	frame FX12D { light MinotaurFX1_X2 }
+	frame FX12E { light MinotaurFX1_X3 }
+	frame FX12F { light MinotaurFX1_X4 }
+	frame FX12G { light MinotaurFX1_X5 }
+	frame FX12H { light MinotaurFX1_X6 }
+}
+
+class MinotaurFX2
+{
+	frame FX13A { light MinotaurFX1 }
+	frame FX13I { light MinotaurFX1_X1 }
+	frame FX13J { light MinotaurFX1_X2 }
+	frame FX13K { light MinotaurFX1_X3 }
+	frame FX13L { light MinotaurFX1_X4 }
+	frame FX13M { light MinotaurFX1_X5 }
+}
+
+class MinotaurFX3
+{
+	frame FX13B { light MinotaurFX1 }
+	frame FX13C { light MinotaurFX1 }
+	frame FX13D { light MinotaurFX1 }
+	frame FX13E { light MinotaurFX1 }
+	frame FX13F { light MinotaurFX1 }
+	frame FX13G { light MinotaurFX1_X5 }
+	frame FX13H { light MinotaurFX1_X6 }
+	frame FX13I { light MinotaurFX1_X1 }
+	frame FX13J { light MinotaurFX1_X2 }
+	frame FX13K { light MinotaurFX1_X3 }
+	frame FX13L { light MinotaurFX1_X4 }
+	frame FX13M { light MinotaurFX1_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SorcererFX1
+{
+	colour 0.75 0.4 0.1
+	radius 126
+}
+
+pointlight SorcererFX1_X1
+{
+	colour 0.75 0.4 0.1
+	radius 250
+}
+
+pointlight SorcererFX1_X2
+{
+	colour 0.75 0.4 0.1
+	radius 200
+}
+
+pointlight SorcererFX1_X3
+{
+	colour 0.75 0.4 0.1
+	radius 150
+}
+
+pointlight SorcererFX1_X4
+{
+	colour 0.75 0.4 0.1
+	radius 100
+}
+
+pointlight SorcererFX1_X5
+{
+	colour 0.75 0.4 0.1
+	radius 50
+}
+
+class SorcererFX1
+{
+	frame FX14A { light SorcererFX1 }
+	frame FX14B { light SorcererFX1 }
+	frame FX14C { light SorcererFX1 }
+	frame FX14D { light SorcererFX1_X1 }
+	frame FX14E { light SorcererFX1_X2 }
+	frame FX14F { light SorcererFX1_X3 }
+	frame FX14G { light SorcererFX1_X4 }
+	frame FX14H { light SorcererFX1_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Sorcerer2FX1
+{
+	colour 0.3 0.3 1
+	radius 126
+}
+
+pointlight Sorcerer2FX1_X1
+{
+	colour 0.3 0.3 1
+	radius 250
+}
+
+pointlight Sorcerer2FX1_X2
+{
+	colour 0.3 0.3 1
+	radius 210
+}
+
+pointlight Sorcerer2FX1_X3
+{
+	colour 0.3 0.3 1
+	radius 170
+}
+
+pointlight Sorcerer2FX1_X4
+{
+	colour 0.3 0.3 1
+	radius 130
+}
+
+pointlight Sorcerer2FX1_X5
+{
+	colour 0.3 0.3 1
+	radius 90
+}
+
+pointlight Sorcerer2FX1_X6
+{
+	colour 0.3 0.3 1
+	radius 50
+}
+
+class Sorcerer2FX1
+{
+	frame FX16A { light Sorcerer2FX1 }
+	frame FX16B { light Sorcerer2FX1 }
+	frame FX16C { light Sorcerer2FX1 }
+	frame FX16G { light Sorcerer2FX1_X1 }
+	frame FX16H { light Sorcerer2FX1_X2 }
+	frame FX16I { light Sorcerer2FX1_X3 }
+	frame FX16J { light Sorcerer2FX1_X4 }
+	frame FX16K { light Sorcerer2FX1_X5 }
+	frame FX16L { light Sorcerer2FX1_X6 }
+}
+
+class Sorcerer2FX2
+{
+	frame FX11A { light Sorcerer2FX1 }
+	frame FX11B { light Sorcerer2FX1 }
+	frame FX11C { light Sorcerer2FX1_X2 }
+	frame FX11D { light Sorcerer2FX1_X3 }
+	frame FX11E { light Sorcerer2FX1_X4 }
+	frame FX11F { light Sorcerer2FX1_X5 }
+	frame FX11G { light Sorcerer2FX1_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Sorcerer2Telefade_1
+{
+	colour 0.75 0.4 0.1
+	radius 50
+}
+
+pointlight Sorcerer2Telefade_2
+{
+	colour 0.75 0.4 0.1
+	radius 100
+}
+
+pointlight Sorcerer2Telefade_3
+{
+	colour 0.75 0.4 0.1
+	radius 150
+}
+
+class Sorcerer2Telefade
+{
+	frame SOR2G { light Sorcerer2Telefade_1 }
+	frame SOR2H { light Sorcerer2Telefade_2 }
+	frame SOR2I { light Sorcerer2Telefade_3 }
+	frame SOR2J { light Sorcerer2Telefade_3 }
+	frame SOR2K { light Sorcerer2Telefade_2 }
+	frame SOR2L { light Sorcerer2Telefade_1 }
+}

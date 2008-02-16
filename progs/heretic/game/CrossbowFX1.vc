@@ -46,7 +46,4 @@ defaultproperties
 	bActivateImpact = true;
 	SightSound = 'weapons/bowshoot';
 	DeathSound = 'weapons/bowhit';
-	bDynamicLight = true;
-	DLightColour = RGB(91, 191, 79);
-	DLightRadius = 126.0;
 }

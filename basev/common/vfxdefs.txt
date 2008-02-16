@@ -1,0 +1,13 @@
+#include "fxdefs/common/effects.txt"
+
+#include "fxdefs/doom/monsters.txt"
+#include "fxdefs/doom/pickups.txt"
+#include "fxdefs/doom/weapons.txt"
+
+#include "fxdefs/heretic/effects.txt"
+#include "fxdefs/heretic/monsters.txt"
+#include "fxdefs/heretic/pickups.txt"
+#include "fxdefs/heretic/weapons.txt"
+
+//	c b 154049
+//  h g 97619 b 62154

@@ -17,6 +17,10 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		fxdefs/doom/monsters.txt
 		fxdefs/doom/pickups.txt
 		fxdefs/doom/weapons.txt
+		fxdefs/heretic/effects.txt
+		fxdefs/heretic/monsters.txt
+		fxdefs/heretic/pickups.txt
+		fxdefs/heretic/weapons.txt
 		graphics/mc_arrow.png
 		sounds/dsempty.lmp
 		sounds/dsquake.flac

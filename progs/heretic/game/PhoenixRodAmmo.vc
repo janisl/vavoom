@@ -42,7 +42,4 @@ defaultproperties
 	BackpackMaxAmount = 40;
 	PickupMessage = "$txt_ammophoenixrod1";
 	IconName = 'inampnx';
-	bDynamicLight = true;
-	DLightColour = RGB(255, 95, 0);
-	DLightRadius = 66.0;
 }

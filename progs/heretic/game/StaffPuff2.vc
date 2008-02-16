@@ -28,8 +28,7 @@ class StaffPuff2 : Effect;
 states
 {
 Spawn:
-	PUF4 A 4 Bright A_Lights
-	PUF4 BCDEF 4 Bright
+	PUF4 ABCDEF 4 Bright
 	Stop
 }
 
@@ -37,7 +36,5 @@ defaultproperties
 {
 	RenderStyle = STYLE_Add;
 	bPuffOnActors = true;
-	ExplodeEffect = RGB(80, 164, 252);
-	DLightRadius = 86.0;
 	AttackSound = 'weapons/staffpowerhit';
 }

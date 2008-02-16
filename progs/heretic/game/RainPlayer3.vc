@@ -41,5 +41,4 @@ AirDeath:
 
 defaultproperties
 {
-	DLightColour = RGB(255, 74, 74);
 }

@@ -1,0 +1,126 @@
+//------------------------------------------------------------------------------
+pointlight EggFX
+{
+	colour 1 1 1
+	radius 120
+}
+
+pointlight EggFX_X1
+{
+	colour 1 1 1
+	radius 250
+}
+
+pointlight EggFX_X2
+{
+	colour 1 1 1
+	radius 190
+}
+
+pointlight EggFX_X3
+{
+	colour 1 1 1
+	radius 130
+}
+
+pointlight EggFX_X4
+{
+	colour 1 1 1
+	radius 70
+}
+
+class EggFX
+{
+	frame EGGM { light EggFX }
+	frame FX01E { light EggFX_X1 }
+	frame FX01F { light EggFX_X2 }
+	frame FX01G { light EggFX_X3 }
+	frame FX01H { light EggFX_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight VolcanoBlast
+{
+	colour 1 0.5 0
+	radius 126
+}
+
+pointlight VolcanoBlast_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight VolcanoBlast_X2
+{
+	colour 1 0.5 0
+	radius 210
+}
+
+pointlight VolcanoBlast_X3
+{
+	colour 1 0.5 0
+	radius 170
+}
+
+pointlight VolcanoBlast_X4
+{
+	colour 1 0.5 0
+	radius 130
+}
+
+pointlight VolcanoBlast_X5
+{
+	colour 1 0.5 0
+	radius 90
+}
+
+pointlight VolcanoBlast_X6
+{
+	colour 1 0.5 0
+	radius 50
+}
+
+class VolcanoBlast
+{
+	frame VFBL { light VolcanoBlast }
+	frame XPL1A { light VolcanoBlast_X1 }
+	frame XPL1B { light VolcanoBlast_X2 }
+	frame XPL1C { light VolcanoBlast_X3 }
+	frame XPL1D { light VolcanoBlast_X4 }
+	frame XPL1E { light VolcanoBlast_X5 }
+	frame XPL1F { light VolcanoBlast_X6 }
+}
+
+class VolcanoTBlast
+{
+	frame VTFB { light VolcanoBlast }
+	frame SFFIA { light VolcanoBlast_X2 }
+	frame SFFIB { light VolcanoBlast_X3 }
+	frame SFFIC { light VolcanoBlast_X4 }
+	frame SFFID { light VolcanoBlast_X5 }
+	frame SFFIE { light VolcanoBlast_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight TeleGlitter1
+{
+	colour 1 0.7 0.7
+	radius 66
+}
+
+class TeleGlitter1
+{
+	frame TGLT { light TeleGlitter1 }
+}
+
+pointlight TeleGlitter2
+{
+	colour 0.75 0.75 0.8
+	radius 66
+}
+
+class TeleGlitter2
+{
+	frame TGLT { light TeleGlitter2 }
+}
