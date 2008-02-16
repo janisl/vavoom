@@ -76,7 +76,4 @@ defaultproperties
 	bRandomise = true;
 	SightSound = 'weapons/plasmaf';
 	DeathSound = 'weapons/plasmax';
-	bDynamicLight = true;
-	DLightColour = RGB(115, 115, 255);
-	DLightRadius = 126.0;
 }

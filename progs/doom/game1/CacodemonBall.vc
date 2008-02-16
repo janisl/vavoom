@@ -60,7 +60,4 @@ defaultproperties
 	bRandomise = true;
 	SightSound = 'caco/attack';
 	DeathSound = 'caco/shotx';
-	bDynamicLight = true;
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 126.0;
 }

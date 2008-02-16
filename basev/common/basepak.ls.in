@@ -37,6 +37,13 @@ terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
 lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
 textcolo.txt			@CMAKE_CURRENT_SOURCE_DIR@/textcolo.txt
 
+//	Effect scripts
+vfxdefs.txt					@CMAKE_CURRENT_SOURCE_DIR@/vfxdefs.txt
+fxdefs/common/effects.txt	@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/common/effects.txt
+fxdefs/doom/monsters.txt	@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/doom/monsters.txt
+fxdefs/doom/pickups.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/doom/pickups.txt
+fxdefs/doom/weapons.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/doom/weapons.txt
+
 //	Console font
 $load @CMAKE_CURRENT_SOURCE_DIR@/confont.pcx
 confont.lmp				fon1

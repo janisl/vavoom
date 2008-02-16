@@ -49,22 +49,6 @@ final void A_SkullAttack()
 	Velocity = Normalise(Target.GetCentre() - Origin) * SKULLSPEED;
 }
 
-//==========================================================================
-//
-//  A_Lights
-//
-//  Just spawn some dynamic light
-//
-//==========================================================================
-
-final void A_Lights()
-{
-	SendExplosion(DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
-
-	//  Clear old dynamic light effect
-	bDynamicLight = false;
-}
-
 states
 {
 Spawn:
@@ -85,7 +69,7 @@ Pain:
 Death:
 	SKUL F 6 Bright
 	SKUL G 6 Bright A_Scream
-	SKUL H 6 Bright A_Lights
+	SKUL H 6 Bright
 	SKUL I 6 Bright A_Fall
 	SKUL JK 6
 	Stop
@@ -116,7 +100,4 @@ defaultproperties
 	AttackSound = 'skull/melee';
 	PainSound = 'skull/pain';
 	DeathSound = 'skull/death';
-	bDynamicLight = true;
-	DLightColour = RGB(179, 0, 0);
-	DLightRadius = 126.0;
 }

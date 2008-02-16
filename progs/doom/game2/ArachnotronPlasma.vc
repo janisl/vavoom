@@ -75,7 +75,4 @@ defaultproperties
 	bRandomise = true;
 	SightSound = 'baby/attack';
 	DeathSound = 'baby/shotx';
-	bDynamicLight = true;
-	DLightColour = RGB(215, 187, 67);
-	DLightRadius = 126.0;
 }

@@ -61,8 +61,6 @@ final void A_BFGSpray()
 		emo = Spawn(BFGExtra, AimTarget.Origin +
 			vector(0.0, 0.0, AimTarget.Height / 4.0));
 
-		SendExplosion(DLightColour, DLightRadius, emo.Origin);
-
 		damage = 0;
 		for (j = 0; j < 15; j++)
 			damage += (P_Random() & 7) + 1;
@@ -122,7 +120,4 @@ defaultproperties
 	bNoTeleport = true;
 	bRandomise = true;
 	DeathSound = 'weapons/bfgx';
-	bDynamicLight = true;
-	DLightColour = RGB(95, 207, 87);
-	DLightRadius = 150.0;
 }

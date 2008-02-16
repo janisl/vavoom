@@ -40,7 +40,4 @@ defaultproperties
 	SaveAmount = 200;
 	SavePercent = 1.0 / 2.0;
 	PickupMessage = "$gotmega";
- 	bDynamicLight = true;
-	DLightColour = RGB(0, 0, 179);
-	DLightRadius = 86.0;
 }

@@ -55,7 +55,6 @@ defaultproperties
 	bFloat = false;
 	bTriggerHappy = false;
 	bNoGravKill = false;
-	bDynamicLight = false;
 	bPassMobj = false;
 	ActiveSound = '';
 	AttackSound = '';

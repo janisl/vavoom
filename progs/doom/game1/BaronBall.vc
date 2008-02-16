@@ -58,10 +58,6 @@ defaultproperties
 	bActivatePCross = true;
 	bNoTeleport = true;
 	bRandomise = true;
-	bDynamicLight = true;
 	SightSound = 'baron/attack';
 	DeathSound = 'baron/shotx';
-	bDynamicLight = true;
-	DLightColour = RGB(91, 191, 79);
-	DLightRadius = 134.0;
 }

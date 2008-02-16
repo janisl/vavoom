@@ -1,0 +1,277 @@
+//------------------------------------------------------------------------------
+pointlight DoomImpBall
+{
+	colour 0.85 0.4 0.05
+	radius 134
+}
+
+pointlight DoomImpBall_X1
+{
+	colour 0.85 0.4 0.05
+	radius 250
+}
+
+pointlight DoomImpBall_X2
+{
+	colour 0.85 0.4 0.05
+	radius 170
+}
+
+pointlight DoomImpBall_X3
+{
+	colour 0.85 0.4 0.05
+	radius 90
+}
+
+class DoomImpBall
+{
+	frame BAL1A { light DoomImpBall }
+	frame BAL1B { light DoomImpBall }
+	frame BAL1C { light DoomImpBall_X1 }
+	frame BAL1D { light DoomImpBall_X2 }
+	frame BAL1E { light DoomImpBall_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CacodemonBall
+{
+	colour 0.75 0.3 0
+	radius 126
+}
+
+pointlight CacodemonBall_X1
+{
+	colour 0.75 0.3 0
+	radius 250
+}
+
+pointlight CacodemonBall_X2
+{
+	colour 0.75 0.3 0
+	radius 170
+}
+
+pointlight CacodemonBall_X3
+{
+	colour 0.75 0.3 0
+	radius 90
+}
+
+class CacodemonBall
+{
+	frame BAL2A { light CacodemonBall }
+	frame BAL2B { light CacodemonBall }
+	frame BAL2C { light CacodemonBall_X1 }
+	frame BAL2D { light CacodemonBall_X2 }
+	frame BAL2E { light CacodemonBall_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight LostSoul
+{
+	colour 0.7 0 0
+	radius 126
+	offset 0 0 28
+}
+
+pointlight LostSoul_X1
+{
+	colour 0.7 0 0
+	radius 260
+	offset 0 0 28
+}
+
+pointlight LostSoul_X2
+{
+	colour 0.7 0 0
+	radius 195
+	offset 0 0 28
+}
+
+pointlight LostSoul_X3
+{
+	colour 0.7 0 0
+	radius 130
+	offset 0 0 28
+}
+
+pointlight LostSoul_X4
+{
+	colour 0.7 0 0
+	radius 65
+	offset 0 0 28
+}
+
+class LostSoul
+{
+	frame SKULA { light LostSoul }
+	frame SKULB { light LostSoul }
+	frame SKULC { light LostSoul }
+	frame SKULD { light LostSoul }
+	frame SKULE { light LostSoul }
+	frame SKULF { light LostSoul }
+	frame SKULG { light LostSoul }
+	frame SKULH { light LostSoul_X1 }
+	frame SKULI { light LostSoul_X2 }
+	frame SKULJ { light LostSoul_X3 }
+	frame SKULK { light LostSoul_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BaronBall
+{
+	colour 0.35 0.75 0.3
+	radius 134
+}
+
+pointlight BaronBall_X1
+{
+	colour 0.35 0.75 0.3
+	radius 250
+}
+
+pointlight BaronBall_X2
+{
+	colour 0.35 0.75 0.3
+	radius 170
+}
+
+pointlight BaronBall_X3
+{
+	colour 0.35 0.75 0.3
+	radius 90
+}
+
+class BaronBall
+{
+	frame BAL7A { light BaronBall }
+	frame BAL7B { light BaronBall }
+	frame BAL7C { light BaronBall_X1 }
+	frame BAL7D { light BaronBall_X2 }
+	frame BAL7E { light BaronBall_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArachnotronPlasma
+{
+	colour 0.85 0.75 0.25
+	radius 126
+}
+
+pointlight ArachnotronPlasma_X1
+{
+	colour 0.85 0.75 0.25
+	radius 250
+}
+
+pointlight ArachnotronPlasma_X2
+{
+	colour 0.85 0.75 0.25
+	radius 200
+}
+
+pointlight ArachnotronPlasma_X3
+{
+	colour 0.85 0.75 0.25
+	radius 150
+}
+
+pointlight ArachnotronPlasma_X4
+{
+	colour 0.85 0.75 0.25
+	radius 100
+}
+
+pointlight ArachnotronPlasma_X5
+{
+	colour 0.85 0.75 0.25
+	radius 50
+}
+
+class ArachnotronPlasma
+{
+	frame APLS { light ArachnotronPlasma }
+	frame APBXA { light ArachnotronPlasma_X1 }
+	frame APBXB { light ArachnotronPlasma_X2 }
+	frame APBXC { light ArachnotronPlasma_X3 }
+	frame APBXD { light ArachnotronPlasma_X4 }
+	frame APBXE { light ArachnotronPlasma_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight RevenantTracer
+{
+	colour 0.6 0.2 0.2
+	radius 118
+}
+
+pointlight RevenantTracer_X1
+{
+	colour 0.6 0.2 0.2
+	radius 240
+}
+
+pointlight RevenantTracer_X2
+{
+	colour 0.6 0.2 0.2
+	radius 160
+}
+
+pointlight RevenantTracer_X3
+{
+	colour 0.6 0.2 0.2
+	radius 80
+}
+
+class RevenantTracer
+{
+	frame FATB { light RevenantTracer }
+	frame FBXPA { light RevenantTracer_X1 }
+	frame FBXPB { light RevenantTracer_X2 }
+	frame FBXPC { light RevenantTracer_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight FatShot
+{
+	colour 1 0.1 0.1
+	radius 134
+}
+
+pointlight FatShot_X1
+{
+	colour 1 0.1 0.1
+	radius 250
+}
+
+pointlight FatShot_X2
+{
+	colour 1 0.1 0.1
+	radius 170
+}
+
+pointlight FatShot_X3
+{
+	colour 1 0.1 0.1
+	radius 90
+}
+
+class FatShot
+{
+	frame MANF { light FatShot }
+	frame MISLB { light FatShot_X1 }
+	frame MISLC { light FatShot_X2 }
+	frame MISLD { light FatShot_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArchvileFire
+{
+	colour 0.75 0.6 0.2
+	radius 134
+}
+
+class ArchvileFire
+{
+	frame FIRE { light ArchvileFire }
+}

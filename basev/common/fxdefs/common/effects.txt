@@ -1,0 +1,50 @@
+//------------------------------------------------------------------------------
+pointlight TeleportFog_1
+{
+	colour 0.3 0.6 0.25
+	radius 40
+}
+
+pointlight TeleportFog_2
+{
+	colour 0.3 0.6 0.25
+	radius 80
+}
+
+pointlight TeleportFog_3
+{
+	colour 0.3 0.6 0.25
+	radius 120
+}
+
+pointlight TeleportFog_4
+{
+	colour 0.3 0.6 0.25
+	radius 160
+}
+
+pointlight TeleportFog_5
+{
+	colour 0.3 0.6 0.25
+	radius 200
+}
+
+pointlight TeleportFog_6
+{
+	colour 0.3 0.6 0.25
+	radius 240
+}
+
+class TeleportFog
+{
+	frame TFOGA { light TeleportFog_2 }
+	frame TFOGB { light TeleportFog_3 }
+	frame TFOGC { light TeleportFog_4 }
+	frame TFOGD { light TeleportFog_5 }
+	frame TFOGE { light TeleportFog_6 }
+	frame TFOGF { light TeleportFog_5 }
+	frame TFOGG { light TeleportFog_4 }
+	frame TFOGH { light TeleportFog_3 }
+	frame TFOGI { light TeleportFog_2 }
+	frame TFOGJ { light TeleportFog_1 }
+}

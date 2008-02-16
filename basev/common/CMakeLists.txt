@@ -11,7 +11,12 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		startup.vs
 		terrain.txt
 		textcolo.txt
+		vfxdefs.txt
 		x11r6rgb.txt
+		fxdefs/common/effects.txt
+		fxdefs/doom/monsters.txt
+		fxdefs/doom/pickups.txt
+		fxdefs/doom/weapons.txt
 		graphics/mc_arrow.png
 		sounds/dsempty.lmp
 		sounds/dsquake.flac

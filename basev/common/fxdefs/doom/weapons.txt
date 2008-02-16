@@ -1,0 +1,147 @@
+//------------------------------------------------------------------------------
+pointlight Rocket
+{
+	colour 0.75 0.3 0
+	radius 126
+}
+
+class Rocket
+{
+	frame MISLA { light Rocket }
+}
+
+//------------------------------------------------------------------------------
+pointlight PlasmaBall
+{
+	colour 0.45 0.45 1
+	radius 126
+}
+
+pointlight PlasmaBall_X1
+{
+	colour 0.45 0.45 1
+	radius 160
+}
+
+pointlight PlasmaBall_X2
+{
+	colour 0.45 0.45 1
+	radius 128
+}
+
+pointlight PlasmaBall_X3
+{
+	colour 0.45 0.45 1
+	radius 96
+}
+
+pointlight PlasmaBall_X4
+{
+	colour 0.45 0.45 1
+	radius 64
+}
+
+pointlight PlasmaBall_X5
+{
+	colour 0.45 0.45 1
+	radius 32
+}
+
+class PlasmaBall
+{
+	frame PLSSA { light PlasmaBall }
+	frame PLSSB { light PlasmaBall }
+	frame PLSEA { light PlasmaBall_X1 }
+	frame PLSEB { light PlasmaBall_X2 }
+	frame PLSEC { light PlasmaBall_X3 }
+	frame PLSED { light PlasmaBall_X4 }
+	frame PLSEE { light PlasmaBall_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BFGBall
+{
+	colour 0.35 0.8 0.35
+	radius 150
+}
+
+pointlight BFGBall_X1
+{
+	colour 0.35 0.8 0.35
+	radius 300
+}
+
+pointlight BFGBall_X2
+{
+	colour 0.35 0.8 0.35
+	radius 250
+}
+
+pointlight BFGBall_X3
+{
+	colour 0.35 0.8 0.35
+	radius 200
+}
+
+pointlight BFGBall_X4
+{
+	colour 0.35 0.8 0.35
+	radius 150
+}
+
+pointlight BFGBall_X5
+{
+	colour 0.35 0.8 0.35
+	radius 100
+}
+
+pointlight BFGBall_X6
+{
+	colour 0.35 0.8 0.35
+	radius 50
+}
+
+class BFGBall
+{
+	frame BFS1A { light BFGBall }
+	frame BFS1B { light BFGBall }
+	frame BFE1A { light BFGBall_X1 }
+	frame BFE1B { light BFGBall_X2 }
+	frame BFE1C { light BFGBall_X3 }
+	frame BFE1D { light BFGBall_X4 }
+	frame BFE1E { light BFGBall_X5 }
+	frame BFE1F { light BFGBall_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BFGExtra_X1
+{
+	colour 0.35 0.8 0.35
+	radius 200
+}
+
+pointlight BFGExtra_X2
+{
+	colour 0.35 0.8 0.35
+	radius 150
+}
+
+pointlight BFGExtra_X3
+{
+	colour 0.35 0.8 0.35
+	radius 100
+}
+
+pointlight BFGExtra_X4
+{
+	colour 0.35 0.8 0.35
+	radius 50
+}
+
+class BFGExtra
+{
+	frame BFE2A { light BFGExtra_X1 }
+	frame BFE2B { light BFGExtra_X2 }
+	frame BFE2C { light BFGExtra_X3 }
+	frame BFE2D { light BFGExtra_X4 }
+}

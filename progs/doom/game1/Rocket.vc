@@ -65,10 +65,7 @@ defaultproperties
 	bNoTeleport = true;
 	bRandomise = true;
 	bExplodeParticles = true;
-	bDynamicLight = true;
 	bLeaveTrail = true;
 	SightSound = 'weapons/rocklf';
 	DeathSound = 'weapons/rocklx';
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 126.0;
 }

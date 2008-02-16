@@ -717,7 +717,7 @@ static void ParsePointLight(VScriptParser* sc)
 			sc->ExpectFloat();
 			float b = MID(0, sc->Float, 1);
 			L->Colour = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) |
-				(int)(g * 255) | 0xff000000;
+				(int)(b * 255) | 0xff000000;
 		}
 		else if (sc->Check("radius"))
 		{
@@ -899,6 +899,7 @@ void R_ParseEffectDefs()
 			//	Sprite name must be either 4 or 5 chars.
 			if (SprDef.Sprite.Length() != 4 && SprDef.Sprite.Length() != 5)
 			{
+				GCon->Logf(NAME_Init, "Bad sprite name length");
 				continue;
 			}
 
@@ -912,6 +913,7 @@ void R_ParseEffectDefs()
 			int SprIdx = VClass::FindSprite(SprName, false);
 			if (SprIdx == -1)
 			{
+				GCon->Logf(NAME_Init, "No such sprite %s", SprName);
 				continue;
 			}
 

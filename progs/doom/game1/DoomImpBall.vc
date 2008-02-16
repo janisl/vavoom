@@ -60,7 +60,4 @@ defaultproperties
 	bRandomise = true;
 	SightSound = 'imp/attack';
 	DeathSound = 'imp/shotx';
-	bDynamicLight = true;
-	DLightColour = RGB(215, 95, 11);
-	DLightRadius = 134.0;
 }

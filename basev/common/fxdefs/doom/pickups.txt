@@ -1,0 +1,95 @@
+//------------------------------------------------------------------------------
+pointlight HealthBonus
+{
+	colour 0 0 0.7
+	radius 86
+}
+
+class HealthBonus
+{
+	frame BON1 { light HealthBonus }
+}
+
+//------------------------------------------------------------------------------
+pointlight GreenArmor
+{
+	colour 0 1 0
+	radius 86
+}
+
+class GreenArmor
+{
+	frame ARM1B { light GreenArmor }
+}
+
+//------------------------------------------------------------------------------
+pointlight BlueArmor
+{
+	colour 0 0 1
+	radius 86
+}
+
+class BlueArmor
+{
+	frame ARM2B { light BlueArmor }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArmorBonus
+{
+	colour 0.2 0.4 0.2
+	radius 86
+}
+
+class ArmorBonus
+{
+	frame BON2 { light ArmorBonus }
+}
+
+//------------------------------------------------------------------------------
+pointlight Soulsphere
+{
+	colour 0 0 1
+	radius 86
+}
+
+class Soulsphere
+{
+	frame SOUL { light Soulsphere }
+}
+
+//------------------------------------------------------------------------------
+pointlight BlurSphere
+{
+	colour 0.65 0 0
+	radius 86
+}
+
+class BlurSphere
+{
+	frame PINS { light BlurSphere }
+}
+
+//------------------------------------------------------------------------------
+pointlight InvulnerabilitySphere
+{
+	colour 0 0.7 0
+	radius 86
+}
+
+class InvulnerabilitySphere
+{
+	frame PINV { light InvulnerabilitySphere }
+}
+
+//------------------------------------------------------------------------------
+pointlight Megasphere
+{
+	colour 0.55 0.45 0.35
+	radius 86
+}
+
+class Megasphere
+{
+	frame MEGA { light Megasphere }
+}

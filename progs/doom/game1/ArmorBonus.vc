@@ -40,7 +40,4 @@ defaultproperties
 	MaxSaveAmount = 200;
 	PickupMessage = "$gotarmbonus";
 	bCountItem = true;
-	bDynamicLight = true;
-	DLightColour = RGB(55, 115, 43);
-	DLightRadius = 86.0;
 }

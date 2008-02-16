@@ -55,7 +55,4 @@ defaultproperties
 	bCountItem = true;
 	PickupMessage = "$gotmsphere";
 	PickupSound = 'misc/p_pkup';
-	bDynamicLight = true;
-	DLightColour = RGB(139, 115, 91);
-	DLightRadius = 86.0;
 }

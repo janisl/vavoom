@@ -5624,7 +5624,7 @@ final void DoStateEffects(float DeltaTime)
 			Up * L->Offset.z;
 		dl->radius = L->Radius;
 		dl->colour = L->Colour;
-		dl->die = XLevel.Time + 0.1;
+		dl->die = XLevel.Time + 0.01;
 	}
 }
 
