@@ -295,6 +295,7 @@ private:
 void R_InitData();
 void R_ShutdownData();
 int R_ParseDecorateTranslation(VScriptParser*);
+void R_ParseEffectDefs();
 
 // r_main
 void R_Init(); // Called by startup code.

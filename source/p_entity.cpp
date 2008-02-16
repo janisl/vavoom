@@ -283,6 +283,46 @@ VState* VEntity::FindState(VName StateName)
 
 //==========================================================================
 //
+//	VEntity::GetStateEffects
+//
+//==========================================================================
+
+void VEntity::GetStateEffects(TArray<VLightEffectDef*>& Lights) const
+{
+	guard(VEntity::GetStateEffects);
+	//	Clear arrays.
+	Lights.Clear();
+
+	//	Check for valid state
+	if (!State)
+	{
+		return;
+	}
+
+	//	Find all matching effects.
+	for (int i = 0; i < GetClass()->SpriteEffects.Num(); i++)
+	{
+		VSpriteEffect& SprFx = GetClass()->SpriteEffects[i];
+		if (SprFx.SpriteIndex != State->SpriteIndex)
+		{
+			continue;
+		}
+		if (SprFx.Frame != -1 &&
+			SprFx.Frame != (State->Frame & FF_FRAMEMASK))
+		{
+			continue;
+		}
+
+		if (SprFx.LightDef)
+		{
+			Lights.Append(SprFx.LightDef);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VEntity::StartSound
 //
 //==========================================================================
@@ -399,6 +439,13 @@ IMPLEMENT_FUNCTION(VEntity, FindState)
 	P_GET_NAME(StateName);
 	P_GET_SELF;
 	RET_PTR(Self->FindState(StateName));
+}
+
+IMPLEMENT_FUNCTION(VEntity, GetStateEffects)
+{
+	P_GET_PTR(TArray<VLightEffectDef*>, Lights);
+	P_GET_SELF;
+	Self->GetStateEffects(*Lights);
 }
 
 IMPLEMENT_FUNCTION(VEntity, PlaySound)

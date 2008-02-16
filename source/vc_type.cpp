@@ -27,8 +27,6 @@
 
 #ifdef IN_VCC
 #include "../utils/vcc/vcc.h"
-#include <math.h>
-#include "vector.h"
 #else
 #include "vc_local.h"
 #endif

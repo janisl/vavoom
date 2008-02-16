@@ -111,6 +111,16 @@ enum
 
 const int TRANSL_TYPE_SHIFT = 16;
 
+struct LightEffectDef
+{
+	name				Name;
+	byte				Type;
+	int					Colour;
+	float				Radius;
+	float				Radius2;
+	TVec				Offset;
+};
+
 // Info for drawing: position.
 TVec			Origin;
 
@@ -254,6 +264,7 @@ native final bool SetState(state State);
 native final void SetInitialState(state State);
 native final bool AdvanceState(float deltaTime);
 native final state FindState(name StateName);
+native final void GetStateEffects(out array<LightEffectDef*> Lights);
 
 native final void PlaySound(name SoundName, int Channel, optional float Volume,
 	optional float Atenuation);

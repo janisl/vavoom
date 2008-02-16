@@ -36,6 +36,18 @@
 
 // TYPES -------------------------------------------------------------------
 
+struct VTempSpriteEffectDef
+{
+	VStr							Sprite;
+	VStr							Light;
+};
+
+struct VTempClassEffects
+{
+	VStr							ClassName;
+	TArray<VTempSpriteEffectDef>	SpriteEffects;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -61,6 +73,8 @@ int								NumTranslationTables;
 TArray<VTextureTranslation*>	DecorateTranslations;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static TArray<VLightEffectDef>	GLightEffectDefs;
 
 // CODE --------------------------------------------------------------------
 
@@ -232,6 +246,8 @@ void R_ShutdownData()
 		delete DecorateTranslations[i];
 	}
 	DecorateTranslations.Clear();
+
+	GLightEffectDefs.Clear();
 	unguard;
 }
 
@@ -640,5 +656,275 @@ int R_ParseDecorateTranslation(VScriptParser* sc)
 	DecorateTranslations.Append(Tr);
 	return (TRANSL_Decorate << TRANSL_TYPE_SHIFT) +
 		DecorateTranslations.Num() - 1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	FindLightEffect
+//
+//==========================================================================
+
+static VLightEffectDef* FindLightEffect(const VStr& Name)
+{
+	guard(FindLightEffect);
+	for (int i = 0; i < GLightEffectDefs.Num(); i++)
+	{
+		if (GLightEffectDefs[i].Name == *Name)
+		{
+			return &GLightEffectDefs[i];
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParsePointLight
+//
+//==========================================================================
+
+static void ParsePointLight(VScriptParser* sc)
+{
+	guard(ParsePointLight);
+	//	Get name, find it in the list or add it if it's not there yet.
+	sc->ExpectString();
+	VLightEffectDef* L = FindLightEffect(sc->String);
+	if (!L)
+	{
+		L = &GLightEffectDefs.Alloc();
+	}
+
+	//	Set default values.
+	L->Name = *sc->String.ToLower();
+	L->Type = 0;
+	L->Colour = 0xffffffff;
+	L->Radius = 0.0;
+	L->Radius2 = 0.0;
+	L->Offset = TVec(0, 0, 0);
+
+	//	Parse light def.
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		if (sc->Check("colour"))
+		{
+			sc->ExpectFloat();
+			float r = MID(0, sc->Float, 1);
+			sc->ExpectFloat();
+			float g = MID(0, sc->Float, 1);
+			sc->ExpectFloat();
+			float b = MID(0, sc->Float, 1);
+			L->Colour = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) |
+				(int)(g * 255) | 0xff000000;
+		}
+		else if (sc->Check("radius"))
+		{
+			sc->ExpectFloat();
+			L->Radius = sc->Float;
+		}
+		else if (sc->Check("radius2"))
+		{
+			sc->ExpectFloat();
+			L->Radius2 = sc->Float;
+		}
+		else if (sc->Check("offset"))
+		{
+			sc->ExpectFloat();
+			L->Offset.x = sc->Float;
+			sc->ExpectFloat();
+			L->Offset.y = sc->Float;
+			sc->ExpectFloat();
+			L->Offset.z = sc->Float;
+		}
+		else
+		{
+			sc->Error("Bad point light parameter");
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseClassEffects
+//
+//==========================================================================
+
+static void ParseClassEffects(VScriptParser* sc,
+	TArray<VTempClassEffects>& ClassDefs)
+{
+	guard(ParseClassEffects);
+	//	Get name, find it in the list or add it if it's not there yet.
+	sc->ExpectString();
+	VTempClassEffects* C = NULL;
+	for (int i = 0; i < ClassDefs.Num(); i++)
+	{
+		if (ClassDefs[i].ClassName == sc->String)
+		{
+			C = &ClassDefs[i];
+			break;
+		}
+	}
+	if (!C)
+	{
+		C = &ClassDefs.Alloc();
+	}
+
+	//	Set defaults.
+	C->ClassName = sc->String;
+	C->SpriteEffects.Clear();
+
+	//	Parse
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		if (sc->Check("frame"))
+		{
+			sc->ExpectString();
+			VTempSpriteEffectDef& S = C->SpriteEffects.Alloc();
+			S.Sprite = sc->String;
+			sc->Expect("{");
+			while (!sc->Check("}"))
+			{
+				if (sc->Check("light"))
+				{
+					sc->ExpectString();
+					S.Light = sc->String.ToLower();
+				}
+				else
+				{
+					sc->Error("Bad frame parameter");
+				}
+			}
+		}
+		else
+		{
+			sc->Error("Bad class parameter");
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseEffectDefs
+//
+//==========================================================================
+
+static void ParseEffectDefs(VScriptParser* sc,
+	TArray<VTempClassEffects>& ClassDefs)
+{
+	guard(ParseEffectDefs);
+	while (!sc->AtEnd())
+	{
+		if (sc->Check("#include"))
+		{
+			sc->ExpectString();
+			int Lump = W_CheckNumForFileName(sc->String);
+			//	Check WAD lump only if it's no longer than 8 characters and
+			// has no path separator.
+			if (Lump < 0 && sc->String.Length() <= 8 &&
+				sc->String.IndexOf('/') < 0)
+			{
+				Lump = W_CheckNumForName(VName(*sc->String, VName::AddLower8));
+			}
+			if (Lump < 0)
+			{
+				sc->Error(va("Lump %s not found", *sc->String));
+			}
+			ParseEffectDefs(new VScriptParser(sc->String,
+				W_CreateLumpReaderNum(Lump)), ClassDefs);
+			continue;
+		}
+		else if (sc->Check("pointlight"))
+		{
+			ParsePointLight(sc);
+		}
+		else if (sc->Check("class"))
+		{
+			ParseClassEffects(sc, ClassDefs);
+		}
+		else if (sc->Check("clear"))
+		{
+			ClassDefs.Clear();
+		}
+		else
+		{
+			sc->Error("Unknown command");
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_ParseEffectDefs
+//
+//==========================================================================
+
+void R_ParseEffectDefs()
+{
+	guard(R_ParseEffectDefs);
+	GCon->Log(NAME_Init, "Parsing effect defs");
+
+	TArray<VTempClassEffects>	ClassDefs;
+
+	//	Parse VFXDEFS scripts.
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) == NAME_vfxdefs)
+		{
+			ParseEffectDefs(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)), ClassDefs);
+		}
+	}
+
+	//	Add effects to the classes.
+	for (int i = 0; i < ClassDefs.Num(); i++)
+	{
+		VTempClassEffects& CD = ClassDefs[i];
+		VClass* Cls = VClass::FindClass(*CD.ClassName);
+		if (!Cls)
+		{
+			GCon->Logf(NAME_Init, "No such class %s", *CD.ClassName);
+			continue;
+		}
+
+		for (int j = 0; j < CD.SpriteEffects.Num(); j++)
+		{
+			VTempSpriteEffectDef& SprDef = CD.SpriteEffects[j];
+			//	Sprite name must be either 4 or 5 chars.
+			if (SprDef.Sprite.Length() != 4 && SprDef.Sprite.Length() != 5)
+			{
+				continue;
+			}
+
+			//	Find sprite index.
+			char SprName[8];
+			SprName[0] = VStr::ToLower(SprDef.Sprite[0]);
+			SprName[1] = VStr::ToLower(SprDef.Sprite[1]);
+			SprName[2] = VStr::ToLower(SprDef.Sprite[2]);
+			SprName[3] = VStr::ToLower(SprDef.Sprite[3]);
+			SprName[4] = 0;
+			int SprIdx = VClass::FindSprite(SprName, false);
+			if (SprIdx == -1)
+			{
+				continue;
+			}
+
+			VSpriteEffect& SprFx = Cls->SpriteEffects.Alloc();
+			SprFx.SpriteIndex = SprIdx;
+			SprFx.Frame = SprDef.Sprite.Length() == 4 ? -1 :
+				(VStr::ToUpper(SprDef.Sprite[4]) - 'A');
+			SprFx.LightDef = FindLightEffect(SprDef.Light);
+			if (!SprFx.LightDef)
+			{
+				GCon->Logf("Light \"%s\" not found", *SprDef.Light);
+			}
+		}
+	}
 	unguard;
 }

@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
+#include <math.h>
 
 #include "../../source/common.h"
 
@@ -49,6 +50,7 @@ void Free(void* ptr);
 #include "../../source/names.h"
 #include "../../source/name.h"
 #include "../../source/str.h"
+#include "../../source/vector.h"
 #include "../../source/progdefs.h"
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"

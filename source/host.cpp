@@ -193,6 +193,8 @@ void Host_Init()
 	SV_Init();
 #endif
 
+	R_ParseEffectDefs();
+
 	InitMapInfo();
 
 	GCmdBuf.Exec();

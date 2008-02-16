@@ -283,6 +283,7 @@ REGISTER_NAME(svprogs)
 REGISTER_NAME(decorate)
 REGISTER_NAME(language)
 REGISTER_NAME(titlemap)
+REGISTER_NAME(vfxdefs)
 
 //	Standard font names
 REGISTER_NAME(smallfont)

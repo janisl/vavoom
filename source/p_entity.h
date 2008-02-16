@@ -434,6 +434,7 @@ class VEntity : public VThinker
 	void SetInitialState(VState*);
 	bool AdvanceState(float);
 	VState* FindState(VName);
+	void GetStateEffects(TArray<VLightEffectDef*>&) const;
 
 	bool CheckWater();
 	bool CheckPosition(TVec);
@@ -481,6 +482,7 @@ public:
 	DECLARE_FUNCTION(SetInitialState)
 	DECLARE_FUNCTION(AdvanceState)
 	DECLARE_FUNCTION(FindState)
+	DECLARE_FUNCTION(GetStateEffects)
 	DECLARE_FUNCTION(PlaySound)
 	DECLARE_FUNCTION(StopSound)
 	DECLARE_FUNCTION(AreSoundsEquivalent)

@@ -247,12 +247,20 @@ VClass *VClass::FindClass(const char *AName)
 //
 //==========================================================================
 
-int VClass::FindSprite(VName Name)
+int VClass::FindSprite(VName Name, bool Append)
 {
 	guard(VClass::FindSprite);
 	for (int i = 0; i < GSpriteNames.Num(); i++)
+	{
 		if (GSpriteNames[i] == Name)
+		{
 			return i;
+		}
+	}
+	if (!Append)
+	{
+		return -1;
+	}
 	return GSpriteNames.Append(Name);
 	unguard;
 }
@@ -421,6 +429,7 @@ void VClass::Shutdown()
 #endif
 	StatesLookup.Clear();
 	RepInfos.Clear();
+	SpriteEffects.Clear();
 	unguard;
 }
 

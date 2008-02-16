@@ -92,6 +92,35 @@ struct VRepInfo
 
 //==========================================================================
 //
+//	VLightEffectDef
+//
+//==========================================================================
+
+struct VLightEffectDef
+{
+	VName				Name;
+	vuint8				Type;
+	vint32				Colour;
+	float				Radius;
+	float				Radius2;
+	TVec				Offset;
+};
+
+//==========================================================================
+//
+//	VSpriteEffect
+//
+//==========================================================================
+
+struct VSpriteEffect
+{
+	vint32				SpriteIndex;
+	vint8				Frame;
+	VLightEffectDef*	LightDef;
+};
+
+//==========================================================================
+//
 //	VClass
 //
 //==========================================================================
@@ -145,6 +174,8 @@ public:
 	VClass*					Replacement;
 	VClass*					Replacee;
 
+	TArray<VSpriteEffect>	SpriteEffects;
+
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
 	static TArray<VName>		GSpriteNames;
@@ -157,7 +188,7 @@ public:
 
 	// Systemwide functions.
 	static VClass *FindClass(const char *);
-	static int FindSprite(VName);
+	static int FindSprite(VName, bool = true);
 #ifndef IN_VCC
 	static void GetSpriteNames(TArray<FReplacedString>&);
 	static void ReplaceSpriteNames(TArray<FReplacedString>&);
