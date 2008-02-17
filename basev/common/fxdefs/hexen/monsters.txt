@@ -1,0 +1,881 @@
+//------------------------------------------------------------------------------
+pointlight FireDemon
+{
+	colour 1 0.7 0
+	radius 126
+	offset 0 0 34
+}
+
+pointlight FireDemon_X1
+{
+	colour 0.25 0.75 1
+	radius 90
+	offset 0 0 34
+}
+
+pointlight FireDemon_X2
+{
+	colour 0.25 0.75 1
+	radius 60
+	offset 0 0 34
+}
+
+pointlight FireDemon_X3
+{
+	colour 0.25 0.75 1
+	radius 30
+	offset 0 0 34
+}
+
+class FireDemon
+{
+	frame FDMNA { light FireDemon }
+	frame FDMNB { light FireDemon }
+	frame FDMNC { light FireDemon }
+	frame FDMND { light FireDemon }
+	frame FDMNE { light FireDemon }
+	frame FDMNF { light FireDemon }
+	frame FDMNG { light FireDemon }
+	frame FDMNH { light FireDemon }
+	frame FDMNI { light FireDemon }
+	frame FDMNJ { light FireDemon }
+	frame FDMNK { light FireDemon }
+	frame FDMNL { light FireDemon_X1 }
+	frame FDMNM { light FireDemon_X2 }
+	frame FDMNN { light FireDemon_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight FireDemonMissile
+{
+	colour 1 0.75 0.1
+	radius 118
+}
+
+pointlight FireDemonMissile_X1
+{
+	colour 1 0.75 0.1
+	radius 200
+}
+
+pointlight FireDemonMissile_X2
+{
+	colour 1 0.75 0.1
+	radius 150
+}
+
+pointlight FireDemonMissile_X3
+{
+	colour 1 0.75 0.1
+	radius 100
+}
+
+pointlight FireDemonMissile_X4
+{
+	colour 1 0.75 0.1
+	radius 50
+}
+
+class FireDemonMissile
+{
+	frame FDMBA { light FireDemonMissile }
+	frame FDMBB { light FireDemonMissile_X1 }
+	frame FDMBC { light FireDemonMissile_X2 }
+	frame FDMBD { light FireDemonMissile_X3 }
+	frame FDMBE { light FireDemonMissile_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CentaurFX
+{
+	colour 0.15 0.45 0.9
+	radius 134
+}
+
+pointlight CentaurFX_X1
+{
+	colour 0.15 0.45 0.9
+	radius 250
+}
+
+pointlight CentaurFX_X2
+{
+	colour 0.15 0.45 0.9
+	radius 200
+}
+
+pointlight CentaurFX_X3
+{
+	colour 0.15 0.45 0.9
+	radius 150
+}
+
+pointlight CentaurFX_X4
+{
+	colour 0.15 0.45 0.9
+	radius 100
+}
+
+pointlight CentaurFX_X5
+{
+	colour 0.15 0.45 0.9
+	radius 50
+}
+
+class CentaurFX
+{
+	frame CTFXA { light CentaurFX }
+	frame CTFXB { light CentaurFX_X1 }
+	frame CTFXC { light CentaurFX_X2 }
+	frame CTFXD { light CentaurFX_X3 }
+	frame CTFXE { light CentaurFX_X4 }
+	frame CTFXF { light CentaurFX_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Demon1FX1
+{
+	colour 0.9 0.55 0
+	radius 126
+}
+
+pointlight Demon1FX1_X1
+{
+	colour 0.9 0.55 0
+	radius 250
+}
+
+pointlight Demon1FX1_X2
+{
+	colour 0.9 0.55 0
+	radius 200
+}
+
+pointlight Demon1FX1_X3
+{
+	colour 0.9 0.55 0
+	radius 150
+}
+
+pointlight Demon1FX1_X4
+{
+	colour 0.9 0.55 0
+	radius 100
+}
+
+pointlight Demon1FX1_X5
+{
+	colour 0.9 0.55 0
+	radius 50
+}
+
+class Demon1FX1
+{
+	frame DMFXA { light Demon1FX1 }
+	frame DMFXB { light Demon1FX1 }
+	frame DMFXC { light Demon1FX1 }
+	frame DMFXD { light Demon1FX1_X1 }
+	frame DMFXE { light Demon1FX1_X2 }
+	frame DMFXF { light Demon1FX1_X3 }
+	frame DMFXG { light Demon1FX1_X4 }
+	frame DMFXH { light Demon1FX1_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Demon2FX1
+{
+	colour 0 1 0
+	radius 126
+}
+
+pointlight Demon2FX1_X1
+{
+	colour 0 1 0
+	radius 250
+}
+
+pointlight Demon2FX1_X2
+{
+	colour 0 1 0
+	radius 210
+}
+
+pointlight Demon2FX1_X3
+{
+	colour 0 1 0
+	radius 170
+}
+
+pointlight Demon2FX1_X4
+{
+	colour 0 1 0
+	radius 130
+}
+
+pointlight Demon2FX1_X5
+{
+	colour 0 1 0
+	radius 90
+}
+
+pointlight Demon2FX1_X6
+{
+	colour 0 1 0
+	radius 50
+}
+
+class Demon2FX1
+{
+	frame D2FXA { light Demon2FX1 }
+	frame D2FXB { light Demon2FX1 }
+	frame D2FXC { light Demon2FX1 }
+	frame D2FXD { light Demon2FX1 }
+	frame D2FXE { light Demon2FX1 }
+	frame D2FXF { light Demon2FX1 }
+	frame D2FXG { light Demon2FX1_X1 }
+	frame D2FXH { light Demon2FX1_X2 }
+	frame D2FXI { light Demon2FX1_X3 }
+	frame D2FXJ { light Demon2FX1_X4 }
+	frame D2FXK { light Demon2FX1_X5 }
+	frame D2FXL { light Demon2FX1_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SerpentFX
+{
+	colour 0.15 1 0.15
+	radius 126
+}
+
+pointlight SerpentFX_X1
+{
+	colour 0.15 1 0.15
+	radius 250
+}
+
+pointlight SerpentFX_X2
+{
+	colour 0.15 1 0.15
+	radius 210
+}
+
+pointlight SerpentFX_X3
+{
+	colour 0.15 1 0.15
+	radius 170
+}
+
+pointlight SerpentFX_X4
+{
+	colour 0.15 1 0.15
+	radius 130
+}
+
+pointlight SerpentFX_X5
+{
+	colour 0.15 1 0.15
+	radius 90
+}
+
+pointlight SerpentFX_X6
+{
+	colour 0.15 1 0.15
+	radius 50
+}
+
+class SerpentFX
+{
+	frame SSFXA { light SerpentFX }
+	frame SSFXB { light SerpentFX }
+	frame SSFXC { light SerpentFX_X1 }
+	frame SSFXD { light SerpentFX_X2 }
+	frame SSFXE { light SerpentFX_X3 }
+	frame SSFXF { light SerpentFX_X4 }
+	frame SSFXG { light SerpentFX_X5 }
+	frame SSFXH { light SerpentFX_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight IceGuyFX
+{
+	colour 0.3 0.3 0.75
+	radius 126
+}
+
+pointlight IceGuyFX_X1
+{
+	colour 0.3 0.3 0.75
+	radius 200
+}
+
+pointlight IceGuyFX_X2
+{
+	colour 0.3 0.3 0.75
+	radius 160
+}
+
+pointlight IceGuyFX_X3
+{
+	colour 0.3 0.3 0.75
+	radius 120
+}
+
+pointlight IceGuyFX_X4
+{
+	colour 0.3 0.3 0.75
+	radius 80
+}
+
+pointlight IceGuyFX_X5
+{
+	colour 0.3 0.3 0.75
+	radius 40
+}
+
+class IceGuyFX
+{
+	frame ICPRA { light IceGuyFX }
+	frame ICPRB { light IceGuyFX }
+	frame ICPRC { light IceGuyFX }
+	frame ICPRD { light IceGuyFX_X1 }
+	frame ICPRE { light IceGuyFX_X2 }
+	frame ICPRF { light IceGuyFX_X3 }
+	frame ICPRG { light IceGuyFX_X4 }
+	frame ICPRH { light IceGuyFX_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight IceGuyFX2
+{
+	colour 0.3 0.3 0.75
+	radius 90
+}
+
+class IceGuyFX2
+{
+	frame ICPR { light IceGuyFX2 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BishopFX
+{
+	colour 0 0.7 0
+	radius 126
+}
+
+pointlight BishopFX_X1
+{
+	colour 0 0.7 0
+	radius 250
+}
+
+pointlight BishopFX_X2
+{
+	colour 0 0.7 0
+	radius 210
+}
+
+pointlight BishopFX_X3
+{
+	colour 0 0.7 0
+	radius 170
+}
+
+pointlight BishopFX_X4
+{
+	colour 0 0.7 0
+	radius 130
+}
+
+pointlight BishopFX_X5
+{
+	colour 0 0.7 0
+	radius 90
+}
+
+pointlight BishopFX_X6
+{
+	colour 0 0.7 0
+	radius 50
+}
+
+class BishopFX
+{
+	frame BPFXA { light BishopFX }
+	frame BPFXB { light BishopFX }
+	frame BPFXC { light BishopFX_X1 }
+	frame BPFXD { light BishopFX_X2 }
+	frame BPFXE { light BishopFX_X3 }
+	frame BPFXF { light BishopFX_X4 }
+	frame BPFXG { light BishopFX_X5 }
+	frame BPFXH { light BishopFX_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight WraithFX1
+{
+	colour 1 0 0
+	radius 126
+}
+
+pointlight WraithFX1_X1
+{
+	colour 1 0 0
+	radius 250
+}
+
+pointlight WraithFX1_X2
+{
+	colour 1 0 0
+	radius 210
+}
+
+pointlight WraithFX1_X3
+{
+	colour 1 0 0
+	radius 170
+}
+
+pointlight WraithFX1_X4
+{
+	colour 1 0 0
+	radius 130
+}
+
+pointlight WraithFX1_X5
+{
+	colour 1 0 0
+	radius 90
+}
+
+pointlight WraithFX1_X6
+{
+	colour 1 0 0
+	radius 50
+}
+
+class WraithFX1
+{
+	frame WRBLA { light WraithFX1 }
+	frame WRBLB { light WraithFX1 }
+	frame WRBLC { light WraithFX1 }
+	frame WRBLD { light WraithFX1_X1 }
+	frame WRBLE { light WraithFX1_X2 }
+	frame WRBLF { light WraithFX1_X3 }
+	frame WRBLG { light WraithFX1_X4 }
+	frame WRBLH { light WraithFX1_X5 }
+	frame WRBLI { light WraithFX1_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight DragonFireball
+{
+	colour 1 0.5 0
+	radius 126
+}
+
+pointlight DragonFireball_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight DragonFireball_X2
+{
+	colour 1 0.5 0
+	radius 210
+}
+
+pointlight DragonFireball_X3
+{
+	colour 1 0.5 0
+	radius 170
+}
+
+pointlight DragonFireball_X4
+{
+	colour 1 0.5 0
+	radius 130
+}
+
+pointlight DragonFireball_X5
+{
+	colour 1 0.5 0
+	radius 90
+}
+
+pointlight DragonFireball_X6
+{
+	colour 1 0.5 0
+	radius 50
+}
+
+class DragonFireball
+{
+	frame DRFXA { light DragonFireball }
+	frame DRFXB { light DragonFireball }
+	frame DRFXC { light DragonFireball }
+	frame DRFXD { light DragonFireball }
+	frame DRFXE { light DragonFireball }
+	frame DRFXF { light DragonFireball }
+	frame DRFXG { light DragonFireball_X1 }
+	frame DRFXH { light DragonFireball_X2 }
+	frame DRFXI { light DragonFireball_X3 }
+	frame DRFXJ { light DragonFireball_X4 }
+	frame DRFXK { light DragonFireball_X5 }
+	frame DRFXL { light DragonFireball_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight DragonExplosion_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight DragonExplosion_X2
+{
+	colour 1 0.5 0
+	radius 210
+}
+
+pointlight DragonExplosion_X3
+{
+	colour 1 0.5 0
+	radius 170
+}
+
+pointlight DragonExplosion_X4
+{
+	colour 1 0.5 0
+	radius 130
+}
+
+pointlight DragonExplosion_X5
+{
+	colour 1 0.5 0
+	radius 90
+}
+
+pointlight DragonExplosion_X6
+{
+	colour 1 0.5 0
+	radius 50
+}
+
+class DragonExplosion
+{
+	frame CFCFQ { light DragonExplosion_X5 }
+	frame CFCFR { light DragonExplosion_X4 }
+	frame CFCFS { light DragonExplosion_X3 }
+	frame CFCFT { light DragonExplosion_X2 }
+	frame CFCFU { light DragonExplosion_X1 }
+	frame CFCFV { light DragonExplosion_X2 }
+	frame CFCFW { light DragonExplosion_X3 }
+	frame CFCFX { light DragonExplosion_X4 }
+	frame CFCFY { light DragonExplosion_X5 }
+	frame CFCFZ { light DragonExplosion_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SorcBall
+{
+	colour 1 0.25 0
+	radius 126
+}
+
+pointlight SorcBall_X1
+{
+	colour 1 0.25 0
+	radius 250
+}
+
+pointlight SorcBall_X2
+{
+	colour 1 0.25 0
+	radius 200
+}
+
+pointlight SorcBall_X3
+{
+	colour 1 0.25 0
+	radius 150
+}
+
+pointlight SorcBall_X4
+{
+	colour 1 0.25 0
+	radius 100
+}
+
+pointlight SorcBall_X5
+{
+	colour 1 0.25 0
+	radius 50
+}
+
+class SorcBall1
+{
+	frame SBMP { light SorcBall }
+	frame SBS4D { light SorcBall_X1 }
+	frame SBS4E { light SorcBall_X2 }
+	frame SBS4F { light SorcBall_X3 }
+	frame SBS4G { light SorcBall_X4 }
+	frame SBS4H { light SorcBall_X5 }
+}
+
+class SorcBall2
+{
+	frame SBMB { light SorcBall }
+	frame SBS3D { light SorcBall_X1 }
+	frame SBS3E { light SorcBall_X2 }
+	frame SBS3F { light SorcBall_X3 }
+	frame SBS3G { light SorcBall_X4 }
+	frame SBS3H { light SorcBall_X5 }
+}
+
+class SorcBall3
+{
+	frame SBMG { light SorcBall }
+	frame SBS3D { light SorcBall_X1 }
+	frame SBS3E { light SorcBall_X2 }
+	frame SBS3F { light SorcBall_X3 }
+	frame SBS3G { light SorcBall_X4 }
+	frame SBS3H { light SorcBall_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SorcFX1
+{
+	colour 1 0.5 0
+	radius 118
+}
+
+pointlight SorcFX1_X1
+{
+	colour 1 0.5 0
+	radius 60
+}
+
+class SorcFX1
+{
+	frame SBS1 { light SorcFX1 }
+	frame FHFX { light SorcFX1_X1 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SorcFX2
+{
+	colour 0.25 0.4 1
+	radius 118
+}
+
+class SorcFX2
+{
+	frame SBS2 { light SorcFX2 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SorcFX3
+{
+	colour 0 0.7 0
+	radius 200
+}
+
+pointlight SorcFX3_X1
+{
+	colour 0 0.7 0
+	radius 170
+}
+
+pointlight SorcFX3_X2
+{
+	colour 0 0.7 0
+	radius 140
+}
+
+pointlight SorcFX3_X3
+{
+	colour 0 0.7 0
+	radius 110
+}
+
+pointlight SorcFX3_X4
+{
+	colour 0 0.7 0
+	radius 80
+}
+
+pointlight SorcFX3_X5
+{
+	colour 0 0.7 0
+	radius 50
+}
+
+pointlight SorcFX3_X6
+{
+	colour 0 0.7 0
+	radius 20
+}
+
+class SorcFX3
+{
+	frame SBS3 { light SorcFX3 }
+	frame BISHP { light SorcFX3_X1 }
+	frame BISHO { light SorcFX3_X2 }
+	frame BISHN { light SorcFX3_X3 }
+	frame BISHM { light SorcFX3_X4 }
+	frame BISHL { light SorcFX3_X5 }
+	frame BISHK { light SorcFX3_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SorcFX4
+{
+	colour 0.6 0 0.75
+	radius 118
+}
+
+pointlight SorcFX4_X1
+{
+	colour 0.6 0 0.75
+	radius 250
+}
+
+pointlight SorcFX4_X2
+{
+	colour 0.6 0 0.75
+	radius 200
+}
+
+pointlight SorcFX4_X3
+{
+	colour 0.6 0 0.75
+	radius 150
+}
+
+pointlight SorcFX4_X4
+{
+	colour 0.6 0 0.75
+	radius 100
+}
+
+pointlight SorcFX4_X5
+{
+	colour 0.6 0 0.75
+	radius 50
+}
+
+class SorcFX4
+{
+	frame SBS4A { light SorcFX4 }
+	frame SBS4B { light SorcFX4 }
+	frame SBS4C { light SorcFX4 }
+	frame SBS4D { light SorcFX4_X1 }
+	frame SBS4E { light SorcFX4_X2 }
+	frame SBS4F { light SorcFX4_X3 }
+	frame SBS4G { light SorcFX4_X4 }
+	frame SBS4H { light SorcFX4_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Heresiarch_X1
+{
+	colour 0.6 0 0.75
+	radius 250
+}
+
+pointlight Heresiarch_X2
+{
+	colour 0.6 0 0.75
+	radius 210
+}
+
+pointlight Heresiarch_X3
+{
+	colour 0.6 0 0.75
+	radius 170
+}
+
+pointlight Heresiarch_X4
+{
+	colour 0.6 0 0.75
+	radius 130
+}
+
+pointlight Heresiarch_X5
+{
+	colour 0.6 0 0.75
+	radius 90
+}
+
+pointlight Heresiarch_X6
+{
+	colour 0.6 0 0.75
+	radius 50
+}
+
+class Heresiarch
+{
+	frame SORCJ { light Heresiarch_X1 }
+	frame SORCK { light Heresiarch_X2 }
+	frame SORCL { light Heresiarch_X3 }
+	frame SORCM { light Heresiarch_X4 }
+	frame SORCN { light Heresiarch_X5 }
+	frame SORCO { light Heresiarch_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight KoraxSpirit
+{
+	colour 0.85 0.85 0.85
+	radius 126
+}
+
+pointlight KoraxSpirit_X1
+{
+	colour 0.85 0.85 0.85
+	radius 120
+}
+
+pointlight KoraxSpirit_X2
+{
+	colour 0.85 0.85 0.85
+	radius 100
+}
+
+pointlight KoraxSpirit_X3
+{
+	colour 0.85 0.85 0.85
+	radius 80
+}
+
+pointlight KoraxSpirit_X4
+{
+	colour 0.85 0.85 0.85
+	radius 60
+}
+
+pointlight KoraxSpirit_X5
+{
+	colour 0.85 0.85 0.85
+	radius 40
+}
+
+pointlight KoraxSpirit_X6
+{
+	colour 0.85 0.85 0.85
+	radius 20
+}
+
+class KoraxSpirit
+{
+	frame SPIRA { light KoraxSpirit }
+	frame SPIRB { light KoraxSpirit }
+	frame SPIRC { light KoraxSpirit_X1 }
+	frame SPIRD { light KoraxSpirit_X2 }
+	frame SPIRE { light KoraxSpirit_X3 }
+	frame SPIRF { light KoraxSpirit_X4 }
+	frame SPIRG { light KoraxSpirit_X5 }
+	frame SPIRH { light KoraxSpirit_X6 }
+}

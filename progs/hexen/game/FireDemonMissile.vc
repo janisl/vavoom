@@ -46,7 +46,4 @@ defaultproperties
 	bFloorClip = true;
 	DamageType = 'Fire';
 	DeathSound = 'FireDemonMissileHit';
-	bDynamicLight = true;
-	DLightColour = RGB(255, 195, 26);
-	DLightRadius = 118.0;
 }

@@ -41,7 +41,4 @@ defaultproperties
 	IconName = 'artisped';
 	bFloatBob = true;
 	bPickupFlash = true;
- 	bDynamicLight = true;
-	DLightColour = RGB(74, 77, 196);
-	DLightRadius = 86.0;
 }

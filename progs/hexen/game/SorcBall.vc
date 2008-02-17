@@ -329,10 +329,6 @@ defaultproperties
 	bActivatePCross = false;
 	bNoWallBounceSnd = true;
 	bFullVolDeath = true;
-	bDynamicLight = false;
-	bDynamicLight = true;
-	DLightColour = RGB(255, 63, 0);
-	DLightRadius = 126.0;
 	SightSound = 'SorcererBallBounce';
 	DeathSound = 'SorcererBigBallExplode';
 }

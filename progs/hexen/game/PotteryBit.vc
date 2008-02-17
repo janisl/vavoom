@@ -109,5 +109,4 @@ defaultproperties
 	bNoBlockmap = false;
 	bDropOff = false;
 	bNoGravity = false;
-	bDynamicLight = false;
 }

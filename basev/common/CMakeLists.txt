@@ -21,6 +21,14 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		fxdefs/heretic/monsters.txt
 		fxdefs/heretic/pickups.txt
 		fxdefs/heretic/weapons.txt
+		fxdefs/hexen/decorations.txt
+		fxdefs/hexen/effects.txt
+		fxdefs/hexen/monsters.txt
+		fxdefs/hexen/pickups.txt
+		fxdefs/hexen/projectiles.txt
+		fxdefs/hexen/weapons.txt
+		fxdefs/raven/minotaur.txt
+		fxdefs/raven/pickups.txt
 		graphics/mc_arrow.png
 		sounds/dsempty.lmp
 		sounds/dsquake.flac

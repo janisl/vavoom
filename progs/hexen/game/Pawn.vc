@@ -65,7 +65,6 @@ final void A_FreezeDeath()
 	bTelestomp = true;
 	bSlide = true;
 	bPassMobj = true;
-	bDynamicLight = false;
 	Height *= 4.0;
 	PlaySound('FreezeDeath', CHAN_VOICE);
 	Translation = 0;	//no translation

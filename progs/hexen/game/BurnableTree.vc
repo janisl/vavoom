@@ -49,10 +49,6 @@ final void A_TreeDeath()
 		}
 
 		SetState(MeleeState);
-		bDynamicLight = true;
-		DLightColour = RGB(255, 127, 0);
-		DLightRadius = 86.0;
-		SendExplosion(DLightColour, DLightRadius, Origin);
 		return;
 	}
 	else
@@ -61,7 +57,7 @@ final void A_TreeDeath()
 		bShootable = true;
 		bDropOff = false;
 		bCorpse = false;
-		Health = 35;		
+		Health = 35;
 	}
 }
 

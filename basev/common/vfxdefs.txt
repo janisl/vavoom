@@ -4,10 +4,17 @@
 #include "fxdefs/doom/pickups.txt"
 #include "fxdefs/doom/weapons.txt"
 
+#include "fxdefs/raven/minotaur.txt"
+#include "fxdefs/raven/pickups.txt"
+
 #include "fxdefs/heretic/effects.txt"
 #include "fxdefs/heretic/monsters.txt"
 #include "fxdefs/heretic/pickups.txt"
 #include "fxdefs/heretic/weapons.txt"
 
-//	c b 154049
-//  h g 97619 b 62154
+#include "fxdefs/hexen/decorations.txt"
+#include "fxdefs/hexen/effects.txt"
+#include "fxdefs/hexen/monsters.txt"
+#include "fxdefs/hexen/pickups.txt"
+#include "fxdefs/hexen/projectiles.txt"
+#include "fxdefs/hexen/weapons.txt"

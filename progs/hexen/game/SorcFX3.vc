@@ -84,7 +84,4 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	SightSound = 'SorcererBishopSpawn';
-	bDynamicLight = true;
-	DLightColour = RGB(8, 175, 8);
-	DLightRadius = 200.0;
 }

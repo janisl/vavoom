@@ -31,7 +31,4 @@ defaultproperties
 	PieceClass = HexenDefs::PCLASS_FIGHTER;
 	PickupMessage = "$txt_quietus_piece";
 	WeaponType = FWeapQuietus;
-	bDynamicLight = true;
-	DLightColour = RGB(51, 104, 43);
-	DLightRadius = 86.0;	
 }

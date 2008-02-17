@@ -31,7 +31,4 @@ defaultproperties
 	PieceClass = HexenDefs::PCLASS_MAGE;
 	PickupMessage = "$txt_bloodscourge_piece";
 	WeaponType = MWeapBloodscourge;
-	bDynamicLight = true;
-	DLightColour = RGB(255, 0, 0);
-	DLightRadius = 86.0;	
 }

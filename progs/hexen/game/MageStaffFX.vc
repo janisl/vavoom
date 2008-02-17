@@ -99,7 +99,4 @@ defaultproperties
 	bRip = true;
 	DamageType = 'Fire';
 	DeathSound = 'MageStaffExplode';
-	bDynamicLight = true;
-	DLightColour = RGB(255, 63, 0);
-	DLightRadius = 134.0;
 }

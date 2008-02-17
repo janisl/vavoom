@@ -79,7 +79,4 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathSound = 'SerpentFXHit';
-	bDynamicLight = true;
-	DLightColour = RGB(42, 252, 42);
-	DLightRadius = 126.0;
 }

@@ -1,0 +1,137 @@
+//------------------------------------------------------------------------------
+pointlight Mana1
+{
+	colour 0.3 0.3 0.75
+	radius 100
+}
+
+class Mana1
+{
+	frame MAN1 { light Mana1 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Mana2
+{
+	colour 0.2 0.4 0.15
+	radius 100
+}
+
+class Mana2
+{
+	frame MAN2 { light Mana2 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Mana3
+{
+	colour 1 0 0
+	radius 100
+}
+
+class Mana3
+{
+	frame MAN3 { light Mana3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArtiSpeedBoots
+{
+	colour 0.3 0.3 0.75
+	radius 86
+}
+
+class ArtiSpeedBoots
+{
+	frame SPED { light ArtiSpeedBoots }
+}
+
+//------------------------------------------------------------------------------
+pointlight ArtiBoostArmor
+{
+	colour 0.6 0 0.7
+	radius 86
+}
+
+class ArtiBoostArmor
+{
+	frame BRAC { light ArtiBoostArmor }
+}
+
+//------------------------------------------------------------------------------
+pointlight MWeapLightning
+{
+	colour 0.3 0.3 0.75
+	radius 86
+}
+
+class MWeapLightning
+{
+	frame WMLG { light MWeapLightning }
+}
+
+//------------------------------------------------------------------------------
+pointlight FighterWeaponPiece
+{
+	colour 0.2 0.4 0.2
+	radius 86
+}
+
+class FWeaponPiece1
+{
+	frame WFR1 { light FighterWeaponPiece }
+}
+
+class FWeaponPiece2
+{
+	frame WFR2 { light FighterWeaponPiece }
+}
+
+class FWeaponPiece3
+{
+	frame WFR3 { light FighterWeaponPiece }
+}
+
+//------------------------------------------------------------------------------
+pointlight ClericWeaponPiece
+{
+	colour 0.3 0.3 0.75
+	radius 86
+}
+
+class CWeaponPiece1
+{
+	frame WCH1 { light ClericWeaponPiece }
+}
+
+class CWeaponPiece2
+{
+	frame WCH2 { light ClericWeaponPiece }
+}
+
+class CWeaponPiece3
+{
+	frame WCH3 { light ClericWeaponPiece }
+}
+
+//------------------------------------------------------------------------------
+pointlight MageWeaponPiece
+{
+	colour 1 0 0
+	radius 86
+}
+
+class MWeaponPiece1
+{
+	frame WMS1 { light MageWeaponPiece }
+}
+
+class MWeaponPiece2
+{
+	frame WMS2 { light MageWeaponPiece }
+}
+
+class MWeaponPiece3
+{
+	frame WMS3 { light MageWeaponPiece }
+}

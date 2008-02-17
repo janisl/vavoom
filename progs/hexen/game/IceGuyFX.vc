@@ -80,7 +80,4 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathSound = 'IceGuyMissileExplode';
-	bDynamicLight = true;
-	DLightColour = RGB(74, 77, 196);
-	DLightRadius = 126.0;
 }

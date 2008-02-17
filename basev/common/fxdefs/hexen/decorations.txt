@@ -1,0 +1,54 @@
+//------------------------------------------------------------------------------
+pointlight BurnableTree_X1
+{
+	colour 1 0.5 0
+	radius 200
+}
+
+pointlight BurnableTree_X2
+{
+	colour 1 0.5 0
+	radius 160
+}
+
+pointlight BurnableTree_X3
+{
+	colour 1 0.5 0
+	radius 120
+}
+
+pointlight BurnableTree_X4
+{
+	colour 1 0.5 0
+	radius 80
+}
+
+pointlight BurnableTree_X5
+{
+	colour 1 0.5 0
+	radius 40
+}
+
+class ZShrub1
+{
+	frame SHB1B { light BurnableTree_X3 }
+	frame SHB1C { light BurnableTree_X4 }
+	frame SHB1D { light BurnableTree_X5 }
+}
+
+class ZShrub2
+{
+	frame SHB2B { light BurnableTree_X2 }
+	frame SHB2C { light BurnableTree_X3 }
+	frame SHB2D { light BurnableTree_X4 }
+	frame SHB2E { light BurnableTree_X5 }
+}
+
+class ZXmasTree
+{
+	frame XMASB { light BurnableTree_X1 }
+	frame XMASC { light BurnableTree_X2 }
+	frame XMASD { light BurnableTree_X3 }
+	frame XMASE { light BurnableTree_X4 }
+	frame XMASF { light BurnableTree_X5 }
+}

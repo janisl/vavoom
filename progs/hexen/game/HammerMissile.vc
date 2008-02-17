@@ -74,7 +74,4 @@ defaultproperties
 	MissileDamage = 10;
 	DamageType = 'Fire';
 	DeathSound = 'FighterHammerExplode';
-	bDynamicLight = true;
-	DLightColour = RGB(244, 14, 3);
-	DLightRadius = 126.0;
 }

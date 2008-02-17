@@ -95,8 +95,5 @@ defaultproperties
 	MissileDamage = 8;
 	RenderStyle = STYLE_Add;
 	bExtremeDeath = true;
-	bDynamicLight = true;
 	DeathSound = 'FighterSwordExplode';
-	DLightColour = RGB(68, 159, 58);
-	DLightRadius = 90.0;
 }

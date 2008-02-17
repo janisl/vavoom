@@ -45,7 +45,4 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
 	DeathSound = 'DemonMissileExplode';
-	bDynamicLight = true;
-	DLightColour = RGB(3, 234, 3);
-	DLightRadius = 126.0;
 }

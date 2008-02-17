@@ -28,8 +28,7 @@ class BlastEffect : Effect;
 states
 {
 Spawn:
-	RADE A 4 A_Lights
-	RADE BCDEFGHI 4
+	RADE ABCDEFGHI 4
 	Stop
 }
 
@@ -41,7 +40,4 @@ defaultproperties
 	bColideWithThings = false;
 	bNoTeleport = true;
 	bFallingFriction = true;
-	bDynamicLight = true;
-	DLightColour = RGB(109, 107, 130);
-	DLightRadius = 118.0;
 }

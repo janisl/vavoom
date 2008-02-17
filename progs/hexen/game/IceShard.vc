@@ -46,7 +46,4 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathSound = 'MageShardsExplode';
-	bDynamicLight = true;
-	DLightColour = RGB(74, 77, 196);
-	DLightRadius = 66.0;
 }

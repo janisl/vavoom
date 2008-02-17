@@ -62,5 +62,4 @@ defaultproperties
 {
 	bNoSector = true;
 	bNoBlockmap = true;
-	bDynamicLight = false;
 }

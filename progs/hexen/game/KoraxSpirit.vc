@@ -196,7 +196,4 @@ defaultproperties
 	bColideWithThings = false;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	bDynamicLight = true;
-	DLightColour = RGB(221, 221, 221);
-	DLightRadius = 126.0;
 }

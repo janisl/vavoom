@@ -45,7 +45,4 @@ defaultproperties
 	MissileDamage = 4;
 	RenderStyle = STYLE_Add;
 	DeathSound = 'CentaurMissileExplode';
-	bDynamicLight = true;
-	DLightColour = RGB(41, 119, 233);
-	DLightRadius = 134.0;
 }

@@ -31,7 +31,4 @@ defaultproperties
 	PieceClass = HexenDefs::PCLASS_CLERIC;
 	PickupMessage = "$txt_wraithverge_piece";
 	WeaponType = CWeapWraithverge;
-	bDynamicLight = true;
-	DLightColour = RGB(74, 77, 196);
-	DLightRadius = 86.0;	
 }

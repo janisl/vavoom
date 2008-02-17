@@ -44,8 +44,5 @@ defaultproperties
 	BackpackAmount = 15;
 	BackpackMaxAmount = 200;
 	bFloatBob = true;
-	bDynamicLight = true;
-	DLightColour = RGB(51, 104, 43);
-	DLightRadius = 100.0;
 	PickupMessage = "$txt_mana_2";
 }

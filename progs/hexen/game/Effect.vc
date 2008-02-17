@@ -26,20 +26,6 @@
 class Effect : Actor
 	abstract;
 
-//==========================================================================
-//
-//  A_Lights
-//
-//  Just spawn some dynamic light
-//
-//==========================================================================
-
-final void A_Lights()
-{
-	SendExplosion(DLightColour, DLightRadius, Origin);
-	bDynamicLight = false;
-}
-
 defaultproperties
 {
 	bNoBlockmap = true;

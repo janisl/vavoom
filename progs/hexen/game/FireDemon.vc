@@ -247,8 +247,7 @@ final void A_FiredSplotch()
 states
 {
 Spawn:
-	FDMN X 4
-	FDMN X 1 Bright { bDynamicLight = true; }
+	FDMN X 5
 	FDMN EFG 10 Bright A_Look
 	Goto Spawn+2
 See:
@@ -306,6 +305,4 @@ defaultproperties
 	ActiveSound = 'FireDemonActive';
 	PainSound = 'FireDemonPain';
 	DeathSound = 'FireDemonDeath';
-	DLightColour = RGB(255, 178, 6);
-	DLightRadius = 126.0;
 }

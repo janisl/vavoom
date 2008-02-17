@@ -54,7 +54,4 @@ defaultproperties
 	DamageType = 'Ice';
 	bActivateImpact = false;
 	bActivatePCross = false;
-	bDynamicLight = true;
-	DLightColour = RGB(74, 77, 196);
-	DLightRadius = 90.0;
 }

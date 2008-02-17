@@ -1,0 +1,716 @@
+//------------------------------------------------------------------------------
+pointlight AxePuffGlow_X1
+{
+	colour 0.25 0.75 1
+	radius 200
+}
+
+pointlight AxePuffGlow_X2
+{
+	colour 0.25 0.75 1
+	radius 170
+}
+
+pointlight AxePuffGlow_X3
+{
+	colour 0.25 0.75 1
+	radius 140
+}
+
+pointlight AxePuffGlow_X4
+{
+	colour 0.25 0.75 1
+	radius 110
+}
+
+pointlight AxePuffGlow_X5
+{
+	colour 0.25 0.75 1
+	radius 80
+}
+
+pointlight AxePuffGlow_X6
+{
+	colour 0.25 0.75 1
+	radius 50
+}
+
+pointlight AxePuffGlow_X7
+{
+	colour 0.25 0.75 1
+	radius 20
+}
+
+class AxePuffGlow
+{
+	frame FAXER { light AxePuffGlow_X1 }
+	frame FAXES { light AxePuffGlow_X2 }
+	frame FAXET { light AxePuffGlow_X3 }
+	frame FAXEU { light AxePuffGlow_X4 }
+	frame FAXEV { light AxePuffGlow_X5 }
+	frame FAXEW { light AxePuffGlow_X6 }
+	frame FAXEX { light AxePuffGlow_X7 }
+}
+
+//------------------------------------------------------------------------------
+pointlight HammerMissile
+{
+	colour 0.95 0 0
+	radius 126
+}
+
+pointlight HammerMissile_X1
+{
+	colour 0.95 0 0
+	radius 250
+}
+
+pointlight HammerMissile_X2
+{
+	colour 0.95 0 0
+	radius 225
+}
+
+pointlight HammerMissile_X3
+{
+	colour 0.95 0 0
+	radius 200
+}
+
+pointlight HammerMissile_X4
+{
+	colour 0.95 0 0
+	radius 175
+}
+
+pointlight HammerMissile_X5
+{
+	colour 0.95 0 0
+	radius 150
+}
+
+pointlight HammerMissile_X6
+{
+	colour 0.95 0 0
+	radius 125
+}
+
+pointlight HammerMissile_X7
+{
+	colour 0.95 0 0
+	radius 100
+}
+
+pointlight HammerMissile_X8
+{
+	colour 0.95 0 0
+	radius 75
+}
+
+pointlight HammerMissile_X9
+{
+	colour 0.95 0 0
+	radius 50
+}
+
+pointlight HammerMissile_X10
+{
+	colour 0.95 0 0
+	radius 25
+}
+
+class HammerMissile
+{
+	frame FHFXA { light HammerMissile }
+	frame FHFXB { light HammerMissile }
+	frame FHFXC { light HammerMissile }
+	frame FHFXD { light HammerMissile }
+	frame FHFXE { light HammerMissile }
+	frame FHFXF { light HammerMissile }
+	frame FHFXG { light HammerMissile }
+	frame FHFXH { light HammerMissile }
+	frame FHFXI { light HammerMissile_X1 }
+	frame FHFXJ { light HammerMissile_X2 }
+	frame FHFXK { light HammerMissile_X3 }
+	frame FHFXL { light HammerMissile_X4 }
+	frame FHFXM { light HammerMissile_X5 }
+	frame FHFXN { light HammerMissile_X6 }
+	frame FHFXO { light HammerMissile_X7 }
+	frame FHFXP { light HammerMissile_X8 }
+	frame FHFXQ { light HammerMissile_X9 }
+	frame FHFXR { light HammerMissile_X10 }
+}
+
+//------------------------------------------------------------------------------
+pointlight FSwordMissile
+{
+	colour 0.25 0.6 0.2
+	radius 90
+}
+
+pointlight FSwordMissile_X1
+{
+	colour 0.25 0.6 0.2
+	radius 200
+}
+
+pointlight FSwordMissile_X2
+{
+	colour 0.25 0.6 0.2
+	radius 180
+}
+
+pointlight FSwordMissile_X3
+{
+	colour 0.25 0.6 0.2
+	radius 160
+}
+
+pointlight FSwordMissile_X4
+{
+	colour 0.25 0.6 0.2
+	radius 140
+}
+
+pointlight FSwordMissile_X5
+{
+	colour 0.25 0.6 0.2
+	radius 120
+}
+
+pointlight FSwordMissile_X6
+{
+	colour 0.25 0.6 0.2
+	radius 100
+}
+
+pointlight FSwordMissile_X7
+{
+	colour 0.25 0.6 0.2
+	radius 80
+}
+
+pointlight FSwordMissile_X8
+{
+	colour 0.25 0.6 0.2
+	radius 60
+}
+
+pointlight FSwordMissile_X9
+{
+	colour 0.25 0.6 0.2
+	radius 40
+}
+
+pointlight FSwordMissile_X10
+{
+	colour 0.25 0.6 0.2
+	radius 20
+}
+
+class FSwordMissile
+{
+	frame FSFXA { light FSwordMissile }
+	frame FSFXB { light FSwordMissile }
+	frame FSFXC { light FSwordMissile }
+	frame FSFXD { light FSwordMissile_X1 }
+	frame FSFXE { light FSwordMissile_X2 }
+	frame FSFXF { light FSwordMissile_X3 }
+	frame FSFXG { light FSwordMissile_X4 }
+	frame FSFXH { light FSwordMissile_X5 }
+	frame FSFXI { light FSwordMissile_X6 }
+	frame FSFXJ { light FSwordMissile_X7 }
+	frame FSFXK { light FSwordMissile_X8 }
+	frame FSFXL { light FSwordMissile_X9 }
+	frame FSFXM { light FSwordMissile_X10 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CStaffMissile
+{
+	colour 0 0.9 0
+	radius 118
+}
+
+pointlight CStaffMissile_X1
+{
+	colour 0 0.9 0
+	radius 250
+}
+
+pointlight CStaffMissile_X2
+{
+	colour 0 0.9 0
+	radius 190
+}
+
+pointlight CStaffMissile_X3
+{
+	colour 0 0.9 0
+	radius 130
+}
+
+pointlight CStaffMissile_X4
+{
+	colour 0 0.9 0
+	radius 70
+}
+
+class CStaffMissile
+{
+	frame CSSFD { light CStaffMissile }
+	frame CSSFE { light CStaffMissile }
+	frame CSSFF { light CStaffMissile_X1 }
+	frame CSSFG { light CStaffMissile_X2 }
+	frame CSSFH { light CStaffMissile_X3 }
+	frame CSSFI { light CStaffMissile_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CFlameMissile
+{
+	colour 1 0.6 0
+	radius 134
+}
+
+pointlight CFlameMissile_X1
+{
+	colour 1 0.6 0
+	radius 250
+}
+
+pointlight CFlameMissile_X2
+{
+	colour 1 0.6 0
+	radius 225
+}
+
+pointlight CFlameMissile_X3
+{
+	colour 1 0.6 0
+	radius 200
+}
+
+pointlight CFlameMissile_X4
+{
+	colour 1 0.6 0
+	radius 175
+}
+
+pointlight CFlameMissile_X5
+{
+	colour 1 0.6 0
+	radius 150
+}
+
+pointlight CFlameMissile_X6
+{
+	colour 1 0.6 0
+	radius 125
+}
+
+pointlight CFlameMissile_X7
+{
+	colour 1 0.6 0
+	radius 100
+}
+
+pointlight CFlameMissile_X8
+{
+	colour 1 0.6 0
+	radius 75
+}
+
+pointlight CFlameMissile_X9
+{
+	colour 1 0.6 0
+	radius 50
+}
+
+pointlight CFlameMissile_X10
+{
+	colour 1 0.6 0
+	radius 25
+}
+
+class CFlameMissile
+{
+	frame CFFXA { light CFlameMissile }
+	frame CFFXB { light CFlameMissile_X1 }
+	frame CFFXC { light CFlameMissile_X2 }
+	frame CFFXD { light CFlameMissile_X3 }
+	frame CFFXE { light CFlameMissile_X4 }
+	frame CFFXF { light CFlameMissile_X5 }
+	frame CFFXG { light CFlameMissile_X6 }
+	frame CFFXH { light CFlameMissile_X7 }
+	frame CFFXI { light CFlameMissile_X8 }
+	frame CFFXJ { light CFlameMissile_X9 }
+	frame CFFXK { light CFlameMissile_X10 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CircleFlame
+{
+	colour 1 0.6 0
+	radius 100
+}
+
+pointlight CircleFlame_X1
+{
+	colour 1 0.6 0
+	radius 80
+}
+
+pointlight CircleFlame_X2
+{
+	colour 1 0.6 0
+	radius 60
+}
+
+pointlight CircleFlame_X3
+{
+	colour 1 0.6 0
+	radius 40
+}
+
+pointlight CircleFlame_X4
+{
+	colour 1 0.6 0
+	radius 20
+}
+
+class CircleFlame
+{
+	frame CFCFA { light CircleFlame }
+	frame CFCFB { light CircleFlame }
+	frame CFCFC { light CircleFlame }
+	frame CFCFD { light CircleFlame }
+	frame CFCFE { light CircleFlame }
+	frame CFCFF { light CircleFlame }
+	frame CFCFG { light CircleFlame }
+	frame CFCFH { light CircleFlame }
+	frame CFCFI { light CircleFlame_X1 }
+	frame CFCFJ { light CircleFlame_X1 }
+	frame CFCFK { light CircleFlame_X2 }
+	frame CFCFL { light CircleFlame_X2 }
+	frame CFCFM { light CircleFlame_X3 }
+	frame CFCFN { light CircleFlame_X3 }
+	frame CFCFO { light CircleFlame_X4 }
+	frame CFCFP { light CircleFlame_X4 }
+	frame CFCFQ { light CircleFlame }
+	frame CFCFR { light CircleFlame }
+	frame CFCFS { light CircleFlame_X1 }
+	frame CFCFT { light CircleFlame_X1 }
+	frame CFCFU { light CircleFlame_X2 }
+	frame CFCFV { light CircleFlame_X2 }
+	frame CFCFW { light CircleFlame_X3 }
+	frame CFCFX { light CircleFlame_X3 }
+	frame CFCFY { light CircleFlame_X4 }
+	frame CFCFZ { light CircleFlame_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight HolyMissile
+{
+	colour 0.85 0.85 0.85
+	radius 126
+}
+
+class HolyMissile
+{
+	frame SPIRP { light HolyMissile }
+}
+
+//------------------------------------------------------------------------------
+pointlight HolySpirit
+{
+	colour 1 1 1
+	radius 126
+}
+
+pointlight HolySpirit_X1
+{
+	colour 1 1 1
+	radius 120
+}
+
+pointlight HolySpirit_X2
+{
+	colour 1 1 1
+	radius 100
+}
+
+pointlight HolySpirit_X3
+{
+	colour 1 1 1
+	radius 80
+}
+
+pointlight HolySpirit_X4
+{
+	colour 1 1 1
+	radius 60
+}
+
+pointlight HolySpirit_X5
+{
+	colour 1 1 1
+	radius 40
+}
+
+pointlight HolySpirit_X6
+{
+	colour 1 1 1
+	radius 20
+}
+
+class HolySpirit
+{
+	frame SPIRA { light HolySpirit }
+	frame SPIRB { light HolySpirit }
+	frame SPIRD { light HolySpirit_X1 }
+	frame SPIRE { light HolySpirit_X2 }
+	frame SPIRF { light HolySpirit_X3 }
+	frame SPIRG { light HolySpirit_X4 }
+	frame SPIRH { light HolySpirit_X5 }
+	frame SPIRI { light HolySpirit_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight MageWandMissile
+{
+	colour 0.35 0.35 0.8
+	radius 118
+}
+
+pointlight MageWandMissile_X1
+{
+	colour 0.35 0.35 0.8
+	radius 250
+}
+
+pointlight MageWandMissile_X2
+{
+	colour 0.35 0.35 0.8
+	radius 200
+}
+
+pointlight MageWandMissile_X3
+{
+	colour 0.35 0.35 0.8
+	radius 150
+}
+
+pointlight MageWandMissile_X4
+{
+	colour 0.35 0.35 0.8
+	radius 100
+}
+
+pointlight MageWandMissile_X5
+{
+	colour 0.35 0.35 0.8
+	radius 50
+}
+
+class MageWandMissile
+{
+	frame MWNDC { light MageWandMissile }
+	frame MWNDD { light MageWandMissile }
+	frame MWNDE { light MageWandMissile_X1 }
+	frame MWNDF { light MageWandMissile_X2 }
+	frame MWNDG { light MageWandMissile_X3 }
+	frame MWNDH { light MageWandMissile_X4 }
+	frame MWNDI { light MageWandMissile_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight FrostMissile
+{
+	colour 0.3 0.3 0.75
+	radius 90
+}
+
+pointlight FrostMissile_X1
+{
+	colour 0.3 0.3 0.75
+	radius 200
+}
+
+pointlight FrostMissile_X2
+{
+	colour 0.3 0.3 0.75
+	radius 160
+}
+
+pointlight FrostMissile_X3
+{
+	colour 0.3 0.3 0.75
+	radius 120
+}
+
+pointlight FrostMissile_X4
+{
+	colour 0.3 0.3 0.75
+	radius 80
+}
+
+pointlight FrostMissile_X5
+{
+	colour 0.3 0.3 0.75
+	radius 40
+}
+
+class FrostMissile
+{
+	frame SHRD { light FrostMissile }
+	frame SHEXA { light FrostMissile_X1 }
+	frame SHEXB { light FrostMissile_X2 }
+	frame SHEXC { light FrostMissile_X3 }
+	frame SHEXD { light FrostMissile_X4 }
+	frame SHEXE { light FrostMissile_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight LightningFloor
+{
+	colour 0.2 0.6 1
+	radius 126
+}
+
+pointlight LightningFloor_X1
+{
+	colour 0.2 0.6 1
+	radius 120
+}
+
+pointlight LightningFloor_X2
+{
+	colour 0.2 0.6 1
+	radius 100
+}
+
+pointlight LightningFloor_X3
+{
+	colour 0.2 0.6 1
+	radius 80
+}
+
+pointlight LightningFloor_X4
+{
+	colour 0.2 0.6 1
+	radius 60
+}
+
+pointlight LightningFloor_X5
+{
+	colour 0.2 0.6 1
+	radius 40
+}
+
+pointlight LightningFloor_X6
+{
+	colour 0.2 0.6 1
+	radius 20
+}
+
+class LightningFloor
+{
+	frame MLFX { light LightningFloor }
+	frame MLF2F { light LightningFloor_X1 }
+	frame MLF2G { light LightningFloor_X1 }
+	frame MLF2H { light LightningFloor_X2 }
+	frame MLF2I { light LightningFloor_X2 }
+	frame MLF2J { light LightningFloor_X3 }
+	frame MLF2K { light LightningFloor_X3 }
+	frame MLF2L { light LightningFloor_X4 }
+	frame MLF2M { light LightningFloor_X4 }
+	frame ALCO { light LightningFloor_X5 }
+	frame MLF2N { light LightningFloor_X5 }
+	frame MLF2O { light LightningFloor_X6 }
+	frame MLF2P { light LightningFloor_X6 }
+}
+
+class LightningCeiling
+{
+	frame MLFX { light LightningFloor }
+	frame MLF2A { light LightningFloor_X1 }
+	frame MLF2B { light LightningFloor_X1 }
+	frame MLF2C { light LightningFloor_X2 }
+	frame MLF2D { light LightningFloor_X2 }
+	frame MLF2E { light LightningFloor_X3 }
+	frame MLF2K { light LightningFloor_X3 }
+	frame MLF2L { light LightningFloor_X4 }
+	frame MLF2M { light LightningFloor_X4 }
+	frame ALCO { light LightningFloor_X5 }
+	frame MLF2N { light LightningFloor_X5 }
+	frame MLF2O { light LightningFloor_X6 }
+	frame MLF2P { light LightningFloor_X6 }
+}
+
+class LightningZap
+{
+	frame MLFXI { light LightningFloor }
+	frame MLFXJ { light LightningFloor }
+	frame MLFXK { light LightningFloor }
+	frame MLFXL { light LightningFloor }
+	frame MLFXM { light LightningFloor }
+	frame MLFXN { light LightningFloor_X1 }
+	frame MLFXO { light LightningFloor_X1 }
+	frame MLFXP { light LightningFloor_X2 }
+	frame MLFXQ { light LightningFloor_X2 }
+	frame MLFXR { light LightningFloor_X3 }
+	frame MLFXS { light LightningFloor_X4 }
+	frame MLFXT { light LightningFloor_X5 }
+	frame MLFXU { light LightningFloor_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight MageStaffFX2
+{
+	colour 1 0.25 0
+	radius 134
+}
+
+pointlight MageStaffFX2_X1
+{
+	colour 1 0.25 0
+	radius 250
+}
+
+pointlight MageStaffFX2_X2
+{
+	colour 1 0.25 0
+	radius 200
+}
+
+pointlight MageStaffFX2_X3
+{
+	colour 1 0.25 0
+	radius 150
+}
+
+pointlight MageStaffFX2_X4
+{
+	colour 1 0.25 0
+	radius 100
+}
+
+pointlight MageStaffFX2_X5
+{
+	colour 1 0.25 0
+	radius 50
+}
+
+class MageStaffFX2
+{
+	frame MSP2A { light MageStaffFX2 }
+	frame MSP2B { light MageStaffFX2 }
+	frame MSP2C { light MageStaffFX2 }
+	frame MSP2D { light MageStaffFX2 }
+	frame MSP2E { light MageStaffFX2_X1 }
+	frame MSP2F { light MageStaffFX2_X2 }
+	frame MSP2G { light MageStaffFX2_X3 }
+	frame MSP2H { light MageStaffFX2_X4 }
+	frame MSP2I { light MageStaffFX2_X5 }
+}

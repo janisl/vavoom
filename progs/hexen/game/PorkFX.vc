@@ -165,7 +165,4 @@ defaultproperties
 	MissileDamage = 1;
 	bActivateImpact = false;
 	bActivatePCross = false;
-	bDynamicLight = true;
-	DLightColour = RGB(149, 112, 1);
-	DLightRadius = 126.0;
 }

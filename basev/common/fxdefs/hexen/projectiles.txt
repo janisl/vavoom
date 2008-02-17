@@ -1,0 +1,100 @@
+//------------------------------------------------------------------------------
+pointlight FireBall
+{
+	colour 1 0.5 0
+	radius 126
+}
+
+pointlight FireBall_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight FireBall_X2
+{
+	colour 1 0.5 0
+	radius 210
+}
+
+pointlight FireBall_X3
+{
+	colour 1 0.5 0
+	radius 170
+}
+
+pointlight FireBall_X4
+{
+	colour 1 0.5 0
+	radius 130
+}
+
+pointlight FireBall_X5
+{
+	colour 1 0.5 0
+	radius 90
+}
+
+pointlight FireBall_X6
+{
+	colour 1 0.5 0
+	radius 50
+}
+
+class FireBall
+{
+	frame FBL1 { light FireBall }
+	frame XPL1A { light FireBall_X1 }
+	frame XPL1B { light FireBall_X2 }
+	frame XPL1C { light FireBall_X3 }
+	frame XPL1D { light FireBall_X4 }
+	frame XPL1E { light FireBall_X5 }
+	frame XPL1F { light FireBall_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight IceShard
+{
+	colour 0.3 0.3 0.75
+	radius 66
+}
+
+pointlight IceShard_X1
+{
+	colour 0.3 0.3 0.75
+	radius 150
+}
+
+pointlight IceShard_X2
+{
+	colour 0.3 0.3 0.75
+	radius 120
+}
+
+pointlight IceShard_X3
+{
+	colour 0.3 0.3 0.75
+	radius 90
+}
+
+pointlight IceShard_X4
+{
+	colour 0.3 0.3 0.75
+	radius 60
+}
+
+pointlight IceShard_X5
+{
+	colour 0.3 0.3 0.75
+	radius 30
+}
+
+class IceShard
+{
+	frame SHRD { light IceShard }
+	frame SHEXA { light IceShard_X1 }
+	frame SHEXB { light IceShard_X2 }
+	frame SHEXC { light IceShard_X3 }
+	frame SHEXD { light IceShard_X4 }
+	frame SHEXE { light IceShard_X5 }
+}

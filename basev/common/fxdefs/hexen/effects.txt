@@ -1,0 +1,151 @@
+//------------------------------------------------------------------------------
+pointlight BridgeBall
+{
+	colour 0.35 0.35 0.8
+	radius 86
+}
+
+class BridgeBall
+{
+	frame TLGL { light BridgeBall }
+}
+
+//------------------------------------------------------------------------------
+pointlight TelOtherFX1
+{
+	colour 0.95 0 0
+	radius 86
+}
+
+class TelOtherFX1
+{
+	frame TRNG { light TelOtherFX1 }
+}
+
+class TelOtherFX2
+{
+	frame TRNG { light TelOtherFX1 }
+}
+
+class TelOtherFX3
+{
+	frame TRNG { light TelOtherFX1 }
+}
+
+class TelOtherFX4
+{
+	frame TRNG { light TelOtherFX1 }
+}
+
+class TelOtherFX5
+{
+	frame TRNG { light TelOtherFX1 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BlastEffect_X1
+{
+	colour 0.4 0.4 0.5
+	radius 250
+}
+
+pointlight BlastEffect_X2
+{
+	colour 0.4 0.4 0.5
+	radius 220
+}
+
+pointlight BlastEffect_X3
+{
+	colour 0.4 0.4 0.5
+	radius 190
+}
+
+pointlight BlastEffect_X4
+{
+	colour 0.4 0.4 0.5
+	radius 160
+}
+
+pointlight BlastEffect_X5
+{
+	colour 0.4 0.4 0.5
+	radius 130
+}
+
+pointlight BlastEffect_X6
+{
+	colour 0.4 0.4 0.5
+	radius 100
+}
+
+pointlight BlastEffect_X7
+{
+	colour 0.4 0.4 0.5
+	radius 70
+}
+
+pointlight BlastEffect_X8
+{
+	colour 0.4 0.4 0.5
+	radius 40
+}
+
+pointlight BlastEffect_X9
+{
+	colour 0.4 0.4 0.5
+	radius 10
+}
+
+class BlastEffect
+{
+	frame RADEA { light BlastEffect_X1 }
+	frame RADEB { light BlastEffect_X2 }
+	frame RADEC { light BlastEffect_X3 }
+	frame RADED { light BlastEffect_X4 }
+	frame RADEE { light BlastEffect_X5 }
+	frame RADEF { light BlastEffect_X6 }
+	frame RADEG { light BlastEffect_X7 }
+	frame RADEH { light BlastEffect_X8 }
+	frame RADEI { light BlastEffect_X9 }
+}
+
+//------------------------------------------------------------------------------
+pointlight PorkFX
+{
+	colour 0.6 0.5 0
+	radius 126
+}
+
+pointlight PorkFX_X1
+{
+	colour 0.6 0.5 0
+	radius 250
+}
+
+pointlight PorkFX_X2
+{
+	colour 0.6 0.5 0
+	radius 190
+}
+
+pointlight PorkFX_X3
+{
+	colour 0.6 0.5 0
+	radius 130
+}
+
+pointlight PorkFX_X4
+{
+	colour 0.6 0.5 0
+	radius 70
+}
+
+class PorkFX
+{
+	frame PRKM { light PorkFX }
+	frame FHFXI { light PorkFX_X1 }
+	frame FHFXJ { light PorkFX_X2 }
+	frame FHFXK { light PorkFX_X3 }
+	frame FHFXL { light PorkFX_X4 }
+}

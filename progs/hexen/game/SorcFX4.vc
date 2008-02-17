@@ -75,7 +75,4 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathSound = 'SorcererBallExplode';
-	bDynamicLight = true;
-	DLightColour = RGB(149, 16, 189);
-	DLightRadius = 118.0;
 }
