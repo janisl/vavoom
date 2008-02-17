@@ -1,0 +1,405 @@
+//------------------------------------------------------------------------------
+pointlight ElectricBolt
+{
+	colour 0.5 0.5 0.65
+	radius 86
+}
+
+pointlight ElectricBolt_X1
+{
+	colour 0.5 0.5 0.65
+	radius 200
+}
+
+pointlight ElectricBolt_X2
+{
+	colour 0.5 0.5 0.65
+	radius 170
+}
+
+pointlight ElectricBolt_X3
+{
+	colour 0.5 0.5 0.65
+	radius 140
+}
+
+pointlight ElectricBolt_X4
+{
+	colour 0.5 0.5 0.65
+	radius 110
+}
+
+pointlight ElectricBolt_X5
+{
+	colour 0.5 0.5 0.65
+	radius 80
+}
+
+pointlight ElectricBolt_X6
+{
+	colour 0.5 0.5 0.65
+	radius 50
+}
+
+class ElectricBolt
+{
+	frame AROW { light ElectricBolt }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+//------------------------------------------------------------------------------
+pointlight MiniMissile
+{
+	colour 0.85 0.7 0
+	radius 118
+}
+
+pointlight MiniMissile_X1
+{
+	colour 0.85 0.7 0
+	radius 280
+}
+
+pointlight MiniMissile_X2
+{
+	colour 0.85 0.7 0
+	radius 240
+}
+
+pointlight MiniMissile_X3
+{
+	colour 0.85 0.7 0
+	radius 200
+}
+
+pointlight MiniMissile_X4
+{
+	colour 0.85 0.7 0
+	radius 160
+}
+
+pointlight MiniMissile_X5
+{
+	colour 0.85 0.7 0
+	radius 120
+}
+
+pointlight MiniMissile_X6
+{
+	colour 0.85 0.7 0
+	radius 80
+}
+
+pointlight MiniMissile_X7
+{
+	colour 0.85 0.7 0
+	radius 40
+}
+
+class MiniMissile
+{
+	frame MICR { light MiniMissile }
+	frame SMISA { light MiniMissile_X1 }
+	frame SMISB { light MiniMissile_X2 }
+	frame SMISC { light MiniMissile_X3 }
+	frame SMISD { light MiniMissile_X4 }
+	frame SMISE { light MiniMissile_X5 }
+	frame SMISF { light MiniMissile_X6 }
+	frame SMISG { light MiniMissile_X7 }
+}
+
+class BishopMissile
+{
+	frame MISS { light MiniMissile }
+	frame SMISA { light MiniMissile_X1 }
+	frame SMISB { light MiniMissile_X2 }
+	frame SMISC { light MiniMissile_X3 }
+	frame SMISD { light MiniMissile_X4 }
+	frame SMISE { light MiniMissile_X5 }
+	frame SMISF { light MiniMissile_X6 }
+	frame SMISG { light MiniMissile_X7 }
+}
+
+//------------------------------------------------------------------------------
+pointlight FlameMissile
+{
+	colour 0.8 0.5 0
+	radius 100
+}
+
+pointlight FlameMissile_X1
+{
+	colour 0.8 0.5 0
+	radius 120
+}
+
+pointlight FlameMissile_X2
+{
+	colour 0.8 0.5 0
+	radius 100
+}
+
+pointlight FlameMissile_X3
+{
+	colour 0.8 0.5 0
+	radius 80
+}
+
+pointlight FlameMissile_X4
+{
+	colour 0.8 0.5 0
+	radius 60
+}
+
+pointlight FlameMissile_X5
+{
+	colour 0.8 0.5 0
+	radius 40
+}
+
+pointlight FlameMissile_X6
+{
+	colour 0.8 0.5 0
+	radius 20
+}
+
+class FlameMissile
+{
+	frame FRBLA { light FlameMissile }
+	frame FRBLB { light FlameMissile }
+	frame FRBLC { light FlameMissile }
+	frame FRBLD { light FlameMissile_X1 }
+	frame FRBLE { light FlameMissile_X2 }
+	frame FRBLF { light FlameMissile_X3 }
+	frame FRBLG { light FlameMissile_X4 }
+	frame FRBLH { light FlameMissile_X5 }
+	frame FRBLI { light FlameMissile_X6 }
+}
+
+class FastFlameMissile
+{
+	frame FRBLA { light FlameMissile }
+	frame FRBLB { light FlameMissile }
+	frame FRBLC { light FlameMissile }
+	frame FRBLD { light FlameMissile_X1 }
+	frame FRBLE { light FlameMissile_X2 }
+	frame FRBLF { light FlameMissile_X3 }
+	frame FRBLG { light FlameMissile_X4 }
+	frame FRBLH { light FlameMissile_X5 }
+	frame FRBLI { light FlameMissile_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight MaulerTorpedo
+{
+	colour 0.3 0.55 0.2
+	radius 118
+}
+
+pointlight MaulerTorpedo_X1
+{
+	colour 0.3 0.55 0.2
+	radius 250
+}
+
+pointlight MaulerTorpedo_X2
+{
+	colour 0.3 0.55 0.2
+	radius 200
+}
+
+pointlight MaulerTorpedo_X3
+{
+	colour 0.3 0.55 0.2
+	radius 150
+}
+
+pointlight MaulerTorpedo_X4
+{
+	colour 0.3 0.55 0.2
+	radius 100
+}
+
+pointlight MaulerTorpedo_X5
+{
+	colour 0.3 0.55 0.2
+	radius 50
+}
+
+class MaulerTorpedo
+{
+	frame TORP { light MaulerTorpedo }
+	frame THITA { light MaulerTorpedo_X1 }
+	frame THITB { light MaulerTorpedo_X2 }
+	frame THITC { light MaulerTorpedo_X3 }
+	frame THITD { light MaulerTorpedo_X4 }
+	frame THITE { light MaulerTorpedo_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight MaulerTorpedoWave
+{
+	colour 0.25 0.5 0.15
+	radius 126
+}
+
+class MaulerTorpedoWave
+{
+	frame TWAVA { light MaulerTorpedoWave }
+	frame TWAVB { light MaulerTorpedoWave }
+	frame TWAVC { light MaulerTorpedoWave }
+}
+
+//------------------------------------------------------------------------------
+pointlight SpectralLightningBall1
+{
+	colour 0.6 0.6 0.8
+	radius 100
+}
+
+class SpectralLightningBall1
+{
+	frame ZOT3 { light SpectralLightningBall1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+class SpectralLightningBall2
+{
+	frame ZOT3 { light SpectralLightningBall1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+class SpectralLightningV1
+{
+	frame ZOT1 { light SpectralLightningBall1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+class SpectralLightningV2
+{
+	frame ZOT1 { light SpectralLightningBall1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SpectralLightningBigBall1
+{
+	colour 0.6 0.6 0.8
+	radius 134
+}
+
+class SpectralLightningBigBall1
+{
+	frame ZAP7 { light SpectralLightningBigBall1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+class SpectralLightningBigBall2
+{
+	frame ZAP7 { light SpectralLightningBigBall1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SpectralLightningBigV1
+{
+	colour 0.6 0.6 0.8
+	radius 126
+}
+
+class SpectralLightningBigV1
+{
+	frame ZOT2 { light SpectralLightningBigV1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+class SpectralLightningBigV2
+{
+	frame ZOT2 { light SpectralLightningBigV1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SpectralLightningH1
+{
+	colour 0.6 0.6 0.8
+	radius 118
+}
+
+class SpectralLightningH1
+{
+	frame ZAP6 { light SpectralLightningH1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+class SpectralLightningH2
+{
+	frame ZAP6 { light SpectralLightningH1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}
+
+class SpectralLightningH3
+{
+	frame ZAP6 { light SpectralLightningH1 }
+	frame ZAP1A { light ElectricBolt_X6 }
+	frame ZAP1B { light ElectricBolt_X5 }
+	frame ZAP1C { light ElectricBolt_X4 }
+	frame ZAP1D { light ElectricBolt_X3 }
+	frame ZAP1E { light ElectricBolt_X2 }
+	frame ZAP1F { light ElectricBolt_X1 }
+}

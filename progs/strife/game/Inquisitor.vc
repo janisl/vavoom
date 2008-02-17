@@ -77,7 +77,6 @@ final void A_InquisitorChase()
 			if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
 			{
 				SetState(FindState('Jump'));
-				bDynamicLight = true;
 			}
 		}
 		else
@@ -92,7 +91,6 @@ final void A_InquisitorChase()
 		if (TestMobjZ())
 		{
 			SetState(FindState('Jump'));
-			bDynamicLight = true;
 		}
 		else
 			return;
@@ -201,7 +199,6 @@ final void A_InquisitorJump()
 		SetState(GetStatePlus(SeeState, 1));
 		ReactionCount = 0;
 		bNoGravity = false;
-		bDynamicLight = false;
 		return;
 	}
 	PlaySound(JumpSound, CHAN_BODY);
@@ -283,7 +280,4 @@ defaultproperties
 	ActiveSound = 'inquisitor/active';
 	JumpSound = 'inquisitor/jump';
 	DeathSound = 'inquisitor/death';
-	DLightColour = RGB(151, 155, 203);
-	DLightRadius = 164.0;
-	ExplodeEffect = RGB(203, 111, 0);
 }

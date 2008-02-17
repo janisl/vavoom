@@ -55,6 +55,9 @@ fxdefs/hexen/projectiles.txt	@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/hexen/projectiles
 fxdefs/hexen/weapons.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/hexen/weapons.txt
 fxdefs/raven/minotaur.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/raven/minotaur.txt
 fxdefs/raven/pickups.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/raven/pickups.txt
+fxdefs/strife/decorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/decorations.txt
+fxdefs/strife/monsters.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/monsters.txt
+fxdefs/strife/weapons.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/weapons.txt
 
 //	Console font
 $load @CMAKE_CURRENT_SOURCE_DIR@/confont.pcx

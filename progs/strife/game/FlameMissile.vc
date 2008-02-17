@@ -62,7 +62,4 @@ defaultproperties
 	bActivateImpact = true;
 	bStrifeDamage = true;
 	SightSound = 'weapons/flamethrower';
-	bDynamicLight = true;
-	DLightColour = RGB(211, 131, 0);
-	DLightRadius = 100.0;
 }

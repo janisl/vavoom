@@ -58,11 +58,11 @@ final void A_AlarmActive()
 states
 {
 Spawn:
-	KLAX A 5 { bDynamicLight = false; A_CheckAlarm(); }
+	KLAX A 5 A_CheckAlarm
 	Loop
 See:
-	KLAX B 6 { bDynamicLight = false; A_AlarmActive(); }
-	KLAX C 60 { bDynamicLight = true; }
+	KLAX B 6 A_AlarmActive
+	KLAX C 60
 	Loop
 }
 
@@ -73,6 +73,4 @@ defaultproperties
 	bStanding = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	DLightColour = RGB(191, 0, 0);
-	DLightRadius = 86.0;
 }

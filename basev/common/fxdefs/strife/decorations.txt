@@ -1,0 +1,164 @@
+//------------------------------------------------------------------------------
+pointlight KlaxonWarningLight
+{
+	colour 1 0 0
+	radius 86
+}
+
+class KlaxonWarningLight
+{
+	frame KLAXC { light KlaxonWarningLight }
+}
+
+//------------------------------------------------------------------------------
+pointlight Computer
+{
+	colour 0.35 0.6 0.2
+	radius 118
+}
+
+pointlight Computer_X1
+{
+	colour 0.35 0.6 0.2
+	radius 250
+}
+
+pointlight Computer_X2
+{
+	colour 0.35 0.6 0.2
+	radius 225
+}
+
+pointlight Computer_X3
+{
+	colour 0.35 0.6 0.2
+	radius 200
+}
+
+pointlight Computer_X4
+{
+	colour 0.35 0.6 0.2
+	radius 175
+}
+
+pointlight Computer_X5
+{
+	colour 0.35 0.6 0.2
+	radius 150
+}
+
+pointlight Computer_X6
+{
+	colour 0.35 0.6 0.2
+	radius 125
+}
+
+pointlight Computer_X7
+{
+	colour 0.35 0.6 0.2
+	radius 100
+}
+
+pointlight Computer_X8
+{
+	colour 0.35 0.6 0.2
+	radius 75
+}
+
+pointlight Computer_X9
+{
+	colour 0.35 0.6 0.2
+	radius 50
+}
+
+pointlight Computer_X10
+{
+	colour 0.35 0.6 0.2
+	radius 25
+}
+
+class Computer
+{
+	frame SECRA { light Computer }
+	frame SECRB { light Computer }
+	frame SECRC { light Computer }
+	frame SECRD { light Computer }
+	frame SECRE { light Computer_X1 }
+	frame SECRF { light Computer_X2 }
+	frame SECRG { light Computer_X3 }
+	frame SECRH { light Computer_X4 }
+	frame SECRI { light Computer_X5 }
+	frame SECRJ { light Computer_X6 }
+	frame SECRK { light Computer_X7 }
+	frame SECRL { light Computer_X8 }
+	frame SECRM { light Computer_X9 }
+	frame SECRN { light Computer_X10 }
+}
+
+//------------------------------------------------------------------------------
+pointlight PowerCrystal_X1
+{
+	colour 1 1 1
+	radius 450
+}
+
+pointlight PowerCrystal_X2
+{
+	colour 1 1 1
+	radius 400
+}
+
+pointlight PowerCrystal_X3
+{
+	colour 1 1 1
+	radius 350
+}
+
+pointlight PowerCrystal_X4
+{
+	colour 1 1 1
+	radius 300
+}
+
+pointlight PowerCrystal_X5
+{
+	colour 1 1 1
+	radius 250
+}
+
+pointlight PowerCrystal_X6
+{
+	colour 1 1 1
+	radius 200
+}
+
+pointlight PowerCrystal_X7
+{
+	colour 1 1 1
+	radius 150
+}
+
+pointlight PowerCrystal_X8
+{
+	colour 1 1 1
+	radius 100
+}
+
+pointlight PowerCrystal_X9
+{
+	colour 1 1 1
+	radius 50
+}
+
+class PowerCrystal
+{
+	frame BOOMA { light PowerCrystal_X1 }
+	frame BOOMB { light PowerCrystal_X2 }
+	frame BOOMC { light PowerCrystal_X3 }
+	frame BOOMD { light PowerCrystal_X4 }
+	frame BOOME { light PowerCrystal_X5 }
+	frame BOOMF { light PowerCrystal_X6 }
+	frame BOOMG { light PowerCrystal_X7 }
+	frame BOOMH { light PowerCrystal_X8 }
+	frame BOOMI { light PowerCrystal_X9 }
+}

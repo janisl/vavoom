@@ -74,11 +74,8 @@ defaultproperties
 	MissileDamage = 1;
 	RenderStyle = STYLE_Add;
 	bActivateImpact = true;
-	bDynamicLight = true;
 	bStrifeDamage = true;
 	DamageType = 'Disintegrate';
 	SightSound = 'weapons/mauler2fire';
 	DeathSound = 'weapons/mauler2hit';
-	DLightColour = RGB(79, 143, 55);
-	DLightRadius = 118.0;
 }

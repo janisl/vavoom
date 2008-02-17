@@ -25,28 +25,10 @@
 
 class TeleportFog : Effect;
 
-//==========================================================================
-//
-//  A_Lights
-//
-//  Just spawn some dynamic light
-//
-//==========================================================================
-
-final void A_Lights()
-{
-	SendExplosion(DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
-
-	//  Clear old dynamic light effect
-	bDynamicLight = false;
-}
-
 states
 {
 Spawn:
-	TFOG ABCDE 6 Bright
-	TFOG F 6 Bright A_Lights
-	TFOG EDCB 6 Bright
+	TFOG ABCDEFEDCB 6 Bright
 	Stop
 }
 
@@ -54,7 +36,4 @@ defaultproperties
 {
 	RenderStyle = STYLE_Add;
 	Alpha = 0.333;
-	bDynamicLight = true;
-	DLightColour = RGB(235, 231, 0);
-	DLightRadius = 86.0;
 }

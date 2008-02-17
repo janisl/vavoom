@@ -1,0 +1,283 @@
+//------------------------------------------------------------------------------
+pointlight Stalker_X1
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight Stalker_X1
+{
+	colour 1 0.5 0
+	radius 170
+}
+
+pointlight Stalker_X1
+{
+	colour 1 0.5 0
+	radius 90
+}
+
+class Stalker
+{
+	frame STLKY { light Stalker_X1 }
+	frame STLKZ { light Stalker_X2 }
+	frame "STLK[" { light Stalker_X3 }
+}
+
+//------------------------------------------------------------------------------
+class Sentinel
+{
+	frame SEWRH { light Stalker_X1 }
+	frame SEWRI { light Stalker_X2 }
+	frame SEWRJ { light Stalker_X3 }
+}
+
+//------------------------------------------------------------------------------
+pointlight SentinelFX1
+{
+	colour 0.6 0.1 0.1
+	radius 96
+}
+
+pointlight SentinelFX1_X1
+{
+	colour 0.6 0.1 0.1
+	radius 200
+}
+
+pointlight SentinelFX1_X2
+{
+	colour 0.6 0.1 0.1
+	radius 160
+}
+
+pointlight SentinelFX1_X3
+{
+	colour 0.6 0.1 0.1
+	radius 120
+}
+
+pointlight SentinelFX1_X4
+{
+	colour 0.6 0.1 0.1
+	radius 80
+}
+
+pointlight SentinelFX1_X5
+{
+	colour 0.6 0.1 0.1
+	radius 40
+}
+
+class SentinelFX1
+{
+	frame SHT1 { light SentinelFX1 }
+	frame POW1J { light SentinelFX1_X5 }
+}
+
+class SentinelFX2
+{
+	frame SHT1 { light SentinelFX1 }
+	frame POW1F { light SentinelFX1_X1 }
+	frame POW1G { light SentinelFX1_X2 }
+	frame POW1H { light SentinelFX1_X3 }
+	frame POW1I { light SentinelFX1_X4 }
+	frame POW1J { light SentinelFX1_X5 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CeilingTurret_X1
+{
+	colour 1 1 1
+	radius 250
+}
+
+pointlight CeilingTurret_X2
+{
+	colour 1 1 1
+	radius 190
+}
+
+pointlight CeilingTurret_X3
+{
+	colour 1 1 1
+	radius 130
+}
+
+pointlight CeilingTurret_X4
+{
+	colour 1 1 1
+	radius 70
+}
+
+class CeilingTurret
+{
+	frame BALLB { light CeilingTurret_X1 }
+	frame BALLC { light CeilingTurret_X2 }
+	frame BALLD { light CeilingTurret_X3 }
+	frame BALLE { light CeilingTurret_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight CrusaderMissile
+{
+	colour 0.85 0.7 0
+	radius 200
+}
+
+pointlight CrusaderMissile_X1
+{
+	colour 0.85 0.7 0
+	radius 300
+}
+
+pointlight CrusaderMissile_X2
+{
+	colour 0.85 0.7 0
+	radius 255
+}
+
+pointlight CrusaderMissile_X3
+{
+	colour 0.85 0.7 0
+	radius 210
+}
+
+pointlight CrusaderMissile_X4
+{
+	colour 0.85 0.7 0
+	radius 165
+}
+
+pointlight CrusaderMissile_X5
+{
+	colour 0.85 0.7 0
+	radius 120
+}
+
+pointlight CrusaderMissile_X6
+{
+	colour 0.85 0.7 0
+	radius 80
+}
+
+pointlight CrusaderMissile_X7
+{
+	colour 0.85 0.7 0
+	radius 40
+}
+
+class CrusaderMissile
+{
+	frame MICR { light CrusaderMissile }
+	frame SMISA { light CrusaderMissile_X1 }
+	frame SMISB { light CrusaderMissile_X2 }
+	frame SMISC { light CrusaderMissile_X3 }
+	frame SMISD { light CrusaderMissile_X4 }
+	frame SMISE { light CrusaderMissile_X5 }
+	frame SMISF { light CrusaderMissile_X6 }
+	frame SMISG { light CrusaderMissile_X7 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Inquisitor
+{
+	colour 0.6 0.6 0.8
+	radius 164
+}
+
+pointlight Inquisitor_X1
+{
+	colour 0.8 0.45 0
+	radius 200
+}
+
+pointlight Inquisitor_X2
+{
+	colour 0.8 0.45 0
+	radius 200
+}
+
+pointlight Inquisitor_X3
+{
+	colour 0.8 0.45 0
+	radius 200
+}
+
+pointlight Inquisitor_X4
+{
+	colour 0.8 0.45 0
+	radius 200
+}
+
+class Inquisitor
+{
+	frame ROB3H { light Inquisitor }
+	frame ROB3I { light Inquisitor }
+	frame ROB3O { light Inquisitor_X1 }
+	frame ROB3P { light Inquisitor_X2 }
+	frame ROB3Q { light Inquisitor_X3 }
+	frame ROB3R { light Inquisitor_X4 }
+	frame ROB3W { light Inquisitor_X1 }
+	frame ROB3X { light Inquisitor_X2 }
+	frame ROB3Y { light Inquisitor_X3 }
+	frame ROB3Z { light Inquisitor_X4 }
+	frame "ROB3]" { light Inquisitor_X1 }
+	frame RBB3A { light Inquisitor_X2 }
+	frame RBB3B { light Inquisitor_X3 }
+	frame RBB3C { light Inquisitor_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Programmer_X1
+{
+	colour 1 0.5 0
+	radius 350
+}
+
+pointlight Programmer_X2
+{
+	colour 1 0.5 0
+	radius 300
+}
+
+pointlight Programmer_X3
+{
+	colour 1 0.5 0
+	radius 250
+}
+
+pointlight Programmer_X4
+{
+	colour 1 0.5 0
+	radius 200
+}
+
+pointlight Programmer_X5
+{
+	colour 1 0.5 0
+	radius 150
+}
+
+pointlight Programmer_X6
+{
+	colour 1 0.5 0
+	radius 100
+}
+
+pointlight Programmer_X7
+{
+	colour 1 0.5 0
+	radius 50
+}
+
+class Programmer
+{
+	frame PRGRN { light Programmer_X1 }
+	frame PRGRO { light Programmer_X2 }
+	frame PRGRP { light Programmer_X3 }
+	frame PRGRQ { light Programmer_X4 }
+	frame PRGRR { light Programmer_X5 }
+	frame PRGRS { light Programmer_X6 }
+	frame PRGRT { light Programmer_X7 }
+}

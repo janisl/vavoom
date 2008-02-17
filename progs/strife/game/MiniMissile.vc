@@ -59,11 +59,8 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	MissileDamage = 10;
 	bActivateImpact = true;
-	bDynamicLight = true;
 	bExplodeParticles = true;
 	bStrifeDamage = true;
 	SightSound = 'weapons/minimissile';
 	DeathSound = 'weapons/minimissilehit';
-	DLightColour = RGB(215, 179, 0);
-	DLightRadius = 118.0;
 }

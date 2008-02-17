@@ -18,3 +18,7 @@
 #include "fxdefs/hexen/pickups.txt"
 #include "fxdefs/hexen/projectiles.txt"
 #include "fxdefs/hexen/weapons.txt"
+
+#include "fxdefs/strife/decorations.txt"
+#include "fxdefs/strife/monsters.txt"
+#include "fxdefs/strife/weapons.txt"

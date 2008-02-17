@@ -44,7 +44,4 @@ defaultproperties
 	IconName = 'i_bry1';
 	bFloorClip = true;
 	PickupMessage = "$txt_energypod";
- 	bDynamicLight = true;
-	DLightColour = RGB(0, 255, 0);
-	DLightRadius = 66.0;
 }

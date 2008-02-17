@@ -61,7 +61,4 @@ defaultproperties
 	bNoBlood = true;
 	bFloorClip = true;
 	DeathSound = 'misc/explosion';
-	bDynamicLight = true;
-	DLightColour = RGB(91, 155, 55);
-	DLightRadius = 118.0;
 }
