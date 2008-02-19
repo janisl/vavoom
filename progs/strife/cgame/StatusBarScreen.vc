@@ -103,8 +103,8 @@ void StartMap()
 	pic_backpack = R_RegisterPic('i_bkpk');
 	//For Icons in Fullscreen HUD
 	pic_medpack = R_RegisterPic('mdkta0');
-	pic_armor[0] = R_RegisterPic('arm1a0');
-	pic_armor[1] = R_RegisterPic('arm2a0');
+	pic_armor[0] = R_RegisterPic('arm3a0');
+	pic_armor[1] = R_RegisterPic('arm4a0');
 
 	pic_pause = R_RegisterPic('m_pause');
 

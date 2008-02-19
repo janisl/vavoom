@@ -249,10 +249,10 @@ void StartMap()
 
 	//  FULLSCREEN ICONS FOR HEALTH AND ARMOR
 	pic_health = R_RegisterPic('ptn1a0');
-	pic_armor2[0] = R_RegisterPic('arm1a0');
-	pic_armor2[1] = R_RegisterPic('arm2a0');
-	pic_armor2[2] = R_RegisterPic('arm3a0');
-	pic_armor2[3] = R_RegisterPic('arm4a0');
+	pic_armor2[0] = R_RegisterPic('ar_1a0');
+	pic_armor2[1] = R_RegisterPic('ar_2a0');
+	pic_armor2[2] = R_RegisterPic('ar_3a0');
+	pic_armor2[3] = R_RegisterPic('ar_4a0');
 }
 
 //==========================================================================
