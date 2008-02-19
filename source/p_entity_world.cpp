@@ -61,6 +61,7 @@ struct cptrace_t
 struct tmtrace_t
 {
 	VEntity *Thing;
+	VEntity* StepThing;
 	TVec End;
 	float BBox[4];
 	float FloorZ;
@@ -798,9 +799,24 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 		return true;
 	}
 
+	tmtrace.BlockingMobj = Other;
+	if ((!(tmtrace.Thing->EntityFlags & EF_Float) || !(tmtrace.Thing->EntityFlags & EF_Missile) ||
+		!(tmtrace.Thing->EntityFlags & EF_NoGravity)) && (Other->EntityFlags & EF_Solid))
+	{
+		// allow actors to walk on other actors as well as floors
+		if (Other->Origin.z + Other->Height >= tmtrace.FloorZ &&
+			Other->Origin.z + Other->Height <= tmtrace.End.z + tmtrace.Thing->MaxStepHeight)
+		{
+			if (fabs(Other->Origin.x - tmtrace.End.x) <= Other->Radius &&
+				fabs(Other->Origin.y - tmtrace.End.y) <= Other->Radius)
+			{
+				tmtrace.StepThing = Other;
+				tmtrace.FloorZ = Other->Origin.z + Other->Height;
+			}
+		}
+	}
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if ((tmtrace.Thing->EntityFlags & EF_PassMobj) ||
-		(tmtrace.Thing->EntityFlags & EF_Missile))
+	if ((tmtrace.Thing->EntityFlags & EF_PassMobj) || (tmtrace.Thing->EntityFlags & EF_Missile))
 	{
 		//	Prevent some objects from overlapping
 		if (tmtrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
@@ -818,7 +834,6 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 		}
 	}
 
-	tmtrace.BlockingMobj = Other;
 	return tmtrace.Thing->eventTouch(Other);
 	unguardSlow;
 }
@@ -977,6 +992,8 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 //   (monsters won't move to a dropoff)
 //  speciallines[]
 //  numspeciallines
+//  VEntity *BlockingMobj = pointer to thing that blocked position (NULL if not
+//   blocked, or blocked by a line).
 //
 //==========================================================================
 
@@ -992,6 +1009,8 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	subsector_t *newsubsec;
 	sec_region_t *gap;
 	sec_region_t *reg;
+	VEntity* thingblocker;
+	VEntity* fakedblocker;
 
 	tmtrace.Thing = this;
 
@@ -1031,6 +1050,9 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	tmtrace.SpecHit.Clear();
 
 	tmtrace.BlockingMobj = NULL;
+	tmtrace.StepThing = NULL;
+	thingblocker = NULL;
+	fakedblocker = NULL;
 
 	// Check things first, possibly picking things up.
 	// The bounding box is extended by MAXRADIUS
@@ -1053,16 +1075,49 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 				{
 					if (!PIT_CheckRelThing(&tmtrace, Ent))
 					{
-						return false;
+						// continue checking for other things in to see if we hit something
+						if (tmtrace.BlockingMobj == NULL)
+						{ // slammed into something
+							return false;
+						}
+						else if (!tmtrace.BlockingMobj->Player && !(tmtrace.BlockingMobj->EntityFlags & VEntity::EF_Float) &&
+							!(tmtrace.BlockingMobj->EntityFlags & VEntity::EF_Missile) &&
+							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height - Origin.z <= MaxStepHeight)
+						{
+							if (!thingblocker || tmtrace.BlockingMobj->Origin.z > thingblocker->Origin.z)
+							{
+								thingblocker = tmtrace.BlockingMobj;
+							}
+							tmtrace.BlockingMobj = NULL;
+						}
+						else if (Player && Origin.z + Height - tmtrace.BlockingMobj->Origin.z <= MaxStepHeight)
+						{
+							if (thingblocker)
+							{ // something to step up on, set it as
+							  // the blocker so that we don't step up
+								return false;
+							}
+							// nothing is blocking, but this object potentially could
+							// if there is something else to step on
+							fakedblocker = tmtrace.BlockingMobj;
+							tmtrace.BlockingMobj = NULL;
+						}
+						else
+						{ // blocking
+							return false;
+						}
 					}
 				}
 			}
 		}
-
-		tmtrace.BlockingMobj = NULL;
 	}
 
+	float thingdropoffz = tmtrace.FloorZ;
+	tmtrace.FloorZ = tmtrace.DropOffZ;
+	tmtrace.BlockingMobj = NULL;
 	// check lines
+	validcount++;
+
 	if (EntityFlags & EF_ColideWithWorld)
 	{
 		xl = MapBlock(tmtrace.BBox[BOXLEFT] - XLevel->BlockMapOrgX);
@@ -1085,6 +1140,18 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 			}
 		}
 	}
+
+	if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
+		return false;
+
+	if (tmtrace.StepThing != NULL)
+	{
+		tmtrace.DropOffZ = thingdropoffz;
+	}
+
+	tmtrace.BlockingMobj = thingblocker;
+	if (tmtrace.BlockingMobj)
+		return false;
 
 	return true;
 	unguard;
@@ -1147,26 +1214,14 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			// is not blocked.
 			if (Origin.z + Height > tmtrace.CeilingZ)
 			{
-				// Check to make sure there's nothing in the way for the step up
-				tztrace_t tztrace;
-				good = TestMobjZ(tztrace);
-				if(good)
-				{
-					Velocity.z = -8.0 * 35.0;
-				}
+				Velocity.z = -8.0 * 35.0;
 				eventPushLine(&tmtrace);
 				return false;
 			}
 			else if (Origin.z < tmtrace.FloorZ
 				&& tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
 			{
-				// Check to make sure there's nothing in the way for the step down
-				tztrace_t tztrace;
-				good = TestMobjZ(tztrace);
-				if(good)
-				{
-					Velocity.z = 8.0 * 35.0;
-				}
+				Velocity.z = 8.0 * 35.0;
 				eventPushLine(&tmtrace);
 				return false;
 			}
@@ -1712,16 +1767,9 @@ bool VEntity::PIT_CheckOnmobjZ(void* arg, VEntity *Other)
 	float blockdist;
 	tztrace_t& tztrace = *(tztrace_t*)arg;
 
-	if (!(Other->EntityFlags & VEntity::EF_Solid))
+	if (!(Other->EntityFlags & EF_Solid))
 	{
 		// Can't hit thing
-		return true;
-	}
-	blockdist = Other->Radius + tztrace.tzmthing->Radius;
-	if (fabs(Other->Origin.x - tztrace.tzorg.x) >= blockdist ||
-		fabs(Other->Origin.y - tztrace.tzorg.y) >= blockdist)
-	{
-		// Didn't hit thing
 		return true;
 	}
 	if (Other == tztrace.tzmthing)
@@ -1736,6 +1784,13 @@ bool VEntity::PIT_CheckOnmobjZ(void* arg, VEntity *Other)
 	if (tztrace.tzorg.z + tztrace.tzmthing->Height < Other->Origin.z)
 	{
 		// under thing
+		return true;
+	}
+	blockdist = Other->Radius + tztrace.tzmthing->Radius;
+	if (fabs(Other->Origin.x - tztrace.tzorg.x) >= blockdist ||
+		fabs(Other->Origin.y - tztrace.tzorg.y) >= blockdist)
+	{
+		// Didn't hit thing
 		return true;
 	}
 	tztrace.onmobj = Other;

@@ -3232,13 +3232,8 @@ final bool StepMove()
 				Origin.z += FloatSpeed * Level.Game.frametime;
 			else
 				Origin.z -= FloatSpeed * Level.Game.frametime;
-
-			// Check to make sure there's nothing in the way of the float
-			if (TestMobjZ())
-			{
-				bInFloat = true;
-				return true;
-			}
+			bInFloat = true;
+			return true;
 		}
 
 		if (!tmtrace.SpecHit.Num)
@@ -4812,10 +4807,13 @@ bool Touch(Entity InOther)
 		Other.Velocity.y += Velocity.y / 4.0;
 	}
 
-	solid = Other.bSolid;
+	solid = Other.bSolid &&
+			Other.bColideWithThings &&
+			bSolid;
 
 	// check for special pickup
-	if (Other.bSpecial)
+	if (Other.bSpecial &&
+		Other.Origin.z < Origin.z + Height - MaxStepHeight)
 	{
 		if (Other.bDehackedSpecial)
 		{

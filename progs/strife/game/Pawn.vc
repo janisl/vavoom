@@ -163,7 +163,7 @@ final void A_FlightChase()
 {
 	float minz, maxz;
 
-	if (bInFloat || !TestMobjZ())
+	if (bInFloat)
 	{
 		Velocity.z = 0.0;
 		return;

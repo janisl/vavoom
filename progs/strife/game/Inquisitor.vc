@@ -129,7 +129,7 @@ final void A_InquisitorGrenade()
 	EntityEx A;
 	float an;
 
-	if (Origin.z != FloorZ)
+	if (!Target || Origin.z != FloorZ)
 		return;
 
 	A_FaceTarget();
