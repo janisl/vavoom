@@ -215,6 +215,4 @@ defaultproperties
 	ActiveSound = 'crusader/active';
 	PainSound = 'crusader/pain';
 	DeathSound = 'crusader/death';
-	ExplodeEffect = RGB(187, 59, 0);
-	DLightRadius = 118.0;
 }

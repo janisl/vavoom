@@ -357,6 +357,39 @@ class IceGuyFX2
 }
 
 //------------------------------------------------------------------------------
+pointlight Bishop_X1
+{
+	colour 0 0.7 0
+	radius 86
+}
+
+pointlight Bishop_X2
+{
+	colour 0 0.7 0
+	radius 64
+}
+
+pointlight Bishop_X3
+{
+	colour 0 0.7 0
+	radius 42
+}
+
+pointlight Bishop_X4
+{
+	colour 0 0.7 0
+	radius 20
+}
+
+class Bishop
+{
+	frame BISHJ { light Bishop_X1 }
+	frame BISHK { light Bishop_X2 }
+	frame BISHL { light Bishop_X3 }
+	frame BISHM { light Bishop_X4 }
+}
+
+//------------------------------------------------------------------------------
 pointlight BishopFX
 {
 	colour 0 0.7 0

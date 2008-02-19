@@ -81,6 +81,4 @@ defaultproperties
 	bNoBlood = true;
 	bExplodeParticles = true;
 	DeathSound = 'world/barrelx';
-	ExplodeEffect = RGB(239, 239, 0);
-	DLightRadius = 86.0;
 }

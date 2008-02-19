@@ -153,10 +153,10 @@ class GoldWandPuff1
 
 class GoldWandPuff2
 {
-	frame PUF2E { light GoldWandPuff1_X2 }
-	frame PUF2F { light GoldWandPuff1_X3 }
-	frame PUF2G { light GoldWandPuff1_X4 }
-	frame PUF2H { light GoldWandPuff1_X5 }
+	frame FX01E { light GoldWandPuff1_X2 }
+	frame FX01F { light GoldWandPuff1_X3 }
+	frame FX01G { light GoldWandPuff1_X4 }
+	frame FX01H { light GoldWandPuff1_X5 }
 }
 
 //------------------------------------------------------------------------------

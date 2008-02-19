@@ -41,7 +41,7 @@ pointlight MinotaurFX1_X6
 	radius 50
 }
 
-class MinotaurFX1
+class MinotaurMissile	//	MinotaurFX1
 {
 	frame FX12A { light MinotaurFX1 }
 	frame FX12B { light MinotaurFX1 }
@@ -53,7 +53,7 @@ class MinotaurFX1
 	frame FX12H { light MinotaurFX1_X6 }
 }
 
-class MinotaurFX2
+class MinotaurFloorFire1	//	MinotaurFX2
 {
 	frame FX13A { light MinotaurFX1 }
 	frame FX13I { light MinotaurFX1_X1 }
@@ -63,7 +63,7 @@ class MinotaurFX2
 	frame FX13M { light MinotaurFX1_X5 }
 }
 
-class MinotaurFX3
+class MinotaurFloorFire2	//	MinotaurFX3
 {
 	frame FX13B { light MinotaurFX1 }
 	frame FX13C { light MinotaurFX1 }

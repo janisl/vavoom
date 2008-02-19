@@ -114,6 +114,7 @@ class TeleGlitter1
 	frame TGLT { light TeleGlitter1 }
 }
 
+//------------------------------------------------------------------------------
 pointlight TeleGlitter2
 {
 	colour 0.75 0.75 0.8
@@ -123,4 +124,70 @@ pointlight TeleGlitter2
 class TeleGlitter2
 {
 	frame TGLT { light TeleGlitter2 }
+}
+
+//------------------------------------------------------------------------------
+pointlight ActivatedTimeBomb_X1
+{
+	colour 1 0.5 0
+	radius 126
+}
+
+pointlight ActivatedTimeBomb_X2
+{
+	colour 1 0.5 0
+	radius 105
+}
+
+pointlight ActivatedTimeBomb_X3
+{
+	colour 1 0.5 0
+	radius 84
+}
+
+pointlight ActivatedTimeBomb_X4
+{
+	colour 1 0.5 0
+	radius 63
+}
+
+pointlight ActivatedTimeBomb_X5
+{
+	colour 1 0.5 0
+	radius 42
+}
+
+pointlight ActivatedTimeBomb_X6
+{
+	colour 1 0.5 0
+	radius 21
+}
+
+class ActivatedTimeBomb
+{
+	frame XPL1A { light ActivatedTimeBomb_X1 }
+	frame XPL1B { light ActivatedTimeBomb_X2 }
+	frame XPL1C { light ActivatedTimeBomb_X3 }
+	frame XPL1D { light ActivatedTimeBomb_X4 }
+	frame XPL1E { light ActivatedTimeBomb_X5 }
+	frame XPL1F { light ActivatedTimeBomb_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Pod_X1
+{
+	colour 0.4 0.9 0.4
+	radius 200
+}
+
+pointlight Pod_X2
+{
+	colour 0.4 0.9 0.4
+	radius 100
+}
+
+class Pod
+{
+	frame PPODE { light Pod_X1 }
+	frame PPODF { light Pod_X2 }
 }

@@ -54,5 +54,4 @@ defaultproperties
 	bColideWithWorld = false;
 	bNoBlood = true;
 	bExplodeParticles = true;
-	ExplodeEffect = RGB(239, 239, 0);
 }

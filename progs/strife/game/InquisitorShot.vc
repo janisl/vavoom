@@ -68,6 +68,4 @@ defaultproperties
 	bExplodeParticles = true;
 	SightSound = 'inquisitor/attack';
 	DeathSound = 'inquisitor/atkexplode';
-	ExplodeEffect = RGB(239, 239, 0);
-	DLightRadius = 118.0;
 }

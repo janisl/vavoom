@@ -119,6 +119,68 @@ class CeilingTurret
 }
 
 //------------------------------------------------------------------------------
+pointlight Reaver_X1
+{
+	colour 0.7 0.25 0
+	radius 120
+}
+
+pointlight Reaver_X2
+{
+	colour 0.7 0.25 0
+	radius 90
+}
+
+pointlight Reaver_X3
+{
+	colour 0.7 0.25 0
+	radius 60
+}
+
+pointlight Reaver_X4
+{
+	colour 0.7 0.25 0
+	radius 30
+}
+
+class Reaver
+{
+	frame ROB1N { light Reaver_X1 }
+	frame ROB1O { light Reaver_X2 }
+	frame ROB1P { light Reaver_X3 }
+	frame ROB1Q { light Reaver_X4 }
+}
+
+//------------------------------------------------------------------------------
+pointlight Crusader_X1
+{
+	colour 0.7 0.25 0
+	radius 118
+}
+
+pointlight Crusader_X2
+{
+	colour 0.7 0.25 0
+	radius 80
+}
+
+pointlight Crusader_X3
+{
+	colour 0.7 0.25 0
+	radius 40
+}
+
+class Crusader
+{
+	frame ROB2J { light Crusader_X1 }
+	frame ROB2K { light Crusader_X2 }
+	frame ROB2L { light Crusader_X3 }
+	frame ROB2M { light Crusader_X1 }
+	frame ROB2N { light Crusader_X2 }
+	frame ROB2O { light Crusader_X3 }
+}
+
+//------------------------------------------------------------------------------
 pointlight CrusaderMissile
 {
 	colour 0.85 0.7 0
@@ -229,6 +291,74 @@ class Inquisitor
 }
 
 //------------------------------------------------------------------------------
+pointlight InquisitorShot_X1
+{
+	colour 1 1 0
+	radius 250
+}
+
+pointlight InquisitorShot_X2
+{
+	colour 1 1 0
+	radius 220
+}
+
+pointlight InquisitorShot_X3
+{
+	colour 1 1 0
+	radius 190
+}
+
+pointlight InquisitorShot_X4
+{
+	colour 1 1 0
+	radius 160
+}
+
+pointlight InquisitorShot_X5
+{
+	colour 1 1 0
+	radius 130
+}
+
+pointlight InquisitorShot_X6
+{
+	colour 1 1 0
+	radius 100
+}
+
+pointlight InquisitorShot_X7
+{
+	colour 1 1 0
+	radius 75
+}
+
+pointlight InquisitorShot_X8
+{
+	colour 1 1 0
+	radius 50
+}
+
+pointlight InquisitorShot_X9
+{
+	colour 1 1 0
+	radius 25
+}
+
+class InquisitorShot
+{
+	frame BNG2A { light InquisitorShot_X1 }
+	frame BNG2B { light InquisitorShot_X2 }
+	frame BNG2C { light InquisitorShot_X3 }
+	frame BNG2D { light InquisitorShot_X4 }
+	frame BNG2E { light InquisitorShot_X5 }
+	frame BNG2F { light InquisitorShot_X6 }
+	frame BNG2G { light InquisitorShot_X7 }
+	frame BNG2H { light InquisitorShot_X8 }
+	frame BNG2I { light InquisitorShot_X9 }
+}
+
+//------------------------------------------------------------------------------
 pointlight Programmer_X1
 {
 	colour 1 0.5 0
@@ -280,4 +410,65 @@ class Programmer
 	frame PRGRR { light Programmer_X5 }
 	frame PRGRS { light Programmer_X6 }
 	frame PRGRT { light Programmer_X7 }
+}
+
+//------------------------------------------------------------------------------
+pointlight ProgrammerBase_X1
+{
+	colour 1 1 0
+	radius 320
+}
+
+pointlight ProgrammerBase_X2
+{
+	colour 1 1 0
+	radius 280
+}
+
+pointlight ProgrammerBase_X3
+{
+	colour 1 1 0
+	radius 240
+}
+
+pointlight ProgrammerBase_X4
+{
+	colour 1 1 0
+	radius 200
+}
+
+pointlight ProgrammerBase_X5
+{
+	colour 1 1 0
+	radius 160
+}
+
+pointlight ProgrammerBase_X6
+{
+	colour 1 1 0
+	radius 120
+}
+
+pointlight ProgrammerBase_X7
+{
+	colour 1 1 0
+	radius 80
+}
+
+pointlight ProgrammerBase_X8
+{
+	colour 1 1 0
+	radius 40
+}
+
+class ProgrammerBase
+{
+	frame BASEA { light ProgrammerBase_X1 }
+	frame BASEB { light ProgrammerBase_X2 }
+	frame BASEC { light ProgrammerBase_X3 }
+	frame BASED { light ProgrammerBase_X4 }
+	frame BASEE { light ProgrammerBase_X5 }
+	frame BASEF { light ProgrammerBase_X6 }
+	frame BASEG { light ProgrammerBase_X7 }
+	frame BASEH { light ProgrammerBase_X8 }
 }

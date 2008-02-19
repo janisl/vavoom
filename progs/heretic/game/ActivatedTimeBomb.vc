@@ -55,6 +55,4 @@ defaultproperties
 	Alpha = 0.666;
 	bNoGravity = true;
 	DeathSound = 'misc/timebomb';
-	ExplodeEffect = RGB(255, 128, 0);
-	DLightRadius = 126.0;
 }

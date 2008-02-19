@@ -149,3 +149,60 @@ class PorkFX
 	frame FHFXK { light PorkFX_X3 }
 	frame FHFXL { light PorkFX_X4 }
 }
+
+//------------------------------------------------------------------------------
+pointlight FireBomb_X1
+{
+	colour 1 0.5 0
+	radius 86
+}
+
+pointlight FireBomb_X2
+{
+	colour 1 0.5 0
+	radius 72
+}
+
+pointlight FireBomb_X3
+{
+	colour 1 0.5 0
+	radius 58
+}
+
+pointlight FireBomb_X4
+{
+	colour 1 0.5 0
+	radius 44
+}
+
+pointlight FireBomb_X5
+{
+	colour 1 0.5 0
+	radius 30
+}
+
+pointlight FireBomb_X6
+{
+	colour 1 0.5 0
+	radius 15
+}
+
+class FireBomb
+{
+	frame XPL1A { light FireBomb_X1 }
+	frame XPL1B { light FireBomb_X2 }
+	frame XPL1C { light FireBomb_X3 }
+	frame XPL1D { light FireBomb_X4 }
+	frame XPL1E { light FireBomb_X5 }
+	frame XPL1F { light FireBomb_X6 }
+}
+
+class ThrowingBomb
+{
+	frame CFCFS { light FireBomb_X1 }
+	frame CFCFT { light FireBomb_X2 }
+	frame CFCFU { light FireBomb_X3 }
+	frame CFCFW { light FireBomb_X4 }
+	frame CFCFX { light FireBomb_X5 }
+	frame CFCFZ { light FireBomb_X6 }
+}

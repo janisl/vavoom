@@ -162,3 +162,111 @@ class PowerCrystal
 	frame BOOMH { light PowerCrystal_X8 }
 	frame BOOMI { light PowerCrystal_X9 }
 }
+
+//------------------------------------------------------------------------------
+pointlight ExplosiveBarrel2_X1
+{
+	colour 1 1 0
+	radius 200
+}
+
+pointlight ExplosiveBarrel2_X2
+{
+	colour 1 1 0
+	radius 170
+}
+
+pointlight ExplosiveBarrel2_X3
+{
+	colour 1 1 0
+	radius 140
+}
+
+pointlight ExplosiveBarrel2_X4
+{
+	colour 1 1 0
+	radius 110
+}
+
+pointlight ExplosiveBarrel2_X5
+{
+	colour 1 1 0
+	radius 70
+}
+
+pointlight ExplosiveBarrel2_X6
+{
+	colour 1 1 0
+	radius 30
+}
+
+class ExplosiveBarrel2
+{
+	frame BARTF { light ExplosiveBarrel2_X1 }
+	frame BARTG { light ExplosiveBarrel2_X2 }
+	frame BARTH { light ExplosiveBarrel2_X3 }
+	frame BARTI { light ExplosiveBarrel2_X4 }
+	frame BARTJ { light ExplosiveBarrel2_X5 }
+	frame BARTK { light ExplosiveBarrel2_X6 }
+}
+
+//------------------------------------------------------------------------------
+pointlight DegninOre_X1
+{
+	colour 1 1 0
+	radius 200
+}
+
+pointlight DegninOre_X1
+{
+	colour 1 1 0
+	radius 175
+}
+
+pointlight DegninOre_X3
+{
+	colour 1 1 0
+	radius 150
+}
+
+pointlight DegninOre_X4
+{
+	colour 1 1 0
+	radius 125
+}
+
+pointlight DegninOre_X5
+{
+	colour 1 1 0
+	radius 100
+}
+
+pointlight DegninOre_X6
+{
+	colour 1 1 0
+	radius 75
+}
+
+pointlight DegninOre_X7
+{
+	colour 1 1 0
+	radius 50
+}
+
+pointlight DegninOre_X8
+{
+	colour 1 1 0
+	radius 25
+}
+
+class DegninOre
+{
+	frame BNG3A { light DegninOre_X1 }
+	frame BNG3B { light DegninOre_X2 }
+	frame BNG3C { light DegninOre_X3 }
+	frame BNG3D { light DegninOre_X4 }
+	frame BNG3E { light DegninOre_X5 }
+	frame BNG3F { light DegninOre_X6 }
+	frame BNG3G { light DegninOre_X7 }
+	frame BNG3H { light DegninOre_X8 }
+}

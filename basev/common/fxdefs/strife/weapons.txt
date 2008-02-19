@@ -126,6 +126,129 @@ class BishopMissile
 }
 
 //------------------------------------------------------------------------------
+pointlight HEGrenade_X1
+{
+	colour 1 1 0
+	radius 250
+}
+
+pointlight HEGrenade_X2
+{
+	colour 1 1 0
+	radius 225
+}
+
+pointlight HEGrenade_X3
+{
+	colour 1 1 0
+	radius 200
+}
+
+pointlight HEGrenade_X4
+{
+	colour 1 1 0
+	radius 175
+}
+
+pointlight HEGrenade_X5
+{
+	colour 1 1 0
+	radius 150
+}
+
+pointlight HEGrenade_X6
+{
+	colour 1 1 0
+	radius 125
+}
+
+pointlight HEGrenade_X7
+{
+	colour 1 1 0
+	radius 100
+}
+
+pointlight HEGrenade_X8
+{
+	colour 1 1 0
+	radius 75
+}
+
+pointlight HEGrenade_X9
+{
+	colour 1 1 0
+	radius 50
+}
+
+pointlight HEGrenade_X10
+{
+	colour 1 1 0
+	radius 25
+}
+
+class HEGrenade
+{
+	frame BNG4A { light HEGrenade_X1 }
+	frame BNG4B { light HEGrenade_X2 }
+	frame BNG4C { light HEGrenade_X3 }
+	frame BNG4D { light HEGrenade_X4 }
+	frame BNG4E { light HEGrenade_X5 }
+	frame BNG4F { light HEGrenade_X6 }
+	frame BNG4G { light HEGrenade_X7 }
+	frame BNG4H { light HEGrenade_X8 }
+	frame BNG4I { light HEGrenade_X9 }
+	frame BNG4J { light HEGrenade_X10 }
+}
+
+//------------------------------------------------------------------------------
+pointlight PhosphorousFire
+{
+	colour 0.8 0.35 0
+	radius 200
+}
+
+pointlight PhosphorousFire_X1
+{
+	colour 0.8 0.35 0
+	radius 160
+}
+
+pointlight PhosphorousFire_X2
+{
+	colour 0.8 0.35 0
+	radius 120
+}
+
+pointlight PhosphorousFire_X3
+{
+	colour 0.8 0.35 0
+	radius 80
+}
+
+pointlight PhosphorousFire_X4
+{
+	colour 0.8 0.35 0
+	radius 40
+}
+
+class PhosphorousFire
+{
+	frame BNG3B { light PhosphorousFire_X2 }
+	frame BNG3C { light PhosphorousFire_X1 }
+	frame FLBEA { light PhosphorousFire }
+	frame FLBEB { light PhosphorousFire }
+	frame FLBEC { light PhosphorousFire }
+	frame FLBED { light PhosphorousFire }
+	frame FLBEE { light PhosphorousFire }
+	frame FLBEF { light PhosphorousFire }
+	frame FLBEG { light PhosphorousFire }
+	frame FLBEH { light PhosphorousFire_X1 }
+	frame FLBEI { light PhosphorousFire_X2 }
+	frame FLBEJ { light PhosphorousFire_X3 }
+	frame FLBEK { light PhosphorousFire_X4 }
+}
+
+//------------------------------------------------------------------------------
 pointlight FlameMissile
 {
 	colour 0.8 0.5 0

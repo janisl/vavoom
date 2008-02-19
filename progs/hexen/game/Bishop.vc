@@ -278,9 +278,6 @@ defaultproperties
 	bActivateMCross = false;
 	bNoTargetSwitch = true;
 	bDontOverlap = true;
-	DLightColour = RGB(8, 175, 8);
-	ExplodeEffect = RGB(8, 175, 8);
-	DLightRadius = 86.0;
 	SightSound = 'BishopSight';
 	ActiveSound = 'BishopActiveSounds';
 	AttackSound = 'BishopAttack';
