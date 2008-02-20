@@ -149,6 +149,7 @@ bool bCannotPush;		// cannot push other pushable mobjs
 bool bSmallSplash;		// Always use small splash
 bool bNoSplash;			// Things that don't splash
 bool bStaticLight;		// Static light source.
+bool bStaticLightSpwned;
 bool bDynamicLight;		// Dynamic light source.
 bool bMuzzleFlash;		// Muzzle flash effect.
 bool bLeaveTrail;		// Leave particles trail.
@@ -5218,27 +5219,19 @@ void OnMapSpawn(mthing_t* mthing)
 		SetOrigin2(Origin);
 	}
 
-	if (bStaticLight && mthing)
+	if (bStaticLight && mthing && !TID)
 	{
-		if (!TID)
+		if (LightColour == 0xffffffff)
 		{
-			if (LightColour == 0xffffffff)
-			{
-				Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
-					itof(mthing->arg1) * 8.0 : LightRadius);
-			}
-			else
-			{
-				Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
-					itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
-			}
+			Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius);
 		}
 		else
 		{
-			bDynamicLight = true;
-			DLightRadius = Args[0] ? itof(Args[0]) * 8.0 : LightRadius;
-			DLightColour = LightColour;
+			Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
 		}
+		bStaticLightSpwned = true;
 	}
 }
 
@@ -5611,18 +5604,26 @@ final void DoStateEffects(float DeltaTime)
 	TVec						Up;
 
 	GetStateEffects(Lights);
+	if (!Lights.Num)
+	{
+		return;
+	}
+
 	AngleVectors(&Angles, &Forward, &Right, &Up);
 
-	//	Dynamic lights.
-	for (i = 0; i < Lights.Num; i++)
+	if (!bStaticLightSpwned)
 	{
-		LightEffectDef* L = Lights[i];
-		dlight_t* dl = AllocDlight(self);
-		dl->origin = Origin + Forward * L->Offset.x - Right * L->Offset.y +
-			Up * L->Offset.z;
-		dl->radius = L->Radius;
-		dl->colour = L->Colour;
-		dl->die = XLevel.Time + 0.01;
+		//	Dynamic lights.
+		for (i = 0; i < Lights.Num; i++)
+		{
+			LightEffectDef* L = Lights[i];
+			dlight_t* dl = AllocDlight(self);
+			dl->origin = Origin + Forward * L->Offset.x - Right * L->Offset.y +
+				Up * L->Offset.z;
+			dl->radius = L->Radius;
+			dl->colour = L->Colour;
+			dl->die = XLevel.Time + 0.01;
+		}
 	}
 }
 

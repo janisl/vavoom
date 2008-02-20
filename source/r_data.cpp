@@ -45,6 +45,7 @@ struct VTempSpriteEffectDef
 struct VTempClassEffects
 {
 	VStr							ClassName;
+	VStr							StaticLight;
 	TArray<VTempSpriteEffectDef>	SpriteEffects;
 };
 
@@ -774,6 +775,7 @@ static void ParseClassEffects(VScriptParser* sc,
 
 	//	Set defaults.
 	C->ClassName = sc->String;
+	C->StaticLight.Clean();
 	C->SpriteEffects.Clear();
 
 	//	Parse
@@ -798,6 +800,11 @@ static void ParseClassEffects(VScriptParser* sc,
 					sc->Error("Bad frame parameter");
 				}
 			}
+		}
+		else if (sc->Check("static_light"))
+		{
+			sc->ExpectString();
+			C->StaticLight = sc->String.ToLower();
 		}
 		else
 		{
@@ -860,6 +867,72 @@ static void ParseEffectDefs(VScriptParser* sc,
 
 //==========================================================================
 //
+//	SetClassFieldInt
+//
+//==========================================================================
+
+static void SetClassFieldInt(VClass* Class, const char* FieldName,
+	int Value, int Idx = 0)
+{
+	guard(SetClassFieldInt);
+	VField* F = Class->FindFieldChecked(FieldName);
+	vint32* Ptr = (vint32*)(Class->Defaults + F->Ofs);
+	Ptr[Idx] = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldBool
+//
+//==========================================================================
+
+static void SetClassFieldBool(VClass* Class, const char* FieldName, int Value)
+{
+	guard(SetClassFieldBool);
+	VField* F = Class->FindFieldChecked(FieldName);
+	vuint32* Ptr = (vuint32*)(Class->Defaults + F->Ofs);
+	if (Value)
+		*Ptr |= F->Type.BitMask;
+	else
+		*Ptr &= ~F->Type.BitMask;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldFloat
+//
+//==========================================================================
+
+static void SetClassFieldFloat(VClass* Class, const char* FieldName,
+	float Value)
+{
+	guard(SetClassFieldFloat);
+	VField* F = Class->FindFieldChecked(FieldName);
+	float* Ptr = (float*)(Class->Defaults + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldVec
+//
+//==========================================================================
+
+static void SetClassFieldVec(VClass* Class, const char* FieldName,
+	const TVec& Value)
+{
+	guard(SetClassFieldVec);
+	VField* F = Class->FindFieldChecked(FieldName);
+	TVec* Ptr = (TVec*)(Class->Defaults + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
 //	R_ParseEffectDefs
 //
 //==========================================================================
@@ -891,6 +964,22 @@ void R_ParseEffectDefs()
 		{
 			GCon->Logf(NAME_Init, "No such class %s", *CD.ClassName);
 			continue;
+		}
+
+		if (CD.StaticLight)
+		{
+			VLightEffectDef* SLight = FindLightEffect(CD.StaticLight);
+			if (SLight)
+			{
+				SetClassFieldBool(Cls, "bStaticLight", true);
+				SetClassFieldInt(Cls, "LightColour", SLight->Colour);
+				SetClassFieldFloat(Cls, "LightRadius", SLight->Radius);
+				SetClassFieldVec(Cls, "LightOffset", SLight->Offset);
+			}
+			else
+			{
+				GCon->Logf("Light \"%s\" not found", *CD.StaticLight);
+			}
 		}
 
 		for (int j = 0; j < CD.SpriteEffects.Num(); j++)
