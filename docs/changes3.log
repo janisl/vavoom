@@ -2936,15 +2936,22 @@
 03.02.2008
   I merged field type classes and added emit context to the engine.
 04.02.2008
-  I adde many of the expression classes to the engine, adde statement classes,
+  I added many of the expression classes to the engine, adde statement classes,
  merged member base classes.
 05.02.2008
   I merged most of the member classes.
 06.02.2008
+  Firebrand fixed Hexen's Deathkings music definitions, "ghost" imps in Doom,
+ activation and deactivation of dynamic lights, infighting of similar species,
+ and did some status bar adjustments and added new logo graphic and icons to
+ the launcher.
+  I updated acc to the latest SVN version.
   I continued merging member classes.
 07.02.2008
   I finished merging member classes.
 09.02.2008
+  In entity class I added method that calculates missile damage, properly
+ implemented Strife missile damages.
   I made remaining expression classes available in engine.
 10.02.2008
   I implemented simple decorate expression parser.
@@ -2955,3 +2962,36 @@
  class for DECORATE identifiers.
   OS X/Darwin desn't have __unix__ defined, so I changed checks wether to use
  $HOME/.vavoom directory to just check if it's not Windows.
+  I implemented sprite renaming that will allow use of actors from other games
+ by just providing needed states without worying about conflicting names.
+  I added base class for dynamic lights and renamed them to proper names.
+12.02.2008
+  I Fixed some bugs in dynamic light actors, added method that returns best
+ matching radius for intensity.
+13.02.2008
+  I started to add common functionaluty to the dynamic light base class. Since
+ all of it was my code, I decided to rewrite the rest of it from scratch.
+14.02.2008
+  I updated acc to the version 1.46.
+  I accidentaly noticed that in CheckDropOff Firebrand is using wrong sin and
+ cos functions. After some more investigation I found out that calculation of
+ deltas was in the wrong place (initially it was correct). Then I changed it's
+ arguments and inlined internal check method. After some testing I found that
+ it uses a wrong angle to calculate deltas. Since angle is calculated from
+ normal I could optimise it so that angle is not used.
+15.02.2008
+  I implemented initial version of per-state point light effects defined using
+ a VFXDEFS lump. Doesn't work yet.
+16.02.2008
+  I fixed a crash in Doom player setup menu when not using models.
+  I found a small bug in effects parser, now it works.
+  I started to convert dynamic ligt effects to VFXDEFS.
+17.02.2008
+  Basicly I finished converting dynamic light effects to VFXDEFS.
+19.02.2008
+  I converted explosion light effects to VFXDEFS.
+  Firebrand fixed some colision problems and did some status bar fixes.
+20.02.2008
+  I added support for defining static lights in VFXDEFS, started to convert.
+21.02.2008
+  I finished static light conversion.
