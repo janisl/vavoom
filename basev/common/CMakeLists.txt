@@ -14,9 +14,11 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		vfxdefs.txt
 		x11r6rgb.txt
 		fxdefs/common/effects.txt
+		fxdefs/doom/decorations.txt
 		fxdefs/doom/monsters.txt
 		fxdefs/doom/pickups.txt
 		fxdefs/doom/weapons.txt
+		fxdefs/heretic/decorations.txt
 		fxdefs/heretic/effects.txt
 		fxdefs/heretic/monsters.txt
 		fxdefs/heretic/pickups.txt

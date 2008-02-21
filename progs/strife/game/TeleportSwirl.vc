@@ -38,8 +38,4 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	Alpha = 0.333;
 	bNoBlockmap = true;
-	bStaticLight = true;
-	LightColour = 0xffffff7f;
-	LightOffset = vector(0.0, 0.0, 32.0);
-	LightRadius = 200.0;
 }

@@ -34,5 +34,4 @@ Spawn:
 
 defaultproperties
 {
-	bStaticLight = false;
 }

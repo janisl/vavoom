@@ -1,0 +1,97 @@
+//------------------------------------------------------------------------------
+pointlight KeyGizmoYellow
+{
+	colour 1 1 0
+	radius 118
+	offset 0 0 68
+}
+
+class KeyGizmoYellow
+{
+	static_light KeyGizmoYellow
+	frame KGZ1 { light KeyGizmoYellow }
+}
+
+//------------------------------------------------------------------------------
+pointlight KeyGizmoGreen
+{
+	colour 0 1 0
+	radius 118
+	offset 0 0 68
+}
+
+class KeyGizmoGreen
+{
+	static_light KeyGizmoGreen
+	frame KGZ1 { light KeyGizmoGreen }
+}
+
+//------------------------------------------------------------------------------
+pointlight KeyGizmoBlue
+{
+	colour 0 0 1
+	radius 118
+	offset 0 0 68
+}
+
+class KeyGizmoBlue
+{
+	static_light KeyGizmoBlue
+	frame KGZ1 { light KeyGizmoBlue }
+}
+
+//------------------------------------------------------------------------------
+pointlight WallTorch
+{
+	colour 1 1 0
+	radius 128
+	offset 0 0 8
+}
+
+class WallTorch
+{
+	static_light WallTorch
+	frame WTRH { light WallTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight SerpentTorch
+{
+	colour 1 1 0
+	radius 128
+	offset 0 0 46
+}
+
+class SerpentTorch
+{
+	static_light SerpentTorch
+	frame SRTC { light SerpentTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight Chandelier
+{
+	colour 1 1 0.5
+	radius 160
+	offset 0 0 52
+}
+
+class Chandelier
+{
+	static_light Chandelier
+	frame CHDL { light Chandelier }
+}
+
+//------------------------------------------------------------------------------
+pointlight FireBrazier
+{
+	colour 1 1 0
+	radius 160
+	offset 0 0 52
+}
+
+class FireBrazier
+{
+	static_light FireBrazier
+	frame KFR1 { light FireBrazier }
+}

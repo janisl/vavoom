@@ -39,8 +39,4 @@ defaultproperties
 	Height = 64.0;
 	bSolid = true;
 	bFloorClip = true;
-	bStaticLight = true;
-	LightColour = RGB(0, 255, 0);
-	LightOffset = vector(0.0, 0.0, 32.0);
-	LightRadius = 160.0;
 }

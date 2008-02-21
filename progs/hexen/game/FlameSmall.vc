@@ -52,7 +52,6 @@ bool Activate()
 {
 	PlaySound('Ignite', CHAN_VOICE);
 	SetState(FindState('Active'));
-	bStaticLight = true;
 	return true;
 }
 
@@ -65,7 +64,6 @@ bool Activate()
 bool Deactivate()
 {
 	SetState(FindState('Inactive'));
-	bStaticLight = false;
 	return true;
 }
 
@@ -74,7 +72,4 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	bInvisible = true;
 	bNoTeleport = true;
-	bStaticLight = true;
-	LightColour = RGB(255, 255, 0);
-	LightRadius = 64.0;
 }

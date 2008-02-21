@@ -40,7 +40,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
-	bStaticLight = true;
-	LightOffset = vector(0.0, 0.0, 0.0);
-	LightRadius = 180.0;
 }

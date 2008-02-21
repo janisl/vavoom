@@ -40,9 +40,11 @@ textcolo.txt			@CMAKE_CURRENT_SOURCE_DIR@/textcolo.txt
 //	Effect scripts
 vfxdefs.txt						@CMAKE_CURRENT_SOURCE_DIR@/vfxdefs.txt
 fxdefs/common/effects.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/common/effects.txt
+fxdefs/doom/decorations.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/doom/decorations.txt
 fxdefs/doom/monsters.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/doom/monsters.txt
 fxdefs/doom/pickups.txt			@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/doom/pickups.txt
 fxdefs/doom/weapons.txt			@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/doom/weapons.txt
+fxdefs/heretic/decorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/heretic/decorations.txt
 fxdefs/heretic/effects.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/heretic/effects.txt
 fxdefs/heretic/monsters.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/heretic/monsters.txt
 fxdefs/heretic/pickups.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/heretic/pickups.txt

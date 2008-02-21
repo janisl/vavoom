@@ -1,0 +1,208 @@
+//------------------------------------------------------------------------------
+pointlight ShortRedTorch
+{
+	colour 1 0 0
+	radius 160
+	offset 0 0 16
+}
+
+class ShortRedTorch
+{
+	static_light ShortRedTorch
+	frame SMRT { light ShortRedTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight ShortGreenTorch
+{
+	colour 0 1 0
+	radius 160
+	offset 0 0 16
+}
+
+class ShortGreenTorch
+{
+	static_light ShortGreenTorch
+	frame SMGT { light ShortGreenTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight ShortBlueTorch
+{
+	colour 0 0 1
+	radius 160
+	offset 0 0 16
+}
+
+class ShortBlueTorch
+{
+	static_light ShortBlueTorch
+	frame SMBT { light ShortBlueTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight RedTorch
+{
+	colour 1 0 0
+	radius 160
+	offset 0 0 32
+}
+
+class RedTorch
+{
+	static_light RedTorch
+	frame TRED { light RedTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight GreenTorch
+{
+	colour 0 1 0
+	radius 160
+	offset 0 0 32
+}
+
+class GreenTorch
+{
+	static_light GreenTorch
+	frame TGRN { light GreenTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight BlueTorch
+{
+	colour 0 0 1
+	radius 160
+	offset 0 0 32
+}
+
+class BlueTorch
+{
+	static_light BlueTorch
+	frame TBLU { light BlueTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight Column
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 32
+}
+
+class Column
+{
+	static_light Column
+	frame COLU { light Column }
+}
+
+//------------------------------------------------------------------------------
+pointlight TechLamp
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 64
+}
+
+class TechLamp
+{
+	static_light TechLamp
+	frame TLMP { light TechLamp }
+}
+
+//------------------------------------------------------------------------------
+pointlight TechLamp2
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 48
+}
+
+class TechLamp2
+{
+	static_light TechLamp2
+	frame TLP2 { light TechLamp2 }
+}
+
+//------------------------------------------------------------------------------
+pointlight BurningBarrel
+{
+	colour 1 1 0
+	radius 140
+	offset 0 0 24
+}
+
+class BurningBarrel
+{
+	static_light BurningBarrel
+	frame FCAN { light BurningBarrel }
+}
+
+//------------------------------------------------------------------------------
+pointlight Candlestick
+{
+	colour 1 1 0.5
+	radius 64
+}
+
+class Candlestick
+{
+	static_light Candlestick
+	frame CAND { light Candlestick }
+}
+
+//------------------------------------------------------------------------------
+pointlight HeadCandles
+{
+	colour 1 0.5 0.3
+	radius 140
+	offset 0 0 32
+}
+
+class HeadCandles
+{
+	static_light HeadCandles
+	frame POL3 { light HeadCandles }
+}
+
+//------------------------------------------------------------------------------
+pointlight Candelabra
+{
+	colour 1 1 0.5
+	radius 128
+	offset 0 0 32
+}
+
+class Candelabra
+{
+	static_light Candelabra
+	frame CBRA { light Candelabra }
+}
+
+//------------------------------------------------------------------------------
+pointlight FloatingSkull
+{
+	colour 1 0.5 0.1
+	radius 140
+	offset 0 0 32
+}
+
+class FloatingSkull
+{
+	static_light FloatingSkull
+	frame FSKU { light FloatingSkull }
+}
+
+//------------------------------------------------------------------------------
+pointlight EvilEye
+{
+	colour 1 1 0.5
+	radius 128
+	offset 0 0 32
+}
+
+class EvilEye
+{
+	static_light EvilEye
+	frame CEYE { light EvilEye }
+}

@@ -36,7 +36,4 @@ Spawn:
 defaultproperties
 {
 	bNoGravity = true;
-	bStaticLight = true;
-	LightColour = RGB(255, 255, 0);
-	LightOffset = vector(0.0, 0.0, 8.0);	
 }

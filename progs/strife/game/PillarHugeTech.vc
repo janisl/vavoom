@@ -39,8 +39,4 @@ defaultproperties
 	Radius = 24.0;
 	Height = 192.0;
 	bSolid = true;
-	bStaticLight = true;
-	LightColour = 0xff7fff7f;
-	LightOffset = vector(0.0, 0.0, 96.0);
-	LightRadius = 185.0;
 }

@@ -39,8 +39,4 @@ defaultproperties
 	Height = 56.0;
 	bSolid = true;
 	ActiveSound = 'ambient/alien1';
-	bStaticLight = true;
-	LightColour = 0xff00ff00;
-	LightOffset = vector(0.0, 0.0, 32.0);
-	LightRadius = 160.0;
 }

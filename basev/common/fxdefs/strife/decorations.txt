@@ -270,3 +270,288 @@ class DegninOre
 	frame BNG3G { light DegninOre_X7 }
 	frame BNG3H { light DegninOre_X8 }
 }
+
+//------------------------------------------------------------------------------
+pointlight TechLampSilver
+{
+	colour 1 1 1
+	radius 200
+	offset 0 0 48
+}
+
+class TechLampSilver
+{
+	static_light TechLampSilver
+	frame TECH { light TechLampSilver }
+}
+
+//------------------------------------------------------------------------------
+pointlight TechLampBrass
+{
+	colour 0.7 0.7 0.5
+	radius 160
+	offset 0 0 32
+}
+
+class TechLampBrass
+{
+	static_light TechLampBrass
+	frame TECH { light TechLampBrass }
+}
+
+//------------------------------------------------------------------------------
+pointlight LightSilverFluorescent
+{
+	colour 1 1 1
+	radius 180
+	offset 0 0 32
+}
+
+class LightSilverFluorescent
+{
+	static_light LightSilverFluorescent
+	frame LITS { light LightSilverFluorescent }
+}
+
+//------------------------------------------------------------------------------
+pointlight LightBrownFluorescent
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 32
+}
+
+class LightBrownFluorescent
+{
+	static_light LightBrownFluorescent
+	frame LITB { light LightBrownFluorescent }
+}
+
+class LightGoldFluorescent
+{
+	static_light LightGoldFluorescent
+	frame LITG { light LightGoldFluorescent }
+}
+
+//------------------------------------------------------------------------------
+pointlight SmallTorchLit
+{
+	colour 1 0.7 0.5
+	radius 160
+	offset 0 0 48
+}
+
+class SmallTorchLit
+{
+	static_light SmallTorchLit
+	frame TRHL { light SmallTorchLit }
+}
+
+//------------------------------------------------------------------------------
+pointlight MediumTorch
+{
+	colour 1 0.7 0.5
+	radius 160
+	offset 0 0 64
+}
+
+class MediumTorch
+{
+	static_light MediumTorch
+	frame LTRH { light MediumTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight LargeTorch
+{
+	colour 1 0.8 0.5
+	radius 160
+	offset 0 0 64
+}
+
+class LargeTorch
+{
+	static_light LargeTorch
+	frame LMPC { light LargeTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight HugeTorch
+{
+	colour 1 0.7 0.5
+	radius 180
+	offset 0 0 80
+}
+
+class HugeTorch
+{
+	static_light HugeTorch
+	frame LOGS { light HugeTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight CageLight
+{
+	colour 1 1 1
+	radius 180
+}
+
+class CageLight
+{
+	static_light CageLight
+	frame CAGE { light CageLight }
+}
+
+//------------------------------------------------------------------------------
+pointlight LightGlobe
+{
+	colour 1 1 1
+	radius 140
+	offset 0 0 64
+}
+
+class LightGlobe
+{
+	static_light LightGlobe
+	frame LITE { light LightGlobe }
+}
+
+//------------------------------------------------------------------------------
+pointlight OutsideLamp
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 70
+}
+
+class OutsideLamp
+{
+	static_light OutsideLamp
+	frame LAMP { light OutsideLamp }
+}
+
+//------------------------------------------------------------------------------
+pointlight Candle
+{
+	colour 1 1 1
+	radius 64
+	offset 0 0 16
+}
+
+class Candle
+{
+	static_light Candle
+	frame KNDL { light Candle }
+}
+
+//------------------------------------------------------------------------------
+pointlight StrifeCandelabra
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 64
+}
+
+class StrifeCandelabra
+{
+	static_light StrifeCandelabra
+	frame CLBR { light StrifeCandelabra }
+}
+
+//------------------------------------------------------------------------------
+pointlight StrifeBurningBarrel
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 64
+}
+
+class StrifeBurningBarrel
+{
+	static_light StrifeBurningBarrel
+	frame BBAR { light StrifeBurningBarrel }
+}
+
+//------------------------------------------------------------------------------
+pointlight BurningBrazier
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 32
+}
+
+class BurningBrazier
+{
+	static_light BurningBrazier
+	frame BRAZ { light BurningBrazier }
+}
+
+//------------------------------------------------------------------------------
+pointlight BurningBowl
+{
+	colour 1 1 1
+	radius 160
+	offset 0 0 16
+}
+
+class BurningBowl
+{
+	static_light BurningBowl
+	frame BOWL { light BurningBowl }
+}
+
+//------------------------------------------------------------------------------
+pointlight PillarHugeTech
+{
+	colour 0.5 1 0.5
+	radius 185
+	offset 0 0 96
+}
+
+class PillarHugeTech
+{
+	static_light PillarHugeTech
+	frame HUGE { light PillarHugeTech }
+}
+
+//------------------------------------------------------------------------------
+pointlight AlienSpiderLight
+{
+	colour 0 1 0
+	radius 160
+	offset 0 0 32
+}
+
+class AlienSpiderLight
+{
+	static_light AlienSpiderLight
+	frame SPDL { light AlienSpiderLight }
+}
+
+//------------------------------------------------------------------------------
+pointlight TeleportSwirl
+{
+	colour 1 1 0.5
+	radius 200
+	offset 0 0 32
+}
+
+class TeleportSwirl
+{
+	static_light TeleportSwirl
+	frame TELP { light TeleportSwirl }
+}
+
+//------------------------------------------------------------------------------
+pointlight HeartsInTank
+{
+	colour 1 1 1
+	radius 128
+	offset 0 0 25
+}
+
+class HeartsInTank
+{
+	static_light HeartsInTank
+	frame HERT { light HeartsInTank }
+}

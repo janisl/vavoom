@@ -40,8 +40,4 @@ defaultproperties
 	Height = 72.0;
 	bSolid = true;
 	ActiveSound = 'world/smallfire';
-	bStaticLight = true;
-	LightColour = 0xffffbf7f;
-	LightOffset = vector(0.0, 0.0, 64.0);
-	LightRadius = 160.0;
 }

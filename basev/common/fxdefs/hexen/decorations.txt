@@ -52,3 +52,242 @@ class ZXmasTree
 	frame XMASE { light BurnableTree_X4 }
 	frame XMASF { light BurnableTree_X5 }
 }
+
+//------------------------------------------------------------------------------
+pointlight FireThing
+{
+	colour 1 1 0
+	radius 160
+	offset 0 0 16
+}
+
+class FireThing
+{
+	static_light FireThing
+	frame FSKL { light FireThing }
+}
+
+//------------------------------------------------------------------------------
+pointlight ZChandelier
+{
+	colour 1 1 0.5
+	radius 128
+	offset 0 0 52
+}
+
+class ZChandelier
+{
+	static_light ZChandelier
+	frame CDLR { light ZChandelier }
+}
+
+//------------------------------------------------------------------------------
+pointlight BrassTorch
+{
+	colour 1 1 0
+	radius 160
+	offset 0 0 48
+}
+
+class BrassTorch
+{
+	static_light BrassTorch
+	frame BRTR { light BrassTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight ZCandle
+{
+	colour 1 1 0.5
+	radius 128
+}
+
+class ZCandle
+{
+	static_light ZCandle
+	frame CNDL { light ZCandle }
+}
+
+//------------------------------------------------------------------------------
+pointlight ZBlueCandle
+{
+	colour 0.4 0.4 1
+	radius 128
+	offset 0 0 8
+}
+
+class ZBlueCandle
+{
+	static_light ZBlueCandle
+	frame BCAN { light ZBlueCandle }
+}
+
+//------------------------------------------------------------------------------
+pointlight ZTwinedTorch
+{
+	colour 1 1 0
+	radius 160
+	offset 0 0 64
+}
+
+class ZTwinedTorch
+{
+	static_light ZTwinedTorch
+	frame TWTRA { light ZTwinedTorch }
+	frame TWTRB { light ZTwinedTorch }
+	frame TWTRC { light ZTwinedTorch }
+	frame TWTRD { light ZTwinedTorch }
+	frame TWTRE { light ZTwinedTorch }
+	frame TWTRF { light ZTwinedTorch }
+	frame TWTRG { light ZTwinedTorch }
+	frame TWTRH { light ZTwinedTorch }
+}
+
+class ZTwinedTorchUnlit
+{
+	frame TWTRA { light ZTwinedTorch }
+	frame TWTRB { light ZTwinedTorch }
+	frame TWTRC { light ZTwinedTorch }
+	frame TWTRD { light ZTwinedTorch }
+	frame TWTRE { light ZTwinedTorch }
+	frame TWTRF { light ZTwinedTorch }
+	frame TWTRG { light ZTwinedTorch }
+	frame TWTRH { light ZTwinedTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight ZWallTorch
+{
+	colour 1 1 0
+	radius 128
+	offset 0 0 48
+}
+
+class ZWallTorch
+{
+	static_light ZWallTorch
+	frame WLTRA { light ZWallTorch }
+	frame WLTRB { light ZWallTorch }
+	frame WLTRC { light ZWallTorch }
+	frame WLTRD { light ZWallTorch }
+	frame WLTRE { light ZWallTorch }
+	frame WLTRF { light ZWallTorch }
+	frame WLTRG { light ZWallTorch }
+	frame WLTRH { light ZWallTorch }
+}
+
+class ZWallTorchUnlit
+{
+	frame WLTRA { light ZWallTorch }
+	frame WLTRB { light ZWallTorch }
+	frame WLTRC { light ZWallTorch }
+	frame WLTRD { light ZWallTorch }
+	frame WLTRE { light ZWallTorch }
+	frame WLTRF { light ZWallTorch }
+	frame WLTRG { light ZWallTorch }
+	frame WLTRH { light ZWallTorch }
+}
+
+//------------------------------------------------------------------------------
+pointlight ZCauldron
+{
+	colour 1 1 0
+	radius 128
+	offset 0 0 18
+}
+
+class ZCauldron
+{
+	static_light ZCauldron
+	frame CDRNB { light ZCauldron }
+	frame CDRNC { light ZCauldron }
+	frame CDRND { light ZCauldron }
+	frame CDRNE { light ZCauldron }
+	frame CDRNF { light ZCauldron }
+	frame CDRNG { light ZCauldron }
+	frame CDRNH { light ZCauldron }
+}
+
+class ZCauldronUnlit
+{
+	frame CDRNB { light ZCauldron }
+	frame CDRNC { light ZCauldron }
+	frame CDRND { light ZCauldron }
+	frame CDRNE { light ZCauldron }
+	frame CDRNF { light ZCauldron }
+	frame CDRNG { light ZCauldron }
+	frame CDRNH { light ZCauldron }
+}
+
+//------------------------------------------------------------------------------
+pointlight ZFireBull
+{
+	colour 1 1 0
+	radius 170
+	offset 0 0 72
+}
+
+class ZFireBull
+{
+	static_light ZFireBull
+	frame FBULA { light ZFireBull }
+	frame FBULB { light ZFireBull }
+	frame FBULC { light ZFireBull }
+	frame FBULD { light ZFireBull }
+	frame FBULE { light ZFireBull }
+	frame FBULF { light ZFireBull }
+	frame FBULG { light ZFireBull }
+	frame FBULH { light ZFireBull }
+}
+
+class ZFireBullUnlit
+{
+	frame FBULA { light ZFireBull }
+	frame FBULB { light ZFireBull }
+	frame FBULC { light ZFireBull }
+	frame FBULD { light ZFireBull }
+	frame FBULE { light ZFireBull }
+	frame FBULF { light ZFireBull }
+	frame FBULG { light ZFireBull }
+	frame FBULH { light ZFireBull }
+}
+
+//------------------------------------------------------------------------------
+pointlight FlameSmall
+{
+	colour 1 1 0
+	radius 128
+	offset 0 0 64
+}
+
+class FlameSmall
+{
+	static_light FlameSmall
+	frame FFSM { light FlameSmall }
+}
+
+class FlameSmall2
+{
+	static_light FlameSmall
+	frame FFSM { light FlameSmall }
+}
+
+//------------------------------------------------------------------------------
+pointlight FlameLarge
+{
+	colour 1 1 0
+	radius 128
+	offset 0 0 0
+}
+
+class FlameLarge
+{
+	static_light FlameLarge
+	frame FFLG { light FlameLarge }
+}
+
+class FlameLarge2
+{
+	static_light FlameLarge
+	frame FFLG { light FlameLarge }
+}

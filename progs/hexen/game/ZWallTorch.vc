@@ -53,7 +53,4 @@ defaultproperties
 {
 	bNoBlockmap = true;
 	bNoGravity = true;
-	bStaticLight = true;
-	LightColour = RGB(255, 255, 0);
-	LightOffset = vector(0.0, 0.0, 48.0);
 }
