@@ -623,6 +623,14 @@ int R_ParseDecorateTranslation(VScriptParser* sc)
 		return (TRANSL_Standard << TRANSL_TYPE_SHIFT) + sc->Number;
 	}
 
+	//	Check for special ice translation
+	if (sc->Check("Ice"))
+	{
+		//FIXME
+		GCon->Logf("Translation Ice is not yet supported");
+		return 0;
+	}
+
 	VTextureTranslation* Tr = new VTextureTranslation;
 
 	do

@@ -27,12 +27,4 @@
 //**
 //**************************************************************************
 
-struct FReplacedString
-{
-	int			Index;
-	bool		Replaced;
-	VStr		Old;
-	VStr		New;
-};
-
 void ProcessDehackedFiles();

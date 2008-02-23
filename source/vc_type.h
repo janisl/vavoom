@@ -135,3 +135,17 @@ private:
 	int ArrSize;
 	vuint8* ArrData;
 };
+
+//==========================================================================
+//
+//	FReplacedString
+//
+//==========================================================================
+
+struct FReplacedString
+{
+	int			Index;
+	bool		Replaced;
+	VStr		Old;
+	VStr		New;
+};

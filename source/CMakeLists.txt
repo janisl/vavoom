@@ -68,10 +68,6 @@ set(MAIN_COMMON_SOURCES
 	d_tex.cpp
 	debug.cpp
 	debug.h
-	decorate.cpp
-	decorate.h
-	dehacked.cpp
-	dehacked.h
 	drawer.h
 	files.cpp
 	files.h
@@ -225,6 +221,10 @@ set(MAIN_COMMON_SOURCES
 	vc_class.h
 	vc_constant.cpp
 	vc_constant.h
+	vc_decorate.cpp
+	vc_decorate.h
+	vc_dehacked.cpp
+	vc_dehacked.h
 	vc_emit_context.cpp
 	vc_emit_context.h
 	vc_expr_array.cpp
@@ -257,6 +257,8 @@ set(MAIN_COMMON_SOURCES
 	vc_member.h
 	vc_method.cpp
 	vc_method.h
+	vc_object.cpp
+	vc_object.h
 	vc_package.cpp
 	vc_package.h
 	vc_property.cpp
@@ -271,8 +273,6 @@ set(MAIN_COMMON_SOURCES
 	vc_type.h
 	vector.h
 	video.h
-	vobject.cpp
-	vobject.h
 	wad.cpp
 	wad.h
 	waddefs.h
@@ -420,8 +420,6 @@ set(SERVER_COMMON_SOURCES
 	crc.cpp
 	cvar.cpp
 	debug.cpp
-	decorate.cpp
-	dehacked.cpp
 	files.cpp
 	fs_dir.cpp
 	fs_wad.cpp
@@ -490,6 +488,8 @@ set(SERVER_COMMON_SOURCES
 	sv_world.cpp
 	vc_class.cpp
 	vc_constant.cpp
+	vc_decorate.cpp
+	vc_dehacked.cpp
 	vc_emit_context.cpp
 	vc_expr_array.cpp
 	vc_expr_assign.cpp
@@ -507,13 +507,13 @@ set(SERVER_COMMON_SOURCES
 	vc_location.h
 	vc_member.cpp
 	vc_method.cpp
+	vc_object.cpp
 	vc_package.cpp
 	vc_property.cpp
 	vc_state.cpp
 	vc_statement.cpp
 	vc_struct.cpp
 	vc_type.cpp
-	vobject.cpp
 	wad.cpp
 	xml.cpp
 	zipstream.cpp

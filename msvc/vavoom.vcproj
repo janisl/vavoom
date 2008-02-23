@@ -230,14 +230,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\decorate.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\dehacked.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\files.cpp"
 				>
 			</File>
@@ -338,6 +330,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_decorate.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_dehacked.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_emit_context.cpp"
 				>
 			</File>
@@ -402,6 +402,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_object.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_package.cpp"
 				>
 			</File>
@@ -423,10 +427,6 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_type.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\vobject.cpp"
 				>
 			</File>
 			<File
@@ -488,14 +488,6 @@
 			</File>
 			<File
 				RelativePath="..\source\debug.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\decorate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\dehacked.h"
 				>
 			</File>
 			<File
@@ -599,6 +591,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_decorate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_dehacked.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_emit_context.h"
 				>
 			</File>
@@ -663,6 +663,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_object.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_package.h"
 				>
 			</File>
@@ -688,10 +692,6 @@
 			</File>
 			<File
 				RelativePath="..\source\vector.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\vobject.h"
 				>
 			</File>
 			<File
