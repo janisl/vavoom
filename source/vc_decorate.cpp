@@ -1669,8 +1669,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("NoSector"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoSector");
+		SetClassFieldBool(Class, "bNoSector", Value);
 		return true;
 	}
 	if (!Flag.ICmp("IceCorpse"))
@@ -2101,37 +2100,29 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			if (sc->Check("("))
 			{
 				GCon->Logf("State action %s with arguments", *FuncName);
-				SkipBlock(sc, 2);
-				sc->SetEscape(true);
-				sc->SetCMode(false);
-				return false;
+				VExpression* Expr = ParseMethodCall(sc, *FuncName, sc->GetLoc());
+				if (Expr)
+				{
+					delete Expr;
+				}
 			}
 			VMethod* Func = Class->FindMethod(*FuncName);
 			if (!Func)
 			{
 				GCon->Logf("Unknown state action %s", *FuncName);
-				SkipBlock(sc, 2);
-				sc->SetEscape(true);
-				sc->SetCMode(false);
-				return false;
 			}
-			if (Func->NumParams)
+			else if (Func->NumParams)
 			{
 				GCon->Logf("State action %s takes parameters", *FuncName);
-				SkipBlock(sc, 2);
-				sc->SetEscape(true);
-				sc->SetCMode(false);
-				return false;
 			}
-			if (Func->ReturnType.Type != TYPE_Void)
+			else if (Func->ReturnType.Type != TYPE_Void)
 			{
 				GCon->Logf("State action %s desn't return void", *FuncName);
-				SkipBlock(sc, 2);
-				sc->SetEscape(true);
-				sc->SetCMode(false);
-				return false;
 			}
-			State->Function = Func;
+			else
+			{
+				State->Function = Func;
+			}
 			NeedsUnget = false;
 			break;
 		}
