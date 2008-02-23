@@ -406,6 +406,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		}
 		else
 		{
+			check(spr.surf);
 			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha, spr.Additive);
 		}
 		if (type)
@@ -421,6 +422,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		spr.Alpha = Alpha;
 		spr.Additive = Additive;
 		spr.translation = translation;
+		spr.type = type;
 		spr.light = light;
 		spr.Fade = Fade;
 		return;
@@ -435,6 +437,7 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	}
 	else
 	{
+		check(surf);
 		Drawer->DrawMaskedPolygon(surf, Alpha, Additive);
 	}
 	unguard;
@@ -715,6 +718,7 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		}
 		else
 		{
+			check(spr.surf);
 			Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha, spr.Additive);
 		}
 		spr.Ent = mobj;
@@ -929,6 +933,7 @@ void VRenderLevel::DrawTranslucentPolys()
 			}
 			else
 			{
+				check(spr.surf);
 				Drawer->DrawMaskedPolygon(spr.surf, spr.Alpha, spr.Additive);
 			}
 			spr.Alpha = 0;
