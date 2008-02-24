@@ -46,22 +46,37 @@ struct VStateLabel
 	VName		Name;
 	VState*		State;
 
-	//	Compiler fields
-	TLocation	Loc;
-	VName		GotoLabel;
-	vint32		GotoOffset;
-
 	VStateLabel()
 	: Name(NAME_None)
 	, State(NULL)
-	, GotoLabel(NAME_None)
-	, GotoOffset(0)
 	{}
 
 	friend inline VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
 	{
 		return Strm << Lbl.Name << Lbl.State;
 	}
+};
+
+//==========================================================================
+//
+//	VStateLabelDef
+//
+//==========================================================================
+
+struct VStateLabelDef
+{
+	VName		Name;
+	VState*		State;
+	TLocation	Loc;
+	VName		GotoLabel;
+	vint32		GotoOffset;
+
+	VStateLabelDef()
+	: Name(NAME_None)
+	, State(NULL)
+	, GotoLabel(NAME_None)
+	, GotoOffset(0)
+	{}
 };
 
 //==========================================================================
@@ -146,6 +161,7 @@ public:
 	TArray<VConstant*>		Constants;
 	TArray<VProperty*>		Properties;
 	TArray<VMethod*>		Methods;
+	TArray<VStateLabelDef>	StateLabelDefs;
 	bool					Defined;
 
 	// Internal per-object variables.
@@ -223,6 +239,7 @@ public:
 	bool DefineMembers();
 	void Emit();
 	void DecorateEmit();
+	void EmitStateLabels();
 	VState* ResolveStateLabel(TLocation, VName, int);
 	void SetStateLabel(VName, VState*);
 

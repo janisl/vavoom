@@ -1536,7 +1536,7 @@ void VParser::ParseStates(VClass* InClass)
 	int StateIdx = 0;
 	VState* PrevState = NULL;
 	VState* LoopStart = NULL;
-	int NewLabelsStart = InClass->StateLabels.Num();
+	int NewLabelsStart = InClass->StateLabelDefs.Num();
 	while (!Lex.Check(TK_RBrace))
 	{
 		TLocation TmpLoc = Lex.Location;
@@ -1558,7 +1558,7 @@ void VParser::ParseStates(VClass* InClass)
 				Lex.NextToken();
 			}
 
-			if (!PrevState && NewLabelsStart == InClass->StateLabels.Num())
+			if (!PrevState && NewLabelsStart == InClass->StateLabelDefs.Num())
 			{
 				ParseError(Lex.Location, "Goto before first state");
 				continue;
@@ -1568,12 +1568,12 @@ void VParser::ParseStates(VClass* InClass)
 				PrevState->GotoLabel = GotoLabel;
 				PrevState->GotoOffset = GotoOffset;
 			}
-			for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
+			for (int i = NewLabelsStart; i < InClass->StateLabelDefs.Num(); i++)
 			{
-				InClass->StateLabels[i].GotoLabel = GotoLabel;
-				InClass->StateLabels[i].GotoOffset = GotoOffset;
+				InClass->StateLabelDefs[i].GotoLabel = GotoLabel;
+				InClass->StateLabelDefs[i].GotoOffset = GotoOffset;
 			}
-			NewLabelsStart = InClass->StateLabels.Num();
+			NewLabelsStart = InClass->StateLabelDefs.Num();
 			PrevState = NULL;
 			continue;
 		}
@@ -1581,7 +1581,7 @@ void VParser::ParseStates(VClass* InClass)
 		//	Stop command.
 		if (TmpName == NAME_Stop)
 		{
-			if (!PrevState && NewLabelsStart == InClass->StateLabels.Num())
+			if (!PrevState && NewLabelsStart == InClass->StateLabelDefs.Num())
 			{
 				ParseError(Lex.Location, "Stop before first state");
 				continue;
@@ -1590,11 +1590,11 @@ void VParser::ParseStates(VClass* InClass)
 			{
 				PrevState->NextState = NULL;
 			}
-			for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
+			for (int i = NewLabelsStart; i < InClass->StateLabelDefs.Num(); i++)
 			{
-				InClass->StateLabels[i].State = NULL;
+				InClass->StateLabelDefs[i].State = NULL;
 			}
-			NewLabelsStart = InClass->StateLabels.Num();
+			NewLabelsStart = InClass->StateLabelDefs.Num();
 			PrevState = NULL;
 			continue;
 		}
@@ -1628,7 +1628,7 @@ void VParser::ParseStates(VClass* InClass)
 		//	Check for label.
 		if (Lex.Check(TK_Colon))
 		{
-			VStateLabel& Lbl = InClass->StateLabels.Alloc();
+			VStateLabelDef& Lbl = InClass->StateLabelDefs.Alloc();
 			Lbl.Loc = TmpLoc;
 			Lbl.Name = TmpName;
 			continue;
@@ -1769,12 +1769,12 @@ void VParser::ParseStates(VClass* InClass)
 		}
 
 		//	Assign state to the labels.
-		for (int i = NewLabelsStart; i < InClass->StateLabels.Num(); i++)
+		for (int i = NewLabelsStart; i < InClass->StateLabelDefs.Num(); i++)
 		{
-			InClass->StateLabels[i].State = s;
+			InClass->StateLabelDefs[i].State = s;
 			LoopStart = s;
 		}
-		NewLabelsStart = InClass->StateLabels.Num();
+		NewLabelsStart = InClass->StateLabelDefs.Num();
 		PrevState = s;
 		StateIdx++;
 
@@ -1805,7 +1805,7 @@ void VParser::ParseStates(VClass* InClass)
 	}
 
 	//	Make sure all state labels have corresponding states.
-	if (NewLabelsStart != InClass->StateLabels.Num())
+	if (NewLabelsStart != InClass->StateLabelDefs.Num())
 	{
 		ParseError(Lex.Location, "State label at the end of state block");
 	}

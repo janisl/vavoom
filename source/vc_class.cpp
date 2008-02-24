@@ -1049,19 +1049,13 @@ void VClass::Emit()
 		Methods[i]->Emit();
 	}
 
+	//	Build list of state labels, resolve jumps.
+	EmitStateLabels();
+
 	//	Emit code of the state methods.
 	for (VState* s = States; s; s = s->Next)
 	{
 		s->Emit();
-	}
-
-	for (int i = 0; i < StateLabels.Num(); i++)
-	{
-		VStateLabel& Lbl = StateLabels[i];
-		if (Lbl.GotoLabel != NAME_None)
-		{
-			Lbl.State = ResolveStateLabel(Lbl.Loc, Lbl.GotoLabel, Lbl.GotoOffset);
-		}
 	}
 
 	//	Emit code of the network replication conditions.
@@ -1096,6 +1090,35 @@ void VClass::DecorateEmit()
 
 	//	Recreate virtual table.
 	CreateVTable();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::EmitStateLabels
+//
+//==========================================================================
+
+void VClass::EmitStateLabels()
+{
+	guard(VClass::EmitStateLabels);
+	//	First add all labels.
+	for (int i = 0; i < StateLabelDefs.Num(); i++)
+	{
+		VStateLabelDef& Lbl = StateLabelDefs[i];
+		SetStateLabel(Lbl.Name, Lbl.State);
+	}
+
+	//	Then resolve state labels that do immediate jumps.
+	for (int i = 0; i < StateLabelDefs.Num(); i++)
+	{
+		VStateLabelDef& Lbl = StateLabelDefs[i];
+		if (Lbl.GotoLabel != NAME_None)
+		{
+			Lbl.State = ResolveStateLabel(Lbl.Loc, Lbl.GotoLabel, Lbl.GotoOffset);
+			SetStateLabel(Lbl.Name, Lbl.State);
+		}
+	}
 	unguard;
 }
 
