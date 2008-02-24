@@ -36,6 +36,7 @@ const int DefMaxAmount		= -2;
 
 //	Special values for powerup's blend colour.
 const int INVERSECOLOUR		= 0x00123456;
+const int GOLDCOLOUR		= 0x00123457;
 
 const int INVERSECOLOURMAP	= 32;
 

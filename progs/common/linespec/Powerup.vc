@@ -171,12 +171,12 @@ void DoEffect()
 		if (EffectTime > PlayerEx::BLINKTHRESHOLD ||
 			(ftoi(4.0 * EffectTime) & 1))
 		{
-			if (BlendColour == INVERSECOLOUR)
+			if (BlendColour == INVERSECOLOUR || BlendColour == GOLDCOLOUR)
 			{
 				Owner.Player.FixedColourmap = INVERSECOLOURMAP;
 			}
 		}
-		else if (BlendColour == INVERSECOLOUR &&
+		else if ((BlendColour == INVERSECOLOUR || BlendColour == GOLDCOLOUR) &&
 			Owner.Player.FixedColourmap == INVERSECOLOURMAP)
 		{
 			Owner.Player.FixedColourmap = 0;
@@ -208,7 +208,7 @@ int GetBlend()
 		return 0;
 	}
 
-	if (BlendColour == INVERSECOLOUR)
+	if (BlendColour == INVERSECOLOUR || BlendColour == GOLDCOLOUR)
 	{
 		return 0;
 	}
