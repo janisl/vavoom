@@ -225,6 +225,7 @@ VClass::~VClass()
 
 VClass *VClass::FindClass(const char *AName)
 {
+	guard(VClass::FindClass);
 	VName TempName(AName, VName::Find);
 	if (TempName == NAME_None)
 	{
@@ -239,6 +240,27 @@ VClass *VClass::FindClass(const char *AName)
 		}
 	}
 	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindClassNoCase
+//
+//==========================================================================
+
+VClass *VClass::FindClassNoCase(const char *AName)
+{
+	guard(VClass::FindClassNoCase);
+	for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
+	{
+		if (!VStr::ICmp(Cls->GetName(), AName))
+		{
+			return Cls;
+		}
+	}
+	return NULL;
+	unguard;
 }
 
 //==========================================================================

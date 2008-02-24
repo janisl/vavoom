@@ -962,7 +962,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("ActLikeBridge"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag ActLikeBridge");
+		GCon->Logf("Unsupported flag ActLikeBridge in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoBlockmap"))
@@ -973,7 +973,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("NoLiftDrop"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoLiftDrop");
+		GCon->Logf("Unsupported flag NoLiftDrop in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("SlidesOnWalls"))
@@ -984,7 +984,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("NoDropOff"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoDropOff");
+		GCon->Logf("Unsupported flag NoDropOff in %s", Class->GetName());
 		return true;
 	}
 	//
@@ -1003,7 +1003,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("NoSplashAlert"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoSplashAlert");
+		GCon->Logf("Unsupported flag NoSplashAlert in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("LookAllAround"))
@@ -1044,7 +1044,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("MissileEvenMore"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag MissileEvenMore");
+		GCon->Logf("Unsupported flag MissileEvenMore in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("ShortMissileRange"))
@@ -1083,7 +1083,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("CanUseWalls"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag CanUseWalls");
+		GCon->Logf("Unsupported flag CanUseWalls in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("ActivateMCross"))
@@ -1109,13 +1109,13 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("StayMorphed"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag StayMorphed");
+		GCon->Logf("Unsupported flag StayMorphed in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("CanBlast"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag CanBlast");
+		GCon->Logf("Unsupported flag CanBlast in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoBlockMonst"))
@@ -1141,7 +1141,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("Frightened"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag Frightened");
+		GCon->Logf("Unsupported flag Frightened in %s", Class->GetName());
 		return true;
 	}
 	//
@@ -1160,19 +1160,19 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("ShieldReflect"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag ShieldReflect");
+		GCon->Logf("Unsupported flag ShieldReflect in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("Deflect"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag Deflect");
+		GCon->Logf("Unsupported flag Deflect in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("FireResist"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag FireResist");
+		GCon->Logf("Unsupported flag FireResist in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoRadiusDmg"))
@@ -1183,7 +1183,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("DontBlast"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag DontBlast");
+		GCon->Logf("Unsupported flag DontBlast in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoTarget"))
@@ -1194,7 +1194,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("Ghost"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag Ghost");
+		GCon->Logf("Unsupported flag Ghost in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("DontMorph"))
@@ -1205,25 +1205,25 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("DontSquash"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag DontSquash");
+		GCon->Logf("Unsupported flag DontSquash in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoTeleOther"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoTeleOther");
+		GCon->Logf("Unsupported flag NoTeleOther in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("DontHurtSpecies"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag DontHurtSpecies");
+		GCon->Logf("Unsupported flag DontHurtSpecies in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoDamage"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoDamage");
+		GCon->Logf("Unsupported flag NoDamage in %s", Class->GetName());
 		return true;
 	}
 	//
@@ -1237,7 +1237,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("Shadow"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag Shadow");
+		GCon->Logf("Unsupported flag Shadow in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoBlood"))
@@ -1248,7 +1248,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("NoBloodDecals"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoBloodDecals");
+		GCon->Logf("Unsupported flag NoBloodDecals in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("Stealth"))
@@ -1279,13 +1279,13 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("NoIceDeath"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoIceDeath");
+		GCon->Logf("Unsupported flag NoIceDeath in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("DontGib"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag DontGib");
+		GCon->Logf("Unsupported flag DontGib in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("DontSplash"))
@@ -1306,7 +1306,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("FixMapThingPos"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag FixMapThingPos");
+		GCon->Logf("Unsupported flag FixMapThingPos in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("FullVolActive"))
@@ -1327,7 +1327,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("VisibilityPulse"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag VisibilityPulse");
+		GCon->Logf("Unsupported flag VisibilityPulse in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("RocketTrail"))
@@ -1338,7 +1338,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("GrenadeTrail"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag GrenadeTrail");
+		GCon->Logf("Unsupported flag GrenadeTrail in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoBounceSound"))
@@ -1349,19 +1349,19 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("NoSkin"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoSkin");
+		GCon->Logf("Unsupported flag NoSkin in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("DontTranslate"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag DontTranslate");
+		GCon->Logf("Unsupported flag DontTranslate in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NoPain"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NoPain");
+		GCon->Logf("Unsupported flag NoPain in %s", Class->GetName());
 		return true;
 	}
 	//
@@ -1395,7 +1395,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("DontReflect"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag DontReflect");
+		GCon->Logf("Unsupported flag DontReflect in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("FloorHugger"))
@@ -1416,7 +1416,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("BloodSplatter"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag BloodSplatter");
+		GCon->Logf("Unsupported flag BloodSplatter in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("FoilInvul"))
@@ -1467,25 +1467,25 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("DehExplosion"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag DehExplosion");
+		GCon->Logf("Unsupported flag DehExplosion in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("PierceArmor"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag PierceArmor");
+		GCon->Logf("Unsupported flag PierceArmor in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("ForceRadiusDmg"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag ForceRadiusDmg");
+		GCon->Logf("Unsupported flag ForceRadiusDmg in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("SpawnSoundSource"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag SpawnSoundSource");
+		GCon->Logf("Unsupported flag SpawnSoundSource in %s", Class->GetName());
 		return true;
 	}
 	//
@@ -1539,19 +1539,19 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("AllowParticles"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag AllowParticles");
+		GCon->Logf("Unsupported flag AllowParticles in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("AlwaysPuff"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag AlwaysPuff");
+		GCon->Logf("Unsupported flag AlwaysPuff in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("Synchronized"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag Synchronized");
+		GCon->Logf("Unsupported flag Synchronized in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("Faster"))
@@ -1562,13 +1562,13 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("AlwaysFast"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag AlwaysFast");
+		GCon->Logf("Unsupported flag AlwaysFast in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("NeverFast"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag NeverFast");
+		GCon->Logf("Unsupported flag NeverFast in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("FastMelee"))
@@ -1579,19 +1579,19 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("OldRadiusDmg"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag OldRadiusDmg");
+		GCon->Logf("Unsupported flag OldRadiusDmg in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("UseSpecial"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag UseSpecial");
+		GCon->Logf("Unsupported flag UseSpecial in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("BossDeath"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag BossDeath");
+		GCon->Logf("Unsupported flag BossDeath in %s", Class->GetName());
 		return true;
 	}
 	//
@@ -1600,7 +1600,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("SeesDaggers"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag SeesDaggers");
+		GCon->Logf("Unsupported flag SeesDaggers in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("InCombat"))
@@ -1642,13 +1642,13 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	if (!Flag.ICmp("ForceYBillboard"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag ForceYBillboard");
+		GCon->Logf("Unsupported flag ForceYBillboard in %s", Class->GetName());
 		return true;
 	}
 	if (!Flag.ICmp("ForceXYBillboard"))
 	{
 		//FIXME
-		GCon->Logf("Unsupported flag ForceXYBillboard");
+		GCon->Logf("Unsupported flag ForceXYBillboard in %s", Class->GetName());
 		return true;
 	}
 
@@ -1660,7 +1660,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		if (!Flag.ICmp("Inventory.Quiet"))
 		{
 			//FIXME
-			GCon->Logf("Unsupported flag Inventory.Quiet");
+			GCon->Logf("Unsupported flag Inventory.Quiet in %s", Class->GetName());
 			return true;
 		}
 		if (!Flag.ICmp("Inventory.AutoActivate"))
@@ -1686,7 +1686,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		if (!Flag.ICmp("Inventory.InterHubStrip"))
 		{
 			//FIXME
-			GCon->Logf("Unsupported flag Inventory.InterHubStrip");
+			GCon->Logf("Unsupported flag Inventory.InterHubStrip in %s", Class->GetName());
 			return true;
 		}
 		if (!Flag.ICmp("Inventory.PickupFlash"))
@@ -1744,7 +1744,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		if (!Flag.ICmp("Weapon.AxeBlood"))
 		{
 			//FIXME
-			GCon->Logf("Unsupported flag Weapon.AxeBlood");
+			GCon->Logf("Unsupported flag Weapon.AxeBlood in %s", Class->GetName());
 			return true;
 		}
 		if (!Flag.ICmp("Weapon.NoAlert"))
@@ -1760,13 +1760,13 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		if (!Flag.ICmp("Weapon.Alt_Ammo_Optional"))
 		{
 			//FIXME
-			GCon->Logf("Unsupported flag Weapon.Alt_Ammo_Optional");
+			GCon->Logf("Unsupported flag Weapon.Alt_Ammo_Optional in %s", Class->GetName());
 			return true;
 		}
 		if (!Flag.ICmp("Weapon.Primary_Uses_Both"))
 		{
 			//FIXME
-			GCon->Logf("Unsupported flag Weapon.Primary_Uses_Both");
+			GCon->Logf("Unsupported flag Weapon.Primary_Uses_Both in %s", Class->GetName());
 			return true;
 		}
 		if (!Flag.ICmp("Weapon.Wimpy_Weapon"))
@@ -1807,17 +1807,12 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		if (!Flag.ICmp("Weapon.No_Auto_Switch"))
 		{
 			//FIXME
-			GCon->Logf("Unsupported flag Weapon.No_Auto_Switch");
+			GCon->Logf("Unsupported flag Weapon.No_Auto_Switch in %s", Class->GetName());
 			return true;
 		}
 	}
 
-	sc->ExpectString();
-	GCon->Logf("Unknown flag %s", *Flag);
-	sc->SetEscape(false);
-	SkipBlock(sc, 1);
-	sc->SetEscape(true);
-	sc->SetCMode(false);
+	sc->Error(va("Unknown flag %s", *Flag));
 	return false;
 	unguard;
 }
@@ -2023,7 +2018,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			VStr FuncName = sc->String;
 			if (sc->Check("("))
 			{
-				GCon->Logf("State action %s with arguments", *FuncName);
+				GCon->Logf("State action %s with arguments in %s", *FuncName, Class->GetName());
 				VExpression* Expr = ParseMethodCall(sc, *FuncName, sc->GetLoc());
 				if (Expr)
 				{
@@ -2033,15 +2028,15 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			VMethod* Func = Class->FindMethod(*FuncName);
 			if (!Func)
 			{
-				GCon->Logf("Unknown state action %s", *FuncName);
+				GCon->Logf("Unknown state action %s in %s", *FuncName, Class->GetName());
 			}
 			else if (Func->NumParams)
 			{
-				GCon->Logf("State action %s takes parameters", *FuncName);
+				GCon->Logf("State action %s in %s takes parameters", *FuncName, Class->GetName());
 			}
 			else if (Func->ReturnType.Type != TYPE_Void)
 			{
-				GCon->Logf("State action %s desn't return void", *FuncName);
+				GCon->Logf("State action %s in %s desn't return void", *FuncName, Class->GetName());
 			}
 			else
 			{
@@ -2128,7 +2123,7 @@ static void ParseActor(VScriptParser* sc)
 		NameStr = sc->String;
 	}
 
-	if (VClass::FindClass(*sc->String))
+	if (VClass::FindClassNoCase(*sc->String))
 	{
 		sc->Error(va("Redeclared class %s", *sc->String));
 	}
@@ -2155,45 +2150,17 @@ static void ParseActor(VScriptParser* sc)
 		ParentStr = sc->String;
 	}
 
-	GCon->Logf("Actor %s of %s", *NameStr, *ParentStr);
-
 	VClass* ParentClass = ActorClass;
 	if (ParentStr)
 	{
-		ParentClass = VClass::FindClass(*ParentStr);
+		ParentClass = VClass::FindClassNoCase(*ParentStr);
 		if (!ParentClass)
 		{
-			//	Temporarely don't make it fatal error.
-			GCon->Logf("Parent class %s not found", *ParentStr);
-			if (sc->Check("replaces"))
-			{
-				sc->ExpectString();
-			}
-			sc->SetCMode(true);
-			sc->SetEscape(false);
-			sc->CheckNumber();
-			sc->Expect("{");
-			SkipBlock(sc, 1);
-			sc->SetEscape(true);
-			sc->SetCMode(false);
-			return;
+			sc->Error(va("Parent class %s not found", *ParentStr));
 		}
 		if (!ParentClass->IsChildOf(ScriptedEntityClass))
 		{
-			//	Temporarely don't make it fatal error.
-			GCon->Logf("Parent class %s is not an actor class", *ParentStr);
-			if (sc->Check("replaces"))
-			{
-				sc->ExpectString();
-			}
-			sc->SetCMode(true);
-			sc->SetEscape(false);
-			sc->CheckNumber();
-			sc->Expect("{");
-			SkipBlock(sc, 1);
-			sc->SetEscape(true);
-			sc->SetCMode(false);
-			return;
+			sc->Error(va("Parent class %s is not an actor class", *ParentStr));
 		}
 	}
 
@@ -2204,34 +2171,15 @@ static void ParseActor(VScriptParser* sc)
 	if (sc->Check("replaces"))
 	{
 		sc->ExpectString();
-		ReplaceeClass = VClass::FindClass(*sc->String);
+		ReplaceeClass = VClass::FindClassNoCase(*sc->String);
 		if (!ReplaceeClass)
 		{
-			//	Temporarely don't make it fatal error.
-			GCon->Logf("Replaced class %s not found", *sc->String);
-			sc->SetCMode(true);
-			sc->SetEscape(false);
-			sc->CheckNumber();
-			sc->Expect("{");
-			SkipBlock(sc, 1);
-			sc->SetEscape(true);
-			sc->SetCMode(false);
-			return;
+			sc->Error(va("Replaced class %s not found", *sc->String));
 		}
 		if (!ReplaceeClass->IsChildOf(ScriptedEntityClass))
 		{
-			//	Temporarely don't make it fatal error.
-			GCon->Logf("Replaced class %s is not an actor class", *sc->String);
-			sc->SetCMode(true);
-			sc->SetEscape(false);
-			sc->CheckNumber();
-			sc->Expect("{");
-			SkipBlock(sc, 1);
-			sc->SetEscape(true);
-			sc->SetCMode(false);
-			return;
+			sc->Error(va("Replaced class %s is not an actor class", *sc->String));
 		}
-		GCon->Logf("%s replaces %s", *NameStr, *sc->String);
 	}
 
 	//	Time to switch to the C mode.
@@ -2353,7 +2301,7 @@ static void ParseActor(VScriptParser* sc)
 		{
 			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property WoundHealth is not yet supported");
+			GCon->Logf("Property WoundHealth in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("ReactionTime"))
@@ -2374,7 +2322,7 @@ static void ParseActor(VScriptParser* sc)
 			sc->ExpectString();
 			sc->Expect(",");
 			sc->ExpectFloat();
-			GCon->Logf("Property DamageFactor is not yet supported");
+			GCon->Logf("Property DamageFactor in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Damage"))
@@ -2382,7 +2330,7 @@ static void ParseActor(VScriptParser* sc)
 			if (sc->Check("("))
 			{
 				//FIXME
-				GCon->Logf("Damage expression is not yet supported");
+				GCon->Logf("Damage expression in %s is not yet supported", Class->GetName());
 				VExpression* Expr = ParseExpression(sc);
 				sc->Expect(")");
 				if (Expr)
@@ -2401,7 +2349,7 @@ static void ParseActor(VScriptParser* sc)
 		{
 			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property PoisonDamage is not yet supported");
+			GCon->Logf("Property PoisonDamage in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("RadiusDamageFactor"))
@@ -2420,14 +2368,14 @@ static void ParseActor(VScriptParser* sc)
 		{
 			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property VSpeed is not yet supported");
+			GCon->Logf("Property VSpeed in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("FastSpeed"))
 		{
 			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property FastSpeed is not yet supported");
+			GCon->Logf("Property FastSpeed in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("FloatSpeed"))
@@ -2467,7 +2415,7 @@ static void ParseActor(VScriptParser* sc)
 		{
 			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property CameraHeight is not yet supported");
+			GCon->Logf("Property CameraHeight in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Gravity"))
@@ -2582,7 +2530,7 @@ static void ParseActor(VScriptParser* sc)
 			else if (sc->Check("Stencil"))
 			{
 				//FIXME
-				GCon->Logf("Render style Stencil is not yet supported");
+				GCon->Logf("Render style Stencil in %s is not yet supported", Class->GetName());
 			}
 			else
 			{
@@ -2634,7 +2582,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				sc->ExpectString();
 			}
-			GCon->Logf("Property BloodColor is not yet supported");
+			GCon->Logf("Property BloodColor in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("BloodType"))
@@ -2649,14 +2597,14 @@ static void ParseActor(VScriptParser* sc)
 					sc->ExpectString();
 				}
 			}
-			GCon->Logf("Property BloodType is not yet supported");
+			GCon->Logf("Property BloodType in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Decal"))
 		{
 			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property Decal is not yet supported");
+			GCon->Logf("Property Decal in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("StencilColor"))
@@ -2671,7 +2619,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				sc->ExpectString();
 			}
-			GCon->Logf("Property StencilColor is not yet supported");
+			GCon->Logf("Property StencilColor in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		//
@@ -2681,14 +2629,14 @@ static void ParseActor(VScriptParser* sc)
 		{
 			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property Obituary is not yet supported");
+			GCon->Logf("Property Obituary in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("HitObituary"))
 		{
 			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property HitObituary is not yet supported");
+			GCon->Logf("Property HitObituary in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		//
@@ -2728,28 +2676,28 @@ static void ParseActor(VScriptParser* sc)
 		{
 			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property MeleeDamage is not yet supported");
+			GCon->Logf("Property MeleeDamage in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("MeleeSound"))
 		{
 			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property MeleeSound is not yet supported");
+			GCon->Logf("Property MeleeSound in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("MissileHeight"))
 		{
 			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MissileHeight is not yet supported");
+			GCon->Logf("Property MissileHeight in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("MissileType"))
 		{
 			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property MissileType is not yet supported");
+			GCon->Logf("Property MissileType in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("ExplosionRadius"))
@@ -2800,7 +2748,7 @@ static void ParseActor(VScriptParser* sc)
 		if (!Prop.ICmp("ClearFlags"))
 		{
 			//FIXME
-			GCon->Logf("Property ClearFlags is not yet supported");
+			GCon->Logf("Property ClearFlags in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("DropItem"))
@@ -2809,7 +2757,7 @@ static void ParseActor(VScriptParser* sc)
 			sc->ExpectString();
 			sc->CheckNumber();
 			sc->CheckNumber();
-			GCon->Logf("Property DropItem is not yet supported");
+			GCon->Logf("Property DropItem in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("States"))
@@ -2823,97 +2771,97 @@ static void ParseActor(VScriptParser* sc)
 		if (!Prop.ICmp("skip_super"))
 		{
 			//FIXME
-			GCon->Logf("Property skip_super is not yet supported");
+			GCon->Logf("Property skip_super in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Spawn"))
 		{
 			//FIXME
-			GCon->Logf("Property Spawn is not yet supported");
+			GCon->Logf("Property Spawn in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("See"))
 		{
 			//FIXME
-			GCon->Logf("Property See is not yet supported");
+			GCon->Logf("Property See in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Melee"))
 		{
 			//FIXME
-			GCon->Logf("Property Melee is not yet supported");
+			GCon->Logf("Property Melee in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Missile"))
 		{
 			//FIXME
-			GCon->Logf("Property Missile is not yet supported");
+			GCon->Logf("Property Missile in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Pain"))
 		{
 			//FIXME
-			GCon->Logf("Property Pain is not yet supported");
+			GCon->Logf("Property Pain in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Death"))
 		{
 			//FIXME
-			GCon->Logf("Property Death is not yet supported");
+			GCon->Logf("Property Death in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("XDeath"))
 		{
 			//FIXME
-			GCon->Logf("Property XDeath is not yet supported");
+			GCon->Logf("Property XDeath in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Burn"))
 		{
 			//FIXME
-			GCon->Logf("Property Burn is not yet supported");
+			GCon->Logf("Property Burn in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Ice"))
 		{
 			//FIXME
-			GCon->Logf("Property Ice is not yet supported");
+			GCon->Logf("Property Ice in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Disintegrate"))
 		{
 			//FIXME
-			GCon->Logf("Property Disintegrate is not yet supported");
+			GCon->Logf("Property Disintegrate in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Raise"))
 		{
 			//FIXME
-			GCon->Logf("Property Raise is not yet supported");
+			GCon->Logf("Property Raise in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Crash"))
 		{
 			//FIXME
-			GCon->Logf("Property Crash is not yet supported");
+			GCon->Logf("Property Crash in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Wound"))
 		{
 			//FIXME
-			GCon->Logf("Property Wound is not yet supported");
+			GCon->Logf("Property Wound in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Crush"))
 		{
 			//FIXME
-			GCon->Logf("Property Crush is not yet supported");
+			GCon->Logf("Property Crush in %s is not yet supported", Class->GetName());
 			continue;
 		}
 		if (!Prop.ICmp("Heal"))
 		{
 			//FIXME
-			GCon->Logf("Property Heal is not yet supported");
+			GCon->Logf("Property Heal in %s is not yet supported", Class->GetName());
 			continue;
 		}
 
@@ -2961,7 +2909,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Inventory.PickupFlash is not yet supported");
+				GCon->Logf("Property Inventory.PickupFlash in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.UseSound"))
@@ -2980,7 +2928,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Inventory.GiveQuest is not yet supported");
+				GCon->Logf("Property Inventory.GiveQuest in %s is not yet supported", Class->GetName());
 				continue;
 			}
 		}
@@ -3040,14 +2988,14 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Armor.MaxBonus is not yet supported");
+				GCon->Logf("Property Armor.MaxBonus in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Armor.MaxBonusMax"))
 			{
 				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Armor.MaxBonusMax is not yet supported");
+				GCon->Logf("Property Armor.MaxBonusMax in %s is not yet supported", Class->GetName());
 				continue;
 			}
 		}
@@ -3118,7 +3066,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Powerup.Type is not yet supported");
+				GCon->Logf("Property Powerup.Type in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Powerup.Mode"))
@@ -3144,7 +3092,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property PuzzleItem.FailMessage is not yet supported");
+				GCon->Logf("Property PuzzleItem.FailMessage in %s is not yet supported", Class->GetName());
 				continue;
 			}
 		}
@@ -3170,14 +3118,14 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.AmmoType1 is not yet supported");
+				GCon->Logf("Property Weapon.AmmoType1 in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.AmmoType2"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.AmmoType2 is not yet supported");
+				GCon->Logf("Property Weapon.AmmoType2 in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.AmmoUse") || !Prop.ICmp("Weapon.AmmoUse1"))
@@ -3214,7 +3162,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.SisterWeapon is not yet supported");
+				GCon->Logf("Property Weapon.SisterWeapon in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.UpSound"))
@@ -3240,14 +3188,14 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property WeaponPiece.Number is not yet supported");
+				GCon->Logf("Property WeaponPiece.Number in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("WeaponPiece.Weapon"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property WeaponPiece.Weapon is not yet supported");
+				GCon->Logf("Property WeaponPiece.Weapon in %s is not yet supported", Class->GetName());
 				continue;
 			}
 		}*/
@@ -3261,7 +3209,7 @@ static void ParseActor(VScriptParser* sc)
 			{
 				//FIXME
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.AttackZOffset is not yet supported");
+				GCon->Logf("Property Player.AttackZOffset in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.ColorRange"))
@@ -3269,28 +3217,28 @@ static void ParseActor(VScriptParser* sc)
 				//FIXME
 				sc->ExpectNumber();
 				sc->ExpectNumber();
-				GCon->Logf("Property Player.ColorRange is not yet supported");
+				GCon->Logf("Property Player.ColorRange in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.CrouchSprite"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.CrouchSprite is not yet supported");
+				GCon->Logf("Property Player.CrouchSprite in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.DamageScreenColor"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.DamageScreenColor is not yet supported");
+				GCon->Logf("Property Player.DamageScreenColor in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.DisplayName"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.DisplayName is not yet supported");
+				GCon->Logf("Property Player.DisplayName in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.ForwardMove"))
@@ -3298,14 +3246,14 @@ static void ParseActor(VScriptParser* sc)
 				//FIXME
 				sc->ExpectFloat();
 				sc->CheckFloat();
-				GCon->Logf("Property Player.ForwardMove is not yet supported");
+				GCon->Logf("Property Player.ForwardMove in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.HealRadiusType"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.HealRadiusType is not yet supported");
+				GCon->Logf("Property Player.HealRadiusType in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.HexenArmor"))
@@ -3320,42 +3268,42 @@ static void ParseActor(VScriptParser* sc)
 				sc->ExpectFloat();
 				sc->Expect(",");
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.HexenArmor is not yet supported");
+				GCon->Logf("Property Player.HexenArmor in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.InvulnerabilityMode"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.InvulnerabilityMode is not yet supported");
+				GCon->Logf("Property Player.InvulnerabilityMode in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.JumpZ"))
 			{
 				//FIXME
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.JumpZ is not yet supported");
+				GCon->Logf("Property Player.JumpZ in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.MaxHealth"))
 			{
 				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Player.MaxHealth is not yet supported");
+				GCon->Logf("Property Player.MaxHealth in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.RunHealth"))
 			{
 				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Player.RunHealth is not yet supported");
+				GCon->Logf("Property Player.RunHealth in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.ScoreIcon"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.ScoreIcon is not yet supported");
+				GCon->Logf("Property Player.ScoreIcon in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.SideMove"))
@@ -3363,21 +3311,21 @@ static void ParseActor(VScriptParser* sc)
 				//FIXME
 				sc->ExpectFloat();
 				sc->CheckFloat();
-				GCon->Logf("Property Player.SideMove is not yet supported");
+				GCon->Logf("Property Player.SideMove in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.SoundClass"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.SoundClass is not yet supported");
+				GCon->Logf("Property Player.SoundClass in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.SpawnClass"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.SpawnClass is not yet supported");
+				GCon->Logf("Property Player.SpawnClass in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.StartItem"))
@@ -3385,31 +3333,26 @@ static void ParseActor(VScriptParser* sc)
 				//FIXME
 				sc->ExpectString();
 				sc->CheckNumber();
-				GCon->Logf("Property Player.StartItem is not yet supported");
+				GCon->Logf("Property Player.StartItem in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.ViewHeight"))
 			{
 				//FIXME
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.ViewHeight is not yet supported");
+				GCon->Logf("Property Player.ViewHeight in %s is not yet supported", Class->GetName());
 				continue;
 			}
 			if (!Prop.ICmp("Player.MorphWeapon"))
 			{
 				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.MorphWeapon is not yet supported");
+				GCon->Logf("Property Player.MorphWeapon in %s is not yet supported", Class->GetName());
 				continue;
 			}
 		}
 
-		GCon->Logf("Unknown property %s", *Prop);
-		sc->SetEscape(false);
-		SkipBlock(sc, 1);
-		sc->SetEscape(true);
-		sc->SetCMode(false);
-		return;
+		sc->Error(va("Unknown property %s", *Prop));
 	}
 
 	sc->SetCMode(false);
@@ -4028,12 +3971,6 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		else if (sc->Check("DontSplash"))
 		{
 			SetClassFieldBool(Class, "bNoSplash", true);
-		}
-		else if (Type == OLDDEC_Pickup)
-		{
-			GCon->Logf("Unknown property %s", *sc->String);
-			SkipBlock(sc, 1);
-			break;
 		}
 		else
 		{
