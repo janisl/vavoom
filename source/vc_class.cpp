@@ -770,7 +770,7 @@ VState* VClass::FindStateChecked(VName AName)
 //
 //==========================================================================
 
-VStateLabel* VClass::FindStateLabel(VName AName, bool CheckParent)
+VStateLabel* VClass::FindStateLabel(VName AName)
 {
 	guard(VClass::FindStateLabel);
 	for (int i = 0; i < StateLabels.Num(); i++)
@@ -779,10 +779,6 @@ VStateLabel* VClass::FindStateLabel(VName AName, bool CheckParent)
 		{
 			return &StateLabels[i];
 		}
-	}
-	if (CheckParent && ParentClass)
-	{
-		return ParentClass->FindStateLabel(AName);
 	}
 	return NULL;
 	unguard;
@@ -1102,6 +1098,11 @@ void VClass::DecorateEmit()
 void VClass::EmitStateLabels()
 {
 	guard(VClass::EmitStateLabels);
+	if (ParentClass)
+	{
+		StateLabels = ParentClass->StateLabels;
+	}
+
 	//	First add all labels.
 	for (int i = 0; i < StateLabelDefs.Num(); i++)
 	{

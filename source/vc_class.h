@@ -232,7 +232,7 @@ public:
 	int GetMethodIndex(VName);
 	VState* FindState(VName);
 	VState* FindStateChecked(VName);
-	VStateLabel* FindStateLabel(VName, bool = true);
+	VStateLabel* FindStateLabel(VName);
 	VStateLabel* FindStateLabelChecked(VName);
 
 	bool Define();
