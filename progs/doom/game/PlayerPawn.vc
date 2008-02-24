@@ -23,11 +23,41 @@
 //**
 //**************************************************************************
 
-#include "Actor.vc"
-#include "MainGameInfo.vc"
-#include "DoomLevelInfo.vc"
-#include "DoomWorldInfo.vc"
-#include "DoomWeapon.vc"
-#include "Player.vc"
-#include "PlayerPawn.vc"
-#include "BotPlayer.vc"
+class PlayerPawn : Actor;
+
+struct InitInvInfo
+{
+	class<Inventory>	Type;
+	int					Amount;
+};
+
+array<InitInvInfo>		InitialInventory;
+
+//==========================================================================
+//
+//  A_PlayerScream
+//
+//  Player death sound
+//
+//==========================================================================
+
+final void A_PlayerScream()
+{
+	// Default death sound.
+	name sound = '*death';
+
+#ifdef DOOM2
+	if (Health < -50)
+	{
+		// IF THE PLAYER DIES
+		// LESS THAN -50% WITHOUT GIBBING
+		sound = '*xdeath';
+	}
+#endif
+
+	PlaySound(sound, CHAN_VOICE);
+}
+
+defaultproperties
+{
+}
