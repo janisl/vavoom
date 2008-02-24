@@ -47,6 +47,13 @@ enum
 	BOUNCE_Hexen
 };
 
+struct VClassFixup
+{
+	VClass**	Ptr;
+	VStr		Name;
+	VClass*		ReqParent;
+};
+
 //==========================================================================
 //
 //	VDecorateSingleName
@@ -257,6 +264,24 @@ static void SetClassFieldStr(VClass* Class, const char* FieldName,
 	VField* F = Class->FindFieldChecked(FieldName);
 	VStr* Ptr = (VStr*)(Class->Defaults + F->Ofs);
 	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	AddClassFixup
+//
+//==========================================================================
+
+static void AddClassFixup(VClass* Class, const char* FieldName,
+	const VStr& ClassName, TArray<VClassFixup>& ClassFixups)
+{
+	guard(AddClassFixup);
+	VField* F = Class->FindFieldChecked(FieldName);
+	VClassFixup& CF = ClassFixups.Alloc();
+	CF.Ptr = (VClass**)(Class->Defaults + F->Ofs);
+	CF.Name = ClassName;
+	CF.ReqParent = F->Type.Class;
 	unguard;
 }
 
@@ -2102,7 +2127,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 //
 //==========================================================================
 
-static void ParseActor(VScriptParser* sc)
+static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 {
 	guard(ParseActor);
 	//	Parse actor name. In order to allow dots in actor names, this is done
@@ -2926,9 +2951,9 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Inventory.GiveQuest"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Inventory.GiveQuest in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "GiveQuestType", va("QuestItem%d",
+					sc->Number), ClassFixups);
 				continue;
 			}
 		}
@@ -3064,9 +3089,8 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Powerup.Type"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Powerup.Type in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "PowerupType", sc->String, ClassFixups);
 				continue;
 			}
 			if (!Prop.ICmp("Powerup.Mode"))
@@ -3116,16 +3140,14 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Weapon.AmmoType") || !Prop.ICmp("Weapon.AmmoType1"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.AmmoType1 in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "AmmoType1", sc->String, ClassFixups);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.AmmoType2"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.AmmoType2 in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "AmmoType2", sc->String, ClassFixups);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.AmmoUse") || !Prop.ICmp("Weapon.AmmoUse1"))
@@ -3160,9 +3182,8 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Weapon.SisterWeapon"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.SisterWeapon in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "SisterWeaponType", sc->String, ClassFixups);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.UpSound"))
@@ -4157,7 +4178,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 //
 //==========================================================================
 
-static void ParseDecorate(VScriptParser* sc)
+static void ParseDecorate(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 {
 	guard(ParseDecorate);
 	while (!sc->AtEnd())
@@ -4178,7 +4199,7 @@ static void ParseDecorate(VScriptParser* sc)
 				sc->Error(va("Lump %s not found", *sc->String));
 			}
 			ParseDecorate(new VScriptParser(sc->String,
-				W_CreateLumpReaderNum(Lump)));
+				W_CreateLumpReaderNum(Lump)), ClassFixups);
 		}
 		else if (sc->Check("const"))
 		{
@@ -4194,7 +4215,7 @@ static void ParseDecorate(VScriptParser* sc)
 		}
 		else if (sc->Check("actor"))
 		{
-			ParseActor(sc);
+			ParseActor(sc, ClassFixups);
 		}
 		else if (sc->Check("breakable"))
 		{
@@ -4253,13 +4274,43 @@ void ProcessDecorateScripts()
 	FuncA_ActiveAndUnblock = ActorClass->FindMethodChecked("A_ActiveAndUnblock");
 	FuncA_ExplodeParms = ActorClass->FindMethodChecked("A_ExplodeParms");
 
+	//	Parse scripts.
+	TArray<VClassFixup> ClassFixups;
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
 		if (W_LumpName(Lump) == NAME_decorate)
 		{
 			ParseDecorate(new VScriptParser(*W_LumpName(Lump),
-				W_CreateLumpReaderNum(Lump)));
+				W_CreateLumpReaderNum(Lump)), ClassFixups);
+		}
+	}
+
+	//	Set class properties.
+	for (int i = 0; i < ClassFixups.Num(); i++)
+	{
+		VClassFixup& CF = ClassFixups[i];
+		check(CF.ReqParent);
+		if (!CF.Name.ICmp("None"))
+		{
+			*CF.Ptr = NULL;
+		}
+		else
+		{
+			VClass* C = VClass::FindClassNoCase(*CF.Name);
+			if (!C)
+			{
+				GCon->Logf("No such class %s", *CF.Name);
+			}
+			else if (!C->IsChildOf(CF.ReqParent))
+			{
+				GCon->Logf("Class %s is not a descendant of %s",
+					*CF.Name, CF.ReqParent->GetName());
+			}
+			else
+			{
+				*CF.Ptr = C;
+			}
 		}
 	}
 
