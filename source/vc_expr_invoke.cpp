@@ -61,8 +61,12 @@ VBaseInvocation::VBaseInvocation(VName AName, int ANumArgs, VExpression** AArgs,
 , Name(AName)
 , NumArgs(ANumArgs)
 {
+	guard(VBaseInvocation::VBaseInvocation);
 	for (int i = 0; i < NumArgs; i++)
+	{
 		Args[i] = AArgs[i];
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -73,8 +77,12 @@ VBaseInvocation::VBaseInvocation(VName AName, int ANumArgs, VExpression** AArgs,
 
 VBaseInvocation::~VBaseInvocation()
 {
+	guard(VBaseInvocation::~VBaseInvocation);
 	for (int i = 0; i < NumArgs; i++)
+	{
 		delete Args[i];
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -85,6 +93,7 @@ VBaseInvocation::~VBaseInvocation()
 
 VExpression* VBaseInvocation::DoResolve(VEmitContext& ec)
 {
+	guard(VBaseInvocation::DoResolve);
 	if (!ec.SelfClass)
 	{
 		ParseError(Loc, ":: not in method");
@@ -104,6 +113,7 @@ VExpression* VBaseInvocation::DoResolve(VEmitContext& ec)
 	NumArgs = 0;
 	delete this;
 	return e->Resolve(ec);
+	unguard;
 }
 
 //==========================================================================
@@ -114,7 +124,9 @@ VExpression* VBaseInvocation::DoResolve(VEmitContext& ec)
 
 void VBaseInvocation::Emit(VEmitContext&)
 {
+	guard(VBaseInvocation::Emit);
 	ParseError(Loc, "Should not happen");
+	unguard;
 }
 
 //==========================================================================
@@ -452,8 +464,12 @@ VInvocation::VInvocation(VExpression* ASelfExpr, VMethod* AFunc, VField* ADelega
 , BaseCall(ABaseCall)
 , NumArgs(ANumArgs)
 {
+	guard(VInvocation::VInvocation);
 	for (int i = 0; i < NumArgs; i++)
+	{
 		Args[i] = AArgs[i];
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -464,10 +480,16 @@ VInvocation::VInvocation(VExpression* ASelfExpr, VMethod* AFunc, VField* ADelega
 
 VInvocation::~VInvocation()
 {
+	guard(VInvocation::~VInvocation);
 	if (SelfExpr)
+	{
 		delete SelfExpr;
+	}
 	for (int i = 0; i < NumArgs; i++)
+	{
 		delete Args[i];
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -478,6 +500,7 @@ VInvocation::~VInvocation()
 
 VExpression* VInvocation::DoResolve(VEmitContext& ec)
 {
+	guard(VInvocation::DoResolve);
 	//	Resolve arguments
 	bool ArgsOk = true;
 	for (int i = 0; i < NumArgs; i++)
@@ -497,7 +520,7 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
-	CheckParams();
+	CheckParams(ec);
 
 	Type  = Func->ReturnType;
 	if (Type.Type == TYPE_Byte || Type.Type == TYPE_Bool)
@@ -505,6 +528,7 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 	if (Func->Flags & FUNC_Spawner)
 		Type.Class = Args[0]->Type.Class;
 	return this;
+	unguard;
 }
 
 //==========================================================================
@@ -515,8 +539,11 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 
 void VInvocation::Emit(VEmitContext& ec)
 {
+	guard(VInvocation::Emit);
 	if (SelfExpr)
+	{
 		SelfExpr->Emit(ec);
+	}
 
 	bool DirectCall = BaseCall || (Func->Flags & FUNC_Final);
 
@@ -605,6 +632,7 @@ void VInvocation::Emit(VEmitContext& ec)
 	{
 		ec.AddStatement(OPC_VCall, Func, SelfOffset);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -613,8 +641,9 @@ void VInvocation::Emit(VEmitContext& ec)
 //
 //==========================================================================
 
-void VInvocation::CheckParams()
+void VInvocation::CheckParams(VEmitContext& ec)
 {
+	guard(VInvocation::CheckParams);
 	//	Determine parameter count.
 	int argsize = 0;
 	int max_params;
@@ -651,6 +680,47 @@ void VInvocation::CheckParams()
 						//ParseError(Args[i]->Loc, "Out parameter types must be equal");
 					}
 					Args[i]->RequestAddressOf();
+				}
+				else if (ec.Package->Name == NAME_decorate)
+				{
+					switch (Func->ParamTypes[i].Type)
+					{
+					case TYPE_Name:
+					{
+						VStr Val = Args[i]->GetStrConst(ec.Package);
+						TLocation ALoc = Args[i]->Loc;
+						delete Args[i];
+						Args[i] = new VNameLiteral(*Val, ALoc);
+						break;
+					}
+
+					case TYPE_Class:
+					{
+						VStr CName = Args[i]->GetStrConst(ec.Package);
+						TLocation ALoc = Args[i]->Loc;
+						VClass* Cls = VClass::FindClassNoCase(*CName);
+						if (!Cls)
+						{
+							ParseError(ALoc, "No such class %s", *CName);
+						}
+						else if (Func->ParamTypes[i].Class &&
+							!Cls->IsChildOf(Func->ParamTypes[i].Class))
+						{
+							ParseError(ALoc, "Class %s is not a descendant of %s",
+								*CName, Func->ParamTypes[i].Class->GetName());
+						}
+						else
+						{
+							delete Args[i];
+							Args[i] = new VClassConstant(Cls, ALoc);
+						}
+						break;
+					}
+
+					default:
+						Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
+						break;
+					}
 				}
 				else
 				{
@@ -691,4 +761,5 @@ void VInvocation::CheckParams()
 	{
 		Args[NumArgs++] = new VIntLiteral(argsize / 4 - num_needed_params, Loc);
 	}
+	unguard;
 }

@@ -288,6 +288,17 @@ bool VExpression::IsFloatConst() const
 
 //==========================================================================
 //
+//	VExpression::IsStrConst
+//
+//==========================================================================
+
+bool VExpression::IsStrConst() const
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	VExpression::GetIntConst
 //
 //==========================================================================
@@ -308,6 +319,18 @@ float VExpression::GetFloatConst() const
 {
 	ParseError(Loc, "Float constant expected");
 	return 0.0;
+}
+
+//==========================================================================
+//
+//	VExpression::GetStrConst
+//
+//==========================================================================
+
+VStr VExpression::GetStrConst(VPackage*) const
+{
+	ParseError(Loc, "String constant expected");
+	return VStr();
 }
 
 //==========================================================================

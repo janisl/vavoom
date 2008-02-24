@@ -2140,32 +2140,69 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 				continue;
 			}
 
+			//	Get function name and parse arguments.
 			VStr FuncName = sc->String;
+			VExpression* Args[VMethod::MAX_PARAMS + 1];
+			int NumArgs = 0;
 			if (sc->Check("("))
 			{
-				GCon->Logf("State action %s with arguments in %s", *FuncName, Class->GetName());
-				VExpression* Expr = ParseMethodCall(sc, *FuncName, sc->GetLoc());
-				if (Expr)
+				if (!sc->Check(")"))
 				{
-					delete Expr;
+					do
+					{
+						Args[NumArgs] = ParseExpressionPriority13(sc);
+						if (NumArgs == VMethod::MAX_PARAMS)
+							ParseError(sc->GetLoc(), "Too many arguments");
+						else
+							NumArgs++;
+					} while (sc->Check(","));
+					sc->Expect(")");
 				}
 			}
-			VMethod* Func = Class->FindMethod(*FuncName);
+
+			//	First look for method with decorate_ prefix.
+			VMethod* Func = Class->FindMethod(va("decorate_%s", *FuncName));
+			if (!Func)
+			{
+				Func = Class->FindMethod(*FuncName);
+			}
 			if (!Func)
 			{
 				GCon->Logf("Unknown state action %s in %s", *FuncName, Class->GetName());
-			}
-			else if (Func->NumParams)
-			{
-				GCon->Logf("State action %s in %s takes parameters", *FuncName, Class->GetName());
 			}
 			else if (Func->ReturnType.Type != TYPE_Void)
 			{
 				GCon->Logf("State action %s in %s desn't return void", *FuncName, Class->GetName());
 			}
+			else if (Func->NumParams || NumArgs)
+			{
+				VExpression* Expr = new VInvocation(NULL, Func, NULL,
+					false, false, sc->GetLoc(), NumArgs, Args);
+				VExpressionStatement* Stmt = new VExpressionStatement(Expr);
+				VMethod* M = new VMethod(NAME_None, Class, sc->GetLoc());
+				M->Flags = FUNC_Final;
+				M->ReturnType = TYPE_Void;
+				M->Statement = Stmt;
+				M->ParamsSize = 1;
+				Class->AddMethod(M);
+				State->Function = M;
+			}
 			else
 			{
 				State->Function = Func;
+			}
+
+			//	If state function is not assigned, it means something is wrong.
+			// In that case we need to free argument expressions.
+			if (!State->Function)
+			{
+				for (int i = 0; i < NumArgs; i++)
+				{
+					if (Args[i])
+					{
+						delete Args[i];
+					}
+				}
 			}
 			NeedsUnget = false;
 			break;
@@ -2472,10 +2509,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					M->Params[1].Name = "Add";
 					M->Params[1].Loc = sc->GetLoc();
 					M->Params[1].TypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
-					VCompound* Comp = new VCompound(sc->GetLoc());
-					VReturn* Ret = new VReturn(Expr, sc->GetLoc());
-					Comp->Statements.Append(Ret);
-					M->Statement = Comp;
+					M->Statement = new VReturn(Expr, sc->GetLoc());
 					Class->AddMethod(M);
 					M->Define();
 				}

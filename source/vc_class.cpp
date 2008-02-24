@@ -1087,6 +1087,8 @@ void VClass::DecorateEmit()
 	for (int i = 0; i < Methods.Num(); i++)
 	{
 		Methods[i]->Emit();
+		Methods[i]->PostLoad();
+		Methods[i]->DumpAsm();
 	}
 
 	//	Calculate indexes of virtual methods.

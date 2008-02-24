@@ -89,6 +89,8 @@ public:
 	VStringLiteral(vint32, const TLocation&);
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
+	bool IsStrConst() const;
+	VStr GetStrConst(VPackage*) const;
 };
 
 //==========================================================================

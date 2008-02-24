@@ -106,5 +106,5 @@ public:
 	~VInvocation();
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
-	void CheckParams();
+	void CheckParams(VEmitContext&);
 };
