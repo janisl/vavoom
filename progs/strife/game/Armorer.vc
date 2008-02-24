@@ -29,7 +29,7 @@ class Armorer : Merchant
 defaultproperties
 {
 	ConversationID = 4;
-	ClassName = 'Armorer';
+	StrifeName = "Armorer";
 	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 8;
 	PainSound = 'armorer/pain';
 }

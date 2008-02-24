@@ -45,7 +45,7 @@ Death:
 
 defaultproperties
 {
-	ClassName = 'rat_buddy';
+	StrifeName = "rat_buddy";
 	Health = 5;
 	Radius = 10.0;
 	Height = 16.0;

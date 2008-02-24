@@ -29,7 +29,7 @@ class BarKeep : Merchant
 defaultproperties
 {
 	ConversationID = 3;
-	ClassName = 'Bar_Keep';
+	StrifeName = "Bar_Keep";
 	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 7;
 	ActiveSound = 'barkeep/active';
 	PainSound = 'barkeep/pain';

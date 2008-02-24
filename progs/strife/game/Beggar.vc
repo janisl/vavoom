@@ -65,7 +65,7 @@ XDeath:
 
 defaultproperties
 {
-	ClassName = 'Beggar';
+	StrifeName = "Beggar";
 	Health = 20;
 	GibsHealth = -10;
 	Radius = 20.0;

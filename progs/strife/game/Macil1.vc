@@ -77,7 +77,7 @@ Pain:
 defaultproperties
 {
 	ConversationID = 49;
-	ClassName = 'MACIL';
+	StrifeName = "MACIL";
 	Health = 95;
 	Radius = 20.0;
 	Height = 56.0;

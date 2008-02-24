@@ -64,7 +64,7 @@ Death:
 defaultproperties
 {
 	ConversationID = 65;
-	ClassName = 'ORACLE';
+	StrifeName = "ORACLE";
 	Health = 1;
 	Radius = 15.0;
 	Height = 56.0;

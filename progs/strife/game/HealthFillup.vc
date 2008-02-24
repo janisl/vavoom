@@ -60,5 +60,5 @@ bool TryPickup(EntityEx Toucher)
 defaultproperties
 {
 	ConversationID = 299;
-	ClassName = 'Health';
+	StrifeName = "Health";
 }

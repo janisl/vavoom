@@ -114,7 +114,7 @@ Death:
 
 defaultproperties
 {
-	ClassName = 'PRIEST';
+	StrifeName = "PRIEST";
 	Health = 800;
 	Radius = 15.0;
 	Height = 56.0;

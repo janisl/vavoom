@@ -51,8 +51,6 @@ float				DropTime;
 name				PickupSound;
 name				UseSound;
 
-string				StrifeName;
-
 //	Originally these didn't respawn in deathmatch
 bool				bBigPowerup;
 //	Spawn PickuFlash when picked up.

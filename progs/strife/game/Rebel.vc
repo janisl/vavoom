@@ -72,7 +72,7 @@ XDeath:
 
 defaultproperties
 {
-	ClassName = 'Rebel';
+	StrifeName = "Rebel";
 	Health = 60;
 	GibsHealth = -30;
 	Radius = 20.0;

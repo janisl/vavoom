@@ -73,7 +73,7 @@ Disintegrate:
 
 defaultproperties
 {
-	ClassName = '';
+	StrifeName = "";
 	Speed = 0.0;
 	SightSound = '';
 	ActiveSound = '';

@@ -29,7 +29,7 @@ class Medic : Merchant
 defaultproperties
 {
 	ConversationID = 5;
-	ClassName = 'Medic';
+	StrifeName = "Medic";
 	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 9;
 	PainSound = 'medic/pain';
 }

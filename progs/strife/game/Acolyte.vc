@@ -142,7 +142,7 @@ XDeath:
 
 defaultproperties
 {
-	ClassName = 'ACOLYTE';
+	StrifeName = "ACOLYTE";
 	Health = 70;
 	GibsHealth = -35;
 	Radius = 24.0;

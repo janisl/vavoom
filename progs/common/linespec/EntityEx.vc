@@ -303,7 +303,7 @@ name			DamageType;
 float			DeathHeight;
 float			BurnHeight;
 
-name			ClassName;		//	For Strife
+string			StrifeName;
 
 // Identifier in conversation scripts, originaly index into mobjinfo.
 int				ConversationID;

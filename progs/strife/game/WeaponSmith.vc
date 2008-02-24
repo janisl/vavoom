@@ -29,6 +29,6 @@ class WeaponSmith : Merchant
 defaultproperties
 {
 	ConversationID = 2;
-	ClassName = 'Weapon_Smith';
+	StrifeName = "Weapon_Smith";
 	PainSound = 'smith/pain';
 }

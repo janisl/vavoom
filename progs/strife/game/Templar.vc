@@ -101,7 +101,7 @@ Death:
 defaultproperties
 {
 	ConversationID = 62;
-	ClassName = 'TEMPLAR';
+	StrifeName = "TEMPLAR";
 	Health = 300;
 	Radius = 20.0;
 	Height = 60.0;
