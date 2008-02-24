@@ -28,6 +28,7 @@ class Ammo : Inventory
 
 int				BackpackAmount;
 int				BackpackMaxAmount;
+int				DropAmount;
 
 //==========================================================================
 //

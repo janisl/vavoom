@@ -41,7 +41,6 @@ const int INVERSECOLOURMAP	= 32;
 
 int					Amount;
 int					MaxAmount;
-int					DropAmount;
 string				PickupMessage;
 float				RespawnTime;
 class<Inventory>	GiveQuestType;

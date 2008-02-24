@@ -5348,9 +5348,9 @@ final void DropItem(class<EntityEx> type, int amount, float chance)
 		else if (Ammo(Item))
 		{
 			//	Half ammo when dropped by bad guys.
-			if (Item.DropAmount)
+			if (Ammo(Item).DropAmount)
 			{
-				Item.Amount = Item.DropAmount;
+				Item.Amount = Ammo(Item).DropAmount;
 			}
 			else
 			{
