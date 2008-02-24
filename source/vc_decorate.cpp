@@ -2331,7 +2331,7 @@ static void ParseActor(VScriptParser* sc)
 		if (!Prop.ICmp("Tag"))
 		{
 			sc->ExpectString();
-			SetClassFieldName(Class, "ClassName", *sc->String);
+			SetClassFieldStr(Class, "StrifeName", sc->String);
 			continue;
 		}
 		//
@@ -2358,9 +2358,8 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("ReactionTime"))
 		{
-			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property ReactionTime is not yet supported");
+			SetClassFieldInt(Class, "ReactionCount", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("PainChance"))
@@ -2407,9 +2406,8 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("RadiusDamageFactor"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property RadiusDamageFactor is not yet supported");
+			SetClassFieldFloat(Class, "RDFactor", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("Speed"))
@@ -2434,9 +2432,8 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("FloatSpeed"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property FloatSpeed is not yet supported");
+			SetClassFieldFloat(Class, "FloatSpeed", sc->Float * 35.0);
 			continue;
 		}
 		//
@@ -2456,16 +2453,14 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("DeathHeight"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property DeathHeight is not yet supported");
+			SetClassFieldFloat(Class, "DeathHeight", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("BurnHeight"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property BurnHeight is not yet supported");
+			SetClassFieldFloat(Class, "BurnHeight", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("CameraHeight"))
@@ -2477,9 +2472,8 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("Gravity"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property Gravity is not yet supported");
+			SetClassFieldFloat(Class, "Gravity", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("Mass"))
@@ -2490,16 +2484,14 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("MaxStepHeight"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MaxStepHeight is not yet supported");
+			SetClassFieldFloat(Class, "MaxStepHeight", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("MaxDropOffHeight"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MaxDropOffHeight is not yet supported");
+			SetClassFieldFloat(Class, "MaxDropoffHeight", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("BounceFactor"))
@@ -2510,9 +2502,8 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("BounceCount"))
 		{
-			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property BounceCount is not yet supported");
+			SetClassFieldInt(Class, "BounceCount", sc->Number);
 			continue;
 		}
 		//
@@ -2705,37 +2696,32 @@ static void ParseActor(VScriptParser* sc)
 		//
 		if (!Prop.ICmp("MinMissileChance"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MinMissileChance is not yet supported");
+			SetClassFieldFloat(Class, "MissileChance", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("DamageType"))
 		{
-			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property DamageType is not yet supported");
+			SetClassFieldName(Class, "DamageType", *sc->String);
 			continue;
 		}
 		if (!Prop.ICmp("MeleeThreshold"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MeleeThreshold is not yet supported");
+			SetClassFieldFloat(Class, "MissileMinRange", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("MeleeRange"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MeleeRange is not yet supported");
+			SetClassFieldFloat(Class, "MeleeRange", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("MaxTargetRange"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MaxTargetRange is not yet supported");
+			SetClassFieldFloat(Class, "MissileMaxRange", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("MeleeDamage"))
@@ -2768,22 +2754,19 @@ static void ParseActor(VScriptParser* sc)
 		}
 		if (!Prop.ICmp("ExplosionRadius"))
 		{
-			//FIXME
-			sc->ExpectFloat();
-			GCon->Logf("Property ExplosionRadius is not yet supported");
+			sc->ExpectNumber();
+			SetClassFieldInt(Class, "ExplosionRadius", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("ExplosionDamage"))
 		{
-			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property ExplosionDamage is not yet supported");
+			SetClassFieldInt(Class, "ExplosionDamage", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("DontHurtShooter"))
 		{
-			//FIXME
-			GCon->Logf("Property DontHurtShooter is not yet supported");
+			SetClassFieldBool(Class, "bExplosionDontHurtSelf", true);
 			continue;
 		}
 		//
@@ -2947,8 +2930,7 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Inventory.DefMaxAmount"))
 			{
-				//FIXME
-				GCon->Logf("Property Inventory.DefMaxAmount is not yet supported");
+				SetClassFieldInt(Class, "MaxAmount", -2);
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.MaxAmount"))
@@ -2959,9 +2941,8 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Inventory.Icon"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Inventory.Icon is not yet supported");
+				SetClassFieldName(Class, "IconName", *sc->String.ToLower());
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.PickupMessage"))
@@ -2972,9 +2953,8 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Inventory.PickupSound"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Inventory.PickupSound is not yet supported");
+				SetClassFieldName(Class, "PickupSound", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.PickupFlash"))
@@ -2986,16 +2966,14 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Inventory.UseSound"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Inventory.UseSound is not yet supported");
+				SetClassFieldName(Class, "UseSound", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.RespawnTics"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Inventory.RespawnTics is not yet supported");
+				SetClassFieldFloat(Class, "RespawnTime", sc->Number / 35.0);
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.GiveQuest"))
@@ -3014,23 +2992,20 @@ static void ParseActor(VScriptParser* sc)
 		{
 			if (!Prop.ICmp("Ammo.BackpackAmount"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Ammo.BackpackAmount is not yet supported");
+				SetClassFieldInt(Class, "BackpackAmount", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Ammo.BackpackMaxAmount"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Ammo.BackpackMaxAmount is not yet supported");
+				SetClassFieldInt(Class, "BackpackMaxAmount", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Ammo.DropAmount"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Ammo.DropAmount is not yet supported");
+				SetClassFieldInt(Class, "DropAmount", sc->Number);
 				continue;
 			}
 		}
@@ -3042,16 +3017,14 @@ static void ParseActor(VScriptParser* sc)
 		{
 			if (!Prop.ICmp("Armor.SaveAmount"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Armor.SaveAmount is not yet supported");
+				SetClassFieldInt(Class, "SaveAmount", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Armor.SavePercent"))
 			{
-				//FIXME
 				sc->ExpectFloat();
-				GCon->Logf("Property Armor.SavePercent is not yet supported");
+				SetClassFieldFloat(Class, "SavePercent", sc->Float);
 				continue;
 			}
 		}
@@ -3059,9 +3032,8 @@ static void ParseActor(VScriptParser* sc)
 		{
 			if (!Prop.ICmp("Armor.MaxSaveAmount"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Armor.MaxSaveAmount is not yet supported");
+				SetClassFieldInt(Class, "MaxSaveAmount", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Armor.MaxBonus"))
@@ -3087,9 +3059,8 @@ static void ParseActor(VScriptParser* sc)
 		{
 			if (!Prop.ICmp("Health.LowMessage"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Health.LowMessage is not yet supported");
+				SetClassFieldStr(Class, "LowHealthMessage", sc->String);
 				continue;
 			}
 		}
@@ -3101,29 +3072,46 @@ static void ParseActor(VScriptParser* sc)
 		{
 			if (!Prop.ICmp("Powerup.Color"))
 			{
-				//FIXME
-				if (!sc->Check("InverseMap") && !sc->Check("GoldMap"))
+				if (sc->Check("InverseMap"))
 				{
+					SetClassFieldInt(Class, "BlendColour", 0x00123456);
+				}
+				else if (sc->Check("GoldMap"))
+				{
+					SetClassFieldInt(Class, "BlendColour", 0x00123457);
+				}
+				else
+				{
+					vuint32 Col;
 					if (sc->CheckNumber())
 					{
+						int r = MID(0, sc->Number, 255);
+						sc->Check(",");
 						sc->ExpectNumber();
+						int g = MID(0, sc->Number, 255);
+						sc->Check(",");
 						sc->ExpectNumber();
+						int b = MID(0, sc->Number, 255);
+						Col = (r << 16) | (g << 8) | b;
 					}
 					else
 					{
 						sc->ExpectString();
+						Col = M_ParseColour(sc->String);
 					}
-					sc->Expect(",");
+					sc->Check(",");
 					sc->ExpectFloat();
+					int a = MID(0, (int)(sc->Float * 255), 255);
+					Col |= a << 24;
+					SetClassFieldInt(Class, "BlendColour", Col);
 				}
-				GCon->Logf("Property Powerup.Color is not yet supported");
 				continue;
 			}
 			if (!Prop.ICmp("Powerup.Duration"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Powerup.Duration is not yet supported");
+				SetClassFieldFloat(Class, "EffectTime",
+					(float)sc->Number / 35.0);
 				continue;
 			}
 			if (!Prop.ICmp("Powerup.Type"))
@@ -3135,9 +3123,8 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Powerup.Mode"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Powerup.Mode is not yet supported");
+				SetClassFieldName(Class, "Mode", *sc->String);
 				continue;
 			}
 		}
@@ -3149,9 +3136,8 @@ static void ParseActor(VScriptParser* sc)
 		{
 			if (!Prop.ICmp("PuzzleItem.Number"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property PuzzleItem.Number is not yet supported");
+				SetClassFieldInt(Class, "PuzzleItemNumber", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("PuzzleItem.FailMessage"))
@@ -3170,16 +3156,14 @@ static void ParseActor(VScriptParser* sc)
 		{
 			if (!Prop.ICmp("Weapon.AmmoGive") || !Prop.ICmp("Weapon.AmmoGive1"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Weapon.AmmoGive1 is not yet supported");
+				SetClassFieldInt(Class, "AmmoGive1", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.AmmoGive2"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Weapon.AmmoGive2 is not yet supported");
+				SetClassFieldInt(Class, "AmmoGive2", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.AmmoType") || !Prop.ICmp("Weapon.AmmoType1"))
@@ -3198,37 +3182,32 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Weapon.AmmoUse") || !Prop.ICmp("Weapon.AmmoUse1"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Weapon.AmmoUse1 is not yet supported");
+				SetClassFieldInt(Class, "AmmoUse1", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.AmmoUse2"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Weapon.AmmoUse1 is not yet supported");
+				SetClassFieldInt(Class, "AmmoUse2", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.Kickback"))
 			{
-				//FIXME
-				sc->ExpectNumber();
-				GCon->Logf("Property Weapon.Kickback is not yet supported");
+				sc->ExpectFloat();
+				SetClassFieldFloat(Class, "Kickback", sc->Float);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.ReadySound"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.ReadySound is not yet supported");
+				SetClassFieldName(Class, "ReadySound", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.SelectionOrder"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Weapon.SelectionOrder is not yet supported");
+				SetClassFieldInt(Class, "SelectionOrder", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.SisterWeapon"))
@@ -3240,16 +3219,14 @@ static void ParseActor(VScriptParser* sc)
 			}
 			if (!Prop.ICmp("Weapon.UpSound"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Weapon.UpSound is not yet supported");
+				SetClassFieldName(Class, "UpSound", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Weapon.YAdjust"))
 			{
-				//FIXME
-				sc->ExpectNumber();
-				GCon->Logf("Property Weapon.YAdjust is not yet supported");
+				sc->ExpectFloat();
+				SetClassFieldFloat(Class, "PSpriteSY", sc->Float);
 				continue;
 			}
 		}
