@@ -2676,7 +2676,7 @@ final bool CheckMissileRange()
 		return false;	// too far away
 	}
 
-	if (MissileMinRange && dist < MissileMinRange)
+	if (MissileMinRange && MeleeState && dist < MissileMinRange)
 	{
 		return false;	// close for fist attack
 	}
@@ -4555,6 +4555,14 @@ void Died(EntityEx source, EntityEx inflictor)
 #endif
 	}
 
+	//	Calculate gibs health
+	int GHealth = GibsHealth;
+	if (!GHealth)
+	{
+		GHealth = ftoi(itof(-default.Health) *
+			LineSpecialGameInfo(Level.Game).GibsHealthFactor);
+	}
+
 	if (DamageType == 'Fire' && FindState('Burn'))
 	{
 		// Flame death
@@ -4565,7 +4573,7 @@ void Died(EntityEx source, EntityEx inflictor)
 		// Specialised death state for this damage type (ice, etc).
 		SetState(FindState(DamageType));
 	}
-	else if (Health < GibsHealth && FindState('XDeath'))
+	else if (Health < GHealth && FindState('XDeath'))
 	{
 		// Extreme death
 		SetState(FindState('XDeath'));
@@ -6904,7 +6912,6 @@ DehackedDormantPickup:
 defaultproperties
 {
 	Health = 1000;
-	GibsHealth = -1000;
 	ReactionCount = 8;
 	Radius = 20.0;
 	Height = 16.0;

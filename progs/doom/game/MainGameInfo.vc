@@ -1092,6 +1092,7 @@ defaultproperties
 	BloodClass = Blood;
 	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
 	bBloodRandomiseTime = true;
+	GibsHealthFactor = 1.0;
 
 	botskill = 2;
 
