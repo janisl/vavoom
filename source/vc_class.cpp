@@ -1076,6 +1076,29 @@ void VClass::Emit()
 
 //==========================================================================
 //
+//	VClass::DecorateEmit
+//
+//==========================================================================
+
+void VClass::DecorateEmit()
+{
+	guard(VClass::DecorateEmit);
+	//	Emit method code.
+	for (int i = 0; i < Methods.Num(); i++)
+	{
+		Methods[i]->Emit();
+	}
+
+	//	Calculate indexes of virtual methods.
+	CalcFieldOffsets();
+
+	//	Recreate virtual table.
+	CreateVTable();
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::ResolveStateLabel
 //
 //==========================================================================
@@ -1108,7 +1131,7 @@ VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 		CheckName = DCol + 2;
 	}
 
-	VStateLabel* Lbl = CheckClass->FindStateLabel(CheckName, false);
+	VStateLabel* Lbl = CheckClass->FindStateLabel(CheckName);
 	if (!Lbl)
 	{
 		ParseError(Loc, "No such state %s", *LabelName);
@@ -1477,6 +1500,10 @@ void VClass::InitDestructorFields()
 void VClass::CreateVTable()
 {
 	guard(VClass::CreateVTable);
+	if (ClassVTable)
+	{
+		delete[] ClassVTable;
+	}
 	ClassVTable = new VMethod*[ClassNumMethods];
 	memset(ClassVTable, 0, ClassNumMethods * sizeof(VMethod*));
 	if (ParentClass)

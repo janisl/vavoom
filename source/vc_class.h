@@ -222,6 +222,7 @@ public:
 	bool Define();
 	bool DefineMembers();
 	void Emit();
+	void DecorateEmit();
 	VState* ResolveStateLabel(TLocation, VName, int);
 	void SetStateLabel(VName, VState*);
 

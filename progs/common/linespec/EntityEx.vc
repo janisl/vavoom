@@ -6843,6 +6843,33 @@ final bool SetPlayerProperty(int Prop, int Set)
 	return true;
 }
 
+//==========================================================================
+//
+//	decorate_random
+//
+//==========================================================================
+
+final int decorate_random(int From, int To)
+{
+	if (From > To)
+	{
+		int Tmp = From;
+		From = To;
+		To = Tmp;
+	}
+	int RVal;
+	if (To - From > 255)
+	{
+		RVal = (P_Random() << 24) | (P_Random() << 16) | (P_Random() << 8) |
+			P_Random();
+	}
+	else
+	{
+		RVal = P_Random();
+	}
+	return From + RVal % (To - From + 1);
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;

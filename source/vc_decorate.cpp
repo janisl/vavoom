@@ -70,6 +70,25 @@ public:
 	void Emit(VEmitContext&);
 };
 
+//==========================================================================
+//
+//	VDecorateInvocation
+//
+//==========================================================================
+
+class VDecorateInvocation : public VExpression
+{
+public:
+	VName			Name;
+	int				NumArgs;
+	VExpression*	Args[VMethod::MAX_PARAMS + 1];
+
+	VDecorateInvocation(VName, const TLocation&, int, VExpression**);
+	~VDecorateInvocation();
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -129,6 +148,7 @@ VDecorateSingleName::VDecorateSingleName(VName AName, const TLocation& ALoc)
 
 VExpression* VDecorateSingleName::DoResolve(VEmitContext& ec)
 {
+	guard(VDecorateSingleName::DoResolve);
 	//	Look only for constants defined in DECORATE scripts.
 	VConstant* Const = ec.Package->FindConstant(Name);
 	if (Const)
@@ -141,6 +161,7 @@ VExpression* VDecorateSingleName::DoResolve(VEmitContext& ec)
 	ParseError(Loc, "Illegal expression identifier %s", *Name);
 	delete this;
 	return NULL;
+	unguard;
 }
 
 //==========================================================================
@@ -150,6 +171,85 @@ VExpression* VDecorateSingleName::DoResolve(VEmitContext& ec)
 //==========================================================================
 
 void VDecorateSingleName::Emit(VEmitContext&)
+{
+	ParseError(Loc, "Should not happen");
+}
+
+//==========================================================================
+//
+//	VDecorateInvocation::VDecorateInvocation
+//
+//==========================================================================
+
+VDecorateInvocation::VDecorateInvocation(VName AName, const TLocation& ALoc, int ANumArgs,
+	VExpression** AArgs)
+: VExpression(ALoc)
+, Name(AName)
+, NumArgs(ANumArgs)
+{
+	for (int i = 0; i < NumArgs; i++)
+		Args[i] = AArgs[i];
+}
+
+//==========================================================================
+//
+//	VDecorateInvocation::~VDecorateInvocation
+//
+//==========================================================================
+
+VDecorateInvocation::~VDecorateInvocation()
+{
+	for (int i = 0; i < NumArgs; i++)
+		if (Args[i])
+			delete Args[i];
+}
+
+//==========================================================================
+//
+//	VDecorateInvocation::DoResolve
+//
+//==========================================================================
+
+VExpression* VDecorateInvocation::DoResolve(VEmitContext& ec)
+{
+	guard(VDecorateInvocation::DoResolve);
+	if (ec.SelfClass)
+	{
+		//	First try with decorate_ prefix, then without.
+		VMethod* M = ec.SelfClass->FindMethod(va("decorate_%s", *Name));
+		if (!M)
+		{
+			M = ec.SelfClass->FindMethod(Name);
+		}
+		if (M)
+		{
+			if (M->Flags & FUNC_Iterator)
+			{
+				ParseError(Loc, "Iterator methods can only be used in foreach statements");
+				delete this;
+				return NULL;
+			}
+			VExpression* e = new VInvocation(NULL, M, NULL,
+				false, false, Loc, NumArgs, Args);
+			NumArgs = 0;
+			delete this;
+			return e->Resolve(ec);
+		}
+	}
+
+	ParseError(Loc, "Unknown method %s", *Name);
+	delete this;
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDecorateInvocation::Emit
+//
+//==========================================================================
+
+void VDecorateInvocation::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
 }
@@ -334,7 +434,7 @@ static VExpression* ParseMethodCall(VScriptParser* sc, VName Name,
 		} while (sc->Check(","));
 		sc->Expect(")");
 	}
-	return new VCastOrInvocation(Name, Loc, NumArgs, Args);
+	return new VDecorateInvocation(Name, Loc, NumArgs, Args);
 	unguard;
 }
 
@@ -2191,6 +2291,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 
 	VClass* Class = ParentClass->CreateDerivedClass(*NameStr, DecPkg,
 		sc->GetLoc());
+	DecPkg->ParsedClasses.Append(Class);
 
 	VClass* ReplaceeClass = NULL;
 	if (sc->Check("replaces"))
@@ -2354,14 +2455,31 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		{
 			if (sc->Check("("))
 			{
-				//FIXME
-				GCon->Logf("Damage expression in %s is not yet supported", Class->GetName());
 				VExpression* Expr = ParseExpression(sc);
-				sc->Expect(")");
-				if (Expr)
+				if (!Expr)
 				{
-					delete Expr;
+					ParseError(sc->GetLoc(), "Damage expression expected");
 				}
+				else
+				{
+					VMethod* M = new VMethod("GetMissileDamage", Class, sc->GetLoc());
+					M->ReturnTypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
+					M->ReturnType = TYPE_Int;
+					M->NumParams = 2;
+					M->Params[0].Name = "Mask";
+					M->Params[0].Loc = sc->GetLoc();
+					M->Params[0].TypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
+					M->Params[1].Name = "Add";
+					M->Params[1].Loc = sc->GetLoc();
+					M->Params[1].TypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
+					VCompound* Comp = new VCompound(sc->GetLoc());
+					VReturn* Ret = new VReturn(Expr, sc->GetLoc());
+					Comp->Statements.Append(Ret);
+					M->Statement = Comp;
+					Class->AddMethod(M);
+					M->Define();
+				}
+				sc->Expect(")");
 			}
 			else
 			{
@@ -3508,6 +3626,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		FakeInventoryClass->CreateDerivedClass(ClassName, DecPkg,
 		sc->GetLoc()) :
 		ActorClass->CreateDerivedClass(ClassName, DecPkg, sc->GetLoc());
+	DecPkg->ParsedClasses.Append(Class);
 	if (Type == OLDDEC_Breakable)
 	{
 		SetClassFieldBool(Class, "bShootable", true);
@@ -4312,6 +4431,17 @@ void ProcessDecorateScripts()
 				*CF.Ptr = C;
 			}
 		}
+	}
+
+	//	Emit code.
+	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
+	{
+		DecPkg->ParsedClasses[i]->DecorateEmit();
+	}
+
+	if (NumErrors)
+	{
+		BailOut();
 	}
 
 	VClass::StaticReinitStatesLookup();
