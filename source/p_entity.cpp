@@ -273,10 +273,26 @@ bool VEntity::AdvanceState(float deltaTime)
 //
 //==========================================================================
 
-VState* VEntity::FindState(VName StateName)
+VState* VEntity::FindState(VName StateName, VName SubLabel, bool Exact)
 {
 	guard(VEntity::FindState);
-	VStateLabel* Lbl = GetClass()->FindStateLabel(StateName);
+	VStateLabel* Lbl = GetClass()->FindStateLabel(StateName, SubLabel, Exact);
+	return Lbl ? Lbl->State : NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::FindStateEx
+//
+//==========================================================================
+
+VState* VEntity::FindStateEx(const VStr& StateName, bool Exact)
+{
+	guard(VEntity::FindStateEx);
+	TArray<VName> Names;
+	VMemberBase::StaticSplitStateLabel(StateName, Names);
+	VStateLabel* Lbl = GetClass()->FindStateLabel(Names, Exact);
 	return Lbl ? Lbl->State : NULL;
 	unguard;
 }
@@ -436,9 +452,19 @@ IMPLEMENT_FUNCTION(VEntity, AdvanceState)
 
 IMPLEMENT_FUNCTION(VEntity, FindState)
 {
+	P_GET_BOOL_OPT(Exact, false);
+	P_GET_NAME_OPT(SubLabel, NAME_None);
 	P_GET_NAME(StateName);
 	P_GET_SELF;
-	RET_PTR(Self->FindState(StateName));
+	RET_PTR(Self->FindState(StateName, SubLabel, Exact));
+}
+
+IMPLEMENT_FUNCTION(VEntity, FindStateEx)
+{
+	P_GET_BOOL_OPT(Exact, false);
+	P_GET_STR(StateName);
+	P_GET_SELF;
+	RET_PTR(Self->FindStateEx(StateName, Exact));
 }
 
 IMPLEMENT_FUNCTION(VEntity, GetStateEffects)

@@ -1630,7 +1630,7 @@ void VParser::ParseStates(VClass* InClass)
 		{
 			VStateLabelDef& Lbl = InClass->StateLabelDefs.Alloc();
 			Lbl.Loc = TmpLoc;
-			Lbl.Name = TmpName;
+			Lbl.Name = *TmpName;
 			continue;
 		}
 

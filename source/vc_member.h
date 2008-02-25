@@ -102,4 +102,6 @@ public:
 	static VClass* StaticFindClass(VName);
 
 	static void StaticSetUpNetClasses();
+
+	static void StaticSplitStateLabel(const VStr&, TArray<VName>&);
 };

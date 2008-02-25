@@ -2078,7 +2078,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 		{
 			VStateLabelDef& Lbl = Class->StateLabelDefs.Alloc();
 			Lbl.Loc = TmpLoc;
-			Lbl.Name = *TmpName;
+			Lbl.Name = TmpName;
 			continue;
 		}
 

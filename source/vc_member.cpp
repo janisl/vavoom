@@ -690,3 +690,23 @@ void VMemberBase::StaticSetUpNetClasses()
 	unguard;
 #endif
 }
+
+//==========================================================================
+//
+//	VMemberBase::StaticSplitStateLabel
+//
+//==========================================================================
+
+void VMemberBase::StaticSplitStateLabel(const VStr& LabelName,
+	TArray<VName>& Parts)
+{
+	guard(VMemberBase::StaticSplitStateLabel);
+	TArray<VStr> StrParts;
+	LabelName.Split(".", StrParts);
+	Parts.Clear();
+	for (int i = 0; i < StrParts.Num(); i++)
+	{
+		Parts.Append(*StrParts[i]);
+	}
+	unguard;
+}

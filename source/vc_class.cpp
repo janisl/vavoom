@@ -770,13 +770,28 @@ VState* VClass::FindStateChecked(VName AName)
 //
 //==========================================================================
 
-VStateLabel* VClass::FindStateLabel(VName AName)
+VStateLabel* VClass::FindStateLabel(VName AName, VName SubLabel, bool Exact)
 {
 	guard(VClass::FindStateLabel);
 	for (int i = 0; i < StateLabels.Num(); i++)
 	{
 		if (StateLabels[i].Name == AName)
 		{
+			if (SubLabel != NAME_None)
+			{
+				TArray<VStateLabel>& SubList = StateLabels[i].SubLabels;
+				for (int j = 0; j < SubList.Num(); j++)
+				{
+					if (SubList[j].Name == SubLabel)
+					{
+						return &SubList[j];
+					}
+				}
+				if (Exact)
+				{
+					return NULL;
+				}
+			}
 			return &StateLabels[i];
 		}
 	}
@@ -786,17 +801,88 @@ VStateLabel* VClass::FindStateLabel(VName AName)
 
 //==========================================================================
 //
+//	VClass::FindStateLabel
+//
+//==========================================================================
+
+VStateLabel* VClass::FindStateLabel(TArray<VName>& Names, bool Exact)
+{
+	guard(VClass::FindStateLabel);
+	TArray<VStateLabel>* List = &StateLabels;
+	VStateLabel* Best = NULL;
+	for (int ni = 0; ni < Names.Num(); ni++)
+	{
+		VStateLabel* Lbl = NULL;
+		for (int i = 0; i < List->Num(); i++)
+		{
+			if ((*List)[i].Name == Names[ni])
+			{
+				Lbl = &(*List)[i];
+				break;
+			}
+		}
+		if (!Lbl)
+		{
+			if (Exact)
+			{
+				return NULL;
+			}
+			break;
+		}
+		else
+		{
+			Best = Lbl;
+			List = &Lbl->SubLabels;
+		}
+	}
+	return Best;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::FindStateLabelChecked
 //
 //==========================================================================
 
-VStateLabel* VClass::FindStateLabelChecked(VName AName)
+VStateLabel* VClass::FindStateLabelChecked(VName AName, VName SubLabel,
+	bool Exact)
 {
 	guard(VClass::FindStateLabelChecked);
-	VStateLabel* Lbl = FindStateLabel(AName);
+	VStateLabel* Lbl = FindStateLabel(AName, SubLabel, Exact);
 	if (!Lbl)
 	{
-		Sys_Error("State %s not found", *AName);
+		VStr FullName = *AName;
+		if (SubLabel != NAME_None)
+		{
+			FullName += ".";
+			FullName += *SubLabel;
+		}
+		Sys_Error("State %s not found", *FullName);
+	}
+	return Lbl;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindStateLabelChecked
+//
+//==========================================================================
+
+VStateLabel* VClass::FindStateLabelChecked(TArray<VName>& Names, bool Exact)
+{
+	guard(VClass::FindStateLabelChecked);
+	VStateLabel* Lbl = FindStateLabel(Names, Exact);
+	if (!Lbl)
+	{
+		VStr FullName = *Names[0];
+		for (int i = 1; i < Names.Num(); i++)
+		{
+			FullName += ".";
+			FullName += *Names[i];
+		}
+		Sys_Error("State %s not found", *FullName);
 	}
 	return Lbl;
 	unguard;
@@ -1107,7 +1193,9 @@ void VClass::EmitStateLabels()
 	for (int i = 0; i < StateLabelDefs.Num(); i++)
 	{
 		VStateLabelDef& Lbl = StateLabelDefs[i];
-		SetStateLabel(Lbl.Name, Lbl.State);
+		TArray<VName> Names;
+		StaticSplitStateLabel(Lbl.Name, Names);
+		SetStateLabel(Names, Lbl.State);
 	}
 
 	//	Then resolve state labels that do immediate jumps.
@@ -1117,7 +1205,9 @@ void VClass::EmitStateLabels()
 		if (Lbl.GotoLabel != NAME_None)
 		{
 			Lbl.State = ResolveStateLabel(Lbl.Loc, Lbl.GotoLabel, Lbl.GotoOffset);
-			SetStateLabel(Lbl.Name, Lbl.State);
+			TArray<VName> Names;
+			StaticSplitStateLabel(Lbl.Name, Names);
+			SetStateLabel(Names, Lbl.State);
 		}
 	}
 	unguard;
@@ -1132,15 +1222,13 @@ void VClass::EmitStateLabels()
 VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 {
 	VClass* CheckClass = this;
-	VName CheckName = LabelName;
+	VStr CheckName = *LabelName;
 
-	const char* DCol = strstr(*LabelName, "::");
-	if (DCol)
+	int DCol = CheckName.IndexOf("::");
+	if (DCol >= 0)
 	{
-		char ClassNameBuf[NAME_SIZE];
-		VStr::Cpy(ClassNameBuf, *LabelName);
-		ClassNameBuf[DCol - *LabelName] = 0;
-		VName ClassName(ClassNameBuf);
+		VStr ClassNameStr(CheckName, 0, DCol);
+		VName ClassName(*ClassNameStr);
 		if (ClassName == NAME_Super)
 		{
 			CheckClass = ParentClass;
@@ -1154,10 +1242,12 @@ VState* VClass::ResolveStateLabel(TLocation Loc, VName LabelName, int Offset)
 				return NULL;
 			}
 		}
-		CheckName = DCol + 2;
+		CheckName = VStr(CheckName, DCol + 2, CheckName.Length() - DCol - 2);
 	}
 
-	VStateLabel* Lbl = CheckClass->FindStateLabel(CheckName);
+	TArray<VName> Names;
+	StaticSplitStateLabel(CheckName, Names);
+	VStateLabel* Lbl = CheckClass->FindStateLabel(Names, true);
 	if (!Lbl)
 	{
 		ParseError(Loc, "No such state %s", *LabelName);
@@ -1198,6 +1288,43 @@ void VClass::SetStateLabel(VName AName, VState* State)
 	VStateLabel& L = StateLabels.Alloc();
 	L.Name = AName;
 	L.State = State;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::SetStateLabel
+//
+//==========================================================================
+
+void VClass::SetStateLabel(const TArray<VName>& Names, VState* State)
+{
+	guard(VClass::SetStateLabel);
+	if (!Names.Num())
+	{
+		return;
+	}
+	TArray<VStateLabel>* List = &StateLabels;
+	VStateLabel* Lbl = NULL;
+	for (int ni = 0; ni < Names.Num(); ni++)
+	{
+		Lbl = NULL;
+		for (int i = 0; i < List->Num(); i++)
+		{
+			if ((*List)[i].Name == Names[ni])
+			{
+				Lbl = &(*List)[i];
+				break;
+			}
+		}
+		if (!Lbl)
+		{
+			Lbl = &List->Alloc();
+			Lbl->Name = Names[ni];
+		}
+		List = &Lbl->SubLabels;
+	}
+	Lbl->State = State;
 	unguard;
 }
 
@@ -1769,4 +1896,26 @@ VClass* VClass::GetReplacee()
 	Replacee = Temp;
 	return Ret;
 	unguard;
+}
+
+//==========================================================================
+//
+//	operator<<
+//
+//==========================================================================
+
+VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
+{
+	Strm << Lbl.Name << Lbl.State;
+	int NumSub = Lbl.SubLabels.Num();
+	Strm << STRM_INDEX(NumSub);
+	if (Strm.IsLoading())
+	{
+		Lbl.SubLabels.SetNum(NumSub);
+	}
+	for (int i = 0; i < NumSub; i++)
+	{
+		Strm << Lbl.SubLabels[i];
+	}
+	return Strm;
 }

@@ -43,18 +43,16 @@ enum EClassObjectFlags
 struct VStateLabel
 {
 	//	Persistent fields
-	VName		Name;
-	VState*		State;
+	VName					Name;
+	VState*					State;
+	TArray<VStateLabel>		SubLabels;
 
 	VStateLabel()
 	: Name(NAME_None)
 	, State(NULL)
 	{}
 
-	friend inline VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
-	{
-		return Strm << Lbl.Name << Lbl.State;
-	}
+	friend VStream& operator<<(VStream&, VStateLabel&);
 };
 
 //==========================================================================
@@ -65,15 +63,14 @@ struct VStateLabel
 
 struct VStateLabelDef
 {
-	VName		Name;
+	VStr		Name;
 	VState*		State;
 	TLocation	Loc;
 	VName		GotoLabel;
 	vint32		GotoOffset;
 
 	VStateLabelDef()
-	: Name(NAME_None)
-	, State(NULL)
+	: State(NULL)
 	, GotoLabel(NAME_None)
 	, GotoOffset(0)
 	{}
@@ -232,8 +229,10 @@ public:
 	int GetMethodIndex(VName);
 	VState* FindState(VName);
 	VState* FindStateChecked(VName);
-	VStateLabel* FindStateLabel(VName);
-	VStateLabel* FindStateLabelChecked(VName);
+	VStateLabel* FindStateLabel(VName, VName = NAME_None, bool = false);
+	VStateLabel* FindStateLabel(TArray<VName>&, bool);
+	VStateLabel* FindStateLabelChecked(VName, VName = NAME_None, bool = false);
+	VStateLabel* FindStateLabelChecked(TArray<VName>&, bool);
 
 	bool Define();
 	bool DefineMembers();
@@ -242,6 +241,7 @@ public:
 	void EmitStateLabels();
 	VState* ResolveStateLabel(TLocation, VName, int);
 	void SetStateLabel(VName, VState*);
+	void SetStateLabel(const TArray<VName>&, VState*);
 
 	bool IsChildOf(const VClass *SomeBaseClass) const
 	{
