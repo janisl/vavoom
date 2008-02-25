@@ -299,6 +299,20 @@ VState* VEntity::FindStateEx(const VStr& StateName, bool Exact)
 
 //==========================================================================
 //
+//	VEntity::HasSpecialStates
+//
+//==========================================================================
+
+bool VEntity::HasSpecialStates(VName StateName)
+{
+	guard(VEntity::HasSpecialStates);
+	VStateLabel* Lbl = GetClass()->FindStateLabel(StateName);
+	return Lbl && Lbl->SubLabels.Num() > 0;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VEntity::GetStateEffects
 //
 //==========================================================================
@@ -465,6 +479,13 @@ IMPLEMENT_FUNCTION(VEntity, FindStateEx)
 	P_GET_STR(StateName);
 	P_GET_SELF;
 	RET_PTR(Self->FindStateEx(StateName, Exact));
+}
+
+IMPLEMENT_FUNCTION(VEntity, HasSpecialStates)
+{
+	P_GET_NAME(StateName);
+	P_GET_SELF;
+	RET_BOOL(Self->HasSpecialStates(StateName));
 }
 
 IMPLEMENT_FUNCTION(VEntity, GetStateEffects)

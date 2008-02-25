@@ -35,14 +35,15 @@ float JumpSpeed;
 //
 //==========================================================================
 
-int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
 {
 	if (InquisitorShot(inflictor))
 	{
 		// Inquisitor grenades don't damage inquisitors
 		return -1;
 	}
-	return ::TakeSpecialDamage(inflictor, source, damage);
+	return ::TakeSpecialDamage(inflictor, source, damage, DmgType);
 }
 
 //==========================================================================

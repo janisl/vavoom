@@ -266,6 +266,7 @@ native final bool AdvanceState(float deltaTime);
 native final state FindState(name StateName, optional name SubLabel,
 	optional bool Exact);
 native final state FindStateEx(string StateName, optional bool Exact);
+native final state HasSpecialStates(name StateName);
 native final void GetStateEffects(out array<LightEffectDef*> Lights);
 
 native final void PlaySound(name SoundName, int Channel, optional float Volume,

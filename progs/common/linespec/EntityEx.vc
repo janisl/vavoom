@@ -4167,7 +4167,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		}
 	}
 
-	damage = TakeSpecialDamage(inflictor, source, damage);
+	damage = TakeSpecialDamage(inflictor, source, damage, DmgType);
 	if (damage == -1)
 	{
 		return;
@@ -4412,9 +4412,18 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 //
 //==========================================================================
 
-int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
 {
-	return damage;
+	//	Always apply damage if actor has regular death state or no death
+	// states at all.
+	if (FindState('Death') || !HasSpecialStates('Death'))
+	{
+		return damage;
+	}
+	//	If there's no corresponding death state, actor takes no damage at
+	// all.
+	return FindState('Death', DmgType) ? damage : -1;
 }
 
 //==========================================================================

@@ -35,7 +35,8 @@ class Macil1 : Pawn
 //
 //==========================================================================
 
-int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage)
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
 {
 	if (Random() < PainChance)
 	{
