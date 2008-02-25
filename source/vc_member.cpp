@@ -704,7 +704,32 @@ void VMemberBase::StaticSplitStateLabel(const VStr& LabelName,
 	TArray<VStr> StrParts;
 	LabelName.Split(".", StrParts);
 	Parts.Clear();
-	for (int i = 0; i < StrParts.Num(); i++)
+	//	Remap old death state labels to proper names.
+	if (StrParts[0] == "XDeath")
+	{
+		Parts.Append("Death");
+		Parts.Append("Extreme");
+	}
+	else if (StrParts[0] == "Burn")
+	{
+		Parts.Append("Death");
+		Parts.Append("Fire");
+	}
+	else if (StrParts[0] == "Ice")
+	{
+		Parts.Append("Death");
+		Parts.Append("Ice");
+	}
+	else if (StrParts[0] == "Disintegrate")
+	{
+		Parts.Append("Death");
+		Parts.Append("Disintegrate");
+	}
+	else
+	{
+		Parts.Append(*StrParts[0]);
+	}
+	for (int i = 1; i < StrParts.Num(); i++)
 	{
 		Parts.Append(*StrParts[i]);
 	}

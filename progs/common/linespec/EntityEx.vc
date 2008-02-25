@@ -4563,20 +4563,15 @@ void Died(EntityEx source, EntityEx inflictor)
 			LineSpecialGameInfo(Level.Game).GibsHealthFactor);
 	}
 
-	if (DamageType == 'Fire' && FindState('Burn'))
-	{
-		// Flame death
-		SetState(FindState('Burn'));
-	}
-	else if (DamageType && DamageType != 'Melee' && FindState(DamageType))
+	if (DamageType && FindState('Death', DamageType, true))
 	{
 		// Specialised death state for this damage type (ice, etc).
-		SetState(FindState(DamageType));
+		SetState(FindState('Death', DamageType, true));
 	}
-	else if (Health < GHealth && FindState('XDeath'))
+	else if (Health < GHealth && FindState('Death', 'Extreme', true))
 	{
 		// Extreme death
-		SetState(FindState('XDeath'));
+		SetState(FindState('Death', 'Extreme', true));
 	}
 	else
 	{
