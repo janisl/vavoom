@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ZXmasTree : BurnableTree
+class ZXmasTree : Decoration
 	__mobjinfo__(8068);
 
 //==========================================================================
@@ -43,10 +43,7 @@ states
 Spawn:
 	XMAS A -1
 	Stop
-Death:
-	XMAS A 4 A_TreeDeath
-	Goto Spawn
-Melee:
+Death.Fire:
 	XMAS B 6 Bright
 	XMAS C 6 Bright A_Scream
 	XMAS D 5 Bright
@@ -65,5 +62,9 @@ defaultproperties
 	Health = 20;
 	Radius = 11.0;
 	Height = 130.0;
+	Mass = 99999.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
 	DeathSound = 'TreeExplode';
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ZShrub2 : BurnableTree
+class ZShrub2 : Decoration
 	__mobjinfo__(8102);
 
 //==========================================================================
@@ -43,10 +43,7 @@ states
 Spawn:
 	SHB2 A -1
 	Stop
-Death:
-	SHB2 A 1 A_TreeDeath
-	Goto Spawn
-Melee:
+Death.Fire:
 	SHB2 B 7 Bright
 	SHB2 C 6 Bright A_Scream
 	SHB2 D 5 Bright A_Explode
@@ -59,5 +56,9 @@ defaultproperties
 	Health = 10;
 	Radius = 16.0;
 	Height = 40.0;
+	Mass = 99999.0;
+	bSolid = true;
+	bShootable = true;
+	bNoBlood = true;
 	DeathSound = 'TreeExplode';
 }
