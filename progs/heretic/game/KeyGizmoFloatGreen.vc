@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KeyGizmoFloatGreen : Decoration;
+class KeyGizmoFloatGreen : Actor;
 
 states
 {

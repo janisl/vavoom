@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Volcano : Decoration
+class Volcano : Actor
 	__mobjinfo__(87)
 	__scriptid__(150);
 
