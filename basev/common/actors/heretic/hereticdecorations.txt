@@ -1,0 +1,273 @@
+//------------------------------------------------------------------------------
+actor SkullHang70 17
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		SKH1 A -1
+		Stop
+	}
+	Height 70
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor SkullHang60 24
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		SKH2 A -1
+		Stop
+	}
+	Height 60
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor SkullHang45 25
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		SKH3 A -1
+		Stop
+	}
+	Height 45
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor SkullHang35 26
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		SKH4 A -1
+		Stop
+	}
+	Height 35
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor Chandelier 28
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		CHDL ABC 4
+		Loop
+	}
+	Height 60
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor SerpentTorch 27
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		SRTC ABC 4
+		Loop
+	}
+	Radius 12
+	Height 54
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor SmallPillar 29
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		SMPL A -1
+		Stop
+	}
+	Radius 16
+	Height 34
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor StalagmiteSmall 37
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		STGS A -1
+		Stop
+	}
+	Radius 8
+	Height 32
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor StalagmiteLarge 38
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		STGL A -1
+		Stop
+	}
+	Radius 12
+	Height 64
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor StalactiteSmall 39
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		STCS A -1
+		Stop
+	}
+	Radius 8
+	Height 36
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor StalactiteLarge 40
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		STCL A -1
+		Stop
+	}
+	Radius 12
+	Height 68
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor FireBrazier 76
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		KFR1 ABCDEFGH 3 Bright
+		Loop
+	}
+	Radius 16
+	Height 44
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Barrel 44
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		BARL A -1
+		Stop
+	}
+	Radius 12
+	Height 32
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor BrownPillar 47
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		BRPL A -1
+		Stop
+	}
+	Radius 14
+	Height 128
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Moss1 48
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		MOS1 A -1
+		Stop
+	}
+	Height 23
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor Moss2 49
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		MOS2 A -1
+		Stop
+	}
+	Height 27
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor WallTorch 50
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		WTRH ABC 6 Bright
+		Loop
+	}
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor HangingCorpse 51
+{
+	Game Heretic
+	states
+	{
+	Spawn:
+		HCOR A -1
+		Stop
+	}
+	Radius 8
+	Height 104
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+}
