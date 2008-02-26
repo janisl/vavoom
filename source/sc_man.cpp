@@ -310,22 +310,6 @@ bool VScriptParser::GetString()
 			String += *ScriptPtr++;
 			String += *ScriptPtr++;
 		}
-		else if (*ScriptPtr == '-' && ((ScriptPtr[1] >= '0' &&
-			ScriptPtr[1] <= '9') || (ScriptPtr[1] == '.' &&
-			ScriptPtr[2] >= '0' && ScriptPtr[2] <= '9')))
-		{
-			//	Negative number
-			String += *ScriptPtr++;
-			while ((vuint8)*ScriptPtr > 32 &&
-				!strchr("`~!@#$%^&*(){}[]/=\\?-+|;:<>,\"", *ScriptPtr))
-			{
-				String += *ScriptPtr++;
-				if (ScriptPtr == ScriptEndPtr)
-				{
-					break;
-				}
-			}
-		}
 		else if ((ScriptPtr[0] >= '0' && ScriptPtr[0] <= '9') ||
 			(ScriptPtr[0] == '.' && ScriptPtr[1] >= '0' && ScriptPtr[1] <= '9'))
 		{
