@@ -37,6 +37,10 @@ terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
 lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
 textcolo.txt			@CMAKE_CURRENT_SOURCE_DIR@/textcolo.txt
 
+//	Decorate scripts
+decorate.txt					@CMAKE_CURRENT_SOURCE_DIR@/decorate.txt
+actors/doom/doomdecorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomdecorations.txt
+
 //	Effect scripts
 vfxdefs.txt						@CMAKE_CURRENT_SOURCE_DIR@/vfxdefs.txt
 fxdefs/common/effects.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/common/effects.txt

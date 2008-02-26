@@ -5,6 +5,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.ls vlumpy
 		basepak.ls.in
 		confont.pcx
+		decorate.txt
 		default.cfg
 		language.en
 		lockdefs.txt
@@ -13,6 +14,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		textcolo.txt
 		vfxdefs.txt
 		x11r6rgb.txt
+		actors/doom/doomdecorations.txt
 		fxdefs/common/effects.txt
 		fxdefs/doom/decorations.txt
 		fxdefs/doom/monsters.txt
