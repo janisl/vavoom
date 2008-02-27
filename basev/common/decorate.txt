@@ -3,3 +3,5 @@
 #include "actors/heretic/hereticdecorations.txt"
 
 #include "actors/hexen/hexendecorations.txt"
+
+#include "actors/strife/strifestuff.txt"

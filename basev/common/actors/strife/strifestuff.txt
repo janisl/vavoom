@@ -1,0 +1,1468 @@
+//------------------------------------------------------------------------------
+actor Tank1 209
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TNK1 A 15
+		TNK1 B 11
+		TNK1 C 40
+		Loop
+	}
+	Radius 16
+	Height 192
+	Mass 50000
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Tank2 210
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TNK2 A 15
+		TNK2 B 11
+		TNK2 C 40
+		Loop
+	}
+	Radius 16
+	Height 192
+	Mass 50000
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Tank3 211
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TNK3 A 15
+		TNK3 B 11
+		TNK3 C 40
+		Loop
+	}
+	Radius 16
+	Height 192
+	Mass 50000
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Tank4 213
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TNK4 A 15
+		TNK4 B 11
+		TNK4 C 40
+		Loop
+	}
+	Radius 16
+	Height 56
+	Mass 50000
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Tank5 214
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TNK5 A 15
+		TNK5 B 11
+		TNK5 C 40
+		Loop
+	}
+	Radius 16
+	Height 56
+	Mass 50000
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Tank6 229
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TNK6 A 15
+		TNK6 B 11
+		TNK6 C 40
+		Loop
+	}
+	Radius 16
+	Height 56
+	Mass 50000
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor WaterBottle 2014
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		WATR A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Mug 164
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		MUGG A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WoodenBarrel 82
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BARW A -1
+		Stop
+	Death:
+		BARW B 2 A_Scream
+		BARW C 2
+		BARW D 2 A_Fall
+		BARW EFG 2
+		BARW H -1
+		Stop
+	}
+	Health 10
+	Radius 10
+	Height 32
+	+Solid
+	+Shootable
+	+InCombat
+	+NoBlood
+	DeathSound "woodenbarrel/death"
+}
+
+//FIXME ExplosiveBarrel2 : ExplosiveBarrel goes here.
+
+//------------------------------------------------------------------------------
+actor TargetPractice 208
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		HOGN A 2 A_ScrollOrDie
+		Loop
+	Pain:
+		HOGN B 1 A_ScrollOrDie
+		HOGN C 1 A_Pain
+		Goto Spawn
+	}
+	Health 99999999
+	Radius 10
+	Height 72
+	Mass 9999999
+	PainChance 255
+	+Solid
+	+Shootable
+	+InCombat
+	+NoBlood
+	PainSound "misc/metalhit"
+}
+
+//------------------------------------------------------------------------------
+actor LightSilverFluorescent 95
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LITS A -1 Bright
+		Stop
+	}
+	Radius 4
+	Height 16
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor LightBrownFluorescent 96
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LITB A -1 Bright
+		Stop
+	}
+	Radius 4
+	Height 16
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor LightGoldFluorescent 97
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LITG A -1 Bright
+		Stop
+	}
+	Radius 4
+	Height 16
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor LightGlobe 2028
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LITE A -1 Bright
+		Stop
+	}
+	Radius 16
+	Height 16
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PillarTechno 48
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		MONI A -1
+		Stop
+	}
+	Radius 20
+	Height 128
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PillarAztec 54
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STEL A -1
+		Stop
+	}
+	Radius 16
+	Height 128
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PillarAztecDamaged 55
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLA A -1
+		Stop
+	}
+	Radius 16
+	Height 80
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PillarAztecRuined 56
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLE A -1
+		Stop
+	}
+	Radius 16
+	Height 40
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PillarHugeTech 57
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		HUGE A 4
+		HUGE BCD 5
+		Loop
+	}
+	Radius 24
+	Height 192
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PillarAlienPower 227
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		APOW A 4 A_ActiveSound
+		Loop
+	}
+	Radius 24
+	Height 192
+	+Solid
+	ActiveSound "ambient/alien2"
+}
+
+//------------------------------------------------------------------------------
+actor SStalactiteBig 98
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLG C -1
+		Stop
+	}
+	Radius 16
+	Height 54
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor SStalactiteSmall 161
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLG A -1
+		Stop
+	}
+	Radius 16
+	Height 40
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor SStalagmiteBig 160
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLG B -1
+		Stop
+	}
+	Radius 16
+	Height 40
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor CavePillarTop 159
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLG D -1
+		Stop
+	}
+	Radius 16
+	Height 128
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor CavePillarBottom 162
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLG E -1
+		Stop
+	}
+	Radius 16
+	Height 128
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor SStalagmiteSmall 163
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STLG F -1
+		Stop
+	}
+	Radius 16
+	Height 25
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Candle 34
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		KNDL A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor StrifeCandelabra 35
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		CLBR A -1 Bright
+		Stop
+	}
+	Radius 16
+	Height 40
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor WaterDropOnFloor 103
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		DRIP A 6 A_ActiveSound
+		DRIP BC 4
+		DRIP D 4 A_ActiveSound
+		DRIP EF 4
+		DRIP G 4 A_ActiveSound
+		DRIP H 4
+		Loop
+	}
+	+NoBlockmap
+	ActiveSound "world/waterdrip"
+}
+
+//------------------------------------------------------------------------------
+actor WaterfallSplash 104
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		SPLH ABC 4
+		SPLH D 8
+		SPLH EFG 4
+		SPLH H 4 A_ActiveSound
+		Loop
+	}
+	+NoBlockmap
+	ActiveSound "world/waterfall"
+}
+
+//------------------------------------------------------------------------------
+actor WaterDrip 53
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		CDRP A 10
+		CDRP BCD 8
+		Loop
+	}
+	Radius 20
+	Height 1
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor WaterFountain 112
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		WTFT ABC 4
+		WTFT D 4 A_ActiveSound
+		Loop
+	}
+	+NoBlockmap
+	ActiveSound "world/watersplash"
+}
+
+//------------------------------------------------------------------------------
+actor HeartsInTank 113
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		HERT ABC 4 Bright
+		Loop
+	}
+	Radius 16
+	Height 56
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor TeleportSwirl 23
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TELP ABCD 3 Bright
+		Loop
+	}
+	RenderStyle Translucent
+	Alpha 0.333
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor DeadStrifePlayer 15
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		// FIXME should it really remove self?
+		PLAY P 700
+		RGIB H 1400
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadPeasant 18
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		PEAS N 1400
+		GIBS U 5
+		GIBS V 1400
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadAcolyte 21
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		AGRD N 1400
+		GIBS K 5
+		GIBS L 1400
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadReaver 20
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		ROB1 R -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadRebel 19
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		HMN1 N -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SacrificedGuy 212
+{
+	Game Strife
+	//ConversationID 236
+	states
+	{
+	Spawn:
+		SACR A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+// Strife used a doomednum, which is the same as the Aztec Pillar. Since
+// the pillar came first in the mobjinfo list, you could not spawn this
+// in a map. Pity.
+actor PileOfGuts
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		DEAD A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor StrifeBurningBarrel 70
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BBAR ABCD 4 Bright
+		Loop
+	}
+	Radius 16
+	Height 48
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor BurningBowl 105
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BOWL ABCD 4 Bright
+		Loop
+	}
+	Radius 16
+	Height 16
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor BurningBrazier 106
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BRAZ ABCD 4 Bright
+		Loop
+	}
+	Radius 10
+	Height 32
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor SmallTorchLit 107
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TRHL ABCD 4 Bright
+		Loop
+	}
+	Radius 2.5
+	Height 16
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor SmallTorchUnlit 108
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TRHO A -1
+		Stop
+	}
+	Radius 0
+	Height 16
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor CeilingChain 109
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		CHAN A -1
+		Stop
+	}
+	Radius 20
+	Height 93
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor CageLight 28
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		CAGE A -1
+		Stop
+	}
+	Radius 20
+	Height 3
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor Statue 110
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STAT A -1
+		Stop
+	}
+	Radius 20
+	Height 64
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor StatueRuined 44
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		DSTA A -1
+		Stop
+	}
+	Radius 20
+	Height 56
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor MediumTorch 111
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LTRH ABCD 4 Bright
+		Loop
+	}
+	Radius 4
+	Height 72
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor OutsideLamp 43
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LAMP A -1
+		Stop
+	}
+	Radius 3
+	Height 80
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PoleLatern 46
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LANT A -1
+		Stop
+	}
+	Radius 3
+	Height 80
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor SRock1 99
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		ROK1 A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor SRock2 100
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		ROK2 A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor SRock3 101
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		ROK3 A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor SRock4 102
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		ROK4 A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor StickInWater 215
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LOGW ABCD 5 A_ActiveSound
+		Loop
+	}
+	+NoBlockmap
+	+FloorClip
+	ActiveSound "world/river"
+}
+
+//------------------------------------------------------------------------------
+actor Rubble1 29
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB1 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor Rubble2 30
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB2 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor Rubble3 31
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB3 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor Rubble4 32
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB4 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor Rubble5 36
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB5 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor Rubble6 37
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB6 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor Rubble7 41
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB7 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor Rubble8 42
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		RUB8 A -1
+		Stop
+	}
+	+NoBlockmap
+	+NoClip
+}
+
+//------------------------------------------------------------------------------
+actor SurgeryCrab 117
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		CRAB A -1
+		Stop
+	}
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor LargeTorch 47
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LMPC ABDCE 4 Bright
+		Loop
+		// NOTE Wad has 5 frames of animation
+	}
+	Radius 10
+	Height 72
+	+Solid
+	ActiveSound "world/smallfire"
+}
+
+//------------------------------------------------------------------------------
+actor HugeTorch 50
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		LOGS ABCD 4 Bright
+		Loop
+		// NOTE Wad has 5 frames of animation
+	}
+	Radius 10
+	Height 80
+	+Solid
+	ActiveSound "world/smallfire"
+}
+
+//------------------------------------------------------------------------------
+actor PalmTree 51
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TREE A -1
+		Stop
+	}
+	Radius 15
+	Height 109
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor BigTree2 202
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TREE B -1
+		Stop
+	}
+	Radius 15
+	Height 109
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor PottedTree 203
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TREE C -1
+		Stop
+	}
+	Radius 15
+	Height 64
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor TreeStub 33
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TRET A -1
+		Stop
+	}
+	Radius 15
+	Height 80
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor ShortBush 60
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BUSH A -1
+		Stop
+	}
+	Radius 15
+	Height 40
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor TallBush 62
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		SHRB A -1
+		Stop
+	}
+	Radius 20
+	Height 64
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor ChimneyStack 63
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STAK A -1
+		Stop
+	}
+	Radius 20
+	Height 64
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor BarricadeColumn 69
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BARC A -1
+		Stop
+	}
+	Radius 16
+	Height 128
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Pot 165
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		VAZE A -1
+		Stop
+	}
+	Radius 12
+	Height 24
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Pitcher 188
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		VAZE B -1
+		Stop
+	}
+	Radius 12
+	Height 32
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Stool 189
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		STOL A -1
+		Stop
+	}
+	Radius 6
+	Height 24
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor MetalPot 190
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		MPOT A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor Tub 191
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TUB1 A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor Anvil 194
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		ANVL A -1
+		Stop
+	}
+	Radius 16
+	Height 32
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor TechLampSilver 196
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TECH A -1
+		Stop
+	}
+	Radius 11
+	Height 64
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor TechLampBrass 197
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TECH B -1
+		Stop
+	}
+	Radius 8
+	Height 64
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor Tray 68
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TRAY A -1
+		Stop
+	}
+	Radius 24
+	Height 40
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor AmmoFiller 228
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		AFED A -1
+		Stop
+	}
+	Radius 12
+	Height 24
+	+Solid
+}
+
+//------------------------------------------------------------------------------
+actor SigilBanner 216
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		SBAN A -1
+		Stop
+	}
+	Radius 24
+	Height 96
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor RebelBoots 217
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BOTR A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor RebelHelmet 218
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		HATR A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor RebelShirt 219
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		TOPR A -1
+		Stop
+	}
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor AlienBubbleColumn 221
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BUBB A 4 A_ActiveSound
+		Loop
+	}
+	Radius 16
+	Height 128
+	+Solid
+	ActiveSound "ambient/alien5"
+}
+
+//------------------------------------------------------------------------------
+actor AlienFloorBubble 222
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BUBF A 4 A_ActiveSound
+		Loop
+	}
+	Radius 16
+	Height 72
+	+Solid
+	ActiveSound "ambient/alien6"
+}
+
+//------------------------------------------------------------------------------
+actor AlienCeilingBubble 223
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		BUBC A 4 A_ActiveSound
+		Loop
+	}
+	Radius 16
+	Height 72
+	+Solid
+	+SpawnCeiling
+	+NoGravity
+	ActiveSound "ambient/alien4"
+}
+
+//------------------------------------------------------------------------------
+actor AlienAspClimber 224
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		ASPR A 4 A_ActiveSound
+		Loop
+	}
+	Radius 16
+	Height 128
+	+Solid
+	ActiveSound "ambient/alien3"
+}
+
+//------------------------------------------------------------------------------
+actor AlienSpiderLight 225
+{
+	Game Strife
+	states
+	{
+	Spawn:
+		SPDL ABC 5 A_ActiveSound
+		Loop
+	}
+	Radius 32
+	Height 56
+	+Solid
+	ActiveSound "ambient/alien1"
+}
