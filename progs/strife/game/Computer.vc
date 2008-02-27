@@ -24,7 +24,7 @@
 //**************************************************************************
 // 124
 
-class Computer : Decoration
+class Computer : Actor
 	__mobjinfo__(182);
 
 states

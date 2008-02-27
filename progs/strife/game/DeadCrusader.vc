@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DeadCrusader : Decoration
+class DeadCrusader : Actor
 	__mobjinfo__(22);
 
 states

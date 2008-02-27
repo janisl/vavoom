@@ -24,7 +24,7 @@
 //**************************************************************************
 // 123
 
-class Piston : Decoration
+class Piston : Actor
 	__mobjinfo__(45);
 
 states

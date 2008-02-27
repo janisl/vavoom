@@ -410,6 +410,33 @@ final void A_CheckAlarm()
 	}
 }
 
+//==========================================================================
+//
+//	A_QuestObjectDeath
+//
+//==========================================================================
+
+final void A_QuestObjectDeath()
+{
+	// This function does a lot more than just this
+	if (DeathSound)
+	{
+		PlaySound(DeathSound, CHAN_VOICE);
+		PlaySound(DeathSound, 6);
+	}
+
+	//	Give quest item for destroying important object.
+	//	Basicly all object using this function does this.
+	int QuestType = ftoi(Speed);
+	class<QuestItem> QClass = class<QuestItem>(FindClass(
+		StrToName(va("QuestItem%d", QuestType))));
+	if (QClass)
+	{
+		EntityEx(Level.Game.Players[0].MO).GiveInventoryType(QClass);
+		Level.Game.Players[0].cprint(va("$txt_quest_%d", QuestType));
+	}
+}
+
 states
 {
 Crunch:

@@ -35,7 +35,6 @@
 #include "DummyStrifeItem.vc"
 #include "Projectile.vc"
 #include "Effect.vc"
-#include "Decoration.vc"
 
 #include "RocketTrail.vc"
 #include "StrifePuff.vc"

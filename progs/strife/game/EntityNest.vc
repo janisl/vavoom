@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class EntityNest : Decoration
+class EntityNest : Actor
 	__mobjinfo__(26);
 
 states
