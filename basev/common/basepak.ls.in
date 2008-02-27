@@ -41,6 +41,7 @@ textcolo.txt			@CMAKE_CURRENT_SOURCE_DIR@/textcolo.txt
 decorate.txt							@CMAKE_CURRENT_SOURCE_DIR@/decorate.txt
 actors/doom/doomdecorations.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomdecorations.txt
 actors/heretic/hereticdecorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticdecorations.txt
+actors/hexen/hexendecorations.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexendecorations.txt
 
 //	Effect scripts
 vfxdefs.txt						@CMAKE_CURRENT_SOURCE_DIR@/vfxdefs.txt
