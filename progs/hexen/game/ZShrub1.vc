@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ZShrub1 : Decoration
+class ZShrub1 : Actor
 	__mobjinfo__(8101);
 
 states

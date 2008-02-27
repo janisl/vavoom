@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FlameSmallTemp : Decoration
+class FlameSmallTemp : Actor
 	__mobjinfo__(10500)
 	__scriptid__(96);
 

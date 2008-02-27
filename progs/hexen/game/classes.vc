@@ -40,7 +40,6 @@
 #include "Fragment.vc"
 #include "Effect.vc"
 #include "Carcas.vc"
-#include "Decoration.vc"
 
 #include "CrystalVial.vc"
 #include "ArtiHealth.vc"

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BloodPool:Decoration
+class BloodPool : Actor
 	__mobjinfo__(111);
 
 states

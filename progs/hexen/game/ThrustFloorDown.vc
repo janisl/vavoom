@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ThrustFloorDown : Decoration
+class ThrustFloorDown : Actor
 	__mobjinfo__(10090)
 	__scriptid__(105);
 

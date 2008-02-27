@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FlameLarge : Decoration
+class FlameLarge : Actor
 	__mobjinfo__(10503)
 	__scriptid__(99);
 

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ZArmorChunk : Decoration;
+class ZArmorChunk : Actor;
 
 states
 {
