@@ -578,6 +578,49 @@ void VScriptParser::ExpectNumber()
 
 //==========================================================================
 //
+//	VScriptParser::CheckNumberWithSign
+//
+//==========================================================================
+
+bool VScriptParser::CheckNumberWithSign()
+{
+	guard(VScriptParser::CheckNumberWithSign);
+	if (Check("-"))
+	{
+		ExpectNumber();
+		Number = -Number;
+		return true;
+	}
+	else
+	{
+		return CheckNumber();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::ExpectNumberWithSign
+//
+//==========================================================================
+
+void VScriptParser::ExpectNumberWithSign()
+{
+	guard(VScriptParser::ExpectNumberWithSign);
+	if (Check("-"))
+	{
+		ExpectNumber();
+		Number = -Number;
+	}
+	else
+	{
+		ExpectNumber();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VScriptParser::CheckFloat
 //
 //==========================================================================

@@ -51,6 +51,8 @@ public:
 	bool CheckIdentifier();
 	bool CheckNumber();
 	void ExpectNumber();
+	bool CheckNumberWithSign();
+	void ExpectNumberWithSign();
 	bool CheckFloat();
 	void ExpectFloat();
 	void UnGet();

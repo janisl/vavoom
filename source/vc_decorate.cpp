@@ -2104,11 +2104,10 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 		VStr FramesString = sc->String;
 
 		//  Tics
-		bool Neg = sc->Check("-");
-		sc->ExpectNumber();
-		if (Neg)
+		sc->ExpectNumberWithSign();
+		if (sc->Number < 0)
 		{
-			State->Time = -sc->Number;
+			State->Time = sc->Number;
 		}
 		else
 		{
@@ -2129,13 +2128,11 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			if (!sc->String.ICmp("Offset"))
 			{
 				sc->Expect("(");
-				Neg = sc->Check("-");
-				sc->ExpectNumber();
-				State->Misc1 = sc->Number * (Neg ? -1 : 1);
+				sc->ExpectNumberWithSign();
+				State->Misc1 = sc->Number;
 				sc->Expect(",");
-				Neg = sc->Check("-");
-				sc->ExpectNumber();
-				State->Misc2 = sc->Number * (Neg ? -1 : 1);
+				sc->ExpectNumberWithSign();
+				State->Misc2 = sc->Number;
 				sc->Expect(")");
 				continue;
 			}
@@ -2439,9 +2436,9 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			SetClassFieldInt(Class, "ConversationID", sc->Number);
 			if (sc->Check(","))
 			{
-				sc->ExpectNumber();
+				sc->ExpectNumberWithSign();
 				sc->Expect(",");
-				sc->ExpectNumber();
+				sc->ExpectNumberWithSign();
 			}
 			continue;
 		}
