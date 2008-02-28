@@ -1,0 +1,9 @@
+class Actor extends Thinker
+	native
+{
+	action native A_ActiveSound();
+	action native A_Pain();
+	action native A_Scream();
+	action native A_NoBlocking();
+	action native A_CheckTerrain();
+}

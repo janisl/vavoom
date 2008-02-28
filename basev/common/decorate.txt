@@ -1,3 +1,5 @@
+#include "actors/nativeclasses.txt"
+
 #include "actors/doom/doomdecorations.txt"
 
 #include "actors/heretic/hereticdecorations.txt"

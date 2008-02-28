@@ -159,7 +159,7 @@ actor WoodenBarrel 82
 	Death:
 		BARW B 2 A_Scream
 		BARW C 2
-		BARW D 2 A_Fall
+		BARW D 2 A_NoBlocking
 		BARW EFG 2
 		BARW H -1
 		Stop
@@ -186,10 +186,10 @@ actor TargetPractice 208
 	states
 	{
 	Spawn:
-		HOGN A 2 A_ScrollOrDie
+		HOGN A 2 A_CheckTerrain
 		Loop
 	Pain:
-		HOGN B 1 A_ScrollOrDie
+		HOGN B 1 A_CheckTerrain
 		HOGN C 1 A_Pain
 		Goto Spawn
 	}

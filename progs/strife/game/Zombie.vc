@@ -29,10 +29,10 @@ class Zombie : StrifeHumanoid
 states
 {
 Spawn:
-	PEAS A 5 A_ScrollOrDie
+	PEAS A 5 A_CheckTerrain
 	Loop
 Pain:
-	AGRD A 5 A_ScrollOrDie
+	AGRD A 5 A_CheckTerrain
 	Loop
 Death:
 	GIBS M 5 A_XDying

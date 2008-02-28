@@ -890,6 +890,30 @@ VStateLabel* VClass::FindStateLabelChecked(TArray<VName>& Names, bool Exact)
 
 //==========================================================================
 //
+//	VClass::FindDecorateStateAction
+//
+//==========================================================================
+
+VDecorateStateAction* VClass::FindDecorateStateAction(VName ActName)
+{
+	guard(VClass::FindDecorateStateAction);
+	for (int i = 0; i < DecorateStateActions.Num(); i++)
+	{
+		if (DecorateStateActions[i].Name == ActName)
+		{
+			return &DecorateStateActions[i];
+		}
+	}
+	if (ParentClass)
+	{
+		return ParentClass->FindDecorateStateAction(ActName);
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VClass::Define
 //
 //==========================================================================

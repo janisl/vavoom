@@ -104,6 +104,18 @@ struct VRepInfo
 
 //==========================================================================
 //
+//	VDecorateStateAction
+//
+//==========================================================================
+
+struct VDecorateStateAction
+{
+	VName			Name;
+	VMethod*		Method;
+};
+
+//==========================================================================
+//
 //	VLightEffectDef
 //
 //==========================================================================
@@ -187,6 +199,8 @@ public:
 	VClass*					Replacement;
 	VClass*					Replacee;
 
+	TArray<VDecorateStateAction>	DecorateStateActions;
+
 	TArray<VSpriteEffect>	SpriteEffects;
 
 	static TArray<mobjinfo_t>	GMobjInfos;
@@ -233,6 +247,7 @@ public:
 	VStateLabel* FindStateLabel(TArray<VName>&, bool);
 	VStateLabel* FindStateLabelChecked(VName, VName = NAME_None, bool = false);
 	VStateLabel* FindStateLabelChecked(TArray<VName>&, bool);
+	VDecorateStateAction* FindDecorateStateAction(VName);
 
 	bool Define();
 	bool DefineMembers();

@@ -1166,6 +1166,35 @@ final void A_ActiveAndUnblock()
 	A_NoBlocking();
 }
 
+//==========================================================================
+//
+//	A_CheckTerrain
+//
+//==========================================================================
+
+final void A_CheckTerrain()
+{
+	int anglespeed;
+	float speed;
+	float finean;
+
+	if (Origin.z == GetPlanePointZ(Floor, Origin))
+	{
+		if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_DamageInstantDeath)
+		{
+			Damage(none, none, 999);
+		}
+		else if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_ScrollCurrent)
+		{
+			anglespeed = Sector->tag - 100;
+			speed = itof(anglespeed % 10) / 16.0 * 35.0;
+			finean = itof(anglespeed / 10) * 45.0;
+			Velocity.x += speed * cos(finean);
+			Velocity.y += speed * sin(finean);
+		}
+	}
+}
+
 states
 {
 FreeTargMobj:

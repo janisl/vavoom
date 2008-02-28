@@ -970,6 +970,45 @@ static void ParseConst(VScriptParser* sc)
 
 //==========================================================================
 //
+//	ParseAction
+//
+//==========================================================================
+
+static void ParseAction(VScriptParser* sc, VClass* Class)
+{
+	guard(ParseAction);
+	sc->Expect("native");
+	//	Find the method. First try with decorate_ prefix, then without.
+	sc->ExpectIdentifier();
+	VMethod* M = Class->FindMethod(va("decorate_%s", *sc->String));
+	if (!M)
+	{
+		M = Class->FindMethod(*sc->String);
+	}
+	if (!M)
+	{
+		sc->Error(va("Method %s not found in class %s", *sc->String,
+			Class->GetName()));
+	}
+	if (M->ReturnType.Type != TYPE_Void)
+	{
+		sc->Error(va("State action %s desn't return void", *sc->String));
+	}
+	VDecorateStateAction& A = Class->DecorateStateActions.Alloc();
+	A.Name = *sc->String.ToLower();
+	A.Method = M;
+	//	Skip arguments, right now I don't care bout them.
+	sc->Expect("(");
+	while (!sc->Check(")"))
+	{
+		sc->ExpectString();
+	}
+	sc->Expect(";");
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseClass
 //
 //==========================================================================
@@ -977,13 +1016,32 @@ static void ParseConst(VScriptParser* sc)
 static void ParseClass(VScriptParser* sc)
 {
 	guard(ParseClass);
+	sc->SetCMode(true);
+	//	Get class name and find the class.
 	sc->ExpectString();
-	GCon->Logf("Class %s", *sc->String);
+	VClass* Class = VClass::FindClass(*sc->String);
+	if (!Class)
+	{
+		sc->Error("Class not found");
+	}
+	//	I don't care about parent class name because in Vavoom it can be
+	// different
 	sc->Expect("extends");
 	sc->ExpectString();
 	sc->Expect("native");
 	sc->Expect("{");
-	SkipBlock(sc, 1);
+	while (!sc->Check("}"))
+	{
+		if (sc->Check("action"))
+		{
+			ParseAction(sc, Class);
+		}
+		else
+		{
+			sc->Error("Unknown class property");
+		}
+	}
+	sc->SetCMode(false);
 	unguard;
 }
 
@@ -2157,19 +2215,13 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 				}
 			}
 
-			//	First look for method with decorate_ prefix.
-			VMethod* Func = Class->FindMethod(va("decorate_%s", *FuncName));
-			if (!Func)
-			{
-				Func = Class->FindMethod(*FuncName);
-			}
+			//	Find the state action method.
+			VDecorateStateAction* Act = Class->FindDecorateStateAction(
+				*FuncName.ToLower());
+			VMethod* Func = Act ? Act->Method : NULL;
 			if (!Func)
 			{
 				GCon->Logf("Unknown state action %s in %s", *FuncName, Class->GetName());
-			}
-			else if (Func->ReturnType.Type != TYPE_Void)
-			{
-				GCon->Logf("State action %s in %s desn't return void", *FuncName, Class->GetName());
 			}
 			else if (Func->NumParams || NumArgs)
 			{
