@@ -2437,6 +2437,12 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		{
 			sc->ExpectNumber();
 			SetClassFieldInt(Class, "ConversationID", sc->Number);
+			if (sc->Check(","))
+			{
+				sc->ExpectNumber();
+				sc->Expect(",");
+				sc->ExpectNumber();
+			}
 			continue;
 		}
 		if (!Prop.ICmp("Tag"))
