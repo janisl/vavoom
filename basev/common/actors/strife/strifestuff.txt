@@ -2,6 +2,7 @@
 actor Tank1 209
 {
 	Game Strife
+	ConversationID 31, -1, -1
 	Radius 16
 	Height 192
 	Mass 50000
@@ -20,6 +21,7 @@ actor Tank1 209
 actor Tank2 210
 {
 	Game Strife
+	ConversationID 32, -1, -1
 	Radius 16
 	Height 192
 	Mass 50000
@@ -38,6 +40,7 @@ actor Tank2 210
 actor Tank3 211
 {
 	Game Strife
+	ConversationID 33, -1, -1
 	Radius 16
 	Height 192
 	Mass 50000
@@ -56,6 +59,7 @@ actor Tank3 211
 actor Tank4 213
 {
 	Game Strife
+	ConversationID 34, -1, -1
 	Radius 16
 	Height 56
 	Mass 50000
@@ -74,6 +78,7 @@ actor Tank4 213
 actor Tank5 214
 {
 	Game Strife
+	ConversationID 35, -1, -1
 	Radius 16
 	Height 56
 	Mass 50000
@@ -92,6 +97,7 @@ actor Tank5 214
 actor Tank6 229
 {
 	Game Strife
+	ConversationID 36, -1, -1
 	Radius 16
 	Height 56
 	Mass 50000
@@ -110,6 +116,7 @@ actor Tank6 229
 actor WaterBottle 2014
 {
 	Game Strife
+	ConversationID 131, -1, -1
 	states
 	{
 	Spawn:
@@ -122,6 +129,7 @@ actor WaterBottle 2014
 actor Mug 164
 {
 	Game Strife
+	ConversationID 132, -1, -1
 	states
 	{
 	Spawn:
@@ -134,6 +142,7 @@ actor Mug 164
 actor WoodenBarrel 82
 {
 	Game Strife
+	ConversationID 203, -1, -1
 	Health 10
 	Radius 10
 	Height 32
@@ -163,6 +172,7 @@ actor WoodenBarrel 82
 actor TargetPractice 208
 {
 	Game Strife
+	ConversationID 205, -1, -1
 	Health 99999999
 	Radius 10
 	Height 72
@@ -189,6 +199,7 @@ actor TargetPractice 208
 actor LightSilverFluorescent 95
 {
 	Game Strife
+	ConversationID 206, -1, -1
 	Radius 4
 	Height 16
 	+NoBlockmap
@@ -204,6 +215,7 @@ actor LightSilverFluorescent 95
 actor LightBrownFluorescent 96
 {
 	Game Strife
+	ConversationID 207, -1, -1
 	Radius 4
 	Height 16
 	+NoBlockmap
@@ -219,6 +231,7 @@ actor LightBrownFluorescent 96
 actor LightGoldFluorescent 97
 {
 	Game Strife
+	ConversationID 208, -1, -1
 	Radius 4
 	Height 16
 	+NoBlockmap
@@ -234,6 +247,7 @@ actor LightGoldFluorescent 97
 actor LightGlobe 2028
 {
 	Game Strife
+	ConversationID 209, -1, -1
 	Radius 16
 	Height 16
 	+Solid
@@ -249,6 +263,7 @@ actor LightGlobe 2028
 actor PillarTechno 48
 {
 	Game Strife
+	ConversationID 210, -1, -1
 	Radius 20
 	Height 128
 	+Solid
@@ -264,6 +279,7 @@ actor PillarTechno 48
 actor PillarAztec 54
 {
 	Game Strife
+	ConversationID 211, -1, -1
 	Radius 16
 	Height 128
 	+Solid
@@ -279,6 +295,7 @@ actor PillarAztec 54
 actor PillarAztecDamaged 55
 {
 	Game Strife
+	ConversationID 212, -1, -1
 	Radius 16
 	Height 80
 	+Solid
@@ -294,6 +311,7 @@ actor PillarAztecDamaged 55
 actor PillarAztecRuined 56
 {
 	Game Strife
+	ConversationID 213, -1, -1
 	Radius 16
 	Height 40
 	+Solid
@@ -309,6 +327,7 @@ actor PillarAztecRuined 56
 actor PillarHugeTech 57
 {
 	Game Strife
+	ConversationID 214, -1, -1
 	Radius 24
 	Height 192
 	+Solid
@@ -325,6 +344,7 @@ actor PillarHugeTech 57
 actor PillarAlienPower 227
 {
 	Game Strife
+	ConversationID 215, -1, -1
 	Radius 24
 	Height 192
 	+Solid
@@ -341,6 +361,7 @@ actor PillarAlienPower 227
 actor SStalactiteBig 98
 {
 	Game Strife
+	ConversationID 216, -1, -1
 	Radius 16
 	Height 54
 	+Solid
@@ -358,6 +379,7 @@ actor SStalactiteBig 98
 actor SStalactiteSmall 161
 {
 	Game Strife
+	ConversationID 217, -1, -1
 	Radius 16
 	Height 40
 	+Solid
@@ -375,6 +397,7 @@ actor SStalactiteSmall 161
 actor SStalagmiteBig 160
 {
 	Game Strife
+	ConversationID 218, -1, -1
 	Radius 16
 	Height 40
 	+Solid
@@ -390,6 +413,7 @@ actor SStalagmiteBig 160
 actor CavePillarTop 159
 {
 	Game Strife
+	ConversationID 219, -1, -1
 	Radius 16
 	Height 128
 	+Solid
@@ -407,6 +431,7 @@ actor CavePillarTop 159
 actor CavePillarBottom 162
 {
 	Game Strife
+	ConversationID 220, -1, -1
 	Radius 16
 	Height 128
 	+Solid
@@ -422,6 +447,7 @@ actor CavePillarBottom 162
 actor SStalagmiteSmall 163
 {
 	Game Strife
+	ConversationID 221, -1, -1
 	Radius 16
 	Height 25
 	+Solid
@@ -437,6 +463,7 @@ actor SStalagmiteSmall 163
 actor Candle 34
 {
 	Game Strife
+	ConversationID 222, -1, -1
 	states
 	{
 	Spawn:
@@ -449,6 +476,7 @@ actor Candle 34
 actor StrifeCandelabra 35
 {
 	Game Strife
+	ConversationID 223, -1, -1
 	Radius 16
 	Height 40
 	+Solid
@@ -464,6 +492,7 @@ actor StrifeCandelabra 35
 actor WaterDropOnFloor 103
 {
 	Game Strife
+	ConversationID 224, -1, -1
 	+NoBlockmap
 	ActiveSound "world/waterdrip"
 	states
@@ -483,6 +512,7 @@ actor WaterDropOnFloor 103
 actor WaterfallSplash 104
 {
 	Game Strife
+	ConversationID 225, -1, -1
 	+NoBlockmap
 	ActiveSound "world/waterfall"
 	states
@@ -500,6 +530,7 @@ actor WaterfallSplash 104
 actor WaterDrip 53
 {
 	Game Strife
+	ConversationID 226, -1, -1
 	Radius 20
 	Height 1
 	+NoBlockmap
@@ -518,6 +549,7 @@ actor WaterDrip 53
 actor WaterFountain 112
 {
 	Game Strife
+	ConversationID 227, -1, -1
 	+NoBlockmap
 	ActiveSound "world/watersplash"
 	states
@@ -533,6 +565,7 @@ actor WaterFountain 112
 actor HeartsInTank 113
 {
 	Game Strife
+	ConversationID 228, -1, -1
 	Radius 16
 	Height 56
 	+Solid
@@ -548,6 +581,7 @@ actor HeartsInTank 113
 actor TeleportSwirl 23
 {
 	Game Strife
+	ConversationID 229, -1, -1
 	RenderStyle Translucent
 	Alpha 0.333
 	+NoBlockmap
@@ -563,6 +597,7 @@ actor TeleportSwirl 23
 actor DeadStrifePlayer 15
 {
 	Game Strife
+	ConversationID 231, -1, -1
 	states
 	{
 	Spawn:
@@ -577,6 +612,7 @@ actor DeadStrifePlayer 15
 actor DeadPeasant 18
 {
 	Game Strife
+	ConversationID 232, -1, -1
 	states
 	{
 	Spawn:
@@ -591,6 +627,7 @@ actor DeadPeasant 18
 actor DeadAcolyte 21
 {
 	Game Strife
+	ConversationID 233, -1, -1
 	states
 	{
 	Spawn:
@@ -605,6 +642,7 @@ actor DeadAcolyte 21
 actor DeadReaver 20
 {
 	Game Strife
+	ConversationID 234, -1, -1
 	states
 	{
 	Spawn:
@@ -617,6 +655,7 @@ actor DeadReaver 20
 actor DeadRebel 19
 {
 	Game Strife
+	ConversationID 235, -1, -1
 	states
 	{
 	Spawn:
@@ -629,7 +668,7 @@ actor DeadRebel 19
 actor SacrificedGuy 212
 {
 	Game Strife
-	//ConversationID 236
+	ConversationID 236, -1, -1
 	states
 	{
 	Spawn:
@@ -645,6 +684,7 @@ actor SacrificedGuy 212
 actor PileOfGuts
 {
 	Game Strife
+	ConversationID 237, -1, -1
 	states
 	{
 	Spawn:
@@ -657,6 +697,7 @@ actor PileOfGuts
 actor StrifeBurningBarrel 70
 {
 	Game Strife
+	ConversationID 238, -1, -1
 	Radius 16
 	Height 48
 	+Solid
@@ -672,6 +713,7 @@ actor StrifeBurningBarrel 70
 actor BurningBowl 105
 {
 	Game Strife
+	ConversationID 239, -1, -1
 	Radius 16
 	Height 16
 	+Solid
@@ -687,6 +729,7 @@ actor BurningBowl 105
 actor BurningBrazier 106
 {
 	Game Strife
+	ConversationID 240, -1, -1
 	Radius 10
 	Height 32
 	+Solid
@@ -702,6 +745,7 @@ actor BurningBrazier 106
 actor SmallTorchLit 107
 {
 	Game Strife
+	ConversationID 241, -1, -1
 	Radius 2.5
 	Height 16
 	+NoBlockmap
@@ -717,6 +761,7 @@ actor SmallTorchLit 107
 actor SmallTorchUnlit 108
 {
 	Game Strife
+	ConversationID 242, -1, -1
 	Radius 0
 	Height 16
 	+NoBlockmap
@@ -732,6 +777,7 @@ actor SmallTorchUnlit 108
 actor CeilingChain 109
 {
 	Game Strife
+	ConversationID 243, -1, -1
 	Radius 20
 	Height 93
 	+NoBlockmap
@@ -749,6 +795,7 @@ actor CeilingChain 109
 actor CageLight 28
 {
 	Game Strife
+	ConversationID 244, -1, -1
 	Radius 20
 	Height 3
 	+NoBlockmap
@@ -766,6 +813,7 @@ actor CageLight 28
 actor Statue 110
 {
 	Game Strife
+	ConversationID 245, -1, -1
 	Radius 20
 	Height 64
 	+Solid
@@ -781,6 +829,7 @@ actor Statue 110
 actor StatueRuined 44
 {
 	Game Strife
+	ConversationID 246, -1, -1
 	Radius 20
 	Height 56
 	+Solid
@@ -796,6 +845,7 @@ actor StatueRuined 44
 actor MediumTorch 111
 {
 	Game Strife
+	ConversationID 247, -1, -1
 	Radius 4
 	Height 72
 	+Solid
@@ -811,6 +861,7 @@ actor MediumTorch 111
 actor OutsideLamp 43
 {
 	Game Strife
+	ConversationID 248, -1, -1
 	Radius 3
 	Height 80
 	+Solid
@@ -826,6 +877,7 @@ actor OutsideLamp 43
 actor PoleLatern 46
 {
 	Game Strife
+	ConversationID 249, -1, -1
 	Radius 3
 	Height 80
 	+Solid
@@ -841,6 +893,7 @@ actor PoleLatern 46
 actor SRock1 99
 {
 	Game Strife
+	ConversationID 250, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -854,6 +907,7 @@ actor SRock1 99
 actor SRock2 100
 {
 	Game Strife
+	ConversationID 251, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -867,6 +921,7 @@ actor SRock2 100
 actor SRock3 101
 {
 	Game Strife
+	ConversationID 252, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -880,6 +935,7 @@ actor SRock3 101
 actor SRock4 102
 {
 	Game Strife
+	ConversationID 253, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -893,6 +949,7 @@ actor SRock4 102
 actor StickInWater 215
 {
 	Game Strife
+	ConversationID 254, -1, -1
 	+NoBlockmap
 	+FloorClip
 	ActiveSound "world/river"
@@ -908,6 +965,7 @@ actor StickInWater 215
 actor Rubble1 29
 {
 	Game Strife
+	ConversationID 255, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -922,6 +980,7 @@ actor Rubble1 29
 actor Rubble2 30
 {
 	Game Strife
+	ConversationID 256, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -936,6 +995,7 @@ actor Rubble2 30
 actor Rubble3 31
 {
 	Game Strife
+	ConversationID 257, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -950,6 +1010,7 @@ actor Rubble3 31
 actor Rubble4 32
 {
 	Game Strife
+	ConversationID 258, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -964,6 +1025,7 @@ actor Rubble4 32
 actor Rubble5 36
 {
 	Game Strife
+	ConversationID 259, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -978,6 +1040,7 @@ actor Rubble5 36
 actor Rubble6 37
 {
 	Game Strife
+	ConversationID 260, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -992,6 +1055,7 @@ actor Rubble6 37
 actor Rubble7 41
 {
 	Game Strife
+	ConversationID 261, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -1006,6 +1070,7 @@ actor Rubble7 41
 actor Rubble8 42
 {
 	Game Strife
+	ConversationID 262, -1, -1
 	+NoBlockmap
 	+NoClip
 	states
@@ -1020,6 +1085,7 @@ actor Rubble8 42
 actor SurgeryCrab 117
 {
 	Game Strife
+	ConversationID 263, -1, -1
 	+Solid
 	+SpawnCeiling
 	+NoGravity
@@ -1035,6 +1101,7 @@ actor SurgeryCrab 117
 actor LargeTorch 47
 {
 	Game Strife
+	ConversationID 264, -1, -1
 	Radius 10
 	Height 72
 	+Solid
@@ -1052,6 +1119,7 @@ actor LargeTorch 47
 actor HugeTorch 50
 {
 	Game Strife
+	ConversationID 265, -1, -1
 	Radius 10
 	Height 80
 	+Solid
@@ -1069,6 +1137,7 @@ actor HugeTorch 50
 actor PalmTree 51
 {
 	Game Strife
+	ConversationID 266, -1, -1
 	Radius 15
 	Height 109
 	+Solid
@@ -1084,6 +1153,7 @@ actor PalmTree 51
 actor BigTree2 202
 {
 	Game Strife
+	ConversationID 267, -1, -1
 	Radius 15
 	Height 109
 	+Solid
@@ -1099,6 +1169,7 @@ actor BigTree2 202
 actor PottedTree 203
 {
 	Game Strife
+	ConversationID 268, -1, -1
 	Radius 15
 	Height 64
 	+Solid
@@ -1114,6 +1185,7 @@ actor PottedTree 203
 actor TreeStub 33
 {
 	Game Strife
+	ConversationID 269, -1, -1
 	Radius 15
 	Height 80
 	+Solid
@@ -1129,6 +1201,7 @@ actor TreeStub 33
 actor ShortBush 60
 {
 	Game Strife
+	ConversationID 270, -1, -1
 	Radius 15
 	Height 40
 	+Solid
@@ -1144,6 +1217,7 @@ actor ShortBush 60
 actor TallBush 62
 {
 	Game Strife
+	ConversationID 271, -1, -1
 	Radius 20
 	Height 64
 	+Solid
@@ -1159,6 +1233,7 @@ actor TallBush 62
 actor ChimneyStack 63
 {
 	Game Strife
+	ConversationID 272, -1, -1
 	Radius 20
 	Height 64
 	+Solid
@@ -1174,6 +1249,7 @@ actor ChimneyStack 63
 actor BarricadeColumn 69
 {
 	Game Strife
+	ConversationID 273, -1, -1
 	Radius 16
 	Height 128
 	+Solid
@@ -1189,6 +1265,7 @@ actor BarricadeColumn 69
 actor Pot 165
 {
 	Game Strife
+	ConversationID 274, -1, -1
 	Radius 12
 	Height 24
 	+Solid
@@ -1204,6 +1281,7 @@ actor Pot 165
 actor Pitcher 188
 {
 	Game Strife
+	ConversationID 275, -1, -1
 	Radius 12
 	Height 32
 	+Solid
@@ -1219,6 +1297,7 @@ actor Pitcher 188
 actor Stool 189
 {
 	Game Strife
+	ConversationID 276, -1, -1
 	Radius 6
 	Height 24
 	+Solid
@@ -1234,6 +1313,7 @@ actor Stool 189
 actor MetalPot 190
 {
 	Game Strife
+	ConversationID 277, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -1247,6 +1327,7 @@ actor MetalPot 190
 actor Tub 191
 {
 	Game Strife
+	ConversationID 278, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -1260,6 +1341,7 @@ actor Tub 191
 actor Anvil 194
 {
 	Game Strife
+	ConversationID 279, -1, -1
 	Radius 16
 	Height 32
 	+Solid
@@ -1275,6 +1357,7 @@ actor Anvil 194
 actor TechLampSilver 196
 {
 	Game Strife
+	ConversationID 280, -1, -1
 	Radius 11
 	Height 64
 	+Solid
@@ -1290,6 +1373,7 @@ actor TechLampSilver 196
 actor TechLampBrass 197
 {
 	Game Strife
+	ConversationID 281, -1, -1
 	Radius 8
 	Height 64
 	+Solid
@@ -1305,6 +1389,7 @@ actor TechLampBrass 197
 actor Tray 68
 {
 	Game Strife
+	ConversationID 282, -1, -1
 	Radius 24
 	Height 40
 	+Solid
@@ -1320,6 +1405,7 @@ actor Tray 68
 actor AmmoFiller 228
 {
 	Game Strife
+	ConversationID 283, -1, -1
 	Radius 12
 	Height 24
 	+Solid
@@ -1335,6 +1421,7 @@ actor AmmoFiller 228
 actor SigilBanner 216
 {
 	Game Strife
+	ConversationID 284, -1, -1
 	Radius 24
 	Height 96
 	+NoBlockmap
@@ -1350,6 +1437,7 @@ actor SigilBanner 216
 actor RebelBoots 217
 {
 	Game Strife
+	ConversationID 285, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -1363,6 +1451,7 @@ actor RebelBoots 217
 actor RebelHelmet 218
 {
 	Game Strife
+	ConversationID 286, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -1376,6 +1465,7 @@ actor RebelHelmet 218
 actor RebelShirt 219
 {
 	Game Strife
+	ConversationID 287, -1, -1
 	+NoBlockmap
 	states
 	{
@@ -1389,6 +1479,7 @@ actor RebelShirt 219
 actor AlienBubbleColumn 221
 {
 	Game Strife
+	ConversationID 290, -1, -1
 	Radius 16
 	Height 128
 	+Solid
@@ -1405,6 +1496,7 @@ actor AlienBubbleColumn 221
 actor AlienFloorBubble 222
 {
 	Game Strife
+	ConversationID 291, -1, -1
 	Radius 16
 	Height 72
 	+Solid
@@ -1421,6 +1513,7 @@ actor AlienFloorBubble 222
 actor AlienCeilingBubble 223
 {
 	Game Strife
+	ConversationID 292, -1, -1
 	Radius 16
 	Height 72
 	+Solid
@@ -1439,6 +1532,7 @@ actor AlienCeilingBubble 223
 actor AlienAspClimber 224
 {
 	Game Strife
+	ConversationID 293, -1, -1
 	Radius 16
 	Height 128
 	+Solid
@@ -1455,6 +1549,7 @@ actor AlienAspClimber 224
 actor AlienSpiderLight 225
 {
 	Game Strife
+	ConversationID 294, -1, -1
 	Radius 32
 	Height 56
 	+Solid
