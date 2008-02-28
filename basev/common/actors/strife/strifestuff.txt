@@ -2,6 +2,10 @@
 actor Tank1 209
 {
 	Game Strife
+	Radius 16
+	Height 192
+	Mass 50000
+	+Solid
 	states
 	{
 	Spawn:
@@ -10,16 +14,16 @@ actor Tank1 209
 		TNK1 C 40
 		Loop
 	}
-	Radius 16
-	Height 192
-	Mass 50000
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Tank2 210
 {
 	Game Strife
+	Radius 16
+	Height 192
+	Mass 50000
+	+Solid
 	states
 	{
 	Spawn:
@@ -28,16 +32,16 @@ actor Tank2 210
 		TNK2 C 40
 		Loop
 	}
-	Radius 16
-	Height 192
-	Mass 50000
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Tank3 211
 {
 	Game Strife
+	Radius 16
+	Height 192
+	Mass 50000
+	+Solid
 	states
 	{
 	Spawn:
@@ -46,16 +50,16 @@ actor Tank3 211
 		TNK3 C 40
 		Loop
 	}
-	Radius 16
-	Height 192
-	Mass 50000
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Tank4 213
 {
 	Game Strife
+	Radius 16
+	Height 56
+	Mass 50000
+	+Solid
 	states
 	{
 	Spawn:
@@ -64,16 +68,16 @@ actor Tank4 213
 		TNK4 C 40
 		Loop
 	}
-	Radius 16
-	Height 56
-	Mass 50000
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Tank5 214
 {
 	Game Strife
+	Radius 16
+	Height 56
+	Mass 50000
+	+Solid
 	states
 	{
 	Spawn:
@@ -82,16 +86,16 @@ actor Tank5 214
 		TNK5 C 40
 		Loop
 	}
-	Radius 16
-	Height 56
-	Mass 50000
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Tank6 229
 {
 	Game Strife
+	Radius 16
+	Height 56
+	Mass 50000
+	+Solid
 	states
 	{
 	Spawn:
@@ -100,10 +104,6 @@ actor Tank6 229
 		TNK6 C 40
 		Loop
 	}
-	Radius 16
-	Height 56
-	Mass 50000
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -134,6 +134,14 @@ actor Mug 164
 actor WoodenBarrel 82
 {
 	Game Strife
+	Health 10
+	Radius 10
+	Height 32
+	+Solid
+	+Shootable
+	+InCombat
+	+NoBlood
+	DeathSound "woodenbarrel/death"
 	states
 	{
 	Spawn:
@@ -147,14 +155,6 @@ actor WoodenBarrel 82
 		BARW H -1
 		Stop
 	}
-	Health 10
-	Radius 10
-	Height 32
-	+Solid
-	+Shootable
-	+InCombat
-	+NoBlood
-	DeathSound "woodenbarrel/death"
 }
 
 //FIXME ExplosiveBarrel2 : ExplosiveBarrel goes here.
@@ -163,16 +163,6 @@ actor WoodenBarrel 82
 actor TargetPractice 208
 {
 	Game Strife
-	states
-	{
-	Spawn:
-		HOGN A 2 A_ScrollOrDie
-		Loop
-	Pain:
-		HOGN B 1 A_ScrollOrDie
-		HOGN C 1 A_Pain
-		Goto Spawn
-	}
 	Health 99999999
 	Radius 10
 	Height 72
@@ -183,132 +173,145 @@ actor TargetPractice 208
 	+InCombat
 	+NoBlood
 	PainSound "misc/metalhit"
+	states
+	{
+	Spawn:
+		HOGN A 2 A_ScrollOrDie
+		Loop
+	Pain:
+		HOGN B 1 A_ScrollOrDie
+		HOGN C 1 A_Pain
+		Goto Spawn
+	}
 }
 
 //------------------------------------------------------------------------------
 actor LightSilverFluorescent 95
 {
 	Game Strife
+	Radius 4
+	Height 16
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		LITS A -1 Bright
 		Stop
 	}
-	Radius 4
-	Height 16
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor LightBrownFluorescent 96
 {
 	Game Strife
+	Radius 4
+	Height 16
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		LITB A -1 Bright
 		Stop
 	}
-	Radius 4
-	Height 16
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor LightGoldFluorescent 97
 {
 	Game Strife
+	Radius 4
+	Height 16
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		LITG A -1 Bright
 		Stop
 	}
-	Radius 4
-	Height 16
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor LightGlobe 2028
 {
 	Game Strife
+	Radius 16
+	Height 16
+	+Solid
 	states
 	{
 	Spawn:
 		LITE A -1 Bright
 		Stop
 	}
-	Radius 16
-	Height 16
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PillarTechno 48
 {
 	Game Strife
+	Radius 20
+	Height 128
+	+Solid
 	states
 	{
 	Spawn:
 		MONI A -1
 		Stop
 	}
-	Radius 20
-	Height 128
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PillarAztec 54
 {
 	Game Strife
+	Radius 16
+	Height 128
+	+Solid
 	states
 	{
 	Spawn:
 		STEL A -1
 		Stop
 	}
-	Radius 16
-	Height 128
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PillarAztecDamaged 55
 {
 	Game Strife
+	Radius 16
+	Height 80
+	+Solid
 	states
 	{
 	Spawn:
 		STLA A -1
 		Stop
 	}
-	Radius 16
-	Height 80
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PillarAztecRuined 56
 {
 	Game Strife
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		STLE A -1
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PillarHugeTech 57
 {
 	Game Strife
+	Radius 24
+	Height 192
+	+Solid
 	states
 	{
 	Spawn:
@@ -316,121 +319,118 @@ actor PillarHugeTech 57
 		HUGE BCD 5
 		Loop
 	}
-	Radius 24
-	Height 192
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PillarAlienPower 227
 {
 	Game Strife
+	Radius 24
+	Height 192
+	+Solid
+	ActiveSound "ambient/alien2"
 	states
 	{
 	Spawn:
 		APOW A 4 A_ActiveSound
 		Loop
 	}
-	Radius 24
-	Height 192
-	+Solid
-	ActiveSound "ambient/alien2"
 }
 
 //------------------------------------------------------------------------------
 actor SStalactiteBig 98
 {
 	Game Strife
+	Radius 16
+	Height 54
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		STLG C -1
 		Stop
 	}
-	Radius 16
-	Height 54
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor SStalactiteSmall 161
 {
 	Game Strife
+	Radius 16
+	Height 40
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		STLG A -1
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor SStalagmiteBig 160
 {
 	Game Strife
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		STLG B -1
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor CavePillarTop 159
 {
 	Game Strife
+	Radius 16
+	Height 128
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		STLG D -1
 		Stop
 	}
-	Radius 16
-	Height 128
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor CavePillarBottom 162
 {
 	Game Strife
+	Radius 16
+	Height 128
+	+Solid
 	states
 	{
 	Spawn:
 		STLG E -1
 		Stop
 	}
-	Radius 16
-	Height 128
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor SStalagmiteSmall 163
 {
 	Game Strife
+	Radius 16
+	Height 25
+	+Solid
 	states
 	{
 	Spawn:
 		STLG F -1
 		Stop
 	}
-	Radius 16
-	Height 25
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -449,21 +449,23 @@ actor Candle 34
 actor StrifeCandelabra 35
 {
 	Game Strife
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		CLBR A -1 Bright
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor WaterDropOnFloor 103
 {
 	Game Strife
+	+NoBlockmap
+	ActiveSound "world/waterdrip"
 	states
 	{
 	Spawn:
@@ -475,14 +477,14 @@ actor WaterDropOnFloor 103
 		DRIP H 4
 		Loop
 	}
-	+NoBlockmap
-	ActiveSound "world/waterdrip"
 }
 
 //------------------------------------------------------------------------------
 actor WaterfallSplash 104
 {
 	Game Strife
+	+NoBlockmap
+	ActiveSound "world/waterfall"
 	states
 	{
 	Spawn:
@@ -492,14 +494,17 @@ actor WaterfallSplash 104
 		SPLH H 4 A_ActiveSound
 		Loop
 	}
-	+NoBlockmap
-	ActiveSound "world/waterfall"
 }
 
 //------------------------------------------------------------------------------
 actor WaterDrip 53
 {
 	Game Strife
+	Radius 20
+	Height 1
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
@@ -507,17 +512,14 @@ actor WaterDrip 53
 		CDRP BCD 8
 		Loop
 	}
-	Radius 20
-	Height 1
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor WaterFountain 112
 {
 	Game Strife
+	+NoBlockmap
+	ActiveSound "world/watersplash"
 	states
 	{
 	Spawn:
@@ -525,38 +527,36 @@ actor WaterFountain 112
 		WTFT D 4 A_ActiveSound
 		Loop
 	}
-	+NoBlockmap
-	ActiveSound "world/watersplash"
 }
 
 //------------------------------------------------------------------------------
 actor HeartsInTank 113
 {
 	Game Strife
+	Radius 16
+	Height 56
+	+Solid
 	states
 	{
 	Spawn:
 		HERT ABC 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 56
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TeleportSwirl 23
 {
 	Game Strife
+	RenderStyle Translucent
+	Alpha 0.333
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TELP ABCD 3 Bright
 		Loop
 	}
-	RenderStyle Translucent
-	Alpha 0.333
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
@@ -657,384 +657,388 @@ actor PileOfGuts
 actor StrifeBurningBarrel 70
 {
 	Game Strife
+	Radius 16
+	Height 48
+	+Solid
 	states
 	{
 	Spawn:
 		BBAR ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 48
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BurningBowl 105
 {
 	Game Strife
+	Radius 16
+	Height 16
+	+Solid
 	states
 	{
 	Spawn:
 		BOWL ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 16
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BurningBrazier 106
 {
 	Game Strife
+	Radius 10
+	Height 32
+	+Solid
 	states
 	{
 	Spawn:
 		BRAZ ABCD 4 Bright
 		Loop
 	}
-	Radius 10
-	Height 32
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor SmallTorchLit 107
 {
 	Game Strife
+	Radius 2.5
+	Height 16
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TRHL ABCD 4 Bright
 		Loop
 	}
-	Radius 2.5
-	Height 16
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor SmallTorchUnlit 108
 {
 	Game Strife
+	Radius 0
+	Height 16
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TRHO A -1
 		Stop
 	}
-	Radius 0
-	Height 16
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor CeilingChain 109
 {
 	Game Strife
+	Radius 20
+	Height 93
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHAN A -1
 		Stop
 	}
-	Radius 20
-	Height 93
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor CageLight 28
 {
 	Game Strife
+	Radius 20
+	Height 3
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CAGE A -1
 		Stop
 	}
-	Radius 20
-	Height 3
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor Statue 110
 {
 	Game Strife
+	Radius 20
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		STAT A -1
 		Stop
 	}
-	Radius 20
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor StatueRuined 44
 {
 	Game Strife
+	Radius 20
+	Height 56
+	+Solid
 	states
 	{
 	Spawn:
 		DSTA A -1
 		Stop
 	}
-	Radius 20
-	Height 56
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor MediumTorch 111
 {
 	Game Strife
+	Radius 4
+	Height 72
+	+Solid
 	states
 	{
 	Spawn:
 		LTRH ABCD 4 Bright
 		Loop
 	}
-	Radius 4
-	Height 72
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor OutsideLamp 43
 {
 	Game Strife
+	Radius 3
+	Height 80
+	+Solid
 	states
 	{
 	Spawn:
 		LAMP A -1
 		Stop
 	}
-	Radius 3
-	Height 80
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PoleLatern 46
 {
 	Game Strife
+	Radius 3
+	Height 80
+	+Solid
 	states
 	{
 	Spawn:
 		LANT A -1
 		Stop
 	}
-	Radius 3
-	Height 80
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor SRock1 99
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		ROK1 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor SRock2 100
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		ROK2 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor SRock3 101
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		ROK3 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor SRock4 102
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		ROK4 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor StickInWater 215
 {
 	Game Strife
+	+NoBlockmap
+	+FloorClip
+	ActiveSound "world/river"
 	states
 	{
 	Spawn:
 		LOGW ABCD 5 A_ActiveSound
 		Loop
 	}
-	+NoBlockmap
-	+FloorClip
-	ActiveSound "world/river"
 }
 
 //------------------------------------------------------------------------------
 actor Rubble1 29
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB1 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor Rubble2 30
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB2 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor Rubble3 31
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB3 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor Rubble4 32
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB4 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor Rubble5 36
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB5 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor Rubble6 37
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB6 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor Rubble7 41
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB7 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor Rubble8 42
 {
 	Game Strife
+	+NoBlockmap
+	+NoClip
 	states
 	{
 	Spawn:
 		RUB8 A -1
 		Stop
 	}
-	+NoBlockmap
-	+NoClip
 }
 
 //------------------------------------------------------------------------------
 actor SurgeryCrab 117
 {
 	Game Strife
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CRAB A -1
 		Stop
 	}
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor LargeTorch 47
 {
 	Game Strife
+	Radius 10
+	Height 72
+	+Solid
+	ActiveSound "world/smallfire"
 	states
 	{
 	Spawn:
@@ -1042,16 +1046,16 @@ actor LargeTorch 47
 		Loop
 		// NOTE Wad has 5 frames of animation
 	}
-	Radius 10
-	Height 72
-	+Solid
-	ActiveSound "world/smallfire"
 }
 
 //------------------------------------------------------------------------------
 actor HugeTorch 50
 {
 	Game Strife
+	Radius 10
+	Height 80
+	+Solid
+	ActiveSound "world/smallfire"
 	states
 	{
 	Spawn:
@@ -1059,410 +1063,406 @@ actor HugeTorch 50
 		Loop
 		// NOTE Wad has 5 frames of animation
 	}
-	Radius 10
-	Height 80
-	+Solid
-	ActiveSound "world/smallfire"
 }
 
 //------------------------------------------------------------------------------
 actor PalmTree 51
 {
 	Game Strife
+	Radius 15
+	Height 109
+	+Solid
 	states
 	{
 	Spawn:
 		TREE A -1
 		Stop
 	}
-	Radius 15
-	Height 109
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BigTree2 202
 {
 	Game Strife
+	Radius 15
+	Height 109
+	+Solid
 	states
 	{
 	Spawn:
 		TREE B -1
 		Stop
 	}
-	Radius 15
-	Height 109
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor PottedTree 203
 {
 	Game Strife
+	Radius 15
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		TREE C -1
 		Stop
 	}
-	Radius 15
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TreeStub 33
 {
 	Game Strife
+	Radius 15
+	Height 80
+	+Solid
 	states
 	{
 	Spawn:
 		TRET A -1
 		Stop
 	}
-	Radius 15
-	Height 80
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ShortBush 60
 {
 	Game Strife
+	Radius 15
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		BUSH A -1
 		Stop
 	}
-	Radius 15
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TallBush 62
 {
 	Game Strife
+	Radius 20
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		SHRB A -1
 		Stop
 	}
-	Radius 20
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ChimneyStack 63
 {
 	Game Strife
+	Radius 20
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		STAK A -1
 		Stop
 	}
-	Radius 20
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BarricadeColumn 69
 {
 	Game Strife
+	Radius 16
+	Height 128
+	+Solid
 	states
 	{
 	Spawn:
 		BARC A -1
 		Stop
 	}
-	Radius 16
-	Height 128
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Pot 165
 {
 	Game Strife
+	Radius 12
+	Height 24
+	+Solid
 	states
 	{
 	Spawn:
 		VAZE A -1
 		Stop
 	}
-	Radius 12
-	Height 24
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Pitcher 188
 {
 	Game Strife
+	Radius 12
+	Height 32
+	+Solid
 	states
 	{
 	Spawn:
 		VAZE B -1
 		Stop
 	}
-	Radius 12
-	Height 32
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Stool 189
 {
 	Game Strife
+	Radius 6
+	Height 24
+	+Solid
 	states
 	{
 	Spawn:
 		STOL A -1
 		Stop
 	}
-	Radius 6
-	Height 24
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor MetalPot 190
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		MPOT A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor Tub 191
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TUB1 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor Anvil 194
 {
 	Game Strife
+	Radius 16
+	Height 32
+	+Solid
 	states
 	{
 	Spawn:
 		ANVL A -1
 		Stop
 	}
-	Radius 16
-	Height 32
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TechLampSilver 196
 {
 	Game Strife
+	Radius 11
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		TECH A -1
 		Stop
 	}
-	Radius 11
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TechLampBrass 197
 {
 	Game Strife
+	Radius 8
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		TECH B -1
 		Stop
 	}
-	Radius 8
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Tray 68
 {
 	Game Strife
+	Radius 24
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		TRAY A -1
 		Stop
 	}
-	Radius 24
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor AmmoFiller 228
 {
 	Game Strife
+	Radius 12
+	Height 24
+	+Solid
 	states
 	{
 	Spawn:
 		AFED A -1
 		Stop
 	}
-	Radius 12
-	Height 24
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor SigilBanner 216
 {
 	Game Strife
+	Radius 24
+	Height 96
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		SBAN A -1
 		Stop
 	}
-	Radius 24
-	Height 96
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor RebelBoots 217
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		BOTR A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor RebelHelmet 218
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		HATR A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor RebelShirt 219
 {
 	Game Strife
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TOPR A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor AlienBubbleColumn 221
 {
 	Game Strife
+	Radius 16
+	Height 128
+	+Solid
+	ActiveSound "ambient/alien5"
 	states
 	{
 	Spawn:
 		BUBB A 4 A_ActiveSound
 		Loop
 	}
-	Radius 16
-	Height 128
-	+Solid
-	ActiveSound "ambient/alien5"
 }
 
 //------------------------------------------------------------------------------
 actor AlienFloorBubble 222
 {
 	Game Strife
+	Radius 16
+	Height 72
+	+Solid
+	ActiveSound "ambient/alien6"
 	states
 	{
 	Spawn:
 		BUBF A 4 A_ActiveSound
 		Loop
 	}
-	Radius 16
-	Height 72
-	+Solid
-	ActiveSound "ambient/alien6"
 }
 
 //------------------------------------------------------------------------------
 actor AlienCeilingBubble 223
 {
 	Game Strife
-	states
-	{
-	Spawn:
-		BUBC A 4 A_ActiveSound
-		Loop
-	}
 	Radius 16
 	Height 72
 	+Solid
 	+SpawnCeiling
 	+NoGravity
 	ActiveSound "ambient/alien4"
+	states
+	{
+	Spawn:
+		BUBC A 4 A_ActiveSound
+		Loop
+	}
 }
 
 //------------------------------------------------------------------------------
 actor AlienAspClimber 224
 {
 	Game Strife
+	Radius 16
+	Height 128
+	+Solid
+	ActiveSound "ambient/alien3"
 	states
 	{
 	Spawn:
 		ASPR A 4 A_ActiveSound
 		Loop
 	}
-	Radius 16
-	Height 128
-	+Solid
-	ActiveSound "ambient/alien3"
 }
 
 //------------------------------------------------------------------------------
 actor AlienSpiderLight 225
 {
 	Game Strife
+	Radius 32
+	Height 56
+	+Solid
+	ActiveSound "ambient/alien1"
 	states
 	{
 	Spawn:
 		SPDL ABC 5 A_ActiveSound
 		Loop
 	}
-	Radius 32
-	Height 56
-	+Solid
-	ActiveSound "ambient/alien1"
 }

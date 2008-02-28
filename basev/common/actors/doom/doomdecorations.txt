@@ -2,300 +2,300 @@
 actor TechLamp 85
 {
 	Game Doom
+	Radius 16
+	Height 72
+	+Solid
 	states
 	{
 	Spawn:
 		TLMP ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 72
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TechLamp2 86
 {
 	Game Doom
+	Radius 16
+	Height 56
+	+Solid
 	states
 	{
 	Spawn:
 		TLP2 ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 56
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Column 2028
 {
 	Game Doom
+	Radius 16
+	Height 48
+	+Solid
 	states
 	{
 	Spawn:
 		COLU A -1 Bright
 		Stop
 	}
-	Radius 16
-	Height 48
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TallGreenColumn 30
 {
 	Game Doom
+	Radius 16
+	Height 52
+	+Solid
 	states
 	{
 	Spawn:
 		COL1 A -1
 		Stop
 	}
-	Radius 16
-	Height 52
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ShortGreenColumn 31
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		COL2 A -1
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TallRedColumn 32
 {
 	Game Doom
+	Radius 16
+	Height 52
+	+Solid
 	states
 	{
 	Spawn:
 		COL3 A -1
 		Stop
 	}
-	Radius 16
-	Height 52
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ShortRedColumn 33
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		COL4 A -1
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor SkullColumn 37
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		COL6 A -1
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor HeartColumn 36
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		COL5 AB 14
 		Loop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor EvilEye 41
 {
 	Game Doom
+	Radius 16
+	Height 16
+	+Solid
 	states
 	{
 	Spawn:
 		CEYE ABCB 6 Bright
 		Loop
 	}
-	Radius 16
-	Height 16
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor FloatingSkull 42
 {
 	Game Doom
+	Radius 16
+	Height 48
+	+Solid
 	states
 	{
 	Spawn:
 		FSKU ABC 6 Bright
 		Loop
 	}
-	Radius 16
-	Height 48
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TorchTree 43
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		TRE1 A -1
 		Stop
 	}
-	Radius 16
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BlueTorch 44
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		TBLU ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor GreenTorch 45
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		TGRN ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor RedTorch 46
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		TRED ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ShortBlueTorch 55
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		SMBT ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ShortGreenTorch 56
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		SMGT ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ShortRedTorch 57
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		SMRT ABCD 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor Stalagtite 47
 {
 	Game Doom
+	Radius 16
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		SMIT A -1
 		Stop
 	}
-	Radius 16
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TechPillar 48
 {
 	Game Doom
+	Radius 16
+	Height 120
+	+Solid
 	states
 	{
 	Spawn:
 		ELEC A -1
 		Stop
 	}
-	Radius 16
-	Height 120
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -314,21 +314,26 @@ actor Candlestick 34
 actor Candelabra 35
 {
 	Game Doom
+	Radius 16
+	Height 56
+	+Solid
 	states
 	{
 	Spawn:
 		CBRA A -1 Bright
 		Stop
 	}
-	Radius 16
-	Height 56
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BloodyTwitch 49
 {
 	Game Doom
+	Radius 16
+	Height 68
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
@@ -338,79 +343,74 @@ actor BloodyTwitch 49
 		GOR1 B 6
 		Loop
 	}
-	Radius 16
-	Height 68
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor Meat2 50
 {
 	Game Doom
+	Radius 16
+	Height 84
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		GOR2 A -1
 		Stop
 	}
-	Radius 16
-	Height 84
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor Meat3 51
 {
 	Game Doom
+	Radius 16
+	Height 84
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		GOR3 A -1
 		Stop
 	}
-	Radius 16
-	Height 84
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor Meat4 52
 {
 	Game Doom
+	Radius 16
+	Height 68
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		GOR4 A -1
 		Stop
 	}
-	Radius 16
-	Height 68
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor Meat5 53
 {
 	Game Doom
+	Radius 16
+	Height 52
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		GOR5 A -1
 		Stop
 	}
-	Radius 16
-	Height 52
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
@@ -458,66 +458,69 @@ actor NonsolidTwitch : BloodyTwitch 63
 actor HeadsOnAStick 28
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		POL2 A -1
 		Stop
 	}
-	Radius 16
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor HeadOnAStick 27
 {
 	Game Doom
+	Radius 16
+	Height 56
+	+Solid
 	states
 	{
 	Spawn:
 		POL4 A -1
 		Stop
 	}
-	Radius 16
-	Height 56
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor HeadCandles 29
 {
 	Game Doom
+	Radius 16
+	Height 48
+	+Solid
 	states
 	{
 	Spawn:
 		POL3 AB 6 Bright
 		Loop
 	}
-	Radius 16
-	Height 48
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor DeadStick 25
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
 		POL1 A -1
 		Stop
 	}
-	Radius 16
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor LiveStick 26
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
 	states
 	{
 	Spawn:
@@ -525,24 +528,21 @@ actor LiveStick 26
 		POL6 B 8
 		Loop
 	}
-	Radius 16
-	Height 64
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BigTree 54
 {
 	Game Doom
+	Radius 32
+	Height 96
+	+Solid
 	states
 	{
 	Spawn:
 		TRE2 A -1
 		Stop
 	}
-	Radius 32
-	Height 96
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -550,117 +550,117 @@ Actor BurningBarrel 70
 {
 	Game Doom
 	SpawnID 149
+	Radius 16
+	Height 32
+	+Solid
 	states
 	{
 	Spawn:
 		FCAN ABC 4 Bright
 		Loop
 	}
-	Radius 16
-	Height 32
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor HangNoGuts 73
 {
 	Game Doom
+	Radius 16
+	Height 88
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		HDB1 A -1
 		Stop
 	}
-	Radius 16
-	Height 88
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor HangBNoBrain 74
 {
 	Game Doom
+	Radius 16
+	Height 88
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		HDB2 A -1
 		Stop
 	}
-	Radius 16
-	Height 88
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor HangTLookingDown 75
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		HDB3 A -1
 		Stop
 	}
-	Radius 16
-	Height 64
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor HangTSkull 76
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		HDB4 A -1
 		Stop
 	}
-	Radius 16
-	Height 64
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor HangTLookingUp 77
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		HDB5 A -1
 		Stop
 	}
-	Radius 16
-	Height 64
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor HangTNoBrain 78
 {
 	Game Doom
+	Radius 16
+	Height 64
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		HDB6 A -1
 		Stop
 	}
-	Radius 16
-	Height 64
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
@@ -668,13 +668,13 @@ actor ColonGibs 79
 {
 	Game Doom
 	SpawnID 147
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		POB1 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
@@ -682,13 +682,13 @@ actor SmallBloodPool 80
 {
 	Game Doom
 	SpawnID 148
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		POB2 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
@@ -696,11 +696,11 @@ actor BrainStem 81
 {
 	Game Doom
 	SpawnID 150
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		BRS1 A -1
 		Stop
 	}
-	+NoBlockmap
 }

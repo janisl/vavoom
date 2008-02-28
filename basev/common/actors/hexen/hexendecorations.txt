@@ -1,15 +1,16 @@
 //------------------------------------------------------------------------------
 actor ZWingedStatue 5
 {
+	Game Hexen
+	Radius 10
+	Height 62
+	+Solid
 	states
 	{
 	Spawn:
 		STTW A -1
 		Stop
 	}
-	Radius 10
-	Height 62
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -52,15 +53,15 @@ actor ZRock3 9
 actor ZRock4 15
 {
 	Game Hexen
+	Radius 20
+	Height 16
+	+Solid
 	states
 	{
 	Spawn:
 		RCK4 A -1
 		Stop
 	}
-	Radius 20
-	Height 16
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -163,692 +164,692 @@ actor ZShroomSmall5 47
 actor ZStalagmitePillar 48
 {
 	Game Hexen
+	Radius 8
+	Height 138
+	+Solid
 	states
 	{
 	Spawn:
 		SGMP A -1
 		Stop
 	}
-	Radius 8
-	Height 138
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalagmiteLarge 49
 {
 	Game Hexen
+	Radius 8
+	Height 48
+	+Solid
 	states
 	{
 	Spawn:
 		SGM1 A -1
 		Stop
 	}
-	Radius 8
-	Height 48
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalagmiteMedium 50
 {
 	Game Hexen
+	Radius 6
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		SGM2 A -1
 		Stop
 	}
-	Radius 6
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalagmiteSmall 51
 {
 	Game Hexen
+	Radius 8
+	Height 36
+	+Solid
 	states
 	{
 	Spawn:
 		SGM3 A -1
 		Stop
 	}
-	Radius 8
-	Height 36
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalactiteLarge 52
 {
 	Game Hexen
+	Radius 8
+	Height 66
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		SLC1 A -1
 		Stop
 	}
-	Radius 8
-	Height 66
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZStalactiteMedium 56
 {
 	Game Hexen
+	Radius 6
+	Height 50
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		SLC2 A -1
 		Stop
 	}
-	Radius 6
-	Height 50
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZStalactiteSmall 57
 {
 	Game Hexen
+	Radius 8
+	Height 40
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		SLC3 A -1
 		Stop
 	}
-	Radius 8
-	Height 40
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZMossCeiling1 58
 {
 	Game Hexen
+	Radius 20
+	Height 20
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		MSS1 A -1
 		Stop
 	}
-	Radius 20
-	Height 20
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZMossCeiling2 59
 {
 	Game Hexen
+	Radius 20
+	Height 24
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		MSS2 A -1
 		Stop
 	}
-	Radius 20
-	Height 24
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZSwampVine 60
 {
 	Game Hexen
+	Radius 8
+	Height 52
+	+Solid
 	states
 	{
 	Spawn:
 		SWMV A -1
 		Stop
 	}
-	Radius 8
-	Height 52
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZCorpseKabob 61
 {
 	Game Hexen
+	Radius 10
+	Height 92
+	+Solid
 	states
 	{
 	Spawn:
 		CPS1 A -1
 		Stop
 	}
-	Radius 10
-	Height 92
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZCorpseSleeping 62
 {
 	Game Hexen
+	Radius 20
+	Height 16
 	states
 	{
 	Spawn:
 		CPS2 A -1
 		Stop
 	}
-	Radius 20
-	Height 16
 }
 
 //------------------------------------------------------------------------------
 actor ZTombstoneRIP 63
 {
 	Game Hexen
+	Radius 10
+	Height 46
+	+Solid
 	states
 	{
 	Spawn:
 		TMS1 A -1
 		Stop
 	}
-	Radius 10
-	Height 46
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTombstoneShane 64
 {
 	Game Hexen
+	Radius 10
+	Height 46
+	+Solid
 	states
 	{
 	Spawn:
 		TMS2 A -1
 		Stop
 	}
-	Radius 10
-	Height 46
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTombstoneBigCross 65
 {
 	Game Hexen
+	Radius 10
+	Height 46
+	+Solid
 	states
 	{
 	Spawn:
 		TMS3 A -1
 		Stop
 	}
-	Radius 10
-	Height 46
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTombstoneBrianR 66
 {
 	Game Hexen
+	Radius 10
+	Height 52
+	+Solid
 	states
 	{
 	Spawn:
 		TMS4 A -1
 		Stop
 	}
-	Radius 10
-	Height 52
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTombstoneCrossCircle 67
 {
 	Game Hexen
+	Radius 10
+	Height 52
+	+Solid
 	states
 	{
 	Spawn:
 		TMS5 A -1
 		Stop
 	}
-	Radius 10
-	Height 52
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTombstoneSmallCross 68
 {
 	Game Hexen
+	Radius 8
+	Height 46
+	+Solid
 	states
 	{
 	Spawn:
 		TMS6 A -1
 		Stop
 	}
-	Radius 8
-	Height 46
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTombstoneBrianP 69
 {
 	Game Hexen
+	Radius 8
+	Height 46
+	+Solid
 	states
 	{
 	Spawn:
 		TMS7 A -1
 		Stop
 	}
-	Radius 8
-	Height 46
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZCorpseHanging 71
 {
 	Game Hexen
+	Radius 6
+	Height 75
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CPS3 A -1
 		Stop
 	}
-	Radius 6
-	Height 75
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleGreenTall 72
 {
 	Game Hexen
+	Radius 14
+	Height 108
+	+Solid
 	states
 	{
 	Spawn:
 		STT2 A -1
 		Stop
 	}
-	Radius 14
-	Height 108
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleBlueTall 73
 {
 	Game Hexen
+	Radius 14
+	Height 108
+	+Solid
 	states
 	{
 	Spawn:
 		STT3 A -1
 		Stop
 	}
-	Radius 14
-	Height 108
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleGreenShort 74
 {
 	Game Hexen
+	Radius 14
+	Height 62
+	+Solid
 	states
 	{
 	Spawn:
 		STT4 A -1
 		Stop
 	}
-	Radius 14
-	Height 62
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleBlueShort 76
 {
 	Game Hexen
+	Radius 14
+	Height 62
+	+Solid
 	states
 	{
 	Spawn:
 		STT5 A -1
 		Stop
 	}
-	Radius 14
-	Height 62
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleStripeTall 8044
 {
 	Game Hexen
+	Radius 14
+	Height 108
+	+Solid
 	states
 	{
 	Spawn:
 		GAR1 A -1
 		Stop
 	}
-	Radius 14
-	Height 108
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleDarkRedTall 8045
 {
 	Game Hexen
+	Radius 14
+	Height 108
+	+Solid
 	states
 	{
 	Spawn:
 		GAR2 A -1
 		Stop
 	}
-	Radius 14
-	Height 108
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleRedTall 8046
 {
 	Game Hexen
+	Radius 14
+	Height 108
+	+Solid
 	states
 	{
 	Spawn:
 		GAR3 A -1
 		Stop
 	}
-	Radius 14
-	Height 108
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleTanTall 8047
 {
 	Game Hexen
+	Radius 14
+	Height 108
+	+Solid
 	states
 	{
 	Spawn:
 		GAR4 A -1
 		Stop
 	}
-	Radius 14
-	Height 108
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleRustTall 8048
 {
 	Game Hexen
+	Radius 14
+	Height 108
+	+Solid
 	states
 	{
 	Spawn:
 		GAR5 A -1
 		Stop
 	}
-	Radius 14
-	Height 108
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleDarkRedShort 8049
 {
 	Game Hexen
+	Radius 14
+	Height 62
+	+Solid
 	states
 	{
 	Spawn:
 		GAR6 A -1
 		Stop
 	}
-	Radius 14
-	Height 62
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleRedShort 8050
 {
 	Game Hexen
+	Radius 14
+	Height 62
+	+Solid
 	states
 	{
 	Spawn:
 		GAR7 A -1
 		Stop
 	}
-	Radius 14
-	Height 62
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleTanShort 8051
 {
 	Game Hexen
+	Radius 14
+	Height 62
+	+Solid
 	states
 	{
 	Spawn:
 		GAR8 A -1
 		Stop
 	}
-	Radius 14
-	Height 62
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStatueGargoyleRustShort 8052
 {
 	Game Hexen
+	Radius 14
+	Height 62
+	+Solid
 	states
 	{
 	Spawn:
 		GAR9 A -1
 		Stop
 	}
-	Radius 14
-	Height 62
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZBannerTattered 77
 {
 	Game Hexen
+	Radius 8
+	Height 120
+	+Solid
 	states
 	{
 	Spawn:
 		BNR1 A -1
 		Stop
 	}
-	Radius 8
-	Height 120
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalactiteIceLarge 89
 {
 	Game Hexen
+	Radius 8
+	Height 66
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		ICT1 A -1
 		Stop
 	}
-	Radius 8
-	Height 66
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZStalactiteIceMedium 90
 {
 	Game Hexen
+	Radius 5
+	Height 50
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		ICT2 A -1
 		Stop
 	}
-	Radius 5
-	Height 50
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZStalactiteIceSmall 91
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		ICT3 A -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZStalactiteIceTiny 92
 {
 	Game Hexen
+	Radius 4
+	Height 8
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		ICT4 A -1
 		Stop
 	}
-	Radius 4
-	Height 8
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZStalagmiteIceLarge 93
 {
 	Game Hexen
+	Radius 8
+	Height 66
+	+Solid
 	states
 	{
 	Spawn:
 		ICM1 A -1
 		Stop
 	}
-	Radius 8
-	Height 66
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalagmiteIceMedium 94
 {
 	Game Hexen
+	Radius 5
+	Height 50
+	+Solid
 	states
 	{
 	Spawn:
 		ICM2 A -1
 		Stop
 	}
-	Radius 5
-	Height 50
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalagmiteIceSmall 95
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+Solid
 	states
 	{
 	Spawn:
 		ICM3 A -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStalagmiteIceTiny 96
 {
 	Game Hexen
+	Radius 4
+	Height 8
+	+Solid
 	states
 	{
 	Spawn:
 		ICM4 A -1
 		Stop
 	}
-	Radius 4
-	Height 8
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZRockBrown1 97
 {
 	Game Hexen
+	Radius 17
+	Height 72
+	+Solid
 	states
 	{
 	Spawn:
 		RKBL A -1
 		Stop
 	}
-	Radius 17
-	Height 72
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZRockBrown2 98
 {
 	Game Hexen
+	Radius 15
+	Height 50
+	+Solid
 	states
 	{
 	Spawn:
 		RKBS A -1
 		Stop
 	}
-	Radius 15
-	Height 50
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZRockBlack 99
 {
 	Game Hexen
+	Radius 20
+	Height 40
+	+Solid
 	states
 	{
 	Spawn:
 		RKBK A -1
 		Stop
 	}
-	Radius 20
-	Height 40
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -891,380 +892,383 @@ actor ZRubble3 102
 actor ZVasePillar 103
 {
 	Game Hexen
+	Radius 12
+	Height 54
+	+Solid
 	states
 	{
 	Spawn:
 		VASE A -1
 		Stop
 	}
-	Radius 12
-	Height 54
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZCorpseLynched 108
 {
 	Game Hexen
+	Radius 11
+	Height 95
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CPS4 A -1
 		Stop
 	}
-	Radius 11
-	Height 95
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZBarrel 8100
 {
 	Game Hexen
+	Radius 15
+	Height 32
+	+Solid
 	states
 	{
 	Spawn:
 		ZBAR A -1
 		Stop
 	}
-	Radius 15
-	Height 32
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZBucket 8103
 {
 	Game Hexen
+	Radius 8
+	Height 72
+	+Solid
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		BCKT A -1
 		Stop
 	}
-	Radius 8
-	Height 72
-	+Solid
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZIronMaiden 8067
 {
 	Game Hexen
+	Radius 12
+	Height 60
+	+Solid
 	states
 	{
 	Spawn:
 		IRON A -1
 		Stop
 	}
-	Radius 12
-	Height 60
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZChainBit32 8071
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHNS A -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZChainBit64 8072
 {
 	Game Hexen
+	Radius 4
+	Height 64
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHNS B -1
 		Stop
 	}
-	Radius 4
-	Height 64
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZChainEndHearth 8073
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHNS C -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZChainEndHook1 8074
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHNS D -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZChainEndHook2 8075
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHNS E -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZChainEndSpike 8076
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHNS F -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZChainEndSkull 8077
 {
 	Game Hexen
+	Radius 4
+	Height 32
+	+NoBlockmap
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CHNS G -1
 		Stop
 	}
-	Radius 4
-	Height 32
-	+NoBlockmap
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor TableShit1 8500
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST1 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit2 8501
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST2 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit3 8502
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST3 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit4 8503
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST4 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit5 8504
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST5 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit6 8505
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST6 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit7 8506
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST7 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit8 8507
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST8 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit9 8508
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST9 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor TableShit10 8509
 {
 	Game Hexen
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		TST0 A -1
 		Stop
 	}
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor ZChandelier 17
 {
 	Game Hexen
+	Radius 20
+	Height 60
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CDLR ABC 4
 		Loop
 	}
-	Radius 20
-	Height 60
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZChandelierUnlit 8063
 {
 	Game Hexen
+	Radius 20
+	Height 60
+	+SpawnCeiling
+	+NoGravity
 	states
 	{
 	Spawn:
 		CDLR D -1
 		Stop
 	}
-	Radius 20
-	Height 60
-	+SpawnCeiling
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor ZCandle 119
 {
 	Game Hexen
+	+NoBlockmap
+	+NoGravity
 	states
 	{
 	Spawn:
 		CNDL ABC 4 Bright
 		Loop
 	}
-	+NoBlockmap
-	+NoGravity
 }
 
 //------------------------------------------------------------------------------
 actor FireThing 8060
 {
 	Game Hexen
+	Radius 5
+	Height 10
+	+Solid
 	states
 	{
 	Spawn:
@@ -1279,129 +1283,126 @@ actor FireThing 8060
 		FSKL I 4 Bright
 		Loop
 	}
-	Radius 5
-	Height 10
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor BrassTorch 8061
 {
 	Game Hexen
+	Radius 6
+	Height 35
+	+Solid
 	states
 	{
 	Spawn:
 		BRTR ABCDEFGHIJKLM 4 Bright
 		Loop
 	}
-	Radius 6
-	Height 35
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZBlueCandle 8066
 {
 	Game Hexen
+	Radius 20
+	Height 16
+	+NoBlockmap
 	states
 	{
 	Spawn:
 		BCAN ABCDE 5 Bright
 		Loop
 	}
-	Radius 20
-	Height 16
-	+NoBlockmap
 }
 
 //------------------------------------------------------------------------------
 actor ZTreeDead 24
 {
 	Game Hexen
+	Radius 10
+	Height 96
+	+Solid
 	states
 	{
 	Spawn:
 		ZTRE A -1
 		Stop
 	}
-	Radius 10
-	Height 96
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTree 25
 {
 	Game Hexen
+	Radius 15
+	Height 128
+	+Solid
 	states
 	{
 	Spawn:
 		ZTRE A -1
 		Stop
 	}
-	Radius 15
-	Height 128
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTreeSwamp150 26
 {
 	Game Hexen
+	Radius 10
+	Height 150
+	+Solid
 	states
 	{
 	Spawn:
 		TRES A -1
 		Stop
 	}
-	Radius 10
-	Height 150
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTreeSwamp120 27
 {
 	Game Hexen
+	Radius 10
+	Height 120
+	+Solid
 	states
 	{
 	Spawn:
 		TRE3 A -1
 		Stop
 	}
-	Radius 10
-	Height 120
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStumpBurned 28
 {
 	Game Hexen
+	Radius 12
+	Height 20
+	+Solid
 	states
 	{
 	Spawn:
 		STM1 A -1
 		Stop
 	}
-	Radius 12
-	Height 20
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZStumpBare 29
 {
 	Game Hexen
+	Radius 12
+	Height 20
+	+Solid
 	states
 	{
 	Spawn:
 		STM2 A -1
 		Stop
 	}
-	Radius 12
-	Height 20
-	+Solid
 }
 
 //------------------------------------------------------------------------------
@@ -1432,81 +1433,85 @@ actor ZStumpSwamp2 38
 actor ZTreeLarge1 78
 {
 	Game Hexen
+	Radius 15
+	Height 180
+	+Solid
 	states
 	{
 	Spawn:
 		TRE4 A -1
 		Stop
 	}
-	Radius 15
-	Height 180
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTreeLarge2 79
 {
 	Game Hexen
+	Radius 15
+	Height 180
+	+Solid
 	states
 	{
 	Spawn:
 		TRE5 A -1
 		Stop
 	}
-	Radius 15
-	Height 180
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTreeGnarled1 80
 {
 	Game Hexen
+	Radius 22
+	Height 100
+	+Solid
 	states
 	{
 	Spawn:
 		TRE6 A -1
 		Stop
 	}
-	Radius 22
-	Height 100
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZTreeGnarled2 87
 {
 	Game Hexen
+	Radius 22
+	Height 100
+	+Solid
 	states
 	{
 	Spawn:
 		TRE7 A -1
 		Stop
 	}
-	Radius 22
-	Height 100
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor ZLog 88
 {
 	Game Hexen
+	Radius 20
+	Height 25
+	+Solid
 	states
 	{
 	Spawn:
 		LOGG A -1
 		Stop
 	}
-	Radius 20
-	Height 25
-	+Solid
 }
 
 //------------------------------------------------------------------------------
 actor TeleSmoke 140
 {
 	Game Hexen
+	RenderStyle Translucent
+	Alpha 0.666
+	+NoBlockmap
+	+NoGravity
 	states
 	{
 	Spawn:
@@ -1538,8 +1543,4 @@ actor TeleSmoke 140
 		TSMK Z 3
 		Loop
 	}
-	RenderStyle Translucent
-	Alpha 0.666
-	+NoBlockmap
-	+NoGravity
 }
