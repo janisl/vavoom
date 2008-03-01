@@ -1024,6 +1024,10 @@ static void ParseClass(VScriptParser* sc)
 	{
 		sc->Error("Class not found");
 	}
+	if (Class == ActorClass)
+	{
+		Class = ScriptedEntityClass;
+	}
 	//	I don't care about parent class name because in Vavoom it can be
 	// different
 	sc->Expect("extends");
