@@ -1,9 +1,238 @@
 class Actor extends Thinker
 	native
 {
+	//
+	//	Monster AI
+	//
+	//A_Look
+	//A_Look2
+	//A_LookEx
+	//A_TurretLook
+	//A_Wander
+	//A_Chase
+	//A_FastChase
+	//A_VileChase
+	//A_ExtChase
+	//A_FaceTarget
+	//A_Die
+	//A_CentaurDefend
+	//A_AlertMonsters
+	//A_ClearTarget
+	//A_ClearSoundTarget
+	//A_KillMaster
+	//A_KillChildren
+	//A_SentinelBob
+	//A_Burst
+
+	//
+	//	Generic monster attacks
+	//
+	//A_CustomMissile
+	//A_CustomBulletAttack
+	//A_CustomRailgun
+	//A_CustomMeleeAttack
+	//A_CustomComboAttack
+	//A_MeleeAttack
+	//A_MissileAttack
+	//A_ComboAttack
+	//A_BasicAttack
+	//A_BulletAttack
+	//A_MonsterRail
+	//A_Explode
+	//A_RadiusThrust
+	//A_Detonate
+	//A_ThrowGrenade
+
+	//
+	//	Freeze death functions
+	//
+	//A_FreezeDeath
+	//A_GenericFreezeDeath
+	//A_FreezeDeathChunks
+	//A_IceGuyDie
+
+	//
+	//	Sound functions
+	//
+	//A_PlaySound
+	//A_PlaySoundEx
+	//A_PlayWeaponSound
 	action native A_ActiveSound();
+	//A_LoopActiveSound
+	//A_FLoopActiveSound (deprecated)
+	//A_StopSound
+	//A_StopSoundEx
 	action native A_Pain();
 	action native A_Scream();
-	action native A_NoBlocking();
+	//A_XScream
+	//A_VileStart
+	//A_BrainPain
+	//A_BrainAwake
+
+	//
+	//	Special actions
+	//
+	//A_BossDeath
+	//A_KeenDie
+	//A_BrainDie
+	//A_GetHurt
+	//A_KlaxonBlare
 	action native A_CheckTerrain();
+	//A_Print
+	//A_SetBlend
+	//A_CheckSight
+	//A_CheckFloor
+	//A_CheckPlayerDone
+	//A_SkullPop
+
+	//
+	//	Spawn functions
+	//
+	//A_TossGib
+	//A_SpawnDebris
+	//A_SpawnItem
+	//A_SpawnItemEx
+
+	//
+	//	State jumps
+	//
+	//A_Jump
+	//A_JumpIf
+	//A_JumpIfCloser
+	//A_JumpIfHealthLower
+	//A_JumpIfInventory
+	//A_JumpIfInTargetInventory
+	//A_JumpIfNoAmmo
+	//A_JumpIfTargetInLOS
+
+	//
+	//	Flags and appearance
+	//
+	//A_ChangeFlag
+	//A_SetFloorClip
+	//A_UnSetFloorClip
+	//A_HideThing
+	//A_UnHideThing
+	//A_SetInvulnerable
+	//A_UnSetInvulnerable
+	//A_SetReflective
+	//A_UnSetReflective
+	//A_SetReflectiveInvulnerable
+	//A_UnSetReflectiveInvulnerable
+	//A_SetShootable
+	//A_UnSetShootable
+	//A_NoGravity
+	//A_Gravity
+	//A_LowGravity
+	action native A_NoBlocking();
+	//A_Fall
+	//A_SetSolid
+	//A_UnsetSolid
+	//A_SetFloat
+	//A_UnsetFloat
+	//A_ScreamAndUnblock
+	//A_ActiveAndUnblock
+	//A_SetShadow
+	//A_ClearShadow
+	//A_SetTranslucent
+	//A_FadeIn
+	//A_FadeOut
+	//A_QueueCorpse
+	//A_DeQueueCorpse
+
+	//
+	//	Missile movement
+	//
+	//A_SeekerMissile
+	//A_Tracer
+	//A_Tracer2
+	//A_Fire
+	//A_BishopMissileWeave
+	//A_CStaffMissileSlither
+	//A_Countdown
+	//A_CountdownArg
+	//A_Stop
+
+	//
+	//	Inventory functions
+	//
+	//A_GiveInventory
+	//A_GiveToTarget
+	//A_TakeInventory
+	//A_TakeFromTarget
+	//A_DropInventory
+	//A_SelectWeapon
+
+	//
+	//	Weapon functions
+	//
+	//A_WeaponReady
+	//A_Lower
+	//A_Raise
+	//A_ReFire
+	//A_GunFlash
+	//A_CheckReload
+	//A_Light
+	//A_Light0
+	//A_Light1
+	//A_Light2
+	//A_LightInverse
+	//A_Recoil
+
+	//
+	//	Weapon attack functions
+	//
+	//A_Punch
+	//A_Saw
+	//A_CustomPunch
+	//A_FireBullets
+	//A_FireCustomMissile
+	//A_RailAttack
+	//A_FireAssaultGun
+
+	//
+	//	Original Doom/Strife monster attacks
+	//
+	//A_PosAttack
+	//A_SPosAttack
+	//A_CPosAttack
+	//A_CPosRefire
+	//A_SpidRefire
+	//A_TroopAttack
+	//A_SargAttack
+	//A_HeadAttack
+	//A_BruisAttack
+	//A_SkullAttack
+	//A_BspiAttack
+	//A_CyberAttack
+	//A_PainAttack
+	//A_DualPainAttack
+	//A_PainDie
+	//A_SkelFist
+	//A_SkelMissile
+	//A_FatAttack1
+	//A_FatAttack2
+	//A_FatAttack3
+	//A_VileTarget
+	//A_VileAttack
+	//A_BrainSpit
+	//A_SpawnFly
+	//A_SpawnSound
+	//A_BrainScream
+	//A_BrainExplode
+	//A_Mushroom
+	//A_M_Saw
+	//A_SentinelRefire
+
+	//
+	//	Monster specific functions for Doom
+	//
+	//A_Hoof
+	//A_Metal
+	//A_BabyMetal
+	//A_FatRaise
+	//A_SkelWhoosh
+	//A_StartFire
+	//A_FireCrackle
+	//A_BFGSpray
 }
