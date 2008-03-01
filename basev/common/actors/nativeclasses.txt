@@ -38,7 +38,7 @@ class Actor extends Thinker
 	//A_BasicAttack
 	//A_BulletAttack
 	//A_MonsterRail
-	//A_Explode
+	action native A_Explode(optional eval int damage, optional eval int distance, optional evanot bool hurtsource);
 	//A_RadiusThrust
 	//A_Detonate
 	//A_ThrowGrenade
@@ -54,7 +54,7 @@ class Actor extends Thinker
 	//
 	//	Sound functions
 	//
-	//A_PlaySound
+	action native A_PlaySound(string soundname);
 	//A_PlaySoundEx
 	//A_PlayWeaponSound
 	action native A_ActiveSound();

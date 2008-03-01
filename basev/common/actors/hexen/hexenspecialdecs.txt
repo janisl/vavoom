@@ -1,0 +1,298 @@
+//------------------------------------------------------------------------------
+actor ZWingedStatueNoSkull : SwitchingDecoration 9011
+{
+	Game Hexen
+	Radius 10
+	Height 62
+	+Solid
+	states
+	{
+	Spawn:
+		STWN A -1
+		Stop
+	Active:
+		STWN B -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZGemPedestal : SwitchingDecoration 9012
+{
+	Game Hexen
+	Radius 10
+	Height 40
+	+Solid
+	states
+	{
+	Spawn:
+		GMPD A -1
+		Stop
+	Active:
+		GMPD B -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZTwinedTorch : SwitchableDecoration 116
+{
+	Game Hexen
+	Radius 10
+	Height 64
+	+Solid
+	states
+	{
+	Active:
+		TWTR A 0 Bright A_PlaySound("Ignite")
+	Spawn:
+		TWTR ABCDEFGH 4 Bright
+		Loop
+	Inactive:
+		TWTR I -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZTwinedTorchUnlit : ZTwinedTorch 117
+{
+	Game Hexen
+	states
+	{
+	Spawn:
+		Goto Super::Inactive
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZWallTorch : SwitchableDecoration 54
+{
+	Game Hexen
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Active:
+		WLTR A 0 Bright A_PlaySound("Ignite")
+	Spawn:
+		WLTR ABCDEFGH 5 Bright
+		Loop
+	Inactive:
+		WLTR I -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZWallTorchUnlit : ZWallTorch 55
+{
+	Game Hexen
+	states
+	{
+	Spawn:
+		Goto Super::Inactive
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZFireBull : SwitchableDecoration 8042
+{
+	Game Hexen
+	Radius 20
+	Height 80
+	+Solid
+	states
+	{
+	Active:
+		FBUL I 4 Bright A_PlaySound("Ignite")
+		FBUL J 4 Bright
+	Spawn:
+		FBUL ABCDEFG 4 Bright
+		Loop
+	Inactive:
+		FBUL JI 4 Bright
+		FBUL H -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZFireBullUnlit : ZFireBull 8043
+{
+	Game Hexen
+	states
+	{
+	Spawn:
+		Goto Super::Inactive+2
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZCauldron : SwitchableDecoration 8069
+{
+	Game Hexen
+	Radius 12
+	Height 26
+	+Solid
+	states
+	{
+	Active:
+		CDRN B 0 Bright A_PlaySound("Ignite")
+	Spawn:
+		CDRN BCDEFGH 4 Bright
+		Loop
+	Inactive:
+		CDRN A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZCauldronUnlit : ZCauldron 8070
+{
+	Game Hexen
+	states
+	{
+	Spawn:
+		Goto Super::Inactive
+	}
+}
+
+//------------------------------------------------------------------------------
+actor TreeDestructible 8062
+{
+	Game Hexen
+	Health 70
+	Radius 15
+	Height 180
+	DeathHeight 24
+	BurnHeight 24
+	Mass 99999
+	+Solid
+	+Shootable
+	+NoBlood
+	PainSound "TreeExplode"
+	DeathSound "TreeBreak"
+	states
+	{
+	Spawn:
+		TRDT A -1
+		Stop
+	Death:
+		TRDT B 5
+		TRDT C 5 A_Scream
+		TRDT DEF 5
+		TRDT G -1
+		Stop
+	Burn:
+		TRDT H 5 Bright A_Pain
+		TRDT IJKL 5 Bright
+		TRDT M 5 Bright A_Explode(10, 128)
+		TRDT N 5 Bright
+		TRDT OP 5
+		TRDT Q -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZShrub1 8101
+{
+	Game Hexen
+	Health 20
+	Radius 8
+	Height 24
+	Mass 99999
+	+Solid
+	+Shootable
+	+NoBlood
+	DeathSound "TreeExplode"
+	states
+	{
+	Spawn:
+		SHB1 A -1
+		Stop
+	Death.Fire:
+		SHB1 B 7 Bright
+		SHB1 C 6 Bright A_Scream
+		SHB1 D 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZShrub2 8102
+{
+	Game Hexen
+	Health 10
+	Radius 16
+	Height 40
+	Mass 99999
+	+Solid
+	+Shootable
+	+NoBlood
+	DeathSound "TreeExplode"
+	states
+	{
+	Spawn:
+		SHB2 A -1
+		Stop
+	Death.Fire:
+		SHB2 B 7 Bright
+		SHB2 C 6 Bright A_Scream
+		SHB2 D 5 Bright A_Explode(30, 64)
+		SHB2 E 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZXmasTree 8068
+{
+	Game Hexen
+	Health 20
+	Radius 11
+	Height 130
+	Mass 99999
+	+Solid
+	+Shootable
+	+NoBlood
+	DeathSound "TreeExplode"
+	states
+	{
+	Spawn:
+		XMAS A -1
+		Stop
+	Death.Fire:
+		XMAS B 6 Bright
+		XMAS C 6 Bright A_Scream
+		XMAS D 5 Bright
+		XMAS E 5 Bright A_Explode(30, 64)
+		XMAS F 5 Bright
+		XMAS G 4 Bright
+		XMAS H 5
+		XMAS I 4 A_NoBlocking
+		XMAS J 4
+		XMAS K -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HWaterDrip
+{
+	Game Hexen
+	SpawnID 95
+	Mass 1
+	Gravity 0.125
+	+Missile
+	+NoTeleport
+	DeathSound "Drip"
+	states
+	{
+	Spawn:
+		HWAT A 5
+		Loop
+	}
+}

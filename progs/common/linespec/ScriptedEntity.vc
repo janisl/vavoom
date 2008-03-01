@@ -575,6 +575,17 @@ final void A_FaceTarget()
 
 //==========================================================================
 //
+//  A_PlaySound
+//
+//==========================================================================
+
+final void A_PlaySound(string Sound)
+{
+	PlaySound(StrToName(Sound), CHAN_BODY);
+}
+
+//==========================================================================
+//
 //  A_Pain
 //
 //==========================================================================
@@ -835,25 +846,15 @@ final void A_BeShadowyFoe()
 
 //==========================================================================
 //
-//  A_Explode
+//  DoExplode
 //
 //  Handles a bunch of exploding things.
 //
 //==========================================================================
 
-final void A_Explode()
+final void DoExplode(int damage, float distance, bool damageSelf)
 {
-	int			damage;
-	float		distance;
-	byte		damageSelf;
 	int			i;
-
-	damage = 128;
-	distance = 128.0;
-	damageSelf = true;
-
-	PreExplode();
-	GetExplodeParms(damage, distance, damageSelf);
 
 	RadiusAttack(Target, damage, distance, damageSelf);
 	if (Origin.z <= FloorZ + distance)
@@ -882,6 +883,30 @@ final void A_Explode()
 	//  Clear old dynamic light and trail effects
 	bDynamicLight = false;
 	bLeaveTrail = false;
+}
+
+//==========================================================================
+//
+//  A_Explode
+//
+//  Handles a bunch of exploding things.
+//
+//==========================================================================
+
+final void A_Explode()
+{
+	int			damage;
+	float		distance;
+	byte		damageSelf;
+
+	damage = 128;
+	distance = 128.0;
+	damageSelf = true;
+
+	PreExplode();
+	GetExplodeParms(damage, distance, damageSelf);
+
+	DoExplode(damage, distance, damageSelf);
 }
 
 //==========================================================================
@@ -910,7 +935,6 @@ final void A_ExplodeParms()
 	int			damage;
 	float		distance;
 	byte		damageSelf;
-	int			i;
 
 	damage = ExplosionDamage;
 	distance = itof(ExplosionRadius);
@@ -925,33 +949,35 @@ final void A_ExplodeParms()
 		distance = itof(damage);
 	}
 
-	RadiusAttack(Target, damage, distance, damageSelf);
-	if (Origin.z <= FloorZ + distance)
+	DoExplode(damage, distance, damageSelf);
+}
+
+//==========================================================================
+//
+//  decorate_A_Explode
+//
+//==========================================================================
+
+final void decorate_A_Explode(optional int damage, optional int distance,
+	optional bool damageSelf)
+{
+	if (specified_damage)
 	{
-		HitFloorType();
+		if (!damage)
+			damage = 128;
+		if (!distance)
+			distance = 128;
+		if (!specified_damageSelf)
+			damageSelf = true;
+	}
+	else
+	{
+		damage = ExplosionDamage;
+		distance = ExplosionRadius;
+		damageSelf = !bExplosionDontHurtSelf;
 	}
 
-	if (bExplodeParticles)
-	{
-		//  Spawn explosion effects - dynamic light and particles
-		for (i = 0; i < MAXPLAYERS; i++)
-		{
-			if (!Level.Game.Players[i])
-				continue;
-			if (!Level.Game.Players[i].bSpawned)
-				continue;
-			PlayerEx(Level.Game.Players[i]).ClientParticleExplosion(
-				DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
-		}
-	}
-	else if (ExplodeEffect)
-	{
-		SendExplosion(ExplodeEffect, DLightRadius, Origin);
-	}
-
-	//  Clear old dynamic light and trail effects
-	bDynamicLight = false;
-	bLeaveTrail = false;
+	DoExplode(damage, itof(distance), damageSelf);
 }
 
 //==========================================================================

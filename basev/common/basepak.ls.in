@@ -43,6 +43,7 @@ actors/nativeclasses.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/nativeclasses.txt
 actors/doom/doomdecorations.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomdecorations.txt
 actors/heretic/hereticdecorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticdecorations.txt
 actors/hexen/hexendecorations.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexendecorations.txt
+actors/hexen/hexenspecialdecs.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenspecialdecs.txt
 actors/strife/strifestuff.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifestuff.txt
 
 //	Effect scripts
