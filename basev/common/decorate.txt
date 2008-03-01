@@ -6,5 +6,6 @@
 
 #include "actors/hexen/hexendecorations.txt"
 #include "actors/hexen/hexenspecialdecs.txt"
+#include "actors/hexen/flame.txt"
 
 #include "actors/strife/strifestuff.txt"

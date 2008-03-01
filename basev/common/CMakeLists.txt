@@ -17,6 +17,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/nativeclasses.txt
 		actors/doom/doomdecorations.txt
 		actors/heretic/hereticdecorations.txt
+		actors/hexen/flame.txt
 		actors/hexen/hexendecorations.txt
 		actors/hexen/hexenspecialdecs.txt
 		actors/strife/strifestuff.txt

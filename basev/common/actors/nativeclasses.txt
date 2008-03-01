@@ -111,8 +111,8 @@ class Actor extends Thinker
 	//A_ChangeFlag
 	//A_SetFloorClip
 	//A_UnSetFloorClip
-	//A_HideThing
-	//A_UnHideThing
+	action native A_HideThing();
+	action native A_UnHideThing();
 	//A_SetInvulnerable
 	//A_UnSetInvulnerable
 	//A_SetReflective
@@ -150,7 +150,7 @@ class Actor extends Thinker
 	//A_BishopMissileWeave
 	//A_CStaffMissileSlither
 	//A_Countdown
-	//A_CountdownArg
+	action native A_CountdownArg(eval int argnum);
 	//A_Stop
 
 	//
