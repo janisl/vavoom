@@ -329,8 +329,8 @@ class LightBrownFluorescent
 
 class LightGoldFluorescent
 {
-	static_light LightGoldFluorescent
-	frame LITG { light LightGoldFluorescent }
+	static_light LightBrownFluorescent
+	frame LITG { light LightBrownFluorescent }
 }
 
 //------------------------------------------------------------------------------
