@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class ClientGameShared : ClientGameBase;
+class ClientGameShared : LineSpecialClientGame
+	abstract;
 
 enum
 {

@@ -23,25 +23,20 @@
 //**
 //**************************************************************************
 
-#include "MenuScreenMain.vc"
-#include "MenuScreenSinglePlayer.vc"
-#include "MenuChoiceEpisode.vc"
-#include "MenuScreenEpisode.vc"
-#include "MenuScreenSkill.vc"
-#include "MenuScreenMultiplayer.vc"
-#include "MenuScreenNewNetGame.vc"
-#include "MenuScreenPlayerSetup.vc"
-#include "MenuScreenOptions.vc"
-#include "MenuScreenControls2.vc"
-#include "MenuScreenGameplayOptions.vc"
-#include "MenuScreenHelp.vc"
-#include "MenuScreenQuit.vc"
+class Gold10 : Coin
+	game(GAME_Strife)
+	__mobjinfo__(138);
 
-#include "ConSlideshow1.vc"
-#include "ConSlideshow2.vc"
+states
+{
+Spawn:
+	CRED A -1
+	Stop
+}
 
-#include "TitleScreen.vc"
-#include "StatusBarScreen.vc"
-#include "IntermissionScreen.vc"
-#include "FinaleScreen.vc"
-#include "ClientGame.vc"
+defaultproperties
+{
+	ConversationID = 169;
+	PickupMessage = "$txt_10gold";
+	Amount = 10;
+}

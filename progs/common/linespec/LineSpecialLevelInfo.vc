@@ -78,6 +78,12 @@ bool			bPuffSpawned;
 int				ExtPlayersBase;
 string			Lock103Message;
 
+EntityEx		CurrentSpeaker;
+EntityEx		CurrentSpeakingTo;
+float			OldSpeakerAngle;
+int				CurrentSpeechIndex;
+bool			ConversationSlideshow;
+
 //==========================================================================
 //
 //  SpawnSpecials
@@ -6103,6 +6109,299 @@ final bool CheckLockDef(LockDef* Lock, EntityEx User)
 	return true;
 }
 
+//**************************************************************************
+//
+//	CONVERSATION STUFF
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	StartConversation
+//
+//==========================================================================
+
+bool StartConversation(EntityEx User, EntityEx UseOn)
+{
+	int SpeechNum;
+
+	if (Game.netgame)
+	{
+		return false;
+	}
+	if (!User || !User.bIsPlayer || User.Health <= 0)
+	{
+		return false;
+	}
+	if (!UseOn || UseOn.Health <= 0)
+	{
+		return false;
+	}
+	if (UseOn.bInCombat)
+	{
+		//	This dude is too busy to talk right now.
+		return false;
+	}
+	if (!UseOn.ConversationID)
+	{
+		return false;
+	}
+	SpeechNum = UseOn.GetSpeech();
+	if (SpeechNum)
+	{
+		CurrentSpeaker = UseOn;
+		CurrentSpeakingTo = User;
+		OldSpeakerAngle = UseOn.Angles.yaw;
+		UseOn.Angles.yaw = atan2(User.Origin.y - UseOn.Origin.y,
+			User.Origin.x - UseOn.Origin.x);
+		User.PlaySound('misc/chat', CHAN_VOICE);
+		StartSpeech(SpeechNum);
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	StartSpeech
+//
+//==========================================================================
+
+final void StartSpeech(int SpeechNum)
+{
+	RogueConSpeech *Speech;
+	bool conJumped;
+
+	do
+	{
+		conJumped = false;
+		if (!SpeechNum)
+		{
+			StopSpeech();
+			return;
+		}
+		if (SpeechNum < 0)
+		{
+			Speech = &XLevel.GenericSpeeches[-SpeechNum - 1];
+		}
+		else
+		{
+			Speech = &XLevel.LevelSpeeches[SpeechNum - 1];
+		}
+		if (Speech->JumpToConv &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem1, 1) != -2 &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem2, 1) != -2 &&
+			CheckForNeededItem(CurrentSpeakingTo, Speech->CheckItem3, 1) != -2)
+		{
+			CurrentSpeaker.CurrentSpeech = Speech->JumpToConv;
+			SpeechNum = CurrentSpeaker.GetSpeech();
+			conJumped = true;
+		}
+	}
+	while (conJumped);
+	CurrentSpeechIndex = SpeechNum;
+
+	PlayerEx(CurrentSpeakingTo.Player).ClientSpeech(CurrentSpeaker, SpeechNum);
+}
+
+//==========================================================================
+//
+//	GetClassFromID
+//
+//==========================================================================
+
+final class<EntityEx> GetClassFromID(int ID)
+{
+	class Cls;
+	foreach (AllClasses(EntityEx, Cls))
+	{
+		if (class<EntityEx>(Cls).default.ConversationID == ID)
+		{
+			return class<EntityEx>(Cls);
+		}
+	}
+	if (ID)
+	{
+		print("Unknown item %d", ID);
+	}
+	return none;
+}
+
+//==========================================================================
+//
+//	CheckForNeededItem
+//
+//==========================================================================
+
+final int CheckForNeededItem(EntityEx A, int ID, int Amount)
+{
+	int i;
+
+	if (!ID)
+	{
+		return -1;
+	}
+	//	Get class ID.
+	class<EntityEx> CID = GetClassFromID(ID);
+	//	Check inventory items.
+	if (class<Inventory>(CID) && class<Inventory>(CID).default.bInvBar)
+	{
+		Inventory Item = A.FindInventory(class<Inventory>(CID));
+		return !Item || Item.Amount < Amount ? -2 : 0;
+	}
+	//	Check keys.
+	Inventory Item = A.FindInventory(class<Inventory>(CID));
+	if (Item)
+	{
+		return -1;
+	}
+	return -2;
+}
+
+//==========================================================================
+//
+//	StopSpeech
+//
+//==========================================================================
+
+final void StopSpeech()
+{
+	CurrentSpeaker.Angles.yaw = OldSpeakerAngle;
+	CurrentSpeaker = none;
+	CurrentSpeakingTo = none;
+	CurrentSpeechIndex = 0;
+}
+
+//==========================================================================
+//
+//	ConChoiceImpulse
+//
+//==========================================================================
+
+final void ConChoiceImpulse(int ChoiceNum)
+{
+	RogueConSpeech *Speech;
+	RogueConChoice *Choice;
+	int SpeechNum;
+	int Item1;
+	int Item2;
+	int Item3;
+	class<EntityEx> ItemType;
+	Inventory Item;
+	bool GaveItem;
+
+	if (ConversationSlideshow)
+	{
+		//	Resume conversation after slideshow.
+		StartSpeech(CurrentSpeaker.GetSpeech());
+		ConversationSlideshow = false;
+		return;
+	}
+	if (!CurrentSpeaker || !CurrentSpeechIndex)
+	{
+		return;
+	}
+	if (!ChoiceNum)
+	{
+		StopSpeech();
+		return;
+	}
+	if (CurrentSpeechIndex < 0)
+	{
+		Speech = &XLevel.GenericSpeeches[-CurrentSpeechIndex - 1];
+	}
+	else
+	{
+		Speech = &XLevel.LevelSpeeches[CurrentSpeechIndex - 1];
+	}
+	Choice = &Speech->Choices[ChoiceNum - 1];
+	//	Check if player has needed items.
+	Item1 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem1, Choice->NeedAmount1);
+	Item2 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem2, Choice->NeedAmount2);
+	Item3 = CheckForNeededItem(CurrentSpeakingTo, Choice->NeedItem3, Choice->NeedAmount3);
+	if (Item1 == -2 || Item2 == -2 || Item3 == -2)
+	{
+		CurrentSpeakingTo.Player.cprint(Choice->TextNo);
+		StopSpeech();
+		return;
+	}
+	GaveItem = true;
+	if (Choice->GiveItem > 0)
+	{
+		ItemType = GetClassFromID(Choice->GiveItem);
+		if (ItemType)
+		{
+			Item = Inventory(Spawn(ItemType,,,, false));
+			GaveItem = Item.TryPickup(CurrentSpeakingTo);
+			if (!GaveItem)
+			{
+				Item.Destroy();
+			}
+		}
+	}
+	if (GaveItem)
+	{
+		if (Item1 != -1)
+		{
+			Item = CurrentSpeakingTo.FindInventory(
+				class<Inventory>(GetClassFromID(Choice->NeedItem1)));
+			Item.Amount -= Choice->NeedAmount1;
+			if (Item.Amount <= 0)
+			{
+				Item.Destroy();
+			}
+		}
+		if (Item2 != -1)
+		{
+			Item = CurrentSpeakingTo.FindInventory(
+				class<Inventory>(GetClassFromID(Choice->NeedItem2)));
+			Item.Amount -= Choice->NeedAmount2;
+			if (Item.Amount <= 0)
+			{
+				Item.Destroy();
+			}
+		}
+		if (Item3 != -1)
+		{
+			Item = CurrentSpeakingTo.FindInventory(
+				class<Inventory>(GetClassFromID(Choice->NeedItem3)));
+			Item.Amount -= Choice->NeedAmount3;
+			if (Item.Amount <= 0)
+			{
+				Item.Destroy();
+			}
+		}
+	}
+	if (Choice->Objectives)
+	{
+		PlayerEx(CurrentSpeakingTo.Player).SetObjectives(Choice->Objectives);
+	}
+	if (!GaveItem)
+	{
+		CurrentSpeakingTo.Player.cprint(Choice->TextNo);
+	}
+	else if (strcmp(Choice->TextOK, "") && strcmp(Choice->TextOK, "_"))
+	{
+		CurrentSpeakingTo.Player.cprint(Choice->TextOK);
+	}
+	if (Choice->Next < 0)
+	{
+		CurrentSpeaker.CurrentSpeech = -Choice->Next;
+		if (!ConversationSlideshow)
+		{
+			StartSpeech(CurrentSpeaker.GetSpeech());
+		}
+	}
+	else
+	{
+		if (Choice->Next)
+		{
+			CurrentSpeaker.CurrentSpeech = Choice->Next;
+		}
+		StopSpeech();
+		ConversationSlideshow = false;
+	}
+}
+
 //==========================================================================
 //
 //  GetDefaultDoorSound
@@ -6112,17 +6411,6 @@ final bool CheckLockDef(LockDef* Lock, EntityEx User)
 name GetDefaultDoorSound(sector_t* Sector)
 {
 	return DefaultDoorSound;
-}
-
-//==========================================================================
-//
-//  GetClassFromID
-//
-//==========================================================================
-
-class<EntityEx> GetClassFromID(int Type)
-{
-	return none;
 }
 
 //==========================================================================
@@ -6167,17 +6455,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 class<Inventory> GetDehackedItemType(EntityEx Ent)
 {
 	return none;
-}
-
-//==========================================================================
-//
-//  StartConversation
-//
-//==========================================================================
-
-bool StartConversation(EntityEx Speaker, EntityEx SpeakingTo)
-{
-	return false;
 }
 
 //==========================================================================

@@ -103,14 +103,20 @@ int				NoRunHealth;
 
 int				PoisonCount;	// screen flash for poison damage
 
+int				Objectives;
+
 replication
 {
 	reliable if (!bIsClient)
-		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash;
+		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash,
+		Objectives;
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,
 		ClientSparkParticles;
+
+	reliable if (!bIsClient)
+		ClientSpeech;
 }
 
 //==========================================================================
@@ -1696,6 +1702,37 @@ void PreTravel()
 {
 	SavedInventory = EntityEx(MO).Inventory;
 	EntityEx(MO).Inventory = none;
+}
+
+//==========================================================================
+//
+//  ClientSpeech
+//
+//==========================================================================
+
+void ClientSpeech(EntityEx Speaker, int SpeechNum)
+{
+	LineSpecialClientGame(ClGame).StartSpeech(Speaker, SpeechNum);
+}
+
+//==========================================================================
+//
+//	SetObjectives
+//
+//==========================================================================
+
+final void SetObjectives(int NewObjectives)
+{
+	if (!NewObjectives)
+	{
+		return;
+	}
+	//	Check if log text lump exists in wad file.
+	if (!WadLumpPresent(StrToName(va("log%d", NewObjectives))))
+	{
+		return;
+	}
+	Objectives = NewObjectives;
 }
 
 //==========================================================================

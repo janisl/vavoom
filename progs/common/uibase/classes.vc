@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-import engine;
+import linespec;
 
 #include "ClientGameShared.vc"
 #include "MenuChoice.vc"
@@ -60,6 +60,9 @@ import engine;
 #include "MenuScreenAdvancedVideoOptions.vc"
 #include "MenuScreenVideoOptions.vc"
 #include "MenuScreenSoundOptions.vc"
+
+#include "ConDlgChoice.vc"
+#include "ConDialog.vc"
 
 #include "StatusBarShared.vc"
 #include "HUDMessage.vc"

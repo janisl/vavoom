@@ -176,3 +176,10 @@ enum
 #include "BloodSplashBase.vc"
 #include "SlimeChunk.vc"
 #include "SlimeSplash.vc"
+
+#include "LineSpecialClientGame.vc"
+
+#include "Coin.vc"
+#include "Gold10.vc"
+#include "Gold25.vc"
+#include "Gold50.vc"

@@ -36,19 +36,16 @@ const int
 	INITIAL_AMMO	= 50,
 	GOD_HEALTH		= 100;
 
-int Objectives;
-
 int Accuracy;
 int Stamina;
 
 replication
 {
 	reliable if (!bIsClient)
-		Accuracy, Stamina, Objectives;
+		Accuracy, Stamina;
 
 	reliable if (!bIsClient)
-		ClientSpeech, ClientVoice, ClientSlideshow1, ClientSlideshow2,
-		ClientFinaleType;
+		ClientVoice, ClientSlideshow1, ClientSlideshow2, ClientFinaleType;
 }
 
 //==========================================================================
@@ -658,26 +655,6 @@ EntityEx InvThrow()
 		Item.Velocity = Dir * 128.0;
 	}
 	return Item;
-}
-
-//==========================================================================
-//
-//	SetObjectives
-//
-//==========================================================================
-
-void SetObjectives(int NewObjectives)
-{
-	if (!NewObjectives)
-	{
-		return;
-	}
-	//	Check if log text lump exists in wad file.
-	if (!WadLumpPresent(StrToName(va("log%d", NewObjectives))))
-	{
-		return;
-	}
-	Objectives = NewObjectives;
 }
 
 //==========================================================================
@@ -1294,17 +1271,6 @@ int P_Massacre()
 void Cheat_KillAll()
 {
 	cprint("%d MONSTERS KILLED", P_Massacre());
-}
-
-//==========================================================================
-//
-//  ClientSpeech
-//
-//==========================================================================
-
-void ClientSpeech(int SpeechNum)
-{
-	ClientGameBaseEx(ClGame).StartSpeech(SpeechNum);
 }
 
 //==========================================================================

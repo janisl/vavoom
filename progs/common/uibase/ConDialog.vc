@@ -54,7 +54,7 @@ string				CancelTexts[3];
 //
 //==========================================================================
 
-void SetSpeech(int SpeechNum)
+void SetSpeech(EntityEx Speaker, int SpeechNum)
 {
 	int i;
 	RogueConSpeech *Speech;
@@ -79,48 +79,21 @@ void SetSpeech(int SpeechNum)
 		BackPic = R_RegisterPic(Speech->BackPic);
 	}
 
+	//	Get name of the speaker.
 	if (Speech->Name)
 	{
 		SpeakerName = Speech->Name;
 	}
-	else
+	else if (Speaker)
 	{
-		// FIXME: Make this some other way
-		switch (Speech->SpeakerID)
-		{
-		case 38:
-		case 39:
-		case 40:
-		case 41:
-		case 42:
-			SpeakerName = "Beggar";
-			break;
-		case 43:
-		case 44:
-		case 45:
-		case 46:
-		case 47:
-		case 48:
-			SpeakerName = "Rebel";
-			break;
-		case 53:
-		case 54:
-		case 55:
-		case 56:
-		case 57:
-		case 58:
-		case 59:
-		case 60:
-			SpeakerName = "Acolyte";
-			break;
-		case 62:
-			SpeakerName = "Templar";
-			break;
-		}
-
-		if (!SpeakerName)
-			SpeakerName = "Person";
+		SpeakerName = Speaker.StrifeName;
 	}
+	if (!SpeakerName)
+	{
+		SpeakerName = "Person";
+	}
+
+	//	Split speach text.
 	SetFont('smallfont');
 	SpeechText = SplitTextWithNewlines(Speech->Text, 640 - 128);
 
@@ -202,7 +175,7 @@ void OnDraw()
 	if (bNeedGold)
 	{
 		Inventory Item;
-		Item = EntityEx(StatusBarScreen(ClGame.GSBar).cl.MO).FindInventory(Coin);
+		Item = EntityEx(StatusBarShared(ClGame.GSBar).ClGame.cl.MO).FindInventory(Coin);
 
 		DrawPic(480, 510 - NumChoices * 22,  R_RegisterPic('i_coin'));
 		DrawText(510, 510 - NumChoices * 22, va("%d", Item ? Item.Amount : 0), CR_WHITE);

@@ -23,19 +23,19 @@
 //**
 //**************************************************************************
 
-class Gold50 : Coin
-	__mobjinfo__(140);
+class LineSpecialClientGame : ClientGameBase
+	abstract;
 
-states
+//==========================================================================
+//
+//	StartSpeech
+//
+//==========================================================================
+
+void StartSpeech(EntityEx Speaker, int SpeechNum)
 {
-Spawn:
-	CHST A -1
-	Stop
 }
 
 defaultproperties
 {
-	ConversationID = 171;
-	PickupMessage = "$txt_50gold";
-	Amount = 50;
 }
