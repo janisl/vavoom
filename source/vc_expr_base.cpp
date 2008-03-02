@@ -388,3 +388,14 @@ bool VExpression::AddDropResult()
 {
 	return false;
 }
+
+//==========================================================================
+//
+//	VExpression::IsDecorateSingleName
+//
+//==========================================================================
+
+bool VExpression::IsDecorateSingleName() const
+{
+	return false;
+}

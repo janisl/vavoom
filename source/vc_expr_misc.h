@@ -191,3 +191,20 @@ public:
 	vint32 GetIntConst() const;
 	float GetFloatConst() const;
 };
+
+//==========================================================================
+//
+//	VDecorateSingleName
+//
+//==========================================================================
+
+class VDecorateSingleName : public VExpression
+{
+public:
+	VStr			Name;
+
+	VDecorateSingleName(const VStr&, const TLocation&);
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+	bool IsDecorateSingleName() const;
+};

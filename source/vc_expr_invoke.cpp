@@ -501,6 +501,11 @@ VInvocation::~VInvocation()
 VExpression* VInvocation::DoResolve(VEmitContext& ec)
 {
 	guard(VInvocation::DoResolve);
+	if (ec.Package->Name == NAME_decorate)
+	{
+		CheckDecorateParams(ec);
+	}
+
 	//	Resolve arguments
 	bool ArgsOk = true;
 	for (int i = 0; i < NumArgs; i++)
@@ -681,47 +686,6 @@ void VInvocation::CheckParams(VEmitContext& ec)
 					}
 					Args[i]->RequestAddressOf();
 				}
-				else if (ec.Package->Name == NAME_decorate)
-				{
-					switch (Func->ParamTypes[i].Type)
-					{
-					case TYPE_Name:
-					{
-						VStr Val = Args[i]->GetStrConst(ec.Package);
-						TLocation ALoc = Args[i]->Loc;
-						delete Args[i];
-						Args[i] = new VNameLiteral(*Val, ALoc);
-						break;
-					}
-
-					case TYPE_Class:
-					{
-						VStr CName = Args[i]->GetStrConst(ec.Package);
-						TLocation ALoc = Args[i]->Loc;
-						VClass* Cls = VClass::FindClassNoCase(*CName);
-						if (!Cls)
-						{
-							ParseError(ALoc, "No such class %s", *CName);
-						}
-						else if (Func->ParamTypes[i].Class &&
-							!Cls->IsChildOf(Func->ParamTypes[i].Class))
-						{
-							ParseError(ALoc, "Class %s is not a descendant of %s",
-								*CName, Func->ParamTypes[i].Class->GetName());
-						}
-						else
-						{
-							delete Args[i];
-							Args[i] = new VClassConstant(Cls, ALoc);
-						}
-						break;
-					}
-
-					default:
-						Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
-						break;
-					}
-				}
 				else
 				{
 					Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
@@ -760,6 +724,91 @@ void VInvocation::CheckParams(VEmitContext& ec)
 	if (Func->Flags & FUNC_VarArgs)
 	{
 		Args[NumArgs++] = new VIntLiteral(argsize / 4 - num_needed_params, Loc);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VInvocation::CheckDecorateParams
+//
+//==========================================================================
+
+void VInvocation::CheckDecorateParams(VEmitContext& ec)
+{
+	guard(VInvocation::CheckDecorateParams);
+	int max_params;
+	int num_needed_params = Func->NumParams;
+	if (Func->Flags & FUNC_VarArgs)
+	{
+		max_params = VMethod::MAX_PARAMS - 1;
+	}
+	else
+	{
+		max_params = Func->NumParams;
+	}
+
+	for (int i = 0; i < NumArgs; i++)
+	{
+		if (i >= num_needed_params)
+		{
+			continue;
+		}
+		if (!Args[i])
+		{
+			continue;
+		}
+		switch (Func->ParamTypes[i].Type)
+		{
+		case TYPE_Name:
+			if (Args[i]->IsDecorateSingleName())
+			{
+				VDecorateSingleName* E = (VDecorateSingleName*)Args[i];
+				Args[i] = new VNameLiteral(*E->Name, E->Loc);
+				delete E;
+			}
+			else if (Args[i]->IsStrConst())
+			{
+				VStr Val = Args[i]->GetStrConst(ec.Package);
+				TLocation ALoc = Args[i]->Loc;
+				delete Args[i];
+				Args[i] = new VNameLiteral(*Val, ALoc);
+			}
+			break;
+
+		case TYPE_String:
+			if (Args[i]->IsDecorateSingleName())
+			{
+				VDecorateSingleName* E = (VDecorateSingleName*)Args[i];
+				Args[i] = new VStringLiteral(E->Name, E->Loc);
+				delete E;
+			}
+			break;
+
+		case TYPE_Class:
+			if (Args[i]->IsStrConst())
+			{
+				VStr CName = Args[i]->GetStrConst(ec.Package);
+				TLocation ALoc = Args[i]->Loc;
+				VClass* Cls = VClass::FindClassNoCase(*CName);
+				if (!Cls)
+				{
+					ParseError(ALoc, "No such class %s", *CName);
+				}
+				else if (Func->ParamTypes[i].Class &&
+					!Cls->IsChildOf(Func->ParamTypes[i].Class))
+				{
+					ParseError(ALoc, "Class %s is not a descendant of %s",
+						*CName, Func->ParamTypes[i].Class->GetName());
+				}
+				else
+				{
+					delete Args[i];
+					Args[i] = new VClassConstant(Cls, ALoc);
+				}
+			}
+			break;
+		}
 	}
 	unguard;
 }

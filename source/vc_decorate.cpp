@@ -56,22 +56,6 @@ struct VClassFixup
 
 //==========================================================================
 //
-//	VDecorateSingleName
-//
-//==========================================================================
-
-class VDecorateSingleName : public VExpression
-{
-public:
-	VName			Name;
-
-	VDecorateSingleName(VName, const TLocation&);
-	VExpression* DoResolve(VEmitContext&);
-	void Emit(VEmitContext&);
-};
-
-//==========================================================================
-//
 //	VDecorateInvocation
 //
 //==========================================================================
@@ -134,7 +118,8 @@ static VMethod*			FuncA_ExplodeParms;
 //
 //==========================================================================
 
-VDecorateSingleName::VDecorateSingleName(VName AName, const TLocation& ALoc)
+VDecorateSingleName::VDecorateSingleName(const VStr& AName,
+	const TLocation& ALoc)
 : VExpression(ALoc)
 , Name(AName)
 {
@@ -149,8 +134,9 @@ VDecorateSingleName::VDecorateSingleName(VName AName, const TLocation& ALoc)
 VExpression* VDecorateSingleName::DoResolve(VEmitContext& ec)
 {
 	guard(VDecorateSingleName::DoResolve);
+	VName CheckName = *Name.ToLower();
 	//	Look only for constants defined in DECORATE scripts.
-	VConstant* Const = ec.Package->FindConstant(Name);
+	VConstant* Const = ec.Package->FindConstant(CheckName);
 	if (Const)
 	{
 		VExpression* e = new VConstantValue(Const, Loc);
@@ -173,6 +159,17 @@ VExpression* VDecorateSingleName::DoResolve(VEmitContext& ec)
 void VDecorateSingleName::Emit(VEmitContext&)
 {
 	ParseError(Loc, "Should not happen");
+}
+
+//==========================================================================
+//
+//	VDecorateSingleName::IsDecorateSingleName
+//
+//==========================================================================
+
+bool VDecorateSingleName::IsDecorateSingleName() const
+{
+	return true;
 }
 
 //==========================================================================
@@ -497,9 +494,9 @@ static VExpression* ParseExpressionPriority0(VScriptParser* sc)
 		VStr Name = sc->String;
 		if (sc->Check("("))
 		{
-			return ParseMethodCall(sc, *Name, l);
+			return ParseMethodCall(sc, *Name.ToLower(), l);
 		}
-		return new VDecorateSingleName(*sc->String.ToLower(), l);
+		return new VDecorateSingleName(Name, l);
 	}
 
 	return NULL;

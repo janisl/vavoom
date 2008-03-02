@@ -107,4 +107,5 @@ public:
 	VExpression* DoResolve(VEmitContext&);
 	void Emit(VEmitContext&);
 	void CheckParams(VEmitContext&);
+	void CheckDecorateParams(VEmitContext&);
 };

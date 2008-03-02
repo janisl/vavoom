@@ -63,4 +63,5 @@ public:
 	virtual bool IsDynArraySetNum() const;
 	virtual VExpression* CreateTypeExprCopy();
 	virtual bool AddDropResult();
+	virtual bool IsDecorateSingleName() const;
 };
