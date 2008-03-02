@@ -1229,11 +1229,11 @@ final void A_CheckTerrain()
 
 final void A_CountdownArg(int Index)
 {
-	if (Index <= 0 || Index > 5)
+	if (Index < 0 || Index >= 5)
 	{
 		return;
 	}
-	if (!Args[Index - 1]--)
+	if (!Args[Index]--)
 	{
 		if (bMissile)
 		{
