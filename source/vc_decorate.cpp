@@ -3243,6 +3243,9 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		{
 			if (!Prop.ICmp("Health.LowMessage"))
 			{
+				sc->ExpectNumber();
+				SetClassFieldInt(Class, "LowHealth", sc->Number);
+				sc->Expect(",");
 				sc->ExpectString();
 				SetClassFieldStr(Class, "LowHealthMessage", sc->String);
 				continue;
