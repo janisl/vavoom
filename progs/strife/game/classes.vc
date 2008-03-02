@@ -70,9 +70,6 @@
 #include "Bang4Cloud.vc"
 
 #include "StrifeKey.vc"
-#include "MedPatch.vc"
-#include "MedicalKit.vc"
-#include "SurgeryKit.vc"
 #include "DegninOre.vc"
 #include "BaseKey.vc"
 #include "GovsKey.vc"

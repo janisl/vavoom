@@ -300,7 +300,7 @@ bool CheckItem(Actor item)
 			return false;
 	}
 
-	if (item.Class == CrystalVial && (botmo.Health >= Player::MAXHEALTH))
+	if (Health(item) && (botmo.Health >= Player::MAXHEALTH))
 		return false;
 	BasicArmor Armor = BasicArmor(botmo.FindInventory(BasicArmor));
 	if (BasicArmorPickup(item) && (Armor.Amount >= BasicArmorPickup(item).SaveAmount))

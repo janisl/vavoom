@@ -1,0 +1,50 @@
+//------------------------------------------------------------------------------
+actor HealthBonus : Health 2014
+{
+	Game Doom
+	SpawnID 152
+	RenderStyle Translucent
+	Alpha 0.9
+	Inventory.Amount 1
+	Inventory.MaxAmount 200
+	Inventory.PickupMessage "$goththbonus"
+	+CountItem
+	+Inventory.AlwaysPickup
+	states
+	{
+	Spawn:
+		BON1 ABCDCB 6
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Stimpack : Health 2011
+{
+	Game Doom
+	SpawnID 23
+	Inventory.Amount 10
+	Inventory.PickupMessage "$gotstim"
+	states
+	{
+	Spawn:
+		STIM A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Medikit : Health 2012
+{
+	Game Doom
+	SpawnID 24
+	Inventory.Amount 25
+	Inventory.PickupMessage "$gotmedikit"
+	Health.LowMessage 10, "$gotmedineed"
+	states
+	{
+	Spawn:
+		MEDI A -1
+		Stop
+	}
+}

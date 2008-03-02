@@ -2506,20 +2506,20 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		//
 		if (!Prop.ICmp("Health"))
 		{
-			sc->ExpectNumber();
+			sc->ExpectNumberWithSign();
 			SetClassFieldInt(Class, "Health", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("GibHealth"))
 		{
-			sc->ExpectNumber();
+			sc->ExpectNumberWithSign();
 			SetClassFieldInt(Class, "GibsHealth", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("WoundHealth"))
 		{
 			//FIXME
-			sc->ExpectNumber();
+			sc->ExpectNumberWithSign();
 			GCon->Logf("Property WoundHealth in %s is not yet supported", Class->GetName());
 			continue;
 		}

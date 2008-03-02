@@ -1,0 +1,59 @@
+//------------------------------------------------------------------------------
+actor MedPatch : HealthPickup 2011
+{
+	Game Strife
+	ConversationID 125, 121, 124
+	Health 10
+	Mass 20
+	Tag "Med_patch"
+	Inventory.PickupMessage "$txt_medpatch"
+	Inventory.MaxAmount 20
+	Inventory.Icon "i_stmp"
+	+FloorClip
+	states
+	{
+	Spawn:
+		STMP A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MedicalKit : HealthPickup 2012
+{
+	Game Strife
+	ConversationID 126, 122, 125
+	Health 25
+	Mass 15
+	Tag "Medical_kit"
+	Inventory.PickupMessage "$txt_medicalkit"
+	Inventory.MaxAmount 15
+	Inventory.Icon "i_mdkt"
+	+FloorClip
+	states
+	{
+	Spawn:
+		MDKT A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SurgeryKit : HealthPickup 83
+{
+	Game Strife
+	ConversationID 127, 123, 126
+	Health -100
+	Mass 5
+	Tag "Surgery_Kit"	// "full_health" in the Teaser
+	Inventory.PickupMessage "$txt_surgerykit"
+	Inventory.MaxAmount 5
+	Inventory.Icon "i_full"
+	+FloorClip
+	states
+	{
+	Spawn:
+		FULL AB 35
+		Loop
+	}
+}

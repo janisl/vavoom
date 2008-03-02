@@ -76,7 +76,7 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 
 void NoBlockingSet()
 {
-	DropItem(ArtiSuperHealth, 0, 0.19921875);
+	DropItem(class<Inventory>(FindClass('ArtiSuperHealth')), 0, 0.19921875);
 	DropItem(PhoenixRodAmmo, 10, 0.328125);
 }
 

@@ -1533,7 +1533,7 @@ void Cheat_Gimme()
 				continue;
 			}
 			if (MainGameInfo(Level.Game).shareware &&
-				(Cls == ArtiSuperHealth || Cls == ArtiTeleport))
+				(Cls == class<Inventory>(FindClass('ArtiSuperHealth')) || Cls == ArtiTeleport))
 			{
 				continue;
 			}

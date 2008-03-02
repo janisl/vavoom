@@ -131,7 +131,7 @@ bool CheckShareware(class<EntityEx> moClass)
 			moClass == PhoenixRodHefty ||
 			moClass == MaceAmmo ||
 			moClass == MaceHefty ||
-			moClass == ArtiSuperHealth ||
+			moClass == class<Inventory>(FindClass('ArtiSuperHealth')) ||
 			moClass == ArtiTeleport ||
 			moClass == FindClass('EnchantedShield') ||
 			moClass == Mace)

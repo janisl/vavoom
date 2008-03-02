@@ -1,0 +1,39 @@
+//------------------------------------------------------------------------------
+actor ArtiHealth : HealthPickup 82
+{
+	Game Raven
+	SpawnID 24
+	Health 25
+	Inventory.PickupSound "misc/p_pkup"
+	Inventory.PickupMessage "$txt_artihealth"
+	Inventory.Icon "artiptn2"
+	+CountItem
+	+FloatBob
+	+Inventory.PickupFlash
+	states
+	{
+	Spawn:
+		PTN2 ABC 4
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ArtiSuperHealth : HealthPickup 32
+{
+	Game Raven
+	SpawnID 25
+	Health 100
+	Inventory.PickupSound "misc/p_pkup"
+	Inventory.PickupMessage "$txt_artisuperhealth"
+	Inventory.Icon "artisphl"
+	+CountItem
+	+FloatBob
+	+Inventory.PickupFlash
+	states
+	{
+	Spawn:
+		SPHL A 350
+		Loop
+	}
+}

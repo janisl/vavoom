@@ -310,8 +310,7 @@ bool CheckItem(Actor item)
 	}
 
 	BasicArmor Armor = BasicArmor(botmo.FindInventory(BasicArmor));
-	if ((item.Class == Stimpack || item.Class == Medikit) &&
-		(botmo.Health >= Player::MAXHEALTH))
+	if (Health(item) && (botmo.Health >= Player::MAXHEALTH))
 		return false;
 	if ((item.Class == Soulsphere || item.Class == Megasphere) &&
 		(botmo.Health >= 2 * Player::MAXHEALTH))

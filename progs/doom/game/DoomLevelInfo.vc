@@ -156,10 +156,11 @@ class<Inventory> GetDehackedItemType(EntityEx Item)
 	{
 		return class<Inventory>(FindClass('BlueArmor'));
 	}
-		// bonus items
+
+	// bonus items
 	if (SpriteName == 'bon1')
 	{
-		return HealthBonus;
+		return class<Inventory>(FindClass('HealthBonus'));
 	}
 	if (SpriteName == 'bon2')
 	{
@@ -203,11 +204,11 @@ class<Inventory> GetDehackedItemType(EntityEx Item)
 	// medikits, heals
 	if (SpriteName == 'stim')
 	{
-		return Stimpack;
+		return class<Inventory>(FindClass('Stimpack'));
 	}
 	if (SpriteName == 'medi')
 	{
-		return Medikit;
+		return class<Inventory>(FindClass('Medikit'));
 	}
 
 	// power ups
