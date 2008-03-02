@@ -90,12 +90,6 @@ typedef void (*builtin_t)();
 
 // TYPES -------------------------------------------------------------------
 
-enum
-{
-	CLASS_Native		= 0x01,
-	CLASS_Abstract		= 0x02,
-};
-
 enum ECompileError
 {
 	ERR_NONE,

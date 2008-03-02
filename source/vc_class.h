@@ -26,6 +26,17 @@
 enum ENativeConstructor		{EC_NativeConstructor};
 
 //
+// Flags describing a class.
+//
+enum EClassFlags
+{
+	// Base flags.
+	CLASS_Native				= 0x0001,
+	CLASS_Abstract				= 0x0002,	//	Class is abstract and can't be instantiated directly.
+	CLASS_SkipSuperStateLabels	= 0x0004,	//	Don't copy state labels
+};
+
+//
 // Flags describing an class instance.
 //
 enum EClassObjectFlags

@@ -89,16 +89,6 @@ public: \
 // ENUMERATIONS ------------------------------------------------------------
 
 //
-// Flags describing a class.
-//
-enum EClassFlags
-{
-	// Base flags.
-	CLASS_Native	= 0x0001,
-	CLASS_Abstract	= 0x0002,  // Class is abstract and can't be instantiated directly.
-};
-
-//
 // Flags describing an object instance.
 //
 enum EObjectFlags

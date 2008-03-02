@@ -3003,8 +3003,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("skip_super"))
 		{
-			//FIXME
-			GCon->Logf("Property skip_super in %s is not yet supported", Class->GetName());
+			//	Copy default properties.
+			Class->CopyObject(ActorClass->Defaults, Class->Defaults);
+			//	Copy state labels
+			Class->StateLabels = ActorClass->StateLabels;
+			Class->ClassFlags |= CLASS_SkipSuperStateLabels;
 			continue;
 		}
 		if (!Prop.ICmp("Spawn"))

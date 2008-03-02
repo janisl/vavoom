@@ -1188,7 +1188,6 @@ void VClass::DecorateEmit()
 	{
 		Methods[i]->Emit();
 		Methods[i]->PostLoad();
-		Methods[i]->DumpAsm();
 	}
 
 	//	Calculate indexes of virtual methods.
@@ -1208,7 +1207,7 @@ void VClass::DecorateEmit()
 void VClass::EmitStateLabels()
 {
 	guard(VClass::EmitStateLabels);
-	if (ParentClass)
+	if (ParentClass && !(ClassFlags & CLASS_SkipSuperStateLabels))
 	{
 		StateLabels = ParentClass->StateLabels;
 	}
