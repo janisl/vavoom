@@ -3208,7 +3208,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			if (!Prop.ICmp("Armor.SavePercent"))
 			{
 				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "SavePercent", sc->Float);
+				SetClassFieldFloat(Class, "SavePercent", MID(0, sc->Float, 100) / 100.0);
 				continue;
 			}
 		}
