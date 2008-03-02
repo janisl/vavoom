@@ -3004,7 +3004,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		if (!Prop.ICmp("skip_super"))
 		{
 			//	Copy default properties.
-			Class->CopyObject(ActorClass->Defaults, Class->Defaults);
+			ActorClass->CopyObject(ActorClass->Defaults, Class->Defaults);
 			//	Copy state labels
 			Class->StateLabels = ActorClass->StateLabels;
 			Class->ClassFlags |= CLASS_SkipSuperStateLabels;
