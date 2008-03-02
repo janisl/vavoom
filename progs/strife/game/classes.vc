@@ -74,8 +74,6 @@
 #include "MedicalKit.vc"
 #include "SurgeryKit.vc"
 #include "DegninOre.vc"
-#include "MetalArmor.vc"
-#include "LeatherArmor.vc"
 #include "BaseKey.vc"
 #include "GovsKey.vc"
 #include "Passcard.vc"

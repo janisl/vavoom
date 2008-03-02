@@ -150,11 +150,11 @@ class<Inventory> GetDehackedItemType(EntityEx Item)
 	name SpriteName = GetStateSpriteName(Item.State);
 	if (SpriteName == 'arm1')
 	{
-		return GreenArmor;
+		return class<Inventory>(FindClass('GreenArmor'));
 	}
 	if (SpriteName == 'arm2')
 	{
-		return BlueArmor;
+		return class<Inventory>(FindClass('BlueArmor'));
 	}
 		// bonus items
 	if (SpriteName == 'bon1')
@@ -163,7 +163,7 @@ class<Inventory> GetDehackedItemType(EntityEx Item)
 	}
 	if (SpriteName == 'bon2')
 	{
-		return ArmorBonus;
+		return class<Inventory>(FindClass('ArmorBonus'));
 	}
 	if (SpriteName == 'soul')
 	{

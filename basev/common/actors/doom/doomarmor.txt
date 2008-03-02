@@ -1,0 +1,53 @@
+//------------------------------------------------------------------------------
+actor GreenArmor : BasicArmorPickup 2018
+{
+	Game Doom
+	SpawnID 68
+	Inventory.PickupMessage "$gotarmor"
+	Inventory.Icon "ARM1A0"
+	Armor.SaveAmount 100
+	Armor.SavePercent 33.33333
+	states
+	{
+	Spawn:
+		ARM1 A 6
+		ARM1 B 7 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlueArmor : BasicArmorPickup 2019
+{
+	Game Doom
+	SpawnID 69
+	Inventory.PickupMessage "$gotmega"
+	Inventory.Icon "ARM2A0"
+	Armor.SaveAmount 200
+	Armor.SavePercent 50
+	states
+	{
+	Spawn:
+		ARM2 A 6
+		ARM2 B 6 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ArmorBonus : BasicArmorBonus 2015
+{
+	Game Doom
+	SpawnID 22
+	Inventory.PickupMessage "$gotarmbonus"
+	Inventory.Icon "ARM1A0"
+	Armor.SaveAmount 1
+	Armor.MaxSaveAmount 200
+	+CountItem
+	states
+	{
+	Spawn:
+		BON2 ABCDCB 6
+		Loop
+	}
+}

@@ -1,0 +1,37 @@
+//------------------------------------------------------------------------------
+actor SilverShield : BasicArmorPickup 85
+{
+	Game Heretic
+	SpawnID 68
+	Height 32
+	Inventory.PickupMessage "$txt_itemshield1"
+	Inventory.Icon "SHLDA0"
+	Armor.SaveAmount 100
+	Armor.SavePercent 50
+	+FloatBob
+	states
+	{
+	Spawn:
+		SHLD A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor EnchantedShield : BasicArmorPickup 31
+{
+	Game Heretic
+	SpawnID 69
+	Height 32
+	Inventory.PickupMessage "$txt_itemshield2"
+	Inventory.Icon "SHD2A0"
+	Armor.SaveAmount 200
+	Armor.SavePercent 75
+	+FloatBob
+	states
+	{
+	Spawn:
+		SHD2 A -1
+		Stop
+	}
+}

@@ -122,7 +122,7 @@ void AutoUseHealth(int saveHealth)
 
 void AutoUseArmor()
 {
-	Inventory Item = FindInventory(MetalArmor);
+	Inventory Item = FindInventory(class<Inventory>(FindClass('MetalArmor')));
 	if (Item)
 	{
 		// Use metal armor
@@ -134,7 +134,7 @@ void AutoUseArmor()
 	}
 	else
 	{
-		Item = FindInventory(LeatherArmor);
+		Item = FindInventory(class<Inventory>(FindClass('LeatherArmor')));
 		if (Item)
 		{
 			// Use leather armor

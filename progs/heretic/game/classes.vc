@@ -100,8 +100,6 @@
 #include "BeakPowered.vc"
 
 #include "CrystalVial.vc"
-#include "SilverShield.vc"
-#include "EnchantedShield.vc"
 #include "BagOfHolding.vc"
 #include "SuperMap.vc"
 #include "ArtiInvisibility.vc"

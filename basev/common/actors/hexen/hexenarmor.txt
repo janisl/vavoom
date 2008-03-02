@@ -1,0 +1,71 @@
+//------------------------------------------------------------------------------
+actor MeshArmor : HexenArmor 8005
+{
+	Game Hexen
+	SpawnID 68
+	Height 32
+	Health 0	//	Armor type
+	Inventory.Amount 0
+	Inventory.PickupMessage "$txt_armor1"
+	+NoGravity
+	states
+	{
+	Spawn:
+		AR_1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FalconShield : HexenArmor 8006
+{
+	Game Hexen
+	SpawnID 69
+	Height 32
+	Health 1	//	Armor type
+	Inventory.Amount 0
+	Inventory.PickupMessage "$txt_armor2"
+	+NoGravity
+	states
+	{
+	Spawn:
+		AR_2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PlatinumHelm : HexenArmor 8007
+{
+	Game Hexen
+	SpawnID 70
+	Height 32
+	Health 2	//	Armor type
+	Inventory.Amount 0
+	Inventory.PickupMessage "$txt_armor3"
+	+NoGravity
+	states
+	{
+	Spawn:
+		AR_3 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor AmuletOfWarding : HexenArmor 8008
+{
+	Game Hexen
+	SpawnID 71
+	Height 32
+	Health 3	//	Armor type
+	Inventory.Amount 0
+	Inventory.PickupMessage "$txt_armor4"
+	+NoGravity
+	states
+	{
+	Spawn:
+		AR_4 A -1
+		Stop
+	}
+}

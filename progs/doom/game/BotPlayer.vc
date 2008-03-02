@@ -313,24 +313,13 @@ bool CheckItem(Actor item)
 	if ((item.Class == Stimpack || item.Class == Medikit) &&
 		(botmo.Health >= Player::MAXHEALTH))
 		return false;
-#ifdef DOOM2
 	if ((item.Class == Soulsphere || item.Class == Megasphere) &&
 		(botmo.Health >= 2 * Player::MAXHEALTH))
 		return false;
-#else
-	if (item.Class == Soulsphere && (botmo.Health >= 2 * Player::MAXHEALTH))
+	if (BasicArmorPickup(item) && (Armor.Amount >= BasicArmorPickup(item).SaveAmount))
 		return false;
-#endif
-	if (item.Class == GreenArmor && (Armor.Amount >= 100))
+	if (item.Class == Megasphere && Armor.Amount >= 200)
 		return false;
-#ifdef DOOM2
-	if ((item.Class == BlueArmor || item.Class == Megasphere) &&
-		(Armor.Amount >= 200))
-		return false;
-#else
-	if ((item.Class == BlueArmor) && (Armor.Amount >= 200))
-		return false;
-#endif
 
 	// Guess we're okay
 	return true;

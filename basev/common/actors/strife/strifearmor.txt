@@ -1,0 +1,45 @@
+//------------------------------------------------------------------------------
+actor MetalArmor : BasicArmorPickup 2019
+{
+	Game Strife
+	SpawnID 69
+	ConversationID 129, 125, 128
+	Mass 3
+	Tag "Metal_Armor"
+	Inventory.PickupMessage "$txt_metalarmor"
+	Inventory.MaxAmount 3
+	Inventory.Icon "i_arm1"
+	Armor.SaveAmount 200
+	Armor.SavePercent 50
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		ARM3 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor LeatherArmor : BasicArmorPickup 2018
+{
+	Game Strife
+	SpawnID 68
+	ConversationID 130, 126, 129
+	Mass 5
+	Tag "Leather_Armor"
+	Inventory.PickupMessage "$txt_leatherarmor"
+	Inventory.MaxAmount 5
+	Inventory.Icon "i_arm2"
+	Armor.SaveAmount 100
+	Armor.SavePercent 33.33333
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		ARM4 A -1
+		Stop
+	}
+}

@@ -27,10 +27,7 @@
 #include "Blood.vc"
 #include "TeleportFog.vc"
 
-#include "GreenArmor.vc"
-#include "BlueArmor.vc"
 #include "HealthBonus.vc"
-#include "ArmorBonus.vc"
 #include "DoomKey.vc"
 #include "BlueCard.vc"
 #include "RedCard.vc"

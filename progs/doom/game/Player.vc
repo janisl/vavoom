@@ -1401,11 +1401,11 @@ void Cheat_Gimme()
 	// Armor
 	if (i1 & GIMME_ARMOR)
 	{
-		EntityEx(MO).GiveInventoryType(GreenArmor);
+		EntityEx(MO).GiveInventoryType(class<Inventory>(FindClass('GreenArmor')));
 	}
 	if (i1 & GIMME_ARMOR2)
 	{
-		EntityEx(MO).GiveInventoryType(BlueArmor);
+		EntityEx(MO).GiveInventoryType(class<Inventory>(FindClass('BlueArmor')));
 	}
 	cprint("YOU GOT IT");
 }

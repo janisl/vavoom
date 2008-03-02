@@ -1424,7 +1424,7 @@ void Cheat_Gimme()
 	{
 		int i;
 
-		EntityEx(MO).GiveInventoryType(EnchantedShield);
+		EntityEx(MO).GiveInventoryType(class<Inventory>(FindClass('EnchantedShield')));
 		EntityEx(MO).GiveInventoryType(BagOfHolding);
 		foreach AllClasses(Ammo, Cls)
 		{
