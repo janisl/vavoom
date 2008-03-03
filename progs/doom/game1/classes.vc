@@ -27,13 +27,6 @@
 #include "Blood.vc"
 #include "TeleportFog.vc"
 
-#include "DoomKey.vc"
-#include "BlueCard.vc"
-#include "RedCard.vc"
-#include "YellowCard.vc"
-#include "YellowSkull.vc"
-#include "RedSkull.vc"
-#include "BlueSkull.vc"
 #include "Soulsphere.vc"
 #include "InvulnerabilitySphere.vc"
 #include "Berserk.vc"

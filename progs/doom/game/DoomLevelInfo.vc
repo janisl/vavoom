@@ -178,27 +178,27 @@ class<Inventory> GetDehackedItemType(EntityEx Item)
 	// cards
 	if (SpriteName == 'bkey')
 	{
-		return BlueCard;
+		return class<Inventory>(FindClass('BlueCard'));
 	}
 	if (SpriteName == 'ykey')
 	{
-		return YellowCard;
+		return class<Inventory>(FindClass('YellowCard'));
 	}
 	if (SpriteName == 'rkey')
 	{
-		return RedCard;
+		return class<Inventory>(FindClass('RedCard'));
 	}
 	if (SpriteName == 'bsku')
 	{
-		return BlueSkull;
+		return class<Inventory>(FindClass('BlueSkull'));
 	}
 	if (SpriteName == 'ysku')
 	{
-		return YellowSkull;
+		return class<Inventory>(FindClass('YellowSkull'));
 	}
 	if (SpriteName == 'rsku')
 	{
-		return RedSkull;
+		return class<Inventory>(FindClass('RedSkull'));
 	}
 
 	// medikits, heals

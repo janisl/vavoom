@@ -61,7 +61,7 @@ int pic_armor[2];
 int LoadedLog;
 string LogText;
 
-class<StrifeKey> KeyCID[30];
+class<Key> KeyCID[30];
 
 //==========================================================================
 //
@@ -74,6 +74,34 @@ void StartMap()
 	int i;
 
 	::StartMap();
+
+	KeyCID[0] = class<Key>(FindClass('BaseKey'));
+	KeyCID[1] = class<Key>(FindClass('GovsKey'));
+	KeyCID[2] = class<Key>(FindClass('Passcard'));
+	KeyCID[3] = class<Key>(FindClass('IDBadge'));
+	KeyCID[4] = class<Key>(FindClass('PrisonKey'));
+	KeyCID[5] = class<Key>(FindClass('SeveredHand'));
+	KeyCID[6] = class<Key>(FindClass('Power1Key'));
+	KeyCID[7] = class<Key>(FindClass('Power2Key'));
+	KeyCID[8] = class<Key>(FindClass('GoldKey'));
+	KeyCID[9] = class<Key>(FindClass('Power3Key'));
+	KeyCID[10] = class<Key>(FindClass('IDCard'));
+	KeyCID[11] = class<Key>(FindClass('SilverKey'));
+	KeyCID[12] = class<Key>(FindClass('OracleKey'));
+	KeyCID[13] = class<Key>(FindClass('MilitaryID'));
+	KeyCID[14] = class<Key>(FindClass('OrderKey'));
+	KeyCID[15] = class<Key>(FindClass('WarehouseKey'));
+	KeyCID[16] = class<Key>(FindClass('BrassKey'));
+	KeyCID[17] = class<Key>(FindClass('RedCrystalKey'));
+	KeyCID[18] = class<Key>(FindClass('BlueCrystalKey'));
+	KeyCID[19] = class<Key>(FindClass('ChapelKey'));
+	KeyCID[20] = class<Key>(FindClass('CatacombKey'));
+	KeyCID[21] = class<Key>(FindClass('SecurityKey'));
+	KeyCID[22] = class<Key>(FindClass('CoreKey'));
+	KeyCID[23] = class<Key>(FindClass('MaulerKey'));
+	KeyCID[24] = class<Key>(FindClass('FactoryKey'));
+	KeyCID[25] = class<Key>(FindClass('MineKey'));
+	KeyCID[26] = class<Key>(FindClass('NewKey5'));
 
 	pic_invback = R_RegisterPic('invback');
 	pic_invtop = R_RegisterPic('invtop');
@@ -344,7 +372,7 @@ void SB_DrawMainBar()
 				SetFont('smallfont2');
 				SetTextAlign(hleft, vtop);
 				DrawText(BAR_X + 40 + (i / 5) * 140,
-					BAR_Y + 64 + (i % 5) * 18, StrifeKey(Item).StrifeName);
+					BAR_Y + 64 + (i % 5) * 18, Item.StrifeName);
 			}
 		}
 	}
@@ -494,7 +522,7 @@ void SB_DrawFullscreenStats()
 				SetFont('smallfont2');
 				SetTextAlign(hleft, vtop);
 				DrawText(BAR_X + 40 + (i / 5) * 140,
-					BAR_Y + 104 + (i % 5) * 18, StrifeKey(Item).StrifeName);
+					BAR_Y + 104 + (i % 5) * 18, Item.StrifeName);
 			}
 		}
 	}
@@ -582,31 +610,4 @@ defaultproperties
 	Focusable = true;
 	Width = 640;
 	Height = 480;
-	KeyCID[0] = BaseKey;
-	KeyCID[1] = GovsKey;
-	KeyCID[2] = Passcard;
-	KeyCID[3] = IDBadge;
-	KeyCID[4] = PrisonKey;
-	KeyCID[5] = SeveredHand;
-	KeyCID[6] = Power1Key;
-	KeyCID[7] = Power2Key;
-	KeyCID[8] = GoldKey;
-	KeyCID[9] = Power3Key;
-	KeyCID[10] = IDCard;
-	KeyCID[11] = SilverKey;
-	KeyCID[12] = OracleKey;
-	KeyCID[13] = MilitaryID;
-	KeyCID[14] = OrderKey;
-	KeyCID[15] = WarehouseKey;
-	KeyCID[16] = BrassKey;
-	KeyCID[17] = RedCrystalKey;
-	KeyCID[18] = BlueCrystalKey;
-	KeyCID[19] = ChapelKey;
-	KeyCID[20] = CatacombKey;
-	KeyCID[21] = SecurityKey;
-	KeyCID[22] = CoreKey;
-	KeyCID[23] = MaulerKey;
-	KeyCID[24] = FactoryKey;
-	KeyCID[25] = MineKey;
-	KeyCID[26] = NewKey5;
 }

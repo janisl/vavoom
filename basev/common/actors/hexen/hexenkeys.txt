@@ -1,0 +1,170 @@
+//------------------------------------------------------------------------------
+actor HexenKey : Key
+{
+	Radius 8
+	Height 20
+}
+
+//------------------------------------------------------------------------------
+actor KeySteel : HexenKey 8030
+{
+	Game Hexen
+	SpawnID 85
+	Inventory.PickupMessage "$txt_key_steel"
+	Inventory.Icon "keyslot1"
+	states
+	{
+	Spawn:
+		KEY1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyCave : HexenKey 8031
+{
+	Game Hexen
+	SpawnID 86
+	Inventory.PickupMessage "$txt_key_cave"
+	Inventory.Icon "keyslot2"
+	states
+	{
+	Spawn:
+		KEY2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyAxe : HexenKey 8032
+{
+	Game Hexen
+	SpawnID 87
+	Inventory.PickupMessage "$txt_key_axe"
+	Inventory.Icon "keyslot3"
+	states
+	{
+	Spawn:
+		KEY3 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyFire : HexenKey 8033
+{
+	Game Hexen
+	SpawnID 88
+	Inventory.PickupMessage "$txt_key_fire"
+	Inventory.Icon "keyslot4"
+	states
+	{
+	Spawn:
+		KEY4 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyEmerald : HexenKey 8034
+{
+	Game Hexen
+	SpawnID 89
+	Inventory.PickupMessage "$txt_key_emerald"
+	Inventory.Icon "keyslot5"
+	states
+	{
+	Spawn:
+		KEY5 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyDungeon : HexenKey 8035
+{
+	Game Hexen
+	SpawnID 90
+	Inventory.PickupMessage "$txt_key_dungeon"
+	Inventory.Icon "keyslot6"
+	states
+	{
+	Spawn:
+		KEY6 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeySilver : HexenKey 8036
+{
+	Game Hexen
+	SpawnID 91
+	Inventory.PickupMessage "$txt_key_silver"
+	Inventory.Icon "keyslot7"
+	states
+	{
+	Spawn:
+		KEY7 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyRusted : HexenKey 8037
+{
+	Game Hexen
+	SpawnID 92
+	Inventory.PickupMessage "$txt_key_rusted"
+	Inventory.Icon "keyslot8"
+	states
+	{
+	Spawn:
+		KEY8 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyHorn : HexenKey 8038
+{
+	Game Hexen
+	SpawnID 93
+	Inventory.PickupMessage "$txt_key_horn"
+	Inventory.Icon "keyslot9"
+	states
+	{
+	Spawn:
+		KEY9 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeySwamp : HexenKey 8039
+{
+	Game Hexen
+	SpawnID 94
+	Inventory.PickupMessage "$txt_key_swamp"
+	Inventory.Icon "keyslota"
+	states
+	{
+	Spawn:
+		KEYA A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyCastle : HexenKey 8200
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_key_castle"
+	Inventory.Icon "keyslotb"
+	states
+	{
+	Spawn:
+		KEYB A -1
+		Stop
+	}
+}

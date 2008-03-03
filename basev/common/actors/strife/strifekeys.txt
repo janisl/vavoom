@@ -1,0 +1,459 @@
+//------------------------------------------------------------------------------
+actor StrifeKey : Key
+{
+	+NotDMatch
+	+FloorClip
+}
+
+//------------------------------------------------------------------------------
+actor BaseKey : StrifeKey 230
+{
+	Game Strife
+	ConversationID 133, 129, 132
+	Tag "Base_Key"
+	Inventory.PickupMessage "$txt_basekey"
+	Inventory.Icon "i_fusl"
+	states
+	{
+	Spawn:
+		FUSL A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GovsKey : StrifeKey
+{
+	Game Strife
+	ConversationID 134, 130, 133
+	Tag "Govs_Key"
+	Inventory.PickupMessage "$txt_govskey"
+	Inventory.Icon "i_rebl"
+	states
+	{
+	Spawn:
+		REBL A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Passcard : StrifeKey 185
+{
+	Game Strife
+	ConversationID 135, 131, 134
+	Tag "Passcard"
+	Inventory.PickupMessage "$txt_passcard"
+	Inventory.Icon "i_tpas"
+	states
+	{
+	Spawn:
+		TPAS A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor IDBadge : StrifeKey 184
+{
+	Game Strife
+	ConversationID 136, 132, 135
+	Tag "ID_Badge"
+	Inventory.PickupMessage "$txt_idbadge"
+	Inventory.Icon "i_crd1"
+	states
+	{
+	Spawn:
+		CRD1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PrisonKey : StrifeKey
+{
+	Game Strife
+	ConversationID 137, 133, 136
+	Tag "Prison_Key"
+	Inventory.PickupMessage "$txt_prisonkey"
+	Inventory.Icon "i_pris"
+	Inventory.GiveQuest 11
+	states
+	{
+	Spawn:
+		PRIS A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SeveredHand : StrifeKey 91
+{
+	Game Strife
+	ConversationID 138, 134, 137
+	Tag "Severed_Hand"
+	Inventory.PickupMessage "$txt_severedhand"
+	Inventory.Icon "i_hand"
+	Inventory.GiveQuest 12
+	states
+	{
+	Spawn:
+		HAND A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Power1Key : StrifeKey
+{
+	Game Strife
+	ConversationID 139, 135, 138
+	Tag "Power1_Key"
+	Inventory.PickupMessage "$txt_power1key"
+	Inventory.Icon "i_pwr1"
+	states
+	{
+	Spawn:
+		PWR1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Power2Key : StrifeKey
+{
+	Game Strife
+	ConversationID 140, 136, 139
+	Tag "Power2_Key"
+	Inventory.PickupMessage "$txt_power2key"
+	Inventory.Icon "i_pwr2"
+	states
+	{
+	Spawn:
+		PWR2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Power3Key : StrifeKey
+{
+	Game Strife
+	ConversationID 141, 137, 140
+	Tag "Power3_Key"
+	Inventory.PickupMessage "$txt_power3key"
+	Inventory.Icon "i_pwr3"
+	states
+	{
+	Spawn:
+		PWR3 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldKey : StrifeKey 40
+{
+	Game Strife
+	ConversationID 142, 138, 141
+	Tag "Gold_Key"
+	Inventory.PickupMessage "$txt_goldkey"
+	Inventory.Icon "i_ky1g"
+	states
+	{
+	Spawn:
+		KY1G A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor IDCard : StrifeKey 13
+{
+	Game Strife
+	ConversationID 143, 139, 142
+	Tag "ID_Card"
+	Inventory.PickupMessage "$txt_idcard"
+	Inventory.Icon "i_crd2"
+	states
+	{
+	Spawn:
+		CRD2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SilverKey : StrifeKey 38
+{
+	Game Strife
+	ConversationID 144, 140, 143
+	Tag "Silver_Key"
+	Inventory.PickupMessage "$txt_silverkey"
+	Inventory.Icon "i_ky2s"
+	states
+	{
+	Spawn:
+		KY2S A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor OracleKey : StrifeKey 61
+{
+	Game Strife
+	ConversationID 145, 141, 144
+	Tag "Oracle_Key"
+	Inventory.PickupMessage "$txt_oraclekey"
+	Inventory.Icon "i_orac"
+	states
+	{
+	Spawn:
+		ORAC A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MilitaryID : StrifeKey
+{
+	Game Strife
+	ConversationID 146, 142, 145
+	Tag "Military_ID"
+	Inventory.PickupMessage "$txt_militaryid"
+	Inventory.Icon "i_gyid"
+	states
+	{
+	Spawn:
+		GYID A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor OrderKey : StrifeKey 86
+{
+	Game Strife
+	ConversationID 147, 143, 146
+	Tag "Order_Key"
+	Inventory.PickupMessage "$txt_orderkey"
+	Inventory.Icon "i_fubr"
+	states
+	{
+	Spawn:
+		FUBR A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WarehouseKey : StrifeKey 166
+{
+	Game Strife
+	ConversationID 148, 144, 147
+	Tag "Warehouse_Key"
+	Inventory.PickupMessage "$txt_warehousekey"
+	Inventory.Icon "i_ware"
+	states
+	{
+	Spawn:
+		WARE A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BrassKey : StrifeKey 39
+{
+	Game Strife
+	ConversationID 149, 145, 148
+	Tag "Brass_Key"
+	Inventory.PickupMessage "$txt_brasskey"
+	Inventory.Icon "i_ky3b"
+	states
+	{
+	Spawn:
+		KY3B A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor RedCrystalKey : StrifeKey 192
+{
+	Game Strife
+	ConversationID 150, 146, 149
+	Tag "Red_Crystal_Key"
+	Inventory.PickupMessage "$txt_redcrystal"
+	Inventory.Icon "i_rcry"
+	states
+	{
+	Spawn:
+		RCRY A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlueCrystalKey : StrifeKey 193
+{
+	Game Strife
+	ConversationID 151, 147, 150
+	Tag "Blue_Crystal_Key"
+	Inventory.PickupMessage "$txt_bluecrystal"
+	Inventory.Icon "i_bcry"
+	states
+	{
+	Spawn:
+		BCRY A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ChapelKey : StrifeKey 195
+{
+	Game Strife
+	ConversationID 152, 148, 151
+	Tag "Chapel_Key"
+	Inventory.PickupMessage "$txt_chapelkey"
+	Inventory.Icon "i_chap"
+	states
+	{
+	Spawn:
+		CHAP A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CatacombKey : StrifeKey
+{
+	Game Strife
+	ConversationID 153, 149, 152
+	Tag "Catacomb_Key"
+	Inventory.PickupMessage "$txt_catacombkey"
+	Inventory.Icon "i_tunl"
+	Inventory.GiveQuest 28
+	states
+	{
+	Spawn:
+		TUNL A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SecurityKey : StrifeKey
+{
+	Game Strife
+	ConversationID 154, 150, 153
+	Tag "Security_Key"
+	Inventory.PickupMessage "$txt_securitykey"
+	Inventory.Icon "i_seck"
+	states
+	{
+	Spawn:
+		SECK A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CoreKey : StrifeKey 236
+{
+	Game Strife
+	ConversationID 155, 151, 154
+	Tag "Core_Key"
+	Inventory.PickupMessage "$txt_corekey"
+	Inventory.Icon "i_goid"
+	states
+	{
+	Spawn:
+		GOID A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaulerKey : StrifeKey 233
+{
+	Game Strife
+	ConversationID 156, 152, 155
+	Tag "Mauler_Key"
+	Inventory.PickupMessage "$txt_maulerkey"
+	Inventory.Icon "i_bltk"
+	states
+	{
+	Spawn:
+		BLTK A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FactoryKey : StrifeKey 234
+{
+	Game Strife
+	ConversationID 157, 153, 156
+	Tag "Factory_Key"
+	Inventory.PickupMessage "$txt_factorykey"
+	Inventory.Icon "i_proc"
+	states
+	{
+	Spawn:
+		PROC A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MineKey : StrifeKey 235
+{
+	Game Strife
+	ConversationID 158, 154, 157
+	Tag "Mine_Key"
+	Inventory.PickupMessage "$txt_minekey"
+	Inventory.Icon "i_mine"
+	states
+	{
+	Spawn:
+		MINE A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor NewKey5 : StrifeKey
+{
+	Game Strife
+	ConversationID 159, 155, 158
+	Tag "New_Key5"
+	Inventory.PickupMessage "$txt_newkey5"
+	Inventory.Icon "i_bltk"
+	states
+	{
+	Spawn:
+		BLTK A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor OraclePass : Inventory
+{
+	Game Strife
+	ConversationID 311, 292, 309
+	Tag "Oracle_Pass"
+	Inventory.PickupMessage "$txt_oraclepass"
+	Inventory.Icon "i_otok"
+	Inventory.GiveQuest 18
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		OTOK A -1
+		Stop
+	}
+}

@@ -43,16 +43,20 @@ actors/nativeclasses.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/nativeclasses.txt
 actors/doom/doomarmor.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomarmor.txt
 actors/doom/doomdecorations.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomdecorations.txt
 actors/doom/doomhealth.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomhealth.txt
+actors/doom/doomkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomkeys.txt
 actors/heretic/hereticarmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticarmor.txt
 actors/heretic/hereticdecorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticdecorations.txt
+actors/heretic/heretickeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/heretickeys.txt
 actors/hexen/flame.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/flame.txt
 actors/hexen/hexenarmor.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenarmor.txt
 actors/hexen/hexendecorations.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexendecorations.txt
+actors/hexen/hexenkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenkeys.txt
 actors/hexen/hexenspecialdecs.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenspecialdecs.txt
 actors/raven/ravenartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenartifacts.txt
 actors/raven/ravenhealth.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenhealth.txt
 actors/strife/strifearmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifearmor.txt
 actors/strife/strifeitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeitems.txt
+actors/strife/strifekeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifekeys.txt
 actors/strife/strifestuff.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifestuff.txt
 
 //	Effect scripts

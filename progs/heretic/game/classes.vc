@@ -30,7 +30,6 @@
 #include "Pawn.vc"
 #include "PlayerPawn.vc"
 #include "HereticWeapon.vc"
-#include "HereticKey.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 
@@ -109,9 +108,6 @@
 #include "ArtiTorch.vc"
 #include "ArtiTimeBomb.vc"
 #include "ArtiTeleport.vc"
-#include "KeyGreen.vc"
-#include "KeyBlue.vc"
-#include "KeyYellow.vc"
 #include "GoldWandAmmo.vc"
 #include "GoldWandHefty.vc"
 #include "MaceAmmo.vc"

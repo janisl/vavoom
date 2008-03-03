@@ -1,0 +1,101 @@
+//------------------------------------------------------------------------------
+actor DoomKey : Key
+{
+	+NotDMatch
+}
+
+//------------------------------------------------------------------------------
+actor BlueCard : DoomKey 5
+{
+	Game Doom
+	SpawnID 85
+	Inventory.PickupMessage "$gotbluecard"
+	Inventory.Icon "stkeys0"
+	states
+	{
+	Spawn:
+		BKEY A 10
+		BKEY B 10 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor YellowCard : DoomKey 6
+{
+	Game Doom
+	SpawnID 87
+	Inventory.PickupMessage "$gotyelwcard"
+	Inventory.Icon "stkeys1"
+	states
+	{
+	Spawn:
+		YKEY A 10
+		YKEY B 10 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor RedCard : DoomKey 13
+{
+	Game Doom
+	SpawnID 86
+	Inventory.PickupMessage "$gotredcard"
+	Inventory.Icon "stkeys2"
+	states
+	{
+	Spawn:
+		RKEY A 10
+		RKEY B 10 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlueSkull : DoomKey 40
+{
+	Game Doom
+	SpawnID 90
+	Inventory.PickupMessage "$gotblueskul"
+	Inventory.Icon "stkeys3"
+	states
+	{
+	Spawn:
+		BSKU A 10
+		BSKU B 10 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor YellowSkull : DoomKey 39
+{
+	Game Doom
+	SpawnID 88
+	Inventory.PickupMessage "$gotyelwskul"
+	Inventory.Icon "stkeys4"
+	states
+	{
+	Spawn:
+		YSKU A 10
+		YSKU B 10 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor RedSkull : DoomKey 38
+{
+	Game Doom
+	SpawnID 89
+	Inventory.PickupMessage "$gotredskull"
+	Inventory.Icon "stkeys5"
+	states
+	{
+	Spawn:
+		RSKU A 10
+		RSKU B 10 Bright
+		Loop
+	}
+}

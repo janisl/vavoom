@@ -1,0 +1,47 @@
+//------------------------------------------------------------------------------
+actor HereticKey : Key
+{
+	+NotDMatch
+}
+
+//------------------------------------------------------------------------------
+actor KeyGreen : HereticKey 73
+{
+	Game Heretic
+	SpawnID 86
+	Inventory.PickupMessage "$txt_gotgreenkey"
+	states
+	{
+	Spawn:
+		AKYY ABCDEFGHIJ 3 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyBlue : HereticKey 79
+{
+	Game Heretic
+	SpawnID 85
+	Inventory.PickupMessage "$txt_gotbluekey"
+	states
+	{
+	Spawn:
+		BKYY ABCDEFGHIJ 3 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyYellow : HereticKey 80
+{
+	Game Heretic
+	SpawnID 87
+	Inventory.PickupMessage "$txt_gotyellowkey"
+	states
+	{
+	Spawn:
+		CKYY ABCDEFGHI 3 Bright
+		Loop
+	}
+}
