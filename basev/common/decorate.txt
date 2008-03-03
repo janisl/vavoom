@@ -14,6 +14,7 @@
 
 #include "actors/hexen/hexenarmor.txt"
 #include "actors/hexen/hexenkeys.txt"
+#include "actors/hexen/puzzleitems.txt"
 #include "actors/hexen/hexendecorations.txt"
 #include "actors/hexen/hexenspecialdecs.txt"
 #include "actors/hexen/flame.txt"

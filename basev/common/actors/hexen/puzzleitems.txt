@@ -1,0 +1,263 @@
+//------------------------------------------------------------------------------
+actor PuzzSkull : PuzzleItem 9002
+{
+	Game Hexen
+	SpawnID 76
+	Inventory.PickupMessage "$txt_artipuzzskull"
+	Inventory.Icon "artiskll"
+	PuzzleItem.Number 0
+	states
+	{
+	Spawn:
+		ASKU A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGemBig : PuzzleItem 9003
+{
+	Game Hexen
+	SpawnID 77
+	Inventory.PickupMessage "$txt_artipuzzgembig"
+	Inventory.Icon "artibgem"
+	PuzzleItem.Number 1
+	states
+	{
+	Spawn:
+		ABGM A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGemRed : PuzzleItem 9004
+{
+	Game Hexen
+	SpawnID 78
+	Inventory.PickupMessage "$txt_artipuzzgemred"
+	Inventory.Icon "artigemr"
+	PuzzleItem.Number 2
+	states
+	{
+	Spawn:
+		AGMR A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGemGreen1 : PuzzleItem 9005
+{
+	Game Hexen
+	SpawnID 79
+	Inventory.PickupMessage "$txt_artipuzzgemgreen1"
+	Inventory.Icon "artigemg"
+	PuzzleItem.Number 3
+	states
+	{
+	Spawn:
+		AGMG A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGemGreen2 : PuzzleItem 9009
+{
+	Game Hexen
+	SpawnID 80
+	Inventory.PickupMessage "$txt_artipuzzgemgreen2"
+	Inventory.Icon "artigmg2"
+	PuzzleItem.Number 4
+	states
+	{
+	Spawn:
+		AGG2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGemBlue1 : PuzzleItem 9006
+{
+	Game Hexen
+	SpawnID 81
+	Inventory.PickupMessage "$txt_artipuzzgemblue1"
+	Inventory.Icon "artigemb"
+	PuzzleItem.Number 5
+	states
+	{
+	Spawn:
+		AGMB A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGemBlue2 : PuzzleItem 9010
+{
+	Game Hexen
+	SpawnID 82
+	Inventory.PickupMessage "$txt_artipuzzgemblue2"
+	Inventory.Icon "artigmb2"
+	PuzzleItem.Number 6
+	states
+	{
+	Spawn:
+		AGB2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzBook1 : PuzzleItem 9007
+{
+	Game Hexen
+	SpawnID 83
+	Inventory.PickupMessage "$txt_artipuzzbook1"
+	Inventory.Icon "artibok1"
+	PuzzleItem.Number 7
+	states
+	{
+	Spawn:
+		ABK1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzBook2 : PuzzleItem 9008
+{
+	Game Hexen
+	SpawnID 84
+	Inventory.PickupMessage "$txt_artipuzzbook2"
+	Inventory.Icon "artibok2"
+	PuzzleItem.Number 8
+	states
+	{
+	Spawn:
+		ABK2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzFlameMask : PuzzleItem 9014
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzskull2"
+	Inventory.Icon "artiskl2"
+	PuzzleItem.Number 9
+	states
+	{
+	Spawn:
+		ASK2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzFWeapon : PuzzleItem 9015
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzfweapon"
+	Inventory.Icon "artifwep"
+	PuzzleItem.Number 10
+	states
+	{
+	Spawn:
+		AFWP A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzCWeapon : PuzzleItem 9016
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzcweapon"
+	Inventory.Icon "articwep"
+	PuzzleItem.Number 11
+	states
+	{
+	Spawn:
+		ACWP A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzMWeapon : PuzzleItem 9017
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzmweapon"
+	Inventory.Icon "artimwep"
+	PuzzleItem.Number 12
+	states
+	{
+	Spawn:
+		AMWP A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGear1 : PuzzleItem 9018
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzgear"
+	Inventory.Icon "artigear"
+	PuzzleItem.Number 13
+	states
+	{
+	Spawn:
+		AGER ABCDEFGH 4 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGear2 : PuzzleItem 9019
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzgear"
+	Inventory.Icon "artiger2"
+	PuzzleItem.Number 14
+	states
+	{
+	Spawn:
+		AGR2 ABCDEFGH 4 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGear3 : PuzzleItem 9020
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzgear"
+	Inventory.Icon "artiger3"
+	PuzzleItem.Number 15
+	states
+	{
+	Spawn:
+		AGR3 ABCDEFGH 4 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PuzzGear4 : PuzzleItem 9021
+{
+	Game Hexen
+	Inventory.PickupMessage "$txt_artipuzzgear"
+	Inventory.Icon "artiger4"
+	PuzzleItem.Number 16
+	states
+	{
+	Spawn:
+		AGR4 ABCDEFGH 4 Bright
+		Stop
+	}
+}
