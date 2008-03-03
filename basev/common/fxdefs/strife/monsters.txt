@@ -5,13 +5,13 @@ pointlight Stalker_X1
 	radius 250
 }
 
-pointlight Stalker_X1
+pointlight Stalker_X2
 {
 	colour 1 0.5 0
 	radius 170
 }
 
-pointlight Stalker_X1
+pointlight Stalker_X3
 {
 	colour 1 0.5 0
 	radius 90

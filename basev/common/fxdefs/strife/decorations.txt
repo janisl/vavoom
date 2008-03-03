@@ -217,7 +217,7 @@ pointlight DegninOre_X1
 	radius 200
 }
 
-pointlight DegninOre_X1
+pointlight DegninOre_X2
 {
 	colour 1 1 0
 	radius 175
