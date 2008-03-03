@@ -38,7 +38,7 @@ defaultproperties
 	PickupMessage = "$txt_beldinsring";
 	MaxAmount = 1;
 	IconName = 'i_ring';
-	GiveQuestType = QuestItem1;
+	GiveQuestNum = 1;
 	bFloorClip = true;
 	bInvBar = true;
 }

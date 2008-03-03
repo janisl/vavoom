@@ -42,7 +42,7 @@ final void A_SubEntityDeath()
 	if (!Target)
 		return;
 
-	if (Target.FindInventory(QuestItem25))
+	if (Target.FindInventory(class<Inventory>(FindClass('QuestItem25'))))
 	{
 		Player(Target.Player).ClientFinaleType(0);
 	}

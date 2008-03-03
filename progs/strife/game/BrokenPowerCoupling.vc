@@ -44,7 +44,7 @@ defaultproperties
 	Speed = 17920.0;
 	MaxAmount = 1;
 	IconName = 'i_coup';
-	GiveQuestType = QuestItem8;
+	GiveQuestNum = 8;
 //	bUnknown5 = true;
 	bDropped = true;
 	bFloorClip = true;

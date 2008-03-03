@@ -55,7 +55,7 @@ final void A_AlienSpectreDeath()
 			return;
 
 		Target.Player.cprint("$txt_killed_bishop");
-		Target.GiveInventoryType(QuestItem21);
+		Target.GiveInventoryType(class<Inventory>(FindClass('QuestItem21')));
 		Player(Target.Player).SetObjectives(74);
 		Player(Target.Player).ClientVoice(74);
 	}
@@ -66,13 +66,13 @@ final void A_AlienSpectreDeath()
 			return;
 
 		Target.Player.cprint("$txt_killed_oracle");
-		Target.GiveInventoryType(QuestItem23);
-		if (Target.FindInventory(QuestItem21))
+		Target.GiveInventoryType(class<Inventory>(FindClass('QuestItem23')));
+		if (Target.FindInventory(class<Inventory>(FindClass('QuestItem21'))))
 		{
 			//	If the Bishop is dead, set quest item 22
-			Target.GiveInventoryType(QuestItem22);
+			Target.GiveInventoryType(class<Inventory>(FindClass('QuestItem22')));
 		}
-		if (Target.FindInventory(QuestItem24))
+		if (Target.FindInventory(class<Inventory>(FindClass('QuestItem24'))))
 		{
 			Player(Target.Player).SetObjectives(85);
 			Player(Target.Player).ClientVoice(85);
@@ -91,8 +91,8 @@ final void A_AlienSpectreDeath()
 			return;
 
 		Target.Player.cprint("$txt_killed_macil");
-		Target.GiveInventoryType(QuestItem24);
-		if (Target.FindInventory(QuestItem25))
+		Target.GiveInventoryType(class<Inventory>(FindClass('QuestItem24')));
+		if (Target.FindInventory(class<Inventory>(FindClass('QuestItem25'))))
 		{
 			Player(Target.Player).SetObjectives(106);
 			Player(Target.Player).ClientVoice(106);
@@ -110,7 +110,7 @@ final void A_AlienSpectreDeath()
 			return;
 
 		Target.Player.cprint("$txt_killed_loremaster");
-		Target.GiveInventoryType(QuestItem26);
+		Target.GiveInventoryType(class<Inventory>(FindClass('QuestItem26')));
 		Target.GiveInventoryType(UpgradeAccuracy);
 		Target.GiveInventoryType(UpgradeStamina);
 		if (GetSigilPieces() == 5)

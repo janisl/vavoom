@@ -38,7 +38,7 @@ defaultproperties
 	PickupMessage = "$txt_ear";
 	MaxAmount = 1;
 	IconName = 'i_ears';
-	GiveQuestType = QuestItem9;
+	GiveQuestNum = 9;
 	bFloorClip = true;
 	bInvBar = true;
 }

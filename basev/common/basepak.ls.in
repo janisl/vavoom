@@ -55,6 +55,7 @@ actors/hexen/hexenspecialdecs.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexen
 actors/hexen/puzzleitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/puzzleitems.txt
 actors/raven/ravenartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenartifacts.txt
 actors/raven/ravenhealth.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenhealth.txt
+actors/strife/questitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/questitems.txt
 actors/strife/strifearmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifearmor.txt
 actors/strife/strifeitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeitems.txt
 actors/strife/strifekeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifekeys.txt

@@ -61,7 +61,7 @@ void Died(EntityEx source, EntityEx inflictor)
 		VerticalDoor::DOOREV_Close, NULL, Actor(Level.Game.Players[i].MO));
 	StrifeLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0,
 		FloorMover::FLOOREV_LowerToHighest, NULL);
-	EntityEx(Level.Game.Players[i].MO).GiveInventoryType(QuestItem6);
+	EntityEx(Level.Game.Players[i].MO).GiveInventoryType(class<Inventory>(FindClass('QuestItem6')));
 	Player(Level.Game.Players[i]).ClientVoice(13);
 	Player(Level.Game.Players[i]).SetObjectives(13);
 	Spawn(BrokenPowerCoupling, Origin);

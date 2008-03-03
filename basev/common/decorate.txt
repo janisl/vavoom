@@ -22,4 +22,5 @@
 #include "actors/strife/strifeitems.txt"
 #include "actors/strife/strifearmor.txt"
 #include "actors/strife/strifekeys.txt"
+#include "actors/strife/questitems.txt"
 #include "actors/strife/strifestuff.txt"

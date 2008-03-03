@@ -37,5 +37,5 @@ defaultproperties
 	ConversationID = 172;
 	PickupMessage = "$txt_300gold";
 	Amount = 300;
-	GiveQuestType = QuestItem3;
+	GiveQuestNum = 3;
 }

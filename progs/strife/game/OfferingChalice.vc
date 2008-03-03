@@ -41,7 +41,7 @@ defaultproperties
 	Height = 8.0;
 	MaxAmount = 1;
 	IconName = 'i_relc';
-	GiveQuestType = QuestItem2;
+	GiveQuestNum = 2;
 	bDropped = true;
 	bFloorClip = true;
 	bInvBar = true;

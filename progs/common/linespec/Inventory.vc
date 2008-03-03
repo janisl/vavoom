@@ -44,7 +44,7 @@ int					Amount;
 int					MaxAmount;
 string				PickupMessage;
 float				RespawnTime;
-class<Inventory>	GiveQuestType;
+int					GiveQuestNum;
 name				IconName;
 float				DropTime;
 
@@ -553,9 +553,10 @@ void PlayPickupSound(EntityEx Toucher)
 
 final void GiveQuest(EntityEx Toucher)
 {
-	if (GiveQuestType)
+	if (GiveQuestNum)
 	{
-		Toucher.GiveInventoryType(GiveQuestType);
+		Toucher.GiveInventoryType(class<Inventory>(FindClass(
+			StrToName(va("QuestItem%d", GiveQuestNum)))));
 	}
 }
 

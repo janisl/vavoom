@@ -3163,8 +3163,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			if (!Prop.ICmp("Inventory.GiveQuest"))
 			{
 				sc->ExpectNumber();
-				AddClassFixup(Class, "GiveQuestType", va("QuestItem%d",
-					sc->Number), ClassFixups);
+				SetClassFieldInt(Class, "GiveQuestNum", sc->Number);
 				continue;
 			}
 		}
