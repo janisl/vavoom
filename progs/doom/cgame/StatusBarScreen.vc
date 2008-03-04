@@ -349,29 +349,29 @@ void SB_DrawMainBar()
 	SB_DrawTallNum(ST_ARMORX, ST_ARMORY, Armor ? Armor.Amount : 0, 1.0, true);
 
 	// keyboxes 0-2
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('BlueSkull'))))
+	if (EntityEx(cl.MO).FindInventory(BlueSkull))
 	{
 		DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[3]);
 	}
-	else if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('BlueCard'))))
+	else if (EntityEx(cl.MO).FindInventory(BlueCard))
 	{
 		DrawPic(ST_KEY0X, ST_KEY0Y, pic_keys[0]);
 	}
 
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('YellowSkull'))))
+	if (EntityEx(cl.MO).FindInventory(YellowSkull))
 	{
 		DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[4]);
 	}
-	else if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('YellowCard'))))
+	else if (EntityEx(cl.MO).FindInventory(YellowCard))
 	{
 		DrawPic(ST_KEY1X, ST_KEY1Y, pic_keys[1]);
 	}
 
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('RedSkull'))))
+	if (EntityEx(cl.MO).FindInventory(RedSkull))
 	{
 		DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[5]);
 	}
-	else if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('RedCard'))))
+	else if (EntityEx(cl.MO).FindInventory(RedCard))
 	{
 		DrawPic(ST_KEY2X, ST_KEY2Y, pic_keys[2]);
 	}
@@ -454,29 +454,29 @@ void SB_DrawFullscreenStats()
 	}
 
 	// keys
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('BlueSkull'))))
+	if (EntityEx(cl.MO).FindInventory(BlueSkull))
 	{
 		DrawPic(460, 470, pic_keys[3], 0.6);
 	}
-	else if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('BlueCard'))))
+	else if (EntityEx(cl.MO).FindInventory(BlueCard))
 	{
 		DrawPic(460, 470, pic_keys[0], 0.6);
 	}
 
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('YellowSkull'))))
+	if (EntityEx(cl.MO).FindInventory(YellowSkull))
 	{
 		DrawPic(440, 470, pic_keys[4], 0.6);
 	}
-	else if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('YellowCard'))))
+	else if (EntityEx(cl.MO).FindInventory(YellowCard))
 	{
 		DrawPic(440, 470, pic_keys[1], 0.6);
 	}
 
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('RedSkull'))))
+	if (EntityEx(cl.MO).FindInventory(RedSkull))
 	{
 		DrawPic(420, 470, pic_keys[5], 0.6);
 	}
-	else if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('RedCard'))))
+	else if (EntityEx(cl.MO).FindInventory(RedCard))
 	{
 		DrawPic(420, 470, pic_keys[2], 0.6);
 	}

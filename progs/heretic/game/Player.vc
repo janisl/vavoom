@@ -1424,7 +1424,7 @@ void Cheat_Gimme()
 	{
 		int i;
 
-		EntityEx(MO).GiveInventoryType(class<Inventory>(FindClass('EnchantedShield')));
+		EntityEx(MO).GiveInventoryType(EnchantedShield);
 		EntityEx(MO).GiveInventoryType(BagOfHolding);
 		foreach AllClasses(Ammo, Cls)
 		{
@@ -1533,7 +1533,7 @@ void Cheat_Gimme()
 				continue;
 			}
 			if (MainGameInfo(Level.Game).shareware &&
-				(Cls == class<Inventory>(FindClass('ArtiSuperHealth')) || Cls == ArtiTeleport))
+				(Cls == ArtiSuperHealth || Cls == ArtiTeleport))
 			{
 				continue;
 			}

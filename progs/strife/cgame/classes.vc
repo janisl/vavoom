@@ -45,3 +45,31 @@
 #include "IntermissionScreen.vc"
 #include "FinaleScreen.vc"
 #include "ClientGame.vc"
+
+class BaseKey : Key decorate;
+class GovsKey : Key decorate;
+class Passcard : Key decorate;
+class IDBadge : Key decorate;
+class PrisonKey : Key decorate;
+class SeveredHand : Key decorate;
+class Power1Key : Key decorate;
+class Power2Key : Key decorate;
+class GoldKey : Key decorate;
+class Power3Key : Key decorate;
+class IDCard : Key decorate;
+class SilverKey : Key decorate;
+class OracleKey : Key decorate;
+class MilitaryID : Key decorate;
+class OrderKey : Key decorate;
+class WarehouseKey : Key decorate;
+class BrassKey : Key decorate;
+class RedCrystalKey : Key decorate;
+class BlueCrystalKey : Key decorate;
+class ChapelKey : Key decorate;
+class CatacombKey : Key decorate;
+class SecurityKey : Key decorate;
+class CoreKey : Key decorate;
+class MaulerKey : Key decorate;
+class FactoryKey : Key decorate;
+class MineKey : Key decorate;
+class NewKey5 : Key decorate;

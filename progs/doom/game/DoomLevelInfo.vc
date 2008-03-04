@@ -150,21 +150,21 @@ class<Inventory> GetDehackedItemType(EntityEx Item)
 	name SpriteName = GetStateSpriteName(Item.State);
 	if (SpriteName == 'arm1')
 	{
-		return class<Inventory>(FindClass('GreenArmor'));
+		return GreenArmor;
 	}
 	if (SpriteName == 'arm2')
 	{
-		return class<Inventory>(FindClass('BlueArmor'));
+		return BlueArmor;
 	}
 
 	// bonus items
 	if (SpriteName == 'bon1')
 	{
-		return class<Inventory>(FindClass('HealthBonus'));
+		return HealthBonus;
 	}
 	if (SpriteName == 'bon2')
 	{
-		return class<Inventory>(FindClass('ArmorBonus'));
+		return ArmorBonus;
 	}
 	if (SpriteName == 'soul')
 	{
@@ -178,37 +178,37 @@ class<Inventory> GetDehackedItemType(EntityEx Item)
 	// cards
 	if (SpriteName == 'bkey')
 	{
-		return class<Inventory>(FindClass('BlueCard'));
+		return BlueCard;
 	}
 	if (SpriteName == 'ykey')
 	{
-		return class<Inventory>(FindClass('YellowCard'));
+		return YellowCard;
 	}
 	if (SpriteName == 'rkey')
 	{
-		return class<Inventory>(FindClass('RedCard'));
+		return RedCard;
 	}
 	if (SpriteName == 'bsku')
 	{
-		return class<Inventory>(FindClass('BlueSkull'));
+		return BlueSkull;
 	}
 	if (SpriteName == 'ysku')
 	{
-		return class<Inventory>(FindClass('YellowSkull'));
+		return YellowSkull;
 	}
 	if (SpriteName == 'rsku')
 	{
-		return class<Inventory>(FindClass('RedSkull'));
+		return RedSkull;
 	}
 
 	// medikits, heals
 	if (SpriteName == 'stim')
 	{
-		return class<Inventory>(FindClass('Stimpack'));
+		return Stimpack;
 	}
 	if (SpriteName == 'medi')
 	{
-		return class<Inventory>(FindClass('Medikit'));
+		return Medikit;
 	}
 
 	// power ups

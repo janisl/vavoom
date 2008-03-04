@@ -31,3 +31,16 @@
 #include "Player.vc"
 #include "PlayerPawn.vc"
 #include "BotPlayer.vc"
+
+class GreenArmor : BasicArmorPickup decorate;
+class BlueArmor : BasicArmorPickup decorate;
+class HealthBonus : Health decorate;
+class ArmorBonus : BasicArmorBonus decorate;
+class BlueCard : Key decorate;
+class YellowCard : Key decorate;
+class RedCard : Key decorate;
+class BlueSkull : Key decorate;
+class YellowSkull : Key decorate;
+class RedSkull : Key decorate;
+class Stimpack : Health decorate;
+class Medikit : Health decorate;

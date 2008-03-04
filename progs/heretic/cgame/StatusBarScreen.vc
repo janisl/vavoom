@@ -337,15 +337,15 @@ void SB_DrawMainBar()
 		}
 
 		//  Keys
-		if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('KeyYellow'))))
+		if (EntityEx(cl.MO).FindInventory(KeyYellow))
 		{
 			DrawPic(BAR_X + 153, BAR_Y + 6, pic_ykey);
 		}
-		if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('KeyGreen'))))
+		if (EntityEx(cl.MO).FindInventory(KeyGreen))
 		{
 			DrawPic(BAR_X + 153, BAR_Y + 14, pic_gkey);
 		}
-		if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('KeyBlue'))))
+		if (EntityEx(cl.MO).FindInventory(KeyBlue))
 		{
 			DrawPic(BAR_X + 153, BAR_Y + 22, pic_bkey);
 		}
@@ -424,15 +424,15 @@ void SB_DrawFullscreenStats()
 	}
 
 	//  Keys
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('KeyYellow'))))
+	if (EntityEx(cl.MO).FindInventory(KeyYellow))
 	{
 		DrawPic(580, 444, pic_ykey, 0.6);
 	}
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('KeyGreen'))))
+	if (EntityEx(cl.MO).FindInventory(KeyGreen))
 	{
 		DrawPic(580, 452, pic_gkey, 0.6);
 	}
-	if (EntityEx(cl.MO).FindInventory(class<Inventory>(FindClass('KeyBlue'))))
+	if (EntityEx(cl.MO).FindInventory(KeyBlue))
 	{
 		DrawPic(580, 460, pic_bkey, 0.6);
 	}

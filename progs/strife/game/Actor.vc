@@ -80,7 +80,7 @@ void AutoUseHealth(int saveHealth)
 {
 	int i;
 
-	Inventory Item = FindInventory(class<Inventory>(FindClass('MedicalKit')));
+	Inventory Item = FindInventory(MedicalKit);
 	if (Item && Item.Amount * 25 >= saveHealth)
 	{
 		// Use medical kits
@@ -97,7 +97,7 @@ void AutoUseHealth(int saveHealth)
 		}
 	}
 	
-	Item = FindInventory(class<Inventory>(FindClass('MedPatch')));
+	Item = FindInventory(MedPatch);
 	if (saveHealth > 0 && Item && Item.Amount * 10 >= saveHealth)
 	{
 		i = (saveHealth + 9) / 10;
@@ -122,7 +122,7 @@ void AutoUseHealth(int saveHealth)
 
 void AutoUseArmor()
 {
-	Inventory Item = FindInventory(class<Inventory>(FindClass('MetalArmor')));
+	Inventory Item = FindInventory(MetalArmor);
 	if (Item)
 	{
 		// Use metal armor
@@ -134,7 +134,7 @@ void AutoUseArmor()
 	}
 	else
 	{
-		Item = FindInventory(class<Inventory>(FindClass('LeatherArmor')));
+		Item = FindInventory(LeatherArmor);
 		if (Item)
 		{
 			// Use leather armor

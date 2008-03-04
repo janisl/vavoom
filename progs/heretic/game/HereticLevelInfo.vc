@@ -131,9 +131,9 @@ bool CheckShareware(class<EntityEx> moClass)
 			moClass == PhoenixRodHefty ||
 			moClass == MaceAmmo ||
 			moClass == MaceHefty ||
-			moClass == class<Inventory>(FindClass('ArtiSuperHealth')) ||
+			moClass == ArtiSuperHealth ||
 			moClass == ArtiTeleport ||
-			moClass == FindClass('EnchantedShield') ||
+			moClass == EnchantedShield ||
 			moClass == Mace)
 		{
 			// Don't place on map in shareware version

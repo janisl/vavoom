@@ -183,3 +183,5 @@ enum
 #include "Gold10.vc"
 #include "Gold25.vc"
 #include "Gold50.vc"
+
+class QuestItem29 : Inventory decorate;

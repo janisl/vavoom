@@ -120,8 +120,8 @@ final void AutoUseHealth(int saveHealth)
 	int i;
 	int count;
 
-	Inventory normal = FindInventory(class<Inventory>(FindClass('ArtiHealth')));
-	Inventory super = FindInventory(class<Inventory>(FindClass('ArtiSuperHealth')));
+	Inventory normal = FindInventory(ArtiHealth);
+	Inventory super = FindInventory(ArtiSuperHealth);
 	if ((Level.Game.gameskill == sk_baby) && normal &&
 		(normal.Amount * 25 >= saveHealth))
 	{

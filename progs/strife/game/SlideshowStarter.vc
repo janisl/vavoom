@@ -42,7 +42,7 @@ bool TryPickup(EntityEx Toucher)
 	{
 		StrifeLevelInfo(Level).ConversationSlideshow = true;
 		Player(Toucher.Player).ClientSlideshow2();
-		Toucher.GiveInventoryType(class<Inventory>(FindClass('QuestItem17')));
+		Toucher.GiveInventoryType(QuestItem17);
 	}
 	GoAwayAndDie();
 	return true;

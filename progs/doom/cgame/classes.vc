@@ -40,3 +40,10 @@
 #include "IntermissionScreen.vc"
 #include "FinaleScreen.vc"
 #include "ClientGame.vc"
+
+class BlueCard : Key decorate;
+class YellowCard : Key decorate;
+class RedCard : Key decorate;
+class BlueSkull : Key decorate;
+class YellowSkull : Key decorate;
+class RedSkull : Key decorate;

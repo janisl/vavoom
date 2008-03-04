@@ -5504,7 +5504,7 @@ final bool EV_GlassBreak(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			}
 			if (A && A.bIsPlayer)
 			{
-				A.GiveInventoryType(class<Inventory>(FindClass('QuestItem29')));
+				A.GiveInventoryType(QuestItem29);
 				A.GiveInventoryType(class<Inventory>(FindClass('UpgradeAccuracy')));
 				A.GiveInventoryType(class<Inventory>(FindClass('UpgradeStamina')));
 			}

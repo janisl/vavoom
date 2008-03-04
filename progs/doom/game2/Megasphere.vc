@@ -36,7 +36,7 @@ class Megasphere : Inventory
 bool TryPickup(EntityEx Toucher)
 {
 	Toucher.GiveInventoryType(MegasphereHealth);
-	Toucher.GiveInventoryType(class<Inventory>(FindClass('BlueArmor')));
+	Toucher.GiveInventoryType(BlueArmor);
 	GoAwayAndDie();
 	return true;
 }

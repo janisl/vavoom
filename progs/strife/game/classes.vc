@@ -234,3 +234,18 @@
 #include "KneelingGyu.vc"
 
 #include "ClientGameBaseEx.vc"
+
+class MedicalKit : HealthPickup decorate;
+class MedPatch : HealthPickup decorate;
+class MetalArmor : BasicArmorPickup decorate;
+class LeatherArmor : BasicArmorPickup decorate;
+class QuestItem6 : Inventory decorate;
+class QuestItem7 : Inventory decorate;
+class QuestItem17 : Inventory decorate;
+class QuestItem21 : Inventory decorate;
+class QuestItem22 : Inventory decorate;
+class QuestItem23 : Inventory decorate;
+class QuestItem24 : Inventory decorate;
+class QuestItem25 : Inventory decorate;
+class QuestItem26 : Inventory decorate;
+class Rubble1 : Actor decorate;

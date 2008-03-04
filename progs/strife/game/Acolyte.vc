@@ -85,7 +85,7 @@ final void A_AcolyteDeath()
 		}
 	}
 
-	EntityEx(Level.Game.Players[0].MO).GiveInventoryType(class<Inventory>(FindClass('QuestItem7')));
+	EntityEx(Level.Game.Players[0].MO).GiveInventoryType(QuestItem7);
 	Player(Level.Game.Players[0]).SetObjectives(14);
 	Player(Level.Game.Players[0]).ClientVoice(14);
 }

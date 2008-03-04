@@ -903,7 +903,7 @@ void PlayerImpulse()
 	{
 		if (impulse == 12 && (Health < MAXHEALTH))
 		{
-			Arti = EntityEx(MO).FindInventory(class<Inventory>(FindClass('ArtiHealth')));
+			Arti = EntityEx(MO).FindInventory(ArtiHealth);
 		}
 		else if (impulse == 10)
 		{

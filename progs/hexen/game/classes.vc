@@ -292,3 +292,6 @@
 #include "MinotaurFriend.vc"
 #include "MinotaurSmoke.vc"
 #include "SummoningDoll.vc"
+
+class ArtiHealth : HealthPickup decorate;
+class ArtiSuperHealth : HealthPickup decorate;
