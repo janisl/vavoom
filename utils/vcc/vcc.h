@@ -51,10 +51,10 @@ void Free(void* ptr);
 #include "../../source/name.h"
 #include "../../source/str.h"
 #include "../../source/vector.h"
-#include "../../source/progdefs.h"
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"
 #include "../../source/vc_member.h"
+#include "../../source/progdefs.h"
 #include "../../source/vc_field.h"
 #include "../../source/vc_property.h"
 typedef void (*builtin_t)();

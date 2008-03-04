@@ -271,6 +271,14 @@ VExpression* VSingleName::IntResolve(VEmitContext& ec, bool AssignTarget)
 		return e->Resolve(ec);
 	}
 
+	Class = ec.Package->FindDecorateImportClass(Name);
+	if (Class)
+	{
+		VExpression* e = new VClassConstant(Class, Loc);
+		delete this;
+		return e->Resolve(ec);
+	}
+
 	Const = (VConstant*)VMemberBase::StaticFindMember(Name, ANY_PACKAGE,
 		MEMBER_Const);
 	if (Const)

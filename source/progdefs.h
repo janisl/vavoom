@@ -407,6 +407,7 @@ struct VProgsImport
 	vuint8			Type;
 	VName			Name;
 	vint32			OuterIndex;
+	VName			ParentClassName;	//	For decorate class imports.
 
 	VMemberBase*	Obj;
 
@@ -420,7 +421,12 @@ struct VProgsImport
 
 	friend VStream& operator<<(VStream& Strm, VProgsImport& I)
 	{
-		return Strm << I.Type << I.Name << STRM_INDEX(I.OuterIndex);
+		Strm << I.Type << I.Name << STRM_INDEX(I.OuterIndex);
+		if (I.Type == MEMBER_DecorateClass)
+		{
+			Strm << I.ParentClassName;
+		}
+		return Strm;
 	}
 };
 

@@ -86,6 +86,7 @@ public:
 	TArray<VConstant*>			ParsedConstants;
 	TArray<VStruct*>			ParsedStructs;
 	TArray<VClass*>				ParsedClasses;
+	TArray<VClass*>				ParsedDecorateImportClasses;
 
 	int							NumBuiltins;
 
@@ -101,6 +102,8 @@ public:
 
 	int FindString(const char*);
 	VConstant* FindConstant(VName);
+
+	VClass* FindDecorateImportClass(VName) const;
 
 	void Emit();
 	void WriteObject(const VStr&);

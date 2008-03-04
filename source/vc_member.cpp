@@ -134,10 +134,33 @@ public:
 		if (!I.Obj)
 		{
 			if (I.Type == MEMBER_Package)
+			{
 				I.Obj = VMemberBase::StaticLoadPackage(I.Name, TLocation());
+			}
+			else if (I.Type == MEMBER_DecorateClass)
+			{
+				for (int i = 0; i < VMemberBase::GDecorateClassImports.Num(); i++)
+				{
+					if (VMemberBase::GDecorateClassImports[i]->Name == I.Name)
+					{
+						I.Obj = VMemberBase::GDecorateClassImports[i];
+						break;
+					}
+				}
+				if (!I.Obj)
+				{
+					VClass* Tmp = new VClass(I.Name, NULL, TLocation());
+					Tmp->MemberType = MEMBER_DecorateClass;
+					Tmp->ParentClassName = I.ParentClassName;
+					VMemberBase::GDecorateClassImports.Append(Tmp);
+					I.Obj = Tmp;
+				}
+			}
 			else
+			{
 				I.Obj = VMemberBase::StaticFindMember(I.Name,
 					GetImport(-I.OuterIndex - 1), I.Type);
+			}
 		}
 		return I.Obj;
 	}
@@ -164,6 +187,7 @@ VMemberBase*			VMemberBase::GMembersHash[4096];
 
 TArray<VStr>			VMemberBase::GPackagePath;
 TArray<VPackage*>		VMemberBase::GLoadedPackages;
+TArray<VClass*>			VMemberBase::GDecorateClassImports;
 
 VClass*					VMemberBase::GClasses;
 TArray<VClass*>			VMemberBase::GNetClassLookup;
@@ -572,7 +596,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 	{
 		for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 		{
-			if (!Cls->Outer)
+			if (!Cls->Outer && Cls->MemberType == MEMBER_Class)
 			{
 				Cls->PostLoad();
 				Cls->CreateDefaults();
@@ -602,7 +626,7 @@ VMemberBase* VMemberBase::StaticFindMember(VName AName, VMemberBase* AOuter,
 	for (VMemberBase* m = GMembersHash[HashIndex]; m; m = m->HashNext)
 	{
 		if (m->Name == AName && (m->Outer == AOuter ||
-			(AOuter == ANY_PACKAGE && m->Outer->MemberType == MEMBER_Package)) &&
+			(AOuter == ANY_PACKAGE && m->Outer && m->Outer->MemberType == MEMBER_Package)) &&
 			(AType == ANY_MEMBER || m->MemberType == AType))
 		{
 			return m;

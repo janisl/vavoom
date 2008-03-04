@@ -332,6 +332,26 @@ VConstant* VPackage::FindConstant(VName Name)
 
 //==========================================================================
 //
+//	VPackage::FindDecorateImportClass
+//
+//==========================================================================
+
+VClass* VPackage::FindDecorateImportClass(VName AName) const
+{
+	guard(VPackage::FindDecorateImportClass);
+	for (int i = 0; i < ParsedDecorateImportClasses.Num(); i++)
+	{
+		if (ParsedDecorateImportClasses[i]->Name == AName)
+		{
+			return ParsedDecorateImportClasses[i];
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VPackage::Emit
 //
 //==========================================================================
@@ -371,6 +391,11 @@ void VPackage::Emit()
 	for (int i = 0; i < ParsedClasses.Num(); i++)
 	{
 		ParsedClasses[i]->Define();
+	}
+
+	for (int i = 0; i < ParsedDecorateImportClasses.Num(); i++)
+	{
+		ParsedDecorateImportClasses[i]->Define();
 	}
 
 	if (NumErrors)
@@ -438,6 +463,16 @@ void VPackage::WriteObject(const VStr& name)
 	{
 		if (VMemberBase::GMembers[i]->IsIn(this))
 			Writer.AddExport(VMemberBase::GMembers[i]);
+	}
+
+	//	Add decorate class imports.
+	for (i = 0; i < ParsedDecorateImportClasses.Num(); i++)
+	{
+		VProgsImport I(ParsedDecorateImportClasses[i], 0);
+		I.Type = MEMBER_DecorateClass;
+		I.ParentClassName = ParsedDecorateImportClasses[i]->ParentClassName;
+		Writer.MembersMap[ParsedDecorateImportClasses[i]->MemberIndex] =
+			-Writer.Imports.Append(I) - 1;
 	}
 
 	//

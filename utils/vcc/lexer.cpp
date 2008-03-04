@@ -60,6 +60,7 @@ const char*			VLexer::TokenNames[] =
 	"class",
 	"const",
 	"continue",
+	"decorate",
 	"default",
 	"defaultproperties",
 	"delegate",
@@ -1136,8 +1137,13 @@ void VLexer::ProcessLetterToken(bool CheckKeywords)
 	case 'd':
 		if (s[1] == 'e')
 		{
-			if (s[2] == 'f' && s[3] == 'a' && s[4] == 'u' && s[5] == 'l' &&
-				s[6] == 't')
+			if (s[2] == 'c' && s[3] == 'o' && s[4] == 'r' &&
+				s[5] == 'a' && s[6] == 't' && s[7] == 'e' && s[8] == 0)
+			{
+				Token = TK_Decorate;
+			}
+			else if (s[2] == 'f' && s[3] == 'a' && s[4] == 'u' &&
+				s[5] == 'l' && s[6] == 't')
 			{
 				if (s[7] == 0)
 				{

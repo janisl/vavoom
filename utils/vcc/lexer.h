@@ -51,6 +51,7 @@ enum EToken
 	TK_Class,
 	TK_Const,
 	TK_Continue,
+	TK_Decorate,
 	TK_Default,
 	TK_DefaultProperties,
 	TK_Delegate,

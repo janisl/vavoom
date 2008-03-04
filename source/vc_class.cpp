@@ -234,7 +234,7 @@ VClass *VClass::FindClass(const char *AName)
 	}
 	for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 	{
-		if (Cls->GetVName() == TempName)
+		if (Cls->GetVName() == TempName && Cls->MemberType == MEMBER_Class)
 		{
 			return Cls;
 		}
@@ -254,7 +254,8 @@ VClass *VClass::FindClassNoCase(const char *AName)
 	guard(VClass::FindClassNoCase);
 	for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 	{
-		if (!VStr::ICmp(Cls->GetName(), AName))
+		if (Cls->MemberType == MEMBER_Class &&
+			!VStr::ICmp(Cls->GetName(), AName))
 		{
 			return Cls;
 		}
@@ -1867,7 +1868,34 @@ VClass* VClass::CreateDerivedClass(VName AName, VMemberBase* AOuter,
 	TLocation ALoc)
 {
 	guard(VClass::CreateDerivedClass);
-	VClass* NewClass = new VClass(AName, AOuter, ALoc);
+	VClass* NewClass = NULL;
+	for (int i = 0; i < GDecorateClassImports.Num(); i++)
+	{
+		if (GDecorateClassImports[i]->Name == AName)
+		{
+			//	This class implements a decorate import class.
+			NewClass = GDecorateClassImports[i];
+			NewClass->MemberType = MEMBER_Class;
+			NewClass->Outer = AOuter;
+			NewClass->Loc = ALoc;
+			//	Make sure parent class is correct.
+			VClass* Check = FindClass(*NewClass->ParentClassName);
+			if (!Check)
+			{
+				Sys_Error("No such class %s", *NewClass->ParentClassName);
+			}
+			if (!IsChildOf(Check))
+			{
+				Sys_Error("%s must be a child of %s", *AName, *Check->Name);
+			}
+			GDecorateClassImports.RemoveIndex(i);
+			break;
+		}
+	}
+	if (!NewClass)
+	{
+		NewClass = new VClass(AName, AOuter, ALoc);
+	}
 	NewClass->ParentClass = this;
 	NewClass->PostLoad();
 	NewClass->CreateDefaults();

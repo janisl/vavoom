@@ -1919,6 +1919,16 @@ void VParser::ParseClass()
 		ParseError(Lex.Location, "Parent class expected");
 	}
 
+	if (Lex.Check(TK_Decorate))
+	{
+		Lex.Expect(TK_Semicolon);
+		//	This class is not IN this package.
+		Class->MemberType = MEMBER_DecorateClass;
+		Class->Outer = NULL;
+		Package->ParsedDecorateImportClasses.Append(Class);
+		return;
+	}
+
 	int ClassAttr = TModifiers::ClassAttr(TModifiers::Check(
 		TModifiers::Parse(Lex), TModifiers::Native | TModifiers::Abstract,
 		Lex.Location));

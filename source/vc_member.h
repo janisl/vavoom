@@ -39,6 +39,9 @@ enum
 	MEMBER_Const,
 	MEMBER_Struct,
 	MEMBER_Class,
+
+	//	A fake type for DECORATE class imports.
+	MEMBER_DecorateClass,
 };
 
 //==========================================================================
@@ -66,6 +69,7 @@ public:
 
 	static TArray<VStr>				GPackagePath;
 	static TArray<VPackage*>		GLoadedPackages;
+	static TArray<VClass*>			GDecorateClassImports;
 
 	static VClass*					GClasses;	// Linked list of all classes.
 	static TArray<VClass*>			GNetClassLookup;

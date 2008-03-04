@@ -4492,6 +4492,12 @@ void ProcessDecorateScripts()
 		}
 	}
 
+	//	Make sure all import classes were defined.
+	if (VMemberBase::GDecorateClassImports.Num())
+	{
+		Sys_Error("Not all DECORATE class imports were defined");
+	}
+
 	//	Set class properties.
 	for (int i = 0; i < ClassFixups.Num(); i++)
 	{
