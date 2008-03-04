@@ -23,26 +23,22 @@
 //**
 //**************************************************************************
 
-class BloodSplatter : Actor;
+class Blood : ScriptedEntity
+	__scriptid__(130);
 
 states
 {
 Spawn:
-	BLUD CBS 8
+	BLUD CBA 8
 	Stop
-Death:
-	BLUD A 6
+Spray:
+	SPRY ABCDEF 3
+	SPRY G 2
 	Stop
 }
 
 defaultproperties
 {
-	Radius = 2.0;
-	Height = 4.0;
-	bMissile = true;
+	Mass = 5.0;
 	bNoBlockmap = true;
-	bDropOff = true;
-	bNoTeleport = true;
-	bActivatePCross = true;
-	bCannotPush = true;
 }

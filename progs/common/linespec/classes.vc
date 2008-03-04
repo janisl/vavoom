@@ -166,6 +166,10 @@ enum
 #include "PointLightFlickerRandom.vc"
 #include "SectorPointLight.vc"
 
+#include "Blood.vc"
+#include "BloodSplatter.vc"
+#include "AxeBlood.vc"
+
 #include "WaterSplash.vc"
 #include "WaterSplashBase.vc"
 #include "LavaSplash.vc"

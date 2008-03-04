@@ -50,7 +50,7 @@ final void A_LoremasterAttack()
 
 final void A_LoremasterDeath()
 {
-	Actor A;
+	EntityEx A;
 	int i;
 
 	//	Spawn some blood.

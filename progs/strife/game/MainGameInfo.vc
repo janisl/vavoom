@@ -598,7 +598,6 @@ defaultproperties
 	GenericConScript = 'script00';
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 100.0;
-	BloodClass = Blood;
 	bBabyNightmareDoubleAmmo = true;
 	bNightmareExtraAmmo = false;
 	bAlwaysSwitchNewWeapon = true;

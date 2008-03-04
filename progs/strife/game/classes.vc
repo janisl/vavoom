@@ -39,7 +39,6 @@
 #include "RocketTrail.vc"
 #include "StrifePuff.vc"
 #include "StrifeSpark.vc"
-#include "Blood.vc"
 #include "TeleportFog.vc"
 #include "Meat.vc"
 #include "Junk.vc"

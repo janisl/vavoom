@@ -5541,8 +5541,7 @@ final bool SectorChanged(int CrushChange)
 		//	Spray blood in a random direction
 		if (!bNoBlood && !bInvulnerable)
 		{
-			A = Spawn(LineSpecialGameInfo(Level.Game).BloodClass,
-				Origin + vector(0.0, 0.0, Height / 2.0));
+			A = Spawn(Blood, Origin + vector(0.0, 0.0, Height / 2.0));
 			A.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
 			A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
 		}
@@ -6332,7 +6331,7 @@ final void SpawnBlood(TVec Org, int damage)
 				0, Org,	0.0, vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0, RGB(32 + c, c >> 4, c >> 4),
 				0.6, 0.0);
 	}
-	A = Spawn(LineSpecialGameInfo(Level.Game).BloodClass, Org);
+	A = Spawn(Blood, Org);
 	A.Velocity.z = 2.0 * 35.0;
 	if (LineSpecialGameInfo(Level.Game).bBloodRandomiseTime)
 	{
@@ -6382,7 +6381,7 @@ final void SpawnBloodSplatter(TVec org, int damage)
 				0.6, 0.0);
 	}
 
-	mo = Spawn(LineSpecialGameInfo(Level.Game).BloodSplatterClass, org);
+	mo = Spawn(BloodSplatter, org);
 	mo.Target = self;
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
@@ -6401,7 +6400,7 @@ final void SpawnBloodSplatter2(TVec org)
 
 	org.x += (Random() - 0.5) * 8.0;
 	org.y += (Random() - 0.5) * 8.0;
-	mo = Spawn(LineSpecialGameInfo(Level.Game).AxeBloodClass, org);
+	mo = Spawn(AxeBlood, org);
 	mo.Target = self;
 }
 
@@ -6419,7 +6418,7 @@ final void SpawnRipperBlood()
 	org.x = Origin.x + (Random() - Random()) * 16.0;
 	org.y = Origin.y + (Random() - Random()) * 16.0;
 	org.z = Origin.z + (Random() - Random()) * 16.0;
-	th = Spawn(LineSpecialGameInfo(Level.Game).BloodClass, org);
+	th = Spawn(Blood, org);
 	if (LineSpecialGameInfo(Level.Game).bRipperBloodNoGravity)
 	{
 		th.bNoGravity = true;

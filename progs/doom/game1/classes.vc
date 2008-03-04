@@ -24,7 +24,6 @@
 //**************************************************************************
 
 #include "BulletPuff.vc"
-#include "Blood.vc"
 #include "TeleportFog.vc"
 
 #include "Soulsphere.vc"

@@ -122,8 +122,6 @@
 #include "BlasterHefty.vc"
 
 #include "TeleportFog.vc"
-#include "Blood.vc"
-#include "BloodSplatter.vc"
 #include "Puffy.vc"
 #include "EggFX.vc"
 #include "ActivatedTimeBomb.vc"

@@ -1089,7 +1089,6 @@ defaultproperties
 	bAlwaysSwitchNewWeapon = true;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
-	BloodClass = Blood;
 	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
 	bBloodRandomiseTime = true;
 	GibsHealthFactor = 1.0;

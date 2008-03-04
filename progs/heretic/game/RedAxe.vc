@@ -47,7 +47,7 @@ void OnMapSpawn(mthing_t* mthing)
 
 final void A_DripBlood()
 {
-	Actor mo;
+	EntityEx mo;
 
 	mo = Spawn(Blood, Origin + vector((Random() - Random()) * 8.0,
 		(Random() - Random()) * 8.0, 0.0));

@@ -23,15 +23,15 @@
 //**
 //**************************************************************************
 
-class AxeBlood : Effect;
+class BloodSplatter : ScriptedEntity;
 
 states
 {
 Spawn:
-	FAXE FGHIJ 3
-	//Fall through
+	BLUD CBA 8
+	Stop
 Death:
-	FAXE K 3
+	BLUD A 6
 	Stop
 }
 
@@ -39,6 +39,9 @@ defaultproperties
 {
 	Radius = 2.0;
 	Height = 4.0;
+	Mass = 5.0;
+	bMissile = true;
+	bNoBlockmap = true;
 	bDropOff = true;
 	bNoTeleport = true;
 	bCannotPush = true;

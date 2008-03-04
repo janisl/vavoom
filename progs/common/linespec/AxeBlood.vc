@@ -23,18 +23,25 @@
 //**
 //**************************************************************************
 
-class Blood : Effect
-	__scriptid__(130);
+class AxeBlood : ScriptedEntity;
 
 states
 {
 Spawn:
-	BLUD CBA 8
+	FAXE FGHIJ 3
+	//Fall through
+Death:
+	FAXE K 3
 	Stop
 }
 
 defaultproperties
 {
-	bNoGravity = false;
-	bSmallSplash = true;
+	Radius = 2.0;
+	Height = 4.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bCannotPush = true;
 }

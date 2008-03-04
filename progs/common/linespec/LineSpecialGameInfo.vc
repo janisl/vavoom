@@ -97,10 +97,6 @@ class<EntityEx>	TeleportFogClass;
 
 float			DefaultKickBack;
 
-class<EntityEx>	BloodClass;
-class<EntityEx>	BloodSplatterClass;
-class<EntityEx>	AxeBloodClass;
-
 int				NonMonsterAngleIncrements;
 
 int				InvDefaultMaxAmount;

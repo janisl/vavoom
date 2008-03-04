@@ -80,8 +80,6 @@
 
 #include "FireBomb.vc"
 #include "TeleportFog.vc"
-#include "Blood.vc"
-#include "BloodSplatter.vc"
 #include "Gibs.vc"
 #include "PlayerSpeed.vc"
 #include "IceChunk.vc"
@@ -93,7 +91,6 @@
 #include "FWeapFist.vc"
 #include "AxePuff.vc"
 #include "AxePuffGlow.vc"
-#include "AxeBlood.vc"
 #include "HammerMissile.vc"
 #include "HammerPuff.vc"
 #include "FSwordFlame.vc"
