@@ -23,21 +23,45 @@
 //**
 //**************************************************************************
 
-class Dirt4 : Fragment
-	__scriptid__(47);
+class GlassShard : ScriptedEntity
+	abstract;
 
-states
+//==========================================================================
+//
+//  FloorBounceMissile
+//
+//==========================================================================
+
+void FloorBounceMissile()
 {
-Spawn:
-	ROKK G 20
-	Loop
-Death:
-	ROKK G 10
-	Stop
+	if (HitFloorType())
+	{
+		Destroy();
+		return;
+	}
+	Velocity.z = Velocity.z * -0.3;
+	if (fabs(Velocity.z) < 0.5 * 35.0)
+	{
+		SetState(none);
+		return;
+	}
+	Velocity.x = 2.0 * Velocity.x / 3.0;
+	Velocity.y = 2.0 * Velocity.y / 3.0;
+	if (SightSound)
+	{
+		PlaySound(SightSound, CHAN_VOICE);
+	}
 }
 
 defaultproperties
 {
-	Gravity = 0.125;
-	bNoGravity = false;
+	Radius = 5.0;
+	Height = 16.0;
+	Mass = 5.0;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	BounceType = BOUNCE_Hexen;
 }

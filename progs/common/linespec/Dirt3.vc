@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Dirt3 : Fragment
+class Dirt3 : ScriptedEntity
 	__scriptid__(46);
 
 states
@@ -38,5 +38,8 @@ Death:
 
 defaultproperties
 {
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
 }

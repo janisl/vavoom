@@ -23,20 +23,23 @@
 //**
 //**************************************************************************
 
-class Rock1 : Fragment
-	__scriptid__(41);
+class Dirt2 : ScriptedEntity
+	__scriptid__(45);
 
 states
 {
 Spawn:
-	ROKK A 20
+	ROKK E 20
 	Loop
 Death:
-	ROKK A 10
+	ROKK E 10
 	Stop
 }
 
 defaultproperties
 {
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
 }

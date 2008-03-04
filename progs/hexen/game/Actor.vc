@@ -290,8 +290,8 @@ final void SpawnDirt(float radius)
 {
 	float angle;
 	TVec org;
-	class<Actor> dtype;
-	Actor dirt;
+	class<EntityEx> dtype;
+	EntityEx dirt;
 
 	angle = 360.0 * Random();
 	org.x = Origin.x + radius * cos(angle);
