@@ -55,13 +55,4 @@ void FloorBounceMissile()
 
 defaultproperties
 {
-	Radius = 5.0;
-	Height = 16.0;
-	Mass = 5.0;
-	bMissile = true;
-	bNoBlockmap = true;
-	bDropOff = true;
-	bNoGravity = true;
-	bNoTeleport = true;
-	BounceType = BOUNCE_Hexen;
 }

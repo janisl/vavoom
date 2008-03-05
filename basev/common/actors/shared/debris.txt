@@ -1,0 +1,440 @@
+//------------------------------------------------------------------------------
+actor Rock1
+{
+	SpawnID 41
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK A 20
+		Loop
+	Death:
+		ROKK A 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Rock2
+{
+	SpawnID 42
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK B 20
+		Loop
+	Death:
+		ROKK B 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Rock3
+{
+	SpawnID 43
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK C 20
+		Loop
+	Death:
+		ROKK C 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Dirt1
+{
+	SpawnID 44
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK D 20
+		Loop
+	Death:
+		ROKK D 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Dirt2
+{
+	SpawnID 45
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK E 20
+		Loop
+	Death:
+		ROKK E 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Dirt3
+{
+	SpawnID 46
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK F 20
+		Loop
+	Death:
+		ROKK F 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Dirt4
+{
+	SpawnID 47
+	Gravity 0.125
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK G 20
+		Loop
+	Death:
+		ROKK G 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Dirt5
+{
+	SpawnID 48
+	Gravity 0.125
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK H 20
+		Loop
+	Death:
+		ROKK H 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Dirt6
+{
+	SpawnID 49
+	Gravity 0.125
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ROKK I 20
+		Loop
+	Death:
+		ROKK I 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard1 : GlassShard
+{
+	SpawnID 54
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSA ABCDE 4
+		Loop
+	Death:
+		SGSA E 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard2 : GlassShard
+{
+	SpawnID 55
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSA FGHIJ 4
+		Loop
+	Death:
+		SGSA J 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard3 : GlassShard
+{
+	SpawnID 56
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSA KLMNO 4
+		Loop
+	Death:
+		SGSA O 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard4 : GlassShard
+{
+	SpawnID 57
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSA PQRST 4
+		Loop
+	Death:
+		SGSA T 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard5 : GlassShard
+{
+	SpawnID 58
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSA UVWXY 4
+		Loop
+	Death:
+		SGSA Y 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard6 : GlassShard
+{
+	SpawnID 59
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSB A 4
+		Loop
+	Death:
+		SGSB A 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard7 : GlassShard
+{
+	SpawnID 60
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSB B 4
+		Loop
+	Death:
+		SGSB B 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard8 : GlassShard
+{
+	SpawnID 61
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSB C 4
+		Loop
+	Death:
+		SGSB C 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard9 : GlassShard
+{
+	SpawnID 62
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSB D 4
+		Loop
+	Death:
+		SGSB D 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SGShard0 : GlassShard
+{
+	SpawnID 63
+	Radius 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+HexenBounce
+	BounceFactor 0.3
+	states
+	{
+	Spawn:
+		SGSB E 4
+		Loop
+	Death:
+		SGSB E 30
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+//FIXME make it fade away.
+actor GlassJunk
+{
+	Health 3	//	Number of different shards
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlockmap
+	+NoClip
+	states
+	{
+		SHAR A 128
+		Stop
+		SHAR B 128
+		Stop
+		SHAR C 128
+		Stop
+	Spawn:
+		SHAR D 128
+		Stop
+		SHAR E 128
+		Stop
+		SHAR F 128
+		Stop
+	}
+}

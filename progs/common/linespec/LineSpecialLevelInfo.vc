@@ -5479,7 +5479,7 @@ final bool EV_GlassBreak(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			{
 				glass = Spawn(GlassJunk, vector(x, y, EntityEx::ONFLOORZ));
 				glass.Origin.z += 24.0;
-				glass.SetState(GetStatePlus(glass.IdleState, P_Random() % 6, true));
+				glass.SetState(GetStatePlus(glass.IdleState, P_Random() % glass.Health, true));
 				an = Random() * 360.0;
 				glass.Angles.yaw = an;
 				speed = Random() * 4.0 * 35.0;

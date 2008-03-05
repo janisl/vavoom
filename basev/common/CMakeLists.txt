@@ -31,6 +31,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/raven/ravenartifacts.txt
 		actors/raven/ravenhealth.txt
 		actors/shared/blood.txt
+		actors/shared/debris.txt
 		actors/strife/questitems.txt
 		actors/strife/strifearmor.txt
 		actors/strife/strifeitems.txt
