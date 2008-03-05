@@ -398,7 +398,7 @@ final void A_QuestObjectDeath()
 
 	//	Give quest item for destroying important object.
 	//	Basicly all object using this function does this.
-	int QuestType = ftoi(Speed);
+	int QuestType = ftoi(Speed / 35.0);
 	class<Inventory> QClass = class<Inventory>(FindClass(
 		StrToName(va("QuestItem%d", QuestType))));
 	if (QClass)

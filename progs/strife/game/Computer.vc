@@ -54,7 +54,7 @@ defaultproperties
 	Radius = 26.0;
 	Height = 128.0;
 	Mass = 100000.0;
-	Speed = 27.0;	//	Quest type
+	Speed = 27.0 * 35.0;	//	Quest type
 	bSolid = true;
 	bShootable = true;
 	bInCombat = true;
