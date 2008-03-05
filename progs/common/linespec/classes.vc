@@ -166,10 +166,6 @@ enum
 #include "PointLightFlickerRandom.vc"
 #include "SectorPointLight.vc"
 
-#include "Blood.vc"
-#include "BloodSplatter.vc"
-#include "AxeBlood.vc"
-
 #include "Rock1.vc"
 #include "Rock2.vc"
 #include "Rock3.vc"
@@ -208,5 +204,9 @@ enum
 #include "Gold10.vc"
 #include "Gold25.vc"
 #include "Gold50.vc"
+
+class Blood : ScriptedEntity decorate;
+class BloodSplatter : ScriptedEntity decorate;
+class AxeBlood : ScriptedEntity decorate;
 
 class QuestItem29 : Inventory decorate;

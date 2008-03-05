@@ -193,6 +193,7 @@
 #include "Sorcerer2Telefade.vc"
 #include "Sorcerer2.vc"
 
+class Blood : ScriptedEntity decorate;
 class ArtiHealth : HealthPickup decorate;
 class ArtiSuperHealth : HealthPickup decorate;
 class EnchantedShield : BasicArmorPickup decorate;

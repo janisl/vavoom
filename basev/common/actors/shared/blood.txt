@@ -1,0 +1,60 @@
+//------------------------------------------------------------------------------
+actor Blood
+{
+	SpawnID 130
+	Mass 5
+	+NoBlockmap
+	states
+	{
+	Spawn:
+		BLUD CBA 8
+		Stop
+	Spray:
+		SPRY ABCDEF 3
+		SPRY G 2
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BloodSplatter
+{
+	Radius 2
+	Height 4
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	+CannotPush
+	states
+	{
+	Spawn:
+		BLUD CBA 8
+		Stop
+	Death:
+		BLUD A 6
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor AxeBlood
+{
+	Radius 2
+	Height 4
+	+NoBlockmap
+	+NoGravity
+	+DropOff
+	+NoTeleport
+	+CannotPush
+	states
+	{
+	Spawn:
+		FAXE FGHIJ 3
+		//Fall through
+	Death:
+		FAXE K 3
+		Stop
+	}
+}
