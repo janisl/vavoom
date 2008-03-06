@@ -268,6 +268,21 @@ static float GetClassFieldFloat(VClass* Class, const char* FieldName)
 
 //==========================================================================
 //
+//	GetClassFieldVec
+//
+//==========================================================================
+
+static TVec GetClassFieldVec(VClass* Class, const char* FieldName)
+{
+	guard(GetClassFieldVec);
+	VField* F = Class->FindFieldChecked(FieldName);
+	TVec* Ptr = (TVec*)(Class->Defaults + F->Ofs);
+	return *Ptr;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SetClassFieldInt
 //
 //==========================================================================
@@ -360,6 +375,22 @@ static void SetClassFieldStr(VClass* Class, const char* FieldName,
 	guard(SetClassFieldStr);
 	VField* F = Class->FindFieldChecked(FieldName);
 	VStr* Ptr = (VStr*)(Class->Defaults + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetClassFieldVec
+//
+//==========================================================================
+
+static void SetClassFieldVec(VClass* Class, const char* FieldName,
+	const TVec& Value)
+{
+	guard(SetClassFieldVec);
+	VField* F = Class->FindFieldChecked(FieldName);
+	TVec* Ptr = (TVec*)(Class->Defaults + F->Ofs);
 	*Ptr = Value;
 	unguard;
 }
@@ -2598,9 +2629,10 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("VSpeed"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property VSpeed in %s is not yet supported", Class->GetName());
+			TVec Val = GetClassFieldVec(Class, "Velocity");
+			Val.z = sc->Float * 35.0;
+			SetClassFieldVec(Class, "Velocity", Val);
 			continue;
 		}
 		if (!Prop.ICmp("FastSpeed"))

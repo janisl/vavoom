@@ -315,8 +315,6 @@ Inventory		Inventory;
 
 float			FloatBobPhase;
 
-float			PuffVelZ;
-
 //	For A_ExplodeParms
 int				ExplosionDamage;
 int				ExplosionRadius;
@@ -6300,7 +6298,6 @@ final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
 		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
 	}
 
-	puff.Velocity.z = puff.PuffVelZ;
 	if (puff.ExplodeEffect)
 	{
 		SendExplosion(ExplodeEffect, DLightRadius, Org);

@@ -27,7 +27,7 @@ class BeakPuff : StaffPuff;
 
 defaultproperties
 {
-	PuffVelZ = 1.0 * 35.0;
+	Velocity.z = 1.0 * 35.0;
 	bPuffOnActors = true;
 	AttackSound = 'chicken/attack';
 }

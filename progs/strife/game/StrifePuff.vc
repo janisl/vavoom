@@ -37,6 +37,6 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
-	PuffVelZ = 1.0 * 35.0;
+	Velocity.z = 1.0 * 35.0;
 	bPuffParticles = true;
 }

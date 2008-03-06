@@ -36,5 +36,5 @@ defaultproperties
 {
 	RenderStyle = STYLE_Add;
 	Alpha = 0.333;
-	PuffVelZ = 1.0 * 35.0;
+	Velocity.z = 1.0 * 35.0;
 }

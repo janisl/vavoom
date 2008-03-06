@@ -36,6 +36,6 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
-	PuffVelZ = 0.8 * 35.0;
+	Velocity.z = 0.8 * 35.0;
 	bPuffOnActors = true;
 }
