@@ -93,7 +93,7 @@ final void A_AcolyteDeath()
 states
 {
 Spawn:
-	AGRD A 5 A_Stand
+	AGRD A 5 A_Look2
 	Loop
 LookRight:
 	AGRD B 8 A_ClearShadow
@@ -102,7 +102,7 @@ LookLeft:
 	AGRD D 8
 	Goto Spawn
 Walk:
-	AGRD ABCDABCD 5 A_Walk
+	AGRD ABCDABCD 5 A_Wander
 	Loop
 See:
 	AGRD A 6 A_AcolyteBits

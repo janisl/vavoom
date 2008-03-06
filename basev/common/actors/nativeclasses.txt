@@ -4,16 +4,16 @@ class Actor extends Thinker
 	//
 	//	Monster AI
 	//
-	//A_Look
-	//A_Look2
+	action native A_Look();
+	action native A_Look2();
 	//A_LookEx
 	//A_TurretLook
-	//A_Wander
-	//A_Chase
-	//A_FastChase
+	action native A_Wander();
+	action native A_Chase(optional state melee, optional state missile, optional eval int flags);
+	action native A_FastChase();
 	//A_VileChase
 	//A_ExtChase
-	//A_FaceTarget
+	action native A_FaceTarget();
 	//A_Die
 	//A_CentaurDefend
 	//A_AlertMonsters
@@ -64,7 +64,7 @@ class Actor extends Thinker
 	//A_StopSoundEx
 	action native A_Pain();
 	action native A_Scream();
-	//A_XScream
+	action native A_XScream();
 	//A_VileStart
 	//A_BrainPain
 	//A_BrainAwake
@@ -72,7 +72,7 @@ class Actor extends Thinker
 	//
 	//	Special actions
 	//
-	//A_BossDeath
+	action native A_BossDeath();
 	//A_KeenDie
 	//A_BrainDie
 	//A_GetHurt
@@ -113,27 +113,27 @@ class Actor extends Thinker
 	//A_UnSetFloorClip
 	action native A_HideThing();
 	action native A_UnHideThing();
-	//A_SetInvulnerable
-	//A_UnSetInvulnerable
+	action native A_SetInvulnerable();
+	action native A_UnSetInvulnerable();
 	//A_SetReflective
 	//A_UnSetReflective
 	//A_SetReflectiveInvulnerable
 	//A_UnSetReflectiveInvulnerable
 	//A_SetShootable
 	//A_UnSetShootable
-	//A_NoGravity
+	action native A_NoGravity();
 	//A_Gravity
 	//A_LowGravity
 	action native A_NoBlocking();
-	//A_Fall
+	action native A_Fall();
 	//A_SetSolid
 	//A_UnsetSolid
 	//A_SetFloat
 	//A_UnsetFloat
-	//A_ScreamAndUnblock
-	//A_ActiveAndUnblock
-	//A_SetShadow
-	//A_ClearShadow
+	action native A_ScreamAndUnblock();
+	action native A_ActiveAndUnblock();
+	action native A_SetShadow();
+	action native A_ClearShadow();
 	//A_SetTranslucent
 	//A_FadeIn
 	//A_FadeOut
@@ -197,7 +197,7 @@ class Actor extends Thinker
 	//A_SPosAttack
 	//A_CPosAttack
 	//A_CPosRefire
-	//A_SpidRefire
+	action native A_SpidRefire();
 	//A_TroopAttack
 	//A_SargAttack
 	//A_HeadAttack
@@ -228,7 +228,7 @@ class Actor extends Thinker
 	//	Monster specific functions for Doom
 	//
 	//A_Hoof
-	//A_Metal
+	action native A_Metal();
 	//A_BabyMetal
 	//A_FatRaise
 	//A_SkelWhoosh

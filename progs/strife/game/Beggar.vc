@@ -32,7 +32,7 @@ Spawn:
 	BEGR A 10 A_Look
 	Loop
 See:
-	BEGR AABBCC 4 A_Walk
+	BEGR AABBCC 4 A_Wander
 	Loop
 Melee:
 	BEGR D 8

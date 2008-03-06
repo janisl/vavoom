@@ -35,8 +35,8 @@ See:
 	RATT AABB 4 A_Chase
 	Loop
 Melee:
-	RATT A 8 A_Walk
-	RATT B 4 A_Walk
+	RATT A 8 A_Wander
+	RATT B 4 A_Wander
 	Goto See
 Death:
 	MEAT Q 700

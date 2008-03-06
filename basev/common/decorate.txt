@@ -1,3 +1,4 @@
+#include "actors/constants.txt"
 #include "actors/nativeclasses.txt"
 
 #include "actors/shared/blood.txt"

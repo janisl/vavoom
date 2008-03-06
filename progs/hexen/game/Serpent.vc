@@ -35,7 +35,7 @@ class Serpent : Pawn
 
 final void A_SerpentChase()
 {
-	DoChase(false, MeleeState, none, true, true);
+	DoChase(false, MeleeState, none, true, true, false);
 }
 
 //==========================================================================
@@ -227,7 +227,7 @@ final void A_SerpentDiveSound()
 
 final void A_SerpentWalk()
 {
-	DoChase(false, FindState('Attack'), none, true, false);
+	DoChase(false, FindState('Attack'), none, true, false, false);
 }
 
 //==========================================================================

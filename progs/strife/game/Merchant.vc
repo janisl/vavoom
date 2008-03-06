@@ -64,7 +64,7 @@ No:
 	MRNO BA 6
 	Goto Spawn
 Spawn:
-	MRST A 10 A_Stand
+	MRST A 10 A_Look2
 	Loop
 LookRight:
 	MRLK A 30 A_ActiveSound

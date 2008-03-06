@@ -29,15 +29,15 @@ class Peasant : StrifeHumanoid
 states
 {
 Spawn:
-	PEAS A 10 A_Stand
+	PEAS A 10 A_Look2
 	Loop
 See:
 LookRight:
-	PEAS A 5 A_Walk
+	PEAS A 5 A_Wander
 LookLeft:
-	PEAS A 5 A_Walk
+	PEAS A 5 A_Wander
 Walk:
-	PEAS BBCCDD 5 A_Walk
+	PEAS BBCCDD 5 A_Wander
 	Goto Spawn
 Melee:
 	PEAS E 10 A_FaceTarget

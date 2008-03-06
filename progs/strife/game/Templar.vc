@@ -58,7 +58,7 @@ final void A_TemplarAttack()
 states
 {
 Spawn:
-	PGRD A 5 A_Stand
+	PGRD A 5 A_Look2
 	Loop
 LookRight:
 	PGRD B 10
@@ -67,7 +67,7 @@ LookLeft:
 	PGRD C 10
 	Goto Spawn
 Walk:
-	PGRD B 10 A_Walk
+	PGRD B 10 A_Wander
 	Goto Spawn
 See:
 	PGRD AABBCCDD 3 A_Chase

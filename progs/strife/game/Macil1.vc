@@ -49,7 +49,7 @@ int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
 states
 {
 Spawn:
-	LEDR C 5 A_Stand
+	LEDR C 5 A_Look2
 	Loop
 LookRight:
 	LEDR A 8
@@ -58,7 +58,7 @@ LookLeft:
 	LEDR B 8
 	Goto Spawn
 Walk:
-	LEAD ABCD 6 A_Walk
+	LEAD ABCD 6 A_Wander
 	Goto Spawn
 See:
 Death:

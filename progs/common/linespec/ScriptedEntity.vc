@@ -142,11 +142,11 @@ final void A_Look()
 
 //==========================================================================
 //
-//	A_Stand
+//	A_Look2
 //
 //==========================================================================
 
-final void A_Stand()
+final void A_Look2()
 {
 	EntityEx	targ;
 
@@ -190,11 +190,11 @@ final void A_Stand()
 
 //==========================================================================
 //
-//	A_Walk
+//	A_Wander
 //
 //==========================================================================
 
-final void A_Walk()
+final void A_Wander()
 {
 	float	delta;
 
@@ -246,7 +246,7 @@ final void A_Walk()
 //==========================================================================
 
 void DoChase(bool FastChase, state AMeleeState, state AMissileState,
-	bool NightmareFast, bool PlayActive)
+	bool NightmareFast, bool PlayActive, bool DontMove)
 {
 	float		delta;
 	float		dist;
@@ -336,9 +336,24 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 		}
 		if (!Target)
 		{
-			SetState(IdleState);
-			bInCombat = false;
-			return;
+			if (bFriendly)
+			{
+				A_Look();
+				if (!Target)
+				{
+					if (!DontMove)
+					{
+						A_Wander();
+					}
+					return;
+				}
+			}
+			else
+			{
+				SetState(IdleState);
+				bInCombat = false;
+				return;
+			}
 		}
 	}
 
@@ -346,7 +361,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	if (bJustAttacked)
 	{
 		bJustAttacked = false;
-		if (!Level.Game.fastparm)
+		if (!Level.Game.fastparm && !DontMove)
 		{
 			NewChaseDir();
 		}
@@ -423,7 +438,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 
 	if (Goal != Target)
 	{
-		if (FastChase)
+		if (FastChase && !DontMove)
 		{
 			//	Strafe
 			if (FastChaseStrafeCount > 0)
@@ -503,7 +518,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	}
 
 	//	Chase towards player.
-	if (!FastChase || !FastChaseStrafeCount)
+	if ((!FastChase || !FastChaseStrafeCount) && !DontMove)
 	{
 		oldX = Origin.x;
 		oldY = Origin.y;
@@ -517,6 +532,10 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			TryMove(vector(oldX, oldY, Origin.z));
 			NewChaseDir();
 		}
+	}
+	else if (DontMove && MoveCount > 0)
+	{
+		MoveCount = 0;
 	}
 
 	//	Make active sound.
@@ -535,7 +554,29 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 final void A_Chase()
 {
 	DoChase(false, MeleeState, MissileState,
-		LineSpecialGameInfo(Level.Game).bNightmareFastChase, true);
+		LineSpecialGameInfo(Level.Game).bNightmareFastChase, true, false);
+}
+
+//==========================================================================
+//
+//	decorate_A_Chase
+//
+//==========================================================================
+
+final void decorate_A_Chase(optional state AMeleeState,
+	optional state AMissileState, optional int Flags)
+{
+	if (specified_AMeleeState)
+	{
+		//FIXME implement flag 8
+		DoChase(!!(Flags & 1), AMeleeState, AMissileState, !!(Flags & 4),
+			!(Flags & 2), !!(Flags & 16));
+	}
+	else
+	{
+		DoChase(false, MeleeState, MissileState,
+			LineSpecialGameInfo(Level.Game).bNightmareFastChase, true, false);
+	}
 }
 
 //============================================================================
@@ -546,7 +587,7 @@ final void A_Chase()
 
 final void A_FastChase()
 {
-	DoChase(true, MeleeState, MissileState, true, true);
+	DoChase(true, MeleeState, MissileState, true, true, false);
 }
 
 //==========================================================================

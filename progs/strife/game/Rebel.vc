@@ -29,7 +29,7 @@ class Rebel : StrifeHumanoid
 states
 {
 Spawn:
-	HMN1 P 5 A_Stand
+	HMN1 P 5 A_Look2
 	Loop
 LookRight:
 	HMN1 Q 8
@@ -38,7 +38,7 @@ LookLeft:
 	HMN1 R 8
 	Goto Spawn
 Walk:
-	HMN1 ABCDABCD 6 A_Walk
+	HMN1 ABCDABCD 6 A_Wander
 	Goto Spawn
 See:
 	HMN1 AABBCCDD 3 A_Chase
