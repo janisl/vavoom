@@ -73,15 +73,7 @@ bool Use(bool Pickup)
 		{
 			continue;	// no dormant creatures
 		}
-		if ((mo.Class == WraithBuried) && mo.bInvisible)
-		{
-			continue;	// no underground wraiths
-		}
-		if ((mo.Class == WaterSplashBase) || (mo.Class == WaterSplash))
-		{
-			continue;
-		}
-		if (mo.Class == Serpent || mo.Class == SerpentLeader)
+		if (mo.bDontBlast)
 		{
 			continue;
 		}

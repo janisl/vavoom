@@ -35,7 +35,8 @@ class WraithBuried : Wraith
 
 final void A_WraithRaiseInit()
 {
-	RenderStyle = STYLE_Normal;
+	bInvisible = false;
+	bDontBlast = false;
 	bNonShootable = false;
 	bShootable = true;
 	bSolid = true;
@@ -105,6 +106,7 @@ defaultproperties
 {
 	Height = 68.0;
 	bSolid = false;
-	RenderStyle = STYLE_None;
+	bInvisible = true;
 	bShootable = false;
+	bDontBlast = true;
 }

@@ -1366,8 +1366,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("DontBlast"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag DontBlast in %s", Class->GetName());
+		SetClassFieldBool(Class, "bDontBlast", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoTarget"))

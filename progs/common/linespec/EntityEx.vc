@@ -224,6 +224,7 @@ bool bNoSightCheck;		// Go after target without checking sight.
 bool bHuntPlayers;		// With TIDToHate, hate players too.
 bool bNoHatePlayers;	// Ignore player attacks.
 bool bStrifeDamage;		// Missiles do 4x damage instead of 8x
+bool bDontBlast;		// Not blasted by blast radius.
 
 //  Params
 float			Speed;

@@ -405,6 +405,7 @@ defaultproperties
 	bActivatePushWall = false;
 	bCantLeaveFloorpic = true;
 	bNonShootable = true;
+	bDontBlast = true;
 	SightSound = 'SerpentSight';
 	AttackSound = 'SerpentAttack';
 	PainSound = 'SerpentPain';
