@@ -3302,7 +3302,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			if (!Prop.ICmp("Powerup.Type"))
 			{
 				sc->ExpectString();
-				AddClassFixup(Class, "PowerupType", sc->String, ClassFixups);
+				AddClassFixup(Class, "PowerupType", VStr("Power") + sc->String,
+					ClassFixups);
 				continue;
 			}
 			if (!Prop.ICmp("Powerup.Mode"))
