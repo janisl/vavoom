@@ -57,6 +57,7 @@ actors/raven/ravenartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravena
 actors/raven/ravenhealth.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenhealth.txt
 actors/shared/blood.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/blood.txt
 actors/shared/debris.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/debris.txt
+actors/shared/splashes.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/splashes.txt
 actors/strife/questitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/questitems.txt
 actors/strife/strifearmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifearmor.txt
 actors/strife/strifeitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeitems.txt

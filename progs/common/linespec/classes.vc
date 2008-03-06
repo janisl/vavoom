@@ -166,17 +166,6 @@ enum
 
 #include "GlassShard.vc"
 
-#include "WaterSplash.vc"
-#include "WaterSplashBase.vc"
-#include "LavaSplash.vc"
-#include "LavaSmoke.vc"
-#include "SludgeChunk.vc"
-#include "SludgeSplash.vc"
-#include "BloodSplash.vc"
-#include "BloodSplashBase.vc"
-#include "SlimeChunk.vc"
-#include "SlimeSplash.vc"
-
 #include "LineSpecialClientGame.vc"
 
 #include "Coin.vc"

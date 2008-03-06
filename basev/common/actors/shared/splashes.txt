@@ -1,0 +1,190 @@
+//------------------------------------------------------------------------------
+actor WaterSplash
+{
+	Radius 2
+	Height 4
+	Gravity 0.125
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	+CannotPush
+	+DontSplash
+	+DontBlast
+	states
+	{
+	Spawn:
+		SPSH ABC 8
+		SPSH D 16
+		Stop
+	Death:
+		SPSH D 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WaterSplashBase
+{
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+DontSplash
+	+DontBlast
+	states
+	{
+	Spawn:
+		SPSH EFGHIJK 5
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor LavaSplash
+{
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+DontSplash
+	states
+	{
+	Spawn:
+		LVAS ABCDEF 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor LavaSmoke
+{
+	RenderStyle Translucent
+	Alpha 0.666 //0.333 in Hexen
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+DontSplash
+	states
+	{
+	Spawn:
+		LVAS GHIJK 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SludgeChunk
+{
+	Radius 2
+	Height 4
+	Gravity 0.125
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	+CannotPush
+	+DontSplash
+	states
+	{
+	Spawn:
+		SLDG ABCD 8
+		Stop
+	Death:
+		SLDG D 6
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SludgeSplash
+{
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+DontSplash
+	states
+	{
+	Spawn:
+		SLDG EFGH 6
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BloodSplash
+{
+	Radius 2
+	Height 4
+	Gravity 0.125
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	+CannotPush
+	+DontSplash
+	+DontBlast
+	states
+	{
+	Spawn:
+		BSPH ABC 8
+		BSPH D 16
+		Stop
+	Death:
+		BSPH D 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BloodSplashBase
+{
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+DontSplash
+	+DontBlast
+	states
+	{
+	Spawn:
+		BSPH EFGHIJK 5
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SlimeChunk
+{
+	Radius 2
+	Height 4
+	Gravity 0.125
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	+ActivatePCross
+	+CannotPush
+	+DontSplash
+	states
+	{
+	Spawn:
+		SLIM ABCD 8
+		Stop
+	Death:
+		SLIM D 6
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SlimeSplash
+{
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+DontSplash
+	states
+	{
+	Spawn:
+		SLIM EFGH 5
+		Stop
+	}
+}
