@@ -37,29 +37,38 @@ final void A_FireCGun()
 {
 	TVec dir;
 
-	Owner.PlaySound('weapons/chngun', CHAN_WEAPON);
-
-	if (!DepleteAmmo(, 1))
+	if (!bIsPlayer)
 	{
 		return;
 	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Owner.SetState(EntityEx(Owner).MeleeState);
+	PlaySound('weapons/chngun', CHAN_WEAPON);
 
-	if (Owner.Player.ViewStates[ps_weapon].State == GetAttackState(false))
+	if (Wpn)
 	{
-		Owner.Player.SetViewState(ps_flash, FindState('Flash'));
-	}
-	else
-	{
-		Owner.Player.SetViewState(ps_flash, FindState('Flash2'));
+		if (!Wpn.DepleteAmmo(, 1))
+		{
+			return;
+		}
+
+		if (Player.ViewStates[ps_weapon].State == Wpn.GetAttackState(false))
+		{
+			Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
+		}
+		else
+		{
+			Player.SetViewState(ps_flash, GetStatePlus(Wpn.FindState('Flash'), 1));
+		}
 	}
 
-	Actor(Owner).Aim(dir, 16.0 * 64.0);
-	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
-	EntityEx(Owner).bMuzzleFlash = true;
-	EntityEx(Owner).DLightColour = RGB(195, 79, 0);
-	EntityEx(Owner).DLightRadius = 118.0;
+	SetState(MeleeState);
+
+	Aim(dir, 16.0 * 64.0);
+	GunShot(self, !Player(Player).Refire, dir);
+	bMuzzleFlash = true;
+	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 118.0;
 }
 
 states
@@ -81,7 +90,6 @@ Fire:
 Flash:
 	CHGF A 5 Bright A_Light1
 	Goto Super::LightDone
-Flash2:
 	CHGF B 5 Bright A_Light2
 	Goto Super::LightDone
 Spawn:

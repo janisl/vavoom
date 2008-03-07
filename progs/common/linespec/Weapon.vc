@@ -555,54 +555,59 @@ final void A_WeaponReady()
 {
 	float angle;
 
-	// get out of attack state
-	if (StateIsInSequence(Owner.State, EntityEx(Owner).MissileState) ||
-		StateIsInSequence(Owner.State, EntityEx(Owner).MeleeState))
+	if (!bIsPlayer)
 	{
-		Owner.SetState(EntityEx(Owner).IdleState);
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	// get out of attack state
+	if (StateIsInSequence(State, MissileState) ||
+		StateIsInSequence(State, MeleeState))
+	{
+		SetState(IdleState);
 	}
 
-	if (Owner.Player.ViewStates[ps_weapon].State == GetReadyState() &&
-		ReadySound && (!bReadySndHalf || Random() < 0.5))
+	if (Player.ViewStates[ps_weapon].State == Wpn.GetReadyState() &&
+		Wpn.ReadySound && (!Wpn.bReadySndHalf || Random() < 0.5))
 	{
-		Owner.PlaySound(ReadySound, CHAN_WEAPON);
+		PlaySound(Wpn.ReadySound, CHAN_WEAPON);
 	}
 
 	// Put the weapon away if the player has a pending weapon or has died.
-	if (PlayerEx(Owner.Player).PendingWeapon || Owner.Player.MO.Health <= 0)
+	if (PlayerEx(Player).PendingWeapon || Player.MO.Health <= 0)
 	{
-		Owner.Player.SetViewState(ps_weapon, GetDownState());
+		Player.SetViewState(ps_weapon, Wpn.GetDownState());
 		return;
 	}
 
 	// Check for fire.
-	if (Owner.Player.Buttons & BT_ATTACK)
+	if (Player.Buttons & BT_ATTACK)
 	{
-		if (!Owner.Player.bAttackDown ||
-			!PlayerEx(Owner.Player).ReadyWeapon.bNoAutoFire)
+		if (!Player.bAttackDown || !PlayerEx(Player).ReadyWeapon.bNoAutoFire)
 		{
-			Owner.Player.bAttackDown = true;
-			PlayerEx(Owner.Player).FireWeapon();
+			Player.bAttackDown = true;
+			PlayerEx(Player).FireWeapon();
 			return;
 		}
 	}
 	else
 	{
-		Owner.Player.bAttackDown = false;
+		Player.bAttackDown = false;
 	}
 
-	if (!bDontBob)
+	if (!Wpn.bDontBob)
 	{
 		// bob the weapon based on movement speed
 		angle = AngleMod360(180.0 * XLevel.Time);
-		Owner.Player.ViewStates[ps_weapon].SX = 1.0 +
-			PlayerEx(Owner.Player).Bob * cos(angle);
+		Player.ViewStates[ps_weapon].SX = 1.0 + PlayerEx(Player).Bob *
+			cos(angle);
 		if (angle >= 180.0)
 		{
 			angle -= 180.0;
 		}
-		Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP +
-			PlayerEx(Owner.Player).Bob * sin(angle);
+		Player.ViewStates[ps_weapon].SY = WEAPONTOP +
+			PlayerEx(Player).Bob * sin(angle);
 	}
 }
 
@@ -616,50 +621,55 @@ final void A_WeaponReady()
 
 final void A_Lower()
 {
-	if (EntityEx(Owner.Player.MO).PlayerIsMorphed() ||
-		PlayerEx(Owner.Player).bInstantWeaponSwitch)
+	if (!bIsPlayer)
 	{
-		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		return;
+	}
+
+	if (EntityEx(Player.MO).PlayerIsMorphed() ||
+		PlayerEx(Player).bInstantWeaponSwitch)
+	{
+		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 	}
 	else
 	{
 		//	FIXME!!
 		if (Level.Game.frametime < 1.0 / 35.0)
 		{
-			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED;
+			Player.ViewStates[ps_weapon].SY += LOWERSPEED;
 		}
 		else
 		{
-			Owner.Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 *
+			Player.ViewStates[ps_weapon].SY += LOWERSPEED * 35.0 *
 				Level.Game.frametime;
 		}
 	}
 
-	if (Owner.Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
+	if (Player.ViewStates[ps_weapon].SY < WEAPONBOTTOM)
 	{
 		// Not lowered all the way yet
 		return;
 	}
 
-	if (Owner.Player.PlayerState == PST_DEAD)
+	if (Player.PlayerState == PST_DEAD)
 	{
 		// Player is dead, so don't bring up a pending weapon
-		Owner.Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
+		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;
 		return;
 	}
 
-	if (Owner.Player.MO.Health <= 0)
+	if (Player.MO.Health <= 0)
 	{
 		// Player is dead, so keep the weapon off screen.
-		Owner.Player.SetViewState(ps_weapon, none);
+		Player.SetViewState(ps_weapon, none);
 		return;
 	}
 
 	//	Clear flash state, needed for Strife.
-	Owner.Player.SetViewState(ps_flash, none);
+	Player.SetViewState(ps_flash, none);
 
-	PlayerEx(Owner.Player).SetWeapon(PlayerEx(Owner.Player).PendingWeapon);
-	PlayerEx(Owner.Player).BringUpWeapon();
+	PlayerEx(Player).SetWeapon(PlayerEx(Player).PendingWeapon);
+	PlayerEx(Player).BringUpWeapon();
 }
 
 //==========================================================================
@@ -670,18 +680,28 @@ final void A_Lower()
 
 final void A_Raise()
 {
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	//	FIXME!!
 	if (Level.Game.frametime < 1.0 / 35.0)
-		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED;
+	{
+		Player.ViewStates[ps_weapon].SY -= RAISESPEED;
+	}
 	else
-		Owner.Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
-	if (Owner.Player.ViewStates[ps_weapon].SY > WEAPONTOP)
+	{
+		Player.ViewStates[ps_weapon].SY -= RAISESPEED * 35.0 * Level.Game.frametime;
+	}
+	if (Player.ViewStates[ps_weapon].SY > WEAPONTOP)
 	{
 		// Not raised all the way yet
 		return;
 	}
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-	Owner.Player.SetViewState(ps_weapon, GetReadyState());
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	Player.SetViewState(ps_weapon, Wpn.GetReadyState());
 }
 
 //===========================================================================
@@ -694,16 +714,22 @@ final void A_Raise()
 
 final void A_ReFire()
 {
-	if ((Owner.Player.Buttons & BT_ATTACK) &&
-		!PlayerEx(Owner.Player).PendingWeapon && Owner.Player.MO.Health > 0)
+	if (!bIsPlayer)
 	{
-		PlayerEx(Owner.Player).Refire++;
-		PlayerEx(Owner.Player).FireWeapon();
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if ((Player.Buttons & BT_ATTACK) &&
+		!PlayerEx(Player).PendingWeapon && Player.MO.Health > 0)
+	{
+		PlayerEx(Player).Refire++;
+		PlayerEx(Player).FireWeapon();
 	}
 	else
 	{
-		PlayerEx(Owner.Player).Refire = 0;
-		CheckAmmo(true);
+		PlayerEx(Player).Refire = 0;
+		Wpn.CheckAmmo(true);
 	}
 }
 
@@ -715,7 +741,13 @@ final void A_ReFire()
 
 final void A_CheckReload()
 {
-	CheckAmmo(true);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.CheckAmmo(true);
 }
 
 //===========================================================================
@@ -726,8 +758,14 @@ final void A_CheckReload()
 
 final void A_GunFlash()
 {
-	Owner.SetState(EntityEx(Owner).MeleeState);
-	Owner.Player.SetViewState(ps_flash, FindState('Flash'));
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	SetState(MeleeState);
+	Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
 }
 
 //===========================================================================
@@ -738,8 +776,13 @@ final void A_GunFlash()
 
 final void A_Light0()
 {
-	Owner.Player.ExtraLight = 0;
-	EntityEx(Owner).bMuzzleFlash = false;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Player.ExtraLight = 0;
+	bMuzzleFlash = false;
 }
 
 //===========================================================================
@@ -750,7 +793,12 @@ final void A_Light0()
 
 final void A_Light1()
 {
-	Owner.Player.ExtraLight = 1;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Player.ExtraLight = 1;
 }
 
 //===========================================================================
@@ -761,7 +809,12 @@ final void A_Light1()
 
 final void A_Light2()
 {
-	Owner.Player.ExtraLight = 2;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Player.ExtraLight = 2;
 }
 
 defaultproperties

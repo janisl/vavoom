@@ -35,8 +35,19 @@ class RocketLauncher : DoomWeapon
 
 final void A_FireMissile()
 {
-	DepleteAmmo(, 1);
-	Actor(Owner).SpawnPlayerMissile(Rocket);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (Wpn)
+	{
+		if (!Wpn.DepleteAmmo(, 1))
+		{
+			return;
+		}
+	}
+	SpawnPlayerMissile(Rocket);
 }
 
 states

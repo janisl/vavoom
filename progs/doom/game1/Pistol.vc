@@ -34,19 +34,35 @@ class Pistol : DoomWeapon;
 final void A_FirePistol()
 {
 	TVec dir;
+	bool Accurate;
 
-	Owner.PlaySound('weapons/pistol', CHAN_WEAPON);
+	if (bIsPlayer)
+	{
+		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+		if (Wpn)
+		{
+			if (!Wpn.DepleteAmmo(, 1))
+			{
+				return;
+			}
 
-	Owner.SetState(EntityEx(Owner).MeleeState);
-	DepleteAmmo(, 1);
+			Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
+		}
+		SetState(MeleeState);
+		Accurate = !Player(Player).Refire;
+	}
+	else
+	{
+		Accurate = true;
+	}
 
-	Owner.Player.SetViewState(ps_flash, FindState('Flash'));
+	PlaySound('weapons/pistol', CHAN_WEAPON);
 
-	Actor(Owner).Aim(dir, 16.0 * 64.0);
-	GunShot(Actor(Owner), !Player(Owner.Player).Refire, dir);
-	EntityEx(Owner).bMuzzleFlash = true;
-	EntityEx(Owner).DLightColour = RGB(195, 79, 0);
-	EntityEx(Owner).DLightRadius = 118.0;
+	Aim(dir, 16.0 * 64.0);
+	GunShot(self, Accurate, dir);
+	bMuzzleFlash = true;
+	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 118.0;
 }
 
 states

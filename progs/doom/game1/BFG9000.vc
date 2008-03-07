@@ -35,7 +35,7 @@ class BFG9000 : DoomWeapon
 
 final void A_BFGsound()
 {
-	Owner.PlaySound('weapons/bfgf', CHAN_WEAPON);
+	PlaySound('weapons/bfgf', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -46,8 +46,19 @@ final void A_BFGsound()
 
 final void A_FireBFG()
 {
-	DepleteAmmo(, BFG9000.default.AmmoUse1);
-	Actor(Owner).SpawnPlayerMissile(BFGBall);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (Wpn)
+	{
+		if (!Wpn.DepleteAmmo(, BFG9000.default.AmmoUse1))
+		{
+			return;
+		}
+	}
+	SpawnPlayerMissile(BFGBall);
 }
 
 states

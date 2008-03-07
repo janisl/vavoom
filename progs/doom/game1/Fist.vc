@@ -38,25 +38,39 @@ final void A_Punch()
 	TVec		dir;
 	EntityEx	AimTarget;
 
+	if (bIsPlayer)
+	{
+		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+		if (Wpn)
+		{
+			if (!Wpn.DepleteAmmo())
+			{
+				return;
+			}
+		}
+	}
+
 	damage = (P_Random() % 10 + 1) << 1;
 
-	if (EntityEx(Owner).FindInventory(PowerStrength))
+	if (FindInventory(PowerStrength))
 		damage *= 10;
 
-	aimAngles = Owner.Angles;
+	aimAngles = Angles;
 	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
-	AimTarget = Actor(Owner).AimLineAttack(dir, aimAngles, Actor::MELEERANGE);
-	Actor(Owner).LineAttack(dir, Actor::MELEERANGE, damage, BulletPuff);
+	AimTarget = AimLineAttack(dir, aimAngles, MELEERANGE);
+	LineAttack(dir, MELEERANGE, damage, BulletPuff);
 
 	// turn to face target
 	if (AimTarget)
 	{
-		Owner.PlaySound('*fist', CHAN_WEAPON);
-		Owner.Angles.yaw = atan2(
-			AimTarget.Origin.y - Owner.Origin.y,
-			AimTarget.Origin.x - Owner.Origin.x);
-		Owner.Player.bFixAngle = true;
+		PlaySound('*fist', CHAN_WEAPON);
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		if (bIsPlayer)
+		{
+			Player.bFixAngle = true;
+		}
 	}
 }
 

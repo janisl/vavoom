@@ -35,12 +35,27 @@ class PlasmaRifle : DoomWeapon
 
 final void A_FirePlasma()
 {
-	DepleteAmmo(, 1);
-	if (!(P_Random() & 1))
-		Owner.Player.SetViewState(ps_flash, FindState('Flash'));
-	else
-		Owner.Player.SetViewState(ps_flash, FindState('Flash2'));
-	Actor(Owner).SpawnPlayerMissile(PlasmaBall);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (Wpn)
+	{
+		if (!Wpn.DepleteAmmo(, 1))
+		{
+			return;
+		}
+		if (!(P_Random() & 1))
+		{
+			Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
+		}
+		else
+		{
+			Player.SetViewState(ps_flash, GetStatePlus(Wpn.FindState('Flash'), 1));
+		}
+	}
+	SpawnPlayerMissile(PlasmaBall);
 }
 
 states
@@ -61,7 +76,6 @@ Fire:
 Flash:
 	PLSF A 4 Bright A_Light1
 	Goto Super::LightDone
-Flash2:
 	PLSF B 4 Bright A_Light1
 	Goto Super::LightDone
 Spawn:

@@ -41,42 +41,59 @@ final void A_Saw()
 	TVec		dir;
 	EntityEx	AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (Wpn)
+	{
+		if (!Wpn.DepleteAmmo())
+		{
+			return;
+		}
+	}
+
 	damage = 2 * (P_Random() % 10 + 1);
-	aimAng = Owner.Angles;
+	aimAng = Angles;
 	aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
 		Random()) * 45.0 / 8.0);
 
 	// use meleerange + 1 se the puff doesn't skip the flash
-	AimTarget = Actor(Owner).AimLineAttack(dir, aimAng, Actor::MELEERANGE + 0.00001);
-	Actor(Owner).LineAttack(dir, Actor::MELEERANGE + 0.00001, damage, BulletPuff);
+	AimTarget = AimLineAttack(dir, aimAng, MELEERANGE + 0.00001);
+	LineAttack(dir, MELEERANGE + 0.00001, damage, BulletPuff);
 
 	if (!AimTarget)
 	{
-		Owner.PlaySound('weapons/sawfull', CHAN_WEAPON);
+		PlaySound('weapons/sawfull', CHAN_WEAPON);
 		return;
 	}
-	Owner.PlaySound('weapons/sawhit', CHAN_WEAPON);
+	PlaySound('weapons/sawhit', CHAN_WEAPON);
 
 	// turn to face target
-	angle = atan2(AimTarget.Origin.y - Owner.Origin.y,
-		AimTarget.Origin.x - Owner.Origin.x);
-	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
+	angle = atan2(AimTarget.Origin.y - Origin.y,
+		AimTarget.Origin.x - Origin.x);
+	if (AngleMod360(angle - Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Owner.Angles.yaw) < -90.0 / 20.0)
-			Owner.Angles.yaw = angle + 90.0 / 21.0;
+		if (AngleMod360(angle - Angles.yaw) < -90.0 / 20.0)
+			Angles.yaw = angle + 90.0 / 21.0;
 		else
-			Owner.Angles.yaw = Owner.Angles.yaw - 90.0 / 20.0;
+			Angles.yaw = Angles.yaw - 90.0 / 20.0;
 	}
 	else
 	{
-		if (AngleMod360(angle - Owner.Angles.yaw) > 90.0 / 20.0)
-			Owner.Angles.yaw = angle - 90.0 / 21.0;
+		if (AngleMod360(angle - Angles.yaw) > 90.0 / 20.0)
+			Angles.yaw = angle - 90.0 / 21.0;
 		else
-			Owner.Angles.yaw += 90.0 / 20.0;
+			Angles.yaw += 90.0 / 20.0;
 	}
-	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw);
-	Actor(Owner).bJustAttacked = true;
-	Owner.Player.bFixAngle = true;
+	Angles.yaw = AngleMod360(Angles.yaw);
+	bJustAttacked = true;
+	if (bIsPlayer)
+	{
+		Player.bFixAngle = true;
+	}
 }
 
 states

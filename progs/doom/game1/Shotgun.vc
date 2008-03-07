@@ -38,21 +38,33 @@ final void A_FireShotgun()
 	int i;
 	TVec dir;
 
-	Owner.PlaySound('weapons/shotgf', CHAN_WEAPON);
-	Owner.SetState(EntityEx(Owner).MeleeState);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	DepleteAmmo(, 1);
+	PlaySound('weapons/shotgf', CHAN_WEAPON);
+	SetState(MeleeState);
 
-	Owner.Player.SetViewState(ps_flash, FindState('Flash'));
+	if (Wpn)
+	{
+		if (!Wpn.DepleteAmmo(, 1))
+		{
+			return;
+		}
 
-	Actor(Owner).Aim(dir, 16.0 * 64.0);
+		Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
+	}
+
+	Aim(dir, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(Actor(Owner), false, dir);
+		GunShot(self, false, dir);
 	}
-	EntityEx(Owner).bMuzzleFlash = true;
-	EntityEx(Owner).DLightColour = RGB(195, 79, 0);
-	EntityEx(Owner).DLightRadius = 118.0;
+	bMuzzleFlash = true;
+	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 118.0;
 }
 
 states

@@ -41,14 +41,26 @@ final void A_FireShotgun2()
 	TVec aimDir;
 	TVec dir;
 
-	Owner.PlaySound('weapons/sshotf', CHAN_WEAPON);
-	Owner.SetState(EntityEx(Owner).MeleeState);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	DepleteAmmo(, 2);
+	PlaySound('weapons/sshotf', CHAN_WEAPON);
+	SetState(MeleeState);
 
-	Owner.Player.SetViewState(ps_flash, FindState('Flash'));
+	if (Wpn)
+	{
+		if (!Wpn.DepleteAmmo(, 2))
+		{
+			return;
+		}
 
-	Actor(Owner).Aim(aimDir, 16.0 * 64.0);
+		Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
+	}
+
+	Aim(aimDir, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
 	{
 		rot.pitch = (Random() - Random()) * 45.0 / 8.0;
@@ -56,11 +68,11 @@ final void A_FireShotgun2()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		Actor(Owner).LineAttack(dir, Actor::MISSILERANGE, damage, BulletPuff);
+		LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 	}
-	EntityEx(Owner).bMuzzleFlash = true;
-	EntityEx(Owner).DLightColour = RGB(195, 79, 0);
-	EntityEx(Owner).DLightRadius = 118.0;
+	bMuzzleFlash = true;
+	DLightColour = RGB(195, 79, 0);
+	DLightRadius = 118.0;
 }
 
 //===========================================================================
@@ -71,7 +83,7 @@ final void A_FireShotgun2()
 
 final void A_OpenShotgun2()
 {
-	Owner.PlaySound('weapons/sshoto', CHAN_WEAPON);
+	PlaySound('weapons/sshoto', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -82,7 +94,7 @@ final void A_OpenShotgun2()
 
 final void A_LoadShotgun2()
 {
-	Owner.PlaySound('weapons/sshotl', CHAN_WEAPON);
+	PlaySound('weapons/sshotl', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -93,7 +105,7 @@ final void A_LoadShotgun2()
 
 final void A_CloseShotgun2()
 {
-	Owner.PlaySound('weapons/sshotc', CHAN_WEAPON);
+	PlaySound('weapons/sshotc', CHAN_WEAPON);
 	A_ReFire();
 }
 

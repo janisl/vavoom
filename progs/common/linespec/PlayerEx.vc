@@ -870,7 +870,7 @@ final void SetWeapon(Weapon NewWeapon)
 {
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;
-	ViewEnt = ReadyWeapon;
+	ViewEnt = MO;
 	PSpriteSY = ReadyWeapon.PSpriteSY;
 	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
 }

@@ -32,7 +32,7 @@ class DoomWeapon : Weapon
 //
 //===========================================================================
 
-final void GunShot(Actor A, int accurate, TVec dir)
+final void GunShot(EntityEx A, int accurate, TVec dir)
 {
 	int damage;
 
