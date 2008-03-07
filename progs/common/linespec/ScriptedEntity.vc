@@ -1273,6 +1273,114 @@ final void A_GiveToTarget(class<Inventory> ItemType, optional int Amount)
 	DoGiveInventory(ItemType, Amount, Target);
 }
 
+//==========================================================================
+//
+//	DoTakeInventory
+//
+//==========================================================================
+
+final void DoTakeInventory(class<Inventory> ItemType, int Amount,
+	EntityEx Receiver)
+{
+	if (!Receiver)
+	{
+		return;
+	}
+
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+
+	Inventory Item = Receiver.FindInventory(ItemType);
+	if (Item && !HexenArmor(Item))
+	{
+		if (Item.Amount > 0 && XLevel.StateCall)
+		{
+			XLevel.StateCall->Result = true;
+		}
+		if (!Amount || Item.Amount <= Amount)
+		{
+			if (Item.bKeepDepleted)
+			{
+				Item.Amount = 0;
+			}
+			else
+			{
+				Item.Destroy();
+			}
+		}
+		else
+		{
+			Item.Amount -= Amount;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_TakeInventory
+//
+//==========================================================================
+
+final void A_TakeInventory(class<Inventory> ItemType, optional int Amount)
+{
+	DoTakeInventory(ItemType, Amount, self);
+}
+
+//==========================================================================
+//
+//	A_TakeFromTarget
+//
+//==========================================================================
+
+final void A_TakeFromTarget(class<Inventory> ItemType, optional int Amount)
+{
+	DoTakeInventory(ItemType, Amount, Target);
+}
+
+//==========================================================================
+//
+//	A_DropInventory
+//
+//==========================================================================
+
+final void A_DropInventory(class<Inventory> ItemType)
+{
+	Inventory Item = FindInventory(ItemType);
+	if (Item)
+	{
+		DropInventory(Item);
+	}
+}
+
+//==========================================================================
+//
+//	A_SelectWeapon
+//
+//==========================================================================
+
+final void A_SelectWeapon(class<Weapon> WeaponType)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Weapon Wpn = Weapon(FindInventory(WeaponType));
+	if (Wpn)
+	{
+		if (PlayerEx(Player).ReadyWeapon != Wpn)
+		{
+			PlayerEx(Player).PendingWeapon = Wpn;
+		}
+	}
+	else if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+}
+
 //**************************************************************************
 //	Weapon functions
 //**************************************************************************

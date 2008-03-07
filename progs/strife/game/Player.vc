@@ -636,25 +636,11 @@ void AdjustInvFirst()
 
 EntityEx InvThrow()
 {
-	TVec			Dir;
-
 	if (!InvPtr)
 	{
 		return none;
 	}
-
-	AngleVector(&MO.Angles, &Dir);
-	Dir.z = 0.0;
-	Dir = Normalise(Dir);
-	Inventory Item = InvPtr.CreateTossable();
-	if (Item)
-	{
-		Item.SetOrigin2(MO.Origin + vector(0.0, 0.0, 32.0) +
-			Dir * (MO.Radius + 32.0));
-		Item.Angles.yaw = MO.Angles.yaw;
-		Item.Velocity = Dir * 128.0;
-	}
-	return Item;
+	return EntityEx(MO).DropInventory(InvPtr);
 }
 
 //==========================================================================

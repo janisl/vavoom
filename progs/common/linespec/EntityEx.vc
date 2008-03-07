@@ -5770,6 +5770,30 @@ bool UseInventory(Inventory Item)
 
 //==========================================================================
 //
+//	DropInventory
+//
+//==========================================================================
+
+EntityEx DropInventory(Inventory SrcItem)
+{
+	TVec			Dir;
+
+	AngleVector(&Angles, &Dir);
+	Dir.z = 0.0;
+	Dir = Normalise(Dir);
+	Inventory Item = SrcItem.CreateTossable();
+	if (Item)
+	{
+		Item.SetOrigin2(Origin + vector(0.0, 0.0, 32.0) +
+			Dir * (Radius + 32.0));
+		Item.Angles.yaw = Angles.yaw;
+		Item.Velocity = Dir * 128.0;
+	}
+	return Item;
+}
+
+//==========================================================================
+//
 //	ObtainInventory
 //
 //==========================================================================
