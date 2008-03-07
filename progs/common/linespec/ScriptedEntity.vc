@@ -1203,6 +1203,76 @@ final void A_CountdownArg(int Index)
 //	Inventory functions
 //**************************************************************************
 
+//==========================================================================
+//
+//	DoGiveInventory
+//
+//==========================================================================
+
+final void DoGiveInventory(class<Inventory> ItemType, int Amount,
+	EntityEx Receiver)
+{
+	if (!Receiver)
+	{
+		return;
+	}
+
+	if (!Amount)
+	{
+		Amount = 1;
+	}
+	bool Ret = true;
+	if (ItemType)
+	{
+		Inventory Item = Spawn(ItemType,,,, false);
+		if (Health(Item))
+		{
+			Item.Amount *= Amount;
+		}
+		else
+		{
+			Item.Amount = Amount;
+		}
+		Item.bDropped = true;
+		if (!Item.TryPickup(Receiver))
+		{
+			Item.Destroy();
+			Ret = false;
+		}
+	}
+	else
+	{
+		Ret = false;
+	}
+
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = Ret;
+	}
+}
+
+//==========================================================================
+//
+//	A_GiveInventory
+//
+//==========================================================================
+
+final void A_GiveInventory(class<Inventory> ItemType, optional int Amount)
+{
+	DoGiveInventory(ItemType, Amount, self);
+}
+
+//==========================================================================
+//
+//	A_GiveToTarget
+//
+//==========================================================================
+
+final void A_GiveToTarget(class<Inventory> ItemType, optional int Amount)
+{
+	DoGiveInventory(ItemType, Amount, Target);
+}
+
 //**************************************************************************
 //	Weapon functions
 //**************************************************************************
