@@ -29,6 +29,13 @@ class Level : Object
 const int MAX_LEVEL_TRANSLATIONS = 0xffff;
 const int MAX_BODY_QUEUE_TRANSLATIONS = 0xff;
 
+struct StateCall
+{
+	Entity		Item;
+	state		State;
+	byte		Result;
+};
+
 native readonly name			MapName;
 
 //	Flags.
@@ -125,6 +132,8 @@ native readonly private void*	HeadSecNode;
 
 native readonly private array<int>	Translations;
 native readonly private array<int>	BodyQueueTransl;
+
+native readonly StateCall*		StateCall;
 
 //
 //	Natives

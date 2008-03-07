@@ -437,6 +437,7 @@ class VEntity : public VThinker
 	VState* FindStateEx(const VStr&, bool);
 	bool HasSpecialStates(VName);
 	void GetStateEffects(TArray<VLightEffectDef*>&) const;
+	bool CallStateChain(VEntity*, VState*);
 
 	bool CheckWater();
 	bool CheckPosition(TVec);
@@ -487,6 +488,7 @@ public:
 	DECLARE_FUNCTION(FindStateEx)
 	DECLARE_FUNCTION(HasSpecialStates)
 	DECLARE_FUNCTION(GetStateEffects)
+	DECLARE_FUNCTION(CallStateChain)
 	DECLARE_FUNCTION(PlaySound)
 	DECLARE_FUNCTION(StopSound)
 	DECLARE_FUNCTION(AreSoundsEquivalent)

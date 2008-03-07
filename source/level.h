@@ -530,6 +530,13 @@ struct linetrace_t
 	bool		SightEarlyOut;
 };
 
+struct VStateCall
+{
+	VEntity*	Item;
+	VState*		State;
+	vuint8		Result;
+};
+
 //==========================================================================
 //
 //	Structures for level network replication
@@ -741,6 +748,8 @@ class VLevel : public VObject
 	//	Translations controlled by ACS scripts.
 	TArray<VTextureTranslation*>	Translations;
 	TArray<VTextureTranslation*>	BodyQueueTrans;
+
+	VStateCall*			StateCall;
 
 	void Serialise(VStream& Strm);
 	void ClearReferences();

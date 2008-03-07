@@ -353,6 +353,72 @@ void VEntity::GetStateEffects(TArray<VLightEffectDef*>& Lights) const
 
 //==========================================================================
 //
+//	VEntity::CallStateChain
+//
+//==========================================================================
+
+bool VEntity::CallStateChain(VEntity* Actor, VState* AState)
+{
+	guard(VEntity::CallStateChain);
+	//	Set up state call structure.
+	VStateCall* PrevCall = XLevel->StateCall;
+	VStateCall Call;
+	Call.Item = this;
+	bool Ret = false;
+	XLevel->StateCall = &Call;
+
+	int RunAway = 0;
+	VState* S = AState;
+	while (S)
+	{
+		Call.State = S;
+		//	Call action function.
+		if (S->Function)
+		{
+			//	Assume success by default.
+			Call.Result = true;
+			P_PASS_REF(Actor);
+			ExecuteFunction(S->Function);
+			//	At least one success means overal success.
+			if (Call.Result)
+			{
+				Ret = true;
+			}
+		}
+
+		//	Check for infinite loops
+		RunAway++;
+		if (RunAway > 1000)
+		{
+			break;
+		}
+
+		if (Call.State == S)
+		{
+			//	Abort immediately if next state loops to itself. In this case
+			// the overal result is always false.
+			if (S->NextState == S)
+			{
+				Ret = false;
+				break;
+			}
+			//	Advance to the next state.
+			S = S->NextState;
+		}
+		else
+		{
+			//	There was a state jump.
+			S = Call.State;
+		}
+	}
+
+	XLevel->StateCall = PrevCall;
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VEntity::StartSound
 //
 //==========================================================================
@@ -493,6 +559,14 @@ IMPLEMENT_FUNCTION(VEntity, GetStateEffects)
 	P_GET_PTR(TArray<VLightEffectDef*>, Lights);
 	P_GET_SELF;
 	Self->GetStateEffects(*Lights);
+}
+
+IMPLEMENT_FUNCTION(VEntity, CallStateChain)
+{
+	P_GET_PTR(VState, State);
+	P_GET_REF(VEntity, Actor);
+	P_GET_SELF;
+	Self->CallStateChain(Actor, State);
 }
 
 IMPLEMENT_FUNCTION(VEntity, PlaySound)
