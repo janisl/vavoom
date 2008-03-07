@@ -566,7 +566,7 @@ IMPLEMENT_FUNCTION(VEntity, CallStateChain)
 	P_GET_PTR(VState, State);
 	P_GET_REF(VEntity, Actor);
 	P_GET_SELF;
-	Self->CallStateChain(Actor, State);
+	RET_BOOL(Self->CallStateChain(Actor, State));
 }
 
 IMPLEMENT_FUNCTION(VEntity, PlaySound)
