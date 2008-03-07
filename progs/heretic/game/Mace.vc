@@ -68,20 +68,25 @@ final void A_FireMacePL1B()
 	Actor ball;
 	float angle;
 
-	if (!CheckAmmo(false))
+	if (!bIsPlayer)
 	{
 		return;
 	}
-	DepleteAmmo();
-	ball = HereticLevelInfo(Level).Spawn(MaceFX2, Owner.Origin +
-		vector(0.0, 0.0, 28.0 - Owner.FloorClip));
-	ball.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
-	angle = Owner.Angles.yaw;
-	ball.Target = Actor(Owner);
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (!Wpn.CheckAmmo(false))
+	{
+		return;
+	}
+	Wpn.DepleteAmmo();
+	ball = Spawn(MaceFX2, Origin + vector(0.0, 0.0, 28.0 - FloorClip));
+	ball.Velocity.z = (2.0 + 173.0 * -tan(Angles.pitch) / 32.0) * 35.0;
+	angle = Angles.yaw;
+	ball.Target = self;
 	ball.Angles.yaw = angle;
-	ball.Origin.z += 173.0 * -tan(Owner.Angles.pitch) / 16.0;
-	ball.Velocity.x = Owner.Velocity.x / 2.0 + ball.Speed * cos(angle);
-	ball.Velocity.y = Owner.Velocity.y / 2.0 + ball.Speed * sin(angle);
+	ball.Origin.z += 173.0 * -tan(Angles.pitch) / 16.0;
+	ball.Velocity.x = Velocity.x / 2.0 + ball.Speed * cos(angle);
+	ball.Velocity.y = Velocity.y / 2.0 + ball.Speed * sin(angle);
 	ball.PlaySound('weapons/maceshoot', CHAN_WEAPON);
 	ball.CheckMissileSpawn();
 }
@@ -96,19 +101,25 @@ final void A_FireMacePL1()
 {
 	EntityEx	ball;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	if (P_Random() < 28)
 	{
 		A_FireMacePL1B();
 		return;
 	}
-	if (!DepleteAmmo())
+	if (!Wpn.DepleteAmmo())
 	{
 		return;
 	}
-	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
-	ball = Actor(Owner).SpawnPlayerMissileAngle(MaceFX1,
-		AngleMod360(Owner.Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
+	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
+	ball = SpawnPlayerMissileAngle(MaceFX1,
+		AngleMod360(Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
 	{
 		Actor(ball).Special1 = 16;	// tics till dropoff
@@ -126,20 +137,26 @@ final void A_FireMacePL2()
 	EntityEx	A;
 	EntityEx	AimTarget;
 
-	DepleteAmmo();
-	A = Actor(Owner).SpawnPlayerMissileEx(MaceFX4, false, AimTarget);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
+	A = SpawnPlayerMissileEx(MaceFX4, false, AimTarget);
 	if (A)
 	{
-		A.Velocity.x += Owner.Velocity.x;
-		A.Velocity.y += Owner.Velocity.y;
-		A.Velocity.z = (2.0 + 173.0 * -tan(Owner.Angles.pitch) / 32.0) * 35.0;
+		A.Velocity.x += Velocity.x;
+		A.Velocity.y += Velocity.y;
+		A.Velocity.z = (2.0 + 173.0 * -tan(Angles.pitch) / 32.0) * 35.0;
 		if (AimTarget)
 		{
 			A.Tracer = AimTarget;
 			A.bSeekerMissile = true;
 		}
 	}
-	Owner.PlaySound('weapons/maceshoot', CHAN_WEAPON);
+	PlaySound('weapons/maceshoot', CHAN_WEAPON);
 }
 
 states

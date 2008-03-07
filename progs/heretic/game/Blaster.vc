@@ -39,15 +39,21 @@ final void A_FireBlasterPL1()
 	float bulletslope;
 	TVec dir;
 
-	DepleteAmmo();
-	Actor(Owner).Aim(dir, 16.0 * 64.0);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
+	Aim(dir, 16.0 * 64.0);
 	damage = HITDICE(4);
-	if (Player(Owner.Player).Refire)
+	if (Player(Player).Refire)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 8.0);
 	}
-	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, BlasterPuff);
-	Owner.PlaySound('weapons/blastershoot', CHAN_WEAPON);
+	LineAttack(dir, MISSILERANGE, damage, BlasterPuff);
+	PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -60,13 +66,19 @@ final void A_FireBlasterPL2()
 {
 	EntityEx	A;
 
-	DepleteAmmo();
-	A = Actor(Owner).SpawnPlayerMissile(BlasterFX1);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
+	A = SpawnPlayerMissile(BlasterFX1);
 	if (A)
 	{
 		A.bBlaster = true;
 	}
-	Owner.PlaySound('weapons/blastershoot', CHAN_WEAPON);
+	PlaySound('weapons/blastershoot', CHAN_WEAPON);
 }
 
 states

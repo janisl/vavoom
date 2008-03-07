@@ -36,7 +36,7 @@ class Gauntlets : HereticWeapon
 final void A_GauntletSound()
 {
 	// Play the sound for the initial gauntlet attack
-	Owner.PlaySound('weapons/gauntletsuse', CHAN_WEAPON);
+	PlaySound('weapons/gauntletsuse', CHAN_WEAPON);
 }
 
 //===========================================================================
@@ -57,10 +57,16 @@ final void A_GauntletAttack()
 	class<Actor>	PuffType;
 	EntityEx		AimTarget;
 
-	Owner.Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
-	angles = Owner.Angles;
-	if (bPoweredUp)
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
+	angles = Angles;
+	if (Wpn.bPoweredUp)
 	{
 		damage = HITDICE(2);
 		dist = 4.0 * MELEERANGE;
@@ -76,57 +82,57 @@ final void A_GauntletAttack()
 			(Random() - Random()) * 45.0 / 8.0);
 		PuffType = GauntletPuff1;
 	}
-	AimTarget = Actor(Owner).AimLineAttack(dir, angles, dist);
-	Actor(Owner).LineAttack(dir, dist, damage, PuffType);
+	AimTarget = AimLineAttack(dir, angles, dist);
+	LineAttack(dir, dist, damage, PuffType);
 	if (!AimTarget)
 	{
 		if (P_Random() > 64)
 		{
-			Owner.Player.ExtraLight = !Owner.Player.ExtraLight;
+			Player.ExtraLight = !Player.ExtraLight;
 		}
-		Owner.PlaySound('weapons/gauntletson', CHAN_WEAPON);
+		PlaySound('weapons/gauntletson', CHAN_WEAPON);
 		return;
 	}
 	randVal = P_Random();
 	if (randVal < 64)
 	{
-		Owner.Player.ExtraLight = 0;
+		Player.ExtraLight = 0;
 	}
 	else if (randVal < 160)
 	{
-		Owner.Player.ExtraLight = 1;
+		Player.ExtraLight = 1;
 	}
 	else
 	{
-		Owner.Player.ExtraLight = 2;
+		Player.ExtraLight = 2;
 	}
-	if (bPoweredUp)
+	if (Wpn.bPoweredUp)
 	{
-		EntityEx(Owner).GiveBody(damage >> 1);
-		Owner.PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
+		GiveBody(damage >> 1);
+		PlaySound('weapons/gauntletspowhit', CHAN_WEAPON);
 	}
 	else
 	{
-		Owner.PlaySound('weapons/gauntletshit', CHAN_WEAPON);
+		PlaySound('weapons/gauntletshit', CHAN_WEAPON);
 	}
 	// turn to face target
-	angle = atan2(AimTarget.Origin.y - Owner.Origin.y,
-		AimTarget.Origin.x - Owner.Origin.x);
-	if (AngleMod360(angle - Owner.Angles.yaw) > 180.0)
+	angle = atan2(AimTarget.Origin.y - Origin.y,
+		AimTarget.Origin.x - Origin.x);
+	if (AngleMod360(angle - Angles.yaw) > 180.0)
 	{
-		if (AngleMod360(angle - Owner.Angles.yaw) < 360.0 - 90.0 / 20.0)
-			Owner.Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
+		if (AngleMod360(angle - Angles.yaw) < 360.0 - 90.0 / 20.0)
+			Angles.yaw = AngleMod360(angle + 90.0 / 21.0);
 		else
-			Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw - 90.0 / 20.0);
+			Angles.yaw = AngleMod360(Angles.yaw - 90.0 / 20.0);
 	}
 	else
 	{
-		if (AngleMod360(angle - Owner.Angles.yaw) > 90.0 / 20.0)
-			Owner.Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
+		if (AngleMod360(angle - Angles.yaw) > 90.0 / 20.0)
+			Angles.yaw = AngleMod360(angle - 90.0 / 21.0);
 		else
-			Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw + 90.0 / 20.0);
+			Angles.yaw = AngleMod360(Angles.yaw + 90.0 / 20.0);
 	}
-	Actor(Owner).bJustAttacked = true;
+	bJustAttacked = true;
 }
 
 states

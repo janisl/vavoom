@@ -33,7 +33,13 @@ class PhoenixRodPowered : PhoenixRod;
 
 final void A_InitPhoenixPL2()
 {
-	FlameCount = 10 * 35;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	PhoenixRod(Wpn).FlameCount = 10 * 35;
 }
 
 //===========================================================================
@@ -50,26 +56,32 @@ final void A_FirePhoenixPL2()
 	TVec dir;
 	TVec org;
 
-	if (--FlameCount == 0)
+	if (!bIsPlayer)
 	{
-		// Out of flame
-		Owner.Player.SetViewState(ps_weapon, FindState('Shutdown'));
-		Player(Owner.Player).Refire = 0;
 		return;
 	}
-	org.x = Owner.Origin.x + (Random() - Random()) * 2.0;
-	org.y = Owner.Origin.y + (Random() - Random()) * 2.0;
-	org.z = Owner.Origin.z + 26.0 - sin(Owner.Angles.pitch);
-	org.z -= Owner.FloorClip;
-	A = HereticLevelInfo(Level).Spawn(PhoenixFX2, org);
-	A.Target = Actor(Owner);
-	A.Angles.yaw = Owner.Angles.yaw;
-	A.Angles.pitch = Owner.Angles.pitch;
-	AngleVector(&A.Angles, &dir);
-	A.Velocity = Owner.Velocity + A.Speed * dir;
-	if (!Player(Owner.Player).Refire || !(XLevel.TicTime % 38))
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (--PhoenixRod(Wpn).FlameCount == 0)
 	{
-		Owner.PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
+		// Out of flame
+		Player.SetViewState(ps_weapon, Wpn.FindState('Shutdown'));
+		Player(Player).Refire = 0;
+		return;
+	}
+	org.x = Origin.x + (Random() - Random()) * 2.0;
+	org.y = Origin.y + (Random() - Random()) * 2.0;
+	org.z = Origin.z + 26.0 - sin(Angles.pitch);
+	org.z -= FloorClip;
+	A = Spawn(PhoenixFX2, org);
+	A.Target = self;
+	A.Angles.yaw = Angles.yaw;
+	A.Angles.pitch = Angles.pitch;
+	AngleVector(&A.Angles, &dir);
+	A.Velocity = Velocity + A.Speed * dir;
+	if (!Player(Player).Refire || !(XLevel.TicTime % 38))
+	{
+		PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
 	}
 	A.CheckMissileSpawn();
 }
@@ -82,7 +94,13 @@ final void A_FirePhoenixPL2()
 
 final void A_ShutdownPhoenixPL2()
 {
-	DepleteAmmo();
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
 }
 
 states

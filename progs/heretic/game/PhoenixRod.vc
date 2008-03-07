@@ -39,10 +39,16 @@ final void A_FirePhoenixPL1()
 {
 	TVec vforward;
 
-	DepleteAmmo();
-	Actor(Owner).SpawnPlayerMissile(PhoenixFX1);
-	AngleVector(&Owner.Angles, &vforward);
-	Owner.Velocity -= vforward * 140.0;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
+	SpawnPlayerMissile(PhoenixFX1);
+	AngleVector(&Angles, &vforward);
+	Velocity -= vforward * 140.0;
 }
 
 states

@@ -38,18 +38,24 @@ final void A_StaffAttackPL1()
 	TVec		dir;
 	EntityEx	AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = 5 + (P_Random() & 15);
-	angles = Owner.Angles;
+	angles = Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	AimTarget = Actor(Owner).AimLineAttack(dir, angles, MELEERANGE);
-	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff, true);
+	AimTarget = AimLineAttack(dir, angles, MELEERANGE);
+	LineAttack(dir, MELEERANGE, damage, StaffPuff, true);
 	if (AimTarget)
 	{
 		// turn to face target
-		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
-			AimTarget.Origin.x - Owner.Origin.x);
-		Owner.Player.bFixAngle = true;
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		Player.bFixAngle = true;
 	}
 }
 
@@ -66,20 +72,26 @@ final void A_StaffAttackPL2()
 	TVec		dir;
 	EntityEx	AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	// P_inter.c:DamageMobj() handles target momentums
 	damage = 18 + (P_Random() & 63);
 
-	angles = Owner.Angles;
+	angles = Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	AimTarget = Actor(Owner).AimLineAttack(dir, angles, MELEERANGE);
-	Actor(Owner).LineAttack(dir, MELEERANGE, damage, StaffPuff2, true);
+	AimTarget = AimLineAttack(dir, angles, MELEERANGE);
+	LineAttack(dir, MELEERANGE, damage, StaffPuff2, true);
 	if (AimTarget)
 	{
 		// turn to face target
-		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
-			AimTarget.Origin.x - Owner.Origin.x);
-		Owner.Player.bFixAngle = true;
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		Player.bFixAngle = true;
 	}
 }
 
