@@ -871,7 +871,7 @@ final void SetWeapon(Weapon NewWeapon)
 	ReadyWeapon = NewWeapon;
 	PendingWeapon = none;
 	ViewEnt = ReadyWeapon;
-	PSpriteSY = Weapon(ViewEnt).PSpriteSY;
+	PSpriteSY = ReadyWeapon.PSpriteSY;
 	MO.ModelVersion = ReadyWeapon.PlayerModelVersion;
 }
 
@@ -907,7 +907,7 @@ final void BringUpWeapon()
 
 final void DropWeapon()
 {
-	SetViewState(ps_weapon, Weapon(ViewEnt).GetDownState());
+	SetViewState(ps_weapon, ReadyWeapon.GetDownState());
 }
 
 //===========================================================================

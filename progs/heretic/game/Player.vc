@@ -151,11 +151,6 @@ void DisconnectClient()
 		MO.bIsPlayer = false;
 		Actor(MO).Damage(none, none, 10000);
 	}
-	if (ViewEnt)
-	{
-		ViewEnt.Destroy();
-		ViewEnt = none;
-	}
 	Level.bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
 }

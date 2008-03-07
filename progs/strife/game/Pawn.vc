@@ -203,7 +203,7 @@ final void A_BurnScream()
 	if (bIsPlayer)
 	{
 		Player.SetViewState(ps_weapon,
-			Player.ViewEnt.FindState('BurnWave'));
+			PlayerEx(Player).ReadyWeapon.FindState('BurnWave'));
 		Player.SetViewState(ps_flash, none);
 	}
 }

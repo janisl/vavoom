@@ -237,11 +237,6 @@ void DisconnectClient()
 		MO.bIsPlayer = false;
 		Actor(MO).Damage(none, none, 10000);
 	}
-	if (ViewEnt)
-	{
-		ViewEnt.Destroy();
-		ViewEnt = none;
-	}
 	Level.bprint("%s left the game\n", PlayerName);
 	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
 }
@@ -458,10 +453,6 @@ void SpawnPlayer(mthing_t * mthing)
 				SetWeapon(Weapon(Item));
 			}
 		}
-	}
-	else
-	{
-		ViewEnt.Owner = MO;
 	}
 	SetupPsprites();
 	if (Level.Game.deathmatch)
@@ -955,7 +946,7 @@ void MorphPlayerThink()
 	if (!(MO.Velocity.x + MO.Velocity.y) && P_Random() < 64)
 	{
 		// Snout sniff
-		Snout(ViewEnt).SnoutSniff();
+		Snout(ReadyWeapon).SnoutSniff();
 		MO.PlaySound('PigActive1', CHAN_VOICE);	// snort
 		return;
 	}
