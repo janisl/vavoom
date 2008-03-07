@@ -85,6 +85,7 @@ enum
 #include "MapRevealer.vc"
 #include "PlayerEx.vc"
 #include "FakeInventory.vc"
+#include "CustomInventory.vc"
 
 #include "TeleportDest.vc"
 #include "TeleportDest2.vc"

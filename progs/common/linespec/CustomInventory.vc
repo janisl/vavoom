@@ -1,0 +1,75 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: classes.vc 3235 2008-03-06 18:13:27Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class CustomInventory : Inventory
+	abstract;
+
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	state S = FindState('Pickup');
+	bool IsOk = CallStateChain(Toucher, S);
+	if ((IsOk || !S) && FindState('Use'))
+	{
+		IsOk = ::TryPickup(Toucher);
+	}
+	else if (IsOk || bAlwaysPickup)
+	{
+		GiveQuest(Toucher);
+		GoAwayAndDie();
+	}
+	return IsOk;
+}
+
+//==========================================================================
+//
+//	SpecialDropAction
+//
+//==========================================================================
+
+bool SpecialDropAction(EntityEx Source)
+{
+	return CallStateChain(Source, FindState('Drop'));
+}
+
+//==========================================================================
+//
+//	Use
+//
+//==========================================================================
+
+bool Use(bool Pickup)
+{
+	return CallStateChain(Owner, FindState('Use'));
+}
+
+defaultproperties
+{
+}
