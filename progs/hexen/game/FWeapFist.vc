@@ -42,54 +42,60 @@ final void A_FPunchAttack()
 	EntityEx		AimTarget;
 	TAVec			angles;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = 40 + (P_Random() & 15);
 	power = 2.0;
 	PuffType = PunchPuff;
-	AimTarget = Actor(Owner).AimEx(vforward, 2.0 * Actor::MELEERANGE, 45.0 / 16.0,
-		16, Actor::MELEERANGE);
+	AimTarget = AimEx(vforward, 2.0 * MELEERANGE, 45.0 / 16.0,
+		16, MELEERANGE);
 	if (AimTarget)
 	{
 		VectorAngles(&vforward, &angles);
-		PunchCount++;
-		if (PunchCount == 3)
+		FWeapFist(Wpn).PunchCount++;
+		if (FWeapFist(Wpn).PunchCount == 3)
 		{
 			damage <<= 1;
 			power = 6.0;
 			PuffType = HammerPuff;
 		}
-		if (Actor(Owner).LineAttack(vforward, 2.0 * Actor::MELEERANGE, damage, PuffType))
+		if (LineAttack(vforward, 2.0 * MELEERANGE, damage, PuffType))
 		{
 			if (PuffType == HammerPuff)
 			{
-				Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+				PlaySound('FighterHammerMiss', CHAN_WEAPON);
 			}
 			else
 			{
-				Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
+				PlaySound('FighterPunchMiss', CHAN_WEAPON);
 			}
 		}
 		if (AimTarget.bMonster || AimTarget.bIsPlayer)
 		{
 			AimTarget.Thrust(angles.yaw, power);
 		}
-		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
+		Player(Player).AdjustPlayerAngle(AimTarget);
 	}
 	else
 	{
 		// didn't find any creatures, so try to strike any walls
-		PunchCount = 0;
+		FWeapFist(Wpn).PunchCount = 0;
 
-		if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
+		if (LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
 		{
-			Owner.PlaySound('FighterPunchMiss', CHAN_WEAPON);
+			PlaySound('FighterPunchMiss', CHAN_WEAPON);
 		}
 	}
 
-	if (PunchCount == 3)
+	if (FWeapFist(Wpn).PunchCount == 3)
 	{
-		PunchCount = 0;
-		Owner.Player.SetViewState(ps_weapon, FindState('Fire2'));
-		Owner.PlaySound('*fistgrunt', CHAN_VOICE);
+		FWeapFist(Wpn).PunchCount = 0;
+		Player.SetViewState(ps_weapon, Wpn.FindState('Fire2'));
+		PlaySound('*fistgrunt', CHAN_VOICE);
 	}
 }
 

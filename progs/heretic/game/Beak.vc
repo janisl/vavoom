@@ -33,8 +33,14 @@ class Beak : HereticWeapon;
 
 final void A_BeakRaise()
 {
-	Owner.Player.ViewStates[ps_weapon].SY = WEAPONTOP;
-	Owner.Player.SetViewState(ps_weapon, GetReadyState());
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	Player.SetViewState(ps_weapon, Wpn.GetReadyState());
 }
 
 //===========================================================================
@@ -45,22 +51,28 @@ final void A_BeakRaise()
 
 final void A_BeakReady()
 {
-	if (Owner.Player.Buttons & BT_ATTACK)
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (Player.Buttons & BT_ATTACK)
 	{
 		// Chicken beak attack
-		Owner.Player.bAttackDown = true;
-		Owner.SetState(Actor(Owner).MissileState);
-		Owner.Player.SetViewState(ps_weapon, GetAttackState(false));
-		HereticLevelInfo(Level).NoiseAlert(Actor(Owner), Actor(Owner));
+		Player.bAttackDown = true;
+		SetState(MissileState);
+		Player.SetViewState(ps_weapon, Wpn.GetAttackState(false));
+		HereticLevelInfo(Level).NoiseAlert(self, self);
 	}
 	else
 	{
-		if (Owner.State == Actor(Owner).MissileState)
+		if (State == MissileState)
 		{
 			// Take out of attack state
-			Owner.SetState(Actor(Owner).IdleState);
+			SetState(IdleState);
 		}
-		Owner.Player.bAttackDown = false;
+		Player.bAttackDown = false;
 	}
 }
 
@@ -76,18 +88,24 @@ final void A_BeakAttackPL1()
 	TVec		dir;
 	EntityEx	AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = 1 + (P_Random() & 3);
-	AimTarget = Actor(Owner).AimLineAttack(dir, Owner.Angles, MELEERANGE);
-	Actor(Owner).LineAttack(dir, MELEERANGE, damage, BeakPuff);
+	AimTarget = AimLineAttack(dir, Angles, MELEERANGE);
+	LineAttack(dir, MELEERANGE, damage, BeakPuff);
 	if (AimTarget)
 	{
-		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
-			AimTarget.Origin.x - Owner.Origin.x);
-		Owner.Player.bFixAngle = true;
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		Player.bFixAngle = true;
 	}
-	Owner.PlaySound('chicken/peck', CHAN_VOICE);
-	Player(Owner.Player).ChickenPeck = 12;
-	Owner.Player.ViewStates[ps_weapon].StateTime -= Random() * 0.25;
+	PlaySound('chicken/peck', CHAN_VOICE);
+	Player(Player).ChickenPeck = 12;
+	Player.ViewStates[ps_weapon].StateTime -= Random() * 0.25;
 }
 
 //===========================================================================
@@ -102,18 +120,24 @@ final void A_BeakAttackPL2()
 	TVec		dir;
 	EntityEx	AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = HITDICE(4);
-	AimTarget = Actor(Owner).AimLineAttack(dir, Owner.Angles, MELEERANGE);
-	Actor(Owner).LineAttack(dir, MELEERANGE, damage, BeakPuff);
+	AimTarget = AimLineAttack(dir, Owner.Angles, MELEERANGE);
+	LineAttack(dir, MELEERANGE, damage, BeakPuff);
 	if (AimTarget)
 	{
-		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
-			AimTarget.Origin.x - Owner.Origin.x);
-		Owner.Player.bFixAngle = true;
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		Player.bFixAngle = true;
 	}
-	Owner.PlaySound('chicken/peck', CHAN_VOICE);
-	Player(Owner.Player).ChickenPeck = 12;
-	Owner.Player.ViewStates[ps_weapon].StateTime -= Random() * 0.125;
+	PlaySound('chicken/peck', CHAN_VOICE);
+	Player(Player).ChickenPeck = 12;
+	Player.ViewStates[ps_weapon].StateTime -= Random() * 0.125;
 }
 
 states

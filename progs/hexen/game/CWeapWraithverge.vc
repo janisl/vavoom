@@ -49,14 +49,20 @@ final void A_CHolyAttack()
 	EntityEx	A;
 	EntityEx	AimTarget;
 
-	DepleteAmmo();
-	A = Actor(Owner).SpawnPlayerMissileEx(HolyMissile, false, AimTarget);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
+	A = SpawnPlayerMissileEx(HolyMissile, false, AimTarget);
 	if (A)
 	{
 		A.Tracer = AimTarget;
 	}
-	CShift = RGBA(255, 255, 255, 66);
-	Owner.PlaySound('HolySymbolFire', CHAN_WEAPON);
+	CWeapWraithverge(Wpn).CShift = RGBA(255, 255, 255, 66);
+	PlaySound('HolySymbolFire', CHAN_WEAPON);
 }
 
 //============================================================================
@@ -67,7 +73,13 @@ final void A_CHolyAttack()
 
 final void A_CHolyPalette1()
 {
-	CShift = RGBA(255, 255, 255, 51);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	CWeapWraithverge(Wpn).CShift = RGBA(255, 255, 255, 51);
 }
 
 //============================================================================
@@ -78,7 +90,13 @@ final void A_CHolyPalette1()
 
 final void A_CHolyPalette2()
 {
-	CShift = RGBA(255, 255, 255, 36);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	CWeapWraithverge(Wpn).CShift = RGBA(255, 255, 255, 36);
 }
 
 //============================================================================
@@ -89,8 +107,14 @@ final void A_CHolyPalette2()
 
 final void A_CHolyPalette3()
 {
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	// reset back to original playpal
-	CShift = 0;
+	CWeapWraithverge(Wpn).CShift = 0;
 }
 
 states

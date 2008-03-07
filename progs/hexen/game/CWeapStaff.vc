@@ -37,7 +37,13 @@ int BlinkCount;
 
 final void A_CStaffInitBlink()
 {
-	BlinkCount = (P_Random() >> 1) + 20;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	CWeapStaff(Wpn).BlinkCount = (P_Random() >> 1) + 20;
 }
 
 //==========================================================================
@@ -48,10 +54,16 @@ final void A_CStaffInitBlink()
 
 final void A_CStaffCheckBlink()
 {
-	if (!--BlinkCount)
+	if (!bIsPlayer)
 	{
-		Owner.Player.SetViewState(ps_weapon, FindState('Blink'));
-		BlinkCount = (P_Random() + 50) >> 2;
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (!--CWeapStaff(Wpn).BlinkCount)
+	{
+		Player.SetViewState(ps_weapon, Wpn.FindState('Blink'));
+		CWeapStaff(Wpn).BlinkCount = (P_Random() + 50) >> 2;
 	}
 }
 
@@ -63,7 +75,6 @@ final void A_CStaffCheckBlink()
 
 final void A_CStaffCheck()
 {
-	Actor		pmo;
 	int			damage;
 	int			newLife;
 	int			i;
@@ -71,25 +82,30 @@ final void A_CStaffCheck()
 	TVec		vforward;
 	EntityEx	AimTarget;
 
-	pmo = Actor(Owner);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = 20 + (P_Random() & 15);
-	AimTarget = pmo.AimEx(vforward, 3.0 * Actor::MELEERANGE / 2.0, 45.0 / 16.0, 3);
+	AimTarget = AimEx(vforward, 3.0 * MELEERANGE / 2.0, 45.0 / 16.0, 3);
 	if (AimTarget)
 	{
 		VectorAngles(&vforward, &angles);
-		pmo.LineAttack(vforward, 1.5 * Actor::MELEERANGE, damage, CStaffPuff);
-		pmo.Angles.yaw = atan2(AimTarget.Origin.y - pmo.Origin.y,
-			AimTarget.Origin.x - pmo.Origin.x);
+		LineAttack(vforward, 1.5 * MELEERANGE, damage, CStaffPuff);
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
 		if ((AimTarget.bIsPlayer || AimTarget.bMonster) &&
 			!AimTarget.bDormant && !AimTarget.bInvulnerable)
 		{
-			newLife = Owner.Player.Health + (damage >> 3);
+			newLife = Player.Health + (damage >> 3);
 			newLife = newLife > 100 ? 100 : newLife;
-			pmo.Health = newLife;
-			Owner.Player.Health = newLife;
-			Owner.Player.SetViewState(ps_weapon, FindState('Fire2'));
+			Health = newLife;
+			Player.Health = newLife;
+			Player.SetViewState(ps_weapon, Wpn.FindState('Fire2'));
 		}
-		DepleteAmmo(false);
+		Wpn.DepleteAmmo(false);
 	}
 }
 
@@ -102,23 +118,25 @@ final void A_CStaffCheck()
 final void A_CStaffAttack()
 {
 	EntityEx	mo;
-	PlayerPawn	playPawn;
 
-	DepleteAmmo();
-	playPawn = PlayerPawn(Owner);
-	mo = Actor(Owner).SpawnPlayerMissileAngle(CStaffMissile,
-		playPawn.Angles.yaw - (45.0 / 15.0));
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
+	mo = SpawnPlayerMissileAngle(CStaffMissile, Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
 		CStaffMissile(mo).WeaveXY = 32;
 	}
-	mo = Actor(Owner).SpawnPlayerMissileAngle(CStaffMissile,
-		playPawn.Angles.yaw + (45.0 / 15.0));
+	mo = SpawnPlayerMissileAngle(CStaffMissile, Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
 		CStaffMissile(mo).WeaveXY = 0;
 	}
-	playPawn.PlaySound('ClericCStaffFire', CHAN_WEAPON);
+	PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }
 
 states

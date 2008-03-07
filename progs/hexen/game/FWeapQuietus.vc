@@ -33,18 +33,24 @@ class FWeapQuietus : FighterWeapon;
 
 final void A_FSwordAttack()
 {
-	DepleteAmmo();
-	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -10.0),
-		FSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 4.0));
-	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, -5.0),
-		FSwordMissile, AngleMod360(Owner.Angles.yaw + 45.0 / 8.0));
-	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin, FSwordMissile,
-		Owner.Angles.yaw);
-	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 5.0),
-		FSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 8.0));
-	Actor(Owner).SpawnPlayerMissileAngleXYZ(Owner.Origin + vector(0.0, 0.0, 10.0),
-		FSwordMissile, AngleMod360(Owner.Angles.yaw - 45.0 / 4.0));
-	Owner.PlaySound('FighterSwordFire', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo();
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, -10.0),
+		FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 4.0));
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, -5.0),
+		FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 8.0));
+	SpawnPlayerMissileAngleXYZ(Origin, FSwordMissile,
+		Angles.yaw);
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, 5.0),
+		FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 8.0));
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, 10.0),
+		FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 4.0));
+	PlaySound('FighterSwordFire', CHAN_WEAPON);
 }
 
 states

@@ -37,7 +37,7 @@ final void A_LightningReady()
 	A_WeaponReady();
 	if (P_Random() < 160)
 	{
-		Owner.PlaySound('MageLightningReady', CHAN_WEAPON);
+		PlaySound('MageLightningReady', CHAN_WEAPON);
 	}
 }
 
@@ -52,8 +52,14 @@ final void A_MLightningAttack()
 	LightningFloor fmo;
 	LightningCeiling cmo;
 
-	fmo = LightningFloor(Actor(Owner).SpawnPlayerMissile(LightningFloor));
-	cmo = LightningCeiling(Actor(Owner).SpawnPlayerMissile(LightningCeiling));
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	fmo = LightningFloor(SpawnPlayerMissile(LightningFloor));
+	cmo = LightningCeiling(SpawnPlayerMissile(LightningCeiling));
 	if (fmo)
 	{
 		fmo.ZigZagCount = 0;
@@ -66,8 +72,8 @@ final void A_MLightningAttack()
 		cmo.LightningLink = fmo;
 		cmo.A_LightningZap();
 	}
-	Owner.PlaySound('MageLightningFire', CHAN_WEAPON);
-	DepleteAmmo();
+	PlaySound('MageLightningFire', CHAN_WEAPON);
+	Wpn.DepleteAmmo();
 }
 
 states

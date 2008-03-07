@@ -38,20 +38,25 @@ final void A_SnoutAttack()
 	TVec		vforward;
 	EntityEx	AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = 3 + (P_Random() & 3);
-	angles = Owner.Angles;
-	AimTarget = Actor(Owner).AimLineAttack(vforward, angles, Actor::MELEERANGE);
+	angles = Angles;
+	AimTarget = AimLineAttack(vforward, angles, MELEERANGE);
 	LineSpecialLevelInfo(Level).bPuffSpawned = false;
-	Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, SnoutPuff);
-	Owner.PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1',
-		CHAN_VOICE);
+	LineAttack(vforward, MELEERANGE, damage, SnoutPuff);
+	PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1', CHAN_VOICE);
 	if (AimTarget)
 	{
-		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
+		Player(Player).AdjustPlayerAngle(AimTarget);
 		if (LineSpecialLevelInfo(Level).bPuffSpawned)
 		{
 			// Bit something
-			Owner.PlaySound('PigAttack', CHAN_VOICE);
+			PlaySound('PigAttack', CHAN_VOICE);
 		}
 	}
 }

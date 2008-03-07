@@ -33,8 +33,13 @@ class MWeapWand : MageWeapon;
 
 final void A_MWandAttack()
 {
-	Actor(Owner).SpawnPlayerMissile(MageWandMissile);
-	Owner.PlaySound('MageWandFire', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	SpawnPlayerMissile(MageWandMissile);
+	PlaySound('MageWandFire', CHAN_WEAPON);
 }
 
 states

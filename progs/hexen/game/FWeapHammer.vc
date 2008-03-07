@@ -28,7 +28,7 @@ class FWeapHammer : FighterWeapon
 	__scriptid__(28);
 
 bool bThrowHammer;
-float HammerRange;
+const float HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 
 //============================================================================
 //
@@ -44,45 +44,51 @@ final void A_FHammerAttack()
 	TVec		vforward;
 	EntityEx	AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = 60 + (P_Random() & 63);
 	power = 10.0;
-	AimTarget = Actor(Owner).AimEx(vforward, HammerRange, 45.0 / 32.0, 16, HammerRange);
+	AimTarget = AimEx(vforward, HammerRange, 45.0 / 32.0, 16, HammerRange);
 	if (AimTarget)
 	{
 		VectorAngles(&vforward, &angles);
-		if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
+		if (LineAttack(vforward, HammerRange, damage, HammerPuff))
 		{
-			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
-		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
+		Player(Player).AdjustPlayerAngle(AimTarget);
 		if (AimTarget.bMonster || AimTarget.bIsPlayer)
 		{
 			AimTarget.Thrust(angles.yaw, power);
 		}
-		bThrowHammer = false;	// Don't throw a hammer
+		FWeapHammer(Wpn).bThrowHammer = false;	// Don't throw a hammer
 	}
 	else
 	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
 		LineSpecialLevelInfo(Level).bPuffSpawned = false;
-		if (Actor(Owner).LineAttack(vforward, HammerRange, damage, HammerPuff))
+		if (LineAttack(vforward, HammerRange, damage, HammerPuff))
 		{
-			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
 		if (LineSpecialLevelInfo(Level).bPuffSpawned)
 		{
-			bThrowHammer = false;
+			FWeapHammer(Wpn).bThrowHammer = false;
 		}
 		else
 		{
-			bThrowHammer = true;
+			FWeapHammer(Wpn).bThrowHammer = true;
 		}
 	}
 
-	if (!CheckAmmo(false, true))
+	if (!Wpn.CheckAmmo(false, true))
 	{
 		// Don't spawn a hammer if the player doesn't have enough mana
-		bThrowHammer = false;
+		FWeapHammer(Wpn).bThrowHammer = false;
 	}
 	return;
 }
@@ -95,12 +101,18 @@ final void A_FHammerAttack()
 
 final void A_FHammerThrow()
 {
-	if (!bThrowHammer)
+	if (!bIsPlayer)
 	{
 		return;
 	}
-	DepleteAmmo(false);
-	Actor(Owner).SpawnPlayerMissile(HammerMissile);
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (!FWeapHammer(Wpn).bThrowHammer)
+	{
+		return;
+	}
+	Wpn.DepleteAmmo(false);
+	SpawnPlayerMissile(HammerMissile);
 }
 
 states
@@ -142,7 +154,6 @@ defaultproperties
 	AmmoUse1 = 3;
 	AmmoGive1 = 25;
 	PSpriteSY = -10.0;
-	HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 	PickupMessage = "$txt_weapon_f3";
 	BotCombatDist = 192.0;
 	bAmmoOptional = true;

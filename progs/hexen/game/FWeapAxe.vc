@@ -27,7 +27,7 @@ class FWeapAxe : FighterWeapon
 	__mobjinfo__(8010)
 	__scriptid__(27);
 
-float AxeRange;
+const float AxeRange = 9.0 * Actor::MELEERANGE / 4.0;
 
 //==========================================================================
 //
@@ -82,9 +82,15 @@ state GetAttackState(bool Hold)
 
 final void A_FAxeCheckReady()
 {
-	if (Ammo1.Amount > 0)
+	if (!bIsPlayer)
 	{
-		Owner.Player.SetViewState(ps_weapon, FindState('GlowReady'));
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (Wpn.Ammo1.Amount > 0)
+	{
+		Player.SetViewState(ps_weapon, Wpn.FindState('GlowReady'));
 	}
 	else
 	{
@@ -100,9 +106,15 @@ final void A_FAxeCheckReady()
 
 final void A_FAxeCheckReadyG()
 {
-	if (Ammo1.Amount <= 0)
+	if (!bIsPlayer)
 	{
-		Owner.Player.SetViewState(ps_weapon, FindState('Ready'));
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (Wpn.Ammo1.Amount <= 0)
+	{
+		Player.SetViewState(ps_weapon, Wpn.FindState('Ready'));
 	}
 	else
 	{
@@ -118,9 +130,15 @@ final void A_FAxeCheckReadyG()
 
 final void A_FAxeCheckUp()
 {
-	if (Ammo1.Amount > 0)
+	if (!bIsPlayer)
 	{
-		Owner.Player.SetViewState(ps_weapon, FindState('GlowSelect'));
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (Wpn.Ammo1.Amount > 0)
+	{
+		Player.SetViewState(ps_weapon, Wpn.FindState('GlowSelect'));
 	}
 	else
 	{
@@ -136,9 +154,15 @@ final void A_FAxeCheckUp()
 
 final void A_FAxeCheckUpG()
 {
-	if (Ammo1.Amount <= 0)
+	if (!bIsPlayer)
 	{
-		Owner.Player.SetViewState(ps_weapon, FindState('Select'));
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (Wpn.Ammo1.Amount <= 0)
+	{
+		Player.SetViewState(ps_weapon, Wpn.FindState('Select'));
 	}
 	else
 	{
@@ -162,9 +186,15 @@ final void A_FAxeAttack()
 	class<Actor>	PuffType;
 	EntityEx		AimTarget;
 
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
 	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
 	power = 0.0;
-	if (EntityEx(Owner).FindInventory(Mana1).Amount > 0)
+	if (FindInventory(Mana1).Amount > 0)
 	{
 		damage <<= 1;
 		power = 6.0;
@@ -176,37 +206,36 @@ final void A_FAxeAttack()
 		PuffType = AxePuff;
 		useMana = 0;
 	}
-	AimTarget = Actor(Owner).AimEx(vforward, AxeRange, 45.0 / 16.0, 16,
-		Actor::MELEERANGE);
+	AimTarget = AimEx(vforward, AxeRange, 45.0 / 16.0, 16, MELEERANGE);
 	if (AimTarget)
 	{
 		VectorAngles(&vforward, &angles);
-		if (Actor(Owner).LineAttack(vforward, AxeRange, damage, PuffType))
+		if (LineAttack(vforward, AxeRange, damage, PuffType))
 		{
-			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
 		if (AimTarget.bMonster || AimTarget.bIsPlayer)
 		{
 			AimTarget.Thrust(angles.yaw, power);
 		}
-		Player(Owner.Player).AdjustPlayerAngle(AimTarget);
+		Player(Player).AdjustPlayerAngle(AimTarget);
 		useMana++;
 	}
 	else
 	{
 		// didn't find any creatures, so try to strike any walls
-		if (Actor(Owner).LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
+		if (LineAttack(vforward, MELEERANGE, damage, PuffType))
 		{
-			Owner.PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
 	}
 
 	if (useMana == 2)
 	{
-		DepleteAmmo(false);
-		if (!CheckAmmo(false, true))
+		Wpn.DepleteAmmo(false);
+		if (!Wpn.CheckAmmo(false, true))
 		{
-			Owner.Player.SetViewState(ps_weapon, FindState('NoMoreMana'));
+			Player.SetViewState(ps_weapon, Wpn.FindState('NoMoreMana'));
 		}
 	}
 }
@@ -278,7 +307,6 @@ defaultproperties
 	AmmoGive1 = 25;
 	PSpriteSY = -12.0;
 	bAmmoOptional = true;
-	AxeRange = 9.0 * Actor::MELEERANGE / 4.0;
 	PickupMessage = "$txt_weapon_f2";
 	BotCombatDist = 48.0;
 	bBotMelee = true;
