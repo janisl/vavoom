@@ -1321,7 +1321,7 @@ void Cheat_Gimme()
 	// Backpack
 	if (Cmd_CheckParm("Backpack"))
 	{
-		Backpack Pack = Level.Spawn(Backpack,,,, false);
+		BackpackItem Pack = Level.Spawn(Backpack,,,, false);
 		Pack.bDropped = true;
 		if (!Pack.TryPickup(EntityEx(MO)))
 		{

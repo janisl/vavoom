@@ -43,3 +43,6 @@
 #include "IntermissionScreen.vc"
 #include "FinaleScreen.vc"
 #include "ClientGame.vc"
+
+class Mana1 : Ammo decorate;
+class Mana2 : Ammo decorate;

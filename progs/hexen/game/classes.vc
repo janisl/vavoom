@@ -50,7 +50,6 @@
 #include "ArtiTeleport.vc"
 #include "ArtiPoisonBag.vc"
 #include "ArtiSpeedBoots.vc"
-#include "ArtiBoostMana.vc"
 #include "ArtiBoostArmor.vc"
 #include "ArtiBlastRadius.vc"
 #include "ArtiHealingRadius.vc"
@@ -74,9 +73,6 @@
 #include "MWeaponPiece1.vc"
 #include "MWeaponPiece2.vc"
 #include "MWeaponPiece3.vc"
-#include "Mana1.vc"
-#include "Mana2.vc"
-#include "Mana3.vc"
 
 #include "FireBomb.vc"
 #include "TeleportFog.vc"
@@ -278,3 +274,5 @@ class Dirt3 : ScriptedEntity decorate;
 class Dirt4 : ScriptedEntity decorate;
 class Dirt5 : ScriptedEntity decorate;
 class Dirt6 : ScriptedEntity decorate;
+class Mana1 : Ammo decorate;
+class Mana2 : Ammo decorate;

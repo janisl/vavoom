@@ -7,6 +7,7 @@
 
 #include "actors/doom/doomhealth.txt"
 #include "actors/doom/doomarmor.txt"
+#include "actors/doom/doomammo.txt"
 #include "actors/doom/doomkeys.txt"
 #include "actors/doom/doomdecorations.txt"
 
@@ -14,10 +15,12 @@
 #include "actors/raven/ravenartifacts.txt"
 
 #include "actors/heretic/hereticarmor.txt"
+#include "actors/heretic/hereticammo.txt"
 #include "actors/heretic/heretickeys.txt"
 #include "actors/heretic/hereticdecorations.txt"
 
 #include "actors/hexen/hexenarmor.txt"
+#include "actors/hexen/mana.txt"
 #include "actors/hexen/hexenkeys.txt"
 #include "actors/hexen/puzzleitems.txt"
 #include "actors/hexen/hexendecorations.txt"
@@ -26,6 +29,7 @@
 
 #include "actors/strife/strifeitems.txt"
 #include "actors/strife/strifearmor.txt"
+#include "actors/strife/strifeammo.txt"
 #include "actors/strife/strifekeys.txt"
 #include "actors/strife/questitems.txt"
 #include "actors/strife/strifestuff.txt"

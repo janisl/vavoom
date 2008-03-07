@@ -47,3 +47,7 @@ class RedCard : Key decorate;
 class BlueSkull : Key decorate;
 class YellowSkull : Key decorate;
 class RedSkull : Key decorate;
+class Clip : Ammo decorate;
+class RocketAmmo : Ammo decorate;
+class Cell : Ammo decorate;
+class Shell : Ammo decorate;

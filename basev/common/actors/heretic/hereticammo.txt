@@ -1,0 +1,219 @@
+//------------------------------------------------------------------------------
+actor GoldWandAmmo : Ammo 10
+{
+	Game Heretic
+	SpawnID 11
+	Inventory.Amount 10
+	Inventory.MaxAmount 100
+	Inventory.PickupMessage "$txt_ammogoldwand1"
+	Inventory.Icon "inamgld"
+	Ammo.BackpackAmount 10
+	Ammo.BackpackMaxAmount 200
+	states
+	{
+	Spawn:
+		AMG1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldWandHefty : GoldWandAmmo 12
+{
+	Game Heretic
+	SpawnID 12
+	Inventory.Amount 50
+	Inventory.PickupMessage "$txt_ammogoldwand2"
+	states
+	{
+	Spawn:
+		AMG2 ABC 4
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaceAmmo : Ammo 13
+{
+	Game Heretic
+	SpawnID 35
+	Inventory.Amount 20
+	Inventory.MaxAmount 150
+	Inventory.PickupMessage "$txt_ammomace1"
+	Inventory.Icon "inamlob"
+	Ammo.BackpackAmount 0
+	Ammo.BackpackMaxAmount 300
+	states
+	{
+	Spawn:
+		AMM1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaceHefty : MaceAmmo 16
+{
+	Game Heretic
+	SpawnID 36
+	Inventory.Amount 100
+	Inventory.PickupMessage "$txt_ammomace2"
+	states
+	{
+	Spawn:
+		AMM2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CrossbowAmmo : Ammo 18
+{
+	Game Heretic
+	SpawnID 33
+	Inventory.Amount 5
+	Inventory.MaxAmount 50
+	Inventory.PickupMessage "$txt_ammocrossbow1"
+	Inventory.Icon "inambow"
+	Ammo.BackpackAmount 5
+	Ammo.BackpackMaxAmount 100
+	states
+	{
+	Spawn:
+		AMC1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CrossbowHefty : CrossbowAmmo 19
+{
+	Game Heretic
+	SpawnID 34
+	Inventory.Amount 20
+	Inventory.PickupMessage "$txt_ammocrossbow2"
+	states
+	{
+	Spawn:
+		AMC2 ABC 5
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SkullRodAmmo : Ammo 20
+{
+	Game Heretic
+	SpawnID 158
+	Inventory.Amount 20
+	Inventory.MaxAmount 200
+	Inventory.PickupMessage "$txt_ammoskullrod1"
+	Inventory.Icon "inamram"
+	Ammo.BackpackAmount 20
+	Ammo.BackpackMaxAmount 400
+	states
+	{
+	Spawn:
+		AMS1 AB 5
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SkullRodHefty : SkullRodAmmo 21
+{
+	Game Heretic
+	SpawnID 159
+	Inventory.Amount 100
+	Inventory.PickupMessage "$txt_ammoskullrod2"
+	states
+	{
+	Spawn:
+		AMS2 AB 5
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PhoenixRodAmmo : Ammo 22
+{
+	Game Heretic
+	SpawnID 161
+	Inventory.Amount 1
+	Inventory.MaxAmount 20
+	Inventory.PickupMessage "$txt_ammophoenixrod1"
+	Inventory.Icon "inampnx"
+	Ammo.BackpackAmount 1
+	Ammo.BackpackMaxAmount 40
+	states
+	{
+	Spawn:
+		AMP1 ABC 4
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PhoenixRodHefty : PhoenixRodAmmo 23
+{
+	Game Heretic
+	SpawnID 162
+	Inventory.Amount 10
+	Inventory.PickupMessage "$txt_ammophoenixrod2"
+	states
+	{
+	Spawn:
+		AMP2 ABC 4
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlasterAmmo : Ammo 54
+{
+	Game Heretic
+	SpawnID 37
+	Inventory.Amount 10
+	Inventory.MaxAmount 200
+	Inventory.PickupMessage "$txt_ammoblaster1"
+	Inventory.Icon "inambst"
+	Ammo.BackpackAmount 10
+	Ammo.BackpackMaxAmount 400
+	states
+	{
+	Spawn:
+		AMB1 ABC 4
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlasterHefty : BlasterAmmo 55
+{
+	Game Heretic
+	SpawnID 38
+	Inventory.Amount 25
+	Inventory.PickupMessage "$txt_ammoblaster2"
+	states
+	{
+	Spawn:
+		AMB2 ABC 4
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BagOfHolding : BackpackItem 8
+{
+	Game Heretic
+	SpawnID 136
+	Inventory.PickupMessage "$txt_itembagofholding"
+	+CountItem
+	+FloatBob
+	states
+	{
+	Spawn:
+		BAGH A -1
+		Stop
+	}
+}

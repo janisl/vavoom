@@ -316,7 +316,7 @@ bool CheckItem(Actor item)
 		if (ManaItem && ManaItem.Amount == ManaItem.MaxAmount)
 			return false;
 	}
-	if (Mana3(item))
+	if (item.IsA('Mana3'))
 	{
 		Inventory ManaItem1 = botmo.FindInventory(Mana1);
 		Inventory ManaItem2 = botmo.FindInventory(Mana2);

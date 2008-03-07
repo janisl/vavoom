@@ -82,17 +82,6 @@
 #include "OfferingChalice.vc"
 #include "Ear.vc"
 #include "Communicator.vc"
-#include "HEGrenadeRounds.vc"
-#include "PhosphorusGrenadeRounds.vc"
-#include "ClipOfBullets.vc"
-#include "BoxOfBullets.vc"
-#include "MiniMissiles.vc"
-#include "CrateOfMissiles.vc"
-#include "EnergyPod.vc"
-#include "EnergyPack.vc"
-#include "PoisonBolts.vc"
-#include "ElectricBolts.vc"
-#include "AmmoSatchel.vc"
 #include "AssaultGun.vc"
 #include "AssaultGunStanding.vc"
 #include "FlameThrower.vc"
@@ -249,3 +238,12 @@ class QuestItem24 : Inventory decorate;
 class QuestItem25 : Inventory decorate;
 class QuestItem26 : Inventory decorate;
 class Rubble1 : Actor decorate;
+class HEGrenadeRounds : Ammo decorate;
+class PhosphorusGrenadeRounds : Ammo decorate;
+class ClipOfBullets : Ammo decorate;
+class MiniMissiles : Ammo decorate;
+class CrateOfMissiles : Ammo decorate;
+class EnergyPod : Ammo decorate;
+class PoisonBolts : Ammo decorate;
+class ElectricBolts : Ammo decorate;
+class AmmoSatchel : BackpackItem decorate;

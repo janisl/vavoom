@@ -98,7 +98,6 @@
 #include "Beak.vc"
 #include "BeakPowered.vc"
 
-#include "BagOfHolding.vc"
 #include "SuperMap.vc"
 #include "ArtiInvisibility.vc"
 #include "ArtiFly.vc"
@@ -108,18 +107,6 @@
 #include "ArtiTorch.vc"
 #include "ArtiTimeBomb.vc"
 #include "ArtiTeleport.vc"
-#include "GoldWandAmmo.vc"
-#include "GoldWandHefty.vc"
-#include "MaceAmmo.vc"
-#include "MaceHefty.vc"
-#include "CrossbowAmmo.vc"
-#include "CrossbowHefty.vc"
-#include "SkullRodAmmo.vc"
-#include "SkullRodHefty.vc"
-#include "PhoenixRodAmmo.vc"
-#include "PhoenixRodHefty.vc"
-#include "BlasterAmmo.vc"
-#include "BlasterHefty.vc"
 
 #include "TeleportFog.vc"
 #include "Puffy.vc"
@@ -197,3 +184,13 @@ class Blood : ScriptedEntity decorate;
 class ArtiHealth : HealthPickup decorate;
 class ArtiSuperHealth : HealthPickup decorate;
 class EnchantedShield : BasicArmorPickup decorate;
+class GoldWandAmmo : Ammo decorate;
+class MaceAmmo : Ammo decorate;
+class MaceHefty : Ammo decorate;
+class CrossbowAmmo : Ammo decorate;
+class SkullRodAmmo : Ammo decorate;
+class SkullRodHefty : Ammo decorate;
+class PhoenixRodAmmo : Ammo decorate;
+class PhoenixRodHefty : Ammo decorate;
+class BlasterAmmo : Ammo decorate;
+class BagOfHolding : BackpackItem decorate;
