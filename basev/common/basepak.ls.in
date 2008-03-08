@@ -37,6 +37,9 @@ terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
 lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
 textcolo.txt			@CMAKE_CURRENT_SOURCE_DIR@/textcolo.txt
 
+//	Line specials, useable in DECORATE
+line_specials.txt		@CMAKE_CURRENT_SOURCE_DIR@/line_specials.txt
+
 //	Decorate scripts
 decorate.txt							@CMAKE_CURRENT_SOURCE_DIR@/decorate.txt
 actors/constants.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/constants.txt

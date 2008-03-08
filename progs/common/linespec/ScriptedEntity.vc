@@ -1528,6 +1528,20 @@ final void A_FreeTargMobj()
 	Health = -1000;	// Don't resurrect
 }
 
+//==========================================================================
+//
+//  A_ExecActionSpecial
+//
+//==========================================================================
+
+final void A_ExecActionSpecial(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, int Special)
+{
+	Level.ExecuteActionSpecial(Special, Arg1, Arg2, Arg3, Arg4, Arg5, NULL,
+		0, self);
+
+}
+
 states
 {
 FreeTargMobj:

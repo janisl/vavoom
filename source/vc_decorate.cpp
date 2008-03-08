@@ -54,6 +54,12 @@ struct VClassFixup
 	VClass*		ReqParent;
 };
 
+struct VLineSpecInfo
+{
+	VStr		Name;
+	int			Number;
+};
+
 //==========================================================================
 //
 //	VDecorateInvocation
@@ -109,6 +115,8 @@ static VMethod*			FuncA_ScreamAndUnblock;
 static VMethod*			FuncA_ActiveSound;
 static VMethod*			FuncA_ActiveAndUnblock;
 static VMethod*			FuncA_ExplodeParms;
+
+static TArray<VLineSpecInfo>	LineSpecialInfos;
 
 // CODE --------------------------------------------------------------------
 
@@ -985,7 +993,6 @@ static void ParseConst(VScriptParser* sc)
 		{
 			int Val = Expr->GetIntConst();
 			delete Expr;
-			GCon->Logf("Constant %s with value %d", *Name, Val);
 			VConstant* C = new VConstant(*Name, DecPkg, Loc);
 			C->Type = TYPE_Int;
 			C->Value = Val;
@@ -2228,6 +2235,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 
 			//	Get function name and parse arguments.
 			VStr FuncName = sc->String;
+			VStr FuncNameLower = sc->String.ToLower();
 			VExpression* Args[VMethod::MAX_PARAMS + 1];
 			int NumArgs = 0;
 			if (sc->Check("("))
@@ -2246,10 +2254,40 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 				}
 			}
 
-			//	Find the state action method.
-			VDecorateStateAction* Act = Class->FindDecorateStateAction(
-				*FuncName.ToLower());
-			VMethod* Func = Act ? Act->Method : NULL;
+			//	Find the state action method. First check action specials, then
+			// state actions.
+			VMethod* Func = NULL;
+			for (int i = 0; i < LineSpecialInfos.Num(); i++)
+			{
+				if (LineSpecialInfos[i].Name == FuncNameLower)
+				{
+					Func = Class->FindMethodChecked("A_ExecActionSpecial");
+					if (NumArgs > 5)
+					{
+						sc->Error("Too many arguments");
+					}
+					else
+					{
+						//	Add missing arguments.
+						while (NumArgs < 5)
+						{
+							Args[NumArgs] = new VIntLiteral(0, sc->GetLoc());
+							NumArgs++;
+						}
+						//	Add action special number argument.
+						Args[5] = new VIntLiteral(LineSpecialInfos[i].Number,
+							sc->GetLoc());
+						NumArgs++;
+					}
+					break;
+				}
+			}
+			if (!Func)
+			{
+				VDecorateStateAction* Act = Class->FindDecorateStateAction(
+					*FuncNameLower);
+				Func = Act ? Act->Method : NULL;
+			}
 			if (!Func)
 			{
 				GCon->Logf("Unknown state action %s in %s", *FuncName, Class->GetName());
@@ -4478,6 +4516,30 @@ static void ParseDecorate(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 
 //==========================================================================
 //
+//	ReadLineSpecialInfos
+//
+//==========================================================================
+
+static void ReadLineSpecialInfos()
+{
+	guard(ReadLineSpecialInfos);
+	VStream* Strm = FL_OpenFileRead("line_specials.txt");
+	check(Strm);
+	VScriptParser* sc = new VScriptParser("line_specials.txt", Strm);
+	while (!sc->AtEnd())
+	{
+		VLineSpecInfo& I = LineSpecialInfos.Alloc();
+		sc->ExpectNumber();
+		I.Number = sc->Number;
+		sc->ExpectString();
+		I.Name = sc->String.ToLower();
+	}
+	delete sc;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ProcessDecorateScripts
 //
 //==========================================================================
@@ -4486,6 +4548,8 @@ void ProcessDecorateScripts()
 {
 	guard(ProcessDecorateScripts);
 	GCon->Logf(NAME_Init, "Processing DECORATE scripts");
+
+	ReadLineSpecialInfos();
 
 	DecPkg = new VPackage(NAME_decorate);
 
@@ -4570,5 +4634,7 @@ void ProcessDecorateScripts()
 	}
 
 	VClass::StaticReinitStatesLookup();
+
+	LineSpecialInfos.Clear();
 	unguard;
 }
