@@ -42,4 +42,5 @@ defaultproperties
 	IconName = 'artisoar';
 	bFloatBob = true;
 	bPickupFlash = true;
+	bInterHubStrip = true;
 }

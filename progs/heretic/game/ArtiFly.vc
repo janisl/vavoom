@@ -42,4 +42,5 @@ defaultproperties
 	bCountItem = true;
 	bFloatBob = true;
 	bPickupFlash = true;
+	bInterHubStrip = true;
 }

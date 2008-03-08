@@ -541,23 +541,17 @@ void PlayerExitMap(bool clusterChange)
 	if (!Level.Game.deathmatch)
 	{
 		if (clusterChange)
-		{	// Entering new cluster
-			// Strip all keys
+		{
+			// Entering new cluster
+			// Some items are stripped.
 			for (Item = EntityEx(MO).Inventory; Item;)
 			{
 				Inventory Next = Item.Inventory;
-				if (Key(Item))
+				if (Item.bInterHubStrip)
 				{
 					Item.Destroy();
 				}
 				Item = Next;
-			}
-
-			// Strip flight artifact
-			Item = EntityEx(MO).FindInventory(ArtiFly);
-			if (Item)
-			{
-				Item.Destroy();
 			}
 		}
 	}

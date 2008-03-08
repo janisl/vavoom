@@ -66,4 +66,5 @@ bool ShouldStay()
 defaultproperties
 {
 	PickupSound = 'misc/k_pkup';
+	bInterHubStrip = true;
 }

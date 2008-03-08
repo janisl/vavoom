@@ -406,11 +406,6 @@ void PlayerExitMap(bool clusterChange)
 		}
 	}
 
-	if (!Level.Game.deathmatch)
-	{
-		PlayerUseArtifactType(ArtiFly);
-	}
-
 	for (Item = EntityEx(MO).Inventory; Item;)
 	{
 		Inventory Next = Item.Inventory;
@@ -426,7 +421,7 @@ void PlayerExitMap(bool clusterChange)
 		for (Item = EntityEx(MO).Inventory; Item;)
 		{
 			Inventory Next = Item.Inventory;
-			if (Key(Item))
+			if (Item.bInterHubStrip)
 			{
 				Item.Destroy();
 			}

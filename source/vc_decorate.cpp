@@ -1906,8 +1906,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		}
 		if (!Flag.ICmp("Inventory.InterHubStrip"))
 		{
-			//FIXME
-			GCon->Logf("Unsupported flag Inventory.InterHubStrip in %s", Class->GetName());
+			SetClassFieldBool(Class, "bInterHubStrip", Value);
 			return true;
 		}
 		if (!Flag.ICmp("Inventory.PickupFlash"))

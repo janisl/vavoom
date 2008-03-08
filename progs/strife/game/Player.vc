@@ -411,7 +411,7 @@ void PlayerExitMap(bool clusterChange)
 		for (Item = EntityEx(MO).Inventory; Item;)
 		{
 			Inventory Next = Item.Inventory;
-			if (Key(Item))
+			if (Item.bInterHubStrip)
 			{
 				Item.Destroy();
 			}
