@@ -41,35 +41,41 @@ final void A_Punch()
 	TVec		dir;
 	EntityEx	AimTarget;
 
-	power = Player(Owner.Player).Stamina / 10;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	power = Player(Player).Stamina / 10;
 	damage = (P_Random() % (power + 8)) * (power + 2);
 
-	angles = Owner.Angles;
+	angles = Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	AimTarget = Actor(Owner).AimLineAttack(dir, angles, PUNCHRANGE);
-	Actor(Owner).LineAttack(dir, PUNCHRANGE, damage, StrifeSpark);
+	AimTarget = AimLineAttack(dir, angles, PUNCHRANGE);
+	LineAttack(dir, PUNCHRANGE, damage, StrifeSpark);
 
 	// turn to face target
 	if (AimTarget)
 	{
 		if (AimTarget.bNoBlood)
 		{
-			Owner.PlaySound('misc/metalhit', CHAN_WEAPON);
+			PlaySound('misc/metalhit', CHAN_WEAPON);
 		}
 		else
 		{
-			Owner.PlaySound('misc/meathit', CHAN_WEAPON);
+			PlaySound('misc/meathit', CHAN_WEAPON);
 		}
-		Owner.Angles.yaw = atan2(AimTarget.Origin.y - Owner.Origin.y,
-			AimTarget.Origin.x - Owner.Origin.x);
-		Owner.Player.bFixAngle = true;
-		Actor(Owner).bJustAttacked = true;
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		Player.bFixAngle = true;
+		bJustAttacked = true;
 		// Sys1eae0 (actor->player, linetarget);
 	}
 	else
 	{
-		Owner.PlaySound('misc/swish', CHAN_WEAPON);
+		PlaySound('misc/swish', CHAN_WEAPON);
 	}
 }
 

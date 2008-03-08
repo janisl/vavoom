@@ -152,22 +152,28 @@ void GiveSigilPiece(EntityEx Receiver)
 
 final void A_SelectSigilReady()
 {
-	switch (NumPieces)
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	switch (Sigil(Wpn).NumPieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, FindState('Ready1'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Ready1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, FindState('Ready2'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Ready2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, FindState('Ready3'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Ready3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, FindState('Ready4'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Ready4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, FindState('Ready5'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Ready5'));
 		break;
 	}
 }
@@ -180,28 +186,34 @@ final void A_SelectSigilReady()
 
 final void A_SelectSigilDown()
 {
-	int Pieces = DownPieces;
-	DownPieces = 0;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	int Pieces = Sigil(Wpn).DownPieces;
+	Sigil(Wpn).DownPieces = 0;
 	if (!Pieces)
 	{
-		Pieces = NumPieces;
+		Pieces = Sigil(Wpn).NumPieces;
 	}
 	switch (Pieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, FindState('Deselect1'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Deselect1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, FindState('Deselect2'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Deselect2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, FindState('Deselect3'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Deselect3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, FindState('Deselect4'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Deselect4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, FindState('Deselect5'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Deselect5'));
 		break;
 	}
 }
@@ -214,22 +226,28 @@ final void A_SelectSigilDown()
 
 final void A_SelectSigilUp()
 {
-	switch (NumPieces)
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	switch (Sigil(Wpn).NumPieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, FindState('Select1'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Select1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, FindState('Select2'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Select2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, FindState('Select3'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Select3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, FindState('Select4'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Select4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, FindState('Select5'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Select5'));
 		break;
 	}
 }
@@ -242,22 +260,28 @@ final void A_SelectSigilUp()
 
 final void A_SelectSigilAttack()
 {
-	switch (NumPieces)
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	switch (Sigil(Wpn).NumPieces)
 	{
 	case 1:
-		Owner.Player.SetViewState(ps_weapon, FindState('Fire1'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Fire1'));
 		break;
 	case 2:
-		Owner.Player.SetViewState(ps_weapon, FindState('Fire2'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Fire2'));
 		break;
 	case 3:
-		Owner.Player.SetViewState(ps_weapon, FindState('Fire3'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Fire3'));
 		break;
 	case 4:
-		Owner.Player.SetViewState(ps_weapon, FindState('Fire4'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Fire4'));
 		break;
 	case 5:
-		Owner.Player.SetViewState(ps_weapon, FindState('Fire5'));
+		Player.SetViewState(ps_weapon, Wpn.FindState('Fire5'));
 		break;
 	}
 }
@@ -270,8 +294,11 @@ final void A_SelectSigilAttack()
 
 final void A_SigilCharge()
 {
-	Owner.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
-	Owner.Player.ExtraLight = 2;
+	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+	if (bIsPlayer)
+	{
+		Player.ExtraLight = 2;
+	}
 }
 
 //==========================================================================
@@ -286,22 +313,28 @@ final void A_FireSigil1()
 	EntityEx	AimTarget;
 	TVec		dir;
 
-	Actor(Owner).Damage(none, Actor(Owner), NumPieces * 4);
-	Owner.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
 
-	sigil = Spawn(SpectralLightningSpot,
-		Owner.Origin + vector(0.0, 0.0, 32.0));
+	Damage(none, self, NumPieces * 4);
+	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+
+	sigil = Spawn(SpectralLightningSpot, Origin + vector(0.0, 0.0, 32.0));
 
 	if (sigil.SightSound)
+	{
 		sigil.PlaySound(sigil.SightSound, CHAN_VOICE);
+	}
 
-	sigil.Target = Actor(Owner);
+	sigil.Target = self;
 	sigil.Origin.z = sigil.FloorZ;
-	AimTarget = Actor(Owner).Aim(dir, 16.0 * 64.0);
+	AimTarget = Aim(dir, 16.0 * 64.0);
 	if (!AimTarget)
 	{
-		sigil.Origin.x = Owner.Origin.x;
-		sigil.Origin.y = Owner.Origin.y;
+		sigil.Origin.x = Origin.x;
+		sigil.Origin.y = Origin.y;
 	}
 	else
 	{
@@ -318,10 +351,15 @@ final void A_FireSigil1()
 
 final void A_FireSigil2()
 {
-	Actor(Owner).Damage(none, Actor(Owner), NumPieces * 4);
-	Owner.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
 
-	Actor(Owner).SpawnPlayerMissile(SpectralLightningH1);
+	Damage(none, self, NumPieces * 4);
+	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+
+	SpawnPlayerMissile(SpectralLightningH1);
 }
 
 //==========================================================================
@@ -336,14 +374,18 @@ final void A_FireSigil3()
 	EntityEx	sigilspread;
 	int			i;
 
-	Actor(Owner).Damage(none, Actor(Owner), NumPieces * 4);
-	Owner.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Damage(none, self, NumPieces * 4);
+	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 
 	for (i = 0; i < 20; i++)
 	{
-		sigilspread = Actor(Owner).SpawnPlayerMissileAngle(
-			SpectralLightningBall1,
-			Owner.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
+		sigilspread = SpawnPlayerMissileAngle(SpectralLightningBall1,
+			Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
 		angle = sigilspread.Angles.yaw;
 		sigilspread.Velocity.x = sigilspread.Speed * cos(angle);
 		sigilspread.Velocity.y = sigilspread.Speed * sin(angle);
@@ -358,10 +400,15 @@ final void A_FireSigil3()
 
 final void A_FireSigil4()
 {
-	Actor(Owner).Damage(none, Actor(Owner), NumPieces * 4);
-	Owner.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
 
-	Actor(Owner).SpawnPlayerMissile(SpectralLightningBigV1);
+	Damage(none, self, NumPieces * 4);
+	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+
+	SpawnPlayerMissile(SpectralLightningBigV1);
 }
 
 //==========================================================================
@@ -372,10 +419,15 @@ final void A_FireSigil4()
 
 final void A_FireSigil5()
 {
-	Actor(Owner).Damage(none, Actor(Owner), NumPieces * 4);
-	Owner.PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
 
-	Actor(Owner).SpawnPlayerMissile(SpectralLightningBigBall1);
+	Damage(none, self, NumPieces * 4);
+	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
+
+	SpawnPlayerMissile(SpectralLightningBigBall1);
 }
 
 //==========================================================================
@@ -386,7 +438,10 @@ final void A_FireSigil5()
 
 final void A_SigilFlash()
 {
-	Owner.Player.FixedColourmap = INVERSECOLOURMAP;
+	if (bIsPlayer)
+	{
+		Player.FixedColourmap = INVERSECOLOURMAP;
+	}
 }
 
 //==========================================================================
@@ -397,7 +452,10 @@ final void A_SigilFlash()
 
 final void A_ClearSigilFlash()
 {
-	Owner.Player.FixedColourmap = 0;
+	if (bIsPlayer)
+	{
+		Player.FixedColourmap = 0;
+	}
 }
 
 states

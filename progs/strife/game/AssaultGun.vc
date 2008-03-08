@@ -38,26 +38,32 @@ final void A_FireRiffle()
 	TAVec angles;
 	int damage;
 
-	Owner.PlaySound('weapons/assaultgun', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	if (!DepleteAmmo())
+	PlaySound('weapons/assaultgun', CHAN_WEAPON);
+
+	if (!Wpn.DepleteAmmo())
 		return;
 
-	Owner.SetState(Actor(Owner).MissileState);
+	SetState(MissileState);
 
-	Actor(Owner).Aim(dir, 16.0 * 64.0);
-	if (Player(Owner.Player).Refire)
+	Aim(dir, 16.0 * 64.0);
+	if (Player(Player).Refire)
 	{
 		VectorAngles(&dir, &angles);
 		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
+			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
 		AngleVector(&angles, &dir);
 	}
 	damage = 4 * (P_Random() % 3 + 1);
-	Actor(Owner).LineAttack(dir, MISSILERANGE, damage, StrifePuff);
-	EntityEx(Owner).bMuzzleFlash = true;
-	EntityEx(Owner).DLightRadius = 118.0;
-	EntityEx(Owner).DLightColour = RGB(203, 111, 0);
+	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
+	bMuzzleFlash = true;
+	DLightRadius = 118.0;
+	DLightColour = RGB(203, 111, 0);
 }
 
 states

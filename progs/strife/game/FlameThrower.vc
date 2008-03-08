@@ -36,12 +36,17 @@ final void A_FireFlamethrower()
 {
 	EntityEx A;
 
-	Owner.SetState(Actor(Owner).MissileState);
-	DepleteAmmo();
-	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
-		(Random() - Random()) * 45.0 / 8.0);
-	Owner.Player.bFixAngle = true;
-	A = Actor(Owner).SpawnPlayerMissile(FlameMissile);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	SetState(MissileState);
+	Wpn.DepleteAmmo();
+	Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0 / 8.0);
+	Player.bFixAngle = true;
+	A = SpawnPlayerMissile(FlameMissile);
 	if (A)
 	{
 		A.Velocity.z += 20.0 * 35.0 / 5.0;

@@ -36,13 +36,19 @@ final void A_FireMissile()
 {
 	float savedangle;
 
-	savedangle = Owner.Angles.yaw;
-	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
-		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
-	DepleteAmmo();
-	Owner.SetState(Actor(Owner).MissileState);
-	Actor(Owner).SpawnPlayerMissile(MiniMissile);
-	Owner.Angles.yaw = savedangle;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	savedangle = Angles.yaw;
+	Angles.yaw = AngleMod360(Angles.yaw +
+		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
+	Wpn.DepleteAmmo();
+	SetState(MissileState);
+	SpawnPlayerMissile(MiniMissile);
+	Angles.yaw = savedangle;
 }
 
 states

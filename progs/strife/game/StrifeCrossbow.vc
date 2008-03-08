@@ -34,7 +34,13 @@ class StrifeCrossbow : StrifeWeapon
 
 final void A_ShowElectricFlash()
 {
-	Owner.Player.SetViewState(ps_flash, FindState('ElectricFlash'));
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Player.SetViewState(ps_flash, Wpn.FindState('ElectricFlash'));
 }
 
 //==========================================================================
@@ -47,14 +53,20 @@ final void A_FireElectricArrow()
 {
 	float savedangle;
 
-	savedangle = Owner.Angles.yaw;
-	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
-		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
-	DepleteAmmo();
-	Owner.SetState(Actor(Owner).MissileState);
-	Actor(Owner).SpawnPlayerMissile(ElectricBolt);
-	Owner.Angles.yaw = savedangle;
-	Owner.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	savedangle = Angles.yaw;
+	Angles.yaw = AngleMod360(Angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
+	Wpn.DepleteAmmo();
+	SetState(MissileState);
+	SpawnPlayerMissile(ElectricBolt);
+	Angles.yaw = savedangle;
+	PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
 
 //==========================================================================
@@ -67,14 +79,20 @@ final void A_FirePoisonArrow()
 {
 	float savedangle;
 
-	savedangle = Owner.Angles.yaw;
-	Owner.Angles.yaw = AngleMod360(Owner.Angles.yaw +
-		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Owner.Player).Accuracy * 5 / 100)));
-	DepleteAmmo();
-	Owner.SetState(Actor(Owner).MissileState);
-	Actor(Owner).SpawnPlayerMissile(PoisonBolt);
-	Owner.Angles.yaw = savedangle;
-	Owner.PlaySound('weapons/xbowshoot', CHAN_WEAPON);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	savedangle = Angles.yaw;
+	Angles.yaw = AngleMod360(Angles.yaw +
+		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
+	Wpn.DepleteAmmo();
+	SetState(MissileState);
+	SpawnPlayerMissile(PoisonBolt);
+	Angles.yaw = savedangle;
+	PlaySound('weapons/xbowshoot', CHAN_WEAPON);
 }
 
 states

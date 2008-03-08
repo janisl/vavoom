@@ -34,7 +34,12 @@ class StrifeWeapon : Weapon
 
 final void A_ClearFlash()
 {
-	Owner.Player.SetViewState(ps_flash, none);
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Player.SetViewState(ps_flash, none);
 }
 
 states
