@@ -226,6 +226,7 @@ bool bNoHatePlayers;	// Ignore player attacks.
 bool bStrifeDamage;		// Missiles do 4x damage instead of 8x
 bool bDontBlast;		// Not blasted by blast radius.
 bool bVisibilityPulse;	// Pulse visibility in and out.
+bool bArgsDefined;		// Args are already defined
 
 //  Params
 float			Speed;
@@ -5187,11 +5188,14 @@ void OnMapSpawn(mthing_t* mthing)
 
 		TID = mthing->tid;
 		Special = mthing->special;
-		Args[0] = mthing->arg1;
-		Args[1] = mthing->arg2;
-		Args[2] = mthing->arg3;
-		Args[3] = mthing->arg4;
-		Args[4] = mthing->arg5;
+		if (!bArgsDefined)
+		{
+			Args[0] = mthing->arg1;
+			Args[1] = mthing->arg2;
+			Args[2] = mthing->arg3;
+			Args[3] = mthing->arg4;
+			Args[4] = mthing->arg5;
+		}
 		if (bFloatBob)
 		{
 			// Seed random starting index for bobbing motion

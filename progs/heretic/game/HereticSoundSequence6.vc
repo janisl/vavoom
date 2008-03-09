@@ -23,10 +23,11 @@
 //**
 //**************************************************************************
 
-class HereticSoundSequence6 : AmbientSoundSequence
+class HereticSoundSequence6 : SoundSequence
 	__mobjinfo__(1205);
 
 defaultproperties
 {
-	SequenceId = 5;
+	Args[0] = 5;
+	bArgsDefined = true;
 }

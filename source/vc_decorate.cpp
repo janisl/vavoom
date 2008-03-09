@@ -3168,6 +3168,23 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			GCon->Logf("Property Heal in %s is not yet supported", Class->GetName());
 			continue;
 		}
+		//
+		//	Not documented
+		//
+		if (!Prop.ICmp("Args"))
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				sc->ExpectNumber();
+				SetClassFieldInt(Class, "Args", sc->Number, i);
+				if (i < 4 && !sc->Check(","))
+				{
+					break;
+				}
+			}
+			SetClassFieldBool(Class, "bArgsDefined", true);
+			continue;
+		}
 
 		//
 		//	Inventory class properties.

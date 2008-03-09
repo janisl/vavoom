@@ -36,7 +36,6 @@
 #include "Projectile.vc"
 #include "Effect.vc"
 
-#include "AmbientSoundSequence.vc"
 #include "HereticSoundSequence1.vc"
 #include "HereticSoundSequence2.vc"
 #include "HereticSoundSequence3.vc"
