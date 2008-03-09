@@ -75,8 +75,6 @@
 #include "Gibs.vc"
 #include "PlayerSpeed.vc"
 #include "IceChunk.vc"
-#include "SoundWindHexen.vc"
-#include "SoundWaterfall.vc"
 #include "BlastEffect.vc"
 
 #include "PunchPuff.vc"

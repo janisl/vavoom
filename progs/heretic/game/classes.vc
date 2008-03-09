@@ -36,17 +36,6 @@
 #include "Projectile.vc"
 #include "Effect.vc"
 
-#include "HereticSoundSequence1.vc"
-#include "HereticSoundSequence2.vc"
-#include "HereticSoundSequence3.vc"
-#include "HereticSoundSequence4.vc"
-#include "HereticSoundSequence5.vc"
-#include "HereticSoundSequence6.vc"
-#include "HereticSoundSequence7.vc"
-#include "HereticSoundSequence8.vc"
-#include "HereticSoundSequence9.vc"
-#include "HereticSoundSequence10.vc"
-
 #include "StaffPuff.vc"
 #include "StaffPuff2.vc"
 #include "Staff.vc"
@@ -106,8 +95,6 @@
 #include "Puffy.vc"
 #include "EggFX.vc"
 #include "ActivatedTimeBomb.vc"
-#include "SoundWind.vc"
-#include "SoundWaterfall.vc"
 
 #include "PodGoo.vc"
 #include "Pod.vc"

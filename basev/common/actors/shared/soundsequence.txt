@@ -1,0 +1,69 @@
+//------------------------------------------------------------------------------
+actor HereticSoundSequence1 : SoundSequence 1200
+{
+	Game Heretic
+	Args 0
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence2 : SoundSequence 1201
+{
+	Game Heretic
+	Args 1
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence3 : SoundSequence 1202
+{
+	Game Heretic
+	Args 2
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence4 : SoundSequence 1203
+{
+	Game Heretic
+	Args 3
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence5 : SoundSequence 1204
+{
+	Game Heretic
+	Args 4
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence6 : SoundSequence 1205
+{
+	Game Heretic
+	Args 5
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence7 : SoundSequence 1206
+{
+	Game Heretic
+	Args 6
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence8 : SoundSequence 1207
+{
+	Game Heretic
+	Args 7
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence9 : SoundSequence 1208
+{
+	Game Heretic
+	Args 8
+}
+
+//------------------------------------------------------------------------------
+actor HereticSoundSequence10 : SoundSequence 1209
+{
+	Game Heretic
+	Args 9
+}
