@@ -23,16 +23,8 @@
 //**
 //**************************************************************************
 
-#include "BulletPuff.vc"
 #include "TeleportFog.vc"
 
-#include "Soulsphere.vc"
-#include "InvulnerabilitySphere.vc"
-#include "Berserk.vc"
-#include "BlurSphere.vc"
-#include "RadSuit.vc"
-#include "Infrared.vc"
-#include "Allmap.vc"
 #include "BFG9000.vc"
 #include "Chaingun.vc"
 #include "Chainsaw.vc"
@@ -44,7 +36,6 @@
 #include "Gibs.vc"
 #include "DoomUnusedStates.vc"
 
-#include "Fist.vc"
 #include "Pistol.vc"
 #include "Rocket.vc"
 #include "PlasmaBall.vc"
@@ -109,3 +100,10 @@ class CellPack : Ammo decorate;
 class Shell : Ammo decorate;
 class ShellBox : Ammo decorate;
 class Backpack : BackpackItem decorate;
+class Soulsphere : Health decorate;
+class InvulnerabilitySphere : PowerupGiver decorate;
+class BlurSphere : PowerupGiver decorate;
+class RadSuit : PowerupGiver decorate;
+class Infrared : PowerupGiver decorate;
+class Allmap : MapRevealer decorate;
+class Berserk : CustomInventory decorate;

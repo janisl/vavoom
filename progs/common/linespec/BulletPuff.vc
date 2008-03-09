@@ -23,27 +23,26 @@
 //**
 //**************************************************************************
 
-class InvulnerabilitySphere : PowerupGiver
-	__mobjinfo__(2022)
-	__scriptid__(133);
+class BulletPuff : ScriptedEntity
+	game(GAME_Doom)
+	__scriptid__(131);
 
 states
 {
 Spawn:
-	PINV ABCD 6 Bright
-	Loop
+	PUFF A 4 Bright
+	PUFF B 4
+Melee:
+	PUFF CD 4
+	Stop
 }
 
 defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
-	PowerupType = PowerInvulnerable;
-	BlendColour = INVERSECOLOUR;
-	PickupMessage = "$gotinvul";
-	MaxAmount = 0;
-	bCountItem = true;
-	bBigPowerup = true;
-	bAutoActivate = true;
-	bAlwaysPickup = true;
+	Velocity.z = 1.0 * 35.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bPuffParticles = true;
 }

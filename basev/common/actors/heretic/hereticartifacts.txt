@@ -1,0 +1,39 @@
+//------------------------------------------------------------------------------
+actor SuperMap : MapRevealer 35
+{
+	Game Heretic
+	SpawnID 137
+	Inventory.MaxAmount 0
+	Inventory.PickupMessage "$txt_itemsupermap"
+	+CountItem
+	+FloatBob
+	+Inventory.AlwaysPickup
+	states
+	{
+	Spawn:
+		SPMP A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ArtiInvisibility : PowerupGiver 75
+{
+	Game Heretic
+	SpawnID 135
+	RenderStyle Translucent
+	Alpha 0.4
+	Inventory.PickupMessage "$txt_artiinvisibility"
+	Inventory.Icon "artiinvs"
+	Inventory.RespawnTics 4230
+	Powerup.Type Ghost
+	+CountItem
+	+FloatBob
+	+Inventory.PickupFlash
+	states
+	{
+	Spawn:
+		INVS A 350 Bright
+		Loop
+	}
+}

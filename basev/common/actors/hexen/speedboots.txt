@@ -1,0 +1,18 @@
+//------------------------------------------------------------------------------
+actor ArtiSpeedBoots : PowerupGiver 8002
+{
+	Game Hexen
+	SpawnID 13
+	Inventory.PickupMessage "$txt_artispeed"
+	Inventory.Icon "artisped"
+	Powerup.Type Speed
+	+FloatBob
+	+CountItem
+	+Inventory.PickupFlash
+	states
+	{
+	Spawn:
+		SPED ABCDEFGH 3 Bright
+		Loop
+	}
+}

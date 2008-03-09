@@ -57,3 +57,278 @@ actor SurgeryKit : HealthPickup 83
 		Loop
 	}
 }
+
+//------------------------------------------------------------------------------
+actor ShadowArmor : PowerupGiver 2024
+{
+	Game Strife
+	SpawnID 135
+	ConversationID 160, 156, 159
+	RenderStyle Translucent
+	Tag "Shadow_armor"
+	Inventory.MaxAmount 2
+	Inventory.PickupMessage "$txt_shadowarmor"
+	Inventory.PickupSound "misc/i_pkup"
+	Inventory.Icon "i_shd1"
+	Powerup.Type Shadow
+	+FloorClip
+	+VisibilityPulse
+	states
+	{
+	Spawn:
+		SHD1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor EnvironmentalSuit : PowerupGiver 2025
+{
+	Game Strife
+	SpawnID 136
+	ConversationID 161, 157, 160
+	Tag "Environmental_Suit"
+	Inventory.PickupMessage "$txt_envsuit"
+	Inventory.PickupSound "misc/i_pkup"
+	Inventory.MaxAmount 5
+	Inventory.Icon "i_mask"
+	Powerup.Type Mask
+	+FloorClip
+	states
+	{
+	Spawn:
+		MASK A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GuardUniform : Inventory 90
+{
+	Game Strife
+	ConversationID 162, 158, 161
+	Tag "Guard_Uniform"
+	Inventory.PickupMessage "$txt_guarduniform"
+	Inventory.GiveQuest 15
+	Inventory.Icon "i_unif"
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		UNIF A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor OfficersUniform : Inventory 52
+{
+	Game Strife
+	ConversationID 163, 159, 162
+	Tag "Officer's_Uniform"
+	Inventory.PickupMessage "$txt_officersuniform"
+	Inventory.Icon "i_ofic"
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		OFIC A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor StrifeMap : MapRevealer 2026
+{
+	Game Strife
+	SpawnID 137
+	ConversationID 164, 160, 163
+	Inventory.PickupMessage "$txt_strifemap"
+	Inventory.PickupSound "misc/p_pkup"
+	+FloorClip
+	states
+	{
+	Spawn:
+		SMAP AB 6 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Targeter : PowerupGiver 207
+{
+	Game Strife
+	ConversationID 167, 169, 173
+	Tag "Targeter"
+	Inventory.MaxAmount 5
+	Inventory.PickupMessage "$txt_targeter"
+	Inventory.PickupSound "misc/i_pkup"
+	Inventory.Icon "i_targ"
+	Powerup.Type Targeter
+	+FloorClip
+	states
+	{
+	Spawn:
+		TARG A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BeldinsRing : Inventory
+{
+	Game Strife
+	ConversationID 173, 165, 169
+	Tag "ring"
+	Inventory.PickupMessage "$txt_beldinsring"
+	Inventory.Icon "i_ring"
+	Inventory.GiveQuest 1
+	+NotDMatch
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		RING A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor OfferingChalice : Inventory 205
+{
+	Game Strife
+	ConversationID 174, 166, 170
+	Radius 10
+	Height 8
+	Tag "Offering_Chalice"
+	Inventory.PickupMessage "$txt_offeringchalice"
+	Inventory.Icon "i_relc"
+	Inventory.GiveQuest 2
+	+Dropped
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		RELC A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Ear : Inventory
+{
+	Game Strife
+	ConversationID 175, 167, 171
+	Inventory.PickupMessage "$txt_ear"
+	Inventory.MaxAmount 1
+	Inventory.Icon "i_ears"
+	Inventory.GiveQuest 9
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		EARS A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Communicator : Inventory 206
+{
+	Game Strife
+	ConversationID 176, 168, 172
+	Tag "Communicator"
+	Inventory.PickupMessage "$txt_communicator"
+	Inventory.PickupSound  "misc/p_pkup"
+	Inventory.Icon "i_comm"
+	+NotDMatch
+	states
+	{
+	Spawn:
+		COMM A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FlameThrowerParts : Inventory
+{
+	Game Strife
+	ConversationID 191, 185, 189
+	Tag "flame_thrower_parts"
+	Inventory.PickupMessage "$txt_fthrowerparts"
+	Inventory.Icon "i_bflm"
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		BFLM A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BrokenPowerCoupling : Inventory 226
+{
+	Game Strife
+	ConversationID 289, -1, -1
+	Health 40
+	Radius 16
+	Height 8
+	Tag "BROKEN_POWER_COUPLING"
+	Inventory.MaxAmount 1
+	Inventory.Icon "i_coup"
+	Inventory.GiveQuest 8
+	Inventory.PickupMessage "$txt_brokencoupling"
+	+Dropped
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		COUP C -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Info : Inventory
+{
+	Game Strife
+	ConversationID 300, 282, 299
+	Tag "info"
+	Inventory.PickupMessage "$txt_info"
+	Inventory.Icon "i_tokn"
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		TOKN A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor InterrogatorReport : Inventory
+{
+	Game Strife
+	ConversationID 308, 289, 306
+	Tag "report"
+	Inventory.PickupMessage "$txt_report"
+	Inventory.Icon "i_tokn"
+	+FloorClip
+	+Inventory.InvBar
+	states
+	{
+	Spawn:
+		TOKN A -1
+		Stop
+	}
+}

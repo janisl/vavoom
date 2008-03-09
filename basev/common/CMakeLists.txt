@@ -18,11 +18,13 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/nativeclasses.txt
 		actors/doom/doomammo.txt	
 		actors/doom/doomarmor.txt
+		actors/doom/doomartifacts.txt
 		actors/doom/doomdecorations.txt
 		actors/doom/doomhealth.txt
 		actors/doom/doomkeys.txt
 		actors/heretic/hereticammo.txt
 		actors/heretic/hereticarmor.txt
+		actors/heretic/hereticartifacts.txt
 		actors/heretic/hereticdecorations.txt
 		actors/heretic/heretickeys.txt
 		actors/hexen/flame.txt
@@ -32,6 +34,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/hexen/hexenspecialdecs.txt
 		actors/hexen/mana.txt
 		actors/hexen/puzzleitems.txt
+		actors/hexen/speedboots.txt
 		actors/raven/ravenartifacts.txt
 		actors/raven/ravenhealth.txt
 		actors/shared/blood.txt

@@ -80,3 +80,4 @@ class MiniMissiles : Ammo decorate;
 class EnergyPod : Ammo decorate;
 class PoisonBolts : Ammo decorate;
 class ElectricBolts : Ammo decorate;
+class Communicator : Inventory decorate;

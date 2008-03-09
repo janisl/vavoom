@@ -46,11 +46,13 @@ actors/constants.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/constants.txt
 actors/nativeclasses.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/nativeclasses.txt
 actors/doom/doomammo.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomammo.txt
 actors/doom/doomarmor.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomarmor.txt
+actors/doom/doomartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomartifacts.txt
 actors/doom/doomdecorations.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomdecorations.txt
 actors/doom/doomhealth.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomhealth.txt
 actors/doom/doomkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomkeys.txt
 actors/heretic/hereticammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticammo.txt
 actors/heretic/hereticarmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticarmor.txt
+actors/heretic/hereticartifacts.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticartifacts.txt
 actors/heretic/hereticdecorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticdecorations.txt
 actors/heretic/heretickeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/heretickeys.txt
 actors/hexen/flame.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/flame.txt
@@ -60,6 +62,7 @@ actors/hexen/hexenkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenkeys.
 actors/hexen/hexenspecialdecs.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenspecialdecs.txt
 actors/hexen/mana.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/mana.txt
 actors/hexen/puzzleitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/puzzleitems.txt
+actors/hexen/speedboots.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/speedboots.txt
 actors/raven/ravenartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenartifacts.txt
 actors/raven/ravenhealth.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenhealth.txt
 actors/shared/blood.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/blood.txt

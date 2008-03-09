@@ -527,7 +527,7 @@ defaultproperties
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	InvDefaultMaxAmount = 16;
-	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
+	DefaultInvulnBlendColour = Inventory::GOLDCOLOUR;
 	IceMoveFactor = 0.25;
 	bRipperBloodNoGravity = true;
 

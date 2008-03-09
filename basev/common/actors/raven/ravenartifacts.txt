@@ -37,3 +37,64 @@ actor ArtiSuperHealth : HealthPickup 32
 		Loop
 	}
 }
+
+//------------------------------------------------------------------------------
+actor ArtiFly : PowerupGiver 83
+{
+	Game Raven
+	SpawnID 15
+	Inventory.PickupMessage "$txt_artifly"
+	Inventory.Icon "artisoar"
+	Inventory.RespawnTics 4230
+	Powerup.Type Flight
+	+CountItem
+	+FloatBob
+	+Inventory.PickupFlash
+	+Inventory.InterHubStrip
+	states
+	{
+	Spawn:
+		SOAR ABCB 5
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ArtiInvulnerability : PowerupGiver 84
+{
+	Game Raven
+	SpawnID 133
+	Powerup.Type Invulnerable
+	Inventory.PickupMessage "$txt_artiinvulnerability"
+	Inventory.PickupMessage Hexen, "$txt_artiinvulnerability2"
+	Inventory.RespawnTics 4230
+	Inventory.Icon "artiinvu"
+	+CountItem
+	+FloatBob
+	+Inventory.PickupFlash
+	states
+	{
+	Spawn:
+		INVU ABCD 3
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ArtiTorch : PowerupGiver 33
+{
+	Game Raven
+	SpawnID 73
+	Inventory.PickupMessage "$txt_artitorch"
+	Inventory.Icon "artitrch"
+	Powerup.Type Torch
+	+CountItem
+	+FloatBob
+	+Inventory.PickupFlash
+	states
+	{
+	Spawn:
+		TRCH ABC 3 Bright
+		Loop
+	}
+}

@@ -22,22 +22,11 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//FIXME implement this!
 
-class StrifeMap : MapRevealer
-	__mobjinfo__(2026)
-	__scriptid__(137);
-
-states
-{
-Spawn:
-	SMAP AB 6 Bright
-	Loop
-}
+class PowerTargeter : Powerup;
 
 defaultproperties
 {
-	ConversationID = 164;
-	PickupMessage = "$txt_strifemap";
-	PickupSound = 'misc/p_pkup';
-	bFloorClip = true;
+	EffectTime = 0.1;
 }

@@ -41,15 +41,11 @@
 #include "Effect.vc"
 #include "Carcas.vc"
 
-#include "ArtiFly.vc"
-#include "ArtiInvulnerability.vc"
 #include "ArtiDarkServant.vc"
 #include "ArtiTeleportOther.vc"
 #include "ArtiPork.vc"
-#include "ArtiTorch.vc"
 #include "ArtiTeleport.vc"
 #include "ArtiPoisonBag.vc"
-#include "ArtiSpeedBoots.vc"
 #include "ArtiBoostArmor.vc"
 #include "ArtiBlastRadius.vc"
 #include "ArtiHealingRadius.vc"
@@ -276,3 +272,5 @@ class Dirt5 : ScriptedEntity decorate;
 class Dirt6 : ScriptedEntity decorate;
 class Mana1 : Ammo decorate;
 class Mana2 : Ammo decorate;
+class ArtiFly : PowerupGiver decorate;
+class ArtiInvulnerability : PowerupGiver decorate;

@@ -69,23 +69,12 @@
 #include "Bang4Cloud.vc"
 
 #include "DegninOre.vc"
-#include "ShadowArmor.vc"
-#include "EnvironmentalSuit.vc"
-#include "GuardUniform.vc"
-#include "OfficersUniform.vc"
-#include "StrifeMap.vc"
 #include "Scanner.vc"
 #include "TeleporterBeacon.vc"
-#include "Targeter.vc"
 #include "Gold300.vc"
-#include "BeldinsRing.vc"
-#include "OfferingChalice.vc"
-#include "Ear.vc"
-#include "Communicator.vc"
 #include "AssaultGun.vc"
 #include "AssaultGunStanding.vc"
 #include "FlameThrower.vc"
-#include "FlameThrowerParts.vc"
 #include "MiniMissileLauncher.vc"
 #include "Mauler.vc"
 #include "Mauler2.vc"
@@ -99,10 +88,8 @@
 #include "Sigil3.vc"
 #include "Sigil4.vc"
 #include "Sigil5.vc"
-#include "BrokenPowerCoupling.vc"
 #include "AmmoFillup.vc"
 #include "HealthFillup.vc"
-#include "Info.vc"
 #include "RaiseAlarm.vc"
 #include "OpenDoor222.vc"
 #include "CloseDoor222.vc"
@@ -110,7 +97,6 @@
 #include "OpenDoor224.vc"
 #include "HealthTraining.vc"
 #include "GunTraining.vc"
-#include "InterrogatorReport.vc"
 #include "UpgradeStamina.vc"
 #include "UpgradeAccuracy.vc"
 #include "SlideshowStarter.vc"
@@ -247,3 +233,5 @@ class EnergyPod : Ammo decorate;
 class PoisonBolts : Ammo decorate;
 class ElectricBolts : Ammo decorate;
 class AmmoSatchel : BackpackItem decorate;
+class Communicator : Inventory decorate;
+class BrokenPowerCoupling : Inventory decorate;

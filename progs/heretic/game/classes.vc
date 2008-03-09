@@ -98,13 +98,8 @@
 #include "Beak.vc"
 #include "BeakPowered.vc"
 
-#include "SuperMap.vc"
-#include "ArtiInvisibility.vc"
-#include "ArtiFly.vc"
-#include "ArtiInvulnerability.vc"
 #include "ArtiTomeOfPower.vc"
 #include "ArtiEgg.vc"
-#include "ArtiTorch.vc"
 #include "ArtiTimeBomb.vc"
 #include "ArtiTeleport.vc"
 
@@ -194,3 +189,4 @@ class PhoenixRodAmmo : Ammo decorate;
 class PhoenixRodHefty : Ammo decorate;
 class BlasterAmmo : Ammo decorate;
 class BagOfHolding : BackpackItem decorate;
+class ArtiFly : PowerupGiver decorate;
