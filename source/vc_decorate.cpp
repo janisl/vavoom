@@ -1548,8 +1548,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("VisibilityPulse"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag VisibilityPulse in %s", Class->GetName());
+		SetClassFieldBool(Class, "bVisibilityPulse", Value);
 		return true;
 	}
 	if (!Flag.ICmp("RocketTrail"))

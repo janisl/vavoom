@@ -30,20 +30,22 @@ class ShadowArmor : PowerupGiver
 states
 {
 Spawn:
-	SHD1 A 17 A_ClearShadow
-	SHD1 A 17 A_BeShadowyFoe
-	SHD1 A 17 A_SetShadow
-	SHD1 A 17 A_BeShadowyFoe
+	SHD1 A 17
+	SHD1 A 17
+	SHD1 A 17
+	SHD1 A 17
 	Loop
 }
 
 defaultproperties
 {
 	ConversationID = 160;
+	RenderStyle = STYLE_Translucent;
 	PowerupType = PowerShadow;
 	MaxAmount = 2;
 	PickupMessage = "$txt_shadowarmor";
 	PickupSound = 'misc/i_pkup';
 	IconName = 'i_shd1';
 	bFloorClip = true;
+	bVisibilityPulse = true;
 }

@@ -225,6 +225,7 @@ bool bHuntPlayers;		// With TIDToHate, hate players too.
 bool bNoHatePlayers;	// Ignore player attacks.
 bool bStrifeDamage;		// Missiles do 4x damage instead of 8x
 bool bDontBlast;		// Not blasted by blast radius.
+bool bVisibilityPulse;	// Pulse visibility in and out.
 
 //  Params
 float			Speed;
@@ -5414,7 +5415,29 @@ void Tick(float deltaTime)
 		Item.DoEffect();
 	}
 
-	if (bStealth)
+	if (bVisibilityPulse)
+	{
+		//	Pulse visibility in and out
+		if (VisDir > 0)
+		{
+			Alpha += 0.75 * deltaTime;
+			if (Alpha > 1.0)
+			{
+				Alpha = 1.0;
+				VisDir = -1;
+			}
+		}
+		else
+		{
+			Alpha -= 0.75 * deltaTime;
+			if (Alpha < 0.25)
+			{
+				Alpha = 0.25;
+				VisDir = 1;
+			}
+		}
+	}
+	else if (bStealth)
 	{
 		//	Fade a stealth monster in and out of visibility
 		if (VisDir > 0)
