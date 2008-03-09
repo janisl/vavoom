@@ -52,6 +52,8 @@ class VGameInfo : public VObject
 	VClass*			LevelInfoClass;
 	VClass*			PlayerReplicationInfoClass;
 
+	vint32			GameFilterFlag;
+
 	enum
 	{
 		GIF_DefaultMonsterFallingDamage		= 0x00000001,

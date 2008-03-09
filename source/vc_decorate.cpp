@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "vc_local.h"
+#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -3200,7 +3201,40 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			if (!Prop.ICmp("Inventory.PickupMessage"))
 			{
 				sc->ExpectString();
-				SetClassFieldStr(Class, "PickupMessage", sc->String);
+				VStr Msg = sc->String;
+				int Filter = 0;
+				if (Msg.ICmp("Doom"))
+				{
+					Filter = GAME_Doom;
+				}
+				else if (Msg.ICmp("Heretic"))
+				{
+					Filter = GAME_Heretic;
+				}
+				else if (Msg.ICmp("Hexen"))
+				{
+					Filter = GAME_Hexen;
+				}
+				else if (Msg.ICmp("Raven"))
+				{
+					Filter = GAME_Raven;
+				}
+				else if (Msg.ICmp("Strife"))
+				{
+					Filter = GAME_Strife;
+				}
+				if (Filter && sc->Check(","))
+				{
+					sc->ExpectString();
+					if (GGameInfo->GameFilterFlag & Filter)
+					{
+						SetClassFieldStr(Class, "PickupMessage", sc->String);
+					}
+				}
+				else
+				{
+					SetClassFieldStr(Class, "PickupMessage", Msg);
+				}
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.PickupSound"))

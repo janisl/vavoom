@@ -108,8 +108,6 @@ float			GibsHealthFactor;
 int				ramp1[16];
 int				ramp2[16];
 
-int				GameFilterFlag;
-
 //==========================================================================
 //
 //  MakeSlope

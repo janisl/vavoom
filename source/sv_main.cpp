@@ -117,15 +117,15 @@ void SV_Init()
 
 	VMemberBase::StaticLoadPackage(NAME_svprogs, TLocation());
 
+	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
+		VClass::FindClass("MainGameInfo"));
+	GGameInfo->eventInit();
+
 	ProcessDecorateScripts();
 
 	ProcessDehackedFiles();
 
 	ServerNetContext = new VServerNetContext();
-
-	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
-		VClass::FindClass("MainGameInfo"));
-	GGameInfo->eventInit();
 
 	VClass* PlayerClass = VClass::FindClass("Player");
 	for (i = 0; i < MAXPLAYERS; i++)
