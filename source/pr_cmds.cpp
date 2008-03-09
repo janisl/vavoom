@@ -585,7 +585,7 @@ IMPLEMENT_FUNCTION(VObject, LocalSound)
 {
 	P_GET_NAME(name);
 	GAudio->PlaySound(GSoundManager->GetSoundID(name), TVec(0, 0, 0),
-		TVec(0, 0, 0), 0, 0, 1, 0);
+		TVec(0, 0, 0), 0, 0, 1, 0, false);
 }
 
 //==========================================================================

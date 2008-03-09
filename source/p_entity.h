@@ -474,7 +474,7 @@ public:
 	void UnlinkFromWorld();
 	bool CanSee(VEntity*);
 
-	void StartSound(VName, vint32, float, float);
+	void StartSound(VName, vint32, float, float, bool);
 	void StartLocalSound(VName, vint32, float, float);
 	void StopSound(vint32);
 	void StartSoundSequence(VName, vint32);

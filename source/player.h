@@ -293,7 +293,7 @@ class VBasePlayer : public VObject
 		EV_RET_VOID(NAME_Cheat_NoTarget);
 	}
 	void eventClientStartSound(int SoundId, TVec Org, int OriginId,
-		int Channel, float Volume, float Attenuation)
+		int Channel, float Volume, float Attenuation, bool Loop)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(SoundId);
@@ -302,6 +302,7 @@ class VBasePlayer : public VObject
 		P_PASS_INT(Channel);
 		P_PASS_FLOAT(Volume);
 		P_PASS_FLOAT(Attenuation);
+		P_PASS_BOOL(Loop);
 		EV_RET_VOID(NAME_ClientStartSound);
 	}
 	void eventClientStopSound(int OriginId, int Channel)

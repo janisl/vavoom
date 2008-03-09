@@ -90,6 +90,7 @@ void CL_ReadFromServerInfo()
 
 IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSound)
 {
+	P_GET_BOOL(Loop);
 	P_GET_FLOAT(Attenuation);
 	P_GET_FLOAT(Volume);
 	P_GET_INT(Channel);
@@ -98,7 +99,7 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSound)
 	P_GET_INT(SoundId);
 	P_GET_SELF;
 	GAudio->PlaySound(SoundId, Org, TVec(0, 0, 0), OriginId, Channel, Volume,
-		Attenuation);
+		Attenuation, Loop);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSound)

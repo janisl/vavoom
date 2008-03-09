@@ -176,12 +176,12 @@ void VLevelInfo::SectorStartSound(const sector_t* Sector, int SoundId,
 	if (Sector)
 	{
 		StartSound(Sector->soundorg, (Sector - XLevel->Sectors) +
-			GMaxEntities, SoundId, Channel, Volume, Attenuation);
+			GMaxEntities, SoundId, Channel, Volume, Attenuation, false);
 	}
 	else
 	{
 		StartSound(TVec(0, 0, 0), 0, SoundId, Channel, Volume,
-			Attenuation);
+			Attenuation, false);
 	}
 	unguard;
 }

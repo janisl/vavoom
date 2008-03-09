@@ -2578,7 +2578,7 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_AmbientSound)
 			StartSound(TVec(0, 0, 0), 0, GSoundManager->GetSoundID(
-				GetName(sp[-2])), 0, sp[-1] / 127.0, 0.0);
+				GetName(sp[-2])), 0, sp[-1] / 127.0, 0.0, false);
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -2668,7 +2668,7 @@ int VAcs::RunScript(float DeltaTime)
 				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
 					mobj != NULL; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
 				{
-					mobj->StartSound(sound, 0, sp[-1] / 127.0, 1.0);
+					mobj->StartSound(sound, 0, sp[-1] / 127.0, 1.0, false);
 				}
 				sp -= 3;
 			}
@@ -2684,12 +2684,12 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_ActivatorSound)
 			if (Activator)
 			{
-				Activator->StartSound(GetName(sp[-2]), 0, sp[-1] / 127.0, 1.0);
+				Activator->StartSound(GetName(sp[-2]), 0, sp[-1] / 127.0, 1.0, false);
 			}
 			else
 			{
 				StartSound(TVec(0, 0, 0), 0, GSoundManager->GetSoundID(
-					GetName(sp[-2])), 0, sp[-1] / 127.0, 1.0);
+					GetName(sp[-2])), 0, sp[-1] / 127.0, 1.0, false);
 			}
 			sp -= 2;
 			ACSVM_BREAK;

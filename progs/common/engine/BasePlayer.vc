@@ -159,7 +159,7 @@ native final void DisconnectBot();
 
 //	For networking
 native void ClientStartSound(int SoundId, TVec Org, int OriginId,
-	int Channel, float Volume, float Attenuation);
+	int Channel, float Volume, float Attenuation, bool Loop);
 native void ClientStopSound(int OriginId, int Channel);
 native void ClientStartSequence(TVec Origin, int OriginId, name Name,
 	int ModeNum);

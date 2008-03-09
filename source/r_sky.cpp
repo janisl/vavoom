@@ -657,7 +657,7 @@ void VRenderLevel::DoLightningFlash()
 			sky[i].texture1 = sky[i].baseTexture2; // set alternate sky
 		}
 		GAudio->PlaySound(GSoundManager->GetSoundID("world/thunder"),
-			TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1, 0);
+			TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1, 0, false);
 	}
 	// Calculate the next lighting flash
 	if (!NextLightningFlash)

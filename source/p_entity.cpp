@@ -424,11 +424,11 @@ bool VEntity::CallStateChain(VEntity* Actor, VState* AState)
 //==========================================================================
 
 void VEntity::StartSound(VName Sound, vint32 Channel, float Volume,
-	float Attenuation)
+	float Attenuation, bool Loop)
 {
 	guard(VEntity::StartSound);
 	Super::StartSound(Origin, NetID, GSoundManager->ResolveEntitySound(
-		SoundClass, SoundGender, Sound), Channel, Volume, Attenuation);
+		SoundClass, SoundGender, Sound), Channel, Volume, Attenuation, Loop);
 	unguard;
 }
 
@@ -446,7 +446,7 @@ void VEntity::StartLocalSound(VName Sound, vint32 Channel, float Volume,
 	{
 		Player->eventClientStartSound(
 			GSoundManager->ResolveEntitySound(SoundClass, SoundGender, Sound),
-			TVec(0, 0, 0), 0, Channel, Volume, Attenuation);
+			TVec(0, 0, 0), 0, Channel, Volume, Attenuation, false);
 	}
 	unguard;
 }
@@ -571,12 +571,13 @@ IMPLEMENT_FUNCTION(VEntity, CallStateChain)
 
 IMPLEMENT_FUNCTION(VEntity, PlaySound)
 {
+	P_GET_BOOL_OPT(Loop, false);
 	P_GET_FLOAT_OPT(Attenuation, 1.0);
 	P_GET_FLOAT_OPT(Volume, 1.0);
 	P_GET_INT(Channel);
 	P_GET_NAME(SoundName);
 	P_GET_SELF;
-	Self->StartSound(SoundName, Channel, Volume, Attenuation);
+	Self->StartSound(SoundName, Channel, Volume, Attenuation, Loop);
 }
 
 IMPLEMENT_FUNCTION(VEntity, StopSound)

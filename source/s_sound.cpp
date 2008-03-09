@@ -80,7 +80,8 @@ public:
 	void Shutdown();
 
 	//	Playback of sound effects
-	void PlaySound(int, const TVec&, const TVec&, int, int, float, float);
+	void PlaySound(int, const TVec&, const TVec&, int, int, float, float,
+		bool);
 	void StopSound(int, int);
 	void StopAllSound();
 	bool IsSoundPlaying(int, int);
@@ -123,6 +124,7 @@ private:
 		int			handle;
 		bool		is3D;
 		bool		LocalPlayerSound;
+		bool		Loop;
 	};
 
 	//	Sound curve
@@ -458,7 +460,7 @@ void VAudio::Shutdown()
 
 void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	const TVec& velocity, int origin_id, int channel, float volume,
-	float Attenuation)
+	float Attenuation, bool Loop)
 {
 	guard(VAudio::PlaySound);
 	if (!SoundDevice || !InSoundId || !MaxVolume || !volume)
@@ -468,6 +470,18 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 
 	//	Find actual sound ID to use.
 	int sound_id = GSoundManager->ResolveSound(InSoundId);
+
+	//	If it's a looping sound and it's still playing, then continue
+	// playing the existing one.
+	for (int i = 0; i < NumChannels; i++)
+	{
+		if (Channel[i].origin_id == origin_id &&
+			Channel[i].channel == channel &&
+			Channel[i].sound_id == sound_id && Channel[i].Loop)
+		{
+			return;
+		}
+	}
 
 	//	Apply sound volume.
 	volume *= MaxVolume;
@@ -516,7 +530,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	if (!origin_id || LocalPlayerSound || Attenuation <= 0)
 	{
 		//	Local sound
-		handle = SoundDevice->PlaySound(sound_id, volume, 0, pitch, false);
+		handle = SoundDevice->PlaySound(sound_id, volume, 0, pitch, Loop);
 		is3D = false;
 	}
 	else if (!SoundDevice->Sound3D)
@@ -528,13 +542,13 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 		{
 			sep = -sep;
 		}
-		handle = SoundDevice->PlaySound(sound_id, vol, sep, pitch, false);
+		handle = SoundDevice->PlaySound(sound_id, vol, sep, pitch, Loop);
 		is3D = false;
 	}
 	else
 	{
 		handle = SoundDevice->PlaySound3D(sound_id, origin, velocity,
-			volume, pitch, false);
+			volume, pitch, Loop);
 		is3D = true;
 	}
 	Channel[chan].origin_id = origin_id;
@@ -548,6 +562,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	Channel[chan].handle = handle;
 	Channel[chan].is3D = is3D;
 	Channel[chan].LocalPlayerSound = LocalPlayerSound;
+	Channel[chan].Loop = Loop;
 	unguard;
 }
 
@@ -1664,7 +1679,7 @@ VSoundSeqNode::~VSoundSeqNode()
 	if (StopSound >= 1)
 	{
 		((VAudio*)GAudio)->PlaySound(StopSound, Origin, TVec(0, 0, 0),
-			OriginId, 1, Volume, Attenuation);
+			OriginId, 1, Volume, Attenuation, false);
 	}
 
 	//	Remove from the list of active sound sequences.
@@ -1714,7 +1729,7 @@ void VSoundSeqNode::Update(float DeltaTime)
 		{
 			CurrentSoundID = SequencePtr[1];
 			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
-				OriginId, 1, Volume, Attenuation);
+				OriginId, 1, Volume, Attenuation, false);
 		}
 		SequencePtr += 2;
 		break;
@@ -1732,14 +1747,14 @@ void VSoundSeqNode::Update(float DeltaTime)
 		{
 			CurrentSoundID = SequencePtr[1];
 			GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0),
-				OriginId, 1, Volume, Attenuation);
+				OriginId, 1, Volume, Attenuation, false);
 		}
 		break;
 
 	case SSCMD_PlayLoop:
 		CurrentSoundID = SequencePtr[1];
 		GAudio->PlaySound(CurrentSoundID, Origin, TVec(0, 0, 0), OriginId, 1,
-			Volume, Attenuation);
+			Volume, Attenuation, false);
 		DelayTime = SequencePtr[2] / 35.0;
 		break;
 

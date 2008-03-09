@@ -70,7 +70,7 @@ class VThinker : public VObject
 	virtual void AddedToLevel();
 	virtual void RemovedFromLevel();
 
-	void StartSound(const TVec&, vint32, vint32, vint32, float, float);
+	void StartSound(const TVec&, vint32, vint32, vint32, float, float, bool);
 	void StopSound(vint32, vint32);
 	void StartSoundSequence(const TVec&, vint32, VName, vint32);
 	void AddSoundSequenceChoice(vint32, VName);

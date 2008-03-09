@@ -1686,7 +1686,7 @@ COMMAND(Say)
 	}
 	GLevelInfo->BroadcastPrint(*Text);
 	GLevelInfo->StartSound(TVec(0, 0, 0), 0,
-		GSoundManager->GetSoundID("misc/chat"), 0, 1.0, 0);
+		GSoundManager->GetSoundID("misc/chat"), 0, 1.0, 0, false);
 	unguard;
 }
 

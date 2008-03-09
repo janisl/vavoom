@@ -271,7 +271,7 @@ native final void GetStateEffects(out array<LightEffectDef*> Lights);
 native final bool CallStateChain(Entity Actor, state State);
 
 native final void PlaySound(name SoundName, int Channel, optional float Volume,
-	optional float Atenuation);
+	optional float Atenuation, optional bool Loop);
 native final void StopSound(int Channel);
 native final bool AreSoundsEquivalent(name Sound1, name Sound2);
 
