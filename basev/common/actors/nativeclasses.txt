@@ -55,13 +55,13 @@ class Actor extends Thinker
 	//	Sound functions
 	//
 	action native A_PlaySound(string soundname);
-	//A_PlaySoundEx
-	//A_PlayWeaponSound
+	action native A_PlaySoundEx(string soundname, string chanel, optional bool loop, optional int attenuation);
+	action native A_PlayWeaponSound(string soundname);
 	action native A_ActiveSound();
-	//A_LoopActiveSound
-	//A_FLoopActiveSound (deprecated)
-	//A_StopSound
-	//A_StopSoundEx
+	action native A_LoopActiveSound();
+	action native A_FLoopActiveSound();
+	action native A_StopSound();
+	action native A_StopSoundEx(string channel);
 	action native A_Pain();
 	action native A_Scream();
 	action native A_XScream();

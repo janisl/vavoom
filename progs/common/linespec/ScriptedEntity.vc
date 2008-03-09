@@ -779,16 +779,174 @@ final void A_PlaySound(string Sound)
 
 //==========================================================================
 //
+//  A_PlaySoundEx
+//
+//==========================================================================
+
+final void A_PlaySoundEx(string Sound, string Channel, optional bool Loop,
+	optional int Attenuation)
+{
+	//	Channel
+	int Chan;
+	if (!stricmp(Channel, "Auto"))
+	{
+		Chan = CHAN_AUTO;
+	}
+	else if (!stricmp(Channel, "Weapon"))
+	{
+		Chan = CHAN_WEAPON;
+	}
+	else if (!stricmp(Channel, "Voice"))
+	{
+		Chan = CHAN_VOICE;
+	}
+	else if (!stricmp(Channel, "Item"))
+	{
+		Chan = CHAN_ITEM;
+	}
+	else if (!stricmp(Channel, "Body"))
+	{
+		Chan = CHAN_BODY;
+	}
+	else if (!stricmp(Channel, "SoundSlot5"))
+	{
+		Chan = 5;
+	}
+	else if (!stricmp(Channel, "SoundSlot6"))
+	{
+		Chan = 6;
+	}
+	else if (!stricmp(Channel, "SoundSlot7"))
+	{
+		Chan = 7;
+	}
+
+	//	Attenuation
+	float Atten = ATTN_NORMAL;
+	switch (Attenuation)
+	{
+	case -1:
+		Atten = ATTN_STATIC;
+		break;
+	case 1:
+		Atten = ATTN_NONE;
+		break;
+	case 2:
+		Atten = ATTN_SURROUND;
+		break;
+	}
+
+	PlaySound(StrToName(Sound), Chan,, Atten, Loop);
+}
+
+//==========================================================================
+//
+//  A_PlayWeaponSound
+//
+//==========================================================================
+
+final void A_PlayWeaponSound(string Sound)
+{
+	PlaySound(StrToName(Sound), CHAN_WEAPON);
+}
+
+//==========================================================================
+//
 //	A_ActiveSound
 //
 //==========================================================================
 
 final void A_ActiveSound()
 {
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	A_LoopActiveSound
+//
+//==========================================================================
+
+final void A_LoopActiveSound()
+{
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE,,, true);
+	}
+}
+
+//==========================================================================
+//
+//	A_FLoopActiveSound
+//
+//==========================================================================
+
+final void A_FLoopActiveSound()
+{
 	if (ActiveSound && !GetSoundPlayingInfo(self, GetSoundID(ActiveSound)))
 	{
 		PlaySound(ActiveSound, CHAN_VOICE);
 	}
+}
+
+//==========================================================================
+//
+//	A_StopSound
+//
+//==========================================================================
+
+final void A_StopSound()
+{
+	StopSound(CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//	A_StopSoundEx
+//
+//==========================================================================
+
+final void A_StopSoundEx(string Channel)
+{
+	//	Channel
+	int Chan;
+	if (!stricmp(Channel, "Auto"))
+	{
+		Chan = CHAN_AUTO;
+	}
+	else if (!stricmp(Channel, "Weapon"))
+	{
+		Chan = CHAN_WEAPON;
+	}
+	else if (!stricmp(Channel, "Voice"))
+	{
+		Chan = CHAN_VOICE;
+	}
+	else if (!stricmp(Channel, "Item"))
+	{
+		Chan = CHAN_ITEM;
+	}
+	else if (!stricmp(Channel, "Body"))
+	{
+		Chan = CHAN_BODY;
+	}
+	else if (!stricmp(Channel, "SoundSlot5"))
+	{
+		Chan = 5;
+	}
+	else if (!stricmp(Channel, "SoundSlot6"))
+	{
+		Chan = 6;
+	}
+	else if (!stricmp(Channel, "SoundSlot7"))
+	{
+		Chan = 7;
+	}
+
+	StopSound(Chan);
 }
 
 //==========================================================================
