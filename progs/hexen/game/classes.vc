@@ -115,12 +115,6 @@
 #include "SnoutPuff.vc"
 #include "Snout.vc"
 
-#include "FireBall.vc"
-#include "Arrow.vc"
-#include "Dart.vc"
-#include "PoisonDart.vc"
-#include "RipperBall.vc"
-#include "ProjectileBlade.vc"
 #include "IceShard.vc"
 #include "PorkFX.vc"
 #include "ThrowingBomb.vc"

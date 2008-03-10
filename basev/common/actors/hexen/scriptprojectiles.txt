@@ -1,0 +1,144 @@
+//------------------------------------------------------------------------------
+actor FireBall
+{
+	Game Hexen
+	SpawnID 10
+	Radius 8
+	Height 8
+	Speed 2
+	Damage 4
+	RenderStyle Add
+	DamageType Fire
+	DeathSound "Fireball"
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	states
+	{
+	Spawn:
+		FBL1 AB 4 Bright
+		Loop
+	Death:
+		XPL1 ABCDEF 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Arrow
+{
+	Game Hexen
+	SpawnID 50
+	Radius 8
+	Height 4
+	Speed 6
+	Damage 4
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	states
+	{
+	Spawn:
+		ARRW A -1
+		Stop
+	Death:
+		ARRW A 1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Dart
+{
+	Game Hexen
+	SpawnID 51
+	Radius 8
+	Height 4
+	Speed 6
+	Damage 2
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	states
+	{
+	Spawn:
+		DART A -1
+		Stop
+	Death:
+		DART A 1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PoisonDart : Dart
+{
+	Game Hexen
+	SpawnID 52
+	PoisonDamage 20
+}
+
+//------------------------------------------------------------------------------
+actor RipperBall
+{
+	Game Hexen
+	SpawnID 53
+	Radius 8
+	Speed 6
+	Damage 2
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	+Ripper
+	states
+	{
+	Spawn:
+		RIPP ABC 3
+		Loop
+	Death:
+		CFCF Q 4 Bright
+		CFCF R 3 Bright
+		CFCF S 4 Bright
+		CFCF T 3 Bright
+		CFCF U 4 Bright
+		CFCF V 3 Bright
+		CFCF W 4 Bright
+		CFCF X 3 Bright
+		CFCF Y 4 Bright
+		CFCF Z 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ProjectileBlade
+{
+	Game Hexen
+	SpawnID 64
+	Radius 6
+	Height 6
+	Speed 6
+	Damage 3
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoGravity
+	+NoTeleport
+	states
+	{
+	Spawn:
+		BLAD A -1
+		Stop
+	Death:
+		BLAD A 1
+		Stop
+	}
+}
