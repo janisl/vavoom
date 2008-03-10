@@ -283,4 +283,5 @@ defaultproperties
 	AttackSound = 'BishopAttack';
 	PainSound = 'BishopPain';
 	DeathSound = 'BishopDeath';
+	Obituary = "$ob_bishop";
 }

@@ -410,4 +410,6 @@ defaultproperties
 	AttackSound = 'SerpentAttack';
 	PainSound = 'SerpentPain';
 	DeathSound = 'SerpentDeath';
+	Obituary = "$ob_serpent";
+	HitObituary = "$ob_serpenthit";
 }

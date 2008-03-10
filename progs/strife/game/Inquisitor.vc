@@ -281,4 +281,5 @@ defaultproperties
 	ActiveSound = 'inquisitor/active';
 	JumpSound = 'inquisitor/jump';
 	DeathSound = 'inquisitor/death';
+	Obituary = "$ob_inquisitor";
 }

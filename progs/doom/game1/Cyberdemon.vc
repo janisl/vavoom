@@ -115,4 +115,5 @@ defaultproperties
 	ActiveSound = 'cyber/active';
 	PainSound = 'cyber/pain';
 	DeathSound = 'cyber/death';
+	Obituary = "$ob_cyborg";
 }

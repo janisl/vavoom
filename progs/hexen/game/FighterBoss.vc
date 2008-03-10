@@ -131,4 +131,5 @@ defaultproperties
 	PainChance = 0.1953125;
 	PainSound = 'PlayerFighterPain';
 	DeathSound = 'PlayerFighterCrazyDeath';
+	Obituary = "$ob_fboss";
 }

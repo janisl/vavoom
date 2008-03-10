@@ -148,4 +148,5 @@ defaultproperties
 	AttackSound = 'programmer/attack';
 	PainSound = 'programmer/pain';
 	DeathSound = 'programmer/death';
+	Obituary = "$ob_programmer";
 }

@@ -333,4 +333,5 @@ defaultproperties
 	AttackSound = 'DragonAttack';
 	PainSound = 'DragonPain';
 	DeathSound = 'DragonDeath';
+	Obituary = "$ob_dragon";
 }

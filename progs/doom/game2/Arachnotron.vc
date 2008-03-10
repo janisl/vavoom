@@ -113,4 +113,5 @@ defaultproperties
 	ActiveSound = 'baby/active';
 	PainSound = 'baby/pain';
 	DeathSound = 'baby/death';
+	Obituary = "$ob_baby";
 }

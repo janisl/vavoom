@@ -135,4 +135,5 @@ defaultproperties
 	PainChance = 0.1953125;
 	PainSound = 'PlayerClericPain';
 	DeathSound = 'PlayerClericCrazyDeath';
+	Obituary = "$ob_cboss";
 }

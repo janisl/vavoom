@@ -102,4 +102,5 @@ defaultproperties
 	DeathSound = 'demon/death';
 	bFaster = true;
 	bFastMelee = true;
+	Obituary = "$ob_demonhit";
 }

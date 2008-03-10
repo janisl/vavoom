@@ -112,4 +112,6 @@ defaultproperties
 	AttackSound = 'hknight/attack';
 	PainSound = 'hknight/pain';
 	DeathSound = 'hknight/death';
+	Obituary = "$ob_boneknight";
+	HitObituary = "$ob_boneknighthit";
 }

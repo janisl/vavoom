@@ -91,4 +91,5 @@ defaultproperties
 	PainSound = 'macil/pain';
 	DLightColour = RGB(203, 111, 0);
 	DLightRadius = 118.0;
+	Obituary = "$ob_macil";
 }

@@ -1761,8 +1761,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("AllowParticles"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag AllowParticles in %s", Class->GetName());
+		SetClassFieldBool(Class, "bPuffParticles", Value);
 		return true;
 	}
 	if (!Flag.ICmp("AlwaysPuff"))
@@ -2946,16 +2945,14 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		//
 		if (!Prop.ICmp("Obituary"))
 		{
-			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property Obituary in %s is not yet supported", Class->GetName());
+			SetClassFieldStr(Class, "Obituary", sc->String);
 			continue;
 		}
 		if (!Prop.ICmp("HitObituary"))
 		{
-			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property HitObituary in %s is not yet supported", Class->GetName());
+			SetClassFieldStr(Class, "HitObituary", sc->String);
 			continue;
 		}
 		//

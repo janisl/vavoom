@@ -201,4 +201,5 @@ defaultproperties
 	AttackSound = 'chicken/attack';
 	PainSound = 'chicken/pain';
 	DeathSound = 'chicken/death';
+	Obituary = "$ob_chicken";
 }

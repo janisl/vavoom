@@ -67,4 +67,5 @@ defaultproperties
 	bLeaveTrail = true;
 	SightSound = 'weapons/rocklf';
 	DeathSound = 'weapons/rocklx';
+	Obituary = "$ob_mprocket";
 }

@@ -84,4 +84,5 @@ defaultproperties
 	ActiveSound = 'wolfss/active';
 	PainSound = 'wolfss/pain';
 	DeathSound = 'wolfss/death';
+	Obituary = "$ob_wolfss";
 }

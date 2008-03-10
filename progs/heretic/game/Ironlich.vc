@@ -157,4 +157,6 @@ defaultproperties
 	AttackSound = 'ironlich/attack1';
 	PainSound = 'ironlich/pain';
 	DeathSound = 'ironlich/death';
+	Obituary = "$ob_ironlich";
+	HitObituary = "$ob_ironlichhit";
 }

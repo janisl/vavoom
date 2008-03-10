@@ -97,4 +97,6 @@ defaultproperties
 	DeathSound = 'reaver/death';
 	DLightColour = RGB(203, 111, 0);
 	DLightRadius = 126.0;
+	Obituary = "$ob_reaver";
+	HitObituary = "$ob_reaverhit";
 }

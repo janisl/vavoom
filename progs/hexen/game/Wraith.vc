@@ -266,4 +266,6 @@ defaultproperties
 	AttackSound = 'WraithAttack';
 	PainSound = 'WraithPain';
 	DeathSound = 'WraithDeath';
+	Obituary = "$ob_wraith";
+	HitObituary = "$ob_wraithhit";
 }

@@ -503,4 +503,5 @@ defaultproperties
 	AttackSound = 'KoraxAttack';
 	PainSound = 'KoraxPain';
 	DeathSound = 'KoraxDeath';
+	Obituary = "$ob_korax";
 }

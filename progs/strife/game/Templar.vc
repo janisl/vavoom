@@ -115,4 +115,6 @@ defaultproperties
 	ActiveSound = 'templar/active';
 	PainSound = 'templar/pain';
 	DeathSound = 'templar/death';
+	Obituary = "$ob_templar";
+	HitObituary = "$ob_templarhit";
 }

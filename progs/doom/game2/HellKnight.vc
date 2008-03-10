@@ -75,4 +75,6 @@ defaultproperties
 	ActiveSound = 'knight/active';
 	PainSound = 'knight/pain';
 	DeathSound = 'knight/death';
+	Obituary = "$ob_knight";
+	HitObituary = "$ob_knighthit";
 }

@@ -109,4 +109,5 @@ defaultproperties
 	AttackSound = 'beast/attack';
 	PainSound = 'beast/pain';
 	DeathSound = 'beast/death';
+	Obituary = "$ob_beast";
 }

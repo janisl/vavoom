@@ -137,4 +137,5 @@ defaultproperties
 	PainSound = 'bishop/pain';
 	DeathSound = 'bishop/death';
 	DLightRadius = 128.0;
+	Obituary = "$ob_stfbishop";
 }

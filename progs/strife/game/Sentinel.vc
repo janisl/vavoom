@@ -104,4 +104,5 @@ defaultproperties
 	SightSound = 'sentinel/sight';
 	ActiveSound = 'sentinel/active';
 	DeathSound = 'sentinel/death';
+	Obituary = "$ob_sentinel";
 }

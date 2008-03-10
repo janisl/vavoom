@@ -98,4 +98,5 @@ defaultproperties
 	bNoTeleport = true;
 	bRandomise = true;
 	DeathSound = 'weapons/bfgx';
+	Obituary = "$ob_mpbfg_boom";
 }

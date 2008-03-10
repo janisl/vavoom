@@ -169,4 +169,6 @@ defaultproperties
 	AttackSound = 'wizard/attack';
 	PainSound = 'wizard/pain';
 	DeathSound = 'wizard/death';
+	Obituary = "$ob_wizard";
+	HitObituary = "$ob_wizardhit";
 }

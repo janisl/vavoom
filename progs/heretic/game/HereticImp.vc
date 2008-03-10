@@ -200,4 +200,6 @@ defaultproperties
 	AttackSound = 'himp/attack';
 	PainSound = 'himp/pain';
 	DeathSound = 'himp/death';
+	Obituary = "$ob_hereticimp";
+	HitObituary = "$ob_hereticimphit";
 }

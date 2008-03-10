@@ -97,4 +97,5 @@ defaultproperties
 	ActiveSound = 'shotguy/active';
 	PainSound = 'shotguy/pain';
 	DeathSound = 'shotguy/death';
+	Obituary = "$ob_shotguy";
 }

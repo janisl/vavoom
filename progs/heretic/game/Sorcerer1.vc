@@ -198,4 +198,6 @@ defaultproperties
 	AttackSound = 'dsparilserpent/attack';
 	PainSound = 'dsparilserpent/pain';
 	DeathSound = 'dsparilserpent/death';
+	Obituary = "$ob_dsparil1";
+	HitObituary = "$ob_dsparil1hit";
 }

@@ -147,4 +147,5 @@ defaultproperties
 	PainChance = 0.1953125;
 	PainSound = 'PlayerMagePain';
 	DeathSound = 'PlayerMageCrazyDeath';
+	Obituary = "$ob_mboss";
 }

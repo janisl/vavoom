@@ -174,4 +174,5 @@ defaultproperties
 	SightSound = 'IceGuySight';
 	ActiveSound = 'IceGuyActive';
 	AttackSound = 'IceGuyAttack';
+	Obituary = "$ob_iceguy";
 }

@@ -128,4 +128,5 @@ defaultproperties
 	AttackSound = 'grunt/attack';
 	PainSound = 'grunt/pain';
 	DeathSound = 'grunt/death1';
+	Obituary = "$ob_zombie";
 }

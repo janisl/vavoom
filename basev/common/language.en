@@ -468,6 +468,72 @@ t6text =
 	"As you step off the transport, you hear\n"
 	"the stomp of a cyberdemon's iron shoe.";
 
+//	Obituary strings
+ob_default = "%o died.";
+ob_mpdefault = "%o was killed by %k.";
+ob_suicide = "%o suicides.";
+ob_falling = "%o fell too far.";
+ob_mptelefrag = "%o was telefragged by %k.";
+ob_montelefrag = "%o was telefragged.";
+ob_crush = "%o was squished.";
+ob_exit = "%o tried to leave.";
+ob_water = "%o can't swim.";
+ob_slime = "%o mutated.";
+ob_lava = "%o melted.";
+ob_killedself = "%o killed %hself.";
+ob_friendly1 = "%k mows down a teammate.";
+ob_friendly2 = "%k checks %p glasses.";
+ob_friendly3 = "%k gets a frag for the other team.";
+ob_friendly4 = "%k loses another friend.";
+ob_barrel = "%o went boom.";
+
+ob_mpfist = "%o chewed on %k's fist.";
+ob_mpchainsaw = "%o was mowed over by %k's chainsaw.";
+ob_mppistol = "%o was tickled by %k's pea shooter.";
+ob_mpshotgun = "%o chewed on %k's boomstick.";
+ob_mpsshotgun = "%o was splattered by %k's super shotgun.";
+ob_mpchaingun = "%o was mowed down by %k's chaingun.";
+ob_mprocket = "%o rode %k's rocket.";
+ob_mpplasmarifle = "%o was melted by %k's plasma gun.";
+ob_mpbfg_boom = "%o was splintered by %k's BFG.";
+ob_mpbfg_splash = "%o couldn't hide from %k's BFG.";
+ob_railgun = "%o was railed by %k.";
+
+ob_zombie = "%o was killed by a zombieman.";
+ob_shotguy = "%o was shot by a sergeant.";
+ob_imp = "%o was burned by an imp.";
+ob_imphit = "%o was slashed by an imp.";
+ob_demonhit = "%o was bit by a demon.";
+ob_spectrehit = "%o was eaten by a spectre.";
+ob_caco = "%o was smitten by a cacodemon.";
+ob_cacohit = "%o got too close to a cacodemon.";
+ob_skull = "%o was spooked by a lost soul.";
+ob_baron = "%o was bruised by a Baron of Hell.";
+ob_baronhit = "%o was ripped open by a Baron of Hell.";
+ob_cyborg = "%o was splattered by a cyberdemon.";
+ob_spider = "%o stood in awe of the spider demon.";
+ob_chainguy = "%o was perforated by a chaingunner.";
+ob_baby = "%o let an arachnotron get %h.";
+ob_knight = "%o was splayed by a Hell Knight.";
+ob_knighthit = "%o was gutted by a Hell Knight.";
+ob_undead = "%o couldn't evade a revenant's fireball.";
+ob_undeadhit = "%o was punched by a revenant.";
+ob_fatso = "%o was squashed by a mancubus.";
+ob_vile = "%o was incinerated by an archvile.";
+ob_wolfss = "%o met a Nazi.";
+ob_stealthzombie = "%o thought %g saw a zombieman.";
+ob_stealthshotguy = "%o thought %g saw a sergeant.";
+ob_stealthimp = "%o thought %g saw an imp.";
+ob_stealthdemon = "%o thought %g saw a demon.";
+ob_stealthcaco = "%o thought %g saw a cacodemon.";
+ob_stealthbaron = "%o thought %g saw a Baron of Hell.";
+ob_stealthchainguy = "%o thought %g saw a chaingunner.";
+ob_stealthbaby = "%o thought %g saw an arachnotron.";
+ob_stealthknight = "%o thought %g saw a Hell Knight.";
+ob_stealthundead = "%o thought %g saw a revenant.";
+ob_stealthfatso = "%o thought %g saw a mancubus.";
+ob_stealthvile = "%o thought %g saw an archvile.";
+
 //
 //	Heretic strings.
 //
@@ -676,6 +742,26 @@ he5text =
 	"surrender without a fight. eyes\n"
 	"wide, you go to meet your fate.";
 
+//	Obituary strings
+ob_chicken = "%o was pecked to death.";
+ob_hereticimp = "%o was scarred by a gargoyle.";
+ob_hereticimphit = "%o was hacked by a gargoyle.";
+ob_mummy = "%o was smashed by a golem.";
+ob_mummyleader = "%o was shrieked to death by a nitrogolem.";
+ob_boneknight = "%o was axed by an undead warrior.";
+ob_boneknighthit = "%o was slain by an undead warrior.";
+ob_clink = "%o was slashed by a sabreclaw.";
+ob_beast = "%o was charred by a weredragon.";
+ob_snake = "%o was rattled by an ophidian.";
+ob_wizard = "%o was cursed by a wizard.";
+ob_wizardhit = "%o was palpated by a wizard.";
+ob_ironlich = "%o was devastated by an ironlich.";
+ob_ironlichhit = "%o got up-close and personal with an ironlich.";
+ob_dsparil1 = "%o was scalded by D'Sparil's serpent.";
+ob_dsparil1hit = "%o was chewed up by D'Sparil's serpent.";
+ob_dsparil2 = "%o was no match for D'Sparil.";
+ob_dsparil2hit = "%o was smacked down by D'Sparil.";
+
 //
 //	Hexen strings
 //
@@ -761,6 +847,27 @@ txt_weapon_m4 = "BLOODSCOURGE ASSEMBLED";
 txt_quietus_piece = "SEGMENT OF QUIETUS";
 txt_wraithverge_piece = "SEGMENT OF WRAITHVERGE";
 txt_bloodscourge_piece = "SEGMENT OF BLOODSCOURGE";
+
+//	Obituary strings
+ob_ettin = "%o was mashed by an Ettin.";
+ob_firedemon = "%o tasted an Afrit's fire.";
+ob_demon1 = "%o was scalded by a Serpent.";
+ob_demon2 = "%o was poisoned by a Serpent.";
+ob_centaur = "%o was cut up by a Centaur.";
+ob_slaughtaur = "%o was struck down by a Slaughtaur's fireball.";
+ob_slaughtaurhit = "%o was cut up by a Slaughtaur.";
+ob_bishop = "%o succumbed to a Bishop's dark power.";
+ob_iceguy = "%o was frozen solid by a Wendigo.";
+ob_serpent = "%o was melted by a Stalker.";
+ob_serpenthit = "%o was mauled by a Stalker.";
+ob_wraith = "%o was charred by a Reiver.";
+ob_wraithhit = "%o had %p life stolen by a Reiver.";
+ob_dragon = "%o was incinerated by the Death Wyvern.";
+ob_heresiarch = "%o had %p bones rolled by the Heresiarch.";
+ob_fboss = "%o was slain by Zedek.";
+ob_cboss = "%o was baptized by Traductus.";
+ob_mboss = "%o couldn't absorb Menelkir's Mana.";
+ob_korax = "%o was swept from the board by Korax.";
 
 //
 //	Strife messages
@@ -909,3 +1016,24 @@ shustr_31 = "AREA 31: Training Facility";
 shustr_32 = "AREA  1: Sanctuary";
 shustr_33 = "AREA  2: Town";
 shustr_34 = "AREA  3: Movement Base";
+
+//	Obituary strings
+ob_peasant = "%o should have never picked a fight with a civilian.";
+ob_beggar = "%o was beaten to death by the poor.";
+ob_rebel = "%o was gunned down by a Rebel.";
+ob_macil = "%o should have never rebelled against Macil.";
+ob_acolyte = "%o was zealously shot down by an Acolyte.";
+ob_stalker = "%o was bugged by a Stalker.";
+ob_turret = "%o triggered the automatic defenses.";
+ob_sentinel = "%o was shot down by a Sentinel.";
+ob_templar = "%o was vaporized by a Templar.";
+ob_templarhit = "%o was clawed by a Templar.";
+ob_reaver = "%o was shot down by a Reaver.";
+ob_reaverhit = "%o was sliced open by a Reaver.";
+ob_crusader = "%o was swept away by a Crusader.";
+ob_inquisitor = "%o was sentenced by an Inquisitor.";
+ob_programmer = "%o was deleted by the Programmer.";
+ob_stfbishop = "%o was blown away by the Bishop.";
+ob_loremaster = "%o couldn't escape from the Lore Master's grasp.";
+ob_alienspecte = "%o was struck down by the Spectre.";
+ob_entity = "%o felt the wrath of The One God.";

@@ -61,4 +61,5 @@ defaultproperties
 	bNoBlood = true;
 	bNoGravKill = true;
 	DeathSound = 'turret/death';
+	Obituary = "$ob_turret";
 }

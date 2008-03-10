@@ -144,4 +144,5 @@ XDeath:
 defaultproperties
 {
 	FireBallType = Demon2FX1;
+	Obituary = "$ob_demon2";
 }

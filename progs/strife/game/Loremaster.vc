@@ -132,4 +132,5 @@ defaultproperties
 	AttackSound = 'loremaster/attack';
 	PainSound = 'loremaster/pain';
 	DeathSound = 'loremaster/death';
+	Obituary = "$ob_loremaster";
 }

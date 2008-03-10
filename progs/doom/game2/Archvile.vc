@@ -251,4 +251,5 @@ defaultproperties
 	ActiveSound = 'vile/active';
 	PainSound = 'vile/pain';
 	DeathSound = 'vile/death';
+	Obituary = "$ob_vile";
 }

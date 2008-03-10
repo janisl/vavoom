@@ -32,4 +32,5 @@ defaultproperties
 	bStealth = true;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.0;
+	Obituary = "$ob_stealthvile";
 }

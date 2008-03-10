@@ -100,4 +100,5 @@ defaultproperties
 	AttackSound = 'clink/attack';
 	PainSound = 'clink/pain';
 	DeathSound = 'clink/death';
+	Obituary = "$ob_clink";
 }

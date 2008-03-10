@@ -114,4 +114,5 @@ defaultproperties
 	AttackSound = 'snake/attack';
 	PainSound = 'snake/pain';
 	DeathSound = 'snake/death';
+	Obituary = "$ob_snake";
 }

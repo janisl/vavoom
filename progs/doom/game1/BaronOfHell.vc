@@ -104,4 +104,6 @@ defaultproperties
 	ActiveSound = 'baron/active';
 	PainSound = 'baron/pain';
 	DeathSound = 'baron/death';
+	Obituary = "$ob_baron";
+	HitObituary = "$ob_baronhit";
 }

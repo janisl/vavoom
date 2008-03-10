@@ -36,4 +36,5 @@ defaultproperties
 	AttackSound = 'spectre/melee';
 	PainSound = 'spectre/pain';
 	DeathSound = 'spectre/death';
+	Obituary = "$ob_spectrehit";
 }

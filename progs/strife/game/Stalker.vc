@@ -219,4 +219,5 @@ defaultproperties
 	AttackSound = 'stalker/attack';
 	PainSound = 'stalker/pain';
 	DeathSound = 'stalker/death';
+	Obituary = "$ob_stalker";
 }

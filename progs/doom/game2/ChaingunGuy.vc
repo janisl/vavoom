@@ -152,4 +152,5 @@ defaultproperties
 	ActiveSound = 'chainguy/active';
 	PainSound = 'chainguy/pain';
 	DeathSound = 'chainguy/death';
+	Obituary = "$ob_chainguy";
 }

@@ -115,4 +115,5 @@ defaultproperties
 	AttackSound = 'mummy/attack1';
 	PainSound = 'mummy/pain';
 	DeathSound = 'mummy/death';
+	Obituary = "$ob_mummy";
 }

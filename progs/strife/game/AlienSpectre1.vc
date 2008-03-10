@@ -195,4 +195,5 @@ defaultproperties
 	AttackSound = 'alienspectre/blade';
 	PainSound = 'alienspectre/pain';
 	DeathSound = 'alienspectre/death';
+	Obituary = "$ob_alienspecte";
 }

@@ -78,4 +78,5 @@ defaultproperties
 	AttackSound = 'beggar/attack';
 	PainSound = 'beggar/pain';
 	DeathSound = 'beggar/death';
+	Obituary = "$ob_beggar";
 }

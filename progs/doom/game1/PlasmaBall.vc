@@ -54,4 +54,5 @@ defaultproperties
 	bRandomise = true;
 	SightSound = 'weapons/plasmaf';
 	DeathSound = 'weapons/plasmax';
+	Obituary = "$ob_mpplasmarifle";
 }

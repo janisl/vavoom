@@ -97,4 +97,5 @@ defaultproperties
 	BotCombatDist = 256.0;
 	bWimpyWeapon = true;
 	PlayerModelVersion = 2;
+	Obituary = "$ob_mppistol";
 }

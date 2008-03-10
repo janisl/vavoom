@@ -115,4 +115,5 @@ defaultproperties
 	PainSound = 'EttinPain';
 	DeathSound = 'EttinDeath';
 	HowlSound = 'PuppyBeat';
+	Obituary = "$ob_ettin";
 }

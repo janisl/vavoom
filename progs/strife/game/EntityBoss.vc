@@ -134,4 +134,5 @@ defaultproperties
 	AttackSound = 'entity/melee';
 	PainSound = 'entity/pain';
 	DeathSound = 'entity/death';
+	Obituary = "$ob_entity";
 }

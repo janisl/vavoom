@@ -115,4 +115,6 @@ defaultproperties
 	ActiveSound = 'imp/active';
 	PainSound = 'imp/pain';
 	DeathSound = 'imp/death';
+	Obituary = "$ob_imp";
+	HitObituary = "$ob_imphit";
 }

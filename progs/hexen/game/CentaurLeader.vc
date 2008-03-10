@@ -70,4 +70,6 @@ defaultproperties
 	GibsHealth = -125;
 	Speed = 10.0 * 35.0;
 	PainChance = 0.375;
+	Obituary = "$ob_slaughtaur";
+	HitObituary = "$ob_slaughtaurhit";
 }

@@ -85,4 +85,5 @@ defaultproperties
 	DLightRadius = 118.0;
 	Health = 100;
 	PainChance = 0.25;
+	Obituary = "$ob_mummyleader";
 }

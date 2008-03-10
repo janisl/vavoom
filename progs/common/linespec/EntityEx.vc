@@ -322,6 +322,9 @@ float			FloatBobPhase;
 int				ExplosionDamage;
 int				ExplosionRadius;
 
+string			Obituary;
+string			HitObituary;
+
 state			PrevEffectState;
 
 replication
@@ -4558,6 +4561,9 @@ void Died(EntityEx source, EntityEx inflictor)
 
 	if (bIsPlayer)
 	{
+		//	Display obituary.
+		PlayerEx(Player).DisplayObituary(inflictor, source, DamageType);
+
 		PlayerKilled(source, inflictor);
 
 		bSolid = false;

@@ -83,4 +83,5 @@ defaultproperties
 	AttackSound = 'spider/attack';
 	PainSound = 'spider/pain';
 	DeathSound = 'spider/death';
+	Obituary = "$ob_spider";
 }

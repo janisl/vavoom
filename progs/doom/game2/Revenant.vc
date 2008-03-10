@@ -154,4 +154,6 @@ defaultproperties
 	ActiveSound = 'skeleton/active';
 	PainSound = 'skeleton/pain';
 	DeathSound = 'skeleton/death';
+	Obituary = "$ob_undead";
+	HitObituary = "$ob_undeadhit";
 }

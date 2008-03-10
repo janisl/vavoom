@@ -102,4 +102,5 @@ defaultproperties
 	bWimpyWeapon = true;
 	bBotMelee = true;
 	PlayerModelVersion = 1;
+	Obituary = "$ob_mpfist";
 }

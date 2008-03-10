@@ -509,7 +509,7 @@ final void PlayerInSpecialSector(float deltaTime)
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 10);
+				EntityEx(MO).Damage(none, none, 10, 'Slime');
 			}
 			break;
 		case SECSPEC_DamageSludge:
@@ -525,7 +525,7 @@ final void PlayerInSpecialSector(float deltaTime)
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 5);
+				EntityEx(MO).Damage(none, none, 5, 'Slime');
 			}
 			break;
 		case SECSPEC_LightStrobeFastDamage:
@@ -534,7 +534,7 @@ final void PlayerInSpecialSector(float deltaTime)
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 20);
+				EntityEx(MO).Damage(none, none, 20, 'Slime');
 			}
 			break;
 		case SECSPEC_DamageSuperHellslimeExit:
@@ -600,7 +600,7 @@ final void PlayerInSpecialSector(float deltaTime)
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 5);
+				EntityEx(MO).Damage(none, none, 5, 'Fire');
 			}
 			break;
 		case 0x0200:
@@ -608,7 +608,7 @@ final void PlayerInSpecialSector(float deltaTime)
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 10);
+				EntityEx(MO).Damage(none, none, 10, 'Slime');
 			}
 			break;
 		case 0x0300:
@@ -616,7 +616,7 @@ final void PlayerInSpecialSector(float deltaTime)
 				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
 			{
 				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 20);
+				EntityEx(MO).Damage(none, none, 20, 'Slime');
 			}
 			break;
 		}
@@ -1735,6 +1735,146 @@ final void SetObjectives(int NewObjectives)
 		return;
 	}
 	Objectives = NewObjectives;
+}
+
+//==========================================================================
+//
+//	DisplayObituary
+//
+//==========================================================================
+
+void DisplayObituary(EntityEx inflictor, EntityEx source, name DmgType)
+{
+	string		Msg;
+
+	if (DmgType == 'Suicide')
+	{
+		//	Commited a suicide
+		Msg = "$ob_suicide";
+	}
+	else if (DmgType == 'Falling')
+	{
+		//	Fell down
+		Msg = "$ob_falling";
+	}
+	else if (DmgType == 'Crush')
+	{
+		//	Crushed by the environment
+		Msg = "$ob_crush";
+	}
+	else if (DmgType == 'Exit')
+	{
+		//	Tried to exit when it's not allowed
+		Msg = "$ob_exit";
+	}
+	else if (DmgType == 'Drowning')
+	{
+		//	Drowned int the water
+		Msg = "$ob_water";
+	}
+	else if (DmgType == 'Slime')
+	{
+		//	Was standing in the slime
+		Msg = "$ob_slime";
+	}
+	else if (DmgType == 'Fire' && !source)
+	{
+		//	Was standing in the lava
+		Msg = "$ob_lava";
+	}
+	else if (source)
+	{
+		if (source.Player == self)
+		{
+			//	Killed self
+			Msg = "$ob_killedself";
+		}
+		else if (!source.bIsPlayer)
+		{
+			//	Killed by monster
+			if (DmgType == 'Telefrag')
+			{
+				//	Monster telefrag
+				Msg = "$ob_montelefrag";
+			}
+			else if (DmgType == 'Melee' && source.HitObituary)
+			{
+				Msg = source.HitObituary;
+			}
+			else
+			{
+				Msg = source.Obituary;
+			}
+		}
+	}
+
+	if (!Msg && source && source.bIsPlayer)
+	{
+		if (Level.Game.netgame && !Level.Game.deathmatch)
+		{
+			//	Killed another player in cooperative net game
+			Msg = va("$ob_friendly%d", P_Random() & 3);
+		}
+		else if (DmgType == 'Telefrag')
+		{
+			//	Telefrag
+			Msg = "$ob_mptelefrag";
+		}
+		else if (inflictor && inflictor.Obituary)
+		{
+			//	Missile with it's own obituary.
+			Msg = inflictor.Obituary;
+		}
+		else
+		{
+			Weapon Wpn = PlayerEx(inflictor.Player).ReadyWeapon;
+			if (Wpn && Wpn.Obituary)
+			{
+				//	Weapon obituary message.
+				Msg = Wpn.Obituary;
+			}
+			else if (DmgType == 'BFGSplash')
+			{
+				//	BFG splash damage
+				Msg = "$ob_mpbfg_splash";
+			}
+			else if (DmgType == 'Railgun')
+			{
+				//	Railgun
+				Msg = "$ob_railgun";
+			}
+			else
+			{
+				//	Default multiplayer kill message.
+				Msg = "$ob_mpdefault";
+			}
+		}
+	}
+	else
+	{
+		source = EntityEx(MO);
+	}
+
+	if (!Msg)
+	{
+		//	Generic death
+		Msg = "$ob_default";
+	}
+
+	//	Look up string in language lump is necesary.
+	if (StrStartsWith(Msg, "$"))
+	{
+		Msg = GetLangString(StrToName(substr(Msg, 1, strlen(Msg) - 1)));
+	}
+
+	//	Do replacements.
+	Msg = StrReplace(Msg, "%g", "he");
+	Msg = StrReplace(Msg, "%h", "him");
+	Msg = StrReplace(Msg, "%p", "his");
+	Msg = StrReplace(Msg, "%o", PlayerName);
+	Msg = StrReplace(Msg, "%k", source.Player.PlayerName);
+
+	Level.bprint("%s", Msg);
 }
 
 //==========================================================================

@@ -106,4 +106,5 @@ defaultproperties
 	PlayerModelVersion = 3;
 	PickupMessage = "$gotshotgun";
 	BotCombatDist = 192.0;
+	Obituary = "$ob_mpshotgun";
 }

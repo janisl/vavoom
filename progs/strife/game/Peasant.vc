@@ -90,4 +90,5 @@ defaultproperties
 	AttackSound = 'peasant/attack';
 	PainSound = 'peasant/pain';
 	DeathSound = 'peasant/death';
+	Obituary = "$ob_peasant";
 }

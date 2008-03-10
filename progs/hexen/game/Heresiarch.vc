@@ -298,4 +298,5 @@ defaultproperties
 	ActiveSound = 'SorcererActive';
 	PainSound = 'SorcererPain';
 	DeathSound = 'SorcererDeathScream';
+	Obituary = "$ob_heresiarch";
 }

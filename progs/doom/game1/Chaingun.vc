@@ -107,4 +107,5 @@ defaultproperties
 	PlayerModelVersion = 4;
 	PickupMessage = "$gotchaingun";
 	BotCombatDist = 256.0;
+	Obituary = "$ob_mpchaingun";
 }

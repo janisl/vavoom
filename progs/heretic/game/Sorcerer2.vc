@@ -365,4 +365,6 @@ defaultproperties
 	PainSound = 'dsparil/pain';
 	DLightColour = RGB(80, 164, 252);
 	DLightRadius = 118.0;
+	Obituary = "$ob_dsparil2";
+	HitObituary = "$ob_dsparil2hit";
 }

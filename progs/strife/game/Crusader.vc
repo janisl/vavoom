@@ -215,4 +215,5 @@ defaultproperties
 	ActiveSound = 'crusader/active';
 	PainSound = 'crusader/pain';
 	DeathSound = 'crusader/death';
+	Obituary = "$ob_crusader";
 }
