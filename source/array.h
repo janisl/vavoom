@@ -33,7 +33,7 @@
 
 enum EArrayNew { E_ArrayNew };
 
-inline void* operator new(size_t, void* Ptr, EArrayNew)
+inline void* operator new(size_t, void* Ptr, EArrayNew, EArrayNew)
 {
 	return Ptr;
 }
@@ -114,7 +114,7 @@ public:
 		ArrData = (T*)Z_Malloc(ArrSize * sizeof(T));
 		for (int i = 0; i < ArrSize; i++)
 		{
-			new(&ArrData[i], E_ArrayNew) T;
+			new(&ArrData[i], E_ArrayNew, E_ArrayNew) T;
 		}
 		for (int i = 0; i < ArrNum; i++)
 		{
@@ -155,7 +155,7 @@ public:
 			ArrData = (T*)Z_Malloc(ArrSize * sizeof(T));
 			for (int i = 0; i < ArrSize; i++)
 			{
-				new(&ArrData[i], E_ArrayNew) T;
+				new(&ArrData[i], E_ArrayNew, E_ArrayNew) T;
 			}
 			for (int i = 0; i < ArrNum; i++)
 			{
