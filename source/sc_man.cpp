@@ -266,7 +266,8 @@ bool VScriptParser::GetString()
 		ScriptPtr++;
 		while (ScriptPtr < ScriptEndPtr && *ScriptPtr != '\"')
 		{
-			if (Escape && ScriptPtr[0] == '\\' && ScriptPtr[1] == '\"')
+			if (Escape && ScriptPtr[0] == '\\' && (ScriptPtr[1] == '\\' ||
+				ScriptPtr[1] == '\"'))
 			{
 				ScriptPtr++;
 			}
