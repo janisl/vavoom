@@ -62,7 +62,5 @@ defaultproperties
 	bShootable = true;
 	bNoBlood = true;
 	bFloorClip = true;
-	bExplodeParticles = true;
 	DeathSound = 'world/barrelx';
-	DLightColour = RGB(203, 87, 7);
 }

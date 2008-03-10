@@ -5,9 +5,44 @@ pointlight Rocket
 	radius 126
 }
 
+pointlight Rocket_X1
+{
+	colour 1 0.35 0.35
+	radius 300
+}
+
+pointlight Rocket_X2
+{
+	colour 1 0.35 0.35
+	radius 200
+}
+
+pointlight Rocket_X3
+{
+	colour 1 0.35 0.35
+	radius 100
+}
+
+particleeffect Rocket
+{
+	type explode
+	type2 explode2
+	colour 1 0.5 0.5
+	count 1024
+	originrandom 32
+	velocity 512 512 512
+	velocityrandom 0.5
+	gravity 40
+	duration 5
+	ramp 4
+}
+
 class Rocket
 {
 	frame MISLA { light Rocket }
+	frame MISLB { light Rocket_X1 particles Rocket }
+	frame MISLC { light Rocket_X2 }
+	frame MISLD { light Rocket_X3 }
 }
 
 //------------------------------------------------------------------------------

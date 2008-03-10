@@ -206,3 +206,54 @@ class EvilEye
 	static_light EvilEye
 	frame CEYE { light EvilEye }
 }
+
+//------------------------------------------------------------------------------
+pointlight ExplosiveBarrel_X1
+{
+	colour 0.8 0.35 0
+	radius 320
+	offset 0 0 24
+}
+
+pointlight ExplosiveBarrel_X2
+{
+	colour 0.8 0.35 0
+	radius 240
+	offset 0 0 24
+}
+
+pointlight ExplosiveBarrel_X3
+{
+	colour 0.8 0.35 0
+	radius 160
+	offset 0 0 24
+}
+
+pointlight ExplosiveBarrel_X4
+{
+	colour 0.8 0.35 0
+	radius 80
+	offset 0 0 24
+}
+
+particleeffect ExplosiveBarrel
+{
+	type explode
+	type2 explode2
+	colour 1 0.5 0.5
+	count 1024
+	originrandom 32
+	velocity 512 512 512
+	velocityrandom 0.5
+	gravity 40
+	duration 5
+	ramp 4
+}
+
+class ExplosiveBarrel
+{
+	frame BEXPC { light ExplosiveBarrel_X1 particles ExplosiveBarrel }
+	frame BEXPC { light ExplosiveBarrel_X2 }
+	frame BEXPD { light ExplosiveBarrel_X3 }
+	frame BEXPE { light ExplosiveBarrel_X4 }
+}

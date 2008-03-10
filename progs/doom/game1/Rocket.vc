@@ -64,7 +64,6 @@ defaultproperties
 	bActivateImpact = true;
 	bNoTeleport = true;
 	bRandomise = true;
-	bExplodeParticles = true;
 	bLeaveTrail = true;
 	SightSound = 'weapons/rocklf';
 	DeathSound = 'weapons/rocklx';

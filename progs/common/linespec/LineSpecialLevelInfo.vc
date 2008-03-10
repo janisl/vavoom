@@ -6516,9 +6516,9 @@ void ParticleEffect(int count, int type1, int type2, TVec origin, float ornd,
 		}
 		else
 		{
-			p->org.x = origin.x + ((Random() * ornd) - 16.0);
-			p->org.y = origin.y + ((Random() * ornd) - 16.0);
-			p->org.z = origin.z + ((Random() * ornd) - 16.0);
+			p->org.x = origin.x + ((Random() * ornd) - ornd / 2.0);
+			p->org.y = origin.y + ((Random() * ornd) - ornd / 2.0);
+			p->org.z = origin.z + ((Random() * ornd) - ornd / 2.0);
 		}
 
 		// No random velocity

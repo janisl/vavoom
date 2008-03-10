@@ -202,7 +202,7 @@ pointlight ExplosiveBarrel2_X6
 
 class ExplosiveBarrel2
 {
-	frame BARTF { light ExplosiveBarrel2_X1 }
+	frame BARTF { light ExplosiveBarrel2_X1 particles ExplosiveBarrel }
 	frame BARTG { light ExplosiveBarrel2_X2 }
 	frame BARTH { light ExplosiveBarrel2_X3 }
 	frame BARTI { light ExplosiveBarrel2_X4 }

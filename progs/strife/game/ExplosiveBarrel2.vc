@@ -79,6 +79,5 @@ defaultproperties
 	bShootable = true;
 	bInCombat = true;
 	bNoBlood = true;
-	bExplodeParticles = true;
 	DeathSound = 'world/barrelx';
 }
