@@ -52,7 +52,6 @@ final void A_TemplarAttack()
 		damage = ((P_Random() % 5) + 1) * 3;
 		LineAttack(dir, MAULERRANGE, damage, MaulerPuff,,, 'Disintegrate');
 	}
-	bMuzzleFlash = true;
 }
 
 states

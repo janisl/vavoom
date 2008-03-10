@@ -53,8 +53,6 @@ final void A_PosAttack()
 	damage = ((P_Random() % 5) + 1) * 3;
 
 	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
-
-	bMuzzleFlash = true;
 }
 
 //==========================================================================
@@ -107,7 +105,6 @@ Raise:
 defaultproperties
 {
 	Health = 20;
-	GibsHealth = -20;
 	Radius = 20.0;
 	Height = 56.0;
 	Mass = 100.0;
@@ -121,8 +118,6 @@ defaultproperties
 	bActivatePushWall = true;
 	bFloorClip = true;
 	bPassMobj = true;
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 118.0;
 	SightSound = 'grunt/sight';
 	ActiveSound = 'grunt/active';
 	AttackSound = 'grunt/attack';

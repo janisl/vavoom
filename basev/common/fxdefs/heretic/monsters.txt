@@ -1,4 +1,33 @@
 //------------------------------------------------------------------------------
+class HereticPlayer
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MummyLeader
+{
+	frame MUMMY { light MuzzleFlash }
+}
+
+class MummyLeaderGhost
+{
+	frame MUMMY { light MuzzleFlash }
+}
+
+class Sorcerer2
+{
+	frame SOR2S { light MuzzleFlash }
+	frame SOR2T { light MuzzleFlash }
+	frame SDTHB { light MuzzleFlash }
+	frame SDTHC { light MuzzleFlash }
+	frame SDTHD { light MuzzleFlash }
+	frame SDTHE { light MuzzleFlash }
+	frame SDTHF { light MuzzleFlash }
+	frame SDTHG { light MuzzleFlash }
+	frame SDTHH { light MuzzleFlash }
+}
+
+//------------------------------------------------------------------------------
 pointlight HereticImpBall
 {
 	colour 0.85 0.45 0.05

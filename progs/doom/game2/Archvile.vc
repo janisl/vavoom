@@ -95,7 +95,6 @@ final void A_VileChase()
 			Target = temp;
 
 			SetState(FindClassState(Archvile, 'Heal'));
-			bMuzzleFlash = true;
 			DLightColour = RGB(195, 0, 0);
 			CorpseHit.PlaySound('vile/raise', CHAN_BODY);
 
@@ -130,8 +129,6 @@ final void A_VileChase()
 final void A_VileStart()
 {
 	PlaySound('vile/start', CHAN_WEAPON);
-	bMuzzleFlash = true;
-	DLightColour = RGB(195, 155, 47);
 }
 
 //==========================================================================

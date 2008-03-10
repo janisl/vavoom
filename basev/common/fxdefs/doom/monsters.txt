@@ -1,4 +1,114 @@
 //------------------------------------------------------------------------------
+class DoomPlayer
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class ZombieMan
+{
+	frame POSSF { light MuzzleFlash }
+}
+
+class ShotgunGuy
+{
+	frame SPOSF { light MuzzleFlash }
+}
+
+class ChaingunGuy
+{
+	frame CPOSE { light MuzzleFlash }
+	frame CPOSF { light MuzzleFlash }
+}
+
+class SpiderMastermind
+{
+	frame SPIDG { light MuzzleFlash }
+	frame SPIDH { light MuzzleFlash }
+}
+
+class Archvile
+{
+	frame VILEG { light MuzzleFlash }
+	frame VILEH { light MuzzleFlash }
+	frame VILEI { light MuzzleFlash }
+	frame VILEJ { light MuzzleFlash }
+	frame VILEK { light MuzzleFlash }
+	frame VILEL { light MuzzleFlash }
+	frame VILEM { light MuzzleFlash }
+	frame VILEN { light MuzzleFlash }
+	frame VILEO { light MuzzleFlash }
+	frame VILEP { light MuzzleFlash }
+	frame "VILE[" { light MuzzleFlash }
+	frame "VILE\\" { light MuzzleFlash }
+	frame "VILE]" { light MuzzleFlash }
+}
+
+class WolfensteinSS
+{
+	frame SSWVG { light MuzzleFlash }
+}
+
+class ScriptedMarine
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineFist
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineBerserk
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineChainsaw
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarinePistol
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineShotgun
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineSSG
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineChaingun
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineRocket
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarinePlasma
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineBFG
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+class MarineRailgun
+{
+	frame PLAYF { light MuzzleFlash }
+}
+
+//------------------------------------------------------------------------------
 pointlight DoomImpBall
 {
 	colour 0.85 0.4 0.05

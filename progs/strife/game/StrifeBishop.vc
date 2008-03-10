@@ -62,7 +62,6 @@ final void A_BishopAttack()
 	if (!Target)
 		return;
 
-	bMuzzleFlash = true;
 	missile = SpawnMissile(Target, BishopMissile, 64.0);
 	if (missile)
 	{

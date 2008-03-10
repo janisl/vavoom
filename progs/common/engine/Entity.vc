@@ -118,6 +118,7 @@ struct LightEffectDef
 	int					Colour;
 	float				Radius;
 	float				Radius2;
+	float				MinLight;
 	TVec				Offset;
 };
 

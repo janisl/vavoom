@@ -693,13 +693,13 @@ static VLightEffectDef* FindLightEffect(const VStr& Name)
 
 //==========================================================================
 //
-//	ParsePointLight
+//	ParseLightDef
 //
 //==========================================================================
 
-static void ParsePointLight(VScriptParser* sc)
+static void ParseLightDef(VScriptParser* sc, int LightType)
 {
-	guard(ParsePointLight);
+	guard(ParseLightDef);
 	//	Get name, find it in the list or add it if it's not there yet.
 	sc->ExpectString();
 	VLightEffectDef* L = FindLightEffect(sc->String);
@@ -710,7 +710,7 @@ static void ParsePointLight(VScriptParser* sc)
 
 	//	Set default values.
 	L->Name = *sc->String.ToLower();
-	L->Type = 0;
+	L->Type = LightType;
 	L->Colour = 0xffffffff;
 	L->Radius = 0.0;
 	L->Radius2 = 0.0;
@@ -740,6 +740,11 @@ static void ParsePointLight(VScriptParser* sc)
 		{
 			sc->ExpectFloat();
 			L->Radius2 = sc->Float;
+		}
+		else if (sc->Check("minlight"))
+		{
+			sc->ExpectFloat();
+			L->MinLight = sc->Float;
 		}
 		else if (sc->Check("offset"))
 		{
@@ -1029,7 +1034,11 @@ static void ParseEffectDefs(VScriptParser* sc,
 		}
 		else if (sc->Check("pointlight"))
 		{
-			ParsePointLight(sc);
+			ParseLightDef(sc, 0);
+		}
+		else if (sc->Check("muzzleflashlight"))
+		{
+			ParseLightDef(sc, 1);
 		}
 		else if (sc->Check("particleeffect"))
 		{

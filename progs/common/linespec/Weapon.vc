@@ -782,7 +782,6 @@ final void A_Light0()
 	}
 
 	Player.ExtraLight = 0;
-	bMuzzleFlash = false;
 }
 
 //===========================================================================

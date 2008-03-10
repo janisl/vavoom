@@ -1,4 +1,804 @@
 //------------------------------------------------------------------------------
+class StrifePlayer
+{
+	frame PLAYF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant1
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant2
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant3
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant4
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant5
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant6
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant7
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant8
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant9
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant10
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant11
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant12
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant13
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant14
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant15
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant16
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant17
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant18
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant19
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant20
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant21
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Peasant22
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Beggar1
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Beggar2
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Beggar3
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Beggar4
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Beggar5
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteBlue
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteDGreen
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteGold
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteGray
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteLGreen
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteRed
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteRust
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteShadow
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class AcolyteTan
+{
+	frame AGRDE { light MuzzleFlash }
+	frame AGRDF { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Rebel1
+{
+	frame HMN1E { light MuzzleFlash }
+	frame HMN1F { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Rebel2
+{
+	frame HMN1E { light MuzzleFlash }
+	frame HMN1F { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Rebel3
+{
+	frame HMN1E { light MuzzleFlash }
+	frame HMN1F { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Rebel4
+{
+	frame HMN1E { light MuzzleFlash }
+	frame HMN1F { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Rebel5
+{
+	frame HMN1E { light MuzzleFlash }
+	frame HMN1F { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Rebel6
+{
+	frame HMN1E { light MuzzleFlash }
+	frame HMN1F { light MuzzleFlash }
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Macil1
+{
+	frame LEADF { light MuzzleFlash }
+}
+
+class Macil2
+{
+	frame LEADF { light MuzzleFlash }
+}
+
+class Zombie
+{
+	frame BURNA { light MuzzleFlash }
+	frame BURNB { light MuzzleFlash }
+	frame BURNC { light MuzzleFlash }
+	frame BURND { light MuzzleFlash }
+	frame BURNE { light MuzzleFlash }
+	frame BURNF { light MuzzleFlash }
+	frame BURNG { light MuzzleFlash }
+	frame BURNH { light MuzzleFlash }
+	frame BURNI { light MuzzleFlash }
+	frame BURNJ { light MuzzleFlash }
+	frame BURNK { light MuzzleFlash }
+	frame BURNL { light MuzzleFlash }
+	frame BURNM { light MuzzleFlash }
+}
+
+class Templar
+{
+	frame PGRDH { light MuzzleFlash }
+}
+
+class StrifeBishop
+{
+	frame MLDRF { light MuzzleFlash }
+}
+
+//------------------------------------------------------------------------------
 pointlight Stalker_X1
 {
 	colour 1 0.5 0
@@ -112,6 +912,7 @@ pointlight CeilingTurret_X4
 
 class CeilingTurret
 {
+	frame TURTB { light MuzzleFlash }
 	frame BALLB { light CeilingTurret_X1 }
 	frame BALLC { light CeilingTurret_X2 }
 	frame BALLD { light CeilingTurret_X3 }
@@ -145,6 +946,7 @@ pointlight Reaver_X4
 
 class Reaver
 {
+	frame ROB1G { light MuzzleFlash }
 	frame ROB1N { light Reaver_X1 }
 	frame ROB1O { light Reaver_X2 }
 	frame ROB1P { light Reaver_X3 }
@@ -274,6 +1076,7 @@ pointlight Inquisitor_X4
 
 class Inquisitor
 {
+	frame ROB3G { light MuzzleFlash }
 	frame ROB3H { light Inquisitor }
 	frame ROB3I { light Inquisitor }
 	frame ROB3O { light Inquisitor_X1 }

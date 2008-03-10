@@ -66,9 +66,6 @@ final void A_FireCGun()
 
 	Aim(dir, 16.0 * 64.0);
 	GunShot(self, !Player(Player).Refire, dir);
-	bMuzzleFlash = true;
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 118.0;
 }
 
 states

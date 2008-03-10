@@ -61,9 +61,6 @@ final void A_FireBlaster1()
 		LineAttack(dir, Actor::MAULERRANGE, damage, MaulerPuff,,,
 			'Disintegrate');
 	}
-	bMuzzleFlash = true;
-	DLightColour = RGB(203, 111, 0);
-	DLightRadius = 118.0;
 }
 
 //==========================================================================

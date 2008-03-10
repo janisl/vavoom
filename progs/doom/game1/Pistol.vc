@@ -60,9 +60,6 @@ final void A_FirePistol()
 
 	Aim(dir, 16.0 * 64.0);
 	GunShot(self, Accurate, dir);
-	bMuzzleFlash = true;
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 118.0;
 }
 
 states

@@ -70,19 +70,17 @@ final void A_MummyAttack2()
 states
 {
 Missile:
-	MUMM X 5 {  bMuzzleFlash = false; A_FaceTarget(); }
-	MUMM Y 5 Bright { bMuzzleFlash = true; A_FaceTarget(); }
-	MUMM X 5 { bMuzzleFlash = false; A_FaceTarget(); }
-	MUMM Y 5 Bright { bMuzzleFlash = true; A_FaceTarget(); }
-	MUMM X 5 { bMuzzleFlash = false; A_FaceTarget(); }
-	MUMM Y 15 Bright { bMuzzleFlash = true; A_MummyAttack2(); }
+	MUMM X 5 A_FaceTarget
+	MUMM Y 5 Bright A_FaceTarget
+	MUMM X 5 A_FaceTarget
+	MUMM Y 5 Bright A_FaceTarget
+	MUMM X 5 A_FaceTarget
+	MUMM Y 15 Bright A_MummyAttack2
 	Goto Super::See
 }
 
 defaultproperties
 {
-	DLightColour = RGB(252, 187, 57);
-	DLightRadius = 118.0;
 	Health = 100;
 	PainChance = 0.25;
 	Obituary = "$ob_mummyleader";

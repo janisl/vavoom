@@ -70,9 +70,6 @@ final void A_FireShotgun2()
 		damage = 5 * (P_Random() % 3 + 1);
 		LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 	}
-	bMuzzleFlash = true;
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 118.0;
 }
 
 //===========================================================================

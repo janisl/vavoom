@@ -113,8 +113,6 @@ final void A_SPosAttack()
 		damage = ((P_Random() % 5) + 1) * 3;
 		LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 	}
-
-	bMuzzleFlash = true;
 }
 
 states

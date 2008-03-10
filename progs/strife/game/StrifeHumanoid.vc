@@ -48,23 +48,23 @@ final void A_PeasantAttack()
 states
 {
 Burn:
-	BURN A 3 { DLightColour = RGB(255, 128, 0); bMuzzleFlash = true; A_BurnScream(); }
+	BURN A 3 A_BurnScream
 	BURN B 3 A_Burn
-	BURN C 3 { A_Wander(); bMuzzleFlash = true; }
-	BURN D 3 { A_Fall(); bMuzzleFlash = true; }
+	BURN C 3 A_Wander
+	BURN D 3 A_Fall
 	BURN E 5 A_Burn
-	BURN F 5 { A_Wander(); bMuzzleFlash = true; }
-	BURN G 5 { A_Wander(); bMuzzleFlash = true; }
-	BURN H 5 { A_Wander(); bMuzzleFlash = true; }
+	BURN F 5 A_Wander
+	BURN G 5 A_Wander
+	BURN H 5 A_Wander
 	BURN I 5 A_Burn
-	BURN J 5 { A_Wander(); bMuzzleFlash = true; }
-	BURN K 5 { A_Wander(); bMuzzleFlash = true; }
-	BURN L 5 { A_Wander(); bMuzzleFlash = true; }
+	BURN J 5 A_Wander
+	BURN K 5 A_Wander
+	BURN L 5 A_Wander
 	BURN M 3 A_Burn
 	BURN N 3
 	BURN OPQPQ 5
 	BURN RSTU 7
-	BURN V 700 { bMuzzleFlash = false; } //FIXME A_Dying();
+	BURN V 700 //FIXME A_Dying();
 	Stop
 Disintegrate:
 	DISR A 5 A_Yeargh

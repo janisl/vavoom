@@ -198,12 +198,6 @@ final void A_Wander()
 {
 	float	delta;
 
-	//  Remove muzzle flash
-	if (bMuzzleFlash)
-	{
-		bMuzzleFlash = false;
-	}
-
 	bInCombat = false;
 	if (bStanding)
 		return;
@@ -264,12 +258,6 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	if (ReactionCount)
 	{
 		ReactionCount--;
-	}
-
-	//	Remove muzzle flash.
-	if (bMuzzleFlash)
-	{
-		bMuzzleFlash = false;
 	}
 
 	bInCombat = true;
@@ -618,6 +606,20 @@ final void A_FaceTarget()
 	}
 }
 
+//==========================================================================
+//
+//	A_AlertMonsters
+//
+//==========================================================================
+
+final void A_AlertMonsters()
+{
+	if (Target && Target.bIsPlayer)
+	{
+		LineSpecialLevelInfo(Level).NoiseAlert(Target, self);
+	}
+}
+
 //**************************************************************************
 //	Generic monster attacks
 //**************************************************************************
@@ -742,17 +744,31 @@ final void decorate_A_Explode(optional int damage, optional int distance,
 	if (specified_damage)
 	{
 		if (!damage)
+		{
 			damage = 128;
+		}
 		if (!distance)
+		{
 			distance = 128;
+		}
 		if (!specified_damageSelf)
+		{
 			damageSelf = true;
+		}
 	}
 	else
 	{
 		damage = ExplosionDamage;
 		distance = ExplosionRadius;
 		damageSelf = !bExplosionDontHurtSelf;
+		if (!damage)
+		{
+			damage = 128;
+		}
+		if (!distance)
+		{
+			distance = damage;
+		}
 	}
 
 	DoExplode(damage, itof(distance), damageSelf);
@@ -957,12 +973,6 @@ final void A_StopSoundEx(string Channel)
 
 final void A_Pain()
 {
-	//  Remove muzzle flash
-	if (bMuzzleFlash)
-	{
-		bMuzzleFlash = false;
-	}
-
 	if (bIsPlayer && !PlayerIsMorphed())
 	{
 		if (Health < 25)
@@ -999,11 +1009,7 @@ final void A_Pain()
 final void A_Scream()
 {
 	//  Remove muzzle flash & other light effects
-	if (bDynamicLight || bMuzzleFlash)
-	{
-		bDynamicLight = false;
-		bMuzzleFlash = false;
-	}
+	bDynamicLight = false;
 
 	if (DeathSound)
 	{
@@ -1022,12 +1028,6 @@ final void A_Scream()
 
 final void A_XScream()
 {
-	//  Remove muzzle flash
-	if (bMuzzleFlash)
-	{
-		bMuzzleFlash = false;
-	}
-
 	if (bIsPlayer)
 	{
 		PlaySound('*gibbed', CHAN_BODY);
@@ -1216,12 +1216,6 @@ final void A_NoBlocking()
 	int					SpeechNum;
 	RogueConSpeech*		Speech;
 	class<EntityEx>		DropItemType;
-
-	//  Remove muzzle flash
-	if (bMuzzleFlash)
-	{
-		bMuzzleFlash = false;
-	}
 
 	//	Andy Baker's stealth monsters
 	if (bStealth)
@@ -1604,12 +1598,6 @@ final void A_Metal()
 
 final void A_XXScream()
 {
-	//  Remove muzzle flash
-	if (bMuzzleFlash)
-	{
-		bMuzzleFlash = false;
-	}
-
 	if (!bNoBlood || !DeathSound)
 	{
 		A_XScream();

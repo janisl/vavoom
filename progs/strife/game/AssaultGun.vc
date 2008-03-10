@@ -61,9 +61,6 @@ final void A_FireRiffle()
 	}
 	damage = 4 * (P_Random() % 3 + 1);
 	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
-	bMuzzleFlash = true;
-	DLightRadius = 118.0;
-	DLightColour = RGB(203, 111, 0);
 }
 
 states

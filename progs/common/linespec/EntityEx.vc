@@ -151,7 +151,6 @@ bool bNoSplash;			// Things that don't splash
 bool bStaticLight;		// Static light source.
 bool bStaticLightSpwned;
 bool bDynamicLight;		// Dynamic light source.
-bool bMuzzleFlash;		// Muzzle flash effect.
 bool bLeaveTrail;		// Leave particles trail.
 bool bTriggerHappy;
 bool bBlaster;
@@ -5618,20 +5617,6 @@ void ClientTick(float DeltaTime)
 		dl->die = XLevel.Time + 0.1;
 	}
 
-	if (bMuzzleFlash)
-	{
-		dl = AllocDlight(self);
-		dl->origin = Origin;
-		dl->origin.z += 48.0;
-		AngleVector(&Angles, &fv);
-
-		dl->origin = dl->origin + 18.0 * fv;
-		dl->radius = DLightRadius + Random() * 31.0;
-		dl->colour = DLightColour;
-		dl->minlight = 32.0;
-		dl->die = XLevel.Time + 0.1;
-	}
-	
 	if (bLeaveTrail)
 	{
 		c = P_Random() >> 1;
@@ -5672,8 +5657,17 @@ final void DoStateEffects(float DeltaTime)
 			dlight_t* dl = AllocDlight(self);
 			dl->origin = Origin + Forward * L->Offset.x - Right * L->Offset.y +
 				Up * L->Offset.z;
-			dl->radius = L->Radius;
+			switch (L->Type)
+			{
+			case 0:
+				dl->radius = L->Radius;
+				break;
+			case 1:
+				dl->radius = L->Radius + Random() * (L->Radius2 - L->Radius);
+				break;
+			}
 			dl->colour = L->Colour;
+			dl->minlight = L->MinLight;
 			dl->die = XLevel.Time + 0.01;
 		}
 	}

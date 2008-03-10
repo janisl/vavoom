@@ -62,9 +62,6 @@ final void A_FireShotgun()
 	{
 		GunShot(self, false, dir);
 	}
-	bMuzzleFlash = true;
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 118.0;
 }
 
 states

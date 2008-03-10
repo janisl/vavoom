@@ -256,17 +256,17 @@ Pain:
 	SORC G 8 A_Pain
 	Goto See
 Missile:
-	SORC F 6 Bright { bMuzzleFlash = true; A_FaceTarget(); }
+	SORC F 6 Bright A_FaceTarget
 	SORC F 6 Bright A_SpeedBalls
 	SORC F 6 Bright A_FaceTarget
 	Wait
 Attack1:
-	SORC E 6 Bright { bMuzzleFlash = true; }
+	SORC E 6 Bright
 	SORC E 6 Bright A_SpawnFizzle
 	SORC E 5 Bright A_FaceTarget
 	Goto Attack1+1
 Attack2:
-	SORC E 2 Bright { bMuzzleFlash = true; }
+	SORC E 2 Bright
 	SORC E 2 Bright A_SorcBossAttack
 	Goto See
 Death:

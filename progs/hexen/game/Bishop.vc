@@ -140,7 +140,6 @@ final void A_BishopAttack()
 	{
 		return;
 	}
-	bMuzzleFlash = true;
 	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{

@@ -138,6 +138,7 @@ struct VLightEffectDef
 	vint32				Colour;
 	float				Radius;
 	float				Radius2;
+	float				MinLight;
 	TVec				Offset;
 };
 
