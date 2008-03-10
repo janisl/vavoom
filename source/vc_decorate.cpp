@@ -50,9 +50,10 @@ enum
 
 struct VClassFixup
 {
-	VClass**	Ptr;
+	int			Offset;
 	VStr		Name;
 	VClass*		ReqParent;
+	VClass*		Class;
 };
 
 struct VLineSpecInfo
@@ -416,9 +417,10 @@ static void AddClassFixup(VClass* Class, const char* FieldName,
 	guard(AddClassFixup);
 	VField* F = Class->FindFieldChecked(FieldName);
 	VClassFixup& CF = ClassFixups.Alloc();
-	CF.Ptr = (VClass**)(Class->Defaults + F->Ofs);
+	CF.Offset = F->Ofs;
 	CF.Name = ClassName;
 	CF.ReqParent = F->Type.Class;
+	CF.Class = Class;
 	unguard;
 }
 
@@ -2446,6 +2448,23 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	VClass* Class = ParentClass->CreateDerivedClass(*NameStr, DecPkg,
 		sc->GetLoc());
 	DecPkg->ParsedClasses.Append(Class);
+
+	if (ParentClass)
+	{
+		//	Copy class fixups of the parent class.
+		for (int i = 0; i < ClassFixups.Num(); i++)
+		{
+			VClassFixup& CF = ClassFixups[i];
+			if (CF.Class == ParentClass)
+			{
+				VClassFixup& NewCF = ClassFixups.Alloc();
+				NewCF.Offset = CF.Offset;
+				NewCF.Name = CF.Name;
+				NewCF.ReqParent = CF.ReqParent;
+				NewCF.Class = Class;
+			}
+		}
+	}
 
 	VClass* ReplaceeClass = NULL;
 	if (sc->Check("replaces"))
@@ -4649,7 +4668,7 @@ void ProcessDecorateScripts()
 		check(CF.ReqParent);
 		if (!CF.Name.ICmp("None"))
 		{
-			*CF.Ptr = NULL;
+			*(VClass**)(CF.Class->Defaults + CF.Offset) = NULL;
 		}
 		else
 		{
@@ -4665,7 +4684,7 @@ void ProcessDecorateScripts()
 			}
 			else
 			{
-				*CF.Ptr = C;
+				*(VClass**)(CF.Class->Defaults + CF.Offset) = C;
 			}
 		}
 	}
