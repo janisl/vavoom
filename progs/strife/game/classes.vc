@@ -105,7 +105,6 @@
 #include "Piston.vc"
 #include "Computer.vc"
 #include "PowerCrystal.vc"
-#include "ExplosiveBarrel2.vc"
 #include "PowerCoupling.vc"
 
 #include "StrifePlayer.vc"

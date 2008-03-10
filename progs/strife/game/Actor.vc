@@ -341,20 +341,6 @@ final void A_DecReactionCount()
 
 //==========================================================================
 //
-//	A_AlertMonsters
-//
-//==========================================================================
-
-final void A_AlertMonsters()
-{
-	if (Target && Target.bIsPlayer)
-	{
-		StrifeLevelInfo(Level).NoiseAlert(Target, self);
-	}
-}
-
-//==========================================================================
-//
 //	A_CheckAlarm
 //
 //	Stay in state untill alarm is triggered.

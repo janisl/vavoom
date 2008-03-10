@@ -1,0 +1,75 @@
+//------------------------------------------------------------------------------
+actor ExplosiveBarrel 2035
+{
+	Game Doom
+	SpawnID 125
+	Health 20
+	Radius 10
+	Height 42
+	+Solid
+	+Shootable
+	+NoBlood
+	+ActivateMCross
+	DeathSound "world/barrelx"
+	Obituary "$ob_barrel"
+	states
+	{
+	Spawn:
+		BAR1 AB 6
+		Loop
+	Death:
+		BEXP A 5 Bright
+		BEXP B 5 Bright A_Scream
+		BEXP C 5 Bright
+		BEXP D 10 Bright A_Explode
+		BEXP E 10 Bright
+		Stop
+	}
+
+	//FIXME I had translucent explosions.
+	//void PreExplode()
+	//{
+	//	RenderStyle = STYLE_Translucent;
+	//	Alpha = 0.5;
+	//}
+}
+
+//------------------------------------------------------------------------------
+actor BulletPuff
+{
+	Game Doom
+	SpawnID 131
+	RenderStyle Translucent
+	Alpha 0.5
+	VSpeed 1
+	Mass 5
+	+NoBlockmap
+	+NoGravity
+	+AllowParticles
+	+Randomize
+	states
+	{
+	Spawn:
+		PUFF A 4 Bright
+		PUFF B 4
+	Melee:
+		PUFF CD 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+//	Only for DeHackEd compatibility.
+actor DoomUnusedStates
+{
+	states
+	{
+		SMT2 A -1
+		Stop
+	Death:
+		PLAY N -1
+		Stop
+		PLAY S -1
+		Stop
+	}
+}

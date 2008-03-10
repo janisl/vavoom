@@ -50,6 +50,7 @@ actors/doom/doomartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomartif
 actors/doom/doomdecorations.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomdecorations.txt
 actors/doom/doomhealth.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomhealth.txt
 actors/doom/doomkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomkeys.txt
+actors/doom/doommisc.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doommisc.txt
 actors/heretic/hereticammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticammo.txt
 actors/heretic/hereticarmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticarmor.txt
 actors/heretic/hereticartifacts.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticartifacts.txt

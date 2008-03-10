@@ -16,7 +16,7 @@ class Actor extends Thinker
 	action native A_FaceTarget();
 	//A_Die
 	//A_CentaurDefend
-	//A_AlertMonsters
+	action native A_AlertMonsters();
 	//A_ClearTarget
 	//A_ClearSoundTarget
 	//A_KillMaster

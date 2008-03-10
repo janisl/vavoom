@@ -166,7 +166,32 @@ actor WoodenBarrel 82
 	}
 }
 
-//FIXME ExplosiveBarrel2 : ExplosiveBarrel goes here.
+//------------------------------------------------------------------------------
+actor ExplosiveBarrel2 : ExplosiveBarrel 94
+{
+	Game Strife
+	ConversationID 204, -1, -1
+	Health 30
+	Radius 10
+	Height 32
+	+InCombat
+	states
+	{
+	Spawn:
+		BART A -1
+		Stop
+	Death:
+		BART B 2 Bright A_Scream
+		BART CD 2 Bright
+		BART E 2 Bright A_NoBlocking
+		BART F 0 Bright A_AlertMonsters
+		BART F 2 Bright A_Explode(64, 64)
+		BART GHI 2 Bright
+		BART JK 3 Bright
+		BART L -1
+		Stop
+	}
+}
 
 //------------------------------------------------------------------------------
 actor TargetPractice 208

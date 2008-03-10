@@ -32,9 +32,7 @@
 #include "PlasmaRifle.vc"
 #include "Shotgun.vc"
 
-#include "ExplosiveBarrel.vc"
 #include "Gibs.vc"
-#include "DoomUnusedStates.vc"
 
 #include "Pistol.vc"
 #include "Rocket.vc"
@@ -107,3 +105,4 @@ class RadSuit : PowerupGiver decorate;
 class Infrared : PowerupGiver decorate;
 class Allmap : MapRevealer decorate;
 class Berserk : CustomInventory decorate;
+class BulletPuff : ScriptedEntity decorate;
