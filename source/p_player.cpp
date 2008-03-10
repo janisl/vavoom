@@ -289,7 +289,7 @@ void VBasePlayer::SetViewState(int position, VState* stnum)
 		// Call action routine.
 		if (state->Function)
 		{
-			P_PASS_REF(ViewEnt);
+			P_PASS_REF(MO);
 			ExecuteFunction(state->Function);
 			if (!VSt.State)
 			{

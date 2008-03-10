@@ -145,7 +145,6 @@ class VBasePlayer : public VObject
 
 	// Overlay view sprites (gun, etc).
 	VViewState		ViewStates[NUMPSPRITES];
-	VEntity*		ViewEnt;
 	float			PSpriteSY;
 
 	float			WorldTimer;				// total time the player's been playing
