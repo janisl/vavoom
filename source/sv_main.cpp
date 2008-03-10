@@ -125,6 +125,11 @@ void SV_Init()
 
 	ProcessDehackedFiles();
 
+	for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
+	{
+		R_InstallSprite(*VClass::GSpriteNames[i], i);
+	}
+
 	ServerNetContext = new VServerNetContext();
 
 	VClass* PlayerClass = VClass::FindClass("Player");

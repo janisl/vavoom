@@ -369,11 +369,6 @@ void CL_ParseServerInfo(VMessageIn& msg)
 
 	SB_Start();
 
-	for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
-	{
-		R_InstallSprite(*VClass::GSpriteNames[i], i);
-	}
-
 	GCon->Log(NAME_Dev, "Client level loaded");
 	unguard;
 }

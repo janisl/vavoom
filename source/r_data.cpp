@@ -63,18 +63,27 @@ struct VTempClassEffects
 //
 //	Main palette
 //
-rgba_t				r_palette[256];
-vuint8				r_black_colour;
+rgba_t					r_palette[256];
+vuint8					r_black_colour;
 
 extern "C" {
-vuint8				r_rgbtable[32 * 32 * 32 + 4];
+vuint8					r_rgbtable[32 * 32 * 32 + 4];
 };
+
+//	variables used to look up
+// and range check thing_t sprites patches
+spritedef_t				sprites[MAX_SPRITE_MODELS];
 
 VTextureTranslation**			TranslationTables;
 int								NumTranslationTables;
 TArray<VTextureTranslation*>	DecorateTranslations;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+//	Temporary variables for sprite installing
+static spriteframe_t	sprtemp[30];
+static int				maxframe;
+static const char*		spritename;
 
 static TArray<VLightEffectDef>		GLightEffectDefs;
 static TArray<VParticleEffectDef>	GParticleEffectDefs;
@@ -207,6 +216,229 @@ static void InitTranslationTables()
 
 //==========================================================================
 //
+//	InstallSpriteLump
+//
+//	Local function for R_InitSprites.
+//
+//==========================================================================
+
+static void InstallSpriteLump(int lumpnr, int frame, char Rot, bool flipped)
+{
+	guard(InstallSpriteLump);
+	int			r;
+	int			rotation;
+
+	if (Rot >= '0' && Rot <= '9')
+	{
+		rotation = Rot - '0';
+	}
+	else if (Rot >= 'a')
+	{
+		rotation = Rot - 'a' + 10;
+	}
+	else
+	{
+		rotation = 17;
+	}
+
+	VTexture* Tex = GTextureManager.Textures[lumpnr];
+	if ((vuint32)frame >= 30 || (vuint32)rotation > 16)
+	{
+		Sys_Error("InstallSpriteLump: Bad frame characters in lump %s",
+			*Tex->Name);
+	}
+
+	if (frame > maxframe)
+		maxframe = frame;
+
+	if (rotation == 0)
+	{
+		// the lump should be used for all rotations
+		sprtemp[frame].rotate = false;
+		for (r = 0; r < 16; r++)
+		{
+			sprtemp[frame].lump[r] = lumpnr;
+			sprtemp[frame].flip[r] = flipped;
+		}
+		return;
+	}
+
+	if (rotation <= 8)
+	{
+		rotation = (rotation - 1) * 2;
+	}
+	else
+	{
+		rotation = (rotation - 9) * 2 + 1;
+	}
+
+	// the lump is only used for one rotation
+	if (sprtemp[frame].rotate == false)
+	{
+		for (r = 0; r < 16; r++)
+		{
+			sprtemp[frame].lump[r] = -1;
+			sprtemp[frame].flip[r] = false;
+		}
+	}
+
+	sprtemp[frame].rotate = true;
+	sprtemp[frame].lump[rotation] = lumpnr;
+	sprtemp[frame].flip[rotation] = flipped;
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_InstallSprite
+//
+// 	Builds the sprite rotation matrixes to account for horizontally flipped
+// sprites. Will report an error if the lumps are inconsistant.
+// 	Sprite lump names are 4 characters for the actor, a letter for the frame,
+// and a number for the rotation. A sprite that is flippable will have an
+// additional letter/number appended. The rotation character can be 0 to
+// signify no rotations.
+//
+//==========================================================================
+
+void R_InstallSprite(const char *name, int index)
+{
+	guard(R_InstallSprite);
+	if ((vuint32)index >= MAX_SPRITE_MODELS)
+	{
+		Host_Error("Invalid sprite index %d for sprite %s", index, name);
+	}
+	spritename = name;
+	memset(sprtemp, -1, sizeof(sprtemp));
+	maxframe = -1;
+
+	// scan all the lump names for each of the names,
+	//  noting the highest frame letter.
+	// Just compare 4 characters as ints
+	int intname = *(int*)*VName(spritename, VName::AddLower8);
+
+	// scan the lumps, filling in the frames for whatever is found
+	for (int l = 0; l < GTextureManager.Textures.Num(); l++)
+	{
+		if (GTextureManager.Textures[l]->Type == TEXTYPE_Sprite)
+		{
+			const char* lumpname = *GTextureManager.Textures[l]->Name;
+			if (*(int*)lumpname == intname)
+			{
+				InstallSpriteLump(l, VStr::ToUpper(lumpname[4]) - 'A',
+					lumpname[5], false);
+
+				if (lumpname[6])
+				{
+					InstallSpriteLump(l, VStr::ToUpper(lumpname[6]) - 'A',
+						lumpname[7], true);
+				}
+			}
+		}
+	}
+
+	// check the frames that were found for completeness
+	if (maxframe == -1)
+	{
+		sprites[index].numframes = 0;
+		return;
+	}
+
+	maxframe++;
+
+	for (int frame = 0 ; frame < maxframe ; frame++)
+	{
+		switch ((int)sprtemp[frame].rotate)
+		{
+		case -1:
+			// no rotations were found for that frame at all
+			Sys_Error("R_InstallSprite: No patches found "
+					"for %s frame %c", spritename, frame + 'A');
+			break;
+
+		case 0:
+			// only the first rotation is needed
+			break;
+
+		case 1:
+			//	Copy missing frames for 16-angle rotation.
+			for (int rotation = 0; rotation < 8; rotation++)
+			{
+				if (sprtemp[frame].lump[rotation * 2 + 1] == -1)
+				{
+					sprtemp[frame].lump[rotation * 2 + 1] =
+						sprtemp[frame].lump[rotation * 2];
+					sprtemp[frame].flip[rotation * 2 + 1] =
+						sprtemp[frame].flip[rotation * 2];
+				}
+				if (sprtemp[frame].lump[rotation * 2] == -1)
+				{
+					sprtemp[frame].lump[rotation * 2] =
+						sprtemp[frame].lump[rotation * 2 + 1];
+					sprtemp[frame].flip[rotation * 2] =
+						sprtemp[frame].flip[rotation * 2 + 1];
+				}
+			}
+			// must have all 8 frames
+			for (int rotation = 0; rotation < 8; rotation++)
+			{
+				if (sprtemp[frame].lump[rotation] == -1)
+				{
+					Sys_Error("R_InstallSprite: Sprite %s frame %c "
+							"is missing rotations", spritename, frame + 'A');
+				}
+			}
+			break;
+		}
+	}
+
+	if (sprites[index].spriteframes)
+	{
+		Z_Free(sprites[index].spriteframes);
+		sprites[index].spriteframes = NULL;
+	}
+	// allocate space for the frames present and copy sprtemp to it
+	sprites[index].numframes = maxframe;
+	sprites[index].spriteframes = (spriteframe_t*)
+		Z_Malloc(maxframe * sizeof(spriteframe_t));
+	memcpy(sprites[index].spriteframes, sprtemp, maxframe * sizeof(spriteframe_t));
+	unguard;
+}
+
+//==========================================================================
+//
+//	FreeSpriteData
+//
+//==========================================================================
+
+static void FreeSpriteData()
+{
+	guard(FreeSpriteData);
+	for (int i = 0; i < MAX_SPRITE_MODELS; i++)
+	{
+		if (sprites[i].spriteframes)
+		{
+			Z_Free(sprites[i].spriteframes);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_AreSpritesPresent
+//
+//==========================================================================
+
+bool R_AreSpritesPresent(int Index)
+{
+	guardSlow(R_AreSpritesPresent);
+	return sprites[Index].numframes > 0;
+	unguardSlow;
+}
+
+//==========================================================================
+//
 //	R_InitData
 //
 //==========================================================================
@@ -249,6 +481,8 @@ void R_ShutdownData()
 		delete DecorateTranslations[i];
 	}
 	DecorateTranslations.Clear();
+
+	FreeSpriteData();
 
 	GLightEffectDefs.Clear();
 	GParticleEffectDefs.Clear();

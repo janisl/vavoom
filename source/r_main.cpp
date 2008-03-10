@@ -1234,7 +1234,6 @@ void V_Shutdown()
 		delete Drawer;
 		Drawer = NULL;
 	}
-	R_FreeSpriteData();
 	R_FreeModels();
 	for (int i = 0; i < MAXPLAYERS + 1; i++)
 	{

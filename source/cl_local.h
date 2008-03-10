@@ -239,7 +239,6 @@ void CL_KeepaliveMessage();
 void CL_SignonReply();
 void CL_ParseServerInfo(class VMessageIn& msg);
 
-void R_InstallSprite(const char*, int);
 void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*, int,
 	int, int, float);
 

@@ -33,7 +33,48 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define MAX_SPRITE_MODELS	1024
+
 // TYPES -------------------------------------------------------------------
+
+//
+//  Sprites are patches with a special naming convention
+// so they can be recognized by R_InitSprites.
+//  The base name is NNNNFx or NNNNFxFx, with
+// x indicating the rotation, x = 0, 1-7.
+//  The sprite and frame specified by a thing_t
+// is range checked at run time.
+//  A sprite is a patch_t that is assumed to represent
+// a three dimensional object and may have multiple
+// rotations pre drawn.
+//  Horizontal flipping is used to save space,
+// thus NNNNF2F5 defines a mirrored patch.
+//  Some sprites will only have one picture used
+// for all views: NNNNF0
+//
+struct spriteframe_t
+{
+	// If false use 0 for any position.
+	// Note: as eight entries are available,
+	//  we might as well insert the same name eight times.
+	bool		rotate;
+
+	// Lump to use for view angles 0-7.
+	short		lump[16];
+
+	// Flip bit (1 = flip) to use for view angles 0-7.
+	bool		flip[16];
+};
+
+//
+// 	A sprite definition:
+// a number of animation frames.
+//
+struct spritedef_t
+{
+	int					numframes;
+	spriteframe_t		*spriteframes;
+};
 
 struct segpart_t
 {
@@ -337,11 +378,6 @@ public:
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
-// R_Things
-//
-void R_FreeSpriteData();
-
-//
 // R_Sky
 //
 void R_InitSkyBoxes();
@@ -355,6 +391,8 @@ void R_FreeModels();
 int R_SetMenuPlayerTrans(int, int, int);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
+
+extern spritedef_t		sprites[MAX_SPRITE_MODELS];
 
 //
 // R_Main

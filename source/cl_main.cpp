@@ -437,11 +437,6 @@ void CL_SetUpStandaloneClient()
 
 	SB_Start();
 
-	for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
-	{
-		R_InstallSprite(*VClass::GSpriteNames[i], i);
-	}
-
 	for (int i = 0; i < GClLevel->NumStaticLights; i++)
 	{
 		rep_light_t& L = GClLevel->StaticLights[i];

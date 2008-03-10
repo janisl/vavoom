@@ -294,6 +294,8 @@ private:
 // r_data
 void R_InitData();
 void R_ShutdownData();
+void R_InstallSprite(const char*, int);
+bool R_AreSpritesPresent(int);
 int R_ParseDecorateTranslation(VScriptParser*);
 void R_ParseEffectDefs();
 

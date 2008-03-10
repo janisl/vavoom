@@ -1141,3 +1141,9 @@ IMPLEMENT_FUNCTION(VObject, LoadBinaryLump)
 	P_GET_INT(Lump);
 	W_LoadLumpIntoArray(Lump, *Array);
 }
+
+IMPLEMENT_FUNCTION(VObject, AreStateSpritesPresent)
+{
+	P_GET_PTR(VState, State);
+	RET_BOOL(State ? R_AreSpritesPresent(State->SpriteIndex) : false);
+}
