@@ -260,6 +260,7 @@ int				LastLookActor;
 int				TIDToHate;
 
 int				MissileDamage;	// For missiles
+int				MissilePoisonDamage;
 
 // For nightmare respawn.
 mthing_t		SpawnPoint;
@@ -4404,6 +4405,11 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
+	if (victim.bIsPlayer && MissilePoisonDamage > 0)
+	{
+		victim.PoisonPlayer(source, MissilePoisonDamage);
+		damage >>= 1;
+	}
 	return damage;
 }
 
@@ -6897,6 +6903,100 @@ final bool SetPlayerProperty(int Prop, int Set)
 
 //==========================================================================
 //
+//  PoisonPlayer - Sets up all data concerning poisoning
+//
+//==========================================================================
+
+final void PoisonPlayer(EntityEx poisoner, int poison)
+{
+	if ((PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE) || bInvulnerable)
+	{
+		return;
+	}
+	PlayerEx(Player).PoisonCount += poison;
+	PlayerEx(Player).Poisoner = poisoner;
+	PlayerEx(Player).PoisonerPlayer = poisoner ? PlayerEx(poisoner.Player) :
+		none;
+	if (PlayerEx(Player).PoisonCount > 100)
+	{
+		PlayerEx(Player).PoisonCount = 100;
+	}
+	PlayerEx(Player).LastPoisonTime = XLevel.Time;
+}
+
+//==========================================================================
+//
+//  PoisonDamage
+//
+//  Similar to Actor::Damage
+//
+//==========================================================================
+
+final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
+	bool playPainSound)
+{
+	if (Health <= 0)
+	{
+		return;
+	}
+	if (bInvulnerable && damage < 10000)
+	{	// mobj is invulnerable
+		return;
+	}
+	if (bIsPlayer && Level.Game.gameskill == sk_baby)
+	{
+		// Take half damage in trainer mode
+		damage >>= 1;
+	}
+	if (damage < 1000 && ((PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE) ||
+		bInvulnerable))
+	{
+		return;
+	}
+	if (damage >= Player.Health && ((Level.Game.gameskill == sk_baby) ||
+		Level.Game.deathmatch) && !PlayerIsMorphed())
+	{
+		// Try to use some inventory health
+		AutoUseHealth(damage - Player.Health + 1);
+	}
+	Player.Health -= damage;	// mirror mobj health here for Dave
+	if (Player.Health < 0)
+	{
+		Player.Health = 0;
+	}
+	PlayerEx(Player).Attacker = source;
+
+	//
+	// do the damage
+	//
+	Health -= damage;
+	if (Health <= 0)
+	{
+		// Death
+		Special1 = damage;
+		if (bIsPlayer && inflictor && !PlayerIsMorphed())
+		{
+			// Check for flame death
+			if (inflictor.DamageType == 'Fire' && (Health > -50) && (damage > 25))
+			{
+				DamageType = 'Fire';
+			}
+			else
+			{
+				DamageType = inflictor.DamageType;
+			}
+		}
+		Died(source, inflictor);
+		return;
+	}
+	if (!(XLevel.TicTime & 63) && playPainSound)
+	{
+		SetState(FindState('Pain'));
+	}
+}
+
+//==========================================================================
+//
 //	decorate_random
 //
 //==========================================================================
@@ -6966,6 +7066,10 @@ void TouchSpecial(EntityEx Toucher)
 }
 
 void AutoUseArmor()
+{
+}
+
+void AutoUseHealth(int saveHealth)
 {
 }
 

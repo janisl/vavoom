@@ -291,6 +291,7 @@ void SpawnPlayer(mthing_t * mthing)
 	Refire = 0;
 	DamageFlash = 0.0;
 	BonusFlash = 0.0;
+	PoisonCount = 0;
 	ExtraLight = 0;
 	FixedColourmap = 0;
 	LastSectorDamageTime = 0.0;
@@ -426,6 +427,7 @@ void PlayerExitMap(bool clusterChange)
 	FixedColourmap = 0;		// cancel ir gogles
 	DamageFlash = 0.0;		// no palette changes
 	BonusFlash = 0.0;
+	PoisonCount = 0;
 }
 
 //==========================================================================
@@ -678,6 +680,10 @@ void DeathPlayerTick(float deltaTime)
 				if (DamageFlash <= 0.0)
 					DamageFlash = 0.0;
 			}
+			if (PoisonCount)
+			{
+				PoisonCount--;
+			}
 		}
 		else if (delta > 0.0)
 			MO.Angles.yaw += 5.0;
@@ -689,6 +695,10 @@ void DeathPlayerTick(float deltaTime)
 		DamageFlash -= deltaTime;
 		if (DamageFlash <= 0.0)
 			DamageFlash = 0.0;
+	}
+	else if (PoisonCount)
+	{
+		PoisonCount--;
 	}
 
 	if (Buttons & BT_USE)
@@ -858,6 +868,17 @@ void PlayerTick(float deltaTime)
 	MovePsprites(deltaTime);
 
 	//  Counters, time dependend power ups.
+
+	if (PoisonCount && Level.XLevel.Time - LastPoisonTime >= 0.5)
+	{
+		PoisonCount -= 5;
+		if (PoisonCount < 0)
+		{
+			PoisonCount = 0;
+		}
+		LastPoisonTime = Level.XLevel.Time;
+		Actor(MO).PoisonDamage(Poisoner, Poisoner, 1, true);
+	}
 
 	if (DamageFlash)
 	{

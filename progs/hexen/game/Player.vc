@@ -29,9 +29,6 @@ const int MAXHEALTH			= 100;
 const int MAXMORPHHEALTH	= 30;
 const float VIEWHEIGHT		= 48.0;
 
-float LastPoisonTime;
-Actor Poisoner;		// none for non-player mobjs
-
 float MorphTime;	// player is a pig if > 0
 
 BotPlayer Bot;
@@ -1129,18 +1126,15 @@ void DeathPlayerTick(float deltaTime)
 			MO.Angles.yaw -= delta;
 		}
 	}
-	else if (DamageFlash || PoisonCount)
+	else if (DamageFlash)
 	{
-		if (DamageFlash)
-		{
-			DamageFlash -= deltaTime;
-			if (DamageFlash <= 0.0)
-				DamageFlash = 0.0;
-		}
-		else
-		{
-			PoisonCount--;
-		}
+		DamageFlash -= deltaTime;
+		if (DamageFlash <= 0.0)
+			DamageFlash = 0.0;
+	}
+	else if (PoisonCount)
+	{
+		PoisonCount--;
 	}
 
 	if (Buttons & BT_USE)
@@ -1354,7 +1348,7 @@ void PlayerTick(float deltaTime)
 			PoisonCount = 0;
 		}
 		LastPoisonTime = Level.XLevel.Time;
-		Actor(MO).PoisonDamage(Poisoner, 1, true);
+		Actor(MO).PoisonDamage(Poisoner, Poisoner, 1, true);
 	}
 
 	if (DamageFlash)

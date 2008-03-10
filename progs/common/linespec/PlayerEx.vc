@@ -102,6 +102,9 @@ bool			bFly;
 int				NoRunHealth;
 
 int				PoisonCount;	// screen flash for poison damage
+float			LastPoisonTime;
+EntityEx		Poisoner;		// none for non-player mobjs
+PlayerEx		PoisonerPlayer;	// for KArena
 
 int				Objectives;
 

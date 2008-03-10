@@ -2647,9 +2647,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("PoisonDamage"))
 		{
-			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property PoisonDamage in %s is not yet supported", Class->GetName());
+			SetClassFieldInt(Class, "MissilePoisonDamage", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("RadiusDamageFactor"))

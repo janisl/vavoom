@@ -26,22 +26,6 @@
 class PoisonDart : Projectile
 	__scriptid__(52);
 
-//==========================================================================
-//
-//  DoSpecialDamage
-//
-//==========================================================================
-
-int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
-{
-	if (victim.bIsPlayer)
-	{
-		Actor(victim).PoisonPlayer(Actor(source), 20);
-		damage >>= 1;
-	}
-	return damage;
-}
-
 states
 {
 Spawn:
@@ -58,6 +42,7 @@ defaultproperties
 	Height = 4.0;
 	Speed = 210.0;
 	MissileDamage = 2;
+	MissilePoisonDamage = 20;
 	bActivateImpact = false;
 	bActivatePCross = false;
 }
