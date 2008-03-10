@@ -4563,6 +4563,14 @@ void Died(EntityEx source, EntityEx inflictor)
 		//	Display obituary.
 		PlayerEx(Player).DisplayObituary(inflictor, source, DamageType);
 
+		PlayerEx(Player).Deaths++;
+
+		// Count environment kills against you
+		if (!source)
+		{
+			Player.Frags--;
+		}
+
 		PlayerKilled(source, inflictor);
 
 		bSolid = false;
