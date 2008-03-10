@@ -317,7 +317,8 @@ bool VEntity::HasSpecialStates(VName StateName)
 //
 //==========================================================================
 
-void VEntity::GetStateEffects(TArray<VLightEffectDef*>& Lights) const
+void VEntity::GetStateEffects(TArray<VLightEffectDef*>& Lights,
+	TArray<VParticleEffectDef*>& Part) const
 {
 	guard(VEntity::GetStateEffects);
 	//	Clear arrays.
@@ -346,6 +347,10 @@ void VEntity::GetStateEffects(TArray<VLightEffectDef*>& Lights) const
 		if (SprFx.LightDef)
 		{
 			Lights.Append(SprFx.LightDef);
+		}
+		if (SprFx.PartDef)
+		{
+			Part.Append(SprFx.PartDef);
 		}
 	}
 	unguard;
@@ -556,9 +561,10 @@ IMPLEMENT_FUNCTION(VEntity, HasSpecialStates)
 
 IMPLEMENT_FUNCTION(VEntity, GetStateEffects)
 {
+	P_GET_PTR(TArray<VParticleEffectDef*>, Part);
 	P_GET_PTR(TArray<VLightEffectDef*>, Lights);
 	P_GET_SELF;
-	Self->GetStateEffects(*Lights);
+	Self->GetStateEffects(*Lights, *Part);
 }
 
 IMPLEMENT_FUNCTION(VEntity, CallStateChain)

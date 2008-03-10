@@ -188,10 +188,24 @@ pointlight ArachnotronPlasma_X5
 	radius 50
 }
 
+particleeffect ArachnotronPlasma
+{
+	type static
+	colour 1 0.75 0.25
+	count 10
+	originrandom 10
+	velocity 384 384 256
+	velocityrandom 0.3
+	acceleration 20
+	gravity 85
+	duration 1
+	ramp 2
+}
+
 class ArachnotronPlasma
 {
 	frame APLS { light ArachnotronPlasma }
-	frame APBXA { light ArachnotronPlasma_X1 }
+	frame APBXA { light ArachnotronPlasma_X1 particles ArachnotronPlasma }
 	frame APBXB { light ArachnotronPlasma_X2 }
 	frame APBXC { light ArachnotronPlasma_X3 }
 	frame APBXD { light ArachnotronPlasma_X4 }

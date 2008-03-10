@@ -33,36 +33,14 @@ class SerpentFX : Projectile;
 
 final void A_ContMobjSound()
 {
-	A_Particles();
 	PlaySound('SerpentFXContinuous', CHAN_VOICE);
-}
-
-//===========================================================================
-//
-//  A_Particles
-//
-//===========================================================================
-
-final void A_Particles()
-{
-	int i;
-	
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		PlayerEx(Level.Game.Players[i]).ParticleEffect(5, LineSpecialLevelInfo::pt_static, 0, Origin, 0.0,
-				vector(16.0, 16.0, 64.0), 0.5, 2.5, 0.0, RGB(42, 252, 42), 0.5, 0.0);
-	}
 }
 
 states
 {
 Spawn:
 	SSFX A 3 Bright A_ContMobjSound
-	SSFX BAB 3 Bright A_Particles
+	SSFX BAB 3 Bright
 	Loop
 Death:
 	SSFX CDEFGH 4 Bright

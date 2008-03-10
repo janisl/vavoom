@@ -143,6 +143,29 @@ struct VLightEffectDef
 
 //==========================================================================
 //
+//	VParticleEffectDef
+//
+//==========================================================================
+
+struct VParticleEffectDef
+{
+	VName				Name;
+	vuint8				Type;
+	vuint8				Type2;
+	vint32				Colour;
+	TVec				Offset;
+	vint32				Count;
+	float				OrgRnd;
+	TVec				Velocity;
+	float				VelRnd;
+	float				Accel;
+	float				Grav;
+	float				Duration;
+	float				Ramp;
+};
+
+//==========================================================================
+//
 //	VSpriteEffect
 //
 //==========================================================================
@@ -152,6 +175,7 @@ struct VSpriteEffect
 	vint32				SpriteIndex;
 	vint8				Frame;
 	VLightEffectDef*	LightDef;
+	VParticleEffectDef*	PartDef;
 };
 
 //==========================================================================

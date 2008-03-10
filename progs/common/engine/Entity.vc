@@ -121,6 +121,23 @@ struct LightEffectDef
 	TVec				Offset;
 };
 
+struct ParticleEffectDef
+{
+	name				Name;
+	byte				Type;
+	byte				Type2;
+	int					Colour;
+	TVec				Offset;
+	int					Count;
+	float				OrgRnd;
+	TVec				Velocity;
+	float				VelRnd;
+	float				Accel;
+	float				Grav;
+	float				Duration;
+	float				Ramp;
+};
+
 // Info for drawing: position.
 TVec			Origin;
 
@@ -267,7 +284,8 @@ native final state FindState(name StateName, optional name SubLabel,
 	optional bool Exact);
 native final state FindStateEx(string StateName, optional bool Exact);
 native final state HasSpecialStates(name StateName);
-native final void GetStateEffects(out array<LightEffectDef*> Lights);
+native final void GetStateEffects(out array<LightEffectDef*> Lights,
+	out array<ParticleEffectDef*> Lights);
 native final bool CallStateChain(Entity Actor, state State);
 
 native final void PlaySound(name SoundName, int Channel, optional float Volume,

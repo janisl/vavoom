@@ -41,7 +41,22 @@ pointlight MinotaurFX1_X6
 	radius 50
 }
 
-class MinotaurMissile	//	MinotaurFX1
+particleeffect MinotaurFX
+{
+	type static
+	type2 explode2
+	colour 1 0.5 0
+	count 10
+	originrandom 10
+	velocity 256 256 256
+	velocityrandom 0.3
+	acceleration 20
+	gravity 85
+	duration 1
+	ramp 2
+}
+
+class MinotaurFX1
 {
 	frame FX12A { light MinotaurFX1 }
 	frame FX12B { light MinotaurFX1 }
@@ -53,17 +68,17 @@ class MinotaurMissile	//	MinotaurFX1
 	frame FX12H { light MinotaurFX1_X6 }
 }
 
-class MinotaurFloorFire1	//	MinotaurFX2
+class MinotaurFX2
 {
 	frame FX13A { light MinotaurFX1 }
 	frame FX13I { light MinotaurFX1_X1 }
-	frame FX13J { light MinotaurFX1_X2 }
+	frame FX13J { light MinotaurFX1_X2 particles MinotaurFX }
 	frame FX13K { light MinotaurFX1_X3 }
 	frame FX13L { light MinotaurFX1_X4 }
 	frame FX13M { light MinotaurFX1_X5 }
 }
 
-class MinotaurFloorFire2	//	MinotaurFX3
+class MinotaurFX3
 {
 	frame FX13B { light MinotaurFX1 }
 	frame FX13C { light MinotaurFX1 }
@@ -73,7 +88,7 @@ class MinotaurFloorFire2	//	MinotaurFX3
 	frame FX13G { light MinotaurFX1_X5 }
 	frame FX13H { light MinotaurFX1_X6 }
 	frame FX13I { light MinotaurFX1_X1 }
-	frame FX13J { light MinotaurFX1_X2 }
+	frame FX13J { light MinotaurFX1_X2 particles MinotaurFX }
 	frame FX13K { light MinotaurFX1_X3 }
 	frame FX13L { light MinotaurFX1_X4 }
 	frame FX13M { light MinotaurFX1_X5 }

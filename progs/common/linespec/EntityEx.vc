@@ -322,6 +322,8 @@ float			FloatBobPhase;
 int				ExplosionDamage;
 int				ExplosionRadius;
 
+state			PrevEffectState;
+
 replication
 {
 	reliable if (Role == ROLE_Authority && bNetOwner)
@@ -5641,13 +5643,14 @@ void ClientTick(float DeltaTime)
 final void DoStateEffects(float DeltaTime)
 {
 	array<LightEffectDef*>		Lights;
+	array<ParticleEffectDef*>	Particles;
 	int							i;
 	TVec						Forward;
 	TVec						Right;
 	TVec						Up;
 
-	GetStateEffects(Lights);
-	if (!Lights.Num)
+	GetStateEffects(Lights, Particles);
+	if (!Lights.Num && !Particles.Num)
 	{
 		return;
 	}
@@ -5667,6 +5670,20 @@ final void DoStateEffects(float DeltaTime)
 			dl->colour = L->Colour;
 			dl->die = XLevel.Time + 0.01;
 		}
+	}
+
+	if (State != PrevEffectState)
+	{
+		//	Particle effects
+		for (i = 0; i < Particles.Num; i++)
+		{
+			ParticleEffectDef* P = Particles[i];
+			Level.ParticleEffect(P->Count, P->Type, P->Type2, Origin +
+				Forward * P->Offset.x - Right * P->Offset.y +
+				Up * P->Offset.z, P->OrgRnd, P->Velocity, P->VelRnd,
+				P->Accel, P->Grav, P->Colour, P->Duration, P->Ramp);
+		}
+		PrevEffectState = State;
 	}
 }
 

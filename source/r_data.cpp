@@ -40,6 +40,7 @@ struct VTempSpriteEffectDef
 {
 	VStr							Sprite;
 	VStr							Light;
+	VStr							Part;
 };
 
 struct VTempClassEffects
@@ -75,7 +76,8 @@ TArray<VTextureTranslation*>	DecorateTranslations;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TArray<VLightEffectDef>	GLightEffectDefs;
+static TArray<VLightEffectDef>		GLightEffectDefs;
+static TArray<VParticleEffectDef>	GParticleEffectDefs;
 
 // CODE --------------------------------------------------------------------
 
@@ -249,6 +251,7 @@ void R_ShutdownData()
 	DecorateTranslations.Clear();
 
 	GLightEffectDefs.Clear();
+	GParticleEffectDefs.Clear();
 	unguard;
 }
 
@@ -757,6 +760,172 @@ static void ParsePointLight(VScriptParser* sc)
 
 //==========================================================================
 //
+//	FindParticleEffect
+//
+//==========================================================================
+
+static VParticleEffectDef* FindParticleEffect(const VStr& Name)
+{
+	guard(FindParticleEffect);
+	for (int i = 0; i < GParticleEffectDefs.Num(); i++)
+	{
+		if (GParticleEffectDefs[i].Name == *Name)
+		{
+			return &GParticleEffectDefs[i];
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	ParseParticleEffect
+//
+//==========================================================================
+
+static void ParseParticleEffect(VScriptParser* sc)
+{
+	guard(ParseParticleEffect);
+	//	Get name, find it in the list or add it if it's not there yet.
+	sc->ExpectString();
+	VParticleEffectDef* P = FindParticleEffect(sc->String);
+	if (!P)
+	{
+		P = &GParticleEffectDefs.Alloc();
+	}
+
+	//	Set default values.
+	P->Name = *sc->String.ToLower();
+	P->Type = 0;
+	P->Type2 = 0;
+	P->Colour = 0xffffffff;
+	P->Offset = TVec(0, 0, 0);
+	P->Count = 0;
+	P->OrgRnd = 0;
+	P->Velocity = TVec(0, 0, 0);
+	P->VelRnd = 0;
+	P->Accel = 0;
+	P->Grav = 0;
+	P->Duration = 0;
+	P->Ramp = 0;
+
+	//	Parse light def.
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		if (sc->Check("type"))
+		{
+			if (sc->Check("static"))
+			{
+				P->Type = 0;
+			}
+			else if (sc->Check("explode"))
+			{
+				P->Type = 1;
+			}
+			else if (sc->Check("explode2"))
+			{
+				P->Type = 2;
+			}
+			else
+			{
+				sc->Error("Bad type");
+			}
+		}
+		else if (sc->Check("type2"))
+		{
+			if (sc->Check("static"))
+			{
+				P->Type2 = 0;
+			}
+			else if (sc->Check("explode"))
+			{
+				P->Type2 = 1;
+			}
+			else if (sc->Check("explode2"))
+			{
+				P->Type2 = 2;
+			}
+			else
+			{
+				sc->Error("Bad type");
+			}
+		}
+		else if (sc->Check("colour"))
+		{
+			sc->ExpectFloat();
+			float r = MID(0, sc->Float, 1);
+			sc->ExpectFloat();
+			float g = MID(0, sc->Float, 1);
+			sc->ExpectFloat();
+			float b = MID(0, sc->Float, 1);
+			P->Colour = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) |
+				(int)(b * 255) | 0xff000000;
+		}
+		else if (sc->Check("offset"))
+		{
+			sc->ExpectFloat();
+			P->Offset.x = sc->Float;
+			sc->ExpectFloat();
+			P->Offset.y = sc->Float;
+			sc->ExpectFloat();
+			P->Offset.z = sc->Float;
+		}
+		else if (sc->Check("count"))
+		{
+			sc->ExpectNumber();
+			P->Count = sc->Number;
+		}
+		else if (sc->Check("originrandom"))
+		{
+			sc->ExpectFloat();
+			P->OrgRnd = sc->Float;
+		}
+		else if (sc->Check("velocity"))
+		{
+			sc->ExpectFloat();
+			P->Velocity.x = sc->Float;
+			sc->ExpectFloat();
+			P->Velocity.y = sc->Float;
+			sc->ExpectFloat();
+			P->Velocity.z = sc->Float;
+		}
+		else if (sc->Check("velocityrandom"))
+		{
+			sc->ExpectFloat();
+			P->VelRnd = sc->Float;
+		}
+		else if (sc->Check("acceleration"))
+		{
+			sc->ExpectFloat();
+			P->Accel = sc->Float;
+		}
+		else if (sc->Check("gravity"))
+		{
+			sc->ExpectFloat();
+			P->Grav = sc->Float;
+		}
+		else if (sc->Check("duration"))
+		{
+			sc->ExpectFloat();
+			P->Duration = sc->Float;
+		}
+		else if (sc->Check("ramp"))
+		{
+			sc->ExpectFloat();
+			P->Ramp = sc->Float;
+		}
+		else
+		{
+			sc->Error("Bad point light parameter");
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseClassEffects
 //
 //==========================================================================
@@ -802,6 +971,11 @@ static void ParseClassEffects(VScriptParser* sc,
 				{
 					sc->ExpectString();
 					S.Light = sc->String.ToLower();
+				}
+				else if (sc->Check("particles"))
+				{
+					sc->ExpectString();
+					S.Part = sc->String.ToLower();
 				}
 				else
 				{
@@ -856,6 +1030,10 @@ static void ParseEffectDefs(VScriptParser* sc,
 		else if (sc->Check("pointlight"))
 		{
 			ParsePointLight(sc);
+		}
+		else if (sc->Check("particleeffect"))
+		{
+			ParseParticleEffect(sc);
 		}
 		else if (sc->Check("class"))
 		{
@@ -1018,10 +1196,23 @@ void R_ParseEffectDefs()
 			SprFx.SpriteIndex = SprIdx;
 			SprFx.Frame = SprDef.Sprite.Length() == 4 ? -1 :
 				(VStr::ToUpper(SprDef.Sprite[4]) - 'A');
-			SprFx.LightDef = FindLightEffect(SprDef.Light);
-			if (!SprFx.LightDef)
+			SprFx.LightDef = NULL;
+			if (SprDef.Light)
 			{
-				GCon->Logf("Light \"%s\" not found", *SprDef.Light);
+				SprFx.LightDef = FindLightEffect(SprDef.Light);
+				if (!SprFx.LightDef)
+				{
+					GCon->Logf("Light \"%s\" not found", *SprDef.Light);
+				}
+			}
+			SprFx.PartDef = NULL;
+			if (SprDef.Part)
+			{
+				SprFx.PartDef = FindParticleEffect(SprDef.Part);
+				if (!SprFx.PartDef)
+				{
+					GCon->Logf("Particle effect \"%s\" not found", *SprDef.Part);
+				}
 			}
 		}
 	}

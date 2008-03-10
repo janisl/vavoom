@@ -69,35 +69,13 @@ final void A_BFGSpray()
 	}
 }
 
-//===========================================================================
-//
-//  A_Particles
-//
-//===========================================================================
-
-final void A_Particles()
-{
-	int i;
-	
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Level.Game.Players[i])
-			continue;
-		if (!Level.Game.Players[i].bSpawned)
-			continue;
-		PlayerEx(Level.Game.Players[i]).ParticleEffect(256, LineSpecialLevelInfo::pt_static, 0, Origin, 10.0,
-				vector(384.0, 384.0, 256.0), 0.3, 14.0, 80.0, RGB(95, 207, 87), 1.5, 2.0);
-	}
-}
-
 states
 {
 Spawn:
 	BFS1 AB 4 Bright
 	Loop
 Death:
-	BFE1 A 8 Bright A_Particles
-	BFE1 B 8 Bright
+	BFE1 AB 8 Bright
 	BFE1 C 8 Bright A_BFGSpray
 	BFE1 DEF 8 Bright
 	Stop

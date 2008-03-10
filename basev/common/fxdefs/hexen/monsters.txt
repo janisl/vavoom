@@ -283,10 +283,21 @@ pointlight SerpentFX_X6
 	radius 50
 }
 
+particleeffect SerpentFX
+{
+	type static
+	colour 0.15 1 0.15
+	count 5
+	velocity 16 16 64
+	velocityrandom 0.5
+	acceleration 2.5
+	duration 0.5
+}
+
 class SerpentFX
 {
-	frame SSFXA { light SerpentFX }
-	frame SSFXB { light SerpentFX }
+	frame SSFXA { light SerpentFX particles SerpentFX }
+	frame SSFXB { light SerpentFX particles SerpentFX }
 	frame SSFXC { light SerpentFX_X1 }
 	frame SSFXD { light SerpentFX_X2 }
 	frame SSFXE { light SerpentFX_X3 }

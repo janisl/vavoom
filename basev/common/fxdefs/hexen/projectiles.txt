@@ -41,10 +41,25 @@ pointlight FireBall_X6
 	radius 50
 }
 
+particleeffect FireBall
+{
+	type static
+	type2 explode2
+	colour 1 0.5 0
+	count 10
+	originrandom 10
+	velocity 256 256 256
+	velocityrandom 0.3
+	acceleration 20
+	gravity 85
+	duration 1
+	ramp 2
+}
+
 class FireBall
 {
 	frame FBL1 { light FireBall }
-	frame XPL1A { light FireBall_X1 }
+	frame XPL1A { light FireBall_X1 particles FireBall }
 	frame XPL1B { light FireBall_X2 }
 	frame XPL1C { light FireBall_X3 }
 	frame XPL1D { light FireBall_X4 }

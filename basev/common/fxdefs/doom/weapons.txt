@@ -47,11 +47,25 @@ pointlight PlasmaBall_X5
 	radius 32
 }
 
+particleeffect PlasmaBall
+{
+	type static
+	colour 0.5 0.5 1
+	count 10
+	originrandom 10
+	velocity 256 256 256
+	velocityrandom 0.3
+	acceleration 20
+	gravity 85
+	duration 1
+	ramp 2
+}
+
 class PlasmaBall
 {
 	frame PLSSA { light PlasmaBall }
 	frame PLSSB { light PlasmaBall }
-	frame PLSEA { light PlasmaBall_X1 }
+	frame PLSEA { light PlasmaBall_X1 particles PlasmaBall }
 	frame PLSEB { light PlasmaBall_X2 }
 	frame PLSEC { light PlasmaBall_X3 }
 	frame PLSED { light PlasmaBall_X4 }
@@ -101,11 +115,25 @@ pointlight BFGBall_X6
 	radius 50
 }
 
+particleeffect BFGBall
+{
+	type static
+	colour 0.4 1 0.4
+	count 256
+	originrandom 10
+	velocity 384 384 256
+	velocityrandom 0.3
+	acceleration 14
+	gravity 80
+	duration 1.5
+	ramp 2
+}
+
 class BFGBall
 {
 	frame BFS1A { light BFGBall }
 	frame BFS1B { light BFGBall }
-	frame BFE1A { light BFGBall_X1 }
+	frame BFE1A { light BFGBall_X1 particles BFGBall }
 	frame BFE1B { light BFGBall_X2 }
 	frame BFE1C { light BFGBall_X3 }
 	frame BFE1D { light BFGBall_X4 }

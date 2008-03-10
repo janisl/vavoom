@@ -39,6 +39,27 @@ class EggFX
 }
 
 //------------------------------------------------------------------------------
+particleeffect Volcano
+{
+	type static
+	type2 explode2
+	colour 1 0.5 0
+	count 10
+	offset 0 0 20
+	velocity 256 256 256
+	velocityrandom 0.3
+	acceleration 20
+	gravity 85
+	duration 1
+	ramp 2
+}
+
+class Volcano
+{
+	frame VLCOE { particles Volcano }
+}
+
+//------------------------------------------------------------------------------
 pointlight VolcanoBlast
 {
 	colour 1 0.5 0
@@ -81,10 +102,24 @@ pointlight VolcanoBlast_X6
 	radius 50
 }
 
+particleeffect VolcanoBlast
+{
+	type static
+	colour 1 0.5 0
+	count 10
+	originrandom 10
+	velocity 256 256 256
+	velocityrandom 0.3
+	acceleration 20
+	gravity 85
+	duration 1
+	ramp 2
+}
+
 class VolcanoBlast
 {
 	frame VFBL { light VolcanoBlast }
-	frame XPL1A { light VolcanoBlast_X1 }
+	frame XPL1A { light VolcanoBlast_X1 particles VolcanoBlast }
 	frame XPL1B { light VolcanoBlast_X2 }
 	frame XPL1C { light VolcanoBlast_X3 }
 	frame XPL1D { light VolcanoBlast_X4 }

@@ -436,7 +436,8 @@ class VEntity : public VThinker
 	VState* FindState(VName, VName = NAME_None, bool = false);
 	VState* FindStateEx(const VStr&, bool);
 	bool HasSpecialStates(VName);
-	void GetStateEffects(TArray<VLightEffectDef*>&) const;
+	void GetStateEffects(TArray<VLightEffectDef*>&,
+		TArray<VParticleEffectDef*>&) const;
 	bool CallStateChain(VEntity*, VState*);
 
 	bool CheckWater();

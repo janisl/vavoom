@@ -365,13 +365,27 @@ pointlight SnakeProjA_X5
 	radius 50
 }
 
+particleeffect SnakeProjA
+{
+	type static
+	colour 0.6 0.6 0.9
+	count 5
+	originrandom 10
+	velocity 128 128 128
+	velocityrandom 0.3
+	acceleration 25
+	gravity 40
+	duration 1
+	ramp 2
+}
+
 class SnakeProjA
 {
 	frame SNFXA { light SnakeProjA }
 	frame SNFXB { light SnakeProjA }
 	frame SNFXC { light SnakeProjA }
 	frame SNFXD { light SnakeProjA }
-	frame SNFXE { light SnakeProjA_X1 }
+	frame SNFXE { light SnakeProjA_X1 particles SnakeProjA }
 	frame SNFXF { light SnakeProjA_X2 }
 	frame SNFXG { light SnakeProjA_X3 }
 	frame SNFXH { light SnakeProjA_X4 }
