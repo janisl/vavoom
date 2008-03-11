@@ -26,8 +26,6 @@
 class HereticWeapon : Weapon
 	abstract;
 
-bool bInShareware;
-
 //==========================================================================
 //
 //	AttachToOwner
@@ -60,6 +58,5 @@ final int HITDICE(int a)
 
 defaultproperties
 {
-	bInShareware = true;
 	Kickback = 150.0;
 }

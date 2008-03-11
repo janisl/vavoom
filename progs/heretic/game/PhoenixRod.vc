@@ -84,7 +84,6 @@ defaultproperties
 	PickupMessage = "$txt_wpnphoenixrod";
 	SisterWeaponType = PhoenixRodPowered;
 	BotCombatDist = 256.0;
-	bInShareware = false;
 	bNoAutoFire = true;
 	bBotProjectile = true;
 }

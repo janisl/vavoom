@@ -1704,6 +1704,11 @@ void Cheat_Gimme()
 				//	Abstract class.
 				continue;
 			}
+			if (!AreStateSpritesPresent(FindClassState(WpnCls, 'Ready')))
+			{
+				//	Weapon has no sprites, must be from different game.
+				continue;
+			}
 			Weapon Wpn = Level.Spawn(WpnCls,,,, false);
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;

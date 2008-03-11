@@ -127,7 +127,6 @@ defaultproperties
 	AmmoUse1 = 1;
 	AmmoGive1 = 50;
 	PSpriteSY = 15.0;
-	bInShareware = false;
 	PickupMessage = "$txt_wpnskullrod";
 	SisterWeaponType = SkullRodPowered;
 	BotCombatDist = 384.0;

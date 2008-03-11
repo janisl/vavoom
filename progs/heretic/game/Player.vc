@@ -1465,14 +1465,14 @@ void Cheat_Gimme()
 			{
 				//	Abstract base class.
 			}
+			if (!AreStateSpritesPresent(FindClassState(WpnCls, 'Ready')))
+			{
+				//	Weapon has no sprites, must be from different game.
+				continue;
+			}
 			if (!FindClassState(WpnCls, 'Spawn'))
 			{
 				//	Can't be picked up
-				continue;
-			}
-			if (MainGameInfo(Level.Game).shareware &&
-				!class<HereticWeapon>(WpnCls).default.bInShareware)
-			{
 				continue;
 			}
 			Weapon Wpn = Level.Spawn(WpnCls,,,, false);

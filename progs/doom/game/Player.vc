@@ -1318,12 +1318,11 @@ void Cheat_Gimme()
 				//	An abstract base class.
 				continue;
 			}
-#ifndef DOOM2
-			if (Cls == SuperShotgun)
+			if (!AreStateSpritesPresent(FindClassState(Cls, 'Ready')))
 			{
+				//	Weapon has no sprites, must be from different game.
 				continue;
 			}
-#endif
 			Weapon Wpn = Weapon(Level.Spawn(Cls,,,, false));
 			Wpn.AmmoGive1 = 0;
 			Wpn.AmmoGive2 = 0;

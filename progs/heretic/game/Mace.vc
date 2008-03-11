@@ -193,6 +193,5 @@ defaultproperties
 	PickupMessage = "$txt_wpnmace";
 	SisterWeaponType = MacePowered;
 	BotCombatDist = 384.0;
-	bInShareware = false;
 	bBotProjectile = true;
 }
