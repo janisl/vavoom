@@ -47,16 +47,6 @@
 #include "Cyberdemon.vc"
 #include "SpiderMastermind.vc"
 
-#include "DeadCacodemon.vc"
-#include "DeadMarine.vc"
-#include "DeadZombieMan.vc"
-#include "DeadDemon.vc"
-#include "DeadLostSoul.vc"
-#include "DeadDoomImp.vc"
-#include "DeadShotgunGuy.vc"
-#include "GibbedMarine.vc"
-#include "GibbedMarineExtra.vc"
-
 #include "StealthBaron.vc"
 #include "StealthCacodemon.vc"
 #include "StealthDemon.vc"

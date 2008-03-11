@@ -44,6 +44,7 @@ line_specials.txt		@CMAKE_CURRENT_SOURCE_DIR@/line_specials.txt
 decorate.txt							@CMAKE_CURRENT_SOURCE_DIR@/decorate.txt
 actors/constants.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/constants.txt
 actors/nativeclasses.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/nativeclasses.txt
+actors/doom/deadthings.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/deadthings.txt
 actors/doom/doomammo.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomammo.txt
 actors/doom/doomarmor.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomarmor.txt
 actors/doom/doomartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomartifacts.txt

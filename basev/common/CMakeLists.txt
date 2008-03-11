@@ -16,6 +16,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		x11r6rgb.txt
 		actors/constants.txt
 		actors/nativeclasses.txt
+		actors/doom/deadthings.txt
 		actors/doom/doomammo.txt	
 		actors/doom/doomarmor.txt
 		actors/doom/doomartifacts.txt

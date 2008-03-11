@@ -1,0 +1,102 @@
+//------------------------------------------------------------------------------
+actor DeadMarine 15
+{
+	game Doom
+	states
+	{
+	Spawn:
+		PLAY N -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GibbedMarine 10
+{
+	game Doom
+	SpawnID 145
+	states
+	{
+	Spawn:
+		PLAY W -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GibbedMarineExtra : GibbedMarine 12
+{
+	game Doom
+}
+
+//------------------------------------------------------------------------------
+actor DeadZombieMan : ZombieMan 18
+{
+	game Doom
+	skip_super
+	states
+	{
+	Spawn:
+		Goto Super::Death+4
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadShotgunGuy : ShotgunGuy 19
+{
+	game Doom
+	skip_super
+	states
+	{
+	Spawn:
+		Goto Super::Death+4
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadDoomImp : DoomImp 20
+{
+	game Doom
+	skip_super
+	states
+	{
+	Spawn:
+		Goto Super::Death+4
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadDemon : Demon 21
+{
+	game Doom
+	skip_super
+	states
+	{
+	Spawn:
+		Goto Super::Death+5
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadCacodemon : Cacodemon 22
+{
+	game Doom
+	skip_super
+	states
+	{
+	Spawn:
+		Goto Super::Death+5
+	}
+}
+
+//------------------------------------------------------------------------------
+actor DeadLostSoul : LostSoul 23
+{
+	game Doom
+	skip_super
+	states
+	{
+	Spawn:
+		Goto Super::Death+5
+	}
+}
