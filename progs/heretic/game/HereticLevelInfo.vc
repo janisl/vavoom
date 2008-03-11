@@ -114,37 +114,6 @@ bool CheckActivation(int activationType, line_t * line, EntityEx A)
 
 //==========================================================================
 //
-//  CheckShareware
-//
-//==========================================================================
-
-bool CheckShareware(class<EntityEx> moClass)
-{
-	if (MainGameInfo(Game).shareware)
-	{
-		// Special stuff
-		if (moClass == SkullRod ||
-			moClass == PhoenixRod ||
-			moClass == SkullRodAmmo ||
-			moClass == SkullRodHefty ||
-			moClass == PhoenixRodAmmo ||
-			moClass == PhoenixRodHefty ||
-			moClass == MaceAmmo ||
-			moClass == MaceHefty ||
-			moClass == ArtiSuperHealth ||
-			moClass == ArtiTeleport ||
-			moClass == EnchantedShield ||
-			moClass == Mace)
-		{
-			// Don't place on map in shareware version
-			return false;
-		}
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //  P_Massacre
 //
 //  Kills all monsters.

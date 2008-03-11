@@ -6009,13 +6009,17 @@ final void SpawnMapThing(mthing_t* mthing)
 	else
 	{
 		moClass = class<EntityEx>(GetClassReplacement(moClass));
+
+		//	If actor has no sprites, also map it to the unknown thing
+		if (FindClassState(moClass, 'Spawn') &&
+			!AreStateSpritesPresent(FindClassState(moClass, 'Spawn')))
+		{
+			print("%n at (%f, %f), has no frames", GetClassName(moClass),
+				mthing->x, mthing->y);
+			moClass = Unknown;
+		}
 	}
 
-	if (!CheckShareware(moClass))
-	{
-		// Don't place on map in shareware version
-		return;
-	}
 	if (Level.Game.nomonsters && moClass.default.bMonster)
 	{
 		return;
@@ -6422,17 +6426,6 @@ name GetDefaultDoorSound(sector_t* Sector)
 int GetPClassSpawnFlags()
 {
 	return 0;
-}
-
-//==========================================================================
-//
-//  CheckShareware
-//
-//==========================================================================
-
-bool CheckShareware(class<EntityEx> moClass)
-{
-	return true;
 }
 
 //==========================================================================
