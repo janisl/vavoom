@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class ScriptedMarine : Actor
+class ScriptedMarine : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(9100)
 	__scriptid__(151);
 
@@ -437,7 +438,7 @@ final void A_M_Refire()
 //
 //===========================================================================
 
-final void GunShot(Actor A, int accurate, TVec dir)
+final void GunShot(EntityEx A, int accurate, TVec dir)
 {
 	int damage;
 

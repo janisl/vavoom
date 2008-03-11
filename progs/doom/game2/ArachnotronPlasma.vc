@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class ArachnotronPlasma : Actor
+class ArachnotronPlasma : ScriptedEntity
+	game(GAME_Doom)
 	__scriptid__(129);
 
 states

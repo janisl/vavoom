@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class PainElemental : Actor
+class PainElemental : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(71)
 	__scriptid__(115);
 

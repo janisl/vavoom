@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Demon : Actor
+class Demon : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(3002)
 	__scriptid__(8);
 

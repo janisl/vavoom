@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class MarinePlasma : ScriptedMarine
+	game(GAME_Doom)
 	__mobjinfo__(9109);
 
 states

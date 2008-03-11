@@ -35,10 +35,10 @@ class SpawnShot : Actor;
 
 final void A_SpawnFly()
 {
-	Actor newmobj;
-	Actor fog;
+	EntityEx newmobj;
+	EntityEx fog;
 	int r;
-	class<Actor> type;
+	class<EntityEx> type;
 
 	if (--ReactionCount)
 		return;	// still flying

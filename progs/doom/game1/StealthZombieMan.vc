@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthZombieMan : ZombieMan
+	game(GAME_Doom)
 	__mobjinfo__(9061)
 	__scriptid__(102);
 

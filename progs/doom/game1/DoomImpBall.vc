@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class DoomImpBall : Actor
+class DoomImpBall : ScriptedEntity
+	game(GAME_Doom)
 	__scriptid__(10);
 
 void OnMapSpawn(mthing_t* mthing)

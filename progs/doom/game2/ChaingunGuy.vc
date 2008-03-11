@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class ChaingunGuy : Actor
+class ChaingunGuy : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(65)
 	__scriptid__(2);
 

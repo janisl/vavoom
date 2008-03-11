@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class HellKnight : BaronOfHell
+	game(GAME_Doom)
 	__mobjinfo__(69)
 	__scriptid__(113);
 

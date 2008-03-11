@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class DeadCacodemon : Cacodemon
+	game(GAME_Doom)
 	__mobjinfo__(22);
 
 states

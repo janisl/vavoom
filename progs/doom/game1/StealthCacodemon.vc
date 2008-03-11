@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthCacodemon : Cacodemon
+	game(GAME_Doom)
 	__mobjinfo__(9053)
 	__scriptid__(119);
 

@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class WolfensteinSS : ChaingunGuy
+	game(GAME_Doom)
 	__mobjinfo__(84)
 	__scriptid__(116);
 

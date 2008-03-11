@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthHellKnight : HellKnight
+	game(GAME_Doom)
 	__mobjinfo__(9056)
 	__scriptid__(101);
 

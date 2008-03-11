@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class PlasmaRifle : DoomWeapon
+	game(GAME_Doom)
 	__mobjinfo__(2004)
 	__scriptid__(30);
 

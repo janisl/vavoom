@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class DeadMarine : DoomPlayer
+	game(GAME_Doom)
 	__mobjinfo__(15);
 
 states

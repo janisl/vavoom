@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class FatShot : Actor
+class FatShot : ScriptedEntity
+	game(GAME_Doom)
 	__scriptid__(153);
 
 states

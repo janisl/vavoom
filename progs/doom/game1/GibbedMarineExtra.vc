@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class GibbedMarineExtra : GibbedMarine
+	game(GAME_Doom)
 	__mobjinfo__(12);
 
 defaultproperties

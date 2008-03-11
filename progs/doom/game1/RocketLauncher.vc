@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class RocketLauncher : DoomWeapon
+	game(GAME_Doom)
 	__mobjinfo__(2003)
 	__scriptid__(29);
 

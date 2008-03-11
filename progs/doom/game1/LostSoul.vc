@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class LostSoul : Actor
+class LostSoul : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(3006)
 	__scriptid__(110);
 

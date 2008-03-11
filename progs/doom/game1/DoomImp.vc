@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class DoomImp : Actor
+class DoomImp : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(3001)
 	__scriptid__(5);
 

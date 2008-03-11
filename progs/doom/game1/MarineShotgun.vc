@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class MarineShotgun : ScriptedMarine
+	game(GAME_Doom)
 	__mobjinfo__(9105);
 
 states

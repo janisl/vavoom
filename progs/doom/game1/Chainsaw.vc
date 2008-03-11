@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class Chainsaw : DoomWeapon
+	game(GAME_Doom)
 	__mobjinfo__(2005)
 	__scriptid__(32);
 

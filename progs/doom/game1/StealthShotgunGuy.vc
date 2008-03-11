@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthShotgunGuy : ShotgunGuy
+	game(GAME_Doom)
 	__mobjinfo__(9060)
 	__scriptid__(103);
 

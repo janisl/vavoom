@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class Shotgun : DoomWeapon
+	game(GAME_Doom)
 	__mobjinfo__(2001)
 	__scriptid__(27);
 

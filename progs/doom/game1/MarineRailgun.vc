@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class MarineRailgun : ScriptedMarine
+	game(GAME_Doom)
 	__mobjinfo__(9110);
 
 states

@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class BaronOfHell : Actor
+class BaronOfHell : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(3003)
 	__scriptid__(3);
 

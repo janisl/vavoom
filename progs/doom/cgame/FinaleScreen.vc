@@ -48,7 +48,7 @@ bool		castdeath;
 const int CastCount = 17;
 
 // Casting by id Software. in order of appearance
-class<Actor> castorder[CastCount];
+class<EntityEx> castorder[CastCount];
 //
 // Character cast strings
 //

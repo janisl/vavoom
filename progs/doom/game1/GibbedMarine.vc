@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class GibbedMarine : DoomPlayer
+	game(GAME_Doom)
 	__mobjinfo__(10)
 	__scriptid__(145);
 

@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Cacodemon : Actor
+class Cacodemon : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(3005)
 	__scriptid__(19);
 

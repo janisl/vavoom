@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Revenant : Actor
+class Revenant : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(66)
 	__scriptid__(20);
 

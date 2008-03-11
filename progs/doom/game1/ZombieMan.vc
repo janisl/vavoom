@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class ZombieMan : Actor
+class ZombieMan : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(3004)
 	__scriptid__(4);
 

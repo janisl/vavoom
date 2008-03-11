@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class BaronBall : Actor
+class BaronBall : ScriptedEntity
+	game(GAME_Doom)
 	__scriptid__(154);
 
 void OnMapSpawn(mthing_t* mthing)

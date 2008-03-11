@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class CacodemonBall : Actor
+class CacodemonBall : ScriptedEntity
+	game(GAME_Doom)
 	__scriptid__(126);
 
 void OnMapSpawn(mthing_t* mthing)

@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthFatso : Fatso
+	game(GAME_Doom)
 	__mobjinfo__(9058)
 	__scriptid__(123);
 

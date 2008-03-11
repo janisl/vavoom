@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Cyberdemon : Actor
+class Cyberdemon : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(16)
 	__scriptid__(114);
 

@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthDoomImp : DoomImp
+	game(GAME_Doom)
 	__mobjinfo__(9057)
 	__scriptid__(122);
 

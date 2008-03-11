@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class DeadLostSoul : LostSoul
+	game(GAME_Doom)
 	__mobjinfo__(23);
 
 states

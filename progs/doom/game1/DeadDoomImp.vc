@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class DeadDoomImp : DoomImp
+	game(GAME_Doom)
 	__mobjinfo__(20);
 
 states

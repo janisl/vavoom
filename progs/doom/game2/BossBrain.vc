@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class BossBrain : Actor
+class BossBrain : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(88);
 
 //==========================================================================
@@ -50,7 +51,7 @@ final void A_BrainPain()
 final void A_BrainScream()
 {
 	TVec org;
-	Actor A;
+	EntityEx A;
 
 	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
 	{
@@ -93,7 +94,7 @@ final void A_BrainDie()
 final void A_BrainExplode()
 {
 	TVec org;
-	Actor A;
+	EntityEx A;
 
 	org.x = Origin.x + (Random() - Random()) * 8.0;
 	org.y = Origin.y;

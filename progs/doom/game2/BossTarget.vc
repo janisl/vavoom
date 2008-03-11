@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class BossTarget : Actor
+class BossTarget : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(87);
 
 defaultproperties

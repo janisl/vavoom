@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthChaingunGuy : ChaingunGuy
+	game(GAME_Doom)
 	__mobjinfo__(9054)
 	__scriptid__(120);
 

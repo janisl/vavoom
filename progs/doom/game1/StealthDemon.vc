@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class StealthDemon : Demon
+	game(GAME_Doom)
 	__mobjinfo__(9055)
 	__scriptid__(121);
 

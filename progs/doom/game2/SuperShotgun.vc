@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class SuperShotgun : DoomWeapon
+	game(GAME_Doom)
 	__mobjinfo__(82)
 	__scriptid__(33);
 

@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Archvile : Actor
+class Archvile : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(64)
 	__scriptid__(111);
 
@@ -141,7 +142,7 @@ final void A_VileStart()
 
 final void A_VileTarget()
 {
-	Actor fog;
+	EntityEx fog;
 
 	if (!Target)
 		return;

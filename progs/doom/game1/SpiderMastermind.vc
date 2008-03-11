@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class SpiderMastermind : Actor
+class SpiderMastermind : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(7)
 	__scriptid__(7);
 

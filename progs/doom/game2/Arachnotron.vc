@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Arachnotron : Actor
+class Arachnotron : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(68)
 	__scriptid__(6);
 

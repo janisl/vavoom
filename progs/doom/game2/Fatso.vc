@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Fatso : Actor
+class Fatso : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(67)
 	__scriptid__(112);
 

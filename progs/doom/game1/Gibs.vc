@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Gibs : Actor
+class Gibs : ScriptedEntity
+	game(GAME_Doom)
 	__mobjinfo__(24)
 	__scriptid__(146);
 
