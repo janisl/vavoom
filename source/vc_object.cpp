@@ -1111,7 +1111,8 @@ IMPLEMENT_FUNCTION(VObject, FindClassState)
 {
 	P_GET_NAME(StateName);
 	P_GET_PTR(VClass, Cls);
-	RET_PTR(Cls->FindStateLabel(StateName));
+	VStateLabel* Lbl = Cls->FindStateLabel(StateName);
+	RET_PTR(Lbl ? Lbl->State : NULL);
 }
 
 IMPLEMENT_FUNCTION(VObject, ParseColour)
