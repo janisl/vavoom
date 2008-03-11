@@ -45,8 +45,8 @@ final void A_VileChase()
 	if (MoveDir != DI_NODIR)
 	{
 		// check for corpses to raise
-		viletryx = Origin.x + Speed / 35.0 * MainGameInfo(Level.Game).xspeed[MoveDir];
-		viletryy = Origin.y + Speed / 35.0 * MainGameInfo(Level.Game).yspeed[MoveDir];
+		viletryx = Origin.x + Speed / 35.0 * LineSpecialGameInfo(Level.Game).xspeed[MoveDir];
+		viletryy = Origin.y + Speed / 35.0 * LineSpecialGameInfo(Level.Game).yspeed[MoveDir];
 
 		//	For all things in radius check whether object is a corpse
 		// that can be raised.
@@ -189,7 +189,7 @@ final void A_VileAttack()
 	// move the fire between the vile and the player
 	fire.Origin.x = Target.Origin.x - 24.0 * cos(Angles.yaw);
 	fire.Origin.y = Target.Origin.y - 24.0 * sin(Angles.yaw);
-	Actor(fire).RadiusAttack(self, 70, 70.0, true);
+	fire.RadiusAttack(self, 70, 70.0, true);
 }
 
 states

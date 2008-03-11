@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RevenantTracerSmoke : Actor;
+class RevenantTracerSmoke : ScriptedEntity;
 
 states
 {

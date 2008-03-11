@@ -173,7 +173,31 @@ enum
 //	We need Doom fist because of the DECORATE.
 #include "DoomWeapon.vc"
 #include "Fist.vc"
+
 #include "../../doom/game1/Shotgun.vc"
+#include "../../doom/game1/Chaingun.vc"
+#include "../../doom/game1/ZombieMan.vc"
+#include "../../doom/game1/ShotgunGuy.vc"
+#include "../../doom/game1/DoomImpBall.vc"
+#include "../../doom/game1/DoomImp.vc"
+#include "../../doom/game1/Demon.vc"
+#include "../../doom/game1/Spectre.vc"
+#include "../../doom/game1/CacodemonBall.vc"
+#include "../../doom/game1/Cacodemon.vc"
+#include "../../doom/game1/BaronBall.vc"
+#include "../../doom/game1/BaronOfHell.vc"
+
+#include "../../doom/game2/ChaingunGuy.vc"
+#include "../../doom/game2/HellKnight.vc"
+#include "../../doom/game2/ArachnotronPlasma.vc"
+#include "../../doom/game2/Arachnotron.vc"
+#include "../../doom/game2/RevenantTracerSmoke.vc"
+#include "../../doom/game2/RevenantTracer.vc"
+#include "../../doom/game2/Revenant.vc"
+#include "../../doom/game2/FatShot.vc"
+#include "../../doom/game2/Fatso.vc"
+#include "../../doom/game2/ArchvileFire.vc"
+#include "../../doom/game2/Archvile.vc"
 
 #include "Coin.vc"
 #include "Gold10.vc"
@@ -186,6 +210,7 @@ class AxeBlood : ScriptedEntity decorate;
 class GlassJunk : ScriptedEntity decorate;
 
 class BulletPuff : ScriptedEntity decorate;
+class Clip : Ammo decorate;
 class Shell : Ammo decorate;
 
 class QuestItem29 : Inventory decorate;

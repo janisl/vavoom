@@ -39,7 +39,7 @@ const float TRACEADJUST = 0.2865921825;
 
 final void A_Tracer()
 {
-	Actor A;
+	EntityEx A;
 	TVec wishdir;
 	TVec currdir;
 	TVec delta;

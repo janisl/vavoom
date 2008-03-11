@@ -26,11 +26,9 @@
 #include "TeleportFog.vc"
 
 #include "BFG9000.vc"
-#include "Chaingun.vc"
 #include "Chainsaw.vc"
 #include "RocketLauncher.vc"
 #include "PlasmaRifle.vc"
-//#include "Shotgun.vc"
 
 #include "Gibs.vc"
 
@@ -45,16 +43,6 @@
 #endif
 
 #include "DoomPlayer.vc"
-#include "ZombieMan.vc"
-#include "ShotgunGuy.vc"
-#include "DoomImpBall.vc"
-#include "DoomImp.vc"
-#include "Demon.vc"
-#include "Spectre.vc"
-#include "CacodemonBall.vc"
-#include "Cacodemon.vc"
-#include "BaronBall.vc"
-#include "BaronOfHell.vc"
 #include "LostSoul.vc"
 #include "Cyberdemon.vc"
 #include "SpiderMastermind.vc"

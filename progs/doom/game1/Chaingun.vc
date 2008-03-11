@@ -66,7 +66,7 @@ final void A_FireCGun()
 	SetState(MeleeState);
 
 	Aim(dir, 16.0 * 64.0);
-	GunShot(self, !Player(Player).Refire, dir);
+	GunShot(self, !PlayerEx(Player).Refire, dir);
 }
 
 states
