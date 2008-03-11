@@ -194,7 +194,8 @@ class Actor extends Thinker
 	//	Original Doom/Strife monster attacks
 	//
 	//A_PosAttack
-	//A_SPosAttack
+	action native A_SPosAttack();
+	action native A_SPosAttackUseAtkSound();
 	//A_CPosAttack
 	//A_CPosRefire
 	action native A_SpidRefire();

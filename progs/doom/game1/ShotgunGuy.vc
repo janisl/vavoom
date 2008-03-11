@@ -48,7 +48,7 @@ See:
 	Loop
 Missile:
 	SPOS E 10 A_FaceTarget
-	SPOS F 10 Bright A_SPosAttack
+	SPOS F 10 Bright A_SPosAttackUseAtkSound
 	SPOS E 10
 	Goto See
 Pain:
@@ -95,6 +95,7 @@ defaultproperties
 	DLightRadius = 118.0;
 	SightSound = 'shotguy/sight';
 	ActiveSound = 'shotguy/active';
+	AttackSound = 'shotguy/attack';
 	PainSound = 'shotguy/pain';
 	DeathSound = 'shotguy/death';
 	Obituary = "$ob_shotguy";
