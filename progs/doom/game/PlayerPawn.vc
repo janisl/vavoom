@@ -35,6 +35,17 @@ array<InitInvInfo>		InitialInventory;
 
 //==========================================================================
 //
+//	GetBaseViewHeight
+//
+//==========================================================================
+
+float GetBaseViewHeight()
+{
+	return Player::VIEWHEIGHT;
+}
+
+//==========================================================================
+//
 //  A_PlayerScream
 //
 //  Player death sound

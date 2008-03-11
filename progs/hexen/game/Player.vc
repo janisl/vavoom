@@ -2015,6 +2015,39 @@ name GetInvulnerabilityMode()
 	return '';
 }
 
+//==========================================================================
+//
+//	KilledByPlayer
+//
+//==========================================================================
+
+void KilledByPlayer(EntityEx Victim)
+{
+	// Check for frag changes
+	if (Victim.bIsPlayer)
+	{
+		if (bIsBot)
+		{
+			Bot.Killed(Victim);
+		}
+
+		if (Victim.Player.bIsBot)
+		{
+			Player(Victim.Player).Bot.Died(EntityEx(MO));
+		}
+
+		if (Victim == MO)
+		{
+			// Self-frag
+			Frags--;
+		}
+		else
+		{
+			Frags++;
+		}
+	}
+}
+
 defaultproperties
 {
 }

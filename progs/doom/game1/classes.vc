@@ -30,7 +30,7 @@
 #include "Chainsaw.vc"
 #include "RocketLauncher.vc"
 #include "PlasmaRifle.vc"
-#include "Shotgun.vc"
+//#include "Shotgun.vc"
 
 #include "Gibs.vc"
 

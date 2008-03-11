@@ -63,39 +63,6 @@ void Destroyed()
 
 //==========================================================================
 //
-//	KilledByPlayer
-//
-//==========================================================================
-
-void KilledByPlayer(EntityEx source)
-{
-	// Check for frag changes
-	if (bIsPlayer)
-	{
-		if (source.Player.bIsBot)
-		{
-			Player(source.Player).Bot.Killed(self);
-		}
-
-		if (Player.bIsBot)
-		{
-			Player(Player).Bot.Died(Actor(source));
-		}
-
-		if (self == source)
-		{
-			// Self-frag
-			Player.Frags--;
-		}
-		else
-		{
-			source.Player.Frags++;
-		}
-	}
-}
-
-//==========================================================================
-//
 //  AutoUseHealth
 //
 //==========================================================================
@@ -244,17 +211,6 @@ final TVec ClipVelocity(TVec in, TVec normal, float overbounce)
 bool PlayerIsMorphed()
 {
 	return !!Player(Player).MorphTime;
-}
-
-//==========================================================================
-//
-//	GetBaseViewHeight
-//
-//==========================================================================
-
-float GetBaseViewHeight()
-{
-	return Player::VIEWHEIGHT;
 }
 
 //============================================================================

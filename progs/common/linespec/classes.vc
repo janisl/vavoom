@@ -173,6 +173,7 @@ enum
 //	We need Doom fist because of the DECORATE.
 #include "DoomWeapon.vc"
 #include "Fist.vc"
+#include "../../doom/game1/Shotgun.vc"
 
 #include "Coin.vc"
 #include "Gold10.vc"
@@ -185,5 +186,6 @@ class AxeBlood : ScriptedEntity decorate;
 class GlassJunk : ScriptedEntity decorate;
 
 class BulletPuff : ScriptedEntity decorate;
+class Shell : Ammo decorate;
 
 class QuestItem29 : Inventory decorate;

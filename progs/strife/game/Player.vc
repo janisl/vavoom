@@ -1344,6 +1344,28 @@ void StartDeathSlideShow()
 	Level.Completed(-1, -1, 0);
 }
 
+//==========================================================================
+//
+//	KilledByPlayer
+//
+//==========================================================================
+
+void KilledByPlayer(EntityEx Victim)
+{
+	// Check for frag changes
+	if (Victim.bIsPlayer)
+	{
+		if (MO == Victim)
+		{
+			Frags--;
+		}
+		else
+		{
+			Frags++;
+		}
+	}
+}
+
 defaultproperties
 {
 	NoRunHealth = 25;

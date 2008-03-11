@@ -4549,7 +4549,7 @@ void Died(EntityEx source, EntityEx inflictor)
 			// count for intermission
 			source.Player.KillCount++;
 		}
-		KilledByPlayer(source);
+		PlayerEx(source.Player).KilledByPlayer(self);
 	}
 	else if (!Level.Game.netgame && bCountKill)
 	{
@@ -4571,7 +4571,7 @@ void Died(EntityEx source, EntityEx inflictor)
 			Player.Frags--;
 		}
 
-		PlayerKilled(source, inflictor);
+		PlayerEx(Player).PlayerKilled(source, inflictor);
 
 		bSolid = false;
 		bFly = false;
@@ -7076,14 +7076,6 @@ bool IsMaster(EntityEx Other)
 bool IsServant()
 {
 	return false;
-}
-
-void KilledByPlayer(EntityEx source)
-{
-}
-
-void PlayerKilled(EntityEx source, EntityEx inflictor)
-{
 }
 
 void TouchSpecial(EntityEx Toucher)

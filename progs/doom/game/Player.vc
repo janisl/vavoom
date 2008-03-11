@@ -1437,6 +1437,38 @@ void Cheat_KillAll()
 	cprint("%d MONSTERS KILLED", DoomLevelInfo(Level).P_Massacre());
 }
 
+//==========================================================================
+//
+//	KilledByPlayer
+//
+//==========================================================================
+
+void KilledByPlayer(EntityEx Victim)
+{
+	// Check for frag changes
+	if (Victim.bIsPlayer)
+	{
+		if (bIsBot)
+		{
+			Bot.Killed(Victim);
+		}
+
+		if (Victim.Player.bIsBot)
+		{
+			Player(Victim.Player).Bot.Died(EntityEx(MO));
+		}
+
+		if (MO == Victim)
+		{
+			Frags--;
+		}
+		else
+		{
+			Frags++;
+		}
+	}
+}
+
 defaultproperties
 {
 }

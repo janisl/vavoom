@@ -43,46 +43,6 @@ final int HITDICE(int a)
 
 //==========================================================================
 //
-//	KilledByPlayer
-//
-//==========================================================================
-
-void KilledByPlayer(EntityEx source)
-{
-	// Check for frag changes
-	if (bIsPlayer)
-	{
-		if (source.Player.bIsBot)
-		{
-			Player(source.Player).Bot.Killed(self);
-		}
-
-		if (Player.bIsBot)
-		{
-			Player(Player).Bot.Died(Actor(source));
-		}
-
-		// Frag stuff
-		if (self == source)
-		{
-			// Self-frag
-			Player.Frags--;
-		}
-		else
-		{
-			source.Player.Frags++;
-			source.PlaySound('misc/frag', CHAN_ITEM);
-			if (Player(source.Player).ChickenTime)
-			{
-				// Make a super chicken
-				source.GiveInventoryType(PowerWeaponLevel2);
-			}
-		}
-	}
-}
-
-//==========================================================================
-//
 //  AutoUseChaosDevice
 //
 //==========================================================================
@@ -167,17 +127,6 @@ final void AutoUseHealth(int saveHealth)
 		}
 	}
 	Player.Health = Health;
-}
-
-//==========================================================================
-//
-//	GetBaseViewHeight
-//
-//==========================================================================
-
-float GetBaseViewHeight()
-{
-	return Player::VIEWHEIGHT;
 }
 
 //==========================================================================

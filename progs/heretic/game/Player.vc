@@ -1693,6 +1693,46 @@ int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
 	return damage;
 }
 
+//==========================================================================
+//
+//	KilledByPlayer
+//
+//==========================================================================
+
+void KilledByPlayer(EntityEx Victim)
+{
+	// Check for frag changes
+	if (Victim.bIsPlayer)
+	{
+		if (bIsBot)
+		{
+			Bot.Killed(Victim);
+		}
+
+		if (Victim.Player.bIsBot)
+		{
+			Player(Victim.Player).Bot.Died(EntityEx(MO));
+		}
+
+		// Frag stuff
+		if (Victim == MO)
+		{
+			// Self-frag
+			Frags--;
+		}
+		else
+		{
+			Frags++;
+			MO.PlaySound('misc/frag', CHAN_ITEM);
+			if (ChickenTime)
+			{
+				// Make a super chicken
+				EntityEx(MO).GiveInventoryType(PowerWeaponLevel2);
+			}
+		}
+	}
+}
+
 defaultproperties
 {
 }

@@ -1297,7 +1297,7 @@ void Pitch()
 //
 //==========================================================================
 
-void Killed(Actor victim)
+void Killed(EntityEx victim)
 {
 	// [BC] Let some anger out
 	angerlevel -= 5;
@@ -1313,7 +1313,7 @@ void Killed(Actor victim)
 //
 //==========================================================================
 
-void Died(Actor killer)
+void Died(EntityEx killer)
 {
 }
 

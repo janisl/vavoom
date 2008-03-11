@@ -2040,6 +2040,14 @@ void Damaged(EntityEx inflictor)
 {
 }
 
+void KilledByPlayer(EntityEx Victim)
+{
+}
+
+void PlayerKilled(EntityEx source, EntityEx inflictor)
+{
+}
+
 defaultproperties
 {
 }
