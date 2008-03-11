@@ -26,13 +26,6 @@
 class Actor : ScriptedEntity
 	abstract;
 
-states
-{
-Crunch:
-	POL5 A -1
-	Stop
-}
-
 defaultproperties
 {
 }

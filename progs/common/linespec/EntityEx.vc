@@ -5552,9 +5552,10 @@ final bool SectorChanged(int CrushChange)
 		}
 		else
 		{
-			if (FindState('Crunch'))
+			state CrunchState = FindState('Crunch');
+			if (CrunchState && AreStateSpritesPresent(CrunchState))
 			{
-				SetState(FindState('Crunch'));
+				SetState(CrunchState);
 			}
 			bCorpse = false;
 			bSolid = false;

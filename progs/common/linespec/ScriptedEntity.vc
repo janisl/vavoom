@@ -1751,6 +1751,9 @@ states
 FreeTargMobj:
 	TNT1 A 1050 A_FreeTargMobj
 	Stop
+Crunch:
+	POL5 A -1
+	Stop
 }
 
 defaultproperties

@@ -354,13 +354,6 @@ final void A_PlayerBurnScream()
 	PlaySound('*burndeath', CHAN_VOICE);
 }
 
-states
-{
-Crunch:
-	POL5 A -1
-	Stop
-}
-
 defaultproperties
 {
 	SoundClass = 'fighter';
