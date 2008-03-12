@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 actor DeadMarine 15
 {
-	game Doom
+	Game Doom
 	states
 	{
 	Spawn:
@@ -13,7 +13,7 @@ actor DeadMarine 15
 //------------------------------------------------------------------------------
 actor GibbedMarine 10
 {
-	game Doom
+	Game Doom
 	SpawnID 145
 	states
 	{
@@ -26,13 +26,13 @@ actor GibbedMarine 10
 //------------------------------------------------------------------------------
 actor GibbedMarineExtra : GibbedMarine 12
 {
-	game Doom
+	Game Doom
 }
 
 //------------------------------------------------------------------------------
 actor DeadZombieMan : ZombieMan 18
 {
-	game Doom
+	Game Doom
 	skip_super
 	states
 	{
@@ -44,7 +44,7 @@ actor DeadZombieMan : ZombieMan 18
 //------------------------------------------------------------------------------
 actor DeadShotgunGuy : ShotgunGuy 19
 {
-	game Doom
+	Game Doom
 	skip_super
 	states
 	{
@@ -56,7 +56,7 @@ actor DeadShotgunGuy : ShotgunGuy 19
 //------------------------------------------------------------------------------
 actor DeadDoomImp : DoomImp 20
 {
-	game Doom
+	Game Doom
 	skip_super
 	states
 	{
@@ -68,7 +68,7 @@ actor DeadDoomImp : DoomImp 20
 //------------------------------------------------------------------------------
 actor DeadDemon : Demon 21
 {
-	game Doom
+	Game Doom
 	skip_super
 	states
 	{
@@ -80,7 +80,7 @@ actor DeadDemon : Demon 21
 //------------------------------------------------------------------------------
 actor DeadCacodemon : Cacodemon 22
 {
-	game Doom
+	Game Doom
 	skip_super
 	states
 	{
@@ -92,7 +92,7 @@ actor DeadCacodemon : Cacodemon 22
 //------------------------------------------------------------------------------
 actor DeadLostSoul : LostSoul 23
 {
-	game Doom
+	Game Doom
 	skip_super
 	states
 	{

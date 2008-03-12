@@ -43,16 +43,8 @@
 #endif
 
 #include "DoomPlayer.vc"
-#include "LostSoul.vc"
 #include "Cyberdemon.vc"
 #include "SpiderMastermind.vc"
-
-#include "StealthBaron.vc"
-#include "StealthCacodemon.vc"
-#include "StealthDemon.vc"
-#include "StealthDoomImp.vc"
-#include "StealthShotgunGuy.vc"
-#include "StealthZombieMan.vc"
 
 #include "ScriptedMarine.vc"
 #include "MarineFist.vc"

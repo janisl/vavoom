@@ -24,6 +24,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/doom/doomhealth.txt
 		actors/doom/doomkeys.txt
 		actors/doom/doommisc.txt
+		actors/doom/stealthmonsters.txt
 		actors/heretic/hereticammo.txt
 		actors/heretic/hereticarmor.txt
 		actors/heretic/hereticartifacts.txt

@@ -34,11 +34,5 @@
 #include "BossEye.vc"
 #include "BrainState.vc"
 #include "CommanderKeen.vc"
-#include "StealthArachnotron.vc"
-#include "StealthArchvile.vc"
-#include "StealthChaingunGuy.vc"
-#include "StealthHellKnight.vc"
-#include "StealthFatso.vc"
-#include "StealthRevenant.vc"
 
 class Megasphere : CustomInventory decorate;

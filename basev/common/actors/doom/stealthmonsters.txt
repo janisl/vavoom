@@ -1,0 +1,126 @@
+//------------------------------------------------------------------------------
+actor StealthArachnotron : Arachnotron 9050
+{
+	Game Doom
+	SpawnID 117
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthbaby"
+	+Stealth
+}
+
+actor StealthArchvile : Archvile 9051
+{
+	Game Doom
+	SpawnID 118
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthvile"
+	+Stealth
+}
+
+actor StealthBaron : BaronOfHell 9052
+{
+	Game Doom
+	SpawnID 100
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthbaron"
+	HitObituary "$ob_stealthbaron"
+	+Stealth
+}
+
+actor StealthCacodemon : Cacodemon 9053
+{
+	Game Doom
+	SpawnID 119
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthcaco"
+	HitObituary "$ob_stealthcaco"
+	+Stealth
+}
+
+actor StealthChaingunGuy : ChaingunGuy 9054
+{
+	Game Doom
+	SpawnID 120
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthchainguy"
+	+Stealth
+}
+
+actor StealthDemon : Demon 9055
+{
+	Game Doom
+	SpawnID 121
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthdemon"
+	HitObituary "$ob_stealthdemon"
+	+Stealth
+}
+
+actor StealthHellKnight : HellKnight 9056
+{
+	Game Doom
+	SpawnID 101
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthknight"
+	HitObituary "$ob_stealthknight"
+	+Stealth
+}
+
+actor StealthDoomImp : DoomImp 9057
+{
+	Game Doom
+	SpawnID 122
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthimp"
+	HitObituary "$ob_stealthimp"
+	+Stealth
+}
+
+actor StealthFatso : Fatso 9058
+{
+	Game Doom
+	SpawnID 123
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthfatso"
+	+Stealth
+}
+
+actor StealthRevenant : Revenant 9059
+{
+	Game Doom
+	SpawnID 124
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthundead"
+	HitObituary "$ob_stealthundead"
+	+Stealth
+}
+
+actor StealthShotgunGuy : ShotgunGuy 9060
+{
+	Game Doom
+	SpawnID 103
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthshotguy"
+	+Stealth
+}
+
+actor StealthZombieMan : ZombieMan 9061
+{
+	Game Doom
+	SpawnID 102
+	RenderStyle Translucent
+	Alpha 0
+	Obituary "$ob_stealthzombie"
+	+Stealth
+}

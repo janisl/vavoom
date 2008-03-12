@@ -184,6 +184,7 @@ enum
 #include "../../doom/game1/Spectre.vc"
 #include "../../doom/game1/CacodemonBall.vc"
 #include "../../doom/game1/Cacodemon.vc"
+#include "../../doom/game1/LostSoul.vc"
 #include "../../doom/game1/BaronBall.vc"
 #include "../../doom/game1/BaronOfHell.vc"
 
