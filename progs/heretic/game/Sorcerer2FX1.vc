@@ -28,19 +28,6 @@ class Sorcerer2FX1 : Projectile
 
 //==========================================================================
 //
-//  OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	if (Level.Game.fastparm)
-		Speed = 980.0;
-}
-
-//==========================================================================
-//
 //	GetExplodeParms
 //
 //==========================================================================
@@ -88,6 +75,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 6.0;
 	Speed = 700.0;
+	FastSpeed = 980.0;
 	MissileDamage = 1;
 	RenderStyle = STYLE_Add;
 }

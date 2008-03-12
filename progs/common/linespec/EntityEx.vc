@@ -231,6 +231,7 @@ bool bGhost;			// Actor is a ghost
 
 //  Params
 float			Speed;
+float			FastSpeed;
 float			FloatSpeed;
 float			PainChance;
 int				GibsHealth;
@@ -5161,6 +5162,11 @@ void OnMapSpawn(mthing_t* mthing)
 	if (!MissileState)
 	{
 		MissileState = FindState('Missile');
+	}
+
+	if (Level.Game.fastparm && FastSpeed)
+	{
+		Speed = FastSpeed;
 	}
 
 	//	Set the state, but do not use SetState, because action routines can't

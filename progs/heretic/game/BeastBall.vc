@@ -28,19 +28,6 @@ class BeastBall : Projectile
 
 //==========================================================================
 //
-//  OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	if (Level.Game.fastparm)
-		Speed = 700.0;
-}
-
-//==========================================================================
-//
 //  A_BeastPuff
 //
 //==========================================================================
@@ -73,6 +60,7 @@ defaultproperties
 	Radius = 9.0;
 	Height = 8.0;
 	Speed = 420.0;
+	FastSpeed = 700.0;
 	MissileDamage = 4;
 	RenderStyle = STYLE_Add;
 	bWindThrust = true;

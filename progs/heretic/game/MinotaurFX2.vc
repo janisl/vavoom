@@ -27,19 +27,6 @@ class MinotaurFX2 : MinotaurFX3;
 
 //==========================================================================
 //
-//  OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	if (Level.Game.fastparm)
-		Speed = 700.0;
-}
-
-//==========================================================================
-//
 //	GetExplodeParms
 //
 //==========================================================================
@@ -84,6 +71,7 @@ defaultproperties
 	Radius = 5.0;
 	Height = 12.0;
 	Speed = 490.0;
+	FastSpeed = 700.0;
 	MissileDamage = 4;
 	DamageType = 'Fire';
 	DeathSound = 'minotaur/fx2hit';

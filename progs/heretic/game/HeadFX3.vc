@@ -27,19 +27,6 @@ class HeadFX3 : Projectile;
 
 //==========================================================================
 //
-//  OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	if (Level.Game.fastparm)
-		Speed = 630.0;
-}
-
-//==========================================================================
-//
 //  A_HeadFireGrow
 //
 //==========================================================================
@@ -72,6 +59,7 @@ defaultproperties
 	Radius = 14.0;
 	Height = 12.0;
 	Speed = 350.0;
+	FastSpeed = 630.0;
 	MissileDamage = 5;
 	RenderStyle = STYLE_Add;
 	bWindThrust = true;

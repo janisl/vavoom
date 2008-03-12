@@ -25,19 +25,6 @@
 
 class MinotaurFX1 : Projectile;
 
-//==========================================================================
-//
-//  OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	if (Level.Game.fastparm)
-		Speed = 910.0;
-}
-
 states
 {
 Spawn:
@@ -53,6 +40,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 6.0;
 	Speed = 700.0;
+	FastSpeed = 910.0;
 	MissileDamage = 3;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';

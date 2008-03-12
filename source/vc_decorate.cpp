@@ -2704,9 +2704,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("FastSpeed"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property FastSpeed in %s is not yet supported", Class->GetName());
+			SetClassFieldFloat(Class, "FastSpeed", sc->Float * 35.0);
 			continue;
 		}
 		if (!Prop.ICmp("FloatSpeed"))

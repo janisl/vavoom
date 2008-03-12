@@ -26,19 +26,6 @@
 class SorcererFX1 : Projectile
 	__scriptid__(144);
 
-//==========================================================================
-//
-//  OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	if (Level.Game.fastparm)
-		Speed = 980.0;
-}
-
 states
 {
 Spawn:
@@ -54,6 +41,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 10.0;
 	Speed = 700.0;
+	FastSpeed = 980.0;
 	MissileDamage = 10;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';

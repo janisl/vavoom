@@ -28,19 +28,6 @@ class MummyFX1 : Projectile
 
 //==========================================================================
 //
-//  OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	if (Level.Game.fastparm)
-		Speed = 630.0;
-}
-
-//==========================================================================
-//
 //  A_ContMobjSound
 //
 //==========================================================================
@@ -79,6 +66,7 @@ defaultproperties
 	Radius = 8.0;
 	Height = 14.0;
 	Speed = 315.0;
+	FastSpeed = 630.0;
 	MissileDamage = 4;
 	RenderStyle = STYLE_Add;
 }
