@@ -600,7 +600,7 @@ final void A_FaceTarget()
 	Angles.yaw = atan2(Target.Origin.y - Origin.y,
 		Target.Origin.x - Origin.x);
 
-	if (Target.Alpha < 1.0)
+	if (Target.bShadow)
 	{
 		Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0);
 	}
@@ -1301,6 +1301,7 @@ final void A_ActiveAndUnblock()
 final void A_SetShadow()
 {
 	bUnknown2 = true;
+	bShadow = true;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 }
@@ -1314,6 +1315,7 @@ final void A_SetShadow()
 final void A_ClearShadow()
 {
 	bUnknown2 = false;
+	bShadow = false;
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
 }

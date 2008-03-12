@@ -38,6 +38,7 @@ final void A_AcolyteBits()
 	{
 		RenderStyle = STYLE_Translucent;
 		Alpha = 0.333;
+		bShadow = true;
 	}
 	if (bSpawnFlag9)
 	{

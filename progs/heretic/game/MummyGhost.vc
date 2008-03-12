@@ -42,4 +42,6 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bShadow = true;
+	bGhost = true;
 }

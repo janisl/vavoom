@@ -97,6 +97,8 @@ int UpdateMorphedMonster(int tics)
 	mo.bNoSightCheck = bNoSightCheck;
 	mo.bHuntPlayers = bHuntPlayers;
 	mo.bNoHatePlayers = bNoHatePlayers;
+	mo.bShadow = bShadow;
+	mo.bGhost = bGhost;
 	fog = Spawn(TeleportFog, oldOrigin + vector(0.0, 0.0, TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 	return true;

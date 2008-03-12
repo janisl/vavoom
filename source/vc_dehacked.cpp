@@ -633,6 +633,7 @@ static void ReadThing(int num)
 				SetClassFieldBool(Ent, "bTeleport", Values[0] & 0x00008000);
 				SetClassFieldBool(Ent, "bMissile", Values[0] & 0x00010000);
 				SetClassFieldBool(Ent, "bDropped", Values[0] & 0x00020000);
+				SetClassFieldBool(Ent, "bShadow", Values[0] & 0x00040000);
 				SetClassFieldBool(Ent, "bNoBlood", Values[0] & 0x00080000);
 				SetClassFieldBool(Ent, "bCorpse", Values[0] & 0x00100000);
 				SetClassFieldBool(Ent, "bInFloat", Values[0] & 0x00200000);

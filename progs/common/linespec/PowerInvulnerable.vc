@@ -82,55 +82,63 @@ void DoEffect()
 
 	if (Mode == 'Ghost')
 	{
-		if (!(TicTime & 7) && bShadow && !bDontDraw)
+		//	Don't mess with translucency if invisibility power is active.
+		if (!EntityEx(Owner).bShadow)
 		{
-			bShadow = false;
-			if (!bAltShadow)
+			if (!(TicTime & 7) && bShadow && !bDontDraw)
 			{
-				bDontDraw = true;
-				EntityEx(Owner).bNonShootable = true;
-			}
-		}
-		if (!(TicTime & 31))
-		{
-			if (bDontDraw)
-			{
-				if (!bShadow)
+				bShadow = false;
+				if (!bAltShadow)
 				{
-					bShadow = true;
-					bAltShadow = true;
+					bDontDraw = true;
+					EntityEx(Owner).bNonShootable = true;
+				}
+			}
+			if (!(TicTime & 31))
+			{
+				if (bDontDraw)
+				{
+					if (!bShadow)
+					{
+						bShadow = true;
+						bAltShadow = true;
+					}
+					else
+					{
+						bDontDraw = false;
+						EntityEx(Owner).bNonShootable = false;
+					}
 				}
 				else
 				{
-					bDontDraw = false;
-					EntityEx(Owner).bNonShootable = false;
+					bShadow = true;
+					bAltShadow = false;
 				}
+			}
+			if (bDontDraw)
+			{
+				Owner.RenderStyle = STYLE_None;
+				Owner.Alpha = 0.0;
+			}
+			else if (bShadow)
+			{
+				Owner.RenderStyle = STYLE_Translucent;
+				Owner.Alpha = 0.333;
+			}
+			else if (bAltShadow)
+			{
+				Owner.RenderStyle = STYLE_Translucent;
+				Owner.Alpha = 0.666;
 			}
 			else
 			{
-				bShadow = true;
-				bAltShadow = false;
+				Owner.RenderStyle = STYLE_Normal;
+				Owner.Alpha = 1.0;
 			}
-		}
-		if (bDontDraw)
-		{
-			Owner.RenderStyle = STYLE_None;
-			Owner.Alpha = 0.0;
-		}
-		else if (bShadow)
-		{
-			Owner.RenderStyle = STYLE_Translucent;
-			Owner.Alpha = 0.333;
-		}
-		else if (bAltShadow)
-		{
-			Owner.RenderStyle = STYLE_Translucent;
-			Owner.Alpha = 0.666;
 		}
 		else
 		{
-			Owner.RenderStyle = STYLE_Normal;
-			Owner.Alpha = 1.0;
+			EntityEx(Owner).bNonShootable = false;
 		}
 	}
 
@@ -244,8 +252,12 @@ void EndEffect()
 	else if (Mode == 'Ghost')
 	{
 		EntityEx(Owner).bNonShootable = false;
-		Owner.RenderStyle = STYLE_Normal;
-		Owner.Alpha = 1.0;
+		//	Don't mess with translucency if invisibility is active
+		if (!EntityEx(Owner).bShadow)
+		{
+			Owner.RenderStyle = STYLE_Normal;
+			Owner.Alpha = 1.0;
+		}
 	}
 	else if (Mode == 'Initial')
 	{

@@ -226,6 +226,8 @@ bool bStrifeDamage;		// Missiles do 4x damage instead of 8x
 bool bDontBlast;		// Not blasted by blast radius.
 bool bVisibilityPulse;	// Pulse visibility in and out.
 bool bArgsDefined;		// Args are already defined
+bool bShadow;			// Actor is hard for monsters to see
+bool bGhost;			// Actor is a ghost
 
 //  Params
 float			Speed;
@@ -2191,7 +2193,7 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 		hit_point -= 10.0 * Dir;
 
 		//  check for physical attacks on a ghost
-		if (th.Alpha < 1.0 && NoAttackGhosts)
+		if (th.bGhost && NoAttackGhosts)
 		{
 			continue;
 		}
@@ -2927,7 +2929,7 @@ final bool LookForPlayers(bool allaround)
 			}
 		}
 
-		if (P.MO.Alpha < 1.0)
+		if (EntityEx(P.MO).bShadow || EntityEx(P.MO).bGhost)
 		{
 			// Player is invisible
 			if (DistTo(P.MO) > 2.0 * MELEERANGE &&
@@ -3734,7 +3736,7 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	if (dest)
 	{
 		dir = dest.Origin - Origin;
-		if (dest.Alpha < 1.0)
+		if (dest.bShadow)
 		{
 			// Invisible target
 			VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
@@ -3774,7 +3776,7 @@ final EntityEx SpawnMissileXYZ(TVec org, EntityEx dest, class<EntityEx> type)
 	}
 	A.Target = self;	// Originator
 	dir = dest.Origin - Origin;
-	if (dest.Alpha < 1.0)
+	if (dest.bShadow)
 	{
 		// Invisible target
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
@@ -3809,7 +3811,7 @@ final EntityEx SpawnMissileZAimed(float z, EntityEx dest, class<EntityEx> type)
 	dir.y = sin(Angles.yaw);
 	dir.z = dist != 0.0 ? (dest.Origin.z - Origin.z) / dist : A.Speed;
 	// fuzzy player
-	if (dest.Alpha < 1.0)
+	if (dest.bShadow)
 	{
 		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	}
@@ -4751,7 +4753,7 @@ bool Touch(Entity InOther)
 			return true;
 		}
 		// Check for passing through a ghost
-		if (Other.Alpha < 1.0 && bThruGhost)
+		if (Other.bGhost && bThruGhost)
 		{
 			return true;
 		}

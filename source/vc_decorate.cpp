@@ -1417,8 +1417,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("Ghost"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag Ghost in %s", Class->GetName());
+		SetClassFieldBool(Class, "bGhost", Value);
 		return true;
 	}
 	if (!Flag.ICmp("DontMorph"))
@@ -1460,8 +1459,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("Shadow"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag Shadow in %s", Class->GetName());
+		SetClassFieldBool(Class, "bShadow", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoBlood"))

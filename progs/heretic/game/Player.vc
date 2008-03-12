@@ -436,7 +436,8 @@ void PlayerExitMap(bool clusterChange)
 	}
 	MO.Angles.pitch = 0.0;
 	MO.RenderStyle = Entity::STYLE_Translucent;
-	MO.Alpha = 1.0;	// cancel invisibility
+	MO.Alpha = 1.0;
+	EntityEx(MO).bShadow = false;	// cancel invisibility
 	ExtraLight = 0;	// cancel gun flashes
 	FixedColourmap = 0;	// cancel ir gogles
 	DamageFlash = 0.0;	// no palette changes
@@ -837,6 +838,8 @@ bool UndoPlayerChicken()
 		A.bFly = true;
 		A.bNoGravity = true;
 	}
+	A.bShadow = EntityEx(MO).bShadow;
+	A.bGhost = EntityEx(MO).bGhost;
 	A.ObtainInventory(EntityEx(MO));
 	ChickenTime = 0.0;
 	Inventory Pw = EntityEx(MO).FindInventory(PowerWeaponLevel2);

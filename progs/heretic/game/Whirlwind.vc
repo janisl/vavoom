@@ -93,7 +93,7 @@ final void A_WhirlwindSeek()
 		Special2 = 58 + (P_Random() & 31);
 		PlaySound('ironlich/attack3', CHAN_WEAPON);
 	}
-	if (Tracer && Tracer.Alpha < 1.0)
+	if (Tracer && Tracer.bShadow)
 	{
 		return;
 	}

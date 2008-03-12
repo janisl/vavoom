@@ -63,6 +63,7 @@ final void A_WizAtk2()
 	A_FaceTarget();
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bGhost = true;
 }
 
 //==========================================================================
@@ -111,6 +112,7 @@ final void A_GhostOff()
 {
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
+	bGhost = false;
 }
 
 states

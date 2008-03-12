@@ -75,6 +75,8 @@ final bool MorphMonster(Actor victim)
 	monster.Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
 	monster.RenderStyle = victim.RenderStyle;
 	monster.Alpha = victim.Alpha;
+	monster.bShadow = victim.bShadow;
+	monster.bGhost = victim.bGhost;
 	monster.Target = victim.Target;
 	monster.Angles.yaw = victim.Angles.yaw;
 	monster.TID = victim.TID;
@@ -138,6 +140,8 @@ final bool MorphPlayer(Actor victim)
 	}
 	beastMo.ObtainInventory(victim);
 	victim.Player.PClass = HexenDefs::PCLASS_PIG;
+	beastMo.bShadow = victim.bShadow;
+	beastMo.bGhost = victim.bGhost;
 	beastMo.bFly = victim.bFly;
 	Player(victim.Player).MorphTime = MORPHTIME;
 	Player(victim.Player).ActivateMorphWeapon();

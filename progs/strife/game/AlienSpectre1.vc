@@ -181,6 +181,7 @@ defaultproperties
 	PainChance = 0.9765625;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bShadow = true;
 	bSpecial = true;
 	bNoGravity = true;
 	bLookAllAround = true;

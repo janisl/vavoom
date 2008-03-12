@@ -35,6 +35,7 @@ void InitEffect()
 {
 	Owner.RenderStyle = STYLE_OptFuzzy;
 	Owner.Alpha = 0.2;
+	EntityEx(Owner).bShadow = true;
 }
 
 //==========================================================================
@@ -66,6 +67,8 @@ void EndEffect()
 
 	Owner.RenderStyle = STYLE_Normal;
 	Owner.Alpha = 1.0;
+	EntityEx(Owner).bShadow = false;
+	EntityEx(Owner).bGhost = false;
 	//	If there are other invisibility powers, reinit their effect.
 	Inventory Item;
 	for (Item = EntityEx(Owner).Inventory; Item; Item = Item.Inventory)

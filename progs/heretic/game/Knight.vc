@@ -58,7 +58,7 @@ final void A_KnightAttack()
 	}
 	// Throw axe
 	PlaySound(AttackSound, CHAN_WEAPON);
-	if (Class == KnightGhost || Random() < 0.15625)
+	if (bShadow || Random() < 0.15625)
 	{
 		// Red axe
 		SpawnMissile(Target, RedAxe, 36.0);

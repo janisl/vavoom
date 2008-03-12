@@ -32,6 +32,7 @@ defaultproperties
 {
 	RenderStyle = STYLE_OptFuzzy;
 	Alpha = 0.2;
+	bShadow = true;
 	SightSound = 'spectre/sight';
 	ActiveSound = 'spectre/active';
 	AttackSound = 'spectre/melee';

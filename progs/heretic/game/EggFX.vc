@@ -75,6 +75,8 @@ final bool MorphMonster(Actor victim)
 	chicken.Special1 = ftoi(Player::CHICKENTIME * 35.0) + P_Random();
 	chicken.RenderStyle = victim.RenderStyle;
 	chicken.Alpha = victim.Alpha;
+	chicken.bShadow = victim.bShadow;
+	chicken.bGhost = victim.bGhost;
 	chicken.Target = victim.Target;
 	chicken.Angles.yaw = victim.Angles.yaw;
 	chicken.TID = victim.TID;
@@ -149,6 +151,8 @@ final bool MorphPlayer(Actor victim)
 		Pw.Destroy();
 	}
 	chicken.ObtainInventory(victim);
+	chicken.bShadow = victim.bShadow;
+	chicken.bGhost = victim.bGhost;
 	chicken.bFly = victim.bFly;
 	Player(victim.Player).ChickenTime = Player::CHICKENTIME;
 	Player(victim.Player).ActivateBeak();

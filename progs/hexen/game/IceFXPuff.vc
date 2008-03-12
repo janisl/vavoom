@@ -39,6 +39,7 @@ defaultproperties
 	Height = 1.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bShadow = true;
 	bDropOff = true;
 	bNoTeleport = true;
 	DLightColour = RGB(74, 77, 196);
