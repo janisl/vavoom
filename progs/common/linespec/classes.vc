@@ -177,15 +177,9 @@ enum
 #include "../../doom/game1/Shotgun.vc"
 #include "../../doom/game1/Chaingun.vc"
 #include "../../doom/game1/Rocket.vc"
-#include "../../doom/game1/BaronBall.vc"
-#include "../../doom/game1/BaronOfHell.vc"
 
-#include "../../doom/game2/HellKnight.vc"
 #include "../../doom/game2/ArachnotronPlasma.vc"
 #include "../../doom/game2/Arachnotron.vc"
-#include "../../doom/game2/RevenantTracerSmoke.vc"
-#include "../../doom/game2/RevenantTracer.vc"
-#include "../../doom/game2/Revenant.vc"
 #include "../../doom/game2/FatShot.vc"
 #include "../../doom/game2/Fatso.vc"
 #include "../../doom/game2/ArchvileFire.vc"
@@ -207,5 +201,8 @@ class Shell : Ammo decorate;
 class DoomImpBall : ScriptedEntity decorate;
 class LostSoul : ScriptedEntity decorate;
 class CacodemonBall : ScriptedEntity decorate;
+class BaronBall : ScriptedEntity decorate;
+class RevenantTracer : ScriptedEntity decorate;
+class RevenantTracerSmoke : ScriptedEntity decorate;
 
 class QuestItem29 : Inventory decorate;

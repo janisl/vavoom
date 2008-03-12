@@ -4943,7 +4943,18 @@ int SpecialMissileHit(EntityEx Other)
 
 class<EntityEx> GetSpecies()
 {
-	return class<EntityEx>(Class);
+	class<EntityEx> Ret = class<EntityEx>(Class);
+	//	Go up in the inheritance hierarchy while there's a monster flag
+	// and use the top one as species.
+	if (bMonster)
+	{
+		while (class<EntityEx>(GetClassParent(Ret)) &&
+			class<EntityEx>(GetClassParent(Ret)).default.bMonster)
+		{
+			Ret = class<EntityEx>(GetClassParent(Ret));
+		}
+	}
+	return Ret;
 }
 
 //===========================================================================
