@@ -51,3 +51,6 @@ class Clip : Ammo decorate;
 class RocketAmmo : Ammo decorate;
 class Cell : Ammo decorate;
 class Shell : Ammo decorate;
+class ZombieMan : ScriptedEntity decorate;
+class ShotgunGuy : ScriptedEntity decorate;
+class ChaingunGuy : ScriptedEntity decorate;

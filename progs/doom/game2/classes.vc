@@ -25,7 +25,6 @@
 
 #include "SuperShotgun.vc"
 
-#include "WolfensteinSS.vc"
 #include "PainElemental.vc"
 #include "BossTarget.vc"
 #include "SpawnFire.vc"
