@@ -32,8 +32,9 @@ actor GibbedMarineExtra : GibbedMarine 12
 //------------------------------------------------------------------------------
 actor DeadZombieMan : ZombieMan 18
 {
+	Skip_Super
 	Game Doom
-	skip_super
+	DropItem None
 	states
 	{
 	Spawn:
@@ -44,8 +45,9 @@ actor DeadZombieMan : ZombieMan 18
 //------------------------------------------------------------------------------
 actor DeadShotgunGuy : ShotgunGuy 19
 {
+	Skip_Super
 	Game Doom
-	skip_super
+	DropItem None
 	states
 	{
 	Spawn:
@@ -56,8 +58,8 @@ actor DeadShotgunGuy : ShotgunGuy 19
 //------------------------------------------------------------------------------
 actor DeadDoomImp : DoomImp 20
 {
+	Skip_Super
 	Game Doom
-	skip_super
 	states
 	{
 	Spawn:
@@ -68,8 +70,8 @@ actor DeadDoomImp : DoomImp 20
 //------------------------------------------------------------------------------
 actor DeadDemon : Demon 21
 {
+	Skip_Super
 	Game Doom
-	skip_super
 	states
 	{
 	Spawn:
@@ -80,8 +82,8 @@ actor DeadDemon : Demon 21
 //------------------------------------------------------------------------------
 actor DeadCacodemon : Cacodemon 22
 {
+	Skip_Super
 	Game Doom
-	skip_super
 	states
 	{
 	Spawn:
@@ -92,8 +94,8 @@ actor DeadCacodemon : Cacodemon 22
 //------------------------------------------------------------------------------
 actor DeadLostSoul : LostSoul 23
 {
+	Skip_Super
 	Game Doom
-	skip_super
 	states
 	{
 	Spawn:

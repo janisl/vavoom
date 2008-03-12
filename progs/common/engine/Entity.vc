@@ -139,6 +139,14 @@ struct ParticleEffectDef
 	float				Ramp;
 };
 
+struct DropItemInfo
+{
+	class<Entity>		Type;
+	name				TypeName;
+	int					Amount;
+	float				Chance;
+};
+
 // Info for drawing: position.
 TVec			Origin;
 

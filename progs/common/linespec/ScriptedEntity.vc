@@ -1257,8 +1257,8 @@ final void A_NoBlocking()
 			{
 				if (DropItemList[i].Type)
 				{
-					DropItem(DropItemList[i].Type, DropItemList[i].Amount,
-						DropItemList[i].Chance);
+					DropItem(class<EntityEx>(DropItemList[i].Type),
+						DropItemList[i].Amount, DropItemList[i].Chance);
 				}
 			}
 		}

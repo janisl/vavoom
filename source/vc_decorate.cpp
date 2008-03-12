@@ -293,6 +293,20 @@ static TVec GetClassFieldVec(VClass* Class, const char* FieldName)
 
 //==========================================================================
 //
+//	GetClassDropItems
+//
+//==========================================================================
+
+static TArray<VDropItemInfo>& GetClassDropItems(VClass* Class)
+{
+	guard(GetClassDropItems);
+	VField* F = Class->FindFieldChecked("DropItemList");
+	return *(TArray<VDropItemInfo>*)(Class->Defaults + F->Ofs);
+	unguard;
+}
+
+//==========================================================================
+//
 //	SetClassFieldInt
 //
 //==========================================================================
@@ -2485,6 +2499,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	int DoomEdNum = -1;
 	int SpawnNum = -1;
 	TArray<VState*> States;
+	bool DropItemsDefined = false;
 
 	if (sc->CheckNumber())
 	{
@@ -3067,11 +3082,26 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("DropItem"))
 		{
-			//FIXME
+			if (!DropItemsDefined)
+			{
+				GetClassDropItems(Class).Clear();
+				DropItemsDefined = true;
+			}
 			sc->ExpectString();
-			sc->CheckNumber();
-			sc->CheckNumber();
-			GCon->Logf("Property DropItem in %s is not yet supported", Class->GetName());
+			VDropItemInfo DI;
+			DI.TypeName = *sc->String;
+			DI.Type = NULL;
+			DI.Amount = 0;
+			DI.Chance = 1.0;
+			if (sc->CheckNumber())
+			{
+				DI.Amount = sc->Number;
+				if (sc->CheckNumber())
+				{
+					DI.Chance = float(sc->Number) / 255.0;
+				}
+			}
+			GetClassDropItems(Class).Insert(0, DI);
 			continue;
 		}
 		if (!Prop.ICmp("States"))
@@ -3089,6 +3119,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			//	Copy state labels
 			Class->StateLabels = ActorClass->StateLabels;
 			Class->ClassFlags |= CLASS_SkipSuperStateLabels;
+			//	Drop items are reset back to the list of the parent class
+			GetClassDropItems(Class) = GetClassDropItems(Class->ParentClass);
 			continue;
 		}
 		if (!Prop.ICmp("Spawn"))
@@ -3696,10 +3728,22 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.StartItem"))
 			{
-				//FIXME
+				if (!DropItemsDefined)
+				{
+					GetClassDropItems(Class).Clear();
+					DropItemsDefined = true;
+				}
 				sc->ExpectString();
-				sc->CheckNumber();
-				GCon->Logf("Property Player.StartItem in %s is not yet supported", Class->GetName());
+				VDropItemInfo DI;
+				DI.TypeName = *sc->String;
+				DI.Type = NULL;
+				DI.Amount = 0;
+				DI.Chance = 1.0;
+				if (sc->CheckNumber())
+				{
+					DI.Amount = sc->Number;
+				}
+				GetClassDropItems(Class).Insert(0, DI);
 				continue;
 			}
 			if (!Prop.ICmp("Player.ViewHeight"))
@@ -4680,6 +4724,31 @@ void ProcessDecorateScripts()
 			else
 			{
 				*(VClass**)(CF.Class->Defaults + CF.Offset) = C;
+			}
+		}
+	}
+	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
+	{
+		TArray<VDropItemInfo>& List = GetClassDropItems(DecPkg->ParsedClasses[i]);
+		for (int j = 0; j < List.Num(); j++)
+		{
+			VDropItemInfo& DI = List[j];
+			if (DI.TypeName == NAME_None)
+			{
+				continue;
+			}
+			VClass* C = VClass::FindClassNoCase(*DI.TypeName);
+			if (!C)
+			{
+				GCon->Logf("No such class %s", *DI.TypeName);
+			}
+			else if (!C->IsChildOf(ScriptedEntityClass))
+			{
+				GCon->Logf("Class %s is not an actor class", *DI.TypeName);
+			}
+			else
+			{
+				DI.Type = C;
 			}
 		}
 	}

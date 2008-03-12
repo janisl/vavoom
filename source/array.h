@@ -177,6 +177,19 @@ public:
 		return ArrData[Index];
 	}
 
+	void Insert(int Index, const T& Item)
+	{
+		if (ArrNum == ArrSize)
+		{
+			Resize(ArrSize + ArrSize * 3 / 8 + 32);
+		}
+		ArrNum++;
+		for (int i = Index + 1; i < ArrNum; i++)
+		{
+			ArrData[i] = ArrData[i - 1];
+		}
+		ArrData[Index] = Item;
+	}
 	int Append(const T& Item)
 	{
 		if (ArrNum == ArrSize)
