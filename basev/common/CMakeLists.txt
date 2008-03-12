@@ -17,11 +17,13 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/constants.txt
 		actors/nativeclasses.txt
 		actors/doom/deadthings.txt
+		actors/doom/demon.txt
 		actors/doom/doomammo.txt	
 		actors/doom/doomarmor.txt
 		actors/doom/doomartifacts.txt
 		actors/doom/doomdecorations.txt
 		actors/doom/doomhealth.txt
+		actors/doom/doomimp.txt
 		actors/doom/doomkeys.txt
 		actors/doom/doommisc.txt
 		actors/doom/possessed.txt

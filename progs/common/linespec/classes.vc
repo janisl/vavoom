@@ -177,10 +177,6 @@ enum
 #include "../../doom/game1/Shotgun.vc"
 #include "../../doom/game1/Chaingun.vc"
 #include "../../doom/game1/Rocket.vc"
-#include "../../doom/game1/DoomImpBall.vc"
-#include "../../doom/game1/DoomImp.vc"
-#include "../../doom/game1/Demon.vc"
-#include "../../doom/game1/Spectre.vc"
 #include "../../doom/game1/CacodemonBall.vc"
 #include "../../doom/game1/Cacodemon.vc"
 #include "../../doom/game1/LostSoul.vc"
@@ -211,5 +207,6 @@ class GlassJunk : ScriptedEntity decorate;
 class BulletPuff : ScriptedEntity decorate;
 class Clip : Ammo decorate;
 class Shell : Ammo decorate;
+class DoomImpBall : ScriptedEntity decorate;
 
 class QuestItem29 : Inventory decorate;

@@ -75,3 +75,6 @@ class Infrared : PowerupGiver decorate;
 class Allmap : MapRevealer decorate;
 class Berserk : CustomInventory decorate;
 class BulletPuff : ScriptedEntity decorate;
+class DoomImp : ScriptedEntity decorate;
+class Demon : ScriptedEntity decorate;
+class Spectre : ScriptedEntity decorate;

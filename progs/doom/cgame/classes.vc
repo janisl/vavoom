@@ -54,3 +54,5 @@ class Shell : Ammo decorate;
 class ZombieMan : ScriptedEntity decorate;
 class ShotgunGuy : ScriptedEntity decorate;
 class ChaingunGuy : ScriptedEntity decorate;
+class DoomImp : ScriptedEntity decorate;
+class Demon : ScriptedEntity decorate;

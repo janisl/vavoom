@@ -1,0 +1,66 @@
+//------------------------------------------------------------------------------
+actor Demon 3002
+{
+	game Doom
+	SpawnID 8
+	Health 150
+	Radius 30
+	Height 56
+	Mass 400
+	Speed 10
+	PainChance 180
+	SeeSound "demon/sight"
+	ActiveSound "demon/active"
+	AttackSound "demon/melee"
+	PainSound "demon/pain"
+	DeathSound "demon/death"
+	Obituary "$ob_demonhit"
+	Monster
+	+FloorClip
+	+Faster
+	+FastMelee
+	states
+	{
+	Spawn:
+		SARG AB 10 A_Look
+		Loop
+	See:
+		SARG AABBCCDD 2 A_Chase
+		Loop
+	Melee:
+		SARG EF 8 A_FaceTarget
+		SARG G 8 A_SargAttack
+		Goto See
+	Pain:
+		SARG H 2
+		SARG H 2 A_Pain
+		Goto See
+	Death:
+		SARG I 8
+		SARG J 8 A_Scream
+		SARG K 4
+		SARG L 4 A_NoBlocking
+		SARG M 4
+		SARG N -1
+		Stop
+	Raise:
+		SARG NMLKJI 5
+		Goto See
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Spectre : Demon 58
+{
+	game Doom
+	SpawnID 9
+	RenderStyle OptFuzzy
+	Alpha 0.2
+	SeeSound "spectre/sight"
+	ActiveSound "spectre/active"
+	AttackSound "spectre/melee"
+	PainSound "spectre/pain"
+	DeathSound "spectre/death"
+	Obituary "$ob_spectrehit"
+	+Shadow
+}
