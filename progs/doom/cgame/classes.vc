@@ -56,3 +56,5 @@ class ShotgunGuy : ScriptedEntity decorate;
 class ChaingunGuy : ScriptedEntity decorate;
 class DoomImp : ScriptedEntity decorate;
 class Demon : ScriptedEntity decorate;
+class LostSoul : ScriptedEntity decorate;
+class Cacodemon : ScriptedEntity decorate;

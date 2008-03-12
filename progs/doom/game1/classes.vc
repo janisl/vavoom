@@ -78,3 +78,4 @@ class BulletPuff : ScriptedEntity decorate;
 class DoomImp : ScriptedEntity decorate;
 class Demon : ScriptedEntity decorate;
 class Spectre : ScriptedEntity decorate;
+class Cacodemon : ScriptedEntity decorate;

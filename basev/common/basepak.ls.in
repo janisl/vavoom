@@ -44,6 +44,7 @@ line_specials.txt		@CMAKE_CURRENT_SOURCE_DIR@/line_specials.txt
 decorate.txt							@CMAKE_CURRENT_SOURCE_DIR@/decorate.txt
 actors/constants.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/constants.txt
 actors/nativeclasses.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/nativeclasses.txt
+actors/doom/cacodemon.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/cacodemon.txt
 actors/doom/deadthings.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/deadthings.txt
 actors/doom/demon.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/demon.txt
 actors/doom/doomammo.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomammo.txt
@@ -54,6 +55,7 @@ actors/doom/doomhealth.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomhealth.
 actors/doom/doomimp.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomimp.txt
 actors/doom/doomkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomkeys.txt
 actors/doom/doommisc.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doommisc.txt
+actors/doom/lostsoul.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/lostsoul.txt
 actors/doom/possessed.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/possessed.txt
 actors/doom/stealthmonsters.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/stealthmonsters.txt
 actors/heretic/hereticammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticammo.txt

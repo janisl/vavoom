@@ -109,8 +109,8 @@ class Actor extends Thinker
 	//	Flags and appearance
 	//
 	//A_ChangeFlag
-	//A_SetFloorClip
-	//A_UnSetFloorClip
+	action native A_SetFloorClip();
+	action native A_UnSetFloorClip();
 	action native A_HideThing();
 	action native A_UnHideThing();
 	action native A_SetInvulnerable();

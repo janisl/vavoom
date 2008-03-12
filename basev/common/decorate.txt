@@ -9,6 +9,8 @@
 #include "actors/doom/possessed.txt"
 #include "actors/doom/doomimp.txt"
 #include "actors/doom/demon.txt"
+#include "actors/doom/lostsoul.txt"
+#include "actors/doom/cacodemon.txt"
 #include "actors/doom/stealthmonsters.txt"
 #include "actors/doom/doomhealth.txt"
 #include "actors/doom/doomarmor.txt"
