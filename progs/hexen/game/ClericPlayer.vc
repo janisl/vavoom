@@ -102,6 +102,6 @@ defaultproperties
 	PainSound = 'PlayerClericPain';
 	SoundClass = 'cleric';
 
-	InitialInventory.Num = 1;
-	InitialInventory[0].Type = CWeapMace; InitialInventory[0].Amount = 1;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = CWeapMace; DropItemList[0].Amount = 1;
 }

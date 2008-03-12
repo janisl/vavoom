@@ -96,6 +96,6 @@ defaultproperties
 	PainSound = '*pain100';
 	DeathSound = '*death';
 
-	InitialInventory.Num = 1;
-	InitialInventory[0].Type = PunchDagger; InitialInventory[0].Amount = 1;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = PunchDagger; DropItemList[0].Amount = 1;
 }

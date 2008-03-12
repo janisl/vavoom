@@ -1249,20 +1249,23 @@ final void A_NoBlocking()
 	}
 
 	// Check for monsters dropping things
-	if (DropItemList.Num)
+	if (ShouldDropItems())
 	{
-		for (i = 0; i < DropItemList.Num; i++)
+		if (DropItemList.Num)
 		{
-			if (DropItemList[i].Type)
+			for (i = 0; i < DropItemList.Num; i++)
 			{
-				DropItem(DropItemList[i].Type, DropItemList[i].Amount,
-					DropItemList[i].Chance);
+				if (DropItemList[i].Type)
+				{
+					DropItem(DropItemList[i].Type, DropItemList[i].Amount,
+						DropItemList[i].Chance);
+				}
 			}
 		}
-	}
-	else
-	{
-		NoBlockingSet();
+		else
+		{
+			NoBlockingSet();
+		}
 	}
 }
 

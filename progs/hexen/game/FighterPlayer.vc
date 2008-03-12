@@ -136,6 +136,6 @@ defaultproperties
 	PainSound = 'PlayerFighterPain';
 	SoundClass = 'fighter';
 
-	InitialInventory.Num = 1;
-	InitialInventory[0].Type = FWeapFist; InitialInventory[0].Amount = 1;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = FWeapFist; DropItemList[0].Amount = 1;
 }

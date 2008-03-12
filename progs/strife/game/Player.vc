@@ -317,11 +317,11 @@ void SpawnPlayer(mthing_t * mthing)
 		BArmor.Amount = 0;
 		BArmor.AttachToOwner(A);
 
-		for (i = 0; i < A.InitialInventory.Num; i++)
+		for (i = 0; i < A.DropItemList.Num; i++)
 		{
-			Item = Level.Spawn(A.InitialInventory[i].Type,,,, false);
+			Item = Inventory(Level.Spawn(A.DropItemList[i].Type,,,, false));
 			Item.bIgnoreSkill = true;
-			Item.Amount = A.InitialInventory[i].Amount;
+			Item.Amount = A.DropItemList[i].Amount;
 			if (Weapon(Item))
 			{
 				//	For better control empty weapon's ammo.

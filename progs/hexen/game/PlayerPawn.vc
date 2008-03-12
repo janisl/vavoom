@@ -26,14 +26,7 @@
 class PlayerPawn : Pawn
 	abstract;
 
-struct InitInvInfo
-{
-	class<Inventory>	Type;
-	int					Amount;
-};
-
 float					HexenArmor[5];
-array<InitInvInfo>		InitialInventory;
 
 //==========================================================================
 //
@@ -44,6 +37,17 @@ array<InitInvInfo>		InitialInventory;
 float GetBaseViewHeight()
 {
 	return Player::VIEWHEIGHT;
+}
+
+//==========================================================================
+//
+//	ShouldDropItems
+//
+//==========================================================================
+
+bool ShouldDropItems()
+{
+	return false;
 }
 
 //==========================================================================

@@ -64,6 +64,6 @@ defaultproperties
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';
 
-	InitialInventory.Num = 1;
-	InitialInventory[0].Type = Snout; InitialInventory[0].Amount = 1;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Snout; DropItemList[0].Amount = 1;
 }

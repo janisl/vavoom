@@ -26,14 +26,6 @@
 class PlayerPawn : Pawn
 	abstract;
 
-struct InitInvInfo
-{
-	class<Inventory>	Type;
-	int					Amount;
-};
-
-array<InitInvInfo>		InitialInventory;
-
 bool bSafeToRemove;
 
 //==========================================================================
@@ -45,6 +37,17 @@ bool bSafeToRemove;
 float GetBaseViewHeight()
 {
 	return Player::VIEWHEIGHT;
+}
+
+//==========================================================================
+//
+//	ShouldDropItems
+//
+//==========================================================================
+
+bool ShouldDropItems()
+{
+	return false;
 }
 
 //==========================================================================

@@ -25,14 +25,6 @@
 
 class PlayerPawn : Actor;
 
-struct InitInvInfo
-{
-	class<Inventory>	Type;
-	int					Amount;
-};
-
-array<InitInvInfo>		InitialInventory;
-
 //==========================================================================
 //
 //	GetBaseViewHeight
@@ -42,6 +34,17 @@ array<InitInvInfo>		InitialInventory;
 float GetBaseViewHeight()
 {
 	return Player::VIEWHEIGHT;
+}
+
+//==========================================================================
+//
+//	ShouldDropItems
+//
+//==========================================================================
+
+bool ShouldDropItems()
+{
+	return false;
 }
 
 //==========================================================================

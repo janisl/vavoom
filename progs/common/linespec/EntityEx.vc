@@ -7059,6 +7059,17 @@ final int decorate_random(int From, int To)
 	return From + RVal % (To - From + 1);
 }
 
+//==========================================================================
+//
+//	ShouldDropItems
+//
+//==========================================================================
+
+bool ShouldDropItems()
+{
+	return true;
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;

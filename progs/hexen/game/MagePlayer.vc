@@ -103,6 +103,6 @@ defaultproperties
 	PainSound = 'PlayerMagePain';
 	SoundClass = 'mage';
 
-	InitialInventory.Num = 1;
-	InitialInventory[0].Type = MWeapWand; InitialInventory[0].Amount = 1;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = MWeapWand; DropItemList[0].Amount = 1;
 }

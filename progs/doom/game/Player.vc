@@ -381,18 +381,18 @@ void SpawnPlayer(mthing_t * mthing)
 		BArmor.Amount = 0;
 		BArmor.AttachToOwner(PP);
 
-		for (i = 0; i < PP.InitialInventory.Num; i++)
+		for (i = 0; i < PP.DropItemList.Num; i++)
 		{
-			Item = Level.Spawn(PP.InitialInventory[i].Type,,,, false);
+			Item = Inventory(Level.Spawn(PP.DropItemList[i].Type,,,, false));
 			Item.bIgnoreSkill = true;
 			//	Temporary hack for Dehacked support.
-			if (PP.InitialInventory[i].Type == Clip)
+			if (PP.DropItemList[i].Type == Clip)
 			{
 				Item.Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
 			}
 			else
 			{
-				Item.Amount = PP.InitialInventory[i].Amount;
+				Item.Amount = PP.DropItemList[i].Amount;
 			}
 			if (Weapon(Item))
 			{
