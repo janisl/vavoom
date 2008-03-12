@@ -28,104 +28,6 @@ class PainElemental : ScriptedEntity
 	__mobjinfo__(71)
 	__scriptid__(115);
 
-//==========================================================================
-//
-//  A_PainShootSkull
-//
-//  Spawn a lost soul and launch it at the target
-//
-//==========================================================================
-
-final void A_PainShootSkull(float angle)
-{
-	Actor mo;
-	LostSoul newSkull;
-	float prestep;
-	int count;
-
-	// count total number of skull currently on the level
-	count = 0;
-	foreach AllThinkers(LostSoul, mo)
-	{
-		count++;
-	}
-
-	// if there are allready 20 skulls on the level,
-	// don't spit another one
-	if (count > 20)
-		return;
-
-	// okay, there's place for another one
-	prestep = 4.0 + 3.0 * (Radius + LostSoul.default.Radius) / 2.0;
-
-	// Check whether the Lost Soul is being fired through a 1-sided
-	// wall or an impassible line, or a "monsters can't cross" line.
-	// If it is, then we don't allow the spawn.
-	if (CheckSides(Origin + vector(
-	    prestep * cos(angle), prestep * sin(angle), 8.0)))
-	{
-		return;
-	}
-
-	newSkull = LostSoul(Spawn(LostSoul, Origin));
-
-	// Check to see if the new Lost Soul's z value is above the
-	// ceiling of its new sector, or below the floor. If so, kill it.
-	if ((newSkull.Origin.z > (newSkull.CeilingZ - newSkull.Height)) ||
-        (newSkull.Origin.z < newSkull.FloorZ))
-	{
-		// kill it immediately
-		newSkull.Damage(self, self, 10000);
-		return;
-	}
-
-	// Check for movements.
-	if (!newSkull.TryMove(newSkull.Origin + vector(
-	    prestep * cos(angle), prestep * sin(angle), 8.0)))
-	{
-		// kill it immediately
-		newSkull.Damage(self, self, 10000);
-		return;
-	}
-
-	newSkull.Target = Target;
-	newSkull.A_SkullAttack();
-}
-
-//==========================================================================
-//
-//  A_PainAttack
-//
-//  Pain elemental attack. Spawn a lost soul and launch it at the target.
-// 
-//==========================================================================
-
-final void A_PainAttack()
-{
-	if (!Target)
-		return;
-
-	A_FaceTarget();
-	A_PainShootSkull(Angles.yaw);
-}
-
-//==========================================================================
-//
-//  A_PainDie
-//
-//  Pain elemental death.
-//
-//==========================================================================
-
-final void A_PainDie()
-{
-	SendExplosion(DLightColour, DLightRadius, Origin + vector(0.0, 0.0, Height * 0.5));
-	A_Fall();
-	A_PainShootSkull(Angles.yaw + 90.0);
-	A_PainShootSkull(Angles.yaw + 180.0);
-	A_PainShootSkull(Angles.yaw + 270.0);
-}
-
 states
 {
 Spawn:
@@ -172,8 +74,6 @@ defaultproperties
 	bNoGravity = true;
 	bFloat = true;
 	bPassMobj = true;
-	DLightColour = RGB(195, 79, 0);
-	DLightRadius = 126.0;
 	SightSound = 'pain/sight';
 	ActiveSound = 'pain/active';
 	PainSound = 'pain/pain';

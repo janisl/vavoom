@@ -157,13 +157,13 @@ int GetSigilPieces()
 
 //==========================================================================
 //
-//	A_Tracer
+//	A_Tracer2
 //
 //==========================================================================
 
 const float TRACEANGLE	= (7.0 * 45.0 / 16.0);
 
-final void A_Tracer()
+final void A_Tracer2()
 {
 	Actor dest;
 	float exact;

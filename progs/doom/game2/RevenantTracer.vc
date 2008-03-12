@@ -27,52 +27,6 @@ class RevenantTracer : ScriptedEntity
 	game(GAME_Doom)
 	__scriptid__(53);
 
-//==========================================================================
-//
-//  A_Tracer
-//
-//  Ravenant missile tracer.
-//
-//==========================================================================
-
-const float TRACEADJUST = 0.2865921825;
-
-final void A_Tracer()
-{
-	EntityEx A;
-	TVec wishdir;
-	TVec currdir;
-	TVec delta;
-	float adjustlen;
-
-	if (XLevel.TicTime & 3)
-		return;
-
-	// spawn a puff of smoke behind the rocket      
-	SpawnPuff(Origin, MISSILERANGE, BulletPuff, false);
-
-	A = Spawn(RevenantTracerSmoke, Origin - Velocity * Level.Game.frametime);
-
-	A.Velocity.z = 1.0 * 35.0;
-	A.StateTime -= Random() * 0.1;
-	if (A.StateTime < 0.1)
-		A.StateTime = 0.1;
-
-	// adjust direction
-	if (!Tracer || Tracer.Health <= 0)
-		return;
-
-	wishdir = Normalise(Tracer.GetCentre() - Origin);
-	currdir = Normalise(Velocity);
-	delta = wishdir - currdir;
-	adjustlen = Length(delta);
-	if (adjustlen > TRACEADJUST)
-		adjustlen = TRACEADJUST;
-	wishdir = currdir + delta * adjustlen;
-	Velocity = wishdir * Speed;
-	VectorAngles(&wishdir, &Angles);
-}
-
 states
 {
 Spawn:

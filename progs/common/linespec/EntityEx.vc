@@ -7063,6 +7063,77 @@ bool ShouldDropItems()
 	return true;
 }
 
+//==========================================================================
+//
+//  PainShootSkull
+//
+//  Spawn a lost soul and launch it at the target
+//
+//==========================================================================
+
+final void PainShootSkull(class<ScriptedEntity> SpawnType, float angle)
+{
+	EntityEx mo;
+	ScriptedEntity newSkull;
+	float prestep;
+	int count;
+
+	if (!SpawnType)
+	{
+		SpawnType = LostSoul;
+	}
+
+	// count total number of skull currently on the level
+	count = 0;
+	foreach AllThinkers(SpawnType, mo)
+	{
+		count++;
+	}
+
+	// if there are allready 20 skulls on the level,
+	// don't spit another one
+	if (count > 20)
+	{
+		return;
+	}
+
+	// okay, there's place for another one
+	prestep = 4.0 + 3.0 * (Radius + SpawnType.default.Radius) / 2.0;
+
+	// Check whether the Lost Soul is being fired through a 1-sided
+	// wall or an impassible line, or a "monsters can't cross" line.
+	// If it is, then we don't allow the spawn.
+	if (CheckSides(Origin + vector(
+	    prestep * cos(angle), prestep * sin(angle), 8.0)))
+	{
+		return;
+	}
+
+	newSkull = Spawn(SpawnType, Origin);
+
+	// Check to see if the new Lost Soul's z value is above the
+	// ceiling of its new sector, or below the floor. If so, kill it.
+	if ((newSkull.Origin.z > (newSkull.CeilingZ - newSkull.Height)) ||
+        (newSkull.Origin.z < newSkull.FloorZ))
+	{
+		// kill it immediately
+		newSkull.Damage(self, self, 10000);
+		return;
+	}
+
+	// Check for movements.
+	if (!newSkull.TryMove(newSkull.Origin + vector(
+	    prestep * cos(angle), prestep * sin(angle), 8.0)))
+	{
+		// kill it immediately
+		newSkull.Damage(self, self, 10000);
+		return;
+	}
+
+	newSkull.Target = Target;
+	newSkull.A_SkullAttack();
+}
+
 float GetBaseViewHeight()
 {
 	return 0.0;

@@ -28,33 +28,6 @@ class Cacodemon : ScriptedEntity
 	__mobjinfo__(3005)
 	__scriptid__(19);
 
-//==========================================================================
-//
-//  A_HeadAttack
-//
-//  Cacodemon attack.
-//
-//==========================================================================
-
-final void A_HeadAttack()
-{
-	int damage;
-
-	if (!Target)
-		return;
-
-	A_FaceTarget();
-	if (CheckMeleeRange())
-	{
-		damage = (P_Random() % 6 + 1) * 10;
-		Target.Damage(self, self, damage);
-		return;
-	}
-
-	// launch a missile
-	SpawnMissile(Target, CacodemonBall);
-}
-
 states
 {
 Spawn:

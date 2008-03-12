@@ -28,28 +28,6 @@ class LostSoul : ScriptedEntity
 	__mobjinfo__(3006)
 	__scriptid__(110);
 
-//==========================================================================
-//
-//  A_SkullAttack
-//
-//  Lost soul attack. Fly at the player like a missile.
-//
-//==========================================================================
-
-const float SKULLSPEED = 700.0;
-
-final void A_SkullAttack()
-{
-	if (!Target)
-		return;
-
-	bSkullFly = true;
-
-	PlaySound(AttackSound, CHAN_VOICE);
-	A_FaceTarget();
-	Velocity = Normalise(Target.GetCentre() - Origin) * SKULLSPEED;
-}
-
 states
 {
 Spawn:

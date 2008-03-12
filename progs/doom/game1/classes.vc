@@ -33,7 +33,6 @@
 #include "Gibs.vc"
 
 #include "Pistol.vc"
-#include "Rocket.vc"
 #include "PlasmaBall.vc"
 #include "BFGExtra.vc"
 #include "BFGBall.vc"

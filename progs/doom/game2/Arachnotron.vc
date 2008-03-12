@@ -28,39 +28,6 @@ class Arachnotron : ScriptedEntity
 	__mobjinfo__(68)
 	__scriptid__(6);
 
-//==========================================================================
-//
-//  A_BabyMetal
-//
-//  Arachnotron move with metal sound.
-//
-//==========================================================================
-
-final void A_BabyMetal()
-{
-	PlaySound('baby/walk', CHAN_BODY);
-	A_Chase();
-}
-
-//==========================================================================
-//
-//  A_BspiAttack
-//
-//  Arachnotron attack.
-//
-//==========================================================================
-
-final void A_BspiAttack()
-{
-	if (!Target)
-		return;
-
-	A_FaceTarget();
-
-	// launch a missile
-	SpawnMissile(Target, ArachnotronPlasma);
-}
-
 states
 {
 Spawn:

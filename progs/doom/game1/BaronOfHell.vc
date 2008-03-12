@@ -28,33 +28,6 @@ class BaronOfHell : ScriptedEntity
 	__mobjinfo__(3003)
 	__scriptid__(3);
 
-//==========================================================================
-//
-//  A_BruisAttack
-//
-//  Hell knight, Baron of hell attack.
-//
-//==========================================================================
-
-final void A_BruisAttack()
-{
-	int damage;
-
-	if (!Target)
-		return;
-
-	if (CheckMeleeRange())
-	{
-		PlaySound('baron/melee', CHAN_WEAPON);
-		damage = (P_Random() % 8 + 1) * 10;
-		Target.Damage(self, self, damage);
-		return;
-	}
-
-	// launch a missile
-	SpawnMissile(Target, BaronBall);
-}
-
 states
 {
 Spawn:

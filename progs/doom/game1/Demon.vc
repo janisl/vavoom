@@ -28,29 +28,6 @@ class Demon : ScriptedEntity
 	__mobjinfo__(3002)
 	__scriptid__(8);
 
-//==========================================================================
-//
-//  A_SargAttack
-//
-//  Demon, Spectre attack.
-//
-//==========================================================================
-
-final void A_SargAttack()
-{
-	int damage;
-
-	if (!Target)
-		return;
-
-	A_FaceTarget();
-	if (CheckMeleeRange())
-	{
-		damage = ((P_Random() % 10) + 1) * 4;
-		Target.Damage(self, self, damage);
-	}
-}
-
 states
 {
 Spawn:

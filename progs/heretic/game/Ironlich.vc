@@ -29,11 +29,11 @@ class Ironlich : Pawn
 
 //==========================================================================
 //
-//  A_HeadAttack
+//  A_IronlichAttack
 //
 //==========================================================================
 
-final void A_HeadAttack()
+final void A_IronlichAttack()
 {
 	int i;
 	Actor fire;
@@ -113,7 +113,7 @@ See:
 	Loop
 Missile:
 	LICH A 5 A_FaceTarget
-	LICH B 20 A_HeadAttack
+	LICH B 20 A_IronlichAttack
 	Goto See
 Pain:
 	LICH A 4

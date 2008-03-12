@@ -44,7 +44,7 @@ states
 {
 Spawn:
 	MISS A 4 Bright A_RocketTrail
-	MISS B 3 Bright A_Tracer
+	MISS B 3 Bright A_Tracer2
 	Loop
 }
 

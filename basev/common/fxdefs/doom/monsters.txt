@@ -399,3 +399,40 @@ class ArchvileFire
 {
 	frame FIRE { light ArchvileFire }
 }
+
+//------------------------------------------------------------------------------
+pointlight PainElemental_X1
+{
+	colour 0.75 0.3 0
+	radius 200
+	offset 0 0 28
+}
+
+pointlight PainElemental_X2
+{
+	colour 0.75 0.3 0
+	radius 150
+	offset 0 0 28
+}
+
+pointlight PainElemental_X3
+{
+	colour 0.75 0.3 0
+	radius 100
+	offset 0 0 28
+}
+
+pointlight PainElemental_X4
+{
+	colour 0.75 0.3 0
+	radius 50
+	offset 0 0 28
+}
+
+class PainElemental
+{
+	frame PAINJ { light PainElemental_X1 }
+	frame PAINK { light PainElemental_X2 }
+	frame PAINL { light PainElemental_X3 }
+	frame PAINM { light PainElemental_X4 }
+}

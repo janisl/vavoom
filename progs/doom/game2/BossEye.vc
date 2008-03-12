@@ -29,20 +29,6 @@ class BossEye : ScriptedEntity
 
 //==========================================================================
 //
-//  A_BrainAwake
-//
-//  Init boss spawner.
-//
-//==========================================================================
-
-final void A_BrainAwake()
-{
-	//	Do just a sound, like in Boom.
-	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
-}
-
-//==========================================================================
-//
 //  A_BrainSpit
 //
 //  Spawn a cube.

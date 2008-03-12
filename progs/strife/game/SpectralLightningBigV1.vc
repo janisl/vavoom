@@ -28,9 +28,9 @@ class SpectralLightningBigV1 : SpectralLightningBase;
 states
 {
 Spawn:
-	ZOT2 AB 4 Bright A_Tracer
-	ZOT2 CD 6 Bright A_Tracer
-	ZOT2 E 5 Bright A_Tracer
+	ZOT2 AB 4 Bright A_Tracer2
+	ZOT2 CD 6 Bright A_Tracer2
+	ZOT2 E 5 Bright A_Tracer2
 	Loop
 Death:
 	Goto Super::Death+1

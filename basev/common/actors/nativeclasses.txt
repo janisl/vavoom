@@ -65,9 +65,9 @@ class Actor extends Thinker
 	action native A_Pain();
 	action native A_Scream();
 	action native A_XScream();
-	//A_VileStart
-	//A_BrainPain
-	//A_BrainAwake
+	action native A_VileStart();
+	action native A_BrainPain();
+	action native A_BrainAwake();
 
 	//
 	//	Special actions
@@ -144,9 +144,9 @@ class Actor extends Thinker
 	//	Missile movement
 	//
 	//A_SeekerMissile
-	//A_Tracer
+	action native A_Tracer();
 	//A_Tracer2
-	//A_Fire
+	action native A_Fire();
 	//A_BishopMissileWeave
 	//A_CStaffMissileSlither
 	//A_Countdown
@@ -193,29 +193,29 @@ class Actor extends Thinker
 	//
 	//	Original Doom/Strife monster attacks
 	//
-	//A_PosAttack
+	action native A_PosAttack();
 	action native A_SPosAttack();
 	action native A_SPosAttackUseAtkSound();
-	//A_CPosAttack
-	//A_CPosRefire
+	action native A_CPosAttack();
+	action native A_CPosRefire();
 	action native A_SpidRefire();
-	//A_TroopAttack
-	//A_SargAttack
-	//A_HeadAttack
-	//A_BruisAttack
-	//A_SkullAttack
-	//A_BspiAttack
-	//A_CyberAttack
-	//A_PainAttack
+	action native A_TroopAttack();
+	action native A_SargAttack();
+	action native A_HeadAttack();
+	action native A_BruisAttack();
+	action native A_SkullAttack();
+	action native A_BspiAttack();
+	action native A_CyberAttack();
+	action native A_PainAttack(optional class<Actor> spawntype);
 	//A_DualPainAttack
-	//A_PainDie
-	//A_SkelFist
-	//A_SkelMissile
-	//A_FatAttack1
-	//A_FatAttack2
-	//A_FatAttack3
-	//A_VileTarget
-	//A_VileAttack
+	action native A_PainDie(optional class<Actor> spawntype);
+	action native A_SkelFist();
+	action native A_SkelMissile();
+	action native A_FatAttack1(optional class<Actor> spawntype);
+	action native A_FatAttack2(optional class<Actor> spawntype);
+	action native A_FatAttack3(optional class<Actor> spawntype);
+	action native A_VileTarget();
+	action native A_VileAttack();
 	//A_BrainSpit
 	//A_SpawnFly
 	//A_SpawnSound
@@ -228,12 +228,12 @@ class Actor extends Thinker
 	//
 	//	Monster specific functions for Doom
 	//
-	//A_Hoof
+	action native A_Hoof();
 	action native A_Metal();
-	//A_BabyMetal
-	//A_FatRaise
-	//A_SkelWhoosh
-	//A_StartFire
-	//A_FireCrackle
+	action native A_BabyMetal();
+	action native A_FatRaise();
+	action native A_SkelWhoosh();
+	action native A_StartFire();
+	action native A_FireCrackle();
 	//A_BFGSpray
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WolfensteinSS : ChaingunGuy
+class WolfensteinSS : ScriptedEntity
 	game(GAME_Doom)
 	__mobjinfo__(84)
 	__scriptid__(116);
@@ -69,9 +69,22 @@ Raise:
 defaultproperties
 {
 	Health = 50;
-	GibsHealth = -50;
+	Radius = 20.0;
+	Height = 56.0;
+	Mass = 100.0;
+	Speed = 8.0 * 35.0;
+	PainChance = 0.6640625;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
 	SightSound = 'wolfss/sight';
 	ActiveSound = 'wolfss/active';
+	AttackSound = 'wolfss/attack';
 	PainSound = 'wolfss/pain';
 	DeathSound = 'wolfss/death';
 	Obituary = "$ob_wolfss";

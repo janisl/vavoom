@@ -29,19 +29,6 @@ class BossBrain : ScriptedEntity
 
 //==========================================================================
 //
-//  A_BrainPain
-//
-//  Brain pain sound.
-//
-//==========================================================================
-
-final void A_BrainPain()
-{
-	PlaySound('brain/pain', CHAN_VOICE, 1.0, ATTN_NONE);
-}
-
-//==========================================================================
-//
 //  A_BrainScream
 //
 //  Brain death sound, make explosions.

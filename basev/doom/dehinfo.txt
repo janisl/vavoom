@@ -117,7 +117,7 @@ states
 	BloodyTwitch			First	4
 	DoomUnusedStates		Death	2
 	HeadsOnAStick			First	1
-	Actor					First	1
+	ScriptedEntity			Crunch	1
 	HeadOnAStick			First	1
 	HeadCandles				First	2
 	DeadStick				First	1
@@ -235,7 +235,7 @@ code_pointers
 	BFGsound		BFG9000				A_BFGsound
 	FireBFG			BFG9000				A_FireBFG
 	BFGSpray		BFGBall				A_BFGSpray
-	Explode			Actor				A_Explode
+	Explode			ScriptedEntity		A_Explode
 	Pain			ScriptedEntity		A_Pain
 	PlayerScream	DoomPlayer			A_PlayerScream
 	Fall			ScriptedEntity		A_Fall
@@ -243,45 +243,45 @@ code_pointers
 	Look			ScriptedEntity		A_Look
 	Chase			ScriptedEntity		A_Chase
 	FaceTarget		ScriptedEntity		A_FaceTarget
-	PosAttack		ZombieMan			A_PosAttack
+	PosAttack		ScriptedEntity		A_PosAttack
 	Scream			ScriptedEntity		A_Scream
-	SPosAttack		Actor				A_SPosAttack
+	SPosAttack		ScriptedEntity		A_SPosAttack
 	VileChase		Archvile			A_VileChase
-	VileStart		Archvile			A_VileStart
-	VileTarget		Archvile			A_VileTarget
-	VileAttack		Archvile			A_VileAttack
+	VileStart		ScriptedEntity		A_VileStart
+	VileTarget		ScriptedEntity		A_VileTarget
+	VileAttack		ScriptedEntity		A_VileAttack
 	StartFire		ArchvileFire		A_StartFire
-	Fire			ArchvileFire		A_Fire
+	Fire			ScriptedEntity		A_Fire
 	FireCrackle		ArchvileFire		A_FireCrackle
-	Tracer			RevenantTracer		A_Tracer
-	SkelWhoosh		Revenant			A_SkelWhoosh
-	SkelFist		Revenant			A_SkelFist
-	SkelMissile		Revenant			A_SkelMissile
-	FatRaise		Fatso				A_FatRaise
-	FatAttack1		Fatso				A_FatAttack1
-	FatAttack2		Fatso				A_FatAttack2
-	FatAttack3		Fatso				A_FatAttack3
-	BossDeath		Actor				A_BossDeath
-	CPosAttack		ChaingunGuy			A_CPosAttack
-	CPosRefire		ChaingunGuy			A_CPosRefire
-	TroopAttack		DoomImp				A_TroopAttack
-	SargAttack		Demon				A_SargAttack
-	HeadAttack		Cacodemon			A_HeadAttack
-	BruisAttack		BaronOfHell			A_BruisAttack
-	SkullAttack		LostSoul			A_SkullAttack
-	Metal			Actor				A_Metal
-	SpidRefire		Actor				A_SpidRefire
-	BabyMetal		Arachnotron			A_BabyMetal
-	BspiAttack		Arachnotron			A_BspiAttack
-	Hoof			Cyberdemon			A_Hoof
-	CyberAttack		Cyberdemon			A_CyberAttack
-	PainAttack		PainElemental		A_PainAttack
-	PainDie			PainElemental		A_PainDie
+	Tracer			ScriptedEntity		A_Tracer
+	SkelWhoosh		ScriptedEntity		A_SkelWhoosh
+	SkelFist		ScriptedEntity		A_SkelFist
+	SkelMissile		ScriptedEntity		A_SkelMissile
+	FatRaise		ScriptedEntity		A_FatRaise
+	FatAttack1		ScriptedEntity		A_FatAttack1
+	FatAttack2		ScriptedEntity		A_FatAttack2
+	FatAttack3		ScriptedEntity		A_FatAttack3
+	BossDeath		ScriptedEntity		A_BossDeath
+	CPosAttack		ScriptedEntity		A_CPosAttack
+	CPosRefire		ScriptedEntity		A_CPosRefire
+	TroopAttack		ScriptedEntity		A_TroopAttack
+	SargAttack		ScriptedEntity		A_SargAttack
+	HeadAttack		ScriptedEntity		A_HeadAttack
+	BruisAttack		ScriptedEntity		A_BruisAttack
+	SkullAttack		ScriptedEntity		A_SkullAttack
+	Metal			ScriptedEntity		A_Metal
+	SpidRefire		ScriptedEntity		A_SpidRefire
+	BabyMetal		ScriptedEntity		A_BabyMetal
+	BspiAttack		ScriptedEntity		A_BspiAttack
+	Hoof			ScriptedEntity		A_Hoof
+	CyberAttack		ScriptedEntity		A_CyberAttack
+	PainAttack		ScriptedEntity		A_PainAttack
+	PainDie			ScriptedEntity		A_PainDie
 	KeenDie			CommanderKeen		A_KeenDie
-	BrainPain		BossBrain			A_BrainPain
+	BrainPain		ScriptedEntity		A_BrainPain
 	BrainScream		BossBrain			A_BrainScream
 	BrainDie		BossBrain			A_BrainDie
-	BrainAwake		BossEye				A_BrainAwake
+	BrainAwake		ScriptedEntity		A_BrainAwake
 	BrainSpit		BossEye				A_BrainSpit
 	SpawnSound		SpawnShot			A_SpawnSound
 	SpawnFly		SpawnShot			A_SpawnFly

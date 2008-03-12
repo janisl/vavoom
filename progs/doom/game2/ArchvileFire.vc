@@ -27,58 +27,6 @@ class ArchvileFire : ScriptedEntity
 	game(GAME_Doom)
 	__scriptid__(98);
 
-//==========================================================================
-//
-//  A_Fire
-//
-//  Keep fire in front of player unless out of sight.
-//
-//==========================================================================
-
-final void A_Fire()
-{
-	if (!Target || !Tracer)
-		return;
-
-	// don't move it if the vile lost sight
-	if (!Target.CanSee(Tracer))
-		return;
-
-	UnlinkFromWorld();
-	Origin.x = Tracer.Origin.x + 24.0 * cos(Tracer.Angles.yaw);
-	Origin.y = Tracer.Origin.y + 24.0 * sin(Tracer.Angles.yaw);
-	Origin.z = Tracer.Origin.z;
-	LinkToWorld();
-}
-
-//==========================================================================
-//
-//  A_StartFire
-//
-//  Make fire start sound.
-//
-//==========================================================================
-
-final void A_StartFire()
-{
-	PlaySound('vile/firestrt', CHAN_VOICE);
-	A_Fire();
-}
-
-//==========================================================================
-//
-//  A_FireCrackle
-//
-//  Fire sound.
-//
-//==========================================================================
-
-final void A_FireCrackle()
-{
-	PlaySound('vile/firecrkl', CHAN_VOICE);
-	A_Fire();
-}
-
 states
 {
 Spawn:

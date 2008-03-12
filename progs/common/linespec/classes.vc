@@ -176,6 +176,7 @@ enum
 
 #include "../../doom/game1/Shotgun.vc"
 #include "../../doom/game1/Chaingun.vc"
+#include "../../doom/game1/Rocket.vc"
 #include "../../doom/game1/ZombieMan.vc"
 #include "../../doom/game1/ShotgunGuy.vc"
 #include "../../doom/game1/DoomImpBall.vc"

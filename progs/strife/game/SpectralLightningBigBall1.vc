@@ -37,7 +37,7 @@ final void A_Unknown91()
 	Actor A;
 	float dir;
 
-	A_Tracer();
+	A_Tracer2();
 
 	dir = Angles.yaw;
 

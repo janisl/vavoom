@@ -28,37 +28,6 @@ class Cyberdemon : ScriptedEntity
 	__mobjinfo__(16)
 	__scriptid__(114);
 
-//==========================================================================
-//
-//  A_Hoof
-//
-//  Cyberdemon move with hoof sound.
-//
-//==========================================================================
-
-final void A_Hoof()
-{
-	PlaySound('cyber/hoof', CHAN_BODY);
-	A_Chase();
-}
-
-//==========================================================================
-//
-//  A_CyberAttack
-//
-//  Cyberdemon attack.
-//
-//==========================================================================
-
-final void A_CyberAttack()
-{
-	if (!Target)
-		return;
-
-	A_FaceTarget();
-	SpawnMissile(Target, Rocket);
-}
-
 states
 {
 Spawn:
