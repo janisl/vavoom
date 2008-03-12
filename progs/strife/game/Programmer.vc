@@ -28,17 +28,6 @@ class Programmer : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(Sigil1, 0, 1.0);
-}
-
-//==========================================================================
-//
 //	A_ProgrammerMelee
 //
 //==========================================================================
@@ -149,4 +138,6 @@ defaultproperties
 	PainSound = 'programmer/pain';
 	DeathSound = 'programmer/death';
 	Obituary = "$ob_programmer";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Sigil1; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

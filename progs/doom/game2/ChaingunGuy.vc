@@ -81,17 +81,6 @@ final void A_CPosRefire()
 	}
 }
 
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(Chaingun, 0, 1.0);
-}
-
 states
 {
 Spawn:
@@ -152,4 +141,6 @@ defaultproperties
 	PainSound = 'chainguy/pain';
 	DeathSound = 'chainguy/death';
 	Obituary = "$ob_chainguy";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Chaingun; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

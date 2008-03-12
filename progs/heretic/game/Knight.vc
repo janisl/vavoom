@@ -29,17 +29,6 @@ class Knight : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(CrossbowAmmo, 5, 0.328125);
-}
-
-//==========================================================================
-//
 //  A_KnightAttack
 //
 //==========================================================================
@@ -114,4 +103,6 @@ defaultproperties
 	DeathSound = 'hknight/death';
 	Obituary = "$ob_boneknight";
 	HitObituary = "$ob_boneknighthit";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = CrossbowAmmo; DropItemList[0].Amount = 5; DropItemList[0].Chance = 0.328125;
 }

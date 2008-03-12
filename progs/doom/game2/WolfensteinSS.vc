@@ -28,17 +28,6 @@ class WolfensteinSS : ChaingunGuy
 	__mobjinfo__(84)
 	__scriptid__(116);
 
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(Clip, 0, 1.0);
-}
-
 states
 {
 Spawn:
@@ -86,4 +75,6 @@ defaultproperties
 	PainSound = 'wolfss/pain';
 	DeathSound = 'wolfss/death';
 	Obituary = "$ob_wolfss";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Clip; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

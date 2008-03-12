@@ -29,18 +29,6 @@ class Ironlich : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(BlasterAmmo, 10, 0.328125);
-	DropItem(ArtiEgg, 0, 0.19921875);
-}
-
-//==========================================================================
-//
 //  A_HeadAttack
 //
 //==========================================================================
@@ -159,4 +147,7 @@ defaultproperties
 	DeathSound = 'ironlich/death';
 	Obituary = "$ob_ironlich";
 	HitObituary = "$ob_ironlichhit";
+	DropItemList.Num = 2;
+	DropItemList[0].Type = BlasterAmmo; DropItemList[0].Amount = 10; DropItemList[0].Chance = 0.328125;
+	DropItemList[1].Type = ArtiEgg; DropItemList[1].Amount = 0; DropItemList[1].Chance = 0.19921875;
 }

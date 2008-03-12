@@ -29,17 +29,6 @@ class Snake : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(PhoenixRodAmmo, 5, 0.328125);
-}
-
-//==========================================================================
-//
 //  A_SnakeAttack
 //
 //==========================================================================
@@ -115,4 +104,6 @@ defaultproperties
 	PainSound = 'snake/pain';
 	DeathSound = 'snake/death';
 	Obituary = "$ob_snake";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = PhoenixRodAmmo; DropItemList[0].Amount = 5; DropItemList[0].Chance = 0.328125;
 }

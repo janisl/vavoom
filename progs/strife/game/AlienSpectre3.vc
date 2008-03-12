@@ -26,17 +26,6 @@
 class AlienSpectre3 : AlienSpectre1
 	__mobjinfo__(76);
 
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(Sigil3, 0, 1.0);
-}
-
 states
 {
 Spawn:
@@ -71,4 +60,6 @@ defaultproperties
 	Radius = 24.0;
 	PainChance = 0.1953125;
 	bSpawnCeiling = true;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Sigil3; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

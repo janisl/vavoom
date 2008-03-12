@@ -29,17 +29,6 @@ class Mummy : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(GoldWandAmmo, 3, 0.328125);
-}
-
-//==========================================================================
-//
 //  A_MummyAttack
 //
 //==========================================================================
@@ -116,4 +105,6 @@ defaultproperties
 	PainSound = 'mummy/pain';
 	DeathSound = 'mummy/death';
 	Obituary = "$ob_mummy";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = GoldWandAmmo; DropItemList[0].Amount = 3; DropItemList[0].Chance = 0.328125;
 }

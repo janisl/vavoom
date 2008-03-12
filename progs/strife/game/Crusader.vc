@@ -43,17 +43,6 @@ final bool EnemyCloseEnough()
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(EnergyPod, 20, 1.0);
-}
-
-//==========================================================================
-//
 //	GetExplodeParms
 //
 //==========================================================================
@@ -216,4 +205,6 @@ defaultproperties
 	PainSound = 'crusader/pain';
 	DeathSound = 'crusader/death';
 	Obituary = "$ob_crusader";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = EnergyPod; DropItemList[0].Amount = 20; DropItemList[0].Chance = 1.0;
 }

@@ -26,18 +26,9 @@
 class Rebel1 : Rebel
 	__mobjinfo__(9);
 
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(ClipOfBullets, 0, 1.0);
-}
-
 defaultproperties
 {
 	ConversationID = 43;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = ClipOfBullets; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

@@ -29,17 +29,6 @@ class Clink : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(SkullRodAmmo, 20, 0.328125);
-}
-
-//==========================================================================
-//
 //  A_ClinkAttack
 //
 //==========================================================================
@@ -101,4 +90,6 @@ defaultproperties
 	PainSound = 'clink/pain';
 	DeathSound = 'clink/death';
 	Obituary = "$ob_clink";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = SkullRodAmmo; DropItemList[0].Amount = 20; DropItemList[0].Chance = 0.328125;
 }

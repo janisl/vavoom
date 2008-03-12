@@ -56,17 +56,6 @@ final void A_PosAttack()
 	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 }
 
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(Clip, 0, 1.0);
-}
-
 states
 {
 Spawn:
@@ -125,4 +114,6 @@ defaultproperties
 	PainSound = 'grunt/pain';
 	DeathSound = 'grunt/death1';
 	Obituary = "$ob_zombie";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Clip; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

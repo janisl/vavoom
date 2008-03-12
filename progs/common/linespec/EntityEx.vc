@@ -104,6 +104,13 @@ enum
 	PROP_SPEED					= 15
 };
 
+struct DropItemInfo
+{
+	class<EntityEx>		Type;
+	int					Amount;
+	float				Chance;
+};
+
 //  States
 state			IdleState;
 state			SeeState;
@@ -327,6 +334,8 @@ string			Obituary;
 string			HitObituary;
 
 state			PrevEffectState;
+
+array<DropItemInfo>	DropItemList;
 
 replication
 {

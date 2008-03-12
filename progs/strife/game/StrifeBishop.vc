@@ -28,17 +28,6 @@ class StrifeBishop : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(CrateOfMissiles, 0, 1.0);
-}
-
-//==========================================================================
-//
 //	GetExplodeParms
 //
 //==========================================================================
@@ -137,4 +126,6 @@ defaultproperties
 	DeathSound = 'bishop/death';
 	DLightRadius = 128.0;
 	Obituary = "$ob_stfbishop";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = CrateOfMissiles; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

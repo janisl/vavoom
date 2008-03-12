@@ -70,18 +70,6 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(ArtiSuperHealth, 0, 0.19921875);
-	DropItem(PhoenixRodAmmo, 10, 0.328125);
-}
-
-//==========================================================================
-//
 //  A_MinotaurAtk1
 //
 //  Melee attack.
@@ -331,4 +319,7 @@ defaultproperties
 	AttackSound = 'minotaur/attack1';
 	PainSound = 'minotaur/pain';
 	DeathSound = 'minotaur/death';
+	DropItemList.Num = 2;
+	DropItemList[0].Type = ArtiSuperHealth; DropItemList[0].Amount = 0; DropItemList[0].Chance = 0.19921875;
+	DropItemList[1].Type = PhoenixRodAmmo; DropItemList[1].Amount = 10; DropItemList[1].Chance = 0.328125;
 }

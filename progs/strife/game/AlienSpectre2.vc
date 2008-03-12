@@ -26,17 +26,6 @@
 class AlienSpectre2 : AlienSpectre1
 	__mobjinfo__(75);
 
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(Sigil2, 0, 1.0);
-}
-
 states
 {
 Missile:
@@ -51,4 +40,6 @@ defaultproperties
 	Health = 1200;
 	Radius = 24.0;
 	PainChance = 0.1953125;
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Sigil2; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

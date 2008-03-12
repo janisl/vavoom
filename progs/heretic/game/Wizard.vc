@@ -29,18 +29,6 @@ class Wizard : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(BlasterAmmo, 10, 0.328125);
-	DropItem(ArtiTomeOfPower, 0, 0.015625);
-}
-
-//==========================================================================
-//
 //  A_WizAtk1
 //
 //==========================================================================
@@ -173,4 +161,7 @@ defaultproperties
 	DeathSound = 'wizard/death';
 	Obituary = "$ob_wizard";
 	HitObituary = "$ob_wizardhit";
+	DropItemList.Num = 2;
+	DropItemList[0].Type = BlasterAmmo; DropItemList[0].Amount = 10; DropItemList[0].Chance = 0.328125;
+	DropItemList[1].Type = ArtiTomeOfPower; DropItemList[1].Amount = 0; DropItemList[1].Chance = 0.015625;
 }

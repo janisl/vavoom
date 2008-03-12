@@ -28,17 +28,6 @@ class ShotgunGuy : ScriptedEntity
 	__mobjinfo__(9)
 	__scriptid__(1);
 
-//==========================================================================
-//
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(Shotgun, 0, 1.0);
-}
-
 states
 {
 Spawn:
@@ -100,4 +89,6 @@ defaultproperties
 	PainSound = 'shotguy/pain';
 	DeathSound = 'shotguy/death';
 	Obituary = "$ob_shotguy";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = Shotgun; DropItemList[0].Amount = 0; DropItemList[0].Chance = 1.0;
 }

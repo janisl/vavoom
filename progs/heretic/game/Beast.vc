@@ -29,17 +29,6 @@ class Beast : Pawn
 
 //==========================================================================
 //
-//	NoBlockingSet
-//
-//==========================================================================
-
-void NoBlockingSet()
-{
-	DropItem(CrossbowAmmo, 10, 0.328125);
-}
-
-//==========================================================================
-//
 //  A_BeastAttack
 //
 //==========================================================================
@@ -110,4 +99,6 @@ defaultproperties
 	PainSound = 'beast/pain';
 	DeathSound = 'beast/death';
 	Obituary = "$ob_beast";
+	DropItemList.Num = 1;
+	DropItemList[0].Type = CrossbowAmmo; DropItemList[0].Amount = 10; DropItemList[0].Chance = 0.328125;
 }
