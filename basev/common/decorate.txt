@@ -18,6 +18,7 @@
 
 #include "actors/raven/ravenhealth.txt"
 #include "actors/raven/ravenartifacts.txt"
+#include "actors/raven/ravenambient.txt"
 
 #include "actors/heretic/hereticarmor.txt"
 #include "actors/heretic/hereticammo.txt"

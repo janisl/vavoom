@@ -32,7 +32,7 @@ actor SoundWaterfall 41
 	states
 	{
 	Spawn:
-		TNT1 A 2 A_PlaySound("world/waterfall", "SoundSlot6", 1)
+		TNT1 A 2 A_PlaySoundEx("world/waterfall", "SoundSlot6", 1)
 		Loop
 	}
 }

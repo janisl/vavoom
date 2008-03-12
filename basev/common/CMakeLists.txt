@@ -39,6 +39,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/hexen/puzzleitems.txt
 		actors/hexen/scriptprojectiles.txt
 		actors/hexen/speedboots.txt
+		actors/raven/ravenambient.txt
 		actors/raven/ravenartifacts.txt
 		actors/raven/ravenhealth.txt
 		actors/shared/blood.txt

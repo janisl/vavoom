@@ -67,6 +67,7 @@ actors/hexen/mana.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/mana.txt
 actors/hexen/puzzleitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/puzzleitems.txt
 actors/hexen/scriptprojectiles.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/scriptprojectiles.txt
 actors/hexen/speedboots.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/speedboots.txt
+actors/raven/ravenambient.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenambient.txt
 actors/raven/ravenartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenartifacts.txt
 actors/raven/ravenhealth.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenhealth.txt
 actors/shared/blood.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/blood.txt
