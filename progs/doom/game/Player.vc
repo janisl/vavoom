@@ -385,12 +385,7 @@ void SpawnPlayer(mthing_t * mthing)
 		{
 			Item = Inventory(Level.Spawn(PP.DropItemList[i].Type,,,, false));
 			Item.bIgnoreSkill = true;
-			//	Temporary hack for Dehacked support.
-			if (PP.DropItemList[i].Type == Clip)
-			{
-				Item.Amount = MainGameInfo(Level.Game).INITIAL_AMMO;
-			}
-			else
+			if (PP.DropItemList[i].Amount > 0)
 			{
 				Item.Amount = PP.DropItemList[i].Amount;
 			}

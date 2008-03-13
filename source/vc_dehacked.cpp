@@ -77,6 +77,7 @@ static TArray<VCodePtrInfo>		CodePtrs;
 static TArray<VName>			Sounds;
 
 static VClass*					GameInfoClass;
+static VClass*					DoomPlayerClass;
 static VClass*					BfgClass;
 static VClass*					HealthBonusClass;
 static VClass*					SoulsphereClass;
@@ -1216,7 +1217,16 @@ static void ReadMisc(int)
 		}
 		else if (!VStr::ICmp(String, "Initial Bullets"))
 		{
-			SetClassFieldInt(GameInfoClass, "INITIAL_AMMO", value);
+			TArray<VDropItemInfo>& List = *(TArray<VDropItemInfo>*)(
+				DoomPlayerClass->Defaults +
+				DoomPlayerClass->FindFieldChecked("DropItemList")->Ofs);
+			for (int i = 0; i < List.Num(); i++)
+			{
+				if (List[i].Type && List[i].Type->Name == "Clip")
+				{
+					List[i].Amount = value;
+				}
+			}
 		}
 		else if (!VStr::ICmp(String, "Max Health"))
 		{
@@ -1955,6 +1965,7 @@ void ProcessDehackedFiles()
 	}
 
 	GameInfoClass = VClass::FindClass("MainGameInfo");
+	DoomPlayerClass = VClass::FindClass("DoomPlayer");
 	BfgClass = VClass::FindClass("BFG9000");
 	HealthBonusClass = VClass::FindClass("HealthBonus");
 	SoulsphereClass = VClass::FindClass("Soulsphere");
