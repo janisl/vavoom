@@ -2672,7 +2672,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			else
 			{
 				sc->ExpectNumber();
-				SetClassFieldFloat(Class, "MissileDamage", sc->Number);
+				SetClassFieldInt(Class, "MissileDamage", sc->Number);
 			}
 			continue;
 		}
