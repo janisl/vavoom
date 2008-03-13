@@ -48,6 +48,22 @@ bool ShouldDropItems()
 	return false;
 }
 
+//===========================================================================
+//
+//  GetSigilPieces
+//
+//===========================================================================
+
+int GetSigilPieces()
+{
+	Sigil S = Sigil(FindInventory(Sigil));
+	if (S)
+	{
+		return S.NumPieces;
+	}
+	return 0;
+}
+
 //==========================================================================
 //
 //	AddInventory

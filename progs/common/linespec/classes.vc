@@ -219,4 +219,17 @@ class PainElemental : ScriptedEntity decorate;
 class Archvile : ScriptedEntity decorate;
 class ArchvileFire : ScriptedEntity decorate;
 
+class ArtiHealth : HealthPickup decorate;
+class ArtiSuperHealth : HealthPickup decorate;
+class Dirt1 : ScriptedEntity decorate;
+class Dirt2 : ScriptedEntity decorate;
+class Dirt3 : ScriptedEntity decorate;
+class Dirt4 : ScriptedEntity decorate;
+class Dirt5 : ScriptedEntity decorate;
+class Dirt6 : ScriptedEntity decorate;
+
+class MedicalKit : HealthPickup decorate;
+class MedPatch : HealthPickup decorate;
+class MetalArmor : BasicArmorPickup decorate;
+class LeatherArmor : BasicArmorPickup decorate;
 class QuestItem29 : Inventory decorate;

@@ -25,6 +25,26 @@
 
 class PoisonBolt : Projectile;
 
+//==========================================================================
+//
+//  TakeSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.bNoBlood)
+	{
+		// Don't damage actors that don't take poison damage
+		return -1;
+	}
+	if (victim.Health < 100000)
+	{
+		return victim.Health + 10;
+	}
+	return 1;
+}
+
 states
 {
 Spawn:

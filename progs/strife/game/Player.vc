@@ -1323,23 +1323,6 @@ void ClientFinaleType(int Type)
 
 //==========================================================================
 //
-//  ArmorAbsorbDamage
-//
-//==========================================================================
-
-int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
-	name DmgType)
-{
-	if (Health < 50 || damage >= Health)
-	{
-		// Try to use some inventory health
-		Actor(MO).AutoUseHealth(damage - Health + 1);
-	}
-	return damage;
-}
-
-//==========================================================================
-//
 //  StartDeathSlideShow
 //
 //==========================================================================

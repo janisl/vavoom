@@ -209,10 +209,6 @@
 #include "ClientGameBaseEx.vc"
 
 class Blood : ScriptedEntity decorate;
-class MedicalKit : HealthPickup decorate;
-class MedPatch : HealthPickup decorate;
-class MetalArmor : BasicArmorPickup decorate;
-class LeatherArmor : BasicArmorPickup decorate;
 class QuestItem6 : Inventory decorate;
 class QuestItem7 : Inventory decorate;
 class QuestItem17 : Inventory decorate;

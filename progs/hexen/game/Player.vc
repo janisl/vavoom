@@ -1977,24 +1977,6 @@ void Cheat_Class()
 
 //==========================================================================
 //
-//  ArmorAbsorbDamage
-//
-//==========================================================================
-
-int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
-	name DmgType)
-{
-	if (damage >= Health
-		&& ((Level.Game.gameskill == sk_baby) || Level.Game.deathmatch) && !MorphTime)
-	{
-		// Try to use some inventory health
-		Actor(MO).AutoUseHealth(damage - Health + 1);
-	}
-	return damage;
-}
-
-//==========================================================================
-//
 //  IsWeaponAlwaysExtremeDeath
 //
 //==========================================================================

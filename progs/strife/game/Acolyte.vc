@@ -34,13 +34,13 @@ class Acolyte : StrifeHumanoid
 
 final void A_AcolyteBits()
 {
-	if (bSpawnFlag8)
+	if (SpawnPoint.options & (1 << 8))
 	{
 		RenderStyle = STYLE_Translucent;
 		Alpha = 0.333;
 		bShadow = true;
 	}
-	if (bSpawnFlag9)
+	if (SpawnPoint.options & (1 << 9))
 	{
 		bUnknown2 = true;
 	}

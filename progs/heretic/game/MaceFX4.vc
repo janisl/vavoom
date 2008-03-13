@@ -45,7 +45,7 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 		{
 			// Can't hurt invulnerable players
 		}
-		else if (Actor(victim).AutoUseChaosDevice())
+		else if (PlayerPawn(victim).AutoUseChaosDevice())
 		{
 			// Player was saved using chaos device
 			return -1;

@@ -256,12 +256,6 @@
 
 class ArtiHealth : HealthPickup decorate;
 class ArtiSuperHealth : HealthPickup decorate;
-class Dirt1 : ScriptedEntity decorate;
-class Dirt2 : ScriptedEntity decorate;
-class Dirt3 : ScriptedEntity decorate;
-class Dirt4 : ScriptedEntity decorate;
-class Dirt5 : ScriptedEntity decorate;
-class Dirt6 : ScriptedEntity decorate;
 class Mana1 : Ammo decorate;
 class Mana2 : Ammo decorate;
 class ArtiFly : PowerupGiver decorate;

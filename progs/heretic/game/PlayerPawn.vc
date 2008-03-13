@@ -127,6 +127,25 @@ bool UseInventory(Inventory Item)
 
 //==========================================================================
 //
+//  AutoUseChaosDevice
+//
+//==========================================================================
+
+final bool AutoUseChaosDevice()
+{
+	Inventory Item = FindInventory(ArtiTeleport);
+	if (Item)
+	{
+		UseInventory(Item);
+		Health = (Health + 1) / 2;
+		Player.Health = Health;
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
 //	A_AddPlayerCorpse
 //
 //==========================================================================

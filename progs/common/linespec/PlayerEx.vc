@@ -1947,18 +1947,6 @@ bool CheckFriendlyFire(EntityEx source, int damage)
 
 //==========================================================================
 //
-//	ArmorAbsorbDamage
-//
-//==========================================================================
-
-int ArmorAbsorbDamage(EntityEx inflictor, EntityEx source, int damage,
-	name DmgType)
-{
-	return damage;
-}
-
-//==========================================================================
-//
 //	IsWeaponAlwaysExtremeDeath
 //
 //==========================================================================
