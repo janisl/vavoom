@@ -66,3 +66,4 @@ class Fatso : ScriptedEntity decorate;
 class PainElemental : ScriptedEntity decorate;
 class Cyberdemon : ScriptedEntity decorate;
 class SpiderMastermind : ScriptedEntity decorate;
+class Archvile : ScriptedEntity decorate;

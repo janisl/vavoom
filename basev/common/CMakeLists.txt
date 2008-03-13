@@ -17,6 +17,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/constants.txt
 		actors/nativeclasses.txt
 		actors/doom/arachnotron.txt
+		actors/doom/archvile.txt
 		actors/doom/bruiser.txt
 		actors/doom/cacodemon.txt
 		actors/doom/cyberdemon.txt
@@ -31,6 +32,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/doom/doomkeys.txt
 		actors/doom/doommisc.txt
 		actors/doom/fatso.txt
+		actors/doom/keen.txt
 		actors/doom/lostsoul.txt
 		actors/doom/painelemental.txt
 		actors/doom/possessed.txt

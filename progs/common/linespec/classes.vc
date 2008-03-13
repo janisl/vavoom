@@ -178,16 +178,12 @@ enum
 #include "../../doom/game1/Chaingun.vc"
 #include "../../doom/game1/Rocket.vc"
 #include "../../doom/game1/BFGExtra.vc"
-
-#include "../../doom/game2/ArchvileFire.vc"
-#include "../../doom/game2/Archvile.vc"
 #include "../../doom/game2/BossTarget.vc"
 #include "../../doom/game2/SpawnFire.vc"
 #include "../../doom/game2/SpawnShot.vc"
 #include "../../doom/game2/BossBrain.vc"
 #include "../../doom/game2/BossEye.vc"
 #include "../../doom/game2/BrainState.vc"
-#include "../../doom/game2/CommanderKeen.vc"
 
 #include "Coin.vc"
 #include "Gold10.vc"
@@ -221,5 +217,7 @@ class Revenant : ScriptedEntity decorate;
 class Arachnotron : ScriptedEntity decorate;
 class Fatso : ScriptedEntity decorate;
 class PainElemental : ScriptedEntity decorate;
+class Archvile : ScriptedEntity decorate;
+class ArchvileFire : ScriptedEntity decorate;
 
 class QuestItem29 : Inventory decorate;

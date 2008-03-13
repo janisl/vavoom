@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SpawnFire : ArchvileFire;
+class SpawnFire : ScriptedEntity;
 
 states
 {
@@ -34,4 +34,8 @@ Spawn:
 
 defaultproperties
 {
+	RenderStyle = STYLE_Add;
+	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
 }
