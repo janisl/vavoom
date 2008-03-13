@@ -10,7 +10,7 @@ add_dependencies(doom2_shared vcc engine)
 
 add_custom_command(OUTPUT ${OUTDIR}/svprogs.dat
 	COMMAND ${VCC} ARGS -P${COMMON_PROGS_DIR} -P${OUTDIR} ${CMAKE_CURRENT_SOURCE_DIR}/svprogs.vc ${OUTDIR}/svprogs.dat
-	DEPENDS vcc svprogs.vc ../doom/*.vc ../doom/game/*.vc ../doom/game1/*.vc ../doom/game2/*.vc
+	DEPENDS vcc svprogs.vc ../doom/*.vc ../doom/game/*.vc
 	${COMMON_PROGS_DIR}/linespec.dat ${OUTDIR}/shared.dat)
 add_custom_target(doom2_svprogs ALL DEPENDS ${OUTDIR}/svprogs.dat)
 add_dependencies(doom2_svprogs vcc linespec doom2_shared)

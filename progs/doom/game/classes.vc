@@ -31,6 +31,38 @@
 #include "PlayerPawn.vc"
 #include "BotPlayer.vc"
 
+#include "TeleportFog.vc"
+
+#include "Pistol.vc"
+#include "SuperShotgun.vc"
+#include "BFG9000.vc"
+#include "Chainsaw.vc"
+#include "RocketLauncher.vc"
+#include "PlasmaRifle.vc"
+#include "PlasmaBall.vc"
+#include "BFGBall.vc"
+#ifdef GRENADE_LAUNCHER
+#include "GrenadeLauncher.vc"
+#include "Grenade.vc"
+#endif
+
+#include "Gibs.vc"
+
+#include "DoomPlayer.vc"
+
+#include "ScriptedMarine.vc"
+#include "MarineFist.vc"
+#include "MarineBerserk.vc"
+#include "MarineChainsaw.vc"
+#include "MarinePistol.vc"
+#include "MarineShotgun.vc"
+#include "MarineSSG.vc"
+#include "MarineChaingun.vc"
+#include "MarineRocket.vc"
+#include "MarinePlasma.vc"
+#include "MarineRailgun.vc"
+#include "MarineBFG.vc"
+
 class GreenArmor : BasicArmorPickup decorate;
 class BlueArmor : BasicArmorPickup decorate;
 class HealthBonus : Health decorate;
@@ -43,3 +75,21 @@ class YellowSkull : Key decorate;
 class RedSkull : Key decorate;
 class Stimpack : Health decorate;
 class Medikit : Health decorate;
+class Clip : Ammo decorate;
+class ClipBox : Ammo decorate;
+class RocketAmmo : Ammo decorate;
+class RocketBox : Ammo decorate;
+class Cell : Ammo decorate;
+class CellPack : Ammo decorate;
+class Shell : Ammo decorate;
+class ShellBox : Ammo decorate;
+class Backpack : BackpackItem decorate;
+class Soulsphere : Health decorate;
+class InvulnerabilitySphere : PowerupGiver decorate;
+class BlurSphere : PowerupGiver decorate;
+class RadSuit : PowerupGiver decorate;
+class Infrared : PowerupGiver decorate;
+class Allmap : MapRevealer decorate;
+class Berserk : CustomInventory decorate;
+class Megasphere : CustomInventory decorate;
+class BulletPuff : ScriptedEntity decorate;

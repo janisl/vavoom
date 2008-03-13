@@ -33,7 +33,3 @@ import linespec;
 //#define GRENADE_LAUNCHER
 
 #include "game/classes.vc"
-
-#include "game1/classes.vc"
-
-#include "game2/classes.vc"
