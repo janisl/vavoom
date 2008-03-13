@@ -34,7 +34,6 @@
 
 #include "Pistol.vc"
 #include "PlasmaBall.vc"
-#include "BFGExtra.vc"
 #include "BFGBall.vc"
 #ifdef GRENADE_LAUNCHER
 #include "GrenadeLauncher.vc"
@@ -73,13 +72,3 @@ class Infrared : PowerupGiver decorate;
 class Allmap : MapRevealer decorate;
 class Berserk : CustomInventory decorate;
 class BulletPuff : ScriptedEntity decorate;
-class DoomImp : ScriptedEntity decorate;
-class Demon : ScriptedEntity decorate;
-class Spectre : ScriptedEntity decorate;
-class Cacodemon : ScriptedEntity decorate;
-class BaronOfHell : ScriptedEntity decorate;
-class HellKnight : ScriptedEntity decorate;
-class Revenant : ScriptedEntity decorate;
-class Arachnotron : ScriptedEntity decorate;
-class Fatso : ScriptedEntity decorate;
-class PainElemental : ScriptedEntity decorate;

@@ -25,12 +25,4 @@
 
 #include "SuperShotgun.vc"
 
-#include "BossTarget.vc"
-#include "SpawnFire.vc"
-#include "SpawnShot.vc"
-#include "BossBrain.vc"
-#include "BossEye.vc"
-#include "BrainState.vc"
-#include "CommanderKeen.vc"
-
 class Megasphere : CustomInventory decorate;

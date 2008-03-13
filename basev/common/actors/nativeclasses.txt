@@ -11,7 +11,7 @@ class Actor extends Thinker
 	action native A_Wander();
 	action native A_Chase(optional state melee, optional state missile, optional eval int flags);
 	action native A_FastChase();
-	//A_VileChase
+	action native A_VileChase();
 	//A_ExtChase
 	action native A_FaceTarget();
 	//A_Die
@@ -73,8 +73,8 @@ class Actor extends Thinker
 	//	Special actions
 	//
 	action native A_BossDeath();
-	//A_KeenDie
-	//A_BrainDie
+	action native A_KeenDie();
+	action native A_BrainDie();
 	//A_GetHurt
 	//A_KlaxonBlare
 	action native A_CheckTerrain();
@@ -216,11 +216,11 @@ class Actor extends Thinker
 	action native A_FatAttack3(optional class<Actor> spawntype);
 	action native A_VileTarget();
 	action native A_VileAttack();
-	//A_BrainSpit
-	//A_SpawnFly
-	//A_SpawnSound
-	//A_BrainScream
-	//A_BrainExplode
+	action native A_BrainSpit();
+	action native A_SpawnFly();
+	action native A_SpawnSound();
+	action native A_BrainScream();
+	action native A_BrainExplode();
 	//A_Mushroom
 	//A_M_Saw
 	//A_SentinelRefire
@@ -235,5 +235,5 @@ class Actor extends Thinker
 	action native A_SkelWhoosh();
 	action native A_StartFire();
 	action native A_FireCrackle();
-	//A_BFGSpray
+	action native A_BFGSpray(optional class<Actor> flashtype, optional eval int numrays, optioal eval int damage);
 }

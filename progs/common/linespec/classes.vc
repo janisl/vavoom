@@ -177,9 +177,17 @@ enum
 #include "../../doom/game1/Shotgun.vc"
 #include "../../doom/game1/Chaingun.vc"
 #include "../../doom/game1/Rocket.vc"
+#include "../../doom/game1/BFGExtra.vc"
 
 #include "../../doom/game2/ArchvileFire.vc"
 #include "../../doom/game2/Archvile.vc"
+#include "../../doom/game2/BossTarget.vc"
+#include "../../doom/game2/SpawnFire.vc"
+#include "../../doom/game2/SpawnShot.vc"
+#include "../../doom/game2/BossBrain.vc"
+#include "../../doom/game2/BossEye.vc"
+#include "../../doom/game2/BrainState.vc"
+#include "../../doom/game2/CommanderKeen.vc"
 
 #include "Coin.vc"
 #include "Gold10.vc"
@@ -191,6 +199,7 @@ class BloodSplatter : ScriptedEntity decorate;
 class AxeBlood : ScriptedEntity decorate;
 class GlassJunk : ScriptedEntity decorate;
 
+//	Doom classes
 class BulletPuff : ScriptedEntity decorate;
 class Clip : Ammo decorate;
 class Shell : Ammo decorate;
@@ -202,5 +211,15 @@ class RevenantTracer : ScriptedEntity decorate;
 class RevenantTracerSmoke : ScriptedEntity decorate;
 class ArachnotronPlasma : ScriptedEntity decorate;
 class FatShot : ScriptedEntity decorate;
+class DoomImp : ScriptedEntity decorate;
+class Demon : ScriptedEntity decorate;
+class Spectre : ScriptedEntity decorate;
+class Cacodemon : ScriptedEntity decorate;
+class BaronOfHell : ScriptedEntity decorate;
+class HellKnight : ScriptedEntity decorate;
+class Revenant : ScriptedEntity decorate;
+class Arachnotron : ScriptedEntity decorate;
+class Fatso : ScriptedEntity decorate;
+class PainElemental : ScriptedEntity decorate;
 
 class QuestItem29 : Inventory decorate;

@@ -535,6 +535,116 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 
 //==========================================================================
 //
+//  CheckForResurrect
+//
+//  Check for ressurecting a body.
+//
+//==========================================================================
+
+final bool CheckForResurrect(bool UseVileStates)
+{
+	float viletryx;
+	float viletryy;
+	Entity Other;
+
+	if (MoveDir != DI_NODIR)
+	{
+		// check for corpses to raise
+		viletryx = Origin.x + Speed / 35.0 * LineSpecialGameInfo(Level.Game).xspeed[MoveDir];
+		viletryy = Origin.y + Speed / 35.0 * LineSpecialGameInfo(Level.Game).yspeed[MoveDir];
+
+		//	For all things in radius check whether object is a corpse
+		// that can be raised.
+		foreach RadiusThings(Other, vector(viletryx, viletryy, 0.0), MAXRADIUS)
+		{
+			//  Detect a corpse that could be raised.
+			float maxdist;
+			bool check;
+
+			if (!Other.bCorpse)
+			{
+				continue;	// not a monster
+			}
+
+			if (Other.StateTime != -1.0)
+			{
+				continue;	// not lying still yet
+			}
+
+			state RaiseState = Other.FindState('Raise');
+			if (!RaiseState)
+			{
+				continue;	// monster doesn't have a raise state
+			}
+
+			maxdist = Other.Radius + Radius;
+
+			if (fabs(Other.Origin.x - viletryx) > maxdist ||
+				fabs(Other.Origin.y - viletryy) > maxdist)
+			{
+				continue;	// not actually touching
+			}
+
+			if (!CanSee(Other))
+			{
+				continue;	//  Con't see, possibly in other region
+			}
+
+			EntityEx CorpseHit = EntityEx(Other);
+			CorpseHit.Velocity.x = 0.0;
+			CorpseHit.Velocity.y = 0.0;
+			float OldHeight = CorpseHit.Height;
+			bool OldSolid = CorpseHit.bSolid;
+			CorpseHit.bSolid = true;
+			CorpseHit.Height = CorpseHit.default.Height;
+			check = CorpseHit.CheckPosition(CorpseHit.Origin);
+			CorpseHit.bSolid = OldSolid;
+			CorpseHit.Height = OldHeight;
+
+			if (!check)
+			{
+				continue;	// doesn't fit here
+			}
+
+			// got one!
+			EntityEx temp = Target;
+			Target = CorpseHit;
+			A_FaceTarget();
+			Target = temp;
+
+			//	Enter heal state.
+			state HealState = FindState('Heal');
+			if (!HealState && UseVileStates)
+			{
+				//	For DeHackEd compatibility use Arch-vile heal states if
+				// this one doesn't have it's own.
+				HealState = FindClassState(Archvile, 'Heal');
+			}
+			if (HealState)
+			{
+				SetState(HealState);
+			}
+			CorpseHit.PlaySound('vile/raise', CHAN_BODY);
+
+			CorpseHit.SetState(RaiseState);
+			CorpseHit.Height = CorpseHit.default.Height;
+			CorpseHit.bShootable = true;
+			CorpseHit.bFloat = CorpseHit.default.bFloat;
+			CorpseHit.bNoGravity = CorpseHit.default.bNoGravity;
+			CorpseHit.bDropOff = false;
+			CorpseHit.bSolid = true;
+			CorpseHit.bCorpse = false;
+			CorpseHit.Health = CorpseHit.default.Health;
+			CorpseHit.Target = none;
+			CorpseHit.LastEnemy = none;
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
 //	A_Chase
 //
 //==========================================================================
@@ -556,7 +666,10 @@ final void decorate_A_Chase(optional state AMeleeState,
 {
 	if (specified_AMeleeState)
 	{
-		//FIXME implement flag 8
+		if ((Flags & 8) && CheckForResurrect(false))
+		{
+			return;
+		}
 		DoChase(!!(Flags & 1), AMeleeState, AMissileState, !!(Flags & 4),
 			!(Flags & 2), !!(Flags & 16));
 	}
@@ -576,6 +689,21 @@ final void decorate_A_Chase(optional state AMeleeState,
 final void A_FastChase()
 {
 	DoChase(true, MeleeState, MissileState, true, true, false);
+}
+
+//==========================================================================
+//
+//  A_VileChase
+//
+//==========================================================================
+
+final void A_VileChase()
+{
+	if (!CheckForResurrect(true))
+	{
+		// Return to normal attack.
+		A_Chase();
+	}
 }
 
 //==========================================================================
@@ -1144,6 +1272,46 @@ final void A_BossDeath()
 			0, NULL, 0, none);
 		return;
 	}
+	Level.ExitLevel(0);
+}
+
+//==========================================================================
+//
+//  A_KeenDie
+//
+//  DOOM II special, map 32. Uses special tag 666.
+//
+//==========================================================================
+
+final void A_KeenDie()
+{
+	EntityEx		Other;
+
+	A_Fall();
+
+	// scan the remaining thinkers to see if all Keens are dead
+	foreach AllThinkers(class<Thinker>(Class), Other)
+	{
+		if (Other != self && Other.Health > 0)
+		{
+			// other mobj of the same Class not dead
+			return;
+		}
+	}
+	Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 666, 16, 150, 0, 0, NULL, 0,
+		none);
+}
+
+//==========================================================================
+//
+//  A_BrainDie
+//
+//  Killed brain, exit level.
+//
+//==========================================================================
+
+final void A_BrainDie()
+{
 	Level.ExitLevel(0);
 }
 
@@ -2397,6 +2565,205 @@ final void A_VileAttack()
 	fire.RadiusAttack(self, 70, 70.0, true);
 }
 
+//==========================================================================
+//
+//  A_BrainSpit
+//
+//  Spawn a cube.
+//
+//==========================================================================
+
+final void A_BrainSpit()
+{
+	BrainState		BState;
+	EntityEx		targ;
+	EntityEx		A;
+	float			Frac;
+
+	//	Find brain state object, create it if not found.
+	BState = none;
+	foreach AllThinkers(BrainState, BState)
+	{
+		break;
+	}
+	if (!BState)
+	{
+		BState = Spawn(BrainState);
+		BState.FindTargets();
+	}
+
+	if (!BState.Targets.Num)
+	{
+		//	No brain targets placed on a map.
+		return;
+	}
+
+	BState.bEasy = !BState.bEasy;
+	if (Level.Game.gameskill <= sk_easy && !BState.bEasy)
+	{
+		return;
+	}
+
+	// shoot a cube at current target
+	targ = BState.Targets[BState.TargetOn];
+	BState.TargetOn = (BState.TargetOn + 1) % BState.Targets.Num;
+
+	// spawn brain missile
+	A = SpawnMissile(targ, SpawnShot);
+	if (A)
+	{
+		A.Target = targ;
+		//	Prevent division by 0
+		if (!A.Velocity.x && !A.Velocity.y)
+		{
+			Frac = 0.0;
+		}
+		else if (fabs(A.Velocity.x) > fabs(A.Velocity.y))
+		{
+			Frac = (targ.Origin.x - Origin.x) / A.Velocity.x;
+		}
+		else
+		{
+			Frac = (targ.Origin.y - Origin.y) / A.Velocity.y;
+		}
+		A.ReactionCount = ftoi(Frac / GetStateDuration(A.State));
+	}
+
+	PlaySound('brain/spit', CHAN_WEAPON, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_SpawnFly
+//
+//  Cube flying, spawn monster, when finished.
+//
+//==========================================================================
+
+final void A_SpawnFly()
+{
+	EntityEx newmobj;
+	EntityEx fog;
+	int r;
+	class<EntityEx> type;
+
+	if (--ReactionCount)
+		return;	// still flying
+
+	// First spawn teleport fog.
+	fog = Spawn(SpawnFire, Target.Origin, vector(0.0, 0.0, 0.0));
+	fog.PlaySound('brain/spawn', CHAN_VOICE);
+
+	// Randomly select monster to spawn.
+	r = P_Random();
+
+	// Probability distribution (kind of :),
+	// decreasing likelihood.
+	if (r < 50)
+		type = DoomImp;
+	else if (r < 90)
+		type = Demon;
+	else if (r < 120)
+		type = Spectre;
+	else if (r < 130)
+		type = PainElemental;
+	else if (r < 160)
+		type = Cacodemon;
+	else if (r < 162)
+		type = Archvile;
+	else if (r < 172)
+		type = Revenant;
+	else if (r < 192)
+		type = Arachnotron;
+	else if (r < 222)
+		type = Fatso;
+	else if (r < 246)
+		type = HellKnight;
+	else
+		type = BaronOfHell;
+
+	newmobj = Spawn(type, Target.Origin, vector(0.0, 0.0, 0.0));
+	if (newmobj.LookForPlayers(true))
+		newmobj.SetState(newmobj.SeeState);
+
+	// telefrag anything in this spot
+	newmobj.bTelestomp = true;
+	newmobj.TeleportMove(newmobj.Origin);
+
+	// remove self (i.e., cube).
+	Destroy();
+}
+
+//==========================================================================
+//
+//  A_SpawnSound
+//
+//  Travelling cube sound.
+//
+//==========================================================================
+
+final void A_SpawnSound()
+{
+	PlaySound('brain/cube', CHAN_VOICE);
+	A_SpawnFly();
+}
+
+//==========================================================================
+//
+//  A_BrainScream
+//
+//  Brain death sound, make explosions.
+//
+//==========================================================================
+
+final void A_BrainScream()
+{
+	TVec org;
+	EntityEx A;
+
+	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
+	{
+		org.y = Origin.y - 320.0;
+		org.z = 1.0 / 512.0 + Random() * 512.0;
+		A = Spawn(Rocket, org);
+		A.Velocity.z = Random() * 2.0 * 35.0;
+
+		A.SetState(FindClassState(BossBrain, 'BrainExplode'));
+
+		A.StateTime -= Random() * 0.2;
+		if (A.StateTime < 0.1)
+			A.StateTime = 0.1;
+	}
+
+	PlaySound('brain/death', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_BrainExplode
+//
+//  Brain explosions.
+//
+//==========================================================================
+
+final void A_BrainExplode()
+{
+	TVec org;
+	EntityEx A;
+
+	org.x = Origin.x + (Random() - Random()) * 8.0;
+	org.y = Origin.y;
+	org.z = 1.0 / 512.0 + Random() * 512.0;
+	A = Spawn(Rocket, org,,, false);
+	A.Velocity.z = Random() * 2.0 * 35.0;
+
+	A.SetState(FindClassState(BossBrain, 'BrainExplode'));
+
+	A.StateTime -= Random() * 0.2;
+	if (A.StateTime < 0.1)
+		A.StateTime = 0.1;
+}
+
 //**************************************************************************
 //	Monster specific functions for Doom
 //**************************************************************************
@@ -2501,6 +2868,79 @@ final void A_FireCrackle()
 {
 	PlaySound('vile/firecrkl', CHAN_VOICE);
 	A_Fire();
+}
+
+//===========================================================================
+//
+//  A_BFGSpray
+//
+//  Spawn a BFG explosion on every monster in view
+//
+//===========================================================================
+
+final void A_BFGSpray()
+{
+	decorate_A_BFGSpray();
+}
+
+//===========================================================================
+//
+//  decorate_A_BFGSpray
+//
+//  Spawn a BFG explosion on every monster in view
+//
+//===========================================================================
+
+final void decorate_A_BFGSpray(optional class<EntityEx> FlashType,
+	optional int NumRays, optional int DamageAmount)
+{
+	int			i;
+	int			j;
+	int			damage;
+	TAVec		aimAng;
+	EntityEx	emo;
+	TVec		Dir;
+	EntityEx	AimTarget;
+
+	if (!FlashType)
+	{
+		FlashType = BFGExtra;
+	}
+	if (NumRays <= 0)
+	{
+		NumRays = 40;
+	}
+	if (DamageAmount <= 0)
+	{
+		DamageAmount = 15;
+	}
+
+	// offset angles from its attack angle
+	for (i = 0; i < NumRays; i++)
+	{
+		aimAng = Angles;
+		aimAng.yaw = AngleMod360(aimAng.yaw - 45.0 + 90.0 / itof(NumRays) *
+			itof(i));
+
+		// target is the originator (player)
+		//  of the missile
+		AimTarget = Target.AimLineAttack(Dir, aimAng, 16.0 * 64.0);
+		if (!AimTarget)
+		{
+			continue;
+		}
+
+		emo = Spawn(FlashType, AimTarget.Origin +
+			vector(0.0, 0.0, AimTarget.Height / 4.0));
+
+		damage = 0;
+		for (j = 0; j < DamageAmount; j++)
+		{
+			damage += (P_Random() & 7) + 1;
+		}
+
+		AimTarget.Damage(Target, Target, damage);
+	}
 }
 
 //**************************************************************************
