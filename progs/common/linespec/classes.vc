@@ -170,20 +170,19 @@ enum
 
 #include "LineSpecialClientGame.vc"
 
-//	We need Doom fist because of the DECORATE.
+//	We need Doom classes because of the DECORATE.
 #include "DoomWeapon.vc"
 #include "Fist.vc"
-
-#include "../../doom/game1/Shotgun.vc"
-#include "../../doom/game1/Chaingun.vc"
-#include "../../doom/game1/Rocket.vc"
-#include "../../doom/game1/BFGExtra.vc"
-#include "../../doom/game2/BossTarget.vc"
-#include "../../doom/game2/SpawnFire.vc"
-#include "../../doom/game2/SpawnShot.vc"
-#include "../../doom/game2/BossBrain.vc"
-#include "../../doom/game2/BossEye.vc"
-#include "../../doom/game2/BrainState.vc"
+#include "Shotgun.vc"
+#include "Chaingun.vc"
+#include "Rocket.vc"
+#include "BFGExtra.vc"
+#include "BossTarget.vc"
+#include "SpawnFire.vc"
+#include "SpawnShot.vc"
+#include "BossBrain.vc"
+#include "BossEye.vc"
+#include "BrainState.vc"
 
 #include "Coin.vc"
 #include "Gold10.vc"
