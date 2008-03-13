@@ -25,6 +25,8 @@
 
 class SummoningDoll : Projectile;
 
+const float MAULATORTIME 	= 25.0;
+
 //==========================================================================
 //
 //  A_Summon

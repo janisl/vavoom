@@ -86,48 +86,6 @@ final void A_CentaurAttack()
 
 //==========================================================================
 //
-//	A_SetReflective
-//
-//==========================================================================
-
-final void A_SetReflective()
-{
-	bReflective = true;
-
-	A_SetInvulnerable();
-}
-
-//==========================================================================
-//
-//	A_UnSetReflective
-//
-//==========================================================================
-
-final void A_UnSetReflective()
-{
-	bReflective = false;
-
-	A_UnSetInvulnerable();
-}
-
-//==========================================================================
-//
-//	A_CentaurDefend
-//
-//==========================================================================
-
-final void A_CentaurDefend()
-{
-	A_FaceTarget();
-	if (CheckMeleeRange() && Random() < 0.125)
-	{
-		A_UnSetInvulnerable();
-		SetState(MeleeState);
-	}
-}
-
-//==========================================================================
-//
 //  A_CentaurDropStuff
 //
 //  Spawn shield/sword sprites when the centaur pulps
@@ -174,9 +132,9 @@ Melee:
 	Goto See
 Pain:
 	CENT G 6 A_Pain
-	CENT G 6 A_SetReflective
+	CENT G 6 A_SetReflectiveInvulnerable
 	CENT EEE 15 A_CentaurDefend
-	CENT E 1 A_UnSetReflective
+	CENT E 1 A_UnSetReflectiveInvulnerable
 	Goto See
 Death:
 	CENT K 4

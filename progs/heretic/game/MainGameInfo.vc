@@ -30,6 +30,8 @@ const int NUM_SPECIALS		= 108;
 const int NUMTOTALBOTS		= 8;
 const int NUMBOTTYPES		= 8;
 
+const float TELEFOGHEIGHT 	= 32.0;
+
 struct spec_trans_t
 {
 	int special;
@@ -523,7 +525,7 @@ defaultproperties
 	bBloodSplatter = true;
 	bNightmareFastChase = true;
 	bRavenStylePickupRespawn = true;
-	TeleFogHeight = Actor::TELEFOGHEIGHT;
+	TeleFogHeight = TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	InvDefaultMaxAmount = 16;

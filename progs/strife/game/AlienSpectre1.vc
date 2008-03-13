@@ -132,15 +132,15 @@ states
 {
 Spawn:
 	ALN1 A 10 A_Look
-	ALN1 B 10 A_FlightChase
+	ALN1 B 10 A_SentinelBob
 	Loop
 See:
 	ALN1 AB 4 Bright A_Chase
-	ALN1 C 4 Bright A_FlightChase
+	ALN1 C 4 Bright A_SentinelBob
 	ALN1 DEF 4 Bright A_Chase
-	ALN1 G 4 Bright A_FlightChase
+	ALN1 G 4 Bright A_SentinelBob
 	ALN1 HIJ 4 Bright A_Chase
-	ALN1 K 4 Bright A_FlightChase
+	ALN1 K 4 Bright A_SentinelBob
 	Loop
 Melee:
 	ALN1 J 4 Bright A_FaceTarget

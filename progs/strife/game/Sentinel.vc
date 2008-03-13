@@ -64,13 +64,13 @@ Spawn:
 	SEWR A 10 A_Look
 	Loop
 See:
-	SEWR A 6 A_FlightChase
+	SEWR A 6 A_SentinelBob
 	SEWR A 6 A_Chase
 	Loop
 Missile:
 	SEWR B 4 A_FaceTarget
 	SEWR C 8 Bright A_SentinelAttack
-	SEWR C 4 Bright A_CheckRefire
+	SEWR C 4 Bright A_SentinelRefire
 	Goto Missile+1
 Pain:
 	SEWR D 5 A_Pain

@@ -76,27 +76,27 @@ states
 {
 Spawn:
 	PRST A 10 A_Look
-	PRST B 10 A_FlightChase
+	PRST B 10 A_SentinelBob
 	Loop
 See:
 	PRST A 4 A_Chase
-	PRST A 4 A_FlightChase
+	PRST A 4 A_SentinelBob
 	PRST B 4 A_Chase
-	PRST B 4 A_FlightChase
+	PRST B 4 A_SentinelBob
 	PRST C 4 A_Chase
-	PRST C 4 A_FlightChase
+	PRST C 4 A_SentinelBob
 	PRST D 4 A_Chase
-	PRST D 4 A_FlightChase
+	PRST D 4 A_SentinelBob
 	Loop
 Melee:
 	PRST E 4 A_FaceTarget
 	PRST F 4 A_SpecterMelee
-	PRST E 4 A_FlightChase
+	PRST E 4 A_SentinelBob
 	Goto See
 Missile:
 	PRST E 4 A_FaceTarget
 	PRST F 4 A_LoremasterAttack
-	PRST E 4 A_FlightChase
+	PRST E 4 A_SentinelBob
 	Goto See
 Death:
 	PDED A 6

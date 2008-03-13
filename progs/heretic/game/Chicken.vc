@@ -88,7 +88,8 @@ bool UpdateChicken(int tics)
 	A.bNoHatePlayers = bNoHatePlayers;
 	A.bShadow = bShadow;
 	A.bGhost = bGhost;
-	fog = Spawn(TeleportFog, A.Origin + vector(0.0, 0.0, TELEFOGHEIGHT));
+	fog = Spawn(TeleportFog, A.Origin + vector(0.0, 0.0,
+		MainGameInfo::TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 	return true;
 }

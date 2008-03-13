@@ -78,29 +78,29 @@ states
 {
 Spawn:
 	PRGR A 5 A_Look
-	PRGR A 1 A_FlightChase
+	PRGR A 1 A_SentinelBob
 	Loop
 See:
-	PRGR A 160 A_FlightChase
-	PRGR BCD 5 A_FlightChase
-	PRGR EF 2 A_FlightChase
+	PRGR A 160 A_SentinelBob
+	PRGR BCD 5 A_SentinelBob
+	PRGR EF 2 A_SentinelBob
 	PRGR EF 3 A_Chase
 	Goto See+4
 Melee:
-	PRGR E 2 A_FlightChase
-	PRGR F 3 A_FlightChase
+	PRGR E 2 A_SentinelBob
+	PRGR F 3 A_SentinelBob
 	PRGR E 3 A_FaceTarget
 	PRGR F 4 A_ProgrammerMelee
 	Goto See+4
 Missile:
 	PRGR G 5 A_FaceTarget
-	PRGR H 5 A_FlightChase
+	PRGR H 5 A_SentinelBob
 	PRGR I 5 Bright A_FaceTarget
 	PRGR J 5 Bright A_SpecterAttack
 	Goto See+4
 Pain:
 	PRGR K 5 A_Pain
-	PRGR L 5 A_FlightChase
+	PRGR L 5 A_SentinelBob
 	Goto See+4
 Death:
 	PRGR L 7 Bright A_XDying

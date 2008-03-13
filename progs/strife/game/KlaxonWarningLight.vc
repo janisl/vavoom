@@ -26,42 +26,13 @@
 class KlaxonWarningLight : Actor
 	__mobjinfo__(24);
 
-//==========================================================================
-//
-//	A_AlarmActive
-//
-//==========================================================================
-
-final void A_AlarmActive()
-{
-	ReactionCount--;
-	if (ReactionCount <= 0)
-	{
-		Target = none;
-		ReactionCount = 60;
-		if (Target == none)
-		{
-			SetState(IdleState);
-		}
-	}
-	if (ReactionCount == 2)
-	{
-		// Should make enemies go to Idle state again
-		StrifeLevelInfo(Level).NoiseAlert(none, self);
-	}
-	else if (ReactionCount > 50)
-	{
-		PlaySound('misc/alarm', CHAN_VOICE);
-	}
-}
-
 states
 {
 Spawn:
-	KLAX A 5 A_CheckAlarm
+	KLAX A 5 A_TurretLook
 	Loop
 See:
-	KLAX B 6 A_AlarmActive
+	KLAX B 6 A_KlaxonBlare
 	KLAX C 60
 	Loop
 }

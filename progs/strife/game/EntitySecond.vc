@@ -59,21 +59,21 @@ Spawn:
 	MNAL R 10 Bright A_Look
 	Loop
 See:
-	MNAL R 5 Bright A_FlightChase
+	MNAL R 5 Bright A_SentinelBob
 	MNAL ST 5 Bright A_Chase
-	MNAL U 5 Bright A_FlightChase
+	MNAL U 5 Bright A_SentinelBob
 	MNAL V 5 Bright A_Chase
-	MNAL W 5 Bright A_FlightChase
+	MNAL W 5 Bright A_SentinelBob
 	Loop
 Melee:
 	MNAL S 4 Bright A_FaceTarget
 	MNAL R 4 Bright A_SpecterMelee
-	MNAL T 4 Bright A_FlightChase
+	MNAL T 4 Bright A_SentinelBob
 	Goto See+1
 Missile:
 	MNAL W 4 Bright A_FaceTarget
 	MNAL U 4 Bright A_Specter2Attack
-	MNAL V 4 Bright A_FlightChase
+	MNAL V 4 Bright A_SentinelBob
 	Goto See+4
 Pain:
 	MNAL R 2 Bright A_Pain

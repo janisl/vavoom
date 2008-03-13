@@ -123,7 +123,7 @@ Actor ActiveMinotaur()
 			continue;	// for morphed minotaurs
 		if (mo.bCorpse)
 			continue;
-		if ((XLevel.Time - mo.StartTime) >= MAULATORTIME)
+		if ((XLevel.Time - mo.StartTime) >= SummoningDoll::MAULATORTIME)
 			continue;
 		if (mo.Tracer == Tracer)
 			return mo;
@@ -330,7 +330,7 @@ final void A_MinotaurChase()
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
-	if (XLevel.Time - StartTime >= MAULATORTIME)
+	if (XLevel.Time - StartTime >= SummoningDoll::MAULATORTIME)
 	{
 		Damage(none, none, 10000);
 		return;
@@ -392,7 +392,7 @@ final void A_MinotaurRoam()
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;	// In case pain caused him to skip his fade in.
 
-	if (XLevel.Time - StartTime >= MAULATORTIME)
+	if (XLevel.Time - StartTime >= SummoningDoll::MAULATORTIME)
 	{
 		Damage(none, none, 10000);
 		return;

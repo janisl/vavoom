@@ -26,11 +26,6 @@
 class Actor : ScriptedEntity
 	abstract;
 
-const float MORPHTIME 		= 40.0;
-const float MAULATORTIME 	= 25.0;
-
-const float TELEFOGHEIGHT	= 32.0;
-
 //==========================================================================
 //
 //	Destroyed

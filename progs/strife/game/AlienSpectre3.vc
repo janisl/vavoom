@@ -33,11 +33,11 @@ Spawn:
 	Loop
 See:
 	ALN1 AB 5 A_Chase
-	ALN1 C 5 A_FlightChase
+	ALN1 C 5 A_SentinelBob
 	ALN1 DEF 5 A_Chase
-	ALN1 G 5 A_FlightChase
+	ALN1 G 5 A_SentinelBob
 	ALN1 HIJ 5 A_Chase
-	ALN1 K 5 A_FlightChase
+	ALN1 K 5 A_SentinelBob
 	Loop
 Melee:
 	ALN1 J 4 A_FaceTarget

@@ -244,69 +244,6 @@ final void A_MarineChase()
 
 //===========================================================================
 //
-//  A_M_Saw
-//
-//===========================================================================
-
-final void A_M_Saw()
-{
-	float		angle;
-	int			damage;
-	TAVec		aimAng;
-	TVec		dir;
-	EntityEx	AimTarget;
-
-	if (!Target)
-	{
-		return;
-	}
-
-	A_FaceTarget();
-	if (CheckMeleeRange())
-	{
-		damage = 2 * (P_Random() % 10 + 1);
-		aimAng = Angles;
-		aimAng.yaw = AngleMod360(aimAng.yaw + (Random() -
-			Random()) * 45.0 / 8.0);
-
-		// use meleerange + 1 se the puff doesn't skip the flash
-		AimTarget = AimLineAttack(dir, aimAng, MELEERANGE + 0.00001);
-		LineAttack(dir, MELEERANGE + 0.00001, damage, BulletPuff);
-
-		if (!AimTarget)
-		{
-			PlaySound('weapons/sawfull', CHAN_WEAPON);
-			return;
-		}
-		PlaySound('weapons/sawhit', CHAN_WEAPON);
-
-		// turn to face target
-		angle = atan2(AimTarget.Origin.y - Origin.y,
-			AimTarget.Origin.x - Origin.x);
-		if (AngleMod360(angle - Angles.yaw) > 180.0)
-		{
-			if (AngleMod360(angle - Angles.yaw) < -90.0 / 20.0)
-				Angles.yaw = angle + 90.0 / 21.0;
-			else
-				Angles.yaw = Angles.yaw - 90.0 / 20.0;
-		}
-		else
-		{
-			if (AngleMod360(angle - Angles.yaw) > 90.0 / 20.0)
-				Angles.yaw = angle - 90.0 / 21.0;
-			else
-				Angles.yaw += 90.0 / 20.0;
-		}
-		Angles.yaw = AngleMod360(Angles.yaw);
-	}
-	else
-	{
-		PlaySound('weapons/sawfull', CHAN_WEAPON);
-	}
-}
-
-//===========================================================================
-//
 //  A_M_SawRefire
 //
 //===========================================================================

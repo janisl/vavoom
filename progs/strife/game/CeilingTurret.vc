@@ -29,7 +29,7 @@ class CeilingTurret : Pawn
 states
 {
 Spawn:
-	TURT A 5 A_CheckAlarm
+	TURT A 5 A_TurretLook
 	Loop
 See:
 	TURT A 2 A_Chase
@@ -37,8 +37,8 @@ See:
 Missile:
 Pain:
 	TURT B 4 A_RiffleAttack
-	TURT D 3 A_CheckRefire
-	TURT A 4 A_CheckRefire
+	TURT D 3 A_SentinelRefire
+	TURT A 4 A_SentinelRefire
 	Loop
 Death:
 	BALL A 6 Bright A_Scream

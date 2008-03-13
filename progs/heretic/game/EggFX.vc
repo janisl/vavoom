@@ -67,7 +67,7 @@ final bool MorphMonster(Actor victim)
 	}
 
 	fog = Spawn(TeleportFog, victim.Origin + vector(0.0, 0.0,
-		TELEFOGHEIGHT));
+		MainGameInfo::TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	chicken = Spawn(Chicken, victim.Origin,,, false);
@@ -125,7 +125,7 @@ final bool MorphPlayer(Actor victim)
 	}
 
 	fog = Spawn(TeleportFog, victim.Origin + vector(0.0, 0.0,
-		TELEFOGHEIGHT));
+		MainGameInfo::TELEFOGHEIGHT));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	chicken = Spawn(ChickenPlayer, victim.Origin,,, false);

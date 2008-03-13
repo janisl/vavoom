@@ -26,17 +26,13 @@
 class Actor : ScriptedEntity
 	abstract;
 
-const float
-	MAULERRANGE		= (33.0 * 64.0),
-	ROBOTRANGE		= 264.0;
-
 //==========================================================================
 //
 //	A_Tracer2
 //
 //==========================================================================
 
-const float TRACEANGLE	= (7.0 * 45.0 / 16.0);
+const float TRACE2ANGLE	= (7.0 * 45.0 / 16.0);
 
 final void A_Tracer2()
 {
@@ -57,13 +53,13 @@ final void A_Tracer2()
 	{
 		if (AngleMod360(exact - Angles.yaw) > 180.0)
 		{
-			Angles.yaw = AngleMod360(Angles.yaw - TRACEANGLE);
+			Angles.yaw = AngleMod360(Angles.yaw - TRACE2ANGLE);
 			if (AngleMod360(exact - Angles.yaw) < 180.0)
 				Angles.yaw = exact;
 		}
 		else
 		{
-			Angles.yaw = AngleMod360(Angles.yaw + TRACEANGLE);
+			Angles.yaw = AngleMod360(Angles.yaw + TRACE2ANGLE);
 			if (AngleMod360(exact - Angles.yaw) > 180.0)
 				Angles.yaw = exact;
 		}
@@ -163,34 +159,6 @@ final void A_DecReactionCount()
 	{
 		ExplodeMissile();
 		bSkullFly = false;
-	}
-}
-
-//==========================================================================
-//
-//	A_CheckAlarm
-//
-//	Stay in state untill alarm is triggered.
-//
-//==========================================================================
-
-final void A_CheckAlarm()
-{
-	Actor targ;
-	int sound;
-
-	Threshold = 0;
-	targ = Actor(Sector->SoundTarget);
-	if (targ && targ.bShootable)
-	{
-		Target = targ;
-		// go into chase state
-		if (SightSound)
-		{
-			PlaySound(SightSound, CHAN_VOICE);
-		}
-		Threshold = 10;
-		SetState(SeeState);
 	}
 }
 

@@ -42,17 +42,6 @@ final void A_CloseUpShop()
 	}
 }
 
-//==========================================================================
-//
-//	A_ClearSoundTarget
-//
-//==========================================================================
-
-final void A_ClearSoundTarget()
-{
-	Sector->SoundTarget = none;
-}
-
 states
 {
 Yes:

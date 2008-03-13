@@ -67,7 +67,7 @@ Death:
 Missile:
 	LEAD E 2 A_FaceTarget
 	LEAD F 2 Bright A_RiffleAttack
-	LEAD E 1 A_CheckRefire
+	LEAD E 1 A_SentinelRefire
 	Loop
 Pain:
 	LEAD Y 3

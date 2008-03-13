@@ -321,7 +321,7 @@ bool CheckSpot(mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	A = HexenLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		sec->floorheight + Actor::TELEFOGHEIGHT));
+		sec->floorheight + MainGameInfo::TELEFOGHEIGHT));
 	A.PlaySound('Teleport', CHAN_VOICE);
 
 	return true;
@@ -1011,7 +1011,7 @@ bool UndoPlayerMorph()
 	PostMorphWeapon(Weapon(Actor(MO).Tracer));
 
 	fog = HexenLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
-		20.0 * sin(MO.Angles.yaw), Actor::TELEFOGHEIGHT));
+		20.0 * sin(MO.Angles.yaw), MainGameInfo::TELEFOGHEIGHT));
 	fog.PlaySound('Teleport', CHAN_VOICE);
 
 	MO.SetState(MO.FindState('FreeTargMobj'));

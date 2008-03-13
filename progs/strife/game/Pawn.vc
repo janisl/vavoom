@@ -26,6 +26,8 @@
 class Pawn : Actor
 	abstract;
 
+const float ROBOTRANGE		= 264.0;
+
 //==========================================================================
 //
 //	CheckRobotRange
@@ -59,46 +61,6 @@ final void A_RiffleAttack()
 	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
 	damage = ((P_Random() % 5) + 1) * 3;
 	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
-}
-
-//==========================================================================
-//
-//	A_CheckRefire
-//
-//==========================================================================
-
-final void A_CheckRefire()
-{
-	// keep firing unless target got out of sight
-	A_FaceTarget();
-
-	if (P_Random() < 30)
-		return;
-
-	if (!Target || Target.Health <= 0 || !CanSee(Target) || P_Random() < 40)
-	{
-		SetState(SeeState);
-	}
-}
-
-//==========================================================================
-//
-//	A_Dying
-//
-//==========================================================================
-
-final void A_Dying()
-{
-	bInCombat = true;
-	if ((P_Random() % 5) == 0)
-	{
-		PlaySound(PainSound, CHAN_VOICE);
-		Health--;
-	}
-	if (Health <= 0)
-	{
-		Died(Target, none);
-	}
 }
 
 //==========================================================================
@@ -149,43 +111,6 @@ final void A_RobotMissile()
 		damage = ((P_Random() % 8) + 1) * 3;
 		LineAttack(dir, MISSILERANGE, damage, StrifePuff);
 	}
-}
-
-//==========================================================================
-//
-//	A_FlightChase
-//
-//==========================================================================
-
-final void A_FlightChase()
-{
-	float minz, maxz;
-
-	if (bInFloat)
-	{
-		Velocity.z = 0.0;
-		return;
-	}
-
-	if (Threshold)
-		return;
-
-	maxz = CeilingZ - Height - 16.0;
-	minz = FloorZ + 96.0;
-	if (minz > maxz)
-	{
-		minz = maxz;
-	}
-
-	if (minz < Origin.z)
-	{
-		Velocity.z -= 1.0 * 35.0;
-	}
-	else
-	{
-		Velocity.z += 1.0 * 35.0;
-	}
-	ReactionCount = (minz >= Origin.z) ? 4 : 0;
 }
 
 //==========================================================================

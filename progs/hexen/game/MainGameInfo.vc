@@ -28,6 +28,8 @@ class MainGameInfo : LineSpecialGameInfo;
 const int NUMTOTALBOTS		= 24;
 const int NUMBOTTYPES		= 24;
 
+const float TELEFOGHEIGHT	= 32.0;
+
 BotPlayer::botinfo_t botinfo[NUMTOTALBOTS];
 int botskill;
 
@@ -351,7 +353,7 @@ defaultproperties
 	bNoDamageThrustInvulnerable = true;
 	bNightmareFastChase = true;
 	bRavenStylePickupRespawn = true;
-	TeleFogHeight = Actor::TELEFOGHEIGHT;
+	TeleFogHeight = TELEFOGHEIGHT;
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	NonMonsterAngleIncrements = 1;

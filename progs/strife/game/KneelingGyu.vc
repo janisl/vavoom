@@ -40,7 +40,7 @@ Pain:
 	Goto Spawn
 Wound:
 	NEAL B 6
-	NEAL C 13 A_Dying
+	NEAL C 13 A_GetHurt
 	Loop
 Death:
 	NEAL D 5

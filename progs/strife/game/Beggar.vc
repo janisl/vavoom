@@ -38,7 +38,7 @@ Melee:
 	BEGR D 8
 	BEGR E 8 A_PeasantAttack
 	BEGR E 1 A_Chase
-	BEGR D 8 A_CheckRefire
+	BEGR D 8 A_SentinelRefire
 	Loop
 Pain:
 	BEGR A 3 A_Pain

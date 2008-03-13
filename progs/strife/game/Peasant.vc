@@ -50,7 +50,7 @@ Pain:
 	Goto Melee
 Wound:
 	PEAS G 5
-	PEAS H 10 A_Dying
+	PEAS H 10 A_GetHurt
 	PEAS I 6
 	Goto Wound+1
 Death:

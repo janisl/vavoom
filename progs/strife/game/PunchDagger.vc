@@ -29,11 +29,11 @@ const float PUNCHRANGE		= 80.0;
 
 //==========================================================================
 //
-//	A_Punch
+//	A_DaggerAttack
 //
 //==========================================================================
 
-final void A_Punch()
+final void A_DaggerAttack()
 {
 	int			power;
 	int			damage;
@@ -92,7 +92,7 @@ Select:
 	Loop
 Fire:
 	PNCH B 4
-	PNCH C 4 A_Punch
+	PNCH C 4 A_DaggerAttack
 	PNCH D 5
 	PNCH C 4
 	PNCH B 5 A_ReFire

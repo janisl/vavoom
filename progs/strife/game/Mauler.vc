@@ -26,6 +26,8 @@
 class Mauler : StrifeWeapon
 	__mobjinfo__(2004);
 
+const float			MAULERRANGE		= (33.0 * 64.0);
+
 //==========================================================================
 //
 //	A_FireBlaster1
@@ -58,7 +60,7 @@ final void A_FireBlaster1()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		LineAttack(dir, Actor::MAULERRANGE, damage, MaulerPuff,,,
+		LineAttack(dir, MAULERRANGE, damage, MaulerPuff,,,
 			'Disintegrate');
 	}
 }
