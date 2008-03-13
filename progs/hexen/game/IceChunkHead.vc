@@ -25,24 +25,10 @@
 
 class IceChunkHead : PlayerPawn;
 
-//==========================================================================
-//
-//	A_IceCheckHeadDone
-//
-//==========================================================================
-
-final void A_IceCheckHeadDone()
-{
-	if (Special2 == 666)
-	{
-		SetState(GetStatePlus(IdleState, 1, true));
-	}
-}
-
 states
 {
 Spawn:
-	ICEC A 10 A_IceCheckHeadDone
+	ICEC A 10 A_CheckPlayerDone
 	Wait
 	ICEC A 1050
 	Stop

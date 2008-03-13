@@ -69,20 +69,6 @@ final void A_FlameSnd()
 	PlaySound('misc/burn', CHAN_WEAPON);	// Burn sound
 }
 
-//==========================================================================
-//
-//  A_CheckBurnGone
-//
-//==========================================================================
-
-final void A_CheckBurnGone()
-{
-	if (bSafeToRemove)
-	{
-		SetState(FindState('BurnGone'));
-	}
-}
-
 states
 {
 Spawn:
@@ -134,7 +120,7 @@ Burn:
 	FDTH P 4 Bright
 	FDTH Q 5 Bright
 	FDTH R 4 Bright
-	ACLO E 35 A_CheckBurnGone
+	ACLO E 35 A_CheckPlayerDone
 	Wait
 BurnGone:
 	ACLO E 8

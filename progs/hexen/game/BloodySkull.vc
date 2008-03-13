@@ -40,26 +40,12 @@ final void A_CheckSkullFloor()
 	}
 }
 
-//==========================================================================
-//
-//  A_CheckSkullDone
-//
-//==========================================================================
-
-final void A_CheckSkullDone()
-{
-	if (Special2 == 666)
-	{
-		SetState(GetStatePlus(IdleState, 8, true));
-	}
-}
-
 states
 {
 Spawn:
 	BSKL ABCDFGH 5 A_CheckSkullFloor
 	Loop
-	BSKL I 16 A_CheckSkullDone
+	BSKL I 16 A_CheckPlayerDone
 	Wait
 	BSKL I 1050
 	Stop

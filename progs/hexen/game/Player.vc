@@ -1150,9 +1150,6 @@ void DeathPlayerTick(float deltaTime)
 		{
 			Actor(MO).Special1 = 0;
 		}
-		// Let the mobj know the player has entered the reborn state.  Some
-		// mobjs need to know when it's ok to remove themselves.
-		Actor(MO).Special2 = 666;
 	}
 }
 

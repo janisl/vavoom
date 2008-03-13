@@ -971,9 +971,6 @@ void DeathPlayerTick(float deltaTime)
 		InvFirst = none;
 		InvPtr = none;
 		PlayerState = PST_REBORN;
-		// Let the mobj know the player has entered the reborn state.  Some
-		// mobjs need to know when it's ok to remove themselves.
-		PlayerPawn(MO).bSafeToRemove = true;
 	}
 }
 

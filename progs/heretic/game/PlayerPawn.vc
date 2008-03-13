@@ -26,8 +26,6 @@
 class PlayerPawn : Pawn
 	abstract;
 
-bool bSafeToRemove;
-
 //==========================================================================
 //
 //	GetBaseViewHeight

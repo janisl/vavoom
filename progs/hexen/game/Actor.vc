@@ -28,40 +28,6 @@ class Actor : ScriptedEntity
 
 //==========================================================================
 //
-//  A_AddPlayerCorpse
-//
-//==========================================================================
-
-final void A_AddPlayerCorpse()
-{
-	if (HexenLevelInfo(Level).bodyqueslot >= HexenLevelInfo::BODYQUESIZE)
-	{
-		// Too many player corpses - remove an old one
-		HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE].Destroy();
-	}
-	HexenLevelInfo(Level).bodyque[HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE] = self;
-	Translation = XLevel.SetBodyQueueTrans(
-		HexenLevelInfo(Level).bodyqueslot % HexenLevelInfo::BODYQUESIZE,
-		Translation);
-	HexenLevelInfo(Level).bodyqueslot++;
-}
-
-//============================================================================
-//
-//  A_CheckBurnGone
-//
-//============================================================================
-
-final void A_CheckBurnGone()
-{
-	if (Special2 == 666)
-	{
-		SetState(FindState('BurnGone'));
-	}
-}
-
-//==========================================================================
-//
 //  A_PigPain
 //
 //==========================================================================

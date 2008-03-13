@@ -84,7 +84,7 @@ class Actor extends Thinker
 	//A_SetBlend
 	//A_CheckSight
 	//A_CheckFloor
-	//A_CheckPlayerDone
+	action native A_CheckPlayerDone();
 	//A_SkullPop
 
 	//

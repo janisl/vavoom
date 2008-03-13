@@ -79,7 +79,7 @@ Burn:
 	FDTH T 4 Bright
 	FDTH U 5 Bright
 	FDTH V 4 Bright
-	ACLO E 35 A_CheckBurnGone
+	ACLO E 35 A_CheckPlayerDone
 	Wait
 BurnGone:
 	ACLO E 8
