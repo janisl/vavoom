@@ -64,3 +64,5 @@ class Revenant : ScriptedEntity decorate;
 class Arachnotron : ScriptedEntity decorate;
 class Fatso : ScriptedEntity decorate;
 class PainElemental : ScriptedEntity decorate;
+class Cyberdemon : ScriptedEntity decorate;
+class SpiderMastermind : ScriptedEntity decorate;

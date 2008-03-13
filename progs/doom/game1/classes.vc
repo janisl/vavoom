@@ -42,8 +42,6 @@
 #endif
 
 #include "DoomPlayer.vc"
-#include "Cyberdemon.vc"
-#include "SpiderMastermind.vc"
 
 #include "ScriptedMarine.vc"
 #include "MarineFist.vc"

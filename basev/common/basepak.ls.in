@@ -47,6 +47,7 @@ actors/nativeclasses.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/nativeclasses.txt
 actors/doom/arachnotron.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/arachnotron.txt
 actors/doom/bruiser.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/bruiser.txt
 actors/doom/cacodemon.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/cacodemon.txt
+actors/doom/cyberdemon.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/cyberdemon.txt
 actors/doom/deadthings.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/deadthings.txt
 actors/doom/demon.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/demon.txt
 actors/doom/doomammo.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomammo.txt
@@ -62,6 +63,7 @@ actors/doom/lostsoul.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/lostsoul.txt
 actors/doom/painelemental.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/painelemental.txt
 actors/doom/possessed.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/possessed.txt
 actors/doom/revenant.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/revenant.txt
+actors/doom/spidermaster.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/spidermaster.txt
 actors/doom/stealthmonsters.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/stealthmonsters.txt
 actors/heretic/hereticammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticammo.txt
 actors/heretic/hereticarmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticarmor.txt
