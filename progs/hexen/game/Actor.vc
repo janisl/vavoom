@@ -48,37 +48,6 @@ void Destroyed()
 	::Destroyed();
 }
 
-//============================================================================
-//
-//  A_PlayerScream
-//
-//============================================================================
-
-final void A_PlayerScream()
-{
-	// Handle the different player death screams
-	if (Velocity.z <= -39.0 * 35.0)
-	{
-		// Falling splat
-		PlaySound('*splat', CHAN_VOICE);
-	}
-	else if (Health > -50)
-	{
-		// Normal death sound
-		PlaySound('*death', CHAN_VOICE);
-	}
-	else if (Health > -100)
-	{
-		// Crazy death sound
-		PlaySound('*crazydeath', CHAN_VOICE);
-	}
-	else
-	{
-		// Extreme death sound
-		PlaySound('*xdeath', CHAN_VOICE);
-	}
-}
-
 //==========================================================================
 //
 //  A_AddPlayerCorpse

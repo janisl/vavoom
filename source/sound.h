@@ -73,6 +73,7 @@ public:
 	int GetSoundID(const char*);
 	int ResolveSound(int);
 	int ResolveEntitySound(VName, VName, VName);
+	bool IsSoundPresent(VName, VName, VName);
 	bool LoadSound(int);
 	void DoneWithLump(int);
 	float GetMusicVolume(VName);

@@ -47,31 +47,6 @@ bool ShouldDropItems()
 	return false;
 }
 
-//==========================================================================
-//
-//  A_PlayerScream
-//
-//  Player death sound
-//
-//==========================================================================
-
-final void A_PlayerScream()
-{
-	// Default death sound.
-	name sound = '*death';
-
-#ifdef DOOM2
-	if (Health < -50)
-	{
-		// IF THE PLAYER DIES
-		// LESS THAN -50% WITHOUT GIBBING
-		sound = '*xdeath';
-	}
-#endif
-
-	PlaySound(sound, CHAN_VOICE);
-}
-
 defaultproperties
 {
 }

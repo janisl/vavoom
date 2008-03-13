@@ -1206,6 +1206,65 @@ final void A_BrainAwake()
 	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
 }
 
+//==========================================================================
+//
+//  A_PlayerScream
+//
+//==========================================================================
+
+final void A_PlayerScream()
+{
+	if (!bIsPlayer || DeathSound)
+	{
+		PlaySound(DeathSound, CHAN_VOICE);
+		return;
+	}
+
+	name Sound;
+	int Chan = CHAN_VOICE;
+
+	// Handle the different player death screams
+	if ((Level.bFallingDamage || Level.bOldFallingDamage ||
+		Level.bStrifeFallingDamage) && Velocity.z <= -39.0 * 35.0 &&
+		IsSoundPresent('*splat'))
+	{
+		// Falling splat
+		Sound = '*splat';
+		Chan = CHAN_BODY;
+	}
+	if (!Sound && Special1 < 10 && IsSoundPresent('*wimpydeath'))
+	{
+		// Wimpy death sound
+		Sound = '*wimpydeath';
+	}
+	if (!Sound && Health <= -50)
+	{
+		if (Health > -100 && IsSoundPresent('*crazydeath'))
+		{
+			// Crazy death sound
+			Sound = '*crazydeath';
+		}
+		if (!Sound && IsSoundPresent('*xdeath'))
+		{
+			// Extreme death sound
+			Sound = '*xdeath';
+		}
+		if (!Sound && IsSoundPresent('*gibbed'))
+		{
+			// Extreme death sound
+			Sound = '*gibbed';
+			Chan = CHAN_BODY;
+		}
+	}
+	if (!Sound)
+	{
+		// Normal death sound
+		Sound = '*death';
+	}
+
+	PlaySound(Sound, Chan);
+}
+
 //**************************************************************************
 //	Special actions
 //**************************************************************************

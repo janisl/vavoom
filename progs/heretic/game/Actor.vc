@@ -30,37 +30,6 @@ const float TELEFOGHEIGHT 	= 32.0;
 
 //==========================================================================
 //
-//  A_PlayerScream
-//
-//==========================================================================
-
-final void A_PlayerScream()
-{
-	// Handle the different player death screams
-	if (Special1 < 10)
-	{
-		// Wimpy death sound
-		PlaySound('*wimpydeath', CHAN_VOICE);
-	}
-	else if (Health > -50)
-	{
-		// Normal death sound
-		PlaySound(DeathSound, CHAN_VOICE);
-	}
-	else if (Health > -100)
-	{
-		// Crazy death sound
-		PlaySound('*crazydeath', CHAN_VOICE);
-	}
-	else
-	{
-		// Extreme death sound
-		PlaySound('*gibbed', CHAN_VOICE);
-	}
-}
-
-//==========================================================================
-//
 //  A_Feathers
 //
 //==========================================================================

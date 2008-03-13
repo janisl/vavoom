@@ -93,8 +93,6 @@ defaultproperties
 	MaxStepHeight = 16.0;
 	bDropOff = true;
 	bFriendly = true;
-	PainSound = '*pain100';
-	DeathSound = '*death';
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = PunchDagger; DropItemList[0].Amount = 1;

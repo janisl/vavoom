@@ -68,6 +68,7 @@ class Actor extends Thinker
 	action native A_VileStart();
 	action native A_BrainPain();
 	action native A_BrainAwake();
+	action native A_PlayerScream();
 
 	//
 	//	Special actions

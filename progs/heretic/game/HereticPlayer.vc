@@ -153,8 +153,6 @@ defaultproperties
 	bWindThrust = true;
 	bSlide = true;
 	bTelestomp = true;
-	PainSound = '*pain100';
-	DeathSound = '*death';
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = GoldWandAmmo; DropItemList[0].Amount = 50;

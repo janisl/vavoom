@@ -237,7 +237,7 @@ code_pointers
 	BFGSpray		ScriptedEntity		A_BFGSpray
 	Explode			ScriptedEntity		A_Explode
 	Pain			ScriptedEntity		A_Pain
-	PlayerScream	DoomPlayer			A_PlayerScream
+	PlayerScream	ScriptedEntity		A_PlayerScream
 	Fall			ScriptedEntity		A_Fall
 	XScream			ScriptedEntity		A_XScream
 	Look			ScriptedEntity		A_Look

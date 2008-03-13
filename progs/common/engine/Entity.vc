@@ -301,6 +301,7 @@ native final void PlaySound(name SoundName, int Channel, optional float Volume,
 	optional float Atenuation, optional bool Loop);
 native final void StopSound(int Channel);
 native final bool AreSoundsEquivalent(name Sound1, name Sound2);
+native final bool IsSoundPresent(name Sound);
 
 native final void StartSoundSequence(name sequence, int ModeNum);
 native final void AddSoundSequenceChoice(name Choice);

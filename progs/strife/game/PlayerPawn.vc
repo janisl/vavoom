@@ -135,29 +135,6 @@ bool UseInventory(Inventory Item)
 	return true;
 }
 
-//==========================================================================
-//
-//  A_PlayerScream
-//
-//  Player death sound
-//
-//==========================================================================
-
-final void A_PlayerScream()
-{
-	// Default death sound.
-	name sound = '*death';
-
-	if (Health < -50)
-	{
-		// IF THE PLAYER DIES
-		// LESS THAN -50% WITHOUT GIBBING
-		sound = '*xdeath';
-	}
-
-	PlaySound(sound, CHAN_VOICE);
-}
-
 defaultproperties
 {
 	ReactionCount = 0;

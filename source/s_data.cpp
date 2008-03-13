@@ -826,6 +826,35 @@ int VSoundManager::ResolveSound(int ClassID, int GenderID, int InSoundId)
 
 //==========================================================================
 //
+//	VSoundManager::IsSoundPresent
+//
+//==========================================================================
+
+bool VSoundManager::IsSoundPresent(VName ClassName, VName GenderName,
+	VName SoundName)
+{
+	guard(VSoundManager::IsSoundPresent);
+	int SoundId = FindSound(SoundName);
+	if (!SoundId)
+	{
+		return false;
+	}
+	int ClassId = FindPlayerClass(ClassName);
+	if (ClassId == -1)
+	{
+		ClassId = 0;
+	}
+	int GenderId = FindPlayerGender(GenderName);
+	if (GenderId == -1)
+	{
+		GenderId = 0;
+	}
+	return ResolveSound(ClassId, GenderId, SoundId) > 0;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VSoundManager::LoadSound
 //
 //==========================================================================

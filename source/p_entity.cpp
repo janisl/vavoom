@@ -603,6 +603,14 @@ IMPLEMENT_FUNCTION(VEntity, AreSoundsEquivalent)
 		Self->SoundClass, Self->SoundGender, Sound2));
 }
 
+IMPLEMENT_FUNCTION(VEntity, IsSoundPresent)
+{
+	P_GET_NAME(Sound);
+	P_GET_SELF;
+	RET_BOOL(GSoundManager->IsSoundPresent(Self->SoundClass,
+		Self->SoundGender, Sound));
+}
+
 IMPLEMENT_FUNCTION(VEntity, StartSoundSequence)
 {
 	P_GET_INT(ModeNum);

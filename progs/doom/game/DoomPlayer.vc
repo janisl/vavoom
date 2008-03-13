@@ -79,8 +79,6 @@ defaultproperties
 	bSlide = true;
 	bNoBlockMonst = true;
 	bPassMobj = true;
-	PainSound = '*pain100';
-	DeathSound = '*death';
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = Clip; DropItemList[0].Amount = 50;
