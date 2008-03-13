@@ -25,11 +25,6 @@
 
 class DoomLevelInfo : LineSpecialLevelInfo;
 
-const int BODYQUESIZE				= 32;
-
-EntityEx bodyque[BODYQUESIZE];
-int bodyqueslot;
-
 //==========================================================================
 //
 //  CheckActivation

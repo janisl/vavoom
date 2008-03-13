@@ -62,6 +62,9 @@ const int DAMAGE_NONPLAYERS			= 2;
 const int DAMAGE_IN_AIR				= 4;
 const int DAMAGE_SUBCLASSES_PROTECT	= 8;
 
+const int BODYQUESIZE				= 32;
+const int CORPSEQUEUESIZE			= 64;
+
 name			DefaultDoorSound;
 name			DefaultCeilingSound;
 name			DefaultSilentCeilingSound;
@@ -83,6 +86,15 @@ EntityEx		CurrentSpeakingTo;
 float			OldSpeakerAngle;
 int				CurrentSpeechIndex;
 bool			ConversationSlideshow;
+
+EntityEx		bodyque[BODYQUESIZE];
+int				BodyQueSize;
+int				bodyqueslot;
+
+// Corpse queue for monsters
+EntityEx		corpseQueue[CORPSEQUEUESIZE];
+int				CorpseQueSize;
+int				corpseQueueSlot;
 
 //==========================================================================
 //
@@ -6600,4 +6612,6 @@ defaultproperties
 {
 	ExtPlayersBase = 4001;
 	Lock103Message = "That doesn't seem to work";
+	BodyQueSize = BODYQUESIZE;
+	CorpseQueSize = CORPSEQUEUESIZE;
 }

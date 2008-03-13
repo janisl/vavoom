@@ -25,11 +25,6 @@
 
 class StrifeLevelInfo : LineSpecialLevelInfo;
 
-const int BODYQUESIZE	= 32;
-
-EntityEx bodyque[BODYQUESIZE];
-int bodyqueslot;
-
 //==========================================================================
 //
 //  ExecuteActionSpecial

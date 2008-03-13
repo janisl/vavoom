@@ -28,23 +28,6 @@ class Actor : ScriptedEntity
 
 //==========================================================================
 //
-//	Destroyed
-//
-//==========================================================================
-
-void Destroyed()
-{
-	// Remove from creature queue
-	if (bMonster && bCorpse)
-	{
-		A_DeQueueCorpse();
-	}
-
-	::Destroyed();
-}
-
-//==========================================================================
-//
 //  A_AddPlayerCorpse
 //
 //==========================================================================
@@ -74,56 +57,6 @@ final void A_CheckBurnGone()
 	if (Special2 == 666)
 	{
 		SetState(FindState('BurnGone'));
-	}
-}
-
-//==========================================================================
-//
-//  A_QueueCorpse
-//
-//  Throw another corpse on the queue.
-//
-//==========================================================================
-
-final void A_QueueCorpse()
-{
-	EntityEx corpse;
-
-	if (HexenLevelInfo(Level).corpseQueueSlot >=
-		HexenLevelInfo::CORPSEQUEUESIZE)
-	{
-		// Too many corpses - remove an old one
-		corpse = HexenLevelInfo(Level).corpseQueue[
-			HexenLevelInfo(Level).corpseQueueSlot %
-			HexenLevelInfo::CORPSEQUEUESIZE];
-		if (corpse)
-			corpse.Destroy();
-	}
-	HexenLevelInfo(Level).corpseQueue[
-		HexenLevelInfo(Level).corpseQueueSlot %
-		HexenLevelInfo::CORPSEQUEUESIZE] = self;
-	HexenLevelInfo(Level).corpseQueueSlot++;
-}
-
-//============================================================================
-//
-//  A_DeQueueCorpse
-//
-//  Remove a mobj from the queue (for resurrection)
-//
-//============================================================================
-
-final void A_DeQueueCorpse()
-{
-	int slot;
-
-	for (slot = 0; slot < HexenLevelInfo::CORPSEQUEUESIZE; slot++)
-	{
-		if (HexenLevelInfo(Level).corpseQueue[slot] == self)
-		{
-			HexenLevelInfo(Level).corpseQueue[slot] = none;
-			break;
-		}
 	}
 }
 

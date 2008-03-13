@@ -31,6 +31,23 @@
 class ScriptedEntity : EntityEx
 	abstract;
 
+//==========================================================================
+//
+//	Destroyed
+//
+//==========================================================================
+
+void Destroyed()
+{
+	// Remove from creature queue
+	if (bMonster && bCorpse)
+	{
+		A_DeQueueCorpse();
+	}
+
+	::Destroyed();
+}
+
 //**************************************************************************
 //	Monster AI
 //**************************************************************************
@@ -1864,6 +1881,58 @@ final void A_ClearShadow()
 	bShadow = false;
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
+}
+
+//==========================================================================
+//
+//  A_QueueCorpse
+//
+//  Throw another corpse on the queue.
+//
+//==========================================================================
+
+final void A_QueueCorpse()
+{
+	EntityEx corpse;
+
+	if (LineSpecialLevelInfo(Level).corpseQueueSlot >=
+		LineSpecialLevelInfo(Level).CorpseQueSize)
+	{
+		// Too many corpses - remove an old one
+		corpse = LineSpecialLevelInfo(Level).corpseQueue[
+			LineSpecialLevelInfo(Level).corpseQueueSlot %
+			LineSpecialLevelInfo(Level).CorpseQueSize];
+		if (corpse)
+		{
+			corpse.Destroy();
+		}
+	}
+	LineSpecialLevelInfo(Level).corpseQueue[
+		LineSpecialLevelInfo(Level).corpseQueueSlot %
+		LineSpecialLevelInfo(Level).CorpseQueSize] = self;
+	LineSpecialLevelInfo(Level).corpseQueueSlot++;
+}
+
+//============================================================================
+//
+//  A_DeQueueCorpse
+//
+//  Remove a mobj from the queue (for resurrection)
+//
+//============================================================================
+
+final void A_DeQueueCorpse()
+{
+	int slot;
+
+	for (slot = 0; slot < LineSpecialLevelInfo(Level).CorpseQueSize; slot++)
+	{
+		if (LineSpecialLevelInfo(Level).corpseQueue[slot] == self)
+		{
+			LineSpecialLevelInfo(Level).corpseQueue[slot] = none;
+			break;
+		}
+	}
 }
 
 //**************************************************************************

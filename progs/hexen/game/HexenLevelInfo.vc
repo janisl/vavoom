@@ -25,16 +25,6 @@
 
 class HexenLevelInfo : LineSpecialLevelInfo;
 
-const int BODYQUESIZE			= 32;
-const int CORPSEQUEUESIZE		= 64;
-
-EntityEx bodyque[BODYQUESIZE];
-int bodyqueslot;
-
-// Corpse queue for monsters
-EntityEx corpseQueue[CORPSEQUEUESIZE];
-int corpseQueueSlot;
-
 enum
 {
 	pt_ice_chunk

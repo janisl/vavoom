@@ -8,7 +8,7 @@ class Actor extends Thinker
 	action native A_Look();
 	action native A_Look2();
 	//A_LookEx
-	//A_TurretLook
+	action native A_TurretLook();
 	action native A_Wander();
 	action native A_Chase(optional state melee, optional state missile, optional eval int flags);
 	action native A_FastChase();
@@ -16,13 +16,13 @@ class Actor extends Thinker
 	//A_ExtChase
 	action native A_FaceTarget();
 	//A_Die
-	//A_CentaurDefend
+	action native A_CentaurDefend();
 	action native A_AlertMonsters();
 	//A_ClearTarget
-	//A_ClearSoundTarget
+	action native A_ClearSoundTarget();
 	//A_KillMaster
 	//A_KillChildren
-	//A_SentinelBob
+	action native A_SentinelBob();
 	//A_Burst
 
 	//
@@ -77,8 +77,8 @@ class Actor extends Thinker
 	action native A_BossDeath();
 	action native A_KeenDie();
 	action native A_BrainDie();
-	//A_GetHurt
-	//A_KlaxonBlare
+	action native A_GetHurt();
+	action native A_KlaxonBlare();
 	action native A_CheckTerrain();
 	//A_Print
 	//A_SetBlend
@@ -116,15 +116,15 @@ class Actor extends Thinker
 	action native A_UnHideThing();
 	action native A_SetInvulnerable();
 	action native A_UnSetInvulnerable();
-	//A_SetReflective
-	//A_UnSetReflective
-	//A_SetReflectiveInvulnerable
-	//A_UnSetReflectiveInvulnerable
-	//A_SetShootable
-	//A_UnSetShootable
+	action native A_SetReflective();
+	action native A_UnSetReflective();
+	action native A_SetReflectiveInvulnerable();
+	action native A_UnSetReflectiveInvulnerable();
+	action native A_SetShootable();
+	action native A_UnSetShootable();
 	action native A_NoGravity();
-	//A_Gravity
-	//A_LowGravity
+	action native A_Gravity();
+	action native A_LowGravity();
 	action native A_NoBlocking();
 	action native A_Fall();
 	//A_SetSolid
@@ -138,8 +138,8 @@ class Actor extends Thinker
 	//A_SetTranslucent
 	//A_FadeIn
 	//A_FadeOut
-	//A_QueueCorpse
-	//A_DeQueueCorpse
+	action native A_QueueCorpse();
+	action native A_DeQueueCorpse();
 
 	//
 	//	Missile movement
@@ -172,7 +172,7 @@ class Actor extends Thinker
 	//
 	//	Weapon attack functions
 	//
-	//A_Punch
+	action native A_Punch();
 	//A_FireAssaultGun
 
 	//
@@ -207,8 +207,8 @@ class Actor extends Thinker
 	action native A_BrainScream();
 	action native A_BrainExplode();
 	//A_Mushroom
-	//A_M_Saw
-	//A_SentinelRefire
+	action native A_M_Saw();
+	action native A_SentinelRefire();
 
 	//
 	//	Monster specific functions for Doom

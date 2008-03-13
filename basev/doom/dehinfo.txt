@@ -221,7 +221,7 @@ code_pointers
 	Light0			Weapon				A_Light0
 	Light1			Weapon				A_Light1
 	Light2			Weapon				A_Light2
-	Punch			Fist				A_Punch
+	Punch			ScriptedEntity		A_Punch
 	Saw				Chainsaw			A_Saw
 	FirePistol		Pistol				A_FirePistol
 	FireShotgun		Shotgun				A_FireShotgun
