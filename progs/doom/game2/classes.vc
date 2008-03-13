@@ -25,7 +25,6 @@
 
 #include "SuperShotgun.vc"
 
-#include "PainElemental.vc"
 #include "BossTarget.vc"
 #include "SpawnFire.vc"
 #include "SpawnShot.vc"

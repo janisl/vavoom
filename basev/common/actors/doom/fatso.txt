@@ -1,0 +1,80 @@
+//------------------------------------------------------------------------------
+actor Fatso 67
+{
+	game Doom
+	SpawnID 112
+	Health 600
+	Radius 48
+	Height 64
+	Mass 1000
+	Speed 8
+	PainChance 80
+	SeeSound "fatso/sight"
+	ActiveSound "fatso/active"
+	PainSound "fatso/pain"
+	DeathSound "fatso/death"
+	Obituary "$ob_fatso"
+	Monster
+	+FloorClip
+	+BossDeath
+	states
+	{
+	Spawn:
+		FATT AB 15 A_Look
+		Loop
+	See:
+		FATT AABBCCDDEEFF 4 A_Chase
+		Loop
+	Missile:
+		FATT G 20 A_FatRaise
+		FATT H 10 Bright A_FatAttack1
+		FATT IG 5 A_FaceTarget
+		FATT H 10 Bright A_FatAttack2
+		FATT IG 5 A_FaceTarget
+		FATT H 10 Bright A_FatAttack3
+		FATT IG 5 A_FaceTarget
+		Goto See
+	Pain:
+		FATT J 3
+		FATT J 3 A_Pain
+		Goto See
+	Death:
+		FATT K 6
+		FATT L 6 A_Scream
+		FATT M 6 A_NoBlocking
+		FATT NOPQRS 6
+		FATT T -1 A_BossDeath
+		Stop
+	Raise:
+		FATT RQPONMLK 5
+		Goto See
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FatShot
+{
+	game Doom
+	SpawnID 153
+	Radius 6
+	Height 8
+	Speed 20
+	Damage 8
+	RenderStyle Add
+	Alpha 1
+	SeeSound "fatso/attack"
+	DeathSound "fatso/shotx"
+	Projectile
+	+Randomize
+	states
+	{
+	Spawn:
+		MANF AB 4 Bright
+		Loop
+	Death:
+		MISL B 8 Bright
+		MISL C 6 Bright
+		MISL D 4 Bright
+		Stop
+	}
+}

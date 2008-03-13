@@ -2202,7 +2202,7 @@ final void A_FatAttack1()
 
 const float FatsoSpreadAngle = 90.0 / 8.0;
 
-final void decorate_A_FatAttack1(class<EntityEx> SpawnType)
+final void decorate_A_FatAttack1(optional class<EntityEx> SpawnType)
 {
 	EntityEx A;
 
@@ -2250,7 +2250,7 @@ final void A_FatAttack2()
 //
 //==========================================================================
 
-final void decorate_A_FatAttack2(class<EntityEx> SpawnType)
+final void decorate_A_FatAttack2(optional class<EntityEx> SpawnType)
 {
 	EntityEx A;
 
@@ -2298,7 +2298,7 @@ final void A_FatAttack3()
 //
 //==========================================================================
 
-final void decorate_A_FatAttack3(class<EntityEx> SpawnType)
+final void decorate_A_FatAttack3(optional class<EntityEx> SpawnType)
 {
 	EntityEx A;
 

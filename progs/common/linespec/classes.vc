@@ -178,10 +178,6 @@ enum
 #include "../../doom/game1/Chaingun.vc"
 #include "../../doom/game1/Rocket.vc"
 
-#include "../../doom/game2/ArachnotronPlasma.vc"
-#include "../../doom/game2/Arachnotron.vc"
-#include "../../doom/game2/FatShot.vc"
-#include "../../doom/game2/Fatso.vc"
 #include "../../doom/game2/ArchvileFire.vc"
 #include "../../doom/game2/Archvile.vc"
 
@@ -204,5 +200,7 @@ class CacodemonBall : ScriptedEntity decorate;
 class BaronBall : ScriptedEntity decorate;
 class RevenantTracer : ScriptedEntity decorate;
 class RevenantTracerSmoke : ScriptedEntity decorate;
+class ArachnotronPlasma : ScriptedEntity decorate;
+class FatShot : ScriptedEntity decorate;
 
 class QuestItem29 : Inventory decorate;
