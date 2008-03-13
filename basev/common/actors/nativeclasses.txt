@@ -1,3 +1,4 @@
+//------------------------------------------------------------------------------
 class Actor extends Thinker
 	native
 {
@@ -103,7 +104,6 @@ class Actor extends Thinker
 	//A_JumpIfHealthLower
 	//A_JumpIfInventory
 	//A_JumpIfInTargetInventory
-	//A_JumpIfNoAmmo
 	//A_JumpIfTargetInLOS
 
 	//
@@ -167,28 +167,12 @@ class Actor extends Thinker
 	//
 	//	Weapon functions
 	//
-	//A_WeaponReady
-	//A_Lower
-	//A_Raise
-	//A_ReFire
-	//A_GunFlash
-	//A_CheckReload
-	//A_Light
-	//A_Light0
-	//A_Light1
-	//A_Light2
-	//A_LightInverse
 	//A_Recoil
 
 	//
 	//	Weapon attack functions
 	//
 	//A_Punch
-	//A_Saw
-	//A_CustomPunch
-	//A_FireBullets
-	//A_FireCustomMissile
-	//A_RailAttack
 	//A_FireAssaultGun
 
 	//
@@ -237,4 +221,65 @@ class Actor extends Thinker
 	action native A_StartFire();
 	action native A_FireCrackle();
 	action native A_BFGSpray(optional class<Actor> flashtype, optional eval int numrays, optioal eval int damage);
+
+	//
+	//	Not documented
+	//
+	//action native A_SetGravity(eval float gravity);
+	//action native A_PlayerSkinCheck(state label);
+	//action native A_Respawn(optional evalnot bool fog);
+	//action native A_BarrelDestroy();
+}
+
+//------------------------------------------------------------------------------
+class Inventory extends Actor
+	native
+{
+	//
+	//	State jumps
+	//
+	//A_JumpIfNoAmmo
+
+	//
+	//	Weapon functions
+	//
+	//A_WeaponReady
+	//A_Lower
+	//A_Raise
+	//A_ReFire
+	//A_GunFlash
+	//A_CheckReload
+	//A_Light
+	//A_Light0
+	//A_Light1
+	//A_Light2
+	//A_LightInverse
+
+	//
+	//	Weapon attack functions
+	//
+	//A_Saw
+	//A_CustomPunch
+	//A_FireBullets
+	//A_FireCustomMissile
+	//A_RailAttack
+
+	//
+	//	Not documented Doom weapon atack functions
+	//
+	//action native A_FirePistol();
+	//action native A_FireShotgun();
+	//action native A_FireShotgun2();
+	//action native A_OpenShotgun2();
+	//action native A_LoadShotgun2();
+	//action native A_CloseShotgun2();
+	//action native A_FireCGun();
+	//action native A_FireMissile();
+	//action native A_FirePlasma();
+	//action native A_FireRailgun();
+	//action native A_FireRailgunLeft();
+	//action native A_FireRailgunRight();
+	//action native A_RailWait();
+	//action native A_BFGsound();
+	//action native A_FireBFG();
 }
