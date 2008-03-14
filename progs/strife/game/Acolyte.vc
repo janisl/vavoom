@@ -34,13 +34,13 @@ class Acolyte : StrifeHumanoid
 
 final void A_AcolyteBits()
 {
-	if (SpawnPoint.options & (1 << 8))
+	if (SpawnPoint.options & (1 << 12))//8))
 	{
 		RenderStyle = STYLE_Translucent;
 		Alpha = 0.333;
 		bShadow = true;
 	}
-	if (SpawnPoint.options & (1 << 9))
+	if (SpawnPoint.options & (1 << 13))//9))
 	{
 		bUnknown2 = true;
 	}
@@ -129,10 +129,10 @@ Death:
 	Goto XDeath+10
 XDeath:
 	GIBS A 5 A_Fall
-	GIBS BC 5 A_XDying
-	GIBS D 4 A_XDying
+	GIBS BC 5 A_TossGib
+	GIBS D 4 A_TossGib
 	GIBS E 4 A_XScream
-	GIBS F 4 A_XDying
+	GIBS F 4 A_TossGib
 	GIBS GH 4
 	GIBS I 5
 	GIBS J 5 A_AcolyteDeath

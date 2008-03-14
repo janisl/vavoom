@@ -92,18 +92,18 @@ Pain:
 Death:
 	MLDR G 3 Bright
 	MLDR H 5 Bright A_Scream
-	MLDR I 4 Bright A_XDying
+	MLDR I 4 Bright A_TossGib
 	MLDR J 4 Bright A_ExplodeAndAlert
 	MLDR KL 4 Bright
 	MLDR M 4 Bright A_Fall
 	MLDR N 4 Bright
-	MLDR O 4 Bright A_XDying
+	MLDR O 4 Bright A_TossGib
 	MLDR P 4 Bright
-	MLDR Q 4 Bright A_XDying
+	MLDR Q 4 Bright A_TossGib
 	MLDR R 4 Bright
-	MLDR S 4 Bright A_XDying
+	MLDR S 4 Bright A_TossGib
 	MLDR T 4 Bright
-	MLDR U 4 Bright A_XDying
+	MLDR U 4 Bright A_TossGib
 	MLDR V 4 A_BishopDeath
 	Stop
 }

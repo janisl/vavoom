@@ -42,7 +42,7 @@ final void A_FireGrenadeExplode()
 states
 {
 Spawn:
-	GRIN AB 3 A_DecReactionCount
+	GRIN AB 3 A_Countdown
 	Loop
 Death:
 	BNG3 A 1 A_FireGrenadeExplode

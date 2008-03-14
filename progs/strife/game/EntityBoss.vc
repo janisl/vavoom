@@ -117,6 +117,7 @@ defaultproperties
 	Height = 8.0;
 	Mass = 1000.0;
 	Speed = 13.0 * 35.0;
+	FloatSpeed = 175.0;
 	PainChance = 1.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;

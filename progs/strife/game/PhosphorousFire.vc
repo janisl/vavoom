@@ -83,13 +83,13 @@ states
 {
 Spawn:
 	BNG3 B 2 Bright A_Explode
-	BNG3 C 2 Bright A_DecReactionCount
+	BNG3 C 2 Bright A_Countdown
 	FLBE A 2 Bright A_Burnination
-	FLBE B 2 Bright A_DecReactionCount
+	FLBE B 2 Bright A_Countdown
 	FLBE C 2 Bright A_Explode
-	FLBE D 3 Bright A_DecReactionCount
+	FLBE D 3 Bright A_Countdown
 	FLBE E 3 Bright A_Explode
-	FLBE F 3 Bright A_DecReactionCount
+	FLBE F 3 Bright A_Countdown
 	FLBE G 3 Bright A_Burnination
 	Goto Spawn+5
 Death:

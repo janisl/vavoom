@@ -35,11 +35,11 @@ Spawn:
 Death:
 	PSTN A 4 Bright A_Scream
 	PSTN B 4 Bright A_Fall
-	PSTN C 4 Bright A_QuestObjectDeath
-	PSTN D 4 Bright A_SpawnPuff
-	PSTN E 4 Bright A_XDying
+	PSTN C 4 Bright A_GiveQuestItem
+	PSTN D 4 Bright A_Bang4Cloud
+	PSTN E 4 Bright A_TossGib
 	PSTN F 4 Bright
-	PSTN G 4 Bright A_SpawnPuff
+	PSTN G 4 Bright A_Bang4Cloud
 	PSTN H 4
 	PSTN I -1
 	Stop

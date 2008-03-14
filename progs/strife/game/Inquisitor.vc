@@ -246,22 +246,22 @@ Jump:
 	ROB3 H 4 Bright A_InquisitorJump
 	Goto Jump+1
 Death:
-	ROB3 L 4 A_XDying
+	ROB3 L 4 A_TossGib
 	ROB3 M 4 A_Scream
-	ROB3 N 4 A_XDying
+	ROB3 N 4 A_TossGib
 	ROB3 O 4 Bright A_ExplodeAndAlert
-	ROB3 P 4 Bright A_XDying
+	ROB3 P 4 Bright A_TossGib
 	ROB3 Q 4 Bright A_Fall
-	ROB3 RSTUV 4 A_XDying
+	ROB3 RSTUV 4 A_TossGib
 	ROB3 W 4 Bright A_ExplodeAndAlert
-	ROB3 XY 4 Bright A_XDying
-	ROB3 Z 4 A_XDying
-	ROB3 "[" 4 A_XDying
-	ROB3 "\\" 3 A_XDying
+	ROB3 XY 4 Bright A_TossGib
+	ROB3 Z 4 A_TossGib
+	ROB3 "[" 4 A_TossGib
+	ROB3 "\\" 3 A_TossGib
 	ROB3 "]" 3 Bright A_ExplodeAndAlert
 	RBB3 A 3 Bright A_InquisitorDropArms
-	RBB3 B 3 Bright A_XDying
-	RBB3 CD 3 A_XDying
+	RBB3 B 3 Bright A_TossGib
+	RBB3 CD 3 A_TossGib
 	RBB3 E -1
 	Stop
 }
@@ -274,6 +274,7 @@ defaultproperties
 	Mass = 1000.0;
 	Speed = 12.0 * 35.0;
 	JumpSpeed = 6.0 * 35.0;
+	MaxDropoffHeight = 32.0;
 	bDropOff = true;
 	bNoBlood = true;
 	bExplodeParticles = true;

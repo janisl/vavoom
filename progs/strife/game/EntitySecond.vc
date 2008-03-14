@@ -80,9 +80,9 @@ Pain:
 	Goto See
 Death:
 	MDTH A 3 Bright A_Scream
-	MDTH B 3 Bright A_XDying
+	MDTH B 3 Bright A_TossGib
 	MDTH C 3 Bright A_Fall
-	MDTH DEFGHIJKLMN 3 Bright A_XDying
+	MDTH DEFGHIJKLMN 3 Bright A_TossGib
 	MDTH O 3 Bright A_SubEntityDeath
 	Stop
 }
@@ -94,6 +94,7 @@ defaultproperties
 	Height = 8.0;
 	Mass = 1000.0;
 	Speed = 14.0 * 35.0;
+	FloatSpeed = 175.0;
 	PainChance = 1.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;

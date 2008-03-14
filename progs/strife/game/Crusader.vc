@@ -178,12 +178,12 @@ Pain:
 	Goto See
 Death:
 	ROB2 G 3 A_Scream
-	ROB2 H 5 A_XDying
-	ROB2 I 4 Bright A_XDying
+	ROB2 H 5 A_TossGib
+	ROB2 I 4 Bright A_TossGib
 	ROB2 J 4 Bright A_ExplodeAndAlert
 	ROB2 K 4 Bright A_Fall
 	ROB2 L 4 A_ExplodeAndAlert
-	ROB2 MN 4 A_XDying
+	ROB2 MN 4 A_TossGib
 	ROB2 O 4 A_ExplodeAndAlert
 	ROB2 P -1 A_CrusaderDeath
 	Stop
@@ -197,6 +197,7 @@ defaultproperties
 	Mass = 400.0;
 	Speed = 8.0 * 35.0;
 	PainChance = 0.5;
+	MaxDropoffHeight = 32.0;
 	bInCombat = true;
 	bNoBlood = true;
 	bExplodeParticles = true;

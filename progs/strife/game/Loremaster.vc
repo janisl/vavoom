@@ -120,6 +120,7 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	Speed = 10.0 * 35.0;
+	FloatSpeed = 175.0;
 	bNoGravity = true;
 	bLookAllAround = true;
 	bFloat = true;

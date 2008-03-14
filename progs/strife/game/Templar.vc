@@ -84,12 +84,12 @@ Pain:
 	PGRD A 2 A_Pain
 	Goto See
 Death:
-	PGRD I 4 Bright A_XDying
+	PGRD I 4 Bright A_TossGib
 	PGRD J 4 Bright A_Scream
-	PGRD K 4 Bright A_XDying
+	PGRD K 4 Bright A_TossGib
 	PGRD L 4 Bright A_Fall
 	PGRD MN 4 Bright
-	PGRD O 4 A_XDying
+	PGRD O 4 A_TossGib
 	PGRD PQR 4
 	PGRD STUVWXYZ 3
 	PGRD "[" 3
@@ -107,9 +107,8 @@ defaultproperties
 	Mass = 500.0;
 	Speed = 8.0 * 35.0;
 	PainChance = 0.390625;
+	MaxDropoffHeight = 32.0;
 	bNoBlood = true;
-	DLightColour = RGB(0, 255, 0);
-	DLightRadius = 126.0;
 	SightSound = 'templar/sight';
 	ActiveSound = 'templar/active';
 	PainSound = 'templar/pain';

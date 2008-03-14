@@ -90,7 +90,7 @@ class Actor extends Thinker
 	//
 	//	Spawn functions
 	//
-	//A_TossGib
+	action native A_TossGib();
 	//A_SpawnDebris
 	//A_SpawnItem
 	//A_SpawnItemEx
@@ -146,11 +146,11 @@ class Actor extends Thinker
 	//
 	//A_SeekerMissile
 	action native A_Tracer();
-	//A_Tracer2
+	action native A_Tracer2();
 	action native A_Fire();
 	//A_BishopMissileWeave
 	//A_CStaffMissileSlither
-	//A_Countdown
+	action native A_Countdown();
 	action native A_CountdownArg(eval int argnum);
 	//A_Stop
 

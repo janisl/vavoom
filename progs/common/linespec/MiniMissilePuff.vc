@@ -23,18 +23,8 @@
 //**
 //**************************************************************************
 
-class Bang4Cloud : Effect;
-
-states
-{
-Spawn:
-	BNG4 BCDEFGHIJKLMN 3 Bright
-	Stop
-}
+class MiniMissilePuff : StrifePuff;
 
 defaultproperties
 {
-	RenderStyle = STYLE_Add;
-	Alpha = 0.333;
-	Velocity.z = 1.0 * 35.0;
 }

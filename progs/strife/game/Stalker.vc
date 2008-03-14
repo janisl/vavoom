@@ -208,6 +208,7 @@ defaultproperties
 	Mass = 100.0;
 	Speed = 16.0 * 35.0;
 	PainChance = 0.15625;
+	MaxDropoffHeight = 32.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	bDropOff = true;

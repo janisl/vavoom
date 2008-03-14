@@ -77,10 +77,10 @@ Pain:
 	Goto Missile+2
 Death:
 	SEWR D 7 A_Fall
-	SEWR E 8 Bright A_XDying
+	SEWR E 8 Bright A_TossGib
 	SEWR F 5 Bright A_Scream
-	SEWR G 4 Bright A_XDying
-	SEWR H 4 Bright A_XDying
+	SEWR G 4 Bright A_TossGib
+	SEWR H 4 Bright A_TossGib
 	SEWR I 4
 	SEWR J 5
 	Stop
@@ -93,6 +93,7 @@ defaultproperties
 	Height = 53.0;
 	Mass = 300.0;
 	Speed = 7.0 * 35.0;
+	FloatSpeed = 175.0;
 	PainChance = 1.0;
 	bSpawnCeiling = true;
 	bNoGravity = true;

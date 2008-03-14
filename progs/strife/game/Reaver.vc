@@ -69,11 +69,11 @@ Death:
 	ROB1 R -1
 	Stop
 XDeath:
-	ROB1 L 5 Bright A_XDying
+	ROB1 L 5 Bright A_TossGib
 	ROB1 M 5 Bright A_XXScream
-	ROB1 N 5 Bright A_XDying
+	ROB1 N 5 Bright A_TossGib
 	ROB1 O 5 Bright A_Fall
-	ROB1 P 5 Bright A_XDying
+	ROB1 P 5 Bright A_TossGib
 	ROB1 Q 5 Bright A_ExplodeAndAlert
 	ROB1 R -1
 	Stop
@@ -88,6 +88,7 @@ defaultproperties
 	Mass = 500.0;
 	Speed = 12.0 * 35.0;
 	PainChance = 0.5;
+	MaxDropoffHeight = 32.0;
 	bInCombat = true;
 	bNoBlood = true;
 	bExplodeParticles = true;

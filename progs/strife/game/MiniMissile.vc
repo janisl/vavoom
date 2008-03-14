@@ -41,7 +41,7 @@ void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
 states
 {
 Spawn:
-	MICR A 6 Bright A_SpawnPuff
+	MICR A 6 Bright A_RocketInFlight
 	Loop
 Death:
 	SMIS A 5 Bright A_ExplodeAndAlert

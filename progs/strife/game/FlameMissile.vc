@@ -41,7 +41,7 @@ states
 {
 Spawn:
 	FRBL AB 3 Bright
-	FRBL C 3 Bright A_DecReactionCount
+	FRBL C 3 Bright A_Countdown
 	Loop
 Death:
 	FRBL D 5 Bright A_FlameFXExplode

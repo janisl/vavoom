@@ -190,6 +190,12 @@ enum
 #include "Gold10.vc"
 #include "Gold25.vc"
 #include "Gold50.vc"
+#include "Meat.vc"
+#include "Junk.vc"
+#include "StrifePuff.vc"
+#include "MiniMissilePuff.vc"
+#include "RocketTrail.vc"
+#include "Bang4Cloud.vc"
 
 class Blood : ScriptedEntity decorate;
 class BloodSplatter : ScriptedEntity decorate;

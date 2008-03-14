@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Meat : Effect;
+class Junk : ScriptedEntity;
 
 //==========================================================================
 //
@@ -40,51 +40,51 @@ void OnMapSpawn(mthing_t* mthing)
 states
 {
 Spawn:
-	MEAT A 700
+	JUNK A 700
 	Stop
-	MEAT B 700
+	JUNK B 700
 	Stop
-	MEAT C 700
+	JUNK C 700
 	Stop
-	MEAT D 700
+	JUNK D 700
 	Stop
-	MEAT E 700
+	JUNK E 700
 	Stop
-	MEAT F 700
+	JUNK F 700
 	Stop
-	MEAT G 700
+	JUNK G 700
 	Stop
-	MEAT H 700
+	JUNK H 700
 	Stop
-	MEAT I 700
+	JUNK I 700
 	Stop
-	MEAT J 700
+	JUNK J 700
 	Stop
-	MEAT K 700
+	JUNK K 700
 	Stop
-	MEAT L 700
+	JUNK L 700
 	Stop
-	MEAT M 700
+	JUNK M 700
 	Stop
-	MEAT N 700
+	JUNK N 700
 	Stop
-	MEAT O 700
+	JUNK O 700
 	Stop
-	MEAT P 700
+	JUNK P 700
 	Stop
-	MEAT Q 700
+	JUNK Q 700
 	Stop
-	MEAT R 700
+	JUNK R 700
 	Stop
-	MEAT S 700
+	JUNK S 700
 	Stop
-	MEAT T 700
+	JUNK T 700
 	Stop
 }
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
 }

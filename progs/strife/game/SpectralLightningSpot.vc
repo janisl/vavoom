@@ -73,9 +73,9 @@ final void A_SigilFloorAttack()
 states
 {
 Spawn:
-	ZAP5 A 4 Bright A_DecReactionCount
+	ZAP5 A 4 Bright A_Countdown
 	ZAP5 B 4 Bright A_SigilFloorAttack
-	ZAP5 CD 4 Bright A_DecReactionCount
+	ZAP5 CD 4 Bright A_Countdown
 	Loop
 Death:
 	Goto Super::Death+1

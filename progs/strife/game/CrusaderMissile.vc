@@ -28,7 +28,7 @@ class CrusaderMissile : Projectile;
 states
 {
 Spawn:
-	MICR A 6 Bright A_SpawnPuff
+	MICR A 6 Bright A_RocketInFlight
 	Loop
 Death:
 	SMIS A 5 Bright { RenderStyle = STYLE_Add; }

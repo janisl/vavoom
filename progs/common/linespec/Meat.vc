@@ -23,18 +23,68 @@
 //**
 //**************************************************************************
 
-class RocketTrail : Effect;
+class Meat : ScriptedEntity;
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+	::OnMapSpawn(mthing);
+	SetState(GetStatePlus(IdleState, P_Random() % 20, true));
+}
 
 states
 {
 Spawn:
-	PUFY BCBCD 4
+	MEAT A 700
+	Stop
+	MEAT B 700
+	Stop
+	MEAT C 700
+	Stop
+	MEAT D 700
+	Stop
+	MEAT E 700
+	Stop
+	MEAT F 700
+	Stop
+	MEAT G 700
+	Stop
+	MEAT H 700
+	Stop
+	MEAT I 700
+	Stop
+	MEAT J 700
+	Stop
+	MEAT K 700
+	Stop
+	MEAT L 700
+	Stop
+	MEAT M 700
+	Stop
+	MEAT N 700
+	Stop
+	MEAT O 700
+	Stop
+	MEAT P 700
+	Stop
+	MEAT Q 700
+	Stop
+	MEAT R 700
+	Stop
+	MEAT S 700
+	Stop
+	MEAT T 700
 	Stop
 }
 
 defaultproperties
 {
-	RenderStyle = STYLE_Translucent;
-	Alpha = 0.333;
-	SightSound = 'misc/missileinflight';
+	bNoBlockmap = true;
+	bColideWithThings = false;
+	bColideWithWorld = false;
 }

@@ -23,68 +23,22 @@
 //**
 //**************************************************************************
 
-class Junk : Effect;
-
-//==========================================================================
-//
-//	OnMapSpawn
-//
-//==========================================================================
-
-void OnMapSpawn(mthing_t* mthing)
-{
-	::OnMapSpawn(mthing);
-	SetState(GetStatePlus(IdleState, P_Random() % 20, true));
-}
+class StrifePuff : ScriptedEntity;
 
 states
 {
 Spawn:
-	JUNK A 700
-	Stop
-	JUNK B 700
-	Stop
-	JUNK C 700
-	Stop
-	JUNK D 700
-	Stop
-	JUNK E 700
-	Stop
-	JUNK F 700
-	Stop
-	JUNK G 700
-	Stop
-	JUNK H 700
-	Stop
-	JUNK I 700
-	Stop
-	JUNK J 700
-	Stop
-	JUNK K 700
-	Stop
-	JUNK L 700
-	Stop
-	JUNK M 700
-	Stop
-	JUNK N 700
-	Stop
-	JUNK O 700
-	Stop
-	JUNK P 700
-	Stop
-	JUNK Q 700
-	Stop
-	JUNK R 700
-	Stop
-	JUNK S 700
-	Stop
-	JUNK T 700
+	PUFY A 4 Bright
+	PUFY BCD 4
 	Stop
 }
 
 defaultproperties
 {
-	bNoGravity = false;
-	bColideWithThings = false;
-	bColideWithWorld = false;
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.333;
+	Velocity.z = 1.0 * 35.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bPuffParticles = true;
 }

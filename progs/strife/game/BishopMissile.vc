@@ -33,7 +33,7 @@ class BishopMissile : MiniMissile;
 
 final void A_RocketTrail()
 {
-	Actor mpuff;
+	EntityEx mpuff;
 
 	mpuff = Spawn(RocketTrail, Origin);
 	if (mpuff.SightSound)

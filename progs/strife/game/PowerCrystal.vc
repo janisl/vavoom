@@ -94,16 +94,16 @@ Spawn:
 	Loop
 Death:
 	BOOM A 1 Bright A_Unknown112
-	BOOM B 3 Bright A_QuestObjectDeath
+	BOOM B 3 Bright A_GiveQuestItem
 	BOOM C 2 Bright A_LightGoesOut
-	BOOM D 3 Bright A_SpawnPuff
+	BOOM D 3 Bright A_Bang4Cloud
 	BOOM EF 3 Bright
-	BOOM G 3 Bright A_SpawnPuff
+	BOOM G 3 Bright A_Bang4Cloud
 	BOOM H 1 Bright A_Unknown112
 	BOOM I 3 Bright
-	BOOM JKL 3 Bright A_SpawnPuff
+	BOOM JKL 3 Bright A_Bang4Cloud
 	BOOM MN 3 Bright
-	BOOM O 3 Bright A_SpawnPuff
+	BOOM O 3 Bright A_Bang4Cloud
 	BOOM PQRST 3 Bright
 	BOOM U 3 Bright A_Unknown114
 	BOOM VWXY 3 Bright

@@ -61,10 +61,10 @@ Death:
 	HMN1 N -1
 	Stop
 XDeath:
-	RGIB A 4 A_XDying
+	RGIB A 4 A_TossGib
 	RGIB B 4 A_XScream
 	RGIB C 3 A_Fall
-	RGIB DEF 3 A_XDying
+	RGIB DEF 3 A_TossGib
 	RGIB G 3
 	RGIB H 1400
 	Stop

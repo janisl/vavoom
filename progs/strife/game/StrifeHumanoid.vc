@@ -78,6 +78,6 @@ Disintegrate:
 
 defaultproperties
 {
+	MaxDropoffHeight = 32.0;
 	MaxStepHeight = 16.0;
-	DLightRadius = 118.0;
 }

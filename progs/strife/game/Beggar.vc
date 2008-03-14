@@ -53,10 +53,10 @@ Death:
 	BEGR N -1
 	Stop
 XDeath:
-	BEGR F 5 A_XDying
+	BEGR F 5 A_TossGib
 	GIBS N 5 A_XScream
 	GIBS O 5 A_Fall
-	GIBS PQRS 4 A_XDying
+	GIBS PQRS 4 A_TossGib
 	GIBS T 4
 	GIBS U 5
 	GIBS V 1400

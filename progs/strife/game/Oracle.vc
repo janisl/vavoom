@@ -69,6 +69,7 @@ defaultproperties
 	Radius = 15.0;
 	Height = 56.0;
 	Mass = 100.0;
+	MaxDropoffHeight = 32.0;
 	bNoBlood = true;
 	bNoDeathmatch = true;
 }

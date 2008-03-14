@@ -36,12 +36,8 @@
 #include "Projectile.vc"
 #include "Effect.vc"
 
-#include "RocketTrail.vc"
-#include "StrifePuff.vc"
 #include "StrifeSpark.vc"
 #include "TeleportFog.vc"
-#include "Meat.vc"
-#include "Junk.vc"
 #include "FireDroplet.vc"
 #include "ForceFieldGuard.vc"
 #include "ZombieSpawner.vc"
@@ -66,7 +62,6 @@
 #include "SpectralLightningBigV1.vc"
 #include "SpectralLightningHTail.vc"
 #include "SpectralLightningSpot.vc"
-#include "Bang4Cloud.vc"
 
 #include "DegninOre.vc"
 #include "Scanner.vc"

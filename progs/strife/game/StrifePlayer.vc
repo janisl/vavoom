@@ -51,10 +51,10 @@ Death:
 	PLAY P 700
 	Goto XDeath+7
 XDeath:
-	RGIB A 5 A_XDying
+	RGIB A 5 A_TossGib
 	RGIB B 5 A_XScream
 	RGIB C 5 A_Fall
-	RGIB DEFG 5 A_XDying
+	RGIB DEFG 5 A_TossGib
 	RGIB H 1400
 	Stop
 Burn:
