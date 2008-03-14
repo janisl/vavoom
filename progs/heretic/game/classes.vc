@@ -116,7 +116,6 @@
 #include "HereticPlayer.vc"
 #include "BloodySkull.vc"
 #include "ChickenPlayer.vc"
-#include "Feather.vc"
 #include "Chicken.vc"
 #include "HereticImpChunk1.vc"
 #include "HereticImpChunk2.vc"

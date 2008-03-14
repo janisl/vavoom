@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class Feather : Actor
+class Feather : ScriptedEntity
+	game(GAME_Heretic)
 	__scriptid__(121);
 
 states

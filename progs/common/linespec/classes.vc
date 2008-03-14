@@ -184,6 +184,8 @@ enum
 #include "BossEye.vc"
 #include "BrainState.vc"
 
+#include "Feather.vc"
+
 #include "Coin.vc"
 #include "Gold10.vc"
 #include "Gold25.vc"

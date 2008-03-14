@@ -26,39 +26,6 @@
 class Actor : ScriptedEntity
 	abstract;
 
-//==========================================================================
-//
-//  A_Feathers
-//
-//==========================================================================
-
-final void A_Feathers()
-{
-	int i;
-	int count;
-	Actor mo;
-
-	if (Health > 0)
-	{
-		// Pain
-		count = P_Random() < 32 ? 2 : 1;
-	}
-	else
-	{
-		// Death
-		count = 5 + (P_Random() & 3);
-	}
-	for (i = 0; i < count; i++)
-	{
-		mo = Spawn(Feather, Origin + vector(0.0, 0.0, 20.0));
-		mo.Target = self;
-		mo.Velocity.x = (Random() - Random()) * 35.0;
-		mo.Velocity.y = (Random() - Random()) * 35.0;
-		mo.Velocity.z = (1.0 + Random() * 2.0) * 35.0;
-		mo.SetState(GetStatePlus(mo.IdleState, P_Random() & 7));
-	}
-}
-
 defaultproperties
 {
 }
