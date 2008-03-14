@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MapSpot : ScriptedEntity
+class MapSpot : Actor
 	__mobjinfo__(9001);
 
 states

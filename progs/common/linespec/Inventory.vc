@@ -27,7 +27,7 @@
 //**
 //**************************************************************************
 
-class Inventory : ScriptedEntity
+class Inventory : Actor
 	abstract;
 
 const float BONUSADD		= 0.2;

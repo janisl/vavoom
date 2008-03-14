@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ScriptedMarine : ScriptedEntity
+class ScriptedMarine : Actor
 	game(GAME_Doom)
 	__mobjinfo__(9100)
 	__scriptid__(151);

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PointPusher : ScriptedEntity
+class PointPusher : Actor
 	__mobjinfo__(5001);
 
 states

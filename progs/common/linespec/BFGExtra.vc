@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BFGExtra : ScriptedEntity;
+class BFGExtra : Actor;
 
 states
 {

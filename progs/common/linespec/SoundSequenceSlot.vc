@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SoundSequenceSlot : ScriptedEntity;
+class SoundSequenceSlot : Actor;
 
 name			SeqName;
 

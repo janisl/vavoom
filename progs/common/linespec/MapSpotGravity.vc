@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MapSpotGravity : ScriptedEntity
+class MapSpotGravity : Actor
 	__mobjinfo__(9013);
 
 states

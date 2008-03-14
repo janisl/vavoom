@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DynamicLight : ScriptedEntity;
+class DynamicLight : Actor;
 
 enum
 {

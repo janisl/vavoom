@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TeleportDest : ScriptedEntity
+class TeleportDest : Actor
 	__mobjinfo__(14);
 
 defaultproperties

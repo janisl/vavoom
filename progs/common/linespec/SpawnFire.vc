@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SpawnFire : ScriptedEntity;
+class SpawnFire : Actor;
 
 states
 {

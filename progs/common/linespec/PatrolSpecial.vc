@@ -27,7 +27,7 @@
 //**
 //**************************************************************************
 
-class PatrolSpecial : ScriptedEntity
+class PatrolSpecial : Actor
 	__mobjinfo__(9047);
 
 defaultproperties

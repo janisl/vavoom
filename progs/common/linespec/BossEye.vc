@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BossEye : ScriptedEntity
+class BossEye : Actor
 	game(GAME_Doom)
 	__mobjinfo__(89);
 

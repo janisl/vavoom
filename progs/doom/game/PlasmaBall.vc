@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlasmaBall : ScriptedEntity
+class PlasmaBall : Actor
 	game(GAME_Doom)
 	__scriptid__(51);
 

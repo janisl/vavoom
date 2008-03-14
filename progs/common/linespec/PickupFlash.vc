@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PickupFlash : ScriptedEntity;
+class PickupFlash : Actor;
 
 states
 {

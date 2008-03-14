@@ -63,7 +63,7 @@
 //**
 //**************************************************************************
 
-class InterpolationPoint : ScriptedEntity
+class InterpolationPoint : Actor
 	__mobjinfo__(9070);
 
 InterpolationPoint NextPoint;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SpawnShot : ScriptedEntity;
+class SpawnShot : Actor;
 
 states
 {

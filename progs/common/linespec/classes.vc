@@ -50,7 +50,7 @@ enum
 };
 
 #include "EntityEx.vc"
-#include "ScriptedEntity.vc"
+#include "Actor.vc"
 #include "Inventory.vc"
 #include "PickupFlash.vc"
 #include "ItemFog.vc"
@@ -197,44 +197,44 @@ enum
 #include "RocketTrail.vc"
 #include "Bang4Cloud.vc"
 
-class Blood : ScriptedEntity decorate;
-class BloodSplatter : ScriptedEntity decorate;
-class AxeBlood : ScriptedEntity decorate;
-class GlassJunk : ScriptedEntity decorate;
+class Blood : Actor decorate;
+class BloodSplatter : Actor decorate;
+class AxeBlood : Actor decorate;
+class GlassJunk : Actor decorate;
 
 //	Doom classes
-class BulletPuff : ScriptedEntity decorate;
+class BulletPuff : Actor decorate;
 class Clip : Ammo decorate;
 class Shell : Ammo decorate;
-class DoomImpBall : ScriptedEntity decorate;
-class LostSoul : ScriptedEntity decorate;
-class CacodemonBall : ScriptedEntity decorate;
-class BaronBall : ScriptedEntity decorate;
-class RevenantTracer : ScriptedEntity decorate;
-class RevenantTracerSmoke : ScriptedEntity decorate;
-class ArachnotronPlasma : ScriptedEntity decorate;
-class FatShot : ScriptedEntity decorate;
-class DoomImp : ScriptedEntity decorate;
-class Demon : ScriptedEntity decorate;
-class Spectre : ScriptedEntity decorate;
-class Cacodemon : ScriptedEntity decorate;
-class BaronOfHell : ScriptedEntity decorate;
-class HellKnight : ScriptedEntity decorate;
-class Revenant : ScriptedEntity decorate;
-class Arachnotron : ScriptedEntity decorate;
-class Fatso : ScriptedEntity decorate;
-class PainElemental : ScriptedEntity decorate;
-class Archvile : ScriptedEntity decorate;
-class ArchvileFire : ScriptedEntity decorate;
+class DoomImpBall : Actor decorate;
+class LostSoul : Actor decorate;
+class CacodemonBall : Actor decorate;
+class BaronBall : Actor decorate;
+class RevenantTracer : Actor decorate;
+class RevenantTracerSmoke : Actor decorate;
+class ArachnotronPlasma : Actor decorate;
+class FatShot : Actor decorate;
+class DoomImp : Actor decorate;
+class Demon : Actor decorate;
+class Spectre : Actor decorate;
+class Cacodemon : Actor decorate;
+class BaronOfHell : Actor decorate;
+class HellKnight : Actor decorate;
+class Revenant : Actor decorate;
+class Arachnotron : Actor decorate;
+class Fatso : Actor decorate;
+class PainElemental : Actor decorate;
+class Archvile : Actor decorate;
+class ArchvileFire : Actor decorate;
 
 class ArtiHealth : HealthPickup decorate;
 class ArtiSuperHealth : HealthPickup decorate;
-class Dirt1 : ScriptedEntity decorate;
-class Dirt2 : ScriptedEntity decorate;
-class Dirt3 : ScriptedEntity decorate;
-class Dirt4 : ScriptedEntity decorate;
-class Dirt5 : ScriptedEntity decorate;
-class Dirt6 : ScriptedEntity decorate;
+class Dirt1 : Actor decorate;
+class Dirt2 : Actor decorate;
+class Dirt3 : Actor decorate;
+class Dirt4 : Actor decorate;
+class Dirt5 : Actor decorate;
+class Dirt6 : Actor decorate;
 
 class MedicalKit : HealthPickup decorate;
 class MedPatch : HealthPickup decorate;

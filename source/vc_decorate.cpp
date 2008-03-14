@@ -98,7 +98,6 @@ static VExpression* ParseExpressionPriority13(VScriptParser* sc);
 static VPackage*		DecPkg;
 
 static VClass*			ActorClass;
-static VClass*			ScriptedEntityClass;
 static VClass*			FakeInventoryClass;
 static VClass*			InventoryClass;
 static VClass*			AmmoClass;
@@ -1075,10 +1074,6 @@ static void ParseClass(VScriptParser* sc)
 	if (!Class)
 	{
 		sc->Error("Class not found");
-	}
-	if (Class == ActorClass)
-	{
-		Class = ScriptedEntityClass;
 	}
 	//	I don't care about parent class name because in Vavoom it can be
 	// different
@@ -2450,7 +2445,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		{
 			sc->Error(va("Parent class %s not found", *ParentStr));
 		}
-		if (!ParentClass->IsChildOf(ScriptedEntityClass))
+		if (!ParentClass->IsChildOf(ActorClass))
 		{
 			sc->Error(va("Parent class %s is not an actor class", *ParentStr));
 		}
@@ -2486,7 +2481,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		{
 			sc->Error(va("Replaced class %s not found", *sc->String));
 		}
-		if (!ReplaceeClass->IsChildOf(ScriptedEntityClass))
+		if (!ReplaceeClass->IsChildOf(ActorClass))
 		{
 			sc->Error(va("Replaced class %s is not an actor class", *sc->String));
 		}
@@ -4660,7 +4655,6 @@ void ProcessDecorateScripts()
 
 	//	Find classes.
 	ActorClass = VClass::FindClass("Actor");
-	ScriptedEntityClass = VClass::FindClass("ScriptedEntity");
 	FakeInventoryClass = VClass::FindClass("FakeInventory");
 	InventoryClass = VClass::FindClass("Inventory");
 	AmmoClass = VClass::FindClass("Ammo");
@@ -4741,7 +4735,7 @@ void ProcessDecorateScripts()
 			{
 				GCon->Logf("No such class %s", *DI.TypeName);
 			}
-			else if (!C->IsChildOf(ScriptedEntityClass))
+			else if (!C->IsChildOf(ActorClass))
 			{
 				GCon->Logf("Class %s is not an actor class", *DI.TypeName);
 			}

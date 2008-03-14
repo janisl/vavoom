@@ -53,7 +53,7 @@
 //**
 //**************************************************************************
 
-class ParticleFountain : ScriptedEntity;
+class ParticleFountain : Actor;
 
 int			EffectColour;
 int			EffectColour2;

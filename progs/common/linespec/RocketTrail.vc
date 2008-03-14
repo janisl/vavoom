@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RocketTrail : ScriptedEntity;
+class RocketTrail : Actor;
 
 states
 {

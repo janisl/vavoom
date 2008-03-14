@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class QuakeFocus : ScriptedEntity;
+class QuakeFocus : Actor;
 
 //
 // Quake variables

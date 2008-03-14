@@ -23,12 +23,11 @@
 //**
 //**************************************************************************
 //**
-//**	Class for Actor state action methods. This will eventually be
-//**  renamed to Actor.
+//**	Class for Actor state action methods.
 //**
 //**************************************************************************
 
-class ScriptedEntity : EntityEx
+class Actor : EntityEx
 	abstract;
 
 //==========================================================================
@@ -2784,7 +2783,7 @@ final void A_PainAttack()
 // 
 //==========================================================================
 
-final void decorate_A_PainAttack(optional class<ScriptedEntity> SpawnType)
+final void decorate_A_PainAttack(optional class<Actor> SpawnType)
 {
 	if (!Target)
 	{
@@ -2816,7 +2815,7 @@ final void A_PainDie()
 //
 //==========================================================================
 
-final void decorate_A_PainDie(optional class<ScriptedEntity> SpawnType)
+final void decorate_A_PainDie(optional class<Actor> SpawnType)
 {
 	A_Fall();
 	PainShootSkull(SpawnType, Angles.yaw + 90.0);
@@ -3783,13 +3782,6 @@ Crunch:
 	POL5 A -1
 	Stop
 }
-
-defaultproperties
-{
-}
-
-class Actor : ScriptedEntity
-	abstract;
 
 defaultproperties
 {

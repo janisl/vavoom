@@ -58,7 +58,7 @@
 //**
 //**************************************************************************
 
-class InterpolationSpecial : ScriptedEntity
+class InterpolationSpecial : Actor
 	__mobjinfo__(9075);
 
 defaultproperties

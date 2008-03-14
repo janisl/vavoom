@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Unknown : ScriptedEntity;
+class Unknown : Actor;
 
 states
 {

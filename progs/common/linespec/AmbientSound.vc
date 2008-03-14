@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AmbientSound : ScriptedEntity
+class AmbientSound : Actor
 	__mobjinfo__(14065);
 
 float			Timer;

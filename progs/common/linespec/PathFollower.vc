@@ -65,7 +65,7 @@
 //**
 //**************************************************************************
 
-class PathFollower : ScriptedEntity
+class PathFollower : Actor
 	__mobjinfo__(9071);
 
 bool bActive;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BossTarget : ScriptedEntity
+class BossTarget : Actor
 	game(GAME_Doom)
 	__mobjinfo__(87);
 

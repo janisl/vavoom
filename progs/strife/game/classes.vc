@@ -202,7 +202,7 @@
 
 #include "ClientGameBaseEx.vc"
 
-class Blood : ScriptedEntity decorate;
+class Blood : Actor decorate;
 class QuestItem6 : Inventory decorate;
 class QuestItem7 : Inventory decorate;
 class QuestItem17 : Inventory decorate;

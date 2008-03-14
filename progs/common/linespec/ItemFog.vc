@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ItemFog : ScriptedEntity;
+class ItemFog : Actor;
 
 states
 {

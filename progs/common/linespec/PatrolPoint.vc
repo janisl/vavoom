@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PatrolPoint : ScriptedEntity
+class PatrolPoint : Actor
 	__mobjinfo__(9024);
 
 defaultproperties

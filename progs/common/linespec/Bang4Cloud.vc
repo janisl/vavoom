@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Bang4Cloud : ScriptedEntity;
+class Bang4Cloud : Actor;
 
 states
 {

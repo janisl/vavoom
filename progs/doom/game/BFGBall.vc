@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BFGBall : ScriptedEntity
+class BFGBall : Actor
 	game(GAME_Doom)
 	__scriptid__(128);
 

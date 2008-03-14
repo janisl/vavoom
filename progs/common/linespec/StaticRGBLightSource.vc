@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StaticRGBLightSource : ScriptedEntity
+class StaticRGBLightSource : Actor
 	__mobjinfo__(1503);
 
 void OnMapSpawn(mthing_t * mthing)

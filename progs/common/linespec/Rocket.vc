@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Rocket : ScriptedEntity
+class Rocket : Actor
 	game(GAME_Doom)
 	__scriptid__(127);
 

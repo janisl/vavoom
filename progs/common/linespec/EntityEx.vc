@@ -7095,10 +7095,10 @@ bool ShouldDropItems()
 //
 //==========================================================================
 
-final void PainShootSkull(class<ScriptedEntity> SpawnType, float angle)
+final void PainShootSkull(class<Actor> SpawnType, float angle)
 {
 	EntityEx mo;
-	ScriptedEntity newSkull;
+	Actor newSkull;
 	float prestep;
 	int count;
 

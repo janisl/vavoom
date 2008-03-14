@@ -62,7 +62,7 @@
 //**
 //**************************************************************************
 
-class SecurityCamera : ScriptedEntity
+class SecurityCamera : Actor
 	__mobjinfo__(9025);
 
 float Centre;
