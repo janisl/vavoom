@@ -95,7 +95,7 @@ Ice:
 	PLAY X 1 A_FreezeDeathChunks
 	Wait
 Burn:
-	FDTH A 5 Bright A_PlayerBurnScream
+	FDTH A 5 Bright { A_PlaySound("*burndeath"); }
 	FDTH B 4 Bright
 	FDTH G 5 Bright
 	FDTH H 4 Bright A_PlayerScream

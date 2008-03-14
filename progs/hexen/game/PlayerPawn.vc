@@ -213,4 +213,6 @@ defaultproperties
 	bSlide = true;
 	bNoBlockMonst = true;
 	RDFactor = 0.25;
+	SoundClass = 'fighter';
+	CrunchSound = '*splat';
 }

@@ -26,34 +26,6 @@
 class Actor : ScriptedEntity
 	abstract;
 
-//==========================================================================
-//
-//  A_PigPain
-//
-//==========================================================================
-
-final void A_PigPain()
-{
-	A_Pain();
-	if (Origin.z <= FloorZ)
-	{
-		Velocity.z = 3.5 * 35.0;
-	}
-}
-
-//==========================================================================
-//
-//	A_PlayerBurnScream
-//
-//==========================================================================
-
-final void A_PlayerBurnScream()
-{
-	PlaySound('*burndeath', CHAN_VOICE);
-}
-
 defaultproperties
 {
-	SoundClass = 'fighter';
-	CrunchSound = '*splat';
 }

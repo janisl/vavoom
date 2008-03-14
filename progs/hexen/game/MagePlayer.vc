@@ -62,7 +62,7 @@ Ice:
 	MAGE Y 1 A_FreezeDeathChunks
 	Wait
 Burn:
-	FDTH E 5 Bright A_PlayerBurnScream
+	FDTH E 5 Bright { A_PlaySound("*burndeath"); }
 	FDTH F 4 Bright
 	FDTH G 5 Bright
 	FDTH H 4 Bright A_PlayerScream
