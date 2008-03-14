@@ -23,7 +23,6 @@
 //**
 //**************************************************************************
 
-#include "Actor.vc"
 #include "MainGameInfo.vc"
 #include "DoomLevelInfo.vc"
 #include "DoomWorldInfo.vc"

@@ -3787,3 +3787,10 @@ Crunch:
 defaultproperties
 {
 }
+
+class Actor : ScriptedEntity
+	abstract;
+
+defaultproperties
+{
+}
