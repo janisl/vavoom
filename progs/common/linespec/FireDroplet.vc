@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FireDroplet : Effect;
+class FireDroplet : Actor;
 
 states
 {
@@ -35,7 +35,7 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
-	bNoGravity = false;
+	bNoBlockmap = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
 }

@@ -48,26 +48,26 @@ final void A_PeasantAttack()
 states
 {
 Burn:
-	BURN A 3 A_BurnScream
-	BURN B 3 A_Burn
+	BURN A 3 A_ItBurnsItBurns
+	BURN B 3 A_DropFire
 	BURN C 3 A_Wander
 	BURN D 3 A_Fall
-	BURN E 5 A_Burn
+	BURN E 5 A_DropFire
 	BURN F 5 A_Wander
 	BURN G 5 A_Wander
 	BURN H 5 A_Wander
-	BURN I 5 A_Burn
+	BURN I 5 A_DropFire
 	BURN J 5 A_Wander
 	BURN K 5 A_Wander
 	BURN L 5 A_Wander
-	BURN M 3 A_Burn
+	BURN M 3 A_DropFire
 	BURN N 3
 	BURN OPQPQ 5
 	BURN RSTU 7
 	BURN V 700 //FIXME A_Dying();
 	Stop
 Disintegrate:
-	DISR A 5 A_Yeargh
+	DISR A 5 { A_PlaySound("human/disrupt"); }
 	DISR BC 5
 	DISR D 5 A_Fall
 	DISR EF 5

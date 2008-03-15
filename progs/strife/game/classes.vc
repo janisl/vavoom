@@ -37,7 +37,6 @@
 
 #include "StrifeSpark.vc"
 #include "TeleportFog.vc"
-#include "FireDroplet.vc"
 #include "ForceFieldGuard.vc"
 #include "ZombieSpawner.vc"
 

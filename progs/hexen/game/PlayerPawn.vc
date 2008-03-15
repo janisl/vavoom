@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerPawn : Pawn
+class PlayerPawn : Actor
 	abstract;
 
 float					HexenArmor[5];
@@ -205,9 +205,12 @@ final void A_AddPlayerCorpse()
 defaultproperties
 {
 	ReactionCount = 0;
-	bCountKill = false;
-	bMonster = false;
-	bActivateMCross = false;
+	bSolid = true;
+	bShootable = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
 	bDropOff = true;
 	bWindThrust = true;
 	bSlide = true;

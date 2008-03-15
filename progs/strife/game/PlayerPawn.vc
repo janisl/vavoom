@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerPawn : Pawn
+class PlayerPawn : Actor
 	abstract;
 
 //==========================================================================
@@ -138,9 +138,11 @@ bool UseInventory(Inventory Item)
 defaultproperties
 {
 	ReactionCount = 0;
-	bCountKill = false;
-	bMonster = false;
-	bActivateMCross = false;
+	bSolid = true;
+	bShootable = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
 	bWindThrust = true;
 	bSlide = true;
 	bTelestomp = true;

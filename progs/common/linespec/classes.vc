@@ -198,6 +198,7 @@ enum
 #include "MiniMissilePuff.vc"
 #include "RocketTrail.vc"
 #include "Bang4Cloud.vc"
+#include "FireDroplet.vc"
 
 class Blood : Actor decorate;
 class BloodSplatter : Actor decorate;

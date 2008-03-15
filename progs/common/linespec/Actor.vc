@@ -3932,6 +3932,40 @@ final void A_GiveQuestItem()
 	}
 }
 
+//==========================================================================
+//
+//	A_ItBurnsItBurns
+//
+//==========================================================================
+
+final void A_ItBurnsItBurns()
+{
+	DeathSound = 'human/imonfire';
+	A_Scream();
+	if (bIsPlayer)
+	{
+		state WaveState = PlayerEx(Player).ReadyWeapon.FindState('BurnWave');
+		if (WaveState)
+		{
+			Player.SetViewState(ps_weapon, WaveState);
+			Player.SetViewState(ps_flash, none);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_DropFire
+//
+//==========================================================================
+
+final void A_DropFire()
+{
+	Actor A = Spawn(FireDroplet, Origin + vector(0.0, 0.0, 24.0));
+	A.Velocity.z = -35.0;
+	RadiusAttack(Target, 64, 64.0, false, 'Fire');
+}
+
 states
 {
 FreeTargMobj:
