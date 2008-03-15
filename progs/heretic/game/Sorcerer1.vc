@@ -193,6 +193,7 @@ defaultproperties
 	bNoMorph = true;
 	bNoRadiusDamage = true;
 	bNeverTarget = true;
+	bNoIceDeath = true;
 	SightSound = 'dsparilserpent/sight';
 	ActiveSound = 'dsparilserpent/active';
 	AttackSound = 'dsparilserpent/attack';

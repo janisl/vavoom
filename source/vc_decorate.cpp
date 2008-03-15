@@ -116,6 +116,8 @@ static VMethod*			FuncA_ScreamAndUnblock;
 static VMethod*			FuncA_ActiveSound;
 static VMethod*			FuncA_ActiveAndUnblock;
 static VMethod*			FuncA_ExplodeParms;
+static VMethod*			FuncA_FreezeDeath;
+static VMethod*			FuncA_FreezeDeathChunks;
 
 static TArray<VLineSpecInfo>	LineSpecialInfos;
 
@@ -1509,8 +1511,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("NoIceDeath"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoIceDeath in %s", Class->GetName());
+		SetClassFieldBool(Class, "bNoIceDeath", Value);
 		return true;
 	}
 	if (!Flag.ICmp("DontGib"))
@@ -1819,8 +1820,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("BossDeath"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag BossDeath in %s", Class->GetName());
+		SetClassFieldBool(Class, "bBossDeath", Value);
 		return true;
 	}
 	//
@@ -4523,7 +4523,10 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		}
 		SetClassFieldFloat(Class, "BurnHeight", BurnHeight);
 
-		Class->SetStateLabel("Burn", States[BurnStart]);
+		TArray<VName> Names;
+		Names.Append("Death");
+		Names.Append("Fire");
+		Class->SetStateLabel(Names, States[BurnStart]);
 	}
 
 	//	Set up links of ice death states.
@@ -4541,12 +4544,18 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		States[IceEnd - 1]->Time = 1.0 / 35.0;
 		//States[IceEnd - 2]->Function = FuncA_FreezeDeathChunks;
 
-		Class->SetStateLabel("Ice", States[IceStart]);
+		TArray<VName> Names;
+		Names.Append("Death");
+		Names.Append("Ice");
+		Class->SetStateLabel(Names, States[IceStart]);
 	}
 	else if (GenericIceDeath)
 	{
 		VStateLabel* Lbl = Class->FindStateLabel("GenericIceDeath");
-		Class->SetStateLabel("Ice", Lbl ? Lbl->State : NULL);
+		TArray<VName> Names;
+		Names.Append("Death");
+		Names.Append("Ice");
+		Class->SetStateLabel(Names, Lbl ? Lbl->State : NULL);
 	}
 	unguard;
 }
@@ -4677,6 +4686,8 @@ void ProcessDecorateScripts()
 	FuncA_ActiveSound = ActorClass->FindMethodChecked("A_ActiveSound");
 	FuncA_ActiveAndUnblock = ActorClass->FindMethodChecked("A_ActiveAndUnblock");
 	FuncA_ExplodeParms = ActorClass->FindMethodChecked("A_ExplodeParms");
+	FuncA_FreezeDeath = ActorClass->FindMethodChecked("A_FreezeDeath");
+	FuncA_FreezeDeathChunks = ActorClass->FindMethodChecked("A_FreezeDeathChunks");
 
 	//	Parse scripts.
 	TArray<VClassFixup> ClassFixups;

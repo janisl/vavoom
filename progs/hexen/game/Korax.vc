@@ -498,6 +498,7 @@ defaultproperties
 	bBoss = true;
 	bNeverTarget = true;
 	bFullVolActive = true;
+	bNoIceDeath = true;
 	SightSound = 'KoraxSight';
 	ActiveSound = 'KoraxActive';
 	AttackSound = 'KoraxAttack';

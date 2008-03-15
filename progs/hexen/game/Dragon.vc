@@ -328,6 +328,7 @@ defaultproperties
 	bActivatePushWall = false;
 	bActivateMCross = false;
 	bFullVolActive = true;
+	bNoIceDeath = true;
 	SightSound = 'DragonSight';
 	ActiveSound = 'DragonActive';
 	AttackSound = 'DragonAttack';

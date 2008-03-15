@@ -1031,7 +1031,7 @@ final void A_FreezeDeath()
 	bSlide = true;
 	bPassMobj = true;
 	Height *= 4.0;
-	PlaySound('FreezeDeath', CHAN_VOICE);
+	PlaySound('misc/freeze', CHAN_VOICE);
 	Translation = 0;	//no translation
 	bIceCorpse = true;
 
@@ -1061,6 +1061,18 @@ final void A_FreezeDeath()
 
 //============================================================================
 //
+//	A_GenericFreezeDeath
+//
+//============================================================================
+
+final void A_GenericFreezeDeath()
+{
+	A_FreezeDeath();
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 7;
+}
+
+//============================================================================
+//
 //  A_FreezeDeathChunks
 //
 //============================================================================
@@ -1075,7 +1087,7 @@ final void A_FreezeDeathChunks()
 		StateTime = 3.0;
 		return;
 	}
-	PlaySound('FreezeShatter', CHAN_VOICE);
+	PlaySound('misc/icebreak', CHAN_VOICE);
 
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -1085,8 +1097,8 @@ final void A_FreezeDeathChunks()
 			continue;
 		PlayerEx(Level.Game.Players[i]).ParticleEffect(256,
 			LineSpecialLevelInfo::pt_static,
-			LineSpecialLevelInfo::pt_ice_chunk, Origin + vector(Radius,
-			Radius, Height), 0.8, vector(64.0, 64.0, 96.0), 0.6, 6.0, 80.0,
+			LineSpecialLevelInfo::pt_ice_chunk, Origin + vector(0.0, 0.0,
+			Height * 0.5), 20.0, vector(64.0, 64.0, 96.0), 0.6, 6.0, 80.0,
 			RGB(127, 130, 240), 10.0, 16.0);
 	}
 
@@ -1140,6 +1152,10 @@ final void A_FreezeDeathChunks()
 		A.Angles.pitch = 0.0;
 	}
 	RemoveFromTIDList();
+	if (bBossDeath)
+	{
+		A_BossDeath();
+	}
 	SetState(FindState('FreeTargMobj'));
 	bInvisible = true;
 }
@@ -3924,6 +3940,10 @@ FreeTargMobj:
 Crunch:
 	POL5 A -1
 	Stop
+GenericFreezeDeath:
+	"----" A 5 A_GenericFreezeDeath
+	"----" A 1 A_FreezeDeathChunks
+	Wait
 }
 
 defaultproperties

@@ -359,6 +359,7 @@ defaultproperties
 	bNoRadiusDamage = true;
 	bNeverTarget = true;
 	bFullVolActive = true;
+	bNoIceDeath = true;
 	SightSound = 'dsparil/sight';
 	ActiveSound = 'dsparil/active';
 	AttackSound = 'dsparil/attack';

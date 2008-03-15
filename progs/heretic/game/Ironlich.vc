@@ -140,6 +140,7 @@ defaultproperties
 	bNoBlood = true;
 	bFloorClip = false;
 	bNoMorph = true;
+	bBossDeath = true;
 	SightSound = 'ironlich/sight';
 	ActiveSound = 'ironlich/active';
 	AttackSound = 'ironlich/attack1';

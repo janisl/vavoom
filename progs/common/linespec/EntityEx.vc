@@ -228,6 +228,8 @@ bool bVisibilityPulse;	// Pulse visibility in and out.
 bool bArgsDefined;		// Args are already defined
 bool bShadow;			// Actor is hard for monsters to see
 bool bGhost;			// Actor is a ghost
+bool bBossDeath;		// A_FreezeDeathChunks calls A_BossDeath
+bool bNoIceDeath;		// Don't use generic ice death
 
 //  Params
 float			Speed;
@@ -4598,33 +4600,56 @@ void Died(EntityEx source, EntityEx inflictor)
 #endif
 	}
 
-	//	Calculate gibs health
-	int GHealth = GibsHealth;
-	if (!GHealth)
-	{
-		GHealth = ftoi(itof(-default.Health) *
-			LineSpecialGameInfo(Level.Game).GibsHealthFactor);
-	}
-
-	if (DamageType && FindState('Death', DamageType, true))
+	state DeathState = none;
+	if (DamageType)
 	{
 		// Specialised death state for this damage type (ice, etc).
-		SetState(FindState('Death', DamageType, true));
+		DeathState = FindState('Death', DamageType, true);
+		if (DamageType == 'Ice' && !bNoIceDeath && (bIsPlayer || bMonster))
+		{
+			DeathState = FindState('GenericFreezeDeath');
+		}
 	}
-	else if (Health < GHealth && FindState('Death', 'Extreme', true))
+	if (!DeathState)
 	{
-		// Extreme death
-		SetState(FindState('Death', 'Extreme', true));
+		//	Calculate gibs health
+		int GHealth = GibsHealth;
+		if (!GHealth)
+		{
+			GHealth = ftoi(itof(-default.Health) *
+				LineSpecialGameInfo(Level.Game).GibsHealthFactor);
+		}
+
+		//	Don't pass damage type unless it's a massacre damage.
+		if (DamageType != 'Massacre')
+		{
+			DamageType = '';
+		}
+
+		if (Health < GHealth)
+		{
+			// Extreme death
+			DeathState = FindState('Death', 'Extreme', true);
+		}
+		if (!DeathState)
+		{
+			// Normal death
+			DeathState = FindState('Death');
+		}
+	}
+
+	if (DeathState)
+	{
+		SetState(DeathState);
+		StateTime -= Random() * 0.1;
+		if (StateTime < 1.0 / 35.0)
+		{
+			StateTime = 1.0 / 35.0;
+		}
 	}
 	else
 	{
-		// Normal death
-		SetState(FindState('Death'));
-	}
-	StateTime -= Random() * 0.1;
-	if (StateTime < 1.0 / 35.0)
-	{
-		StateTime = 1.0 / 35.0;
+		Destroy();
 	}
 }
 

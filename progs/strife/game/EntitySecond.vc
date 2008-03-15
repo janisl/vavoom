@@ -107,6 +107,7 @@ defaultproperties
 	bUnknown2 = true;
 	bSpectral = true;
 	bNoBlockMonst = true;
+	bNoIceDeath = true;
 	SightSound = 'alienspectre/sight';
 	ActiveSound = 'alienspectre/active';
 	AttackSound = 'alienspectre/blade';

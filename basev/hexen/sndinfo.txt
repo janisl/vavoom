@@ -32,6 +32,7 @@ $playeralias	fighter	male	*xdeath		PlayerFighterExtremeDeathPicker
 $playeralias	fighter	male	*splat		PlayerFallingSplat
 $playeralias	fighter	male	*burndeath	PlayerFighterBurnDeath
 $playeralias	fighter male 	*fistgrunt	FighterGrunt
+$playersound	fighter	male	*jump		fgtjump
 
 $random PlayerClericExtremeDeathPicker	{ PlayerClericExtreme1Death
 										  PlayerClericExtreme2Death
@@ -52,6 +53,7 @@ $playeralias	cleric	male	*crazydeath	PlayerClericCrazyDeath
 $playeralias	cleric	male	*xdeath		PlayerClericExtremeDeathPicker
 $playeralias	cleric	male	*splat		PlayerFallingSplat
 $playeralias	cleric	male	*burndeath	PlayerClericBurnDeath
+$playersound	cleric	male	*jump		plrjump
 
 $random PlayerMageExtremeDeathPicker	{ PlayerMageExtreme1Death
 										  PlayerMageExtreme2Death
@@ -72,6 +74,9 @@ $playeralias	mage	male	*crazydeath	PlayerMageCrazyDeath
 $playeralias	mage	male	*xdeath		PlayerMageExtremeDeathPicker
 $playeralias	mage	male	*splat		PlayerFallingSplat
 $playeralias	mage	male	*burndeath	PlayerMageBurnDeath
+$playersound	mage	male	*jump		mgjump
+
+$playeralias	pig		male	*usefail	PigActive1
 
 // Use *pain in a script to play any of the pain sounds
 $random *pain					{ *pain100  *pain75  *pain50  *pain25 }
@@ -90,6 +95,7 @@ $limit SorcererBallWoosh		4
 $limit SorcererBallBounce		3
 $limit SorcererBallExplode		3
 $limit SorcererBigBallExplode	3
+$limit SorcererBallPop			3
 
 $limit Ambient1					1
 $limit Ambient2					1
@@ -108,6 +114,20 @@ $limit Ambient14				1
 $limit Ambient15				1
 
 $limit MysticIncant				4
+
+$limit DoorCloseLight			4
+
+$limit PuppyBeat				0
+$limit CeantaurPain				0
+$limit BishopPain				0
+$limit SerpentPain				0
+$limit DemonPain				0
+$limit WraithPain				0
+$limit MaulatorPain				0
+$limit EttinPain				0
+$limit FireDemonPain			0
+$limit SorcererPain				0
+$limit DragonPain				0
 
 $pitchshift PlayerMageNormalDeath		0
 $pitchshift PlayerMageCrazyDeath		0
@@ -146,6 +166,16 @@ $alias misc/armor_pkup			misc/i_pkup
 $alias misc/ammo_pkup			misc/i_pkup
 $alias misc/invuse				UseArtifact
 $alias misc/keytry				DoorLocked
+$alias misc/freeze				FreezeDeath
+$alias misc/icebreak			FreezeShatter
+$alias misc/fallingsplat		PlayerFallingSplat
+
+$alias minotaur/sight			MaulatorSight
+$alias minotaur/pain			MaulatorPain
+$alias minotaur/death			MaulatorDeath
+$alias minotaur/active			MaulatorActive
+$alias minotaur/attack1			MaulatorHamHit
+$alias minotaur/attack2			MaulatorHamSwing
 
 $random BishopActiveSounds		{ BishopActive BishopSight }
 $random PigActive				{ PigActive1 PigActive2 }

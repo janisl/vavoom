@@ -201,6 +201,7 @@ defaultproperties
 	bInCombat = true;
 	bNoBlood = true;
 	bExplodeParticles = true;
+	bNoIceDeath = true;
 	SightSound = 'crusader/sight';
 	ActiveSound = 'crusader/active';
 	PainSound = 'crusader/pain';

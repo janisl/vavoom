@@ -131,6 +131,7 @@ defaultproperties
 	bSpectral = true;
 	bNoDeathmatch = true;
 	bNoBlockMonst = true;
+	bNoIceDeath = true;
 	SightSound = 'entity/sight';
 	ActiveSound = 'entity/active';
 	AttackSound = 'entity/melee';

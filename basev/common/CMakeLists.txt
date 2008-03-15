@@ -90,9 +90,15 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		graphics/mc_arrow.png
 		sounds/dsempty.lmp
 		sounds/dsquake.flac
+		sounds/icebrk1a.flac
+		sounds/icedth1.flac
 		sounds/spark1.flac
 		sounds/spark2.flac
 		sounds/spark3.flac
+		sprites/iceca0.png
+		sprites/icecb0.png
+		sprites/icecc0.png
+		sprites/icecd0.png
 		sprites/tnt1a0.lmp
 		sprites/unkna0.png
 		textures/-noflat-.png

@@ -86,6 +86,7 @@ defaultproperties
 	Speed = 8.0 * 35.0;
 	PainChance = 0.9765625;
 	bNoDeathmatch = true;
+	bNoIceDeath = true;
 	SightSound = 'macil/sight';
 	ActiveSound = 'macil/active';
 	PainSound = 'macil/pain';

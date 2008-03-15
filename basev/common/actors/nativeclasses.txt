@@ -48,7 +48,7 @@ class Actor extends Thinker
 	//	Freeze death functions
 	//
 	action native A_FreezeDeath();
-	//A_GenericFreezeDeath
+	action native A_GenericFreezeDeath();
 	action native A_FreezeDeathChunks();
 	action native A_IceGuyDie();
 

@@ -16,12 +16,18 @@ graphics/mc_arrow.png	@CMAKE_CURRENT_SOURCE_DIR@/graphics/mc_arrow.png
 textures/-noflat-.png	@CMAKE_CURRENT_SOURCE_DIR@/textures/-noflat-.png
 
 //	Common sprites
+sprites/iceca0.png		@CMAKE_CURRENT_SOURCE_DIR@/sprites/iceca0.png
+sprites/icecb0.png		@CMAKE_CURRENT_SOURCE_DIR@/sprites/icecb0.png
+sprites/icecc0.png		@CMAKE_CURRENT_SOURCE_DIR@/sprites/icecc0.png
+sprites/icecd0.png		@CMAKE_CURRENT_SOURCE_DIR@/sprites/icecd0.png
 sprites/tnt1a0.lmp		@CMAKE_CURRENT_SOURCE_DIR@/sprites/tnt1a0.lmp
 sprites/unkna0.png		@CMAKE_CURRENT_SOURCE_DIR@/sprites/unkna0.png
 
 //	Sounds
 sounds/dsempty.lmp		@CMAKE_CURRENT_SOURCE_DIR@/sounds/dsempty.lmp
 sounds/dsquake.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/dsquake.flac
+sounds/icebrk1a.flac	@CMAKE_CURRENT_SOURCE_DIR@/sounds/icebrk1a.flac
+sounds/icedth1.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/icedth1.flac
 sounds/spark1.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark1.flac
 sounds/spark2.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark2.flac
 sounds/spark3.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark3.flac
