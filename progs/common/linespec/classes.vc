@@ -51,6 +51,9 @@ enum
 
 #include "EntityEx.vc"
 #include "Actor.vc"
+#include "PlayerPawnBase.vc"
+#include "PlayerEx.vc"
+
 #include "Inventory.vc"
 #include "PickupFlash.vc"
 #include "ItemFog.vc"
@@ -84,7 +87,6 @@ enum
 #include "BasicArmorBonus.vc"
 #include "HexenArmor.vc"
 #include "MapRevealer.vc"
-#include "PlayerEx.vc"
 #include "FakeInventory.vc"
 #include "CustomInventory.vc"
 

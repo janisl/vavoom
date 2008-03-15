@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerPawn : Actor
+class PlayerPawn : PlayerPawnBase
 	abstract;
 
 float					HexenArmor[5];
@@ -37,17 +37,6 @@ float					HexenArmor[5];
 float GetBaseViewHeight()
 {
 	return Player::VIEWHEIGHT;
-}
-
-//==========================================================================
-//
-//	ShouldDropItems
-//
-//==========================================================================
-
-bool ShouldDropItems()
-{
-	return false;
 }
 
 //===========================================================================

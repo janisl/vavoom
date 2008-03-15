@@ -23,17 +23,18 @@
 //**
 //**************************************************************************
 
-class PlayerPawn : PlayerPawnBase;
+class PlayerPawnBase : Actor
+	abstract;
 
 //==========================================================================
 //
-//	GetBaseViewHeight
+//	ShouldDropItems
 //
 //==========================================================================
 
-float GetBaseViewHeight()
+bool ShouldDropItems()
 {
-	return Player::VIEWHEIGHT;
+	return false;
 }
 
 defaultproperties
