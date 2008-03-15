@@ -2995,3 +2995,96 @@
   I added support for defining static lights in VFXDEFS, started to convert.
 21.02.2008
   I finished static light conversion.
+23.02.2008
+  I added calculation of default gibs health if it's not specified.
+  I added stubs for all DECORATE actor properties and flags, implemented all
+ flags that are supported, made states parser not to stop parsing thing on
+ unknown state actions or state actions with paameters.
+  I fixed a bug that caused random crashes while drawing translucent sprite.
+24.02.2008
+  I implemented all DECORATE actor properties that are supported.
+  I moved DropAmount from Inventory to Ammo class.
+  I merged ClassName in EntityEx with StrifeName from Inventory.
+  I implemented support for calling state actions with parameters.
+  I changed class to have full list of state labels, parent class is not
+ checked anymore.
+25.02.2008
+  I implemented support for state sub-labels. I changed burnable trees to use
+ it. This also properly fixes lost souls creating ghosts bug.
+26.02.2008
+  I converted Doom and Heretic decorations to DECORATE, started with Hexen.
+27.02.2008
+  I converted Hexen and Strife decorations to DECORATE.
+28.02.2008
+  I added conversation IDs to all Strife decorations.
+  In scripts parser I added methods that can check/expect negative numbers,
+ changed some places to use them.
+  I added parsing of action definitions in DECORATE class definition, changed
+ states to only use actions defined in the class definitions.
+01.03.2008
+  I moved Strife conversation system to linespec and uibase.
+  I moved Hexen's special decorations to DECORATE.
+02.03.2008
+  I implemented passing unquoted strings as string arguments in DECORATE state
+ actions.
+  I implemented Skip_Super DECORATE property.
+  I moved health and armor items to DECORATE.
+03.03.2008
+  I moved keys, puzzle items and quest items to DECORATE.
+04.03.2008
+  I implemented support for progs to reference DECORATE classes as objects that
+ are linked during loading.
+  I moved blood, rock, dirt and stained glass shard classes to linespec.
+05.03.2008
+  I moved blood, rock, dirt, stained glass shard and glass junk classes to
+ DECORATE.
+06.03.2008
+  I made available in DECORATE all methods that ScriptedEntity implements.
+  I implemented some DECORATE properties.
+  I moved splash and ammo classes to DECORATE.
+07.03.2008
+  I implemented CustomInventory class and inventory related action methods.
+  I changed weapon action methods to be executed by the player's actor object.
+ I changed most of the weapon action methods to use this.
+08.03.2008
+  I finished changing weapon action methods.
+  I implemented suport for using line specials as state action methods.
+  I moved most of the artifacts and inventory items to DECORATE.
+  I implemented support for game specific pickup messages.
+  In Inventory class I added inter hub strip flag.
+09.03.2008
+  I moved more artifact and inventory classes to DECORATE.
+  I implemented most of the DECORATE sound action methods.
+  I moved Heretic's and Hexen's ambient sound classes to DECORATE.
+  I fixed MapList not showing correctly localised map names.
+10.03.2008
+  I moved handling of poison damage to EntityEx.
+  I added support for particle effect definitions to VFXDEFS and moved all
+ particle effects to VFXDEFS.
+  I made DECORATE classes to also inherit class fixups from parent class.
+  I moved muzzle flashes to VFXDEFS.
+  I changed sprites to be initialised also on the server and added a method
+ to check if particular sprites are present.
+  When spawning things in map, I added a check if sprites are present and use
+ Unknown thing if not. This replaces the shareware check.
+  I moved to DECORATE misc Doom classes, Hexen script projectiles.
+  I implemented support for obituaries.
+11.03.2008
+  I moved KilledByPlayer and PlayerKilled to player class.
+  I temporarely moved Doom monsters to linespec, so that I can move dead Doom
+ things to DECORATE.
+12.03.2008
+  I added back shadow and ghost flags and use them instead of the alpha value.
+  I added DECORATE support for drop items, changed player pawns to use it as
+ a initial inventory list.
+  I moved many Doom state action methods to ScriptedEntity and made them
+ available in DECORATE.
+  I moved most of the Doom monsters to DECORATE.
+13.03.2008
+  I moved the rest of the Doom monsters to DECORATE.
+  I moved many action methods from other games to ScriptedEntity.
+  I finally moved all Doom game files into a single directory.
+  I changed the way DeHackEd sets initial ammo.
+  I moved most of the things out of Actor classes.
+14.03.2008
+  I finally merged Actor classes.
