@@ -3638,10 +3638,18 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.ForwardMove"))
 			{
-				//FIXME
 				sc->ExpectFloat();
-				sc->CheckFloat();
-				GCon->Logf("Property Player.ForwardMove in %s is not yet supported", Class->GetName());
+				SetClassFieldFloat(Class, "ForwardMove1", sc->Float);
+				SetClassFieldFloat(Class, "ForwardMove2", sc->Float);
+				if (sc->Check(","))
+				{
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, "ForwardMove2", sc->Float);
+				}
+				else if (sc->CheckFloat())
+				{
+					SetClassFieldFloat(Class, "ForwardMove2", sc->Float);
+				}
 				continue;
 			}
 			if (!Prop.ICmp("Player.HealRadiusType"))
@@ -3703,10 +3711,18 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.SideMove"))
 			{
-				//FIXME
 				sc->ExpectFloat();
-				sc->CheckFloat();
-				GCon->Logf("Property Player.SideMove in %s is not yet supported", Class->GetName());
+				SetClassFieldFloat(Class, "SideMove1", sc->Float);
+				SetClassFieldFloat(Class, "SideMove2", sc->Float);
+				if (sc->Check(","))
+				{
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, "SideMove2", sc->Float);
+				}
+				else if (sc->CheckFloat())
+				{
+					SetClassFieldFloat(Class, "SideMove2", sc->Float);
+				}
 				continue;
 			}
 			if (!Prop.ICmp("Player.SoundClass"))

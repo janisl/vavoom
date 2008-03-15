@@ -127,6 +127,10 @@ defaultproperties
 	Height = 64.0;
 	PainChance = 1.0;
 	ViewHeight = 48.0;
+	ForwardMove1 = 1.18;
+	ForwardMove2 = 1.18;
+	SideMove1 = 1.3;
+	SideMove2 = 1.3;
 	HexenArmor[0] = 15.0;
 	HexenArmor[1] = 25.0;
 	HexenArmor[2] = 20.0;

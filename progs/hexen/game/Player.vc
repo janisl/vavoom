@@ -794,40 +794,6 @@ void AdjustInvFirst()
 
 //==========================================================================
 //
-//  AdjustSpeed
-//
-//==========================================================================
-
-void AdjustSpeed(out float forward, out float side)
-{
-	//  Adjust speed depending on class. Originaly this is done in input
-	// code, but to simplify it, we do it here.
-	//  Fighter moves faster, cleric at original speed, mage - slower,
-	// pig - slower, but faster than mage
-	switch (PClass)
-	{
-	case HexenDefs::PCLASS_FIGHTER:
-		forward *= 1.18;
-		side *= 1.3;
-		break;
-
-	case HexenDefs::PCLASS_CLERIC:
-		break;
-
-	case HexenDefs::PCLASS_MAGE:
-		forward *= 0.9;
-		side *= 0.9;
-		break;
-
-	case HexenDefs::PCLASS_PIG:
-		forward *= 0.97;
-		side *= 0.97;
-		break;
-	}
-}
-
-//==========================================================================
-//
 //  UseFlyPower
 //
 //==========================================================================

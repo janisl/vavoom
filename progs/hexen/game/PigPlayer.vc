@@ -61,6 +61,10 @@ defaultproperties
 	Height = 24.0;
 	PainChance = 1.0;
 	ViewHeight = 48.0;
+	ForwardMove1 = 0.97;
+	ForwardMove2 = 0.97;
+	SideMove1 = 0.97;
+	SideMove2 = 0.97;
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';

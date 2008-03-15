@@ -28,6 +28,13 @@ class PlayerPawnBase : Actor
 
 float			ViewHeight;
 
+int				RunHealth;
+
+float			ForwardMove1;
+float			ForwardMove2;
+float			SideMove1;
+float			SideMove2;
+
 //==========================================================================
 //
 //	ShouldDropItems
@@ -117,6 +124,61 @@ bool UseInventory(Inventory Item)
 	return true;
 }
 
+//==========================================================================
+//
+//  AdjustSpeed
+//
+//==========================================================================
+
+final void AdjustSpeed(out float forward, out float side)
+{
+	// When the player has less than 25 health points, he's unable to run
+	if (Health < RunHealth)
+	{
+		if (forward > 1000.0)
+		{
+			forward = 1000.0;
+		}
+		else if (forward < -1000.0)
+		{
+			forward = -1000.0;
+		}
+		if (side > 1000.0)
+		{
+			side = 1000.0;
+		}
+		else if (side < -1000.0)
+		{
+			side = -1000.0;
+		}
+	}
+
+	if (forward >= -1000.0 && forward < 1000.0)
+	{
+		forward *= ForwardMove1;
+	}
+	else
+	{
+		forward *= ForwardMove2;
+	}
+	if (side >= -1000.0 && side < 1000.0)
+	{
+		side *= SideMove1;
+	}
+	else
+	{
+		side *= SideMove2;
+	}
+
+	if (Inventory && !PlayerIsMorphed())
+	{
+		// Adjust for a player with a speed artifact
+		float SpeedFactor = Inventory.GetSpeedFactor();
+		forward *= SpeedFactor;
+		side *= SpeedFactor;
+	}
+}
+
 defaultproperties
 {
 	Health = 100;
@@ -126,6 +188,10 @@ defaultproperties
 	Speed = 1.0;
 	ReactionCount = 0;
 	ViewHeight = 41.0;
+	ForwardMove1 = 1.0;
+	ForwardMove2 = 1.0;
+	SideMove1 = 1.0;
+	SideMove2 = 1.0;
 	bSolid = true;
 	bShootable = true;
 	bDropOff = true;

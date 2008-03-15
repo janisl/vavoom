@@ -60,6 +60,11 @@ defaultproperties
 	Height = 24.0;
 	Gravity = 0.125;
 	PainChance = 1.0;
+	// Chicken speed
+	ForwardMove1 = 1.2;
+	ForwardMove2 = 1.2;
+	SideMove1 = 1.2;
+	SideMove2 = 1.2;
 	bPickUp = false;
 	PainSound = 'chicken/pain';
 	DeathSound = 'chicken/death';

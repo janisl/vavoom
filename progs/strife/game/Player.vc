@@ -1355,5 +1355,4 @@ void KilledByPlayer(EntityEx Victim)
 
 defaultproperties
 {
-	NoRunHealth = 25;
 }

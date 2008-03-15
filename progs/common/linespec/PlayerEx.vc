@@ -99,8 +99,6 @@ bool			bInstantWeaponSwitch;
 //	Player is flying
 bool			bFly;
 
-int				NoRunHealth;
-
 int				PoisonCount;	// screen flash for poison damage
 float			LastPoisonTime;
 EntityEx		Poisoner;		// none for non-player mobjs
@@ -236,36 +234,7 @@ final void MovePlayer(float deltaTime)
 	forward = ForwardMove * 5.0;
 	side = SideMove * 5.0;
 
-	AdjustSpeed(forward, side);
-
-	if (EntityEx(MO).Inventory && !EntityEx(MO).PlayerIsMorphed())
-	{
-		// Adjust for a player with a speed artifact
-		float SpeedFactor = EntityEx(MO).Inventory.GetSpeedFactor();
-		forward *= SpeedFactor;
-		side *= SpeedFactor;
-	}
-
-	// When the player has less than 25 health points, he's unable to run
-	if (MO.Health < NoRunHealth)
-	{
-		if (forward > 1000.0)
-		{
-			forward = 1000.0;
-		}
-		else if (forward < -1000.0)
-		{
-			forward = -1000.0;
-		}
-		if (side > 1000.0)
-		{
-			side = 1000.0;
-		}
-		else if (side < -1000.0)
-		{
-			side = -1000.0;
-		}
-	}
+	PlayerPawnBase(MO).AdjustSpeed(forward, side);
 
 	if (!(onground || MO.bFly))
 	{
@@ -406,15 +375,7 @@ final void WaterMove(float deltaTime)
 	forward = ForwardMove;
 	side = SideMove;
 
-	AdjustSpeed(forward, side);
-
-	if (EntityEx(MO).Inventory && !EntityEx(MO).PlayerIsMorphed())
-	{
-		// Adjust for a player with a speed artifact
-		float SpeedFactor = EntityEx(MO).Inventory.GetSpeedFactor();
-		forward *= SpeedFactor;
-		side *= SpeedFactor;
-	}
+	PlayerPawnBase(MO).AdjustSpeed(forward, side);
 
 	wishvel = vforward * forward + vright * side;
 	if (!forward && !side /* && !cmd.upmove */ )
@@ -1960,10 +1921,6 @@ name GetInvulnerabilityMode()
 int GetMaxHealth()
 {
 	return 0;
-}
-
-void AdjustSpeed(out float forward, out float side)
-{
 }
 
 void UseFlyPower()
