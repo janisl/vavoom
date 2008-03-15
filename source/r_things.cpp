@@ -313,7 +313,9 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 	spritedef_t*	sprdef;
 	spriteframe_t*	sprframe;
 
-	int SpriteIndex = thing->State->SpriteIndex;
+	VState* DispState = (thing->EntityFlags & VEntity::EF_UseDispState) ?
+		thing->DispState : thing->State;
+	int SpriteIndex = DispState->SpriteIndex;
 	if (thing->FixedSpriteName != NAME_None)
 	{
 		SpriteIndex = VClass::FindSprite(thing->FixedSpriteName);
@@ -328,15 +330,15 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 		return;
 	}
 	sprdef = &sprites[SpriteIndex];
-	if ((thing->State->Frame & FF_FRAMEMASK) >= sprdef->numframes)
+	if ((DispState->Frame & FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",
-			SpriteIndex, thing->State->Frame);
+			SpriteIndex, DispState->Frame);
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[thing->State->Frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[DispState->Frame & FF_FRAMEMASK];
 
 	int			lump;
 	bool		flip;

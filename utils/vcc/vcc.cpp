@@ -84,7 +84,6 @@ int main(int argc, char **argv)
 
 	// set the byte swapping variables in a portable manner
 	GBigEndian = *(short*)swaptest != 1;
-	VMemberBase::StaticInit();
 
 	signal(SIGSEGV, SignalHandler);
 
@@ -144,6 +143,7 @@ static void Init()
 	DebugFile = NULL;
 	num_dump_asm = 0;
 	VName::StaticInit();
+	VMemberBase::StaticInit();
 	PC_Init();
 }
 

@@ -196,6 +196,19 @@ bool VEntity::SetState(VState* InState)
 			return false;
 		}
 
+		if (st->SpriteIndex == 1)
+		{
+			//	1 is ----, which is "do not change sprite"
+			if (!(EntityFlags & EF_UseDispState))
+			{
+				DispState = State;
+				EntityFlags |= EF_UseDispState;
+			}
+		}
+		else
+		{
+			EntityFlags &= ~EF_UseDispState;
+		}
 		State = st;
 		StateTime = eventGetStateTime(st, st->Time);
 		EntityFlags &= ~EF_FullBright;

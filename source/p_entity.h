@@ -149,6 +149,7 @@ class VEntity : public VThinker
 	TAVec			Angles;			// orientation
 
 	VState*			State;
+	VState*			DispState;
 	float			StateTime;		// state tic counter
 
 	//More drawing info.
@@ -228,6 +229,7 @@ class VEntity : public VThinker
 		EF_Invisible			= 0x01000000,	// Don't draw this actor
 		EF_Missile				= 0x02000000,	// don't hit same species, explode on block
 		EF_DontOverlap			= 0x04000000,	// Prevent some things from overlapping.
+		EF_UseDispState			= 0x08000000,	// Use DispState for rendering
 	};
 	vuint32			EntityFlags;
 

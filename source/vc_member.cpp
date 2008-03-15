@@ -343,6 +343,7 @@ void VMemberBase::Shutdown()
 void VMemberBase::StaticInit()
 {
 	guard(VMemberBase::StaticInit);
+	//	Add native classes to the list.
 	for (VClass* C = GClasses; C; C = C->LinkNext)
 	{
 		C->MemberIndex = GMembers.Append(C);
@@ -350,6 +351,11 @@ void VMemberBase::StaticInit()
 		C->HashNext = GMembersHash[HashIndex];
 		GMembersHash[HashIndex] = C;
 	}
+
+	//	Sprite TNT1 is always 0, ---- is always 1
+	VClass::GSpriteNames.Append("tnt1");
+	VClass::GSpriteNames.Append("----");
+
 	GObjInitialised = true;
 	unguard;
 }

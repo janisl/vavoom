@@ -945,6 +945,8 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 	float Alpha, bool Additive, float Inter)
 {
 	guard(VRenderLevel::DrawEntityModel);
+	VState* DispState = (Ent->EntityFlags & VEntity::EF_UseDispState) ?
+		Ent->DispState : Ent->State;
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
 		if (!FL_FileExists(VStr("models/") + Ent->FixedModelName))
@@ -959,14 +961,14 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 		}
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, Mdl,
-			Ent->State->InClassIndex, *Ent->ModelSkin,
+			DispState->InClassIndex, *Ent->ModelSkin,
 			GetTranslation(Ent->Translation), Ent->ModelVersion, Light, Fade,
 			Alpha, Additive, false, Inter);
 	}
 	else
 	{
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
-			Ent->Angles, Ent->ScaleX, Ent->ScaleY, Ent->State,
+			Ent->Angles, Ent->ScaleX, Ent->ScaleY, DispState,
 			*Ent->ModelSkin, GetTranslation(Ent->Translation),
 			Ent->ModelVersion, Light, Fade, Alpha, Additive, false, Inter);
 	}

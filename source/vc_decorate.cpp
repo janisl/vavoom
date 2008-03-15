@@ -2056,7 +2056,10 @@ static VStr ParseStateString(VScriptParser* sc)
 	guard(ParseStateString);
 	VStr		StateStr;
 
-	sc->ExpectIdentifier();
+	if (!sc->CheckQuotedString())
+	{
+		sc->ExpectIdentifier();
+	}
 	StateStr = sc->String;
 
 	if (sc->Check("::"))

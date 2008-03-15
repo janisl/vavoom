@@ -1487,14 +1487,14 @@ void VParser::ParseStruct(VClass* InClass, bool IsVector)
 
 VName VParser::ParseStateString()
 {
-	char		StateStr[256];
+	VStr		StateStr;
 
-	if (Lex.Token != TK_Identifier)
+	if (Lex.Token != TK_Identifier && Lex.Token != TK_StringLiteral)
 	{
 		ParseError(Lex.Location, "Identifier expected");
 		return NAME_None;
 	}
-	VStr::Cpy(StateStr, *Lex.Name);
+	StateStr = Lex.String;
 	Lex.NextToken();
 
 	if (Lex.Check(TK_DColon))
@@ -1504,8 +1504,8 @@ VName VParser::ParseStateString()
 			ParseError(Lex.Location, "Identifier expected");
 			return NAME_None;
 		}
-		strcat(StateStr, "::");
-		strcat(StateStr, *Lex.Name);
+		StateStr += "::";
+		StateStr += *Lex.Name;
 		Lex.NextToken();
 	}
 
@@ -1516,12 +1516,12 @@ VName VParser::ParseStateString()
 			ParseError(Lex.Location, "Identifier expected");
 			return NAME_None;
 		}
-		strcat(StateStr, ".");
-		strcat(StateStr, *Lex.Name);
+		StateStr += ".";
+		StateStr += *Lex.Name;
 		Lex.NextToken();
 	}
 
-	return StateStr;
+	return *StateStr;
 }
 
 //==========================================================================
