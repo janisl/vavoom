@@ -177,15 +177,15 @@ final void CalcHeight(float deltaTime)
 	{
 		ViewHeight += DeltaViewHeight * deltaTime;
 
-		if (ViewHeight > EntityEx(MO).GetBaseViewHeight())
+		if (ViewHeight > PlayerPawnBase(MO).ViewHeight)
 		{
-			ViewHeight = EntityEx(MO).GetBaseViewHeight();
+			ViewHeight = PlayerPawnBase(MO).ViewHeight;
 			DeltaViewHeight = 0.0;
 		}
 
-		if (ViewHeight < EntityEx(MO).GetBaseViewHeight() / 2.0)
+		if (ViewHeight < PlayerPawnBase(MO).ViewHeight / 2.0)
 		{
-			ViewHeight = EntityEx(MO).GetBaseViewHeight() / 2.0;
+			ViewHeight = PlayerPawnBase(MO).ViewHeight / 2.0;
 			if (DeltaViewHeight <= 0.0)
 				DeltaViewHeight = 0.00001;
 		}

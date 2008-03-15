@@ -92,6 +92,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 64.0;
 	PainChance = 1.0;
+	ViewHeight = 48.0;
 	HexenArmor[0] = 10.0;
 	HexenArmor[1] = 10.0;
 	HexenArmor[2] = 25.0;

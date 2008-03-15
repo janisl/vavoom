@@ -26,6 +26,8 @@
 class PlayerPawnBase : Actor
 	abstract;
 
+float			ViewHeight;
+
 //==========================================================================
 //
 //	ShouldDropItems
@@ -123,6 +125,7 @@ defaultproperties
 	PainChance = 1.0;
 	Speed = 1.0;
 	ReactionCount = 0;
+	ViewHeight = 41.0;
 	bSolid = true;
 	bShootable = true;
 	bDropOff = true;

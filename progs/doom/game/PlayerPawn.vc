@@ -25,17 +25,6 @@
 
 class PlayerPawn : PlayerPawnBase;
 
-//==========================================================================
-//
-//	GetBaseViewHeight
-//
-//==========================================================================
-
-float GetBaseViewHeight()
-{
-	return Player::VIEWHEIGHT;
-}
-
 defaultproperties
 {
 }

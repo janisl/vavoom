@@ -60,6 +60,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 24.0;
 	PainChance = 1.0;
+	ViewHeight = 48.0;
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';

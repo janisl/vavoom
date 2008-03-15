@@ -27,7 +27,6 @@ class Player : PlayerEx;
 
 const int MAXHEALTH			= 100;
 const int MAXMORPHHEALTH	= 30;
-const float VIEWHEIGHT		= 48.0;
 
 float MorphTime;	// player is a pig if > 0
 
@@ -401,7 +400,7 @@ void SpawnPlayer(mthing_t * mthing)
 	FixedColourmap = 0;
 	LastSectorDamageTime = 0.0;
 	LastHazardTime = 0.0;
-	ViewHeight = VIEWHEIGHT;
+	ViewHeight = pp.ViewHeight;
 	ViewAngles = pp.Angles;
 	bFixAngle = true;
 

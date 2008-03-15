@@ -549,7 +549,8 @@ bool Physics(float DeltaTime)
 					PlayerEx(Player).ViewHeight -=
 						onmo.Origin.z + onmo.Height - Origin.z;
 					PlayerEx(Player).DeltaViewHeight =
-						(GetBaseViewHeight() - PlayerEx(Player).ViewHeight) * 4.0;
+						(PlayerPawnBase(self).ViewHeight -
+						PlayerEx(Player).ViewHeight) * 4.0;
 				}
 				Origin.z = onmo.Origin.z + onmo.Height;
 			}
@@ -568,7 +569,8 @@ bool Physics(float DeltaTime)
 						PlayerEx(onmo.Player).ViewHeight -=
 							onmo.FloorZ - onmo.Origin.z;
 						PlayerEx(onmo.Player).DeltaViewHeight =
-							(GetBaseViewHeight() - PlayerEx(onmo.Player).ViewHeight) * 4.0;
+							(PlayerPawnBase(self).ViewHeight -
+							PlayerEx(onmo.Player).ViewHeight) * 4.0;
 					}
 					onmo.Origin.z = onmo.FloorZ;
 				}
@@ -709,7 +711,7 @@ final void ZMovement(float DeltaTime)
 	if (bIsPlayer && Origin.z < FloorZ)
 	{
 		PlayerEx(Player).ViewHeight -= FloorZ - Origin.z;
-		PlayerEx(Player).DeltaViewHeight = (GetBaseViewHeight() -
+		PlayerEx(Player).DeltaViewHeight = (PlayerPawnBase(self).ViewHeight -
 			PlayerEx(Player).ViewHeight) * 4.0;
 	}
 
@@ -7392,11 +7394,6 @@ final void SpawnDirt(float radius)
 	{
 		dirt.Velocity.z = Random() * 4.0 * 35.0;
 	}
-}
-
-float GetBaseViewHeight()
-{
-	return 0.0;
 }
 
 bool PlayerIsMorphed()

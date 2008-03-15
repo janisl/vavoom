@@ -3711,9 +3711,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.SoundClass"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.SoundClass in %s is not yet supported", Class->GetName());
+				SetClassFieldName(Class, "SoundClass", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Player.SpawnClass"))
@@ -3745,9 +3744,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.ViewHeight"))
 			{
-				//FIXME
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.ViewHeight in %s is not yet supported", Class->GetName());
+				SetClassFieldFloat(Class, "ViewHeight", sc->Float);
 				continue;
 			}
 			if (!Prop.ICmp("Player.MorphWeapon"))
@@ -4538,11 +4536,11 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		}
 
 		States[IceEnd - 2]->Time = 5.0 / 35.0;
-		//States[IceEnd - 2]->Function = FuncA_FreezeDeath;
+		States[IceEnd - 2]->Function = FuncA_FreezeDeath;
 
 		States[IceEnd - 1]->NextState = States[IceEnd - 1];
 		States[IceEnd - 1]->Time = 1.0 / 35.0;
-		//States[IceEnd - 2]->Function = FuncA_FreezeDeathChunks;
+		States[IceEnd - 1]->Function = FuncA_FreezeDeathChunks;
 
 		TArray<VName> Names;
 		Names.Append("Death");

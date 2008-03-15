@@ -26,7 +26,6 @@
 class Player : PlayerEx;
 
 const int MAXCHICKENHEALTH	= 30;
-const float VIEWHEIGHT		= 41.0;
 
 const float
 	CHICKENTIME 	= 40.0;
@@ -299,7 +298,7 @@ void SpawnPlayer(mthing_t * mthing)
 	FixedColourmap = 0;
 	LastSectorDamageTime = 0.0;
 	LastHazardTime = 0.0;
-	ViewHeight = VIEWHEIGHT;
+	ViewHeight = A.ViewHeight;
 	ViewAngles = A.Angles;
 	bFixAngle = true;
 

@@ -25,8 +25,6 @@
 
 class Player : PlayerEx;
 
-const float VIEWHEIGHT		= 41.0;
-
 const float ST_STRAIGHTFACETIME		= 0.5;
 const float ST_TURNTIME				= 1.0;
 const float ST_EVILGRINTIME			= 2.0;
@@ -356,7 +354,7 @@ void SpawnPlayer(mthing_t * mthing)
 	FixedColourmap = 0;
 	LastSectorDamageTime = 0.0;
 	LastHazardTime = 0.0;
-	ViewHeight = VIEWHEIGHT;
+	ViewHeight = PP.ViewHeight;
 	ViewAngles = PP.Angles;
 	bFixAngle = true;
 
