@@ -23,41 +23,32 @@
 //**
 //**************************************************************************
 
-class Pawn : Actor
-	abstract;
+class IceChunkHead : PlayerPawn;
 
-//============================================================================
-//
-//  IsNotAttackingMaster
-//
-//============================================================================
-
-bool IsNotAttackingMaster(EntityEx Other)
+states
 {
-	return Class == MinotaurFriend && Other.Class == MinotaurFriend &&
-		Other.Target != Tracer;
-}
-
-//==========================================================================
-//
-//	IsMaster
-//
-//==========================================================================
-
-bool IsMaster(EntityEx Other)
-{
-	return Class == MinotaurFriend && Tracer == Other;
+Spawn:
+	ICEC A 10 A_CheckPlayerDone
+	Wait
+	ICEC A 1050
+	Stop
 }
 
 defaultproperties
 {
-	bSolid = true;
-	bShootable = true;
-	bCountKill = true;
-	bMonster = true;
-	bFloorClip = true;
-	bTelestomp = true;
-	bActivatePushWall = true;
-	bActivateMCross = true;
-	bPassMobj = true;
+	Radius = 3.0;
+	Height = 4.0;
+	Gravity = 0.125;
+	ReactionCount = 8;
+	bSolid = false;
+	bShootable = false;
+	bTelestomp = false;
+	bActivatePushWall = false;
+	bWindThrust = false;
+	bFloorClip = false;
+	bSlide = false;
+	DamageType = 'Ice';	// used to force blue palette
+	bNoBlockmap = true;
+	bPassMobj = false;
+	bCannotPush = true;
 }

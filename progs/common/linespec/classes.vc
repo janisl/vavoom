@@ -186,6 +186,8 @@ enum
 
 #include "Feather.vc"
 
+#include "IceChunk.vc"
+
 #include "Coin.vc"
 #include "Gold10.vc"
 #include "Gold25.vc"

@@ -102,6 +102,7 @@
 #include "PowerCoupling.vc"
 
 #include "StrifePlayer.vc"
+#include "IceChunkHead.vc"
 #include "Merchant.vc"
 #include "WeaponSmith.vc"
 #include "BarKeep.vc"

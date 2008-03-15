@@ -48,6 +48,7 @@
 #include "Gibs.vc"
 
 #include "DoomPlayer.vc"
+#include "IceChunkHead.vc"
 
 #include "ScriptedMarine.vc"
 #include "MarineFist.vc"

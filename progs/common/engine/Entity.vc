@@ -156,6 +156,7 @@ TVec			Velocity;
 TAVec			Angles;				// orientation
 
 readonly state	State;
+readonly state	DispState;
 float			StateTime;			// state tic counter
 
 //More drawing info.
@@ -232,6 +233,7 @@ native readonly bool bNetLocalPlayer;	// Mobj of player currently being updated
 bool bInvisible;		// Don't draw this actor
 bool bMissile;			// don't hit same species, explode on block
 bool bDontOverlap;		// Prevent some things from overlapping.
+readonly bool bUseDispState;	// Use DispState for rendering
 
 int				Health;
 
@@ -272,8 +274,10 @@ replication
 		Origin, Angles, FloorClip, State, StateTime, SpriteType,
 		FixedSpriteName, ModelSkin, ModelVersion, RenderStyle, Alpha,
 		Translation, ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright,
-		bFixedModel, bNetLocalPlayer, NetID;
+		bFixedModel, bNetLocalPlayer, NetID, bUseDispState;
 
+	reliable if (Role == ROLE_Authority && bUseDispState)
+		DispState;
 
 	reliable if (Role == ROLE_Authority && bFixedModel)
 		FixedModelName;

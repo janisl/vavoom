@@ -23,37 +23,14 @@
 //**
 //**************************************************************************
 
-class IceChunk : Effect;
-
-//============================================================================
-//
-//	A_IceSetTics
-//
-//============================================================================
-
-final void A_IceSetTics()
-{
-	VTerrainInfo* floor;
-
-	StateTime = 2.0 + Random() * 2.0;
-	floor = GetFloorType();
-	if (floor->DamageType == 'lava')
-	{
-		StateTime /= 4.0;
-	}
-	else if (floor->DamageType == 'ice')
-	{
-		StateTime *= 2.0;
-	}
-}
+class IceChunkHead : PlayerPawn;
 
 states
 {
 Spawn:
-	ICEC A 10
-	ICEC B 10 A_IceSetTics
-	ICEC C 10 A_IceSetTics
-	ICEC D 10 A_IceSetTics
+	ICEC A 10 A_CheckPlayerDone
+	Wait
+	ICEC A 1050
 	Stop
 }
 
@@ -62,8 +39,16 @@ defaultproperties
 	Radius = 3.0;
 	Height = 4.0;
 	Gravity = 0.125;
-	bDropOff = true;
-	bFloorClip = true;
+	ReactionCount = 8;
+	bSolid = false;
+	bShootable = false;
+	bTelestomp = false;
+	bActivatePushWall = false;
+	bWindThrust = false;
+	bFloorClip = false;
+	bSlide = false;
+	DamageType = 'Ice';	// used to force blue palette
+	bNoBlockmap = true;
+	bPassMobj = false;
 	bCannotPush = true;
-	bNoGravity = false;
 }

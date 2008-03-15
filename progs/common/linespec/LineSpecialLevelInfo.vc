@@ -52,6 +52,7 @@ enum
 	pt_static,
 	pt_explode,
 	pt_explode2,
+	pt_ice_chunk,
 	pt_fountain,
 	pt_spark
 };
@@ -6604,6 +6605,12 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 		p->vel += p->accel * DeltaTime;
 		p->colour = (p->colour & 0x00ffffff) | (ftoi(
 			itof(p->colour >> 24) - 255.0 / 10.0 * 35.0 * DeltaTime) << 24);
+		break;
+
+	case pt_ice_chunk:
+		p->vel.x -= p->vel.x * DeltaTime;
+		p->vel.y -= p->vel.y * DeltaTime;
+		p->vel.z += p->accel.z * DeltaTime;
 		break;
 	}
 }

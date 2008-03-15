@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerPawn : Pawn
+class PlayerPawn : Actor
 	abstract;
 
 //==========================================================================
@@ -164,9 +164,11 @@ final void A_AddPlayerCorpse()
 
 defaultproperties
 {
-	bMonster = false;
-	bCountKill = false;
-	bActivateMCross = false;
+	bSolid = true;
+	bShootable = true;
+	bFloorClip = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
 	bDropOff = true;
 	bOnmobjCopyVel = true;
 	bNoBlockMonst = true;

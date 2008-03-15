@@ -23,41 +23,47 @@
 //**
 //**************************************************************************
 
-class Pawn : Actor
-	abstract;
+class IceChunk : Actor;
 
 //============================================================================
 //
-//  IsNotAttackingMaster
+//	A_IceSetTics
 //
 //============================================================================
 
-bool IsNotAttackingMaster(EntityEx Other)
+final void A_IceSetTics()
 {
-	return Class == MinotaurFriend && Other.Class == MinotaurFriend &&
-		Other.Target != Tracer;
+	VTerrainInfo* floor;
+
+	StateTime = 2.0 + Random() * 2.0;
+	floor = GetFloorType();
+	if (floor->DamageType == 'lava')
+	{
+		StateTime /= 4.0;
+	}
+	else if (floor->DamageType == 'ice')
+	{
+		StateTime *= 2.0;
+	}
 }
 
-//==========================================================================
-//
-//	IsMaster
-//
-//==========================================================================
-
-bool IsMaster(EntityEx Other)
+states
 {
-	return Class == MinotaurFriend && Tracer == Other;
+Spawn:
+	ICEC A 10
+	ICEC B 10 A_IceSetTics
+	ICEC C 10 A_IceSetTics
+	ICEC D 10 A_IceSetTics
+	Stop
 }
 
 defaultproperties
 {
-	bSolid = true;
-	bShootable = true;
-	bCountKill = true;
-	bMonster = true;
+	Radius = 3.0;
+	Height = 4.0;
+	Gravity = 0.125;
+	bNoBlockmap = true;
+	bDropOff = true;
 	bFloorClip = true;
-	bTelestomp = true;
-	bActivatePushWall = true;
-	bActivateMCross = true;
-	bPassMobj = true;
+	bCannotPush = true;
 }
