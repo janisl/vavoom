@@ -85,14 +85,10 @@ Disintegrate:
 defaultproperties
 {
 	Health = 100;
-	GibsHealth = -50;
 	Radius = 18.0;
 	Height = 56.0;
-	Mass = 100.0;
 	PainChance = 1.0;
 	MaxStepHeight = 16.0;
-	bDropOff = true;
-	bFriendly = true;
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = PunchDagger; DropItemList[0].Amount = 1;

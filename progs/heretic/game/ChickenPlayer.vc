@@ -56,14 +56,11 @@ Death:
 defaultproperties
 {
 	Health = 100;
-	ReactionCount = 0;
 	Radius = 16.0;
 	Height = 24.0;
 	Gravity = 0.125;
 	PainChance = 1.0;
-	bWindThrust = true;
-	bSlide = true;
-	bTelestomp = true;
+	bPickUp = false;
 	PainSound = 'chicken/pain';
 	DeathSound = 'chicken/death';
 }

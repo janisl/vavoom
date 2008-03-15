@@ -62,23 +62,8 @@ XDeath:
 defaultproperties
 {
 	Health = 100;
-	GibsHealth = -100;
-	ReactionCount = 0;
 	Radius = 16.0;
 	Height = 56.0;
-	Mass = 100.0;
-	PainChance = 1.0;
-	bSolid = true;
-	bShootable = true;
-	bActivatePushWall = true;
-	bTelestomp = true;
-	bWindThrust = true;
-	bDropOff = true;
-	bPickUp = true;
-	bFloorClip = true;
-	bSlide = true;
-	bNoBlockMonst = true;
-	bPassMobj = true;
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = Clip; DropItemList[0].Amount = 50;

@@ -37,6 +37,103 @@ bool ShouldDropItems()
 	return false;
 }
 
+//==========================================================================
+//
+//	AddInventory
+//
+//==========================================================================
+
+void AddInventory(Inventory Item)
+{
+	::AddInventory(Item);
+	if (bIsPlayer && Item.bInvBar && !PlayerEx(Player).InvPtr)
+	{
+		PlayerEx(Player).InvPtr = Item;
+		PlayerEx(Player).InvFirst = Item;
+	}
+}
+
+//==========================================================================
+//
+//	RemoveInventory
+//
+//==========================================================================
+
+void RemoveInventory(Inventory Item)
+{
+	if (bIsPlayer)
+	{
+		if (PlayerEx(Player).InvPtr == Item)
+		{
+			PlayerEx(Player).InvPtr = Item.PrevInv();
+			if (!PlayerEx(Player).InvPtr)
+			{
+				PlayerEx(Player).InvPtr = Item.NextInv();
+			}
+		}
+		if (PlayerEx(Player).InvFirst == Item)
+		{
+			PlayerEx(Player).InvFirst = Item.PrevInv();
+			if (!PlayerEx(Player).InvFirst)
+			{
+				PlayerEx(Player).InvFirst = Item.NextInv();
+			}
+		}
+	}
+	::RemoveInventory(Item);
+	if (bIsPlayer && Item.bInvBar)
+	{
+		PlayerEx(Player).AdjustInvFirst();
+	}
+}
+
+//==========================================================================
+//
+//  UseInventory
+//
+//==========================================================================
+
+bool UseInventory(Inventory Item)
+{
+	//	Can't use anything while totally frozen
+	if (PlayerEx(Player).bTotallyFrozen)
+	{
+		return false;
+	}
+	// Found match - try to use
+	if (!::UseInventory(Item))
+	{
+		if (!PuzzleItem(Item))
+		{
+			// Unable to use artifact, advance pointer
+			PlayerEx(Player).PlayerNextArtifact();
+		}
+		return false;
+	}
+	PlaySound(Item.UseSound, CHAN_ITEM);
+	PlayerEx(Player).ArtifactFlash = 4;
+	return true;
+}
+
 defaultproperties
 {
+	Health = 100;
+	Radius = 16.0;
+	Height = 56.0;
+	PainChance = 1.0;
+	Speed = 1.0;
+	ReactionCount = 0;
+	bSolid = true;
+	bShootable = true;
+	bDropOff = true;
+	bPickUp = true;
+	bNoDeathmatch = true;
+	bFriendly = true;
+	bSlide = true;
+	bPassMobj = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bWindThrust = true;
+	bTelestomp = true;
+	bNoBlockMonst = true;
 }

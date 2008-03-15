@@ -90,7 +90,6 @@ BurnGone:
 defaultproperties
 {
 	Health = 100;
-	GibsHealth = -50;
 	Radius = 16.0;
 	Height = 64.0;
 	PainChance = 1.0;
@@ -99,7 +98,6 @@ defaultproperties
 	HexenArmor[2] = 15.0;
 	HexenArmor[3] = 10.0;
 	HexenArmor[4] = 25.0;
-	bPickUp = true;
 	PainSound = 'PlayerMagePain';
 	SoundClass = 'mage';
 

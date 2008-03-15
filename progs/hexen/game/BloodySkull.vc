@@ -68,4 +68,5 @@ defaultproperties
 	bPassMobj = false;
 	bCannotPush = true;
 	bBounceSky = true;
+	bPickUp = false;
 }

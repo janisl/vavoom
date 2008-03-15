@@ -130,15 +130,9 @@ BurnGone:
 defaultproperties
 {
 	Health = 100;
-	GibsHealth = -50;
-	ReactionCount = 0;
 	Radius = 16.0;
 	Height = 56.0;
 	PainChance = 1.0;
-	bPickUp = true;
-	bWindThrust = true;
-	bSlide = true;
-	bTelestomp = true;
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = GoldWandAmmo; DropItemList[0].Amount = 50;

@@ -57,6 +57,7 @@ defaultproperties
 	Radius = 4.0;
 	Height = 4.0;
 	Gravity = 0.125;
+	ReactionCount = 8;
 	bSolid = false;
 	bShootable = false;
 	bNoBlockmap = true;
@@ -64,4 +65,8 @@ defaultproperties
 	bCannotPush = true;
 	bFloorClip = false;
 	bBounceSky = true;
+	bPickUp = false;
+	bSlide = false;
+	bWindThrust = false;
+	bTelestomp = false;
 }

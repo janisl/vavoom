@@ -63,6 +63,7 @@ defaultproperties
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';
+	bPickUp = false;
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = Snout; DropItemList[0].Amount = 1;
