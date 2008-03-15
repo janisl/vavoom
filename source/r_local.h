@@ -410,6 +410,7 @@ extern VCvarI			old_aspect;
 
 extern VTextureTranslation**		TranslationTables;
 extern int							NumTranslationTables;
+extern VTextureTranslation			IceTranslation;
 extern TArray<VTextureTranslation*>	DecorateTranslations;
 
 #endif

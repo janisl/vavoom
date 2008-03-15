@@ -157,4 +157,16 @@ extern vuint8			gammatable[5][256];
 
 extern float			PixelAspect;
 
+//==========================================================================
+//
+//	R_LookupRBG
+//
+//==========================================================================
+
+inline int R_LookupRBG(vuint8 r, vuint8 g, vuint8 b)
+{
+	return r_rgbtable[((r << 7) & 0x7c00) + ((g << 2) & 0x3e0) +
+		((b >> 3) & 0x1f)];
+}
+
 #endif

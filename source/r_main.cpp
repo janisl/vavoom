@@ -1071,11 +1071,18 @@ VTextureTranslation* R_GetCachedTranslation(int TransNum, VLevel* Level)
 	switch (Type)
 	{
 	case TRANSL_Standard:
-		if (Index < 0 || Index >= NumTranslationTables - 1)
+		if (Index == 7)
 		{
-			return NULL;
+			Tr = &IceTranslation;
 		}
-		Tr = TranslationTables[Index + 1];
+		else
+		{
+			if (Index < 0 || Index >= NumTranslationTables - 1)
+			{
+				return NULL;
+			}
+			Tr = TranslationTables[Index + 1];
+		}
 		break;
 
 	case TRANSL_Player:

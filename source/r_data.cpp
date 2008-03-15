@@ -76,6 +76,7 @@ spritedef_t				sprites[MAX_SPRITE_MODELS];
 
 VTextureTranslation**			TranslationTables;
 int								NumTranslationTables;
+VTextureTranslation				IceTranslation;
 TArray<VTextureTranslation*>	DecorateTranslations;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -211,6 +212,21 @@ static void InitTranslationTables()
 		}
 	}
 	delete Strm;
+
+	//	Calculate ice translation.
+	IceTranslation.Table[0] = 0;
+	IceTranslation.Palette[0] = r_palette[0];
+	for (int i = 1; i < 256; i++)
+	{
+		int r = int(r_palette[i].r * 0.5 + 64 * 0.5);
+		int g = int(r_palette[i].g * 0.5 + 64 * 0.5);
+		int b = int(r_palette[i].b * 0.5 + 255 * 0.5);
+		IceTranslation.Palette[i].r = r;
+		IceTranslation.Palette[i].g = g;
+		IceTranslation.Palette[i].b = b;
+		IceTranslation.Palette[i].a = 255;
+		IceTranslation.Table[i] = R_LookupRBG(r, g, b);
+	}
 	unguard;
 }
 
@@ -863,9 +879,7 @@ int R_ParseDecorateTranslation(VScriptParser* sc)
 	//	Check for special ice translation
 	if (sc->Check("Ice"))
 	{
-		//FIXME
-		GCon->Logf("Translation Ice is not yet supported");
-		return 0;
+		return (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 7;
 	}
 
 	VTextureTranslation* Tr = new VTextureTranslation;
