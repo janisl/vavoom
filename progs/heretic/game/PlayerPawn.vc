@@ -28,25 +28,6 @@ class PlayerPawn : PlayerPawnBase
 
 //==========================================================================
 //
-//  AutoUseChaosDevice
-//
-//==========================================================================
-
-final bool AutoUseChaosDevice()
-{
-	Inventory Item = FindInventory(ArtiTeleport);
-	if (Item)
-	{
-		UseInventory(Item);
-		Health = (Health + 1) / 2;
-		Player.Health = Health;
-		return true;
-	}
-	return false;
-}
-
-//==========================================================================
-//
 //	A_AddPlayerCorpse
 //
 //==========================================================================
@@ -67,5 +48,4 @@ final void A_AddPlayerCorpse()
 
 defaultproperties
 {
-	bOnmobjCopyVel = true;
 }

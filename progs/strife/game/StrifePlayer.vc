@@ -90,6 +90,8 @@ defaultproperties
 	PainChance = 1.0;
 	MaxStepHeight = 16.0;
 	RunHealth = 25;
+	TranslStart = 128;
+	TranslEnd = 143;
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = PunchDagger; DropItemList[0].Amount = 1;

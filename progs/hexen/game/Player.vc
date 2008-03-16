@@ -466,16 +466,8 @@ void SpawnPlayer(mthing_t * mthing)
 	}
 
 	// Set translation table data
-	if (PClass == HexenDefs::PCLASS_FIGHTER)
-	{
-		TranslStart = 246;
-		TranslEnd = 254;
-	}
-	else
-	{
-		TranslStart = 146;
-		TranslEnd = 163;
-	}
+	TranslStart = pp.TranslStart;
+	TranslEnd = pp.TranslEnd;
 	pp.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
 		GetPlayerNum();
 	if (bIsBot)

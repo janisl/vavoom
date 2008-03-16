@@ -65,6 +65,8 @@ defaultproperties
 	ForwardMove2 = 0.97;
 	SideMove1 = 0.97;
 	SideMove2 = 0.97;
+	RDFactor = 0.25;
+	CrunchSound = '*splat';
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';

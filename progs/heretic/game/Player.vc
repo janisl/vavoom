@@ -275,8 +275,8 @@ void SpawnPlayer(mthing_t * mthing)
 	A.Origin.z += mthing->height;
 	A.LinkToWorld();
 	// set colour translations for player sprites
-	TranslStart = 225;
-	TranslEnd = 240;
+	TranslStart = A.TranslStart;
+	TranslEnd = A.TranslEnd;
 	A.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
 		GetPlayerNum();
 

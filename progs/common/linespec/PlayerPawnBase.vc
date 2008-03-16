@@ -26,14 +26,24 @@
 class PlayerPawnBase : Actor
 	abstract;
 
+//	Default view height.
 float			ViewHeight;
 
+//	Player is unable to run if health is lower than this.
 int				RunHealth;
 
+//	Movement speed modifiers.
 float			ForwardMove1;
 float			ForwardMove2;
 float			SideMove1;
 float			SideMove2;
+
+//	Colour translation range.
+int				TranslStart;
+int				TranslEnd;
+
+//	Values for Hexen armor.
+float			HexenArmor[5];
 
 //==========================================================================
 //

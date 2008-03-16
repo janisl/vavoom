@@ -333,8 +333,8 @@ void SpawnPlayer(mthing_t * mthing)
 	PP.LinkToWorld();
 
 	// set colour translations for player sprites
-	TranslStart = 112;
-	TranslEnd = 127;
+	TranslStart = PP.TranslStart;
+	TranslEnd = PP.TranslEnd;
 	PP.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
 		GetPlayerNum();
 

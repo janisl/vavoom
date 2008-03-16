@@ -26,8 +26,6 @@
 class PlayerPawn : PlayerPawnBase
 	abstract;
 
-float					HexenArmor[5];
-
 //===========================================================================
 //
 //	PlayerIsMorphed
@@ -104,7 +102,4 @@ final void A_AddPlayerCorpse()
 
 defaultproperties
 {
-	RDFactor = 0.25;
-	SoundClass = 'fighter';
-	CrunchSound = '*splat';
 }

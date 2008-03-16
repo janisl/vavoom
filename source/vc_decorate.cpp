@@ -345,12 +345,12 @@ static void SetClassFieldByte(VClass* Class, const char* FieldName,
 //==========================================================================
 
 static void SetClassFieldFloat(VClass* Class, const char* FieldName,
-	float Value)
+	float Value, int Idx = 0)
 {
 	guard(SetClassFieldFloat);
 	VField* F = Class->FindFieldChecked(FieldName);
 	float* Ptr = (float*)(Class->Defaults + F->Ofs);
-	*Ptr = Value;
+	Ptr[Idx] = Value;
 	unguard;
 }
 
@@ -3609,10 +3609,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.ColorRange"))
 			{
-				//FIXME
 				sc->ExpectNumber();
+				SetClassFieldInt(Class, "TranslStart", sc->Number);
+				sc->Check(",");
 				sc->ExpectNumber();
-				GCon->Logf("Property Player.ColorRange in %s is not yet supported", Class->GetName());
+				SetClassFieldInt(Class, "TranslEnd", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Player.CrouchSprite"))
@@ -3661,17 +3662,20 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.HexenArmor"))
 			{
-				//FIXME
 				sc->ExpectFloat();
+				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 0);
 				sc->Expect(",");
 				sc->ExpectFloat();
+				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 1);
 				sc->Expect(",");
 				sc->ExpectFloat();
+				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 2);
 				sc->Expect(",");
 				sc->ExpectFloat();
+				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 3);
 				sc->Expect(",");
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.HexenArmor in %s is not yet supported", Class->GetName());
+				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 4);
 				continue;
 			}
 			if (!Prop.ICmp("Player.InvulnerabilityMode"))

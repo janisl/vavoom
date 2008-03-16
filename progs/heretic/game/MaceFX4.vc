@@ -45,7 +45,7 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 		{
 			// Can't hurt invulnerable players
 		}
-		else if (PlayerPawn(victim).AutoUseChaosDevice())
+		else if (AutoUseChaosDevice(victim))
 		{
 			// Player was saved using chaos device
 			return -1;
@@ -58,6 +58,24 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 	return ::DoSpecialDamage(victim, source, damage);
 }
 
+//==========================================================================
+//
+//  AutoUseChaosDevice
+//
+//==========================================================================
+
+final bool AutoUseChaosDevice(EntityEx Victim)
+{
+	Inventory Item = Victim.FindInventory(ArtiTeleport);
+	if (Item)
+	{
+		Victim.UseInventory(Item);
+		Victim.Health = (Victim.Health + 1) / 2;
+		Victim.Player.Health = Victim.Health;
+		return true;
+	}
+	return false;
+}
 //===========================================================================
 //
 //  A_DeathBallImpact

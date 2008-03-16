@@ -98,11 +98,15 @@ defaultproperties
 	ForwardMove2 = 0.9;
 	SideMove1 = 0.9;
 	SideMove2 = 0.9;
+	TranslStart = 146;
+	TranslEnd = 163;
 	HexenArmor[0] = 5.0;
 	HexenArmor[1] = 5.0;
 	HexenArmor[2] = 15.0;
 	HexenArmor[3] = 10.0;
 	HexenArmor[4] = 25.0;
+	RDFactor = 0.25;
+	CrunchSound = '*splat';
 	PainSound = 'PlayerMagePain';
 	SoundClass = 'mage';
 

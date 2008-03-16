@@ -133,6 +133,9 @@ defaultproperties
 	Radius = 16.0;
 	Height = 56.0;
 	PainChance = 1.0;
+	TranslStart = 225;
+	TranslEnd = 240;
+	bOnmobjCopyVel = true;
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = GoldWandAmmo; DropItemList[0].Amount = 50;

@@ -64,6 +64,8 @@ defaultproperties
 	Health = 100;
 	Radius = 16.0;
 	Height = 56.0;
+	TranslStart = 112;
+	TranslEnd = 127;
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = Clip; DropItemList[0].Amount = 50;

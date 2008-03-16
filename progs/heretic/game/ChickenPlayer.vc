@@ -66,6 +66,7 @@ defaultproperties
 	SideMove1 = 1.2;
 	SideMove2 = 1.2;
 	bPickUp = false;
+	bOnmobjCopyVel = true;
 	PainSound = 'chicken/pain';
 	DeathSound = 'chicken/death';
 }
