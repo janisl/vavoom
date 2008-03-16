@@ -65,6 +65,7 @@ defaultproperties
 	ForwardMove2 = 0.97;
 	SideMove1 = 0.97;
 	SideMove2 = 0.97;
+	JumpVelZ = 6.5 * 35.0;
 	RDFactor = 0.25;
 	CrunchSound = '*splat';
 	PainSound = 'PigPain';

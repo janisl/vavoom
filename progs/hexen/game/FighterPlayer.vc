@@ -138,6 +138,7 @@ defaultproperties
 	HexenArmor[2] = 20.0;
 	HexenArmor[3] = 15.0;
 	HexenArmor[4] = 5.0;
+	JumpVelZ = 9.5 * 35.0;
 	RDFactor = 0.25;
 	CrunchSound = '*splat';
 	PainSound = 'PlayerFighterPain';

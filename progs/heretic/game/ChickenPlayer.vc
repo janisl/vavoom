@@ -65,6 +65,7 @@ defaultproperties
 	ForwardMove2 = 1.2;
 	SideMove1 = 1.2;
 	SideMove2 = 1.2;
+	JumpVelZ = 6.5 * 35.0;
 	bPickUp = false;
 	bOnmobjCopyVel = true;
 	PainSound = 'chicken/pain';

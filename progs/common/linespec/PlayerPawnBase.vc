@@ -45,6 +45,9 @@ int				TranslEnd;
 //	Values for Hexen armor.
 float			HexenArmor[5];
 
+//	Jump velocity.
+float			JumpVelZ;
+
 //==========================================================================
 //
 //	ShouldDropItems
@@ -202,6 +205,7 @@ defaultproperties
 	ForwardMove2 = 1.0;
 	SideMove1 = 1.0;
 	SideMove2 = 1.0;
+	JumpVelZ = 8.0 * 35.0;
 	bSolid = true;
 	bShootable = true;
 	bDropOff = true;

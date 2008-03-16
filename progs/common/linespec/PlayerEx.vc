@@ -301,14 +301,7 @@ final void MovePlayer(float deltaTime)
 
 	if ((Buttons & BT_JUMP) && onground && !JumpTime)
 	{
-		if (EntityEx(MO).PlayerIsMorphed())
-		{
-			MO.Velocity.z = 6.5 * 35.0;
-		}
-		else
-		{
-			MO.Velocity.z = 9.5 * 35.0;
-		}
+		MO.Velocity.z = PlayerPawnBase(MO).JumpVelZ;
 		EntityEx(MO).bOnMobj = false;
 		JumpTime = 0.5;
 	}

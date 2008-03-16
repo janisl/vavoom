@@ -3687,9 +3687,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.JumpZ"))
 			{
-				//FIXME
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.JumpZ in %s is not yet supported", Class->GetName());
+				SetClassFieldFloat(Class, "JumpVelZ", sc->Float * 35.0);
 				continue;
 			}
 			if (!Prop.ICmp("Player.MaxHealth"))
@@ -3701,9 +3700,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.RunHealth"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Player.RunHealth in %s is not yet supported", Class->GetName());
+				SetClassFieldInt(Class, "RunHealth", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Player.ScoreIcon"))
