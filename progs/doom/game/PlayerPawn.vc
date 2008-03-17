@@ -23,7 +23,8 @@
 //**
 //**************************************************************************
 
-class PlayerPawn : PlayerPawnBase;
+class PlayerPawn : PlayerPawnBase
+	abstract;
 
 defaultproperties
 {

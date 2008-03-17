@@ -47,14 +47,14 @@ Death:
 	CLER LL 6
 	CLER M 6 A_NoBlocking
 	CLER NOP 6
-	CLER Q -1 A_AddPlayerCorpse
+	CLER Q -1
 	Stop
 XDeath:
 	CLER R 5 A_PlayerScream
 	CLER S 5
 	CLER T 5 A_NoBlocking
 	CLER UVWXYZ 5
-	CLER "[" -1 A_AddPlayerCorpse
+	CLER "[" -1
 	Stop
 Ice:
 	CLER "\\" 5 A_FreezeDeath

@@ -219,14 +219,10 @@ bool CheckSpot(mthing_t * mthing)
 		return false;
 	}
 
-	// flush an old corpse if needed 
-	if (StrifeLevelInfo(Level).bodyqueslot >= StrifeLevelInfo::BODYQUESIZE)
-		StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE].Destroy();
-	StrifeLevelInfo(Level).bodyque[StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE] = Actor(MO);
-	MO.Translation = Level.XLevel.SetBodyQueueTrans(
-		StrifeLevelInfo(Level).bodyqueslot % StrifeLevelInfo::BODYQUESIZE,
-		MO.Translation);
-	StrifeLevelInfo(Level).bodyqueslot++;
+	if (!IceChunkHead(MO))
+	{
+		LineSpecialLevelInfo(Level).AddPlayerCorpse(EntityEx(MO));
+	}
 
 	// spawn a teleport fog 
 	sec = Level.XLevel.PointInSector(vector(x, y, 0.0));

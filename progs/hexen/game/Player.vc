@@ -315,6 +315,11 @@ bool CheckSpot(mthing_t * mthing)
 	}
 	MO.bPassMobj = true;
 
+	if (!IceChunkHead(MO) && !BloodySkull(MO))
+	{
+		LineSpecialLevelInfo(Level).AddPlayerCorpse(EntityEx(MO));
+	}
+
 	// spawn a teleport fog 
 	sec = Level.XLevel.PointInSector(vector(x, y, 0.0));
 	an = itof(45 * (mthing->angle / 45));

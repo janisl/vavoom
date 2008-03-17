@@ -279,14 +279,10 @@ bool CheckSpot(mthing_t * mthing)
 		return false;
 	}
 
-	// flush an old corpse if needed 
-	if (DoomLevelInfo(Level).bodyqueslot >= DoomLevelInfo::BODYQUESIZE)
-		DoomLevelInfo(Level).bodyque[DoomLevelInfo(Level).bodyqueslot % DoomLevelInfo::BODYQUESIZE].Destroy();
-	DoomLevelInfo(Level).bodyque[DoomLevelInfo(Level).bodyqueslot % DoomLevelInfo::BODYQUESIZE] = Actor(MO);
-	MO.Translation = Level.XLevel.SetBodyQueueTrans(
-		DoomLevelInfo(Level).bodyqueslot % DoomLevelInfo::BODYQUESIZE,
-		MO.Translation);
-	DoomLevelInfo(Level).bodyqueslot++;
+	if (!IceChunkHead(MO))
+	{
+		LineSpecialLevelInfo(Level).AddPlayerCorpse(EntityEx(MO));
+	}
 
 	// spawn a teleport fog 
 	sec = Level.XLevel.PointInSector(vector(x, y, 0.0));

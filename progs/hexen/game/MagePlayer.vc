@@ -48,14 +48,14 @@ Death:
 	MAGE JK 6
 	MAGE L 6 A_NoBlocking
 	MAGE M 6
-	MAGE N -1 A_AddPlayerCorpse
+	MAGE N -1
 	Stop
 XDeath:
 	MAGE O 5 A_PlayerScream
 	MAGE P 5
 	MAGE R 5 A_NoBlocking
 	MAGE STUVW 5
-	MAGE X -1 A_AddPlayerCorpse
+	MAGE X -1
 	Stop
 Ice:
 	MAGE Y 5 A_FreezeDeath
