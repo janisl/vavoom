@@ -33,7 +33,7 @@ class Crossbow : HereticWeapon
 //
 //===========================================================================
 
-final void A_FireCrossbowPL1()
+final void A_FireCrossbowPL1() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -55,7 +55,7 @@ final void A_FireCrossbowPL1()
 //
 //===========================================================================
 
-final void A_FireCrossbowPL2()
+final void A_FireCrossbowPL2() self(Actor)
 {
 	if (!bIsPlayer)
 	{

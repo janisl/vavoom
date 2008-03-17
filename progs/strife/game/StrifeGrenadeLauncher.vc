@@ -32,7 +32,7 @@ class StrifeGrenadeLauncher : StrifeWeapon
 //
 //==========================================================================
 
-final void A_FireGrenade()
+final void A_FireGrenade() self(Actor)
 {
 	class<Projectile> grenadetype;
 	EntityEx grenade;

@@ -34,7 +34,7 @@ const float			MAULERRANGE		= (33.0 * 64.0);
 //
 //==========================================================================
 
-final void A_FireBlaster1()
+final void A_FireBlaster1() self(Actor)
 {
 	int i;
 	int damage;
@@ -60,7 +60,7 @@ final void A_FireBlaster1()
 		rot.roll = 0.0;
 		dir = RotateDirectionVector(aimDir, rot);
 		damage = 5 * (P_Random() % 3 + 1);
-		LineAttack(dir, MAULERRANGE, damage, MaulerPuff,,,
+		LineAttack(dir, Mauler::MAULERRANGE, damage, MaulerPuff,,,
 			'Disintegrate');
 	}
 }
@@ -71,7 +71,7 @@ final void A_FireBlaster1()
 //
 //==========================================================================
 
-final void A_FireBlasterSound()
+final void A_FireBlasterSound() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -90,7 +90,7 @@ final void A_FireBlasterSound()
 //
 //==========================================================================
 
-final void A_FireBlaster2()
+final void A_FireBlaster2() self(Actor)
 {
 	if (!bIsPlayer)
 	{

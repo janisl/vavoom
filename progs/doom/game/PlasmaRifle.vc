@@ -34,7 +34,7 @@ class PlasmaRifle : DoomWeapon
 //
 //===========================================================================
 
-final void A_FirePlasma()
+final void A_FirePlasma() self(Actor)
 {
 	if (!bIsPlayer)
 	{

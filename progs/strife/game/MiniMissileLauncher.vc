@@ -32,7 +32,7 @@ class MiniMissileLauncher : StrifeWeapon
 //
 //==========================================================================
 
-final void A_FireMissile()
+final void A_FireMissile() self(Actor)
 {
 	float savedangle;
 

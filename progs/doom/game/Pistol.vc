@@ -31,7 +31,7 @@ class Pistol : DoomWeapon;
 //
 //===========================================================================
 
-final void A_FirePistol()
+final void A_FirePistol() self(Actor)
 {
 	TVec dir;
 	bool Accurate;
@@ -59,7 +59,7 @@ final void A_FirePistol()
 	PlaySound('weapons/pistol', CHAN_WEAPON);
 
 	Aim(dir, 16.0 * 64.0);
-	GunShot(self, Accurate, dir);
+	DoomWeapon(PlayerEx(Player).ReadyWeapon).GunShot(self, Accurate, dir);
 }
 
 states

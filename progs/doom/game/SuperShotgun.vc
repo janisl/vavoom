@@ -34,7 +34,7 @@ class SuperShotgun : DoomWeapon
 //
 //===========================================================================
 
-final void A_FireShotgun2()
+final void A_FireShotgun2() self(Actor)
 {
 	int i;
 	int damage;
@@ -79,7 +79,7 @@ final void A_FireShotgun2()
 //
 //===========================================================================
 
-final void A_OpenShotgun2()
+final void A_OpenShotgun2() self(Actor)
 {
 	PlaySound('weapons/sshoto', CHAN_WEAPON);
 }
@@ -90,7 +90,7 @@ final void A_OpenShotgun2()
 //
 //===========================================================================
 
-final void A_LoadShotgun2()
+final void A_LoadShotgun2() self(Actor)
 {
 	PlaySound('weapons/sshotl', CHAN_WEAPON);
 }

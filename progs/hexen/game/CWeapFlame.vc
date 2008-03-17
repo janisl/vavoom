@@ -32,7 +32,7 @@ class CWeapFlame : ClericWeapon
 //
 //============================================================================
 
-final void A_CFlameAttack()
+final void A_CFlameAttack() self(Actor)
 {
 	EntityEx mo;
 

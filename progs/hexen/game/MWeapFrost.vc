@@ -33,7 +33,7 @@ class MWeapFrost : MageWeapon
 //
 //==========================================================================
 
-final void A_FireConePL1()
+final void A_FireConePL1() self(Actor)
 {
 	TAVec			ang;
 	int				damage;

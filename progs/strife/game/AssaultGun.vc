@@ -32,7 +32,7 @@ class AssaultGun : StrifeWeapon
 //
 //==========================================================================
 
-final void A_FireRiffle()
+final void A_FireRiffle() self(Actor)
 {
 	TVec dir;
 	TAVec angles;

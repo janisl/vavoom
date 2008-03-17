@@ -31,7 +31,7 @@ class MWeapWand : MageWeapon;
 //
 //==========================================================================
 
-final void A_MWandAttack()
+final void A_MWandAttack() self(Actor)
 {
 	if (!bIsPlayer)
 	{

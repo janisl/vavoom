@@ -84,6 +84,7 @@ public:
 	VExpression*			ReturnTypeExpr;
 	VMethodParam			Params[MAX_PARAMS];
 	VStatement*				Statement;
+	VName					SelfTypeName;
 
 	//	Run-time fields
 	vuint32					Profile1;

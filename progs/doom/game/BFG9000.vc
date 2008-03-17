@@ -34,7 +34,7 @@ class BFG9000 : DoomWeapon
 //
 //===========================================================================
 
-final void A_BFGsound()
+final void A_BFGsound() self(Actor)
 {
 	PlaySound('weapons/bfgf', CHAN_WEAPON);
 }
@@ -45,7 +45,7 @@ final void A_BFGsound()
 //
 //===========================================================================
 
-final void A_FireBFG()
+final void A_FireBFG() self(Actor)
 {
 	if (!bIsPlayer)
 	{

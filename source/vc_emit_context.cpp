@@ -89,6 +89,16 @@ VEmitContext::VEmitContext(VMemberBase* Member)
 		CurrentFunc->Instructions.Clear();
 		CurrentFunc->Instructions.Resize(1024);
 		FuncRetType = CurrentFunc->ReturnType;
+		if (CurrentFunc->SelfTypeName != NAME_None)
+		{
+			SelfClass = VMemberBase::StaticFindClass(
+				CurrentFunc->SelfTypeName);
+			if (!SelfClass)
+			{
+				ParseError(CurrentFunc->Loc, "No such class %s",
+					*CurrentFunc->SelfTypeName);
+			}
+		}
 	}
 }
 

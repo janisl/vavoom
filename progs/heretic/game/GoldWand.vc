@@ -31,7 +31,7 @@ class GoldWand : HereticWeapon;
 //
 //===========================================================================
 
-final void A_FireGoldWandPL1()
+final void A_FireGoldWandPL1() self(Actor)
 {
 	int damage;
 	TVec dir;
@@ -59,7 +59,7 @@ final void A_FireGoldWandPL1()
 //
 //===========================================================================
 
-final void A_FireGoldWandPL2()
+final void A_FireGoldWandPL2() self(Actor)
 {
 	int i;
 	int damage;

@@ -32,7 +32,7 @@ class FlameThrower : StrifeWeapon
 //
 //==========================================================================
 
-final void A_FireFlamethrower()
+final void A_FireFlamethrower() self(Actor)
 {
 	EntityEx A;
 

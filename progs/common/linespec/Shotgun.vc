@@ -34,7 +34,7 @@ class Shotgun : DoomWeapon
 //
 //===========================================================================
 
-final void A_FireShotgun()
+final void A_FireShotgun() self(Actor)
 {
 	int i;
 	TVec dir;
@@ -61,7 +61,7 @@ final void A_FireShotgun()
 	Aim(dir, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(self, false, dir);
+		DoomWeapon(Wpn).GunShot(self, false, dir);
 	}
 }
 

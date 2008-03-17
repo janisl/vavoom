@@ -36,7 +36,7 @@ const float HammerRange = Actor::MELEERANGE + Actor::MELEERANGE / 2.0;
 //
 //============================================================================
 
-final void A_FHammerAttack()
+final void A_FHammerAttack() self(Actor)
 {
 	int			damage;
 	float		power;
@@ -52,11 +52,11 @@ final void A_FHammerAttack()
 
 	damage = 60 + (P_Random() & 63);
 	power = 10.0;
-	AimTarget = AimEx(vforward, HammerRange, 45.0 / 32.0, 16, HammerRange);
+	AimTarget = AimEx(vforward, FWeapHammer::HammerRange, 45.0 / 32.0, 16, FWeapHammer::HammerRange);
 	if (AimTarget)
 	{
 		VectorAngles(&vforward, &angles);
-		if (LineAttack(vforward, HammerRange, damage, HammerPuff))
+		if (LineAttack(vforward, FWeapHammer::HammerRange, damage, HammerPuff))
 		{
 			PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -71,7 +71,7 @@ final void A_FHammerAttack()
 	{
 		// didn't find any targets in meleerange, so set to throw out a hammer
 		LineSpecialLevelInfo(Level).bPuffSpawned = false;
-		if (LineAttack(vforward, HammerRange, damage, HammerPuff))
+		if (LineAttack(vforward, FWeapHammer::HammerRange, damage, HammerPuff))
 		{
 			PlaySound('FighterHammerMiss', CHAN_WEAPON);
 		}
@@ -99,7 +99,7 @@ final void A_FHammerAttack()
 //
 //============================================================================
 
-final void A_FHammerThrow()
+final void A_FHammerThrow() self(Actor)
 {
 	if (!bIsPlayer)
 	{

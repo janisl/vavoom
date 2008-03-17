@@ -47,7 +47,7 @@ final void A_LightningReady()
 //
 //==========================================================================
 
-final void A_MLightningAttack()
+final void A_MLightningAttack() self(Actor)
 {
 	LightningFloor fmo;
 	LightningCeiling cmo;

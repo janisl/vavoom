@@ -33,7 +33,7 @@ const float PUNCHRANGE		= 80.0;
 //
 //==========================================================================
 
-final void A_DaggerAttack()
+final void A_DaggerAttack() self(Actor)
 {
 	int			power;
 	int			damage;
@@ -53,8 +53,8 @@ final void A_DaggerAttack()
 	angles = Angles;
 	angles.yaw = AngleMod360(angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0);
-	AimTarget = AimLineAttack(dir, angles, PUNCHRANGE);
-	LineAttack(dir, PUNCHRANGE, damage, StrifeSpark);
+	AimTarget = AimLineAttack(dir, angles, PunchDagger::PUNCHRANGE);
+	LineAttack(dir, PunchDagger::PUNCHRANGE, damage, StrifeSpark);
 
 	// turn to face target
 	if (AimTarget)

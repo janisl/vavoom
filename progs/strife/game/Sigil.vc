@@ -150,7 +150,7 @@ void GiveSigilPiece(EntityEx Receiver)
 //
 //==========================================================================
 
-final void A_SelectSigilReady()
+final void A_SelectSigilReady() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -184,7 +184,7 @@ final void A_SelectSigilReady()
 //
 //==========================================================================
 
-final void A_SelectSigilDown()
+final void A_SelectSigilDown() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -224,7 +224,7 @@ final void A_SelectSigilDown()
 //
 //==========================================================================
 
-final void A_SelectSigilUp()
+final void A_SelectSigilUp() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -258,7 +258,7 @@ final void A_SelectSigilUp()
 //
 //==========================================================================
 
-final void A_SelectSigilAttack()
+final void A_SelectSigilAttack() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -292,7 +292,7 @@ final void A_SelectSigilAttack()
 //
 //==========================================================================
 
-final void A_SigilCharge()
+final void A_SigilCharge() self(Actor)
 {
 	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 	if (bIsPlayer)
@@ -307,7 +307,7 @@ final void A_SigilCharge()
 //
 //==========================================================================
 
-final void A_FireSigil1()
+final void A_FireSigil1() self(Actor)
 {
 	EntityEx	sigil;
 	EntityEx	AimTarget;
@@ -317,8 +317,9 @@ final void A_FireSigil1()
 	{
 		return;
 	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Damage(none, self, NumPieces * 4);
+	Damage(none, self, Sigil(Wpn).NumPieces * 4);
 	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 
 	sigil = Spawn(SpectralLightningSpot, Origin + vector(0.0, 0.0, 32.0));
@@ -349,14 +350,15 @@ final void A_FireSigil1()
 //
 //==========================================================================
 
-final void A_FireSigil2()
+final void A_FireSigil2() self(Actor)
 {
 	if (!bIsPlayer)
 	{
 		return;
 	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Damage(none, self, NumPieces * 4);
+	Damage(none, self, Sigil(Wpn).NumPieces * 4);
 	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 
 	SpawnPlayerMissile(SpectralLightningH1);
@@ -368,7 +370,7 @@ final void A_FireSigil2()
 //
 //==========================================================================
 
-final void A_FireSigil3()
+final void A_FireSigil3() self(Actor)
 {
 	float		angle;
 	EntityEx	sigilspread;
@@ -378,8 +380,9 @@ final void A_FireSigil3()
 	{
 		return;
 	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Damage(none, self, NumPieces * 4);
+	Damage(none, self, Sigil(Wpn).NumPieces * 4);
 	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 
 	for (i = 0; i < 20; i++)
@@ -398,14 +401,15 @@ final void A_FireSigil3()
 //
 //==========================================================================
 
-final void A_FireSigil4()
+final void A_FireSigil4() self(Actor)
 {
 	if (!bIsPlayer)
 	{
 		return;
 	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Damage(none, self, NumPieces * 4);
+	Damage(none, self, Sigil(Wpn).NumPieces * 4);
 	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 
 	SpawnPlayerMissile(SpectralLightningBigV1);
@@ -417,14 +421,15 @@ final void A_FireSigil4()
 //
 //==========================================================================
 
-final void A_FireSigil5()
+final void A_FireSigil5() self(Actor)
 {
 	if (!bIsPlayer)
 	{
 		return;
 	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Damage(none, self, NumPieces * 4);
+	Damage(none, self, Sigil(Wpn).NumPieces * 4);
 	PlaySound('weapons/sigilcharge', CHAN_WEAPON);
 
 	SpawnPlayerMissile(SpectralLightningBigBall1);
@@ -436,11 +441,11 @@ final void A_FireSigil5()
 //
 //==========================================================================
 
-final void A_SigilFlash()
+final void A_SigilFlash() self(Actor)
 {
 	if (bIsPlayer)
 	{
-		Player.FixedColourmap = INVERSECOLOURMAP;
+		Player.FixedColourmap = Inventory::INVERSECOLOURMAP;
 	}
 }
 
@@ -450,7 +455,7 @@ final void A_SigilFlash()
 //
 //==========================================================================
 
-final void A_ClearSigilFlash()
+final void A_ClearSigilFlash() self(Actor)
 {
 	if (bIsPlayer)
 	{

@@ -31,7 +31,7 @@ class FWeapQuietus : FighterWeapon;
 //
 //============================================================================
 
-final void A_FSwordAttack()
+final void A_FSwordAttack() self(Actor)
 {
 	if (!bIsPlayer)
 	{

@@ -34,7 +34,7 @@ class RocketLauncher : DoomWeapon
 //
 //===========================================================================
 
-final void A_FireMissile()
+final void A_FireMissile() self(Actor)
 {
 	if (!bIsPlayer)
 	{

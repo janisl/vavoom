@@ -59,45 +59,11 @@ bool DoRespawn()
 
 //===========================================================================
 //
-//	A_FireMacePL1B
-//
-//===========================================================================
-
-final void A_FireMacePL1B()
-{
-	Actor ball;
-	float angle;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	if (!Wpn.CheckAmmo(false))
-	{
-		return;
-	}
-	Wpn.DepleteAmmo();
-	ball = Spawn(MaceFX2, Origin + vector(0.0, 0.0, 28.0 - FloorClip));
-	ball.Velocity.z = (2.0 + 173.0 * -tan(Angles.pitch) / 32.0) * 35.0;
-	angle = Angles.yaw;
-	ball.Target = self;
-	ball.Angles.yaw = angle;
-	ball.Origin.z += 173.0 * -tan(Angles.pitch) / 16.0;
-	ball.Velocity.x = Velocity.x / 2.0 + ball.Speed * cos(angle);
-	ball.Velocity.y = Velocity.y / 2.0 + ball.Speed * sin(angle);
-	ball.PlaySound('weapons/maceshoot', CHAN_WEAPON);
-	ball.CheckMissileSpawn();
-}
-
-//===========================================================================
-//
 //  A_FireMacePL1
 //
 //===========================================================================
 
-final void A_FireMacePL1()
+final void A_FireMacePL1() self(Actor)
 {
 	EntityEx	ball;
 
@@ -106,18 +72,30 @@ final void A_FireMacePL1()
 		return;
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	if (P_Random() < 28)
-	{
-		A_FireMacePL1B();
-		return;
-	}
 	if (!Wpn.DepleteAmmo())
 	{
 		return;
 	}
+
+	if (P_Random() < 28)
+	{
+		float angle;
+
+		ball = Spawn(MaceFX2, Origin + vector(0.0, 0.0, 28.0 - FloorClip));
+		ball.Velocity.z = (2.0 + 173.0 * -tan(Angles.pitch) / 32.0) * 35.0;
+		angle = Angles.yaw;
+		ball.Target = self;
+		ball.Angles.yaw = angle;
+		ball.Origin.z += 173.0 * -tan(Angles.pitch) / 16.0;
+		ball.Velocity.x = Velocity.x / 2.0 + ball.Speed * cos(angle);
+		ball.Velocity.y = Velocity.y / 2.0 + ball.Speed * sin(angle);
+		ball.PlaySound('weapons/maceshoot', CHAN_WEAPON);
+		ball.CheckMissileSpawn();
+		return;
+	}
+
 	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
+	Player.ViewStates[ps_weapon].SY = Weapon::WEAPONTOP + Random() * 4.0;
 	ball = SpawnPlayerMissileAngle(MaceFX1,
 		AngleMod360(Angles.yaw + (Random() - 0.5) * 45.0 / 4.0));
 	if (ball)
@@ -132,7 +110,7 @@ final void A_FireMacePL1()
 //
 //===========================================================================
 
-final void A_FireMacePL2()
+final void A_FireMacePL2() self(Actor)
 {
 	EntityEx	A;
 	EntityEx	AimTarget;

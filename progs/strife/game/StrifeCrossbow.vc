@@ -32,7 +32,7 @@ class StrifeCrossbow : StrifeWeapon
 //
 //==========================================================================
 
-final void A_ShowElectricFlash()
+final void A_ShowElectricFlash() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -49,7 +49,7 @@ final void A_ShowElectricFlash()
 //
 //==========================================================================
 
-final void A_FireElectricArrow()
+final void A_FireElectricArrow() self(Actor)
 {
 	float savedangle;
 
@@ -75,7 +75,7 @@ final void A_FireElectricArrow()
 //
 //==========================================================================
 
-final void A_FirePoisonArrow()
+final void A_FirePoisonArrow() self(Actor)
 {
 	float savedangle;
 

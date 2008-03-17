@@ -31,7 +31,7 @@ class Beak : HereticWeapon;
 //
 //===========================================================================
 
-final void A_BeakRaise()
+final void A_BeakRaise() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -39,7 +39,7 @@ final void A_BeakRaise()
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP;
+	Player.ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
 	Player.SetViewState(ps_weapon, Wpn.GetReadyState());
 }
 
@@ -49,7 +49,7 @@ final void A_BeakRaise()
 //
 //===========================================================================
 
-final void A_BeakReady()
+final void A_BeakReady() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -82,7 +82,7 @@ final void A_BeakReady()
 //
 //===========================================================================
 
-final void A_BeakAttackPL1()
+final void A_BeakAttackPL1() self(Actor)
 {
 	int			damage;
 	TVec		dir;
@@ -114,7 +114,7 @@ final void A_BeakAttackPL1()
 //
 //===========================================================================
 
-final void A_BeakAttackPL2()
+final void A_BeakAttackPL2() self(Actor)
 {
 	int			damage;
 	TVec		dir;

@@ -33,7 +33,7 @@ class Blaster : HereticWeapon
 //
 //===========================================================================
 
-final void A_FireBlasterPL1()
+final void A_FireBlasterPL1() self(Actor)
 {
 	int damage;
 	float bulletslope;
@@ -62,7 +62,7 @@ final void A_FireBlasterPL1()
 //
 //===========================================================================
 
-final void A_FireBlasterPL2()
+final void A_FireBlasterPL2() self(Actor)
 {
 	EntityEx	A;
 

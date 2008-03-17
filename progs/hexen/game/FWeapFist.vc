@@ -33,7 +33,7 @@ int PunchCount;
 //
 //==========================================================================
 
-final void A_FPunchAttack()
+final void A_FPunchAttack() self(Actor)
 {
 	int				damage;
 	float			power;

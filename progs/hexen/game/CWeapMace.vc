@@ -31,7 +31,7 @@ class CWeapMace : ClericWeapon;
 //
 //===========================================================================
 
-final void A_CMaceAttack()
+final void A_CMaceAttack() self(Actor)
 {
 	int			damage;
 	TVec		vforward;

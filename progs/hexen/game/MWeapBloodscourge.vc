@@ -48,10 +48,10 @@ final void MStaffSpawn(float angle)
 {
 	EntityEx	mo;
 
-	mo = SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	mo = EntityEx(Owner).SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
-		mo.Target = self;
+		mo.Target = EntityEx(Owner);
 		mo.Tracer = Actor(mo.RoughMonsterSearch(10));
 	}
 }
@@ -62,7 +62,7 @@ final void MStaffSpawn(float angle)
 //
 //==========================================================================
 
-final void A_MStaffAttack()
+final void A_MStaffAttack() self(Actor)
 {
 	float angle;
 
@@ -75,9 +75,9 @@ final void A_MStaffAttack()
 	Wpn.DepleteAmmo();
 	angle = Angles.yaw;
 
-	MStaffSpawn(angle);
-	MStaffSpawn(angle - 5.0);
-	MStaffSpawn(angle + 5.0);
+	MWeapBloodscourge(Wpn).MStaffSpawn(angle);
+	MWeapBloodscourge(Wpn).MStaffSpawn(angle - 5.0);
+	MWeapBloodscourge(Wpn).MStaffSpawn(angle + 5.0);
 	PlaySound('MageStaffFire', CHAN_WEAPON);
 	MWeapBloodscourge(Wpn).CShift = RGBA(255, 187, 4, 76);
 }
@@ -88,7 +88,7 @@ final void A_MStaffAttack()
 //
 //==========================================================================
 
-final void A_MStaffPalette1()
+final void A_MStaffPalette1() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -105,7 +105,7 @@ final void A_MStaffPalette1()
 //
 //==========================================================================
 
-final void A_MStaffPalette2()
+final void A_MStaffPalette2() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -122,7 +122,7 @@ final void A_MStaffPalette2()
 //
 //==========================================================================
 
-final void A_MStaffPalette3()
+final void A_MStaffPalette3() self(Actor)
 {
 	if (!bIsPlayer)
 	{

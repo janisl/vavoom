@@ -35,7 +35,7 @@ int BlinkCount;
 //
 //==========================================================================
 
-final void A_CStaffInitBlink()
+final void A_CStaffInitBlink() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -52,7 +52,7 @@ final void A_CStaffInitBlink()
 //
 //==========================================================================
 
-final void A_CStaffCheckBlink()
+final void A_CStaffCheckBlink() self(Actor)
 {
 	if (!bIsPlayer)
 	{
@@ -73,7 +73,7 @@ final void A_CStaffCheckBlink()
 //
 //==========================================================================
 
-final void A_CStaffCheck()
+final void A_CStaffCheck() self(Actor)
 {
 	int			damage;
 	int			newLife;
@@ -115,7 +115,7 @@ final void A_CStaffCheck()
 //
 //==========================================================================
 
-final void A_CStaffAttack()
+final void A_CStaffAttack() self(Actor)
 {
 	EntityEx	mo;
 

@@ -31,7 +31,7 @@ class Snout : HexenWeapon;
 //
 //==========================================================================
 
-final void A_SnoutAttack()
+final void A_SnoutAttack() self(Actor)
 {
 	int			damage;
 	TAVec		angles;

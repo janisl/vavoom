@@ -35,7 +35,7 @@ int FlameCount;	// for flame thrower duration
 //
 //===========================================================================
 
-final void A_FirePhoenixPL1()
+final void A_FirePhoenixPL1() self(Actor)
 {
 	TVec vforward;
 

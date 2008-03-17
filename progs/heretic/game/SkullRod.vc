@@ -33,7 +33,7 @@ class SkullRod : HereticWeapon
 //
 //===========================================================================
 
-final void A_FireSkullRodPL1()
+final void A_FireSkullRodPL1() self(Actor)
 {
 	EntityEx	A;
 
@@ -65,7 +65,7 @@ final void A_FireSkullRodPL1()
 //
 //===========================================================================
 
-final void A_FireSkullRodPL2()
+final void A_FireSkullRodPL2() self(Actor)
 {
 	HornRodFX2	A;
 	EntityEx	AimTarget;

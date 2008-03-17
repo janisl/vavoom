@@ -1305,6 +1305,22 @@ void VParser::ParseMethodDef(VExpression* RetType, VName MName,
 	}
 	else
 	{
+		//	Self type specifier.
+		if (Lex.Check(TK_Self))
+		{
+			Lex.Expect(TK_LParen);
+			if (Lex.Token != TK_Identifier)
+			{
+				ParseError(Lex.Location, "Class name expected");
+			}
+			else
+			{
+				Func->SelfTypeName = Lex.Name;
+				Lex.NextToken();
+			}
+			Lex.Expect(TK_RParen);
+		}
+
 		Lex.Expect(TK_LBrace, ERR_MISSING_LBRACE);
 		Func->Statement = ParseCompoundStatement();
 	}

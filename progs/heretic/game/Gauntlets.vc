@@ -33,7 +33,7 @@ class Gauntlets : HereticWeapon
 //
 //===========================================================================
 
-final void A_GauntletSound()
+final void A_GauntletSound() self(Actor)
 {
 	// Play the sound for the initial gauntlet attack
 	PlaySound('weapons/gauntletsuse', CHAN_WEAPON);
@@ -45,7 +45,7 @@ final void A_GauntletSound()
 //
 //===========================================================================
 
-final void A_GauntletAttack()
+final void A_GauntletAttack() self(Actor)
 {
 	float			angle;
 	int				damage;
@@ -64,7 +64,7 @@ final void A_GauntletAttack()
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
 	Player.ViewStates[ps_weapon].SX = Random() * 4.0 - 2.0;
-	Player.ViewStates[ps_weapon].SY = WEAPONTOP + Random() * 4.0;
+	Player.ViewStates[ps_weapon].SY = Weapon::WEAPONTOP + Random() * 4.0;
 	angles = Angles;
 	if (Wpn.bPoweredUp)
 	{
