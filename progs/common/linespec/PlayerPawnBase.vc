@@ -201,7 +201,7 @@ final void AdjustSpeed(out float forward, out float side)
 		side *= SideMove2;
 	}
 
-	if (Inventory && !PlayerIsMorphed())
+	if (Inventory && !PlayerEx(Player).MorphTime)
 	{
 		// Adjust for a player with a speed artifact
 		float SpeedFactor = Inventory.GetSpeedFactor();

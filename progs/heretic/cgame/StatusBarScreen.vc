@@ -518,7 +518,7 @@ void SB_DrawIcons()
 	}
 
 	Pw = Powerup(EntityEx(cl.MO).FindInventory(PowerWeaponLevel2));
-	if (Pw && !cl.ChickenTime && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
+	if (Pw && !cl.MorphTime && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
 		DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 3) & 15]);

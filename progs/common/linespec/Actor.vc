@@ -1368,7 +1368,7 @@ final void A_StopSoundEx(string Channel)
 
 final void A_Pain()
 {
-	if (bIsPlayer && !PlayerIsMorphed())
+	if (bIsPlayer && !PlayerEx(Player).MorphTime)
 	{
 		if (Health < 25)
 		{

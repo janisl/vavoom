@@ -57,7 +57,7 @@ bool Use(bool Pickup)
 	}
 	EntityEx(Owner).Teleport(vector(destX, destY, EntityEx::ONFLOORZ),
 		destAngle, true, true, false);
-	if (Player(Owner.Player).ChickenTime)
+	if (Player(Owner.Player).MorphTime)
 	{
 		// Teleporting away will undo any morph effects
 		Player(Owner.Player).UndoPlayerChicken();

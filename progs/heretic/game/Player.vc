@@ -32,19 +32,11 @@ const float
 
 const int MAXHEALTH	= 100;
 
-float ChickenTime;	// player is a chicken if > 0
-
 int ChickenPeck;	// chicken peck countdown
 Actor Rain1;	// active rain maker 1
 Actor Rain2;	// active rain maker 2
 
 BotPlayer Bot;
-
-replication
-{
-	reliable if (!bIsClient)
-		ChickenTime;
-}
 
 //==========================================================================
 //
@@ -296,7 +288,7 @@ void SpawnPlayer(mthing_t * mthing)
 	DamageFlash = 0.0;
 	BonusFlash = 0.0;
 	PoisonCount = 0;
-	ChickenTime = 0.0;
+	MorphTime = 0.0;
 	Rain1 = none;
 	Rain2 = none;
 	ExtraLight = 0;
@@ -433,10 +425,10 @@ void PlayerExitMap(bool clusterChange)
 			Item = Next;
 		}
 	}
-	if (ChickenTime)
+	if (MorphTime)
 	{
 		SetWeapon(Weapon(Actor(MO).Tracer));	// Restore weapon
-		ChickenTime = 0.0;
+		MorphTime = 0.0;
 	}
 	MO.Angles.pitch = 0.0;
 	MO.RenderStyle = Entity::STYLE_Translucent;
@@ -539,7 +531,7 @@ void GotAmmo(Ammo NewAmmo)
 
 int GetMaxHealth()
 {
-	if (ChickenTime)
+	if (MorphTime)
 	{
 		return MAXCHICKENHEALTH;
 	}
@@ -767,7 +759,7 @@ void ChickenPlayerThink()
 		// Handle beak movement
 		UpdateBeak();
 	}
-	if (ftoi(32.0 * ChickenTime) & 15)
+	if (ftoi(32.0 * MorphTime) & 15)
 	{
 		return;
 	}
@@ -810,7 +802,7 @@ bool UndoPlayerChicken()
 		// Didn't fit
 		A.Destroy();
 		MO.LinkToWorld();
-		ChickenTime = 2.0;
+		MorphTime = 2.0;
 		return false;
 	}
 	MO.LinkToWorld();
@@ -829,7 +821,7 @@ bool UndoPlayerChicken()
 	A.bShadow = EntityEx(MO).bShadow;
 	A.bGhost = EntityEx(MO).bGhost;
 	A.ObtainInventory(EntityEx(MO));
-	ChickenTime = 0.0;
+	MorphTime = 0.0;
 	Inventory Pw = EntityEx(MO).FindInventory(PowerWeaponLevel2);
 	if (Pw)
 	{
@@ -1032,7 +1024,7 @@ void PlayerTick(float deltaTime)
 		if (JumpTime <= 0.0)
 			JumpTime = 0.0;
 	}
-	if (ChickenTime)
+	if (MorphTime)
 	{
 		ChickenPlayerThink();
 	}
@@ -1083,18 +1075,18 @@ void PlayerTick(float deltaTime)
 	}
 
 	// Chicken counter
-	if (ChickenTime)
+	if (MorphTime)
 	{
 		if (ChickenPeck)
 		{
 			// Chicken attack counter
 			ChickenPeck -= 3;
 		}
-		ChickenTime -= deltaTime;
-		if (ChickenTime <= 0.0)
+		MorphTime -= deltaTime;
+		if (MorphTime <= 0.0)
 		{
 			// Attempt to undo the chicken
-			ChickenTime = 0.0;
+			MorphTime = 0.0;
 			UndoPlayerChicken();
 		}
 	}
@@ -1178,7 +1170,7 @@ void SetViewPos()
 
 		ViewAngles = MO.Angles;
 
-		if (ChickenTime && ChickenPeck)
+		if (MorphTime && ChickenPeck)
 		{
 			// Set chicken attack view position
 			ViewOrg.x += itof(ChickenPeck) * cos(MO.Angles.yaw);
@@ -1490,7 +1482,7 @@ void Cheat_Gimme()
 	}
 	if (Cmd_CheckParm("health"))
 	{
-		if (ChickenTime)
+		if (MorphTime)
 		{
 			MO.Health = MAXCHICKENHEALTH;
 			Health = MO.Health;
@@ -1608,7 +1600,7 @@ void Cheat_KillAll()
 
 void Cheat_Morph()
 {
-	if (ChickenTime)
+	if (MorphTime)
 	{
 		if (UndoPlayerChicken())
 		{
@@ -1634,7 +1626,7 @@ void Cheat_Morph()
 
 void Cheat_NoWeapons()
 {
-	if (ChickenTime)
+	if (MorphTime)
 	{
 		return;
 	}
@@ -1695,7 +1687,7 @@ void KilledByPlayer(EntityEx Victim)
 		{
 			Frags++;
 			MO.PlaySound('misc/frag', CHAN_ITEM);
-			if (ChickenTime)
+			if (MorphTime)
 			{
 				// Make a super chicken
 				EntityEx(MO).GiveInventoryType(PowerWeaponLevel2);

@@ -107,9 +107,9 @@ final bool MorphPlayer(Actor victim)
 	Actor fog;
 	Actor chicken;
 
-	if (Player(victim.Player).ChickenTime)
+	if (Player(victim.Player).MorphTime)
 	{
-		if ((Player(victim.Player).ChickenTime <
+		if ((Player(victim.Player).MorphTime <
 			Player::CHICKENTIME - 1.0) &&
 			!victim.FindInventory(PowerWeaponLevel2))
 		{
@@ -154,7 +154,7 @@ final bool MorphPlayer(Actor victim)
 	chicken.bShadow = victim.bShadow;
 	chicken.bGhost = victim.bGhost;
 	chicken.bFly = victim.bFly;
-	Player(victim.Player).ChickenTime = Player::CHICKENTIME;
+	Player(victim.Player).MorphTime = Player::CHICKENTIME;
 	Player(victim.Player).ActivateBeak();
 
 	victim.SetState(victim.FindState('FreeTargMobj'));

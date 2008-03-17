@@ -1179,7 +1179,7 @@ final void PlayerLandedOnThing()
 {
 	PlayerEx(Player).DeltaViewHeight = Velocity.z / 8.0;
 	FallingDamage();
-	if (Health > 0 && !PlayerIsMorphed())
+	if (Health > 0 && !PlayerEx(Player).MorphTime)
 	{
 		if (Velocity.z < -DEFAULT_GRAVITY * 0.375)
 		{
@@ -4278,7 +4278,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		}
 
 		if (damage >= Health && ((Level.Game.gameskill == sk_baby) ||
-			Level.Game.deathmatch) && !PlayerIsMorphed())
+			Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
 		{
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
@@ -4314,7 +4314,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		// check for special fire damage or ice damage deaths
 		if (DmgType == 'Fire')
 		{
-			if (bIsPlayer && !PlayerIsMorphed())
+			if (bIsPlayer && !PlayerEx(Player).MorphTime)
 			{
 				// Check for flame death
 				if (!inflictor || !inflictor.bConditionalFireDamage ||
@@ -7035,7 +7035,7 @@ final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
 		return;
 	}
 	if (damage >= Player.Health && ((Level.Game.gameskill == sk_baby) ||
-		Level.Game.deathmatch) && !PlayerIsMorphed())
+		Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
 	{
 		// Try to use some inventory health
 		AutoUseHealth(damage - Player.Health + 1);
@@ -7055,7 +7055,7 @@ final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
 	{
 		// Death
 		Special1 = damage;
-		if (bIsPlayer && inflictor && !PlayerIsMorphed())
+		if (bIsPlayer && inflictor && !PlayerEx(Player).MorphTime)
 		{
 			// Check for flame death
 			if (inflictor.DamageType == 'Fire' && (Health > -50) && (damage > 25))
@@ -7396,9 +7396,9 @@ final void SpawnDirt(float radius)
 	}
 }
 
-bool PlayerIsMorphed()
+final bool _PlayerIsMorphed()
 {
-	return false;
+	return !!PlayerEx(Player).MorphTime;
 }
 
 bool IsTeammate(EntityEx Other)

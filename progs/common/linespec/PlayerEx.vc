@@ -106,11 +106,13 @@ PlayerEx		PoisonerPlayer;	// for KArena
 
 int				Objectives;
 
+float			MorphTime;	// player is morphed into something if > 0
+
 replication
 {
 	reliable if (!bIsClient)
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash,
-		Objectives;
+		Objectives, MorphTime;
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,
@@ -195,14 +197,7 @@ final void CalcHeight(float deltaTime)
 				DeltaViewHeight = 0.00001;
 		}
 	}
-	if (EntityEx(MO).PlayerIsMorphed())
-	{
-		ViewOrg.z = MO.Origin.z + ViewHeight - 20.0;
-	}
-	else
-	{
-		ViewOrg.z = MO.Origin.z + ViewHeight + bob;
-	}
+	ViewOrg.z = MO.Origin.z + ViewHeight + bob;
 
 	if (PlayerState != PST_DEAD && MO.Origin.z <= MO.FloorZ)
 	{
@@ -933,7 +928,7 @@ void FireWeapon()
 
 final void ChangeWeapon(int newweapon)
 {
-	if (EntityEx(MO).PlayerIsMorphed())
+	if (MorphTime)
 	{
 		return;
 	}
@@ -952,7 +947,7 @@ final void ChangeWeapon(int newweapon)
 
 final void PrevWeapon()
 {
-	if (EntityEx(MO).PlayerIsMorphed())
+	if (MorphTime)
 	{
 		return;
 	}
@@ -971,7 +966,7 @@ final void PrevWeapon()
 
 final void NextWeapon()
 {
-	if (EntityEx(MO).PlayerIsMorphed())
+	if (MorphTime)
 	{
 		return;
 	}

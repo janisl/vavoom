@@ -626,7 +626,7 @@ final void A_Lower()
 		return;
 	}
 
-	if (EntityEx(Player.MO).PlayerIsMorphed() ||
+	if (PlayerEx(Player).MorphTime ||
 		PlayerEx(Player).bInstantWeaponSwitch)
 	{
 		Player.ViewStates[ps_weapon].SY = WEAPONBOTTOM;

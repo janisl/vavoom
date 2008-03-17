@@ -35,7 +35,7 @@ class ArtiTomeOfPower : PowerupGiver
 
 bool Use(bool Pickup)
 {
-	if (Player(Owner.Player).ChickenTime)
+	if (Player(Owner.Player).MorphTime)
 	{
 		// Attempt to undo chicken
 		if (Player(Owner.Player).UndoPlayerChicken() == false)
@@ -46,7 +46,7 @@ bool Use(bool Pickup)
 		else
 		{
 			// Succeeded
-			Player(Owner.Player).ChickenTime = 0.0;
+			Player(Owner.Player).MorphTime = 0.0;
 			Owner.PlaySound('*evillaugh', CHAN_ITEM);
 		}
 		return true;
