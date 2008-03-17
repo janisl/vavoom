@@ -60,7 +60,7 @@ defaultproperties
 	Radius = 16.0;
 	Height = 24.0;
 	PainChance = 1.0;
-	ViewHeight = 48.0;
+	ViewHeight = 28.0;
 	ForwardMove1 = 0.97;
 	ForwardMove2 = 0.97;
 	SideMove1 = 0.97;
@@ -71,6 +71,7 @@ defaultproperties
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';
+	MorphWeapon = Snout;
 	bPickUp = false;
 
 	DropItemList.Num = 1;

@@ -1943,24 +1943,6 @@ bool IsWeaponAlwaysExtremeDeath()
 
 //==========================================================================
 //
-//  GetInvulnerabilityMode
-//
-//==========================================================================
-
-name GetInvulnerabilityMode()
-{
-	switch (PClass)
-	{
-	case HexenDefs::PCLASS_CLERIC:
-		return 'Ghost';
-	case HexenDefs::PCLASS_MAGE:
-		return 'Reflective';
-	}
-	return '';
-}
-
-//==========================================================================
-//
 //	KilledByPlayer
 //
 //==========================================================================

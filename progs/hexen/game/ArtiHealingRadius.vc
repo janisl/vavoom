@@ -58,9 +58,9 @@ bool Use(bool Pickup)
 			continue;
 		}
 
-		switch (Player(Owner.Player).PClass)
+		if (PlayerPawn(Owner).HealRadiusType == 'Armor')
 		{
-		case HexenDefs::PCLASS_FIGHTER:	// Radius armor boost
+			// Radius armor boost
 			GaveArmor = false;
 			for (i = 0; i < 4; i++)
 			{
@@ -81,16 +81,10 @@ bool Use(bool Pickup)
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);
 			}
-			break;
-		case HexenDefs::PCLASS_CLERIC:	// Radius heal
-			amount = 50 + (P_Random() % 50);
-			if (P.GiveBody(amount))
-			{
-				effective = true;
-				P.PlaySound('MysticIncant', CHAN_ITEM);
-			}
-			break;
-		case HexenDefs::PCLASS_MAGE:	// Radius mana boost
+		}
+		else if (PlayerPawn(Owner).HealRadiusType == 'Mana')
+		{
+			// Radius mana boost
 			amount = 50 + (P_Random() % 50);
 			if ((Player(P.Player).GiveMana(Mana1, amount)) ||
 				(Player(P.Player).GiveMana(Mana2, amount)))
@@ -98,10 +92,16 @@ bool Use(bool Pickup)
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);
 			}
-			break;
-		case HexenDefs::PCLASS_PIG:
-		default:
-			break;
+		}
+		else
+		{
+			// Radius heal
+			amount = 50 + (P_Random() % 50);
+			if (P.GiveBody(amount))
+			{
+				effective = true;
+				P.PlaySound('MysticIncant', CHAN_ITEM);
+			}
 		}
 	}
 	return effective;

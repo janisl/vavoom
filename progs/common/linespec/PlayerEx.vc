@@ -1906,11 +1906,6 @@ void GotAmmo(Ammo NewAmmo)
 {
 }
 
-name GetInvulnerabilityMode()
-{
-	return '';
-}
-
 int GetMaxHealth()
 {
 	return 0;

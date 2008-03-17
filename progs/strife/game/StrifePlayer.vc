@@ -92,6 +92,7 @@ defaultproperties
 	RunHealth = 25;
 	TranslStart = 128;
 	TranslEnd = 143;
+	DisplayName = "Rebel";
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = PunchDagger; DropItemList[0].Amount = 1;

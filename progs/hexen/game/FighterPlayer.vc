@@ -143,6 +143,10 @@ defaultproperties
 	CrunchSound = '*splat';
 	PainSound = 'PlayerFighterPain';
 	SoundClass = 'fighter';
+	DisplayName = "Fighter";
+	HealRadiusType = 'Armor';
+	SpawnClass = 'Fighter';
+	ScoreIcon = 'fiteface';
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = FWeapFist; DropItemList[0].Amount = 1;

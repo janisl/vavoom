@@ -136,6 +136,7 @@ defaultproperties
 	TranslStart = 225;
 	TranslEnd = 240;
 	bOnmobjCopyVel = true;
+	DisplayName = "Corvus";
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = GoldWandAmmo; DropItemList[0].Amount = 50;

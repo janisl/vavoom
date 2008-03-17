@@ -3632,9 +3632,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.DisplayName"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.DisplayName in %s is not yet supported", Class->GetName());
+				SetClassFieldStr(Class, "DisplayName", sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Player.ForwardMove"))
@@ -3655,9 +3654,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.HealRadiusType"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.HealRadiusType in %s is not yet supported", Class->GetName());
+				SetClassFieldName(Class, "HealRadiusType", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Player.HexenArmor"))
@@ -3680,9 +3678,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.InvulnerabilityMode"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.InvulnerabilityMode in %s is not yet supported", Class->GetName());
+				SetClassFieldName(Class, "InvulnerabilityMode", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Player.JumpZ"))
@@ -3706,9 +3703,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.ScoreIcon"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.ScoreIcon in %s is not yet supported", Class->GetName());
+				SetClassFieldName(Class, "ScoreIcon", *sc->String.ToLower());
 				continue;
 			}
 			if (!Prop.ICmp("Player.SideMove"))
@@ -3735,9 +3731,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.SpawnClass"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.SpawnClass in %s is not yet supported", Class->GetName());
+				SetClassFieldName(Class, "SpawnClass", *sc->String);
 				continue;
 			}
 			if (!Prop.ICmp("Player.StartItem"))
@@ -3768,9 +3763,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.MorphWeapon"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Player.MorphWeapon in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "MorphWeapon", sc->String, ClassFixups);
 				continue;
 			}
 		}

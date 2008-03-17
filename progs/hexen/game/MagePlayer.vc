@@ -110,6 +110,11 @@ defaultproperties
 	CrunchSound = '*splat';
 	PainSound = 'PlayerMagePain';
 	SoundClass = 'mage';
+	DisplayName = "Mage";
+	HealRadiusType = 'Mana';
+	InvulnerabilityMode = 'Reflective';
+	SpawnClass = 'Mage';
+	ScoreIcon = 'mageface';
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = MWeapWand; DropItemList[0].Amount = 1;

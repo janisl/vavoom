@@ -105,6 +105,11 @@ defaultproperties
 	CrunchSound = '*splat';
 	PainSound = 'PlayerClericPain';
 	SoundClass = 'cleric';
+	DisplayName = "Cleric";
+	HealRadiusType = 'Health';
+	InvulnerabilityMode = 'Ghost';
+	SpawnClass = 'Cleric';
+	ScoreIcon = 'clerface';
 
 	DropItemList.Num = 1;
 	DropItemList[0].Type = CWeapMace; DropItemList[0].Amount = 1;

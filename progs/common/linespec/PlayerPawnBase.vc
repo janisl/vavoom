@@ -48,6 +48,24 @@ float			HexenArmor[5];
 //	Jump velocity.
 float			JumpVelZ;
 
+//	Name displayed in menu.
+string			DisplayName;
+
+//	For ArtiHealRadius
+name			HealRadiusType;
+
+//	Special mode of the invulnerability powerup.
+name			InvulnerabilityMode;
+
+//	Which class filter to use.
+name			SpawnClass;
+
+//	Icon for intermission screen.
+name			ScoreIcon;
+
+//	For morphed player classes
+class<Weapon>	MorphWeapon;
+
 //==========================================================================
 //
 //	ShouldDropItems

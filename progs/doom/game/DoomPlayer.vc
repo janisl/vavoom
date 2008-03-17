@@ -66,6 +66,7 @@ defaultproperties
 	Height = 56.0;
 	TranslStart = 112;
 	TranslEnd = 127;
+	DisplayName = "Marine";
 
 	DropItemList.Num = 3;
 	DropItemList[0].Type = Clip; DropItemList[0].Amount = 50;
