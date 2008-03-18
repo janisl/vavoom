@@ -62,9 +62,7 @@ class VGameInfo : public VObject
 	};
 	vuint32			Flags;
 
-	VGameInfo()
-	: PlayerClasses(E_NoInit)
-	{}
+	VGameInfo();
 
 	void eventInit()
 	{

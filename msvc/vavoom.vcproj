@@ -2204,6 +2204,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_gameinfo.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_gameinfo.h"
 				>
 			</File>

@@ -51,8 +51,6 @@ static void ProcessKeyConf();
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_CLASS(V, GameInfo)
-
 VCvarI			real_time("real_time", "1");
 
 server_t		sv;
@@ -75,7 +73,6 @@ bool			netgame;                // only true if packets are broadcast
 
 int 			TimerGame;
 
-VGameInfo*		GGameInfo;
 VWorldInfo*		GWorldInfo;
 VLevelInfo*		GLevelInfo;
 
