@@ -27,7 +27,6 @@
 #include "HereticLevelInfo.vc"
 #include "HereticWorldInfo.vc"
 #include "Pawn.vc"
-#include "PlayerPawn.vc"
 #include "HereticWeapon.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"

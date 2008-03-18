@@ -27,7 +27,6 @@
 #include "HexenLevelInfo.vc"
 #include "HexenWorldInfo.vc"
 #include "Pawn.vc"
-#include "PlayerPawn.vc"
 #include "HexenWeapon.vc"
 #include "FighterWeapon.vc"
 #include "ClericWeapon.vc"

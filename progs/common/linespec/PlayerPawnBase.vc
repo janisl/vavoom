@@ -249,3 +249,10 @@ defaultproperties
 	bTelestomp = true;
 	bNoBlockMonst = true;
 }
+
+class PlayerPawn : PlayerPawnBase
+	abstract;
+
+defaultproperties
+{
+}

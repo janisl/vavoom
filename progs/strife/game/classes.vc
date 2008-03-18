@@ -27,7 +27,6 @@
 #include "StrifeLevelInfo.vc"
 #include "StrifeWorldInfo.vc"
 #include "Pawn.vc"
-#include "PlayerPawn.vc"
 #include "StrifeWeapon.vc"
 #include "Player.vc"
 

@@ -27,7 +27,6 @@
 #include "DoomLevelInfo.vc"
 #include "DoomWorldInfo.vc"
 #include "Player.vc"
-#include "PlayerPawn.vc"
 #include "BotPlayer.vc"
 
 #include "TeleportFog.vc"
