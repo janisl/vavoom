@@ -177,15 +177,15 @@ final void CalcHeight(float deltaTime)
 	{
 		ViewHeight += DeltaViewHeight * deltaTime;
 
-		if (ViewHeight > PlayerPawnBase(MO).ViewHeight)
+		if (ViewHeight > PlayerPawn(MO).ViewHeight)
 		{
-			ViewHeight = PlayerPawnBase(MO).ViewHeight;
+			ViewHeight = PlayerPawn(MO).ViewHeight;
 			DeltaViewHeight = 0.0;
 		}
 
-		if (ViewHeight < PlayerPawnBase(MO).ViewHeight / 2.0)
+		if (ViewHeight < PlayerPawn(MO).ViewHeight / 2.0)
 		{
-			ViewHeight = PlayerPawnBase(MO).ViewHeight / 2.0;
+			ViewHeight = PlayerPawn(MO).ViewHeight / 2.0;
 			if (DeltaViewHeight <= 0.0)
 				DeltaViewHeight = 0.00001;
 		}
@@ -229,7 +229,7 @@ final void MovePlayer(float deltaTime)
 	forward = ForwardMove * 5.0;
 	side = SideMove * 5.0;
 
-	PlayerPawnBase(MO).AdjustSpeed(forward, side);
+	PlayerPawn(MO).AdjustSpeed(forward, side);
 
 	if (!(onground || MO.bFly))
 	{
@@ -296,7 +296,7 @@ final void MovePlayer(float deltaTime)
 
 	if ((Buttons & BT_JUMP) && onground && !JumpTime)
 	{
-		MO.Velocity.z = PlayerPawnBase(MO).JumpVelZ;
+		MO.Velocity.z = PlayerPawn(MO).JumpVelZ;
 		EntityEx(MO).bOnMobj = false;
 		JumpTime = 0.5;
 	}
@@ -363,7 +363,7 @@ final void WaterMove(float deltaTime)
 	forward = ForwardMove;
 	side = SideMove;
 
-	PlayerPawnBase(MO).AdjustSpeed(forward, side);
+	PlayerPawn(MO).AdjustSpeed(forward, side);
 
 	wishvel = vforward * forward + vright * side;
 	if (!forward && !side /* && !cmd.upmove */ )

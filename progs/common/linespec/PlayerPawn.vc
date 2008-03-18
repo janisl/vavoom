@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PlayerPawnBase : Actor
+class PlayerPawn : Actor
 	abstract;
 
 //	Default view height.
@@ -248,11 +248,4 @@ defaultproperties
 	bWindThrust = true;
 	bTelestomp = true;
 	bNoBlockMonst = true;
-}
-
-class PlayerPawn : PlayerPawnBase
-	abstract;
-
-defaultproperties
-{
 }

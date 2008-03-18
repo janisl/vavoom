@@ -51,7 +51,7 @@ enum
 
 #include "EntityEx.vc"
 #include "Actor.vc"
-#include "PlayerPawnBase.vc"
+#include "PlayerPawn.vc"
 #include "PlayerEx.vc"
 
 #include "Inventory.vc"

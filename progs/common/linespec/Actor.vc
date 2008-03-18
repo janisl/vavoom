@@ -1136,7 +1136,7 @@ final void A_FreezeDeathChunks()
 	{
 		// attach the player's view to a chunk of ice
 		A = Spawn(class<Actor>(FindClass('IceChunkHead')),
-			Origin + vector(0.0, 0.0, PlayerPawnBase(self).ViewHeight));
+			Origin + vector(0.0, 0.0, PlayerPawn(self).ViewHeight));
 		A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
 		A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 		A.Velocity.z = (A.Origin.z - Origin.z) / Height * 4.0 * 35.0;

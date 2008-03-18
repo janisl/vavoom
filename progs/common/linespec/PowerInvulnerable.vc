@@ -48,7 +48,7 @@ void InitEffect()
 	// player class.
 	if (!Mode && Owner.bIsPlayer)
 	{
-		Mode = PlayerPawnBase(Owner).InvulnerabilityMode;
+		Mode = PlayerPawn(Owner).InvulnerabilityMode;
 	}
 
 	EntityEx(Owner).bInvulnerable = true;
