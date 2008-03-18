@@ -3090,10 +3090,25 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			DI.Type = NULL;
 			DI.Amount = 0;
 			DI.Chance = 1.0;
-			if (sc->CheckNumber())
+			bool HaveAmount = false;
+			if (sc->Check(","))
+			{
+				sc->ExpectNumber();
+				HaveAmount = true;
+			}
+			else
+			{
+				HaveAmount = sc->CheckNumber();
+			}
+			if (HaveAmount)
 			{
 				DI.Amount = sc->Number;
-				if (sc->CheckNumber())
+				if (sc->Check(","))
+				{
+					sc->ExpectNumber();
+					DI.Chance = float(sc->Number) / 255.0;
+				}
+				else if (sc->CheckNumber())
 				{
 					DI.Chance = float(sc->Number) / 255.0;
 				}
@@ -3748,7 +3763,12 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 				DI.Type = NULL;
 				DI.Amount = 0;
 				DI.Chance = 1.0;
-				if (sc->CheckNumber())
+				if (sc->Check(","))
+				{
+					sc->ExpectNumber();
+					DI.Amount = sc->Number;
+				}
+				else if (sc->CheckNumber())
 				{
 					DI.Amount = sc->Number;
 				}
