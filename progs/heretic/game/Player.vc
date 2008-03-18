@@ -268,7 +268,12 @@ void SpawnPlayer(mthing_t * mthing)
 	y = mthing->y;
 
 	z = Actor::ONFLOORZ;
-	A = HereticLevelInfo(Level).Spawn(HereticPlayer, vector(x, y, z),,, false);
+	if (PClass >= Level.Game.PlayerClasses.Num)
+	{
+		Error("Player::SpawnPlayer : Unknown class type");
+	}
+	A = Level.Spawn(class<PlayerPawn>(Level.Game.PlayerClasses[PClass]),
+		vector(x, y, z),,, false);
 	A.Origin.z += mthing->height;
 	A.LinkToWorld();
 	// set colour translations for player sprites
@@ -796,7 +801,12 @@ bool UndoPlayerChicken()
 	Actor A;
 
 	MO.UnlinkFromWorld();
-	A = HereticLevelInfo(Level).Spawn(HereticPlayer, MO.Origin);
+	if (BaseClass >= Level.Game.PlayerClasses.Num)
+	{
+		Error("Player::SpawnPlayer : Unknown class type");
+	}
+	A = Level.Spawn(class<PlayerPawn>(Level.Game.PlayerClasses[BaseClass]),
+		MO.Origin,,, false);
 	if (!A.TestLocation())
 	{
 		// Didn't fit

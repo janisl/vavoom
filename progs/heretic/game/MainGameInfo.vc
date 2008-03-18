@@ -59,10 +59,10 @@ bool shareware;
 
 void Init()
 {
+	::Init();
 	shareware = !WadLumpPresent('e2m1');
 	InitTranslationTables();
 	InitBotTypes();
-	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================
@@ -534,4 +534,7 @@ defaultproperties
 	bRipperBloodNoGravity = true;
 
 	botskill = 2;
+
+	PlayerClasses.Num = 1;
+	PlayerClasses[0] = HereticPlayer;
 }

@@ -59,12 +59,12 @@ int GOD_HEALTH;
 
 void Init()
 {
+	::Init();
 #ifndef DOOM2
 	shareware = !WadLumpPresent('e2m1');
 #endif
 	InitTranslationTables();
 	InitBotTypes();
-	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================
@@ -1096,4 +1096,7 @@ defaultproperties
 
 	INITIAL_HEALTH = 100;
 	GOD_HEALTH = 100;
+
+	PlayerClasses.Num = 1;
+	PlayerClasses[0] = DoomPlayer;
 }

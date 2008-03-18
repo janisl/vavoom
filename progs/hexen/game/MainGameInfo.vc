@@ -45,6 +45,7 @@ bool randomclass;
 
 void Init()
 {
+	::Init();
 	SetSeqTrans('Platform', 0, SEQ_Platform);
 	SetSeqTrans('Platform', 1, SEQ_Platform);	// a 'heavy' platform is just a platform
 	SetSeqTrans('PlatformMetal', 2, SEQ_Platform);
@@ -70,7 +71,6 @@ void Init()
 	SetSeqTrans('Wind', 0, SEQ_Environment);
 
 	InitBotTypes();
-	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================
@@ -363,4 +363,9 @@ defaultproperties
 	classFlags[2] = HexenLevelInfo::MTF_MAGE;
 
 	botskill = 2;
+
+	PlayerClasses.Num = 3;
+	PlayerClasses[0] = FighterPlayer;
+	PlayerClasses[1] = ClericPlayer;
+	PlayerClasses[2] = MagePlayer;
 }

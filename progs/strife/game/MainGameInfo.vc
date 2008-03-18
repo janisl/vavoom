@@ -49,8 +49,8 @@ spec_trans_t spec_trans_tab[NUM_SPECIALS];
 
 void Init()
 {
+	::Init();
 	InitTranslationTables();
-	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================
@@ -602,4 +602,6 @@ defaultproperties
 	bNightmareExtraAmmo = false;
 	bAlwaysSwitchNewWeapon = true;
 	bBloodSpray = true;
+	PlayerClasses.Num = 1;
+	PlayerClasses[0] = StrifePlayer;
 }

@@ -54,6 +54,8 @@ class<PlayerReplicationInfo>	PlayerReplicationInfoClass;
 
 int					GameFilterFlag;
 
+array<class>		PlayerClasses;
+
 bool				bDefaultMonsterFallingDamage;
 
 //==========================================================================
