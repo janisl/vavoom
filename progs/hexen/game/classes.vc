@@ -157,7 +157,6 @@
 #include "MagePlayer.vc"
 #include "PigPlayer.vc"
 #include "BloodySkull.vc"
-#include "IceChunkHead.vc"
 
 #include "Pig.vc"
 #include "EttinMace.vc"
