@@ -23,42 +23,20 @@
 //**
 //**************************************************************************
 
-class BloodySkull : PlayerChunk;
-
-//==========================================================================
-//
-//	A_CheckSkullFloor
-//
-//==========================================================================
-
-final void A_CheckSkullFloor()
-{
-	if (Origin.z <= FloorZ)
-	{
-		SetState(FindState('Done1'));
-	}
-}
-
-states
-{
-Spawn:
-	BSKL ABCDE 5 A_CheckSkullFloor
-	Loop
-Done1:
-	BSKL F 16 A_CheckPlayerDone
-	Loop
-Done2:
-	BSKL F 1050
-	Stop
-}
+class PlayerChunk : PlayerPawn
+	abstract;
 
 defaultproperties
 {
-	Radius = 4.0;
-	Height = 4.0;
-	Gravity = 0.125;
-	bNoBlockmap = true;
-	bPassMobj = false;
-	bCannotPush = true;
-	bBounceSky = true;
+	ReactionCount = 8;
+	bSolid = false;
+	bShootable = false;
+	bPickUp = false;
+	bNoDeathmatch = false;
+	bFriendly = false;
+	bSlide = false;
+	bActivatePushWall = false;
+	bFloorClip = false;
+	bWindThrust = false;
+	bTelestomp = false;
 }

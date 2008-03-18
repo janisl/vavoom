@@ -219,7 +219,7 @@ bool CheckSpot(mthing_t * mthing)
 		return false;
 	}
 
-	if (!IceChunkHead(MO))
+	if (!PlayerChunk(MO))
 	{
 		LineSpecialLevelInfo(Level).AddPlayerCorpse(EntityEx(MO));
 	}

@@ -224,7 +224,7 @@ bool CheckSpot(mthing_t * mthing)
 	}
 	MO.bPassMobj = true;
 
-	if (!IceChunkHead(MO) && !BloodySkull(MO))
+	if (!PlayerChunk(MO))
 	{
 		LineSpecialLevelInfo(Level).AddPlayerCorpse(EntityEx(MO));
 	}

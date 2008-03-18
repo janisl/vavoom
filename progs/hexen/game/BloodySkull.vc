@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BloodySkull : PlayerPawn;
+class BloodySkull : PlayerChunk;
 
 //==========================================================================
 //
@@ -56,17 +56,8 @@ defaultproperties
 	Radius = 4.0;
 	Height = 4.0;
 	Gravity = 0.125;
-	ReactionCount = 8;
-	bSolid = false;
-	bShootable = false;
-	bFloorClip = false;
-	bTelestomp = false;
-	bActivatePushWall = false;
-	bWindThrust = false;
-	bSlide = false;
 	bNoBlockmap = true;
 	bPassMobj = false;
 	bCannotPush = true;
 	bBounceSky = true;
-	bPickUp = false;
 }

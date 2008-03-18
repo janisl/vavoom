@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceChunkHead : PlayerPawn;
+class IceChunkHead : PlayerChunk;
 
 states
 {
@@ -39,17 +39,8 @@ defaultproperties
 	Radius = 3.0;
 	Height = 4.0;
 	Gravity = 0.125;
-	ReactionCount = 8;
-	bSolid = false;
-	bShootable = false;
-	bTelestomp = false;
-	bActivatePushWall = false;
-	bWindThrust = false;
-	bFloorClip = false;
-	bSlide = false;
 	DamageType = 'Ice';	// used to force blue palette
 	bNoBlockmap = true;
 	bPassMobj = false;
 	bCannotPush = true;
-	bPickUp = false;
 }
