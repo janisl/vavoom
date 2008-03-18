@@ -604,4 +604,15 @@ defaultproperties
 	bBloodSpray = true;
 	PlayerClasses.Num = 1;
 	PlayerClasses[0] = StrifePlayer;
+	WeaponSlots[1].Weapons[0] = PunchDagger;
+	WeaponSlots[2].Weapons[0] = StrifeCrossbow2;
+	WeaponSlots[2].Weapons[1] = StrifeCrossbow;
+	WeaponSlots[3].Weapons[0] = AssaultGun;
+	WeaponSlots[4].Weapons[0] = MiniMissileLauncher;
+	WeaponSlots[5].Weapons[0] = StrifeGrenadeLauncher2;
+	WeaponSlots[5].Weapons[1] = StrifeGrenadeLauncher;
+	WeaponSlots[6].Weapons[0] = FlameThrower;
+	WeaponSlots[7].Weapons[0] = Mauler2;
+	WeaponSlots[7].Weapons[1] = Mauler;
+	WeaponSlots[8].Weapons[0] = Sigil;
 }

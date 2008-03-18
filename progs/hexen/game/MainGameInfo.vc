@@ -368,4 +368,16 @@ defaultproperties
 	PlayerClasses[0] = FighterPlayer;
 	PlayerClasses[1] = ClericPlayer;
 	PlayerClasses[2] = MagePlayer;
+	WeaponSlots[1].Weapons[0] = FWeapFist;
+	WeaponSlots[1].Weapons[1] = CWeapMace;
+	WeaponSlots[1].Weapons[2] = MWeapWand;
+	WeaponSlots[2].Weapons[0] = FWeapAxe;
+	WeaponSlots[2].Weapons[1] = CWeapStaff;
+	WeaponSlots[2].Weapons[2] = MWeapFrost;
+	WeaponSlots[3].Weapons[0] = FWeapHammer;
+	WeaponSlots[3].Weapons[1] = CWeapFlame;
+	WeaponSlots[3].Weapons[2] = MWeapLightning;
+	WeaponSlots[4].Weapons[0] = FWeapQuietus;
+	WeaponSlots[4].Weapons[1] = CWeapWraithverge;
+	WeaponSlots[4].Weapons[2] = MWeapBloodscourge;
 }

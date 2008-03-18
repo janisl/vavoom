@@ -1099,4 +1099,13 @@ defaultproperties
 
 	PlayerClasses.Num = 1;
 	PlayerClasses[0] = DoomPlayer;
+	WeaponSlots[1].Weapons[0] = Fist;
+	WeaponSlots[1].Weapons[1] = Chainsaw;
+	WeaponSlots[2].Weapons[0] = Pistol;
+	WeaponSlots[3].Weapons[0] = Shotgun;
+	WeaponSlots[3].Weapons[1] = SuperShotgun;
+	WeaponSlots[4].Weapons[0] = Chaingun;
+	WeaponSlots[5].Weapons[0] = RocketLauncher;
+	WeaponSlots[6].Weapons[0] = PlasmaRifle;
+	WeaponSlots[7].Weapons[0] = BFG9000;
 }

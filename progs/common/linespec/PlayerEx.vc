@@ -932,7 +932,7 @@ final void ChangeWeapon(int newweapon)
 	{
 		return;
 	}
-	Weapon NewWpn = GetSlotChangeWeapon(newweapon, ReadyWeapon, false);
+	Weapon NewWpn = GetSlotChangeWeapon(newweapon);
 	if (NewWpn && NewWpn != ReadyWeapon)
 	{
 		PendingWeapon = NewWpn;
@@ -1030,72 +1030,67 @@ final Weapon BestWeapon(optional class<Ammo> AmmoType)
 
 //==========================================================================
 //
+//	ChoosePowered
+//
+//==========================================================================
+
+final Weapon ChoosePowered(Weapon Wpn)
+{
+	bool Powered = !!EntityEx(MO).FindInventory(PowerWeaponLevel2);
+	if (Powered && Wpn.SisterWeapon && Wpn.SisterWeapon.bPoweredUp)
+	{
+		return Wpn.SisterWeapon;
+	}
+	return Wpn;
+}
+
+//==========================================================================
+//
 //	GetSlotChangeWeapon
 //
 //==========================================================================
 
-final Weapon GetSlotChangeWeapon(int Slot, Weapon Current, bool bCheckAmmo)
+final Weapon GetSlotChangeWeapon(int Slot)
 {
-	if (Current && Current.Slot != Slot)
-	{
-		//	Current one is from different slot, so just ignore it.
-		Current = none;
-	}
+	int			i;
+	int			j;
+	LineSpecialGameInfo GI = LineSpecialGameInfo(Level.Game);
 
-	bool Powered = !!EntityEx(MO).FindInventory(PowerWeaponLevel2);
-	Weapon Best = none;
-	Weapon NextBest = none;
-	Inventory Item;
-	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	if (ReadyWeapon)
 	{
-		//	Must be a weapon
-		Weapon Wpn = Weapon(Item);
-		if (!Wpn)
+		for (i = 0; i < LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT; i++)
 		{
-			continue;
-		}
-		//	Check if it's for the needed slot.
-		if (Wpn.Slot != Slot)
-		{
-			continue;
-		}
-		//	Skip current one.
-		if (Wpn == Current)
-		{
-			continue;
-		}
-		//	Check if it's for the current tome of power state.
-		if (Powered && Wpn.SisterWeapon && Wpn.SisterWeapon.bPoweredUp)
-		{
-			continue;
-		}
-		if (!Powered && Wpn.bPoweredUp)
-		{
-			continue;
-		}
-		//	See if it has enough ammo
-		if (bCheckAmmo && !Wpn.CheckAmmo(false))
-		{
-			continue;
-		}
-		//	See if this is the best one.
-		if (!Best || Best.SelectionOrder > Wpn.SelectionOrder)
-		{
-			Best = Wpn;
-		}
-		//	See if this one is best next choice after the current one.
-		if (Current && Wpn.SelectionOrder > Current.SelectionOrder &&
-			(!NextBest || NextBest.SelectionOrder > Wpn.SelectionOrder))
-		{
-			NextBest = Wpn;
+			if (GI.WeaponSlots[Slot].Weapons[i] == ReadyWeapon.Class ||
+				(ReadyWeapon.bPoweredUp && ReadyWeapon.SisterWeapon &&
+				GI.WeaponSlots[Slot].Weapons[i] == ReadyWeapon.SisterWeapon.Class))
+			{
+				for (j = (i + LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT - 1) %
+					LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT; j != i;
+					j = (j + LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT - 1) %
+					LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT)
+				{
+					Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
+						GI.WeaponSlots[Slot].Weapons[j]));
+					if (Wpn && Wpn.CheckAmmo(false))
+					{
+						return ChoosePowered(Wpn);
+					}
+				}
+			}
 		}
 	}
 
-	if (NextBest)
+	for (i = LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT - 1; i >= 0; i--)
 	{
-		return NextBest;
+		Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
+			GI.WeaponSlots[Slot].Weapons[i]));
+		if (Wpn && Wpn.CheckAmmo(false))
+		{
+			return ChoosePowered(Wpn);
+		}
 	}
-	return Best;
+
+	return ReadyWeapon;
 }
 
 //==========================================================================

@@ -48,6 +48,14 @@ const int
 	COPY_FLOOR_PLANE_TYPE = 9510,
 	COPY_CEILING_PLANE_TYPE = 9511;
 
+const int
+	NUM_WEAPON_SLOTS = 10,
+	MAX_WEAPONS_PER_SLOT = 8;
+
+struct WeaponSlot
+{
+	class<Weapon>	Weapons[MAX_WEAPONS_PER_SLOT];
+};
 
 float			contents_alpha[9];
 
@@ -107,6 +115,8 @@ float			GibsHealthFactor;
 
 int				ramp1[16];
 int				ramp2[16];
+
+WeaponSlot		WeaponSlots[NUM_WEAPON_SLOTS];
 
 //==========================================================================
 //

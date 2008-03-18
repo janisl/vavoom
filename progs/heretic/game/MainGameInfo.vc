@@ -537,4 +537,12 @@ defaultproperties
 
 	PlayerClasses.Num = 1;
 	PlayerClasses[0] = HereticPlayer;
+	WeaponSlots[1].Weapons[0] = Staff;
+	WeaponSlots[1].Weapons[1] = Gauntlets;
+	WeaponSlots[2].Weapons[0] = GoldWand;
+	WeaponSlots[3].Weapons[0] = Crossbow;
+	WeaponSlots[4].Weapons[0] = Blaster;
+	WeaponSlots[5].Weapons[0] = SkullRod;
+	WeaponSlots[6].Weapons[0] = PhoenixRod;
+	WeaponSlots[7].Weapons[0] = Mace;
 }
