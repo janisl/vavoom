@@ -31,6 +31,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/doom/doomimp.txt
 		actors/doom/doomkeys.txt
 		actors/doom/doommisc.txt
+		actors/doom/doomplayer.txt
 		actors/doom/fatso.txt
 		actors/doom/keen.txt
 		actors/doom/lostsoul.txt

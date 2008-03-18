@@ -1,0 +1,45 @@
+//------------------------------------------------------------------------------
+actor DoomPlayer : PlayerPawn
+{
+	Health 100
+	Radius 16
+	Height 56
+	Player.ColorRange 112, 127
+	Player.DisplayName "Marine"
+	Player.StartItem "Pistol"
+	Player.StartItem "Fist"
+	Player.StartItem "Clip", 50
+	states
+	{
+	Spawn:
+		PLAY A -1
+		Stop
+	See:
+		PLAY ABCD 4
+		Loop
+	Missile:
+		PLAY E 12
+		Goto Spawn
+	Melee:
+		PLAY F 6 Bright
+		Goto Missile
+	Pain:
+		PLAY G 4
+		PLAY G 4 A_Pain
+		Goto Spawn
+	Death:
+		PLAY H 10
+		PLAY I 10 A_PlayerScream
+		PLAY J 10 A_NoBlocking
+		PLAY KLM 10
+		PLAY N -1
+		Stop
+	XDeath:
+		PLAY O 5
+		PLAY P 5 A_XScream
+		PLAY Q 5 A_NoBlocking
+		PLAY RSTUV 5
+		PLAY W -1
+		Stop
+	}
+}

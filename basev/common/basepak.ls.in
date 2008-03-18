@@ -65,6 +65,7 @@ actors/doom/doomhealth.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomhealth.
 actors/doom/doomimp.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomimp.txt
 actors/doom/doomkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomkeys.txt
 actors/doom/doommisc.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doommisc.txt
+actors/doom/doomplayer.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/doomplayer.txt
 actors/doom/fatso.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/fatso.txt
 actors/doom/keen.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/keen.txt
 actors/doom/lostsoul.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/lostsoul.txt

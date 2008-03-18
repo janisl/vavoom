@@ -46,8 +46,6 @@
 
 #include "Gibs.vc"
 
-#include "DoomPlayer.vc"
-
 #include "ScriptedMarine.vc"
 #include "MarineFist.vc"
 #include "MarineBerserk.vc"
@@ -91,3 +89,4 @@ class Allmap : MapRevealer decorate;
 class Berserk : CustomInventory decorate;
 class Megasphere : CustomInventory decorate;
 class BulletPuff : Actor decorate;
+class DoomPlayer : PlayerPawn decorate;

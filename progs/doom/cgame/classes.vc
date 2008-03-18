@@ -67,3 +67,4 @@ class PainElemental : Actor decorate;
 class Cyberdemon : Actor decorate;
 class SpiderMastermind : Actor decorate;
 class Archvile : Actor decorate;
+class DoomPlayer : PlayerPawn decorate;
