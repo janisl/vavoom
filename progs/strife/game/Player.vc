@@ -1349,6 +1349,22 @@ void KilledByPlayer(EntityEx Victim)
 	}
 }
 
+//===========================================================================
+//
+//  GetSigilPieces
+//
+//===========================================================================
+
+int GetSigilPieces()
+{
+	Sigil S = Sigil(EntityEx(MO).FindInventory(Sigil));
+	if (S)
+	{
+		return S.NumPieces;
+	}
+	return 0;
+}
+
 defaultproperties
 {
 }

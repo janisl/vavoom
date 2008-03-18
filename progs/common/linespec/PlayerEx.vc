@@ -1930,6 +1930,11 @@ void PlayerNextArtifact()
 {
 }
 
+int GetSigilPieces()
+{
+	return 0;
+}
+
 defaultproperties
 {
 }

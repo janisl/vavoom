@@ -210,6 +210,17 @@ final void AdjustSpeed(out float forward, out float side)
 	}
 }
 
+//===========================================================================
+//
+//  GetSigilPieces
+//
+//===========================================================================
+
+int GetSigilPieces()
+{
+	return PlayerEx(Player).GetSigilPieces();
+}
+
 defaultproperties
 {
 	Health = 100;
