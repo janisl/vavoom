@@ -40,7 +40,7 @@ void MStaffSpawn2(float angle)
 	if (mo)
 	{
 		mo.Target = self;
-		mo.Tracer = Actor(mo.RoughMonsterSearch(10));
+		MageStaffFX2(mo).FindEnemy();
 	}
 }
 

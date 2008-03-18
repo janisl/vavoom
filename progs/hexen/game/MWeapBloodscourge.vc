@@ -52,7 +52,7 @@ final void MStaffSpawn(float angle)
 	if (mo)
 	{
 		mo.Target = EntityEx(Owner);
-		mo.Tracer = Actor(mo.RoughMonsterSearch(10));
+		MageStaffFX2(mo).FindEnemy();
 	}
 }
 

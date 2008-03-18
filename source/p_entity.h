@@ -360,12 +360,6 @@ class VEntity : public VThinker
 		P_PASS_INT(CrushChange);
 		EV_RET_BOOL_IDX(FIndex_SectorChanged);
 	}
-	bool eventRoughCheckThing(VEntity *Other)
-	{
-		P_PASS_SELF;
-		P_PASS_REF(Other);
-		EV_RET_BOOL_IDX(FIndex_RoughCheckThing);
-	}
 	void eventClearInventory()
 	{
 		P_PASS_SELF;
@@ -477,8 +471,6 @@ class VEntity : public VThinker
 	VEntity *CheckOnmobj();
 	bool CheckSides(TVec);
 	void CheckDropOff(float&, float&);
-	VEntity *RoughBlockCheck(int);
-	VEntity *RoughMonsterSearch(int);
 
 private:
 	//	World iterator callbacks
@@ -537,5 +529,5 @@ public:
 	DECLARE_FUNCTION(LinkToWorld)
 	DECLARE_FUNCTION(UnlinkFromWorld)
 	DECLARE_FUNCTION(CanSee)
-	DECLARE_FUNCTION(RoughMonsterSearch)
+	DECLARE_FUNCTION(RoughBlockSearch)
 };

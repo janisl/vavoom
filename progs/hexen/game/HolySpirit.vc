@@ -100,39 +100,6 @@ bool Touch(Entity InOther)
 	return ::Touch(InOther);
 }
 
-//===========================================================================
-//
-//  RoughCheckThing
-//
-//===========================================================================
-
-bool RoughCheckThing(Entity Other)
-{
-	EntityEx link = EntityEx(Other);
-	
-	if ((!link.bMonster && !link.bIsPlayer) || link.bDormant)
-	{
-		return false;
-	}
-	if (!link.bShootable)
-	{
-		return false;
-	}
-	if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
-	{
-		return false;
-	}
-	if (link == Target)
-	{
-		return false;
-	}
-	if (CanSee(link))
-	{
-		return true;
-	}
-	return false;
-}
-
 //============================================================================
 //
 //  CHolyFindTarget
@@ -141,15 +108,37 @@ bool RoughCheckThing(Entity Other)
 
 void CHolyFindTarget()
 {
-	EntityEx targ;
+	Entity		Other;
 
-	targ = EntityEx(RoughMonsterSearch(6));
-	if (targ)
+	foreach RoughBlockSearch(Other, 6)
 	{
-		Tracer = targ;
+		EntityEx link = EntityEx(Other);
+
+		if ((!link.bMonster && !link.bIsPlayer) || link.bDormant)
+		{
+			continue;
+		}
+		if (!link.bShootable)
+		{
+			continue;
+		}
+		if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
+		{
+			continue;
+		}
+		if (link == Target)
+		{
+			continue;
+		}
+		if (!CanSee(link))
+		{
+			continue;
+		}
+		Tracer = link;
 		bColideWithWorld = false;
 		bSkullFly = true;
 		bMissile = false;
+		break;
 	}
 }
 

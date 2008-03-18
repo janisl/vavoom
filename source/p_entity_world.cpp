@@ -108,6 +108,31 @@ struct tztrace_t
 	VEntity *onmobj;	//generic global onmobj...used for landing on pods/players
 };
 
+//	Searches though the surrounding mapblocks for monsters/players
+//      distance is in MAPBLOCKUNITS
+class VRoughBlockSearchIterator : public VScriptIterator
+{
+private:
+	VEntity*	Self;
+	int			Distance;
+	VEntity*	Ent;
+	VEntity**	EntPtr;
+
+	int			StartX;
+	int			StartY;
+	int			Count;
+	int			CurrentEdge;
+	int			BlockIndex;
+	int			FirstStop;
+	int			SecondStop;
+	int			ThirdStop;
+	int			FinalStop;
+
+public:
+	VRoughBlockSearchIterator(VEntity*, int, VEntity**);
+	bool GetNext();
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -2131,153 +2156,6 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 	unguard;
 }
 
-//===========================================================================
-//
-//  VEntity::RoughBlockCheck
-//
-//===========================================================================
-
-VEntity* VEntity::RoughBlockCheck(int index)
-{
-	guard(VEntity::RoughBlockCheck);
-	VEntity *link;
-
-	for (link = XLevel->BlockLinks[index]; link; link = link->BlockMapNext)
-	{
-		if (eventRoughCheckThing(link))
-		{
-			return link;
-		}
-	}
-	return NULL;
-	unguard;
-}
-
-//===========================================================================
-//
-//	VEntity::RoughMonsterSearch
-//
-//	Searches though the surrounding mapblocks for monsters/players
-//      distance is in MAPBLOCKUNITS
-//
-//===========================================================================
-
-VEntity* VEntity::RoughMonsterSearch(int distance)
-{
-	guard(VEntity::RoughMonsterSearch);
-	int blockX;
-	int blockY;
-	int startX, startY;
-	int blockIndex;
-	int firstStop;
-	int secondStop;
-	int thirdStop;
-	int finalStop;
-	int count;
-	VEntity *newEnemy;
-
-	startX = MapBlock(Origin.x - XLevel->BlockMapOrgX);
-	startY = MapBlock(Origin.y - XLevel->BlockMapOrgY);
-
-	if (startX >= 0 && startX < XLevel->BlockMapWidth &&
-		startY >= 0 && startY < XLevel->BlockMapHeight)
-	{
-		newEnemy = RoughBlockCheck(startY * XLevel->BlockMapWidth + startX);
-		if (newEnemy)
-		{
-			// found a target right away
-			return newEnemy;
-		}
-	}
-	for (count = 1; count <= distance; count++)
-	{
-		blockX = startX - count;
-		blockY = startY - count;
-
-		if (blockY < 0)
-		{
-			blockY = 0;
-		}
-		else if (blockY >= XLevel->BlockMapHeight)
-		{
-			blockY = XLevel->BlockMapHeight - 1;
-		}
-		if (blockX < 0)
-		{
-			blockX = 0;
-		}
-		else if (blockX >= XLevel->BlockMapWidth)
-		{
-			blockX = XLevel->BlockMapWidth - 1;
-		}
-		blockIndex = blockY * XLevel->BlockMapWidth + blockX;
-		firstStop = startX + count;
-		if (firstStop < 0)
-		{
-			continue;
-		}
-		if (firstStop >= XLevel->BlockMapWidth)
-		{
-			firstStop = XLevel->BlockMapWidth - 1;
-		}
-		secondStop = startY + count;
-		if (secondStop < 0)
-		{
-			continue;
-		}
-		if (secondStop >= XLevel->BlockMapHeight)
-		{
-			secondStop = XLevel->BlockMapHeight - 1;
-		}
-		thirdStop = secondStop * XLevel->BlockMapWidth + blockX;
-		secondStop = secondStop * XLevel->BlockMapWidth + firstStop;
-		firstStop += blockY * XLevel->BlockMapWidth;
-		finalStop = blockIndex;
-
-		// Trace the first block section (along the top)
-		for (; blockIndex <= firstStop; blockIndex++)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-		// Trace the second block section (right edge)
-		for (blockIndex--; blockIndex <= secondStop;
-			blockIndex += XLevel->BlockMapWidth)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-		// Trace the third block section (bottom edge)
-		for (blockIndex -= XLevel->BlockMapWidth; blockIndex >= thirdStop;
-			blockIndex--)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-		// Trace the final block section (left edge)
-		for (blockIndex++; blockIndex > finalStop;
-			blockIndex -= XLevel->BlockMapWidth)
-		{
-			newEnemy = RoughBlockCheck(blockIndex);
-			if (newEnemy)
-			{
-				return newEnemy;
-			}
-		}
-	}
-	return NULL;
-	unguard;
-}
-
 //==========================================================================
 //
 //	VEntity::CanSee
@@ -2360,6 +2238,172 @@ bool VEntity::CanSee(VEntity* Other)
 	Trace.End = Other->Origin;
 	Trace.End.z -= Other->FloorClip;
 	return XLevel->TraceLine(Trace, Trace.Start, Trace.End, SPF_NOBLOCKSIGHT);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRoughBlockSearchIterator
+//
+//==========================================================================
+
+VRoughBlockSearchIterator::VRoughBlockSearchIterator(VEntity* ASelf,
+	int ADistance, VEntity** AEntPtr)
+: Self(ASelf)
+, Distance(ADistance)
+, Ent(NULL)
+, EntPtr(AEntPtr)
+, Count(1)
+, CurrentEdge(-1)
+{
+	guard(VRoughBlockSearchIterator::VRoughBlockSearchIterator);
+	StartX = MapBlock(Self->Origin.x - Self->XLevel->BlockMapOrgX);
+	StartY = MapBlock(Self->Origin.y - Self->XLevel->BlockMapOrgY);
+
+	//	Start with current block
+	if (StartX >= 0 && StartX < Self->XLevel->BlockMapWidth &&
+		StartY >= 0 && StartY < Self->XLevel->BlockMapHeight)
+	{
+		Ent = Self->XLevel->BlockLinks[StartY * Self->XLevel->BlockMapWidth +
+			StartX];
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRoughBlockSearchIterator::GetNext
+//
+//==========================================================================
+
+bool VRoughBlockSearchIterator::GetNext()
+{
+	guard(VRoughBlockSearchIterator::GetNext);
+	int		BlockX;
+	int		BlockY;
+
+	while (1)
+	{
+		if (Ent)
+		{
+			*EntPtr = Ent;
+			Ent = Ent->BlockMapNext;
+			return true;
+		}
+
+		switch (CurrentEdge)
+		{
+		case 0:
+			// Trace the first block section (along the top)
+			if (BlockIndex <= FirstStop)
+			{
+				Ent = Self->XLevel->BlockLinks[BlockIndex];
+				BlockIndex++;
+			}
+			else
+			{
+				CurrentEdge = 1;
+				BlockIndex--;
+			}
+			break;
+
+		case 1:
+			// Trace the second block section (right edge)
+			if (BlockIndex <= SecondStop)
+			{
+				Ent = Self->XLevel->BlockLinks[BlockIndex];
+				BlockIndex += Self->XLevel->BlockMapWidth;
+			}
+			else
+			{
+				CurrentEdge = 2;
+				BlockIndex -= Self->XLevel->BlockMapWidth;
+			}
+			break;
+
+		case 2:
+			// Trace the third block section (bottom edge)
+			if (BlockIndex >= ThirdStop)
+			{
+				Ent = Self->XLevel->BlockLinks[BlockIndex];
+				BlockIndex--;
+			}
+			else
+			{
+				CurrentEdge = 3;
+				BlockIndex++;
+			}
+			break;
+
+		case 3:
+			// Trace the final block section (left edge)
+			if (BlockIndex > FinalStop)
+			{
+				Ent = Self->XLevel->BlockLinks[BlockIndex];
+				BlockIndex -= Self->XLevel->BlockMapWidth;
+			}
+			else
+			{
+				CurrentEdge = -1;
+			}
+			break;
+
+		default:
+			if (Count > Distance)
+			{
+				//	We are done
+				return false;
+			}
+			BlockX = StartX - Count;
+			BlockY = StartY - Count;
+
+			if (BlockY < 0)
+			{
+				BlockY = 0;
+			}
+			else if (BlockY >= Self->XLevel->BlockMapHeight)
+			{
+				BlockY = Self->XLevel->BlockMapHeight - 1;
+			}
+			if (BlockX < 0)
+			{
+				BlockX = 0;
+			}
+			else if (BlockX >= Self->XLevel->BlockMapWidth)
+			{
+				BlockX = Self->XLevel->BlockMapWidth - 1;
+			}
+			BlockIndex = BlockY * Self->XLevel->BlockMapWidth + BlockX;
+			FirstStop = StartX + Count;
+			if (FirstStop < 0)
+			{
+				Count++;
+				break;
+			}
+			if (FirstStop >= Self->XLevel->BlockMapWidth)
+			{
+				FirstStop = Self->XLevel->BlockMapWidth - 1;
+			}
+			SecondStop = StartY + Count;
+			if (SecondStop < 0)
+			{
+				Count++;
+				break;
+			}
+			if (SecondStop >= Self->XLevel->BlockMapHeight)
+			{
+				SecondStop = Self->XLevel->BlockMapHeight - 1;
+			}
+			ThirdStop = SecondStop * Self->XLevel->BlockMapWidth + BlockX;
+			SecondStop = SecondStop * Self->XLevel->BlockMapWidth + FirstStop;
+			FirstStop += BlockY * Self->XLevel->BlockMapWidth;
+			FinalStop = BlockIndex;
+			Count++;
+			CurrentEdge = 0;
+			break;
+		}
+	}
+	return false;
 	unguard;
 }
 
@@ -2472,9 +2516,10 @@ IMPLEMENT_FUNCTION(VEntity, CanSee)
 	RET_BOOL(Self->CanSee(Other));
 }
 
-IMPLEMENT_FUNCTION(VEntity, RoughMonsterSearch)
+IMPLEMENT_FUNCTION(VEntity, RoughBlockSearch)
 {
 	P_GET_INT(Distance);
+	P_GET_PTR(VEntity*, EntPtr);
 	P_GET_SELF;
-	RET_REF(Self->RoughMonsterSearch(Distance));
+	RET_PTR(new VRoughBlockSearchIterator(Self, Distance, EntPtr));
 }

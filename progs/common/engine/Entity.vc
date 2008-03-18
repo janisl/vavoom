@@ -333,7 +333,7 @@ native final void UnlinkFromWorld();
 
 native final bool CanSee(Entity Other);
 
-native final Entity RoughMonsterSearch(int distance);
+native final iterator RoughBlockSearch(out Entity EntPtr, int Distance);
 
 //===========================================================================
 //
@@ -440,17 +440,6 @@ void ApplyFriction()
 bool SectorChanged(int CrushChange)
 {
 	return true;
-}
-
-//===========================================================================
-//
-//  RoughCheckThing
-//
-//===========================================================================
-
-bool RoughCheckThing(Entity Other)
-{
-	return false;
 }
 
 //===========================================================================

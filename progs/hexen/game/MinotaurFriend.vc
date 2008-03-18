@@ -171,39 +171,93 @@ void MonsterMorphed()
 
 //==========================================================================
 //
-//  RoughCheckThing
+//  FindEnemySelf
 //
 //==========================================================================
 
-bool RoughCheckThing(Entity Other)
+final EntityEx FindEnemySelf()
 {
-	EntityEx link = EntityEx(Other);
-	
-	if (!link.bMonster && (!link.bIsPlayer || link == Tracer))
+	Entity Other;
+
+	foreach RoughBlockSearch(Other, 20)
 	{
-		return false;
+		EntityEx link = EntityEx(Other);
+
+		if (!link.bMonster && (!link.bIsPlayer || link == Tracer))
+		{
+			continue;
+		}
+		if (!link.bShootable)
+		{
+			continue;
+		}
+		if (link.bDormant)
+		{
+			continue;
+		}
+		if (MinotaurFriend(link) && link.Tracer == Tracer)
+		{
+			continue;
+		}
+		if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
+		{
+			continue;
+		}
+		if (!CanSee(link))
+		{
+			continue;
+		}
+		return link;
 	}
-	if (!link.bShootable)
+	return none;
+}
+
+//===========================================================================
+//
+//  FindEnemyMaster
+//
+//	Minotaur looking around player
+//
+//===========================================================================
+
+final EntityEx FindEnemyMaster()
+{
+	Entity Other;
+
+	foreach Tracer.RoughBlockSearch(Other, 20)
 	{
-		return false;
+		EntityEx link = EntityEx(Other);
+
+		if (!Tracer.bIsPlayer)
+		{
+			continue;
+		}
+		if (!link.bMonster && (!link.bIsPlayer || link == Tracer))
+		{
+			continue;
+		}
+		if (!link.bShootable)
+		{
+			continue;
+		}
+		if (link.bDormant)
+		{
+			continue;
+		}
+		if (link.IsA('MinotaurFriend') && link.Tracer == Tracer)
+		{
+			continue;
+		}
+		if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
+		{
+			continue;
+		}
+		if (Tracer.CanSee(link))
+		{
+			return link;
+		}
 	}
-	if (link.bDormant)
-	{
-		return false;
-	}
-	if (MinotaurFriend(link) && link.Tracer == Tracer)
-	{
-		return false;
-	}
-	if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
-	{
-		return false;
-	}
-	if (!CanSee(link))
-	{
-		return false;
-	}
-	return true;
+	return none;
 }
 
 //==========================================================================
@@ -282,9 +336,9 @@ final void A_MinotaurLook()
 	if (!Target)	// Near player monster search
 	{
 		if (Tracer && (Tracer.Health > 0) && Tracer.bIsPlayer)
-			Target = Actor(Tracer.RoughMonsterSearch(20));
+			Target = FindEnemyMaster();
 		else
-			Target = Actor(RoughMonsterSearch(20));
+			Target = FindEnemySelf();
 	}
 
 	if (!Target)	// Normal monster search
