@@ -184,7 +184,7 @@ public:
 			Resize(ArrSize + ArrSize * 3 / 8 + 32);
 		}
 		ArrNum++;
-		for (int i = Index + 1; i < ArrNum; i++)
+		for (int i = ArrNum - 1; i > Index; i--)
 		{
 			ArrData[i] = ArrData[i - 1];
 		}
