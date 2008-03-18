@@ -63,6 +63,8 @@ protected:
 	static VBasePlayer*			Player;	//	For SRC_Client
 
 public:
+	static bool					ParsingKeyConf;
+
 	VCommand(const char*);
 	virtual ~VCommand();
 

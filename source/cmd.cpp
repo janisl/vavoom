@@ -42,7 +42,9 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-VCmdBuf				GCmdBuf;
+VCmdBuf					GCmdBuf;
+
+bool					VCommand::ParsingKeyConf;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -57,6 +59,19 @@ TArray<const char*>		VCommand::AutoCompleteTable;
 
 VCommand*				VCommand::Cmds = NULL;
 VCommand::VAlias*		VCommand::Alias = NULL;
+
+static const char*		KeyConfCommands[] =
+{
+	"alias",
+	"defaultbind",
+	"addkeysection",
+	"addmenukey",
+	"addslotdefault",
+	"weaponsection",
+	"setslot",
+	"addplayerclass",
+	"clearplayerclasses"
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -332,6 +347,25 @@ void VCommand::ExecuteString(const VStr& Acmd, ECmdSource src,
 
 	if (!Args.Num())
 		return;
+
+	if (ParsingKeyConf)
+	{
+		//	Verify that it's a valid keyconf command.
+		bool Found = false;
+		for (int i = 0; i < ARRAY_COUNT(KeyConfCommands); i++)
+		{
+			if (!Args[0].ICmp(KeyConfCommands[i]))
+			{
+				Found = true;
+				break;
+			}
+		}
+		if (!Found)
+		{
+			GCon->Logf("%s is not a valid KeyConf command!", *Args[0]);
+			return;
+		}
+	}
 
 	//
 	//	Check for command

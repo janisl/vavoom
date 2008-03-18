@@ -284,6 +284,7 @@ REGISTER_NAME(decorate)
 REGISTER_NAME(language)
 REGISTER_NAME(titlemap)
 REGISTER_NAME(vfxdefs)
+REGISTER_NAME(keyconf)
 
 //	Standard font names
 REGISTER_NAME(smallfont)
