@@ -103,6 +103,24 @@ replication
 
 //==========================================================================
 //
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	//	If sprites for ready state are missing, you can't pick up this
+	// weapon.
+	state ReadyState = FindState('Ready');
+	if (ReadyState && AreStateSpritesPresent(ReadyState))
+	{
+		return ::TryPickup(Toucher);
+	}
+	return false;
+}
+
+//==========================================================================
+//
 //	HandlePickup
 //
 //==========================================================================
