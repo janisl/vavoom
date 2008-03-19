@@ -31,15 +31,6 @@
 
 #include "TeleportFog.vc"
 
-#include "SuperShotgun.vc"
-#include "Chainsaw.vc"
-#include "RocketLauncher.vc"
-#include "PlasmaRifle.vc"
-#ifdef GRENADE_LAUNCHER
-#include "GrenadeLauncher.vc"
-#include "Grenade.vc"
-#endif
-
 #include "Gibs.vc"
 
 #include "ScriptedMarine.vc"
@@ -84,5 +75,17 @@ class Infrared : PowerupGiver decorate;
 class Allmap : MapRevealer decorate;
 class Berserk : CustomInventory decorate;
 class Megasphere : CustomInventory decorate;
+class Fist : Weapon decorate;
+class Chainsaw : Weapon decorate;
+class Pistol : Weapon decorate;
+class Shotgun : Weapon decorate;
+class SuperShotgun : Weapon decorate;
+class Chaingun : Weapon decorate;
+class RocketLauncher : Weapon decorate;
+class PlasmaRifle : Weapon decorate;
+class BFG9000 : Weapon decorate;
 class BulletPuff : Actor decorate;
+class Rocket : Actor decorate;
+class PlasmaBall : Actor decorate;
+class BFGBall : Actor decorate;
 class DoomPlayer : PlayerPawn decorate;

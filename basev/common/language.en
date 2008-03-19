@@ -42,6 +42,7 @@ gotlauncher = "You got the rocket launcher!";
 gotplasma = "You got the plasma gun!";
 gotshotgun = "You got the shotgun!";
 gotshotgun2 = "You got the super shotgun!";
+pickup_pistol_dropped = "Picked up a pistol.";
 
 //	Locked door messages
 pd_blueo = "You need a blue key to activate this object";

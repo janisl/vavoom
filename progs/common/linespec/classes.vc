@@ -174,16 +174,6 @@ enum
 #include "LineSpecialClientGame.vc"
 
 //	We need Doom classes because of the DECORATE.
-#include "DoomWeapon.vc"
-#include "Fist.vc"
-#include "Pistol.vc"
-#include "Shotgun.vc"
-#include "Chaingun.vc"
-#include "Rocket.vc"
-#include "PlasmaBall.vc"
-#include "BFG9000.vc"
-#include "BFGBall.vc"
-#include "BFGExtra.vc"
 #include "BossTarget.vc"
 #include "SpawnFire.vc"
 #include "SpawnShot.vc"
@@ -238,6 +228,11 @@ class Fatso : Actor decorate;
 class PainElemental : Actor decorate;
 class Archvile : Actor decorate;
 class ArchvileFire : Actor decorate;
+class Rocket : Actor decorate;
+class PlasmaBall : Actor decorate;
+class BFG9000 : Weapon decorate;
+class BFGBall : Actor decorate;
+class BFGExtra : Actor decorate;
 
 class ArtiHealth : HealthPickup decorate;
 class ArtiSuperHealth : HealthPickup decorate;

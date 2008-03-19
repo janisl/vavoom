@@ -3587,6 +3587,21 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 				SetClassFieldFloat(Class, "PSpriteSY", sc->Float);
 				continue;
 			}
+			//
+			//	Vavoom specific
+			//
+			if (!Prop.ICmp("Weapon.BotCombatDist"))
+			{
+				sc->ExpectFloat();
+				SetClassFieldFloat(Class, "BotCombatDist", sc->Float);
+				continue;
+			}
+			if (!Prop.ICmp("Weapon.PlayerModelVersion"))
+			{
+				sc->ExpectNumber();
+				SetClassFieldInt(Class, "PlayerModelVersion", sc->Number);
+				continue;
+			}
 		}
 
 		//

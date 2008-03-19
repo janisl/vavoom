@@ -1198,7 +1198,7 @@ void Attack()
 	if (!Check_LOS(enemy, SHOOTFOV))
 		return;
 
-	if (Chaingun(player.ReadyWeapon))
+	if (player.ReadyWeapon.Class == Chaingun)
 	{
 		// Double tap the chaingun for extreme accuracy
 		if (info.accuracy == bsk_supreme)
