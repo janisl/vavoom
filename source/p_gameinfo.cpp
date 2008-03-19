@@ -121,3 +121,42 @@ COMMAND(AddPlayerClass)
 	GGameInfo->PlayerClasses.Append(Class);
 	unguard;
 }
+
+//==========================================================================
+//
+//	COMMAND WeaponSection
+//
+//==========================================================================
+
+COMMAND(WeaponSection)
+{
+	guard(COMMAND WeaponSection);
+	GGameInfo->eventCmdWeaponSection(Args.Num() > 1 ? Args[1] : "");
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND SetSlot
+//
+//==========================================================================
+
+COMMAND(SetSlot)
+{
+	guard(COMMAND SetSlot);
+	GGameInfo->eventCmdSetSlot(&Args);
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND AddSlotDefault
+//
+//==========================================================================
+
+COMMAND(AddSlotDefault)
+{
+	guard(COMMAND AddSlotDefault);
+	GGameInfo->eventCmdAddSlotDefault(&Args);
+	unguard;
+}

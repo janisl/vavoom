@@ -98,4 +98,22 @@ class VGameInfo : public VObject
 		P_PASS_NAME(LevelName);
 		EV_RET_NAME("GetConScriptName");
 	}
+	void eventCmdWeaponSection(const VStr& Section)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Section);
+		EV_RET_VOID("CmdWeaponSection");
+	}
+	void eventCmdSetSlot(TArray<VStr>* Args)
+	{
+		P_PASS_SELF;
+		P_PASS_PTR(Args);
+		EV_RET_VOID("CmdSetSlot");
+	}
+	void eventCmdAddSlotDefault(TArray<VStr>* Args)
+	{
+		P_PASS_SELF;
+		P_PASS_PTR(Args);
+		EV_RET_VOID("CmdAddSlotDefault");
+	}
 };

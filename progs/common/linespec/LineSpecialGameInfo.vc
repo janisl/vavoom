@@ -1116,6 +1116,137 @@ bool FindWeaponSlot(class<Weapon> WpnClass, out int Slot, out int Index)
 	return false;
 }
 
+//==========================================================================
+//
+//  AddWeaponToSlot
+//
+//==========================================================================
+
+bool AddWeaponToSlot(int Slot, class<Weapon> WeaponClass)
+{
+	int i;
+	for (i = 0; i < MAX_WEAPONS_PER_SLOT; i++)
+	{
+		if (WeaponSlots[Slot].Weapons[i] == WeaponClass)
+		{
+			//	Already there.
+			return true;
+		}
+		if (!WeaponSlots[Slot].Weapons[i])
+		{
+			WeaponSlots[Slot].Weapons[i] = WeaponClass;
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  CmdWeaponSection
+//
+//==========================================================================
+
+void CmdWeaponSection(string Section)
+{
+	if (!strlen(Section))
+	{
+		print("Usage: WeaponSection <section name>");
+		return;
+	}
+	//	Unused right now.
+}
+
+//==========================================================================
+//
+//  CmdSetSlot
+//
+//==========================================================================
+
+void CmdSetSlot(out array<string> Args)
+{
+	if (Args.Num < 2)
+	{
+		print("Usage: SetSlot <slot> <weapon> ...");
+		return;
+	}
+
+	//	Get slot number.
+	int Slot = atoi(Args[1]);
+	if (Slot < 0 || Slot >= NUM_WEAPON_SLOTS)
+	{
+		print("Bad weapon slot number");
+		return;
+	}
+
+	//	Clear slot.
+	int i;
+	for (i = 0; i < MAX_WEAPONS_PER_SLOT; i++)
+	{
+		WeaponSlots[Slot].Weapons[i] = none;
+	}
+
+	if (Args.Num == 2)
+	{
+		print("Slot cleared");
+	}
+	else
+	{
+		for (i = 2; i < Args.Num; i++)
+		{
+			class<Weapon> Cls = class<Weapon>(FindClass(StrToName(Args[i])));
+			if (!Cls)
+			{
+				print("%s is not a weapon", Args[i]);
+			}
+			else if (!AddWeaponToSlot(Slot, Cls))
+			{
+				print("Couldn\'t add %s to slot %d", Args[i], Slot);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  CmdAddSlotDefault
+//
+//==========================================================================
+
+void CmdAddSlotDefault(out array<string> Args)
+{
+	if (Args.Num != 3)
+	{
+		print("Usage: SetSlot <slot> <weapon>");
+		return;
+	}
+
+	//	Get slot number.
+	int Slot = atoi(Args[1]);
+	if (Slot < 0 || Slot >= NUM_WEAPON_SLOTS)
+	{
+		print("Bad weapon slot number");
+		return;
+	}
+
+	class<Weapon> Cls = class<Weapon>(FindClass(StrToName(Args[2])));
+	if (!Cls)
+	{
+		print("%s is not a weapon", Args[2]);
+		return;
+	}
+
+	int TmpSlot;
+	int TmpIndex;
+	if (!FindWeaponSlot(Cls, TmpSlot, TmpIndex))
+	{
+		if (!AddWeaponToSlot(Slot, Cls))
+		{
+			print("Couldn\'t add %s to slot %d", Args[2], Slot);
+		}
+	}
+}
+
 defaultproperties
 {
 	contents_alpha[0] = 1.0;

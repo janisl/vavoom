@@ -131,6 +131,36 @@ name GetConScriptName(name LevelName)
 	return '';
 }
 
+//==========================================================================
+//
+//  CmdWeaponSection
+//
+//==========================================================================
+
+void CmdWeaponSection(string Section)
+{
+}
+
+//==========================================================================
+//
+//  CmdSetSlot
+//
+//==========================================================================
+
+void CmdSetSlot(out array<string> Args)
+{
+}
+
+//==========================================================================
+//
+//  CmdAddSlotDefault
+//
+//==========================================================================
+
+void CmdAddSlotDefault(out array<string> Args)
+{
+}
+
 defaultproperties
 {
 	FloatBobOffsets[0] = 0.0; FloatBobOffsets[1] = 0.7841339111; FloatBobOffsets[2] = 1.560714722; FloatBobOffsets[3] = 2.322265625;
