@@ -1088,6 +1088,34 @@ void SpawnWorld(Level InLevel)
 	}
 }
 
+//==========================================================================
+//
+//	FindWeaponSlot
+//
+//==========================================================================
+
+bool FindWeaponSlot(class<Weapon> WpnClass, out int Slot, out int Index)
+{
+	int			i;
+	int			j;
+
+	for (i = 0; i < NUM_WEAPON_SLOTS; i++)
+	{
+		for (j = 0; j < MAX_WEAPONS_PER_SLOT; j++)
+		{
+			if (WeaponSlots[i].Weapons[j] == WpnClass)
+			{
+				Slot = i;
+				Index = j;
+				return true;
+			}
+		}
+	}
+	Slot = -1;
+	Index = -1;
+	return false;
+}
+
 defaultproperties
 {
 	contents_alpha[0] = 1.0;
