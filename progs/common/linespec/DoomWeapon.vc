@@ -26,32 +26,6 @@
 class DoomWeapon : Weapon
 	abstract;
 
-//===========================================================================
-//
-//  GunShot
-//
-//===========================================================================
-
-final void GunShot(EntityEx A, int accurate, TVec dir)
-{
-	int damage;
-
-	//  Make a copy of angles because inacurate shoot will modify them
-	if (!accurate)
-	{
-		TAVec angles;
-
-		VectorAngles(&dir, &angles);
-		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 8.0);
-		AngleVector(&angles, &dir);
-	}
-
-	damage = 5 * (P_Random() % 3 + 1);
-
-	A.LineAttack(dir, MISSILERANGE, damage, BulletPuff);
-}
-
 states
 {
 LightDone:

@@ -25,43 +25,6 @@
 
 class Pistol : DoomWeapon;
 
-//===========================================================================
-//
-//  A_FirePistol
-//
-//===========================================================================
-
-final void A_FirePistol() self(Actor)
-{
-	TVec dir;
-	bool Accurate;
-
-	if (bIsPlayer)
-	{
-		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-		if (Wpn)
-		{
-			if (!Wpn.DepleteAmmo(, 1))
-			{
-				return;
-			}
-
-			Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
-		}
-		SetState(MeleeState);
-		Accurate = !Player(Player).Refire;
-	}
-	else
-	{
-		Accurate = true;
-	}
-
-	PlaySound('weapons/pistol', CHAN_WEAPON);
-
-	Aim(dir, 16.0 * 64.0);
-	DoomWeapon(PlayerEx(Player).ReadyWeapon).GunShot(self, Accurate, dir);
-}
-
 states
 {
 Ready:

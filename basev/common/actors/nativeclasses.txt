@@ -243,22 +243,23 @@ class Inventory extends Actor
 	//
 	//	Weapon functions
 	//
-	//A_WeaponReady
-	//A_Lower
-	//A_Raise
-	//A_ReFire
-	//A_GunFlash
-	//A_CheckReload
+	action native A_WeaponReady();
+	action native A_Lower();
+	action native A_Raise();
+	action native A_ReFire();
+	action native A_GunFlash();
+	action native A_CheckReload();
 	//A_Light
-	//A_Light0
-	//A_Light1
-	//A_Light2
+	action native A_Light0();
+	action native A_Light1();
+	action native A_Light2();
 	//A_LightInverse
 
 	//
 	//	Weapon attack functions
 	//
-	//A_Saw
+	action native A_Saw(optional string fullsound, optional string hitsound,
+		optional eval int damage, optional class<Actor> pufftype);
 	//A_CustomPunch
 	//A_FireBullets
 	//A_FireCustomMissile
@@ -267,19 +268,19 @@ class Inventory extends Actor
 	//
 	//	Not documented Doom weapon atack functions
 	//
-	//action native A_FirePistol();
-	//action native A_FireShotgun();
-	//action native A_FireShotgun2();
-	//action native A_OpenShotgun2();
-	//action native A_LoadShotgun2();
-	//action native A_CloseShotgun2();
-	//action native A_FireCGun();
-	//action native A_FireMissile();
-	//action native A_FirePlasma();
+	action native A_FirePistol();
+	action native A_FireShotgun();
+	action native A_FireShotgun2();
+	action native A_OpenShotgun2();
+	action native A_LoadShotgun2();
+	action native A_CloseShotgun2();
+	action native A_FireCGun();
+	action native A_FireMissile();
+	action native A_FirePlasma();
 	//action native A_FireRailgun();
 	//action native A_FireRailgunLeft();
 	//action native A_FireRailgunRight();
 	//action native A_RailWait();
-	//action native A_BFGsound();
-	//action native A_FireBFG();
+	action native A_BFGsound();
+	action native A_FireBFG();
 }

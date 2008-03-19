@@ -28,43 +28,6 @@ class Shotgun : DoomWeapon
 	__mobjinfo__(2001)
 	__scriptid__(27);
 
-//===========================================================================
-//
-//  A_FireShotgun
-//
-//===========================================================================
-
-final void A_FireShotgun() self(Actor)
-{
-	int i;
-	TVec dir;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	PlaySound('weapons/shotgf', CHAN_WEAPON);
-	SetState(MeleeState);
-
-	if (Wpn)
-	{
-		if (!Wpn.DepleteAmmo(, 1))
-		{
-			return;
-		}
-
-		Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
-	}
-
-	Aim(dir, 16.0 * 64.0);
-	for (i = 0; i < 7; i++)
-	{
-		DoomWeapon(Wpn).GunShot(self, false, dir);
-	}
-}
-
 states
 {
 Ready:

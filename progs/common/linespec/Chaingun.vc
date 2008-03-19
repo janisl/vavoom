@@ -28,47 +28,6 @@ class Chaingun : DoomWeapon
 	__mobjinfo__(2002)
 	__scriptid__(28);
 
-//===========================================================================
-//
-//  A_FireCGun
-//
-//===========================================================================
-
-final void A_FireCGun() self(Actor)
-{
-	TVec dir;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	PlaySound('weapons/chngun', CHAN_WEAPON);
-
-	if (Wpn)
-	{
-		if (!Wpn.DepleteAmmo(, 1))
-		{
-			return;
-		}
-
-		if (Player.ViewStates[ps_weapon].State == Wpn.GetAttackState(false))
-		{
-			Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
-		}
-		else
-		{
-			Player.SetViewState(ps_flash, GetStatePlus(Wpn.FindState('Flash'), 1));
-		}
-	}
-
-	SetState(MeleeState);
-
-	Aim(dir, 16.0 * 64.0);
-	DoomWeapon(Wpn).GunShot(self, !PlayerEx(Player).Refire, dir);
-}
-
 states
 {
 Ready:

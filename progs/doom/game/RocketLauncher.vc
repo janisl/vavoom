@@ -28,29 +28,6 @@ class RocketLauncher : DoomWeapon
 	__mobjinfo__(2003)
 	__scriptid__(29);
 
-//===========================================================================
-//
-//  A_FireMissile
-//
-//===========================================================================
-
-final void A_FireMissile() self(Actor)
-{
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-	if (Wpn)
-	{
-		if (!Wpn.DepleteAmmo(, 1))
-		{
-			return;
-		}
-	}
-	SpawnPlayerMissile(Rocket);
-}
-
 states
 {
 Ready:

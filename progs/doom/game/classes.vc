@@ -31,14 +31,10 @@
 
 #include "TeleportFog.vc"
 
-#include "Pistol.vc"
 #include "SuperShotgun.vc"
-#include "BFG9000.vc"
 #include "Chainsaw.vc"
 #include "RocketLauncher.vc"
 #include "PlasmaRifle.vc"
-#include "PlasmaBall.vc"
-#include "BFGBall.vc"
 #ifdef GRENADE_LAUNCHER
 #include "GrenadeLauncher.vc"
 #include "Grenade.vc"

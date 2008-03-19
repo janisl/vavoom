@@ -212,28 +212,28 @@ code_pointer_states
 code_pointers
 {
 	//	NULL is implicit
-	WeaponReady		Weapon			A_WeaponReady
-	Lower			Weapon			A_Lower
-	Raise			Weapon			A_Raise
-	ReFire			Weapon			A_ReFire
-	CheckReload		Weapon			A_CheckReload
-	GunFlash		Weapon			A_GunFlash
-	Light0			Weapon			A_Light0
-	Light1			Weapon			A_Light1
-	Light2			Weapon			A_Light2
+	WeaponReady		Inventory		A_WeaponReady
+	Lower			Inventory		A_Lower
+	Raise			Inventory		A_Raise
+	ReFire			Inventory		A_ReFire
+	CheckReload		Inventory		A_CheckReload
+	GunFlash		Inventory		A_GunFlash
+	Light0			Inventory		A_Light0
+	Light1			Inventory		A_Light1
+	Light2			Inventory		A_Light2
 	Punch			Actor			A_Punch
-	Saw				Chainsaw		A_Saw
-	FirePistol		Pistol			A_FirePistol
-	FireShotgun		Shotgun			A_FireShotgun
-	FireShotgun2	SuperShotgun	A_FireShotgun2
-	OpenShotgun2	SuperShotgun	A_OpenShotgun2
-	LoadShotgun2	SuperShotgun	A_LoadShotgun2
-	CloseShotgun2	SuperShotgun	A_CloseShotgun2
-	FireCGun		Chaingun		A_FireCGun
-	FireMissile		RocketLauncher	A_FireMissile
-	FirePlasma		PlasmaRifle		A_FirePlasma
-	BFGsound		BFG9000			A_BFGsound
-	FireBFG			BFG9000			A_FireBFG
+	Saw				Inventory		A_Saw
+	FirePistol		Inventory		A_FirePistol
+	FireShotgun		Inventory		A_FireShotgun
+	FireShotgun2	Inventory		A_FireShotgun2
+	OpenShotgun2	Inventory		A_OpenShotgun2
+	LoadShotgun2	Inventory		A_LoadShotgun2
+	CloseShotgun2	Inventory		A_CloseShotgun2
+	FireCGun		Inventory		A_FireCGun
+	FireMissile		Inventory		A_FireMissile
+	FirePlasma		Inventory		A_FirePlasma
+	BFGsound		Inventory		A_BFGsound
+	FireBFG			Inventory		A_FireBFG
 	BFGSpray		Actor			A_BFGSpray
 	Explode			Actor			A_Explode
 	Pain			Actor			A_Pain

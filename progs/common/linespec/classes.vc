@@ -176,9 +176,13 @@ enum
 //	We need Doom classes because of the DECORATE.
 #include "DoomWeapon.vc"
 #include "Fist.vc"
+#include "Pistol.vc"
 #include "Shotgun.vc"
 #include "Chaingun.vc"
 #include "Rocket.vc"
+#include "PlasmaBall.vc"
+#include "BFG9000.vc"
+#include "BFGBall.vc"
 #include "BFGExtra.vc"
 #include "BossTarget.vc"
 #include "SpawnFire.vc"
@@ -213,6 +217,7 @@ class GlassJunk : Actor decorate;
 class BulletPuff : Actor decorate;
 class Clip : Ammo decorate;
 class Shell : Ammo decorate;
+class Cell : Ammo decorate;
 class DoomImpBall : Actor decorate;
 class LostSoul : Actor decorate;
 class CacodemonBall : Actor decorate;

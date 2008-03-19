@@ -371,32 +371,6 @@ final void A_M_Refire()
 
 //===========================================================================
 //
-//  GunShot
-//
-//===========================================================================
-
-final void GunShot(EntityEx A, int accurate, TVec dir)
-{
-	int damage;
-
-	//  Make a copy of angles because inacurate shoot will modify them
-	if (!accurate)
-	{
-		TAVec angles;
-
-		VectorAngles(&dir, &angles);
-		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 8.0);
-		AngleVector(&angles, &dir);
-	}
-
-	damage = 5 * (P_Random() % 3 + 1);
-
-	A.LineAttack(dir, MISSILERANGE, damage, BulletPuff);
-}
-
-//===========================================================================
-//
 //  A_M_FirePistol
 //
 //===========================================================================
@@ -414,7 +388,7 @@ final void A_M_FirePistol()
 	PlaySound('weapons/pistol', CHAN_WEAPON);
 
 	Aim(dir, 16.0 * 64.0);
-	GunShot(self, true, dir);
+	GunShot(true, dir);
 }
 
 //===========================================================================
@@ -436,7 +410,7 @@ final void A_M_FirePistolInaccurate()
 	PlaySound('weapons/pistol', CHAN_WEAPON);
 
 	Aim(dir, 16.0 * 64.0);
-	GunShot(self, false, dir);
+	GunShot(false, dir);
 }
 
 //===========================================================================
@@ -461,7 +435,7 @@ final void A_M_FireShotgun()
 	Aim(dir, 16.0 * 64.0);
 	for (i = 0; i < 7; i++)
 	{
-		GunShot(self, false, dir);
+		GunShot(false, dir);
 	}
 	Special1f = XLevel.Time + 27.0 / 35.0;
 }
@@ -538,7 +512,7 @@ final void A_M_FireCGunAccurate()
 	PlaySound('weapons/chngun', CHAN_WEAPON);
 
 	Aim(dir, 16.0 * 64.0);
-	GunShot(self, true, dir);
+	GunShot(true, dir);
 }
 
 //===========================================================================
@@ -560,7 +534,7 @@ final void A_M_FireCGun()
 	PlaySound('weapons/chngun', CHAN_WEAPON);
 
 	Aim(dir, 16.0 * 64.0);
-	GunShot(self, false, dir);
+	GunShot(false, dir);
 }
 
 //===========================================================================

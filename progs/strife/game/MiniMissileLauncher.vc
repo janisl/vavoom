@@ -28,11 +28,11 @@ class MiniMissileLauncher : StrifeWeapon
 
 //==========================================================================
 //
-//	A_FireMissile
+//	A_FireMiniMissile
 //
 //==========================================================================
 
-final void A_FireMissile() self(Actor)
+final void A_FireMiniMissile() self(Actor)
 {
 	float savedangle;
 
@@ -63,7 +63,7 @@ Select:
 	MMIS A 1 A_Raise
 	Loop
 Fire:
-	MMIS A 4 A_FireMissile
+	MMIS A 4 A_FireMiniMissile
 	MMIS B 4 A_Light1
 	MMIS C 5 Bright
 	MMIS D 2 Bright A_Light2

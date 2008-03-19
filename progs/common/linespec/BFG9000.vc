@@ -28,40 +28,6 @@ class BFG9000 : DoomWeapon
 	__mobjinfo__(2006)
 	__scriptid__(31);
 
-//===========================================================================
-//
-//  A_BFGsound
-//
-//===========================================================================
-
-final void A_BFGsound() self(Actor)
-{
-	PlaySound('weapons/bfgf', CHAN_WEAPON);
-}
-
-//===========================================================================
-//
-//  A_FireBFG
-//
-//===========================================================================
-
-final void A_FireBFG() self(Actor)
-{
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-	if (Wpn)
-	{
-		if (!Wpn.DepleteAmmo(, BFG9000.default.AmmoUse1))
-		{
-			return;
-		}
-	}
-	SpawnPlayerMissile(BFGBall);
-}
-
 states
 {
 Ready:

@@ -28,37 +28,6 @@ class PlasmaRifle : DoomWeapon
 	__mobjinfo__(2004)
 	__scriptid__(30);
 
-//===========================================================================
-//
-//  A_FirePlasma
-//
-//===========================================================================
-
-final void A_FirePlasma() self(Actor)
-{
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-	if (Wpn)
-	{
-		if (!Wpn.DepleteAmmo(, 1))
-		{
-			return;
-		}
-		if (!(P_Random() & 1))
-		{
-			Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
-		}
-		else
-		{
-			Player.SetViewState(ps_flash, GetStatePlus(Wpn.FindState('Flash'), 1));
-		}
-	}
-	SpawnPlayerMissile(PlasmaBall);
-}
-
 states
 {
 Ready:
