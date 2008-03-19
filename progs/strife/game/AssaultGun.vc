@@ -86,7 +86,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 3;
 	SelectionOrder = 600;
 	AmmoType1 = ClipOfBullets;
 	AmmoUse1 = 1;

@@ -99,7 +99,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 3;
 	SelectionOrder = 800;
 	AmmoType1 = CrossbowAmmo;
 	AmmoUse1 = 1;

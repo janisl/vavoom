@@ -133,7 +133,6 @@ Spawn:
 defaultproperties
 {
 	SisterWeaponType = Mauler2;
-	Slot = 7;
 	SelectionOrder = 300;
 	AmmoType1 = EnergyPod;
 	AmmoUse1 = 20;

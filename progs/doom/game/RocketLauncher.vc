@@ -80,7 +80,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 5;
 	SelectionOrder = 2500;
 	AmmoType1 = RocketAmmo;
 	AmmoUse1 = 1;

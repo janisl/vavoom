@@ -121,7 +121,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 5;
 	SelectionOrder = 200;
 	AmmoType1 = SkullRodAmmo;
 	AmmoUse1 = 1;

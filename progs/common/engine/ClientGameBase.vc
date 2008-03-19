@@ -34,6 +34,7 @@ bool skipintermission;
 
 bool bPaused;
 
+readonly GameInfo Game;
 readonly BasePlayer cl;
 readonly Level GLevel;
 

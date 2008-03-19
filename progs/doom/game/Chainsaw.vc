@@ -119,7 +119,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 1;
 	SelectionOrder = 2200;
 	PlayerModelVersion = 8;
 	PickupMessage = "$gotchainsaw";

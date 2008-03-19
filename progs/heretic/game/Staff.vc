@@ -115,7 +115,6 @@ Fire:
 
 defaultproperties
 {
-	Slot = 1;
 	SelectionOrder = 3800;
 	PSpriteSY = 0.0;
 	SisterWeaponType = StaffPowered;

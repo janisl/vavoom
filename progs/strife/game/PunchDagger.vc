@@ -101,7 +101,6 @@ Fire:
 
 defaultproperties
 {
-	Slot = 1;
 	SelectionOrder = 3900;
 	bNoAlert = true;
 	bBotMelee = true;

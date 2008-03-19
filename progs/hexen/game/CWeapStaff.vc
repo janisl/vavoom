@@ -177,7 +177,6 @@ Spawn:
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_CLERIC;
-	Slot = 2;
 	SelectionOrder = 1600;
 	AmmoType1 = Mana1;
 	AmmoUse1 = 1;

@@ -64,7 +64,6 @@ Fire:
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_MAGE;
-	Slot = 1;
 	SelectionOrder = 3600;
 	PSpriteSY = 9.0;
 	BotCombatDist = 192.0;

@@ -75,7 +75,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 6;
 	SelectionOrder = 2600;
 	AmmoType1 = PhoenixRodAmmo;
 	AmmoUse1 = 1;

@@ -571,7 +571,6 @@ Flash:
 
 defaultproperties
 {
-	Slot = 8;
 	SelectionOrder = 4000;
 	NumPieces = 1;
 	IconName = 'i_sgl1';

@@ -111,7 +111,6 @@ Spawn:
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_MAGE;
-	Slot = 3;
 	SelectionOrder = 1100;
 	AmmoType1 = Mana2;
 	AmmoUse1 = 5;

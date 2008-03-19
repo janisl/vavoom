@@ -48,7 +48,7 @@ name			UpSound;
 name			ReadySound;
 
 //	Weapon slot this weapon is placed in.
-int				Slot;
+//int				Slot;
 //	Weapons with lower values have greater priority
 int				SelectionOrder;
 //	Kickback from this weapon
@@ -211,11 +211,22 @@ void AttachToOwner(EntityEx NewOwner)
 	{
 		//	Doom and Strife always switch to a new weapon, Heretic and Hexen
 		// only switch to more powerful weapons, always check for ammo.
-		if (CheckAmmo(false) && (LineSpecialGameInfo(Level.Game).bAlwaysSwitchNewWeapon ||
-			!PlayerEx(Owner.Player).ReadyWeapon ||
-			Slot > PlayerEx(Owner.Player).ReadyWeapon.Slot) ||
-			(Slot == PlayerEx(Owner.Player).ReadyWeapon.Slot &&
-			SelectionOrder < PlayerEx(Owner.Player).ReadyWeapon.SelectionOrder))
+		int ReadySlot = -1;
+		int ReadyIndex = -1;
+		int NewSlot;
+		int NewIndex;
+		if (PlayerEx(Owner.Player).ReadyWeapon)
+		{
+			LineSpecialGameInfo(Level.Game).FindWeaponSlot(
+				class<Weapon>(PlayerEx(Owner.Player).ReadyWeapon.Class),
+				ReadySlot, ReadyIndex);
+		}
+		LineSpecialGameInfo(Level.Game).FindWeaponSlot(
+			class<Weapon>(Class), NewSlot, NewIndex);
+		if (CheckAmmo(false) &&
+			(LineSpecialGameInfo(Level.Game).bAlwaysSwitchNewWeapon ||
+			!PlayerEx(Owner.Player).ReadyWeapon || NewSlot > ReadySlot) ||
+			(NewSlot == ReadySlot && NewIndex < ReadyIndex))
 		{
 			PlayerEx(Owner.Player).PendingWeapon = self;
 		}

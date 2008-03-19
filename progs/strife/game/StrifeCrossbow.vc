@@ -127,7 +127,6 @@ Spawn:
 defaultproperties
 {
 	SisterWeaponType = StrifeCrossbow2;
-	Slot = 2;
 	SelectionOrder = 1200;
 	AmmoType1 = ElectricBolts;
 	AmmoUse1 = 1;

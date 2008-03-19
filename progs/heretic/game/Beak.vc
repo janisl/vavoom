@@ -158,7 +158,6 @@ Fire:
 
 defaultproperties
 {
-	Slot = 1;
 	SelectionOrder = 10000;
 	PSpriteSY = 15.0;
 	SisterWeaponType = BeakPowered;

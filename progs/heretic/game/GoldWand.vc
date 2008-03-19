@@ -111,7 +111,6 @@ Fire:
 
 defaultproperties
 {
-	Slot = 2;
 	SelectionOrder = 2000;
 	AmmoType1 = GoldWandAmmo;
 	AmmoUse1 = 1;

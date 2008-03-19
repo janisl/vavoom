@@ -367,6 +367,7 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
+	GClGame->Game = GGameInfo;
 	if (host_standalone)
 	{
 		VBasePlayer* Player = GPlayersBase[0];

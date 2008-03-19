@@ -161,7 +161,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 1;
 	SelectionOrder = 2300;
 	PSpriteSY = 15.0;
 	PickupMessage = "$txt_wpngauntlets";

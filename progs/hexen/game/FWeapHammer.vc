@@ -148,7 +148,6 @@ Spawn:
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_FIGHTER;
-	Slot = 3;
 	SelectionOrder = 900;
 	AmmoType1 = Mana2;
 	AmmoUse1 = 3;

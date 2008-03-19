@@ -96,7 +96,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 3;
 	SelectionOrder = 1300;
 	AmmoType1 = Shell;
 	AmmoUse1 = 1;

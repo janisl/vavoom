@@ -318,7 +318,15 @@ void SB_DrawMainBar()
 			Inventory Item;
 			for (Item = EntityEx(cl.MO).Inventory; Item; Item = Item.Inventory)
 			{
-				if (Weapon(Item) && Weapon(Item).Slot == i + 2)
+				if (!Weapon(Item))
+				{
+					continue;
+				}
+				int TmpSlot;
+				int TmpIndex;
+				LineSpecialGameInfo(cl.ClGame.Game).FindWeaponSlot(
+					class<Weapon>(Item.Class), TmpSlot, TmpIndex);
+				if (TmpSlot == i + 2)
 				{
 					HaveWeapon = true;
 					break;

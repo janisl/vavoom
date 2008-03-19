@@ -50,7 +50,6 @@ Fire:
 defaultproperties
 {
 	SisterWeaponType = StrifeCrossbow;
-	Slot = 2;
 	SelectionOrder = 2700;
 	AmmoType1 = PoisonBolts;
 	AmmoUse1 = 1;

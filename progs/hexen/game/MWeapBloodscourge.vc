@@ -159,7 +159,6 @@ Fire:
 defaultproperties
 {
 	WeaponClass = HexenDefs::PCLASS_MAGE;
-	Slot = 4;
 	SelectionOrder = 3100;
 	AmmoType1 = Mana1;
 	AmmoType2 = Mana2;

@@ -50,7 +50,6 @@ Fire:
 defaultproperties
 {
 	SisterWeaponType = Mauler;
-	Slot = 7;
 	SelectionOrder = 3300;
 	AmmoUse1 = 30;
 	AmmoGive1 = 0;

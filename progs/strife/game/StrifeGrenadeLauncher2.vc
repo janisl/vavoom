@@ -57,7 +57,6 @@ Flash2:
 defaultproperties
 {
 	SisterWeaponType = StrifeGrenadeLauncher;
-	Slot = 5;
 	SelectionOrder = 3200;
 	AmmoType1 = PhosphorusGrenadeRounds;
 	AmmoUse1 = 1;

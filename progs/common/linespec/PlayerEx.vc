@@ -951,10 +951,10 @@ final void PrevWeapon()
 	{
 		return;
 	}
-	Weapon Best = GetPrevWeapon(ReadyWeapon);
-	if (Best && Best != ReadyWeapon)
+	Weapon Wpn = GetPrevWeapon(PendingWeapon ? PendingWeapon : ReadyWeapon);
+	if (Wpn && Wpn != ReadyWeapon)
 	{
-		PendingWeapon = Best;
+		PendingWeapon = Wpn;
 	}
 }
 
@@ -970,10 +970,10 @@ final void NextWeapon()
 	{
 		return;
 	}
-	Weapon Best = GetNextWeapon(ReadyWeapon);
-	if (Best && Best != ReadyWeapon)
+	Weapon Wpn = GetNextWeapon(PendingWeapon ? PendingWeapon : ReadyWeapon);
+	if (Wpn && Wpn != ReadyWeapon)
 	{
-		PendingWeapon = Best;
+		PendingWeapon = Wpn;
 	}
 }
 
@@ -1117,9 +1117,10 @@ final Weapon GetPrevWeapon(Weapon Current)
 	}
 
 	for (i = LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT *
-		LineSpecialGameInfo::NUM_WEAPON_SLOTS; i >= 0; i--)
+		LineSpecialGameInfo::NUM_WEAPON_SLOTS - 1; i >= 0; i--)
 	{
-		Slot = (Start + i) / LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT;
+		Slot = ((Start + i) / LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT) %
+			LineSpecialGameInfo::NUM_WEAPON_SLOTS;
 		Index = (Start + i) % LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT;
 		Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
 			GI.WeaponSlots[Slot].Weapons[Index]));
@@ -1157,7 +1158,8 @@ final Weapon GetNextWeapon(Weapon Current)
 	for (i = 1; i <= LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT *
 		LineSpecialGameInfo::NUM_WEAPON_SLOTS; i++)
 	{
-		Slot = (Start + i) / LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT;
+		Slot = ((Start + i) / LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT) %
+			LineSpecialGameInfo::NUM_WEAPON_SLOTS;
 		Index = (Start + i) % LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT;
 		Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
 			GI.WeaponSlots[Slot].Weapons[Index]));

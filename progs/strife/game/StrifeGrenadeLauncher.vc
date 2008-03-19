@@ -127,7 +127,6 @@ Spawn:
 defaultproperties
 {
 	SisterWeaponType = StrifeGrenadeLauncher2;
-	Slot = 5;
 	SelectionOrder = 2400;
 	AmmoType1 = HEGrenadeRounds;
 	AmmoUse1 = 1;

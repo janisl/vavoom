@@ -106,7 +106,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 4;
 	SelectionOrder = 500;
 	AmmoType1 = BlasterAmmo;
 	AmmoUse1 = 1;

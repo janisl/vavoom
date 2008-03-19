@@ -86,7 +86,6 @@ Flash:
 
 defaultproperties
 {
-	Slot = 2;
 	SelectionOrder = 1900;
 	AmmoType1 = Clip;
 	AmmoUse1 = 1;

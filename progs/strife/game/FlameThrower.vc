@@ -75,7 +75,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 6;
 	SelectionOrder = 2100;
 	AmmoType1 = EnergyPod;
 	AmmoUse1 = 1;

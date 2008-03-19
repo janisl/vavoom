@@ -61,6 +61,7 @@ class VClientGameBase : public VObject
 	};
 	vuint32				ClientFlags;
 
+	VGameInfo*			Game;
 	VBasePlayer*		cl;
 	VLevel*				GLevel;
 

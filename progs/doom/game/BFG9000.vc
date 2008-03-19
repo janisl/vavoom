@@ -90,7 +90,6 @@ Spawn:
 
 defaultproperties
 {
-	Slot = 7;
 	SelectionOrder = 2800;
 	AmmoType1 = Cell;
 	AmmoUse1 = 40;

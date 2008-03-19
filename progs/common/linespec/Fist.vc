@@ -47,7 +47,6 @@ Fire:
 
 defaultproperties
 {
-	Slot = 1;
 	SelectionOrder = 3700;
 	BotCombatDist = 1.0;
 	bWimpyWeapon = true;
