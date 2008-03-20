@@ -331,6 +331,11 @@ string			HitObituary;
 
 state			PrevEffectState;
 
+int				MeleeDamage;
+name			MeleeSound;
+float			MissileHeight;
+class<Actor>	MissileType;
+
 array<DropItemInfo>	DropItemList;
 
 replication
@@ -7422,6 +7427,17 @@ final void GunShot(int accurate, TVec dir)
 	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
 }
 
+//===========================================================================
+//
+//  IsMissile
+//
+//===========================================================================
+
+final bool IsMissile(bool Precise)
+{
+	return bMissile || (Precise && default.bMissile);
+}
+
 bool IsTeammate(EntityEx Other)
 {
 	return bIsPlayer && Other.bIsPlayer && Level.Game.netgame &&
@@ -7485,4 +7501,5 @@ defaultproperties
 	RDFactor = 1.0;
 	MeleeRange = 44.0;	//	MELEERANGE(64.0) - 20.0
 	LastLookActor = -1;
+	MissileHeight = 32.0;
 }

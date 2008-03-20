@@ -3000,30 +3000,26 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("MeleeDamage"))
 		{
-			//FIXME
 			sc->ExpectNumber();
-			GCon->Logf("Property MeleeDamage in %s is not yet supported", Class->GetName());
+			SetClassFieldInt(Class, "MeleeDamage", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("MeleeSound"))
 		{
-			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property MeleeSound in %s is not yet supported", Class->GetName());
+			SetClassFieldName(Class, "MeleeSound", *sc->String);
 			continue;
 		}
 		if (!Prop.ICmp("MissileHeight"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property MissileHeight in %s is not yet supported", Class->GetName());
+			SetClassFieldFloat(Class, "MissileHeight", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("MissileType"))
 		{
-			//FIXME
 			sc->ExpectString();
-			GCon->Logf("Property MissileType in %s is not yet supported", Class->GetName());
+			AddClassFixup(Class, "MissileType", sc->String, ClassFixups);
 			continue;
 		}
 		if (!Prop.ICmp("ExplosionRadius"))

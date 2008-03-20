@@ -28,16 +28,23 @@ class Actor extends Thinker
 	//
 	//	Generic monster attacks
 	//
-	//A_CustomMissile
-	//A_CustomBulletAttack
+	action native A_CustomMissile(class<Actor> missiletype, eval float spawnheight,
+		eval int spawnoffs_xy, eval float angle, optional eval int aimmode,
+		optional eval float pitch);
+	action native A_CustomBulletAttack(eval float spread_horiz, eval float spread_vert,
+		eval int numbullets, eval int damage, class<Actor> pufftype,
+		optional eval float range, optional eval bool aimfacing);
 	//A_CustomRailgun
-	//A_CustomMeleeAttack
-	//A_CustomComboAttack
-	//A_MeleeAttack
-	//A_MissileAttack
-	//A_ComboAttack
-	//A_BasicAttack
-	//A_BulletAttack
+	action native A_CustomMeleeAttack(eval int damage, string meleesound,
+		string misssound, string damagetype, eval bool bleed);
+	action native A_CustomComboAttack(class<Actor> missiletype, eval float spawnheight,
+		eval int damage, string meleesound, string damagetype, eval bool bleed);
+	action native A_MeleeAttack();
+	action native A_MissileAttack();
+	action native A_ComboAttack();
+	action native A_BasicAttack(eval int meleedamage, string meleesound,
+		class<Actor> missiletype, eval float missileheight);
+	action native A_BulletAttack();
 	//A_MonsterRail
 	action native A_Explode(optional eval int damage, optional eval int distance, optional evanot bool hurtsource);
 	//A_RadiusThrust

@@ -825,12 +825,18 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 			if (Args[i]->IsDecorateSingleName())
 			{
 				VDecorateSingleName* E = (VDecorateSingleName*)Args[i];
-				Args[i] = new VStringLiteral(E->Name, E->Loc);
+				Args[i] = new VStringLiteral(ec.Package->FindString(*E->Name), E->Loc);
 				delete E;
 			}
 			break;
 
 		case TYPE_Class:
+			if (Args[i]->IsDecorateSingleName())
+			{
+				VDecorateSingleName* E = (VDecorateSingleName*)Args[i];
+				Args[i] = new VStringLiteral(ec.Package->FindString(*E->Name), E->Loc);
+				delete E;
+			}
 			if (Args[i]->IsStrConst())
 			{
 				VStr CName = Args[i]->GetStrConst(ec.Package);
@@ -838,13 +844,17 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 				VClass* Cls = VClass::FindClassNoCase(*CName);
 				if (!Cls)
 				{
-					ParseError(ALoc, "No such class %s", *CName);
+					ParseWarning(ALoc, "No such class %s", *CName);
+					delete Args[i];
+					Args[i] = new VNoneLiteral(ALoc);
 				}
 				else if (Func->ParamTypes[i].Class &&
 					!Cls->IsChildOf(Func->ParamTypes[i].Class))
 				{
-					ParseError(ALoc, "Class %s is not a descendant of %s",
+					ParseWarning(ALoc, "Class %s is not a descendant of %s",
 						*CName, Func->ParamTypes[i].Class->GetName());
+					delete Args[i];
+					Args[i] = new VNoneLiteral(ALoc);
 				}
 				else
 				{

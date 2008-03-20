@@ -4,3 +4,9 @@ const int CHF_NOPLAYACTIVE	= 2;
 const int CHF_NIGHTMAREFAST	= 4;
 const int CHF_RESURRECT		= 8;
 const int CHF_DONTMOVE		= 16;
+
+// Flags for A_CustomMissile
+const int CMF_AIMOFFSET			= 1;
+const int CMF_AIMDIRECTION		= 2;
+const int CMF_TRACKOWNER		= 4;
+const int CMF_CHECKTARGETDEAD	= 8;
