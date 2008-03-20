@@ -676,6 +676,51 @@ void VInvocation::CheckParams(VEmitContext& ec)
 			}
 			else
 			{
+				if (ec.Package->Name == NAME_decorate)
+				{
+					switch (Func->ParamTypes[i].Type)
+					{
+					case TYPE_Int:
+						if (Args[i]->IsFloatConst())
+						{
+							int Val = int(Args[i]->GetFloatConst());
+							TLocation Loc = Args[i]->Loc;
+							delete Args[i];
+							Args[i] = new VIntLiteral(Val, Loc);
+							Args[i] = Args[i]->Resolve(ec);
+						}
+						else if (Args[i]->Type.Type == TYPE_Float)
+						{
+							VExpression* TmpArgs[1];
+							TmpArgs[0] = Args[i];
+							Args[i] = new VInvocation(NULL,
+								ec.SelfClass->FindMethodChecked("ftoi"), NULL,
+								false, false, Args[i]->Loc, 1, TmpArgs);
+							Args[i] = Args[i]->Resolve(ec);
+						}
+						break;
+
+					case TYPE_Float:
+						if (Args[i]->IsIntConst())
+						{
+							int Val = Args[i]->GetIntConst();
+							TLocation Loc = Args[i]->Loc;
+							delete Args[i];
+							Args[i] = new VFloatLiteral(Val, Loc);
+							Args[i] = Args[i]->Resolve(ec);
+						}
+						else if (Args[i]->Type.Type == TYPE_Int)
+						{
+							VExpression* TmpArgs[1];
+							TmpArgs[0] = Args[i];
+							Args[i] = new VInvocation(NULL,
+								ec.SelfClass->FindMethodChecked("itof"), NULL,
+								false, false, Args[i]->Loc, 1, TmpArgs);
+							Args[i] = Args[i]->Resolve(ec);
+						}
+						break;
+					}
+				}
 				if (Func->ParamFlags[i] & FPARM_Out)
 				{
 					if (!Args[i]->Type.Equals(Func->ParamTypes[i]))

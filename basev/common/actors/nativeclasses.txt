@@ -249,7 +249,7 @@ class Inventory extends Actor
 	action native A_ReFire();
 	action native A_GunFlash();
 	action native A_CheckReload();
-	//A_Light
+	action native A_Light(eval int value);
 	action native A_Light0();
 	action native A_Light1();
 	action native A_Light2();
@@ -260,9 +260,16 @@ class Inventory extends Actor
 	//
 	action native A_Saw(optional string fullsound, optional string hitsound,
 		optional eval int damage, optional class<Actor> pufftype);
-	//A_CustomPunch
-	//A_FireBullets
-	//A_FireCustomMissile
+	action native A_CustomPunch(eval int PunchDamage, optional eval bool NoRandom,
+		optional evalnot bool UseAmmo, optional class<Actor> PuffType,
+		optional eval float Range);
+	action native A_FireBullets(eval float spread_horz, eval float spread_vert,
+		eval int numbullets, eval int damage, optional class<Actor> pufftype,
+		optional evalnot bool useammo, optional eval float range);
+	action native A_FireCustomMissile(class<Actor> MissileType,
+		optional eval float Angle, optional evalnot bool UseAmmo,
+		optional eval int SpawnXY, optional eval float SpawnZ,
+		optional eval int AimAtAngle);
 	//A_RailAttack
 
 	//

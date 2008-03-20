@@ -936,6 +936,30 @@ final void A_CheckReload()
 
 //===========================================================================
 //
+//  A_Light
+//
+//===========================================================================
+
+final void A_Light(int LightValue)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	if (LightValue < 0)
+	{
+		LightValue = 0;
+	}
+	else if (LightValue > 20)
+	{
+		LightValue = 20;
+	}
+	Player.ExtraLight = LightValue;
+}
+
+//===========================================================================
+//
 //  A_Light0
 //
 //===========================================================================
@@ -1078,6 +1102,211 @@ final void decorate_A_Saw(optional name FullSound, optional name HitSound,
 	if (bIsPlayer)
 	{
 		Player.bFixAngle = true;
+	}
+}
+
+//===========================================================================
+//
+//  A_CustomPunch
+//
+//===========================================================================
+
+final void A_CustomPunch(int PunchDamage, optional bool NoRandom,
+	optional bool UseAmmo, optional class<Actor> PuffType,
+	optional float Range)
+{
+	TAVec		aimAngles;
+	TVec		dir;
+	EntityEx	AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	if (!specified_UseAmmo)
+	{
+		UseAmmo = true;
+	}
+	if (!PuffType)
+	{
+		PuffType = BulletPuff;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	aimAngles = Angles;
+	aimAngles.yaw = AngleMod360(aimAngles.yaw + (Random() -
+		Random()) * 45.0 / 8.0);
+	AimTarget = AimLineAttack(dir, aimAngles, Range);
+
+	//	Use ammo only if hit something.
+	if (UseAmmo && AimTarget && Wpn)
+	{
+		if (!Wpn.DepleteAmmo())
+		{
+			return;
+		}
+	}
+
+	if (!NoRandom)
+	{
+		PunchDamage *= (P_Random() % 8 + 1);
+	}
+
+	LineAttack(dir, Range, PunchDamage, PuffType,,,
+		PuffType.default.DamageType);
+
+	// turn to face target
+	if (AimTarget)
+	{
+		if (Wpn)
+		{
+			PlaySound(Wpn.AttackSound, CHAN_WEAPON);
+		}
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		if (bIsPlayer)
+		{
+			Player.bFixAngle = true;
+		}
+	}
+}
+
+//===========================================================================
+//
+//  A_FireBullets
+//
+//===========================================================================
+
+final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
+	int DamagePerBullet, optional class<Actor> PuffType, optional bool UseAmmo,
+	optional float Range)
+{
+	TVec		dir;
+	int			i;
+	int			damage;
+	TAVec		rot;
+	TVec		aimDir;
+
+	if (!PuffType)
+	{
+		PuffType = BulletPuff;
+	}
+	if (!specified_UseAmmo)
+	{
+		UseAmmo = true;
+	}
+	if (!Range)
+	{
+		Range = MISSILERANGE;
+	}
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (UseAmmo && Wpn)
+	{
+		if (!Wpn.DepleteAmmo())
+		{
+			return;
+		}
+	}
+
+	SetState(MeleeState);
+
+	if (Wpn)
+	{
+		PlaySound(Wpn.AttackSound, CHAN_WEAPON);
+	}
+
+	Aim(aimDir, 16.0 * 64.0);
+
+	if ((NumBullets == 1 && !PlayerEx(Player).Refire) || NumBullets == 0)
+	{
+		damage = DamagePerBullet * (P_Random() % 3 + 1);
+		LineAttack(aimDir, Range, damage, PuffType,,,
+			PuffType.default.DamageType);
+	}
+	else
+	{
+		if (NumBullets == -1)
+		{
+			NumBullets = 1;
+		}
+		for (i = 0; i < NumBullets; i++)
+		{
+			rot.pitch = (Random() - Random()) * SpreadVert;
+			rot.yaw = (Random() - Random()) * SpreadHoriz;
+			rot.roll = 0.0;
+			dir = RotateDirectionVector(aimDir, rot);
+			damage = DamagePerBullet * (P_Random() % 3 + 1);
+			LineAttack(dir, Range, damage, PuffType,,,
+				PuffType.default.DamageType);
+		}
+	}
+}
+
+//===========================================================================
+//
+//  A_FireCustomMissile
+//
+//===========================================================================
+
+final void A_FireCustomMissile(class<Actor> MissileType, optional float Angle,
+	optional bool UseAmmo, optional int SpawnXY, optional float SpawnZ,
+	optional int AimAtAngle)
+{
+	if (!MissileType || !bIsPlayer)
+	{
+		return;
+	}
+
+	if (!specified_UseAmmo)
+	{
+		UseAmmo = true;
+	}
+
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (UseAmmo && Wpn)
+	{
+		if (!Wpn.DepleteAmmo())
+		{
+			return;
+		}
+	}
+
+	TVec ShootOrg = Origin;
+	if (SpawnXY)
+	{
+		Origin.x += itof(SpawnXY) * cos(Angles.yaw - 90.0);
+		Origin.y += itof(SpawnXY) * sin(Angles.yaw - 90.0);
+	}
+	ShootOrg.x += SpawnZ;
+
+	float ShootAngle = Angles.yaw;
+	if (AimAtAngle)
+	{
+		ShootAngle += Angle;
+	}
+
+	EntityEx AimTarget;
+	EntityEx A = SpawnPlayerMissileEx(MissileType, false, AimTarget,
+		ShootAngle, ShootOrg);
+	if (A)
+	{
+		//	Handle seeker missiles.
+		if (A.bSeekerMissile)
+		{
+			A.Tracer = AimTarget;
+		}
+
+		if (!AimAtAngle)
+		{
+			VectorRotateAroundZ(&A.Velocity, Angle);
+		}
 	}
 }
 
