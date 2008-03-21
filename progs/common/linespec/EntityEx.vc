@@ -7438,6 +7438,58 @@ final bool IsMissile(bool Precise)
 	return bMissile || (Precise && default.bMissile);
 }
 
+//===========================================================================
+//
+//  FindJumpState
+//
+//===========================================================================
+
+final state FindJumpState(name Label)
+{
+	if (XLevel.StateCall)
+	{
+		return XLevel.StateCall->Item.FindState(Label);
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_weapon].State)
+	{
+		return PlayerEx(Player).ReadyWeapon.FindState(Label);
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_flash].State)
+	{
+		return PlayerEx(Player).ReadyWeapon.FindState(Label);
+	}
+	else
+	{
+		return FindState(Label);
+	}
+}
+
+//===========================================================================
+//
+//  DoJump
+//
+//===========================================================================
+
+final void DoJump(state State)
+{
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->State = State;
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_weapon].State)
+	{
+		Player.SetViewState(ps_weapon, State);
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_flash].State)
+	{
+		Player.SetViewState(ps_flash, State);
+	}
+	else
+	{
+		SetState(State);
+	}
+}
+
 bool IsTeammate(EntityEx Other)
 {
 	return bIsPlayer && Other.bIsPlayer && Level.Game.netgame &&

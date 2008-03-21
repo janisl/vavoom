@@ -99,6 +99,8 @@ public:
 	bool			BaseCall;
 	int				NumArgs;
 	VExpression*	Args[VMethod::MAX_PARAMS + 1];
+	VState*			CallerState;
+	bool			MultiFrameState;
 
 	VInvocation(VExpression* ASelfExpr, VMethod* AFunc, VField* ADelegateField,
 		bool AHaveSelf, bool ABaseCall, const TLocation& ALoc, int ANumArgs,

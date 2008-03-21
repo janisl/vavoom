@@ -703,6 +703,37 @@ float GetSpeedFactor()
 //	State jumps
 //**************************************************************************
 
+//==========================================================================
+//
+//  A_JumpIfNoAmmo
+//
+//==========================================================================
+
+final void A_JumpIfNoAmmo(state Label)
+{
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+
+	//	Only for weapons.
+	if (!bIsPlayer || XLevel.StateCall)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (!Wpn)
+	{
+		return;
+	}
+
+	if (!Wpn.CheckAmmo(false, true))
+	{
+		DoJump(Label);
+	}
+}
+
 //**************************************************************************
 //	Weapon functions
 //**************************************************************************

@@ -749,6 +749,7 @@ class VLevel : public VObject
 	TArray<VTextureTranslation*>	Translations;
 	TArray<VTextureTranslation*>	BodyQueueTrans;
 
+	VState*				CallingState;
 	VStateCall*			StateCall;
 
 	void Serialise(VStream& Strm);

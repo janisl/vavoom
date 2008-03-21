@@ -804,6 +804,45 @@ void VClassConstant::Emit(VEmitContext& ec)
 
 //END
 
+//BEGIN VClassConstant
+
+//==========================================================================
+//
+//	VStateConstant::VStateConstant
+//
+//==========================================================================
+
+VStateConstant::VStateConstant(VState* AState, const TLocation& ALoc)
+: VExpression(ALoc)
+, State(AState)
+{
+	Type = TYPE_State;
+}
+
+//==========================================================================
+//
+//	VStateConstant::DoResolve
+//
+//==========================================================================
+
+VExpression* VStateConstant::DoResolve(VEmitContext&)
+{
+	return this;
+}
+
+//==========================================================================
+//
+//	VStateConstant::Emit
+//
+//==========================================================================
+
+void VStateConstant::Emit(VEmitContext& ec)
+{
+	ec.AddStatement(OPC_PushState, State);
+}
+
+//END
+
 //BEGIN VConstantValue
 
 //==========================================================================

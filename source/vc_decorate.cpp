@@ -2304,8 +2304,10 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			}
 			else if (Func->NumParams || NumArgs)
 			{
-				VExpression* Expr = new VInvocation(NULL, Func, NULL,
+				VInvocation* Expr = new VInvocation(NULL, Func, NULL,
 					false, false, sc->GetLoc(), NumArgs, Args);
+				Expr->CallerState = State;
+				Expr->MultiFrameState = FramesString.Length() > 1;
 				VExpressionStatement* Stmt = new VExpressionStatement(Expr);
 				VMethod* M = new VMethod(NAME_None, Class, sc->GetLoc());
 				M->Flags = FUNC_Final;

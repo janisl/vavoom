@@ -174,6 +174,22 @@ public:
 
 //==========================================================================
 //
+//	VStateConstant
+//
+//==========================================================================
+
+class VStateConstant : public VExpression
+{
+public:
+	VState*		State;
+
+	VStateConstant(VState* AState, const TLocation& ALoc);
+	VExpression* DoResolve(VEmitContext&);
+	void Emit(VEmitContext&);
+};
+
+//==========================================================================
+//
 //	VConstantValue
 //
 //==========================================================================

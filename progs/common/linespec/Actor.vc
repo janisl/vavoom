@@ -2093,6 +2093,237 @@ final void A_TossGib()
 //	State jumps
 //**************************************************************************
 
+//==========================================================================
+//
+//  A_Jump
+//
+//==========================================================================
+
+final void A_Jump(int Chance, state Label1, optional state Label2,
+	optional state Label3, optional state Label4, optional state Label5,
+	optional state Label6, optional state Label7, optional state Label8)
+{
+	if (P_Random() < Chance)
+	{
+		if (!specified_Label2)
+		{
+			DoJump(Label1);
+		}
+		else
+		{
+			array<state> List;
+			List[0] = Label1;
+			List[1] = Label2;
+			if (specified_Label3)
+			{
+				List[2] = Label3;
+			}
+			if (specified_Label4)
+			{
+				List[3] = Label4;
+			}
+			if (specified_Label5)
+			{
+				List[4] = Label5;
+			}
+			if (specified_Label6)
+			{
+				List[5] = Label6;
+			}
+			if (specified_Label7)
+			{
+				List[6] = Label7;
+			}
+			if (specified_Label8)
+			{
+				List[7] = Label8;
+			}
+			DoJump(List[P_Random() % List.Num]);
+		}
+	}
+
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+}
+
+//==========================================================================
+//
+//  A_JumpIf
+//
+//==========================================================================
+
+final void A_JumpIf(bool Expr, state Label)
+{
+	if (Expr)
+	{
+		DoJump(Label);
+	}
+
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+}
+
+//==========================================================================
+//
+//  A_JumpIfCloser
+//
+//==========================================================================
+
+final void A_JumpIfCloser(float Dist, state Label)
+{
+	EntityEx Targ;
+
+	if (!bIsPlayer)
+	{
+		Targ = Target;
+	}
+	else
+	{
+		TVec Dir;
+		Targ = Aim(Dir, 16.0 * 64.0);
+	}
+
+	if (Targ && DistTo2(Targ) < Dist && ((Origin.z > Targ.Origin.z &&
+		Origin.z - Target.Origin.z - Target.Height < Dist) ||
+		(Origin.z <= Targ.Origin.z &&
+		Target.Origin.z - Origin.z - Height < Dist)))
+	{
+		DoJump(Label);
+	}
+
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+}
+
+//==========================================================================
+//
+//  A_JumpIfHealthLower
+//
+//==========================================================================
+
+final void A_JumpIfHealthLower(int HealthVal, state Label)
+{
+	if (Health < HealthVal)
+	{
+		DoJump(Label);
+	}
+
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+}
+
+//==========================================================================
+//
+//  A_JumpIfInventory
+//
+//==========================================================================
+
+final void A_JumpIfInventory(class<Actor> ItemType, int Amount, state Label)
+{
+	if (ItemType)
+	{
+		Inventory Item = FindInventory(class<Inventory>(ItemType));
+		if (Item)
+		{
+			if ((Amount > 0 && Item.Amount >= Amount) ||
+				(Amount == 0 && Item.Amount >= Item.MaxAmount))
+			{
+				DoJump(Label);
+			}
+		}
+	}
+
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+}
+
+//==========================================================================
+//
+//  A_JumpIfInTargetInventory
+//
+//==========================================================================
+
+final void A_JumpIfInTargetInventory(class<Actor> ItemType, int Amount, state Label)
+{
+	if (ItemType && Target)
+	{
+		Inventory Item = Target.FindInventory(class<Inventory>(ItemType));
+		if (Item)
+		{
+			if ((Amount > 0 && Item.Amount >= Amount) ||
+				(Amount == 0 && Item.Amount >= Item.MaxAmount))
+			{
+				DoJump(Label);
+			}
+		}
+	}
+
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+}
+
+//==========================================================================
+//
+//  A_JumpIfTargetInLOS
+//
+//==========================================================================
+
+final void A_JumpIfTargetInLOS(state Label, optional float Fov)
+{
+	//	State jumps should not affect state chain results.
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->Result = false;
+	}
+
+	EntityEx Targ;
+	if (!bIsPlayer)
+	{
+		Targ = Target;
+		if (!Targ || !CanSee(Targ))
+		{
+			return;
+		}
+		if (Fov && Fov < 360.0)
+		{
+			float Ang = AngleMod180(atan2(Targ.Origin.y - Origin.y,
+				Targ.Origin.x - Origin.x) - Angles.yaw);
+			if (fabs(Ang) > Fov / 2.0)
+			{
+				return;
+			}
+		}
+	}
+	else
+	{
+		TVec Dir;
+		Targ = Aim(Dir, 16.0 * 64.0);
+	}
+
+	if (Targ)
+	{
+		DoJump(Label);
+	}
+}
+
 //**************************************************************************
 //	Flags and appearance
 //**************************************************************************

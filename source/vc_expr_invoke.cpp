@@ -463,6 +463,8 @@ VInvocation::VInvocation(VExpression* ASelfExpr, VMethod* AFunc, VField* ADelega
 , HaveSelf(AHaveSelf)
 , BaseCall(ABaseCall)
 , NumArgs(ANumArgs)
+, CallerState(NULL)
+, MultiFrameState(false)
 {
 	guard(VInvocation::VInvocation);
 	for (int i = 0; i < NumArgs; i++)
@@ -860,6 +862,94 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 				{
 					delete Args[i];
 					Args[i] = new VClassConstant(Cls, ALoc);
+				}
+			}
+			break;
+
+		case TYPE_State:
+			if (Args[i]->IsIntConst())
+			{
+				int Offs = Args[i]->GetIntConst();
+				TLocation ALoc = Args[i]->Loc;
+				if (Offs < 0)
+				{
+					ParseError(ALoc, "Negative state jumps are not allowed");
+				}
+				else if (Offs == 0)
+				{
+					//	0 means no state
+					delete Args[i];
+					Args[i] = new VNoneLiteral(ALoc);
+				}
+				else
+				{
+					check(CallerState);
+					VState* S = CallerState->GetPlus(Offs, true);
+					if (!S)
+					{
+						ParseError(ALoc, "Bad state jump offset");
+					}
+					else
+					{
+						delete Args[i];
+						Args[i] = new VStateConstant(S, ALoc);
+					}
+				}
+			}
+			else if (Args[i]->IsStrConst())
+			{
+				VStr Lbl = Args[i]->GetStrConst(ec.Package);
+				TLocation ALoc = Args[i]->Loc;
+				int DCol = Lbl.IndexOf("::");
+				if (DCol >= 0)
+				{
+					//	Jump to a specific parent class state, resolve it and
+					// pass value directly.
+					VStr ClassName(Lbl, 0, DCol);
+					VClass* CheckClass;
+					if (ClassName.ICmp("Super"))
+					{
+						CheckClass = ec.SelfClass->ParentClass;
+					}
+					else
+					{
+						CheckClass = VClass::FindClassNoCase(*ClassName);
+						if (!CheckClass)
+						{
+							ParseError(ALoc, "No such class %s", *ClassName);
+						}
+						else if (!ec.SelfClass->IsChildOf(CheckClass))
+						{
+							ParseError(ALoc, "%s is not a subclass of %s",
+								ec.SelfClass->GetName(), CheckClass->GetName());
+							CheckClass = NULL;
+						}
+					}
+					if (CheckClass)
+					{
+						VStr LblName(Lbl, DCol + 2, Lbl.Length() - DCol - 2);
+						TArray<VName> Names;
+						VMemberBase::StaticSplitStateLabel(LblName, Names);
+						VStateLabel* StLbl = CheckClass->FindStateLabel(Names, true);
+						if (!StLbl)
+						{
+							ParseError(ALoc, "No such state %s", *Lbl);
+						}
+						else
+						{
+							delete Args[i];
+							Args[i] = new VStateConstant(StLbl->State, ALoc);
+						}
+					}
+				}
+				else
+				{
+					//	It's a virtual state jump
+					VExpression* TmpArgs[1];
+					TmpArgs[0] = Args[i];
+					Args[i] = new VInvocation(NULL,
+						ec.SelfClass->FindMethodChecked("FindJumpState"),
+						NULL, false, false, Args[i]->Loc, 1, TmpArgs);
 				}
 			}
 			break;

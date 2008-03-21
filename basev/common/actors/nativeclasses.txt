@@ -105,13 +105,13 @@ class Actor extends Thinker
 	//
 	//	State jumps
 	//
-	//A_Jump
-	//A_JumpIf
-	//A_JumpIfCloser
-	//A_JumpIfHealthLower
-	//A_JumpIfInventory
-	//A_JumpIfInTargetInventory
-	//A_JumpIfTargetInLOS
+	action native A_Jump(eval int chance, state label, ...);
+	action native A_JumpIf(eval bool expr, state label);
+	action native A_JumpIfCloser(eval float dist, state label);
+	action native A_JumpIfHealthLower(eval int health, state label);
+	action native A_JumpIfInventory(class<Actor> itemtype, eval int amount, state label);
+	action native A_JumpIfInTargetInventory(class<Actor> itemtype, eval int amount, state label);
+	action native A_JumpIfTargetInLOS(state label, optional float fov);
 
 	//
 	//	Flags and appearance
@@ -245,7 +245,7 @@ class Inventory extends Actor
 	//
 	//	State jumps
 	//
-	//A_JumpIfNoAmmo
+	action native A_JumpIfNoAmmo(state label);
 
 	//
 	//	Weapon functions

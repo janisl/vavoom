@@ -217,6 +217,7 @@ bool VEntity::SetState(VState* InState)
 		// Call action functions when the state is set
 		if (st->Function)
 		{
+			XLevel->CallingState = State;
 			P_PASS_SELF;
 			ExecuteFunction(st->Function);
 		}
@@ -394,6 +395,7 @@ bool VEntity::CallStateChain(VEntity* Actor, VState* AState)
 		if (S->Function)
 		{
 			//	Assume success by default.
+			XLevel->CallingState = S;
 			Call.Result = true;
 			P_PASS_REF(Actor);
 			ExecuteFunction(S->Function);
