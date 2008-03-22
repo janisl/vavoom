@@ -800,7 +800,7 @@ void VSoftwareDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	VTextureTranslation* Trans, float Alpha)
 {
 	guard(VSoftwareDrawer::DrawPic);
-	picsource = SetPic(Tex, Trans);
+	picsource = SetPic(Tex, Trans, CM_Default);
 	int trans = (int)((1.0 - Alpha) * 100.0);
 	if (ScreenBPP == 8)
 	{
@@ -873,7 +873,7 @@ void VSoftwareDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, VTexture* Tex, float shade)
 {
 	guard(VSoftwareDrawer::DrawPicShadow);
-	picsource = SetPic(Tex, NULL);
+	picsource = SetPic(Tex, NULL, CM_Default);
 	ds_shade = (int)(shade * 255);
 	if (ScreenBPP == 8)
 	{
@@ -903,7 +903,7 @@ void VSoftwareDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, VTexture* Tex)
 {
 	guard(VSoftwareDrawer::FillRectWithFlat);
-	SetTexture(Tex);
+	SetTexture(Tex, CM_Default);
 	picsource = (byte*)cacheblock;
 	if (ScreenBPP == 8)
 	{
@@ -1000,7 +1000,7 @@ void VSoftwareDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	float w = Tex->GetWidth();
 	float h = Tex->GetHeight();
 
-	SetSpriteLump(Tex, 0xffffffff, Translation);
+	SetSpriteLump(Tex, 0xffffffff, Translation, CM_Default);
 	picsource = (byte*)cacheblock;
 	picspanfunc = ScreenBPP == 8 ? DrawPicSpan_8 :
 		PixelBytes == 2 ? DrawSpritePicSpan_16 : DrawSpritePicSpan_32;

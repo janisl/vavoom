@@ -145,8 +145,8 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 		{
 			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
 				spr.Alpha, spr.Additive, GetTranslation(spr.translation),
-				spr.light, spr.Fade, spr.normal, spr.pdist, spr.saxis,
-				spr.taxis, spr.texorg);
+				ColourMap, spr.light, spr.Fade, spr.normal, spr.pdist,
+				spr.saxis, spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -176,8 +176,8 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	if (type)
 	{
 		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha,
-			Additive, GetTranslation(translation), light, Fade, normal,
-			pdist, saxis, taxis, texorg);
+			Additive, GetTranslation(translation), ColourMap, light, Fade,
+			normal, pdist, saxis, taxis, texorg);
 	}
 	else
 	{
@@ -402,8 +402,8 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 	else
 	{
 		Drawer->DrawSpritePolygon(sv, GTextureManager[lump], Alpha,
-			Additive, GetTranslation(thing->Translation), light, Fade,
-			-sprforward, DotProduct(sprorigin, -sprforward),
+			Additive, GetTranslation(thing->Translation), ColourMap, light,
+			Fade, -sprforward, DotProduct(sprorigin, -sprforward),
 			(flip ? -sprright : sprright) / thing->ScaleX,
 			-sprup / thing->ScaleY, flip ? sv[2] : sv[1]);
 	}
@@ -459,8 +459,8 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 		{
 			Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
 				spr.Alpha, spr.Additive, GetTranslation(spr.translation),
-				spr.light, spr.Fade, spr.normal, spr.pdist, spr.saxis,
-				spr.taxis, spr.texorg);
+				ColourMap, spr.light, spr.Fade, spr.normal, spr.pdist,
+				spr.saxis, spr.taxis, spr.texorg);
 		}
 		else
 		{
@@ -674,8 +674,8 @@ void VRenderLevel::DrawTranslucentPolys()
 			{
 				Drawer->DrawSpritePolygon(spr.Verts, GTextureManager[spr.lump],
 					spr.Alpha, spr.Additive, GetTranslation(spr.translation),
-					spr.light, spr.Fade, spr.normal, spr.pdist, spr.saxis,
-					spr.taxis, spr.texorg);
+					ColourMap, spr.light, spr.Fade, spr.normal, spr.pdist,
+					spr.saxis, spr.taxis, spr.texorg);
 			}
 			else
 			{
@@ -779,8 +779,8 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
 
 	Drawer->DrawSpritePolygon(dv, GTextureManager[lump], Alpha, Additive,
-		0, light, Fade, -viewforward, DotProduct(dv[0], -viewforward),
-		saxis, taxis, texorg);
+		0, ColourMap, light, Fade, -viewforward,
+		DotProduct(dv[0], -viewforward), saxis, taxis, texorg);
 	unguard;
 }
 

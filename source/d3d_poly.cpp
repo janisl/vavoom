@@ -569,7 +569,7 @@ void VDirect3DDrawer::WorldDrawing()
 			light = 0xff000000 | (lR << 16) | (lG << 8) | lB;
 		}
 
-		SetTexture(tex->Tex);
+		SetTexture(tex->Tex, tex->ColourMap);
 		SetFade(surf->Fade);
 
 		for (i = 0; i < surf->count; i++)
@@ -632,7 +632,7 @@ void VDirect3DDrawer::WorldDrawing()
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
-				SetTexture(tex->Tex);
+				SetTexture(tex->Tex, tex->ColourMap);
 				SetFade(surf->Fade);
 				for (i = 0; i < surf->count; i++)
 				{
@@ -843,7 +843,8 @@ void VDirect3DDrawer::BeginSky()
 //==========================================================================
 
 void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
-	VTexture* Texture1, float offs1, VTexture* Texture2, float offs2)
+	VTexture* Texture1, float offs1, VTexture* Texture2, float offs2,
+	int CMap)
 {
 	guard(VDirect3DDrawer::DrawSkyPolygon);
 	MyD3DVertex		out[256];
@@ -876,9 +877,9 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
 
-		SetTexture(Texture1);
+		SetTexture(Texture1, CMap);
 		TexStage = 1;
-		SetTexture(Texture2);
+		SetTexture(Texture2, CMap);
 		TexStage = 0;
 		for (i = 0; i < surf->count; i++)
 		{
@@ -899,7 +900,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	}
 	else
 	{
-		SetTexture(Texture1);
+		SetTexture(Texture1, CMap);
 		for (i = 0; i < surf->count; i++)
 		{
 			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
@@ -914,7 +915,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 
 		if (Texture2->Type != TEXTYPE_Null)
 		{
-			SetTexture(Texture2);
+			SetTexture(Texture2, CMap);
 			for (i = 0; i < surf->count; i++)
 			{
 				out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
@@ -960,7 +961,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	int			l;
 
 	texinfo_t* tex = surf->texinfo;
-	SetTexture(tex->Tex);
+	SetTexture(tex->Tex, tex->ColourMap);
 
 	if (surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount)
@@ -1039,7 +1040,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 //==========================================================================
 
 void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
-	bool Additive, VTextureTranslation* Translation, vuint32 light,
+	bool Additive, VTextureTranslation* Translation, int CMap, vuint32 light,
 	vuint32 Fade, const TVec&, float, const TVec& saxis, const TVec& taxis,
 	const TVec& texorg)
 {
@@ -1096,8 +1097,8 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
-	VTexture* Skin, VTextureTranslation* Trans, vuint32 light, vuint32 Fade,
-	float Alpha, bool Additive, bool is_view_model)
+	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
+	vuint32 Fade, float Alpha, bool Additive, bool is_view_model)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
@@ -1180,7 +1181,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
 
-	SetPic(Skin, Trans);
+	SetPic(Skin, Trans, CMap);
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);

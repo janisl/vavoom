@@ -259,50 +259,10 @@ void VDirect3DDrawer::FlushTexture(VTexture* Tex)
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetTexture(VTexture* Tex)
+void VDirect3DDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VDirect3DDrawer::SetTexture);
-	if (!RenderDevice)
-	{
-		return;
-	}
-
-	if (!Tex->DriverData || Tex->CheckModified())
-	{
-		GenerateTexture(Tex, &Tex->DriverData, NULL);
-	}
-
-#if DIRECT3D_VERSION >= 0x0900
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE9)Tex->DriverData);
-	if (Tex->Type == TEXTYPE_SkyMap)
-	{
-		RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-		RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
-	}
-	else
-	{
-		RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-		RenderDevice->SetSamplerState(TexStage, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-	}
-#else
-#if DIRECT3D_VERSION >= 0x0800
-	RenderDevice->SetTexture(TexStage, (LPDIRECT3DTEXTURE8)Tex->DriverData);
-#else
-	RenderDevice->SetTexture(TexStage, (LPDIRECTDRAWSURFACE7)Tex->DriverData);
-#endif
-	if (Tex->Type == TEXTYPE_SkyMap)
-	{
-		RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSU, D3DTADDRESS_CLAMP);
-		RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_CLAMP);
-	}
-	else
-	{
-		RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
-		RenderDevice->SetTextureStageState(TexStage, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
-	}
-#endif
-	tex_iw = 1.0 / Tex->GetWidth();
-	tex_ih = 1.0 / Tex->GetHeight();
+	SetSpriteLump(Tex, NULL, CMap);
 	unguard;
 }
 
@@ -312,7 +272,8 @@ void VDirect3DDrawer::SetTexture(VTexture* Tex)
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translation)
+void VDirect3DDrawer::SetSpriteLump(VTexture* Tex,
+	VTextureTranslation* Translation, int CMap)
 {
 	guard(VDirect3DDrawer::SetSpriteLump);
 	if (!RenderDevice)
@@ -325,7 +286,7 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translat
 		FlushTexture(Tex);
 	}
 
-	if (Translation)
+	if (Translation || CMap)
 	{
 		VTexture::VTransData* TData = Tex->FindDriverTrans(Translation);
 		if (!TData)
@@ -333,7 +294,8 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translat
 			TData = &Tex->DriverTranslated.Alloc();
 			TData->Data = NULL;
 			TData->Trans = Translation;
-			GenerateTexture(Tex, &TData->Data, Translation);
+			TData->ColourMap = CMap;
+			GenerateTexture(Tex, &TData->Data, Translation, CMap);
 		}
 #if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)TData->Data);
@@ -347,7 +309,7 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translat
 	{
 		if (!Tex->DriverData)
 		{
-			GenerateTexture(Tex, &Tex->DriverData, NULL);
+			GenerateTexture(Tex, &Tex->DriverData, NULL, 0);
 		}
 #if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)Tex->DriverData);
@@ -376,10 +338,11 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translat
 //
 //==========================================================================
 
-void VDirect3DDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
+void VDirect3DDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans,
+	int CMap)
 {
 	guard(VDirect3DDrawer::SetPic);
-	SetSpriteLump(Tex, Trans);
+	SetSpriteLump(Tex, Trans, CMap);
 	unguard;
 }
 
@@ -390,7 +353,7 @@ void VDirect3DDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
 //==========================================================================
 
 void VDirect3DDrawer::GenerateTexture(VTexture* Tex, void** Data,
-	VTextureTranslation* Translation)
+	VTextureTranslation* Translation, int CMap)
 {
 	guard(VDirect3DDrawer::GenerateTexture);
 	//	Try to load high resolution version.
@@ -401,10 +364,27 @@ void VDirect3DDrawer::GenerateTexture(VTexture* Tex, void** Data,
 	}
 
 	SAFE_RELEASE_TEXTURE(*Data);
-	if (Translation)
+	if (Translation && CMap)
+	{
+		rgba_t TmpPal[256];
+		const vuint8* TrTab = Translation->GetTable();
+		const rgba_t* CMPal = ColourMaps[CMap].GetPalette();
+		for (int i = 0; i < 256; i++)
+		{
+			TmpPal[i] = CMPal[TrTab[i]];
+		}
+		*Data = UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
+			SrcTex->GetPixels8(), TmpPal);
+	}
+	else if (Translation)
 	{
 		*Data = UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
 			SrcTex->GetPixels8(), Translation->GetPalette());
+	}
+	else if (CMap)
+	{
+		*Data = UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
+			SrcTex->GetPixels8(), ColourMaps[CMap].GetPalette());
 	}
 	else
 	{

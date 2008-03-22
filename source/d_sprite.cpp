@@ -2264,7 +2264,7 @@ void VSoftwareDrawer::MaskedSurfCaclulateGradients(surface_t *surf)
 //==========================================================================
 
 void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
-	VTexture* Tex, VTextureTranslation* Translation, float Alpha,
+	VTexture* Tex, VTextureTranslation* Translation, int CMap, float Alpha,
 	bool Additive, vuint32 light, vuint32 Fade, const TVec& normal,
 	float dist, const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
@@ -2383,7 +2383,7 @@ void VSoftwareDrawer::SpriteDrawPolygon(TVec *cv, int count, surface_t *surf,
 	{
 		SpriteCaclulateGradients(Tex, normal, dist, saxis, taxis, texorg);
 		SetFade(Fade);
-		SetSpriteLump(Tex, light, Translation);
+		SetSpriteLump(Tex, light, Translation, CMap);
 	}
 	SpriteScanLeftEdge(verts, r_emited);
 	SpriteScanRightEdge(verts, r_emited);
@@ -2400,7 +2400,7 @@ void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	bool Additive)
 {
 	guard(VSoftwareDrawer::DrawMaskedPolygon);
-	SpriteDrawPolygon(surf->verts, surf->count, surf, NULL, 0, Alpha,
+	SpriteDrawPolygon(surf->verts, surf->count, surf, NULL, 0, 0, Alpha,
 		Additive, 0, 0, TVec(), 0, TVec(), TVec(), TVec());
 	unguard;
 }
@@ -2412,12 +2412,12 @@ void VSoftwareDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 //==========================================================================
 
 void VSoftwareDrawer::DrawSpritePolygon(TVec* cv, VTexture* Tex, float Alpha,
-	bool Additive, VTextureTranslation* Translation, vuint32 light,
+	bool Additive, VTextureTranslation* Translation, int CMap, vuint32 light,
 	vuint32 Fade, const TVec& normal, float dist, const TVec& saxis,
 	const TVec& taxis, const TVec& texorg)
 {
 	guard(VSoftwareDrawer::DrawSpritePolygon);
-	SpriteDrawPolygon(cv, 4, NULL, Tex, Translation, Alpha, Additive, light,
-		Fade, normal, dist, saxis, taxis, texorg);
+	SpriteDrawPolygon(cv, 4, NULL, Tex, Translation, CMap, Alpha, Additive,
+		light, Fade, normal, dist, saxis, taxis, texorg);
 	unguard;
 }

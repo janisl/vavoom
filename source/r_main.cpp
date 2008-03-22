@@ -57,10 +57,6 @@ TVec					viewright;
 TVec					viewup;	
 TAVec					viewangles;
 
-// bumped light from gun blasts
-int						extralight;
-int						fixedlight;
-
 TClipPlane				view_clipplanes[4];
 
 int						r_visframecount;
@@ -483,18 +479,54 @@ void VRenderLevel::SetupFrame()
 
 	TransformFrustum();
 
-	extralight = cl->ExtraLight;
-	if (cl->FixedColourmap >= 32)
+	ExtraLight = ViewEnt->Player ? ViewEnt->Player->ExtraLight * 8 : 0;
+	if (cl->Camera == cl->MO)
 	{
-		fixedlight = 255;
-	}
-	else if (cl->FixedColourmap)
-	{
-		fixedlight = 255 - (cl->FixedColourmap << 3);
+		ColourMap = CM_Default;
+		if (cl->FixedColourmap == INVERSECOLOURMAP)
+		{
+			ColourMap = CM_Inverse;
+			FixedLight = 255;
+		}
+		else if (cl->FixedColourmap == GOLDCOLOURMAP)
+		{
+			ColourMap = CM_Gold;
+			FixedLight = 255;
+		}
+		else if (cl->FixedColourmap == REDCOLOURMAP)
+		{
+			ColourMap = CM_Red;
+			FixedLight = 255;
+		}
+		else if (cl->FixedColourmap == GREENCOLOURMAP)
+		{
+			ColourMap = CM_Green;
+			FixedLight = 255;
+		}
+		else if (cl->FixedColourmap >= NUMCOLOURMAPS)
+		{
+			FixedLight = 255;
+		}
+		else if (cl->FixedColourmap)
+		{
+			FixedLight = 255 - (cl->FixedColourmap << 3);
+		}
+		else
+		{
+			FixedLight = 0;
+		}
 	}
 	else
 	{
-		fixedlight = 0;
+		FixedLight = 0;
+		ColourMap = 0;
+	}
+	//	Inverse colourmap flash effect.
+	if (cl->ExtraLight == 255)
+	{
+		ExtraLight = 0;
+		ColourMap = CM_Inverse;
+		FixedLight = 255;
 	}
 
 	r_viewleaf = Level->PointInSubsector(cl->ViewOrg);
@@ -548,8 +580,9 @@ void VRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
 
 	TransformFrustum();
 
-	extralight = 0;
-	fixedlight = 0;
+	ExtraLight = 0;
+	FixedLight = 0;
+	ColourMap = 0;
 
 	r_viewleaf = Level->PointInSubsector(vieworg);
 
@@ -727,7 +760,20 @@ void VRenderLevel::DrawParticles()
 	Drawer->StartParticles();
 	for (particle_t* p = ActiveParticles; p; p = p->next)
 	{
-		Drawer->DrawParticle(p);
+		if (ColourMap)
+		{
+			vuint32 Col = p->colour;
+			rgba_t TmpCol = ColourMaps[ColourMap].GetPalette()[R_LookupRGB(
+				(Col >> 16) & 0xff, (Col >> 8) & 0xff, Col & 0xff)];
+			p->colour = (Col & 0xff000000) | (TmpCol.r << 16) |
+				(TmpCol.g << 8) | TmpCol.b;
+			Drawer->DrawParticle(p);
+			p->colour = Col;
+		}
+		else
+		{
+			Drawer->DrawParticle(p);
+		}
 	}
 	Drawer->EndParticles();
 	unguard;
@@ -954,7 +1000,7 @@ void VRenderLevel::PrecacheLevel()
 	{
 		if (texturepresent[i])
 		{
-			Drawer->SetTexture(GTextureManager[i]);
+			Drawer->SetTexture(GTextureManager[i], 0);
 		}
 	}
 

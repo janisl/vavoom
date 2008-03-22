@@ -112,8 +112,8 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 	sec_params_t* LightParams = LightSourceSector == -1 ? r_region->params :
 		&Level->Sectors[LightSourceSector].params;
-	int lLev = fixedlight ? fixedlight :
-			MIN(255, LightParams->lightlevel);
+	int lLev = FixedLight ? FixedLight :
+			MIN(255, LightParams->lightlevel + ExtraLight);
 	if (r_darken)
 	{
 		lLev = light_remap[lLev];

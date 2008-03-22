@@ -29,6 +29,18 @@
 
 class BasePlayer : Object;
 
+//
+//	Constants for FixedColourmap
+//
+enum
+{
+	NUMCOLOURMAPS		= 32,
+	INVERSECOLOURMAP	= 32,
+	GOLDCOLOURMAP		= 33,
+	REDCOLOURMAP		= 34,
+	GREENCOLOURMAP		= 35
+};
+
 struct VViewState
 {
 	state		State;	// a 0 state means not active

@@ -37,8 +37,8 @@ const int DefMaxAmount		= -2;
 //	Special values for powerup's blend colour.
 const int INVERSECOLOUR		= 0x00123456;
 const int GOLDCOLOUR		= 0x00123457;
-
-const int INVERSECOLOURMAP	= 32;
+const int REDCOLOUR			= 0x00123458;
+const int GREENCOLOUR		= 0x00123459;
 
 int					Amount;
 int					MaxAmount;
@@ -1035,6 +1035,20 @@ final void A_Light2()
 	}
 
 	Player.ExtraLight = 2;
+}
+
+//==========================================================================
+//
+//	A_LightInverse
+//
+//==========================================================================
+
+final void A_LightInverse()
+{
+	if (bIsPlayer)
+	{
+		Player.ExtraLight = 255;
+	}
 }
 
 //**************************************************************************

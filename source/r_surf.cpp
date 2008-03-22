@@ -428,6 +428,7 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	ssurf->texinfo.Tex = Tex;
 	ssurf->texinfo.Alpha = splane->Alpha < 1.0 ? splane->Alpha : 1.1;
 	ssurf->texinfo.Additive = false;
+	ssurf->texinfo.ColourMap = 0;
 	ssurf->XScale = splane->XScale;
 	ssurf->YScale = splane->YScale;
 	ssurf->Angle = splane->BaseAngle - splane->Angle;
@@ -499,6 +500,7 @@ void VRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 		}
 	}
 
+	ssurf->texinfo.ColourMap = ColourMap;
 	if (ssurf->texinfo.Tex != GTextureManager(plane->pic))
 	{
 		ssurf->texinfo.Tex = GTextureManager(plane->pic);
@@ -894,6 +896,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Tex = MTex;
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
+		sp->texinfo.ColourMap = 0;
 
 		hdelta = topz2 - topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -941,6 +944,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Tex = GTextureManager[skyflatnum];
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
+		sp->texinfo.ColourMap = 0;
 		if (r_ceiling->pic == skyflatnum)
 		{
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -992,6 +996,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Tex = TTex;
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
+		sp->texinfo.ColourMap = 0;
 
 		hdelta = top_topz2 - top_topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -1038,6 +1043,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.Tex = GTextureManager[skyflatnum];
 			sp->texinfo.Alpha = 1.1;
 			sp->texinfo.Additive = false;
+			sp->texinfo.ColourMap = 0;
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -1066,6 +1072,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Tex = BTex;
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
+		sp->texinfo.ColourMap = 0;
 
 		hdelta = back_botz2 - back_botz1;
 		offshdelta = hdelta * seg->offset / seg->length;
@@ -1113,6 +1120,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 		VTexture* MTex = GTextureManager(sidedef->midtexture);
 		sp->texinfo.Tex = MTex;
+		sp->texinfo.ColourMap = 0;
 		if (MTex->Type != TEXTYPE_Null)
 		{
 			// masked midtexture
@@ -1198,6 +1206,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.Alpha = reg->prev->extraline->alpha < 1.0 ?
 				reg->prev->extraline->alpha : 1.1;
 			sp->texinfo.Additive = !!(extraside->Flags & SDF_ADDITIVE);
+			sp->texinfo.ColourMap = 0;
 
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -1281,6 +1290,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 	if (!seg->backsector)
 	{
 		sp = dseg->mid;
+		sp->texinfo.ColourMap = ColourMap;
 		VTexture* MTex = GTextureManager(sidedef->midtexture);
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
@@ -1352,6 +1362,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 		}
 
 		sp = dseg->topsky;
+		sp->texinfo.ColourMap = ColourMap;
 		if (r_ceiling->pic == skyflatnum &&
 			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
@@ -1382,6 +1393,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 
 		// top wall
 		sp = dseg->top;
+		sp->texinfo.ColourMap = ColourMap;
 		VTexture* TTex = GTextureManager(sidedef->toptexture);
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
@@ -1460,6 +1472,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 
 		//	Sky abowe top
 		sp = dseg->topsky;
+		sp->texinfo.ColourMap = ColourMap;
 		if (r_ceiling->pic == skyflatnum &&
 			back_ceiling->pic != skyflatnum &&
 			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
@@ -1486,6 +1499,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 
 		// bottom wall
 		sp = dseg->bot;
+		sp->texinfo.ColourMap = ColourMap;
 		VTexture* BTex = GTextureManager(sidedef->bottomtexture);
 		sp->texinfo.Tex = BTex;
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
@@ -1557,6 +1571,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 
 		// masked midtexture
 		sp = dseg->mid;
+		sp->texinfo.ColourMap = ColourMap;
 		VTexture* MTex = GTextureManager(sidedef->midtexture);
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
@@ -1667,6 +1682,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			TPlane *extrabot = reg->ceiling;
 			side_t *extraside = &Level->Sides[reg->extraline->sidenum[0]];
 
+			sp->texinfo.ColourMap = ColourMap;
 			VTexture* ETex = GTextureManager(extraside->midtexture);
 			sp->texinfo.Tex = ETex;
 			if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||

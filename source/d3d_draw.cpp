@@ -63,7 +63,7 @@ void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	MyD3DVertex	dv[4];
 	int l = ((int)(Alpha * 255) << 24) | 0xffffff;
 
-	SetPic(Tex, Trans);
+	SetPic(Tex, Trans, CM_Default);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -103,7 +103,7 @@ void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	MyD3DVertex	dv[4];
 	int l = (int)(shade * 255) << 24;
 
-	SetPic(Tex, NULL);
+	SetPic(Tex, NULL, CM_Default);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -139,7 +139,7 @@ void VDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	MyD3DVertex	dv[4];
 	int l = 0xffffffff;
 
-	SetTexture(Tex);
+	SetTexture(Tex, CM_Default);
 
 	dv[0] = MyD3DVertex(x1, y1, l, s1 * tex_iw, t1 * tex_ih);
 	dv[1] = MyD3DVertex(x2, y1, l, s2 * tex_iw, t1 * tex_ih);
@@ -262,7 +262,7 @@ void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	VTexture* Tex, VTextureTranslation* Translation, bool flip)
 {
 	guard(VDirect3DDrawer::DrawSpriteLump);
-	SetSpriteLump(Tex, Translation);
+	SetSpriteLump(Tex, Translation, CM_Default);
 
 	float s1, s2;
 	if (flip)

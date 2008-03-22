@@ -778,9 +778,9 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 	int				leafnum;
 
 
-	if (fixedlight)
+	if (FixedLight)
 	{
-		return fixedlight | (fixedlight << 8) | (fixedlight << 16) | (fixedlight << 24);
+		return FixedLight | (FixedLight << 8) | (FixedLight << 16) | (FixedLight << 24);
 	}
 
 	sub = Level->PointInSubsector(p);
@@ -798,11 +798,12 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 	}
 
 	//	Region's base light
-	l = reg->secregion->params->lightlevel;
+	l = reg->secregion->params->lightlevel + ExtraLight;
 	if (r_darken)
 	{
 		l = light_remap[MIN(255, (int)l)];
 	}
+	l = MIN(255, l);
 	int SecLightColour = reg->secregion->params->LightColour;
 	lr = ((SecLightColour >> 16) & 255) * l / 255.0;
 	lg = ((SecLightColour >> 8) & 255) * l / 255.0;

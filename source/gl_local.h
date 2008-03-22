@@ -130,20 +130,21 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(VTexture*);
+	void SetTexture(VTexture*, int);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
-	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
+	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float,
+		int);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float, bool);
 	void DrawSpritePolygon(TVec*, VTexture*, float, bool, VTextureTranslation*,
-		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		int, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
 		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, VTexture*, VTextureTranslation*, vuint32, vuint32,
+		mmdl_t*, int, VTexture*, VTextureTranslation*, int, vuint32, vuint32,
 		float, bool, bool);
 
 	//	Particles
@@ -239,9 +240,9 @@ protected:
 	void FlushTextures();
 	void DeleteTextures();
 	void FlushTexture(VTexture*);
-	void SetSpriteLump(VTexture*, VTextureTranslation*);
-	void SetPic(VTexture*, VTextureTranslation*);
-	void GenerateTexture(VTexture*, GLuint*, VTextureTranslation*);
+	void SetSpriteLump(VTexture*, VTextureTranslation*, int);
+	void SetPic(VTexture*, VTextureTranslation*, int);
+	void GenerateTexture(VTexture*, GLuint*, VTextureTranslation*, int);
 	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);

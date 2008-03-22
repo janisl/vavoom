@@ -188,21 +188,10 @@ int VOpenGLDrawer::ToPowerOf2(int val)
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetTexture(VTexture* Tex)
+void VOpenGLDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VOpenGLDrawer::SetTexture);
-	if (!Tex->DriverHandle || Tex->CheckModified())
-	{
-		GenerateTexture(Tex, &Tex->DriverHandle, NULL);
-	}
-	else
-	{
-		glBindTexture(GL_TEXTURE_2D, Tex->DriverHandle);
-	}
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-	tex_iw = 1.0 / Tex->GetWidth();
-	tex_ih = 1.0 / Tex->GetHeight();
+	SetSpriteLump(Tex, NULL, CMap);
 	unguard;
 }
 
@@ -212,16 +201,17 @@ void VOpenGLDrawer::SetTexture(VTexture* Tex)
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translation)
+void VOpenGLDrawer::SetSpriteLump(VTexture* Tex,
+	VTextureTranslation* Translation, int CMap)
 {
 	guard(VOpenGLDrawer::SetSpriteLump);
 	if (Tex->CheckModified())
 	{
 		FlushTexture(Tex);
 	}
-	if (Translation)
+	if (Translation || CMap)
 	{
-		VTexture::VTransData* TData = Tex->FindDriverTrans(Translation);
+		VTexture::VTransData* TData = Tex->FindDriverTrans(Translation, CMap);
 		if (TData)
 		{
 			glBindTexture(GL_TEXTURE_2D, TData->Handle);
@@ -231,14 +221,15 @@ void VOpenGLDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translatio
 			TData = &Tex->DriverTranslated.Alloc();
 			TData->Handle = 0;
 			TData->Trans = Translation;
-			GenerateTexture(Tex, (GLuint*)&TData->Handle, Translation);
+			TData->ColourMap = CMap;
+			GenerateTexture(Tex, (GLuint*)&TData->Handle, Translation, CMap);
 		}
 	}
 	else
 	{
 		if (!Tex->DriverHandle)
 		{
-			GenerateTexture(Tex, &Tex->DriverHandle, NULL);
+			GenerateTexture(Tex, &Tex->DriverHandle, NULL, 0);
 		}
 		else
 		{
@@ -259,10 +250,11 @@ void VOpenGLDrawer::SetSpriteLump(VTexture* Tex, VTextureTranslation* Translatio
 //
 //==========================================================================
 
-void VOpenGLDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
+void VOpenGLDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans,
+	int CMap)
 {
 	guard(VOpenGLDrawer::SetPic);
-	SetSpriteLump(Tex, Trans);
+	SetSpriteLump(Tex, Trans, CMap);
 	unguard;
 }
 
@@ -273,7 +265,7 @@ void VOpenGLDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
 //==========================================================================
 
 void VOpenGLDrawer::GenerateTexture(VTexture* Tex, GLuint* pHandle,
-	VTextureTranslation* Translation)
+	VTextureTranslation* Translation, int CMap)
 {
 	guard(VOpenGLDrawer::GenerateTexture);
 	if (!*pHandle)
@@ -290,10 +282,27 @@ void VOpenGLDrawer::GenerateTexture(VTexture* Tex, GLuint* pHandle,
 	}
 
 	//	Upload data.
-	if (Translation)
+	if (Translation && CMap)
+	{
+		rgba_t TmpPal[256];
+		const vuint8* TrTab = Translation->GetTable();
+		const rgba_t* CMPal = ColourMaps[CMap].GetPalette();
+		for (int i = 0; i < 256; i++)
+		{
+			TmpPal[i] = CMPal[TrTab[i]];
+		}
+		UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
+			SrcTex->GetPixels8(), TmpPal);
+	}
+	else if (Translation)
 	{
 		UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
 			SrcTex->GetPixels8(), Translation->GetPalette());
+	}
+	else if (CMap)
+	{
+		UploadTexture8(SrcTex->GetWidth(), SrcTex->GetHeight(),
+			SrcTex->GetPixels8(), ColourMaps[CMap].GetPalette());
 	}
 	else
 	{

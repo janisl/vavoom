@@ -751,8 +751,9 @@ static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 
 static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx,
-	const char* Skin, VTextureTranslation* Trans, int Version, vuint32 Light,
-	vuint32 Fade, float Alpha, bool Additive, bool IsViewModel, float Inter)
+	const char* Skin, VTextureTranslation* Trans, int ColourMap, int Version,
+	vuint32 Light, vuint32 Fade, float Alpha, bool Additive, bool IsViewModel,
+	float Inter)
 {
 	guard(DrawModel);
 	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
@@ -859,8 +860,8 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		Scale.z = F.Scale.z * ScaleY;
 
 		Drawer->DrawAliasModel(Md2Org, Md2Angle, F.Offset, F.Scale, pmdl,
-			Md2Frame, GTextureManager(SkinID), Trans, Light, Fade, Md2Alpha,
-			Additive, IsViewModel);
+			Md2Frame, GTextureManager(SkinID), Trans, ColourMap, Light, Fade,
+			Md2Alpha, Additive, IsViewModel);
 	}
 	unguard;
 }
@@ -892,8 +893,8 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	}
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
-		Skin, Trans, Version, Light, Fade, Alpha, Additive, IsViewModel,
-		Inter);
+		Skin, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
+		IsViewModel, Inter);
 	return true;
 	unguard;
 }
@@ -930,7 +931,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	}
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, Skin, Trans,
-		Version, Light, Fade, Alpha, Additive, IsViewModel, Inter);
+		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel, Inter);
 	return true;
 	unguard;
 }
@@ -1051,7 +1052,6 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	viewangles.roll = 0;
 	AngleVectors(viewangles, viewforward, viewright, viewup);
 	vieworg = TVec(0, 0, 0);
-	fixedlight = 0;
 
 	refdef_t	rd;
 
@@ -1073,7 +1073,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *SMdl->DefaultClass, FIdx,
 		Skin, R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
-		TranslEnd, Colour), NULL), 0, 0xffffffff, 0, 1.0, false, false, 0);
+		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false, 0);
 
 	Drawer->EndView();
 	unguard;
@@ -1111,7 +1111,6 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	viewangles.roll = 0;
 	AngleVectors(viewangles, viewforward, viewright, viewup);
 	vieworg = TVec(0, 0, 0);
-	fixedlight = 0;
 
 	refdef_t	rd;
 
@@ -1132,7 +1131,7 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	Angles.roll = 0;
 
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Cls, FIdx, "", NULL, 0,
-		0xffffffff, 0, 1.0, false, false, 0);
+		0, 0xffffffff, 0, 1.0, false, false, 0);
 
 	Drawer->EndView();
 	return true;

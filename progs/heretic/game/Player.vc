@@ -1519,7 +1519,7 @@ void Cheat_Gimme()
 
 		foreach AllClasses(Inventory, Cls)
 		{
-			if (!Cls.default.bInvBar)
+			if (!Cls.default.bInvBar || !Cls.default.MaxAmount)
 			{
 				//	Not an artifact
 				continue;

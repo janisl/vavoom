@@ -356,12 +356,14 @@ void VTexture::FixupPalette(vuint8* Pixels, rgba_t* Palette)
 //
 //==========================================================================
 
-VTexture::VTransData* VTexture::FindDriverTrans(VTextureTranslation* TransTab)
+VTexture::VTransData* VTexture::FindDriverTrans(
+	VTextureTranslation* TransTab, int CMap)
 {
 	guard(VTexture::FindDriverTrans);
 	for (int i = 0; i < DriverTranslated.Num(); i++)
 	{
-		if (DriverTranslated[i].Trans == TransTab)
+		if (DriverTranslated[i].Trans == TransTab &&
+			DriverTranslated[i].ColourMap == CMap)
 		{
 			return &DriverTranslated[i];
 		}

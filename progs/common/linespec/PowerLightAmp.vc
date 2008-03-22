@@ -35,7 +35,7 @@ void DoEffect()
 {
 	::DoEffect();
 	if (Owner && Owner.bIsPlayer &&
-		Owner.Player.FixedColourmap  != Inventory::INVERSECOLOURMAP)
+		Owner.Player.FixedColourmap  < PlayerEx::NUMCOLOURMAPS)
 	{
 		if (EffectTime > PlayerEx::BLINKTHRESHOLD ||
 			(ftoi(4.0 * EffectTime) & 1))
@@ -59,7 +59,7 @@ void DoEffect()
 void EndEffect()
 {
 	if (Owner && Owner.bIsPlayer &&
-		Owner.Player.FixedColourmap  != Inventory::INVERSECOLOURMAP)
+		Owner.Player.FixedColourmap  < PlayerEx::NUMCOLOURMAPS)
 	{
 		Owner.Player.FixedColourmap = 0;
 	}

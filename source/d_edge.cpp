@@ -75,10 +75,11 @@ struct surf_t
 	float		offs1;
 	float		offs2;
 
+	int			ColourMap;
+
 	// Make size 64 bytes to simplify asm
 	int			reserved1;
 	int			reserved2;
-	int			reserved3;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -512,7 +513,8 @@ void VSoftwareDrawer::BeginSky()
 //==========================================================================
 
 void VSoftwareDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
-	VTexture* Texture1, float offs1, VTexture* Texture2, float offs2)
+	VTexture* Texture1, float offs1, VTexture* Texture2, float offs2,
+	int CMap)
 {
 	guard(VSoftwareDrawer::DrawSkyPolygon);
 	int		i;
@@ -568,6 +570,7 @@ void VSoftwareDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	surface_p->Texture2 = Texture2;
 	surface_p->offs1 = offs1;
 	surface_p->offs2 = offs2;
+	surface_p->ColourMap = CMap;
 
 	surface_p++;
 	unguard;
@@ -976,7 +979,7 @@ void VSoftwareDrawer::DrawSurfaces()
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
 			cache = CacheSkySurface(surf->surf, surf->Texture1,
-				surf->Texture2, surf->offs1, surf->offs2);
+				surf->Texture2, surf->offs1, surf->offs2, surf->ColourMap);
 			cachewidth = cache->width;
 			cacheblock = cache->data;
 			D_DrawSpans(surf->spans);
@@ -988,7 +991,7 @@ void VSoftwareDrawer::DrawSurfaces()
 		else if (surf->flags & SURF_SKY_BOX)
 		{
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
-			SetTexture(surf->Texture1);
+			SetTexture(surf->Texture1, surf->ColourMap);
 			D_DrawSpans(surf->spans);
 			d_ziorigin = 0;
 			d_zistepv = 0;

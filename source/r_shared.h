@@ -36,6 +36,18 @@
 
 // MACROS ------------------------------------------------------------------
 
+//	Colour maps
+enum
+{
+	CM_Default,
+	CM_Inverse,
+	CM_Gold,
+	CM_Red,
+	CM_Green,
+
+	CM_Max
+};
+
 // TYPES -------------------------------------------------------------------
 
 class TClipPlane : public TPlane
@@ -61,6 +73,7 @@ struct texinfo_t
 	// Alpha for masked surfaces
 	float			Alpha;
 	bool			Additive;
+	vuint8			ColourMap;
 };
 
 struct surface_t
@@ -128,9 +141,6 @@ extern VCvarF			r_fog_start;
 extern VCvarF			r_fog_end;
 extern VCvarF			r_fog_density;
 
-extern int				extralight;
-extern int				fixedlight;
-
 extern "C" {
 extern TClipPlane		view_clipplanes[4];
 }
@@ -157,13 +167,15 @@ extern vuint8			gammatable[5][256];
 
 extern float			PixelAspect;
 
+extern VTextureTranslation	ColourMaps[CM_Max];
+
 //==========================================================================
 //
 //	R_LookupRBG
 //
 //==========================================================================
 
-inline int R_LookupRBG(vuint8 r, vuint8 g, vuint8 b)
+inline int R_LookupRGB(vuint8 r, vuint8 g, vuint8 b)
 {
 	return r_rgbtable[((r << 7) & 0x7c00) + ((g << 2) & 0x3e0) +
 		((b >> 3) & 0x1f)];

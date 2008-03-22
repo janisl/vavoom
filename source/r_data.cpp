@@ -79,6 +79,9 @@ int								NumTranslationTables;
 VTextureTranslation				IceTranslation;
 TArray<VTextureTranslation*>	DecorateTranslations;
 
+//	They basicly work the same as translations.
+VTextureTranslation				ColourMaps[CM_Max];
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 //	Temporary variables for sprite installing
@@ -225,7 +228,82 @@ static void InitTranslationTables()
 		IceTranslation.Palette[i].g = g;
 		IceTranslation.Palette[i].b = b;
 		IceTranslation.Palette[i].a = 255;
-		IceTranslation.Table[i] = R_LookupRBG(r, g, b);
+		IceTranslation.Table[i] = R_LookupRGB(r, g, b);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	InitColourMaps
+//
+//==========================================================================
+
+static void InitColourMaps()
+{
+	guard(InitColourMaps);
+	//	Calculate inverse colourmap.
+	VTextureTranslation* T = &ColourMaps[CM_Inverse];
+	T->Table[0] = 0;
+	T->Palette[0] = r_palette[0];
+	for (int i = 1; i < 256; i++)
+	{
+		int Gray = (r_palette[i].r * 77 + r_palette[i].g * 143 +
+			r_palette[i].b * 37) >> 8;
+		int Val = 255 - Gray;
+		T->Palette[i].r = Val;
+		T->Palette[i].g = Val;
+		T->Palette[i].b = Val;
+		T->Palette[i].a = 255;
+		T->Table[i] = R_LookupRGB(Val, Val, Val);
+	}
+
+	//	Calculate gold colourmap.
+	T = &ColourMaps[CM_Gold];
+	T->Table[0] = 0;
+	T->Palette[0] = r_palette[0];
+	for (int i = 1; i < 256; i++)
+	{
+		int Gray = (r_palette[i].r * 77 + r_palette[i].g * 143 +
+			r_palette[i].b * 37) >> 8;
+		T->Palette[i].r = MIN(255, Gray + Gray / 2);
+		T->Palette[i].g = Gray;
+		T->Palette[i].b = 0;
+		T->Palette[i].a = 255;
+		T->Table[i] = R_LookupRGB(T->Palette[i].r, T->Palette[i].g,
+			T->Palette[i].b);
+	}
+
+	//	Calculate red colourmap.
+	T = &ColourMaps[CM_Red];
+	T->Table[0] = 0;
+	T->Palette[0] = r_palette[0];
+	for (int i = 1; i < 256; i++)
+	{
+		int Gray = (r_palette[i].r * 77 + r_palette[i].g * 143 +
+			r_palette[i].b * 37) >> 8;
+		T->Palette[i].r = MIN(255, Gray + Gray / 2);
+		T->Palette[i].g = 0;
+		T->Palette[i].b = 0;
+		T->Palette[i].a = 255;
+		T->Table[i] = R_LookupRGB(T->Palette[i].r, T->Palette[i].g,
+			T->Palette[i].b);
+	}
+
+	//	Calculate green colourmap.
+	T = &ColourMaps[CM_Green];
+	T->Table[0] = 0;
+	T->Palette[0] = r_palette[0];
+	for (int i = 1; i < 256; i++)
+	{
+		int Gray = (r_palette[i].r * 77 + r_palette[i].g * 143 +
+			r_palette[i].b * 37) >> 8;
+		T->Palette[i].r = MIN(255, Gray + Gray / 2);
+		T->Palette[i].g = MIN(255, Gray + Gray / 2);
+		T->Palette[i].b = Gray;
+		T->Palette[i].a = 255;
+		T->Table[i] = R_LookupRGB(T->Palette[i].r, T->Palette[i].g,
+			T->Palette[i].b);
 	}
 	unguard;
 }
@@ -470,6 +548,9 @@ void R_InitData()
 
 	//	Init standard translation tables.
 	InitTranslationTables();
+
+	//	Init colour maps.
+	InitColourMaps();
 	unguard;
 }
 
@@ -613,9 +694,8 @@ void VTextureTranslation::BuildPlayerTrans(int Start, int End, int Col)
 		Palette[Idx].r = r * Mul / Count;
 		Palette[Idx].g = g * Mul / Count;
 		Palette[Idx].b = b * Mul / Count;
-		Table[Idx] =r_rgbtable[((Palette[Idx].r << 7) & 0x7c00) +
-			((Palette[Idx].g << 2) & 0x3e0) +
-			((Palette[Idx].b >> 3) & 0x1f)];
+		Table[Idx] = R_LookupRGB(Palette[Idx].r, Palette[Idx].g,
+			Palette[Idx].b);
 	}
 	CalcCrc();
 	TranslStart = Start;
@@ -725,8 +805,7 @@ void VTextureTranslation::MapToColours(int AStart, int AEnd, int AR1, int AG1,
 		Palette[Start].r = R1;
 		Palette[Start].g = G1;
 		Palette[Start].b = B1;
-		Table[Start] = r_rgbtable[((R1 << 7) & 0x7c00) + ((G1 << 2) & 0x3e0) +
-			((B1 >> 3) & 0x1f)];
+		Table[Start] = R_LookupRGB(R1, G1, B1);
 		return;
 	}
 	float CurR = R1;
@@ -741,8 +820,7 @@ void VTextureTranslation::MapToColours(int AStart, int AEnd, int AR1, int AG1,
 		Palette[i].r = int(CurR);
 		Palette[i].g = int(CurG);
 		Palette[i].b = int(CurB);
-		Table[i] = r_rgbtable[((Palette[i].r << 7) & 0x7c00) +
-			((Palette[i].g << 2) & 0x3e0) + ((Palette[i].b >> 3) & 0x1f)];
+		Table[i] = R_LookupRGB(Palette[i].r, Palette[i].g, Palette[i].b);
 	}
 	VTransCmd& C = Commands.Alloc();
 	C.Type = 1;

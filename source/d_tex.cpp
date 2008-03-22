@@ -39,6 +39,7 @@ struct sprite_cache_t
 	vuint32					light;
 	VTexture*				Tex;
 	VTextureTranslation*	tnum;
+	int						ColourMap;
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -121,6 +122,7 @@ void VSoftwareDrawer::FlushTexture(VTexture* Tex)
 		Z_Free(Tex->DriverTranslated[j].Data);
 	}
 	Tex->DriverTranslated.Clear();
+	SCInvalidateTexture(Tex);
 	unguard;
 }
 
@@ -130,26 +132,63 @@ void VSoftwareDrawer::FlushTexture(VTexture* Tex)
 //
 //==========================================================================
 
-void VSoftwareDrawer::SetTexture(VTexture* Tex)
+void VSoftwareDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VSoftwareDrawer::SetTexture);
+	if (Tex->CheckModified())
+	{
+		FlushTexture(Tex);
+	}
+
 	if (Tex->Type == TEXTYPE_SkyMap)
 	{
-		if (!Tex->DriverData || Tex->CheckModified())
+		if (CMap)
 		{
-			LoadSkyMap(Tex);
+			VTexture::VTransData* TData = Tex->FindDriverTrans(NULL, CMap);
+			if (!TData)
+			{
+				TData = &Tex->DriverTranslated.Alloc();
+				TData->Data = NULL;
+				TData->Trans = NULL;
+				TData->ColourMap = CMap;
+				LoadSkyMap(Tex, TData->Data, CMap);
+			}
+			cacheblock = (vuint8*)TData->Data;
 		}
-		cacheblock = (vuint8*)Tex->DriverData;
+		else
+		{
+			if (!Tex->DriverData)
+			{
+				LoadSkyMap(Tex, Tex->DriverData, 0);
+			}
+			cacheblock = (vuint8*)Tex->DriverData;
+		}
 		cachewidth = Tex->GetWidth();
 		return;
 	}
 
-	if (!Tex->DriverData || Tex->CheckModified())
+	if (CMap)
 	{
-		GenerateTexture(Tex);
+		VTexture::VTransData* TData = Tex->FindDriverTrans(NULL, CMap);
+		if (!TData)
+		{
+			TData = &Tex->DriverTranslated.Alloc();
+			TData->Data = NULL;
+			TData->Trans = NULL;
+			TData->ColourMap = CMap;
+			GenerateTexture(Tex, TData->Data, CMap);
+		}
+		miptexture = (miptexture_t*)TData->Data;
+	}
+	else
+	{
+		if (!Tex->DriverData)
+		{
+			GenerateTexture(Tex, Tex->DriverData, 0);
+		}
+		miptexture = (miptexture_t*)Tex->DriverData;
 	}
 
-	miptexture = (miptexture_t*)Tex->DriverData;
 	cacheblock = (vuint8*)miptexture + miptexture->offsets[0];
 	unguard;
 }
@@ -161,7 +200,7 @@ void VSoftwareDrawer::SetTexture(VTexture* Tex)
 //==========================================================================
 
 void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light,
-	VTextureTranslation* Translation)
+	VTextureTranslation* Translation, int CMap)
 {
 	guard(VSoftwareDrawer::SetSpriteLump);
 	light &= 0xf8f8f8f8;
@@ -186,7 +225,8 @@ void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light,
 		{
 			if (sprite_cache[i].Tex == Tex &&
 				sprite_cache[i].light == light &&
-				sprite_cache[i].tnum == Translation)
+				sprite_cache[i].tnum == Translation &&
+				sprite_cache[i].ColourMap == CMap)
 			{
 				cacheblock = (vuint8*)sprite_cache[i].data;
 				cachewidth = Tex->GetWidth();
@@ -207,7 +247,7 @@ void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light,
 		sprite_cache_count = (sprite_cache_count + 1) % SPRITE_CACHE_SIZE;
 	}
 
-	GenerateSprite(Tex, avail, light, Translation);
+	GenerateSprite(Tex, avail, light, Translation, CMap);
 	cacheblock = (vuint8*)sprite_cache[avail].data;
 	cachewidth = Tex->GetWidth();
 	unguard;
@@ -219,22 +259,24 @@ void VSoftwareDrawer::SetSpriteLump(VTexture* Tex, vuint32 light,
 //
 //==========================================================================
 
-vuint8* VSoftwareDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
+vuint8* VSoftwareDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans,
+	int CMap)
 {
 	guard(VSoftwareDrawer::SetPic);
 	if (Tex->CheckModified())
 	{
 		FlushTexture(Tex);
 	}
-	if (Trans)
+	if (Trans || CMap)
 	{
-		VTexture::VTransData* TData = Tex->FindDriverTrans(Trans);
+		VTexture::VTransData* TData = Tex->FindDriverTrans(Trans, CMap);
 		if (!TData)
 		{
 			TData = &Tex->DriverTranslated.Alloc();
 			TData->Data = NULL;
 			TData->Trans = Trans;
-			GeneratePic(Tex, &TData->Data, Trans);
+			TData->ColourMap = CMap;
+			GeneratePic(Tex, &TData->Data, Trans, CMap);
 		}
 		cachewidth = Tex->GetWidth();
 		return (vuint8*)TData->Data;
@@ -243,7 +285,7 @@ vuint8* VSoftwareDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
 	{
 		if (!Tex->DriverData)
 		{
-			GeneratePic(Tex, &Tex->DriverData, Trans);
+			GeneratePic(Tex, &Tex->DriverData, Trans, CMap);
 		}
 		cachewidth = Tex->GetWidth();
 		return (vuint8*)Tex->DriverData;
@@ -257,30 +299,35 @@ vuint8* VSoftwareDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans)
 //
 //==========================================================================
 
-void VSoftwareDrawer::GenerateTexture(VTexture* Tex)
+void VSoftwareDrawer::GenerateTexture(VTexture* Tex, void*& DataPtr, int CMap)
 {
 	guard(VSoftwareDrawer::GenerateTexture);
 	vuint8* block = Tex->GetPixels8();
 
 	int mipw = (Tex->GetWidth() + 15) & ~15;
 	int miph = (Tex->GetHeight() + 15) & ~15;
-	if (!Tex->DriverData)
+	if (!DataPtr)
 	{
-		Tex->DriverData = Z_Malloc(sizeof(miptexture_t) +
+		DataPtr = Z_Malloc(sizeof(miptexture_t) +
 			mipw * miph / 64 * 85);
 	}
-	miptexture_t* mip = (miptexture_t*)Tex->DriverData;
+	miptexture_t* mip = (miptexture_t*)DataPtr;
 	memset(mip, 0, sizeof(miptexture_t) + mipw * miph / 64 * 85);
 	mip->width = mipw;
 	mip->height = miph;
 	vuint8* pSrc = block;
 	vuint8* pDst = (vuint8*)mip + sizeof(miptexture_t);
+	const vuint8* CMTab = CMap ? ColourMaps[CMap].GetTable() : NULL;
 	for (int y = 0; y < miph; y++)
 	{
 		for (int x = 0; x < mipw; x++)
 		{
 			pDst[x + y * mipw] = pSrc[x % Tex->GetWidth() +
 				(y % Tex->GetHeight()) * Tex->GetWidth()];
+			if (CMTab)
+			{
+				pDst[x + y * mipw] = CMTab[pDst[x + y * mipw]];
+			}
 		}
 	}
 	MakeMips(mip);
@@ -394,21 +441,47 @@ void VSoftwareDrawer::MakeMips(miptexture_t *mip)
 //
 //==========================================================================
 
-void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
+void VSoftwareDrawer::LoadSkyMap(VTexture* Tex, void*& DataPtr, int CMap)
 {
 	guard(VSoftwareDrawer::LoadSkyMap);
 	int j;
 
 	vuint8* Pixels = Tex->GetPixels();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
-	if (!Tex->DriverData)
+	if (!DataPtr)
 	{
-		Tex->DriverData = Z_Malloc(NumPixels * PixelBytes);
+		DataPtr = Z_Malloc(NumPixels * PixelBytes);
 	}
-	if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal)
+	if (Tex->Format == TEXFMT_8 || Tex->Format == TEXFMT_8Pal || CMap)
 	{
+		rgba_t CMappedPal[256];
+		const rgba_t* Pal = Tex->GetPalette();
+
+		//	If it's colour-mapped, get 8 bit version and calculate palette.
+		if (CMap)
+		{
+			if (Tex->Format == TEXFMT_RGBA)
+			{
+				Pixels = Tex->GetPixels8();
+				Pal = ColourMaps[CMap].GetPalette();
+			}
+			else if (Tex->Format == TEXFMT_8Pal)
+			{
+				const rgba_t* CMPal = ColourMaps[CMap].GetPalette();
+				for (int i = 0; i < 256; i++)
+				{
+					int Col = R_LookupRGB(Pal[i].r, Pal[i].g, Pal[i].b);
+					CMappedPal[i] = CMPal[Col];
+				}
+				Pal = CMappedPal;
+			}
+			else
+			{
+				Pal = ColourMaps[CMap].GetPalette();
+			}
+		}
+
 		// Load paletted skymap
-		rgba_t* Pal = Tex->GetPalette();
 		if (ScreenBPP == 8)
 		{
 			vuint8 remap[256];
@@ -419,7 +492,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 			}
 
 			vuint8 *psrc = (vuint8*)Pixels;
-			vuint8 *pdst = (vuint8*)Tex->DriverData;
+			vuint8 *pdst = (vuint8*)DataPtr;
 			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
@@ -435,7 +508,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 			}
 
 			vuint8 *psrc = (vuint8*)Pixels;
-			word *pdst = (word*)Tex->DriverData;
+			word *pdst = (word*)DataPtr;
 			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
@@ -451,7 +524,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 			}
 
 			vuint8 *psrc = (vuint8 *)Pixels;
-			vuint32* pdst = (vuint32*)Tex->DriverData;
+			vuint32* pdst = (vuint32*)DataPtr;
 			for (j = 0; j < NumPixels; j++, psrc++, pdst++)
 			{
 				*pdst = remap[*psrc];
@@ -463,7 +536,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 		if (ScreenBPP == 8)
 		{
 			rgba_t *src = (rgba_t*)Pixels;
-			vuint8 *dst = (vuint8*)Tex->DriverData;
+			vuint8 *dst = (vuint8*)DataPtr;
 			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol8(src->r, src->g, src->b);
@@ -472,7 +545,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 		else if (ScreenBPP == 15 || ScreenBPP == 16)
 		{
 			rgba_t *src = (rgba_t*)Pixels;
-			word *dst = (word*)Tex->DriverData;
+			word *dst = (word*)DataPtr;
 			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol16(src->r, src->g, src->b);
@@ -481,7 +554,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 		else
 		{
 			rgba_t *src = (rgba_t*)Pixels;
-			vuint32* dst = (vuint32*)Tex->DriverData;
+			vuint32* dst = (vuint32*)DataPtr;
 			for (j = 0; j < NumPixels; j++, src++, dst++)
 			{
 				*dst = MakeCol32(src->r, src->g, src->b);
@@ -498,7 +571,7 @@ void VSoftwareDrawer::LoadSkyMap(VTexture* Tex)
 //==========================================================================
 
 void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
-	VTextureTranslation* Translation)
+	VTextureTranslation* Translation, int CMap)
 {
 	guard(VSoftwareDrawer::GenerateSprite);
 	int w = Tex->GetWidth();
@@ -511,6 +584,7 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 	sprite_cache[slot].light = light;
 	sprite_cache[slot].Tex = Tex;
 	sprite_cache[slot].tnum = Translation;
+	sprite_cache[slot].ColourMap = CMap;
 
 	int lightr = (light >> 19) & 0x1f;
 	int lightg = (light >> 11) & 0x1f;
@@ -545,6 +619,7 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 	}
 
 	const vuint8* trtab = Translation ? Translation->GetTable() : NULL;
+	const vuint8* CMTab = CMap ? ColourMaps[CMap].GetTable() : NULL;
 
 	int count =  w * h;
 	vuint8* source = SrcBlock;
@@ -556,6 +631,10 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 			if (*source)
 			{
 				int itmp = trtab ? trtab[*source] : *source;
+				if (CMTab)
+				{
+					itmp = CMTab[itmp];
+				}
 				*dest = r_rgbtable[(((word*)cmapr)[itmp]) |
 					(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp])];
 			}
@@ -569,7 +648,13 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		while (count--)
 		{
 			if (*source)
+			{
 				*dest = ((vuint8*)cmap)[trtab ? trtab[*source] : *source];
+				if (CMTab)
+				{
+					*dest = CMTab[*dest];
+				}
+			}
 			source++;
 			dest++;
 		}
@@ -582,6 +667,10 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 			if (*source)
 			{
 				int itmp = trtab ? trtab[*source] : *source;
+				if (CMTab)
+				{
+					itmp = CMTab[itmp];
+				}
 				*dest = (((word*)cmapr)[itmp]) |
 					(((word*)cmapg)[itmp]) | (((word*)cmapb)[itmp]);
 				if (!*dest)
@@ -597,7 +686,14 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		while (count--)
 		{
 			if (*source)
-				*dest = ((word*)cmap)[trtab ? trtab[*source] : *source];
+			{
+				int itmp = trtab ? trtab[*source] : *source;
+				if (CMTab)
+				{
+					itmp = CMTab[itmp];
+				}
+				*dest = ((word*)cmap)[itmp];
+			}
 			source++;
 			dest++;
 		}
@@ -610,6 +706,10 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 			if (*source)
 			{
 				int itmp = trtab ? trtab[*source] : *source;
+				if (CMTab)
+				{
+					itmp = CMTab[itmp];
+				}
 				*dest = MakeCol32(((vuint8*)cmapr)[itmp],
 					((vuint8*)cmapg)[itmp], ((vuint8*)cmapb)[itmp]);
 				if (!*dest)
@@ -625,7 +725,14 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 		while (count--)
 		{
 			if (*source)
-				*dest = ((vuint32*)cmap)[trtab ? trtab[*source] : *source];
+			{
+				int itmp = trtab ? trtab[*source] : *source;
+				if (CMTab)
+				{
+					itmp = CMTab[itmp];
+				}
+				*dest = ((vuint32*)cmap)[itmp];
+			}
 			source++;
 			dest++;
 		}
@@ -640,7 +747,7 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 //==========================================================================
 
 void VSoftwareDrawer::GeneratePic(VTexture* Tex, void** pData,
-	VTextureTranslation* Trans)
+	VTextureTranslation* Trans, int CMap)
 {
 	guard(GeneratePic);
 	vuint8* Pixels = Tex->GetPixels8();
@@ -653,6 +760,15 @@ void VSoftwareDrawer::GeneratePic(VTexture* Tex, void** pData,
 	if (Trans)
 	{
 		const vuint8* TrTab = Trans->GetTable();
+		vuint8* pPix = (vuint8*)*pData;
+		for (int i = 0; i < NumPixels; i++, pPix++)
+		{
+			*pPix = TrTab[*pPix];
+		}
+	}
+	if (CMap)
+	{
+		const vuint8* TrTab = ColourMaps[CMap].GetTable();
 		vuint8* pPix = (vuint8*)*pData;
 		for (int i = 0; i < NumPixels; i++, pPix++)
 		{

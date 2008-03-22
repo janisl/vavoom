@@ -198,6 +198,7 @@ public:
 			void*				Data;
 		};
 		VTextureTranslation*	Trans;
+		int						ColourMap;
 	};
 
 	union
@@ -234,7 +235,7 @@ public:
 	virtual rgba_t* GetPalette();
 	virtual void Unload() = 0;
 	virtual VTexture* GetHighResolutionTexture();
-	VTransData* FindDriverTrans(VTextureTranslation*);
+	VTransData* FindDriverTrans(VTextureTranslation*, int);
 
 protected:
 	void FixupPalette(vuint8* Pixels, rgba_t* Palette);

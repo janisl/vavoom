@@ -435,34 +435,6 @@ final void A_FireSigil5() self(Actor)
 	SpawnPlayerMissile(SpectralLightningBigBall1);
 }
 
-//==========================================================================
-//
-//	A_SigilFlash
-//
-//==========================================================================
-
-final void A_SigilFlash() self(Actor)
-{
-	if (bIsPlayer)
-	{
-		Player.FixedColourmap = Inventory::INVERSECOLOURMAP;
-	}
-}
-
-//==========================================================================
-//
-//	A_ClearSigilFlash
-//
-//==========================================================================
-
-final void A_ClearSigilFlash() self(Actor)
-{
-	if (bIsPlayer)
-	{
-		Player.FixedColourmap = 0;
-	}
-}
-
 states
 {
 Ready:
@@ -563,8 +535,7 @@ Fire5:
 
 Flash:
 	SIGF A 4 Bright A_Light2
-	SIGF B 6 Bright A_SigilFlash
-	SIGF C 0 Bright A_ClearSigilFlash
+	SIGF B 6 Bright A_LightInverse
 	SIGF C 4 Bright A_Light1
 	Goto Super::LightDone
 }

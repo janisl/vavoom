@@ -42,7 +42,7 @@ void DoEffect()
 	}
 
 	if (EffectTime <= PlayerEx::BLINKTHRESHOLD ||
-		Owner.Player.FixedColourmap == Inventory::INVERSECOLOURMAP)
+		Owner.Player.FixedColourmap >= PlayerEx::NUMCOLOURMAPS)
 	{
 		::DoEffect();
 	}

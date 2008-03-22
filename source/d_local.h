@@ -112,6 +112,7 @@ struct surfcache_t
 	unsigned		height;		// DEBUG only needed for debug
 	float			mipscale;
 	VTexture*		Texture;	// checked for animating textures
+	int				ColourMap;
 	vuint8			data[4];	// width*height elements
 };
 
@@ -176,20 +177,21 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(VTexture*);
+	void SetTexture(VTexture*, int);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void BeginSky();
-	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float);
+	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float,
+		int);
 	void EndSky();
 	void DrawMaskedPolygon(surface_t*, float, bool);
 	void DrawSpritePolygon(TVec*, VTexture*, float, bool, VTextureTranslation*,
-		vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		int, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
 		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, VTexture*, VTextureTranslation*, vuint32, vuint32,
+		mmdl_t*, int, VTexture*, VTextureTranslation*, int, vuint32, vuint32,
 		float, bool, bool);
 
 	//	Particles
@@ -234,13 +236,13 @@ protected:
 	//	Textures.
 	void FlushTextureCaches();
 	void FlushTexture(VTexture*);
-	void SetSpriteLump(VTexture*, vuint32, VTextureTranslation*);
-	vuint8* SetPic(VTexture*, VTextureTranslation*);
-	void GenerateTexture(VTexture*);
+	void SetSpriteLump(VTexture*, vuint32, VTextureTranslation*, int);
+	vuint8* SetPic(VTexture*, VTextureTranslation*, int);
+	void GenerateTexture(VTexture*, void*&, int);
 	static void MakeMips(miptexture_t*);
-	void LoadSkyMap(VTexture*);
-	void GenerateSprite(VTexture*, int, vuint32, VTextureTranslation*);
-	void GeneratePic(VTexture*, void**, VTextureTranslation*);
+	void LoadSkyMap(VTexture*, void*&, int);
+	void GenerateSprite(VTexture*, int, vuint32, VTextureTranslation*, int);
+	void GeneratePic(VTexture*, void**, VTextureTranslation*, int);
 
 	//	Edge drawing.
 	void BeginEdgeFrame();
@@ -259,7 +261,7 @@ protected:
 	//	Surface caching.
 	surfcache_t* CacheSurface(surface_t*, int);
 	surfcache_t* CacheSkySurface(surface_t*, VTexture*, VTexture*, float,
-		float);
+		float, int);
 
 	//	Sprite drawing.
 	static void SpriteClipEdge(const TVec&, const TVec&, TClipPlane*, int);
@@ -269,13 +271,13 @@ protected:
 		const TVec&, const TVec&);
 	void MaskedSurfCaclulateGradients(surface_t*);
 	void SpriteDrawPolygon(TVec*, int, surface_t*, VTexture*,
-		VTextureTranslation*, float, bool, vuint32, vuint32, const TVec&,
+		VTextureTranslation*, int, float, bool, vuint32, vuint32, const TVec&,
 		float, const TVec&, const TVec&, const TVec&);
 
 	//	Drawing of the aliased models, i.e. md2
 	bool AliasCheckBBox(const TAVec&, const TVec&, const TVec&, int);
 	void AliasSetUpTransform(const TAVec&, const TVec&, const TVec&, int, int);
-	void AliasSetupSkin(VTexture*, VTextureTranslation*);
+	void AliasSetupSkin(VTexture*, VTextureTranslation*, int);
 	void AliasSetupLighting(vuint32);
 	void AliasSetupFrame(int);
 	void AliasPrepareUnclippedPoints();

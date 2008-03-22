@@ -173,13 +173,13 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	float           surfscale;
 
 	VTexture* Tex = surface->texinfo->Tex;
+	int CMap = surface->texinfo->ColourMap;
 
 	//	If texture has been modified mark all cache spots using this texture
 	// as invalid.
 	if (Tex->CheckModified())
 	{
-		SCInvalidateTexture(Tex);
-		GenerateTexture(Tex);
+		FlushTexture(Tex);
 	}
 	
 	//
@@ -192,7 +192,8 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 		cache->dlight == r_dlightframecount) &&
 		cache->Texture == Tex &&
 		cache->Light == surface->Light &&
-		cache->Fade == surface->Fade)
+		cache->Fade == surface->Fade &&
+		cache->ColourMap == CMap)
 		return cache;
 
 	//
@@ -221,6 +222,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	cache->Texture = Tex;
 	cache->Light = surface->Light;
 	cache->Fade = surface->Fade;
+	cache->ColourMap = CMap;
 
 	//
 	// draw and light the surface texture
@@ -247,7 +249,7 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 	
 	surfrowbytes = surfwidth * PixelBytes;
 
-	SetTexture(Tex);
+	SetTexture(Tex, CMap);
 	mt = miptexture;
 	
 	r_source = (byte *)mt + mt->offsets[miplevel];
@@ -347,7 +349,8 @@ surfcache_t *VSoftwareDrawer::CacheSurface(surface_t *surface, int miplevel)
 //==========================================================================
 
 surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface,
-	VTexture* Texture1, VTexture* Texture2, float offs1, float offs2)
+	VTexture* Texture1, VTexture* Texture2, float offs1, float offs2,
+	int CMap)
 {
 	guard(VSoftwareDrawer::CacheSkySurface);
 	//
@@ -356,7 +359,8 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface,
 	surfcache_t* cache = surface->cachespots[0];
 
 	if (cache && cache->Texture == Texture1 && cache->SkyOffs1 == offs1 &&
-		cache->SkyTexture2 == Texture2 && cache->mipscale == offs2)
+		cache->SkyTexture2 == Texture2 && cache->mipscale == offs2 &&
+		cache->ColourMap == CMap)
 	{
 		return cache;
 	}
@@ -381,6 +385,7 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface,
 	cache->SkyOffs1 = offs1;
 	cache->SkyTexture2 = Texture2;
 	cache->mipscale = offs2;
+	cache->ColourMap = CMap;
 
 	//
 	// draw the surface texture
@@ -393,13 +398,13 @@ surfcache_t *VSoftwareDrawer::CacheSkySurface(surface_t *surface,
 	dsky_cachedest = (byte*)cache->data;
 	dsky_toffs = surface->texturemins[1];
 
-	SetTexture(Texture1);
+	SetTexture(Texture1, CMap);
 	dsky_mt1 = miptexture;
 	dsky_offs1 = (-(int)offs1) & (dsky_mt1->width - 1);
 
 	if (Texture2->Type != TEXTYPE_Null)
 	{
-		SetTexture(Texture2);
+		SetTexture(Texture2, CMap);
 		dsky_mt2 = miptexture;
 		dsky_offs2 = (-(int)offs2) & (dsky_mt2->width - 1);
 

@@ -33,6 +33,18 @@ class VNetConnection;
 class VClientGameBase;
 
 //
+//	Constants for FixedColourmap
+//
+enum
+{
+	NUMCOLOURMAPS		= 32,
+	INVERSECOLOURMAP	= 32,
+	GOLDCOLOURMAP		= 33,
+	REDCOLOURMAP		= 34,
+	GREENCOLOURMAP		= 35,
+};
+
+//
 // Overlay psprites are scaled shapes
 // drawn directly on the view screen,
 // coordinates are given for a 320*200 view screen.

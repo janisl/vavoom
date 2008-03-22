@@ -60,7 +60,7 @@ void VOpenGLDrawer::DrawPic(float x1, float y1, float x2, float y2,
 	VTextureTranslation* Trans, float Alpha)
 {
 	guard(VOpenGLDrawer::DrawPic);
-	SetPic(Tex, Trans);
+	SetPic(Tex, Trans, CM_Default);
 	if (Alpha < 1.0)
 	{
 		glDisable(GL_ALPHA_TEST);
@@ -99,7 +99,7 @@ void VOpenGLDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, VTexture* Tex, float shade)
 {
 	guard(VOpenGLDrawer::DrawPicShadow);
-	SetPic(Tex, NULL);
+	SetPic(Tex, NULL, CM_Default);
 	glDisable(GL_ALPHA_TEST);
 	glEnable(GL_BLEND);
 	glColor4f(0, 0, 0, shade);
@@ -130,7 +130,7 @@ void VOpenGLDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	float s1, float t1, float s2, float t2, VTexture* Tex)
 {
 	guard(VOpenGLDrawer::FillRectWithFlat);
-	SetTexture(Tex);
+	SetTexture(Tex, CM_Default);
 
 	glColor4f(1, 1, 1, 1);
 	glBegin(GL_QUADS);
@@ -237,7 +237,7 @@ void VOpenGLDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	VTexture* Tex, VTextureTranslation* Translation, bool flip)
 {
 	guard(VOpenGLDrawer::DrawSpriteLump);
-	SetSpriteLump(Tex, Translation);
+	SetSpriteLump(Tex, Translation, CM_Default);
 
 	float s1, s2;
 	if (flip)

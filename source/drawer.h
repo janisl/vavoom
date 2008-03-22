@@ -90,22 +90,22 @@ public:
 
 	//	Texture stuff
 	virtual void InitTextures() = 0;
-	virtual void SetTexture(VTexture*) = 0;
+	virtual void SetTexture(VTexture*, int) = 0;
 
 	//	Polygon drawing
 	virtual void DrawPolygon(surface_t*, int) = 0;
 	virtual void DrawSkyPortal(surface_t*, int) = 0;
 	virtual void BeginSky() = 0;
 	virtual void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*,
-		float) = 0;
+		float, int) = 0;
 	virtual void EndSky() = 0;
 	virtual void DrawMaskedPolygon(surface_t*, float, bool) = 0;
 	virtual void DrawSpritePolygon(TVec*, VTexture*, float, bool,
-		VTextureTranslation*, vuint32, vuint32, const TVec&, float,
+		VTextureTranslation*, int, vuint32, vuint32, const TVec&, float,
 		const TVec&, const TVec&, const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, VTexture*, VTextureTranslation*, vuint32,
-		vuint32, float, bool, bool) = 0;
+		const TVec&, mmdl_t*, int, VTexture*, VTextureTranslation*, int,
+		vuint32, vuint32, float, bool, bool) = 0;
 
 	//	Particles
 	virtual void StartParticles() = 0;

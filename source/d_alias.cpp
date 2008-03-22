@@ -124,8 +124,8 @@ static aedge_t aedges[12] =
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, mmdl_t* Apmdl, int frame,
-	VTexture* Skin, VTextureTranslation* Trans, vuint32 light, vuint32 Fade,
-	float Alpha, bool Additive, bool is_view_model)
+	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
+	vuint32 Fade, float Alpha, bool Additive, bool is_view_model)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
@@ -154,7 +154,7 @@ void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			(((long)&finalstverts[0] + CACHE_SIZE - 1) & ~(CACHE_SIZE - 1));
 	pauxverts = &auxverts[0];
 
-	AliasSetupSkin(Skin, Trans);
+	AliasSetupSkin(Skin, Trans, CMap);
 	AliasSetUpTransform(angles, Offset, Scale, frame, a_trivial_accept);
 	AliasSetupLighting(light);
 	AliasSetupFrame(frame);
@@ -424,9 +424,9 @@ void VSoftwareDrawer::AliasSetUpTransform(const TAVec &angles,
 //==========================================================================
 
 void VSoftwareDrawer::AliasSetupSkin(VTexture* Skin,
-	VTextureTranslation* Trans)
+	VTextureTranslation* Trans, int CMap)
 {
-	d_affinetridesc.pskin = SetPic(Skin, Trans);
+	d_affinetridesc.pskin = SetPic(Skin, Trans, CMap);
 	d_affinetridesc.skinwidth = pmdl->skinwidth;
 	d_affinetridesc.skinheight = pmdl->skinheight;
 }

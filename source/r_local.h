@@ -255,6 +255,11 @@ private:
 
 	VEntity*		ViewEnt;
 
+	//	Bumped light from gun blasts
+	int				ExtraLight;
+	int				FixedLight;
+	int				ColourMap;
+
 	//	General
 	void PrecacheLevel();
 	void ExecuteSetViewSize();
