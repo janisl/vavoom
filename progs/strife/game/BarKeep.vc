@@ -30,7 +30,7 @@ defaultproperties
 {
 	ConversationID = 3;
 	StrifeName = "Bar_Keep";
-	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 7;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 4;
 	ActiveSound = 'barkeep/active';
 	PainSound = 'barkeep/pain';
 }

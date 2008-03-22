@@ -30,6 +30,6 @@ defaultproperties
 {
 	ConversationID = 5;
 	StrifeName = "Medic";
-	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 9;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 6;
 	PainSound = 'medic/pain';
 }

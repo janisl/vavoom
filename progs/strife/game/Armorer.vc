@@ -30,6 +30,6 @@ defaultproperties
 {
 	ConversationID = 4;
 	StrifeName = "Armorer";
-	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 8;
+	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 5;
 	PainSound = 'armorer/pain';
 }
