@@ -868,10 +868,10 @@ int R_ParseDecorateTranslation(VScriptParser* sc)
 	//	First check for standard translation.
 	if (sc->CheckNumber())
 	{
-		if (sc->Number < 0 || sc->Number >= NumTranslationTables - 1)
+		if (sc->Number < 0 || sc->Number >= NumTranslationTables)
 		{
 			sc->Error(va("Translation must be in range [0, %d]",
-				NumTranslationTables - 2));
+				NumTranslationTables - 1));
 		}
 		return (TRANSL_Standard << TRANSL_TYPE_SHIFT) + sc->Number;
 	}
