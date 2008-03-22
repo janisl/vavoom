@@ -171,6 +171,7 @@ final void A_BishopAttack2()
 	if (mo)
 	{
 		mo.Tracer = Target;
+		mo.Special2 = 16;
 	}
 	NumToSpawn--;
 }

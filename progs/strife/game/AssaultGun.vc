@@ -26,43 +26,6 @@
 class AssaultGun : StrifeWeapon
 	__mobjinfo__(2002);
 
-//==========================================================================
-//
-//	A_FireRiffle
-//
-//==========================================================================
-
-final void A_FireRiffle() self(Actor)
-{
-	TVec dir;
-	TAVec angles;
-	int damage;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	PlaySound('weapons/assaultgun', CHAN_WEAPON);
-
-	if (!Wpn.DepleteAmmo())
-		return;
-
-	SetState(MissileState);
-
-	Aim(dir, 16.0 * 64.0);
-	if (Player(Player).Refire)
-	{
-		VectorAngles(&dir, &angles);
-		angles.yaw = AngleMod360(angles.yaw +
-			(Random() - Random()) * 45.0 / 2.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
-		AngleVector(&angles, &dir);
-	}
-	damage = 4 * (P_Random() % 3 + 1);
-	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
-}
-
 states
 {
 Ready:
@@ -75,7 +38,7 @@ Select:
 	RIFG A 1 A_Raise
 	Loop
 Fire:
-	RIFF ABD 3 A_FireRiffle
+	RIFF ABD 3 A_FireAssaultGun
 	RIFG C 0 A_ReFire
 	RIFG B 2 A_Light0
 	Goto Ready

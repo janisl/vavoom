@@ -108,11 +108,14 @@ int				Objectives;
 
 float			MorphTime;	// player is morphed into something if > 0
 
+int				Accuracy;
+int				Stamina;
+
 replication
 {
 	reliable if (!bIsClient)
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash,
-		Objectives, MorphTime;
+		Objectives, MorphTime, Accuracy, Stamina;
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,

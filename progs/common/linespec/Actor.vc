@@ -752,6 +752,32 @@ final void A_VileChase()
 
 //==========================================================================
 //
+//	A_ExtChase
+//
+//==========================================================================
+
+final void A_ExtChase(bool UseMelee, bool UseMissile,
+	optional bool PlayActive, optional bool NightmareFast)
+{
+	if (!specified_PlayActive)
+	{
+		PlayActive = true;
+	}
+	state Melee = MeleeState;
+	if (!UseMelee)
+	{
+		Melee = none;
+	}
+	state Missile = MissileState;
+	if (!UseMissile)
+	{
+		Missile = none;
+	}
+	DoChase(false, Melee, Missile, NightmareFast, PlayActive, false);
+}
+
+//==========================================================================
+//
 //	A_FaceTarget
 //
 //==========================================================================
@@ -2584,6 +2610,51 @@ final void A_Fall()
 
 //==========================================================================
 //
+//	A_SetSolid
+//
+//==========================================================================
+
+final void A_SetSolid()
+{
+	bSolid = true;
+}
+
+//==========================================================================
+//
+//	A_UnsetSolid
+//
+//==========================================================================
+
+final void A_UnsetSolid()
+{
+	bSolid = false;
+}
+
+//==========================================================================
+//
+//	A_SetFloat
+//
+//==========================================================================
+
+final void A_SetFloat()
+{
+	bFloat = true;
+}
+
+//==========================================================================
+//
+//	A_UnsetFloat
+//
+//==========================================================================
+
+final void A_UnsetFloat()
+{
+	bFloat = false;
+	bInFloat = false;
+}
+
+//==========================================================================
+//
 //	A_ScreamAndUnblock
 //
 //	For breakable DECORATE decorations that have only one death state.
@@ -2636,6 +2707,62 @@ final void A_ClearShadow()
 	bShadow = false;
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
+}
+
+//==========================================================================
+//
+//	A_SetTranslucent
+//
+//==========================================================================
+
+final void A_SetTranslucent(float AlphaVal, optional int Mode)
+{
+	if (AlphaVal < 0.0)
+	{
+		AlphaVal = 0.0;
+	}
+	else if (AlphaVal > 1.0)
+	{
+		AlphaVal = 1.0;
+	}
+
+	Alpha = 1.0;
+	RenderStyle = Mode == 0 ? STYLE_Translucent : Mode == 2 ?
+		STYLE_Fuzzy : STYLE_Add;
+}
+
+//==========================================================================
+//
+//	A_FadeIn
+//
+//==========================================================================
+
+final void A_FadeIn(optional float Val)
+{
+	if (!Val)
+	{
+		Val = 0.1;
+	}
+	Alpha += Val;
+}
+
+//==========================================================================
+//
+//	A_FadeOut
+//
+//==========================================================================
+
+final void A_FadeOut(optional float Val)
+{
+	if (!Val)
+	{
+		Val = 0.1;
+	}
+	Alpha -= Val;
+	if (Alpha <= 0.0)
+	{
+		Destroy();
+	}
 }
 
 //==========================================================================
@@ -2693,6 +2820,33 @@ final void A_DeQueueCorpse()
 //**************************************************************************
 //	Missile movement
 //**************************************************************************
+
+//==========================================================================
+//
+//  A_SeekerMissile
+//
+//==========================================================================
+
+final void A_SeekerMissile(int Threshold, int TurnMax)
+{
+	if (Threshold < 0)
+	{
+		Threshold = 0;
+	}
+	else if (Threshold > 90)
+	{
+		Threshold = 90;
+	}
+	if (TurnMax < 0)
+	{
+		TurnMax = 0;
+	}
+	else if (TurnMax > 90)
+	{
+		TurnMax = 90;
+	}
+	SeekerMissile(itof(Threshold), itof(TurnMax));
+}
 
 //==========================================================================
 //
@@ -2840,6 +2994,48 @@ final void A_Fire()
 
 //==========================================================================
 //
+//	A_BishopMissileWeave
+//
+//==========================================================================
+
+final void A_BishopMissileWeave()
+{
+	int WeaveXY = Special2 >> 16;
+	int WeaveZ = Special2 & 0xffff;
+	float angle = AngleMod360(Angles.yaw + 90.0);
+	float newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
+	float newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
+	WeaveXY = (WeaveXY + 2) & 63;
+	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
+	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
+	TryMove(vector(newX, newY, Origin.z));
+	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ];
+	WeaveZ = (WeaveZ + 2) & 63;
+	Origin.z += Level.Game.FloatBobOffsets[WeaveZ];
+	Special2 = (WeaveXY << 16) | WeaveZ;
+}
+
+//============================================================================
+//
+//  A_CStaffMissileSlither
+//
+//============================================================================
+
+final void A_CStaffMissileSlither()
+{
+	int WeaveXY = Special2;
+	float angle = AngleMod360(Angles.yaw + 90.0);
+	float newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY];
+	float newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY];
+	WeaveXY = (WeaveXY + 3) & 63;
+	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY];
+	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY];
+	TryMove(vector(newX, newY, Origin.z));
+	Special2 = WeaveXY;
+}
+
+//==========================================================================
+//
 //	A_Countdown
 //
 //==========================================================================
@@ -2880,6 +3076,17 @@ final void A_CountdownArg(int Index)
 			SetState(FindState('Death'));
 		}
 	}
+}
+
+//============================================================================
+//
+//  A_Stop
+//
+//============================================================================
+
+final void A_Stop()
+{
+	Velocity = vector(0.0, 0.0, 0.0);
 }
 
 //**************************************************************************
@@ -3068,6 +3275,13 @@ final void A_SelectWeapon(class<Weapon> WeaponType)
 //	Weapon functions
 //**************************************************************************
 
+final void A_Recoil(float Force)
+{
+	TVec Dir;
+	AngleVector(&Angles, &Dir);
+	Velocity += Dir * Force * 35.0;
+}
+
 //**************************************************************************
 //	Weapon attack functions
 //**************************************************************************
@@ -3119,6 +3333,50 @@ final void A_Punch()
 			Player.bFixAngle = true;
 		}
 	}
+}
+
+//==========================================================================
+//
+//	A_FireAssaultGun
+//
+//==========================================================================
+
+final void A_FireAssaultGun()
+{
+	TVec dir;
+	TAVec angles;
+	int damage;
+
+	PlaySound('weapons/assaultgun', CHAN_WEAPON);
+
+	if (bIsPlayer)
+	{
+		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+		if (!Wpn.DepleteAmmo())
+		{
+			return;
+		}
+
+		SetState(MissileState);
+
+		Aim(dir, 16.0 * 64.0);
+		if (PlayerEx(Player).Refire)
+		{
+			VectorAngles(&dir, &angles);
+			angles.yaw = AngleMod360(angles.yaw +
+				(Random() - Random()) * 45.0 / 2.0 /
+				itof(1 << (PlayerEx(Player).Accuracy * 5 / 100)));
+			AngleVector(&angles, &dir);
+		}
+	}
+	else
+	{
+		Aim(dir, 16.0 * 64.0);
+	}
+
+	damage = 4 * (P_Random() % 3 + 1);
+	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
 }
 
 //**************************************************************************
@@ -3503,6 +3761,24 @@ final void decorate_A_PainAttack(optional class<Actor> SpawnType)
 
 	A_FaceTarget();
 	PainShootSkull(SpawnType, Angles.yaw);
+}
+
+//==========================================================================
+//
+//  A_DualPainAttack
+//
+//==========================================================================
+
+final void A_DualPainAttack(optional class<Actor> SpawnType)
+{
+	if (!Target)
+	{
+		return;
+	}
+
+	A_FaceTarget();
+	PainShootSkull(SpawnType, Angles.yaw + 45.0);
+	PainShootSkull(SpawnType, Angles.yaw - 45.0);
 }
 
 //==========================================================================
@@ -4008,6 +4284,72 @@ final void A_BrainExplode()
 	A.StateTime -= Random() * 0.2;
 	if (A.StateTime < 0.1)
 		A.StateTime = 0.1;
+}
+
+//==========================================================================
+//
+//	A_Mushroom
+//
+//==========================================================================
+
+final void A_Mushroom(class<Actor> SpawnType, optional int Amount)
+{
+	decorate_A_Mushroom();
+}
+
+//==========================================================================
+//
+//	decorate_A_Mushroom
+//
+//	killough 9/98: a mushroom explosion effect, sorta :)
+//	Original idea: Linguica
+//
+//==========================================================================
+
+final void decorate_A_Mushroom(optional class<Actor> SpawnType,
+	optional int Amount)
+{
+	int			i;
+	int			j;
+
+	if (!SpawnType)
+	{
+		SpawnType = FatShot;
+	}
+	if (!Amount)
+	{
+		Amount = GetMissileDamage(0, 1);
+	}
+
+	// First make normal explosion
+	A_Explode();
+
+	// Now launch mushroom cloud
+	// We need something to aim at.
+	Actor target = Spawn(MapSpot,,,, false);
+	target.Height = Height;
+	for (i = -Amount; i <= Amount; i += 8)
+	{
+		for (j = -Amount; j <= Amount; j += 8)
+		{
+			// Aim in many directions from source
+			target.Origin.x = Origin.x + itof(i);
+			target.Origin.y = Origin.y + itof(j);
+			// Aim up fairly high
+			target.Origin.z = Origin.z + Length(vector(itof(i), itof(j),
+				0.0)) * 4.0;
+			// Launch fireball
+			EntityEx mo = SpawnMissile(target, SpawnType);
+			if (mo)
+			{
+				// Slow it down a bit
+				mo.Velocity = mo.Velocity * 0.5;
+				// Make debris fall under gravity
+				mo.bNoGravity = false;
+			}
+		}
+	}
+	target.Destroy();
 }
 
 //===========================================================================

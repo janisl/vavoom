@@ -413,7 +413,6 @@ actor SGShard0 : GlassShard
 }
 
 //------------------------------------------------------------------------------
-//FIXME make it fade away.
 actor GlassJunk
 {
 	Health 3	//	Number of different shards
@@ -424,17 +423,20 @@ actor GlassJunk
 	states
 	{
 		SHAR A 128
-		Stop
+		Goto Death
 		SHAR B 128
-		Stop
+		Goto Death
 		SHAR C 128
-		Stop
+		Goto Death
 	Spawn:
 		SHAR D 128
-		Stop
+		Goto Death
 		SHAR E 128
-		Stop
+		Goto Death
 		SHAR F 128
-		Stop
+		Goto Death
+	Death:
+		"----" A 1 A_FadeOut(0.03)
+		Wait
 	}
 }

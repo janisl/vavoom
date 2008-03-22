@@ -13,7 +13,8 @@ class Actor extends Thinker
 	action native A_Chase(optional state melee, optional state missile, optional eval int flags);
 	action native A_FastChase();
 	action native A_VileChase();
-	//A_ExtChase
+	action native A_ExtChase(eval bool usemelee, eval bool usemissile,
+		optional evalnot bool playactive, optional eval bool nightmarefast);
 	action native A_FaceTarget();
 	//A_Die
 	action native A_CentaurDefend();
@@ -134,32 +135,32 @@ class Actor extends Thinker
 	action native A_LowGravity();
 	action native A_NoBlocking();
 	action native A_Fall();
-	//A_SetSolid
-	//A_UnsetSolid
-	//A_SetFloat
-	//A_UnsetFloat
+	action native A_SetSolid();
+	action native A_UnsetSolid();
+	action native A_SetFloat();
+	action native A_UnsetFloat();
 	action native A_ScreamAndUnblock();
 	action native A_ActiveAndUnblock();
 	action native A_SetShadow();
 	action native A_ClearShadow();
-	//A_SetTranslucent
-	//A_FadeIn
-	//A_FadeOut
+	action native A_SetTranslucent(eval float alpha, optional eval int mode);
+	action native A_FadeIn(optional eval float increase);
+	action native A_FadeOut(optional eval float reduce);
 	action native A_QueueCorpse();
 	action native A_DeQueueCorpse();
 
 	//
 	//	Missile movement
 	//
-	//A_SeekerMissile
+	action native A_SeekerMissile(eval int threshold, eval int turnmax);
 	action native A_Tracer();
 	action native A_Tracer2();
 	action native A_Fire();
-	//A_BishopMissileWeave
-	//A_CStaffMissileSlither
+	action native A_BishopMissileWeave();
+	action native A_CStaffMissileSlither();
 	action native A_Countdown();
 	action native A_CountdownArg(eval int argnum);
-	//A_Stop
+	action native A_Stop();
 
 	//
 	//	Inventory functions
@@ -174,13 +175,13 @@ class Actor extends Thinker
 	//
 	//	Weapon functions
 	//
-	//A_Recoil
+	action native A_Recoil(eval float force);
 
 	//
 	//	Weapon attack functions
 	//
 	action native A_Punch();
-	//A_FireAssaultGun
+	action native A_FireAssaultGun();
 
 	//
 	//	Original Doom/Strife monster attacks
@@ -199,7 +200,7 @@ class Actor extends Thinker
 	action native A_BspiAttack();
 	action native A_CyberAttack();
 	action native A_PainAttack(optional class<Actor> spawntype);
-	//A_DualPainAttack
+	action native A_DualPainAttack(optional class<Actor> spawntype);
 	action native A_PainDie(optional class<Actor> spawntype);
 	action native A_SkelFist();
 	action native A_SkelMissile();
@@ -213,7 +214,7 @@ class Actor extends Thinker
 	action native A_SpawnSound();
 	action native A_BrainScream();
 	action native A_BrainExplode();
-	//A_Mushroom
+	action native A_Mushroom(optional class<Actor> spawntype, optioal eval int amount);
 	action native A_M_Saw();
 	action native A_SentinelRefire();
 

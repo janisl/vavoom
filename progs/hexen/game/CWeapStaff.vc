@@ -129,12 +129,12 @@ final void A_CStaffAttack() self(Actor)
 	mo = SpawnPlayerMissileAngle(CStaffMissile, Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{
-		CStaffMissile(mo).WeaveXY = 32;
+		mo.Special2 = 32;
 	}
 	mo = SpawnPlayerMissileAngle(CStaffMissile, Angles.yaw + (45.0 / 15.0));
 	if (mo)
 	{
-		CStaffMissile(mo).WeaveXY = 0;
+		mo.Special2 = 0;
 	}
 	PlaySound('ClericCStaffFire', CHAN_WEAPON);
 }

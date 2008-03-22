@@ -286,6 +286,7 @@ code_pointers
 	SpawnSound		Actor			A_SpawnSound
 	SpawnFly		Actor			A_SpawnFly
 	BrainExplode	Actor			A_BrainExplode
+	Mushroom		Actor			A_Mushroom
 }
 
 //	Names of the sounds to be used when changing sounds

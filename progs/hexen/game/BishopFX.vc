@@ -25,9 +25,6 @@
 
 class BishopFX : Projectile;
 
-int WeaveXY;
-int WeaveZ;
-
 //==========================================================================
 //
 //  DoSpecialDamage
@@ -38,29 +35,6 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	// Bishops are just too nasty
 	return damage >> 1;
-}
-
-//==========================================================================
-//
-//	A_BishopMissileWeave
-//
-//==========================================================================
-
-final void A_BishopMissileWeave()
-{
-	float newX, newY;
-	float angle;
-
-	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
-	newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
-	WeaveXY = (WeaveXY + 2) & 63;
-	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
-	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
-	TryMove(vector(newX, newY, Origin.z));
-	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ];
-	WeaveZ = (WeaveZ + 2) & 63;
-	Origin.z += Level.Game.FloatBobOffsets[WeaveZ];
 }
 
 //==========================================================================
@@ -97,6 +71,4 @@ defaultproperties
 	bActivateImpact = false;
 	bActivatePCross = false;
 	DeathSound = 'BishopMissileExplode';
-	WeaveXY = 0;
-	WeaveZ = 16;
 }

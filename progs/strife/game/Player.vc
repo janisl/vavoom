@@ -34,14 +34,8 @@ const int
 	INITIAL_AMMO	= 50,
 	GOD_HEALTH		= 100;
 
-int Accuracy;
-int Stamina;
-
 replication
 {
-	reliable if (!bIsClient)
-		Accuracy, Stamina;
-
 	reliable if (!bIsClient)
 		ClientVoice, ClientSlideshow1, ClientSlideshow2, ClientFinaleType;
 }

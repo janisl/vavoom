@@ -25,28 +25,6 @@
 
 class CStaffMissile : Projectile;
 
-int WeaveXY;
-
-//============================================================================
-//
-//  A_CStaffMissileSlither
-//
-//============================================================================
-
-final void A_CStaffMissileSlither()
-{
-	float newX, newY;
-	float angle;
-
-	angle = AngleMod360(Angles.yaw + 90.0);
-	newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY];
-	newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY];
-	WeaveXY = (WeaveXY + 3) & 63;
-	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY];
-	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY];
-	TryMove(vector(newX, newY, Origin.z));
-}
-
 states
 {
 Spawn:
