@@ -1039,6 +1039,10 @@ static void ReadWeapon(int num)
 		{
 			SetClassFieldInt(Weapon, "AmmoUse1", value);
 		}
+		else if (!VStr::ICmp(String, "Min Ammo"))
+		{
+			//	Unused
+		}
 		else if (!VStr::ICmp(String, "Deselect frame"))
 		{
 			DoWeaponState(Weapon, "Select");
@@ -1741,6 +1745,33 @@ static void LoadDehackedFile(VStream* Strm)
 		else if (!VStr::ICmp(Section, "[CodePtr]"))
 		{
 			ReadCodePtr(i);
+		}
+		else if (!VStr::ICmp(Section, "Include"))
+		{
+			VStr LumpName = numStr;
+			int Lump = W_CheckNumForFileName(LumpName);
+			//	Check WAD lump only if it's no longer than 8 characters and
+			// has no path separator.
+			if (Lump < 0 && LumpName.Length() <= 8 &&
+				LumpName.IndexOf('/') < 0)
+			{
+				Lump = W_CheckNumForName(VName(*LumpName, VName::AddLower8));
+			}
+			if (Lump < 0)
+			{
+				GCon->Logf(va("Lump %s not found", *LumpName));
+			}
+			else
+			{
+				char* SavedPatch = Patch;
+				char* SavedPatchPtr = PatchPtr;
+				char* SavedString = String;
+				LoadDehackedFile(W_CreateLumpReaderNum(Lump));
+				Patch = SavedPatch;
+				PatchPtr = SavedPatchPtr;
+				String = SavedString;
+			}
+			GetLine();
 		}
 		else
 		{
