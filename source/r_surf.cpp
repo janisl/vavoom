@@ -970,11 +970,13 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		float back_botz2 = back_floor->GetPointZ(*seg->v2);
 
 		// hack to allow height changes in outdoor areas
+		float top_topz1 = topz1;
+		float top_topz2 = topz2;
 		if (r_ceiling->pic == skyflatnum &&
 			back_ceiling->pic == skyflatnum)
 		{
-			topz1 = back_topz1;
-			topz2 = back_topz2;
+			top_topz1 = back_topz1;
+			top_topz2 = back_topz2;
 		}
 
 		// top wall
@@ -991,12 +993,12 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
 
-		hdelta = topz2 - topz1;
+		hdelta = top_topz2 - top_topz1;
 		offshdelta = hdelta * seg->offset / seg->length;
 		if (linedef->flags & ML_DONTPEGTOP)
 		{
 			// top of texture at top
-			sp->texinfo.toffs = topz1;
+			sp->texinfo.toffs = top_topz1;
 		}
 		else
 		{
@@ -1013,8 +1015,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		wv[2].y = wv[3].y = seg->v2->y;
 
 		wv[0].z = MAX(back_topz1, botz1);
-		wv[1].z = topz1;
-		wv[2].z = topz2;
+		wv[1].z = top_topz1;
+		wv[2].z = top_topz2;
 		wv[3].z = MAX(back_topz2, botz2);
 
 		sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
@@ -1071,7 +1073,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		{
 			// bottom of texture at bottom
 			// top of texture at top
-			sp->texinfo.toffs = topz1;
+			sp->texinfo.toffs = top_topz1;
 		}
 		else
 		{
@@ -1396,22 +1398,24 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
 
 			// hack to allow height changes in outdoor areas
+			float top_topz1 = topz1;
+			float top_topz2 = topz2;
 			if (r_ceiling->pic == skyflatnum &&
 				back_ceiling->pic == skyflatnum)
 			{
-				topz1 = back_topz1;
-				topz2 = back_topz2;
+				top_topz1 = back_topz1;
+				top_topz2 = back_topz2;
 			}
 
 			FreeWSurfs(sp->surfs);
 			sp->surfs = NULL;
 
-			float hdelta = topz2 - topz1;
+			float hdelta = top_topz2 - top_topz1;
 			float offshdelta = hdelta * seg->offset / seg->length;
 			if (linedef->flags & ML_DONTPEGTOP)
 			{
 				// top of texture at top
-				sp->texinfo.toffs = topz1;
+				sp->texinfo.toffs = top_topz1;
 			}
 			else
 			{
@@ -1429,8 +1433,8 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			wv[2].y = wv[3].y = seg->v2->y;
 
 			wv[0].z = MAX(back_topz1, botz1);
-			wv[1].z = topz1;
-			wv[2].z = topz2;
+			wv[1].z = top_topz1;
+			wv[2].z = top_topz2;
 			wv[3].z = MAX(back_topz2, botz2);
 
 			sp->surfs = CreateWSurfs(wv, &sp->texinfo, seg, r_sub);
@@ -1579,14 +1583,6 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
 				float back_botz1 = back_floor->GetPointZ(*seg->v1);
 				float back_botz2 = back_floor->GetPointZ(*seg->v2);
-
-				// hack to allow height changes in outdoor areas
-				if (r_ceiling->pic == skyflatnum &&
-					back_ceiling->pic == skyflatnum)
-				{
-					topz1 = back_topz1;
-					topz2 = back_topz2;
-				}
 
 				float midtopz1 = MIN(topz1, back_topz1);
 				float midtopz2 = MIN(topz2, back_topz2);
