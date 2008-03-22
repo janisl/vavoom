@@ -24,4 +24,4 @@ sprite_rename.txt		@CMAKE_CURRENT_SOURCE_DIR@/sprite_rename.txt
 terrain.txt				@CMAKE_CURRENT_SOURCE_DIR@/terrain.txt
 
 $load @CMAKE_CURRENT_SOURCE_DIR@/palette.pcx
-translat.dat			raw 0 0 256 22
+translat.dat			raw 0 1 256 7

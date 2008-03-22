@@ -25,4 +25,4 @@ bigfont.lmp				fon2
 
 //	Generated data
 $load @CMAKE_CURRENT_SOURCE_DIR@/palette.pcx
-translat.dat			raw 0 0 256 8
+translat.dat			raw 0 1 256 3

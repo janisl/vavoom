@@ -1077,11 +1077,11 @@ VTextureTranslation* R_GetCachedTranslation(int TransNum, VLevel* Level)
 		}
 		else
 		{
-			if (Index < 0 || Index >= NumTranslationTables - 1)
+			if (Index < 0 || Index >= NumTranslationTables)
 			{
 				return NULL;
 			}
-			Tr = TranslationTables[Index + 1];
+			Tr = TranslationTables[Index];
 		}
 		break;
 
