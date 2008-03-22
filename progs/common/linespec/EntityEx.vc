@@ -236,6 +236,7 @@ float			Speed;
 float			FastSpeed;
 float			FloatSpeed;
 float			PainChance;
+int				WoundHealth;
 int				GibsHealth;
 
 float			MissileChance;
@@ -4351,6 +4352,13 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		return;
 	}
 
+	state WoundState = FindState('Wound', DmgType, false);
+	if (Health <= WoundHealth && WoundState)
+	{
+		SetState(WoundState);
+		return;
+	}
+
 	if ((Random() < PainChance) && !bSkullFly)
 	{
 		if (inflictor && inflictor.bLightning)
@@ -4358,7 +4366,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			if (P_Random() < 96)
 			{
 				bJustHit = true;	// fight back!
-				SetState(FindState('Pain'));
+				SetState(FindState('Pain', DmgType, false));
 			}
 			else
 			{
@@ -4374,7 +4382,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		else
 		{
 			bJustHit = true;	// fight back!
-			SetState(FindState('Pain'));
+			SetState(FindState('Pain', DmgType, false));
 			if (inflictor && inflictor.bHowlVictims)
 			{
 				if (HowlSound && bCountKill && P_Random() < 128 &&
@@ -7554,4 +7562,5 @@ defaultproperties
 	MeleeRange = 44.0;	//	MELEERANGE(64.0) - 20.0
 	LastLookActor = -1;
 	MissileHeight = 32.0;
+	WoundHealth = 6;
 }

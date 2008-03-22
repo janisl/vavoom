@@ -2616,9 +2616,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("WoundHealth"))
 		{
-			//FIXME
 			sc->ExpectNumberWithSign();
-			GCon->Logf("Property WoundHealth in %s is not yet supported", Class->GetName());
+			SetClassFieldInt(Class, "WoundHealth", sc->Number);
 			continue;
 		}
 		if (!Prop.ICmp("ReactionTime"))
