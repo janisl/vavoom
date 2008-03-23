@@ -3088,3 +3088,47 @@
   I moved most of the things out of Actor classes.
 14.03.2008
   I finally merged Actor classes.
+15.03.2008
+  I implemented support for special "do not change" sprite.
+  I moved freeze death action methods to Actor and added support for generic
+ freeze death.
+  I made all player pawn classes inherit directly from Actor, so that I can
+ create a base class for player pawns. I moved common methods to it and added
+ proeprties for view height and movement speed.
+17.03.2008
+  I added most of the needed player pawn properties.
+  I implemented possibility for weapon action methods to specify the actual
+ self type.
+  I removed the need for a A_AddPlayerCorpse method.
+  I implemented rough block search as an iterator.
+18.03.2008
+  I removed RoughMonsterSearch and changed all uses to use iterator instead.
+  I merged PlayerPawn classes, added PlayerChunk class.
+  I implemented support for parsing KEYCONF scripts, implemented commands for
+ handling player classes.
+  I moved Doom player to DECORATE.
+  I added global weapon slots and started to change weapon switch methods to
+ use them instead of Slot field in Weapon class.
+19.03.2008
+  I switched to global weapon slots, removed Slot field from Weapon class. I
+ implemented corresponding console commands used by KEYCONF script.
+  I moved all common and Doom weapon state action methods to Inventory class
+ and made them available in DECORATE.
+  I moved Doom weapons to DECORATE.
+20.03.2008
+  I implemented generic monster and weapon attack state action methods.
+  I implemented support methods needed for state jump action methods.
+21.03.2008
+  I implemented all state jump action methods.
+  I fixed rendering of mid textures on sky height change lines.
+22.03.2008
+  I implemented many simple state action methods, some were moved from Hexen
+ and Strife.
+  I changed translation tables in PK3 files not to include identity translation
+ and fixed Strife merchant translations.
+  I implemented entering in the wound state like in Strife with support for
+ damage specific wound states. I also added support for damage specific pain
+ states.
+  I implemented proper support for special colourmaps used by invulnerability
+ powerups.
+  I implemented support for include directive in DeHackEd patches.
