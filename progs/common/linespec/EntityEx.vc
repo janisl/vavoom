@@ -5326,7 +5326,7 @@ void OnMapSpawn(mthing_t* mthing)
 		}
 		if (mthing->options & LineSpecialLevelInfo::MTF_DORMANT)
 		{
-			SetDormant();
+			Deactivate();
 		}
 		if (mthing->options & LineSpecialLevelInfo::MTF_FRIENDLY)
 		{
@@ -6637,18 +6637,6 @@ int AngleIncrements()
 {
 	return bMonster ? 45 : LineSpecialGameInfo(
 		Level.Game).NonMonsterAngleIncrements;
-}
-
-//==========================================================================
-//
-//  SetDormant
-//
-//==========================================================================
-
-void SetDormant()
-{
-	bDormant = true;
-	StateTime = -1.0;
 }
 
 //==========================================================================

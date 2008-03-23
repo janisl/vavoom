@@ -136,15 +136,15 @@ Death:
 
 //==========================================================================
 //
-//	SetDormant
+//	Deactivate
 //
 //==========================================================================
 
-void SetDormant()
+bool Deactivate()
 {
-	bDormant = true;
+	::Deactivate();
 	SetState(FindState('Dormant'));
-	StateTime = -1.0;
+	return true;
 }
 
 defaultproperties
