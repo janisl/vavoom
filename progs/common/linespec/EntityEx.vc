@@ -3645,6 +3645,7 @@ final bool CheckMissileSpawn()
 
 	// move a little forward so an angle can be computed if it
 	// immediately explodes
+	UnlinkFromWorld();
 	if (Speed > 100.0 * 35.0)
 	{
 		//	Ultra-fast missile
@@ -3655,6 +3656,7 @@ final bool CheckMissileSpawn()
 		//	Normal missile
 		Origin += Velocity * 0.0142857143;
 	}
+	LinkToWorld();
 	if (!TryMove(Origin))
 	{
 		ExplodeMissile();

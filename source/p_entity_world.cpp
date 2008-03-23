@@ -345,6 +345,7 @@ void VEntity::UnlinkFromWorld()
 			if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
 				blocky >= 0 && blocky < XLevel->BlockMapHeight)
 			{
+				check(XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] == this);
 				XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] =
 					BlockMapNext;
 			}
