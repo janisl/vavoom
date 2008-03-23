@@ -131,7 +131,8 @@ void ClientTick(float DeltaTime)
 
 	case DLTYPE_Pulse:
 	{
-		float PulseCycle = Angles.yaw / 35.0;
+		// Avoid division by 0
+		float PulseCycle = Angles.yaw ? Angles.yaw / 35.0 : 1.0 / 35.0;
 		LightTime += DeltaTime;
 		if (LightTime >= PulseCycle)
 		{
