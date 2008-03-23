@@ -1,0 +1,157 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SectorAction : Actor
+	abstract;
+
+enum
+{
+	SECSPAC_Enter		= 1,	// Trigger when player enters
+	SECSPAC_Exit		= 2,	// Trigger when player exits
+	SECSPAC_HitFloor	= 4,	// Trigger when player hits floor
+	SECSPAC_HitCeiling	= 8,	// Trigger when player hits ceiling
+	SECSPAC_Use			= 16,	// Trigger when player uses
+	SECSPAC_UseWall		= 32,	// Trigger when player uses a wall
+	SECSPAC_EyesDive	= 64,	// Trigger when player eyes go below fake floor
+	SECSPAC_EyesSurface = 128,	// Trigger when player eyes go above fake floor
+	SECSPAC_EyesBelowC	= 256,	// Trigger when player eyes go below fake ceiling
+	SECSPAC_EyesAboveC	= 512,	// Trigger when player eyes go above fake ceiling
+	SECSPAC_HitFakeFloor= 1024	// Trigger when player hits fake floor
+};
+
+//==========================================================================
+//
+//  Destroyed
+//
+//==========================================================================
+
+void Destroyed()
+{
+	//	Removed this action from sector's action list.
+	if (Sector->ActionList == self)
+	{
+		Sector->ActionList = Tracer;
+	}
+	else
+	{
+		EntityEx Prev = EntityEx(Sector->ActionList);
+		while (Prev && Prev.Tracer != self)
+		{
+			Prev = Prev.Tracer;
+		}
+		if (Prev)
+		{
+			Prev.Tracer = Tracer;
+		}
+	}
+
+	::Destroyed();
+}
+
+//==========================================================================
+//
+//  BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+
+	//	Add to the list of sector's action triggers.
+	Tracer = EntityEx(Sector->ActionList);
+	Sector->ActionList = self;
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate()
+{
+	//	Projectiles cannot activate.
+	bDormant = false;
+	return true;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate()
+{
+	//	Projectiles can activate.
+	bDormant = true;
+	return true;
+}
+
+//==========================================================================
+//
+//	TriggerAction
+//
+//==========================================================================
+
+bool TriggerAction(EntityEx Triggerer, int ActType)
+{
+	//	Pass action to the next sector action trigger.
+	if (Tracer)
+	{
+		return SectorAction(Tracer).TriggerAction(Triggerer, ActType);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+//==========================================================================
+//
+//	CheckTrigger
+//
+//==========================================================================
+
+final bool CheckTrigger(EntityEx Triggerer)
+{
+	if (Special && (Triggerer.bIsPlayer ||
+		(bAmbush && Triggerer.bActivateMCross) ||
+		(bDormant && Triggerer.bActivatePCross)))
+	{
+		return !!Level.ExecuteActionSpecial(Special, Args[0], Args[1],
+			Args[2], Args[3], Args[4], NULL, 0, Triggerer);
+	}
+	return false;
+}
+
+defaultproperties
+{
+	bNoBlockmap = true;
+	bNoSector = true;
+	bNoGravity = true;
+	bNoSplash = true;
+}

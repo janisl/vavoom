@@ -1204,6 +1204,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 	int oldside;
 	line_t *ld;
 	bool good;
+	sector_t* OldSec = Sector;
 
 	check = CheckRelPosition(tmtrace, newPos);
 	tmtrace.TraceFlags &= ~tmtrace_t::TF_FloatOk;
@@ -1320,6 +1321,16 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 		}
 	}
 
+	bool OldAboveFakeFloor = false;
+	bool OldAboveFakeCeiling = false;
+	if (Sector->heightsec)
+	{
+		float EyeZ = Player ? Player->ViewOrg.z : Origin.z + Height * 0.5;
+		OldAboveFakeFloor = EyeZ > Sector->heightsec->floor.GetPointZ(Origin);
+		OldAboveFakeCeiling = EyeZ > Sector->heightsec->ceiling.GetPointZ(
+			Origin);
+	}
+
 	// the move is ok,
 	// so link the thing into its new position
 	UnlinkFromWorld();
@@ -1364,6 +1375,9 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			}
 		}
 	}
+
+	eventCheckForSectorActions(OldSec, OldAboveFakeFloor,
+		OldAboveFakeCeiling);
 
 	return true;
 	unguard;

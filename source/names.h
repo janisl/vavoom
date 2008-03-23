@@ -101,6 +101,7 @@ REGISTER_NAME(MoveThing)
 REGISTER_NAME(GetStateTime)
 REGISTER_NAME(SetActorProperty)
 REGISTER_NAME(GetActorProperty)
+REGISTER_NAME(CheckForSectorActions)
 
 //	LevelInfo events
 REGISTER_NAME(SpawnSpecials)

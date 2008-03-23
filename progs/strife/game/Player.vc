@@ -1001,6 +1001,8 @@ void P_UseLines()
 
 	x2 = x1 + USERANGE * useDir.x;
 	y2 = y1 + USERANGE * useDir.y;
+	bool DoSecAct = true;
+	bool FoundLine = false;
 	foreach MO.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES)
 	{
 		line_t* line;
@@ -1016,12 +1018,32 @@ void P_UseLines()
 				hit_point.z + MO.Height);
 			if (!open)
 			{
+				DoSecAct = false;
+
+				//	Let sector intercept the use.
+				if (MO.Sector->ActionList &&
+					SectorAction(MO.Sector->ActionList).TriggerAction(
+					EntityEx(MO), SectorAction::SECSPAC_Use))
+				{
+					break;
+				}
+
+				sector_t* Sec = PointOnPlaneSide(MO.Origin, line) == 0 ?
+					line->frontsector : line->backsector;
+				if (Sec->ActionList &&
+					SectorAction(Sec->ActionList).TriggerAction(
+					EntityEx(MO), SectorAction::SECSPAC_UseWall))
+				{
+					break;
+				}
+
 				MO.PlaySound('*usefail', CHAN_VOICE);
 
 				// can't use through a wall
 				break;
 			}
 			// not a special line, but keep checking
+			FoundLine = true;
 			continue;
 		}
 
@@ -1039,8 +1061,21 @@ void P_UseLines()
 		//jff 3/21/98 NOW multiple use allowed with enabling line flag
 		if (Level.GET_SPAC(in->line->flags) != SPAC_USETHROUGH)
 		{
+			DoSecAct = false;
 			break;
 		}
+	}
+
+	if (DoSecAct && MO.Sector->ActionList)
+	{
+		//	Let sector intercept the use.
+		int Spac = SectorAction::SECSPAC_Use;
+		if (FoundLine)
+		{
+			Spac |= SectorAction::SECSPAC_UseWall;
+		}
+		SectorAction(MO.Sector->ActionList).TriggerAction(EntityEx(MO),
+			Spac);
 	}
 }
 

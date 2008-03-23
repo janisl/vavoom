@@ -884,6 +884,9 @@ struct sector_t
 	Thinker		LightingData;
 	Thinker		AffectorData;
 
+	//	Sector action triggers.
+	Entity		ActionList;
+
 	int			Damage;
 
 	float		Friction;

@@ -716,6 +716,7 @@ final void ZMovement(float DeltaTime)
 {
 	float	dist;
 	float	delta;
+	float	OldZ = Origin.z;
 
 	// check for smooth step up
 	if (bIsPlayer && Origin.z < FloorZ)
@@ -764,6 +765,8 @@ final void ZMovement(float DeltaTime)
 			return;
 		}
 	}
+
+	CheckFakeFloorTriggers(OldZ);
 }
 
 //==========================================================================
@@ -926,6 +929,13 @@ final bool HitFloor(float DeltaTime)
 {
 	float	vdot;
 
+	//	Trigger hit floor sector actions.
+	if (Sector->ActionList && GetPlanePointZ(&Sector->floor, Origin) == FloorZ)
+	{
+		SectorAction(Sector->ActionList).TriggerAction(self,
+			SectorAction::SECSPAC_HitFloor);
+	}
+
 	if (bMissile && (bColideWithWorld ||
 		!LineSpecialGameInfo(Level.Game).bNoClipIgnoreFloor))
 	{
@@ -1005,6 +1015,14 @@ final bool HitFloor(float DeltaTime)
 final bool HitCeiling()
 {
 	float	vdot;
+
+	//	Trigger hit ceiling sector actions.
+	if (Sector->ActionList && GetPlanePointZ(&Sector->ceiling, Origin) ==
+		CeilingZ)
+	{
+		SectorAction(Sector->ActionList).TriggerAction(self,
+			SectorAction::SECSPAC_HitCeiling);
+	}
 
 	vdot = DotProduct(Velocity, Ceiling->normal);
 	if (vdot < 0.0)
@@ -2545,6 +2563,7 @@ int FaceActor(EntityEx target, out float delta)
 final bool HeightClip()
 {
 	bool onfloor;
+	float OldZ = Origin.z;
 
 	onfloor = (Origin.z == FloorZ);
 
@@ -2571,6 +2590,8 @@ final bool HeightClip()
 		if (Origin.z + Height > CeilingZ)
 			Origin.z = CeilingZ - Height;
 	}
+
+	CheckFakeFloorTriggers(OldZ);
 
 	if (CeilingZ - FloorZ < Height)
 		return false;
@@ -7513,6 +7534,131 @@ final void DoJump(state State)
 	else
 	{
 		SetState(State);
+	}
+}
+
+//==========================================================================
+//
+//	CheckForSectorActions
+//
+//==========================================================================
+
+void CheckForSectorActions(sector_t* OldSec, bool OldAboveFakeFloor,
+	bool OldAboveFakeCeiling)
+{
+	//	Check for crossing fake floor or ceiling
+	if (OldSec->heightsec && Sector->heightsec && Sector->ActionList)
+	{
+		float EyeZ = bIsPlayer ? Player.ViewOrg.z : Origin.z + Height * 0.5;
+		float FakeZ = GetPlanePointZ(&Sector->heightsec->floor, Origin);
+
+		if (!OldAboveFakeFloor && EyeZ > FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesSurface);
+		}
+		else if (OldAboveFakeFloor && EyeZ <= FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesDive);
+		}
+
+		if (!Sector->heightsec->bFakeFloorOnly)
+		{
+			FakeZ = GetPlanePointZ(&Sector->heightsec->ceiling, Origin);
+			if (!OldAboveFakeCeiling && EyeZ > FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesSurface);
+			}
+			else if (OldAboveFakeCeiling && EyeZ <= FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesBelowC);
+			}
+		}
+	}
+
+	//	Check for sector change triggers.
+	if (OldSec != Sector)
+	{
+		if (OldSec->ActionList)
+		{
+			SectorAction(OldSec->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_Exit);
+		}
+		if (Sector->ActionList)
+		{
+			int Spac = SectorAction::SECSPAC_Enter;
+			if (Origin.z <= GetPlanePointZ(&Sector->floor, Origin))
+			{
+				Spac |= SectorAction::SECSPAC_HitFloor;
+			}
+			if (Origin.z + Height >= GetPlanePointZ(&Sector->ceiling,
+				Origin))
+			{
+				Spac |= SectorAction::SECSPAC_HitCeiling;
+			}
+			if (Sector->heightsec && Origin.z ==
+				GetPlanePointZ(&Sector->heightsec->floor, Origin))
+			{
+				Spac |= SectorAction::SECSPAC_HitFakeFloor;
+			}
+			SectorAction(Sector->ActionList).TriggerAction(self, Spac);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	CheckFakeFloorTriggers
+//
+//==========================================================================
+
+final void CheckFakeFloorTriggers(float OldZ, optional bool OldHasViewH)
+{
+	if (Sector->heightsec && Sector->ActionList)
+	{
+		float ViewH = bIsPlayer ? PlayerEx(Player).ViewHeight : Height * 0.5;
+		float FakeZ = GetPlanePointZ(&Sector->heightsec->floor, Origin);
+
+		if (OldZ > FakeZ && Origin.z <= FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_HitFakeFloor);
+		}
+
+		float EyeZ = Origin.z + ViewH;
+		if (!OldHasViewH)
+		{
+			OldZ += ViewH;
+		}
+
+		if (OldZ <= FakeZ && EyeZ > FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesSurface);
+		}
+		else if (OldZ > FakeZ && EyeZ <= FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesDive);
+		}
+
+		if (!Sector->heightsec->bFakeFloorOnly)
+		{
+			FakeZ = GetPlanePointZ(&Sector->heightsec->ceiling, Origin);
+			if (OldZ <= FakeZ && EyeZ > FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesAboveC);
+			}
+			else if (OldZ > FakeZ && EyeZ <= FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesBelowC);
+			}
+		}
 	}
 }
 

@@ -448,6 +448,15 @@ class VEntity : public VThinker
 		P_PASS_INT(Prop);
 		EV_RET_INT(NAME_GetActorProperty);
 	}
+	void eventCheckForSectorActions(sector_t* OldSec, bool OldAboveFakeFloor,
+		bool OldAboveFakeCeiling)
+	{
+		P_PASS_SELF;
+		P_PASS_PTR(OldSec);
+		P_PASS_BOOL(OldAboveFakeFloor);
+		P_PASS_BOOL(OldAboveFakeCeiling);
+		EV_RET_VOID(NAME_CheckForSectorActions);
+	}
 
 	bool SetState(VState*);
 	void SetInitialState(VState*);

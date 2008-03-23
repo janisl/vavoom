@@ -158,11 +158,13 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->special
 			<< sec->tag
 			<< sec->seqType
+			<< sec->SectorFlags
 			<< sec->SoundTarget
 			<< sec->FloorData
 			<< sec->CeilingData
 			<< sec->LightingData
 			<< sec->AffectorData
+			<< sec->ActionList
 			<< sec->Damage
 			<< sec->Friction
 			<< sec->MoveFactor
@@ -381,6 +383,8 @@ void VLevel::ClearReferences()
 			sec->LightingData = NULL;
 		if (sec->AffectorData && sec->AffectorData->GetFlags() & _OF_CleanupRef)
 			sec->AffectorData = NULL;
+		if (sec->ActionList && sec->ActionList->GetFlags() & _OF_CleanupRef)
+			sec->ActionList = NULL;
 	}
 	for (int i = 0; i < NumPolyObjs; i++)
 	{

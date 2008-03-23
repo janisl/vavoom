@@ -353,6 +353,9 @@ struct sector_t
 	VThinker*	LightingData;
 	VThinker*	AffectorData;
 
+	//	Sector action triggers.
+	VEntity*	ActionList;
+
 	vint32		Damage;
 
 	float		Friction;
