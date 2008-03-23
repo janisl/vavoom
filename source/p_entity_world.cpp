@@ -1164,10 +1164,12 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 				}
 			}
 		}
-	}
 
-	if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
-		return false;
+		if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
+		{
+			return false;
+		}
+	}
 
 	if (tmtrace.StepThing != NULL)
 	{
@@ -1176,7 +1178,9 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 
 	tmtrace.BlockingMobj = thingblocker;
 	if (tmtrace.BlockingMobj)
+	{
 		return false;
+	}
 
 	return true;
 	unguard;
