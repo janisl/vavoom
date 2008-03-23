@@ -381,7 +381,9 @@ void VMemberBase::StaticExit()
 		}
 	}
 	GMembers.Clear();
+	GPackagePath.Clear();
 	GLoadedPackages.Clear();
+	GDecorateClassImports.Clear();
 	GNetClassLookup.Clear();
 	VClass::GMobjInfos.Clear();
 	VClass::GScriptIds.Clear();

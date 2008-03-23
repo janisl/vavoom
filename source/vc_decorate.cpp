@@ -4813,6 +4813,7 @@ void ProcessDecorateScripts()
 
 	VClass::StaticReinitStatesLookup();
 
+	TLocation::ClearSourceFiles();
 	LineSpecialInfos.Clear();
 	unguard;
 }

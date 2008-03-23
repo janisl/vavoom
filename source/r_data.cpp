@@ -1383,6 +1383,7 @@ static void ParseEffectDefs(VScriptParser* sc,
 			sc->Error("Unknown command");
 		}
 	}
+	delete sc;
 	unguard;
 }
 
