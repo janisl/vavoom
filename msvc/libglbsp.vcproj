@@ -110,13 +110,15 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				InlineFunctionExpansion="1"
+				InlineFunctionExpansion="2"
 				PreprocessorDefinitions="GLBSP_PLUGIN;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="1"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

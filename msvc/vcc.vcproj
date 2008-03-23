@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="vcc"
 	ProjectGUID="{2DB17B76-8B9F-4F30-A5FA-DC3FBC2E6768}"
 	RootNamespace="vcc"
@@ -128,7 +128,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				InlineFunctionExpansion="1"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../utils/common"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;IN_VCC"
 				StringPooling="true"
@@ -136,6 +139,8 @@
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="1"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -150,10 +155,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				SubSystem="1"
-				TargetMachine="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				TargetMachine="0"
 			/>
 			<Tool
 				Name="VCALinkTool"

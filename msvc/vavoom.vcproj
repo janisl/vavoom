@@ -48,14 +48,21 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				InlineFunctionExpansion="1"
+				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				BrowseInformation="1"
-				WarningLevel="4"
+				RuntimeTypeInfo="false"
+				BrowseInformation="0"
+				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="1"
+				CallingConvention="0"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -63,7 +70,7 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="1062"
+				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -74,8 +81,17 @@
 				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				IgnoreDefaultLibraryNames="libcmtd.lib"
+				GenerateDebugInformation="true"
+				GenerateMapFile="true"
+				MapFileName="$(TargetDir)$(TargetName).map"
+				MapExports="true"
 				SubSystem="2"
-				TargetMachine="1"
+				TerminalServerAware="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				SetChecksum="true"
+				TargetMachine="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
