@@ -54,7 +54,6 @@ int pic_blaster;
 int pic_i_comm;
 int pic_backpack;
 //For Icons in Fullscreen HUD
-int pic_tallnum[10];
 int pic_medpack;
 int pic_armor[2];
 
@@ -112,7 +111,6 @@ void StartMap()
 
 	for (i = 0; i < 10; i++)
 	{
-		pic_tallnum[i] = R_RegisterPic(StrToName(va("fontb%d", i + 16)));
 		pic_yellownum[i] = R_RegisterPic(StrToName(va("invfony%d", i)));
 		pic_graynum[i] = R_RegisterPic(StrToName(va("invfong%d", i)));
 	}
@@ -182,30 +180,17 @@ void SB_DrawSmallNum(int x, int y, int num)
 
 void SB_DrawTallNum(int x, int y, int num, float alpha)
 {
-	int w;
-	picinfo_t info;
-
 	if (num < 0)
 	{
 		num = -num;
 	}
 
-	R_GetPicInfo(pic_tallnum[0], &info);
-	w = info.width;
-
-	// in the special case of 0, you draw 0
-	if (!num)
-	{
-		DrawPic(x - w, y, pic_tallnum[0], alpha);
-	}
+	string Text = va("%d", num);
+	SetFont('bigfont');
+	x -= TextWidth(Text);
 
 	// draw the new number
-	while (num)
-	{
-		x -= w;
-		DrawPic(x, y, pic_tallnum[num % 10], alpha);
-		num /= 10;
-	}
+	DrawText(x, y, Text,,, alpha);
 }
 
 //==========================================================================
