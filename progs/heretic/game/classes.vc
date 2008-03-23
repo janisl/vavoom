@@ -104,12 +104,6 @@
 #include "TeleGlitterGenerator1.vc"
 #include "TeleGlitter2.vc"
 #include "TeleGlitterGenerator2.vc"
-#include "KeyGizmoFloatBlue.vc"
-#include "KeyGizmoBlue.vc"
-#include "KeyGizmoFloatGreen.vc"
-#include "KeyGizmoGreen.vc"
-#include "KeyGizmoFloatYellow.vc"
-#include "KeyGizmoYellow.vc"
 
 #include "HereticPlayer.vc"
 #include "BloodySkull.vc"

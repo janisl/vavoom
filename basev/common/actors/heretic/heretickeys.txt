@@ -45,3 +45,96 @@ actor KeyYellow : HereticKey 80
 		Loop
 	}
 }
+
+//------------------------------------------------------------------------------
+actor KeyGizmoFloatBlue
+{
+	Radius 16
+	+Solid
+	+NoGravity
+	states
+	{
+	Spawn:
+		KGZB A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyGizmoBlue 94
+{
+	Game Heretic
+	Radius 16
+	Height 50
+	+Solid
+	states
+	{
+	Spawn:
+		KGZ1 A 1
+		KGZ1 A 1 A_SpawnItemEx("KeyGizmoFloatBlue", 0, 0, 60)
+		KGZ1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyGizmoFloatGreen
+{
+	Radius 16
+	+Solid
+	+NoGravity
+	states
+	{
+	Spawn:
+		KGZG A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyGizmoGreen 95
+{
+	Game Heretic
+	Radius 16
+	Height 50
+	+Solid
+	states
+	{
+	Spawn:
+		KGZ1 A 1
+		KGZ1 A 1 A_SpawnItemEx("KeyGizmoFloatGreen", 0, 0, 60)
+		KGZ1 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyGizmoFloatYellow
+{
+	Radius 16
+	+Solid
+	+NoGravity
+	states
+	{
+	Spawn:
+		KGZY A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KeyGizmoYellow 96
+{
+	Game Heretic
+	Radius 16
+	Height 50
+	+Solid
+	states
+	{
+	Spawn:
+		KGZ1 A 1
+		KGZ1 A 1 A_SpawnItemEx("KeyGizmoFloatYellow", 0, 0, 60)
+		KGZ1 A -1
+		Stop
+	}
+}
