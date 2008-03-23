@@ -292,6 +292,24 @@ public:
 	DECLARE_FUNCTION(Cmd_CheckParm)
 	DECLARE_FUNCTION(CmdBuf_AddText)
 
+	//	Class methods
+	DECLARE_FUNCTION(FindClass)
+	DECLARE_FUNCTION(ClassIsChildOf)
+	DECLARE_FUNCTION(GetClassName)
+	DECLARE_FUNCTION(GetClassParent)
+	DECLARE_FUNCTION(GetClassReplacement)
+	DECLARE_FUNCTION(FindClassState)
+	DECLARE_FUNCTION(GetClassNumOwnedStates)
+	DECLARE_FUNCTION(GetClassFirstState)
+
+	//	State methods
+	DECLARE_FUNCTION(StateIsInRange)
+	DECLARE_FUNCTION(StateIsInSequence)
+	DECLARE_FUNCTION(GetStateSpriteName)
+	DECLARE_FUNCTION(GetStateDuration)
+	DECLARE_FUNCTION(GetStatePlus)
+	DECLARE_FUNCTION(AreStateSpritesPresent)
+
 	//	Iterators
 	DECLARE_FUNCTION(AllObjects)
 	DECLARE_FUNCTION(AllClasses)
@@ -300,27 +318,15 @@ public:
 	DECLARE_FUNCTION(Info_ValueForKey)
 	DECLARE_FUNCTION(WadLumpPresent)
 	DECLARE_FUNCTION(SpawnObject)
-	DECLARE_FUNCTION(FindClass)
-	DECLARE_FUNCTION(StateIsInRange)
-	DECLARE_FUNCTION(StateIsInSequence)
-	DECLARE_FUNCTION(GetStateSpriteName)
-	DECLARE_FUNCTION(GetStateDuration)
 	DECLARE_FUNCTION(FindAnimDoor)
 	DECLARE_FUNCTION(GetLangString)
 	DECLARE_FUNCTION(RGB)
 	DECLARE_FUNCTION(RGBA)
-	DECLARE_FUNCTION(ClassIsChildOf)
-	DECLARE_FUNCTION(GetClassName)
-	DECLARE_FUNCTION(GetClassParent)
-	DECLARE_FUNCTION(GetClassReplacement)
 	DECLARE_FUNCTION(GetLockDef)
-	DECLARE_FUNCTION(GetStatePlus)
-	DECLARE_FUNCTION(FindClassState)
 	DECLARE_FUNCTION(ParseColour)
 	DECLARE_FUNCTION(TextColourString)
 	DECLARE_FUNCTION(StartTitleMap)
 	DECLARE_FUNCTION(LoadBinaryLump)
-	DECLARE_FUNCTION(AreStateSpritesPresent)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

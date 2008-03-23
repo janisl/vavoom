@@ -199,7 +199,7 @@ COMMAND(Script)
 		script = atoi(*Args[1]);
 		if (script < 1)
 			return;
-		if (script > 99)
+		if (script > 9999)
 			return;
 
 		if (GLevel->Acs->Start(script, 0, 0, 0, 0, GGameInfo->Players[0]->MO,

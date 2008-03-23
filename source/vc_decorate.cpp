@@ -1279,8 +1279,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("MissileEvenMore"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag MissileEvenMore in %s", Class->GetName());
+		SetClassFieldBool(Class, "bMissileEvenMore", Value);
 		return true;
 	}
 	if (!Flag.ICmp("ShortMissileRange"))
@@ -1585,8 +1584,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("DontTranslate"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag DontTranslate in %s", Class->GetName());
+		SetClassFieldBool(Class, "bDontTranslate", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoPain"))

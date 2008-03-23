@@ -230,6 +230,8 @@ bool bShadow;			// Actor is hard for monsters to see
 bool bGhost;			// Actor is a ghost
 bool bBossDeath;		// A_FreezeDeathChunks calls A_BossDeath
 bool bNoIceDeath;		// Don't use generic ice death
+bool bDontTranslate;	// Don't use translation
+bool bMissileEvenMore;
 
 //  Params
 float			Speed;
@@ -255,6 +257,8 @@ EntityEx		LastEnemy;
 EntityEx		Tracer;
 // Monster's goal if not chasing anything
 EntityEx		Goal;
+//	Master entity
+EntityEx		Master;
 
 // Player number last looked for.
 int				LastLook;
@@ -2261,7 +2265,7 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 //
 //==========================================================================
 
-final bool TeleportMove(TVec org)
+final bool TeleportMove(TVec org, optional bool ForceTelestomp)
 {
 	EntityEx	Other;
 	float		blockdist;
@@ -2291,7 +2295,7 @@ final bool TeleportMove(TVec org)
 		}
 
 		//  Check if allowed to stomp things
-		if (!bTelestomp && !Level.bAllowMonsterTelefrags)
+		if (!ForceTelestomp && !bTelestomp && !Level.bAllowMonsterTelefrags)
 		{
 			return false;
 		}
@@ -2706,6 +2710,10 @@ final bool CheckMissileRange()
 	{
 		//	Attack from far away
 		dist /= 2.0;
+	}
+	if (bMissileEvenMore)
+	{
+		dist /= 8.0;
 	}
 
 	if (dist > MissileChance)

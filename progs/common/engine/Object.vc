@@ -1533,6 +1533,32 @@ native static final int Cmd_CheckParm(string str);
 native static final void CmdBuf_AddText(string format, ...);
 
 //
+//  Class methods
+//
+
+native static final class FindClass(name Name);
+native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
+native static final name GetClassName(class C);
+native static final class GetClassParent(class C);
+native static final class GetClassReplacement(class C);
+native static final state FindClassState(class C, name StateName);
+native static final int GetClassNumOwnedStates(class C);
+native static final state GetClassFirstState(class C);
+
+//
+//  State methods
+//
+
+native static final bool StateIsInRange(state State, state Start, state End,
+	int MaxDepth);
+native static final bool StateIsInSequence(state State, state Start);
+native static final name GetStateSpriteName(state State);
+native static final float GetStateDuration(state State);
+native static final state GetStatePlus(state S, int Offset,
+	optional bool IgnoreJump);
+native static final bool AreStateSpritesPresent(state State);
+
+//
 //  Iterators
 //
 
@@ -1548,29 +1574,15 @@ native static final string Info_ValueForKey(string info, string key);
 //  Checks if WAD lump is present, used to check for shareware/extended WADs
 native static final bool WadLumpPresent(name Name);
 native static final Object SpawnObject(class cid);
-native static final class FindClass(name Name);
-native static final bool StateIsInRange(state State, state Start, state End,
-	int MaxDepth);
-native static final bool StateIsInSequence(state State, state Start);
-native static final name GetStateSpriteName(state State);
-native static final float GetStateDuration(state State);
 native static final VAnimDoorDef* FindAnimDoor(int BaseTex);
 native static final string GetLangString(name Id);
 native static final int RGB(byte r, byte g, byte b);
 native static final int RGBA(byte r, byte g, byte b, byte a);
-native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
-native static final name GetClassName(class C);
-native static final class GetClassParent(class C);
-native static final class GetClassReplacement(class C);
 native static final LockDef* GetLockDef(int Lock);
-native static final state GetStatePlus(state S, int Offset,
-	optional bool IgnoreJump);
-native static final state FindClassState(class C, name StateName);
 native static final int ParseColour(string Name);
 native static final string TextColourString(int Colour);
 native static final bool StartTitleMap();
 native static final void LoadBinaryLump(int Lump, out array<byte> Array);
-native static final bool AreStateSpritesPresent(state State);
 
 //==========================================================================
 //

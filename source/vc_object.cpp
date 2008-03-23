@@ -898,6 +898,116 @@ IMPLEMENT_FUNCTION(VObject, CmdBuf_AddText)
 
 //==========================================================================
 //
+//	Class methods
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, FindClass)
+{
+	P_GET_NAME(Name);
+	RET_PTR(VClass::FindClass(*Name));
+}
+
+IMPLEMENT_FUNCTION(VObject, ClassIsChildOf)
+{
+	P_GET_PTR(VClass, BaseClass);
+	P_GET_PTR(VClass, SomeClass);
+	RET_BOOL(SomeClass->IsChildOf(BaseClass));
+}
+
+IMPLEMENT_FUNCTION(VObject, GetClassName)
+{
+	P_GET_PTR(VClass, SomeClass);
+	RET_NAME(SomeClass->Name);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetClassParent)
+{
+	P_GET_PTR(VClass, SomeClass);
+	RET_PTR(SomeClass->ParentClass);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetClassReplacement)
+{
+	P_GET_PTR(VClass, SomeClass);
+	RET_PTR(SomeClass->GetReplacement());
+}
+
+IMPLEMENT_FUNCTION(VObject, FindClassState)
+{
+	P_GET_NAME(StateName);
+	P_GET_PTR(VClass, Cls);
+	VStateLabel* Lbl = Cls->FindStateLabel(StateName);
+	RET_PTR(Lbl ? Lbl->State : NULL);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetClassNumOwnedStates)
+{
+	P_GET_PTR(VClass, Cls);
+	int Ret = 0;
+	for (VState* S = Cls->States; S; S = S->Next)
+	{
+		Ret++;
+	}
+	RET_INT(Ret);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetClassFirstState)
+{
+	P_GET_PTR(VClass, Cls);
+	RET_PTR(Cls->States);
+}
+
+//==========================================================================
+//
+//	State methods
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VObject, StateIsInRange)
+{
+	P_GET_INT(MaxDepth);
+	P_GET_PTR(VState, End);
+	P_GET_PTR(VState, Start);
+	P_GET_PTR(VState, State);
+	RET_BOOL(State->IsInRange(Start, End, MaxDepth));
+}
+
+IMPLEMENT_FUNCTION(VObject, StateIsInSequence)
+{
+	P_GET_PTR(VState, Start);
+	P_GET_PTR(VState, State);
+	RET_BOOL(State->IsInSequence(Start));
+}
+
+IMPLEMENT_FUNCTION(VObject, GetStateSpriteName)
+{
+	P_GET_PTR(VState, State);
+	RET_NAME(State ? State->SpriteName : NAME_None);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetStateDuration)
+{
+	P_GET_PTR(VState, State);
+	RET_FLOAT(State ? State->Time : 0.0);
+}
+
+IMPLEMENT_FUNCTION(VObject, GetStatePlus)
+{
+	P_GET_BOOL_OPT(IgnoreJump, false);
+	P_GET_INT(Offset);
+	P_GET_PTR(VState, State);
+	RET_PTR(State->GetPlus(Offset, IgnoreJump));
+}
+
+IMPLEMENT_FUNCTION(VObject, AreStateSpritesPresent)
+{
+	P_GET_PTR(VState, State);
+	RET_BOOL(State ? R_AreSpritesPresent(State->SpriteIndex) : false);
+}
+
+//==========================================================================
+//
 //	Iterators
 //
 //==========================================================================
@@ -1005,40 +1115,6 @@ IMPLEMENT_FUNCTION(VObject, SpawnObject)
 	RET_REF(VObject::StaticSpawnObject(Class));
 }
 
-IMPLEMENT_FUNCTION(VObject, FindClass)
-{
-	P_GET_NAME(Name);
-	RET_PTR(VClass::FindClass(*Name));
-}
-
-IMPLEMENT_FUNCTION(VObject, StateIsInRange)
-{
-	P_GET_INT(MaxDepth);
-	P_GET_PTR(VState, End);
-	P_GET_PTR(VState, Start);
-	P_GET_PTR(VState, State);
-	RET_BOOL(State->IsInRange(Start, End, MaxDepth));
-}
-
-IMPLEMENT_FUNCTION(VObject, StateIsInSequence)
-{
-	P_GET_PTR(VState, Start);
-	P_GET_PTR(VState, State);
-	RET_BOOL(State->IsInSequence(Start));
-}
-
-IMPLEMENT_FUNCTION(VObject, GetStateSpriteName)
-{
-	P_GET_PTR(VState, State);
-	RET_NAME(State ? State->SpriteName : NAME_None);
-}
-
-IMPLEMENT_FUNCTION(VObject, GetStateDuration)
-{
-	P_GET_PTR(VState, State);
-	RET_FLOAT(State ? State->Time : 0.0);
-}
-
 IMPLEMENT_FUNCTION(VObject, FindAnimDoor)
 {
 	P_GET_INT(BaseTex);
@@ -1068,51 +1144,10 @@ IMPLEMENT_FUNCTION(VObject, RGBA)
 	RET_INT((a << 24) + (r << 16) + (g << 8) + b);
 }
 
-IMPLEMENT_FUNCTION(VObject, ClassIsChildOf)
-{
-	P_GET_PTR(VClass, BaseClass);
-	P_GET_PTR(VClass, SomeClass);
-	RET_BOOL(SomeClass->IsChildOf(BaseClass));
-}
-
-IMPLEMENT_FUNCTION(VObject, GetClassName)
-{
-	P_GET_PTR(VClass, SomeClass);
-	RET_NAME(SomeClass->Name);
-}
-
-IMPLEMENT_FUNCTION(VObject, GetClassParent)
-{
-	P_GET_PTR(VClass, SomeClass);
-	RET_PTR(SomeClass->ParentClass);
-}
-
-IMPLEMENT_FUNCTION(VObject, GetClassReplacement)
-{
-	P_GET_PTR(VClass, SomeClass);
-	RET_PTR(SomeClass->GetReplacement());
-}
-
 IMPLEMENT_FUNCTION(VObject, GetLockDef)
 {
 	P_GET_INT(Lock);
 	RET_PTR(GetLockDef(Lock));
-}
-
-IMPLEMENT_FUNCTION(VObject, GetStatePlus)
-{
-	P_GET_BOOL_OPT(IgnoreJump, false);
-	P_GET_INT(Offset);
-	P_GET_PTR(VState, State);
-	RET_PTR(State->GetPlus(Offset, IgnoreJump));
-}
-
-IMPLEMENT_FUNCTION(VObject, FindClassState)
-{
-	P_GET_NAME(StateName);
-	P_GET_PTR(VClass, Cls);
-	VStateLabel* Lbl = Cls->FindStateLabel(StateName);
-	RET_PTR(Lbl ? Lbl->State : NULL);
 }
 
 IMPLEMENT_FUNCTION(VObject, ParseColour)
@@ -1141,10 +1176,4 @@ IMPLEMENT_FUNCTION(VObject, LoadBinaryLump)
 	P_GET_PTR(TArray<vuint8>, Array);
 	P_GET_INT(Lump);
 	W_LoadLumpIntoArray(Lump, *Array);
-}
-
-IMPLEMENT_FUNCTION(VObject, AreStateSpritesPresent)
-{
-	P_GET_PTR(VState, State);
-	RET_BOOL(State ? R_AreSpritesPresent(State->SpriteIndex) : false);
 }

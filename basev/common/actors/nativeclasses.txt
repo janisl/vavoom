@@ -99,9 +99,15 @@ class Actor extends Thinker
 	//	Spawn functions
 	//
 	action native A_TossGib();
-	//A_SpawnDebris
-	//A_SpawnItem
-	//A_SpawnItemEx
+	action native A_SpawnDebris(class<Actor> SpawnType, optional eval bool transfer_translation,
+		optional eval float mult_h, optional eval float mult_v);
+	action native A_SpawnItem(class<Actor> itemtype, optional eval float distance,
+		optional eval float zheight, optional evalnot bool useammo,
+		optional eval bool transfer_translation);
+	action native A_SpawnItemEx(class<Actor> itemtype, optional eval float xoffs,
+		optional eval float yoffs, optional eval float zoffs, optional eval float xmom,
+		optional eval float ymom, optional eval float zmom, optional eval float angle,
+		optional eval int flags, optional eval int chance);
 
 	//
 	//	State jumps

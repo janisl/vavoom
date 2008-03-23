@@ -2098,9 +2098,13 @@ final void A_TossGib()
 	class<EntityEx> tp;
 
 	if (bNoBlood)
+	{
 		tp = Junk;
+	}
 	else
+	{
 		tp = Meat;
+	}
 	gib = Spawn(tp, Origin + vector(0.0, 0.0, 24.0));
 	if (!gib)
 	{
@@ -2113,6 +2117,244 @@ final void A_TossGib()
 	gib.Velocity.x = speed * cos(an);
 	gib.Velocity.y = speed * sin(an);
 	gib.Velocity.z = Random() * 16.0 * 35.0;
+}
+
+//==========================================================================
+//
+//	A_SpawnDebris
+//
+//==========================================================================
+
+final void A_SpawnDebris(class<Actor> SpawnType, optional bool TransTransl,
+	optional float MultH, optional float MultV)
+{
+	if (!SpawnType)
+	{
+		return;
+	}
+	if (MultH <= 0.0)
+	{
+		MultH = 1.0;
+	}
+	if (MultV <= 0.0)
+	{
+		MultV = 1.0;
+	}
+
+	int i;
+	for (i = 0; i < SpawnType.default.Health; i++)
+	{
+		EntityEx A = Spawn(SpawnType, Origin + vector((Random() - 0.5) * 16.0,
+			(Random() - 0.5) * 16.0, Random() * Height));
+		if (A && TransTransl)
+		{
+			A.Translation = Translation;
+		}
+		//	The way it uses states sucks big time.
+		if (A && i < GetClassNumOwnedStates(SpawnType))
+		{
+			A.SetState(GetStatePlus(GetClassFirstState(SpawnType), i));
+			A.Velocity.x = MultH * (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = MultH * (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = MultV * (Random() * 8.0 + 5.0) * 35.0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_SpawnItem
+//
+//==========================================================================
+
+final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
+	bool NoCheckPos)
+{
+	if (!A)
+	{
+		return;
+	}
+
+	if (TransTransl && !bDontTranslate)
+	{
+		A.Translation = Translation;
+	}
+
+	//	Find instigator for missiles.
+	EntityEx Instig = self;
+	while (Instig && Instig.IsMissile(true))
+	{
+		Instig = Instig.Target;
+	}
+
+	if (A.bMonster)
+	{
+		//	Check if thing fits in it's current location.
+		if (!NoCheckPos && !A.TestLocation())
+		{
+			A.Destroy();
+			//	Set result for state chain calls.
+			if (XLevel.StateCall)
+			{
+				XLevel.StateCall->Result = false;
+			}
+			return;
+		}
+
+		if (Instig)
+		{
+			if (Instig.bMonster)
+			{
+				A.bFriendly = bFriendly;
+				if (SetMaster)
+				{
+					A.Master = self;
+				}
+			}
+			else if (Instig.bIsPlayer)
+			{
+				//	Make monster friendly.
+				A.bFriendly = true;
+				EntityEx Atk = PlayerEx(Player).Attacker;
+				if (Atk && !Atk.bFriendly)
+				{
+					//	Make it attack monster who last attacked player.
+					A.Target = Atk;
+				}
+			}
+		}
+	}
+	else
+	{
+		//	For missiles or anything else set target to instigator.
+		if (!Instig)
+		{
+			Instig = self;
+		}
+		A.Target = Instig;
+	}
+}
+
+//==========================================================================
+//
+//	A_SpawnItem
+//
+//==========================================================================
+
+final void A_SpawnItem(class<Actor> ItemType, optional float Distance,
+	optional float ZHeight, optional bool UseAmmo, optional bool TransTransl)
+{
+	if (!specified_UseAmmo)
+	{
+		UseAmmo = true;
+	}
+
+	if (!ItemType)
+	{
+		if (XLevel.StateCall)
+		{
+			XLevel.StateCall->Result = false;
+		}
+		return;
+	}
+
+	//	Don't spawn monsters if this actor has been massacred
+	if (DamageType == 'Massacre' && ItemType.default.bMonster)
+	{
+		return;
+	}
+
+	if (!Distance)
+	{
+		Distance = Radius + ItemType.default.Radius;
+	}
+
+	//	If called from weapon, then use ammo.
+	if (bIsPlayer &&
+		(XLevel.CallingState == Player.ViewStates[ps_weapon].State ||
+		XLevel.CallingState == Player.ViewStates[ps_flash].State))
+	{
+		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+		if (!Wpn)
+		{
+			return;
+		}
+		if (UseAmmo && !Wpn.DepleteAmmo())
+		{
+			return;
+		}
+	}
+
+	EntityEx A = Spawn(ItemType, Origin + vector(Distance * cos(Angles.yaw),
+		Distance * sin(Angles.yaw), ZHeight - FloorClip));
+	InitSpawnedItem(A, TransTransl, UseAmmo, false);
+}
+
+//==========================================================================
+//
+//	A_SpawnItem
+//
+//==========================================================================
+
+final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
+	optional float YOffs, optional float ZOffs, optional float XVel,
+	optional float YVel, optional float ZVel, optional float Angle,
+	optional int Flags, optional int Chance)
+{
+	if (!ItemType)
+	{
+		if (XLevel.StateCall)
+		{
+			XLevel.StateCall->Result = false;
+		}
+		return;
+	}
+
+	if (Chance > 0 && P_Random() < Chance)
+	{
+		return;
+	}
+
+	//	Don't spawn monsters if this actor has been massacred
+	if (DamageType == 'Massacre' && ItemType.default.bMonster)
+	{
+		return;
+	}
+
+	if (!(Flags & 4))
+	{
+		Angle += Angles.yaw;
+	}
+
+	TVec Org = vector(XOffs, YOffs, ZOffs - FloorClip);
+	if (!(Flags & 2))
+	{
+		//	In relative mode negative y values mean 'left' and positive ones
+		// mean 'right'. This is the inverse orientation of the absolute mode!
+		Org.y = -Org.y;
+		VectorRotateAroundZ(&Org, Angle);
+	}
+	Org += Origin;
+
+	EntityEx A = Spawn(ItemType, Org);
+	InitSpawnedItem(A, !!(Flags & 1), !!(Flags & 16), !!(Flags & 32));
+	if (A)
+	{
+		A.Velocity.x = XVel;
+		A.Velocity.y = YVel;
+		A.Velocity.z = ZVel;
+		A.Angles.yaw = Angle;
+		if (!(Flags & 8))
+		{
+			//	The same issue as with offsets.
+			A.Velocity.y = -A.Velocity.y;
+			VectorRotateAroundZ(&A.Velocity, Angle);
+		}
+		if (Flags & 64)
+		{
+			A.TeleportMove(A.Origin, true);
+		}
+	}
 }
 
 //**************************************************************************
