@@ -45,6 +45,9 @@ const int
 	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
 	MTF_GCOOP		= 0x0200,
 	MTF_GDEATHMATCH	= 0x0400,
+	MTF_SHADOW		= 0x0800,
+	MTF_ALTSHADOW	= 0x1000,
+	MTF_FRIENDLY	= 0x2000,
 	MTF_STANDSTILL	= 0x4000;
 
 enum

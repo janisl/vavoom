@@ -5318,6 +5318,26 @@ void OnMapSpawn(mthing_t* mthing)
 		{
 			SetDormant();
 		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_FRIENDLY)
+		{
+			bFriendly = true;
+			//	Friendlies don't count as kills.
+			if (bCountKill)
+			{
+				bCountKill = false;
+				Level.TotalKills--;
+			}
+		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_SHADOW)
+		{
+			bShadow = true;
+			RenderStyle = STYLE_Translucent;
+			Alpha = 0.25;
+		}
+		else if (mthing->options & LineSpecialLevelInfo::MTF_ALTSHADOW)
+		{
+			RenderStyle = STYLE_None;
+		}
 	}
 	else
 	{

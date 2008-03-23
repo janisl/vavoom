@@ -34,15 +34,13 @@ class Acolyte : StrifeHumanoid
 
 final void A_AcolyteBits()
 {
-	if (SpawnPoint.options & (1 << 12))//8))
+	if (SpawnPoint.options & LineSpecialLevelInfo::MTF_SHADOW)
 	{
-		RenderStyle = STYLE_Translucent;
-		Alpha = 0.333;
-		bShadow = true;
+		A_BeShadowyFoe();
 	}
-	if (SpawnPoint.options & (1 << 13))//9))
+	else if (SpawnPoint.options & LineSpecialLevelInfo::MTF_SHADOW)
 	{
-		bUnknown2 = true;
+		RenderStyle = STYLE_None;
 	}
 }
 

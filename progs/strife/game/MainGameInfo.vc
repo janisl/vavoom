@@ -535,9 +535,29 @@ void TranslateThing(mthing_t* mthing)
 	flags = mthing->options;
 	mthing->options = (flags & 0x7) | 0x7e0;
 	if (flags & 0x10)
+	{
 		mthing->options &= ~StrifeLevelInfo::MTF_GSINGLE;
+	}
 	if (flags & 0x08)
+	{
 		mthing->options |= LineSpecialLevelInfo::MTF_STANDSTILL;
+	}
+	if (flags & 0x20)
+	{
+		mthing->options |= LineSpecialLevelInfo::MTF_AMBUSH;
+	}
+	if (flags & 0x40)
+	{
+		mthing->options |= LineSpecialLevelInfo::MTF_FRIENDLY;
+	}
+	if (flags & 0x100)
+	{
+		mthing->options |= LineSpecialLevelInfo::MTF_SHADOW;
+	}
+	if (flags & 0x200)
+	{
+		mthing->options |= LineSpecialLevelInfo::MTF_ALTSHADOW;
+	}
 }
 
 //==========================================================================

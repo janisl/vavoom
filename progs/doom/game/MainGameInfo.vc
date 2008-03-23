@@ -1048,9 +1048,21 @@ void TranslateThing(mthing_t* mthing)
 
 	// translate the spawn flags to Hexen format.
 	flags = mthing->options;
+	if (flags & 0x100)
+	{
+		flags &= 0x1f;
+	}
+
 	mthing->options = (flags & 0xf) | 0x7e0;
 	if (flags & 0x10)
+	{
 		mthing->options &= ~LineSpecialLevelInfo::MTF_GSINGLE;
+	}
+	if (flags & 0x80)
+	{
+		//	MBF friendly monsters
+		mthing->options |= LineSpecialLevelInfo::MTF_FRIENDLY;
+	}
 }
 
 //==========================================================================
