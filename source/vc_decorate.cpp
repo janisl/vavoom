@@ -4805,6 +4805,11 @@ void ProcessDecorateScripts()
 	{
 		DecPkg->ParsedClasses[i]->DecorateEmit();
 	}
+	//	Compile and set up for execution.
+	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
+	{
+		DecPkg->ParsedClasses[i]->DecoratePostLoad();
+	}
 
 	if (NumErrors)
 	{

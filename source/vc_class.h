@@ -289,6 +289,7 @@ public:
 	bool DefineMembers();
 	void Emit();
 	void DecorateEmit();
+	void DecoratePostLoad();
 	void EmitStateLabels();
 	VState* ResolveStateLabel(TLocation, VName, int);
 	void SetStateLabel(VName, VState*);

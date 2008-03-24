@@ -1188,14 +1188,7 @@ void VClass::DecorateEmit()
 	for (int i = 0; i < Methods.Num(); i++)
 	{
 		Methods[i]->Emit();
-		Methods[i]->PostLoad();
 	}
-
-	//	Calculate indexes of virtual methods.
-	CalcFieldOffsets();
-
-	//	Recreate virtual table.
-	CreateVTable();
 	unguard;
 }
 
@@ -1398,6 +1391,29 @@ void VClass::PostLoad()
 	}
 
 	ObjectFlags |= CLASSOF_PostLoaded;
+}
+
+//==========================================================================
+//
+//	VClass::DecoratePostLoad
+//
+//==========================================================================
+
+void VClass::DecoratePostLoad()
+{
+	guard(VClass::DecoratePostLoad);
+	//	Compile.
+	for (int i = 0; i < Methods.Num(); i++)
+	{
+		Methods[i]->PostLoad();
+	}
+
+	//	Calculate indexes of virtual methods.
+	CalcFieldOffsets();
+
+	//	Recreate virtual table.
+	CreateVTable();
+	unguard;
 }
 
 //==========================================================================
