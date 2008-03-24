@@ -85,6 +85,8 @@ bool			host_request_exit = false;
 bool			host_standalone;
 bool			host_titlemap;
 
+vuint32			host_cycles[16];
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VCvarF	host_framerate("framerate", "0");
@@ -384,11 +386,13 @@ void Host_Frame()
 #endif
 
 #ifdef SERVER
+clock(host_cycles[0]);
 		if (sv.active)
 		{
 			//	Server operations
 			ServerFrame(host_frametics);
 		}
+unclock(host_cycles[0]);
 #endif
 
 		host_time += host_frametime;

@@ -55,3 +55,5 @@ extern double		realtime;
 extern int			host_framecount;
 extern bool			host_standalone;
 extern bool			host_titlemap;
+
+extern vuint32		host_cycles[16];

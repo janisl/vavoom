@@ -171,6 +171,8 @@ static double	fps_start = 0.0;
 static int		fps_frames = 0;
 static int		show_fps = 0;
 
+static VCvarI	draw_cycles("draw_cycles", "0", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //**************************************************************************
@@ -278,6 +280,29 @@ static void DrawFPS()
 		T_SetFont(SmallFont);
 		T_SetAlign(hright, vtop);
 		T_DrawText(VirtualWidth - 2, 0, va("%d fps", show_fps), CR_UNTRANSLATED);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	DrawCycles
+//
+//==========================================================================
+
+static void DrawCycles()
+{
+	guard(DrawCycles);
+	if (draw_cycles)
+	{
+		T_SetFont(ConFont);
+		T_SetAlign(hright, vtop);
+		for (int i = 0; i < 16; i++)
+		{
+			T_DrawText(VirtualWidth - 2, 32 + i * 8, va("%d %10u", i,
+				host_cycles[i]), CR_UNTRANSLATED);
+			host_cycles[i] = 0;
+		}
 	}
 	unguard;
 }
@@ -460,6 +485,7 @@ void SCR_Init()
 void SCR_Update()
 {
 	guard(SCR_Update);
+clock(host_cycles[1]);
 	CheckResolutionChange();
 
 	Drawer->StartUpdate();
@@ -497,6 +523,9 @@ void SCR_Update()
 	C_Drawer();
 
 	DrawFPS();
+unclock(host_cycles[1]);
+
+	DrawCycles();
 
 	Drawer->Update();              // page flip or blit buffer
 	unguard;

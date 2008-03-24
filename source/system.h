@@ -55,3 +55,21 @@ void Sys_LowFPPrecision();
 void Sys_HighFPPrecision();
 
 }
+
+#ifdef INLINE_ASM_I386_GAS
+
+inline vuint32 Sys_Cycles()
+{
+	vuint32 Ret;
+	asm("rdtsc" : "=a" (Ret) : "d" (Ret));
+	return Ret;
+}
+
+#else
+
+inline vuint32 Sys_Cycles()
+{
+	return 0;
+}
+
+#endif
