@@ -1287,6 +1287,13 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 	side_t* sidedef = seg->sidedef;
 	line_t* linedef = seg->linedef;
 
+	float a1 = ViewClip.PointToClipAngle(*seg->v2);
+	float a2 = ViewClip.PointToClipAngle(*seg->v1);
+	if (!ViewClip.IsRangeVisible(a1, a2))
+	{
+		return;
+	}
+
 	if (!seg->backsector)
 	{
 		sp = dseg->mid;
@@ -2005,13 +2012,24 @@ void VRenderLevel::UpdateSubsector(int num, float *bbox)
 		return;
 	}
 
+	if (!ViewClip.ClipCheckSubsector(r_sub))
+	{
+		return;
+	}
+
 	bbox[2] = r_sub->sector->floor.minz;
 	if (r_sub->sector->ceiling.pic == skyflatnum)
+	{
 		bbox[5] = skyheight;
+	}
 	else
+	{
 		bbox[5] = r_sub->sector->ceiling.maxz;
+	}
 
 	UpdateSubRegion(r_sub->regions);
+
+	ViewClip.ClipAddSubsectorSegs(r_sub);
 	unguard;
 }
 
@@ -2024,13 +2042,27 @@ void VRenderLevel::UpdateSubsector(int num, float *bbox)
 void VRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 {
 	guard(VRenderLevel::UpdateBSPNode);
+	if (ViewClip.ClipIsFull())
+	{
+		return;
+	}
+
+	if (!ViewClip.ClipIsBBoxVisible(bbox))
+	{
+		return;
+	}
+
 	// Found a subsector?
 	if (bspnum & NF_SUBSECTOR)
 	{
 		if (bspnum == -1)
+		{
 			UpdateSubsector(0, bbox);
+		}
 		else
+		{
 			UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
+		}
 		return;
 	}
 
@@ -2041,8 +2073,11 @@ void VRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 		return;
 	}
 
-	UpdateBSPNode(bsp->children[0], bsp->bbox[0]);
-	UpdateBSPNode(bsp->children[1], bsp->bbox[1]);
+	// Decide which side the view point is on.
+	int side = bsp->PointOnSide(vieworg);
+
+	UpdateBSPNode(bsp->children[side], bsp->bbox[side]);
+	UpdateBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
 	bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
 	bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
 	unguard;
@@ -2323,10 +2358,14 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 //
 //==========================================================================
 
-void VRenderLevel::UpdateWorld()
+void VRenderLevel::UpdateWorld(const refdef_t* rd)
 {
 	guard(VRenderLevel::UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
+
+	ViewClip.ClearClipNodes(vieworg, Level);
+	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
+		rd->fovx, rd->fovy);
 
 	//	Update fake sectors.
 	for (int i = 0; i < Level->NumSectors; i++)

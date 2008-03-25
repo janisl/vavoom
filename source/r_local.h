@@ -291,7 +291,7 @@ private:
 	void UpdateSubRegion(subregion_t*);
 	void UpdateSubsector(int, float*);
 	void UpdateBSPNode(int, float*);
-	void UpdateWorld();
+	void UpdateWorld(const refdef_t*);
 	bool CopyPlaneIfValid(sec_plane_t*, const sec_plane_t*,
 		const sec_plane_t*);
 	void UpdateFakeFlats(sector_t*);
