@@ -61,6 +61,6 @@ defaultproperties
 	RespawnTime = 120.0 + 30.0 / 35.0;
 	IconName = 'artisumn';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

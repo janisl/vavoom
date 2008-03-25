@@ -58,6 +58,6 @@ defaultproperties
 	IconName = 'artifbmb';
 	bCountItem = true;
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

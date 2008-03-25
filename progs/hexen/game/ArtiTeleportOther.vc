@@ -59,6 +59,6 @@ defaultproperties
 	PickupMessage = "$txt_artiteleportother";
 	IconName = 'artitelo';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

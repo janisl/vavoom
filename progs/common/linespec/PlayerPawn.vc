@@ -66,6 +66,15 @@ name			ScoreIcon;
 //	For morphed player classes
 class<Weapon>	MorphWeapon;
 
+//	Attack offset, relative to the centre of the player.
+float			AttackZOffset;
+
+//	Damage flash colour.
+int				DamageScreenColour;
+
+//	Maximal health.
+int				MaxHealth;
+
 //==========================================================================
 //
 //	ShouldDropItems
@@ -235,6 +244,8 @@ defaultproperties
 	SideMove1 = 1.0;
 	SideMove2 = 1.0;
 	JumpVelZ = 8.0 * 35.0;
+	AttackZOffset = 8.0;
+	DamageScreenColour = 0xffff0000;
 	bSolid = true;
 	bShootable = true;
 	bDropOff = true;

@@ -80,6 +80,6 @@ defaultproperties
 	IconName = 'artiatlp';
 	bCountItem = true;
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

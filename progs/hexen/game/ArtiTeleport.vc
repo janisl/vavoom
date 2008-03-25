@@ -77,6 +77,6 @@ defaultproperties
 	PickupMessage = "$txt_artiteleport";
 	IconName = 'artiatlp';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

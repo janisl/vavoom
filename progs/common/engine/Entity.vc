@@ -147,6 +147,18 @@ struct DropItemInfo
 	float				Chance;
 };
 
+struct DamageFactor
+{
+	name				DamageType;
+	float				Factor;
+};
+
+struct PainChanceInfo
+{
+	name				DamageType;
+	float				Chance;
+};
+
 // Info for drawing: position.
 TVec			Origin;
 

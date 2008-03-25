@@ -27,6 +27,7 @@ class PuzzleItem : Inventory
 	abstract;
 
 int				PuzzleItemNumber;
+string			FailMessage;
 
 //==========================================================================
 //
@@ -82,7 +83,7 @@ bool Use(bool Pickup)
 	}
 	else
 	{
-		Owner.Player.centreprint("$txt_usepuzzlefailed");
+		Owner.Player.centreprint(FailMessage);
 		return false;
 	}
 }
@@ -94,4 +95,5 @@ defaultproperties
 	bInvBar = true;
 	bFullVolPickupSound = true;
 	UseSound = 'PuzzleSuccess';
+	FailMessage = "$txt_usepuzzlefailed";
 }

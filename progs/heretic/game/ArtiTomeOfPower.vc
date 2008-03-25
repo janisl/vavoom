@@ -71,5 +71,5 @@ defaultproperties
 	IconName = 'artipwbk';
 	bCountItem = true;
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 }

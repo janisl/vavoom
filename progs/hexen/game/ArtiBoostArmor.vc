@@ -69,6 +69,6 @@ defaultproperties
 	PickupMessage = "$txt_artiboostarmor";
 	IconName = 'artibrac';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

@@ -94,6 +94,6 @@ defaultproperties
 	PickupMessage = "$txt_artipoisonbag";
 	IconName = 'artipsbg';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

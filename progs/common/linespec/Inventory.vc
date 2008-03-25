@@ -47,14 +47,14 @@ float				RespawnTime;
 int					GiveQuestNum;
 name				IconName;
 float				DropTime;
+//	Spawn PickuFlash when picked up.
+class<Actor>		PickupFlashType;
 
 name				PickupSound;
 name				UseSound;
 
 //	Originally these didn't respawn in deathmatch
 bool				bBigPowerup;
-//	Spawn PickuFlash when picked up.
-bool				bPickupFlash;
 //	Play pickup sound at full volume
 bool				bFullVolPickupSound;
 //	Used by HandlePickup.
@@ -438,20 +438,20 @@ final bool GoAway()
 	//	Never respawn dropped items.
 	if (bDropped)
 	{
-		if (bPickupFlash)
+		if (PickupFlashType)
 		{
 			//  Initiate the artifact pickup animation.
-			Spawn(PickupFlash, Origin);
+			Spawn(PickupFlashType, Origin);
 		}
 		return false;
 	}
 
 	if (!ShouldStay())
 	{
-		if (bPickupFlash)
+		if (PickupFlashType)
 		{
 			//  Initiate the artifact pickup animation.
-			Spawn(PickupFlash, Origin);
+			Spawn(PickupFlashType, Origin);
 		}
 		if (ShouldRespawn())
 		{
@@ -495,7 +495,7 @@ final void Hide()
 	{
 		SetState(FindState('HideSpecial'));
 		StateTime = 40.0;
-		if (bPickupFlash)
+		if (PickupFlashType)
 		{
 			StateTime += 30.0 / 35.0;
 		}

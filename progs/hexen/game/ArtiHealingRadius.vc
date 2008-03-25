@@ -121,6 +121,6 @@ defaultproperties
 	PickupMessage = "$txt_artihealingradius";
 	IconName = 'artihrad';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

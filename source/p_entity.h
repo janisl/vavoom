@@ -116,22 +116,19 @@ struct VDropItemInfo
 {
 	VClass*			Type;
 	VName			TypeName;
-//==========================================================================
-//
-//	GetClassFieldVec
-//
-//==========================================================================
-
-static TVec GetClassFieldVec(VClass* Class, const char* FieldName)
-{
-	guard(GetClassFieldVec);
-	VField* F = Class->FindFieldChecked(FieldName);
-	TVec* Ptr = (TVec*)(Class->Defaults + F->Ofs);
-	return *Ptr;
-	unguard;
-}
-
 	vint32			Amount;
+	float			Chance;
+};
+
+struct VDamageFactor
+{
+	VName			DamageType;
+	float			Factor;
+};
+
+struct VPainChanceInfo
+{
+	VName			DamageType;
 	float			Chance;
 };
 

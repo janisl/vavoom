@@ -308,6 +308,34 @@ static TArray<VDropItemInfo>& GetClassDropItems(VClass* Class)
 
 //==========================================================================
 //
+//	GetClassDamageFactors
+//
+//==========================================================================
+
+static TArray<VDamageFactor>& GetClassDamageFactors(VClass* Class)
+{
+	guard(GetClassDamageFactors);
+	VField* F = Class->FindFieldChecked("DamageFactors");
+	return *(TArray<VDamageFactor>*)(Class->Defaults + F->Ofs);
+	unguard;
+}
+
+//==========================================================================
+//
+//	GetClassPainChances
+//
+//==========================================================================
+
+static TArray<VPainChanceInfo>& GetClassPainChances(VClass* Class)
+{
+	guard(GetClassPainChances);
+	VField* F = Class->FindFieldChecked("PainChances");
+	return *(TArray<VPainChanceInfo>*)(Class->Defaults + F->Ofs);
+	unguard;
+}
+
+//==========================================================================
+//
 //	SetClassFieldInt
 //
 //==========================================================================
@@ -1119,7 +1147,8 @@ static void ParseEnum(VScriptParser* sc)
 //
 //==========================================================================
 
-static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
+static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
+	TArray<VClassFixup>& ClassFixups)
 {
 	guard(ParseFlag);
 	//	Get full name of the flag.
@@ -1894,7 +1923,8 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		}
 		if (!Flag.ICmp("Inventory.PickupFlash"))
 		{
-			SetClassFieldBool(Class, "bPickupFlash", Value);
+			AddClassFixup(Class, "PickupFlashType", Value ? "PickupFlash" :
+				"None", ClassFixups);
 			return true;
 		}
 		if (!Flag.ICmp("Inventory.AlwaysPickup"))
@@ -2552,7 +2582,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	{
 		if (sc->Check("+"))
 		{
-			if (!ParseFlag(sc, Class, true))
+			if (!ParseFlag(sc, Class, true, ClassFixups))
 			{
 				return;
 			}
@@ -2560,7 +2590,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (sc->Check("-"))
 		{
-			if (!ParseFlag(sc, Class, false))
+			if (!ParseFlag(sc, Class, false, ClassFixups))
 			{
 				return;
 			}
@@ -2665,17 +2695,63 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("PainChance"))
 		{
-			sc->ExpectNumber();
-			SetClassFieldFloat(Class, "PainChance", float(sc->Number) / 256.0);
+			if (sc->CheckNumber())
+			{
+				SetClassFieldFloat(Class, "PainChance", float(sc->Number) / 256.0);
+			}
+			else
+			{
+				sc->ExpectString();
+				VName DamageType = sc->String.ICmp("Normal") ? NAME_None :
+					VName(*sc->String);
+				sc->Expect(",");
+				sc->ExpectNumber();
+
+				//	Check pain chances array for replacements.
+				TArray<VPainChanceInfo> PainChances = GetClassPainChances(Class);
+				VPainChanceInfo* PC = NULL;
+				for (int i = 0; i < PainChances.Num(); i++)
+				{
+					if (PainChances[i].DamageType == DamageType)
+					{
+						PC = &PainChances[i];
+						break;
+					}
+				}
+				if (!PC)
+				{
+					PC = &PainChances.Alloc();
+					PC->DamageType = DamageType;
+				}
+				PC->Chance = float(sc->Number) / 256.0;
+			}
 			continue;
 		}
 		if (!Prop.ICmp("DamageFactor"))
 		{
-			//FIXME
 			sc->ExpectString();
+			VName DamageType = !sc->String.ICmp("Normal") ? NAME_None :
+				VName(*sc->String);
 			sc->Expect(",");
 			sc->ExpectFloat();
-			GCon->Logf("Property DamageFactor in %s is not yet supported", Class->GetName());
+
+			//	Check damage factors array for replacements.
+			TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);
+			VDamageFactor* DF = NULL;
+			for (int i = 0; i < DamageFactors.Num(); i++)
+			{
+				if (DamageFactors[i].DamageType == DamageType)
+				{
+					DF = &DamageFactors[i];
+					break;
+				}
+			}
+			if (!DF)
+			{
+				DF = &DamageFactors.Alloc();
+				DF->DamageType = DamageType;
+			}
+			DF->Factor = sc->Float;
 			continue;
 		}
 		if (!Prop.ICmp("Damage"))
@@ -2779,9 +2855,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("CameraHeight"))
 		{
-			//FIXME
 			sc->ExpectFloat();
-			GCon->Logf("Property CameraHeight in %s is not yet supported", Class->GetName());
+			SetClassFieldFloat(Class, "CameraHeight", sc->Float);
 			continue;
 		}
 		if (!Prop.ICmp("Gravity"))
@@ -2953,17 +3028,18 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("BloodType"))
 		{
-			//FIXME
 			sc->ExpectString();
+			AddClassFixup(Class, "BloodType", sc->String, ClassFixups);
 			if (sc->Check(","))
 			{
 				sc->ExpectString();
-				if (sc->Check(","))
-				{
-					sc->ExpectString();
-				}
 			}
-			GCon->Logf("Property BloodType in %s is not yet supported", Class->GetName());
+			AddClassFixup(Class, "BloodSplatterType", sc->String, ClassFixups);
+			if (sc->Check(","))
+			{
+				sc->ExpectString();
+			}
+			AddClassFixup(Class, "AxeBloodType", sc->String, ClassFixups);
 			continue;
 		}
 		if (!Prop.ICmp("Decal"))
@@ -3160,6 +3236,9 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("skip_super"))
 		{
+			//	Preserve items that should not be copied
+			TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);
+			TArray<VPainChanceInfo> PainChances = GetClassPainChances(Class);
 			//	Copy default properties.
 			ActorClass->CopyObject(ActorClass->Defaults, Class->Defaults);
 			//	Copy state labels
@@ -3167,6 +3246,9 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			Class->ClassFlags |= CLASS_SkipSuperStateLabels;
 			//	Drop items are reset back to the list of the parent class
 			GetClassDropItems(Class) = GetClassDropItems(Class->ParentClass);
+			//	Restore items that should not be copied
+			GetClassDamageFactors(Class) = DamageFactors;
+			GetClassPainChances(Class) = PainChances;
 			continue;
 		}
 		if (!Prop.ICmp("Spawn"))
@@ -3337,9 +3419,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Inventory.PickupFlash"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property Inventory.PickupFlash in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "PickupFlashType", *sc->String, ClassFixups);
 				continue;
 			}
 			if (!Prop.ICmp("Inventory.UseSound"))
@@ -3522,9 +3603,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("PuzzleItem.FailMessage"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property PuzzleItem.FailMessage in %s is not yet supported", Class->GetName());
+				SetClassFieldStr(Class, "FailMessage", sc->String);
 				continue;
 			}
 		}
@@ -3651,9 +3731,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		{
 			if (!Prop.ICmp("Player.AttackZOffset"))
 			{
-				//FIXME
 				sc->ExpectFloat();
-				GCon->Logf("Property Player.AttackZOffset in %s is not yet supported", Class->GetName());
+				SetClassFieldFloat(Class, "AttackZOffset", sc->Float);
 				continue;
 			}
 			if (!Prop.ICmp("Player.ColorRange"))
@@ -3674,9 +3753,26 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.DamageScreenColor"))
 			{
-				//FIXME
-				sc->ExpectString();
-				GCon->Logf("Property Player.DamageScreenColor in %s is not yet supported", Class->GetName());
+				//	First number is ignored. Is it a bug?
+				int Col;
+				if (sc->CheckNumber())
+				{
+					sc->ExpectString();
+					int r = MID(sc->Number, 0, 255);
+					sc->Check(",");
+					sc->ExpectString();
+					int g = MID(sc->Number, 0, 255);
+					sc->Check(",");
+					sc->ExpectString();
+					int b = MID(sc->Number, 0, 255);
+					Col = 0xff000000 | (r << 16) | (g << 8) | b;
+				}
+				else
+				{
+					sc->ExpectString();
+					Col = M_ParseColour(sc->String);
+				}
+				SetClassFieldInt(Class, "DamageScreenColour", Col);
 				continue;
 			}
 			if (!Prop.ICmp("Player.DisplayName"))

@@ -61,6 +61,6 @@ defaultproperties
 	PickupMessage = "$txt_artiegg2";
 	IconName = 'artipork';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

@@ -192,6 +192,6 @@ defaultproperties
 	PickupMessage = "$txt_artiblastradius";
 	IconName = 'artiblst';
 	bFloatBob = true;
-	bPickupFlash = true;
+	PickupFlashType = PickupFlash;
 	bInvBar = true;
 }

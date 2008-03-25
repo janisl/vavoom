@@ -1535,7 +1535,8 @@ void PaletteFlash()
 			{
 				Amount = 228;
 			}
-			AddBlend(r, g, b, a, RGBA(255, 0, 0, Amount));
+			AddBlend(r, g, b, a, (Amount << 24) |
+				(PlayerPawn(MO).DamageScreenColour & 0x00ffffff));
 		}
 
 		if (BonusFlash)
