@@ -2363,6 +2363,70 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 
 //==========================================================================
 //
+//	ParseParentState
+//
+//	This is for compatibility with old WADs.
+//
+//==========================================================================
+
+static void ParseParentState(VScriptParser* sc, VClass* Class,
+	const char* LblName)
+{
+	guard(ParseParentState);
+	TLocation TmpLoc = sc->GetLoc();
+	VState* State;
+	//	If there's a string token on next line, it gets eaten. Is this a bug?
+	if (sc->GetString() && !sc->Crossed)
+	{
+		sc->UnGet();
+		if (sc->Check("0"))
+		{
+			State = NULL;
+		}
+		else if (sc->Check("parent"))
+		{
+			//	Find state in parent class.
+			sc->ExpectString();
+			VStateLabel* SLbl = Class->ParentClass->FindStateLabel(*sc->String);
+			State = SLbl ? SLbl->State : NULL;
+
+			//	Check for offset.
+			int Offs = 0;
+			if (sc->Check("+"))
+			{
+				sc->ExpectNumber();
+				Offs = sc->Number;
+			}
+
+			if (!State && Offs)
+			{
+				sc->Error(va("Attempt to get invalid state from actor %s",
+					Class->GetSuperClass()->GetName()));
+			}
+			else if (State)
+			{
+				State = State->GetPlus(Offs, true);
+			}
+		}
+		else
+		{
+			sc->Error("Invalid state assignment");
+		}
+	}
+	else
+	{
+		State = NULL;
+	}
+
+	VStateLabelDef& Lbl = Class->StateLabelDefs.Alloc();
+	Lbl.Loc = TmpLoc;
+	Lbl.Name = LblName;
+	Lbl.State = State;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseActor
 //
 //==========================================================================
@@ -3107,92 +3171,77 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("Spawn"))
 		{
-			//FIXME
-			GCon->Logf("Property Spawn in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Spawn");
 			continue;
 		}
 		if (!Prop.ICmp("See"))
 		{
-			//FIXME
-			GCon->Logf("Property See in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "See");
 			continue;
 		}
 		if (!Prop.ICmp("Melee"))
 		{
-			//FIXME
-			GCon->Logf("Property Melee in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Melee");
 			continue;
 		}
 		if (!Prop.ICmp("Missile"))
 		{
-			//FIXME
-			GCon->Logf("Property Missile in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Missile");
 			continue;
 		}
 		if (!Prop.ICmp("Pain"))
 		{
-			//FIXME
-			GCon->Logf("Property Pain in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Pain");
 			continue;
 		}
 		if (!Prop.ICmp("Death"))
 		{
-			//FIXME
-			GCon->Logf("Property Death in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Death");
 			continue;
 		}
 		if (!Prop.ICmp("XDeath"))
 		{
-			//FIXME
-			GCon->Logf("Property XDeath in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "XDeath");
 			continue;
 		}
 		if (!Prop.ICmp("Burn"))
 		{
-			//FIXME
-			GCon->Logf("Property Burn in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Burn");
 			continue;
 		}
 		if (!Prop.ICmp("Ice"))
 		{
-			//FIXME
-			GCon->Logf("Property Ice in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Ice");
 			continue;
 		}
 		if (!Prop.ICmp("Disintegrate"))
 		{
-			//FIXME
-			GCon->Logf("Property Disintegrate in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Disintegrate");
 			continue;
 		}
 		if (!Prop.ICmp("Raise"))
 		{
-			//FIXME
-			GCon->Logf("Property Raise in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Raise");
 			continue;
 		}
 		if (!Prop.ICmp("Crash"))
 		{
-			//FIXME
-			GCon->Logf("Property Crash in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Crash");
 			continue;
 		}
 		if (!Prop.ICmp("Wound"))
 		{
-			//FIXME
-			GCon->Logf("Property Wound in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Wound");
 			continue;
 		}
 		if (!Prop.ICmp("Crush"))
 		{
-			//FIXME
-			GCon->Logf("Property Crush in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Crush");
 			continue;
 		}
 		if (!Prop.ICmp("Heal"))
 		{
-			//FIXME
-			GCon->Logf("Property Heal in %s is not yet supported", Class->GetName());
+			ParseParentState(sc, Class, "Heal");
 			continue;
 		}
 		//
