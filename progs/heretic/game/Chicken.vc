@@ -51,6 +51,10 @@ bool UpdateChicken(int tics)
 		return false;
 	}
 	moType = SpecialCID;
+	if (moType.default.bStayMorphed)
+	{
+		return false;
+	}
 	oldAngle = Angles.yaw;
 	oldTarget = Target;
 	oldSpecial = Special;

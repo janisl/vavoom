@@ -736,4 +736,5 @@ defaultproperties
 	bActivateMCross = false;
 	bNoTargetSwitch = true;
 	bCountKill = false;
+	bStayMorphed = true;
 }

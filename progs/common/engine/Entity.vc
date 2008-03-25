@@ -234,6 +234,8 @@ bool bInvisible;		// Don't draw this actor
 bool bMissile;			// don't hit same species, explode on block
 bool bDontOverlap;		// Prevent some things from overlapping.
 readonly bool bUseDispState;	// Use DispState for rendering
+bool bActLikeBridge;	// Always allow obkects to pass.
+bool bNoDropOff;		// Can't drop off under any circumstances
 
 int				Health;
 

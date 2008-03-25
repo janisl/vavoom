@@ -109,4 +109,5 @@ defaultproperties
 	bInvisible = true;
 	bShootable = false;
 	bDontBlast = true;
+	bStayMorphed = true;
 }

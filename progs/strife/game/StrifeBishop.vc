@@ -120,6 +120,7 @@ defaultproperties
 	bNoBlood = true;
 	bNoDeathmatch = true;
 	bExplodeParticles = true;
+	bFireResist = true;
 	SightSound = 'bishop/sight';
 	ActiveSound = 'bishop/active';
 	PainSound = 'bishop/pain';

@@ -33,7 +33,7 @@ class TelOtherFX1 : Projectile;
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
-	if (victim.bMonster && !Actor(victim).bBoss && !Serpent(victim))
+	if (victim.bMonster && !victim.bBoss && !victim.bNoTeleOther)
 	{
 		TeleportOther(Actor(victim));
 	}

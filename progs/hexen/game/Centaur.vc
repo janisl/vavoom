@@ -29,45 +29,6 @@ class Centaur : Pawn
 
 //==========================================================================
 //
-//	GetReflectedAngle
-//
-//==========================================================================
-
-float GetReflectedAngle(EntityEx Other)
-{
-	float angle = atan2(Other.Origin.y - Origin.y,
-		Other.Origin.x - Origin.x);
-
-	// Change angle for delflection/reflection
-	if (fabs(AngleMod180(angle - Angles.yaw)) > 45.0 * 45.0 / 32.0)
-	{
-		return -1.0;
-	}
-	if (HolySpirit(Other))
-	{
-		return -1.0;
-	}
-	// Deflection
-	if (Random() < 0.5)
-		angle = AngleMod360(angle + 45.0);
-	else
-		angle = AngleMod360(angle - 45.0);
-	return angle;
-}
-
-//==========================================================================
-//
-//  OkayToSwitchTarget
-//
-//==========================================================================
-
-bool OkayToSwitchTarget(EntityEx source)
-{
-	return ::OkayToSwitchTarget(source) && !Centaur(source);
-}
-
-//==========================================================================
-//
 //  A_CentaurAttack
 //
 //==========================================================================
@@ -174,6 +135,7 @@ defaultproperties
 	Mass = 120.0;
 	Speed = 13.0 * 35.0;
 	PainChance = 0.52734375;
+	bShieldReflect = true;
 	SightSound = 'CentaurSight';
 	ActiveSound = 'CentaurActive';
 	AttackSound = 'CentaurAttack';

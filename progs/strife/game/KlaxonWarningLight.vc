@@ -44,4 +44,5 @@ defaultproperties
 	bStanding = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
+	bSynchronised = true;
 }

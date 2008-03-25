@@ -1197,8 +1197,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("ActLikeBridge"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag ActLikeBridge in %s", Class->GetName());
+		SetClassFieldBool(Class, "bActLikeBridge", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoBlockmap"))
@@ -1208,8 +1207,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("NoLiftDrop"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoLiftDrop in %s", Class->GetName());
+		SetClassFieldBool(Class, "bNoLiftDrop", Value);
 		return true;
 	}
 	if (!Flag.ICmp("SlidesOnWalls"))
@@ -1219,8 +1217,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("NoDropOff"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoDropOff in %s", Class->GetName());
+		SetClassFieldBool(Class, "bNoDropOff", Value);
 		return true;
 	}
 	//
@@ -1343,14 +1340,12 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("StayMorphed"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag StayMorphed in %s", Class->GetName());
+		SetClassFieldBool(Class, "bStayMorphed", Value);
 		return true;
 	}
 	if (!Flag.ICmp("CanBlast"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag CanBlast in %s", Class->GetName());
+		SetClassFieldBool(Class, "bCanBlast", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoBlockMonst"))
@@ -1394,20 +1389,17 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("ShieldReflect"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag ShieldReflect in %s", Class->GetName());
+		SetClassFieldBool(Class, "bShieldReflect", Value);
 		return true;
 	}
 	if (!Flag.ICmp("Deflect"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag Deflect in %s", Class->GetName());
+		SetClassFieldBool(Class, "bDeflect", Value);
 		return true;
 	}
 	if (!Flag.ICmp("FireResist"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag FireResist in %s", Class->GetName());
+		SetClassFieldBool(Class, "bFireResist", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoRadiusDmg"))
@@ -1437,26 +1429,22 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("DontSquash"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag DontSquash in %s", Class->GetName());
+		SetClassFieldBool(Class, "bDontSquash", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoTeleOther"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoTeleOther in %s", Class->GetName());
+		SetClassFieldBool(Class, "bNoTeleOther", Value);
 		return true;
 	}
 	if (!Flag.ICmp("DontHurtSpecies"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag DontHurtSpecies in %s", Class->GetName());
+		SetClassFieldBool(Class, "bDontHurtSpecies", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoDamage"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoDamage in %s", Class->GetName());
+		SetClassFieldBool(Class, "bNoDamage", Value);
 		return true;
 	}
 	//
@@ -1515,8 +1503,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("DontGib"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag DontGib in %s", Class->GetName());
+		SetClassFieldBool(Class, "bDontGib", Value);
 		return true;
 	}
 	if (!Flag.ICmp("DontSplash"))
@@ -1589,8 +1576,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("NoPain"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoPain in %s", Class->GetName());
+		SetClassFieldBool(Class, "bNoPain", Value);
 		return true;
 	}
 	//
@@ -1623,8 +1609,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("DontReflect"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag DontReflect in %s", Class->GetName());
+		SetClassFieldBool(Class, "bDontReflect", Value);
 		return true;
 	}
 	if (!Flag.ICmp("FloorHugger"))
@@ -1701,20 +1686,17 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("PierceArmor"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag PierceArmor in %s", Class->GetName());
+		SetClassFieldBool(Class, "bPierceArmor", Value);
 		return true;
 	}
 	if (!Flag.ICmp("ForceRadiusDmg"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag ForceRadiusDmg in %s", Class->GetName());
+		SetClassFieldBool(Class, "bForceRadiusDmg", Value);
 		return true;
 	}
 	if (!Flag.ICmp("SpawnSoundSource"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag SpawnSoundSource in %s", Class->GetName());
+		SetClassFieldBool(Class, "bSpawnSoundSource", Value);
 		return true;
 	}
 	//
@@ -1772,14 +1754,12 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("AlwaysPuff"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag AlwaysPuff in %s", Class->GetName());
+		SetClassFieldBool(Class, "bAlwaysPuff", Value);
 		return true;
 	}
 	if (!Flag.ICmp("Synchronized"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag Synchronized in %s", Class->GetName());
+		SetClassFieldBool(Class, "bSynchronised", Value);
 		return true;
 	}
 	if (!Flag.ICmp("Faster"))
@@ -1789,14 +1769,12 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	}
 	if (!Flag.ICmp("AlwaysFast"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag AlwaysFast in %s", Class->GetName());
+		SetClassFieldBool(Class, "bAlwaysFast", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NeverFast"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag NeverFast in %s", Class->GetName());
+		SetClassFieldBool(Class, "bNeverFast", Value);
 		return true;
 	}
 	if (!Flag.ICmp("FastMelee"))
@@ -1886,8 +1864,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 	{
 		if (!Flag.ICmp("Inventory.Quiet"))
 		{
-			//FIXME
-			GCon->Logf("Unsupported flag Inventory.Quiet in %s", Class->GetName());
+			SetClassFieldBool(Class, "bQuiet", Value);
 			return true;
 		}
 		if (!Flag.ICmp("Inventory.AutoActivate"))
@@ -1969,8 +1946,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		}
 		if (!Flag.ICmp("Weapon.AxeBlood"))
 		{
-			//FIXME
-			GCon->Logf("Unsupported flag Weapon.AxeBlood in %s", Class->GetName());
+			SetClassFieldBool(Class, "bAxeBlood", Value);
 			return true;
 		}
 		if (!Flag.ICmp("Weapon.NoAlert"))
@@ -2032,8 +2008,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value)
 		}
 		if (!Flag.ICmp("Weapon.No_Auto_Switch"))
 		{
-			//FIXME
-			GCon->Logf("Unsupported flag Weapon.No_Auto_Switch in %s", Class->GetName());
+			SetClassFieldBool(Class, "bNoAutoSwitch", Value);
 			return true;
 		}
 	}

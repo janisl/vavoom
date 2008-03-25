@@ -306,6 +306,7 @@ defaultproperties
 	AmmoGive1 = 25;
 	PSpriteSY = -12.0;
 	bAmmoOptional = true;
+	bAxeBlood = true;
 	PickupMessage = "$txt_weapon_f2";
 	BotCombatDist = 48.0;
 	bBotMelee = true;

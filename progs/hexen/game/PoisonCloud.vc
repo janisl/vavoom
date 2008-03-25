@@ -144,5 +144,6 @@ defaultproperties
 	bDamageInvulnerable = true;
 	bHowlVictims = true;
 	bNoSplash = true;
+	bCanBlast = true;
 	DeathSound = 'PoisonShroomDeath';
 }

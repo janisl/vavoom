@@ -84,5 +84,6 @@ defaultproperties
 	GibsHealth = -47;
 	PainChance = 0.78125;
 	bSpectral = true;
+	bNoDamage = false;
 	DeathSound = 'macil/slop';
 }

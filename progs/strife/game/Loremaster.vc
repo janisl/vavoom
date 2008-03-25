@@ -129,6 +129,7 @@ defaultproperties
 	bNoDeathmatch = true;
 	bNoBlockMonst = true;
 	bNoIceDeath = true;
+	bFireResist = true;
 	SightSound = 'loremaster/sight';
 	ActiveSound = 'loremaster/active';
 	AttackSound = 'loremaster/attack';

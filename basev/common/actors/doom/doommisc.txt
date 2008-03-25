@@ -10,6 +10,7 @@ actor ExplosiveBarrel 2035
 	+Shootable
 	+NoBlood
 	+ActivateMCross
+	+DontGib
 	DeathSound "world/barrelx"
 	Obituary "$ob_barrel"
 	states

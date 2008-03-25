@@ -72,4 +72,5 @@ defaultproperties
 	MaxDropoffHeight = 32.0;
 	bNoBlood = true;
 	bNoDeathmatch = true;
+	bFireResist = true;
 }

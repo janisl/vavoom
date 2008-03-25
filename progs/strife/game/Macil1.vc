@@ -87,6 +87,8 @@ defaultproperties
 	PainChance = 0.9765625;
 	bNoDeathmatch = true;
 	bNoIceDeath = true;
+	bFireResist = true;
+	bNoDamage = true;
 	SightSound = 'macil/sight';
 	ActiveSound = 'macil/active';
 	PainSound = 'macil/pain';

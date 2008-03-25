@@ -322,5 +322,7 @@ defaultproperties
 	bExplodeOnSky = true;
 	bNoExplodeFloor = true;
 	bExtremeDeath = true;
+	bCanBlast = true;
+	bDontShieldReflect = true;
 	DeathSound = 'SpiritDie';
 }

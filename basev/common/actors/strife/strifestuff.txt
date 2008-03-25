@@ -207,6 +207,7 @@ actor TargetPractice 208
 	+Shootable
 	+InCombat
 	+NoBlood
+	+NoDamage
 	PainSound "misc/metalhit"
 	states
 	{

@@ -230,6 +230,8 @@ class VEntity : public VThinker
 		EF_Missile				= 0x02000000,	// don't hit same species, explode on block
 		EF_DontOverlap			= 0x04000000,	// Prevent some things from overlapping.
 		EF_UseDispState			= 0x08000000,	// Use DispState for rendering
+		EF_ActLikeBridge		= 0x10000000,	// Always allow obkects to pass.
+		EF_NoDropOff			= 0x20000000,	// Can't drop off under any circumstances
 	};
 	vuint32			EntityFlags;
 

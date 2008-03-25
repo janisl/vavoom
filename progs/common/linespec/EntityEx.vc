@@ -173,7 +173,6 @@ bool bNoRadiusDamage;	//	Does not take radius damage
 bool bCantAutoAim;		//	Can't auto aim at this actor
 bool bPuffOnActors;		//	Spawn this puff when hitting actors
 bool bInvulnerable;		// mobj is invulnerable
-bool bAxeBlood;			//	Use axe's blood splatter
 bool bFriendly;			// Will fight on player's side
 bool bRandomise;		//	Randomise initial state time
 bool bFullVolDeath;		//	Play missile death sound at full volume
@@ -232,6 +231,27 @@ bool bBossDeath;		// A_FreezeDeathChunks calls A_BossDeath
 bool bNoIceDeath;		// Don't use generic ice death
 bool bDontTranslate;	// Don't use translation
 bool bMissileEvenMore;
+bool bNoLiftDrop;		// Don't fall down with the lift
+bool bStayMorphed;		// Don't unmorph
+bool bCanBlast;			// Special cases that can be blasted
+bool bShieldReflect;	// Centaur style shield reflection
+bool bDontShieldReflect;	// Projectile not reflected by shield reflection
+bool bDeflect;			// Different projectile reflection style
+bool bDontReflect;		// Projectile cannot be reflected
+bool bFireResist;		// Actor takes half damage from fire.
+bool bDontSquash;		// Death ball can't squash this actor
+bool bNoTeleOther;		// Monster is not affected by teleport other artifact
+bool bDontHurtSpecies;	// Don't hurt own species with explosions.
+bool bNoDamage;			// Actor reacts to pain but does not take any damage.
+bool bDontGib;			// Don't crunch this corpse to gibs.
+bool bNoPain;			// Don't enter pain state.
+bool bPierceArmor;		// Damage from this actor is not protected by armor.
+bool bForceRadiusDmg;	// Override NoRadiusDmg
+bool bSpawnSoundSource;	// Play missile's see sound on spawning object.
+bool bAlwaysPuff;		// Always show puff, even when hit nothing.
+bool bSynchronised;		// For map spawned things don't randomise tics.
+bool bAlwaysFast;		// Always uses 'fast' attack logic
+bool bNeverFast;		// Never uses 'fast' attack logic
 
 //  Params
 float			Speed;
@@ -1172,10 +1192,52 @@ final void CeilingBounceMissile()
 //
 //==========================================================================
 
-float GetReflectedAngle(EntityEx Other)
+final float GetReflectedAngle(EntityEx Other)
 {
+	if (Other.bDontReflect)
+	{
+		return -1.0;
+	}
+
 	float angle = atan2(Other.Origin.y - Origin.y,
 		Other.Origin.x - Origin.x);
+
+	if (bShieldReflect)
+	{
+		// Change angle for delflection/reflection
+		if (fabs(AngleMod180(angle - Angles.yaw)) > 45.0 * 45.0 / 32.0)
+		{
+			return -1.0;
+		}
+		if (Other.bDontShieldReflect)
+		{
+			return -1.0;
+		}
+		// Deflection
+		if (Random() < 0.5)
+		{
+			angle = AngleMod360(angle + 45.0);
+		}
+		else
+		{
+			angle = AngleMod360(angle - 45.0);
+		}
+		return angle;
+	}
+
+	if (bDeflect)
+	{
+		// Change angle for delflection
+		if (Random() < 0.5)
+		{
+			angle = AngleMod360(angle + 45.0);
+		}
+		else
+		{
+			angle = AngleMod360(angle - 45.0);
+		}
+		return angle;
+	}
 
 	// Change angle for reflection
 	angle = AngleMod360(angle + Random() * 16.0 - 8.0);
@@ -1703,7 +1765,7 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 		}
 
 		//	Check for actors that take no damage from concussion.
-		if (Other.bNoRadiusDamage)
+		if (Other.bNoRadiusDamage && !bForceRadiusDmg)
 		{
 			continue;
 		}
@@ -1711,6 +1773,14 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 		if (!DamageSource && Other == Source)
 		{
 			// don't damage the source of the explosion
+			continue;
+		}
+
+		//	Option for monsters that fire explosive projectiles not to hurt
+		// monsters of the same class with it's projectiles.
+		if (Source && Other.Class == Source.Class && !Other.bIsPlayer &&
+			Source.bDontHurtSpecies)
+		{
 			continue;
 		}
 
@@ -2238,22 +2308,27 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 			*OutHitPoint = hit_point;
 		}
 
+		bool UseAxeBlood = bIsPlayer && PlayerEx(Player).ReadyWeapon &&
+			PlayerEx(Player).ReadyWeapon.bAxeBlood;
+		bool UseBloodSplatter = UseAxeBlood ||
+			LineSpecialGameInfo(Level.Game).bBloodSplatter;
+
 		// Spawn bullet puffs or blod spots, depending on target type.
 		if (PuffType.default.bPuffOnActors || th.bNoBlood ||
 			th.bInvulnerable || th.bDormant)
 		{
 			SpawnPuff(hit_point, Distance, PuffType, true);
 		}
-		if (!LineSpecialGameInfo(Level.Game).bBloodSplatter && !th.bNoBlood &&
-			!th.bInvulnerable && !th.bDormant)
+		if (!UseBloodSplatter && !th.bNoBlood && !th.bInvulnerable &&
+			!th.bDormant)
 		{
 			SpawnBlood(hit_point, LADamage);
 		}
-		if (LADamage && LineSpecialGameInfo(Level.Game).bBloodSplatter)
+		if (LADamage && UseBloodSplatter)
 		{
 			if (!th.bNoBlood && !th.bInvulnerable && !th.bDormant)
 			{
-				if (PuffType.default.bAxeBlood)
+				if (UseAxeBlood)
 				{
 					th.SpawnBloodSplatter2(hit_point);
 				}
@@ -2266,15 +2341,36 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 
 		if (LADamage)
 		{
-			th.Damage(self, self, LADamage, DmgType);
+			bool NoArmor = false;
+			//	Allow bPierceArmor on weapons as well.
+			if (bIsPlayer && PlayerEx(Player).ReadyWeapon &&
+				PlayerEx(Player).ReadyWeapon.bPierceArmor)
+			{
+				NoArmor = true;
+			}
+			th.Damage(self, self, LADamage, DmgType, NoArmor);
 		}
 
 		// don't go any farther
 		return false;
 	}
 	LineEnd = Dst;
-	return ShootCheckPlanes(XLevel.PointInSector(Dst), LineStart, LineEnd,
-		Distance, PuffType);
+	if (!ShootCheckPlanes(XLevel.PointInSector(Dst), LineStart, LineEnd,
+		Distance, PuffType))
+	{
+		return false;
+	}
+
+	if (PuffType.default.ActiveSound)
+	{
+		//	Play miss sound.
+		PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
+	}
+	if (PuffType.default.bAlwaysPuff)
+	{
+		SpawnPuff(LineEnd, Distance, PuffType, false);
+	}
+	return true;
 }
 
 //==========================================================================
@@ -2310,6 +2406,20 @@ final bool TeleportMove(TVec org, optional bool ForceTelestomp)
 		if (Other == self)
 		{
 			continue;
+		}
+
+		//	Z-Check
+		if ((bPassMobj || Other.bActLikeBridge) &&
+			(!bDontOverlap || !Other.bDontOverlap))
+		{
+			if (Other.Origin.z > org.z + Height)
+			{
+				continue;
+			}
+			if (Other.Origin.z + Other.Height < org.z)
+			{
+				continue;
+			}
 		}
 
 		//  Check if allowed to stomp things
@@ -2576,7 +2686,7 @@ final bool HeightClip()
 	FloorZ = tmtrace.FloorZ;
 	CeilingZ = tmtrace.CeilingZ;
 
-	if (onfloor)
+	if (onfloor && (!bNoGravity || !bNoLiftDrop))
 	{
 		// walking monsters rise and fall with the floor
 		if ((Origin.z - FloorZ < 9.0) || bNoGravity || !XLevel.bExtended)
@@ -3649,6 +3759,31 @@ final void RandomChaseDir()
 
 //==========================================================================
 //
+//	PlayMissileSpawnSound
+//
+//==========================================================================
+
+final void PlayMissileSpawnSound(EntityEx Source)
+{
+	if (SightSound)
+	{
+		if (!bSpawnSoundSource)
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+		else if (Source)
+		{
+			Source.PlaySound(SightSound, CHAN_WEAPON);
+		}
+		else
+		{
+			PlaySound(SightSound, CHAN_WEAPON);
+		}
+	}
+}
+
+//==========================================================================
+//
 //  CheckMissileSpawn
 //
 //  Moves the missile forward a bit and possibly explodes it right there.
@@ -3770,10 +3905,7 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	org.z -= FloorClip;
 	A = Spawn(type, org);
 
-	if (A.SightSound)
-	{
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-	}
+	A.PlayMissileSpawnSound(self);
 
 	A.Target = self;	// where it came from
 
@@ -3814,10 +3946,7 @@ final EntityEx SpawnMissileXYZ(TVec org, EntityEx dest, class<EntityEx> type)
 
 	org.z -= FloorClip;
 	A = Spawn(type, org);
-	if (A.SightSound)
-	{
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-	}
+	A.PlayMissileSpawnSound(self);
 	A.Target = self;	// Originator
 	dir = dest.Origin - Origin;
 	if (dest.bShadow)
@@ -3845,8 +3974,7 @@ final EntityEx SpawnMissileZAimed(float z, EntityEx dest, class<EntityEx> type)
 
 	A = Spawn(type, Origin + vector(0.0, 0.0, z - FloorClip));
 
-	if (A.SightSound)
-		A.PlaySound(A.SightSound, CHAN_VOICE);
+	A.PlayMissileSpawnSound(self);
 
 	A.Target = self;	// where it came from
 
@@ -3902,10 +4030,7 @@ final EntityEx SpawnMissileAngles(class<EntityEx> type, float yaw, float pitch,
 	}
 	org.z -= FloorClip;
 	A = Spawn(type, org);
-	if (A.SightSound)
-	{
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-	}
+	A.PlayMissileSpawnSound(self);
 	A.Target = self;	// Originator
 	A.Angles.yaw = yaw;
 	A.Angles.pitch = pitch;
@@ -3949,10 +4074,7 @@ final EntityEx SpawnMissileAngle(class<EntityEx> type, float angle,
 	}
 	org.z -= FloorClip;
 	mo = Spawn(type, org);
-	if (mo.SightSound)
-	{
-		mo.PlaySound(mo.SightSound, CHAN_VOICE);
-	}
+	mo.PlayMissileSpawnSound(self);
 	mo.Target = self;	// Originator
 	mo.Angles.yaw = angle;
 	mo.Velocity.x = mo.Speed * cos(angle);
@@ -3984,6 +4106,7 @@ final EntityEx SpawnMissileAngleSpeed(class<EntityEx> type, float angle,
 	mo.Velocity.x = speed * cos(angle);
 	mo.Velocity.y = speed * sin(angle);
 	mo.Velocity.z = momz;
+	mo.PlayMissileSpawnSound(self);
 	return mo.CheckMissileSpawn() ? mo : none;
 }
 
@@ -4100,10 +4223,7 @@ final EntityEx SpawnPlayerMissileEx(class<EntityEx> type, bool RetExploded,
 	}
 	A = Spawn(type, org);
 
-	if (A.SightSound)
-	{
-		A.PlaySound(A.SightSound, CHAN_VOICE);
-	}
+	A.PlayMissileSpawnSound(self);
 
 	A.Target = self;
 	A.Velocity = dir * A.Speed;
@@ -4126,7 +4246,7 @@ final EntityEx SpawnPlayerMissileEx(class<EntityEx> type, bool RetExploded,
 //==========================================================================
 
 final void Damage(EntityEx inflictor, EntityEx source, int damage,
-	optional name DmgType)
+	optional name DmgType, optional bool NoArmor)
 {
 	if (!bShootable)
 	{
@@ -4164,6 +4284,11 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		{
 			return;
 		}
+	}
+
+	if (inflictor && inflictor.bPierceArmor)
+	{
+		NoArmor = true;
 	}
 
 	//	Spectral targets only take damage from spectral projectiles.
@@ -4217,6 +4342,11 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		{
 			return;
 		}
+	}
+
+	if (DmgType == 'Fire' && bFireResist)
+	{
+		damage >>= 1;
 	}
 
 	damage = TakeSpecialDamage(inflictor, source, damage, DmgType);
@@ -4303,7 +4433,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			return;
 		}
 
-		if (Inventory)
+		if (!NoArmor && Inventory)
 		{
 			int NewDmg = damage;
 			Inventory.AbsorbDamage(damage, DmgType, NewDmg);
@@ -4390,7 +4520,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		return;
 	}
 
-	if ((Random() < PainChance) && !bSkullFly)
+	if (!bNoPain && (Random() < PainChance) && !bSkullFly)
 	{
 		if (inflictor && inflictor.bLightning)
 		{
@@ -4485,6 +4615,11 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
+	if (bNoDamage)
+	{
+		return 0;
+	}
+
 	//	Always apply damage if actor has regular death state or no death
 	// states at all.
 	if (FindState('Death') || !HasSpecialStates('Death'))
@@ -4493,7 +4628,22 @@ int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
 	}
 	//	If there's no corresponding death state, actor takes no damage at
 	// all.
-	return FindState('Death', DmgType) ? damage : -1;
+	if (DmgType == 'Ice')
+	{
+		if (FindState('Death', 'Ice', true))
+		{
+			return damage;
+		}
+		if ((bIsPlayer || bMonster) && !bNoIceDeath)
+		{
+			return damage;
+		}
+		return -1;
+	}
+	else
+	{
+		return FindState('Death', DmgType) ? damage : -1;
+	}
 }
 
 //==========================================================================
@@ -4707,7 +4857,7 @@ void Died(EntityEx source, EntityEx inflictor)
 
 final float GetStateTime(state AState, float AStateTime)
 {
-	if (Level.Game.fastparm)
+	if (IsFast())
 	{
 		if (bFaster && StateIsInRange(AState, SeeState, none, 8))
 		{
@@ -5218,7 +5368,7 @@ final void FaceMovementDirection()
 
 void OnMapSpawn(mthing_t* mthing)
 {
-	if (Level.Game.gameskill == sk_nightmare)
+	if (IsFast())
 	{
 		ReactionCount = 0;
 	}
@@ -5322,7 +5472,7 @@ void OnMapSpawn(mthing_t* mthing)
 			FloatBobPhase = Random() * 256.0 / 35.0;
 			Special1f = mthing->height;
 		}
-		if (StateTime > 0.0)
+		if (!bSynchronised && StateTime > 0.0)
 		{
 			StateTime = 0.1 + Random() * StateTime;
 		}
@@ -5663,7 +5813,7 @@ final bool SectorChanged(int CrushChange)
 	}
 
 	//	Crunch bodies to giblets
-	if (bCorpse && Health <= 0)
+	if (bCorpse && !bDontGib && Health <= 0)
 	{
 		if (bNoBlood)
 		{
@@ -7617,7 +7767,7 @@ void CheckForSectorActions(sector_t* OldSec, bool OldAboveFakeFloor,
 
 final void CheckFakeFloorTriggers(float OldZ, optional bool OldHasViewH)
 {
-	if (Sector->heightsec && Sector->ActionList)
+	if (Sector && Sector->heightsec && Sector->ActionList)
 	{
 		float ViewH = bIsPlayer ? PlayerEx(Player).ViewHeight : Height * 0.5;
 		float FakeZ = GetPlanePointZ(&Sector->heightsec->floor, Origin);
@@ -7660,6 +7810,25 @@ final void CheckFakeFloorTriggers(float OldZ, optional bool OldHasViewH)
 			}
 		}
 	}
+}
+
+//==========================================================================
+//
+//	IsFast
+//
+//==========================================================================
+
+final bool IsFast()
+{
+	if (bAlwaysFast)
+	{
+		return true;
+	}
+	if (bNeverFast)
+	{
+		return false;
+	}
+	return Level.Game.fastparm;
 }
 
 bool IsTeammate(EntityEx Other)

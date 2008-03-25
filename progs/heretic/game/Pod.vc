@@ -126,5 +126,6 @@ defaultproperties
 	bCantAutoAim = true;
 	bNoBlockMonst = true;
 	bPassMobj = true;
+	bDontGib = true;
 	DeathSound = 'world/podexplode';
 }

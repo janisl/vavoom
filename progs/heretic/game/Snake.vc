@@ -40,7 +40,6 @@ final void A_SnakeAttack()
 		SetState(SeeState);
 		return;
 	}
-	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
 	SpawnMissile(Target, SnakeProjA);
 }
@@ -58,7 +57,6 @@ final void A_SnakeAttack2()
 		SetState(SeeState);
 		return;
 	}
-	PlaySound(AttackSound, CHAN_WEAPON);
 	A_FaceTarget();
 	SpawnMissile(Target, SnakeProjB);
 }
@@ -100,7 +98,6 @@ defaultproperties
 	PainChance = 0.1875;
 	SightSound = 'snake/sight';
 	ActiveSound = 'snake/active';
-	AttackSound = 'snake/attack';
 	PainSound = 'snake/pain';
 	DeathSound = 'snake/death';
 	Obituary = "$ob_snake";

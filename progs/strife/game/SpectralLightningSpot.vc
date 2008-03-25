@@ -88,8 +88,7 @@ defaultproperties
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 	bNoBlockmap = true;
-	bNoGravity = true;
 	bPassMobj = false;
-	bNoGravity = false;
 	bNoBlockMonst = true;
+	bNoDropOff = true;
 }

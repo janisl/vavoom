@@ -89,6 +89,10 @@ bool			bBotProjectile;
 bool			bBotBfg;
 //	Not considered a weapon by gimme cheat
 bool			bCheatNotWeapon;
+//	Use axe's blood splatter
+bool			bAxeBlood;
+//	Never switch to this weapon when picked up
+bool			bNoAutoSwitch;
 
 //	Runtime in-inventory references.
 Ammo			Ammo1;
@@ -207,7 +211,7 @@ void AttachToOwner(EntityEx NewOwner)
 	Ammo2 = AddAmmo(NewOwner, AmmoType2, AmmoGive2);
 	SisterWeapon = AddWeapon(SisterWeaponType);
 
-	if (Owner.Player)
+	if (Owner.Player && !bNoAutoSwitch)
 	{
 		//	Doom and Strife always switch to a new weapon, Heretic and Hexen
 		// only switch to more powerful weapons, always check for ammo.

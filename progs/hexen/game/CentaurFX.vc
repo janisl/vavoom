@@ -44,5 +44,7 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 4;
 	RenderStyle = STYLE_Add;
+	bSpawnSoundSource = true;
+	SightSound = 'CentaurLeaderAttack';
 	DeathSound = 'CentaurMissileExplode';
 }

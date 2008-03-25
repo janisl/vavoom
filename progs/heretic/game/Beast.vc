@@ -39,9 +39,9 @@ final void A_BeastAttack()
 	{
 		return;
 	}
-	PlaySound(AttackSound, CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
+		PlaySound(AttackSound, CHAN_WEAPON);
 		Target.Damage(self, self, HITDICE(3));
 		return;
 	}

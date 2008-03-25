@@ -36,7 +36,6 @@ defaultproperties
 {
 	RenderStyle = STYLE_Add;
 	bPuffOnActors = true;
-	bAxeBlood = true;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';
 }

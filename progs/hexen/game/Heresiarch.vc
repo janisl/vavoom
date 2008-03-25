@@ -62,24 +62,6 @@ bool bBallsSpawned;
 
 //==========================================================================
 //
-//	GetReflectedAngle
-//
-//==========================================================================
-
-final float GetReflectedAngle(EntityEx Other)
-{
-	float angle = atan2(Other.Origin.y - Origin.y,
-		Other.Origin.x - Origin.x);
-	// Change angle for delflection
-	if (Random() < 0.5)
-		angle = AngleMod360(angle + 45.0);
-	else
-		angle = AngleMod360(angle - 45.0);
-	return angle;
-}
-
-//==========================================================================
-//
 //  Died
 //
 //==========================================================================
@@ -295,6 +277,7 @@ defaultproperties
 	bTelestomp = false;
 	bFullVolActive = true;
 	bNoIceDeath = true;
+	bDeflect = true;
 	SightSound = 'SorcererSight';
 	ActiveSound = 'SorcererActive';
 	PainSound = 'SorcererPain';

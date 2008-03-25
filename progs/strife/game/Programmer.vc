@@ -135,6 +135,7 @@ defaultproperties
 	bNoBlockMonst = true;
 	bStrifeDamage = true;
 	bNoIceDeath = true;
+	bFireResist = true;
 	ActiveSound = 'programmer/active';
 	AttackSound = 'programmer/attack';
 	PainSound = 'programmer/pain';

@@ -393,7 +393,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	if (bJustAttacked)
 	{
 		bJustAttacked = false;
-		if (!Level.Game.fastparm && !DontMove)
+		if (!IsFast() && !DontMove)
 		{
 			NewChaseDir();
 		}
@@ -515,7 +515,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 		//	Check for missile attack.
 		if (AMissileState)
 		{
-			if (Level.Game.fastparm || !MoveCount)
+			if (IsFast() || !MoveCount)
 			{
 				if (CheckMissileRange())
 				{

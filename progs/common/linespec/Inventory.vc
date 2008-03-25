@@ -75,6 +75,8 @@ bool				bAlwaysPickup;
 bool				bHubPower;
 //	Remove when traveling between different clusters.
 bool				bInterHubStrip;
+//	No feedback when picked up
+bool				bQuiet;
 
 replication
 {
@@ -224,9 +226,13 @@ final void TouchSpecial(EntityEx Toucher)
 		return;
 	}
 
-	Toucher.Player.cprint(GetPickupMessage());
-	PlayPickupSound(Toucher);
-	PlayerEx(Toucher.Player).BonusFlash += BONUSADD;
+	if (!bQuiet)
+	{
+		Toucher.Player.cprint(GetPickupMessage());
+		PlayPickupSound(Toucher);
+		PlayerEx(Toucher.Player).BonusFlash += BONUSADD;
+	}
+
 	DoPickupSpecial(Toucher);
 	if (bCountItem)
 	{

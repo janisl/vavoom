@@ -546,7 +546,8 @@ bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
 	}
 
 	if ((cptrace.Thing->EntityFlags & EF_PassMobj) ||
-		(cptrace.Thing->EntityFlags & EF_Missile))
+		(cptrace.Thing->EntityFlags & EF_Missile) ||
+		(Other->EntityFlags & EF_ActLikeBridge))
 	{
 		//	Prevent some objects from overlapping
 		if (cptrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
@@ -842,7 +843,9 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 		}
 	}
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if ((tmtrace.Thing->EntityFlags & EF_PassMobj) || (tmtrace.Thing->EntityFlags & EF_Missile))
+	if ((tmtrace.Thing->EntityFlags & EF_PassMobj) ||
+		(tmtrace.Thing->EntityFlags & EF_Missile) ||
+		(Other->EntityFlags & EF_ActLikeBridge))
 	{
 		//	Prevent some objects from overlapping
 		if (tmtrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
@@ -1284,7 +1287,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 //		}
 		// killough 3/15/98: Allow certain objects to drop off
 		if ((!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float)) ||
-			(EntityFlags & EF_AvoidingDropoff))
+			(EntityFlags & EF_AvoidingDropoff) || (EntityFlags & EF_NoDropOff))
 		{
 			float floorz = tmtrace.FloorZ;
 

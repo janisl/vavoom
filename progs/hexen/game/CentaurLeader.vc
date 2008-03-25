@@ -51,7 +51,6 @@ final void A_CentaurAttack2()
 		return;
 	}
 	SpawnMissile(Target, CentaurFX, 45.0);
-	PlaySound('CentaurLeaderAttack', CHAN_WEAPON);
 }
 
 states

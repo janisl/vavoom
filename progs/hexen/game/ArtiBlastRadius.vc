@@ -54,9 +54,7 @@ bool Use(bool Pickup)
 			// Not a valid monster
 			continue;
 		}
-		if (mo.Class == PoisonCloud ||	// poison cloud
-			mo.Class == HolySpirit ||	// holy fx
-			mo.bIceCorpse)	// frozen corpse
+		if (mo.bCanBlast || mo.bIceCorpse)	// frozen corpse
 		{
 			// Let these special cases go
 		}

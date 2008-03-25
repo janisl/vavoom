@@ -34,7 +34,7 @@ class MaceFX4 : MaceFX3
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
-	if (Actor(victim).bBoss || victim.Class == Ironlich)
+	if (victim.bBoss || victim.bDontSquash)
 	{
 		// Don't allow cheap boss kills
 	}

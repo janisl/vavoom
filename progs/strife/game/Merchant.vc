@@ -92,4 +92,5 @@ defaultproperties
 	bMonster = false;
 	bActivateMCross = false;
 	bNoDeathmatch = true;
+	bNoDamage = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SnakeProjB : Projectile
+class SnakeProjB : SnakeProjA
 	__scriptid__(139);
 
 states
@@ -40,9 +40,7 @@ Death:
 
 defaultproperties
 {
-	Radius = 12.0;
-	Height = 8.0;
-	Speed = 490.0;
-	FastSpeed = 700.0;
 	MissileDamage = 3;
+	RenderStyle = STYLE_Normal;
+	bWindThrust = false;
 }

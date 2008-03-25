@@ -28,7 +28,6 @@ class HammerPuff : AxePuff;
 defaultproperties
 {
 	Velocity.z = 8.0 / 10.0 * 35.0;
-	bAxeBlood = false;
 	SightSound = 'FighterHammerHitThing';
 	AttackSound = 'FighterHammerHitWall';
 }

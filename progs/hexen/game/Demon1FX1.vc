@@ -44,5 +44,7 @@ defaultproperties
 	MissileDamage = 5;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
+	bSpawnSoundSource = true;
+	SightSound = 'DemonMissileFire';
 	DeathSound = 'DemonMissileExplode';
 }
