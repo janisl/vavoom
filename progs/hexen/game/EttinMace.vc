@@ -25,28 +25,13 @@
 
 class EttinMace : Carcas;
 
-//==========================================================================
-//
-//  A_CheckFloor
-//
-//  Checks if an object hit the floor
-//
-//==========================================================================
-
-final void A_CheckFloor()
-{
-	if (Origin.z <= FloorZ)
-	{
-		Origin.z = FloorZ;
-		Gravity = 1.0;
-		SetState(FindState('Death'));
-	}
-}
-
 states
 {
 Spawn:
-	ETTB MNOP 5 A_CheckFloor
+	ETTB M 5 { A_CheckFloor(FindState('Death')); }
+	ETTB N 5 { A_CheckFloor(FindState('Death')); }
+	ETTB O 5 { A_CheckFloor(FindState('Death')); }
+	ETTB P 5 { A_CheckFloor(FindState('Death')); }
 	Loop
 Death:
 	ETTB Q 5

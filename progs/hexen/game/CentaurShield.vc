@@ -25,28 +25,15 @@
 
 class CentaurShield : Carcas;
 
-//==========================================================================
-//
-//  A_CheckFloor
-//
-//  Checks if an object hit the floor
-//
-//==========================================================================
-
-final void A_CheckFloor()
-{
-	if (Origin.z <= FloorZ)
-	{
-		Origin.z = FloorZ;
-		//bLowGravity = false;
-		SetState(FindState('Death'));
-	}
-}
-
 states
 {
 Spawn:
-	CTDP ABCDEF 3 A_CheckFloor
+	CTDP A 3 { A_CheckFloor(FindState('Death')); }
+	CTDP B 3 { A_CheckFloor(FindState('Death')); }
+	CTDP C 3 { A_CheckFloor(FindState('Death')); }
+	CTDP D 3 { A_CheckFloor(FindState('Death')); }
+	CTDP E 3 { A_CheckFloor(FindState('Death')); }
+	CTDP F 3 { A_CheckFloor(FindState('Death')); }
 	Goto Spawn+2
 Death:
 	CTDP G 4

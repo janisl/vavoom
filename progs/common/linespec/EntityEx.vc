@@ -409,6 +409,8 @@ void Destroyed()
 
 final void SetOrigin2(TVec origin)
 {
+	UnlinkFromWorld();
+
 	Origin = origin;
 
 	// Set subsector and/or block links.
@@ -1764,12 +1766,16 @@ final float GetFriction()
 //==========================================================================
 
 final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
-	bool DamageSource, optional name BombDmgType)
+	bool DamageSource, optional name BombDmgType, optional bool DoDamage)
 {
 	EntityEx	Other;
 	float		dist;
 	int			damage;
 
+	if (!specified_DoDamage)
+	{
+		DoDamage = true;
+	}
 	foreach RadiusThings(Other, Origin, BombDistance)
 	{
 		if (!Other.bShootable)
@@ -1814,7 +1820,41 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 			// OK to damage, target is in direct path
 			damage = ftoi(itof(BombDamage) * RDFactor *
 				(BombDistance - dist) / BombDistance);
-			Other.Damage(self, Source, damage, BombDmgType);
+			if (DoDamage)
+			{
+				Other.Damage(self, Source, damage, BombDmgType);
+			}
+			else
+			{
+				Other.bBlasted = true;
+			}
+
+			if (!Other.bIceCorpse && (!DoDamage || !bNoDamageThrust))
+			{
+				float Thrust = itof(damage) * 0.5 / Other.Mass;
+				float VelZ = (Other.Origin.z + Other.Height * 0.5 -
+					Origin.z) * Thrust;
+				if (Source != Other)
+				{
+					VelZ *= 0.5;
+				}
+				else
+				{
+					VelZ *= 0.8;
+				}
+				TVec Dir = Other.Origin - Origin;
+				Dir.z = 0.0;
+				if (Length(Dir) < 0.001)
+				{
+					//	Zero length. In this case Doom would use angle 0
+					Dir = vector(1.0, 0.0, 0.0);
+				}
+				Other.Velocity += Normalise(Dir) * Thrust * 35.0;
+				if (DoDamage)
+				{
+					Other.Velocity.z += VelZ * 35.0;
+				}
+			}
 		}
 	}
 }
@@ -7920,6 +7960,137 @@ final bool IsFast()
 		return false;
 	}
 	return Level.Game.fastparm;
+}
+
+//==========================================================================
+//
+//	RespawnResetFlags
+//
+//	Reset most of the flags to the default values on respawn.
+//
+//==========================================================================
+
+void RespawnResetFlags()
+{
+	bSpecial = default.bSpecial;
+	bSolid = default.bSolid;
+	bShootable = default.bShootable;
+	bAmbush = default.bAmbush;
+	bJustHit = default.bJustHit;
+	bJustAttacked = default.bJustAttacked;
+	bSpawnCeiling = default.bSpawnCeiling;
+	bNoGravity = default.bNoGravity;
+	bDropOff = default.bDropOff;
+	bPickUp = default.bPickUp;
+	bFloat = default.bFloat;
+	bMissile = default.bMissile;
+	bDropped = default.bDropped;
+	bShadow = default.bShadow;
+	bNoBlood = default.bNoBlood;
+	bCorpse = default.bCorpse;
+	bInFloat = default.bInFloat;
+	bCountKill = default.bCountKill;
+	bCountItem = default.bCountItem;
+	bSkullFly = default.bSkullFly;
+	bNoDeathmatch = default.bNoDeathmatch;
+	bSpawnSoundSource = default.bSpawnSoundSource;
+	bNoLiftDrop = default.bNoLiftDrop;
+	bStealth = default.bStealth;
+	bIceCorpse = default.bIceCorpse;
+
+	bDontReflect = default.bDontReflect;
+	bWindThrust = default.bWindThrust;
+	bBlasted = default.bBlasted;
+	bFly = default.bFly;
+	bFloorClip = default.bFloorClip;
+	bSpawnFloat = default.bSpawnFloat;
+	bNoTeleport = default.bNoTeleport;
+	bRip = default.bRip;
+	bPushable = default.bPushable;
+	bSlide = default.bSlide;
+	bOnMobj = default.bOnMobj;
+	bPassMobj = default.bPassMobj;
+	bCannotPush = default.bCannotPush;
+	bThruGhost = default.bThruGhost;
+	bBoss = default.bBoss;
+	bDontTranslate = default.bDontTranslate;
+	bNoDamageThrust = default.bNoDamageThrust;
+	bTelestomp = default.bTelestomp;
+	bFloatBob = default.bFloatBob;
+	bActivateImpact = default.bActivateImpact;
+	bActivatePushWall = default.bActivatePushWall;
+	bActivateMCross = default.bActivateMCross;
+	bActivatePCross = default.bActivatePCross;
+	bCantLeaveFloorpic = default.bCantLeaveFloorpic;
+	bNonShootable = default.bNonShootable;
+	bInvulnerable = default.bInvulnerable;
+	bSeekerMissile = default.bSeekerMissile;
+	bReflective = default.bReflective;
+
+	bIgnoreFloorStep = default.bIgnoreFloorStep;
+	bIgnoreCeilingStep = default.bIgnoreCeilingStep;
+	bNoRadiusDamage = default.bNoRadiusDamage;
+	bGhost = default.bGhost;
+	bAlwaysPuff = default.bAlwaysPuff;
+	bNoSplash = default.bNoSplash;
+	bDontOverlap = default.bDontOverlap;
+	bNoMorph = default.bNoMorph;
+	bDontSquash = default.bDontSquash;
+	bFullVolActive = default.bFullVolActive;
+	bMonster = default.bMonster;
+	bExplodeOnSky = default.bExplodeOnSky;
+	bStayMorphed = default.bStayMorphed;
+	bDontBlast = default.bDontBlast;
+	bCanBlast = default.bCanBlast;
+	bNeverTarget = default.bNeverTarget;
+	bDontGib = default.bDontGib;
+	bNoBlockMonst = default.bNoBlockMonst;
+	bFullVolDeath = default.bFullVolDeath;
+	bCanBounceWater = default.bCanBounceWater;
+	bNoWallBounceSnd = default.bNoWallBounceSnd;
+	bDamageInvulnerable = default.bDamageInvulnerable;
+	bNoTeleOther = default.bNoTeleOther;
+	bBloodlessImpact = default.bBloodlessImpact;
+	bNoExplodeFloor = default.bNoExplodeFloor;
+	bPuffOnActors = default.bPuffOnActors;
+
+	bNoGrudge = default.bNoGrudge;
+	bNoIceDeath = default.bNoIceDeath;
+	bBossDeath = default.bBossDeath;
+	bRandomise = default.bRandomise;
+	bActLikeBridge = default.bActLikeBridge;
+	bStrifeDamage = default.bStrifeDamage;
+	bTriggerHappy = default.bTriggerHappy;
+	bMissileEvenMore = default.bMissileEvenMore;
+	bForceRadiusDmg = default.bForceRadiusDmg;
+	bNoGravKill = default.bNoGravKill;
+	bInCombat = default.bInCombat;
+	bLookAllAround = default.bLookAllAround;
+	bStanding = default.bStanding;
+	bSpectral = default.bSpectral;
+	bFireResist = default.bFireResist;
+	bSynchronised = default.bSynchronised;
+	bNoTargetSwitch = default.bNoTargetSwitch;
+	bDontHurtSpecies = default.bDontHurtSpecies;
+	bShieldReflect = default.bShieldReflect;
+	bDeflect = default.bDeflect;
+	bPuffParticles = default.bPuffParticles;
+	bNoExtremeDeath = default.bNoExtremeDeath;
+	bExtremeDeath = default.bExtremeDeath;
+	bNoBounceSound = default.bNoBounceSound;
+
+	bFaster = default.bFaster;
+	bFastMelee = default.bFastMelee;
+	bNoDropOff = default.bNoDropOff;
+	bBounceOnActors = default.bBounceOnActors;
+	bExplodeOnWater = default.bExplodeOnWater;
+	bAvoidingDropoff = default.bAvoidingDropoff;
+	bNoDamage = default.bNoDamage;
+	bChaseGoal = default.bChaseGoal;
+	bPierceArmor = default.bPierceArmor;
+	bNoPain = default.bNoPain;
+	bAlwaysFast = default.bAlwaysFast;
+	bNeverFast = default.bNeverFast;
 }
 
 bool IsTeammate(EntityEx Other)

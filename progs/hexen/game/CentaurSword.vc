@@ -28,7 +28,13 @@ class CentaurSword : CentaurShield;
 states
 {
 Spawn:
-	CTDP KLMNOPQ 3 A_CheckFloor
+	CTDP K 3 { A_CheckFloor(FindState('Death')); }
+	CTDP L 3 { A_CheckFloor(FindState('Death')); }
+	CTDP M 3 { A_CheckFloor(FindState('Death')); }
+	CTDP N 3 { A_CheckFloor(FindState('Death')); }
+	CTDP O 3 { A_CheckFloor(FindState('Death')); }
+	CTDP P 3 { A_CheckFloor(FindState('Death')); }
+	CTDP Q 3 { A_CheckFloor(FindState('Death')); }
 	Goto Spawn+2
 Death:
 	CTDP R 4

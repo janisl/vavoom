@@ -16,15 +16,15 @@ class Actor extends Thinker
 	action native A_ExtChase(eval bool usemelee, eval bool usemissile,
 		optional evalnot bool playactive, optional eval bool nightmarefast);
 	action native A_FaceTarget();
-	//A_Die
+	action native A_Die();
 	action native A_CentaurDefend();
 	action native A_AlertMonsters();
-	//A_ClearTarget
+	action native A_ClearTarget();
 	action native A_ClearSoundTarget();
-	//A_KillMaster
-	//A_KillChildren
+	action native A_KillMaster();
+	action native A_KillChildren();
 	action native A_SentinelBob();
-	//A_Burst
+	action native A_Burst(class<Actor> chunktype);
 
 	//
 	//	Generic monster attacks
@@ -47,10 +47,13 @@ class Actor extends Thinker
 		class<Actor> missiletype, eval float missileheight);
 	action native A_BulletAttack();
 	//A_MonsterRail
-	action native A_Explode(optional eval int damage, optional eval int distance, optional evanot bool hurtsource);
-	//A_RadiusThrust
-	//A_Detonate
-	//A_ThrowGrenade
+	action native A_Explode(optional eval int damage, optional eval int distance,
+		optional evanot bool hurtsource);
+	action native A_RadiusThrust(optional eval int force, optional eval int distance,
+		optional evanot bool affectsource);
+	action native A_Detonate();
+	action native A_ThrowGrenade(class<Actor> itemtype, optional eval float spawnheight,
+		optional eval float xyvel, optional eval float zvel, optional evalnot bool useammo);
 
 	//
 	//	Freeze death functions
@@ -88,10 +91,10 @@ class Actor extends Thinker
 	action native A_GetHurt();
 	action native A_KlaxonBlare();
 	action native A_CheckTerrain();
-	//A_Print
+	action native A_Print(string text, optional eval float time, optional string fontname);
 	//A_SetBlend
-	//A_CheckSight
-	//A_CheckFloor
+	action native A_CheckSight(state label);
+	action native A_CheckFloor(state label);
 	action native A_CheckPlayerDone();
 	//A_SkullPop
 
@@ -239,9 +242,9 @@ class Actor extends Thinker
 	//
 	//	Not documented
 	//
-	//action native A_SetGravity(eval float gravity);
+	action native A_SetGravity(eval float gravity);
 	//action native A_PlayerSkinCheck(state label);
-	//action native A_Respawn(optional evalnot bool fog);
+	action native A_Respawn(optional evalnot bool fog);
 	//action native A_BarrelDestroy();
 }
 
