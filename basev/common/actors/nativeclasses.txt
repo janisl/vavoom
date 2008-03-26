@@ -35,7 +35,9 @@ class Actor extends Thinker
 	action native A_CustomBulletAttack(eval float spread_horiz, eval float spread_vert,
 		eval int numbullets, eval int damage, class<Actor> pufftype,
 		optional eval float range, optional eval bool aimfacing);
-	//A_CustomRailgun
+	action native A_CustomRailgun(eval int damage, optional eval float offset_xy,
+		optional color color1, optional color color2, optional eval bool silent,
+		optional eval bool aim, optional eval float maxdiff, optional class<Actor> pufftype);
 	action native A_CustomMeleeAttack(eval int damage, string meleesound,
 		string misssound, string damagetype, eval bool bleed);
 	action native A_CustomComboAttack(class<Actor> missiletype, eval float spawnheight,
@@ -46,7 +48,7 @@ class Actor extends Thinker
 	action native A_BasicAttack(eval int meleedamage, string meleesound,
 		class<Actor> missiletype, eval float missileheight);
 	action native A_BulletAttack();
-	//A_MonsterRail
+	action native A_MonsterRail();
 	action native A_Explode(optional eval int damage, optional eval int distance,
 		optional evanot bool hurtsource);
 	action native A_RadiusThrust(optional eval int force, optional eval int distance,
@@ -287,7 +289,9 @@ class Inventory extends Actor
 		optional eval float Angle, optional evalnot bool UseAmmo,
 		optional eval int SpawnXY, optional eval float SpawnZ,
 		optional eval int AimAtAngle);
-	//A_RailAttack
+	action native A_RailAttack(eval int damage, optional eval float offset_xy,
+		optional evalnot bool useammo, optional color color1, optional color color2,
+		optional eval bool silent, optional eval float maxdiff, optional class<Actor> pufftype);
 
 	//
 	//	Not documented Doom weapon atack functions
@@ -301,10 +305,10 @@ class Inventory extends Actor
 	action native A_FireCGun();
 	action native A_FireMissile();
 	action native A_FirePlasma();
-	//action native A_FireRailgun();
-	//action native A_FireRailgunLeft();
-	//action native A_FireRailgunRight();
-	//action native A_RailWait();
+	action native A_FireRailgun();
+	action native A_FireRailgunLeft();
+	action native A_FireRailgunRight();
+	action native A_RailWait();
 	action native A_BFGsound();
 	action native A_FireBFG();
 }

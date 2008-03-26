@@ -1361,6 +1361,43 @@ final void A_FireCustomMissile(class<Actor> MissileType, optional float Angle,
 	}
 }
 
+//===========================================================================
+//
+//  A_RailAttack
+//
+//===========================================================================
+
+final void A_RailAttack(int RailDamage, optional float Offset,
+	optional bool UseAmmo, optional string Colour1, optional string Colour2,
+	optional bool Silent, optional float MaxDiff,
+	optional class<Actor> PuffType)
+{
+	if (!specified_UseAmmo)
+	{
+		UseAmmo = true;
+	}
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (UseAmmo)
+	{
+		if (!Wpn.DepleteAmmo(, 1))
+		{
+			return;
+		}
+	}
+
+	int Col1 = ParseColour(Colour1);
+	int Col2 = ParseColour(Colour2);
+	TVec Dir;
+	AngleVector(&Angles, &Dir);
+	RailAttack(Dir, Offset, RailDamage, Col1, Col2, MaxDiff, PuffType,
+		Silent);
+}
+
 //**************************************************************************
 //	Doom weapon atack functions
 //**************************************************************************
@@ -1611,6 +1648,83 @@ final void A_FirePlasma()
 		}
 	}
 	SpawnPlayerMissile(PlasmaBall);
+}
+
+//===========================================================================
+//
+//  DoFireRailgun
+//
+//===========================================================================
+
+final void DoFireRailgun(float Offset)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (Wpn)
+	{
+		if (!Wpn.DepleteAmmo(, 1))
+		{
+			return;
+		}
+		if (!(P_Random() & 1))
+		{
+			Player.SetViewState(ps_flash, Wpn.FindState('Flash'));
+		}
+		else
+		{
+			Player.SetViewState(ps_flash, GetStatePlus(Wpn.FindState('Flash'), 1));
+		}
+	}
+	int RailDamage = Level.Game.deathmatch ? 100 : 150;
+	TVec Dir;
+	AngleVector(&Angles, &Dir);
+	RailAttack(Dir, Offset, RailDamage);
+}
+
+//===========================================================================
+//
+//  A_FireRailgun
+//
+//===========================================================================
+
+final void A_FireRailgun()
+{
+	DoFireRailgun(0.0);
+}
+
+//===========================================================================
+//
+//  A_FireRailgunLeft
+//
+//===========================================================================
+
+final void A_FireRailgunLeft()
+{
+	DoFireRailgun(-10.0);
+}
+
+//===========================================================================
+//
+//  A_FireRailgunRight
+//
+//===========================================================================
+
+final void A_FireRailgunRight()
+{
+	DoFireRailgun(10.0);
+}
+
+//===========================================================================
+//
+//  A_RailWait
+//
+//===========================================================================
+
+final void A_RailWait()
+{
 }
 
 //===========================================================================

@@ -28,6 +28,7 @@ sounds/dsempty.lmp		@CMAKE_CURRENT_SOURCE_DIR@/sounds/dsempty.lmp
 sounds/dsquake.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/dsquake.flac
 sounds/icebrk1a.flac	@CMAKE_CURRENT_SOURCE_DIR@/sounds/icebrk1a.flac
 sounds/icedth1.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/icedth1.flac
+sounds/railgf1.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/railgf1.flac
 sounds/spark1.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark1.flac
 sounds/spark2.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark2.flac
 sounds/spark3.flac		@CMAKE_CURRENT_SOURCE_DIR@/sounds/spark3.flac

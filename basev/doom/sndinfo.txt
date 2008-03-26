@@ -74,6 +74,9 @@ $limit weapons/plasmaf 0
 weapons/bfgf					dsbfg
 weapons/bfgx					dsrxplod
 
+//	Railgun
+weapons/railgf					railgf1
+
 //==========================================================================
 //
 //  Monster sounds

@@ -94,6 +94,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		sounds/dsquake.flac
 		sounds/icebrk1a.flac
 		sounds/icedth1.flac
+		sounds/railgf1.flac
 		sounds/spark1.flac
 		sounds/spark2.flac
 		sounds/spark3.flac

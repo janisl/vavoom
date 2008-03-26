@@ -2442,6 +2442,314 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 	return true;
 }
 
+//**************************************************************************
+//
+//  RAILGUN
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//  RailHitPlane
+//
+//==========================================================================
+
+final bool RailHitPlane(sec_plane_t* plane, TVec linestart, out TVec lineend,
+	float range, class<EntityEx> PuffType)
+{
+	float	org_dist;
+	float	hit_dist;
+
+	if (plane->flags & SPF_NOBLOCKSHOOT)
+	{
+		//  Doesn't block shooting
+		return true;
+	}
+	org_dist = DotProduct(linestart, plane->normal) - plane->dist;
+	if (org_dist < 0.0)
+	{
+		//  Don't shoot back side
+		return true;
+	}
+	hit_dist = DotProduct(lineend, plane->normal) - plane->dist;
+	if (hit_dist >= 0.0)
+	{
+		//  Didn't hit plane
+		return true;
+	}
+
+	//  Hit plane
+	if (plane->pic == Level.Game.skyflatnum)
+	{
+		// don't shoot the sky!
+		return false;
+	}
+
+	//  If we are shooting floor or ceiling we are adjusting position
+	// to spawn puff on floor or ceiling, not on wall
+	lineend -= (lineend - linestart) * hit_dist / (hit_dist - org_dist);
+
+	// position a bit closer
+	lineend += 4.0 * plane->normal;
+
+	if (PuffType)
+	{
+		// Spawn bullet puffs.
+		SpawnPuff(lineend, range, PuffType, false);
+	}
+
+	// don't go any farther
+	return false;
+}
+
+//==========================================================================
+//
+//  RailCheckPlanes
+//
+//==========================================================================
+
+final bool RailCheckPlanes(sector_t* sec, TVec linestart, out TVec lineend,
+	float range, class<EntityEx> PuffType)
+{
+	sec_region_t *reg;
+	sec_region_t *startreg;
+
+	startreg = PointInRegion(sec, linestart);
+	for (reg = startreg; reg; reg = reg->next)
+	{
+		if (!RailHitPlane(reg->floor, linestart, lineend, range, PuffType))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!RailHitPlane(reg->ceiling, linestart, lineend, range, PuffType))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	for (reg = startreg->prev; reg; reg = reg->prev)
+	{
+		if (!RailHitPlane(reg->floor, linestart, lineend, range, PuffType))
+		{
+			//  Hit floor
+			return false;
+		}
+		if (!RailHitPlane(reg->ceiling, linestart, lineend, range, PuffType))
+		{
+			//  Hit ceiling
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  RailAttack
+//
+//==========================================================================
+
+final void RailAttack(TVec Dir, float Offset, int RailDamage,
+	optional int Col1, optional int Col2, optional float MaxDiff,
+	optional class<EntityEx> PuffType, optional bool Silent)
+{
+	TVec			Dst;
+	intercept_t*	in;
+	TVec			LineStart;
+	TVec			LineEnd;
+	TVec			ShootOrigin;
+
+	if (!Silent)
+	{
+		PlaySound('weapons/railgf', CHAN_WEAPON);
+	}
+
+	if (!specified_PuffType)
+	{
+		PuffType = BulletPuff;
+	}
+	name DmgType = 'Railgun';
+	if (PuffType && PuffType.default.DamageType)
+	{
+		DmgType = PuffType.default.DamageType;
+	}
+
+	ShootOrigin = Origin;
+	ShootOrigin.z += Height * 0.5 - FloorClip;
+	if (bIsPlayer)
+	{
+		ShootOrigin.z += PlayerPawn(Player.MO).AttackZOffset;
+	}
+	else
+	{
+		ShootOrigin.z += 8.0;
+	}
+	ShootOrigin.x += Offset * cos(Angles.yaw - 90.0);
+	ShootOrigin.y += Offset * sin(Angles.yaw - 90.0);
+
+	float Distance = 8192.0;
+	Dst = ShootOrigin + Distance * Dir;
+	LineStart = ShootOrigin;
+	bool DidHit = false;
+	foreach PathTraverse(in, Origin.x, Origin.y, Dst.x, Dst.y,
+		PT_ADDLINES | PT_ADDTHINGS)
+	{
+		TVec		hit_point;
+		line_t*		li;
+		EntityEx	th;
+
+		if (in->bIsALine)
+		{
+			sector_t *sec;
+
+			li = in->line;
+			hit_point = ShootOrigin + (Distance * in->frac) * Dir;
+			if (li->flags & ML_TWOSIDED && PointOnPlaneSide(ShootOrigin, li))
+			{
+				sec = li->backsector;
+			}
+			else
+			{
+				sec = li->frontsector;
+			}
+
+			LineEnd = hit_point;
+
+			//  Check for shooting floor or ceiling
+			if (!RailCheckPlanes(sec, LineStart, LineEnd, Distance, PuffType))
+			{
+				DidHit = true;
+				break;
+			}
+
+			LineStart = LineEnd;
+
+			//  Execute line special after checking for hitting floor or ceiling
+			// when we know that it actally hits line
+			if (li->special)
+			{
+				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_IMPACT);
+			}
+
+			if (li->flags & ML_TWOSIDED)
+			{
+				// crosses a two sided line
+				opening_t *open;
+				float opentop = 0.0;
+
+				open = LineOpenings(li, hit_point);
+				if (open)
+				{
+					opentop = open->top;
+				}
+				while (open)
+				{
+					if (open->bottom <= hit_point.z && open->top >= hit_point.z)
+					{
+						// shot continues
+						break;
+					}
+					open = open->next;
+				}
+				if (open)
+				{
+					continue;
+				}
+				if (li->frontsector->ceiling.pic == Level.Game.skyflatnum &&
+					li->backsector->ceiling.pic == Level.Game.skyflatnum &&
+					hit_point.z > opentop)
+				{
+					// it's a sky hack wall
+					DidHit = true;
+					break;
+				}
+			}
+
+			//  Hit line
+
+			// position a bit closer
+			hit_point -= 4.0 * Dir;
+
+			if (PuffType)
+			{
+				// Spawn bullet puffs.
+				SpawnPuff(hit_point, Distance, PuffType, false);
+			}
+
+			// don't go any farther
+			LineEnd = hit_point;
+			DidHit = true;
+			break;
+		}
+
+		// shoot a thing
+		th = EntityEx(in->Thing);
+
+		if (th == self)
+		{
+			continue;	// can't shoot self
+		}
+
+		if (!th.bShootable)
+		{
+			continue;	// corpse or something
+		}
+
+		// check angles to see if the thing can be aimed at
+		hit_point = ShootOrigin + (Distance * in->frac) * Dir;
+
+		if (th.Origin.z + th.Height < hit_point.z)
+		{
+			continue;	// shot over the thing
+		}
+
+		if (th.Origin.z > hit_point.z)
+		{
+			continue;	// shot under the thing
+		}
+
+		//	Invulnerable things completely block the shot.
+		if (th.bInvulnerable)
+		{
+			DidHit = true;
+			LineEnd = hit_point;
+			break;
+		}
+
+		// hit thing
+		// position a bit closer
+		hit_point -= 10.0 * Dir;
+
+		// Spawn bullet puffs or blod spots, depending on target type.
+		if (th.bNoBlood || th.bInvulnerable || th.bDormant)
+		{
+			if (PuffType)
+			{
+				SpawnPuff(hit_point, Distance, PuffType, true);
+			}
+		}
+		else
+		{
+			SpawnBlood(hit_point, RailDamage);
+		}
+		th.Damage(self, self, RailDamage, DmgType);
+	}
+
+	if (!DidHit)
+	{
+		LineEnd = Dst;
+		RailCheckPlanes(XLevel.PointInSector(Dst), LineStart, LineEnd,
+			Distance, PuffType);
+	}
+
+	PlayerEx P;
+	foreach AllActivePlayers(P)
+	{
+		P.ClientRailTrail(ShootOrigin, LineEnd, Col1, Col2, MaxDiff);
+	}
+}
+
 //==========================================================================
 //
 //  TeleportMove

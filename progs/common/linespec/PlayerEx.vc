@@ -119,7 +119,7 @@ replication
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,
-		ClientSparkParticles;
+		ClientSparkParticles, ClientRailTrail;
 
 	reliable if (!bIsClient)
 		ClientSpeech;
@@ -1773,6 +1773,110 @@ void DisplayObituary(EntityEx inflictor, EntityEx source, name DmgType)
 	Msg = StrReplace(Msg, "%k", source.Player.PlayerName);
 
 	Level.bprint("%s", Msg);
+}
+
+//==========================================================================
+//
+//	ClientRailTrail
+//
+//==========================================================================
+
+void ClientRailTrail(TVec From, TVec To, int Col1, int Col2, float MaxDiff)
+{
+	float Len = Length(To - From);
+	TVec Dir = Normalise(To - From);
+	TAVec Ang;
+	VectorAngles(&Dir, &Ang);
+	Ang.roll = 270.0;
+
+	if (!Col1)
+	{
+		Col1 = RGBA(255, 255, 255, 255);
+	}
+	if (!Col2)
+	{
+		Col2 = RGBA(0, 0, 255, 255);
+	}
+
+	TVec Diff;
+	float Offs;
+	for (Offs = 0.0; Offs < Len; Offs += 3.0)
+	{
+		if (MaxDiff > 0.0)
+		{
+			int Rnd = P_Random();
+			if (Rnd & 1)
+			{
+				Diff.x += Rnd & 8 ? 1.0 : -1.0;
+				if (Diff.x > MaxDiff)
+				{
+					Diff.x = MaxDiff;
+				}
+				else if (Diff.x < -MaxDiff)
+				{
+					Diff.x = -MaxDiff;
+				}
+			}
+			if (Rnd & 2)
+			{
+				Diff.y += Rnd & 16 ? 1.0 : -1.0;
+				if (Diff.y > MaxDiff)
+				{
+					Diff.y = MaxDiff;
+				}
+				else if (Diff.y < -MaxDiff)
+				{
+					Diff.y = -MaxDiff;
+				}
+			}
+			if (Rnd & 4)
+			{
+				Diff.z += Rnd & 32 ? 1.0 : -1.0;
+				if (Diff.z > MaxDiff)
+				{
+					Diff.z = MaxDiff;
+				}
+				else if (Diff.z < -MaxDiff)
+				{
+					Diff.z = -MaxDiff;
+				}
+			}
+		}
+
+		particle_t *p = Level.NewParticle();
+		if (!p)
+		{
+			break;
+		}
+		p->type = LineSpecialLevelInfo::pt_rail;
+		p->Size = 0.5;
+		p->colour = Col1;
+		p->die = Level.XLevel.Time + 1.0;
+		p->org = From + Dir * Offs + Diff;
+		p->vel.x = (Random() - 0.5) * 2.0;
+		p->vel.y = (Random() - 0.5) * 2.0;
+		p->vel.z = (Random() - 0.5) * 2.0;
+		p->accel = vector(0.0, 0.0, 0.0);
+
+		Ang.roll += 14.0;
+		TVec Forward;
+		TVec Right;
+		TVec Up;
+		AngleVectors(&Ang, &Forward, &Right, &Up);
+
+		p = Level.NewParticle();
+		if (!p)
+		{
+			break;
+		}
+		p->type = LineSpecialLevelInfo::pt_rail;
+		p->Size = 0.5;
+		p->colour = Col2;
+		p->die = Level.XLevel.Time + 1.0;
+		p->org = From + Dir * Offs + Up * 3.0;
+		p->vel = Up;
+		p->accel = vector(0.0, 0.0, 0.0);
+	}
 }
 
 //==========================================================================
