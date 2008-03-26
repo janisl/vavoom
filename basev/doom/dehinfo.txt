@@ -287,10 +287,10 @@ code_pointers
 	SpawnFly		Actor			A_SpawnFly
 	BrainExplode	Actor			A_BrainExplode
 	Mushroom		Actor			A_Mushroom
-	FireRailgun		Actor			A_FireRailgun
-	FireRailgunLeft	Actor			A_FireRailgunLeft
-	FireRailgunRight	Actor		A_FireRailgunRight
-	RailWait		Actor			A_RailWait
+	FireRailgun		Inventory		A_FireRailgun
+	FireRailgunLeft	Inventory		A_FireRailgunLeft
+	FireRailgunRight	Inventory	A_FireRailgunRight
+	RailWait		Inventory		A_RailWait
 }
 
 //	Names of the sounds to be used when changing sounds
