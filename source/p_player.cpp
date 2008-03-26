@@ -342,14 +342,14 @@ IMPLEMENT_FUNCTION(VBasePlayer, cprint)
 {
 	VStr msg = PF_FormatString();
 	P_GET_SELF;
-	Self->Printf(*msg);
+	Self->eventClientPrint(*msg);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, centreprint)
 {
 	VStr msg = PF_FormatString();
 	P_GET_SELF;
-	Self->CentrePrintf(*msg);
+	Self->eventClientCentrePrint(*msg);
 }
 
 IMPLEMENT_FUNCTION(VBasePlayer, GetPlayerNum)
