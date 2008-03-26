@@ -733,6 +733,9 @@ static void G_DoCompleted()
 	sv.intertime = 0;
 	GLevelInfo->CompletitionTime = GLevel->Time;
 
+	GLevel->Acs->StartTypedACScripts(SCRIPT_Unloading, 0, 0, 0, NULL, false,
+		true);
+
 	const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
 	const mapInfo_t& new_info = P_GetMapInfo(GLevelInfo->NextMap);
 	const VClusterDef* ClusterD = P_GetClusterDef(old_info.Cluster);
@@ -1098,7 +1101,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 		P_Ticker();
 
 		//	Start open scripts.
-		GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
+		GLevel->Acs->StartTypedACScripts(SCRIPT_Open, 0, 0, 0, NULL, false,
+			false);
 	}
 
 	GCon->Log(NAME_Dev, "Server spawned");
@@ -1163,8 +1167,12 @@ COMMAND(Spawn)
 	if (host_standalone && run_open_scripts)
 	{
 		//	Start open scripts.
-		GLevel->Acs->StartTypedACScripts(SCRIPT_Open);
+		GLevel->Acs->StartTypedACScripts(SCRIPT_Open, 0, 0, 0, NULL, false,
+			false);
 	}
+
+	GLevel->Acs->StartTypedACScripts(SCRIPT_Enter, 0, 0, 0, Player->MO, true,
+		false);
 
 	if (!netgame || svs.num_connected == sv_load_num_players)
 	{
@@ -1188,6 +1196,8 @@ COMMAND(Spawn)
 void SV_DropClient(VBasePlayer* Player, bool)
 {
 	guard(SV_DropClient);
+	GLevel->Acs->StartTypedACScripts(SCRIPT_Disconnect,
+		SV_GetPlayerNum(Player), 0, 0, NULL, true, false);
 	if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
 	{
 		Player->eventDisconnectClient();

@@ -163,7 +163,8 @@ private:
 	vuint8* FindChunk(const char* id) const;
 	vuint8* NextChunk(vuint8* prev) const;
 	void Serialise(VStream& Strm);
-	void StartTypedACScripts(int Type);
+	void StartTypedACScripts(int Type, int Arg1, int Arg2, int Arg3,
+		VEntity* Activator, bool Always, bool RunNow);
 
 public:
 	VAcsLevel*			Level;
@@ -1177,7 +1178,8 @@ void VAcsObject::SetArrayVal(int ArrayIdx, int Index, int Value)
 //
 //==========================================================================
 
-void VAcsObject::StartTypedACScripts(int Type)
+void VAcsObject::StartTypedACScripts(int Type, int Arg1, int Arg2, int Arg3,
+	VEntity* Activator, bool Always, bool RunNow)
 {
 	guard(VAcsObject::StartTypedACScripts);
 	for (int i = 0; i < NumScripts; i++)
@@ -1185,8 +1187,12 @@ void VAcsObject::StartTypedACScripts(int Type)
 		if (Scripts[i].Type == Type)
 		{
 			// Auto-activate
-			Level->SpawnScript(&Scripts[i], this, NULL, NULL, 0, 0, 0, 0,
-				true, true);
+			VAcs* Script = Level->SpawnScript(&Scripts[i], this, Activator,
+				NULL, 0, Arg1, Arg2, Arg3, Always, !RunNow);
+			if (RunNow)
+			{
+				Script->RunScript(host_frametime);
+			}
 		}
 	}
 	unguard;
@@ -1303,12 +1309,14 @@ VAcsObject* VAcsLevel::GetObject(int Index)
 //
 //==========================================================================
 
-void VAcsLevel::StartTypedACScripts(int Type)
+void VAcsLevel::StartTypedACScripts(int Type, int Arg1, int Arg2, int Arg3,
+	VEntity* Activator, bool Always, bool RunNow)
 {
 	guard(VAcsLevel::StartTypedACScripts);
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 	{
-		LoadedObjects[i]->StartTypedACScripts(Type);
+		LoadedObjects[i]->StartTypedACScripts(Type, Arg1, Arg2, Arg3,
+			Activator, Always, RunNow);
 	}
 	unguard;
 }
@@ -4783,4 +4791,18 @@ IMPLEMENT_FUNCTION(VLevel, TerminateACS)
 	P_GET_INT(number);
 	P_GET_SELF;
 	RET_BOOL(Self->Acs->Terminate(number, map));
+}
+
+IMPLEMENT_FUNCTION(VLevel, StartTypedACScripts)
+{
+	P_GET_BOOL(RunNow);
+	P_GET_BOOL(Always);
+	P_GET_REF(VEntity, Activator);
+	P_GET_INT(Arg3);
+	P_GET_INT(Arg2);
+	P_GET_INT(Arg1);
+	P_GET_INT(Type);
+	P_GET_SELF;
+	Self->Acs->StartTypedACScripts(Type, Arg1, Arg2, Arg3, Activator, Always,
+		RunNow);
 }

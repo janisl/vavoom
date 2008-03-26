@@ -5185,6 +5185,9 @@ void Died(EntityEx source, EntityEx inflictor)
 		//	Display obituary.
 		PlayerEx(Player).DisplayObituary(inflictor, source, DamageType);
 
+		XLevel.StartTypedACScripts(Level::SCRIPT_Death, 0, 0, 0, self, true,
+			false);
+
 		PlayerEx(Player).Deaths++;
 
 		// Count environment kills against you

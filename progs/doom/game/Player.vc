@@ -433,6 +433,12 @@ void SpawnPlayer(mthing_t * mthing)
 	SetClientModel();
 
 	UpdateRevealedMap();
+
+	if (ResetInventory)
+	{
+		Level.XLevel.StartTypedACScripts(Level::SCRIPT_Respawn, 0, 0, 0, MO,
+			true, false);
+	}
 }
 
 //==========================================================================
