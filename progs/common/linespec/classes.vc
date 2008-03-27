@@ -184,6 +184,11 @@ enum
 
 #include "GlassShard.vc"
 
+#include "InvisibleBridge.vc"
+#include "InvisibleBridge32.vc"
+#include "InvisibleBridge16.vc"
+#include "InvisibleBridge8.vc"
+
 #include "LineSpecialClientGame.vc"
 
 //	We need Doom classes because of the DECORATE.
