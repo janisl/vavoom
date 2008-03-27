@@ -1885,6 +1885,39 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		GCon->Logf("Unsupported flag ForceXYBillboard in %s", Class->GetName());
 		return true;
 	}
+	//
+	//	Not documented
+	//
+	if (!Flag.ICmp("InFloat"))
+	{
+		SetClassFieldBool(Class, "bInFloat", Value);
+		return true;
+	}
+	if (!Flag.ICmp("SkullFly"))
+	{
+		SetClassFieldBool(Class, "bSkullFly", Value);
+		return true;
+	}
+	if (!Flag.ICmp("Blasted"))
+	{
+		SetClassFieldBool(Class, "bBlasted", Value);
+		return true;
+	}
+	if (!Flag.ICmp("AlwaysRespawn"))
+	{
+		SetClassFieldBool(Class, "bAlwaysRespawn", Value);
+		return true;
+	}
+	if (!Flag.ICmp("NeverRespawn"))
+	{
+		SetClassFieldBool(Class, "bNeverRespawn", Value);
+		return true;
+	}
+	if (!Flag.ICmp("DontRip"))
+	{
+		SetClassFieldBool(Class, "bDontRip", Value);
+		return true;
+	}
 
 	//
 	//	Inventory class flags.
@@ -1950,6 +1983,11 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		if (!Flag.ICmp("Inventory.IgnoreSkill"))
 		{
 			SetClassFieldBool(Class, "bIgnoreSkill", Value);
+			return true;
+		}
+		if (!Flag.ICmp("Inventory.AdditiveTime"))
+		{
+			SetClassFieldBool(Class, "bAdditiveTime", Value);
 			return true;
 		}
 	}
@@ -2039,6 +2077,18 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		if (!Flag.ICmp("Weapon.No_Auto_Switch"))
 		{
 			SetClassFieldBool(Class, "bNoAutoSwitch", Value);
+			return true;
+		}
+	}
+
+	//
+	//	PlayerPawn class flags.
+	//
+	if (Class->IsChildOf(PlayerPawnClass))
+	{
+		if (!Flag.ICmp("PickUp"))
+		{
+			SetClassFieldBool(Class, "bPickUp", Value);
 			return true;
 		}
 	}
@@ -3918,6 +3968,27 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 				continue;
 			}
 		}
+
+		//
+		//	MorphProjectile class properties.
+		//
+/*		if (Class->IsChildOf(MorphProjectileClass))
+		{
+			if (!Prop.ICmp("MorphProjectile.MonsterClass"))
+			{
+				//FIXME
+				sc->ExpectNumber();
+				GCon->Logf("Property MorphProjectile.MonsterClass in %s is not yet supported", Class->GetName());
+				continue;
+			}
+			if (!Prop.ICmp("MorphProjectile.PlayerClass"))
+			{
+				//FIXME
+				sc->ExpectString();
+				GCon->Logf("Property MorphProjectile.PlayerClass in %s is not yet supported", Class->GetName());
+				continue;
+			}
+		}*/
 
 		sc->Error(va("Unknown property %s", *Prop));
 	}

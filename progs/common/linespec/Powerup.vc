@@ -102,9 +102,15 @@ bool HandlePickup(Inventory Item)
 			return true;
 		}
 		//	Only increase effect time.
-		if (EffectTime < Pow.EffectTime)
+		if (Pow.bAdditiveTime)
+		{
+			EffectTime += Pow.EffectTime;
+			BlendColour = Pow.BlendColour;
+		}
+		else if (EffectTime < Pow.EffectTime)
 		{
 			EffectTime = Pow.EffectTime;
+			BlendColour = Pow.BlendColour;
 		}
 		Item.bPickupGood = true;
 		return true;

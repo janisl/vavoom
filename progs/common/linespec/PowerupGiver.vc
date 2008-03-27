@@ -58,6 +58,7 @@ bool Use(bool Pickup)
 		Pw.Mode = Mode;
 	}
 	Pw.bAlwaysPickup = bAlwaysPickup;
+	Pw.bAdditiveTime = bAdditiveTime;
 	if (!Pw.TryPickup(EntityEx(Owner)))
 	{
 		Pw.Destroy();

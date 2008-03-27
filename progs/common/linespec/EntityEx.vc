@@ -252,6 +252,9 @@ bool bAlwaysPuff;		// Always show puff, even when hit nothing.
 bool bSynchronised;		// For map spawned things don't randomise tics.
 bool bAlwaysFast;		// Always uses 'fast' attack logic
 bool bNeverFast;		// Never uses 'fast' attack logic
+bool bAlwaysRespawn;	// Always respawns, regardless of skill.
+bool bNeverRespawn;		// Never respawns, regardless of skill.
+bool bDontRip;			// Ripping projectiles explode when hitting this actor.
 
 //  Params
 float			Speed;
@@ -4190,10 +4193,16 @@ final bool CheckMissileSpawn()
 		Origin += Velocity * 0.0142857143;
 	}
 	LinkToWorld();
-	if (!TryMove(Origin))
+	tmtrace_t tmtrace;
+	if (!TryMoveEx(&tmtrace, Origin))
 	{
-		ExplodeMissile();
-		return false;
+		//	Don't explode ripping missiles that spawn inside another thing.
+		if (!tmtrace.BlockingMobj || !bRip ||
+			EntityEx(tmtrace.BlockingMobj).bDontRip)
+		{
+			ExplodeMissile();
+			return false;
+		}
 	}
 	return true;
 }
@@ -5446,7 +5455,7 @@ bool Touch(Entity InOther)
 			return true;
 		}
 
-		if (bRip)
+		if (bRip && !Other.bDontRip)
 		{
 			if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
 			{
@@ -6186,13 +6195,16 @@ void Tick(float deltaTime)
 	else
 	{
 		// Check for nightmare respawn
-		if (!bMonster)
+		if (!bAlwaysRespawn)
 		{
-			return;
-		}
-		if (!LineSpecialGameInfo(Level.Game).respawnmonsters)
-		{
-			return;
+			if (!bMonster || bDormant || bNeverRespawn)
+			{
+				return;
+			}
+			if (!LineSpecialGameInfo(Level.Game).respawnmonsters)
+			{
+				return;
+			}
 		}
 
 		MoveCount++;

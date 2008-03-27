@@ -77,6 +77,8 @@ bool				bHubPower;
 bool				bInterHubStrip;
 //	No feedback when picked up
 bool				bQuiet;
+//	When picked up while it's still active, time is added
+bool				bAdditiveTime;
 
 replication
 {
