@@ -93,6 +93,8 @@
 #include "Puffy.vc"
 #include "EggFX.vc"
 #include "ActivatedTimeBomb.vc"
+#include "BridgeBall.vc"
+#include "Bridge.vc"
 
 #include "PodGoo.vc"
 #include "Pod.vc"

@@ -38,6 +38,8 @@
 #include "TeleportFog.vc"
 #include "ForceFieldGuard.vc"
 #include "ZombieSpawner.vc"
+#include "BridgeBall.vc"
+#include "Bridge.vc"
 
 #include "PunchDagger.vc"
 #include "StrifeZap1.vc"
