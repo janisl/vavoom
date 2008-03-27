@@ -23,6 +23,7 @@
 //**
 //**************************************************************************
 
+#include "HexenDefs.vc"
 #include "MainGameInfo.vc"
 #include "HexenLevelInfo.vc"
 #include "HexenWorldInfo.vc"
