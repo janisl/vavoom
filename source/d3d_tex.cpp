@@ -288,7 +288,7 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex,
 
 	if (Translation || CMap)
 	{
-		VTexture::VTransData* TData = Tex->FindDriverTrans(Translation);
+		VTexture::VTransData* TData = Tex->FindDriverTrans(Translation, CMap);
 		if (!TData)
 		{
 			TData = &Tex->DriverTranslated.Alloc();

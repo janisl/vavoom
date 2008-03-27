@@ -1047,7 +1047,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	guard(VDirect3DDrawer::DrawSpritePolygon);
 	MyD3DVertex		out[4];
 
-	SetSpriteLump(Tex, Translation);
+	SetSpriteLump(Tex, Translation, CMap);
 
 	int l = ((int)(Alpha * 255) << 24) | (light & 0x00ffffff);
 	for (int i = 0; i < 4; i++)
