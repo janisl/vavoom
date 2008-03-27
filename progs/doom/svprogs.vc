@@ -27,9 +27,6 @@
 //**
 //**************************************************************************
 
-import shared;
 import linespec;
-
-//#define GRENADE_LAUNCHER
 
 #include "game/classes.vc"

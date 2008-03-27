@@ -19,11 +19,9 @@ cd..
 cd progs
 cd doom
 
-vcc -I../common -P../common doomdefs.vc shared.dat
 vcc -I../common -P../common svprogs.vc svprogs.dat
 vcc -I../common -P../common clprogs.vc clprogs.dat
 
-copy shared.dat D:\korax\vavoom\source\svn\basev\doom1\progs\
 copy svprogs.dat D:\korax\vavoom\source\svn\basev\doom1\progs\
 copy clprogs.dat D:\korax\vavoom\source\svn\basev\doom1\progs\
 

@@ -35,6 +35,33 @@ const int ST_MUCHPAIN				= 20;
 const int MAXHEALTH					= 100;
 
 //
+//  FACE WIDGET MACROS
+//
+enum
+{
+// Number of status faces.
+	ST_NUMPAINFACES		= 5,
+	ST_NUMSTRAIGHTFACES	= 3,
+	ST_NUMTURNFACES		= 2,
+	ST_NUMSPECIALFACES	= 3,
+
+	ST_FACESTRIDE
+          = (ST_NUMSTRAIGHTFACES + ST_NUMTURNFACES + ST_NUMSPECIALFACES),
+
+	ST_NUMEXTRAFACES	= 2,
+
+	ST_NUMFACES
+          = (ST_FACESTRIDE*ST_NUMPAINFACES+ST_NUMEXTRAFACES),
+
+	ST_TURNOFFSET		= (ST_NUMSTRAIGHTFACES),
+	ST_OUCHOFFSET		= (ST_TURNOFFSET + ST_NUMTURNFACES),
+	ST_EVILGRINOFFSET	= (ST_OUCHOFFSET + 1),
+	ST_RAMPAGEOFFSET	= (ST_EVILGRINOFFSET + 1),
+	ST_GODFACE			= (ST_NUMPAINFACES * ST_FACESTRIDE),
+	ST_DEADFACE			= (ST_GODFACE + 1)
+};
+
+//
 //  FACE WIDGET DATA
 //
 
@@ -886,7 +913,7 @@ int CalcPainOffset()
 	if (health != sb_cpo_oldhealth)
 	{
 		sb_cpo_lastcalc =
-			DoomDefs::ST_FACESTRIDE * (((100 - health) * DoomDefs::ST_NUMPAINFACES) / 101);
+			ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
 		sb_cpo_oldhealth = health;
 	}
 	return sb_cpo_lastcalc;
@@ -921,7 +948,7 @@ void UpdateFaceWidget(float FrameTime)
 		if (!Health)
 		{
 			sb_face_priority = 9;
-			sb_faceindex = DoomDefs::ST_DEADFACE;
+			sb_faceindex = ST_DEADFACE;
 			sb_facetime = 0.01;
 		}
 	}
@@ -943,7 +970,7 @@ void UpdateFaceWidget(float FrameTime)
 				// evil grin if just picked up weapon
 				sb_face_priority = 8;
 				sb_facetime = ST_EVILGRINTIME;
-				sb_faceindex = CalcPainOffset() + DoomDefs::ST_EVILGRINOFFSET;
+				sb_faceindex = CalcPainOffset() + ST_EVILGRINOFFSET;
 			}
 		}
 	}
@@ -958,7 +985,7 @@ void UpdateFaceWidget(float FrameTime)
 			if (Health - sb_oldhealth > ST_MUCHPAIN)
 			{
 				sb_facetime = ST_TURNTIME;
-				sb_faceindex = CalcPainOffset() + DoomDefs::ST_OUCHOFFSET;
+				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
 			}
 			else
 			{
@@ -984,17 +1011,17 @@ void UpdateFaceWidget(float FrameTime)
 				if (diffang < 45.0)
 				{
 					// head-on
-					sb_faceindex += DoomDefs::ST_RAMPAGEOFFSET;
+					sb_faceindex += ST_RAMPAGEOFFSET;
 				}
 				else if (i)
 				{
 					// turn face right
-					sb_faceindex += DoomDefs::ST_TURNOFFSET;
+					sb_faceindex += ST_TURNOFFSET;
 				}
 				else
 				{
 					// turn face left
-					sb_faceindex += DoomDefs::ST_TURNOFFSET + 1;
+					sb_faceindex += ST_TURNOFFSET + 1;
 				}
 			}
 		}
@@ -1009,13 +1036,13 @@ void UpdateFaceWidget(float FrameTime)
 			{
 				sb_face_priority = 7;
 				sb_facetime = ST_TURNTIME;
-				sb_faceindex = CalcPainOffset() + DoomDefs::ST_OUCHOFFSET;
+				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
 			}
 			else
 			{
 				sb_face_priority = 6;
 				sb_facetime = ST_TURNTIME;
-				sb_faceindex = CalcPainOffset() + DoomDefs::ST_RAMPAGEOFFSET;
+				sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
 			}
 		}
 	}
@@ -1033,7 +1060,7 @@ void UpdateFaceWidget(float FrameTime)
 				if (sb_face_lastattackdown <= 0.0)
 				{
 					sb_face_priority = 5;
-					sb_faceindex = CalcPainOffset() + DoomDefs::ST_RAMPAGEOFFSET;
+					sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
 					sb_facetime = 0.01;
 					sb_face_lastattackdown = 0.01;
 				}
@@ -1050,7 +1077,7 @@ void UpdateFaceWidget(float FrameTime)
 		{
 			sb_face_priority = 4;
 
-			sb_faceindex = DoomDefs::ST_GODFACE;
+			sb_faceindex = ST_GODFACE;
 			sb_facetime = 0.01;
 		}
 	}

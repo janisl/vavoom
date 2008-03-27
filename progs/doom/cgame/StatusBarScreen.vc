@@ -114,7 +114,7 @@ int pic_graynum[10];
 int pic_minus;
 int pic_percent;
 int pic_faceback;
-int pic_faces[DoomDefs::ST_NUMFACES];
+int pic_faces[Player::ST_NUMFACES];
 int pic_keys[6];
 int pic_pause;
 //For Icons in Fullscreen HUD
@@ -153,27 +153,27 @@ void StartMap()
 		pic_keys[i] = R_RegisterPic(StrToName(va("stkeys%d", i)));
 	}
 
-	for (i = 0; i < DoomDefs::ST_NUMPAINFACES; i++)
+	for (i = 0; i < Player::ST_NUMPAINFACES; i++)
 	{
-		pic_faces[i * DoomDefs::ST_FACESTRIDE] =
+		pic_faces[i * Player::ST_FACESTRIDE] =
 			R_RegisterPic(StrToName(va("stfst%d0", i)));
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 1] =
+		pic_faces[i * Player::ST_FACESTRIDE + 1] =
 			R_RegisterPic(StrToName(va("stfst%d1", i)));
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 2] =
+		pic_faces[i * Player::ST_FACESTRIDE + 2] =
 			R_RegisterPic(StrToName(va("stfst%d2", i)));
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 3] =
+		pic_faces[i * Player::ST_FACESTRIDE + 3] =
 			R_RegisterPic(StrToName(va("stftr%d0", i)));
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 4] =
+		pic_faces[i * Player::ST_FACESTRIDE + 4] =
 			R_RegisterPic(StrToName(va("stftl%d0", i)));
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 5] =
+		pic_faces[i * Player::ST_FACESTRIDE + 5] =
 			R_RegisterPic(StrToName(va("stfouch%d", i)));
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 6] =
+		pic_faces[i * Player::ST_FACESTRIDE + 6] =
 			R_RegisterPic(StrToName(va("stfevl%d", i)));
-		pic_faces[i * DoomDefs::ST_FACESTRIDE + 7] =
+		pic_faces[i * Player::ST_FACESTRIDE + 7] =
 			R_RegisterPic(StrToName(va("stfkill%d", i)));
 	}
-	pic_faces[DoomDefs::ST_GODFACE] = R_RegisterPic('stfgod0');
-	pic_faces[DoomDefs::ST_DEADFACE] = R_RegisterPic('stfdead0');
+	pic_faces[Player::ST_GODFACE] = R_RegisterPic('stfgod0');
+	pic_faces[Player::ST_DEADFACE] = R_RegisterPic('stfdead0');
 
 	pic_pause = R_RegisterPic('m_pause');
 

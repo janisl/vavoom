@@ -5,7 +5,6 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.ls vlumpy
 		basepak.ls.in
 		mapinfo.txt
-		${CMAKE_CURRENT_BINARY_DIR}/progs/shared.dat
 		${CMAKE_CURRENT_BINARY_DIR}/progs/clprogs.dat
 		${CMAKE_CURRENT_BINARY_DIR}/progs/svprogs.dat
 	)
