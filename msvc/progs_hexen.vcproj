@@ -25,8 +25,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/hexndefs.vc ../basev/hexen/progs/shared.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/svprogs.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/clprogs.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;"
-				Outputs="../basev/hexen/progs/shared.dat;../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/game/classes.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/cgame/classes.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;"
+				Outputs="../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -88,8 +88,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/hexndefs.vc ../basev/hexen/progs/shared.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/svprogs.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/clprogs.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs -I../progs/common&#x0D;&#x0A;"
-				Outputs="../basev/hexen/progs/shared.dat;../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/game/classes.vc ../basev/hexen/progs/svprogs.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/cgame/classes.vc ../basev/hexen/progs/clprogs.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;"
+				Outputs="../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -145,14 +145,6 @@
 	</References>
 	<Files>
 		<Filter
-			Name="shared"
-			>
-			<File
-				RelativePath="..\progs\hexen\hexndefs.vc"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="cgame"
 			>
 			<File
@@ -161,10 +153,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\cgame\ClientGame.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\clprogs.vc"
 				>
 			</File>
 			<File
@@ -248,18 +236,6 @@
 			Name="game"
 			>
 			<File
-				RelativePath="..\progs\hexen\game\Actor.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\AmuletOfWarding.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Arrow.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ArtiBlastRadius.vc"
 				>
 			</File>
@@ -268,27 +244,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ArtiBoostMana.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ArtiDarkServant.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ArtiFly.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ArtiHealingRadius.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ArtiHealth.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ArtiInvulnerability.vc"
 				>
 			</File>
 			<File
@@ -300,27 +260,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ArtiSpeedBoots.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ArtiSuperHealth.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ArtiTeleport.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\ArtiTeleportOther.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ArtiTorch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\AxeBlood.vc"
 				>
 			</File>
 			<File
@@ -364,23 +308,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Blood.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\BloodPool.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\BloodSplash.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\BloodSplashBase.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\BloodSplatter.vc"
 				>
 			</File>
 			<File
@@ -392,19 +320,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\BrassTorch.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\Bridge.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\BridgeBall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\BurnableTree.vc"
 				>
 			</File>
 			<File
@@ -480,10 +400,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\CrystalVial.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\CStaffMissile.vc"
 				>
 			</File>
@@ -517,14 +433,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\CWeapWraithverge.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Dart.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Decoration.vc"
 				>
 			</File>
 			<File
@@ -592,30 +500,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Dirt1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Dirt2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Dirt3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Dirt4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Dirt5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Dirt6.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\DirtClump.vc"
 				>
 			</File>
@@ -648,10 +532,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\FalconShield.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\FighterBoss.vc"
 				>
 			</File>
@@ -665,10 +545,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\FighterWeaponPiece.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FireBall.vc"
 				>
 			</File>
 			<File
@@ -712,39 +588,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\FireThing.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FlameLarge.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FlameLarge2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FlameLargeTemp.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\FlamePuff.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\FlamePuff2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FlameSmall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FlameSmall2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FlameSmallTemp.vc"
 				>
 			</File>
 			<File
@@ -824,10 +672,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\GlassShard.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\HammerMissile.vc"
 				>
 			</File>
@@ -840,7 +684,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\HexenKey.vc"
+				RelativePath="..\progs\hexen\game\HexenDefs.vc"
 				>
 			</File>
 			<File
@@ -876,18 +720,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\HWaterDrip.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\IceChunk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\IceChunkHead.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\IceFXPuff.vc"
 				>
 			</File>
@@ -920,50 +752,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\KeyAxe.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeyCastle.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeyCave.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeyDungeon.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeyEmerald.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeyFire.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeyHorn.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeyRusted.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeySilver.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeySteel.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\KeySwamp.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\Korax.vc"
 				>
 			</File>
@@ -973,14 +761,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\KoraxSpirit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\LavaSmoke.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\LavaSplash.vc"
 				>
 			</File>
 			<File
@@ -1052,22 +832,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Mana1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Mana2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Mana3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\MeshArmor.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\MinotaurFloorFire.vc"
 				>
 			</File>
@@ -1136,15 +900,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\PlatinumHelm.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\Player.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PlayerPawn.vc"
 				>
 			</File>
 			<File
@@ -1157,10 +913,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\PoisonCloud.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PoisonDart.vc"
 				>
 			</File>
 			<File
@@ -1188,95 +940,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ProjectileBlade.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\PunchPuff.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzBook1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzBook2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzCWeapon.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzFlameMask.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzFWeapon.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGear1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGear2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGear3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGear4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGemBig.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGemBlue1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGemBlue2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGemGreen1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGemGreen2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzGemRed.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzMWeapon.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\PuzzSkull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\RipperBall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Rock1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Rock2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Rock3.vc"
 				>
 			</File>
 			<File
@@ -1305,62 +969,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\SerpentLeader.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard0.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard6.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard7.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard8.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SGShard9.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SlimeChunk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SlimeSplash.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SludgeChunk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SludgeSplash.vc"
 				>
 			</File>
 			<File
@@ -1416,75 +1024,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\SoundWaterfall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\SoundWindHexen.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\StaticLightSource.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\StaticRGBLightSource.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\SummoningDoll.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\svprogs.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit10.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit6.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit7.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit8.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TableShit9.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\TeleportFog.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\TeleSmoke.vc"
 				>
 			</File>
 			<File
@@ -1520,18 +1064,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\TreeDestructible.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WaterSplash.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\WaterSplashBase.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\Wraith.vc"
 				>
 			</File>
@@ -1564,83 +1096,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ZBannerTattered.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZBarrel.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ZBell.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZBlueCandle.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZBucket.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZCandle.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZCauldron.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZCauldronUnlit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChainBit32.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChainBit64.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChainEndHearth.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChainEndHook1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChainEndHook2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChainEndSkull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChainEndSpike.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChandelier.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZChandelierUnlit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZCorpseHanging.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZCorpseKabob.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZCorpseLynched.vc"
 				>
 			</File>
 			<File
@@ -1652,347 +1108,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ZCorpseSleeping.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZFireBull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZFireBullUnlit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZGemPedestal.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZIronMaiden.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZLog.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZMossCeiling1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZMossCeiling2.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ZPoisonShroom.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ZRock1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRock2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRock3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRock4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRockBlack.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRockBrown1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRockBrown2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRubble1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRubble2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZRubble3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomLarge1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomLarge2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomLarge3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomSmall1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomSmall2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomSmall3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomSmall4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShroomSmall5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShrub1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZShrub2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalactiteIceLarge.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalactiteIceMedium.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalactiteIceSmall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalactiteIceTiny.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalactiteLarge.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalactiteMedium.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalactiteSmall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmiteIceLarge.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmiteIceMedium.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmiteIceSmall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmiteIceTiny.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmiteLarge.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmiteMedium.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmitePillar.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStalagmiteSmall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleBlueShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleBlueTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleDarkRedShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleDarkRedTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleGreenShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleGreenTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleRedShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleRedTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleRustShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleRustTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleStripeTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleTanShort.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStatueGargoyleTanTall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStumpBare.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStumpBurned.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStumpSwamp1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZStumpSwamp2.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ZSuitOfArmor.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZSwampVine.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTombstoneBigCross.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTombstoneBrianP.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTombstoneBrianR.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTombstoneCrossCircle.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTombstoneRIP.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTombstoneShane.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTombstoneSmallCross.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTree.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTreeDead.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTreeGnarled1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTreeGnarled2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTreeLarge1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTreeLarge2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTreeSwamp120.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTreeSwamp150.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTwinedTorch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZTwinedTorchUnlit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZVasePillar.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZWallTorch.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZWallTorchUnlit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZWingedStatue.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZWingedStatueNoSkull.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ZXmasTree.vc"
 				>
 			</File>
 		</Filter>

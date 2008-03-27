@@ -25,8 +25,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/shared.vc ../basev/doom2/progs/shared.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/svprogs.vc ../basev/doom2/progs/svprogs.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/clprogs.vc ../basev/doom2/progs/clprogs.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/common"
-				Outputs="../basev/doom2/progs/shared.dat;../basev/doom2/progs/svprogs.dat;../basev/doom2/progs/clprogs.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/svprogs.vc ../basev/doom2/progs/svprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/clprogs.vc ../basev/doom2/progs/clprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;"
+				Outputs="../basev/doom2/progs/svprogs.dat;../basev/doom2/progs/clprogs.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -88,8 +88,8 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/shared.vc ../basev/doom2/progs/shared.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/svprogs.vc ../basev/doom2/progs/svprogs.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/common&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/clprogs.vc ../basev/doom2/progs/clprogs.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/common"
-				Outputs="../basev/doom2/progs/shared.dat;../basev/doom2/progs/svprogs.dat;../basev/doom2/progs/clprogs.dat"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/svprogs.vc ../basev/doom2/progs/svprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/clprogs.vc ../basev/doom2/progs/clprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;"
+				Outputs="../basev/doom2/progs/svprogs.dat;../basev/doom2/progs/clprogs.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -146,10 +146,6 @@
 	<Files>
 		<File
 			RelativePath="..\progs\doom2\clprogs.vc"
-			>
-		</File>
-		<File
-			RelativePath="..\progs\doom2\shared.vc"
 			>
 		</File>
 		<File
