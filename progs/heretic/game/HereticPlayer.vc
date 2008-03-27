@@ -27,40 +27,6 @@ class HereticPlayer : PlayerPawn;
 
 //==========================================================================
 //
-//  A_SkullPop
-//
-//==========================================================================
-
-final void A_SkullPop()
-{
-	EntityEx A;
-
-	if (!bIsPlayer)
-	{
-		//	Not a player anymore, i.e. already respawned or disconnected.
-		return;
-	}
-	bSolid = false;
-	A = Spawn(BloodySkull, Origin + vector(0.0, 0.0, 48.0),,, false);
-	A.Velocity.x = (Random() - Random()) * 2.0 * 35.0;
-	A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
-	A.Velocity.z = (2.0 + Random() / 4.0) * 35.0;
-	// Attach player mobj to bloody skull
-	A.Player = Player;
-	A.bIsPlayer = true;
-	A.ObtainInventory(EntityEx(Player.MO));
-	Player = none;
-	bIsPlayer = false;
-	A.Health = Health;
-	A.Angles.yaw = Angles.yaw;
-	A.Player.MO = A;
-	A.Player.Camera = A;
-	Player(A.Player).DamageFlash = 1.0;
-	LineSpecialLevelInfo(Level).AddPlayerCorpse(self);
-}
-
-//==========================================================================
-//
 //	A_FlameSnd
 //
 //==========================================================================
@@ -97,7 +63,7 @@ Death:
 	Stop
 XDeath:
 	PLAY Q 5 A_PlayerScream
-	PLAY R 5 A_SkullPop
+	PLAY R 5 { A_SkullPop(); }
 	PLAY S 5 A_NoBlocking
 	PLAY TUVWX 5
 	PLAY Y -1

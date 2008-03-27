@@ -201,6 +201,8 @@ enum
 
 #include "Feather.vc"
 
+#include "BloodySkull.vc"
+#include "HexenBloodySkull.vc"
 #include "IceChunk.vc"
 #include "IceChunkHead.vc"
 

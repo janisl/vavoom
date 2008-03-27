@@ -98,7 +98,7 @@ class Actor extends Thinker
 	action native A_CheckSight(state label);
 	action native A_CheckFloor(state label);
 	action native A_CheckPlayerDone();
-	//A_SkullPop
+	action native A_SkullPop(optional class<Actor> spawntype);
 
 	//
 	//	Spawn functions
