@@ -30,6 +30,7 @@
 #include "BotPlayer.vc"
 
 #include "TeleportFog.vc"
+#include "Bridge.vc"
 
 #include "Gibs.vc"
 
