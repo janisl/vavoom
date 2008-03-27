@@ -158,6 +158,8 @@ enum
 #include "SecActEyesAboveC.vc"
 #include "SecActHitFakeFloor.vc"
 
+#include "FlashFader.vc"
+
 #include "Unknown.vc"
 #include "PatrolPoint.vc"
 #include "PatrolSpecial.vc"

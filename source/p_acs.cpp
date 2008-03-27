@@ -3266,34 +3266,23 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_FadeTo)
-			STUB(PCD_FadeTo)
-			//FIXME implement this
-			//sp[-5] - r
-			//sp[-4] - g
-			//sp[-3] - b
-			//sp[-2] - a
-			//sp[-1] - time, fixed point
+			Level->eventAcsFadeRange(0, 0, 0, -1, (float)sp[-5] / 255.0,
+				(float)sp[-4] / 255.0, (float)sp[-3] / 255.0,
+				(float)sp[-2] / 65536.0, (float)sp[-1] / 65536.0, Activator);
 			sp -= 5;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_FadeRange)
-			STUB(PCD_FadeRange)
-			//FIXME implement this
-			//sp[-9] - r1
-			//sp[-8] - g1
-			//sp[-7] - b1
-			//sp[-6] - a1
-			//sp[-5] - r2
-			//sp[-4] - g2
-			//sp[-3] - b2
-			//sp[-2] - a2
-			//sp[-1] - time, fixed point
+			Level->eventAcsFadeRange((float)sp[-9] / 255.0,
+				(float)sp[-8] / 255.0, (float)sp[-7] / 255.0,
+				(float)sp[-6] / 65536.0, (float)sp[-5] / 255.0,
+				(float)sp[-4] / 255.0, (float)sp[-3] / 255.0,
+				(float)sp[-2] / 65536.0, (float)sp[-1] / 65536.0, Activator);
 			sp -= 9;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CancelFade)
-			STUB(PCD_CancelFade)
-			//FIXME implement this
+			Level->eventAcsCancelFade(Activator);
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PlayMovie)
@@ -4607,13 +4596,43 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetActorState)
-			STUB(PCD_SetActorState)
-			//sp[-3] - TID, 0 - activator
-			//sp[-2] - State name (stirng)
-			//sp[-1] - Exact match
-			//returns success
-			sp[-3] = 0;
-			sp -= 2;
+			{
+				TArray<VName> Names;
+				VMemberBase::StaticSplitStateLabel(GetStr(sp[-2]), Names);
+				if (!sp[-3])
+				{
+					VStateLabel* Lbl = !Activator ? NULL :
+						Activator->GetClass()->FindStateLabel(Names, !!sp[-1]);
+					if (Lbl && Lbl->State)
+					{
+						Activator->SetState(Lbl->State);
+						sp[-3] = 1;
+					}
+					else
+					{
+						sp[-3] = 0;
+					}
+				}
+				else
+				{
+					int searcher = -1;
+					int Count = 0;
+					for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-3],
+						&searcher); Ent; Ent = Level->eventFindMobjFromTID(
+						sp[-2], &searcher))
+					{
+						VStateLabel* Lbl = Ent->GetClass()->FindStateLabel(
+							Names, !!sp[-1]);
+						if (Lbl && Lbl->State)
+						{
+							Ent->SetState(Lbl->State);
+							Count++;
+						}
+					}
+					sp[-3] = Count;
+				}
+				sp -= 2;
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingDamage2)

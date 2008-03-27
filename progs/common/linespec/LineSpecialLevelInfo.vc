@@ -6644,6 +6644,97 @@ void UpdateParticle(particle_t * p, float DeltaTime)
 	}
 }
 
+//==========================================================================
+//
+//	AcsFadeRange
+//
+//==========================================================================
+
+void AcsFadeRange(float BlendR1, float BlendG1, float BlendB1, float BlendA1,
+	float BlendR2, float BlendG2, float BlendB2, float BlendA2,
+	float Duration, Entity Activator)
+{
+	if (Activator)
+	{
+		if (!Activator.bIsPlayer)
+		{
+			return;
+		}
+		StartFlashFader(BlendR1, BlendG1, BlendB1, BlendA1, BlendR2,
+			BlendG2, BlendB2, BlendA2, Duration, Activator);
+	}
+	else
+	{
+		BasePlayer P;
+		foreach AllActivePlayers(P)
+		{
+			StartFlashFader(BlendR1, BlendG1, BlendB1, BlendA1, BlendR2,
+				BlendG2, BlendB2, BlendA2, Duration, P.MO);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	StartFlashFader
+//
+//==========================================================================
+
+final void StartFlashFader(float BlendR1, float BlendG1, float BlendB1,
+	float BlendA1, float BlendR2, float BlendG2, float BlendB2,
+	float BlendA2, float Duration, Entity ForWho)
+{
+	PlayerEx P = PlayerEx(ForWho.Player);
+	if (Duration <= 0.0)
+	{
+		P.BlendR = BlendR2;
+		P.BlendG = BlendG2;
+		P.BlendB = BlendB2;
+		P.BlendA = BlendA2;
+	}
+	else
+	{
+		if (BlendA1 < 0.0)
+		{
+			if (P.BlendA <= 0.0)
+			{
+				BlendR1 = BlendR2;
+				BlendG1 = BlendG2;
+				BlendB1 = BlendB2;
+				BlendA1 = 0.0;
+			}
+			else
+			{
+				BlendR1 = P.BlendR;
+				BlendG1 = P.BlendG;
+				BlendB1 = P.BlendB;
+				BlendA1 = P.BlendA;
+			}
+		}
+		FlashFader F = Spawn(FlashFader);
+		F.Init(BlendR1, BlendG1, BlendB1, BlendA1, BlendR2, BlendG2, BlendB2,
+			BlendA2, Duration, EntityEx(ForWho));
+	}
+}
+
+//==========================================================================
+//
+//	AcsCancelFade
+//
+//==========================================================================
+
+void AcsCancelFade(Entity Activator)
+{
+	Thinker Th;
+	foreach AllThinkers(FlashFader, Th)
+	{
+		if (!Activator || FlashFader(Th).ForWho == Activator)
+		{
+			FlashFader(Th).Cancel();
+		}
+	}
+}
+
 defaultproperties
 {
 	ExtPlayersBase = 4001;

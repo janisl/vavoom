@@ -111,6 +111,11 @@ float			MorphTime;	// player is morphed into something if > 0
 int				Accuracy;
 int				Stamina;
 
+float			BlendR;
+float			BlendG;
+float			BlendB;
+float			BlendA;
+
 replication
 {
 	reliable if (!bIsClient)
@@ -1574,6 +1579,12 @@ void PaletteFlash()
 		{
 			AddBlend(r, g, b, a, Blend);
 		}
+	}
+
+	if (BlendA)
+	{
+		AddBlend(r, g, b, a, RGBA(ftoi(BlendR * 255.0), ftoi(BlendG * 255.0),
+			ftoi(BlendB * 255.0), ftoi(BlendA * 255.0)));
 	}
 
 	if (r > 1.0)

@@ -2416,6 +2416,46 @@ final void A_Print(string Text, optional float Time, optional string FontName)
 
 //============================================================================
 //
+//  A_SetBlend
+//
+//============================================================================
+
+final void A_SetBlend(string Col1, float A, int Tics, optional string Col2)
+{
+	int C1 = ParseColour(Col1);
+	int C2 = ParseColour(Col2);
+	if (A < 0.0)
+	{
+		A = 0.0;
+	}
+	else if (A > 1.0)
+	{
+		A = 1.0;
+	}
+
+	//	Huh?
+	if (C1 == 0xffffffff)
+	{
+		C1 = 0;
+	}
+	if (C2 == 0xffffffff)
+	{
+		C2 = 0;
+	}
+	if (!specified_Col2)
+	{
+		C2 = C1;
+	}
+
+	FlashFader F = Spawn(FlashFader);
+	F.Init(itof((C1 >> 16) & 0xff) / 255.0, itof((C1 >> 8) & 0xff) / 255.0,
+		itof(C1 & 0xff) / 255.0, A, itof((C2 >> 16) & 0xff) / 255.0,
+		itof((C2 >> 8) & 0xff) / 255.0, itof(C2 & 0xff) / 255.0, 0.0,
+		itof(Tics) / 35.0, self);
+}
+
+//============================================================================
+//
 //  A_CheckSight
 //
 //============================================================================

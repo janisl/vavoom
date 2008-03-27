@@ -482,6 +482,11 @@ int ParseHex(const char* Str)
 vuint32 M_ParseColour(VStr Name)
 {
 	guard(M_ParseColour);
+	if (!Name.Length())
+	{
+		return 0xff000000;
+	}
+
 	VStr Str = LookupColourName(Name);
 	vuint8 Col[3];
 	if (Str[0] == '#')

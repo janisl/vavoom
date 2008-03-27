@@ -94,7 +94,7 @@ class Actor extends Thinker
 	action native A_KlaxonBlare();
 	action native A_CheckTerrain();
 	action native A_Print(string text, optional eval float time, optional string fontname);
-	//A_SetBlend
+	action native A_SetBlend(color color1, eval float alpha, eval int tics, optional color color2);
 	action native A_CheckSight(state label);
 	action native A_CheckFloor(state label);
 	action native A_CheckPlayerDone();

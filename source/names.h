@@ -125,6 +125,8 @@ REGISTER_NAME(SectorDamage)
 REGISTER_NAME(DoThingDamage)
 REGISTER_NAME(SetMarineWeapon)
 REGISTER_NAME(SetMarineSprite)
+REGISTER_NAME(AcsFadeRange)
+REGISTER_NAME(AcsCancelFade)
 
 //	BasePlayer events
 REGISTER_NAME(PutClientIntoServer)

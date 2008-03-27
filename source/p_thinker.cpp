@@ -427,7 +427,7 @@ public:
 		{
 			VBasePlayer* P = Self->Level->Game->Players[Index];
 			Index++;
-			if (P && (P->PlayerFlags && VBasePlayer::PF_Spawned))
+			if (P && (P->PlayerFlags & VBasePlayer::PF_Spawned))
 			{
 				*Out = P;
 				return true;

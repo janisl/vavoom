@@ -1170,6 +1170,28 @@ void SetMarineSprite(int Tid, name SrcClassName, Entity Activator)
 {
 }
 
+//==========================================================================
+//
+//	AcsFadeRange
+//
+//==========================================================================
+
+void AcsFadeRange(float BlendR1, float BlendG1, float BlendB1, float BlendA1,
+	float BlendR2, float BlendG2, float BlendB2, float BlendA2,
+	float Duration, Entity Activator)
+{
+}
+
+//==========================================================================
+//
+//	AcsCancelFade
+//
+//==========================================================================
+
+void AcsCancelFade(Entity Activator)
+{
+}
+
 defaultproperties
 {
 	bAlwaysRelevant = true;

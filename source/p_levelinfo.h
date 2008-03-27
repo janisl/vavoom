@@ -313,6 +313,7 @@ class VLevelInfo : public VThinker
 	}
 	void eventSetMarineWeapon(int Tid, int Weapon, VEntity* Activator)
 	{
+		P_PASS_SELF;
 		P_PASS_INT(Tid);
 		P_PASS_INT(Weapon);
 		P_PASS_REF(Activator);
@@ -320,9 +321,33 @@ class VLevelInfo : public VThinker
 	}
 	void eventSetMarineSprite(int Tid, VName SrcClass, VEntity* Activator)
 	{
+		P_PASS_SELF;
 		P_PASS_INT(Tid);
 		P_PASS_NAME(SrcClass);
 		P_PASS_REF(Activator);
 		EV_RET_VOID(NAME_SetMarineSprite);
+	}
+	void eventAcsFadeRange(float BlendR1, float BlendG1, float BlendB1,
+		float BlendA1, float BlendR2, float BlendG2, float BlendB2,
+		float BlendA2, float Duration, VEntity* Activator)
+	{
+		P_PASS_SELF;
+		P_PASS_FLOAT(BlendR1);
+		P_PASS_FLOAT(BlendG1);
+		P_PASS_FLOAT(BlendB1);
+		P_PASS_FLOAT(BlendA1);
+		P_PASS_FLOAT(BlendR2);
+		P_PASS_FLOAT(BlendG2);
+		P_PASS_FLOAT(BlendB2);
+		P_PASS_FLOAT(BlendA2);
+		P_PASS_FLOAT(Duration);
+		P_PASS_REF(Activator);
+		EV_RET_VOID(NAME_AcsFadeRange);
+	}
+	void eventAcsCancelFade(VEntity* Activator)
+	{
+		P_PASS_SELF;
+		P_PASS_REF(Activator);
+		EV_RET_VOID(NAME_AcsCancelFade);
 	}
 };
