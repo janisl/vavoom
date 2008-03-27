@@ -22,6 +22,12 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**    DOOM and DOOM II progs
+//**
+//**************************************************************************
+
+import linespec;
 
 #include "MainGameInfo.vc"
 #include "DoomLevelInfo.vc"

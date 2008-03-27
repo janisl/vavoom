@@ -25,4 +25,4 @@
 
 #define DOOM2
 
-#include "../doom/clprogs.vc"
+#include "../doom/cgame/classes.vc"

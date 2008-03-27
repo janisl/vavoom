@@ -23,6 +23,8 @@
 //**
 //**************************************************************************
 
+import linespec;
+
 #include "HexenDefs.vc"
 #include "MainGameInfo.vc"
 #include "HexenLevelInfo.vc"

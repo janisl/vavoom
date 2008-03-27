@@ -22,6 +22,13 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**    DOOM and DOOM II client progs
+//**
+//**************************************************************************
+
+import svprogs;
+import uibase;
 
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
