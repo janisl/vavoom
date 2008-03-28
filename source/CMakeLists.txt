@@ -13,6 +13,9 @@ option(ENABLE_ZONE_DEBUG "Enable memory allocation debuging")
 option(ENABLE_CLIENT "Build client executable" ON)
 option(ENABLE_SERVER "Build dedicated server executable" ON)
 option(ENABLE_ASM "Enable assembly-language code" ON)
+if(UNIX)
+option(ENABLE_WRAPPERS "Enable creation of wrapper scripts" ON)
+endif(UNIX)
 
 #---------------------------------------
 #
@@ -916,11 +919,11 @@ if(WITH_FLAC)
 endif(WITH_FLAC)
 
 add_executable(vavoom ${MAIN_SOURCES})
-if(UNIX)
-set_target_properties(vavoom PROPERTIES OUTPUT_NAME ../vavoom.i686)
-else(UNIX)
+if(ENABLE_WRAPPERS)
+set_target_properties(vavoom PROPERTIES OUTPUT_NAME ../vavoom.bin)
+else(ENABLE_WRAPPERS)
 set_target_properties(vavoom PROPERTIES OUTPUT_NAME ../vavoom)
-endif(UNIX)
+endif(ENABLE_WRAPPERS)
 if (MAIN_COMPILE_FLAGS)
 	set_target_properties(vavoom PROPERTIES COMPILE_FLAGS ${MAIN_COMPILE_FLAGS})
 endif (MAIN_COMPILE_FLAGS)
@@ -931,17 +934,17 @@ install(TARGETS vavoom DESTINATION ${BINDIR})
 
 install(FILES vavoom.png DESTINATION ${DATADIR})
 
-if(UNIX)
+if(ENABLE_WRAPPERS)
 	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/vavoom
 "#!/bin/sh
 # Needed to make symlinks/shortcuts work.
 # the binaries must run with correct working directory
 cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
-\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom.i686\" $* ${IWADDIR}
+\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom.bin\" $* ${IWADDIR}
 exit $?
 ")
 	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom DESTINATION ${BINDIR})
-endif(UNIX)
+endif(ENABLE_WRAPPERS)
 
 endif(ENABLE_CLIENT)
 
@@ -960,28 +963,28 @@ set(SERVER_SOURCES ${SERVER_COMMON_SOURCES} ${SERVER_UNIX_SOURCES})
 endif(WIN32)
 
 add_executable(vavoom-dedicated ${SERVER_SOURCES})
-if(UNIX)
-set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated.i686)
-else(UNIX)
+if(ENABLE_WRAPPERS)
+set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated.bin)
+else(ENABLE_WRAPPERS)
 set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated)
-endif(UNIX)
+endif(ENABLE_WRAPPERS)
 set_target_properties(vavoom-dedicated PROPERTIES COMPILE_FLAGS -DSERVER)
 target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY} ${NET_LIBRARIES})
 add_dependencies(vavoom-dedicated glbsp)
 
 install(TARGETS vavoom-dedicated DESTINATION ${BINDIR})
 
-if(UNIX)
+if(ENABLE_WRAPPERS)
 	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated
 "#!/bin/sh
 # Needed to make symlinks/shortcuts work.
 # the binaries must run with correct working directory
 cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
-\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom-dedicated.i686\" $* ${IWADDIR}
+\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom-dedicated.bin\" $* ${IWADDIR}
 exit $?
 ")
 	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated DESTINATION ${BINDIR})
-endif(UNIX)
+endif(ENABLE_WRAPPERS)
 
 endif(ENABLE_SERVER)
 
