@@ -263,6 +263,13 @@ void VDirect3DDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VDirect3DDrawer::SetTexture);
 	SetSpriteLump(Tex, NULL, CMap);
+#if DIRECT3D_VERSION >= 0x0900
+	RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+	RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+#else
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSU, D3DTADDRESS_WRAP);
+	RenderDevice->SetTextureStageState(0, D3DTSS_ADDRESSV, D3DTADDRESS_WRAP);
+#endif
 	unguard;
 }
 
@@ -436,7 +443,7 @@ void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 	D3DSURFACE_DESC desc;
 	surf->GetDesc(&desc);
 
-	rgba_t *in = data;
+	const rgba_t *in = data;
 	if (desc.Format == D3DFMT_A1R5G5B5)
 	{
 		word *out = (word*)lrect.pBits;

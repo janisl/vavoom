@@ -1245,8 +1245,7 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 	else
 	{
 		GCon->Log(NAME_Init, "Invalid pixel format");
-		Z_Free(dst);
-		return NULL;
+		return;
 	}
 
 	D3DLOCKED_RECT lrect;
