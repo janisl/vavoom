@@ -109,6 +109,9 @@ private:
 	bool		Wait;
 
 public:
+	VCmdBuf()
+	: Wait(false)
+	{}
 	void Insert(const char*);
 	void Insert(const VStr&);
 	void Print(const char*);
