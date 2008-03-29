@@ -34,10 +34,7 @@
 
 #include "winlocal.h"
 #include "gamedefs.h"
-#if 1
-#define D3D_OVERLOADS
-#include <d3d.h>
-#elif 1
+#if 0
 #include <d3d8.h>
 #include <dx7todx8.h>
 #else
@@ -236,20 +233,16 @@ private:
 	static int ToPowerOf2(int);
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9 CreateSurface(int, int, int, bool);
-#elif DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8 CreateSurface(int, int, int, bool);
 #else
-	LPDIRECTDRAWSURFACE7 CreateSurface(int, int, int, bool);
+	LPDIRECT3DTEXTURE8 CreateSurface(int, int, int, bool);
 #endif
 	void SetSpriteLump(VTexture*, VTextureTranslation*, int);
 	void SetPic(VTexture*, VTextureTranslation*, int);
 	void GenerateTexture(VTexture*, void**, VTextureTranslation*, int);
 #if DIRECT3D_VERSION >= 0x0900
 	void UploadTextureImage(LPDIRECT3DTEXTURE9, int, int, int, const rgba_t*);
-#elif DIRECT3D_VERSION >= 0x0800
-	void UploadTextureImage(LPDIRECT3DTEXTURE8, int, int, int, const rgba_t*);
 #else
-	void UploadTextureImage(LPDIRECTDRAWSURFACE7, int, int, const rgba_t*);
+	void UploadTextureImage(LPDIRECT3DTEXTURE8, int, int, int, const rgba_t*);
 #endif
 	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
@@ -257,12 +250,9 @@ private:
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9 UploadTexture8(int, int, const byte*, const rgba_t*);
 	LPDIRECT3DTEXTURE9 UploadTexture(int, int, const rgba_t*);
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 	LPDIRECT3DTEXTURE8 UploadTexture8(int, int, const byte*, const rgba_t*);
 	LPDIRECT3DTEXTURE8 UploadTexture(int, int, const rgba_t*);
-#else
-	LPDIRECTDRAWSURFACE7 UploadTexture8(int, int, const byte*, const rgba_t*);
-	LPDIRECTDRAWSURFACE7 UploadTexture(int, int, const rgba_t*);
 #endif
 
 	void FlushCaches(bool);
@@ -272,20 +262,6 @@ private:
 	void CacheSurface(surface_t*);
 
 	void SetFade(vuint32 NewFade);
-
-#if DIRECT3D_VERSION < 0x0800
-	static HRESULT CALLBACK EnumDevicesCallback(
-		LPSTR lpDeviceDesc,
-		LPSTR lpDeviceName,
-		LPD3DDEVICEDESC7 lpD3DDeviceDesc,
-		LPVOID);
-	static HRESULT CALLBACK EnumZBufferCallback(LPDDPIXELFORMAT pf, void* dst);
-	static HRESULT CALLBACK EnumPixelFormatsCallback(LPDDPIXELFORMAT pf, void* dst);
-	static HRESULT CALLBACK EnumPixelFormats32Callback(LPDDPIXELFORMAT pf, void* dst);
-	static void LogPrimCaps(FOutputDevice &Ar, const D3DPRIMCAPS &pc);
-	static void LogDeviceDesc(FOutputDevice &Ar, const LPD3DDEVICEDESC7 dd);
-	static void LogPixelFormat(FOutputDevice &Ar, const LPDDPIXELFORMAT pf);
-#endif
 
 	word MakeCol16(byte r, byte g, byte b, byte a)
 	{
@@ -310,7 +286,7 @@ private:
 	LPDIRECT3DDEVICE9			RenderDevice;
 
 	D3DVIEWPORT9				viewData;
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 	HMODULE						DLLHandle;
 
 	//	Direct3D interfaces
@@ -318,21 +294,6 @@ private:
 	LPDIRECT3DDEVICE8			RenderDevice;
 
 	D3DVIEWPORT8				viewData;
-#else
-	//	DirectDraw interfaces
-	LPDIRECTDRAW7				DDraw;
-	LPDIRECTDRAWSURFACE7		PrimarySurface;
-	LPDIRECTDRAWSURFACE7		RenderSurface;
-	LPDIRECTDRAWSURFACE7		ZBuffer;
-
-	//	Direct3D interfaces
-	LPDIRECT3D7					Direct3D;
-	LPDIRECT3DDEVICE7			RenderDevice;
-
-	D3DVIEWPORT7				viewData;
-
-	DDPIXELFORMAT				PixelFormat;
-	DDPIXELFORMAT				PixelFormat32;
 #endif
 	MyD3DMatrix					IdentityMatrix;
 	MyD3DMatrix					matProj;
@@ -364,23 +325,15 @@ private:
 	int							CurrentFade;
 
 	//	Texture filters.
-#if DIRECT3D_VERSION >= 0x0800
 	D3DTEXTUREFILTERTYPE		magfilter;
 	D3DTEXTUREFILTERTYPE		minfilter;
 	D3DTEXTUREFILTERTYPE		mipfilter;
-#else
-	D3DTEXTUREMAGFILTER			magfilter;
-	D3DTEXTUREMINFILTER			minfilter;
-	D3DTEXTUREMIPFILTER			mipfilter;
-#endif
 
 	//	Textures.
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9			particle_texture;
-#elif DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			particle_texture;
 #else
-	LPDIRECTDRAWSURFACE7		particle_texture;
+	LPDIRECT3DTEXTURE8			particle_texture;
 #endif
     int                         tscount;
 
@@ -394,10 +347,8 @@ private:
 	//	Lightmaps.
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9			*light_surf;
-#elif DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			*light_surf;
 #else
-	LPDIRECTDRAWSURFACE7		*light_surf;
+	LPDIRECT3DTEXTURE8			*light_surf;
 #endif
 	rgba_t						light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool						block_changed[NUM_BLOCK_SURFS];
@@ -406,10 +357,8 @@ private:
 	//	Specular lightmaps.
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9			*add_surf;
-#elif DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8			*add_surf;
 #else
-	LPDIRECTDRAWSURFACE7		*add_surf;
+	LPDIRECT3DTEXTURE8			*add_surf;
 #endif
 	rgba_t						add_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool						add_changed[NUM_BLOCK_SURFS];

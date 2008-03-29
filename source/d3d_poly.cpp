@@ -541,11 +541,7 @@ void VDirect3DDrawer::WorldDrawing()
 			{
 				out[i] = MyD3DVertex(surf->verts[i], 0, 0, 0);
 			}
-#if DIRECT3D_VERSION >= 0x0800
 			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-			RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 		}
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
@@ -579,11 +575,7 @@ void VDirect3DDrawer::WorldDrawing()
 				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
 
-#if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 	}
 
 	if (maxMultiTex >= 2)
@@ -596,12 +588,9 @@ void VDirect3DDrawer::WorldDrawing()
 #if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 		RenderDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetTextureStageState(1, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
-#else
-		RenderDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
-		RenderDevice->SetTextureStageState(1, D3DTSS_MINFILTER, D3DTFN_LINEAR);
 #endif
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
@@ -619,11 +608,7 @@ void VDirect3DDrawer::WorldDrawing()
 			if (block_changed[lb])
 			{
 				block_changed[lb] = false;
-#if DIRECT3D_VERSION >= 0x0800
 				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
-#else
-				UploadTextureImage(light_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
-#endif
 			}
 
 			RenderDevice->SetTexture(1, light_surf[lb]);
@@ -644,11 +629,7 @@ void VDirect3DDrawer::WorldDrawing()
 						s * tex_iw, t * tex_ih,
 						lights / BLOCK_WIDTH, lightt / BLOCK_HEIGHT);
 				}
-#if DIRECT3D_VERSION >= 0x0800
 				RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 			}
 		}
 
@@ -661,14 +642,10 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-#else
-		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTFP_NONE);
 #endif
 		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_SRCCOLOR);
@@ -690,11 +667,7 @@ void VDirect3DDrawer::WorldDrawing()
 			if (block_changed[lb])
 			{
 				block_changed[lb] = false;
-#if DIRECT3D_VERSION >= 0x0800
 				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
-#else
-				UploadTextureImage(light_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
-#endif
 			}
 
 			RenderDevice->SetTexture(0, light_surf[lb]);
@@ -713,11 +686,7 @@ void VDirect3DDrawer::WorldDrawing()
 					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
 						lights / BLOCK_WIDTH, lightt / BLOCK_HEIGHT);
 				}
-#if DIRECT3D_VERSION >= 0x0800
 				RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 			}
 		}
 
@@ -745,14 +714,10 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-#else
-		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTFG_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTFN_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTFP_NONE);
 #endif
 		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
@@ -775,11 +740,7 @@ void VDirect3DDrawer::WorldDrawing()
 			if (add_changed[lb])
 			{
 				add_changed[lb] = false;
-#if DIRECT3D_VERSION >= 0x0800
 				UploadTextureImage(add_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, add_block[lb]);
-#else
-				UploadTextureImage(add_surf[lb], BLOCK_WIDTH, BLOCK_HEIGHT, add_block[lb]);
-#endif
 			}
 
 			RenderDevice->SetTexture(0, add_surf[lb]);
@@ -797,11 +758,7 @@ void VDirect3DDrawer::WorldDrawing()
 					out[i] = MyD3DVertex(surf->verts[i], 0xffffffff,
 						lights / BLOCK_WIDTH, lightt / BLOCK_HEIGHT);
 				}
-#if DIRECT3D_VERSION >= 0x0800
 				RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-				RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 			}
 		}
 
@@ -889,11 +846,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
 				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
-#if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
@@ -907,11 +860,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
 				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
-#if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 
 		if (Texture2->Type != TEXTYPE_Null)
 		{
@@ -923,11 +872,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 			}
 			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-#if DIRECT3D_VERSION >= 0x0800
 			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-			RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		}
 	}
@@ -1014,11 +959,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
 	}
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, surf->count, 0);
-#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 	if (blend_sprites || Additive || Alpha < 1.0)
@@ -1070,11 +1011,7 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	}
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, 4, 0);
-#endif
 
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
@@ -1124,11 +1061,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	if (is_view_model)
 	{
 		// hack the depth range to prevent view model from poking into walls
-#if DIRECT3D_VERSION >= 0x0800
 		viewData.MaxZ = 0.3;
-#else
-		viewData.dvMaxZ = 0.3;
-#endif
 		RenderDevice->SetViewport(&viewData);
 	}
 
@@ -1241,11 +1174,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			out[i].z = verts[index].v[2];
 		}
 
-#if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(primtype, count - 2, out, sizeof(MyD3DVertex));
-#else
-		RenderDevice->DrawPrimitive(primtype, MYD3D_VERTEX_FORMAT, out, count, 0);
-#endif
 	}
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
@@ -1258,11 +1187,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
 	if (is_view_model)
 	{
-#if DIRECT3D_VERSION >= 0x0800
 		viewData.MaxZ = 1.0;
-#else
-		viewData.dvMaxZ = 1.0;
-#endif
 		RenderDevice->SetViewport(&viewData);
 	}
 	unguard;
@@ -1292,11 +1217,7 @@ void VDirect3DDrawer::StartParticles()
 			}
 		}
 		particle_texture = CreateSurface(8, 8, 16, false);
-#if DIRECT3D_VERSION >= 0x0800
 		UploadTextureImage(particle_texture, 0, 8, 8, &pbuf[0][0]);
-#else
-		UploadTextureImage(particle_texture, 8, 8, &pbuf[0][0]);
-#endif
 	}
 	RenderDevice->SetTexture(0, particle_texture);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
@@ -1319,11 +1240,7 @@ void VDirect3DDrawer::DrawParticle(particle_t *p)
 	out[1] = MyD3DVertex(p->org + viewright * p->Size + viewup * p->Size, p->colour, 1, 0);
 	out[2] = MyD3DVertex(p->org + viewright * p->Size - viewup * p->Size, p->colour, 1, 1);
 	out[3] = MyD3DVertex(p->org - viewright * p->Size - viewup * p->Size, p->colour, 0, 1);
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, out, 4, 0);
-#endif
 	unguard;
 }
 

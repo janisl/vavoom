@@ -390,7 +390,6 @@ set(MAIN_WIN32_SOURCES
 	cd_win32.cpp
 	d_win32.cpp
 	d3d_draw.cpp
-	d3d_info.cpp
 	d3d_local.h
 	d3d_main.cpp
 	d3d_poly.cpp

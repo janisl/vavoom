@@ -76,11 +76,7 @@ void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 	}
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 
 	if (Alpha < 1.0)
 	{
@@ -113,11 +109,7 @@ void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -146,11 +138,7 @@ void VDirect3DDrawer::FillRectWithFlat(float x1, float y1, float x2, float y2,
 	dv[2] = MyD3DVertex(x2, y2, l, s2 * tex_iw, t2 * tex_ih);
 	dv[3] = MyD3DVertex(x1, y2, l, s1 * tex_iw, t2 * tex_ih);
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 	unguard;
 }
 
@@ -173,11 +161,7 @@ void VDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	unguard;
@@ -207,11 +191,7 @@ void VDirect3DDrawer::ShadeRect(int x, int y, int w, int h, float darkening)
 	dv[2] = MyD3DVertex(x + w, y + h, l, 0, 0);
 	dv[3] = MyD3DVertex(x, y + h, l, 0, 0);
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -240,11 +220,7 @@ void VDirect3DDrawer::DrawConsoleBackground(int h)
 	dv[2] = MyD3DVertex(ScreenWidth, h, l, 0, 0);
 	dv[3] = MyD3DVertex(0, h, l, 0, 0);
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -284,11 +260,7 @@ void VDirect3DDrawer::DrawSpriteLump(float x1, float y1, float x2, float y2,
 	dv[2] = MyD3DVertex(x2, y2, 0xffffffff, s2, texh);
 	dv[3] = MyD3DVertex(x1, y2, 0xffffffff, s1, texh);
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 	unguard;
 }
 
@@ -320,11 +292,7 @@ void VDirect3DDrawer::DrawLine(int x1, int y1, vuint32 c1, int x2, int y2,
 	MyD3DVertex out[2];
  	out[0] = MyD3DVertex(x1, y1, c1, 0, 0);
  	out[1] = MyD3DVertex(x2, y2, c2, 0, 0);
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, out, sizeof(MyD3DVertex));
-#else
-	RenderDevice->DrawPrimitive(D3DPT_LINELIST, MYD3D_VERTEX_FORMAT, out, 2, 0);
-#endif
 	unguard;
 }
 

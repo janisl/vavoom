@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1253"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -175,7 +175,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpngd.lib libjpeg_d.lib zlibd.lib libmad_d.lib vorbis_static_d.lib ogg_static_d.lib mikmod_d.lib libFLAC_static_d.lib libFLAC++_static_d.lib"
+				AdditionalDependencies="user32.lib ole32.lib gdi32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpngd.lib libjpeg_d.lib zlibd.lib libmad_d.lib vorbis_static_d.lib ogg_static_d.lib mikmod_d.lib libFLAC_static_d.lib libFLAC++_static_d.lib"
 				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -1660,10 +1660,6 @@
 				>
 				<File
 					RelativePath="..\source\d3d_draw.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\source\d3d_info.cpp"
 					>
 				</File>
 				<File

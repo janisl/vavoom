@@ -65,18 +65,9 @@ VCvarI VDirect3DDrawer::specular_highlights("d3d_specular_highlights", "1", CVAR
 
 VDirect3DDrawer::VDirect3DDrawer()
 : Windowed(false)
-#if DIRECT3D_VERSION >= 0x0800
 , DLLHandle(0)
 , Direct3D(0)
 , RenderDevice(0)
-#else
-, DDraw(0)
-, PrimarySurface(0)
-, RenderSurface(0)
-, ZBuffer(0)
-, Direct3D(0)
-, RenderDevice(0)
-#endif
 , IdentityMatrix(1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
@@ -136,7 +127,7 @@ void VDirect3DDrawer::Init()
 	{
 		Sys_Error("Failed to create Direct3D object");
 	}
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 	typedef IDirect3D8* (WINAPI*fp_Direct3DCreate8)(UINT SDKVersion);
 
 	fp_Direct3DCreate8 p_Direct3DCreate8;
@@ -174,138 +165,6 @@ void VDirect3DDrawer::InitData()
 {
 }
 
-#if DIRECT3D_VERSION < 0x0800
-
-//==========================================================================
-//
-//	VDirect3DDrawer::EnumDevicesCallback
-//
-//==========================================================================
-
-HRESULT CALLBACK VDirect3DDrawer::EnumDevicesCallback(
-	LPSTR lpDeviceDesc,
-	LPSTR lpDeviceName,
-	LPD3DDEVICEDESC7 lpD3DDeviceDesc,
-	LPVOID)
-{
-	GCon->Logf(NAME_Dev, "Device %s", lpDeviceName);
-	GCon->Logf(NAME_Dev, "Description: %s", lpDeviceDesc);
-	LogDeviceDesc(*GCon, lpD3DDeviceDesc);
-	GCon->Log(NAME_Dev, "-------------------------------------");
-
-	return D3DENUMRET_OK;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::EnumZBufferCallback
-//
-//==========================================================================
-
-HRESULT CALLBACK VDirect3DDrawer::EnumZBufferCallback(LPDDPIXELFORMAT pf, void* dst)
-{
-	GCon->Log(NAME_Dev, "Z buffer format");
-	LogPixelFormat(*GCon, pf);
-	GCon->Log(NAME_Dev, "-------------------------------------");
-
-	// Choose best available z-buffer bit depth
-	if (pf->dwFlags == DDPF_ZBUFFER &&
-		pf->dwZBufferBitDepth > ((LPDDPIXELFORMAT)dst)->dwZBufferBitDepth)
-	{
-		memcpy(dst, pf, sizeof(DDPIXELFORMAT));
-	}
-
-	// Return with D3DENUMRET_OK to continue the search.
-	return D3DENUMRET_OK;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::EnumPixelFormatsCallback
-//
-//==========================================================================
-
-HRESULT CALLBACK VDirect3DDrawer::EnumPixelFormatsCallback(LPDDPIXELFORMAT pf, void* dst)
-{
-	GCon->Log(NAME_Dev, "Pixel format");
-	LogPixelFormat(*GCon, pf);
-	GCon->Log(NAME_Dev, "-------------------------------------");
-
-	if ((pf->dwFlags == (DDPF_RGB|DDPF_ALPHAPIXELS)) &&
-		(pf->dwRGBBitCount == 16))
-	{
-		memcpy(dst, pf, sizeof(DDPIXELFORMAT));
-
-		// Return with D3DENUMRET_CANCEL to end the search.
-		return D3DENUMRET_CANCEL;
-	}
-
-	// Return with D3DENUMRET_OK to continue the search.
-	return D3DENUMRET_OK;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::EnumPixelFormats32Callback
-//
-//==========================================================================
-
-HRESULT CALLBACK VDirect3DDrawer::EnumPixelFormats32Callback(LPDDPIXELFORMAT pf, void* dst)
-{
-	if ((pf->dwFlags == (DDPF_RGB|DDPF_ALPHAPIXELS)) &&
-		(pf->dwRGBBitCount == 32))
-	{
-		memcpy(dst, pf, sizeof(DDPIXELFORMAT));
-
-		// Return with D3DENUMRET_CANCEL to end the search.
-		return D3DENUMRET_CANCEL;
-	}
-
-	// Return with D3DENUMRET_OK to continue the search.
-	return D3DENUMRET_OK;
-}
-
-//==========================================================================
-//
-//	GetBits
-//
-//==========================================================================
-
-int GetBits(vuint32 mask)
-{
-	int answer = 0;
-	while (mask)
-	{
-		if (mask & 1)
-		{
-			answer++;
-		}
-		mask >>= 1;
-	}
-	return answer;
-}
-
-//==========================================================================
-//
-//	GetShift
-//
-//==========================================================================
-
-int GetShift(vuint32 mask)
-{
-	if (!mask)
-		return 0;
-	int answer = 0;
-	while (!(mask & 1))
-	{
-		answer++;
-		mask >>= 1;
-	}
-	return answer;
-}
-
-#endif
-
 //==========================================================================
 //
 // 	VDirect3DDrawer::SetResolution
@@ -335,7 +194,6 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 		return false;
 	}
 
-#if DIRECT3D_VERSION >= 0x0800
 	//	Shut down current mode
 	ReleaseTextures();
 	SAFE_RELEASE(RenderDevice)
@@ -414,182 +272,6 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	rshift32 = 16;
 	gshift32 = 8;
 	bshift32 = 0;
-#else
-	GCon->Log(NAME_Init, "-------------------------------------");
-
-	DDSURFACEDESC2	ddsd;
-
-	//	Shut down current mode
-	ReleaseTextures();
-	SAFE_RELEASE(RenderDevice)
-	SAFE_RELEASE(Direct3D)
-	SAFE_RELEASE(ZBuffer)
-	SAFE_RELEASE(RenderSurface)
-	SAFE_RELEASE(PrimarySurface)
-	SAFE_RELEASE(DDraw)
-
-	HRESULT			result;
-
-	// Create DirectDraw object
-	result = CoCreateInstance(CLSID_DirectDraw7, NULL,
-		CLSCTX_ALL, IID_IDirectDraw7, (void**)&DDraw);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to create DirecDraw7");
-
-	// Initialise
-	result = DDraw->Initialize(NULL);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to initialise DirectDraw");
-
-	// Set cooperative level
-	result = DDraw->SetCooperativeLevel(hwnd,
-		Windowed ? DDSCL_NORMAL | DDSCL_FPUPRESERVE :
-		DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN | DDSCL_FPUPRESERVE);
-	if (result != DD_OK)
-		Sys_Error("I_InitGraphics: Failed to set cooperative level.");
-
-	// Create Direct3D object
-	result = DDraw->QueryInterface(IID_IDirect3D7, (void**)&Direct3D);
-	if (FAILED(result))
-		Sys_Error("Failed to create Direct3D object");
-
-	if (Windowed)
-	{
-		RECT WindowRect;
-		WindowRect.left = 0;
-		WindowRect.right = Width;
-		WindowRect.top = 0;
-		WindowRect.bottom = Height;
-		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
-			WS_EX_APPWINDOW);
-		SetWindowPos(hwnd, HWND_TOP, 0, 0, WindowRect.right - WindowRect.left,
-			WindowRect.bottom - WindowRect.top, SWP_NOMOVE);
-	}
-	else
-	{
-		//	Set video mode
-		if (DDraw->SetDisplayMode(Width, Height, BPP, 0, 0) != DD_OK)
-			return false;
-	}
-
-	//	Create primary surface
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_CAPS;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-	if (DDraw->CreateSurface(&ddsd, &PrimarySurface, NULL) != DD_OK)
-		Sys_Error("I_SetResolution: Failed to create primary surface");
-
-	Direct3D->EnumDevices(EnumDevicesCallback, NULL);
-
-	GUID DeviceGUID;
-	switch (device)
-	{
-	default:
-		device = 0;
-	case 0:
-		DeviceGUID = IID_IDirect3DHALDevice;
-		SurfaceMemFlag = DDSCAPS_VIDEOMEMORY;
-		break;
-
-	case 1:
-		DeviceGUID = IID_IDirect3DRGBDevice;
-		SurfaceMemFlag = DDSCAPS_SYSTEMMEMORY;
-		break;
-
-	case 2:
-		DeviceGUID = IID_IDirect3DRefDevice;
-		SurfaceMemFlag = DDSCAPS_SYSTEMMEMORY;
-		break;
-	}
-
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE | SurfaceMemFlag;
-	ddsd.dwWidth  = Width;
-	ddsd.dwHeight = Height;
-
-	//	Create the back buffer.
-	if (FAILED(DDraw->CreateSurface(&ddsd, &RenderSurface, NULL)))
-		return false;
-
-	//	Create the z-buffer
-	DDPIXELFORMAT ddpfZBuffer;
-	memset(&ddpfZBuffer, 0, sizeof(ddpfZBuffer));
-	Direct3D->EnumZBufferFormats(DeviceGUID,
-		EnumZBufferCallback, (VOID*)&ddpfZBuffer);
-
-	//	If the enumerated format is good (it should be), the dwSize member
-	// will be properly initialised. Check this just in case.
-	if (sizeof(DDPIXELFORMAT) != ddpfZBuffer.dwSize)
-		return false;
-
-	// Get z-buffer dimensions from the render target
-	// Setup the surface desc for the z-buffer.
-	ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_ZBUFFER | SurfaceMemFlag;
-	ddsd.dwWidth = Width;
-	ddsd.dwHeight = Height;
-	memcpy(&ddsd.ddpfPixelFormat, &ddpfZBuffer, sizeof(DDPIXELFORMAT));
-
-	// Create the depth-buffer.
-	if (FAILED(DDraw->CreateSurface(&ddsd, &ZBuffer, NULL)))
-		return false;
-
-	// Attach the z-buffer to the back buffer.
-	if (FAILED(RenderSurface->AddAttachedSurface(ZBuffer)))
-		return false;
-
-	//	Create rendering device
-	if (FAILED(Direct3D->CreateDevice(DeviceGUID,
-		RenderSurface, &RenderDevice)))
-	{
-		return false;
-	}
-
-	D3DDEVICEDESC7	DeviceDesc;
-	RenderDevice->GetCaps(&DeviceDesc);
-	VCvar::Set("r_sort_sprites", int((DeviceDesc.dwDevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
-	square_textures = (DeviceDesc.dpcTriCaps.dwTextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
-	// needed?
-	//minTexSize = MAX(DeviceDesc.dwMinTextureWidth, DeviceDesc.dwMinTextureHeight);
-	maxTexSize = MAX(DeviceDesc.dwMaxTextureWidth, DeviceDesc.dwMaxTextureHeight);
-	if (square_textures)
-	{
-		//	Limit texture size when square textures are requred
-		maxTexSize = 256;
-	}
-	maxMultiTex = DeviceDesc.wMaxSimultaneousTextures;
-	if (device == 1)
-	{
-		//	In software actually can be only one texture
-		maxMultiTex = 1;
-	}
-	RenderDevice->SetTextureStageState(0, D3DTSS_MAXANISOTROPY, DeviceDesc.dwMaxAnisotropy);
-
-	memset(&PixelFormat, 0, sizeof(PixelFormat));
-	RenderDevice->EnumTextureFormats(EnumPixelFormatsCallback, &PixelFormat);
-	if (PixelFormat.dwSize != sizeof(DDPIXELFORMAT))
-		return false;
-	abits = GetBits(PixelFormat.dwRGBAlphaBitMask);
-	ashift = GetShift(PixelFormat.dwRGBAlphaBitMask);
-	rbits = GetBits(PixelFormat.dwRBitMask);
-	rshift = GetShift(PixelFormat.dwRBitMask);
-	gbits = GetBits(PixelFormat.dwGBitMask);
-	gshift = GetShift(PixelFormat.dwGBitMask);
-	bbits = GetBits(PixelFormat.dwBBitMask);
-	bshift = GetShift(PixelFormat.dwBBitMask);
-
-	memset(&PixelFormat32, 0, sizeof(PixelFormat32));
-	RenderDevice->EnumTextureFormats(EnumPixelFormats32Callback, &PixelFormat32);
-	ashift32 = GetShift(PixelFormat32.dwRGBAlphaBitMask);
-	rshift32 = GetShift(PixelFormat32.dwRBitMask);
-	gshift32 = GetShift(PixelFormat32.dwGBitMask);
-	bshift32 = GetShift(PixelFormat32.dwBBitMask);
-
-//	Sys_HighFPPrecision();
-#endif
 
 	//	Set screen params
 	ScreenWidth = Width;
@@ -612,7 +294,7 @@ void VDirect3DDrawer::InitResolution()
 #if DIRECT3D_VERSION >= 0x0900
 	RenderDevice->SetStreamSource(0, NULL, 0, sizeof(MyD3DVertex));
 	RenderDevice->SetFVF(MYD3D_VERTEX_FORMAT);
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 	RenderDevice->SetStreamSource(0, NULL, sizeof(MyD3DVertex));
 	RenderDevice->SetVertexShader(MYD3D_VERTEX_FORMAT);
 #endif
@@ -653,21 +335,12 @@ void VDirect3DDrawer::NewMap()
 void VDirect3DDrawer::StartUpdate()
 {
 	guard(VDirect3DDrawer::StartUpdate);
-#if DIRECT3D_VERSION < 0x0800
-	// Check for lost surface
-	if (RenderSurface->IsLost() != DD_OK)
-	{
-		RenderSurface->Restore();
-	}
-#endif
-
 	//	Clear surface
 	if (clear)
 	{
 		RenderDevice->Clear(0, NULL, D3DCLEAR_TARGET, 0, 1.0, 0);
 	}
 
-#if DIRECT3D_VERSION >= 0x0800
 	//	Setup texture filtering
 	if (tex_linear == 4)
 	{
@@ -699,39 +372,6 @@ void VDirect3DDrawer::StartUpdate()
 		minfilter = D3DTEXF_POINT;
 		mipfilter = D3DTEXF_NONE;
 	}
-#else
-	//	Setup texture filtering
-	if (tex_linear == 4)
-	{
-		magfilter = D3DTFG_ANISOTROPIC;
-		minfilter = D3DTFN_ANISOTROPIC;
-		mipfilter = D3DTFP_LINEAR;
-	}
-	else if (tex_linear == 3)
-	{
-		magfilter = D3DTFG_LINEAR;
-		minfilter = D3DTFN_LINEAR;
-		mipfilter = D3DTFP_LINEAR;
-	}
-	else if (tex_linear == 2)
-	{
-		magfilter = D3DTFG_LINEAR;
-		minfilter = D3DTFN_LINEAR;
-		mipfilter = D3DTFP_POINT;
-	}
-	else if (tex_linear)
-	{
-		magfilter = D3DTFG_LINEAR;
-		minfilter = D3DTFN_LINEAR;
-		mipfilter = D3DTFP_NONE;
-	}
-	else
-	{
-		magfilter = D3DTFG_POINT;
-		minfilter = D3DTFN_POINT;
-		mipfilter = D3DTFP_NONE;
-	}
-#endif
 
 	if (lastgamma != usegamma)
 	{
@@ -776,7 +416,6 @@ void VDirect3DDrawer::Setup2D()
 {
 	guard(VDirect3DDrawer::Setup2D);
 	//	Setup viewport
-#if DIRECT3D_VERSION >= 0x0800
 #if DIRECT3D_VERSION >= 0x0900
 	D3DVIEWPORT9 view2D;
 	memset(&view2D, 0, sizeof(D3DVIEWPORT9));
@@ -790,16 +429,6 @@ void VDirect3DDrawer::Setup2D()
 	view2D.Height = ScreenHeight;
 	view2D.MinZ = 0.0f;
 	view2D.MaxZ = 1.0f;
-#else
-	D3DVIEWPORT7 view2D;
-	memset(&view2D, 0, sizeof(D3DVIEWPORT7));
-	view2D.dwX = 0;
-	view2D.dwY = 0;
-	view2D.dwWidth  = ScreenWidth;
-	view2D.dwHeight = ScreenHeight;
-	view2D.dvMinZ = 0.0f;
-	view2D.dvMaxZ = 1.0f;
-#endif
 	RenderDevice->SetViewport(&view2D);
 
 	//	Setup projection
@@ -838,7 +467,6 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	}
 
 	//	Setup viewport
-#if DIRECT3D_VERSION >= 0x0800
 #if DIRECT3D_VERSION >= 0x0900
 	memset(&viewData, 0, sizeof(D3DVIEWPORT9));
 #else
@@ -850,15 +478,6 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	viewData.Height = rd->height;
 	viewData.MinZ = 0;
 	viewData.MaxZ = 1;
-#else
-	memset(&viewData, 0, sizeof(D3DVIEWPORT7));
-	viewData.dwX = rd->x;
-	viewData.dwY = rd->y;
-	viewData.dwWidth  = rd->width;
-	viewData.dwHeight = rd->height;
-	viewData.dvMinZ = 0;
-	viewData.dvMaxZ = 1;
-#endif
 	RenderDevice->SetViewport(&viewData);
 
 	//	Setup projection
@@ -934,11 +553,7 @@ void VDirect3DDrawer::EndView()
 		dv[2] = MyD3DVertex(ScreenWidth, ScreenHeight, cl->CShift, 0, 0);
 		dv[3] = MyD3DVertex(0, ScreenHeight, cl->CShift, 0, 0);
 
-#if DIRECT3D_VERSION >= 0x0800
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-#else
-		RenderDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, MYD3D_VERTEX_FORMAT, dv, 4, 0);
-#endif
 
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
@@ -961,27 +576,7 @@ void VDirect3DDrawer::Update()
 	// End the scene.
 	RenderDevice->EndScene();
 
-#if DIRECT3D_VERSION >= 0x0800
 	RenderDevice->Present(NULL, NULL, NULL, NULL);
-#else
-	// Check for lost surface
-	if (PrimarySurface->IsLost() != DD_OK)
-	{
-		PrimarySurface->Restore();
-	}
-
-	if (Windowed)
-	{
-		POINT Point = {0, 0};
-		ClientToScreen(hwnd, &Point);
-		RECT ScreenRect = {Point.x, Point.y, Point.x + ScreenWidth, Point.y + ScreenHeight}, ViewportRect = {0, 0, ScreenWidth, ScreenHeight};
-		PrimarySurface->Blt(&ScreenRect, RenderSurface, &ViewportRect, DDBLT_WAIT, NULL);
-	}
-	else
-	{
-		PrimarySurface->Blt(NULL, RenderSurface, NULL, DDBLT_WAIT, NULL);
-	}
-#endif
 	unguard;
 }
 
@@ -994,14 +589,6 @@ void VDirect3DDrawer::Update()
 void VDirect3DDrawer::BeginDirectUpdate()
 {
 	guard(VDirect3DDrawer::BeginDirectUpdate);
-#if DIRECT3D_VERSION < 0x0800
-	// Check for lost surface
-	if (RenderSurface->IsLost() != DD_OK)
-	{
-		RenderSurface->Restore();
-	}
-#endif
-
 	// Begin the scene.
 	RenderDevice->BeginScene();
 	unguard;
@@ -1030,7 +617,6 @@ void VDirect3DDrawer::Shutdown()
 {
 	guard(VDirect3DDrawer::Shutdown);
 	ReleaseTextures();
-#if DIRECT3D_VERSION >= 0x0800
 	SAFE_RELEASE(RenderDevice)
 	SAFE_RELEASE(Direct3D)
 	if (DLLHandle)
@@ -1038,15 +624,6 @@ void VDirect3DDrawer::Shutdown()
 		FreeLibrary(DLLHandle);
 		DLLHandle = NULL;
 	}
-#else
-	SAFE_RELEASE(RenderDevice)
-	SAFE_RELEASE(Direct3D)
-
-	SAFE_RELEASE(ZBuffer)
-	SAFE_RELEASE(RenderSurface)
-	SAFE_RELEASE(PrimarySurface)
-	SAFE_RELEASE(DDraw)
-#endif
 	unguard;
 }
 
@@ -1062,7 +639,6 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	//	Allocate buffer
 	void* dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t));
 
-#if DIRECT3D_VERSION >= 0x0800
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DSURFACE9 surf;
 	RenderDevice->GetRenderTarget(0, &surf);
@@ -1142,40 +718,6 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 	surf->UnlockRect();
 	surf->Release();
-#else
-	DDSURFACEDESC2	ddsd;
-
-	//	Lock surface
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_LPSURFACE | DDSD_PITCH | DDSD_PIXELFORMAT;
-	if (RenderSurface->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL) != DD_OK)
-		Sys_Error("ReadScreen: Failed to lock screen");
-
-	//	Decode pixel format
-	int scr_rbits = GetBits(ddsd.ddpfPixelFormat.dwRBitMask);
-	int scr_rshift = GetShift(ddsd.ddpfPixelFormat.dwRBitMask);
-	int scr_gbits = GetBits(ddsd.ddpfPixelFormat.dwGBitMask);
-	int scr_gshift = GetShift(ddsd.ddpfPixelFormat.dwGBitMask);
-	int scr_bbits = GetBits(ddsd.ddpfPixelFormat.dwBBitMask);
-	int scr_bshift = GetShift(ddsd.ddpfPixelFormat.dwBBitMask);
-
-	rgb_t *pdst = (rgb_t*)dst;
-	for (int j = 0; j < ScreenHeight; j++)
-	{
-		byte *psrc = (byte*)ddsd.lpSurface + j * ddsd.lPitch;
-		for (int i = 0; i < ScreenWidth; i++)
-		{
-			pdst->r = byte((*(vuint32*)psrc >> scr_rshift) << (8 - scr_rbits));
-			pdst->g = byte((*(vuint32*)psrc >> scr_gshift) << (8 - scr_gbits));
-			pdst->b = byte((*(vuint32*)psrc >> scr_bshift) << (8 - scr_bbits));
-			psrc += PixelBytes;
-			pdst++;
-		}
-	}
-
-	RenderSurface->Unlock(NULL);
-#endif
 
 	*bpp = 24;
 	*bot2top = false;
@@ -1192,7 +734,6 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 {
 	guard(VDirect3DDrawer::ReadBackScreen);
-#if DIRECT3D_VERSION >= 0x0800
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DSURFACE9 surf;
 	RenderDevice->GetRenderTarget(0, &surf);
@@ -1271,41 +812,6 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 
 	surf->UnlockRect();
 	surf->Release();
-#else
-	DDSURFACEDESC2	ddsd;
-
-	//	Lock surface
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_LPSURFACE | DDSD_PITCH | DDSD_PIXELFORMAT;
-	if (RenderSurface->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL) != DD_OK)
-		Sys_Error("ReadScreen: Failed to lock screen");
-
-	//	Decode pixel format
-	int scr_rbits = GetBits(ddsd.ddpfPixelFormat.dwRBitMask);
-	int scr_rshift = GetShift(ddsd.ddpfPixelFormat.dwRBitMask);
-	int scr_gbits = GetBits(ddsd.ddpfPixelFormat.dwGBitMask);
-	int scr_gshift = GetShift(ddsd.ddpfPixelFormat.dwGBitMask);
-	int scr_bbits = GetBits(ddsd.ddpfPixelFormat.dwBBitMask);
-	int scr_bshift = GetShift(ddsd.ddpfPixelFormat.dwBBitMask);
-
-	rgba_t *pdst = Dest;
-	for (int j = 0; j < Height; j++)
-	{
-		byte *psrc = (byte*)ddsd.lpSurface + j * ddsd.lPitch;
-		for (int i = 0; i < Width; i++)
-		{
-			pdst->r = byte((*(vuint32*)psrc >> scr_rshift) << (8 - scr_rbits));
-			pdst->g = byte((*(vuint32*)psrc >> scr_gshift) << (8 - scr_gbits));
-			pdst->b = byte((*(vuint32*)psrc >> scr_bshift) << (8 - scr_bbits));
-			pdst->a = 255;
-			psrc += PixelBytes;
-			pdst++;
-		}
-	}
-
-	RenderSurface->Unlock(NULL);
-#endif
 	unguard;
 }
 

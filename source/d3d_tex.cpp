@@ -36,18 +36,11 @@
 		((LPDIRECT3DTEXTURE9)iface)->Release(); \
 		iface = NULL; \
 	}
-#elif DIRECT3D_VERSION >= 0x0800
-#define SAFE_RELEASE_TEXTURE(iface) \
-	if (iface) \
-	{ \
-		((LPDIRECT3DTEXTURE8)iface)->Release(); \
-		iface = NULL; \
-	}
 #else
 #define SAFE_RELEASE_TEXTURE(iface) \
 	if (iface) \
 	{ \
-		((LPDIRECTDRAWSURFACE7)iface)->Release(); \
+		((LPDIRECT3DTEXTURE8)iface)->Release(); \
 		iface = NULL; \
 	}
 #endif
@@ -88,7 +81,6 @@ int VDirect3DDrawer::ToPowerOf2(int val)
 //
 //==========================================================================
 
-#if DIRECT3D_VERSION >= 0x0800
 #if DIRECT3D_VERSION >= 0x0900
 LPDIRECT3DTEXTURE9 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
 #else
@@ -124,53 +116,6 @@ LPDIRECT3DTEXTURE8 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mi
 	return surf;
 	unguard;
 }
-#else
-LPDIRECTDRAWSURFACE7 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mipmaps)
-{
-	guard(VDirect3DDrawer::CreateSurface);
-	DDSURFACEDESC2			ddsd;
-	LPDIRECTDRAWSURFACE7	surf = NULL;
-	int i;
-
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS | DDSD_PIXELFORMAT;
-	ddsd.ddsCaps.dwCaps = DDSCAPS_TEXTURE | SurfaceMemFlag;
-	if (mipmaps)
-	{
-		ddsd.ddsCaps.dwCaps |= DDSCAPS_MIPMAP | DDSCAPS_COMPLEX;
-	}
-	ddsd.dwWidth  = w;
-	ddsd.dwHeight = h;
-	if (bpp == 32)
-		memcpy(&ddsd.ddpfPixelFormat, &PixelFormat32, sizeof(DDPIXELFORMAT));
-	else
-		memcpy(&ddsd.ddpfPixelFormat, &PixelFormat, sizeof(DDPIXELFORMAT));
-
-	do
-	{
-		if (DDraw->CreateSurface(&ddsd, &surf, NULL) == DD_OK)
-		{
-			return surf;
-		}
-
-		tscount++;
-		for (i = 0; i < GTextureManager.Textures.Num(); i++)
-		{
-			int index = (i + tscount) % GTextureManager.Textures.Num();
-			if (GTextureManager.Textures[index]->DriverData)
-			{
-				FlushTexture(GTextureManager[index]);
-				break;
-			}
-		}
-	} while (i < GTextureManager.Textures.Num());
-
-	Sys_Error("Failed to create surface");
-	return NULL;
-	unguard;
-}
-#endif
 
 //==========================================================================
 //
@@ -186,16 +131,11 @@ void VDirect3DDrawer::InitTextures()
 	// release them
 	light_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 	add_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
 	// release them
 	light_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 	add_surf = (LPDIRECT3DTEXTURE8*)Z_Calloc(NUM_BLOCK_SURFS * 4);
-#else
-	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
-	// release them
-	light_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
-	add_surf = (LPDIRECTDRAWSURFACE7*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 #endif
 	unguard;
 }
@@ -306,10 +246,8 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex,
 		}
 #if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)TData->Data);
-#elif DIRECT3D_VERSION >= 0x0800
-		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)TData->Data);
 #else
-		RenderDevice->SetTexture(0, (LPDIRECTDRAWSURFACE7)TData->Data);
+		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)TData->Data);
 #endif
 	}
 	else
@@ -320,10 +258,8 @@ void VDirect3DDrawer::SetSpriteLump(VTexture* Tex,
 		}
 #if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE9)Tex->DriverData);
-#elif DIRECT3D_VERSION >= 0x0800
-		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)Tex->DriverData);
 #else
-		RenderDevice->SetTexture(0, (LPDIRECTDRAWSURFACE7)Tex->DriverData);
+		RenderDevice->SetTexture(0, (LPDIRECT3DTEXTURE8)Tex->DriverData);
 #endif
 	}
 
@@ -416,7 +352,6 @@ void VDirect3DDrawer::GenerateTexture(VTexture* Tex, void** Data,
 //
 //==========================================================================
 
-#if DIRECT3D_VERSION >= 0x0800
 #if DIRECT3D_VERSION >= 0x0900
 void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE9 tex, int level,
 	int width, int height, const rgba_t* data)
@@ -464,47 +399,6 @@ void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE8 tex, int level,
 	surf->Release();
 	unguard;
 }
-#else
-void VDirect3DDrawer::UploadTextureImage(LPDIRECTDRAWSURFACE7 surf,
-	int width, int height, const rgba_t *data)
-{
-	guard(VDirect3DDrawer::UploadTextureImage);
-	DDSURFACEDESC2 ddsd;
-	memset(&ddsd, 0, sizeof(ddsd));
-	ddsd.dwSize = sizeof(ddsd);
-	ddsd.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT | DDSD_LPSURFACE;
-	if (FAILED(surf->Lock(NULL, &ddsd, DDLOCK_WAIT, NULL)))
-	{
-		GCon->Logf(NAME_Dev, "Failed to lock surface");
-		return;
-	}
-	const rgba_t *in = data;
-	if (ddsd.ddpfPixelFormat.dwRGBBitCount == 16)
-	{
-		for (int y = 0; y < height; y++)
-		{
-			word *out = (word*)((byte *)ddsd.lpSurface + y * ddsd.lPitch);
-			for (int x = 0; x < width; x++, in++, out++)
-			{
-				*out = MakeCol16(in->r, in->g, in->b, in->a);
-			}
-		}
-	}
-	else if (ddsd.ddpfPixelFormat.dwRGBBitCount == 32)
-	{
-		for (int y = 0; y < height; y++)
-		{
-			vuint32* out = (vuint32*)((vuint8*)ddsd.lpSurface + y * ddsd.lPitch);
-			for (int x = 0; x < width; x++, in++, out++)
-			{
-				*out = MakeCol32(in->r, in->g, in->b, in->a);
-			}
-		}
-	}
-	surf->Unlock(NULL);
-	unguard;
-}
-#endif
 
 //==========================================================================
 //
@@ -704,11 +598,8 @@ void VDirect3DDrawer::MipMap(int width, int height, byte *in)
 #if DIRECT3D_VERSION >= 0x0900
 LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture8(int Width, int Height,
 	const byte* Data, const rgba_t* Pal)
-#elif DIRECT3D_VERSION >= 0x0800
-LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture8(int Width, int Height,
-	const byte* Data, const rgba_t* Pal)
 #else
-LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture8(int Width, int Height,
+LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture8(int Width, int Height,
 	const byte* Data, const rgba_t* Pal)
 #endif
 {
@@ -720,10 +611,8 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture8(int Width, int Height,
 	}
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9 Ret;
-#elif DIRECT3D_VERSION >= 0x0800
-	LPDIRECT3DTEXTURE8 Ret;
 #else
-	LPDIRECTDRAWSURFACE7 Ret;
+	LPDIRECT3DTEXTURE8 Ret;
 #endif
 	Ret = UploadTexture(Width, Height, NewData);
 	Z_Free(NewData);
@@ -738,10 +627,8 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture8(int Width, int Height,
 
 #if DIRECT3D_VERSION >= 0x0900
 LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const rgba_t *data)
-#elif DIRECT3D_VERSION >= 0x0800
-LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture(int width, int height, const rgba_t *data)
 #else
-LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, const rgba_t *data)
+LPDIRECT3DTEXTURE8 VDirect3DDrawer::UploadTexture(int width, int height, const rgba_t *data)
 #endif
 {
 	guard(VDirect3DDrawer::UploadTexture);
@@ -751,14 +638,9 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, const
 #if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9		surf;
 	UINT					level;
-#elif DIRECT3D_VERSION >= 0x0800
+#else
 	LPDIRECT3DTEXTURE8		surf;
 	UINT					level;
-#else
-	LPDIRECTDRAWSURFACE7	surf;
-	LPDIRECTDRAWSURFACE7	mipsurf;
-	DDSCAPS2				ddsc;
-	HRESULT					ddres;
 #endif
 
 	w = ToPowerOf2(width);
@@ -795,7 +677,6 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, const
 	}
 	AdjustGamma((rgba_t*)image, w * h);
 	surf = CreateSurface(w, h, 16, true);
-#if DIRECT3D_VERSION >= 0x0800
 	UploadTextureImage(surf, 0, w, h, (rgba_t*)image);
 
 	for (level = 1; level < surf->GetLevelCount(); level++)
@@ -807,36 +688,6 @@ LPDIRECTDRAWSURFACE7 VDirect3DDrawer::UploadTexture(int width, int height, const
 			h >>= 1;
 		UploadTextureImage(surf, level, w, h, (rgba_t*)image);
 	}
-#else
-	UploadTextureImage(surf, w, h, (rgba_t*)image);
-
-	mipsurf = NULL;
-	memset(&ddsc, 0, sizeof(ddsc));
-	ddsc.dwCaps = DDSCAPS_TEXTURE | DDSCAPS_MIPMAP;
-	while (w > 1 && h > 1)
-	{
-		MipMap(w, h, image);
-		if (w > 1)
-			w >>= 1;
-		if (h > 1)
-			h >>= 1;
-		if (mipsurf)
-		{
-			LPDIRECTDRAWSURFACE7 prevsurf = mipsurf;
-			ddres = prevsurf->GetAttachedSurface(&ddsc, &mipsurf);
-			prevsurf->Release();
-		}
-		else
-		{
-			ddres = surf->GetAttachedSurface(&ddsc, &mipsurf);
-		}
-		if (ddres != DD_OK)
-		{
-			Sys_Error("Failed to get attached surface");
-		}
-		UploadTextureImage(mipsurf, w, h, (rgba_t*)image);
-	}
-#endif
 
 	if (image != stackbuf)
 	{
