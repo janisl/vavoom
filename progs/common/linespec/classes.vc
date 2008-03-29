@@ -57,7 +57,6 @@ enum
 
 #include "Inventory.vc"
 #include "PickupFlash.vc"
-#include "ItemFog.vc"
 #include "Ammo.vc"
 #include "BackpackItem.vc"
 #include "Weapon.vc"
@@ -94,8 +93,6 @@ enum
 #include "TeleportDest.vc"
 #include "TeleportDest2.vc"
 #include "TeleportDest3.vc"
-#include "MapSpot.vc"
-#include "MapSpotGravity.vc"
 #include "PointPusher.vc"
 #include "PointPuller.vc"
 #include "WaterZone.vc"
@@ -160,9 +157,6 @@ enum
 
 #include "FlashFader.vc"
 
-#include "Unknown.vc"
-#include "PatrolPoint.vc"
-#include "PatrolSpecial.vc"
 #include "DoomBuilderCamera.vc"
 
 #include "ParticleFountain.vc"
@@ -224,6 +218,11 @@ class Blood : Actor decorate;
 class BloodSplatter : Actor decorate;
 class AxeBlood : Actor decorate;
 class GlassJunk : Actor decorate;
+class Unknown : Actor decorate;
+class PatrolPoint : Actor decorate;
+class PatrolSpecial : Actor decorate;
+class MapSpot : Actor decorate;
+class ItemFog : Actor decorate;
 
 //	Doom classes
 class BulletPuff : Actor decorate;

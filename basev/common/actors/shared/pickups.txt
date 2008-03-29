@@ -1,0 +1,14 @@
+//------------------------------------------------------------------------------
+actor ItemFog
+{
+	RenderStyle Translucent
+	Alpha 0.666
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		IFOG ABABCDE 6 Bright
+		Stop
+	}
+}

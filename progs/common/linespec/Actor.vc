@@ -72,11 +72,11 @@ final void A_Look()
 		for (Ent = Level.FindMobjFromTID(Args[1], &Searcher); Ent;
 			Ent = Level.FindMobjFromTID(Args[1], &Searcher))
 		{
-			if (!PatrolPoint(Ent))
+			if (!Ent.IsA('PatrolPoint'))
 			{
 				continue;
 			}
-			Goal = PatrolPoint(Ent);
+			Goal = EntityEx(Ent);
 			break;
 		}
 		Special = 0;
@@ -419,7 +419,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			for (Ent = Level.FindMobjFromTID(Goal.TID, &Searcher); Ent;
 				Ent = Level.FindMobjFromTID(Goal.TID, &Searcher))
 			{
-				if (!PatrolSpecial(Ent))
+				if (Ent.Class != PatrolSpecial)
 				{
 					continue;
 				}
@@ -435,11 +435,11 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			for (Ent = Level.FindMobjFromTID(Goal.Args[0], &Searcher); Ent;
 				Ent = Level.FindMobjFromTID(Goal.Args[0], &Searcher))
 			{
-				if (!PatrolPoint(Ent))
+				if (!Ent.IsA('PatrolPoint'))
 				{
 					continue;
 				}
-				NewGoal = PatrolPoint(Ent);
+				NewGoal = EntityEx(Ent);
 				break;
 			}
 			if (NewGoal && Goal == Target)

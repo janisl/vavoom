@@ -4076,11 +4076,11 @@ final bool EV_ThingSetGoal(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	for (Ent = FindMobjFromTID(Arg2, &Searcher); Ent;
 		Ent = FindMobjFromTID(Arg2, &Searcher))
 	{
-		if (!PatrolPoint(Ent))
+		if (!Ent.IsA('PatrolPoint'))
 		{
 			continue;
 		}
-		NewGoal = PatrolPoint(Ent);
+		NewGoal = EntityEx(Ent);
 		break;
 	}
 
