@@ -585,13 +585,8 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
-#if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-#else
-		RenderDevice->SetTextureStageState(1, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
-		RenderDevice->SetTextureStageState(1, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
-#endif
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -638,15 +633,9 @@ void VDirect3DDrawer::WorldDrawing()
 	}
 	else
 	{
-#if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-#else
-		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-#endif
 		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR);
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
@@ -690,15 +679,9 @@ void VDirect3DDrawer::WorldDrawing()
 			}
 		}
 
-#if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
-#else
-		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, magfilter);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
-#endif
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -710,15 +693,9 @@ void VDirect3DDrawer::WorldDrawing()
 	//
 	if (specular_highlights)
 	{
-#if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-#else
-		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, D3DTEXF_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
-#endif
 		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
@@ -762,15 +739,9 @@ void VDirect3DDrawer::WorldDrawing()
 			}
 		}
 
-#if DIRECT3D_VERSION >= 0x0900
 		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
-#else
-		RenderDevice->SetTextureStageState(0, D3DTSS_MAGFILTER, magfilter);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
-		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
-#endif
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);

@@ -34,11 +34,7 @@
 
 #include "winlocal.h"
 #include "gamedefs.h"
-#if 0
-#include <d3d8.h>
-#else
 #include <d3d9.h>
-#endif
 #include "cl_local.h"
 #include "r_shared.h"
 
@@ -229,29 +225,16 @@ private:
 	void ReleaseTextures();
 	void FlushTexture(VTexture*);
 	static int ToPowerOf2(int);
-#if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9 CreateSurface(int, int, int, bool);
-#else
-	LPDIRECT3DTEXTURE8 CreateSurface(int, int, int, bool);
-#endif
 	void SetSpriteLump(VTexture*, VTextureTranslation*, int);
 	void SetPic(VTexture*, VTextureTranslation*, int);
 	void GenerateTexture(VTexture*, void**, VTextureTranslation*, int);
-#if DIRECT3D_VERSION >= 0x0900
 	void UploadTextureImage(LPDIRECT3DTEXTURE9, int, int, int, const rgba_t*);
-#else
-	void UploadTextureImage(LPDIRECT3DTEXTURE8, int, int, int, const rgba_t*);
-#endif
 	void AdjustGamma(rgba_t *, int);
 	void ResampleTexture(int, int, const byte*, int, int, byte*);
 	void MipMap(int, int, byte*);
-#if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9 UploadTexture8(int, int, const byte*, const rgba_t*);
 	LPDIRECT3DTEXTURE9 UploadTexture(int, int, const rgba_t*);
-#else
-	LPDIRECT3DTEXTURE8 UploadTexture8(int, int, const byte*, const rgba_t*);
-	LPDIRECT3DTEXTURE8 UploadTexture(int, int, const rgba_t*);
-#endif
 
 	void FlushCaches(bool);
 	void FlushOldCaches();
@@ -276,7 +259,6 @@ private:
 
 	bool						Windowed;
 
-#if DIRECT3D_VERSION >= 0x0900
 	HMODULE						DLLHandle;
 
 	//	Direct3D interfaces
@@ -284,15 +266,6 @@ private:
 	LPDIRECT3DDEVICE9			RenderDevice;
 
 	D3DVIEWPORT9				viewData;
-#else
-	HMODULE						DLLHandle;
-
-	//	Direct3D interfaces
-	LPDIRECT3D8					Direct3D;
-	LPDIRECT3DDEVICE8			RenderDevice;
-
-	D3DVIEWPORT8				viewData;
-#endif
 	MyD3DMatrix					IdentityMatrix;
 	MyD3DMatrix					matProj;
 	MyD3DMatrix					matView;
@@ -328,11 +301,7 @@ private:
 	D3DTEXTUREFILTERTYPE		mipfilter;
 
 	//	Textures.
-#if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9			particle_texture;
-#else
-	LPDIRECT3DTEXTURE8			particle_texture;
-#endif
     int                         tscount;
 
 	VRenderLevelDrawer*			RendLev;
@@ -343,21 +312,13 @@ private:
 	surface_t*					SkyPortalsTail;
 
 	//	Lightmaps.
-#if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9			*light_surf;
-#else
-	LPDIRECT3DTEXTURE8			*light_surf;
-#endif
 	rgba_t						light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool						block_changed[NUM_BLOCK_SURFS];
 	surfcache_t					*light_chain[NUM_BLOCK_SURFS];
 
 	//	Specular lightmaps.
-#if DIRECT3D_VERSION >= 0x0900
 	LPDIRECT3DTEXTURE9			*add_surf;
-#else
-	LPDIRECT3DTEXTURE8			*add_surf;
-#endif
 	rgba_t						add_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
 	bool						add_changed[NUM_BLOCK_SURFS];
 	surfcache_t					*add_chain[NUM_BLOCK_SURFS];
