@@ -534,7 +534,7 @@ void VDirect3DDrawer::WorldDrawing()
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		//FIXME is there another way how to disable colour writes?
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			for (i = 0; i < surf->count; i++)
@@ -543,7 +543,7 @@ void VDirect3DDrawer::WorldDrawing()
 			}
 			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
 		}
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	}
 
@@ -647,10 +647,10 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
 #endif
-		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ZERO);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_SRCCOLOR);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);	// don't bother writing Z
+		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ZERO);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_SRCCOLOR);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);	// don't bother writing Z
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -699,10 +699,10 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
 #endif
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);		// back to normal Z buffering
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);		// back to normal Z buffering
 	}
 
 	//
@@ -719,10 +719,10 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, D3DTEXF_NONE);
 #endif
-		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_ONE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);	// don't bother writing Z
+		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);	// don't bother writing Z
 		SetFade(0);
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
@@ -771,10 +771,10 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetTextureStageState(0, D3DTSS_MINFILTER, minfilter);
 		RenderDevice->SetTextureStageState(0, D3DTSS_MIPFILTER, mipfilter);
 #endif
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);		// back to normal Z buffering
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);		// back to normal Z buffering
 	}
 	unguard;
 }
@@ -788,7 +788,7 @@ void VDirect3DDrawer::WorldDrawing()
 void VDirect3DDrawer::BeginSky()
 {
 	guard(VDirect3DDrawer::BeginSky);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 	SetFade(0);
 	unguard;
 }
@@ -871,9 +871,9 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 					(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
 					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 			}
-			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+			RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
-			RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+			RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 		}
 	}
 	unguard;
@@ -888,7 +888,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 void VDirect3DDrawer::EndSky()
 {
 	guard(VDirect3DDrawer::EndSky);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ZWRITEENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	unguard;
 }
 
@@ -948,28 +948,28 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 			(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 	}
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	}
 	if (Additive)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	}
 
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
 	}
 	if (Additive)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 	unguard;
 }
@@ -1002,27 +1002,27 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	}
 	if (Additive)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	}
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
 
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
 	}
 	if (Additive)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	unguard;
 }
 
@@ -1112,15 +1112,15 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matTmp(3, 2) = pframedesc->scale_origin[2] * Scale.z;
 	matWorld = matTmp * matWorld;
 
-	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &matWorld);
+	RenderDevice->SetTransform(D3DTS_WORLD, &matWorld);
 
 	SetPic(Skin, Trans, CMap);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_GOURAUD);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	if (Additive)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_ONE);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	}
 
 	SetFade(Fade);
@@ -1177,14 +1177,14 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		RenderDevice->DrawPrimitiveUP(primtype, count - 2, out, sizeof(MyD3DVertex));
 	}
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_FLAT);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	if (Additive)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 
-	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
+	RenderDevice->SetTransform(D3DTS_WORLD, &IdentityMatrix);
 	if (is_view_model)
 	{
 		viewData.MaxZ = 1.0;
@@ -1220,9 +1220,9 @@ void VDirect3DDrawer::StartParticles()
 		UploadTextureImage(particle_texture, 0, 8, 8, &pbuf[0][0]);
 	}
 	RenderDevice->SetTexture(0, particle_texture);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 0);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 0);
 	unguard;
 }
 
@@ -1253,8 +1253,8 @@ void VDirect3DDrawer::DrawParticle(particle_t *p)
 void VDirect3DDrawer::EndParticles()
 {
 	guard(VDirect3DDrawer::EndParticles);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
 	unguard;
 }

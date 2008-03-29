@@ -36,10 +36,8 @@
 #include "gamedefs.h"
 #if 0
 #include <d3d8.h>
-#include <dx7todx8.h>
 #else
 #include <d3d9.h>
-#include <dx7todx8.h>
 #endif
 #include "cl_local.h"
 #include "r_shared.h"
@@ -322,7 +320,7 @@ private:
 	float						tex_ih;
 
 	int							lastgamma;
-	int							CurrentFade;
+	vuint32						CurrentFade;
 
 	//	Texture filters.
 	D3DTEXTUREFILTERTYPE		magfilter;

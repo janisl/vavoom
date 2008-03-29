@@ -72,16 +72,16 @@ void VDirect3DDrawer::DrawPic(float x1, float y1, float x2, float y2,
 
 	if (Alpha < 1.0)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	}
 
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
 
 	if (Alpha < 1.0)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	}
 	unguard;
 }
@@ -106,13 +106,13 @@ void VDirect3DDrawer::DrawPicShadow(float x1, float y1, float x2, float y2,
 	dv[2] = MyD3DVertex(x2, y2, l, s2 * tex_iw, t2 * tex_ih);
 	dv[3] = MyD3DVertex(x1, y2, l, s1 * tex_iw, t2 * tex_ih);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	unguard;
 }
 
@@ -160,9 +160,9 @@ void VDirect3DDrawer::FillRect(float x1, float y1, float x2, float y2,
 	dv[3] = MyD3DVertex(x1, y2, colour, 0, 0);
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	unguard;
 }
@@ -183,8 +183,8 @@ void VDirect3DDrawer::ShadeRect(int x, int y, int w, int h, float darkening)
 	int l = (int)(darkening * 255) << 24;
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	dv[0] = MyD3DVertex(x, y, l, 0, 0);
 	dv[1] = MyD3DVertex(x + w, y, l, 0, 0);
@@ -193,8 +193,8 @@ void VDirect3DDrawer::ShadeRect(int x, int y, int w, int h, float darkening)
 
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	unguard;
 }
@@ -212,8 +212,8 @@ void VDirect3DDrawer::DrawConsoleBackground(int h)
 	int l = 0xc000007f;
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	dv[0] = MyD3DVertex(0, 0, l, 0, 0);
 	dv[1] = MyD3DVertex(ScreenWidth, 0, l, 0, 0);
@@ -222,8 +222,8 @@ void VDirect3DDrawer::DrawConsoleBackground(int h)
 
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	unguard;
 }
@@ -274,8 +274,8 @@ void VDirect3DDrawer::StartAutomap()
 {
 	guard(VDirect3DDrawer::StartAutomap);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 	unguard;
 }
 
@@ -305,8 +305,8 @@ void VDirect3DDrawer::DrawLine(int x1, int y1, vuint32 c1, int x2, int y2,
 void VDirect3DDrawer::EndAutomap()
 {
 	guard(VDirect3DDrawer::EndAutomap);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	unguard;
 }

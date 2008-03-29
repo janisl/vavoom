@@ -298,20 +298,20 @@ void VDirect3DDrawer::InitResolution()
 	RenderDevice->SetStreamSource(0, NULL, sizeof(MyD3DVertex));
 	RenderDevice->SetVertexShader(MYD3D_VERTEX_FORMAT);
 #endif
-	RenderDevice->SetTransform(D3DTRANSFORMSTATE_WORLD, &IdentityMatrix);
+	RenderDevice->SetTransform(D3DTS_WORLD, &IdentityMatrix);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ZFUNC, D3DCMP_LESSEQUAL);
+	RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 	
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAFUNC, D3DCMP_GREATER);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHAREF, 170);
+	RenderDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_SRCBLEND, D3DBLEND_SRCALPHA);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
 	RenderDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_LIGHTING, FALSE);
+	RenderDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_FLAT);
+	RenderDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 	unguard;
 }
 
@@ -392,11 +392,11 @@ void VDirect3DDrawer::StartUpdate()
 	//	Dithering
 	if (dither)
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DITHERENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_DITHERENABLE, TRUE);
 	}
 	else
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_DITHERENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_DITHERENABLE, FALSE);
 	}
 
 	// Begin the scene.
@@ -437,14 +437,14 @@ void VDirect3DDrawer::Setup2D()
 	proj2D(1, 1) = -2.0 / (float)ScreenHeight;
 	proj2D(3, 0) = -1.0;
 	proj2D(3, 1) = 1.0;
-	RenderDevice->SetTransform(D3DTRANSFORMSTATE_PROJECTION, &proj2D);
+	RenderDevice->SetTransform(D3DTS_PROJECTION, &proj2D);
 
-	RenderDevice->SetTransform(D3DTRANSFORMSTATE_VIEW, &IdentityMatrix);
+	RenderDevice->SetTransform(D3DTS_VIEW, &IdentityMatrix);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_NONE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 
 	SetFade(0);
 	unguard;
@@ -489,7 +489,7 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	matProj(2, 2) = Q;
 	matProj(3, 2) = -Q * mindist;
 	matProj(2, 3) = 1;
-	RenderDevice->SetTransform(D3DTRANSFORMSTATE_PROJECTION, &matProj);
+	RenderDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 
 	// The view matrix defines the position and orientation of the camera.
 	MyD3DMatrix matView;
@@ -509,13 +509,13 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	matView(1, 3) = 0;
 	matView(2, 3) = 0;
 	matView(3, 3) = 1;
-	RenderDevice->SetTransform(D3DTRANSFORMSTATE_VIEW, &matView);
+	RenderDevice->SetTransform(D3DTS_VIEW, &matView);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_CULLMODE, D3DCULL_CCW);
+	RenderDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ZENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
@@ -545,8 +545,8 @@ void VDirect3DDrawer::EndView()
 		MyD3DVertex	dv[4];
 
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 		dv[0] = MyD3DVertex(0, 0, cl->CShift, 0, 0);
 		dv[1] = MyD3DVertex(ScreenWidth, 0, cl->CShift, 0, 0);
@@ -555,8 +555,8 @@ void VDirect3DDrawer::EndView()
 
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, dv, sizeof(MyD3DVertex));
 
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_ALPHATESTENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	}
 	unguard;
@@ -833,16 +833,16 @@ void VDirect3DDrawer::SetFade(vuint32 NewFade)
 		static const D3DFOGMODE fog_mode[4] = {
 			D3DFOG_LINEAR, D3DFOG_LINEAR, D3DFOG_EXP, D3DFOG_EXP2 };
 
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGVERTEXMODE, fog_mode[r_fog & 3]);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGCOLOR, NewFade);
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGDENSITY, PassFloat(r_fog_density));
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGSTART, PassFloat(r_fog_start));
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGEND, PassFloat(r_fog_end));
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_FOGVERTEXMODE, fog_mode[r_fog & 3]);
+		RenderDevice->SetRenderState(D3DRS_FOGCOLOR, NewFade);
+		RenderDevice->SetRenderState(D3DRS_FOGDENSITY, PassFloat(r_fog_density));
+		RenderDevice->SetRenderState(D3DRS_FOGSTART, PassFloat(r_fog_start));
+		RenderDevice->SetRenderState(D3DRS_FOGEND, PassFloat(r_fog_end));
+		RenderDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
 	}
 	else
 	{
-		RenderDevice->SetRenderState(D3DRENDERSTATE_FOGENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
 	}
 	CurrentFade = NewFade;
 	unguard;
