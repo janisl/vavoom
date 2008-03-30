@@ -1006,7 +1006,7 @@ final void A_Burst(class<Actor> ChunkType)
 //==========================================================================
 
 final void A_CustomMissile(class<Actor> MissileType, float SpawnHeight,
-	int SpawnXYOffset, float Angle, optional int AimMode,
+	int SpawnXYOffset, optional float Angle, optional int AimMode,
 	optional float Pitch)
 {
 	int Flags = AimMode & ~3;
@@ -2821,9 +2821,9 @@ final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
 	InitSpawnedItem(A, !!(Flags & 1), !!(Flags & 16), !!(Flags & 32));
 	if (A)
 	{
-		A.Velocity.x = XVel;
-		A.Velocity.y = YVel;
-		A.Velocity.z = ZVel;
+		A.Velocity.x = XVel * 35.0;
+		A.Velocity.y = YVel * 35.0;
+		A.Velocity.z = ZVel * 35.0;
 		A.Angles.yaw = Angle;
 		if (!(Flags & 8))
 		{

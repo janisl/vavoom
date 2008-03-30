@@ -158,31 +158,6 @@ import linespec;
 #include "PigPlayer.vc"
 
 #include "Pig.vc"
-#include "EttinMace.vc"
-#include "Ettin.vc"
-#include "EttinMash.vc"
-#include "CentaurShield.vc"
-#include "CentaurSword.vc"
-#include "Centaur.vc"
-#include "CentaurFX.vc"
-#include "CentaurLeader.vc"
-#include "CentaurMash.vc"
-#include "Demon1FX1.vc"
-#include "Demon1Chunk1.vc"
-#include "Demon1Chunk2.vc"
-#include "Demon1Chunk3.vc"
-#include "Demon1Chunk4.vc"
-#include "Demon1Chunk5.vc"
-#include "Demon1.vc"
-#include "Demon2FX1.vc"
-#include "Demon2Chunk1.vc"
-#include "Demon2Chunk2.vc"
-#include "Demon2Chunk3.vc"
-#include "Demon2Chunk4.vc"
-#include "Demon2Chunk5.vc"
-#include "Demon2.vc"
-#include "Demon1Mash.vc"
-#include "Demon2Mash.vc"
 #include "IceGuyBit.vc"
 #include "IceGuyWisp1.vc"
 #include "IceGuyWisp2.vc"
@@ -258,3 +233,9 @@ class ArtiInvulnerability : PowerupGiver decorate;
 class FighterPlayer : PlayerPawn decorate;
 class ClericPlayer : PlayerPawn decorate;
 class MagePlayer : PlayerPawn decorate;
+class Ettin : Actor decorate;
+class Centaur : Actor decorate;
+class CentaurLeader : Actor decorate;
+class CentaurFX : Actor decorate;
+class Demon1FX1 : Actor decorate;
+class Demon2FX1 : Actor decorate;

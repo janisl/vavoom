@@ -1,0 +1,104 @@
+//------------------------------------------------------------------------------
+actor Ettin 10030
+{
+	game Hexen
+	SpawnID 4
+	Health 175
+	Radius 25
+	Height 68
+	Mass 175
+	Speed 13
+	Damage 3
+	PainChance 60
+	SeeSound "EttinSight"
+	ActiveSound "EttinActive"
+	AttackSound "EttinAttack"
+	PainSound "EttinPain"
+	DeathSound "EttinDeath"
+	HowlSound "PuppyBeat"
+	Obituary "$ob_ettin"
+	Monster
+	+FloorClip
+	+Telestomp
+	states
+	{
+	Spawn:
+		ETTN AA 10 A_Look
+		Loop
+	See:
+		ETTN ABCD 5 A_Chase
+		Loop
+	Pain:
+		ETTN H 7 A_Pain
+		Goto See
+	Melee:
+		ETTN EF 6 A_FaceTarget
+		ETTN G 8 A_CustomMeleeAttack(random(1, 8) * 2)
+		Goto See
+	Death:
+		ETTN IJ 4
+		ETTN K 4 A_Scream
+		ETTN L 4 A_NoBlocking
+		ETTN M 4 A_QueueCorpse
+		ETTN NOP 4
+		ETTN Q -1
+		Stop
+	XDeath:
+		ETTB A 4
+		ETTB B 4 A_NoBlocking
+		ETTB C 4 A_SpawnItemEx(EttinMace, 0, 0, 34, random(-128, 127) * 0.03125,
+			random(-128, 127) * 0.03125, 10 + random(0, 255) * 0.015625, 0,
+			SXF_ABSOLUTEMOMENTUM)
+		ETTB D 4 A_Scream
+		ETTB E 4 A_QueueCorpse
+		ETTB FGHIJK 4
+		ETTB L -1
+		Stop
+	Ice:
+		ETTN R 5 A_FreezeDeath
+		ETTN R 1 A_FreezeDeathChunks
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
+actor EttinMace
+{
+	Radius 5
+	Height 5
+	+Corpse
+	+DropOff
+	+NoTeleport
+	+FloorClip
+	states
+	{
+	Spawn:
+		ETTB MNOP 5
+		Loop
+	Crash:
+		ETTB Q 5
+		ETTB R 5 A_QueueCorpse
+		ETTB S -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor EttinMash : Ettin
+{
+	game Hexen
+	SpawnID 102
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlood
+	+Blasted
+	+NoIceDeath
+	-Telestomp
+	states
+	{
+	Death:
+	XDeath:
+	Ice:
+		Stop
+	}
+}

@@ -1,0 +1,178 @@
+//------------------------------------------------------------------------------
+actor Centaur 107
+{
+	game Hexen
+	SpawnID 1
+	Health 200
+	Radius 20
+	Height 64
+	Mass 120
+	Speed 13
+	PainChance 135
+	SeeSound "CentaurSight"
+	ActiveSound "CentaurActive"
+	AttackSound "CentaurAttack"
+	PainSound "CentaurPain"
+	DeathSound "CentaurDeath"
+	HowlSound "PuppyBeat"
+	Obituary "$ob_centaur"
+	Monster
+	+FloorClip
+	+Telestomp
+	+ShieldReflect
+	states
+	{
+	Spawn:
+		CENT AB 10 A_Look
+		Loop
+	See:
+		CENT ABCD 4 A_Chase
+		Loop
+	Melee:
+		CENT H 5 A_FaceTarget
+		CENT I 4 A_FaceTarget
+		CENT J 7 A_CustomMeleeAttack(random(3, 10))
+		Goto See
+	Pain:
+		CENT G 6 A_Pain
+		CENT G 6 A_SetReflectiveInvulnerable
+		CENT EEE 15 A_CentaurDefend
+		CENT E 1 A_UnSetReflectiveInvulnerable
+		Goto See
+	Death:
+		CENT K 4
+		CENT L 4 A_Scream
+		CENT MN 4
+		CENT O 4 A_NoBlocking
+		CENT PQ 4
+		CENT R 4 A_QueueCorpse
+		CENT S 4
+		CENT T -1
+		Stop
+	XDeath:
+		CTXD A 4
+		CTXD B 4 A_NoBlocking
+		CTXD C 0 A_SpawnItemEx("CentaurShield", 0, 0, 45, random(-128, 127) * 0.03125 + 1,
+			random(-128, 127) * 0.03125 + 1, 8 + random(0, 255) * 0.015625, 90)
+		CTXD C 4 A_SpawnItemEx("CentaurSword", 0, 0, 45, random(-128, 127) * 0.03125 + 1,
+			random(-128, 127) * 0.03125 + 1, 8 + random(0, 255) * 0.015625, 270)
+		CTXD D 3 A_Scream
+		CTXD E 4 A_QueueCorpse
+		CTXD F 3
+		CTXD G 4
+		CTXD H 3
+		CTXD I 4
+		CTXD J 3
+		CTXD K -1
+		Stop
+	Ice:
+		CENT U 5 A_FreezeDeath
+		CENT U 1 A_FreezeDeathChunks
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CentaurShield
+{
+	+Corpse
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		CTDP ABCDEF 3
+		Goto Spawn+2
+	Crash:
+		CTDP G 4
+		CTDP H 4 A_QueueCorpse
+		CTDP I 4
+		CTDP J -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CentaurSword
+{
+	+Corpse
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		CTDP KLMNOPQ 3
+		Goto Spawn+2
+	Crash:
+		CTDP R 4
+		CTDP S 4 A_QueueCorpse
+		CTDP T -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CentaurLeader : Centaur 115
+{
+	game Hexen
+	SpawnID 2
+	Health 250
+	Speed 10
+	PainChance 96
+	Obituary "$ob_slaughtaur"
+	HitObituary "$ob_slaughtaurhit"
+	states
+	{
+	Missile:
+		CENT E 10 A_FaceTarget
+		CENT F 8 Bright A_CustomMissile("CentaurFX", 45, 0, 0, CMF_AIMOFFSET)
+		CENT E 10 A_FaceTarget
+		CENT F 8 Bright A_CustomMissile("CentaurFX", 45, 0, 0, CMF_AIMOFFSET)
+		Goto See
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CentaurFX
+{
+	Speed 20
+	Damage 4
+	RenderStyle Add
+	SeeSound "CentaurLeaderAttack"
+	DeathSound "CentaurMissileExplode"
+	Projectile
+	+SpawnSoundSource
+	states
+	{
+	Spawn:
+		CTFX A -1 Bright
+		Stop
+	Death:
+		CTFX B 4 Bright
+		CTFX C 3 Bright
+		CTFX D 4 Bright
+		CTFX E 3 Bright
+		CTFX F 2 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CentaurMash : Centaur
+{
+	game Hexen
+	SpawnID 103
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlood
+	+Blasted
+	+NoIceDeath
+	-Telestomp
+	states
+	{
+	Death:
+	XDeath:
+	Ice:
+		Stop
+	}
+}

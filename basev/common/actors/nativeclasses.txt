@@ -30,7 +30,7 @@ class Actor extends Thinker
 	//	Generic monster attacks
 	//
 	action native A_CustomMissile(class<Actor> missiletype, eval float spawnheight,
-		eval int spawnoffs_xy, eval float angle, optional eval int aimmode,
+		eval int spawnoffs_xy, optional eval float angle, optional eval int aimmode,
 		optional eval float pitch);
 	action native A_CustomBulletAttack(eval float spread_horiz, eval float spread_vert,
 		eval int numbullets, eval int damage, class<Actor> pufftype,

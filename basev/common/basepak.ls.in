@@ -86,7 +86,10 @@ actors/heretic/heretickeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/heret
 actors/heretic/hereticplayer.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticplayer.txt
 actors/heretic/mummy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/mummy.txt
 actors/heretic/snake.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/snake.txt
+actors/hexen/centaur.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/centaur.txt
 actors/hexen/clericplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericplayer.txt
+actors/hexen/demons.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/demons.txt
+actors/hexen/ettin.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/ettin.txt
 actors/hexen/fighterplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterplayer.txt
 actors/hexen/flame.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/flame.txt
 actors/hexen/hexenarmor.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenarmor.txt
