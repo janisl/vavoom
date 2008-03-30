@@ -46,11 +46,15 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/heretic/hereticartifacts.txt
 		actors/heretic/hereticdecorations.txt
 		actors/heretic/heretickeys.txt
+		actors/heretic/hereticplayer.txt
+		actors/hexen/clericplayer.txt
+		actors/hexen/fighterplayer.txt
 		actors/hexen/flame.txt
 		actors/hexen/hexenarmor.txt
 		actors/hexen/hexendecorations.txt
 		actors/hexen/hexenkeys.txt
 		actors/hexen/hexenspecialdecs.txt
+		actors/hexen/mageplayer.txt
 		actors/hexen/mana.txt
 		actors/hexen/puzzleitems.txt
 		actors/hexen/scriptprojectiles.txt
@@ -69,6 +73,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/strife/strifearmor.txt
 		actors/strife/strifeitems.txt
 		actors/strife/strifekeys.txt
+		actors/strife/strifeplayer.txt
 		actors/strife/strifestuff.txt
 		fxdefs/common/effects.txt
 		fxdefs/doom/decorations.txt

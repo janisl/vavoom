@@ -108,7 +108,6 @@ import uibase;
 #include "PowerCrystal.vc"
 #include "PowerCoupling.vc"
 
-#include "StrifePlayer.vc"
 #include "Merchant.vc"
 #include "WeaponSmith.vc"
 #include "BarKeep.vc"
@@ -231,3 +230,4 @@ class ElectricBolts : Ammo decorate;
 class AmmoSatchel : BackpackItem decorate;
 class Communicator : Inventory decorate;
 class BrokenPowerCoupling : Inventory decorate;
+class StrifePlayer : PlayerPawn decorate;

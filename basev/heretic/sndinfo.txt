@@ -25,6 +25,7 @@ $playersound	player	male	*crazydeath		plrcdth
 $playersound	player	male	*gibbed			gibdth
 $playersound	player	male	*weaponlaugh	wpnup
 $playersounddup	player	male	*evillaugh		*weaponlaugh
+$playersound	player	male	*burndeath		hedat1
 
 // Use *pain in a script to play any of the pain sounds
 $random *pain					{ *pain100  *pain75  *pain50  *pain25 }

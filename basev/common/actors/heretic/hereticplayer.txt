@@ -1,0 +1,87 @@
+//------------------------------------------------------------------------------
+actor HereticPlayer : PlayerPawn
+{
+	Health 100
+	Radius 16
+	Height 56
+	PainChance 255
+	Player.ColorRange 225, 240
+	Player.DisplayName "Corvus"
+	Player.StartItem "GoldWand"
+	Player.StartItem "Staff"
+	Player.StartItem "GoldWandAmmo", 50
+	states
+	{
+	Spawn:
+		PLAY A -1
+		Stop
+	See:
+		PLAY ABCD 4
+		Loop
+	Melee:
+	Missile:
+		PLAY F 6 Bright
+		PLAY E 12
+		Goto Spawn
+	Pain:
+		PLAY G 4
+		PLAY G 4 A_Pain
+		Goto Spawn
+	Death:
+		PLAY H 6
+		PLAY I 6 A_PlayerScream
+		PLAY JK 6
+		PLAY L 6 A_NoBlocking
+		PLAY MNO 6
+		PLAY P -1
+		Stop
+	XDeath:
+		PLAY Q 5 A_PlayerScream
+		PLAY R 5 A_SkullPop
+		PLAY S 5 A_NoBlocking
+		PLAY TUVWX 5
+		PLAY Y -1
+		Stop
+	Burn:
+		FDTH A 5 Bright A_PlaySound("*burndeath")
+		FDTH B 4 Bright
+		FDTH C 5 Bright
+		FDTH D 4 Bright A_PlayerScream
+		FDTH E 5 Bright
+		FDTH F 4 Bright
+		FDTH G 5 Bright A_PlaySound("*burndeath")
+		FDTH H 4 Bright
+		FDTH I 5 Bright
+		FDTH J 4 Bright
+		FDTH K 5 Bright
+		FDTH L 4 Bright
+		FDTH M 5 Bright
+		FDTH N 4 Bright
+		FDTH O 5 Bright A_NoBlocking
+		FDTH P 4 Bright
+		FDTH Q 5 Bright
+		FDTH R 4 Bright
+		ACLO E 35 A_CheckPlayerDone
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BloodySkull : PlayerChunk
+{
+	Radius 4
+	Height 4
+	Gravity 0.125
+	+NoBlockmap
+	+CanPass
+	+CannotPush
+	states
+	{
+	Spawn:
+		BSKL ABCDE 5 A_CheckFloor("Hit")
+		Loop
+	Hit:
+		BSKL F 16 A_CheckPlayerDone
+		Loop
+	}
+}

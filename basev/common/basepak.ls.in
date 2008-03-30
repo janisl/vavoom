@@ -81,11 +81,15 @@ actors/heretic/hereticarmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/here
 actors/heretic/hereticartifacts.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticartifacts.txt
 actors/heretic/hereticdecorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticdecorations.txt
 actors/heretic/heretickeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/heretickeys.txt
+actors/heretic/hereticplayer.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticplayer.txt
+actors/hexen/clericplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericplayer.txt
+actors/hexen/fighterplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterplayer.txt
 actors/hexen/flame.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/flame.txt
 actors/hexen/hexenarmor.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenarmor.txt
 actors/hexen/hexendecorations.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexendecorations.txt
 actors/hexen/hexenkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenkeys.txt
 actors/hexen/hexenspecialdecs.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenspecialdecs.txt
+actors/hexen/mageplayer.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/mageplayer.txt
 actors/hexen/mana.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/mana.txt
 actors/hexen/puzzleitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/puzzleitems.txt
 actors/hexen/scriptprojectiles.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/scriptprojectiles.txt
@@ -104,6 +108,7 @@ actors/strife/strifeammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeam
 actors/strife/strifearmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifearmor.txt
 actors/strife/strifeitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeitems.txt
 actors/strife/strifekeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifekeys.txt
+actors/strife/strifeplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeplayer.txt
 actors/strife/strifestuff.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifestuff.txt
 
 //	Effect scripts

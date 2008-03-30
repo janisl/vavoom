@@ -877,7 +877,7 @@ void DeathPlayerTick(float deltaTime)
 
 	onground = (MO.Origin.z <= MO.FloorZ);
 
-	if (MO.Class == BloodySkull)
+	if (PlayerChunk(MO))
 	{
 		// Flying bloody skull
 		ViewHeight = 6.0;

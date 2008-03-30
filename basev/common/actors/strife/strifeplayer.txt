@@ -1,0 +1,72 @@
+//------------------------------------------------------------------------------
+actor StrifePlayer : PlayerPawn
+{
+	action native A_ItBurnsItBurns();
+	action native A_DropFire();
+
+	Health 100
+	Radius 18
+	Height 56
+	PainChance 255
+	MaxStepHeight 16
+	Player.RunHealth 25
+	Player.ColorRange 128, 143
+	Player.DisplayName "Rebel"
+	Player.StartItem "PunchDagger"
+	states
+	{
+	Spawn:
+		PLAY A -1
+		Stop
+	See:
+		PLAY ABCD 4
+		Loop
+	Missile:
+		PLAY E 12
+		Goto Spawn
+	Melee:
+		PLAY F 6
+		Goto Missile
+	Pain:
+		PLAY Q 4 A_Pain
+		PLAY Q 4
+		Goto Spawn
+	Death:
+		PLAY G 4
+		PLAY H 3 A_PlayerScream
+		PLAY I 3 A_NoBlocking
+		PLAY JKLMNO 4
+		PLAY P -1
+		Stop
+	XDeath:
+		RGIB A 5 A_TossGib
+		RGIB B 5 A_XScream
+		RGIB C 5 A_NoBlocking
+		RGIB DEFG 5 A_TossGib
+		RGIB H -1 A_TossGib
+		Stop
+	Burn:
+		BURN A 3 Bright A_ItBurnsItBurns
+		BURN B 3 Bright A_DropFire
+		BURN C 3 Bright A_Wander
+		BURN D 3 Bright A_NoBlocking
+		BURN E 5 Bright A_DropFire
+		BURN FGH 5 Bright A_Wander
+		BURN I 5 Bright A_DropFire
+		BURN JKL 5 Bright A_Wander
+		BURN M 3 Bright A_DropFire
+		BURN N 3 Bright
+		BURN OPQPQ 5 Bright
+		BURN RSTU 7 Bright
+		BURN V -1
+		Stop
+	Disintegrate:
+		DISR A 5 A_PlaySound("misc/disruptordeath")
+		DISR BC 5
+		DISR D 5 A_Fall
+		DISR EF 5
+		DISR GHIJ 4
+		MEAT D 700
+		Stop
+	}
+}

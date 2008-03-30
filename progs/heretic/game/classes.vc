@@ -109,7 +109,6 @@ import linespec;
 #include "TeleGlitter2.vc"
 #include "TeleGlitterGenerator2.vc"
 
-#include "HereticPlayer.vc"
 #include "ChickenPlayer.vc"
 #include "Chicken.vc"
 #include "HereticImpChunk1.vc"
@@ -166,3 +165,4 @@ class PhoenixRodAmmo : Ammo decorate;
 class BlasterAmmo : Ammo decorate;
 class BagOfHolding : BackpackItem decorate;
 class ArtiFly : PowerupGiver decorate;
+class HereticPlayer : PlayerPawn decorate;

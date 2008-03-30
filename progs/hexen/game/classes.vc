@@ -155,9 +155,6 @@ import linespec;
 #include "PoisonBag.vc"
 #include "ZPoisonShroom.vc"
 
-#include "FighterPlayer.vc"
-#include "ClericPlayer.vc"
-#include "MagePlayer.vc"
 #include "PigPlayer.vc"
 
 #include "Pig.vc"
@@ -258,3 +255,6 @@ class Mana1 : Ammo decorate;
 class Mana2 : Ammo decorate;
 class ArtiFly : PowerupGiver decorate;
 class ArtiInvulnerability : PowerupGiver decorate;
+class FighterPlayer : PlayerPawn decorate;
+class ClericPlayer : PlayerPawn decorate;
+class MagePlayer : PlayerPawn decorate;

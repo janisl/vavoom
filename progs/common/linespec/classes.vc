@@ -197,8 +197,6 @@ enum
 
 #include "Feather.vc"
 
-#include "BloodySkull.vc"
-#include "HexenBloodySkull.vc"
 #include "IceChunk.vc"
 #include "IceChunkHead.vc"
 
@@ -223,6 +221,7 @@ class PatrolPoint : Actor decorate;
 class PatrolSpecial : Actor decorate;
 class MapSpot : Actor decorate;
 class ItemFog : Actor decorate;
+class BloodySkull : PlayerChunk decorate;
 
 //	Doom classes
 class BulletPuff : Actor decorate;

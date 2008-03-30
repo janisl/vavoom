@@ -67,7 +67,7 @@ Burn:
 	BURN V 700 //FIXME A_Dying();
 	Stop
 Disintegrate:
-	DISR A 5 { A_PlaySound("human/disrupt"); }
+	DISR A 5 { A_PlaySound("misc/disruptordeath"); }
 	DISR BC 5
 	DISR D 5 A_Fall
 	DISR EF 5

@@ -2647,6 +2647,12 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			continue;
 		}
 
+		if (sc->Check("action"))
+		{
+			ParseAction(sc, Class);
+			continue;
+		}
+
 		//	Get full name of the property.
 		sc->ExpectIdentifier();
 		VStr Prop = sc->String;
@@ -3990,7 +3996,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 		}*/
 
-		sc->Error(va("Unknown property %s", *Prop));
+		sc->Error(va("Unknown property \"%s\"", *Prop));
 	}
 
 	sc->SetCMode(false);
