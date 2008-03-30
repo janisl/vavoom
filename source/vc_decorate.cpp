@@ -3256,27 +3256,27 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			DI.Type = NULL;
 			DI.Amount = 0;
 			DI.Chance = 1.0;
-			bool HaveAmount = false;
+			bool HaveChance = false;
 			if (sc->Check(","))
 			{
 				sc->ExpectNumber();
-				HaveAmount = true;
+				HaveChance = true;
 			}
 			else
 			{
-				HaveAmount = sc->CheckNumber();
+				HaveChance = sc->CheckNumber();
 			}
-			if (HaveAmount)
+			if (HaveChance)
 			{
-				DI.Amount = sc->Number;
+				DI.Chance = float(sc->Number) / 255.0;
 				if (sc->Check(","))
 				{
 					sc->ExpectNumber();
-					DI.Chance = float(sc->Number) / 255.0;
+					DI.Amount = sc->Number;
 				}
 				else if (sc->CheckNumber())
 				{
-					DI.Chance = float(sc->Number) / 255.0;
+					DI.Amount = sc->Number;
 				}
 			}
 			GetClassDropItems(Class).Insert(0, DI);

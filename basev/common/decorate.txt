@@ -39,6 +39,8 @@
 #include "actors/raven/ravenambient.txt"
 
 #include "actors/heretic/hereticplayer.txt"
+#include "actors/heretic/mummy.txt"
+#include "actors/heretic/clink.txt"
 #include "actors/heretic/hereticarmor.txt"
 #include "actors/heretic/hereticammo.txt"
 #include "actors/heretic/heretickeys.txt"

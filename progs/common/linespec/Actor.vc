@@ -1185,8 +1185,8 @@ final void A_CustomRailgun(int RailDamage, optional float Offset,
 //
 //==========================================================================
 
-final void A_CustomMeleeAttack(int MeleeDamage, name MeleeSound,
-	name MissSound, name DamageType, bool Bleed)
+final void A_CustomMeleeAttack(int MeleeDamage, optional name MeleeSound,
+	optional name MissSound, optional name DamageType, optional bool Bleed)
 {
 	if (!Target)
 	{
@@ -1222,7 +1222,8 @@ final void A_CustomMeleeAttack(int MeleeDamage, name MeleeSound,
 //==========================================================================
 
 final void A_CustomComboAttack(class<Actor> MissileType, float MissileHeight,
-	int MeleeDamage, name MeleeSound, name DamageType, bool Bleed)
+	int MeleeDamage, optional name MeleeSound, optional name DamageType,
+	optional bool Bleed)
 {
 	if (!Target)
 	{

@@ -1,0 +1,135 @@
+//------------------------------------------------------------------------------
+actor Mummy 68
+{
+	game Heretic
+	SpawnID 4
+	Health 80
+	Radius 22
+	Height 62
+	Mass 75
+	Speed 12
+	PainChance 128
+	SeeSound "mummy/sight"
+	ActiveSound "mummy/active"
+	AttackSound "mummy/attack1"
+	PainSound "mummy/pain"
+	DeathSound "mummy/death"
+	Obituary "$ob_mummy"
+	DropItem "GoldWandAmmo", 84, 3
+	Monster
+	+FloorClip
+	states
+	{
+	Spawn:
+		MUMM AB 10 A_Look
+		Loop
+	See:
+		MUMM ABCD 4 A_Chase
+		Loop
+	Melee:
+		MUMM E 6 A_FaceTarget
+		MUMM F 6 A_CustomMeleeAttack(random(1, 8) * 2, "mummy/attack2", "mummy/attack1")
+		MUMM G 6 A_FaceTarget
+		Goto See
+	Pain:
+		MUMM H 4
+		MUMM H 4 A_Pain
+		Goto See
+	Death:
+		MUMM I 5
+		MUMM J 5 A_Scream
+		MUMM K 5 A_SpawnItemEx("MummySoul", 0, 0, 10, 0, 0, 1)
+		MUMM L 5
+		MUMM M 5 A_NoBlocking
+		MUMM NO 5
+		MUMM P -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MummySoul
+{
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		MUMM QRS 5
+		MUMM T 9
+		MUMM UVW 5
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MummyLeader : Mummy 45
+{
+	game Heretic
+	SpawnID 2
+	Health 100
+	PainChance 64
+	Obituary "$ob_mummyleader"
+	states
+	{
+	Missile:
+		MUMM X 5 A_FaceTarget
+		MUMM Y 5 Bright A_FaceTarget
+		MUMM X 5 A_FaceTarget
+		MUMM Y 5 Bright A_FaceTarget
+		MUMM X 5 A_FaceTarget
+		MUMM Y 15 Bright A_CustomComboAttack("MummyFX1", 32, random(1, 8) * 2, "mummy/attack2")
+		Goto See
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MummyFX1
+{
+	game Heretic
+	SpawnID 131
+	Radius 8
+	Height 14
+	Speed 9
+	FastSpeed 18
+	Damage 4
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+	+SeekerMissile
+	states
+	{
+	Spawn:
+		FX15 A 5 Bright A_PlaySound("mummy/head")
+		FX15 B 5 Bright A_SeekerMissile(10, 20)
+		FX15 C 5 Bright
+		FX15 B 5 Bright A_SeekerMissile(10, 20)
+		Loop
+	Death:
+		FX15 DEFG 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MummyGhost : Mummy 69
+{
+	game Heretic
+	SpawnID 8
+	RenderStyle Translucent
+	Alpha 0.4
+	+Shadow
+	+Ghost
+}
+
+//------------------------------------------------------------------------------
+actor MummyLeaderGhost : MummyLeader 46
+{
+	game Heretic
+	SpawnID 9
+	RenderStyle Translucent
+	Alpha 0.4
+	+Shadow
+	+Ghost
+}
