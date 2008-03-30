@@ -23,12 +23,42 @@
 //**
 //**************************************************************************
 
-class Peasant16:Peasant
-	__mobjinfo__(175);
+class StrifeHumanoid : Actor
+	abstract;
+
+states
+{
+Burn:
+	BURN A 3 A_ItBurnsItBurns
+	BURN B 3 A_DropFire
+	BURN C 3 A_Wander
+	BURN D 3 A_Fall
+	BURN E 5 A_DropFire
+	BURN F 5 A_Wander
+	BURN G 5 A_Wander
+	BURN H 5 A_Wander
+	BURN I 5 A_DropFire
+	BURN J 5 A_Wander
+	BURN K 5 A_Wander
+	BURN L 5 A_Wander
+	BURN M 3 A_DropFire
+	BURN N 3
+	BURN OPQPQ 5
+	BURN RSTU 7
+	BURN V 700 //FIXME A_Dying();
+	Stop
+Disintegrate:
+	DISR A 5 { A_PlaySound("misc/disruptordeath"); }
+	DISR BC 5
+	DISR D 5 A_Fall
+	DISR EF 5
+	DISR GHIJ 4
+	MEAT D 700
+	Stop
+}
 
 defaultproperties
 {
-	ConversationID = 21;
-	Speed = 8.0 * 35.0;
-	Translation = (TRANSL_Standard << TRANSL_TYPE_SHIFT) + 5;
+	MaxDropoffHeight = 32.0;
+	MaxStepHeight = 16.0;
 }

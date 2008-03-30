@@ -1,0 +1,88 @@
+//------------------------------------------------------------------------------
+actor Merchant
+{
+	Health 10000000
+	Radius 20
+	Height 56
+	Mass 5000
+	PainChance 150
+	+Solid
+	+Shootable
+	+NotDMatch
+	+NoDamage
+	states
+	{
+	Spawn:
+		MRST A 10 A_Look2
+		Loop
+		MRLK A 30 A_ActiveSound
+		Loop
+		MRLK B 30
+		Loop
+		MRBD ABCDEDCB 4
+		MRBD A 5
+		MRBD F 6
+		Loop
+	See:
+	Pain:
+		MRPN A 3 A_AlertMonsters
+		MRPN B 3 A_Pain
+		MRPN C 3
+		MRPN D 9 Door_CloseWaitOpen(999, 64, 960)
+		MRPN C 4
+		MRPN B 3
+		MRPN A 3 A_ClearSoundTarget
+		Goto Spawn
+	Yes:
+		MRYS A 30
+		// Fall through
+	Greetings:
+		MRGT ABCDEFGHI 5
+		Goto Spawn
+	No:
+		MRNO AB 6
+		MRNO C 10
+		MRNO BA 6
+		Goto Greetings
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WeaponSmith : Merchant 116
+{
+	game Strife
+	ConversationID 2
+	Tag "Weapon_Smith"
+	PainSound "smith/pain"
+}
+
+//------------------------------------------------------------------------------
+actor BarKeep : Merchant 72
+{
+	game Strife
+	ConversationID 3
+	Tag "Bar_Keep"
+	Translation 4
+	ActiveSound "barkeep/active"
+	PainSound "barkeep/pain"
+}
+
+//------------------------------------------------------------------------------
+actor Armorer : Merchant 73
+{
+	game Strife
+	ConversationID 4
+	Tag "Armorer"
+	Translation 5
+	PainSound "armorer/pain"
+}
+
+//------------------------------------------------------------------------------
+actor Medic : Merchant 74
+{
+	game Strife
+	ConversationID 5
+	Tag "Medic"
+	Translation 6
+	PainSound "medic/pain"
+}

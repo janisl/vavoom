@@ -211,6 +211,7 @@ enum
 #include "RocketTrail.vc"
 #include "Bang4Cloud.vc"
 #include "FireDroplet.vc"
+#include "StrifeHumanoid.vc"
 
 class Blood : Actor decorate;
 class BloodSplatter : Actor decorate;

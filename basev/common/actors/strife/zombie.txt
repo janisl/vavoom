@@ -1,0 +1,52 @@
+//------------------------------------------------------------------------------
+actor Zombie : StrifeHumanoid 169
+{
+	game Strife
+	ConversationID 28, -1, -1
+	Health 31
+	Radius 20
+	Height 56
+	Translation 0
+	DeathSound "zombie/death"
+	+Solid
+	+Shootable
+	+ActivateMCross
+	+CanPushWalls
+	+FloorClip
+	+CanPass
+	states
+	{
+	Spawn:
+		PEAS A 5 A_CheckTerrain
+		Loop
+	Pain:
+		AGRD A 5 A_CheckTerrain
+		Loop
+	Death:
+		GIBS M 5 A_TossGib
+		GIBS N 5 A_XScream
+		GIBS O 5 A_NoBlocking
+		GIBS PQRST 4 A_TossGib
+		GIBS U 5
+		GIBS V 1400
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZombieSpawner 170
+{
+	game Strife
+	ConversationID 30, -1, -1
+	Health 20
+	RenderStyle None
+	+Shootable
+	+NoSector
+	ActiveSound "zombie/spawner"
+	states
+	{
+	Spawn:
+		TNT1 A 175 A_SpawnItemEx("Zombie")
+		Loop
+	}
+}

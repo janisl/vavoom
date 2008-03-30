@@ -1,0 +1,89 @@
+//------------------------------------------------------------------------------
+actor Beggar : StrifeHumanoid
+{
+	Tag "Beggar"
+	Health 20
+	Radius 20
+	Height 56
+	Mass 100
+	Speed 3
+	PainChance 250
+	AttackSound "beggar/attack"
+	PainSound "beggar/pain"
+	DeathSound "beggar/death"
+	Obituary "$ob_beggar"
+	Monster
+	+JustHit
+	-CountKill
+	states
+	{
+	Spawn:
+		BEGR A 10 A_Look
+		Loop
+	See:
+		BEGR AABBCC 4 A_Wander
+		Loop
+	Melee:
+		BEGR D 8
+		BEGR E 8 A_CustomMeleeAttack(random(1, 5) * 2 + 2)
+		BEGR E 1 A_Chase
+		BEGR D 8 A_SentinelRefire
+		Loop
+	Pain:
+		BEGR A 3 A_Pain
+		BEGR A 3 A_Chase
+		Goto Melee
+	Death:
+		BEGR F 4
+		BEGR G 4 A_Scream
+		BEGR H 4
+		BEGR I 4 A_NoBlocking
+		BEGR JKLM 4
+		BEGR N -1
+		Stop
+	XDeath:
+		BEGR F 5 A_TossGib
+		GIBS N 5 A_XScream
+		GIBS O 5 A_NoBlocking
+		GIBS PQRS 4 A_TossGib
+		GIBS T 4
+		GIBS U 5
+		GIBS V 1400
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Beggar1 : Beggar 141
+{
+	game Strife
+	ConversationID 38, 37, 38
+}
+
+//------------------------------------------------------------------------------
+actor Beggar2 : Beggar 155
+{
+	game Strife
+	ConversationID 39, 38, 39
+}
+
+//------------------------------------------------------------------------------
+actor Beggar3 : Beggar 156
+{
+	game Strife
+	ConversationID 40, 39, 40
+}
+
+//------------------------------------------------------------------------------
+actor Beggar4 : Beggar 157
+{
+	game Strife
+	ConversationID 41, 40, 41
+}
+
+//------------------------------------------------------------------------------
+actor Beggar5 : Beggar 158
+{
+	game Strife
+	ConversationID 42, 41, 42
+}

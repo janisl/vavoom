@@ -1,0 +1,240 @@
+//------------------------------------------------------------------------------
+actor Peasant : StrifeHumanoid
+{
+	Health 31
+	Radius 20
+	Height 56
+	Mass 100
+	Speed 8
+	PainChance 200
+	SeeSound "peasant/sight"
+	AttackSound "peasant/attack"
+	PainSound "peasant/pain"
+	DeathSound "peasant/death"
+	Obituary "$ob_peasant"
+	Monster
+	-CountKill
+	+Friendly
+	states
+	{
+	Spawn:
+		PEAS A 10 A_Look2
+		Loop
+	See:
+		PEAS AABBCCDD 5 A_Wander
+		Goto Spawn
+	Melee:
+		PEAS E 10 A_FaceTarget
+		PEAS F 8 A_CustomMeleeAttack(random(1, 5) * 2 + 2)
+		PEAS E 8
+		Goto See
+	Pain:
+		PEAS O 3
+		PEAS O 3 A_Pain
+		Goto Melee
+	Wound:
+		PEAS G 5
+		PEAS H 10 A_GetHurt
+		PEAS I 6
+		Goto Wound+1
+	Death:
+		PEAS G 5
+		PEAS H 5 A_Scream
+		PEAS I 6
+		PEAS J 5 A_NoBlocking
+		PEAS K 5
+		PEAS L 6
+		PEAS M 8
+		PEAS N 1400
+		GIBS U 5
+		GIBS V 1400
+		Stop
+	XDeath:
+		GIBS M 5 A_TossGib
+		GIBS N 5 A_XScream
+		GIBS O 5 A_NoBlocking
+		GIBS PQRS 4 A_TossGib
+		GIBS T 4
+		Goto Death+8
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Peasant1 : Peasant 3004
+{
+	game Strife
+	ConversationID 6
+	Speed 4
+}
+
+//------------------------------------------------------------------------------
+actor Peasant2 : Peasant 130
+{
+	game Strife
+	ConversationID 7
+	Speed 5
+}
+
+//------------------------------------------------------------------------------
+actor Peasant3 : Peasant 131
+{
+	game Strife
+	ConversationID 8
+	Speed 5
+}
+
+//------------------------------------------------------------------------------
+actor Peasant4 : Peasant 65
+{
+	game Strife
+	ConversationID 9
+	Speed 7
+	Translation 0
+}
+
+//------------------------------------------------------------------------------
+actor Peasant5 : Peasant 132
+{
+	game Strife
+	ConversationID 10
+	Speed 7
+	Translation 0
+}
+
+//------------------------------------------------------------------------------
+actor Peasant6 : Peasant 133
+{
+	game Strife
+	ConversationID 11
+	Speed 7
+	Translation 0
+}
+
+//------------------------------------------------------------------------------
+actor Peasant7 : Peasant 66
+{
+	game Strife
+	ConversationID 12
+	Translation 2
+}
+
+//------------------------------------------------------------------------------
+actor Peasant8 : Peasant 134
+{
+	game Strife
+	ConversationID 13
+	Translation 2
+}
+
+//------------------------------------------------------------------------------
+actor Peasant9 : Peasant 135
+{
+	game Strife
+	ConversationID 14
+	Translation 2
+}
+
+//------------------------------------------------------------------------------
+actor Peasant10 : Peasant 67
+{
+	game Strife
+	ConversationID 15
+	Translation 1
+}
+
+//------------------------------------------------------------------------------
+actor Peasant11 : Peasant 136
+{
+	game Strife
+	ConversationID 16
+	Speed 7
+	Translation 1
+}
+
+//------------------------------------------------------------------------------
+actor Peasant12 : Peasant 137
+{
+	game Strife
+	ConversationID 17
+	Translation 1
+}
+
+//------------------------------------------------------------------------------
+actor Peasant13 : Peasant 172
+{
+	game Strife
+	ConversationID 18
+	Translation 3
+}
+
+//------------------------------------------------------------------------------
+actor Peasant14 : Peasant 173
+{
+	game Strife
+	ConversationID 19
+	Translation 3
+}
+
+//------------------------------------------------------------------------------
+actor Peasant15 : Peasant 174
+{
+	game Strife
+	ConversationID 20
+	Translation 3
+}
+
+//------------------------------------------------------------------------------
+actor Peasant16 : Peasant 175
+{
+	game Strife
+	ConversationID 21
+	Translation 5
+}
+
+//------------------------------------------------------------------------------
+actor Peasant17 : Peasant 176
+{
+	game Strife
+	ConversationID 22
+	Translation 5
+}
+
+//------------------------------------------------------------------------------
+actor Peasant18 : Peasant 177
+{
+	game Strife
+	ConversationID 23
+	Translation 5
+}
+
+//------------------------------------------------------------------------------
+actor Peasant19 : Peasant 178
+{
+	game Strife
+	ConversationID 24
+	Translation 4
+}
+
+//------------------------------------------------------------------------------
+actor Peasant20 : Peasant 179
+{
+	game Strife
+	ConversationID 25
+	Translation 4
+}
+
+//------------------------------------------------------------------------------
+actor Peasant21 : Peasant 180
+{
+	game Strife
+	ConversationID 26
+	Translation 4
+}
+
+//------------------------------------------------------------------------------
+actor Peasant22 : Peasant 181
+{
+	game Strife
+	ConversationID 27
+	Translation 6
+}

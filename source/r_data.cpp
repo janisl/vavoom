@@ -940,16 +940,16 @@ static void DoTransString(VTextureTranslation* Tr, const VStr& Str)
 //
 //==========================================================================
 
-int R_ParseDecorateTranslation(VScriptParser* sc)
+int R_ParseDecorateTranslation(VScriptParser* sc, int GameMax)
 {
 	guard(R_ParseDecorateTranslation);
 	//	First check for standard translation.
 	if (sc->CheckNumber())
 	{
-		if (sc->Number < 0 || sc->Number >= NumTranslationTables)
+		if (sc->Number < 0 || sc->Number >= MAX(NumTranslationTables, GameMax))
 		{
 			sc->Error(va("Translation must be in range [0, %d]",
-				NumTranslationTables - 1));
+				MAX(NumTranslationTables, GameMax) - 1));
 		}
 		return (TRANSL_Standard << TRANSL_TYPE_SHIFT) + sc->Number;
 	}

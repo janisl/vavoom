@@ -110,13 +110,19 @@ actors/shared/pickups.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/pickups.tx
 actors/shared/sharedmisc.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/sharedmisc.txt
 actors/shared/soundsequence.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/soundsequence.txt
 actors/shared/splashes.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/splashes.txt
+actors/strife/beggars.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/beggars.txt
+actors/strife/merchants.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/merchants.txt
+actors/strife/peasants.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/peasants.txt
 actors/strife/questitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/questitems.txt
+actors/strife/ratbuddy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/ratbuddy.txt
 actors/strife/strifeammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeammo.txt
 actors/strife/strifearmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifearmor.txt
+actors/strife/strifebishop.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifebishop.txt
 actors/strife/strifeitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeitems.txt
 actors/strife/strifekeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifekeys.txt
 actors/strife/strifeplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeplayer.txt
 actors/strife/strifestuff.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifestuff.txt
+actors/strife/zombie.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/zombie.txt
 
 //	Effect scripts
 vfxdefs.txt						@CMAKE_CURRENT_SOURCE_DIR@/vfxdefs.txt

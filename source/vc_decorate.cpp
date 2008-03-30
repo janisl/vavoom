@@ -3091,7 +3091,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		if (!Prop.ICmp("Translation"))
 		{
 			SetClassFieldInt(Class, "Translation",
-				R_ParseDecorateTranslation(sc));
+				R_ParseDecorateTranslation(sc,
+				GameFilter & GAME_Strife ? 6 : 2));
 			continue;
 		}
 		if (!Prop.ICmp("BloodColor"))

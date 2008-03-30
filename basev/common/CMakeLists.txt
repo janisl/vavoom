@@ -75,13 +75,19 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/shared/sharedmisc.txt
 		actors/shared/soundsequence.txt
 		actors/shared/splashes.txt
+		actors/strife/beggars.txt
+		actors/strife/merchants.txt
+		actors/strife/peasants.txt
 		actors/strife/questitems.txt
+		actors/strife/ratbuddy.txt
 		actors/strife/strifeammo.txt
 		actors/strife/strifearmor.txt
+		actors/strife/strifebishop.txt
 		actors/strife/strifeitems.txt
 		actors/strife/strifekeys.txt
 		actors/strife/strifeplayer.txt
 		actors/strife/strifestuff.txt
+		actors/strife/zombie.txt
 		fxdefs/common/effects.txt
 		fxdefs/doom/decorations.txt
 		fxdefs/doom/monsters.txt

@@ -297,7 +297,7 @@ void R_InitData();
 void R_ShutdownData();
 void R_InstallSprite(const char*, int);
 bool R_AreSpritesPresent(int);
-int R_ParseDecorateTranslation(VScriptParser*);
+int R_ParseDecorateTranslation(VScriptParser*, int);
 void R_ParseEffectDefs();
 
 // r_main

@@ -157,4 +157,12 @@ defaultproperties
 	DLightColour = RGB(203, 111, 0);
 	DLightRadius = 118.0;
 	Obituary = "$ob_acolyte";
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
 }

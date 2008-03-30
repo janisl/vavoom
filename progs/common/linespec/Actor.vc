@@ -194,13 +194,13 @@ final void A_Look2()
 	if (P_Random() < 30)
 	{
 		if (!(P_Random() & 1))
-			SetState(FindState('LookRight'));
+			SetState(GetStatePlus(IdleState, 1, true));
 		else
-			SetState(FindState('LookLeft'));
+			SetState(GetStatePlus(IdleState, 2, true));
 	}
 	if (!bStanding && P_Random() < 40)
 	{
-		SetState(FindState('Walk'));
+		SetState(GetStatePlus(IdleState, 3, true));
 	}
 }
 
@@ -5651,6 +5651,28 @@ final void A_DropFire()
 	Actor A = Spawn(FireDroplet, Origin + vector(0.0, 0.0, 24.0));
 	A.Velocity.z = -35.0;
 	RadiusAttack(Target, 64, 64.0, false, 'Fire');
+}
+
+//==========================================================================
+//
+//	A_RiffleAttack
+//
+//==========================================================================
+
+final void A_RiffleAttack()
+{
+	int damage;
+	TVec dir;
+
+	if (!Target)
+		return;
+
+	PlaySound('monsters/rifle', CHAN_WEAPON);
+	A_FaceTarget();
+	AimLineAttack(dir, Angles, MISSILERANGE);
+	VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+	damage = ((P_Random() % 5) + 1) * 3;
+	LineAttack(dir, MISSILERANGE, damage, StrifePuff);
 }
 
 states
