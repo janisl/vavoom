@@ -7765,9 +7765,38 @@ final int decorate_random(int From, int To)
 //
 //==========================================================================
 
-final int decorate_random2()
+final int decorate_random2(optional int Mask)
 {
-	return P_Random() - P_Random();
+	if (specified_Mask)
+	{
+		return (P_Random() & Mask) - (P_Random() & Mask);
+	}
+	else
+	{
+		return P_Random() - P_Random();
+	}
+}
+
+//==========================================================================
+//
+//	decorate_sin
+//
+//==========================================================================
+
+final float decorate_sin(float Angle)
+{
+	return sin(Angle);
+}
+
+//==========================================================================
+//
+//	decorate_cos
+//
+//==========================================================================
+
+final float decorate_cos(float Angle)
+{
+	return cos(Angle);
 }
 
 //==========================================================================
@@ -8469,6 +8498,76 @@ DehackedDormantPickup:
 		A.PlaySound('misc/spawn', CHAN_ITEM);
 	}
 	Stop
+}
+
+float decorate_alpha
+{
+	get { return Alpha; }
+}
+
+float decorate_angle
+{
+	get { return AngleMod360(Angles.yaw); }
+}
+
+int* decorate_args
+{
+	get { return &Args[0]; }
+}
+
+float decorate_ceilingz
+{
+	get { return CeilingZ; }
+}
+
+float decorate_floorz
+{
+	get { return FloorZ; }
+}
+
+int decorate_health
+{
+	get { return Health; }
+}
+
+float decorate_pitch
+{
+	get { return AngleMod360(Angles.pitch); }
+}
+
+int decorate_special
+{
+	get { return Special; }
+}
+
+int decorate_tid
+{
+	get { return TID; }
+}
+
+int decorate_tidtohate
+{
+	get { return TIDToHate; }
+}
+
+int decorate_waterlevel
+{
+	get { return WaterLevel; }
+}
+
+float decorate_x
+{
+	get { return Origin.x; }
+}
+
+float decorate_y
+{
+	get { return Origin.y; }
+}
+
+float decorate_z
+{
+	get { return Origin.z; }
 }
 
 float decorate_momx
