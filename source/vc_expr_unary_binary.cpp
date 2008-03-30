@@ -443,6 +443,26 @@ VExpression* VBinary::DoResolve(VEmitContext& ec)
 		return NULL;
 	}
 
+	if (ec.Package->Name == NAME_decorate)
+	{
+		if (op1->Type.Type == TYPE_Int && op2->Type.Type == TYPE_Float)
+		{
+			VExpression* TmpArgs[1];
+			TmpArgs[0] = op1;
+			op1 = new VInvocation(NULL, ec.SelfClass->FindMethodChecked(
+				"itof"), NULL, false, false, op1->Loc, 1, TmpArgs);
+			op1 = op1->Resolve(ec);
+		}
+		else if (op1->Type.Type == TYPE_Float && op2->Type.Type == TYPE_Int)
+		{
+			VExpression* TmpArgs[1];
+			TmpArgs[0] = op2;
+			op2 = new VInvocation(NULL, ec.SelfClass->FindMethodChecked(
+				"itof"), NULL, false, false, op2->Loc, 1, TmpArgs);
+			op2 = op2->Resolve(ec);
+		}
+	}
+
 	switch (Oper)
 	{
 	case Add:

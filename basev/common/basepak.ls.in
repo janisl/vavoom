@@ -76,6 +76,7 @@ actors/doom/possessed.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/possessed.tx
 actors/doom/revenant.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/revenant.txt
 actors/doom/spidermaster.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/spidermaster.txt
 actors/doom/stealthmonsters.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/doom/stealthmonsters.txt
+actors/heretic/beast.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/beast.txt
 actors/heretic/clink.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/clink.txt
 actors/heretic/hereticammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticammo.txt
 actors/heretic/hereticarmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticarmor.txt
@@ -84,6 +85,7 @@ actors/heretic/hereticdecorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/
 actors/heretic/heretickeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/heretickeys.txt
 actors/heretic/hereticplayer.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticplayer.txt
 actors/heretic/mummy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/mummy.txt
+actors/heretic/snake.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/snake.txt
 actors/hexen/clericplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericplayer.txt
 actors/hexen/fighterplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterplayer.txt
 actors/hexen/flame.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/flame.txt

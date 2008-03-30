@@ -92,7 +92,6 @@ import linespec;
 #include "ArtiTeleport.vc"
 
 #include "TeleportFog.vc"
-#include "Puffy.vc"
 #include "EggFX.vc"
 #include "ActivatedTimeBomb.vc"
 #include "BridgeBall.vc"
@@ -127,13 +126,6 @@ import linespec;
 #include "HeadFX3.vc"
 #include "Whirlwind.vc"
 #include "Ironlich.vc"
-#include "BeastBall.vc"
-#include "Beast.vc"
-#include "BurnBall.vc"
-#include "BurnBallFB.vc"
-#include "SnakeProjA.vc"
-#include "SnakeProjB.vc"
-#include "Snake.vc"
 #include "MinotaurFX1.vc"
 #include "MinotaurFX3.vc"
 #include "MinotaurFX2.vc"
@@ -159,3 +151,4 @@ class BlasterAmmo : Ammo decorate;
 class BagOfHolding : BackpackItem decorate;
 class ArtiFly : PowerupGiver decorate;
 class HereticPlayer : PlayerPawn decorate;
+class Puffy : Actor decorate;

@@ -1,0 +1,99 @@
+//------------------------------------------------------------------------------
+actor Snake 92
+{
+	game Heretic
+	SpawnID 132
+	Health 280
+	Radius 22
+	Height 70
+	Speed 10
+	PainChance 48
+	SeeSound "snake/sight"
+	ActiveSound "snake/active"
+	AttackSound "snake/attack"
+	PainSound "snake/pain"
+	DeathSound "snake/death"
+	Obituary "$ob_snake"
+	DropItem "PhoenixRodAmmo", 84, 5
+	Monster
+	+FloorClip
+	states
+	{
+	Spawn:
+		SNKE AB 10 A_Look
+		Loop
+	See:
+		SNKE ABCD 4 A_Chase
+		Loop
+	Missile:
+		SNKE FF 5 A_FaceTarget
+		SNKE FFF 4 A_CustomMissile("SnakeProjA", 32, 0, 0, CMF_CHECKTARGETDEAD)
+		SNKE FFF 5 A_FaceTarget
+		SNKE F 4 A_CustomMissile("SnakeProjB", 32, 0, 0, CMF_CHECKTARGETDEAD)
+		Goto See
+	Pain:
+		SNKE E 3
+		SNKE E 3 A_Pain
+		Goto See
+	Death:
+		SNKE G 5
+		SNKE H 5 A_Scream
+		SNKE IJKL 5
+		SNKE M 5 A_NoBlocking
+		SNKE NO 5
+		SNKE P -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SnakeProjA
+{
+	game Heretic
+	SpawnID 138
+	Radius 12
+	Height 8
+	Speed 14
+	FastSpeed 20
+	Damage 1
+	RenderStyle Add
+	SeeSound "snake/attack"
+	Projectile
+	-NoBlockmap
+	-ActivateImpact
+	-ActivatePCross
+	+WindThrust
+	+SpawnSoundSource
+	states
+	{
+	Spawn:
+		SNFX ABCD 5 Bright
+		Loop
+	Death:
+		SNFX EF 5 Bright
+		SNFX G 4 Bright
+		SNFX HI 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SnakeProjB : SnakeProjA
+{
+	game Heretic
+	SpawnID 139
+	Damage 3
+	+NoBlockmap
+	-WindThrust
+	states
+	{
+	Spawn:
+		SNFX JK 6 Bright
+		Loop
+	Death:
+		SNFX LM 5 Bright
+		SNFX N 4 Bright
+		SNFX O 3 Bright
+		Stop
+	}
+}

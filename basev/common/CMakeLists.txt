@@ -41,6 +41,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/doom/revenant.txt
 		actors/doom/spidermaster.txt
 		actors/doom/stealthmonsters.txt
+		actors/heretic/beast.txt	
 		actors/heretic/clink.txt
 		actors/heretic/hereticammo.txt
 		actors/heretic/hereticarmor.txt
@@ -49,6 +50,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/heretic/heretickeys.txt
 		actors/heretic/hereticplayer.txt
 		actors/heretic/mummy.txt
+		actors/heretic/snake.txt
 		actors/hexen/clericplayer.txt
 		actors/hexen/fighterplayer.txt
 		actors/hexen/flame.txt
