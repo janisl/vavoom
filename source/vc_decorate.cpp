@@ -145,7 +145,34 @@ VDecorateSingleName::VDecorateSingleName(const VStr& AName,
 VExpression* VDecorateSingleName::DoResolve(VEmitContext& ec)
 {
 	guard(VDecorateSingleName::DoResolve);
-	VName CheckName = *Name.ToLower();
+	VName CheckName = va("decorate_%s", *Name.ToLower());
+	if (ec.SelfClass)
+	{
+		VConstant* Const = ec.SelfClass->FindConstant(CheckName);
+		if (Const)
+		{
+			VExpression* e = new VConstantValue(Const, Loc);
+			delete this;
+			return e->Resolve(ec);
+		}
+
+		VProperty* Prop = ec.SelfClass->FindProperty(CheckName);
+		if (Prop)
+		{
+			if (!Prop->GetFunc)
+			{
+				ParseError(Loc, "Property %s cannot be read", *Name);
+				delete this;
+				return NULL;
+			}
+			VExpression* e = new VInvocation(NULL, Prop->GetFunc, NULL,
+				false, false, Loc, 0, NULL);
+			delete this;
+			return e->Resolve(ec);
+		}
+	}
+
+	CheckName = *Name.ToLower();
 	//	Look only for constants defined in DECORATE scripts.
 	VConstant* Const = ec.Package->FindConstant(CheckName);
 	if (Const)

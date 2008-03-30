@@ -8471,6 +8471,21 @@ DehackedDormantPickup:
 	Stop
 }
 
+float decorate_momx
+{
+	get { return Velocity.x / 35.0; }
+}
+
+float decorate_momy
+{
+	get { return Velocity.y / 35.0; }
+}
+
+float decorate_momz
+{
+	get { return Velocity.z / 35.0; }
+}
+
 defaultproperties
 {
 	Health = 1000;
