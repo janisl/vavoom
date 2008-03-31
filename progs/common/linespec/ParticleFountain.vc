@@ -55,10 +55,14 @@
 
 class ParticleFountain : Actor;
 
-int			EffectColour;
-int			EffectColour2;
 bool		bFountain;
 float		GenDelay;
+
+replication
+{
+	reliable if (Role == ROLE_Authority)
+		bFountain;
+}
 
 //==========================================================================
 //
@@ -116,60 +120,96 @@ void BeginPlay()
 void ClientTick(float deltaTime)
 {
 	::ClientTick(deltaTime);
-	if (bFountain)
+	if (!bFountain)
 	{
-		GenDelay -= deltaTime;
-		if (GenDelay > 0.0)
+		return;
+	}
+
+	GenDelay -= deltaTime;
+	if (GenDelay > 0.0)
+	{
+		return;
+	}
+	GenDelay += 2.0 / 35.0;
+
+	int			EffectColour;
+	int			EffectColour2;
+	switch (Health)
+	{
+	case 1:
+		EffectColour = RGB(255, 0, 0);
+		EffectColour2 = RGB(255, 127, 127);
+		break;
+	case 2:
+		EffectColour = RGB(0, 200, 0);
+		EffectColour2 = RGB(127, 255, 127);
+		break;
+	case 3:
+		EffectColour = RGB(0,   0,   255);
+		EffectColour2 = RGB(127, 127, 255);
+		break;
+	case 4:
+		EffectColour = RGB(255, 255, 0);
+		EffectColour2 = RGB(255, 255, 180);
+		break;
+	case 5:
+		EffectColour = RGB(120, 0,   160);
+		EffectColour2 = RGB(200, 30,  255);
+		break;
+	case 6:
+		EffectColour = RGB(0, 0, 0);
+		EffectColour2 = RGB(50, 50, 50);
+		break;
+	case 7:
+		EffectColour = RGB(210, 210, 210);
+		EffectColour2 = RGB(255, 255, 255);
+		break;
+	}
+
+	particle_t *p = Level.NewParticle();
+
+	if (p)
+	{
+		float An = Random() * 360.0;
+		float Out = Radius * Random();
+
+		p->org.x = Origin.x + Out * cos(An);
+		p->org.y = Origin.y + Out * sin(An);
+		p->org.z = Origin.z + Height + 1.0;
+
+		if (P_Random() < 30)
 		{
-			return;
+			p->Size = 1.0;
+			p->colour = EffectColour2;
 		}
-		GenDelay += 2.0 / 35.0;
-
-		particle_t *p = Level.NewParticle();
-
-		if (p)
+		else
 		{
-			float An = Random() * 360.0;
-			float Out = Radius * Random();
-
-			p->org.x = Origin.x + Out * cos(An);
-			p->org.y = Origin.y + Out * sin(An);
-			p->org.z = Origin.z + Height + 1.0;
-
-			if (P_Random() < 30)
-			{
-				p->Size = 1.0;
-				p->colour = EffectColour2;
-			}
-			else
-			{
-				p->Size = 1.5;
-				p->colour = EffectColour;
-			}
-
-			// Set initial velocities
-			p->vel.x = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
-			p->vel.y = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
-			p->vel.z = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
-
-			// Set initial accelerations
-			p->accel.x = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
-			p->accel.y = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
-			p->accel.z = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
-
-			if (Out < Radius / 8.0)
-			{
-				p->vel.z += 10.0 / 3.0 * 35.0;
-			}
-			else
-			{
-				p->vel.z += 3.0 * 35.0;
-			}
-			p->accel.z -= 1.0 / 11.0 * 35.0 * 35.0;
-
-			p->die = Level.XLevel.Time + 51.0 / 35.0;
-			p->type = LineSpecialLevelInfo::pt_fountain;
+			p->Size = 1.5;
+			p->colour = EffectColour;
 		}
+
+		// Set initial velocities
+		p->vel.x = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
+		p->vel.y = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
+		p->vel.z = (1.0 / 4096.0) * (itof(P_Random()) - 128.0) * 35.0;
+
+		// Set initial accelerations
+		p->accel.x = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
+		p->accel.y = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
+		p->accel.z = (1.0 / 16384.0) * (itof(P_Random()) - 128.0) * 35.0 * 35.0;
+
+		if (Out < Radius / 8.0)
+		{
+			p->vel.z += 10.0 / 3.0 * 35.0;
+		}
+		else
+		{
+			p->vel.z += 3.0 * 35.0;
+		}
+		p->accel.z -= 1.0 / 11.0 * 35.0 * 35.0;
+
+		p->die = Level.XLevel.Time + 51.0 / 35.0;
+		p->type = LineSpecialLevelInfo::pt_fountain;
 	}
 }
 

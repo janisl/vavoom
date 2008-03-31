@@ -9,7 +9,7 @@
 //**
 //**    $Id$
 //**
-//**    Copyright (C) 1999-2006 Janis Legzdinš
+//**    Copyright (C) 1999-2006 Janis Legzdinï¿½
 //**
 //**    This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -28,6 +28,5 @@ class YellowParticleFountain : ParticleFountain
 
 defaultproperties
 {
-	EffectColour = RGB(255, 255, 0);
-	EffectColour2 = RGB(255, 255, 180);
+	Health = 4;
 }
