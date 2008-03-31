@@ -1,0 +1,41 @@
+//------------------------------------------------------------------------------
+actor RedParticleFountain : ParticleFountain 9027
+{
+	Health 1
+}
+
+//------------------------------------------------------------------------------
+actor GreenParticleFountain : ParticleFountain 9028
+{
+	Health 2
+}
+
+//------------------------------------------------------------------------------
+actor BlueParticleFountain : ParticleFountain 9029
+{
+	Health 3
+}
+
+//------------------------------------------------------------------------------
+actor YellowParticleFountain : ParticleFountain 9030
+{
+	Health 4
+}
+
+//------------------------------------------------------------------------------
+actor PurpleParticleFountain : ParticleFountain 9031
+{
+	Health 5
+}
+
+//------------------------------------------------------------------------------
+actor BlackParticleFountain : ParticleFountain 9032
+{
+	Health 6
+}
+
+//------------------------------------------------------------------------------
+actor WhiteParticleFountain : ParticleFountain 9033
+{
+	Health 7
+}

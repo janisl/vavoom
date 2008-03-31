@@ -161,13 +161,6 @@ enum
 #include "DoomBuilderCamera.vc"
 
 #include "ParticleFountain.vc"
-#include "RedParticleFountain.vc"
-#include "GreenParticleFountain.vc"
-#include "BlueParticleFountain.vc"
-#include "YellowParticleFountain.vc"
-#include "PurpleParticleFountain.vc"
-#include "BlackParticleFountain.vc"
-#include "WhiteParticleFountain.vc"
 #include "Spark.vc"
 
 #include "StaticLightSource.vc"

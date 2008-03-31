@@ -107,6 +107,7 @@ actors/raven/ravenartifacts.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravena
 actors/raven/ravenhealth.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/ravenhealth.txt
 actors/shared/blood.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/blood.txt
 actors/shared/debris.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/debris.txt
+actors/shared/fountain.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/fountain.txt
 actors/shared/pickups.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/pickups.txt
 actors/shared/sharedmisc.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/sharedmisc.txt
 actors/shared/soundsequence.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/shared/soundsequence.txt

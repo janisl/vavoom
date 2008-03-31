@@ -72,6 +72,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/raven/ravenhealth.txt
 		actors/shared/blood.txt
 		actors/shared/debris.txt
+		actors/shared/fountain.txt
 		actors/shared/pickups.txt
 		actors/shared/sharedmisc.txt
 		actors/shared/soundsequence.txt
