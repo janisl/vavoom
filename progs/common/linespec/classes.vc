@@ -99,6 +99,7 @@ enum
 
 #include "SwitchableDecoration.vc"
 #include "SwitchingDecoration.vc"
+#include "MorphProjectile.vc"
 
 #include "AmbientSound.vc"
 #include "SoundSequence.vc"

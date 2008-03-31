@@ -55,7 +55,7 @@ Death:
 
 defaultproperties
 {
-	Health = 100;
+	Health = 30;
 	Radius = 16.0;
 	Height = 24.0;
 	Gravity = 0.125;

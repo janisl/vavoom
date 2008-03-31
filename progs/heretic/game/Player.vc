@@ -27,9 +27,6 @@ class Player : PlayerEx;
 
 const int MAXCHICKENHEALTH	= 30;
 
-const float
-	CHICKENTIME 	= 40.0;
-
 const int MAXHEALTH	= 100;
 
 int ChickenPeck;	// chicken peck countdown
@@ -1242,11 +1239,11 @@ void PlayerNextArtifact()
 
 //===========================================================================
 //
-//  ActivateBeak
+//  ActivateMorphWeapon
 //
 //===========================================================================
 
-void ActivateBeak()
+void ActivateMorphWeapon()
 {
 	Weapon Wpn = Level.Spawn(Beak);
 	if (!Wpn.TryPickup(EntityEx(MO)))

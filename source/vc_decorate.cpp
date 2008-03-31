@@ -109,6 +109,7 @@ static VClass*			PuzzleItemClass;
 static VClass*			WeaponClass;
 //static VClass*			WeaponPieceClass;
 static VClass*			PlayerPawnClass;
+static VClass*			MorphProjectileClass;
 
 static VMethod*			FuncA_Scream;
 static VMethod*			FuncA_NoBlocking;
@@ -4012,23 +4013,21 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		//
 		//	MorphProjectile class properties.
 		//
-/*		if (Class->IsChildOf(MorphProjectileClass))
+		if (Class->IsChildOf(MorphProjectileClass))
 		{
 			if (!Prop.ICmp("MorphProjectile.MonsterClass"))
 			{
-				//FIXME
-				sc->ExpectNumber();
-				GCon->Logf("Property MorphProjectile.MonsterClass in %s is not yet supported", Class->GetName());
+				sc->ExpectString();
+				AddClassFixup(Class, "MonsterClass", sc->String, ClassFixups);
 				continue;
 			}
 			if (!Prop.ICmp("MorphProjectile.PlayerClass"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property MorphProjectile.PlayerClass in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "PlayerClass", sc->String, ClassFixups);
 				continue;
 			}
-		}*/
+		}
 
 		sc->Error(va("Unknown property \"%s\"", *Prop));
 	}
@@ -4949,6 +4948,7 @@ void ProcessDecorateScripts()
 	WeaponClass = VClass::FindClass("Weapon");
 //	WeaponPieceClass = VClass::FindClass("WeaponPiece");
 	PlayerPawnClass = VClass::FindClass("PlayerPawn");
+	MorphProjectileClass = VClass::FindClass("MorphProjectile");
 
 	//	Find methods used by old style decorations.
 	FuncA_Scream = ActorClass->FindMethodChecked("A_Scream");

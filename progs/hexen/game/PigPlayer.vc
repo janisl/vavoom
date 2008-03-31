@@ -56,7 +56,7 @@ Ice:
 
 defaultproperties
 {
-	Health = 100;
+	Health = 30;
 	Radius = 16.0;
 	Height = 24.0;
 	PainChance = 1.0;

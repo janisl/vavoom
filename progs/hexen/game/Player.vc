@@ -1983,6 +1983,17 @@ void KilledByPlayer(EntityEx Victim)
 	}
 }
 
+//==========================================================================
+//
+//	PlayerMorphed
+//
+//==========================================================================
+
+void PlayerMorphed(Actor OldMO)
+{
+	PClass = HexenDefs::PCLASS_PIG;
+}
+
 defaultproperties
 {
 }

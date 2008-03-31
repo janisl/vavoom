@@ -1999,6 +1999,14 @@ int GetSigilPieces()
 	return 0;
 }
 
+void ActivateMorphWeapon()
+{
+}
+
+void PlayerMorphed(Actor OldMO)
+{
+}
+
 defaultproperties
 {
 }
