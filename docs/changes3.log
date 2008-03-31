@@ -3132,3 +3132,44 @@
   I implemented proper support for special colourmaps used by invulnerability
  powerups.
   I implemented support for include directive in DeHackEd patches.
+23.03.2008
+  I fixed noclip cheat.
+  I implemented missing map thing flags.
+  I implemented spawn state action methods.
+  I fixed missile spawn check modifying origin without unlinking thing from
+ world.
+  I implemented sector action triggers.
+  I moved Heretic's key gizmos to DECORATE.
+24.03.2008
+  I added support macros for performance measurement.
+  I fixed problem with string arguments in DECORATE state methods.
+25.03.2008
+  I changed update of the render world to use angle clipping to speed it up.
+  I implemented many of the missing DECORATE actor flags, properties and state
+ action methods.
+26.03.2008
+  I implemented railgun attack methods.
+  I implemented execution of the missing ACS typed script types.
+27.03.2008
+  I added bridge classes to other games and added invisible bridges.
+  I merged Doom's and Hexen's shared packages with svprogs, changed all to
+ compile classes.vc as a main source file.
+  I moved skull popping to Actor class.
+  I implemented ACS fade effects.
+  I added more missing DECORATE flags and properties.
+28.03.2008
+  I added build option to disable wrapper scripts.
+  I fixed some Direct3D bugs.
+29.03.2008
+  I compared performance of Direct3D renderer compiled against versions 7,8
+ and 9 and found out that version 7 performs worst, 8 and 9 are about the same.
+ So I decoded to switch to version 9 and remove code for older versions.
+  I moved some shared classes to DECORATE.
+30.03.2008
+  I moved Heretic's, Hexen's and Strife's player and some monster classes to
+ DECORATE.
+  I added support for actor properties and added some more methods for DECORATE
+ expressions.
+  I created a base class for morph projectiles.
+31.03.2008
+  I moved morph artifacts and particle fountains to DECORATE.
