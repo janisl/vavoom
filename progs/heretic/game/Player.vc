@@ -1654,7 +1654,7 @@ void Cheat_Morph()
 	}
 	else
 	{
-		EggFX Tmp = Level.Spawn(EggFX);
+		MorphProjectile Tmp = Level.Spawn(EggFX);
 		if (Tmp.MorphPlayer(Actor(MO)))
 		{
 			cprint("CHICKEN ON");

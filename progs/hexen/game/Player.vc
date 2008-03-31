@@ -1853,7 +1853,7 @@ void Cheat_Morph()
 	}
 	else
 	{
-		PorkFX Tmp = Level.Spawn(PorkFX);
+		MorphProjectile Tmp = Level.Spawn(PorkFX);
 		Tmp.MorphPlayer(Actor(MO));
 		Tmp.Destroy();
 	}

@@ -44,7 +44,6 @@ import linespec;
 
 #include "ArtiDarkServant.vc"
 #include "ArtiTeleportOther.vc"
-#include "ArtiPork.vc"
 #include "ArtiTeleport.vc"
 #include "ArtiPoisonBag.vc"
 #include "ArtiBoostArmor.vc"
@@ -116,7 +115,6 @@ import linespec;
 #include "Snout.vc"
 
 #include "IceShard.vc"
-#include "PorkFX.vc"
 #include "ThrowingBomb.vc"
 #include "TelOtherFX1.vc"
 #include "TelOtherFX2.vc"
@@ -239,3 +237,5 @@ class CentaurLeader : Actor decorate;
 class CentaurFX : Actor decorate;
 class Demon1FX1 : Actor decorate;
 class Demon2FX1 : Actor decorate;
+class ArtiPork : CustomInventory decorate;
+class PorkFX : MorphProjectile decorate;

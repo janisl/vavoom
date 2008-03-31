@@ -36,6 +36,7 @@
 
 #include "actors/raven/ravenhealth.txt"
 #include "actors/raven/ravenartifacts.txt"
+#include "actors/raven/artiegg.txt"
 #include "actors/raven/ravenambient.txt"
 
 #include "actors/heretic/hereticplayer.txt"

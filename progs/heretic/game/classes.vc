@@ -87,12 +87,10 @@ import linespec;
 #include "BeakPowered.vc"
 
 #include "ArtiTomeOfPower.vc"
-#include "ArtiEgg.vc"
 #include "ArtiTimeBomb.vc"
 #include "ArtiTeleport.vc"
 
 #include "TeleportFog.vc"
-#include "EggFX.vc"
 #include "ActivatedTimeBomb.vc"
 #include "BridgeBall.vc"
 #include "Bridge.vc"
@@ -152,3 +150,5 @@ class BagOfHolding : BackpackItem decorate;
 class ArtiFly : PowerupGiver decorate;
 class HereticPlayer : PlayerPawn decorate;
 class Puffy : Actor decorate;
+class ArtiEgg : CustomInventory decorate;
+class EggFX : MorphProjectile decorate;
