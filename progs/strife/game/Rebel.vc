@@ -88,6 +88,7 @@ defaultproperties
 	bActivatePushWall = true;
 	bFloorClip = true;
 	bPassMobj = true;
+	bCanUseWalls = true;
 	bFriendly = true;
 	SightSound = 'rebel/sight';
 	ActiveSound = 'rebel/active';

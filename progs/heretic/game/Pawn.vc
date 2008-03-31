@@ -36,4 +36,5 @@ defaultproperties
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bPassMobj = true;
+	bCanUseWalls = true;
 }

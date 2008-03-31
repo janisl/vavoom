@@ -1377,8 +1377,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 	}
 	if (!Flag.ICmp("CanUseWalls"))
 	{
-		//FIXME
-		GCon->Logf("Unsupported flag CanUseWalls in %s", Class->GetName());
+		SetClassFieldBool(Class, "bCanUseWalls", Value);
 		return true;
 	}
 	if (!Flag.ICmp("ActivateMCross"))
@@ -3256,6 +3255,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			SetClassFieldBool(Class, "bActivateMCross", true);
 			SetClassFieldBool(Class, "bPassMobj", true);
 			SetClassFieldBool(Class, "bMonster", true);
+			SetClassFieldBool(Class, "bCanUseWalls", true);
 			continue;
 		}
 		if (!Prop.ICmp("Projectile"))

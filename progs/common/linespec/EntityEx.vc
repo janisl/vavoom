@@ -255,6 +255,7 @@ bool bNeverFast;		// Never uses 'fast' attack logic
 bool bAlwaysRespawn;	// Always respawns, regardless of skill.
 bool bNeverRespawn;		// Never respawns, regardless of skill.
 bool bDontRip;			// Ripping projectiles explode when hitting this actor.
+bool bCanUseWalls;		// Can activate "use" specials.
 
 //  Params
 float			Speed;
@@ -3806,7 +3807,7 @@ final bool StepMove()
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if (LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_USE) ||
+			if ((bCanUseWalls && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_USE)) ||
 			    (bActivatePushWall && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_PUSH)))
 			{
 				good |= ld == tmtrace.BlockingLine ? 1 : 2;//true;
@@ -8454,6 +8455,7 @@ void RespawnResetFlags()
 	bNoPain = default.bNoPain;
 	bAlwaysFast = default.bAlwaysFast;
 	bNeverFast = default.bNeverFast;
+	bCanUseWalls = default.bCanUseWalls;
 }
 
 bool IsTeammate(EntityEx Other)

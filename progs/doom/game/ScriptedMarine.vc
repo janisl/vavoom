@@ -782,6 +782,7 @@ defaultproperties
 	bFloorClip = true;
 	bMonster = true;
 	bPassMobj = true;
+	bCanUseWalls = true;
 	PainSound = '*pain50';
 	DeathSound = '*death';
 }

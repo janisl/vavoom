@@ -165,4 +165,5 @@ defaultproperties
 	bActivatePushWall = true;
 	bFloorClip = true;
 	bPassMobj = true;
+	bCanUseWalls = true;
 }
