@@ -5060,8 +5060,10 @@ final void decorate_A_Mushroom(optional class<Actor> SpawnType,
 		for (j = -Amount; j <= Amount; j += 8)
 		{
 			// Aim in many directions from source
+			target.UnlinkFromWorld();
 			target.Origin.x = Origin.x + itof(i);
 			target.Origin.y = Origin.y + itof(j);
+			target.LinkToWorld();
 			// Aim up fairly high
 			target.Origin.z = Origin.z + Length(vector(itof(i), itof(j),
 				0.0)) * 4.0;
