@@ -4584,7 +4584,9 @@ final void A_SkelMissile()
 
 	if (A)
 	{
+		A.UnlinkFromWorld();
 		A.Origin = A.Origin + A.Velocity * 0.03;
+		A.LinkToWorld();
 		A.Tracer = Target;
 		A.bSeekerMissile = true;
 	}
