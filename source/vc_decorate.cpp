@@ -1957,68 +1957,68 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 	//
 	if (Class->IsChildOf(InventoryClass))
 	{
-		if (!Flag.ICmp("Inventory.Quiet"))
+		if (!Flag.ICmp("Inventory.Quiet") || !Flag.ICmp("Quiet"))
 		{
 			SetClassFieldBool(Class, "bQuiet", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.AutoActivate"))
+		if (!Flag.ICmp("Inventory.AutoActivate") || !Flag.ICmp("AutoActivate"))
 		{
 			SetClassFieldBool(Class, "bAutoActivate", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.Undroppable"))
+		if (!Flag.ICmp("Inventory.Undroppable") || !Flag.ICmp("Undroppable"))
 		{
 			SetClassFieldBool(Class, "bUndroppable", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.InvBar"))
+		if (!Flag.ICmp("Inventory.InvBar") || !Flag.ICmp("InvBar"))
 		{
 			SetClassFieldBool(Class, "bInvBar", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.HubPower"))
+		if (!Flag.ICmp("Inventory.HubPower") || !Flag.ICmp("HubPower"))
 		{
 			SetClassFieldBool(Class, "bHubPower", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.InterHubStrip"))
+		if (!Flag.ICmp("Inventory.InterHubStrip") || !Flag.ICmp("InterHubStrip"))
 		{
 			SetClassFieldBool(Class, "bInterHubStrip", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.PickupFlash"))
+		if (!Flag.ICmp("Inventory.PickupFlash") || !Flag.ICmp("PickupFlash"))
 		{
 			AddClassFixup(Class, "PickupFlashType", Value ? "PickupFlash" :
 				"None", ClassFixups);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.AlwaysPickup"))
+		if (!Flag.ICmp("Inventory.AlwaysPickup") || !Flag.ICmp("AlwaysPickup"))
 		{
 			SetClassFieldBool(Class, "bAlwaysPickup", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.FancyPickupSound"))
+		if (!Flag.ICmp("Inventory.FancyPickupSound") || !Flag.ICmp("FancyPickupSound"))
 		{
 			SetClassFieldBool(Class, "bFullVolPickupSound", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.BigPowerup"))
+		if (!Flag.ICmp("Inventory.BigPowerup") || !Flag.ICmp("BigPowerup"))
 		{
 			SetClassFieldBool(Class, "bBigPowerup", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.KeepDepleted"))
+		if (!Flag.ICmp("Inventory.KeepDepleted") || !Flag.ICmp("KeepDepleted"))
 		{
 			SetClassFieldBool(Class, "bKeepDepleted", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.IgnoreSkill"))
+		if (!Flag.ICmp("Inventory.IgnoreSkill") || !Flag.ICmp("IgnoreSkill"))
 		{
 			SetClassFieldBool(Class, "bIgnoreSkill", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Inventory.AdditiveTime"))
+		if (!Flag.ICmp("Inventory.AdditiveTime") || !Flag.ICmp("AdditiveTime"))
 		{
 			SetClassFieldBool(Class, "bAdditiveTime", Value);
 			return true;
@@ -2030,84 +2030,84 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 	//
 	if (Class->IsChildOf(WeaponClass))
 	{
-		if (!Flag.ICmp("Weapon.NoAutoFire"))
+		if (!Flag.ICmp("Weapon.NoAutoFire") || !Flag.ICmp("NoAutoFire"))
 		{
 			SetClassFieldBool(Class, "bNoAutoFire", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.ReadySndHalf"))
+		if (!Flag.ICmp("Weapon.ReadySndHalf") || !Flag.ICmp("ReadySndHalf"))
 		{
 			SetClassFieldBool(Class, "bReadySndHalf", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.DontBob"))
+		if (!Flag.ICmp("Weapon.DontBob") || !Flag.ICmp("DontBob"))
 		{
 			SetClassFieldBool(Class, "bDontBob", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.AxeBlood"))
+		if (!Flag.ICmp("Weapon.AxeBlood") || !Flag.ICmp("AxeBlood"))
 		{
 			SetClassFieldBool(Class, "bAxeBlood", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.NoAlert"))
+		if (!Flag.ICmp("Weapon.NoAlert") || !Flag.ICmp("NoAlert"))
 		{
 			SetClassFieldBool(Class, "bNoAlert", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.Ammo_Optional"))
+		if (!Flag.ICmp("Weapon.Ammo_Optional") || !Flag.ICmp("Ammo_Optional"))
 		{
 			SetClassFieldBool(Class, "bAmmoOptional", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.Alt_Ammo_Optional"))
+		if (!Flag.ICmp("Weapon.Alt_Ammo_Optional") || !Flag.ICmp("Alt_Ammo_Optional"))
 		{
 			//FIXME
 			GCon->Logf("Unsupported flag Weapon.Alt_Ammo_Optional in %s", Class->GetName());
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.Primary_Uses_Both"))
+		if (!Flag.ICmp("Weapon.Primary_Uses_Both") || !Flag.ICmp("Primary_Uses_Both"))
 		{
 			//FIXME
 			GCon->Logf("Unsupported flag Weapon.Primary_Uses_Both in %s", Class->GetName());
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.Wimpy_Weapon"))
+		if (!Flag.ICmp("Weapon.Wimpy_Weapon") || !Flag.ICmp("Wimpy_Weapon"))
 		{
 			SetClassFieldBool(Class, "bWimpyWeapon", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.Powered_Up"))
+		if (!Flag.ICmp("Weapon.Powered_Up") || !Flag.ICmp("Powered_Up"))
 		{
 			SetClassFieldBool(Class, "bPoweredUp", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.Staff2_Kickback"))
+		if (!Flag.ICmp("Weapon.Staff2_Kickback") || !Flag.ICmp("Staff2_Kickback"))
 		{
 			SetClassFieldBool(Class, "bStaff2Kickback", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.Explosive"))
+		if (!Flag.ICmp("Weapon.Explosive") || !Flag.ICmp("Explosive"))
 		{
 			SetClassFieldBool(Class, "bBotProjectile", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.MeleeWeapon"))
+		if (!Flag.ICmp("Weapon.MeleeWeapon") || !Flag.ICmp("MeleeWeapon"))
 		{
 			SetClassFieldBool(Class, "bBotMelee", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.BFG"))
+		if (!Flag.ICmp("Weapon.BFG") || !Flag.ICmp("BFG"))
 		{
 			SetClassFieldBool(Class, "bBotBfg", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.CheatNotWeapon"))
+		if (!Flag.ICmp("Weapon.CheatNotWeapon") || !Flag.ICmp("CheatNotWeapon"))
 		{
 			SetClassFieldBool(Class, "bCheatNotWeapon", Value);
 			return true;
 		}
-		if (!Flag.ICmp("Weapon.No_Auto_Switch"))
+		if (!Flag.ICmp("Weapon.No_Auto_Switch") || !Flag.ICmp("No_Auto_Switch"))
 		{
 			SetClassFieldBool(Class, "bNoAutoSwitch", Value);
 			return true;
