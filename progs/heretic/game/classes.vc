@@ -28,13 +28,9 @@ import linespec;
 #include "MainGameInfo.vc"
 #include "HereticLevelInfo.vc"
 #include "HereticWorldInfo.vc"
-#include "Pawn.vc"
 #include "HereticWeapon.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
-
-#include "Projectile.vc"
-#include "Effect.vc"
 
 #include "StaffPuff.vc"
 #include "StaffPuff2.vc"

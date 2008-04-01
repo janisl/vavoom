@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlasterPuff : Effect;
+class BlasterPuff : Actor;
 
 states
 {
@@ -40,6 +40,8 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bPuffOnActors = true;
 	SightSound = 'weapons/blastershoot';
 }

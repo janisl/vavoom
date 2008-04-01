@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhoenixFX1 : Projectile
+class PhoenixFX1 : Actor
 	__scriptid__(163);
 
 //==========================================================================
@@ -86,6 +86,12 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 20;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bThruGhost = true;
 	bActivateImpact = true;
 	DamageType = 'Fire';

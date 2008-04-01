@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class VolcanoBlast : Projectile
+class VolcanoBlast : Actor
 	__scriptid__(123);
 
 //==========================================================================
@@ -96,6 +96,10 @@ defaultproperties
 	Gravity = 0.125;
 	MissileDamage = 2;
 	DamageType = 'Fire';
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	DeathSound = 'world/volcano/blast';
 }

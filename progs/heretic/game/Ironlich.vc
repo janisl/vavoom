@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Ironlich : Pawn
+class Ironlich : Actor
 	__mobjinfo__(6)
 	__scriptid__(20);
 
@@ -137,8 +137,15 @@ defaultproperties
 	Mass = 325.0;
 	Speed = 6.0 * 35.0;
 	PainChance = 0.125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoBlood = true;
-	bFloorClip = false;
 	bNoMorph = true;
 	bBossDeath = true;
 	bDontSquash = true;

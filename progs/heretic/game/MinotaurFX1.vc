@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MinotaurFX1 : Projectile;
+class MinotaurFX1 : Actor;
 
 states
 {
@@ -44,5 +44,11 @@ defaultproperties
 	MissileDamage = 3;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bLeaveTrail = true;
 }

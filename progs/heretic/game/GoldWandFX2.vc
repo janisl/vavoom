@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GoldWandFX2 : Projectile
+class GoldWandFX2 : Actor
 	__scriptid__(152);
 
 states
@@ -43,5 +43,11 @@ defaultproperties
 	Height = 6.0;
 	Speed = 630.0;
 	MissileDamage = 1;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bActivateImpact = true;
 }

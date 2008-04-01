@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlasterFX1 : Projectile;
+class BlasterFX1 : Actor;
 
 //===========================================================================
 //
@@ -109,6 +109,12 @@ defaultproperties
 	Height = 8.0;
 	Speed = 6440.0;
 	MissileDamage = 2;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bActivateImpact = true;
 	DeathSound = 'weapons/blasterhit';
 }

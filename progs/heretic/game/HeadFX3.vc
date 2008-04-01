@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HeadFX3 : Projectile;
+class HeadFX3 : Actor;
 
 //==========================================================================
 //
@@ -62,5 +62,11 @@ defaultproperties
 	FastSpeed = 630.0;
 	MissileDamage = 5;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bWindThrust = true;
 }

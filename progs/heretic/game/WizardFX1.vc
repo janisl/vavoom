@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WizardFX1 : Projectile
+class WizardFX1 : Actor
 	__scriptid__(140);
 
 states
@@ -44,4 +44,10 @@ defaultproperties
 	FastSpeed = 840.0;
 	MissileDamage = 3;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 }

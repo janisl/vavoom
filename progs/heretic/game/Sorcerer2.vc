@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sorcerer2 : Pawn
+class Sorcerer2 : Actor
 	__scriptid__(143);
 
 int			BossSpotCount;
@@ -353,6 +353,15 @@ defaultproperties
 	Mass = 300.0;
 	Speed = 14.0 * 35.0;
 	PainChance = 0.125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bDropOff = true;
 	bBoss = true;
 	bNoMorph = true;

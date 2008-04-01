@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HereticImpBall : Projectile
+class HereticImpBall : Actor
 	__scriptid__(10);
 
 states
@@ -44,5 +44,11 @@ defaultproperties
 	FastSpeed = 700.0;
 	MissileDamage = 1;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bWindThrust = true;
 }

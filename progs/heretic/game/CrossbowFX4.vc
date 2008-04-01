@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowFX4 : Effect;
+class CrossbowFX4 : Actor;
 
 states
 {
@@ -35,5 +35,7 @@ Spawn:
 defaultproperties
 {
 	Gravity = 0.125;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bNoGravity = false;
 }

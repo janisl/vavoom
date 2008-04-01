@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcererFX1 : Projectile
+class SorcererFX1 : Actor
 	__scriptid__(144);
 
 states
@@ -45,4 +45,10 @@ defaultproperties
 	MissileDamage = 10;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 }

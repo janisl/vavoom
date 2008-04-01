@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KnightAxe : Projectile
+class KnightAxe : Actor
 	__scriptid__(127);
 
 //==========================================================================
@@ -55,6 +55,12 @@ defaultproperties
 	Speed = 315.0;
 	FastSpeed = 630.0;
 	MissileDamage = 2;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bWindThrust = true;
 	bThruGhost = true;
 	DeathSound = 'hknight/hit';

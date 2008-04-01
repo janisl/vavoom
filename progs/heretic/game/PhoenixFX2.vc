@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhoenixFX2 : Projectile;
+class PhoenixFX2 : Actor;
 
 //==========================================================================
 //
@@ -87,5 +87,11 @@ defaultproperties
 	MissileDamage = 2;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bActivateImpact = true;
 }

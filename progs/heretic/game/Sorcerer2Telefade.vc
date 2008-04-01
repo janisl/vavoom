@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sorcerer2Telefade : Effect;
+class Sorcerer2Telefade : Actor;
 
 states
 {
@@ -35,5 +35,5 @@ Spawn:
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
 }

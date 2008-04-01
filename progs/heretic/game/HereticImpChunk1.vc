@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HereticImpChunk1 : Effect;
+class HereticImpChunk1 : Actor;
 
 states
 {
@@ -35,5 +35,5 @@ Spawn:
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Whirlwind : Projectile
+class Whirlwind : Actor
 	__scriptid__(165);
 
 //==========================================================================
@@ -119,6 +119,12 @@ defaultproperties
 	MissileDamage = 1;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bExploCount = true;
 	Special2 = 50;
 	Special1 = 60;

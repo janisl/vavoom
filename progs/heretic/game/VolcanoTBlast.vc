@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class VolcanoTBlast : Projectile
+class VolcanoTBlast : Actor
 	__scriptid__(124);
 
 states
@@ -44,5 +44,9 @@ defaultproperties
 	Gravity = 0.125;
 	MissileDamage = 1;
 	DamageType = 'Fire';
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StaffPuff2 : Effect;
+class StaffPuff2 : Actor;
 
 states
 {
@@ -35,6 +35,8 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bPuffOnActors = true;
 	AttackSound = 'weapons/staffpowerhit';
 }

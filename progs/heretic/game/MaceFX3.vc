@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaceFX3 : Projectile
+class MaceFX3 : Actor
 	__scriptid__(155);
 
 //===========================================================================
@@ -78,7 +78,11 @@ defaultproperties
 	Gravity = 0.125;
 	MissileDamage = 4;
 	BounceType = BOUNCE_Heretic;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bThruGhost = true;
-	bNoGravity = false;
 	bActivateImpact = true;
 }

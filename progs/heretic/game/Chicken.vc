@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Chicken : Pawn
+class Chicken : Actor
 	__scriptid__(122);
 
 //==========================================================================
@@ -200,6 +200,15 @@ defaultproperties
 	Mass = 40.0;
 	Speed = 4.0 * 35.0;
 	PainChance = 0.78125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bDropOff = true;
 	bWindThrust = true;
 	bNoMorph = true;

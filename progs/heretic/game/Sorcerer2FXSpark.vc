@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sorcerer2FXSpark : Effect;
+class Sorcerer2FXSpark : Actor;
 
 states
 {
@@ -35,6 +35,8 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bNoTeleport = true;
 	bCannotPush = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowFX3 : Projectile
+class CrossbowFX3 : Actor
 	__scriptid__(149);
 
 states
@@ -42,6 +42,12 @@ defaultproperties
 	Height = 8.0;
 	Speed = 700.0;
 	MissileDamage = 2;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bActivateImpact = true;
 	bWindThrust = true;
 	bThruGhost = true;

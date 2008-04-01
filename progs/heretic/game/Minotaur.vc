@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Minotaur : Pawn
+class Minotaur : Actor
 	__mobjinfo__(9);
 
 float ChargeSpeed;
@@ -308,6 +308,15 @@ defaultproperties
 	PainChance = 0.09765625;
 	MissileDamage = 7;
 	ChargeSpeed	= 455.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bDropOff = true;
 	bBoss = true;
 	bNoMorph = true;

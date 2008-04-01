@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HereticImp : Pawn
+class HereticImp : Actor
 	__mobjinfo__(66)
 	__scriptid__(5);
 
@@ -189,10 +189,17 @@ defaultproperties
 	Mass = 50.0;
 	Speed = 10.0 * 35.0;
 	PainChance = 0.78125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoGravity = true;
 	bFloat = true;
 	bSpawnFloat = true;
-	bFloorClip = false;
 	bTriggerHappy = true;
 	bDontOverlap = true;
 	SightSound = 'himp/sight';

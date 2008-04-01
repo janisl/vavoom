@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GauntletPuff2 : Effect;
+class GauntletPuff2 : Actor;
 
 states
 {
@@ -37,5 +37,7 @@ defaultproperties
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
 	Velocity.z = 0.8 * 35.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bPuffOnActors = true;
 }

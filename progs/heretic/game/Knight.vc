@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Knight : Pawn
+class Knight : Actor
 	__mobjinfo__(64)
 	__scriptid__(6);
 
@@ -105,4 +105,13 @@ defaultproperties
 	HitObituary = "$ob_boneknighthit";
 	DropItemList.Num = 1;
 	DropItemList[0].Type = CrossbowAmmo; DropItemList[0].Amount = 5; DropItemList[0].Chance = 0.328125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 }

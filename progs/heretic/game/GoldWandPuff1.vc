@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GoldWandPuff1 : Effect;
+class GoldWandPuff1 : Actor;
 
 states
 {
@@ -35,5 +35,7 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bPuffOnActors = true;
 }

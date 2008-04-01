@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrossbowFX1 : Projectile
+class CrossbowFX1 : Actor
 	__scriptid__(147);
 
 states
@@ -43,6 +43,12 @@ defaultproperties
 	Speed = 1050.0;
 	MissileDamage = 10;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bActivateImpact = true;
 	SightSound = 'weapons/bowshoot';
 	DeathSound = 'weapons/bowhit';

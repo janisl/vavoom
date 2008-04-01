@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Ripper : Projectile
+class Ripper : Actor
 	__scriptid__(157);
 
 //==========================================================================
@@ -63,6 +63,12 @@ defaultproperties
 	Height = 6.0;
 	Speed = 490.0;
 	MissileDamage = 1;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bRip = true;
 	bActivateImpact = true;
 	DeathSound = 'weapons/blasterpowhit';

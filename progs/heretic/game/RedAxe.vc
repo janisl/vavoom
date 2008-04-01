@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RedAxe : Projectile
+class RedAxe : Actor
 	__scriptid__(128);
 
 //==========================================================================
@@ -60,6 +60,12 @@ defaultproperties
 	Speed = 315.0;
 	FastSpeed = 630.0;
 	MissileDamage = 7;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
 	bThruGhost = true;
 	DeathSound = 'hknight/hit';
 }

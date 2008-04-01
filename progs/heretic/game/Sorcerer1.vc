@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sorcerer1 : Pawn
+class Sorcerer1 : Actor
 	__mobjinfo__(7)
 	__scriptid__(142);
 
@@ -189,6 +189,15 @@ defaultproperties
 	Mass = 800.0;
 	Speed = 16.0 * 35.0;
 	PainChance = 0.21875;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bBoss = true;
 	bNoMorph = true;
 	bNoRadiusDamage = true;
