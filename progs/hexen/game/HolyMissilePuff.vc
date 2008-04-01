@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolyMissilePuff : Effect;
+class HolyMissilePuff : Actor;
 
 states
 {
@@ -38,6 +38,8 @@ defaultproperties
 	Height = 8.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bDropOff = true;
 	bNoTeleport = true;
 }

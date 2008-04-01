@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceGuyFX2 : Projectile;
+class IceGuyFX2 : Actor;
 
 //==========================================================================
 //
@@ -50,8 +50,9 @@ defaultproperties
 	Gravity = 0.125;
 	Speed = 350.0;
 	MissileDamage = 1;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
 	DamageType = 'Ice';
-	bActivateImpact = false;
-	bActivatePCross = false;
 }

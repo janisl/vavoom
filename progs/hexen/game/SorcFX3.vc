@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcFX3 : Projectile;
+class SorcFX3 : Actor;
 
 //============================================================================
 //
@@ -79,9 +79,8 @@ defaultproperties
 	Radius = 22.0;
 	Height = 65.0;
 	Speed = 525.0;
-	bDropOff = false;
-	bNoGravity = false;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoTeleport = true;
 	SightSound = 'SorcererBishopSpawn';
 }

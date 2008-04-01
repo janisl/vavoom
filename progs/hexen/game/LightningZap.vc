@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LightningZap : Projectile;
+class LightningZap : Actor;
 
 Lightning LightningOwner;	//	Lightning missile that spawned zap.
 
@@ -149,8 +149,9 @@ defaultproperties
 	Height = 35.0;
 	MissileDamage = 2;
 	RenderStyle = STYLE_Add;
-	bNoTeleport = false;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
 	bLightning = true;
 }

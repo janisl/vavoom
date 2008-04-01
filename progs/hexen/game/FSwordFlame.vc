@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FSwordFlame : Effect;
+class FSwordFlame : Actor;
 
 states
 {
@@ -36,4 +36,6 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

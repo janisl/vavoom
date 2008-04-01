@@ -29,18 +29,12 @@ import linespec;
 #include "MainGameInfo.vc"
 #include "HexenLevelInfo.vc"
 #include "HexenWorldInfo.vc"
-#include "Pawn.vc"
 #include "HexenWeapon.vc"
 #include "FighterWeapon.vc"
 #include "ClericWeapon.vc"
 #include "MageWeapon.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
-
-#include "Projectile.vc"
-#include "Fragment.vc"
-#include "Effect.vc"
-#include "Carcas.vc"
 
 #include "ArtiDarkServant.vc"
 #include "ArtiTeleportOther.vc"

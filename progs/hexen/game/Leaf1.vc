@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Leaf1 : Fragment;
+class Leaf1 : Actor;
 
 int RestartCount;
 
@@ -93,7 +93,8 @@ defaultproperties
 	Radius = 2.0;
 	Height = 4.0;
 	Gravity = 0.125;
-	bDropOff = false;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoTeleport = true;
 	bNoSplash = true;
 }

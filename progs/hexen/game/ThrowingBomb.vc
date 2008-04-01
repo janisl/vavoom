@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ThrowingBomb : Projectile;
+class ThrowingBomb : Actor;
 
 //===========================================================================
 //
@@ -83,10 +83,13 @@ defaultproperties
 	Speed = 420.0;
 	BounceType = BOUNCE_Hexen;
 	DamageType = 'Fire';
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	bNoGravity = false;
 	bNoTeleport = false;
-	bActivateImpact = false;
-	bActivatePCross = false;
 	SightSound = 'FlechetteBounce';
 	DeathSound = 'FlechetteExplode';
 }

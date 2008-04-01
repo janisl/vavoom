@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MinotaurFloorFire : Projectile
+class MinotaurFloorFire : Actor
 	abstract;
 
 states
@@ -39,6 +39,9 @@ defaultproperties
 	MissileDamage = 4;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 }

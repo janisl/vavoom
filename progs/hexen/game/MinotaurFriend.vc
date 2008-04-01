@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MinotaurFriend : Pawn;
+class MinotaurFriend : Actor;
 
 //
 // Minotaur variables
@@ -45,6 +45,28 @@ float ChargeSpeed;
 bool IsServant()
 {
 	return true;
+}
+
+//============================================================================
+//
+//  IsNotAttackingMaster
+//
+//============================================================================
+
+bool IsNotAttackingMaster(EntityEx Other)
+{
+	return Other.Class == MinotaurFriend && Other.Target != Tracer;
+}
+
+//==========================================================================
+//
+//	IsMaster
+//
+//==========================================================================
+
+bool IsMaster(EntityEx Other)
+{
+	return Tracer == Other;
 }
 
 //==========================================================================
@@ -733,8 +755,14 @@ defaultproperties
 	AttackSound = 'MaulatorHamSwing';
 	PainSound = 'MaulatorPain';
 	DeathSound = 'MaulatorDeath';
-	bActivateMCross = false;
+	bSolid = true;
+	bShootable = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoTargetSwitch = true;
-	bCountKill = false;
 	bStayMorphed = true;
 }

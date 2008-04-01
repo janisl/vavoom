@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SerpentGib1 : Effect;
+class SerpentGib1 : Actor;
 
 //==========================================================================
 //
@@ -75,4 +75,6 @@ defaultproperties
 {
 	Radius = 3.0;
 	Height = 3.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

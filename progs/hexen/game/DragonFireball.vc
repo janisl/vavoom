@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DragonFireball : Projectile;
+class DragonFireball : Actor;
 
 //============================================================================
 //
@@ -70,7 +70,10 @@ defaultproperties
 	MissileDamage = 6;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	DeathSound = 'DragonFireballExplode';
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcFX1 : Projectile;
+class SorcFX1 : Actor;
 
 //==========================================================================
 //
@@ -99,10 +99,9 @@ defaultproperties
 	Height = 5.0;
 	Speed = 245.0;
 	BounceType = BOUNCE_Hexen;
-	bDropOff = false;
-	bNoGravity = false;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoTeleport = true;
 	bNoWallBounceSnd = true;
 	bFullVolDeath = true;
 	SightSound = 'SorcererBallBounce';

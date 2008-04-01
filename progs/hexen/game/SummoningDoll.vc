@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SummoningDoll : Projectile;
+class SummoningDoll : Actor;
 
 const float MAULATORTIME 	= 25.0;
 
@@ -86,7 +86,8 @@ Death:
 defaultproperties
 {
 	Speed = 700.0;
-	bNoGravity = false;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
 }

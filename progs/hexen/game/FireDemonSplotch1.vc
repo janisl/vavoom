@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FireDemonSplotch1 : Carcas;
+class FireDemonSplotch1 : Actor;
 
 states
 {
@@ -38,4 +38,8 @@ defaultproperties
 {
 	Radius = 3.0;
 	Height = 16.0;
+	bCorpse = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bFloorClip = true;
 }

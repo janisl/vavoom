@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceShard : Projectile
+class IceShard : Actor
 	__scriptid__(65);
 
 states
@@ -43,7 +43,10 @@ defaultproperties
 	Speed = 875.0;
 	MissileDamage = 1;
 	DamageType = 'Ice';
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	DeathSound = 'MageShardsExplode';
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcFX2 : Effect;
+class SorcFX2 : Actor;
 
 //==========================================================================
 // Blue spell - defense
@@ -145,5 +145,7 @@ defaultproperties
 	Radius = 5.0;
 	Height = 5.0;
 	Speed = 525.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bNoTeleport = true;
 }

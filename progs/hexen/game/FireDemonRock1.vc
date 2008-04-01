@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FireDemonRock1 : Fragment;
+class FireDemonRock1 : Actor;
 
 //==========================================================================
 //
@@ -59,5 +59,8 @@ defaultproperties
 	Radius = 3.0;
 	Height = 5.0;
 	Mass = 16.0;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
 }

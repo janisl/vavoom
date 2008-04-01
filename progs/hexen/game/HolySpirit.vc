@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolySpirit : Projectile;
+class HolySpirit : Actor;
 
 int WeaveXY;
 int WeaveZ;
@@ -316,6 +316,13 @@ defaultproperties
 	MissileDamage = 3;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bRip = true;
 	bSeekerMissile = true;
 	bDamageInvulnerable = true;

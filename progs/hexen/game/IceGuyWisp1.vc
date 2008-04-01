@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceGuyWisp1 : Fragment;
+class IceGuyWisp1 : Actor;
 
 states
 {
@@ -36,4 +36,9 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 }

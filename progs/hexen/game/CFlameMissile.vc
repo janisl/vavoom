@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CFlameMissile : Projectile;
+class CFlameMissile : Actor;
 
 float FlameSpeed;
 Actor bmo;
@@ -180,6 +180,13 @@ defaultproperties
 	Speed = 7000.0;
 	MissileDamage = 8;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bInvisible = true;
 	DamageType = 'Fire';
 	bBlaster = true;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CStaffMissile : Projectile;
+class CStaffMissile : Actor;
 
 states
 {
@@ -45,4 +45,11 @@ defaultproperties
 	MissilePoisonDamage = 20;
 	RenderStyle = STYLE_Add;
 	DeathSound = 'ClericCStaffExplode';
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolyMissile : Projectile;
+class HolyMissile : Actor;
 
 //============================================================================
 //
@@ -122,7 +122,10 @@ defaultproperties
 	Height = 8.0;
 	Speed = 1050.0;
 	MissileDamage = 4;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	bExtremeDeath = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MageWandPuff : Effect;
+class MageWandPuff : Actor;
 
 states
 {
@@ -38,6 +38,8 @@ Spawn:
 
 defaultproperties
 {
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bNoTeleport = true;
 	bCannotPush = true;
 	bNoDamageThrust = true;

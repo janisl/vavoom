@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcFX4 : Projectile;
+class SorcFX4 : Actor;
 
 //==========================================================================
 //
@@ -72,7 +72,10 @@ defaultproperties
 	Height = 10.0;
 	Speed = 420.0;
 	bDropOff = false;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	DeathSound = 'SorcererBallExplode';
 }

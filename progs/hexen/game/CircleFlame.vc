@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CircleFlame : Projectile;
+class CircleFlame : Actor;
 
 float FlameRotSpeed;
 
@@ -89,8 +89,11 @@ defaultproperties
 	MissileDamage = 2;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	DeathSound = 'ClericFlameCircle';
 	FlameRotSpeed = 2.0 * 35.0;
 }

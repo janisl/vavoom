@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BishopFX : Projectile;
+class BishopFX : Actor;
 
 //==========================================================================
 //
@@ -67,8 +67,11 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 1;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	bSeekerMissile = true;
-	bActivateImpact = false;
-	bActivatePCross = false;
 	DeathSound = 'BishopMissileExplode';
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceGuyFX : Projectile;
+class IceGuyFX : Actor;
 
 //==========================================================================
 //
@@ -77,7 +77,10 @@ defaultproperties
 	Speed = 490.0;
 	MissileDamage = 1;
 	DamageType = 'Ice';
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	DeathSound = 'IceGuyMissileExplode';
 }

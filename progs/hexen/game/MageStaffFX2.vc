@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MageStaffFX2 : Projectile;
+class MageStaffFX2 : Actor;
 
 //==========================================================================
 //
@@ -132,6 +132,13 @@ defaultproperties
 	Speed = 595.0;
 	MissileDamage = 4;
 	DamageType = 'Fire';
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bSeekerMissile = true;
 	bExtremeDeath = true;
 	DeathSound = 'MageStaffExplode';

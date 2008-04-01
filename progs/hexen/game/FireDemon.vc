@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FireDemon : Pawn
+class FireDemon : Actor
 	__mobjinfo__(10060)
 	__scriptid__(5);
 
@@ -291,6 +291,16 @@ defaultproperties
 	PainChance = 0.00390625;
 	AttackRange	 = 512.0;
 	MissileDamage = 1;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoGravity = true;
 	bDropOff = true;
 	bFloat = true;

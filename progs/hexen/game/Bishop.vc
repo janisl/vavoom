@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Bishop : Pawn
+class Bishop : Actor
 	__mobjinfo__(114)
 	__scriptid__(19);
 
@@ -271,11 +271,17 @@ defaultproperties
 	Mass = 100.0;
 	Speed = 10.0 * 35.0;
 	PainChance = 0.4296875;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoGravity = true;
 	bFloat = true;
 	bNoBlood = true;
-	bFloorClip = false;
-	bActivateMCross = false;
 	bNoTargetSwitch = true;
 	bDontOverlap = true;
 	SightSound = 'BishopSight';

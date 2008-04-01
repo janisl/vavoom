@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AxePuffGlow : Effect;
+class AxePuffGlow : Actor;
 
 states
 {
@@ -35,6 +35,8 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bPuffOnActors = true;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';

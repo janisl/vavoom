@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Lightning : Projectile
+class Lightning : Actor
 	abstract;
 
 Lightning LightningLink;
@@ -274,5 +274,12 @@ defaultproperties
 	MissileDamage = 8;
 	RenderStyle = STYLE_Add;
 	ZagSpeed = 1.0;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bLightning = true;
 }

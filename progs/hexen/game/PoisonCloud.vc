@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PoisonCloud : Effect;
+class PoisonCloud : Actor;
 
 int LifeCount;
 int BobIndex;
@@ -137,6 +137,8 @@ defaultproperties
 	Mass = 99999.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bDropOff = true;
 	bColideWithWorld = false;
 	bColideWithThings = false;

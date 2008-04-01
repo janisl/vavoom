@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceGuy : Pawn
+class IceGuy : Actor
 	__mobjinfo__(8020)
 	__scriptid__(20);
 
@@ -155,9 +155,17 @@ defaultproperties
 	Mass = 150.0;
 	Speed = 14.0 * 35.0;
 	PainChance = 0.5625;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoBlood = true;
 	DamageType = 'Ice';
-	bFloorClip = false;
 	bNoIceDeath = true;
 	SightSound = 'IceGuySight';
 	ActiveSound = 'IceGuyActive';

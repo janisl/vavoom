@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CorpseBit : Effect;
+class CorpseBit : Actor;
 
 states
 {
@@ -42,6 +42,6 @@ defaultproperties
 {
 	Radius = 5.0;
 	Height = 5.0;
-	bNoGravity = false;
+	bNoBlockmap = true;
 	bTelestomp = true;
 }

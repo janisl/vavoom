@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WraithFX4 : Fragment
+class WraithFX4 : Actor
 	__scriptid__(106);
 
 states
@@ -41,6 +41,9 @@ defaultproperties
 	Radius = 2.0;
 	Height = 5.0;
 	Mass = 5.0;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
 	DeathSound = 'Drip';
 }

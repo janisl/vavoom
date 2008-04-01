@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DragonExplosion : Effect;
+class DragonExplosion : Actor;
 
 //==========================================================================
 //
@@ -59,9 +59,9 @@ defaultproperties
 	RenderStyle = STYLE_Add;
 	Radius = 8.0;
 	Height = 8.0;
+	bNoBlockmap = true;
 	bInvisible = true;
 	bNoTeleport = true;
 	DamageType = 'Fire';
-	bNoGravity = false;
 	DeathSound = 'DragonFireballExplode';
 }

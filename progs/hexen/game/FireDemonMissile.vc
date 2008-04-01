@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FireDemonMissile : Projectile;
+class FireDemonMissile : Actor;
 
 states
 {
@@ -43,6 +43,13 @@ defaultproperties
 	Speed = 350.0;
 	MissileDamage = 1;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bFloorClip = true;
 	DamageType = 'Fire';
 	DeathSound = 'FireDemonMissileHit';

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TelOtherFX1 : Projectile;
+class TelOtherFX1 : Actor;
 
 //==========================================================================
 //
@@ -227,7 +227,10 @@ defaultproperties
 	Speed = 700.0;
 	MissileDamage = 10001;
 	RenderStyle = STYLE_Add;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	bBloodlessImpact = true;
 }

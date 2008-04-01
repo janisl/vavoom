@@ -48,7 +48,7 @@
 //
 //**************************************************************************
 
-class Korax : Pawn
+class Korax : Actor
 	__mobjinfo__(10200);
 
 //
@@ -494,7 +494,15 @@ defaultproperties
 	Arm6Height = 53.0;
 	CommandHeight = 120.0;
 	CommandOffset = 27.0;
-	bPassMobj = false;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bCanUseWalls = true;
 	bBoss = true;
 	bNeverTarget = true;
 	bFullVolActive = true;

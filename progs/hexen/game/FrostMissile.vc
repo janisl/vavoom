@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FrostMissile : Projectile;
+class FrostMissile : Actor;
 
 bool bShardSpawnLeft;
 bool bShardSpawnRight;
@@ -156,4 +156,11 @@ defaultproperties
 	MissileDamage = 1;
 	DamageType = 'Ice';
 	DeathSound = 'MageShardsExplode';
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 }

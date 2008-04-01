@@ -27,7 +27,7 @@
 //
 //**************************************************************************
 
-class IceGuyBit : Effect;
+class IceGuyBit : Actor;
 
 states
 {
@@ -43,7 +43,7 @@ defaultproperties
 	Radius = 1.0;
 	Height = 1.0;
 	Gravity = 0.125;
+	bNoBlockmap = true;
 	bDropOff = true;
 	bNoTeleport = true;
-	bNoGravity = false;
 }

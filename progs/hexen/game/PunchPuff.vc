@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PunchPuff : Effect;
+class PunchPuff : Actor;
 
 states
 {
@@ -38,6 +38,8 @@ defaultproperties
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
 	Velocity.z = 1.0 * 35.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bPuffOnActors = true;
 	SightSound = 'FighterPunchHitThing';
 	AttackSound = 'FighterPunchHitWall';

@@ -27,7 +27,7 @@
 //
 //**************************************************************************
 
-class MageStaffFX : Projectile;
+class MageStaffFX : Actor;
 
 int WeaveXY;
 int WeaveZ;
@@ -96,6 +96,13 @@ defaultproperties
 	Height = 8.0;
 	Speed = 700.0;
 	MissileDamage = 6;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bRip = true;
 	DamageType = 'Fire';
 	DeathSound = 'MageStaffExplode';

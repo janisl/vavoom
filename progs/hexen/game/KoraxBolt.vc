@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KoraxBolt : Fragment;
+class KoraxBolt : Actor;
 
 float BoltHeight;
 
@@ -83,6 +83,9 @@ defaultproperties
 	Height = 35.0;
 	LifeTime = 3;
 	BoltHeight = 48.0;
-	DLightColour = RGB(58, 158, 239);
-	DLightRadius = 126.0;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 }

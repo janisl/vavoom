@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CorpseBloodDrip : Fragment;
+class CorpseBloodDrip : Actor;
 
 states
 {
@@ -41,9 +41,6 @@ defaultproperties
 	Radius = 1.0;
 	Height = 4.0;
 	Gravity = 0.125;
-	bNoBlockmap = false;
-	bDropOff = false;
-	bNoGravity = false;
-	bNoTeleport = false;
+	bMissile = true;
 	DeathSound = 'Drip';
 }

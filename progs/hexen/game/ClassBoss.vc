@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClassBoss : Pawn
+class ClassBoss : Actor
 	abstract;
 
 bool bHealthInitialised;
@@ -48,5 +48,15 @@ final void A_ClassBossHealth()
 
 defaultproperties
 {
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoMorph = true;
 }

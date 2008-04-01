@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcBall : Projectile
+class SorcBall : Actor
 	abstract;
 
 //  Heresiarch Ball Variables
@@ -324,9 +324,10 @@ defaultproperties
 	Height = 5.0;
 	Speed = 350.0;
 	BounceType = BOUNCE_Hexen;
-	bDropOff = false;
-	bActivateImpact = false;
-	bActivatePCross = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 	bNoWallBounceSnd = true;
 	bFullVolDeath = true;
 	SightSound = 'SorcererBallBounce';

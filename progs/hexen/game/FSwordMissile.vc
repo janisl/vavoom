@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FSwordMissile : Projectile;
+class FSwordMissile : Actor;
 
 //==========================================================================
 //
@@ -94,6 +94,13 @@ defaultproperties
 	Speed = 1050.0;
 	MissileDamage = 8;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bExtremeDeath = true;
 	DeathSound = 'FighterSwordExplode';
 }

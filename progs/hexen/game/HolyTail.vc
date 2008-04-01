@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HolyTail:Effect;
+class HolyTail : Actor;
 
 Actor ParentSpirit;
 HolyTail NextTail;
@@ -131,6 +131,8 @@ defaultproperties
 	Height = 1.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bDropOff = true;
 	bColideWithWorld = false;
 	bColideWithThings = false;

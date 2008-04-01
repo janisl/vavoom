@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Dragon : Pawn
+class Dragon : Actor
 	__mobjinfo__(254);
 
 Actor FlightTarget;
@@ -318,15 +318,17 @@ defaultproperties
 	Mass = 99999.0;
 	Speed = 350.0;
 	PainChance = 0.5;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoGravity = true;
 	bFloat = true;
 	bNoBlood = true;
 	bBoss = true;
 	bNeverTarget = true;
-	bFloorClip = false;
-	bTelestomp = false;
-	bActivatePushWall = false;
-	bActivateMCross = false;
 	bFullVolActive = true;
 	bNoIceDeath = true;
 	SightSound = 'DragonSight';

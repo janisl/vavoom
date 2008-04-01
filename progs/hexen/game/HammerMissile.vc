@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HammerMissile : Projectile;
+class HammerMissile : Actor;
 
 //==========================================================================
 //
@@ -74,4 +74,11 @@ defaultproperties
 	MissileDamage = 10;
 	DamageType = 'Fire';
 	DeathSound = 'FighterHammerExplode';
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 }

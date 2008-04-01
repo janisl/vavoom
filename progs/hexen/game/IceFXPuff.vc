@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class IceFXPuff : Effect;
+class IceFXPuff : Actor;
 
 states
 {
@@ -39,6 +39,8 @@ defaultproperties
 	Height = 1.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bShadow = true;
 	bDropOff = true;
 	bNoTeleport = true;

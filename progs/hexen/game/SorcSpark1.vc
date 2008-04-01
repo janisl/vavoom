@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcSpark1 : Effect;
+class SorcSpark1 : Actor;
 
 states
 {
@@ -38,7 +38,7 @@ defaultproperties
 	Radius = 5.0;
 	Height = 5.0;
 	Gravity = 0.125;
+	bNoBlockmap = true;
 	bDropOff = true;
 	bNoTeleport = true;
-	bNoGravity = false;
 }

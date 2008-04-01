@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class TeleportFog : Effect;
+class TeleportFog : Actor;
 
 states
 {
@@ -35,4 +35,6 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FogPatch : Effect
+class FogPatch : Actor
 	abstract;
 
 //==========================================================================
@@ -76,6 +76,8 @@ defaultproperties
 	Speed = 35.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bFloat = true;

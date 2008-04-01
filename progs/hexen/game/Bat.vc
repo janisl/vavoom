@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Bat : Fragment;
+class Bat : Actor;
 
 // Bat Variables
 int LifeTime;		// lifetime counter
@@ -84,5 +84,8 @@ defaultproperties
 	Radius = 3.0;
 	Height = 3.0;
 	Speed = 175.0;
-	bDropOff = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoTeleport = true;
 }

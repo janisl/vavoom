@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class BlastEffect : Effect;
+class BlastEffect : Actor;
 
 states
 {
@@ -36,6 +36,8 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bColideWithWorld = false;
 	bColideWithThings = false;
 	bNoTeleport = true;

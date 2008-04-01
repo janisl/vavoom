@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SorcFX3Explosion : Effect;
+class SorcFX3Explosion : Actor;
 
 states
 {
@@ -36,5 +36,7 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bNoTeleport = true;
 }

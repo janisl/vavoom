@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PoisonBag : Effect;
+class PoisonBag : Actor;
 
 //===========================================================================
 //
@@ -56,4 +56,6 @@ defaultproperties
 {
 	Radius = 5.0;
 	Height = 5.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

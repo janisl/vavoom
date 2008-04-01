@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PotteryBit : Fragment;
+class PotteryBit : Actor;
 
 state BitState;
 
@@ -106,7 +106,6 @@ defaultproperties
 {
 	Radius = 5.0;
 	Height = 5.0;
-	bNoBlockmap = false;
-	bDropOff = false;
-	bNoGravity = false;
+	bMissile = true;
+	bNoTeleport = true;
 }

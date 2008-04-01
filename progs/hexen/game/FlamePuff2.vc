@@ -27,7 +27,7 @@
 //
 //**************************************************************************
 
-class FlamePuff2 : Effect;
+class FlamePuff2 : Actor;
 
 states
 {
@@ -59,4 +59,6 @@ defaultproperties
 	Height = 1.0;
 	SightSound = 'ClericFlameExplode';
 	AttackSound = 'ClericFlameExplode';
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

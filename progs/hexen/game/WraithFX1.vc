@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WraithFX1 : Projectile;
+class WraithFX1 : Actor;
 
 //==========================================================================
 //
@@ -84,6 +84,13 @@ defaultproperties
 	Mass = 5.0;
 	Speed = 490.0;
 	MissileDamage = 5;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
 	bFloorClip = true;
 	DamageType = 'Fire';
 	DeathSound = 'WraithMissileExplode';

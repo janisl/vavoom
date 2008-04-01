@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SerpentHead : Effect;
+class SerpentHead : Actor;
 
 //==========================================================================
 //
@@ -62,5 +62,5 @@ defaultproperties
 	Radius = 5.0;
 	Height = 10.0;
 	Gravity = 0.125;
-	bNoGravity = false;
+	bNoBlockmap = true;
 }

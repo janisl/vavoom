@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WraithFX3 : Fragment;
+class WraithFX3 : Actor;
 
 states
 {
@@ -40,7 +40,10 @@ defaultproperties
 	Radius = 2.0;
 	Height = 5.0;
 	Mass = 5.0;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoTeleport = true;
 	bFloorClip = true;
-	bNoGravity = false;
 	DeathSound = 'Drip';
 }

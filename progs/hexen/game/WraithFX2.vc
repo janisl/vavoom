@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class WraithFX2 : Effect
+class WraithFX2 : Actor
 	__scriptid__(108);
 
 states
@@ -38,8 +38,8 @@ defaultproperties
 	Radius = 2.0;
 	Height = 5.0;
 	Mass = 5.0;
+	bNoBlockmap = true;
 	bDropOff = true;
 	bFloorClip = true;
 	bNoTeleport = true;
-	bNoGravity = false;
 }

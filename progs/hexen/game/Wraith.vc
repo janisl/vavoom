@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Wraith : Pawn
+class Wraith : Actor
 	__mobjinfo__(34)
 	__scriptid__(8);
 
@@ -257,10 +257,18 @@ defaultproperties
 	Speed = 11.0 * 35.0;
 	PainChance = 0.09765625;
 	MissileDamage = 10;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoGravity = true;
 	bDropOff = true;
 	bFloat = true;
-	bActivateMCross = false;
 	SightSound = 'WraithSight';
 	ActiveSound = 'WraithActive';
 	AttackSound = 'WraithAttack';

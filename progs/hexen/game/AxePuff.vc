@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AxePuff : Effect;
+class AxePuff : Actor;
 
 states
 {
@@ -36,6 +36,8 @@ defaultproperties
 {
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bPuffOnActors = true;
 	SightSound = 'FighterAxeHitThing';
 	AttackSound = 'FighterHammerHitWall';

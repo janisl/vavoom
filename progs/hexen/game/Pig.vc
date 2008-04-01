@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Pig : Pawn;
+class Pig : Actor;
 
 //==========================================================================
 //
@@ -192,8 +192,16 @@ defaultproperties
 	Mass = 60.0;
 	Speed = 10.0 * 35.0;
 	PainChance = 0.5;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bWindThrust = true;
-	bActivateMCross = false;
 	bNoMorph = true;
 	SightSound = 'PigActive1';
 	ActiveSound = 'PigActive';

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Heresiarch : Pawn
+class Heresiarch : Actor
 	__mobjinfo__(10080);
 
 const int SORCBALL_INITIAL_SPEED 		= 7;
@@ -271,10 +271,18 @@ defaultproperties
 	Speed = 16.0 * 35.0;
 	PainChance = 0.0390625;
 	MissileDamage = 9;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoBlood = true;
 	bBoss = true;
 	bNeverTarget = true;
-	bTelestomp = false;
 	bFullVolActive = true;
 	bNoIceDeath = true;
 	bDeflect = true;
