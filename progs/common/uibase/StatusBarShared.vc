@@ -241,7 +241,8 @@ void DrawCentreMessage()
 		for (i = 0; i < CentreMessageLines.Num; i++)
 		{
 			DrawText(320 - CentreMessageLines[i].Width / 2, 360 + i * LineH,
-				CentreMessageLines[i].Text, GetCvar('font_colour2'));
+				CentreMessageLines[i].Text, GetCvar('font_colour2'),
+				CR_YELLOW);
 		}
 	}
 }
