@@ -1334,8 +1334,8 @@ final void A_FireCustomMissile(class<Actor> MissileType, optional float Angle,
 	TVec ShootOrg = Origin;
 	if (SpawnXY)
 	{
-		Origin.x += itof(SpawnXY) * cos(Angles.yaw - 90.0);
-		Origin.y += itof(SpawnXY) * sin(Angles.yaw - 90.0);
+		ShootOrg.x += itof(SpawnXY) * cos(Angles.yaw - 90.0);
+		ShootOrg.y += itof(SpawnXY) * sin(Angles.yaw - 90.0);
 	}
 	ShootOrg.x += SpawnZ;
 
