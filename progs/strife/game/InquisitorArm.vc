@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class InquisitorArm : Effect;
+class InquisitorArm : Actor;
 
 states
 {
@@ -36,7 +36,7 @@ Spawn:
 defaultproperties
 {
 	Speed = 25.0 * 35.0;
-	bNoGravity = false;
+	bNoBlockmap = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
 	bNoBlood = true;

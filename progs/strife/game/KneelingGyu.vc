@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class KneelingGyu : Pawn
+class KneelingGyu : Actor
 	__mobjinfo__(204);
 
 states
@@ -60,6 +60,15 @@ defaultproperties
 	Height = 17.0;
 	Mass = 50000.0;
 	PainChance = 1.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bInCombat = true;
 	bNoBlood = true;
 	ActiveSound = 'misc/chant';

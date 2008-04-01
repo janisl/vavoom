@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Stalker : Pawn
+class Stalker : Actor
 	__mobjinfo__(186);
 
 name WalkSound;
@@ -209,6 +209,15 @@ defaultproperties
 	Speed = 16.0 * 35.0;
 	PainChance = 0.15625;
 	MaxDropoffHeight = 32.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	bDropOff = true;

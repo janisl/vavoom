@@ -35,7 +35,7 @@
 //
 //**************************************************************************
 
-class BridgeBall : Effect;
+class BridgeBall : Actor;
 
 float OrbitAngle;		// Angle of ball
 
@@ -69,5 +69,7 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bNoTeleport = true;
 }

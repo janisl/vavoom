@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class AlienChunkSmall : Effect;
+class AlienChunkSmall : Actor;
 
 states
 {
@@ -34,7 +34,7 @@ Spawn:
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
 }

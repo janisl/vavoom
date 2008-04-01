@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PoisonBolt : Projectile;
+class PoisonBolt : Actor;
 
 //==========================================================================
 //
@@ -62,6 +62,12 @@ defaultproperties
 	Speed = 1050.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 500;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bActivateImpact = true;
 	bNoExtremeDeath = true;
 	bStrifeDamage = true;

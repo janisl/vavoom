@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CeilingTurret : Pawn
+class CeilingTurret : Actor
 	__mobjinfo__(27);
 
 states
@@ -54,7 +54,14 @@ defaultproperties
 	Radius = 20.0;
 	Height = 16.0;
 	Mass = 10000000.0;
-	bSolid = false;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bStanding = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;

@@ -38,8 +38,6 @@ import uibase;
 #include "Player.vc"
 
 #include "DummyStrifeItem.vc"
-#include "Projectile.vc"
-#include "Effect.vc"
 
 #include "StrifeSpark.vc"
 #include "TeleportFog.vc"

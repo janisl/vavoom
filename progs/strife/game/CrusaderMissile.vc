@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class CrusaderMissile : Projectile;
+class CrusaderMissile : Actor;
 
 states
 {
@@ -47,6 +47,12 @@ defaultproperties
 	MissileDamage = 7;
 	SightSound = 'crusader/misl';
 	DeathSound = 'crusader/mislx';
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bExplodeParticles = true;
 	bStrifeDamage = true;
 }

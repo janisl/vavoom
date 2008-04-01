@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Sentinel : Pawn
+class Sentinel : Actor
 	__mobjinfo__(3006);
 
 //==========================================================================
@@ -95,6 +95,15 @@ defaultproperties
 	Speed = 7.0 * 35.0;
 	FloatSpeed = 175.0;
 	PainChance = 1.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bSpawnCeiling = true;
 	bNoGravity = true;
 	bLookAllAround = true;

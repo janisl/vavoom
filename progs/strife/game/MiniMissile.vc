@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MiniMissile : Projectile;
+class MiniMissile : Actor;
 
 //==========================================================================
 //
@@ -58,6 +58,12 @@ defaultproperties
 	Speed = 700.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 10;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bActivateImpact = true;
 	bExplodeParticles = true;
 	bStrifeDamage = true;

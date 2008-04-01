@@ -127,6 +127,15 @@ defaultproperties
 	FloatSpeed = 175.0;
 	PainChance = 0.1953125;
 	MissileDamage = 4;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoGravity = true;
 	bLookAllAround = true;
 	bFloat = true;

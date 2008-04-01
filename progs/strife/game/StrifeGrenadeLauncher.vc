@@ -34,7 +34,7 @@ class StrifeGrenadeLauncher : StrifeWeapon
 
 final void A_FireGrenade() self(Actor)
 {
-	class<Projectile> grenadetype;
+	class<Actor> grenadetype;
 	EntityEx grenade;
 	float an;
 	float tworadii;

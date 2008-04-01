@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HEGrenade : Projectile;
+class HEGrenade : Actor;
 
 //==========================================================================
 //
@@ -58,7 +58,11 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	ReactionCount = 30;
 	MissileDamage = 1;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bActivateImpact = true;
 	bBounceOnActors = true;
 	bNoBounceSound = true;

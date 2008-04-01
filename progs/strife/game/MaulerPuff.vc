@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaulerPuff : Effect;
+class MaulerPuff : Actor;
 
 states
 {
@@ -37,4 +37,6 @@ defaultproperties
 {
 	RenderStyle = STYLE_Add;
 	Velocity.z = 1.0 * 35.0;
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

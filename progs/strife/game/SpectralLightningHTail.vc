@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class SpectralLightningHTail : Effect;
+class SpectralLightningHTail : Actor;
 
 states
 {
@@ -35,5 +35,7 @@ Spawn:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 	bDropOff = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaulerTorpedoWave : Projectile;
+class MaulerTorpedoWave : Actor;
 
 states
 {
@@ -43,6 +43,12 @@ defaultproperties
 	MaxStepHeight = 4.0;
 	MissileDamage = 10;
 	RenderStyle = STYLE_Add;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bActivateImpact = true;
 	DamageType = 'Disintegrate';
 	bStrifeDamage = true;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FlameMissile : Projectile;
+class FlameMissile : Actor;
 
 //==========================================================================
 //
@@ -57,7 +57,11 @@ defaultproperties
 	Speed = 525.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 4;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	DamageType = 'Fire';
 	bActivateImpact = true;
 	bStrifeDamage = true;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhosphorousGrenade : Projectile;
+class PhosphorousGrenade : Actor;
 
 //==========================================================================
 //
@@ -61,7 +61,11 @@ defaultproperties
 	BounceType = BOUNCE_Doom;
 	BounceCount = 2;
 	BounceFactor = 0.5;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bActivateImpact = true;
 	bBounceOnActors = true;
 	bNoBounceSound = true;

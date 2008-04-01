@@ -108,6 +108,15 @@ defaultproperties
 	Speed = 8.0 * 35.0;
 	PainChance = 0.390625;
 	MaxDropoffHeight = 32.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoBlood = true;
 	SightSound = 'templar/sight';
 	ActiveSound = 'templar/active';

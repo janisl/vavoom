@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Macil1 : Pawn
+class Macil1 : Actor
 	__mobjinfo__(64);
 
 //==========================================================================
@@ -85,6 +85,15 @@ defaultproperties
 	Mass = 100.0;
 	Speed = 8.0 * 35.0;
 	PainChance = 0.9765625;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoDeathmatch = true;
 	bNoIceDeath = true;
 	bFireResist = true;

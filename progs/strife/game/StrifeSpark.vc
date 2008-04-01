@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StrifeSpark : Effect;
+class StrifeSpark : Actor;
 
 states
 {
@@ -38,4 +38,6 @@ Crash:
 defaultproperties
 {
 	RenderStyle = STYLE_Add;
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

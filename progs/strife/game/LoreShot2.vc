@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LoreShot2 : Effect;
+class LoreShot2 : Actor;
 
 states
 {
@@ -35,4 +35,6 @@ Spawn:
 defaultproperties
 {
 	SightSound = 'loremaster/active';
+	bNoBlockmap = true;
+	bNoGravity = true;
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ProgrammerBase : Effect;
+class ProgrammerBase : Actor;
 
 //==========================================================================
 //
@@ -49,7 +49,7 @@ Spawn:
 
 defaultproperties
 {
-	bNoGravity = false;
+	bNoBlockmap = true;
 	bColideWithThings = false;
 	bColideWithWorld = false;
 	bNoBlood = true;

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PhosphorousFire : Effect;
+class PhosphorousFire : Actor;
 
 //==========================================================================
 //
@@ -103,6 +103,6 @@ defaultproperties
 {
 	RenderStyle = STYLE_Add;
 	ReactionCount = 120;
-	bNoGravity = false;
+	bNoBlockmap = true;
 	DamageType = 'Fire';
 }

@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class LoreShot : Projectile;
+class LoreShot : Actor;
 
 //==========================================================================
 //
@@ -75,6 +75,12 @@ defaultproperties
 	Speed = 700.0;
 	MaxStepHeight = 4.0;
 	MissileDamage = 2;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bStrifeDamage = true;
 	SightSound = 'loremaster/chain';
 	ActiveSound = 'loremaster/swish';

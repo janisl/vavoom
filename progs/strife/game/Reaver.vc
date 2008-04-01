@@ -82,13 +82,21 @@ XDeath:
 defaultproperties
 {
 	Health = 150;
-	GibsHealth = -75;
 	Radius = 20.0;
 	Height = 60.0;
 	Mass = 500.0;
 	Speed = 12.0 * 35.0;
 	PainChance = 0.5;
 	MaxDropoffHeight = 32.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bInCombat = true;
 	bNoBlood = true;
 	bExplodeParticles = true;

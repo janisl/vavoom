@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Oracle : Pawn
+class Oracle : Actor
 	__mobjinfo__(199);
 
 //==========================================================================
@@ -70,6 +70,15 @@ defaultproperties
 	Height = 56.0;
 	Mass = 100.0;
 	MaxDropoffHeight = 32.0;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bNoBlood = true;
 	bNoDeathmatch = true;
 	bFireResist = true;

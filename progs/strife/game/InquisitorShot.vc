@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class InquisitorShot : Projectile;
+class InquisitorShot : Actor;
 
 //==========================================================================
 //
@@ -64,7 +64,11 @@ defaultproperties
 	Speed = 875.0;
 	MaxStepHeight = 4.0;
 	ReactionCount = 15;
-	bNoGravity = false;
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bActivatePCross = true;
+	bNoTeleport = true;
 	bExplodeParticles = true;
 	SightSound = 'inquisitor/attack';
 	DeathSound = 'inquisitor/atkexplode';

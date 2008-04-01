@@ -98,6 +98,15 @@ defaultproperties
 	PainChance = 1.0;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.333;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bFloorClip = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
 	bShadow = true;
 	bSpecial = true;
 	bNoGravity = true;
