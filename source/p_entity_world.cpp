@@ -353,7 +353,7 @@ void VEntity::UnlinkFromWorld()
 	}
 	SubSector = NULL;
 	Sector = NULL;
-	unguard;
+	unguardf(("(%s)", GetClass()->GetName()));
 }
 
 //==========================================================================
