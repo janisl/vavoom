@@ -66,7 +66,6 @@ import linespec;
 
 #include "FireBomb.vc"
 #include "TeleportFog.vc"
-#include "Gibs.vc"
 #include "PlayerSpeed.vc"
 #include "BlastEffect.vc"
 
@@ -93,7 +92,6 @@ import linespec;
 #include "HolyMissilePuff.vc"
 #include "HolyMissile.vc"
 #include "CWeapWraithverge.vc"
-#include "MageWandPuff.vc"
 #include "MageWandSmoke.vc"
 #include "MageWandMissile.vc"
 #include "MWeapWand.vc"
@@ -104,7 +102,6 @@ import linespec;
 #include "LightningCeiling.vc"
 #include "MageStaffFX2.vc"
 #include "MWeapBloodscourge.vc"
-#include "MageStaffFX.vc"
 #include "SnoutPuff.vc"
 #include "Snout.vc"
 
