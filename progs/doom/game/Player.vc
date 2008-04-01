@@ -1499,11 +1499,11 @@ void Cheat_KillAll()
 
 //==========================================================================
 //
-//	KilledByPlayer
+//	KilledActor
 //
 //==========================================================================
 
-void KilledByPlayer(EntityEx Victim)
+void KilledActor(EntityEx Victim)
 {
 	// Check for frag changes
 	if (Victim.bIsPlayer)

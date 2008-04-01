@@ -1978,11 +1978,11 @@ void Damaged(EntityEx inflictor)
 {
 }
 
-void KilledByPlayer(EntityEx Victim)
+void KilledActor(EntityEx Victim)
 {
 }
 
-void PlayerKilled(EntityEx source, EntityEx inflictor)
+void Killed(EntityEx source, EntityEx inflictor)
 {
 }
 
