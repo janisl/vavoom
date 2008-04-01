@@ -26,7 +26,7 @@
 #ifndef OPCODE_INFO
 
 #define PROG_MAGIC		"VPRG"
-#define PROG_VERSION	26
+#define PROG_VERSION	27
 
 enum
 {
