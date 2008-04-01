@@ -1100,6 +1100,10 @@ static void ParseMapInfo(VScriptParser* sc)
 	info->CDTrack = 0;
 	info->Sky1Texture = GTextureManager.CheckNumForName("sky1",
 		TEXTYPE_Wall, true, false);
+	if (info->Sky1Texture < 0)
+	{
+		info->Sky1Texture = GTextureManager.DefaultTexture;
+	}
 	info->Sky2Texture = info->Sky1Texture;
 	info->Sky1ScrollDelta = 0.0;
 	info->Sky2ScrollDelta = 0.0;
