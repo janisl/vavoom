@@ -624,7 +624,9 @@ void CheckForSectorActions(sector_t* OldSec, bool OldAboveFakeFloor,
 
 void SetOrigin(TVec NewOrigin)
 {
+	UnlinkFromWorld();
 	Origin = NewOrigin;
+	LinkToWorld();
 }
 
 //==========================================================================
