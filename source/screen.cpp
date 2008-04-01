@@ -485,7 +485,6 @@ void SCR_Init()
 void SCR_Update()
 {
 	guard(SCR_Update);
-clock(host_cycles[1]);
 	CheckResolutionChange();
 
 	Drawer->StartUpdate();
@@ -523,7 +522,6 @@ clock(host_cycles[1]);
 	C_Drawer();
 
 	DrawFPS();
-unclock(host_cycles[1]);
 
 	DrawCycles();
 

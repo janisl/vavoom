@@ -386,13 +386,11 @@ void Host_Frame()
 #endif
 
 #ifdef SERVER
-clock(host_cycles[0]);
 		if (sv.active)
 		{
 			//	Server operations
 			ServerFrame(host_frametics);
 		}
-unclock(host_cycles[0]);
 #endif
 
 		host_time += host_frametime;
