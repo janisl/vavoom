@@ -3173,3 +3173,18 @@
   I created a base class for morph projectiles.
 31.03.2008
   I moved morph artifacts and particle fountains to DECORATE.
+01.04.2008
+  I implemented CanUseWalls flag.
+  I got rid of some classes that only set some flags.
+  I fixed printing of bold messages from ACS.
+  I removed some unused Hexen classes.
+  I added support for DECORATE inventory and weapon flags without prefix.
+  I fixed crash when default sky texture SKY1 is missing.
+  I fixed some cases where origin was changed without unlinking actor from the
+ world and linking it afterwards.
+02.04.2008
+  I increased maximal screen width.
+
+******************************************************************************
+                            VERSION 1.27
+******************************************************************************

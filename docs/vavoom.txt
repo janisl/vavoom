@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.26
+                                                    Version 1.27
 
 Contents:
     0. Disclaimer
@@ -53,7 +53,7 @@ Vavoom System Requirements:
      - 32 MB RAM
      - Optional: Sound card
      - Optional: CD-ROM
-     - Windows version: DirectX 7 (http://www.microsoft.com/directx)
+     - Windows version: DirectX 9 (http://www.microsoft.com/directx)
 
 *** IMPORTANT! Vavoom requires a floating point processor.
 Systems that do not have an FPU installed will not run Vavoom -- at all.
@@ -94,7 +94,8 @@ the binaries.
 In order to compile and run Vavoom under Linux, you need the following:
 
 Compiler and tools:
-    * GNU C++ Compiler, GNU make (every LINUX user must have them)
+    * GNU C++ Compiler, (every LINUX user must have them)
+    * CMake (http://cmake.org)
 Libraries:
     * zlib (http://www.zlib.net)
     * libpng (http://www.libpng.org)
@@ -121,26 +122,28 @@ Optional:
 Step by step:
 -------------
 
-  1. Unpack the Vavoom source package:
+  1. Unpack the Vavoom source package and change directory to it:
 
-    tar xvjf vavoom-1.22.tar.bz2
+    tar xvjf vavoom-1.27.tar.bz2
+    cd vavoom-1.27
 
-  If you got the zip file instead of tarball then you must run fixunix.sh to
-convert text files to UNIX format:
+  2. Run the CMake:
 
-    ./fixunix.sh
+    cmake .
 
-  2. Run the configure script:
+  Here are some CMake parameters you may want to use:
 
-    ./configure
-
-  Here are some configure parameters you may want to use:
-
-    --prefix=PATH       - specify prefix of installation. Default is /usr/local
-    --with-allegro      - use Allegro for hardware API. This is the default.
-    --with-sdl          - use SDL for hardware API.
-    --without-opengl    - compile without OpenGL support.
-    --without-openal    - compile without OpenAL support.
+    -DCMAKE_INSTALL_PREFIX=PATH  - specify prefix of installation. Default is
+                                   /usr/local
+    -DWITH_ALLEGRO=Y             - use Allegro for hardware API. This is the
+                                   default.
+    -DWITH_SDL=Y                 - use SDL for hardware API.
+    -DWITH_OPENGL=N              - compile without OpenGL support.
+    -DWITH_OPENAL=Y              - compile without OpenAL support.
+    -DBINDIR=PATH                - specify directory for binary files, relative
+                                   to prefix. Default is bin
+    -DDATADIR=PATH               - specify directory for data files, relative
+                                   to prefix. Default is share/vavoom
 
   3. Run make in the main directory.
 
@@ -153,15 +156,15 @@ additional wad files.
 
     su -c "make install"
 
-  This will install Vavoom into {prefix}/games/Vavoom.
+  This will install Vavoom into {prefix}.
 
-  5. Change to this directory and copy the main .wad file here or create
+  5. Change to Vavoom data directory and copy the main .wad file here or create
 a symbolic link to it:
 
-        cd {prefix}/games/Vavoom
+        cd {prefix}/share/vavoom
         cp <where-your-wad-file-is> .
    or:
-        cd {prefix}/games/Vavoom
+        cd {prefix}/share/vavoom
         ln -s <where-your-wad-file-is> .
 
   Also make sure that the file/symbolic link name is in lower case.
@@ -176,17 +179,11 @@ card, save the changes and then copy allegro.cfg into Vavoom directory.
 For Windows you need:
   Compiler and tools:
       * MinGW and MSYS (http://www.mingw.org).
-  or:
-      * Microsoft Visual C++ 2005.
-      * DJGPP (http://www.delorie.com/djgpp) - used to compile asm files.
   Libraries:
       * zlib (http://www.zlib.net)
       * libpng (http://www.libpng.org)
       * libjpeg (http://www.ijg.org)
-      * DirectX 7 SDK (http://www.microsoft.com/directx), already included
-    in Builder but some headers needed by DirectMusic are missing. In Allegro
-    website (http://alleg.sourceforge.net) you will find a minimal version of
-    DirectX 7 SDK.
+      * DirectX 9 SDK (http://www.microsoft.com/directx)
       * EAX 2.0 SDK (http://developer.creative.com/).
       * OpenAL SDK (http://developer.creative.com), you must create directory
     AL in your compilers include directory and copy OpenAL include files here.
@@ -195,21 +192,15 @@ For Windows you need:
       * mikmod (http://mikmod.raphnet.net/)
       * FLAC (http://flac.sourceforge.net/)
 
-  You can also compile with MSVC, you will find the workspace and project files
-in the 'msvc' subdirectory.
+  You can also compile with MSVC 2005, you will find the workspace and project
+ files in the 'msvc' subdirectory. You will still need MinGW to compile asm
+ files.
 
 *****************************************************************************
 4. Starting a net game
 *****************************************************************************
 
-  First about drivers. The DOS version supports IPX, Beame & Whiteside TCP/IP
-and MPATH TCP/IP drivers. MPATH driver needs a launcher, the one from Quake
-works fine (because the drivers are taken from Quake sources). Serial driver
-is not fixed (if you need this, please let me know or otherwise I will not
-fix it).
-
-The Windows version supports Winsock TCP/IP and Winsock IPX driers. The Linux
-version only has the TCP/IP driver.
+  The Vavoom supports only TCP/IP.
 
   The default socket port is 26000. It can be changed in the console with
 the command "port <port>".
@@ -418,6 +409,7 @@ dedicated servers
     - glBSP plugin.
     - glVIS plugin.
     - WAV and FLAC sounds, MP3, OGG and mod-style music.
+    - Custom object and weapon definitions using DECORATE script.
     - A lots more.
 
 *****************************************************************************
@@ -1070,6 +1062,28 @@ Version 1.26
 * Impemented scripted marines.
 * Fixed many bugs, other small things.
 
+==============================================================================
+Version 1.27
+==============================================================================
+
+* Dropped DOS support.
+* Switched to CMake build system.
+* Fully working DECORATE support.
+* Effect definitions usinf VFXDEFS script.
+* Added sprite renaming that allows use of actors from other games by just
+ providing needed states without worying about conflicting names.
+* Added better check for things from registered version being used in shareware
+ version of the IWAD.
+* Added support for obituaries.
+* Added support for generic freeze death.
+* Partial support for KEYCONF scripts.
+* Implemented sector action triggers.
+* Added invisible bridges.
+* Implemented ACS fade effects.
+* Switched Direct3D renderer to use DirectX 9.
+* Fixed screen colour of invulnerability powerups.
+* Many bug fixes.
+
 *****************************************************************************
 8. Licensing
 *****************************************************************************
@@ -1081,13 +1095,13 @@ Version 1.26
 *****************************************************************************
 
   The Vavoom homepage:
-    http://www.vavoom-engine.com/
+    http://vavoom-engine.com/
 
   Vavoom forums:
-    http://www.vavoom-engine.com/forums/
+    http://vavoom-engine.com/forums/
 
   Vavoom wiki:
-    http://www.vavoom-engine.com/wiki/
+    http://vavoom-engine.com/wiki/
 
   The Vavoom SourceForge project page:
     http://sourceforge.net/projects/vavoom/
@@ -1096,7 +1110,7 @@ Version 1.26
     http://glbsp.sourceforge.net/
 
   The homepage for glVIS:
-    http://www.vavoom-engine.com/glvis.php
+    http://vavoom-engine.com/glvis.php
 
   The home of ID-Software:
     http://www.idsoftware.com/
@@ -1123,7 +1137,7 @@ Version 1.26
     http://www.korax-heritage.com/
 
   All questions, bug reports, etc. should be posted on the Vavoom Engine forums:
-    http://www.vavoom-engine.com/forums/
+    http://vavoom-engine.com/forums/
   or sent to:
     vavoom@vavoom-engine.com
 
