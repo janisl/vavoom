@@ -31,6 +31,13 @@ foreach(DIR ${EXTRA_SUBDIRS})
 	add_subdirectory(${DIR})
 endforeach(DIR)
 
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/karena)
+	add_subdirectory(karena)
+endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/karena)
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/koraxrpg)
+	add_subdirectory(koraxrpg)
+endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/koraxrpg)
+
 # EXTRA_DIST = \
 # 	autogen.sh \
 # 	fixunix.sh \
