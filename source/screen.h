@@ -28,7 +28,7 @@
 // MACROS ------------------------------------------------------------------
 
 // Maximal resolution. Needed for some arrays
-#define MAXSCREENWIDTH			1600
+#define MAXSCREENWIDTH			1680
 #define MAXSCREENHEIGHT			1200
 
 // TYPES -------------------------------------------------------------------
