@@ -541,6 +541,10 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 	{
 		return;
 	}
+	if (!mobj->State)
+	{
+		return;
+	}
 
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
