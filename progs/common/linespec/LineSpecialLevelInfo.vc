@@ -5754,23 +5754,18 @@ final int ThingCount(int type, name TypeName, int tid)
 		for (Ent = EntityEx(FindMobjFromTID(tid, &searcher)); Ent != none;
 			Ent = EntityEx(FindMobjFromTID(tid, &searcher)))
 		{
+			if (Ent.bMonster && Ent.Health <= 0)
+			{
+				// Don't count dead monsters
+				continue;
+			}
 			if (Inventory(Ent) && Ent.Owner)
 			{
 				//	Don't count things in somebody's inventory
 				continue;
 			}
-			if (!moType)
+			if (!moType || moType == Ent.Class)
 			{
-				// Just count TIDs
-				count++;
-			}
-			else if (moType == Ent.Class)
-			{
-				if (Ent.bMonster && Ent.Health <= 0)
-				{
-					// Don't count dead monsters
-					continue;
-				}
 				count++;
 			}
 		}
