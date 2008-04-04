@@ -5723,9 +5723,6 @@ final bool PolyBusy(int polyobj)
 
 final int ThingCount(int type, name TypeName, int tid)
 {
-	int					count;
-	int					searcher;
-	EntityEx			Ent;
 	class<EntityEx>		moType;
 
 	if (!(type + tid) && !TypeName)
@@ -5746,6 +5743,35 @@ final int ThingCount(int type, name TypeName, int tid)
 		moType = class<EntityEx>(FindClassFromScriptId(type,
 			LineSpecialGameInfo(Game).GameFilterFlag));
 	}
+
+	//	Count things.
+	int Count = DoThingCount(moType, tid);
+	if (moType)
+	{
+		//	If this class has a replacement, count number of instances of
+		// replacement class too.
+		class<EntityEx> RepType = class<EntityEx>(GetClassReplacement(
+			moType));
+		if (RepType != moType)
+		{
+			Count += DoThingCount(RepType, tid);
+		}
+	}
+	return Count;
+}
+
+//==========================================================================
+//
+//	DoThingCount
+//
+//==========================================================================
+
+final int DoThingCount(class<EntityEx> moType, int tid)
+{
+	int					count;
+	int					searcher;
+	EntityEx			Ent;
+
 	count = 0;
 	searcher = -1;
 	if (tid)
