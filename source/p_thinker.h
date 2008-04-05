@@ -30,6 +30,14 @@ enum
 	ROLE_Authority
 };
 
+//	Type of the sound origin, used for origin IDs when playing sounds.
+enum
+{
+	SNDORG_Entity,
+	SNDORG_Sector,
+	SNDORG_PolyObj,
+};
+
 //
 //	VThinker
 //

@@ -246,7 +246,7 @@ class VEntity : public VThinker
 	int				Special;		// special
 	int				Args[5];		// special arguments
 
-	int				NetID;
+	int				SoundOriginID;
 
 	//  Params
 	float			Mass;

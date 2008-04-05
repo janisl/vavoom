@@ -263,7 +263,7 @@ int				TID;		// thing identifier
 int				Special;	// special
 int				Args[5];	// special arguments
 
-readonly private int	NetID;
+readonly private int	SoundOriginID;
 
 //  Params
 float			Mass;
@@ -288,7 +288,7 @@ replication
 		Origin, Angles, FloorClip, State, StateTime, SpriteType,
 		FixedSpriteName, ModelSkin, ModelVersion, RenderStyle, Alpha,
 		Translation, ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright,
-		bFixedModel, bNetLocalPlayer, NetID, bUseDispState;
+		bFixedModel, bNetLocalPlayer, SoundOriginID, bUseDispState;
 
 	reliable if (Role == ROLE_Authority && bUseDispState)
 		DispState;

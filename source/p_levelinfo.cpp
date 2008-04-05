@@ -176,7 +176,8 @@ void VLevelInfo::SectorStartSound(const sector_t* Sector, int SoundId,
 	if (Sector)
 	{
 		StartSound(Sector->soundorg, (Sector - XLevel->Sectors) +
-			GMaxEntities, SoundId, Channel, Volume, Attenuation, false);
+			(SNDORG_Sector << 24), SoundId, Channel, Volume, Attenuation,
+			false);
 	}
 	else
 	{
@@ -195,7 +196,7 @@ void VLevelInfo::SectorStartSound(const sector_t* Sector, int SoundId,
 void VLevelInfo::SectorStopSound(const sector_t *sector, int channel)
 {
 	guard(VLevelInfo::SectorStopSound);
-	StopSound((sector - XLevel->Sectors) + GMaxEntities, channel);
+	StopSound((sector - XLevel->Sectors) + (SNDORG_Sector << 24), channel);
 	unguard;
 }
 
@@ -212,7 +213,7 @@ void VLevelInfo::SectorStartSequence(const sector_t* Sector, VName Name,
 	if (Sector)
 	{
 		StartSoundSequence(Sector->soundorg, (Sector - XLevel->Sectors) +
-			GMaxEntities, Name, ModeNum);
+			(SNDORG_Sector << 24), Name, ModeNum);
 	}
 	else
 	{
@@ -230,7 +231,7 @@ void VLevelInfo::SectorStartSequence(const sector_t* Sector, VName Name,
 void VLevelInfo::SectorStopSequence(const sector_t *sector)
 {
 	guard(VLevelInfo::SectorStopSequence);
-	StopSoundSequence((sector - XLevel->Sectors) + GMaxEntities);
+	StopSoundSequence((sector - XLevel->Sectors) + (SNDORG_Sector << 24));
 	unguard;
 }
 
@@ -245,7 +246,7 @@ void VLevelInfo::PolyobjStartSequence(const polyobj_t* Poly, VName Name,
 {
 	guard(VLevelInfo::PolyobjStartSequence);
 	StartSoundSequence(Poly->startSpot, (Poly - XLevel->PolyObjs) +
-		GMaxEntities + XLevel->NumSectors, Name, ModeNum);
+		(SNDORG_PolyObj << 24), Name, ModeNum);
 	unguard;
 }
 
@@ -258,7 +259,7 @@ void VLevelInfo::PolyobjStartSequence(const polyobj_t* Poly, VName Name,
 void VLevelInfo::PolyobjStopSequence(const polyobj_t *poly)
 {
 	guard(VLevelInfo::PolyobjStopSequence);
-	StopSoundSequence((poly - XLevel->PolyObjs) + GMaxEntities + XLevel->NumSectors);
+	StopSoundSequence((poly - XLevel->PolyObjs) + (SNDORG_PolyObj << 24));
 	unguard;
 }
 

@@ -271,7 +271,7 @@ IMPLEMENT_FUNCTION(VObject, GetSoundPlayingInfo)
 	P_GET_INT(id);
 	P_GET_REF(VEntity, mobj);
 #ifdef CLIENT
-	RET_BOOL(GAudio->IsSoundPlaying(mobj->NetID, id));
+	RET_BOOL(GAudio->IsSoundPlaying(mobj->SoundOriginID, id));
 #else
 	RET_BOOL(false);
 #endif

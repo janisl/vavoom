@@ -161,7 +161,7 @@ void VEntity::AddedToLevel()
 		Used = false;
 		for (TThinkerIterator<VEntity> Other(XLevel); Other; ++Other)
 		{
-			if (Other->NetID == Id)
+			if (Other->SoundOriginID == Id)
 			{
 				Used = true;
 				break;
@@ -169,7 +169,7 @@ void VEntity::AddedToLevel()
 		}
 	}
 	while (Used);
-	NetID = Id;
+	SoundOriginID = Id + (SNDORG_Entity << 24);
 	unguard;
 }
 
@@ -447,8 +447,9 @@ void VEntity::StartSound(VName Sound, vint32 Channel, float Volume,
 	float Attenuation, bool Loop)
 {
 	guard(VEntity::StartSound);
-	Super::StartSound(Origin, NetID, GSoundManager->ResolveEntitySound(
-		SoundClass, SoundGender, Sound), Channel, Volume, Attenuation, Loop);
+	Super::StartSound(Origin, SoundOriginID,
+		GSoundManager->ResolveEntitySound(SoundClass, SoundGender, Sound),
+		Channel, Volume, Attenuation, Loop);
 	unguard;
 }
 
@@ -480,7 +481,7 @@ void VEntity::StartLocalSound(VName Sound, vint32 Channel, float Volume,
 void VEntity::StopSound(vint32 channel)
 {
 	guard(VEntity::StopSound);
-	Super::StopSound(NetID, channel);
+	Super::StopSound(SoundOriginID, channel);
 	unguard;
 }
 
@@ -493,7 +494,7 @@ void VEntity::StopSound(vint32 channel)
 void VEntity::StartSoundSequence(VName Name, vint32 ModeNum)
 {
 	guard(VEntity::StartSoundSequence);
-	Super::StartSoundSequence(Origin, NetID, Name, ModeNum);
+	Super::StartSoundSequence(Origin, SoundOriginID, Name, ModeNum);
 	unguard;
 }
 
@@ -506,7 +507,7 @@ void VEntity::StartSoundSequence(VName Name, vint32 ModeNum)
 void VEntity::AddSoundSequenceChoice(VName Choice)
 {
 	guard(VEntity::AddSoundSequenceChoice);
-	Super::AddSoundSequenceChoice(NetID, Choice);
+	Super::AddSoundSequenceChoice(SoundOriginID, Choice);
 	unguard;
 }
 
@@ -519,7 +520,7 @@ void VEntity::AddSoundSequenceChoice(VName Choice)
 void VEntity::StopSoundSequence()
 {
 	guard(VEntity::StopSoundSequence);
-	Super::StopSoundSequence(NetID);
+	Super::StopSoundSequence(SoundOriginID);
 	unguard;
 }
 
