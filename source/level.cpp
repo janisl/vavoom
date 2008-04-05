@@ -50,8 +50,6 @@ IMPLEMENT_CLASS(V, Level);
 VLevel*			GLevel;
 VLevel*			GClLevel;
 
-int				GMaxEntities = 4096;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------

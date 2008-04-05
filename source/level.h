@@ -755,6 +755,8 @@ class VLevel : public VObject
 	VState*				CallingState;
 	VStateCall*			StateCall;
 
+	int					NextSoundOriginID;
+
 	void Serialise(VStream& Strm);
 	void ClearReferences();
 	void Destroy();
@@ -900,8 +902,6 @@ void SwapPlanes(sector_t *);
 void CalcSecMinMaxs(sector_t *sector);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
-
-extern int				GMaxEntities;
 
 extern VLevel*			GLevel;
 extern VLevel*			GClLevel;

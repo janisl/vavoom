@@ -143,12 +143,6 @@ void Host_Init()
 	cls.state = ca_disconnected;
 #endif
 
-	const char* p = GArgs.CheckValue("-maxents");
-	if (p)
-	{
-		GMaxEntities = atoi(p);
-	}
-
 	VName::StaticInit();
 	VObject::StaticInit();
 

@@ -152,24 +152,12 @@ void VEntity::DestroyThinker()
 void VEntity::AddedToLevel()
 {
 	guard(VEntity::AddedToLevel);
-	//	Find an available net ID.
-	int Id = 0;
-	bool Used = false;
-	do
+	if (!XLevel->NextSoundOriginID)
 	{
-		Id++;
-		Used = false;
-		for (TThinkerIterator<VEntity> Other(XLevel); Other; ++Other)
-		{
-			if (Other->SoundOriginID == Id)
-			{
-				Used = true;
-				break;
-			}
-		}
+		XLevel->NextSoundOriginID = 1;
 	}
-	while (Used);
-	SoundOriginID = Id + (SNDORG_Entity << 24);
+	SoundOriginID = XLevel->NextSoundOriginID + (SNDORG_Entity << 24);
+	XLevel->NextSoundOriginID = (XLevel->NextSoundOriginID + 1) & 0x00ffffff;
 	unguard;
 }
 

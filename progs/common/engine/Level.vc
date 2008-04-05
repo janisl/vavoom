@@ -151,6 +151,8 @@ native readonly private array<int>	BodyQueueTransl;
 native readonly state			CallingState;
 native readonly StateCall*		StateCall;
 
+native readonly private int		NextSoundOriginID;
+
 //
 //	Natives
 //
