@@ -560,6 +560,10 @@ void PlayerExitMap(bool clusterChange)
 	DamageFlash = 0.0;	// No palette changes
 	BonusFlash = 0.0;
 	PoisonCount = 0;
+	BlendR = 0.0;
+	BlendG = 0.0;
+	BlendB = 0.0;
+	BlendA = 0.0;
 }
 
 //==========================================================================
