@@ -6628,13 +6628,13 @@ final void GiveInventory(name ItemName, int Amount)
 	{
 		return;
 	}
-	if (!stricmp(va("%n", ItemName), "Armor"))
+	if (ItemName == 'armor')
 	{
-		ItemName = 'BasicArmor';
+		ItemName = 'basicarmor';
 	}
 
 	//	Get class of the item.
-	class EClass = FindClass(ItemName);
+	class EClass = FindClassLowerCase(ItemName);
 	if (!EClass)
 	{
 		print("Unknown item type %n", ItemName);
@@ -6692,13 +6692,14 @@ final void TakeInventory(name ItemName, int Amount)
 	{
 		return;
 	}
-	if (!stricmp(va("%n", ItemName), "Armor"))
+	if (ItemName == 'armor')
 	{
-		ItemName = 'BasicArmor';
+		ItemName = 'basicarmor';
 	}
 
 	//	Get class of the item.
-	class<Inventory> ItemClass = class<Inventory>(FindClass(ItemName));
+	class<Inventory> ItemClass = class<Inventory>(FindClassLowerCase(
+		ItemName));
 	if (!ItemClass)
 	{
 		return;
@@ -6732,16 +6733,17 @@ final void TakeInventory(name ItemName, int Amount)
 
 final int CheckInventory(name ItemName)
 {
-	if (!stricmp(va("%n", ItemName), "Armor"))
+	if (ItemName == 'armor')
 	{
-		ItemName = 'BasicArmor';
+		ItemName = 'basicarmor';
 	}
-	else if (!stricmp(va("%n", ItemName), "Health"))
+	else if (ItemName == 'health')
 	{
 		return Health;
 	}
 
-	class<Inventory> ItemClass = class<Inventory>(FindClass(ItemName));
+	class<Inventory> ItemClass = class<Inventory>(FindClassLowerCase(
+		ItemName));
 	if (ItemClass)
 	{
 		Inventory Item = FindInventory(ItemClass);
@@ -6791,7 +6793,8 @@ final int SetNamedWeapon(name Name)
 		return false;
 	}
 
-	Weapon Wpn = Weapon(FindInventory(class<Inventory>(FindClass(Name))));
+	Weapon Wpn = Weapon(FindInventory(class<Inventory>(FindClassLowerCase(
+		Name))));
 	if (!Wpn)
 	{
 		return false;
@@ -6820,7 +6823,7 @@ final int SetNamedWeapon(name Name)
 
 final int GetAmmoCapacity(name Name)
 {
-	class<Ammo> AmmoType = class<Ammo>(FindClass(Name));
+	class<Ammo> AmmoType = class<Ammo>(FindClassLowerCase(Name));
 	if (!AmmoType)
 	{
 		return 0;
@@ -6851,7 +6854,7 @@ final int GetAmmoCapacity(name Name)
 
 final void SetAmmoCapacity(name Name, int Amount)
 {
-	class<Ammo> AmmoType = class<Ammo>(FindClass(Name));
+	class<Ammo> AmmoType = class<Ammo>(FindClassLowerCase(Name));
 	if (!AmmoType)
 	{
 		return;

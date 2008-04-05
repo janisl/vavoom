@@ -3634,7 +3634,7 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 	searcher = -1;
 	if (TypeName)
 	{
-		moType = class<EntityEx>(FindClass(TypeName));
+		moType = class<EntityEx>(FindClassLowerCase(TypeName));
 	}
 	else
 	{
@@ -3791,7 +3791,7 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 {
-	class EClass = FindClass(Name);
+	class EClass = FindClassLowerCase(Name);
 	if (!EClass)
 	{
 		print("No such class %n", Name);
@@ -5732,7 +5732,7 @@ final int ThingCount(int type, name TypeName, int tid)
 	}
 	if (TypeName)
 	{
-		moType = class<EntityEx>(FindClass(TypeName));
+		moType = class<EntityEx>(FindClassLowerCase(TypeName));
 		if (!moType)
 		{
 			return 0;
@@ -5831,7 +5831,8 @@ final int DoThingCount(class<EntityEx> moType, int tid)
 final void SectorDamage(int Tag, int Amount, name DamageType,
 	name ProtectionType, int Flags)
 {
-	class<Inventory> ProtectClass = class<Inventory>(FindClass(ProtectionType));
+	class<Inventory> ProtectClass = class<Inventory>(FindClassLowerCase(
+		ProtectionType));
 
 	int SecNum = -1;
 	for (SecNum = XLevel.FindSectorFromTag(Tag, -1); SecNum >= 0;

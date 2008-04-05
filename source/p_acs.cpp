@@ -331,6 +331,10 @@ private:
 	{
 		return *ActiveObject->Level->GetString(Index);
 	}
+	VName GetNameLowerCase(int Index)
+	{
+		return *ActiveObject->Level->GetString(Index).ToLower();
+	}
 	VName GetName8(int Index)
 	{
 		return VName(*ActiveObject->Level->GetString(Index),
@@ -2855,7 +2859,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_GiveInventory)
 			if (Activator)
 			{
-				Activator->eventGiveInventory(GetName(sp[-2]), sp[-1]);
+				Activator->eventGiveInventory(GetNameLowerCase(sp[-2]),
+					sp[-1]);
 			}
 			else
 			{
@@ -2865,7 +2870,7 @@ int VAcs::RunScript(float DeltaTime)
 						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
 					{
 						Level->Game->Players[i]->MO->eventGiveInventory(
-							GetName(sp[-2]), sp[-1]);
+							GetNameLowerCase(sp[-2]), sp[-1]);
 					}
 				}
 			}
@@ -2875,7 +2880,7 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_GiveInventoryDirect)
 			if (Activator)
 			{
-				Activator->eventGiveInventory(GetName(READ_INT32(ip)),
+				Activator->eventGiveInventory(GetNameLowerCase(READ_INT32(ip)),
 					READ_INT32(ip + 4));
 			}
 			else
@@ -2885,7 +2890,7 @@ int VAcs::RunScript(float DeltaTime)
 					if (Level->Game->Players[i] &&
 						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
 						Level->Game->Players[i]->MO->eventGiveInventory(
-							GetName(READ_INT32(ip)), READ_INT32(ip + 4));
+							GetNameLowerCase(READ_INT32(ip)), READ_INT32(ip + 4));
 				}
 			}
 			ip += 8;
@@ -2894,7 +2899,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_TakeInventory)
 			if (Activator)
 			{
-				Activator->eventTakeInventory(GetName(sp[-2]), sp[-1]);
+				Activator->eventTakeInventory(GetNameLowerCase(sp[-2]),
+					sp[-1]);
 			}
 			else
 			{
@@ -2904,7 +2910,7 @@ int VAcs::RunScript(float DeltaTime)
 						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
 					{
 						Level->Game->Players[i]->MO->eventTakeInventory(
-							GetName(sp[-2]), sp[-1]);
+							GetNameLowerCase(sp[-2]), sp[-1]);
 					}
 				}
 			}
@@ -2914,7 +2920,7 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_TakeInventoryDirect)
 			if (Activator)
 			{
-				Activator->eventTakeInventory(GetName(READ_INT32(ip)),
+				Activator->eventTakeInventory(GetNameLowerCase(READ_INT32(ip)),
 					READ_INT32(ip + 4));
 			}
 			else
@@ -2924,7 +2930,8 @@ int VAcs::RunScript(float DeltaTime)
 					if (Level->Game->Players[i] &&
 						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
 						Level->Game->Players[i]->MO->eventTakeInventory(
-							GetName(READ_INT32(ip)), READ_INT32(ip + 4));
+							GetNameLowerCase(READ_INT32(ip)),
+							READ_INT32(ip + 4));
 				}
 			}
 			ip += 8;
@@ -2937,7 +2944,8 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			else
 			{
-				sp[-1] = Activator->eventCheckInventory(GetName(sp[-1]));
+				sp[-1] = Activator->eventCheckInventory(GetNameLowerCase(
+					sp[-1]));
 			}
 			ACSVM_BREAK;
 
@@ -2948,15 +2956,16 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			else
 			{
-				*sp = Activator->eventCheckInventory(GetName(READ_INT32(ip)));
+				*sp = Activator->eventCheckInventory(GetNameLowerCase(
+					READ_INT32(ip)));
 			}
 			sp++;
 			ip += 4;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_Spawn)
-			sp[-6] = Level->eventAcsSpawnThing(GetName(sp[-6]), TVec(
-				float(sp[-5]) / float(0x10000),
+			sp[-6] = Level->eventAcsSpawnThing(GetNameLowerCase(sp[-6]),
+				TVec(float(sp[-5]) / float(0x10000),
 				float(sp[-4]) / float(0x10000),
 				float(sp[-3]) / float(0x10000)),
 				sp[-2], float(sp[-1]) * 45.0 / 32.0);
@@ -2964,8 +2973,8 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnDirect)
-			*sp = Level->eventAcsSpawnThing(GetName(READ_INT32(ip)), TVec(
-				float(READ_INT32(ip + 4)) / float(0x10000),
+			*sp = Level->eventAcsSpawnThing(GetNameLowerCase(READ_INT32(ip)),
+				TVec(float(READ_INT32(ip + 4)) / float(0x10000),
 				float(READ_INT32(ip + 8)) / float(0x10000),
 				float(READ_INT32(ip + 12)) / float(0x10000)),
 				READ_INT32(ip + 16), float(READ_INT32(ip + 20)) * 45.0 / 32.0);
@@ -2973,13 +2982,13 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpot)
-			sp[-4] = Level->eventAcsSpawnSpot(GetName(sp[-4]), sp[-3], sp[-2],
-				float(sp[-1]) * 45.0 / 32.0);
+			sp[-4] = Level->eventAcsSpawnSpot(GetNameLowerCase(sp[-4]),
+				sp[-3], sp[-2], float(sp[-1]) * 45.0 / 32.0);
 			sp -= 3;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpotDirect)
-			*sp = Level->eventAcsSpawnSpot(GetName(READ_INT32(ip)),
+			*sp = Level->eventAcsSpawnSpot(GetNameLowerCase(READ_INT32(ip)),
 				READ_INT32(ip + 4), READ_INT32(ip + 8),
 				float(READ_INT32(ip + 12)) * 45.0 / 32.0);
 			sp++;
@@ -3590,7 +3599,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_CheckWeapon)
 			if (Activator)
 			{
-				sp[-1] = Activator->eventCheckNamedWeapon(GetName(sp[-1]));
+				sp[-1] = Activator->eventCheckNamedWeapon(GetNameLowerCase(
+					sp[-1]));
 			}
 			else
 			{
@@ -3601,7 +3611,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_SetWeapon)
 			if (Activator)
 			{
-				sp[-1] = Activator->eventSetNamedWeapon(GetName(sp[-1]));
+				sp[-1] = Activator->eventSetNamedWeapon(GetNameLowerCase(
+					sp[-1]));
 			}
 			else
 			{
@@ -4029,7 +4040,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_GetAmmoCapacity)
 			if (Activator)
 			{
-				sp[-1] = Activator->eventGetAmmoCapacity(GetName(sp[-1]));
+				sp[-1] = Activator->eventGetAmmoCapacity(GetNameLowerCase(
+					sp[-1]));
 			}
 			else
 			{
@@ -4040,7 +4052,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_SetAmmoCapacity)
 			if (Activator)
 			{
-				Activator->eventSetAmmoCapacity(GetName(sp[-2]), sp[-1]);
+				Activator->eventSetAmmoCapacity(GetNameLowerCase(sp[-2]),
+					sp[-1]);
 			}
 			ACSVM_BREAK;
 
@@ -4108,7 +4121,7 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SpawnProjectile)
 			Level->eventEV_ThingProjectile(sp[-7], 0, sp[-5], sp[-4], sp[-3],
-				sp[-2], sp[-1], GetName(sp[-6]), Activator);
+				sp[-2], sp[-1], GetNameLowerCase(sp[-6]), Activator);
 			sp -= 7;
 			ACSVM_BREAK;
 
@@ -4155,7 +4168,7 @@ int VAcs::RunScript(float DeltaTime)
 				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
 					mobj; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
 				{
-					mobj->eventGiveInventory(GetName(sp[-2]), sp[-1]);
+					mobj->eventGiveInventory(GetNameLowerCase(sp[-2]), sp[-1]);
 				}
 			}
 			sp -= 3;
@@ -4167,7 +4180,7 @@ int VAcs::RunScript(float DeltaTime)
 				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
 					mobj; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
 				{
-					mobj->eventTakeInventory(GetName(sp[-2]), sp[-1]);
+					mobj->eventTakeInventory(GetNameLowerCase(sp[-2]), sp[-1]);
 				}
 			}
 			sp -= 3;
@@ -4182,20 +4195,22 @@ int VAcs::RunScript(float DeltaTime)
 				}
 				else
 				{
-					sp[-2] = Ent->eventCheckInventory(GetName(sp[-1]));
+					sp[-2] = Ent->eventCheckInventory(GetNameLowerCase(
+						sp[-1]));
 				}
 			}
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCountName)
-			sp[-2] = Level->eventThingCount(0, GetName(sp[-2]), sp[-1]);
+			sp[-2] = Level->eventThingCount(0, GetNameLowerCase(sp[-2]),
+				sp[-1]);
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SpawnSpotFacing)
-			sp[-3] = Level->eventAcsSpawnSpotFacing(GetName(sp[-3]), sp[-2],
-				sp[-1]);
+			sp[-3] = Level->eventAcsSpawnSpotFacing(GetNameLowerCase(sp[-3]),
+				sp[-2], sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -4501,7 +4516,7 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SectorDamage)
 			Level->eventSectorDamage(sp[-5], sp[-4], GetName(sp[-3]),
-				GetName(sp[-2]), sp[-1]);
+				GetNameLowerCase(sp[-2]), sp[-1]);
 			sp -= 5;
 			ACSVM_BREAK;
 
