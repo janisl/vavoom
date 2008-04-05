@@ -1540,6 +1540,7 @@ native static final void CmdBuf_AddText(string format, ...);
 //
 
 native static final class FindClass(name Name);
+native static final class FindClassLowerCase(name Name);
 native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
 native static final name GetClassName(class C);
 native static final class GetClassParent(class C);

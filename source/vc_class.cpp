@@ -63,6 +63,7 @@ public:
 TArray<mobjinfo_t>		VClass::GMobjInfos;
 TArray<mobjinfo_t>		VClass::GScriptIds;
 TArray<VName>			VClass::GSpriteNames;
+VClass*					VClass::GLowerCaseHashTable[VClass::LOWER_CASE_HASH_SIZE];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -107,6 +108,7 @@ VClass::VClass(VName AName, VMemberBase* AOuter, TLocation ALoc)
 	guard(VClass::VClass);
 	LinkNext = GClasses;
 	GClasses = this;
+	HashLowerCased();
 	unguard;
 }
 
@@ -1962,6 +1964,44 @@ VClass* VClass::GetReplacee()
 	VClass* Ret = Temp->GetReplacee();
 	Replacee = Temp;
 	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::HashLowerCased
+//
+//==========================================================================
+
+void VClass::HashLowerCased()
+{
+	guard(VClass::HashLowerCased);
+	LowerCaseName = *VStr(*Name).ToLower();
+	int HashIndex = GetTypeHash(LowerCaseName) & (LOWER_CASE_HASH_SIZE - 1);
+	LowerCaseHashNext = GLowerCaseHashTable[HashIndex];
+	GLowerCaseHashTable[HashIndex] = this;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VClass::FindClassLowerCase
+//
+//==========================================================================
+
+VClass* VClass::FindClassLowerCase(VName AName)
+{
+	guard(VClass::FindClassLowerCase);
+	int HashIndex = GetTypeHash(AName) & (LOWER_CASE_HASH_SIZE - 1);
+	for (VClass* Probe = GLowerCaseHashTable[HashIndex]; Probe;
+		Probe = Probe->LowerCaseHashNext)
+	{
+		if (Probe->LowerCaseName == AName)
+		{
+			return Probe;
+		}
+	}
+	return NULL;
 	unguard;
 }
 

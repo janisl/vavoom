@@ -294,6 +294,7 @@ public:
 
 	//	Class methods
 	DECLARE_FUNCTION(FindClass)
+	DECLARE_FUNCTION(FindClassLowerCase)
 	DECLARE_FUNCTION(ClassIsChildOf)
 	DECLARE_FUNCTION(GetClassName)
 	DECLARE_FUNCTION(GetClassParent)

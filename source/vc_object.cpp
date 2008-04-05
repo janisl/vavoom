@@ -908,6 +908,12 @@ IMPLEMENT_FUNCTION(VObject, FindClass)
 	RET_PTR(VClass::FindClass(*Name));
 }
 
+IMPLEMENT_FUNCTION(VObject, FindClassLowerCase)
+{
+	P_GET_NAME(Name);
+	RET_PTR(VClass::FindClassLowerCase(Name));
+}
+
 IMPLEMENT_FUNCTION(VObject, ClassIsChildOf)
 {
 	P_GET_PTR(VClass, BaseClass);

@@ -350,6 +350,7 @@ void VMemberBase::StaticInit()
 		int HashIndex = C->Name.GetIndex() & 4095;
 		C->HashNext = GMembersHash[HashIndex];
 		GMembersHash[HashIndex] = C;
+		C->HashLowerCased();
 	}
 
 	//	Sprite TNT1 is always 0, ---- is always 1

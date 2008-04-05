@@ -188,6 +188,8 @@ struct VSpriteEffect
 class VClass : public VMemberBase
 {
 public:
+	enum { LOWER_CASE_HASH_SIZE = 8 * 1024 };
+
 	//	Persistent fields
 	VClass*					ParentClass;
 	VField*					Fields;
@@ -239,9 +241,13 @@ public:
 
 	TArray<VSpriteEffect>	SpriteEffects;
 
+	VName					LowerCaseName;
+	VClass*					LowerCaseHashNext;
+
 	static TArray<mobjinfo_t>	GMobjInfos;
 	static TArray<mobjinfo_t>	GScriptIds;
 	static TArray<VName>		GSpriteNames;
+	static VClass*				GLowerCaseHashTable[LOWER_CASE_HASH_SIZE];
 
 	//	Structors.
 	VClass(VName, VMemberBase*, TLocation);
@@ -250,8 +256,9 @@ public:
 	~VClass();
 
 	// Systemwide functions.
-	static VClass *FindClass(const char *);
-	static VClass *FindClassNoCase(const char *);
+	static VClass* FindClass(const char *);
+	static VClass* FindClassNoCase(const char *);
+	static VClass* FindClassLowerCase(VName);
 	static int FindSprite(VName, bool = true);
 #ifndef IN_VCC
 	static void GetSpriteNames(TArray<FReplacedString>&);
@@ -322,6 +329,7 @@ public:
 #endif
 	VClass* GetReplacement();
 	VClass* GetReplacee();
+	void HashLowerCased();
 
 private:
 	void CalcFieldOffsets();
