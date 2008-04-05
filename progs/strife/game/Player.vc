@@ -290,6 +290,8 @@ void SpawnPlayer(mthing_t * mthing)
 	LastSectorDamageTime = 0.0;
 	LastHazardTime = 0.0;
 	ViewHeight = A.ViewHeight;
+	ViewOrg = MO.Origin;
+	ViewOrg.z += ViewHeight;
 	ViewAngles = A.Angles;
 	bFixAngle = true;
 
