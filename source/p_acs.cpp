@@ -143,6 +143,7 @@ private:
 
 	vint32				NumStrings;
 	char**				Strings;
+	VName*				LowerCaseNames;
 
 	vint32				MapVarStore[MAX_ACS_MAP_VARS];
 
@@ -195,6 +196,14 @@ public:
 			Ret = Ret.Latin1ToUtf8();
 		}
 		return Ret;
+	}
+	VName GetNameLowerCase(int i)
+	{
+		if (LowerCaseNames[i] == NAME_None)
+		{
+			LowerCaseNames[i] = *GetString(i).ToLower();
+		}
+		return LowerCaseNames[i];
 	}
 	int GetLibraryID() const
 	{
@@ -333,7 +342,7 @@ private:
 	}
 	VName GetNameLowerCase(int Index)
 	{
-		return *ActiveObject->Level->GetString(Index).ToLower();
+		return ActiveObject->Level->GetNameLowerCase(Index);
 	}
 	VName GetName8(int Index)
 	{
@@ -394,6 +403,7 @@ VAcsObject::VAcsObject(VAcsLevel* ALevel, int Lump)
 	Functions = NULL;
 	NumStrings = 0;
 	Strings = NULL;
+	LowerCaseNames = NULL;
 	NumArrays = 0;
 	ArrayStore = NULL;
 	NumTotalArrays = 0;
@@ -484,6 +494,7 @@ VAcsObject::~VAcsObject()
 	guard(VAcsObject::~VAcsObject);
 	delete[] Scripts;
 	delete[] Strings;
+	delete[] LowerCaseNames;
 	for (int i = 0; i < NumArrays; i++)
 		delete[] ArrayStore[i].Data;
 	if (ArrayStore)
@@ -534,9 +545,11 @@ void VAcsObject::LoadOldObject()
 	//	Load strings.
 	NumStrings = LittleLong(*buffer++);
 	Strings = new char*[NumStrings];
+	LowerCaseNames = new VName[NumStrings];
 	for (i = 0; i < NumStrings; i++)
 	{
 		Strings[i] = (char*)Data + LittleLong(buffer[i]);
+		LowerCaseNames[i] = NAME_None;
 	}
 
 	//	Set up map vars.
@@ -659,9 +672,11 @@ void VAcsObject::LoadEnhancedObject()
 		buffer += 2;
 		NumStrings = LittleLong(buffer[1]);
 		Strings = new char*[NumStrings];
+		LowerCaseNames = new VName[NumStrings];
 		for(i = 0; i < NumStrings; i++)
 		{
 			Strings[i] = (char*)buffer + LittleLong(buffer[i + 3]);
+			LowerCaseNames[i] = NAME_None;
 		}
 	}
 
@@ -1287,6 +1302,24 @@ VStr VAcsLevel::GetString(int Index)
 		return "";
 	}
 	return LoadedObjects[ObjIdx]->GetString(Index & 0xffff);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcsLevel::GetNameLowerCase
+//
+//==========================================================================
+
+VName VAcsLevel::GetNameLowerCase(int Index)
+{
+	guard(VAcsLevel::GetNameLowerCase);
+	int ObjIdx = Index >> 16;
+	if (ObjIdx >= LoadedObjects.Num())
+	{
+		return NAME_None;
+	}
+	return LoadedObjects[ObjIdx]->GetNameLowerCase(Index & 0xffff);
 	unguard;
 }
 

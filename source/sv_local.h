@@ -82,6 +82,7 @@ public:
 	VAcsObject* LoadObject(int Lump);
 	VAcsInfo* FindScript(int Number, VAcsObject*& Object);
 	VStr GetString(int Index);
+	VName GetNameLowerCase(int Index);
 	VAcsObject* GetObject(int Index);
 	void StartTypedACScripts(int Type, int Arg1, int Arg2, int Arg3,
 		VEntity* Activator, bool Always, bool RunNow);
