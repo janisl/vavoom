@@ -2177,6 +2177,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 {
 	guard(ParseStates);
 	VState* PrevState = NULL;
+	VState* LastState = NULL;
 	VState* LoopStart = NULL;
 	int NewLabelsStart = Class->StateLabelDefs.Num();
 
@@ -2199,14 +2200,14 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 				GotoOffset = sc->Number;
 			}
 
-			if (!PrevState && NewLabelsStart == Class->StateLabelDefs.Num())
+			if (!LastState && NewLabelsStart == Class->StateLabelDefs.Num())
 			{
 				sc->Error("Goto before first state");
 			}
-			if (PrevState)
+			if (LastState)
 			{
-				PrevState->GotoLabel = GotoLabel;
-				PrevState->GotoOffset = GotoOffset;
+				LastState->GotoLabel = GotoLabel;
+				LastState->GotoOffset = GotoOffset;
 			}
 			for (int i = NewLabelsStart; i < Class->StateLabelDefs.Num(); i++)
 			{
@@ -2221,14 +2222,14 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 		//	Stop command.
 		if (!TmpName.ICmp("Stop"))
 		{
-			if (!PrevState && NewLabelsStart == Class->StateLabelDefs.Num())
+			if (!LastState && NewLabelsStart == Class->StateLabelDefs.Num())
 			{
 				sc->Error("Stop before first state");
 				continue;
 			}
-			if (PrevState)
+			if (LastState)
 			{
-				PrevState->NextState = NULL;
+				LastState->NextState = NULL;
 			}
 			for (int i = NewLabelsStart; i < Class->StateLabelDefs.Num(); i++)
 			{
@@ -2242,12 +2243,12 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 		//	Wait command.
 		if (!TmpName.ICmp("Wait") || !TmpName.ICmp("Fail"))
 		{
-			if (!PrevState)
+			if (!LastState)
 			{
 				sc->Error(va("%s before first state", *TmpName));
 				continue;
 			}
-			PrevState->NextState = PrevState;
+			LastState->NextState = LastState;
 			PrevState = NULL;
 			continue;
 		}
@@ -2255,12 +2256,12 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 		//	Loop command.
 		if (!TmpName.ICmp("Loop"))
 		{
-			if (!PrevState)
+			if (!LastState)
 			{
 				sc->Error("Loop before first state");
 				continue;
 			}
-			PrevState->NextState = LoopStart;
+			LastState->NextState = LoopStart;
 			PrevState = NULL;
 			continue;
 		}
@@ -2268,6 +2269,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 		//	Check for label.
 		if (sc->Check(":"))
 		{
+			LastState = NULL;
 			VStateLabelDef& Lbl = Class->StateLabelDefs.Alloc();
 			Lbl.Loc = TmpLoc;
 			Lbl.Name = TmpName;
@@ -2442,6 +2444,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 		}
 		NewLabelsStart = Class->StateLabelDefs.Num();
 		PrevState = State;
+		LastState = State;
 
 		for (size_t i = 1; i < FramesString.Length(); i++)
 		{
@@ -2466,6 +2469,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			//	Link previous state.
 			PrevState->NextState = s2;
 			PrevState = s2;
+			LastState = s2;
 		}
 	}
 	//	Re-enable escape sequences.
