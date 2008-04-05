@@ -586,11 +586,6 @@ static VExpression* ParseExpressionPriority0(VScriptParser* sc)
 		return new VIntLiteral(1, l);
 	}
 
-	if (sc->Check("none"))
-	{
-		return new VNoneLiteral(l);
-	}
-
 	if (sc->Check("("))
 	{
 		VExpression* op = ParseExpressionPriority13(sc);
