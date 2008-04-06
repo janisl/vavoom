@@ -255,13 +255,12 @@ VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
 	{
 		((VEntity*)Ret)->Origin = AOrigin;
 		((VEntity*)Ret)->Angles = AAngles;
+		((VEntity*)Ret)->eventOnMapSpawn(mthing);
 		if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_BegunPlay)
 		{
 			((VEntity*)Ret)->eventBeginPlay();
 		}
-		((VEntity*)Ret)->eventOnMapSpawn(mthing);
 	}
-
 	return Ret;
 	unguard;
 }
