@@ -1878,7 +1878,6 @@ void VLevel::GroupLines() const
 	guard(VLevel::GroupLines);
 	line_t ** linebuffer;
 	int i;
-	int j;
 	int total;
 	line_t *li;
 	sector_t *sector;
@@ -1907,21 +1906,41 @@ void VLevel::GroupLines() const
 	sector = Sectors;
 	for (i = 0; i < NumSectors; i++, sector++)
 	{
-		ClearBox(bbox);
 		sector->lines = linebuffer;
-		li = Lines;
-		for (j = 0; j < NumLines; j++, li++)
+		linebuffer += sector->linecount;
+	}
+
+	//	Assign lines for each sector.
+	int* SecLineCount = new int[NumSectors];
+	memset(SecLineCount, 0, sizeof(int) * NumSectors);
+	li = Lines;
+	for (i = 0; i < NumLines; i++, li++)
+	{
+		if (li->frontsector)
 		{
-			if (li->frontsector == sector || li->backsector == sector)
-			{
-				*linebuffer++ = li;
-				AddToBox(bbox, li->v1->x, li->v1->y);
-				AddToBox(bbox, li->v2->x, li->v2->y);
-			}
+			li->frontsector->lines[SecLineCount[
+				li->frontsector - Sectors]++] = li;
 		}
-		if (linebuffer - sector->lines != sector->linecount)
+		if (li->backsector && li->backsector != li->frontsector)
+		{
+			li->backsector->lines[SecLineCount[
+				li->backsector - Sectors]++] = li;
+		}
+	}
+
+	sector = Sectors;
+	for (i = 0; i < NumSectors; i++, sector++)
+	{
+		if (SecLineCount[i] != sector->linecount)
 		{
 			Sys_Error("GroupLines: miscounted");
+		}
+		ClearBox(bbox);
+		for (int j = 0; j < sector->linecount; j++)
+		{
+			li = sector->lines[j];
+			AddToBox(bbox, li->v1->x, li->v1->y);
+			AddToBox(bbox, li->v2->x, li->v2->y);
 		}
 
 		// set the soundorg to the middle of the bounding box
@@ -1945,6 +1964,7 @@ void VLevel::GroupLines() const
 		block = block < 0 ? 0 : block;
 		sector->blockbox[BOXLEFT] = block;
 	}
+	delete[] SecLineCount;
 	unguard;
 }
 
