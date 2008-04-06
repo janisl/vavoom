@@ -188,6 +188,7 @@ public:
 	float		SScale;				//	Scaling
 	float		TScale;
 	int			TextureTranslation;	// Animation
+	int			HashNext;
 
 	//	Driver data.
 	struct VTransData
@@ -244,7 +245,6 @@ protected:
 class VTextureManager
 {
 public:
-	TArray<VTexture*>	Textures;
 	vint32				DefaultTexture;
 	float				Time;	//	Time value for warp textures
 
@@ -252,6 +252,7 @@ public:
 	void Init();
 	void Shutdown();
 	int AddTexture(VTexture* Tex);
+	void ReplaceTexture(int Index, VTexture* Tex);
 	int	CheckNumForName(VName Name, int Type, bool bOverload = false,
 		bool bCheckAny = false);
 	int	NumForName(VName Name, int Type, bool bOverload = false,
@@ -285,7 +286,19 @@ public:
 		return Textures[TextureAnimation(TexNum)];
 	}
 
+	int GetNumTextures() const
+	{
+		return Textures.Num();
+	}
+
 private:
+	enum { HASH_SIZE = 1024 };
+
+	TArray<VTexture*>	Textures;
+	int					TextureHash[HASH_SIZE];
+
+	void AddToHash(int Index);
+	void RemoveFromHash(int Index);
 	void AddTextures();
 	void AddTexturesLump(int, int, int, bool);
 	void AddGroup(int, EWadNamespace);

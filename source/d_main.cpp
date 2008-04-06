@@ -650,7 +650,7 @@ void VSoftwareDrawer::FreeAllMemory()
 {
 	guard(VSoftwareDrawer::FreeAllMemory);
 	FreeMemory();
-	for (int i = 0; i < GTextureManager.Textures.Num(); i++)
+	for (int i = 0; i < GTextureManager.GetNumTextures(); i++)
 	{
 		FlushTexture(GTextureManager[i]);
 	}

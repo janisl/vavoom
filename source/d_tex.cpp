@@ -91,13 +91,13 @@ void VSoftwareDrawer::FlushTextureCaches()
 		}
 	}
 
-	for (i = 0; i < GTextureManager.Textures.Num(); i++)
+	for (i = 0; i < GTextureManager.GetNumTextures(); i++)
 	{
-		if (GTextureManager.Textures[i]->Type == TEXTYPE_SkyMap &&
-			GTextureManager.Textures[i]->DriverData)
+		if (GTextureManager[i]->Type == TEXTYPE_SkyMap &&
+			GTextureManager[i]->DriverData)
 		{
-			Z_Free(GTextureManager.Textures[i]->DriverData);
-			GTextureManager.Textures[i]->DriverData = NULL;
+			Z_Free(GTextureManager[i]->DriverData);
+			GTextureManager[i]->DriverData = NULL;
 		}
 	}
 	unguard;

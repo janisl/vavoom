@@ -368,7 +368,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 		flip = sprframe->flip[0];
 	}
 
-	VTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager[lump];
 	int TexWidth = Tex->GetWidth();
 	int TexHeight = Tex->GetHeight();
 	int TexSOffset = Tex->SOffset;
@@ -729,7 +729,7 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 
 	lump = sprframe->lump[0];
 	flip = sprframe->flip[0];
-	VTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager[lump];
 
 	int TexWidth = Tex->GetWidth();
 	int TexHeight = Tex->GetHeight();
@@ -905,7 +905,7 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
 	spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & FF_FRAMEMASK];
 	flip = sprframe->flip[rot];
 	lump = sprframe->lump[rot];
-	VTexture* Tex = GTextureManager.Textures[lump];
+	VTexture* Tex = GTextureManager[lump];
 
 	Tex->GetWidth();
 

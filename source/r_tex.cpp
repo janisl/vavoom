@@ -138,6 +138,10 @@ VTextureManager::VTextureManager()
 : DefaultTexture(-1)
 , Time(0)
 {
+	for (int i = 0; i < HASH_SIZE; i++)
+	{
+		TextureHash[i] = -1;
+	}
 }
 
 //==========================================================================
@@ -215,7 +219,64 @@ int VTextureManager::AddTexture(VTexture* Tex)
 	}
 	Textures.Append(Tex);
 	Tex->TextureTranslation = Textures.Num() - 1;
+	AddToHash(Textures.Num() - 1);
 	return Textures.Num() - 1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTextureManager::ReplaceTexture
+//
+//==========================================================================
+
+void VTextureManager::ReplaceTexture(int Index, VTexture* NewTex)
+{
+	guard(VTextureManager::ReplaceTexture);
+	check(Index >= 0);
+	check(Index < Textures.Num());
+	check(NewTex);
+	VTexture* OldTex = Textures[Index];
+	NewTex->Name = OldTex->Name;
+	NewTex->Type = OldTex->Type;
+	NewTex->TextureTranslation = OldTex->TextureTranslation;
+	NewTex->HashNext = OldTex->HashNext;
+	Textures[Index] = NewTex;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTextureManager::AddToHash
+//
+//==========================================================================
+
+void VTextureManager::AddToHash(int Index)
+{
+	guard(VTextureManager::AddToHash);
+	int HashIndex = GetTypeHash(Textures[Index]->Name) & (HASH_SIZE - 1);
+	Textures[Index]->HashNext = TextureHash[HashIndex];
+	TextureHash[HashIndex] = Index;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTextureManager::RemoveFromHash
+//
+//==========================================================================
+
+void VTextureManager::RemoveFromHash(int Index)
+{
+	guard(VTextureManager::RemoveFromHash);
+	int HashIndex = GetTypeHash(Textures[Index]->Name) & (HASH_SIZE - 1);
+	int* Prev = &TextureHash[HashIndex];
+	while (*Prev != -1 && *Prev != Index)
+	{
+		Prev = &Textures[*Prev]->HashNext;
+	}
+	check(*Prev != -1);
+	*Prev = Textures[Index]->HashNext;
 	unguard;
 }
 
@@ -233,12 +294,17 @@ int	VTextureManager::CheckNumForName(VName Name, int Type, bool bOverload,
 	guard(VTextureManager::CheckNumForName);
 	//	Check for "NoTexture" marker.
 	if ((*Name)[0] == '-' && (*Name)[1] == 0)
+	{
 		return 0;
+	}
 
-	for (int i = Textures.Num() - 1; i >= 0; i--)
+	int HashIndex = GetTypeHash(Name) & (HASH_SIZE - 1);
+	for (int i = TextureHash[HashIndex]; i >= 0; i = Textures[i]->HashNext)
 	{
 		if (Textures[i]->Name != Name)
+		{
 			continue;
+		}
 
 		if (Type == TEXTYPE_Any || Textures[i]->Type == Type ||
 			(bOverload && Textures[i]->Type == TEXTYPE_Overload))
@@ -816,6 +882,7 @@ void VTextureManager::AddHiResTextures()
 
 void P_InitAnimated()
 {
+	guard(P_InitAnimated);
 	animDef_t 	ad;
 	frameDef_t	fd;
 
@@ -896,6 +963,7 @@ void P_InitAnimated()
 		AnimDefs.Append(ad);
 	}
 	delete Strm;
+	unguard;
 }
 
 //==========================================================================
@@ -908,6 +976,7 @@ void P_InitAnimated()
 
 static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 {
+	guard(ParseFTAnim);
 	animDef_t 	ad;
 	frameDef_t	fd;
 
@@ -1045,6 +1114,7 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 		ad.Time = 0.01; // Force 1st game tic to animate
 		AnimDefs.Append(ad);
 	}
+	unguard;
 }
 
 //==========================================================================
@@ -1055,6 +1125,7 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 
 static int AddSwitchDef(TSwitch* Switch)
 {
+	guard(AddSwitchDef);
 	for (int i = 0; i < Switches.Num(); i++)
 	{
 		if (Switches[i]->Tex == Switch->Tex)
@@ -1065,6 +1136,7 @@ static int AddSwitchDef(TSwitch* Switch)
 		}
 	}
 	return Switches.Append(Switch);
+	unguard;
 }
 
 //==========================================================================
@@ -1075,6 +1147,7 @@ static int AddSwitchDef(TSwitch* Switch)
 
 static TSwitch* ParseSwitchState(VScriptParser* sc, bool IgnoreBad)
 {
+	guard(ParseSwitchState);
 	TArray<TSwitchFrame>	Frames;
 	int						Sound = 0;
 	bool					Bad = false;
@@ -1155,6 +1228,7 @@ static TSwitch* ParseSwitchState(VScriptParser* sc, bool IgnoreBad)
 		Def->Frames[i].RandomRange = Frames[i].RandomRange;
 	}
 	return Def;
+	unguard;
 }
 
 //==========================================================================
@@ -1165,6 +1239,7 @@ static TSwitch* ParseSwitchState(VScriptParser* sc, bool IgnoreBad)
 
 static void ParseSwitchDef(VScriptParser* sc)
 {
+	guard(ParseSwitchDef);
 	//	Skip game specifier.
 	if (sc->Check("doom"))
 	{
@@ -1252,6 +1327,7 @@ static void ParseSwitchDef(VScriptParser* sc)
 	Def2->Quest = Quest;
 	Def2->PairIndex = AddSwitchDef(Def1);
 	Def1->PairIndex = AddSwitchDef(Def2);
+	unguard;
 }
 
 //==========================================================================
@@ -1358,7 +1434,7 @@ static void ParseWarp(VScriptParser* sc, int Type)
 		return;
 	}
 
-	VTexture* SrcTex = GTextureManager.Textures[TexNum];
+	VTexture* SrcTex = GTextureManager[TexNum];
 	VTexture* WarpTex = SrcTex;
 	//	Warp only once.
 	if (!SrcTex->WarpType)
@@ -1367,10 +1443,7 @@ static void ParseWarp(VScriptParser* sc, int Type)
 			WarpTex = new VWarpTexture(SrcTex);
 		else
 			WarpTex = new VWarp2Texture(SrcTex);
-		WarpTex->Name = SrcTex->Name;
-		WarpTex->Type = SrcTex->Type;
-		WarpTex->TextureTranslation = SrcTex->TextureTranslation;
-		GTextureManager.Textures[TexNum] = WarpTex;
+		GTextureManager.ReplaceTexture(TexNum, WarpTex);
 	}
 	//	Ignored for now.
 	sc->Check("allowdecals");
@@ -1407,9 +1480,7 @@ static void ParseCameraTexture(VScriptParser* sc)
 		VTexture* OldTex = GTextureManager[TexNum];
 		FitWidth = OldTex->GetScaledWidth();
 		FitHeight = OldTex->GetScaledHeight();
-		Tex->Type = OldTex->Type;
-		Tex->TextureTranslation = OldTex->TextureTranslation;
-		GTextureManager.Textures[TexNum] = Tex;
+		GTextureManager.ReplaceTexture(TexNum, Tex);
 		delete OldTex;
 	}
 	else
@@ -1674,13 +1745,13 @@ void R_AnimateSurfaces()
 		}
 		if (ad.Type == ANIM_Normal)
 		{
-			GTextureManager.Textures[ad.Index]->TextureTranslation = fd.Index;
+			GTextureManager[ad.Index]->TextureTranslation = fd.Index;
 		}
 		else
 		{
 			for (int i = 0; i < ad.NumFrames; i++)
 			{
-				GTextureManager.Textures[ad.Index + i]->TextureTranslation =
+				GTextureManager[ad.Index + i]->TextureTranslation =
 					ad.Index + (ad.CurrentFrame + i) % ad.NumFrames;
 			}
 		}

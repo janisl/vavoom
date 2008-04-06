@@ -200,7 +200,7 @@ void VRenderLevel::InitOldSky()
 		}
 	}
 
-	int skyheight = GTextureManager.Textures[Level->LevelInfo->Sky1Texture]->GetHeight();
+	int skyheight = GTextureManager[Level->LevelInfo->Sky1Texture]->GetHeight();
 	if (Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_ForceNoSkyStretch)
 	{
 		skyheight = 256;
@@ -447,7 +447,7 @@ void VRenderLevel::InitSkyBox(VName Name1, VName Name2)
 		//	Precache texture
 		Drawer->SetTexture(GTextureManager[sky[j].texture1], 0);
 
-		VTexture* STex = GTextureManager.Textures[sky[j].texture1];
+		VTexture* STex = GTextureManager[sky[j].texture1];
 
 		sky[j].surf.extents[0] = STex->GetWidth();
 		sky[j].surf.extents[1] = STex->GetHeight();
@@ -498,9 +498,9 @@ void VRenderLevel::InitSky()
 		if (r_skyboxes && !(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_DoubleSky) &&
 			!Level->LevelInfo->Sky1ScrollDelta)
 		{
-			Name1 = GTextureManager.Textures[Level->LevelInfo->Sky1Texture]->Name;
+			Name1 = GTextureManager[Level->LevelInfo->Sky1Texture]->Name;
 			Name2 = Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning ?
-				GTextureManager.Textures[Level->LevelInfo->Sky2Texture]->Name : Name1;
+				GTextureManager[Level->LevelInfo->Sky2Texture]->Name : Name1;
 			Num1 = CheckSkyboxNumForName(Name1);
 			Num2 = CheckSkyboxNumForName(Name2);
 		}

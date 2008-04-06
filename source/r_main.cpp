@@ -976,11 +976,11 @@ void VRenderLevel::PrecacheLevel()
 		return;
 
 #ifdef __GNUC__
-	char texturepresent[GTextureManager.Textures.Num()];
+	char texturepresent[GTextureManager.GetNumTextures()];
 #else
-	char* texturepresent = (char*)Z_Malloc(GTextureManager.Textures.Num());
+	char* texturepresent = (char*)Z_Malloc(GTextureManager.GetNumTextures());
 #endif
-	memset(texturepresent, 0, GTextureManager.Textures.Num());
+	memset(texturepresent, 0, GTextureManager.GetNumTextures());
 
 	for (i = 0; i < Level->NumSectors; i++)
 	{
@@ -996,7 +996,7 @@ void VRenderLevel::PrecacheLevel()
 	}
 
 	// Precache textures.
-	for (i = 1; i < GTextureManager.Textures.Num(); i++)
+	for (i = 1; i < GTextureManager.GetNumTextures(); i++)
 	{
 		if (texturepresent[i])
 		{

@@ -335,7 +335,7 @@ static void InstallSpriteLump(int lumpnr, int frame, char Rot, bool flipped)
 		rotation = 17;
 	}
 
-	VTexture* Tex = GTextureManager.Textures[lumpnr];
+	VTexture* Tex = GTextureManager[lumpnr];
 	if ((vuint32)frame >= 30 || (vuint32)rotation > 16)
 	{
 		Sys_Error("InstallSpriteLump: Bad frame characters in lump %s",
@@ -412,11 +412,11 @@ void R_InstallSprite(const char *name, int index)
 	int intname = *(int*)*VName(spritename, VName::AddLower8);
 
 	// scan the lumps, filling in the frames for whatever is found
-	for (int l = 0; l < GTextureManager.Textures.Num(); l++)
+	for (int l = 0; l < GTextureManager.GetNumTextures(); l++)
 	{
-		if (GTextureManager.Textures[l]->Type == TEXTYPE_Sprite)
+		if (GTextureManager[l]->Type == TEXTYPE_Sprite)
 		{
-			const char* lumpname = *GTextureManager.Textures[l]->Name;
+			const char* lumpname = *GTextureManager[l]->Name;
 			if (*(int*)lumpname == intname)
 			{
 				InstallSpriteLump(l, VStr::ToUpper(lumpname[4]) - 'A',
