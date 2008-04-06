@@ -108,6 +108,7 @@ enum
 static VCvarI strict_level_errors("strict_level_errors", "1");
 static VCvarI build_blockmap("build_blockmap", "0", CVAR_Archive);
 static VCvarI build_gwa("build_gwa", "0", CVAR_Archive);
+static VCvarI show_level_load_times("show_level_load_times", "1", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -124,6 +125,8 @@ void VLevel::LoadMap(VName AMapName)
 	int lumpnum;
 	VName MapLumpName;
 
+	double TotalTime = -Sys_Time();
+	double InitTime = -Sys_Time();
 	MapName = AMapName;
 	//	If working with a devlopment map, reload it.
 	VStr aux_file_name = va("maps/%s.wad", *MapName);
@@ -172,7 +175,9 @@ void VLevel::LoadMap(VName AMapName)
 		}
 	}
 	delete TmpStrm;
+	InitTime += Sys_Time();
 
+	double NodeBuildTime = -Sys_Time();
 	bool NeedNodesBuild = false;
 	if (!UseComprGLNodes)
 	{
@@ -207,6 +212,7 @@ void VLevel::LoadMap(VName AMapName)
 			}
 		}
 	}
+	NodeBuildTime += Sys_Time();
 
 	//	Determine level format.
 	if (W_LumpName(lumpnum + ML_BEHAVIOR) == NAME_behavior)
@@ -216,22 +222,36 @@ void VLevel::LoadMap(VName AMapName)
 	//	Begin processing map lumps.
 	// Note: most of this ordering is important
 	//
+	double VertexTime = -Sys_Time();
 	int NumBaseVerts;
 	LevelFlags &= ~LF_GLNodesV5;
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, NumBaseVerts);
+	VertexTime += Sys_Time();
+	double SectorsTime = -Sys_Time();
 	LoadSectors(lumpnum + ML_SECTORS);
+	SectorsTime += Sys_Time();
+	double SidesTime = -Sys_Time();
 	LoadSideDefsPass1(lumpnum + ML_SIDEDEFS);
+	SidesTime += Sys_Time();
+	double LinesTime = -Sys_Time();
+	double ThingsTime;
 	if (!(LevelFlags & LF_Extended))
 	{
 		LoadLineDefs1(lumpnum + ML_LINEDEFS, NumBaseVerts);
+		LinesTime += Sys_Time();
+		ThingsTime = -Sys_Time();
 		LoadThings1(lumpnum + ML_THINGS);
 	}
 	else
 	{
 		LoadLineDefs2(lumpnum + ML_LINEDEFS, NumBaseVerts);
+		LinesTime += Sys_Time();
+		ThingsTime = -Sys_Time();
 		LoadThings2(lumpnum + ML_THINGS);
 	}
+	ThingsTime += Sys_Time();
 
+	double NodesTime = -Sys_Time();
 	if (NeedNodesBuild)
 	{
 		BuildNodes();
@@ -247,9 +267,15 @@ void VLevel::LoadMap(VName AMapName)
 		LoadNodes(gl_lumpnum + ML_GL_NODES);
 		LoadPVS(gl_lumpnum + ML_GL_PVS);
 	}
+	NodesTime += Sys_Time();
+	double BlockMapTime = -Sys_Time();
 	LoadBlockMap(lumpnum + ML_BLOCKMAP);
+	BlockMapTime += Sys_Time();
+	double RejectTime = -Sys_Time();
 	LoadReject(lumpnum + ML_REJECT);
+	RejectTime += Sys_Time();
 
+	double AcsTime = -Sys_Time();
 	//	ACS object code
 	if (LevelFlags & LF_Extended)
 	{
@@ -259,35 +285,52 @@ void VLevel::LoadMap(VName AMapName)
 	{
 		LoadACScripts(-1);
 	}
+	AcsTime += Sys_Time();
 
+	double TranslTime = -Sys_Time();
 	if (!(LevelFlags & LF_Extended))
 	{
 		//	Translate level to Hexen format
 		GGameInfo->eventTranslateLevel(this);
 	}
+	TranslTime += Sys_Time();
 	//	Set up textures after loading lines because for some Boom line
 	// specials there can be special meaning of some texture names.
+	double Sides2Time = -Sys_Time();
 	LoadSideDefsPass2(lumpnum + ML_SIDEDEFS);
+	Sides2Time += Sys_Time();
 
+	double GroupLinesTime = -Sys_Time();
 	GroupLines();
+	GroupLinesTime += Sys_Time();
 
+	double ConvTime = -Sys_Time();
 	//	Load conversations.
 	LoadRogueConScript(GGameInfo->GenericConScript, GenericSpeeches,
 		NumGenericSpeeches);
 	LoadRogueConScript(GGameInfo->eventGetConScriptName(MapName),
 		LevelSpeeches, NumLevelSpeeches);
+	ConvTime += Sys_Time();
 
 	//	Set up polyobjs, slopes, 3D floors and some other static stuff.
+	double SpawnWorldTime = -Sys_Time();
 	GGameInfo->eventSpawnWorld(this);
+	SpawnWorldTime += Sys_Time();
+	double InitPolysTime = -Sys_Time();
 	InitPolyobjs();	// Initialise the polyobjs
+	InitPolysTime += Sys_Time();
 
+	double MinMaxTime = -Sys_Time();
 	//	We need this for client.
 	for (int i = 0; i < NumSectors; i++)
 	{
 		CalcSecMinMaxs(&Sectors[i]);
 	}
+	MinMaxTime += Sys_Time();
 
+	double RepBaseTime = -Sys_Time();
 	CreateRepBase();
+	RepBaseTime += Sys_Time();
 
 	//
 	// End of map lump processing
@@ -296,6 +339,31 @@ void VLevel::LoadMap(VName AMapName)
 	{
 		// Close the auxiliary file.
 		W_CloseAuxiliary();
+	}
+
+	TotalTime += Sys_Time();
+	if (show_level_load_times)
+	{
+		GCon->Logf("-------");
+		GCon->Logf("Level loadded in %f", TotalTime);
+		GCon->Logf("Initialisation   %f", InitTime);
+		GCon->Logf("Node build       %f", NodeBuildTime);
+		GCon->Logf("Vertexes         %f", VertexTime);
+		GCon->Logf("Sectors          %f", SectorsTime);
+		GCon->Logf("Sides            %f", SidesTime);
+		GCon->Logf("Lines            %f", LinesTime);
+		GCon->Logf("Things           %f", ThingsTime);
+		GCon->Logf("Nodes            %f", NodesTime);
+		GCon->Logf("Block map        %f", BlockMapTime);
+		GCon->Logf("Reject           %f", RejectTime);
+		GCon->Logf("ACS              %f", AcsTime);
+		GCon->Logf("Translation      %f", TranslTime);
+		GCon->Logf("Sides 2          %f", Sides2Time);
+		GCon->Logf("Group lines      %f", GroupLinesTime);
+		GCon->Logf("Conversations    %f", ConvTime);
+		GCon->Logf("Spawn world      %f", SpawnWorldTime);
+		GCon->Logf("Polyobjs         %f", InitPolysTime);
+		GCon->Logf("");
 	}
 	unguard;
 }
@@ -1852,31 +1920,30 @@ void VLevel::GroupLines() const
 			}
 		}
 		if (linebuffer - sector->lines != sector->linecount)
+		{
 			Sys_Error("GroupLines: miscounted");
+		}
 
 		// set the soundorg to the middle of the bounding box
 		sector->soundorg = TVec((bbox[BOXRIGHT] + bbox[BOXLEFT]) / 2.0,
 			(bbox[BOXTOP] + bbox[BOXBOTTOM]) / 2.0, 0);
 
-		if (LevelFlags & LF_ForServer)
-		{
-			// adjust bounding box to map blocks
-			block = MapBlock(bbox[BOXTOP] - BlockMapOrgY + MAXRADIUS);
-			block = block >= BlockMapHeight ? BlockMapHeight - 1 : block;
-			sector->blockbox[BOXTOP] = block;
+		// adjust bounding box to map blocks
+		block = MapBlock(bbox[BOXTOP] - BlockMapOrgY + MAXRADIUS);
+		block = block >= BlockMapHeight ? BlockMapHeight - 1 : block;
+		sector->blockbox[BOXTOP] = block;
 
-			block = MapBlock(bbox[BOXBOTTOM] - BlockMapOrgY - MAXRADIUS);
-			block = block < 0 ? 0 : block;
-			sector->blockbox[BOXBOTTOM] = block;
+		block = MapBlock(bbox[BOXBOTTOM] - BlockMapOrgY - MAXRADIUS);
+		block = block < 0 ? 0 : block;
+		sector->blockbox[BOXBOTTOM] = block;
 
-			block = MapBlock(bbox[BOXRIGHT] - BlockMapOrgX + MAXRADIUS);
-			block = block >= BlockMapWidth ? BlockMapWidth - 1 : block;
-			sector->blockbox[BOXRIGHT] = block;
+		block = MapBlock(bbox[BOXRIGHT] - BlockMapOrgX + MAXRADIUS);
+		block = block >= BlockMapWidth ? BlockMapWidth - 1 : block;
+		sector->blockbox[BOXRIGHT] = block;
 
-			block = MapBlock(bbox[BOXLEFT] - BlockMapOrgX - MAXRADIUS);
-			block = block < 0 ? 0 : block;
-			sector->blockbox[BOXLEFT] = block;
-		}
+		block = MapBlock(bbox[BOXLEFT] - BlockMapOrgX - MAXRADIUS);
+		block = block < 0 ? 0 : block;
+		sector->blockbox[BOXLEFT] = block;
 	}
 	unguard;
 }
