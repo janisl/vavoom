@@ -110,6 +110,7 @@ void AddInventory(Inventory Item)
 
 void RemoveInventory(Inventory Item)
 {
+	bool SelectNewWeap = false;
 	if (bIsPlayer)
 	{
 		if (PlayerEx(Player).InvPtr == Item)
@@ -128,11 +129,30 @@ void RemoveInventory(Inventory Item)
 				PlayerEx(Player).InvFirst = Item.NextInv();
 			}
 		}
+		if (PlayerEx(Player).PendingWeapon == Item)
+		{
+			PlayerEx(Player).PendingWeapon = none;
+		}
+		if (PlayerEx(Player).ReadyWeapon == Item)
+		{
+			PlayerEx(Player).ReadyWeapon = none;
+			PlayerEx(Player).Refire = 0;
+			SelectNewWeap = true;
+		}
 	}
 	::RemoveInventory(Item);
 	if (bIsPlayer && Item.bInvBar)
 	{
 		PlayerEx(Player).AdjustInvFirst();
+	}
+	if (SelectNewWeap && !PlayerEx(Player).PendingWeapon)
+	{
+		Weapon Best = PlayerEx(Player).BestWeapon();
+		if (Best)
+		{
+			PlayerEx(Player).SetWeapon(Best);
+			PlayerEx(Player).BringUpWeapon();
+		}
 	}
 }
 

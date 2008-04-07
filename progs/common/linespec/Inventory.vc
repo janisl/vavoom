@@ -906,7 +906,14 @@ final void A_Raise()
 		return;
 	}
 	Player.ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
-	Player.SetViewState(ps_weapon, Wpn.GetReadyState());
+	if (Wpn)
+	{
+		Player.SetViewState(ps_weapon, Wpn.GetReadyState());
+	}
+	else
+	{
+		Player.SetViewState(ps_weapon, none);
+	}
 }
 
 //===========================================================================
