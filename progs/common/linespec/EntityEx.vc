@@ -5082,9 +5082,27 @@ bool OkayToSwitchTarget(EntityEx source)
 		return false;
 	}
 
-	return (!Threshold || bNoGrudge) && !source.bNeverTarget &&
-		!bNoTargetSwitch && (!source.bIsPlayer || !bNoHatePlayers) &&
-		(Level.Game.deathmatch || source.bFriendly != bFriendly);
+	if (Threshold && !bNoGrudge)
+	{
+		return false;
+	}
+	if (source.bNeverTarget)
+	{
+		return false;
+	}
+	if (bNoTargetSwitch)
+	{
+		return false;
+	}
+	if (source.bIsPlayer && bNoHatePlayers)
+	{
+		return false;
+	}
+	if (!Level.Game.deathmatch && source.bFriendly && bFriendly)
+	{
+		return false;
+	}
+	return true;
 }
 
 //==========================================================================
