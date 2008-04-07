@@ -1166,7 +1166,7 @@ int VFont::SplitText(const VStr& Text, TArray<VSplitLine>& Lines,
 					ParseColourEscape(SPtr2, CR_UNDEFINED, CR_UNDEFINED);
 				}
 			}
-			if (NewW > MaxWidth)
+			if (NewW > MaxWidth && PChar != Start)
 			{
 				VSplitLine& L = Lines.Alloc();
 				L.Text = VStr(Text, Start - *Text, PChar - Start);
