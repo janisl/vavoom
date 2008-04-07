@@ -2838,39 +2838,57 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 	float		aboveFloor;
 	float		fogDelta;
 	EntityEx	fog;
+	bool		ResetPitch = false;
 
 	oldOrg = Origin;
 	aboveFloor = Origin.z - FloorZ;
+	if (Dst.z == ONFLOORZ)
+	{
+		sector_t* DstSec = XLevel.PointInSector(Dst);
+		float DstFloorZ = GetPlanePointZ(&DstSec->floor, Dst);
+		float DstCeilZ = GetPlanePointZ(&DstSec->floor, Dst);
+		if (bIsPlayer)
+		{
+			if (FindInventory(PowerFlight) && aboveFloor)
+			{
+				Dst.z = DstFloorZ + aboveFloor;
+				if (Dst.z + Height > DstCeilZ)
+				{
+					Dst.z = DstCeilZ - Height;
+				}
+			}
+			else
+			{
+				Dst.z = DstFloorZ;
+				if (!KeepDir)
+				{
+					ResetPitch = true;
+				}
+			}
+		}
+		else if (bMissile)
+		{
+			Dst.z = Dst.z + aboveFloor;
+			if (Dst.z + Height > DstCeilZ)
+			{
+				Dst.z = DstCeilZ - Height;
+			}
+		}
+		else
+		{
+			Dst.z = DstFloorZ;
+		}
+	}
 	if (!TeleportMove(Dst))
 	{
 		return false;
 	}
 	if (bIsPlayer)
 	{
-		if (FindInventory(PowerFlight) && aboveFloor)
+		Player.ViewOrg.z = Origin.z + PlayerEx(Player).ViewHeight;
+		if (ResetPitch)
 		{
-			Origin.z = Origin.z + aboveFloor;
-			if (Origin.z + Height > CeilingZ)
-			{
-				Origin.z = CeilingZ - Height;
-			}
-			Player.ViewOrg.z = Origin.z + PlayerEx(Player).ViewHeight;
-		}
-		else
-		{
-			Player.ViewOrg.z = Origin.z + PlayerEx(Player).ViewHeight;
-			if (!KeepDir)
-			{
-				Angles.pitch = 0.0;
-			}
-		}
-	}
-	else if (bMissile)
-	{
-		Origin.z = Origin.z + aboveFloor;
-		if (Origin.z + Height > CeilingZ)
-		{
-			Origin.z = CeilingZ - Height;
+			Angles.pitch = 0.0;
 		}
 	}
 	// spawn teleport fog at source and destination
