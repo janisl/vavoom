@@ -207,6 +207,7 @@ void CL_ReadFromServer()
 		if (!host_standalone)
 		{
 			GClLevel->Time += host_frametime;
+			GClLevel->TicTime = (int)(GClLevel->Time * 35.0);
 		}
 
 		CL_UpdateMobjs();
