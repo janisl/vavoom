@@ -257,6 +257,7 @@ class VAcs : public VThinker
 
 	void Destroy();
 	void Serialise(VStream&);
+	void ClearReferences();
 	int RunScript(float);
 	void Tick(float);
 
@@ -1800,6 +1801,23 @@ void VAcs::Serialise(VStream& Strm)
 	Strm << HudWidth
 		<< HudHeight
 		<< Font;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAcs::ClearReferences
+//
+//==========================================================================
+
+void VAcs::ClearReferences()
+{
+	guard(VAcs::ClearReferences);
+	Super::ClearReferences();
+	if (Activator && Activator->GetFlags() & _OF_CleanupRef)
+	{
+		Activator = NULL;
+	}
 	unguard;
 }
 
