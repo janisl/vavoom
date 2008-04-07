@@ -108,7 +108,7 @@ enum
 static VCvarI strict_level_errors("strict_level_errors", "1");
 static VCvarI build_blockmap("build_blockmap", "0", CVAR_Archive);
 static VCvarI build_gwa("build_gwa", "0", CVAR_Archive);
-static VCvarI show_level_load_times("show_level_load_times", "1", CVAR_Archive);
+static VCvarI show_level_load_times("show_level_load_times", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
