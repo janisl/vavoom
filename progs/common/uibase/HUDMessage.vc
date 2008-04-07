@@ -71,18 +71,6 @@ void Init(string Message, name AFont, int Type, int AId, int Colour,
 	MsgColour = Colour;
 	HoldTime = AHoldTime;
 
-	//	Calculate width and height of the text.
-	SetFont(MsgFont);
-	MsgHeight = SplitText(Message, MsgLines, Width);
-	MsgWidth = 0;
-	for (i = 0; i < MsgLines.Num; i++)
-	{
-		if (MsgLines[i].Width > MsgWidth)
-		{
-			MsgWidth = MsgLines[i].Width;
-		}
-	}
-
 	//	Position of the message.
 	MsgX = AMsgX;
 	MsgY = AMsgY;
@@ -124,6 +112,18 @@ void Init(string Message, name AFont, int Type, int AId, int Colour,
 		else
 		{
 			MsgX = itof(IntPart) - itof(FracPart & 3) / 10.0;
+		}
+	}
+
+	//	Calculate width and height of the text.
+	SetFont(MsgFont);
+	MsgHeight = SplitText(Message, MsgLines, Width);
+	MsgWidth = 0;
+	for (i = 0; i < MsgLines.Num; i++)
+	{
+		if (MsgLines[i].Width > MsgWidth)
+		{
+			MsgWidth = MsgLines[i].Width;
 		}
 	}
 }
