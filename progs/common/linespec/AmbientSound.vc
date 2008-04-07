@@ -121,9 +121,13 @@ void Tick(float DeltaTime)
 		{
 			return;
 		}
+		PlaySound(Amb->Sound, CHAN_BODY, Amb->Volume, Amb->Attenuation, true);
+	}
+	else
+	{
+		PlaySound(Amb->Sound, CHAN_BODY, Amb->Volume, Amb->Attenuation);
 	}
 
-	PlaySound(Amb->Sound, CHAN_BODY, Amb->Volume, Amb->Attenuation);
 	SetTimer(Amb);
 }
 
@@ -138,7 +142,7 @@ void SetTimer(FAmbientSound* Amb)
 	switch (Amb->Type & SNDTYPE_PlaybackMask)
 	{
 	case SNDTYPE_Continuous:
-		Timer += 0.03;
+		Timer += 0.5;
 		break;
 
 	case SNDTYPE_Random:
