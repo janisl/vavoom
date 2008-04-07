@@ -575,8 +575,7 @@ void VMethod::DumpAsm()
 			break;
 		case OPCARGS_Member:
 			//	Name of the object
-			dprintf(" %s.%s", *Instructions[s].Member->Outer->Name,
-				*Instructions[s].Member->Name);
+			dprintf(" %s", *Instructions[s].Member->GetFullName());
 			break;
 		case OPCARGS_BranchTarget:
 			dprintf(" %6d", Instructions[s].Arg1);
