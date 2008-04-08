@@ -710,22 +710,29 @@ final void XYMovement(float DeltaTime)
 	xmove = Velocity.x * DeltaTime;
 	ymove = Velocity.y * DeltaTime;
 
-	do
+	//	Split move in multiple steps if moving too fast.
+	int Steps = 1;
+	float XStep = fabs(xmove);
+	float YStep = fabs(ymove);
+	if (XStep > MAXMOVESTEP || YStep > MAXMOVESTEP)
 	{
-		if (xmove > MAXMOVESTEP || ymove > MAXMOVESTEP)
+		if (XStep > YStep)
 		{
-			ptryx = Origin.x + xmove / 2.0;
-			ptryy = Origin.y + ymove / 2.0;
-			xmove /= 2.0;
-			ymove /= 2.0;
+			Steps = ftoi(XStep / MAXMOVESTEP) + 1;
 		}
 		else
 		{
-			ptryx = Origin.x + xmove;
-			ptryy = Origin.y + ymove;
-			xmove = 0.0;
-			ymove = 0.0;
+			Steps = ftoi(YStep / MAXMOVESTEP) + 1;
 		}
+	}
+	float StepXMove = xmove / itof(Steps);
+	float StepYMove = ymove / itof(Steps);
+
+	int Step = 1;
+	do
+	{
+		ptryx = Origin.x + StepXMove;
+		ptryy = Origin.y + StepYMove;
 
 		tmtrace_t tmtrace;
 		if (!TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z)))
@@ -742,7 +749,7 @@ final void XYMovement(float DeltaTime)
 			return;
 		}
 	}
-	while (xmove || ymove);
+	while (Step++ < Steps);
 }
 
 //==========================================================================
