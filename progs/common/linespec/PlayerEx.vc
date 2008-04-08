@@ -866,7 +866,10 @@ final void BringUpWeapon()
 
 final void DropWeapon()
 {
-	SetViewState(ps_weapon, ReadyWeapon.GetDownState());
+	if (ReadyWeapon)
+	{
+		SetViewState(ps_weapon, ReadyWeapon.GetDownState());
+	}
 }
 
 //===========================================================================
