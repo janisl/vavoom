@@ -111,7 +111,7 @@ static VCvarI	artiskip("artiskip", "1", CVAR_Archive);	// whether shift-enter sk
 
 static VCvarF	cl_forwardspeed("cl_forwardspeed", "200", CVAR_Archive);
 static VCvarF	cl_backspeed("cl_backspeed", "200", CVAR_Archive);
-static VCvarF	cl_sidespeed("cl_sidespeed", "350", CVAR_Archive);
+static VCvarF	cl_sidespeed("cl_sidespeed", "200", CVAR_Archive);
 static VCvarF	cl_flyspeed("cl_flyspeed", "80", CVAR_Archive);
 
 static VCvarF	cl_movespeedkey("cl_movespeedkey", "2.0", CVAR_Archive);
@@ -480,9 +480,13 @@ static void BuildTiccmd()
 		side += KeyRight.KeyState() * cl_sidespeed;
 		side -= KeyLeft.KeyState() * cl_sidespeed;
 		if (joyxmove > 0)
+		{
 			side += cl_sidespeed;
+		}
 		if (joyxmove < 0)
+		{
 			side -= cl_sidespeed;
+		}
 	}
 
 	forward += KeyForward.KeyState() * cl_forwardspeed;
@@ -492,20 +496,17 @@ static void BuildTiccmd()
 	side -= KeyMoveLeft.KeyState() * cl_sidespeed;
 
 	if (joyymove < 0) 
+	{
 		forward += cl_forwardspeed;
+	}
 	if (joyymove > 0) 
+	{
 		forward -= cl_backspeed;
+	}
 
 	// Fly up/down/drop keys
 	flyheight += KeyFlyUp.KeyState() * cl_flyspeed; // note that the actual flyheight will be twice this
 	flyheight -= KeyFlyDown.KeyState() * cl_flyspeed;
-
-	if (allways_run || (KeySpeed.state & 1))
-	{
-		forward *= cl_movespeedkey;
-		side *= cl_movespeedkey;
-		flyheight *= cl_movespeedkey;
-	}
 
 	if ((!mouse_look && !(KeyMouseLook.state & 1)) || (KeyStrafe.state & 1))
 	{
@@ -518,10 +519,17 @@ static void BuildTiccmd()
 		side += m_side * mousex;
 	}
 
-	if (flyheight > 127)
-		flyheight = 127;
-	if (flyheight < -127)
-		flyheight = -127;
+	forward = MID(forward, -cl_backspeed, cl_forwardspeed);
+	side = MID(side, -cl_sidespeed, cl_sidespeed);
+
+	if (allways_run || (KeySpeed.state & 1))
+	{
+		forward *= cl_movespeedkey;
+		side *= cl_movespeedkey;
+		flyheight *= cl_movespeedkey;
+	}
+
+	flyheight = MID(flyheight, -127, 127);
 	if (KeyFlyCentre.KeyState())
 	{
 		flyheight = TOCENTRE;
