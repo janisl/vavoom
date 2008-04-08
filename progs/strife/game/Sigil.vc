@@ -42,11 +42,15 @@ bool HandlePickup(Inventory Item)
 		if (OtherPieces > NumPieces)
 		{
 			Item.bPickupGood = true;
-			Amount += Item.Amount;
-			if (Amount > MaxAmount)
+			IconName = Item.IconName;
+			//	If the player is holding the Sigil right now, drop it and
+			// bring it back with the new piece(s) in view.
+			if (Owner.bIsPlayer && PlayerEx(Owner.Player).ReadyWeapon == self)
 			{
-				Amount = MaxAmount;
+				DownPieces = NumPieces;
+				PlayerEx(Owner.Player).PendingWeapon = self;
 			}
+			NumPieces = OtherPieces;
 		}
 		return true;
 	}
