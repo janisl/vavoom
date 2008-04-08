@@ -44,6 +44,7 @@ public:
 	{
 		MREADER		Core;
 		VStream*	Strm;
+		bool		AtEof;
 	};
 
 	MODULE*			Module;
@@ -251,7 +252,9 @@ BOOL VMikModAudioCodec::ArchiveReader_Seek(MREADER* rd, long offset, int whence)
 		break;
 	}
 	if (NewPos > Strm->TotalSize())
+	{
 		return false;
+	}
 	Strm->Seek(NewPos);
 	return !Strm->IsError();
 	unguard;
@@ -282,7 +285,10 @@ BOOL VMikModAudioCodec::ArchiveReader_Read(MREADER* rd, void *dest, size_t lengt
 	guard(VMikModAudioCodec::ArchiveReader_Read);
 	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
 	if (Strm->Tell() + (int)length > Strm->TotalSize())
+	{
+		((FMikModArchiveReader*)rd)->AtEof = true;
 		return false;
+	}
 	Strm->Serialise(dest, length);
 	return !Strm->IsError();
 	unguard;
@@ -299,7 +305,10 @@ int VMikModAudioCodec::ArchiveReader_Get(MREADER* rd)
 	guard(VMikModAudioCodec::ArchiveReader_Get);
 	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
 	if (Strm->AtEnd())
+	{
+		((FMikModArchiveReader*)rd)->AtEof = true;
 		return EOF;
+	}
 	else
 	{
 		byte c;
@@ -318,8 +327,7 @@ int VMikModAudioCodec::ArchiveReader_Get(MREADER* rd)
 BOOL VMikModAudioCodec::ArchiveReader_Eof(MREADER* rd)
 {
 	guard(VMikModAudioCodec::ArchiveReader_Eof);
-	VStream* Strm = ((FMikModArchiveReader*)rd)->Strm;
-	return Strm->AtEnd();
+	return ((FMikModArchiveReader*)rd)->AtEof;
 	unguard;
 }
 
@@ -362,6 +370,7 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	Reader.Core.Seek = ArchiveReader_Seek;
 	Reader.Core.Tell = ArchiveReader_Tell;
 	Reader.Strm = InStrm;
+	Reader.AtEof = false;
 	InStrm->Seek(0);
 
 	//	Try to load the song.
