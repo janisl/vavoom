@@ -1513,7 +1513,7 @@ void VEntity::SlidePathTraverse(VLevel*, slidetrace_t& trace, float x, float y)
 //
 //==========================================================================
 
-void VEntity::SlideMove()
+void VEntity::SlideMove(float XMove, float YMove)
 {
 	guard(VEntity::SlideMove);
 	float leadx;
@@ -1534,17 +1534,15 @@ void VEntity::SlideMove()
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y *
-				host_frametime, Origin.z)))
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove, Origin.z)))
 			{
-				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime,
-					Origin.y, Origin.z));
+				TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y, Origin.z));
 			}
 			return;
 		}
 
 		// trace along the three leading corners
-		if (Velocity.x > 0.0)
+		if (XMove > 0.0)
 		{
 			leadx = Origin.x + Radius;
 			trailx = Origin.x - Radius;
@@ -1575,12 +1573,10 @@ void VEntity::SlideMove()
 		// move up to the wall
 		if (trace.bestslidefrac == 1.00001f)
 		{
-			// the move most have hit the middle, so stairstep
-			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y *
-				host_frametime, Origin.z)))
+			// the move must have hit the middle, so stairstep
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove, Origin.z)))
 			{
-				TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime,
-					Origin.y, Origin.z));
+				TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y, Origin.z));
 			}
 			return;
 		}
@@ -1589,17 +1585,17 @@ void VEntity::SlideMove()
 		trace.bestslidefrac -= 0.03125;
 		if (trace.bestslidefrac > 0.0)
 		{
-			newx = Velocity.x * host_frametime * trace.bestslidefrac;
-			newy = Velocity.y * host_frametime * trace.bestslidefrac;
+			newx = XMove * trace.bestslidefrac;
+			newy = YMove * trace.bestslidefrac;
 
 			if (!TryMove(tmtrace, TVec(Origin.x + newx, Origin.y + newy,
 				Origin.z)))
 			{
-				if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + Velocity.y *
-					host_frametime, Origin.z)))
+				if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove,
+					Origin.z)))
 				{
-					TryMove(tmtrace, TVec(Origin.x + Velocity.x *
-						host_frametime, Origin.y, Origin.z));
+					TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y,
+						Origin.z));
 				}
 				return;
 			}
@@ -1624,8 +1620,8 @@ void VEntity::SlideMove()
 			trace.bestslideline->normal, 1.0);
 
 	}
-	while (!TryMove(tmtrace, TVec(Origin.x + Velocity.x * host_frametime,
-		Origin.y + Velocity.y * host_frametime, Origin.z)));
+	while (!TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y + YMove,
+		Origin.z)));
 	unguard;
 }
 
@@ -2496,8 +2492,10 @@ IMPLEMENT_FUNCTION(VEntity, TestMobjZ)
 
 IMPLEMENT_FUNCTION(VEntity, SlideMove)
 {
+	P_GET_FLOAT(YMove);
+	P_GET_FLOAT(XMove);
 	P_GET_SELF;
-	Self->SlideMove();
+	Self->SlideMove(XMove, YMove);
 }
 
 IMPLEMENT_FUNCTION(VEntity, BounceWall)

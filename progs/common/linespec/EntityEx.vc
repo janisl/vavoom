@@ -744,7 +744,7 @@ final void XYMovement(float DeltaTime)
 			}
 			else
 			{
-				HitLine(&tmtrace);
+				HitLine(&tmtrace, StepXMove, StepYMove);
 			}
 			return;
 		}
@@ -821,7 +821,7 @@ final void ZMovement(float DeltaTime)
 //
 //==========================================================================
 
-final void HitLine(tmtrace_t* tmtrace)
+final void HitLine(tmtrace_t* tmtrace, float XMove, float YMove)
 {
 	if (bMissile)
 	{
@@ -869,7 +869,7 @@ final void HitLine(tmtrace_t* tmtrace)
 	else if (bSlide)
 	{
 		// try to slide along it
-		SlideMove();
+		SlideMove(XMove, YMove);
 	}
 	else
 	{

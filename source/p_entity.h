@@ -472,7 +472,7 @@ class VEntity : public VThinker
 	bool CheckRelPosition(tmtrace_t&, TVec);
 	bool TryMove(tmtrace_t&, TVec);
 	bool TestMobjZ(tztrace_t&, bool = false);
-	void SlideMove();
+	void SlideMove(float, float);
 	void BounceWall(float);
 	void UpdateVelocity();
 	void FakeZMovement(tztrace_t&);
