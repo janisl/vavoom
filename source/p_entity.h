@@ -77,7 +77,6 @@
 //
 //==========================================================================
 
-struct tztrace_t;
 struct tmtrace_t;
 
 enum
@@ -471,11 +470,11 @@ class VEntity : public VThinker
 	bool CheckPosition(TVec);
 	bool CheckRelPosition(tmtrace_t&, TVec);
 	bool TryMove(tmtrace_t&, TVec);
-	bool TestMobjZ(tztrace_t&, bool = false);
+	VEntity* TestMobjZ(const TVec&);
 	void SlideMove(float);
 	void BounceWall(float);
 	void UpdateVelocity();
-	void FakeZMovement(tztrace_t&);
+	TVec FakeZMovement();
 	VEntity *CheckOnmobj();
 	bool CheckSides(TVec);
 	void CheckDropOff(float&, float&);
@@ -487,12 +486,7 @@ private:
 	static bool PIT_CheckRelThing(void*, VEntity*);
 	static bool PIT_CheckRelLine(void*, line_t*);
 	static TVec ClipVelocity(const TVec&, const TVec&, float);
-	static bool PTR_SlideTraverse(void*, intercept_t*);
-	static void SlidePathTraverse(VLevel*, struct slidetrace_t&, float, float,
-		float);
-	static bool PTR_BounceTraverse(void*, intercept_t*);
-	static bool PIT_CheckOnmobjZ(void*, VEntity*);
-	static bool PIT_CrossLine(void*, line_t*);
+	void SlidePathTraverse(float&, line_t*&, float, float, float);
 
 	void CreateSecNodeList();
 
