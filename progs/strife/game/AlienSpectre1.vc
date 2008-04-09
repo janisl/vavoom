@@ -34,6 +34,9 @@ class AlienSpectre1 : Pawn
 
 final void A_AlienSpectreDeath()
 {
+	//	We need this so that Sigil is dropped.
+	A_NoBlocking();
+
 	if (!CheckBossDeath())
 	{
 		return;
