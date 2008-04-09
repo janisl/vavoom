@@ -1420,12 +1420,10 @@ void VEntity::SlidePathTraverse(float& BestSlideFrac, line_t*& BestSlideLine,
 				(open->bottom - Origin.z <= MaxStepHeight))	// not too big a step up
 			{
 				// this line doesn't block movement
-				continue;
-			}
-			if (open && (Origin.z < open->bottom))
-			{
 				// Check to make sure there's nothing in the way for the step up
-				if (!TestMobjZ(SlideOrg))
+				TVec CheckOrg = Origin;
+				CheckOrg.z = open->bottom;
+				if (!TestMobjZ(CheckOrg))
 				{
 					continue;
 				}
