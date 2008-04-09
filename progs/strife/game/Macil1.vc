@@ -26,26 +26,6 @@
 class Macil1 : Actor
 	__mobjinfo__(64);
 
-//==========================================================================
-//
-//	TakeSpecialDamage
-//
-//	Before you storm the castle, Macil is a god and unkillable. The effort
-// required to take the castle apparently drops him to mere godlike status.
-//
-//==========================================================================
-
-int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
-	name DmgType)
-{
-	if (Random() < PainChance)
-	{
-		SetState(FindState('Pain'));
-	}
-
-	return -1;
-}
-
 states
 {
 Spawn:
