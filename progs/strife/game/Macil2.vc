@@ -73,7 +73,8 @@ XDeath:
 	LEAD IJ 4
 	LEAD K 3
 	LEAD L 3 A_Fall
-	LEAD MNOPQRSTUVW 3
+	LEAD MNOPQRSTUV 3
+	LEAD W 3 A_MacilDeath
 	LEAD X -1
 	Stop
 }
