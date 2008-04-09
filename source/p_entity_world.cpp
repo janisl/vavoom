@@ -1488,10 +1488,11 @@ bool VEntity::PTR_SlideTraverse(void* arg, intercept_t* in)
 //
 //==========================================================================
 
-void VEntity::SlidePathTraverse(VLevel*, slidetrace_t& trace, float x, float y)
+void VEntity::SlidePathTraverse(VLevel*, slidetrace_t& trace, float x,
+	float y, float StepVelScale)
 {
 	trace.slideorg = TVec(x, y, trace.slidemo->Origin.z);
-	trace.slidedir = trace.slidemo->Velocity * host_frametime;
+	trace.slidedir = trace.slidemo->Velocity * StepVelScale;
 	intercept_t*	in;
 	for (VPathTraverse It(trace.slidemo, &in, x, y, x + trace.slidedir.x,
 		y + trace.slidedir.y, PT_ADDLINES); It.GetNext(); )
@@ -1513,7 +1514,7 @@ void VEntity::SlidePathTraverse(VLevel*, slidetrace_t& trace, float x, float y)
 //
 //==========================================================================
 
-void VEntity::SlideMove(float XMove, float YMove)
+void VEntity::SlideMove(float StepVelScale)
 {
 	guard(VEntity::SlideMove);
 	float leadx;
@@ -1529,6 +1530,8 @@ void VEntity::SlideMove(float XMove, float YMove)
 	trace.slidemo = this;
 	hitcount = 0;
 
+	float XMove = Velocity.x * StepVelScale;
+	float YMove = Velocity.y * StepVelScale;
 	do
 	{
 		if (++hitcount == 3)
@@ -1566,9 +1569,9 @@ void VEntity::SlideMove(float XMove, float YMove)
 
 		trace.bestslidefrac = 1.00001f;
 
-		SlidePathTraverse(XLevel, trace, leadx, leady);
-		SlidePathTraverse(XLevel, trace, trailx, leady);
-		SlidePathTraverse(XLevel, trace, leadx, traily);
+		SlidePathTraverse(XLevel, trace, leadx, leady, StepVelScale);
+		SlidePathTraverse(XLevel, trace, trailx, leady, StepVelScale);
+		SlidePathTraverse(XLevel, trace, leadx, traily, StepVelScale);
 
 		// move up to the wall
 		if (trace.bestslidefrac == 1.00001f)
@@ -1618,7 +1621,8 @@ void VEntity::SlideMove(float XMove, float YMove)
 		// clip the moves
 		Velocity = ClipVelocity(Velocity * trace.bestslidefrac,
 			trace.bestslideline->normal, 1.0);
-
+		XMove = Velocity.x * StepVelScale;
+		YMove = Velocity.y * StepVelScale;
 	}
 	while (!TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y + YMove,
 		Origin.z)));
@@ -2492,10 +2496,9 @@ IMPLEMENT_FUNCTION(VEntity, TestMobjZ)
 
 IMPLEMENT_FUNCTION(VEntity, SlideMove)
 {
-	P_GET_FLOAT(YMove);
-	P_GET_FLOAT(XMove);
+	P_GET_FLOAT(StepVelScale);
 	P_GET_SELF;
-	Self->SlideMove(XMove, YMove);
+	Self->SlideMove(StepVelScale);
 }
 
 IMPLEMENT_FUNCTION(VEntity, BounceWall)

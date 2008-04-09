@@ -472,7 +472,7 @@ class VEntity : public VThinker
 	bool CheckRelPosition(tmtrace_t&, TVec);
 	bool TryMove(tmtrace_t&, TVec);
 	bool TestMobjZ(tztrace_t&, bool = false);
-	void SlideMove(float, float);
+	void SlideMove(float);
 	void BounceWall(float);
 	void UpdateVelocity();
 	void FakeZMovement(tztrace_t&);
@@ -488,7 +488,8 @@ private:
 	static bool PIT_CheckRelLine(void*, line_t*);
 	static TVec ClipVelocity(const TVec&, const TVec&, float);
 	static bool PTR_SlideTraverse(void*, intercept_t*);
-	static void SlidePathTraverse(VLevel*, struct slidetrace_t&, float, float);
+	static void SlidePathTraverse(VLevel*, struct slidetrace_t&, float, float,
+		float);
 	static bool PTR_BounceTraverse(void*, intercept_t*);
 	static bool PIT_CheckOnmobjZ(void*, VEntity*);
 	static bool PIT_CrossLine(void*, line_t*);

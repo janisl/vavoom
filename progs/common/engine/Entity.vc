@@ -333,7 +333,7 @@ native final bool TryMove(TVec newPos);
 native final bool TryMoveEx(tmtrace_t* tmtrace, TVec newPos);
 native final bool TestMobjZ();
 
-native final void SlideMove(float XMove, float YMove);
+native final void SlideMove(float StepVelScale);
 native final void BounceWall(float overbounce);
 
 native final bool CheckWater();
