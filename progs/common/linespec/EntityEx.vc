@@ -256,6 +256,7 @@ bool bAlwaysRespawn;	// Always respawns, regardless of skill.
 bool bNeverRespawn;		// Never respawns, regardless of skill.
 bool bDontRip;			// Ripping projectiles explode when hitting this actor.
 bool bCanUseWalls;		// Can activate "use" specials.
+transient bool bInChase;// Used to prevent recursion in A_Chase.
 
 //  Params
 float			Speed;

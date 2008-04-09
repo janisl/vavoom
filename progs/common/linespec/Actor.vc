@@ -111,21 +111,48 @@ final void A_Look()
 
 	if (targ && targ.bShootable)
 	{
-		Target = targ;
-
-		if (bAmbush)
+		if (bFriendly && targ.bFriendly)
 		{
-			if (!CanSee(Target))
+			//	If we find a valid target here, the wandering logic should
+			// *not* be activated! If would cause the seestate to be set twice.
+			if (!LookForPlayers(bLookAllAround))
 			{
-				if (!LookForPlayers(false))
-					return;
+				// Let the actor wander around aimlessly looking for a fight
+				if (SeeState)
+				{
+					if (!bInChase)
+					{
+						SetState(SeeState);
+					}
+				}
+				else
+				{
+					A_Wander();
+				}
+			}
+		}
+		else
+		{
+			Target = targ;
+
+			if (bAmbush)
+			{
+				if (!CanSee(Target))
+				{
+					if (!LookForPlayers(bLookAllAround))
+					{
+						return;
+					}
+				}
 			}
 		}
 	}
 	else
 	{
 		if (!LookForPlayers(bLookAllAround))
+		{
 			return;
+		}
 	}
 
 	//	Go into chase state
@@ -293,6 +320,12 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	float		oldY;
 	int			oldFloor;
 
+	if (bInChase)
+	{
+		return;
+	}
+	bInChase = true;
+
 	//	Andy Baker's stealth monsters
 	if (bStealth)
 	{
@@ -364,6 +397,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 		if (LookForPlayers(true) && Target != Goal)
 		{
 			//	Got a new target.
+			bInChase = false;
 			return;
 		}
 		if (!Target)
@@ -377,6 +411,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 					{
 						A_Wander();
 					}
+					bInChase = false;
 					return;
 				}
 			}
@@ -384,6 +419,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			{
 				SetState(IdleState);
 				bInCombat = false;
+				bInChase = false;
 				return;
 			}
 		}
@@ -397,6 +433,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 		{
 			NewChaseDir();
 		}
+		bInChase = false;
 		return;
 	}
 
@@ -464,6 +501,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 				SetState(IdleState);
 			}
 			Goal = NewGoal;
+			bInChase = false;
 			return;
 		}
 	}
@@ -509,6 +547,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 				PlaySound(AttackSound, CHAN_WEAPON);
 			}
 			SetState(AMeleeState);
+			bInChase = false;
 			return;
 		}
 
@@ -521,6 +560,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 				{
 					SetState(AMissileState);
 					bJustAttacked = true;
+					bInChase = false;
 					return;
 				}
 			}
@@ -539,6 +579,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			if (GotNew)
 			{
 				//	Got a new target.
+				bInChase = false;
 				return;
 			}
 		}
@@ -575,6 +616,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 	{
 		PlayActiveSound();
 	}
+	bInChase = false;
 }
 
 //==========================================================================
