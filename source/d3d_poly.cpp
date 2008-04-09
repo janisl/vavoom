@@ -1093,6 +1093,8 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	}
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 
 	SetFade(Fade);
 
@@ -1154,6 +1156,8 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	RenderDevice->SetTransform(D3DTS_WORLD, &IdentityMatrix);
 	if (is_view_model)

@@ -1052,6 +1052,8 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	}
+	glAlphaFunc(GL_GREATER, 0.0);
+	glEnable(GL_ALPHA_TEST);
 
 	verts = (trivertx_t *)(framedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
@@ -1095,6 +1097,8 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
+	glAlphaFunc(GL_GREATER, 0.666);
+	glDisable(GL_ALPHA_TEST);
 
 	glPopMatrix();
 	if (is_view_model)
