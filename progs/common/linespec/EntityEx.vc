@@ -2893,7 +2893,8 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 	}
 	if (bIsPlayer)
 	{
-		Player.ViewOrg.z = Origin.z + PlayerEx(Player).ViewHeight;
+		Player.ViewOrg = Origin + vector(0.0, 0.0,
+			PlayerEx(Player).ViewHeight);
 		if (ResetPitch)
 		{
 			Angles.pitch = 0.0;
