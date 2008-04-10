@@ -93,9 +93,7 @@ void SetSpeech(EntityEx Speaker, int SpeechNum)
 		SpeakerName = "Person";
 	}
 
-	//	Split speach text.
-	SetFont('smallfont');
-	SpeechText = SplitTextWithNewlines(Speech->Text, 640 - 128);
+	SpeechText = Speech->Text;
 
 	//	Check for random conversation text.
 	if (!strcmp(substr(SpeechText, 0, 6), "RANDOM"))
@@ -107,12 +105,15 @@ void SetSpeech(EntityEx Speaker, int SpeechNum)
 		{
 			if (!strcmp(TempStr, RandomConversations[i].Name))
 			{
-				SpeechText = SplitTextWithNewlines(
-					RandomConversations[i].Texts[P_Random() % 10], 640 - 128);
+				SpeechText = RandomConversations[i].Texts[P_Random() % 10];
 				break;
 			}
 		}
 	}
+
+	//	Split speach text.
+	SetFont('smallfont');
+	SpeechText = SplitTextWithNewlines(SpeechText, 640 - 128);
 
 	for (i = 0; i < 5; i++)
 	{
