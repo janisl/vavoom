@@ -100,17 +100,17 @@ const vuint8 VDirectInputDevice::scan2key[256] =
 	'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', K_LSHIFT, '\\', 'z', 'x', 'c', 'v',
 	'b', 'n', 'm', ',', '.', '/', K_RSHIFT, K_PADMULTIPLE, K_LALT, ' ', K_CAPSLOCK, K_F1, K_F2, K_F3, K_F4, K_F5,
 	K_F6, K_F7, K_F8, K_F9, K_F10, K_NUMLOCK, K_SCROLLLOCK, K_PAD7, K_PAD8, K_PAD9, K_PADMINUS, K_PAD4, K_PAD5, K_PAD6, K_PADPLUS, K_PAD1,
-	K_PAD2, K_PAD3, K_PAD0, K_PADDOT, 84, 85, 86, K_F11, K_F12, 89, 90, 91, 92, 93, 94, 95,
-	96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111,
-	112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127,
-	128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
-	144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, K_PADENTER, K_RCTRL, 158, 159,
-	160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
-	176, 177, 178, 179, 180, K_PADDIVIDE, 182, K_PRINTSCRN, K_RALT, 185, 186, 187, 188, 189, 190, 191,
-	192, 193, 194, 195, 196, 197, 198, K_HOME, K_UPARROW, K_PAGEUP, 202, K_LEFTARROW, 204, K_RIGHTARROW, 206, K_END, 
-	K_DOWNARROW, K_PAGEDOWN, K_INSERT, K_DELETE, 212, 213, 214, 215, 216, 217, 218, K_LWIN, K_RWIN, K_MENU, 222, 223,
-	224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
-	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255
+	K_PAD2, K_PAD3, K_PAD0, K_PADDOT, 0, 0, 0, K_F11, K_F12, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, K_PADENTER, K_RCTRL, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, K_PADDIVIDE, 0, K_PRINTSCRN, K_RALT, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, K_HOME, K_UPARROW, K_PAGEUP, 0, K_LEFTARROW, 0, K_RIGHTARROW, 0, K_END, 
+	K_DOWNARROW, K_PAGEDOWN, K_INSERT, K_DELETE, 0, 0, 0, 0, 0, 0, 0, K_LWIN, K_RWIN, K_MENU, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 DIOBJECTDATAFORMAT VDirectInputDevice::rgodf_Keyboard[] =
@@ -680,7 +680,11 @@ void VDirectInputDevice::ReadKeyboard()
 	// Process the data.
 	for (size_t i = 0; i < NumItems; i++)
 	{
-		GInput->KeyEvent(scan2key[DevData[i].dwOfs], DevData[i].dwData & 0x80);
+		if (scan2key[DevData[i].dwOfs])
+		{
+			GInput->KeyEvent(scan2key[DevData[i].dwOfs],
+				!!(DevData[i].dwData & 0x80));
+		}
 	}
 	unguard;
 }
