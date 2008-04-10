@@ -503,8 +503,10 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.
 	int dist = 0;
-	if (origin_id && !LocalPlayerSound && Attenuation > 0)
+	if (origin_id && !LocalPlayerSound && Attenuation > 0 && cl)
+	{
 		dist = (int)(Length(origin - cl->ViewOrg) * Attenuation);
+	}
 	if (dist >= MaxSoundDist)
 	{
 		return; // sound is beyond the hearing range...
@@ -942,6 +944,11 @@ void VAudio::UpdateSfx()
 
 		//	Move sound
 		Channel[i].origin += Channel[i].velocity * host_frametime;
+
+		if (!cl)
+		{
+			continue;
+		}
 
 		int dist = (int)(Length(Channel[i].origin - cl->ViewOrg) *
 			Channel[i].Attenuation);
