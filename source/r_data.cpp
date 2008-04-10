@@ -1040,6 +1040,7 @@ static void ParseLightDef(VScriptParser* sc, int LightType)
 	L->Colour = 0xffffffff;
 	L->Radius = 0.0;
 	L->Radius2 = 0.0;
+	L->MinLight = 0.0;
 	L->Offset = TVec(0, 0, 0);
 
 	//	Parse light def.
