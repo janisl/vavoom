@@ -1561,8 +1561,6 @@ void Cheat_Gimme()
 	if (Cmd_CheckParm("artifacts"))
 	{
 		// All artifacts
-		int j;
-
 		foreach AllClasses(Inventory, Cls)
 		{
 			if (!Cls.default.bInvBar || !Cls.default.MaxAmount)
@@ -1575,9 +1573,14 @@ void Cheat_Gimme()
 				//	Abstract class.
 				continue;
 			}
-			if (MainGameInfo(Level.Game).shareware &&
-				(Cls == ArtiSuperHealth || Cls == ArtiTeleport))
+			if (ClassIsChildOf(Cls, PuzzleItem))
 			{
+				//	Not puzzle items.
+				continue;
+			}
+			if (!AreStateSpritesPresent(FindClassState(Cls, 'Spawn')))
+			{
+				//	From other game or not available in shareware.
 				continue;
 			}
 			Inventory Item = Level.Spawn(Cls,,,, false);
@@ -1587,7 +1590,7 @@ void Cheat_Gimme()
 				Item.Destroy();
 			}
 		}
-		cprint("YOU GOT IT");
+		cprint("ALL ARTIFACTS");
 	}
 /*	int i;
 	int j;

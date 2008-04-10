@@ -1763,13 +1763,12 @@ void Cheat_Gimme()
 	}
 	if (Cmd_CheckParm("artifacts"))
 	{
+		// All artifacts
 		foreach AllClasses(Inventory, Cls)
 		{
-			int j;
-
-			if (!Cls.default.bInvBar)
+			if (!Cls.default.bInvBar || !Cls.default.MaxAmount)
 			{
-				//	Not an inventory item.
+				//	Not an artifact
 				continue;
 			}
 			if (!FindClassState(Cls, 'Spawn'))
@@ -1780,6 +1779,11 @@ void Cheat_Gimme()
 			if (ClassIsChildOf(Cls, PuzzleItem))
 			{
 				//	Not puzzle items.
+				continue;
+			}
+			if (!AreStateSpritesPresent(FindClassState(Cls, 'Spawn')))
+			{
+				//	From other game or not available in shareware.
 				continue;
 			}
 			Inv = Level.Spawn(Cls,,,, false);
