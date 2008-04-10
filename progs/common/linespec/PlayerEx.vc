@@ -429,7 +429,8 @@ final void PlayerInSpecialSector(float deltaTime)
 	float speed;
 	float finean;
 
-	if (MO.Origin.z != GetPlanePointZ(&MO.Sector->floor, MO.Origin))
+	if (MO.Origin.z != GetPlanePointZ(&MO.Sector->floor, MO.Origin) &&
+		!MO.WaterLevel)
 	{
 		// Player is not touching the floor
 		return;
