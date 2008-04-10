@@ -707,6 +707,14 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 #endif
 			break;
 
+		case CMD_Line:
+			{
+				line_t* Line = &Level->Lines[Msg.ReadInt(Level->NumLines)];
+				if (Msg.ReadBit())
+					Msg << Line->alpha;
+			}
+			break;
+
 		case CMD_CamTex:
 			{
 				int i = Msg.ReadInt(0xff);
@@ -789,6 +797,9 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				Tr->BuildPlayerTrans(TrStart, TrEnd, Col);
 			}
 			break;
+
+		default:
+			Sys_Error("Invalid level update command %d", Cmd);
 		}
 	}
 	unguard;
