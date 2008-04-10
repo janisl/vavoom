@@ -715,15 +715,20 @@ final void XYMovement(float DeltaTime)
 	int Steps = 1;
 	float XStep = fabs(xmove);
 	float YStep = fabs(ymove);
-	if (XStep > MAXMOVESTEP || YStep > MAXMOVESTEP)
+	float MaxStep = Radius - 1.0;
+	if (MaxStep <= 0.0)
+	{
+		MaxStep = MAXMOVESTEP;
+	}
+	if (XStep > MaxStep || YStep > MaxStep)
 	{
 		if (XStep > YStep)
 		{
-			Steps = ftoi(XStep / MAXMOVESTEP) + 1;
+			Steps = ftoi(XStep / MaxStep) + 1;
 		}
 		else
 		{
-			Steps = ftoi(YStep / MAXMOVESTEP) + 1;
+			Steps = ftoi(YStep / MaxStep) + 1;
 		}
 	}
 	float StepXMove = xmove / itof(Steps);
