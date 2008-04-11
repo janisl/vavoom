@@ -1452,8 +1452,8 @@ COMMAND(MapList)
 		if (W_CheckNumForName(MapInfo[i].LumpName) >= 0)
 		{
 			GCon->Log(VStr(MapInfo[i].LumpName) + " - " +
-				(MapInfo[i].Flags & MAPINFOF_LookupName) ?
-				GLanguage[*MapInfo[i].Name] : MapInfo[i].Name);
+				((MapInfo[i].Flags & MAPINFOF_LookupName) ?
+				GLanguage[*MapInfo[i].Name] : MapInfo[i].Name));
 		}
 	}
 	unguard;
