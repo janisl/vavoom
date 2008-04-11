@@ -5421,10 +5421,14 @@ bool Touch(Entity InOther)
 
 	//	For Korax Arena
 	if (Other.IsTouched(self))
+	{
 		return !Other.bSolid && !Other.bSpecial && !Other.bShootable;
-		
+	}
+	
 	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+	{
 		return true;
+	}
 
 	// check for skulls slamming into things
 	if (bSkullFly && Health > 0)
@@ -5555,8 +5559,8 @@ bool Touch(Entity InOther)
 			bSolid;
 
 	// check for special pickup
-	if (Other.bSpecial &&
-		Other.Origin.z < Origin.z + Height - MaxStepHeight)
+	if (Other.bSpecial/* &&
+		Other.Origin.z < Origin.z + Height - MaxStepHeight*/)
 	{
 		if (Other.bDehackedSpecial)
 		{
