@@ -1381,7 +1381,7 @@ void Cheat_Gimme()
 		i1 |= GIMME_ARMOR2;
 
 	// Weapons
-	if (Cmd_CheckParm("Weapons"))
+	if (Cmd_CheckParm("Weapons") || Cmd_CheckParm("All"))
 	{
 		foreach AllClasses(Weapon, Cls)
 		{
@@ -1401,7 +1401,7 @@ void Cheat_Gimme()
 	}
 
 	// Backpack
-	if (Cmd_CheckParm("Backpack"))
+	if (Cmd_CheckParm("Backpack") || Cmd_CheckParm("All"))
 	{
 		BackpackItem Pack = Level.Spawn(Backpack,,,, false);
 		Pack.bDropped = true;
@@ -1412,7 +1412,7 @@ void Cheat_Gimme()
 	}
 
 	// Ammo
-	if (Cmd_CheckParm("Ammo"))
+	if (Cmd_CheckParm("Ammo") || Cmd_CheckParm("All"))
 	{
 		foreach AllClasses(Ammo, Cls)
 		{
@@ -1439,7 +1439,7 @@ void Cheat_Gimme()
 	}
 
 	// Keys
-	if (Cmd_CheckParm("Keys"))
+	if (Cmd_CheckParm("Keys") || Cmd_CheckParm("All"))
 	{
 		foreach AllClasses(Key, Cls)
 		{
