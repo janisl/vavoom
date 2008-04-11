@@ -1086,6 +1086,13 @@ void VAcsObject::Serialise(VStream& Strm)
 	{
 		Strm << STRM_INDEX(MapVarStore[i]);
 	}
+	for (int i = 0; i < NumArrays; i++)
+	{
+		for (int j = 0; j < ArrayStore[i].Size; j++)
+		{
+			Strm << STRM_INDEX(ArrayStore[i].Data[j]);
+		}
+	}
 	unguard;
 }
 
