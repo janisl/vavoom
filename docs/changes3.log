@@ -3188,3 +3188,79 @@
 ******************************************************************************
                             VERSION 1.27
 ******************************************************************************
+
+03.04.2008
+  I added state pointer check when rendering a thing.
+  I changed continuous ambient sounds to be played looped and checked less
+ frequently.
+04.04.2008
+  I changed ThingCount to skip dead monsters in all cases and to also count
+ instances of replacement actor class.
+05.04.2008
+  I changed DECORATE states to be allowed to be followd by multiple goto/loop/
+ stop/wait commands. The last one takes effect. I also removed check for none
+ literal.
+  I added lower cased name to the class and added method to search by it. It
+ uses hash table to sped it up. I then changed all ACS p-codes that use actor
+ class names to be case in-sensitive, i.e. names are lower-cased so the fast
+ search by lower-cased class name can be used. I also added caching of ACS
+ strings as lower cased names.
+  I fixed initial frame after level change being rendered from wrong origin.
+  I fixed script fade effects not being cleared on level change.
+  I changed sound origin IDs to use origin type ID in it's high byte. I renamed
+ NetID in Entity class to SoundOriginID since that's the only thing it's used
+ for now. The way sound origin ID was calculated was a leftover from old net
+ code and was a reason for major slowdown on large levels when spawning things.
+ I changed it to use a simple counter.
+06.04.2008
+  I added hash lookup for texture lookups by name.
+  I split loops in GroupLines so that array of lines is processd only once and
+ not once for each sector. On large maps this gives big improvement in reducing
+ map load time.
+  I fixed crashes when weapon was taken away by ACS script.
+07.04.2008
+  I fixed activator of ACS script not being cleared if it was destroyed.
+  I fixed monster infighting not working.
+  When teleporting with destination z coordinate being ONFLOORZ, the z value
+ must be calculated before teleport move so that Z checks work correctly.
+  I fixed Heretic and Hexen powerup icons not spinning in multiplayer.
+  I fixed HUD messages wrapping against default HUD size, not the actual one.
+08.04.2008
+  MikMod library expects EOF method to return true only it it tried to read
+ beyond end of file, like C library method feof does. Returning AtEnd caused a
+ crash with some mods (like some in the Zen Dynamics).
+  I fixed Sigil pickups in net games not giving right number of pieces.
+  I fixed crash when dying without having active weapon.
+  I fixed strafing at run speed even if not running and fixed mouse movements
+ not being affected by run state.
+  Splitting of movement into 2 steps for very fast movement speeds was done
+ only for positive values, if it was in negative direction, it wasn't split.
+ I changed it to split it in even more steps if it's very fast.
+09.04.2008
+  SlideMove was using full movement step values which with high velocities
+ could cause actor to end up outside the level. I inlined some of the callback
+ methods. I also fixed sliding against two sided lines.
+  I added alpha testing when drawing models.
+  I fixed second Macil being unkillable and not spawning spectre when killed.
+  I fixe friendly monsters attacking you if you made noise.
+  I fixed Strife's alien spectres not giving you a Sigil piece when killed.
+  I fixed MapList not printing lump name.
+10.04.2008
+  I fixed Strife's random conversations.
+  MinLight of dynamic light definition wasn't defined causing bad effects in
+ some cases.
+  I changed input drivers to ignore unknown keys.
+  I fixed "gimme artifacts" cheat.
+  I fixed teleport sound being unhearable when teleporting long distances.
+  I changed maximal movement step to be radius dependant.
+  Sliding against two-sided lines should do z check only if actor will try to
+ step up.
+  I fixed crashes in sound playback when cl becomes NULL.
+  I fixed network replication of lines was not being handled on client side.
+  I changed sector special to be also applied while player is in water.
+11.04.2008
+  I fixed problem not being able to pick up items at certain height.
+  I changed "gimme all" cheat in Doom to also include weapons, ammo, backpack
+ and keys.
+  In Strife I changed finale to show credits at the end.
+  I added missing saving of ACS map arrays.
