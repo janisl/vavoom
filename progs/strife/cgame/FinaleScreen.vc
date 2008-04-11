@@ -29,6 +29,7 @@ int				FinaleType;
 int				FinalePage;
 int				FinalePic;
 float			FinaleTimer;
+int				FinaleStage;
 
 //==========================================================================
 //
@@ -39,6 +40,7 @@ float			FinaleTimer;
 void StartFinale(name AFinaleType)
 {
 	FinalePage = FinaleType * 10;
+	FinaleStage = 0;
 	F_PlayPage();
 }
 
@@ -50,10 +52,13 @@ void StartFinale(name AFinaleType)
 
 void Tick(float DeltaTime)
 {
-	FinaleTimer -= DeltaTime;
-	if (FinaleTimer <= 0.0)
+	if (FinaleStage == 0)
 	{
-		F_PlayPage();
+		FinaleTimer -= DeltaTime;
+		if (FinaleTimer <= 0.0)
+		{
+			F_PlayPage();
+		}
 	}
 }
 
@@ -151,6 +156,12 @@ void F_PlayPage()
 		LocalSound('svox/ss603a');
 		FinaleTimer = 9.0;
 		FinalePage = -1;
+		break;
+
+	case -1:
+		CmdBuf_AddText("music loop d_fast\n");
+		FinalePic = R_RegisterPic('credit');
+		FinaleStage = 1;
 		break;
 	}
 }
