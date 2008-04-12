@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.27
+                                                  Version 1.27.1
 
 Contents:
     0. Disclaimer
@@ -1083,6 +1083,12 @@ Version 1.27
 * Switched Direct3D renderer to use DirectX 9.
 * Fixed screen colour of invulnerability powerups.
 * Many bug fixes.
+
+==============================================================================
+Version 1.27.1
+==============================================================================
+
+* A lots of bug fixes.
 
 *****************************************************************************
 8. Licensing
