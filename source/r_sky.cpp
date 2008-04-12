@@ -220,6 +220,7 @@ void VRenderLevel::InitOldSky()
 	skybot = skytop - skyheight;
 	int skyh = (int)skytop;
 
+	bool flip = true;
 	for (j = 0; j < VDIVS; j++)
 	{
 		float va0 = 90.0 - j * (180.0 / VDIVS);
@@ -265,10 +266,31 @@ float tk = skyh / RADIUS;
 				s.texinfo.saxis);
 			s.texinfo.toffs = skyh;
 
-			float mins = DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1],
-				s.texinfo.saxis) + s.texinfo.soffs;
-			float maxs = DotProduct(s.surf.verts[j < VDIVS / 2 ? 3 : 2],
-				s.texinfo.saxis) + s.texinfo.soffs;
+			s.columnOffset1 = s.columnOffset2 = -i * (1024 / HDIVS) + 128;
+
+			float mins;
+			float maxs;
+
+			if (flip)
+			{
+				s.texinfo.saxis = -s.texinfo.saxis;
+				s.texinfo.soffs = -s.texinfo.soffs;
+				s.columnOffset1 = -s.columnOffset1;
+				s.columnOffset2 = -s.columnOffset2;
+
+				mins = DotProduct(s.surf.verts[j < VDIVS / 2 ? 3 : 2],
+					s.texinfo.saxis) + s.texinfo.soffs;
+				maxs = DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1],
+					s.texinfo.saxis) + s.texinfo.soffs;
+			}
+			else
+			{
+				mins = DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1],
+					s.texinfo.saxis) + s.texinfo.soffs;
+				maxs = DotProduct(s.surf.verts[j < VDIVS / 2 ? 3 : 2],
+					s.texinfo.saxis) + s.texinfo.soffs;
+			}
+
 			int bmins = (int)floor(mins / 16);
 			int bmaxs = (int)ceil(maxs / 16);
 			s.surf.texturemins[0] = bmins * 16;
@@ -281,8 +303,6 @@ float tk = skyh / RADIUS;
 			s.surf.texturemins[1] = bmins * 16;
 			s.surf.extents[1] = (bmaxs - bmins) * 16;
 			//s.surf.extents[1] = skyh;
-
-			s.columnOffset1 = s.columnOffset2 = -i * (1024 / HDIVS);
 		}
 	}
 
