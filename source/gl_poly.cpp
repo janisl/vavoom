@@ -809,3 +809,86 @@ void VOpenGLDrawer::EndParticles()
 	}
 	unguard;
 }
+
+//==========================================================================
+//
+//	VOpenGLDrawer::StartPortal
+//
+//==========================================================================
+
+bool VOpenGLDrawer::StartPortal(VPortal* Portal)
+{
+	guard(VOpenGLDrawer::StartPortal);
+	//	Disable drawing
+	glDisable(GL_TEXTURE_2D);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDepthMask(GL_FALSE);
+
+	//	Set up stencil test.
+	if (!PortalDepth)
+	{
+		glEnable(GL_STENCIL_TEST);
+	}
+	glStencilFunc(GL_EQUAL, PortalDepth, ~0);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+
+	//	Mark the portal area.
+	DrawPortalArea(Portal);
+
+	//	Enable drawing.
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_TEXTURE_2D);
+
+	//	Set up stencil test for portal
+	glStencilFunc(GL_EQUAL, PortalDepth + 1, ~0);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	PortalDepth++;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawPortalArea
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawPortalArea(VPortal* Portal)
+{
+	guard(VOpenGLDrawer::DrawPortalArea);
+	for (int i = 0; i < Portal->Surfs.Num(); i++)
+	{
+		const surface_t* Surf = Portal->Surfs[i];
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < Surf->count; i++)
+		{
+			glVertex(Surf->verts[i]);
+		}
+		glEnd();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::EndPortal
+//
+//==========================================================================
+
+void VOpenGLDrawer::EndPortal(VPortal* Portal)
+{
+	//	Draw proper z-buffer for the portal area.
+	glDisable(GL_TEXTURE_2D);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	DrawPortalArea(Portal);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_TEXTURE_2D);
+
+	PortalDepth--;
+	if (!PortalDepth)
+	{
+		glDisable(GL_STENCIL_TEST);
+	}
+}

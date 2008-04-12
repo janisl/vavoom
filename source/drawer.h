@@ -25,6 +25,9 @@
 
 struct surface_t;
 struct surfcache_t;
+struct VModel;
+struct mmdl_t;
+class VPortal;
 
 struct particle_t
 {
@@ -54,9 +57,6 @@ struct refdef_t
 	bool		DrawCamera;
 };
 
-struct VModel;
-struct mmdl_t;
-
 class VRenderLevelDrawer : public VRenderLevelPublic
 {
 public:
@@ -66,6 +66,11 @@ public:
 class VDrawer
 {
 public:
+	bool			HasStencil;
+
+	VDrawer()
+	: HasStencil(false)
+	{}
 	virtual ~VDrawer()
 	{}
 
@@ -105,6 +110,8 @@ public:
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, VTexture*, VTextureTranslation*, int,
 		vuint32, vuint32, float, bool, bool) = 0;
+	virtual bool StartPortal(VPortal*) = 0;
+	virtual void EndPortal(VPortal*) = 0;
 
 	//	Particles
 	virtual void StartParticles() = 0;

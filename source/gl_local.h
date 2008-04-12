@@ -116,6 +116,8 @@ public:
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		mmdl_t*, int, VTexture*, VTextureTranslation*, int, vuint32, vuint32,
 		float, bool, bool);
+	bool StartPortal(VPortal*);
+	void EndPortal(VPortal*);
 
 	//	Particles
 	void StartParticles();
@@ -162,6 +164,8 @@ protected:
 	GLenum		ClampToEdge;
 	GLfloat		max_anisotropy;
 
+	int			PortalDepth;
+
 	//
 	//	Console variables
 	//
@@ -191,6 +195,8 @@ protected:
 	void GenerateTexture(VTexture*, GLuint*, VTextureTranslation*, int);
 	void UploadTexture8(int, int, const vuint8*, const rgba_t*);
 	void UploadTexture(int, int, const rgba_t*);
+
+	void DrawPortalArea(VPortal*);
 
 	bool				mtexable;
 	MultiTexCoord2f_t	p_MultiTexCoord2f;

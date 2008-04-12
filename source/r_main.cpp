@@ -185,6 +185,7 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 , Particles(0)
 , ActiveParticles(0)
 , FreeParticles(0)
+, SkyPortal(this)
 {
 	guard(VRenderLevel::VRenderLevel);
 	r_oldviewleaf = NULL;
@@ -1302,4 +1303,25 @@ void V_Shutdown()
 	CachedTranslations.Clear();
 	R_FreeSkyboxData();
 	unguard;
+}
+
+//==========================================================================
+//
+//	VPortal::VPortal
+//
+//==========================================================================
+
+VPortal::VPortal(class VRenderLevel* ARLev)
+: RLev(ARLev)
+{
+}
+
+//==========================================================================
+//
+//	VPortal::~VPortal
+//
+//==========================================================================
+
+VPortal::~VPortal()
+{
 }

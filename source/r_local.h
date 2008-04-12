@@ -131,9 +131,20 @@ struct fakefloor_t
 	sec_params_t	params;
 };
 
+class VSkyPortal : public VPortal
+{
+public:
+	VSkyPortal(class VRenderLevel* ARLev)
+	: VPortal(ARLev)
+	{}
+	void DrawContents();
+};
+
 class VRenderLevel : public VRenderLevelDrawer
 {
 private:
+	friend class VSkyPortal;
+
 	struct skysurface_t : surface_t
 	{
 		TVec			__verts[3];
@@ -250,6 +261,7 @@ private:
 	vuint8*			BspVis;
 	int				FrustumIndexes[4][6];
 	bool			SkyIsVisible;
+	VSkyPortal		SkyPortal;
 
 	trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 
@@ -305,6 +317,7 @@ private:
 	void AnimateSky(float);
 	void DoLightningFlash();
 	void DrawSky();
+	void DrawSkyPortal();
 
 	//	Light methods
 	static void CalcMinMaxs(surface_t*);

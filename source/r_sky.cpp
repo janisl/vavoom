@@ -719,3 +719,45 @@ void VRenderLevel::DrawSky()
 	Drawer->EndSky();
 	unguard;
 }
+
+//==========================================================================
+//
+//	VRenderLevel::DrawSkyPortal
+//
+//==========================================================================
+
+void VRenderLevel::DrawSkyPortal()
+{
+	guard(VRenderLevel::DrawSkyPortal);
+	if (!Drawer->StartPortal(&SkyPortal))
+	{
+		//	All portal polygons are clipped away.
+		return;
+	}
+	SkyPortal.DrawContents();
+	Drawer->EndPortal(&SkyPortal);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSkyPortal::DrawContents
+//
+//==========================================================================
+
+void VSkyPortal::DrawContents()
+{
+	guard(VSkyPortal::DrawContents);
+	RLev->InitSky();
+
+	Drawer->BeginSky();
+	for (int i = 0; i < RLev->NumSkySurfs; i++)
+	{
+		Drawer->DrawSkyPolygon(&RLev->sky[i].surf, RLev->bIsSkyBox,
+			GTextureManager(RLev->sky[i].texture1), RLev->sky[i].columnOffset1,
+			GTextureManager(RLev->sky[i].texture2), RLev->sky[i].columnOffset2,
+			RLev->ColourMap);
+	}
+	Drawer->EndSky();
+	unguard;
+}

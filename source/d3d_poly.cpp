@@ -860,3 +860,24 @@ void VDirect3DDrawer::EndParticles()
 	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
 	unguard;
 }
+
+//==========================================================================
+//
+//	VDirect3DDrawer::StartPortal
+//
+//==========================================================================
+
+bool VDirect3DDrawer::StartPortal(VPortal*)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VDirect3DDrawer::EndPortal
+//
+//==========================================================================
+
+void VDirect3DDrawer::EndPortal(VPortal*)
+{
+}

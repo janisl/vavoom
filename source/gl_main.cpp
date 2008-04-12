@@ -166,6 +166,10 @@ void VOpenGLDrawer::InitResolution()
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup
+	if (HasStencil)
+	{
+		glClearStencil(0);
+	}
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	Update();
@@ -335,7 +339,11 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	glViewport(rd->x, ScreenHeight - rd->height - rd->y, rd->width, rd->height);
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	
+	if (HasStencil)
+	{
+		glClear(GL_STENCIL_BUFFER_BIT);
+	}
+
 	glMatrixMode(GL_PROJECTION);		// Select The Projection Matrix
 	glLoadIdentity();					// Reset The Projection Matrix
 
@@ -381,6 +389,7 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;
 	SkyPortalsTail = NULL;
+	PortalDepth = 0;
 	cacheframecount++;
 	unguard;
 }

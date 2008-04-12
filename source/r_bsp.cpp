@@ -106,7 +106,14 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	if (texinfo->Tex == GTextureManager[skyflatnum])
 	{
 		SkyIsVisible = true;
-		Drawer->DrawSkyPortal(surfs, clipflags);
+		if (Drawer->HasStencil)
+		{
+			SkyPortal.Surfs.Append(surfs);
+		}
+		else
+		{
+			Drawer->DrawSkyPortal(surfs, clipflags);
+		}
 		return;
 	}
 
@@ -427,14 +434,20 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 	memset(BspVis, 0, VisSize);
 
 	SkyIsVisible = false;
+	SkyPortal.Surfs.Clear();
 
 	RenderBSPNode(Level->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
 
-	if (SkyIsVisible)
+	if (SkyIsVisible && !Drawer->HasStencil)
 	{
 		DrawSky();
 	}
 
 	Drawer->WorldDrawing();
+
+	if (SkyIsVisible && Drawer->HasStencil)
+	{
+		DrawSkyPortal();
+	}
 	unguard;
 }

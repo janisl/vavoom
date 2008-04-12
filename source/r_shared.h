@@ -114,6 +114,20 @@ public:
 	VTexture* GetHighResolutionTexture();
 };
 
+//
+//	Base class for portals.
+//
+class VPortal
+{
+public:
+	class VRenderLevel*		RLev;
+	TArray<surface_t*>		Surfs;
+
+	VPortal(class VRenderLevel* ARLev);
+	virtual ~VPortal();
+	virtual void DrawContents() = 0;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void R_DrawViewBorder();

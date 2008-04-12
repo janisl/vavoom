@@ -115,9 +115,24 @@ bool VSdlOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		flags |= SDL_FULLSCREEN;
 	}
 
+	HasStencil = true;
+	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 	hw_screen = SDL_SetVideoMode(Width, Height, BPP, flags);
-	if (hw_screen == NULL)
-		return false;
+	if (!hw_screen)
+	{
+		//	Try without stencil.
+		HasStencil = false;
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 0);
+		hw_screen = SDL_SetVideoMode(Width, Height, BPP, flags);
+		if (hw_screen == NULL)
+		{
+			return false;
+		}
+	}
+	if (HasStencil)
+	{
+		GCon->Logf(NAME_Init, "Stencil buffer available");
+	}
 
 	// Everything is fine, set some globals and finish
 	ScreenWidth = Width;

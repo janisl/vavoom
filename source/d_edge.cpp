@@ -1108,3 +1108,24 @@ void VSoftwareDrawer::WorldDrawing()
 		GCon->Logf(NAME_Dev, "Out of %d edges", outofedges);
 	unguard;
 }
+
+//==========================================================================
+//
+//	VSoftwareDrawer::StartPortal
+//
+//==========================================================================
+
+bool VSoftwareDrawer::StartPortal(VPortal*)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::EndPortal
+//
+//==========================================================================
+
+void VSoftwareDrawer::EndPortal(VPortal*)
+{
+}
