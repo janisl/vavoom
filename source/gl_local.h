@@ -130,7 +130,7 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(VTexture*, int);
+	void PrecacheTexture(VTexture*);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
@@ -240,6 +240,7 @@ protected:
 	void FlushTextures();
 	void DeleteTextures();
 	void FlushTexture(VTexture*);
+	void SetTexture(VTexture*, int);
 	void SetSpriteLump(VTexture*, VTextureTranslation*, int);
 	void SetPic(VTexture*, VTextureTranslation*, int);
 	void GenerateTexture(VTexture*, GLuint*, VTextureTranslation*, int);

@@ -1000,7 +1000,7 @@ void VRenderLevel::PrecacheLevel()
 	{
 		if (texturepresent[i])
 		{
-			Drawer->SetTexture(GTextureManager[i], 0);
+			Drawer->PrecacheTexture(GTextureManager[i]);
 		}
 	}
 

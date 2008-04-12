@@ -105,8 +105,6 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mi
 void VDirect3DDrawer::InitTextures()
 {
 	guard(VDirect3DDrawer::InitTextures);
-	//	Lightmaps, seperate from other surfaces so CreateSurface doesn't
-	// release them
 	light_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 	add_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 	unguard;
@@ -162,6 +160,19 @@ void VDirect3DDrawer::FlushTexture(VTexture* Tex)
 		SAFE_RELEASE_TEXTURE(Tex->DriverTranslated[j].Data);
 	}
 	Tex->DriverTranslated.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+// 	VDirect3DDrawer::PrecacheTexture
+//
+//==========================================================================
+
+void VDirect3DDrawer::PrecacheTexture(VTexture* Tex)
+{
+	guard(VDirect3DDrawer::PrecacheTexture);
+	SetTexture(Tex, 0);
 	unguard;
 }
 

@@ -179,7 +179,7 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(VTexture*, int);
+	void PrecacheTexture(VTexture*);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
@@ -226,6 +226,7 @@ private:
 	void FlushTexture(VTexture*);
 	static int ToPowerOf2(int);
 	LPDIRECT3DTEXTURE9 CreateSurface(int, int, int, bool);
+	void SetTexture(VTexture*, int);
 	void SetSpriteLump(VTexture*, VTextureTranslation*, int);
 	void SetPic(VTexture*, VTextureTranslation*, int);
 	void GenerateTexture(VTexture*, void**, VTextureTranslation*, int);

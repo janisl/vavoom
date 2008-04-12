@@ -90,7 +90,7 @@ public:
 
 	//	Texture stuff
 	virtual void InitTextures() = 0;
-	virtual void SetTexture(VTexture*, int) = 0;
+	virtual void PrecacheTexture(VTexture*) = 0;
 
 	//	Polygon drawing
 	virtual void DrawPolygon(surface_t*, int) = 0;

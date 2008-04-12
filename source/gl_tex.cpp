@@ -184,6 +184,19 @@ int VOpenGLDrawer::ToPowerOf2(int val)
 
 //==========================================================================
 //
+// 	VOpenGLDrawer::PrecacheTexture
+//
+//==========================================================================
+
+void VOpenGLDrawer::PrecacheTexture(VTexture* Tex)
+{
+	guard(VOpenGLDrawer::PrecacheTexture);
+	SetTexture(Tex, 0);
+	unguard;
+}
+
+//==========================================================================
+//
 // 	VOpenGLDrawer::SetTexture
 //
 //==========================================================================

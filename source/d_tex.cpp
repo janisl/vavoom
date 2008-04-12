@@ -128,6 +128,19 @@ void VSoftwareDrawer::FlushTexture(VTexture* Tex)
 
 //==========================================================================
 //
+// 	VSoftwareDrawer::PrecacheTexture
+//
+//==========================================================================
+
+void VSoftwareDrawer::PrecacheTexture(VTexture* Tex)
+{
+	guard(VSoftwareDrawer::PrecacheTexture);
+	SetTexture(Tex, 0);
+	unguard;
+}
+
+//==========================================================================
+//
 // 	VSoftwareDrawer::SetTexture
 //
 //==========================================================================

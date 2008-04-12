@@ -177,7 +177,7 @@ public:
 
 	//	Texture stuff
 	void InitTextures();
-	void SetTexture(VTexture*, int);
+	void PrecacheTexture(VTexture*);
 
 	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
@@ -236,6 +236,7 @@ protected:
 	//	Textures.
 	void FlushTextureCaches();
 	void FlushTexture(VTexture*);
+	void SetTexture(VTexture*, int);
 	void SetSpriteLump(VTexture*, vuint32, VTextureTranslation*, int);
 	vuint8* SetPic(VTexture*, VTextureTranslation*, int);
 	void GenerateTexture(VTexture*, void*&, int);
