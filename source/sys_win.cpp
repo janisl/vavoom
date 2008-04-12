@@ -40,7 +40,7 @@
 #define DIRECTINPUT_VERSION		0x0500
 #define DIRECTSOUND_VERSION		0x0700
 #include <dinput.h>
-#include <d3d.h>
+#include <ddraw.h>
 #include <dsound.h>
 #include "eax.h"
 
