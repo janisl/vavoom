@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="vlaunch"
 	ProjectGUID="{6E511081-6C06-426C-A9D2-7C45D046137E}"
 	RootNamespace="minimal"
@@ -810,8 +810,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\vc_mswd"
-			IntermediateDirectory=".\vc_mswd\minimal"
+			OutputDirectory=".\debug"
+			IntermediateDirectory=".\debug\vlaunch"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -844,17 +844,17 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;.\..\..\..\wxWidgets-2.8.4\lib\vc_lib\mswd&quot;;&quot;.\..\..\..\wxWidgets-2.8.4\include&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH"
-				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				RuntimeTypeInfo="true"
-				PrecompiledHeaderFile=".\vc_mswd\minimal/minimal.pch"
-				AssemblerListingLocation=".\vc_mswd\minimal/"
-				ObjectFile=".\vc_mswd\minimal/"
-				ProgramDataBaseFileName="vc_mswd\minimal.pdb"
-				WarningLevel="4"
+				PrecompiledHeaderFile=".\debug\vlaunch/vlaunch.pch"
+				AssemblerListingLocation=".\debug\vlaunch/"
+				ObjectFile=".\debug\vlaunch/"
+				ProgramDataBaseFileName=".\debug\vlaunch.pdb"
+				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="3"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -871,12 +871,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw28d_core.lib wxbase28d.lib wxtiffd.lib wxjpegd.lib wxpngd.lib wxzlibd.lib wxregexd.lib wxexpatd.lib winmm.lib comctl32.lib rpcrt4.lib wsock32.lib odbc32.lib"
-				OutputFile="vc_mswd\minimal.exe"
+				OutputFile=".\debug\vlaunch.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\wxWidgets-2.8.4\lib\vc_lib"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile=".\vc_mswd/minimal.pdb"
+				ProgramDatabaseFile=".\debug/vlaunch.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -1206,8 +1206,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\vc_msw"
-			IntermediateDirectory=".\vc_msw\minimal"
+			OutputDirectory=".\release"
+			IntermediateDirectory=".\release\vlaunch"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -1237,20 +1237,22 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHsc "
-				Optimization="2"
-				InlineFunctionExpansion="1"
+				Optimization="3"
+				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="&quot;.\..\..\..\wxWidgets-2.8.4\lib\vc_lib\msw&quot;;&quot;.\..\..\..\wxWidgets-2.8.4\include&quot;"
 				PreprocessorDefinitions="WIN32;__WXMSW__;_WINDOWS;NOPCH"
 				StringPooling="true"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
 				RuntimeTypeInfo="true"
-				PrecompiledHeaderFile=".\vc_msw\minimal/minimal.pch"
-				AssemblerListingLocation=".\vc_msw\minimal/"
-				ObjectFile=".\vc_msw\minimal/"
-				ProgramDataBaseFileName="vc_msw\minimal.pdb"
-				WarningLevel="4"
+				PrecompiledHeaderFile=".\release\vlaunch/vlaunch.pch"
+				AssemblerListingLocation=".\release\vlaunch/"
+				ObjectFile=".\release\vlaunch/"
+				ProgramDataBaseFileName=".\release\vlaunch.pdb"
+				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="1"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -1267,7 +1269,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="wxmsw28_core.lib wxbase28.lib wxtiff.lib wxjpeg.lib wxpng.lib wxzlib.lib wxregex.lib wxexpat.lib winmm.lib comctl32.lib rpcrt4.lib wsock32.lib odbc32.lib"
-				OutputFile="vc_msw\minimal.exe"
+				OutputFile=".\release\vlaunch.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="..\..\..\wxWidgets-2.8.4\lib\vc_lib"
@@ -1614,6 +1616,14 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\resource.h"
+			>
+		</File>
+		<File
+			RelativePath=".\vlaunch.ico"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
