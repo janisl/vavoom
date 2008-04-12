@@ -837,8 +837,10 @@ void PlayerTick(float deltaTime)
 
 	CalcHeight(deltaTime);
 
-	if (MO.Sector->special)
+	if (MO.Sector->special || MO.Sector->Damage)
+	{
 		PlayerInSpecialSector(deltaTime);
+	}
 	PlayerInContents(deltaTime);
 
 	// Check for weapon change.
