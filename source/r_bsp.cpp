@@ -106,11 +106,57 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	if (texinfo->Tex == GTextureManager[skyflatnum])
 	{
 		SkyIsVisible = true;
-		if (Drawer->HasStencil)
+		VSky* Sky = NULL;
+		if (r_sub->sector->Sky & SKY_FROM_SIDE)
 		{
-			SkyPortal.Surfs.Append(surfs);
+			side_t* Side = &Level->Sides[r_sub->sector->Sky &
+				(SKY_FROM_SIDE - 1)];
+			int Tex = Side->toptexture;
+			bool Flip = !!Level->Lines[Side->LineNum].arg3;
+			if (GTextureManager[Tex]->Type != TEXTYPE_Null)
+			{
+				for (int i = 0; i < SideSkies.Num(); i++)
+				{
+					if (SideSkies[i]->SideTex == Tex &&
+						SideSkies[i]->SideFlip == Flip)
+					{
+						Sky = SideSkies[i];
+						break;
+					}
+				}
+				if (!Sky)
+				{
+					Sky = new VSky;
+					Sky->Init(Tex, Tex, 0, 0, false,
+						!!(Level->LevelInfo->LevelInfoFlags &
+						VLevelInfo::LIF_ForceNoSkyStretch), Flip, false);
+					SideSkies.Append(Sky);
+				}
+			}
 		}
-		else
+		if (!Sky)
+		{
+			InitSky();
+			Sky = &BaseSky;
+		}
+
+		VPortal* Portal = NULL;
+		for (int i = 0; i < Portals.Num(); i++)
+		{
+			if (Portals[i] && Portals[i]->MatchSky(Sky))
+			{
+				Portal = Portals[i];
+				break;
+			}
+		}
+		if (!Portal)
+		{
+			Portal = new VSkyPortal(this, Sky);
+			Portals.Append(Portal);
+		}
+		Portal->Surfs.Append(surfs);
+
+		if (!Drawer->HasStencil)
 		{
 			Drawer->DrawSkyPortal(surfs, clipflags);
 		}
@@ -434,7 +480,6 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 	memset(BspVis, 0, VisSize);
 
 	SkyIsVisible = false;
-	SkyPortal.Surfs.Clear();
 
 	RenderBSPNode(Level->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
 
@@ -445,9 +490,23 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 
 	Drawer->WorldDrawing();
 
-	if (SkyIsVisible && Drawer->HasStencil)
+	if (Drawer->HasStencil)
 	{
-		DrawSkyPortal();
+		for (int i = 0; i < Portals.Num(); i++)
+		{
+			if (!Drawer->StartPortal(Portals[i]))
+			{
+				//	All portal polygons are clipped away.
+				continue;
+			}
+			Portals[i]->DrawContents();
+			Drawer->EndPortal(Portals[i]);
+		}
 	}
+	for (int i = 0; i < Portals.Num(); i++)
+	{
+		delete Portals[i];
+	}
+	Portals.Clear();
 	unguard;
 }

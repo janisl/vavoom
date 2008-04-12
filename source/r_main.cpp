@@ -185,7 +185,6 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 , Particles(0)
 , ActiveParticles(0)
 , FreeParticles(0)
-, SkyPortal(this)
 {
 	guard(VRenderLevel::VRenderLevel);
 	r_oldviewleaf = NULL;
@@ -274,6 +273,11 @@ VRenderLevel::~VRenderLevel()
 
 	delete[] Particles;
 	delete[] BspVis;
+
+	for (int i = 0; i < SideSkies.Num(); i++)
+	{
+		delete SideSkies[i];
+	}
 	unguard;
 }
 
@@ -1324,4 +1328,15 @@ VPortal::VPortal(class VRenderLevel* ARLev)
 
 VPortal::~VPortal()
 {
+}
+
+//==========================================================================
+//
+//	VPortal::MatchSky
+//
+//==========================================================================
+
+bool VPortal::MatchSky(VSky*)
+{
+	return false;
 }

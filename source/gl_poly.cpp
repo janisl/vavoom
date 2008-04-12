@@ -879,6 +879,8 @@ void VOpenGLDrawer::DrawPortalArea(VPortal* Portal)
 
 void VOpenGLDrawer::EndPortal(VPortal* Portal)
 {
+	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
+
 	//	Draw proper z-buffer for the portal area.
 	glDisable(GL_TEXTURE_2D);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);

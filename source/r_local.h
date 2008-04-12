@@ -131,45 +131,64 @@ struct fakefloor_t
 	sec_params_t	params;
 };
 
+struct skysurface_t : surface_t
+{
+	TVec			__verts[3];
+};
+
+struct sky_t
+{
+	int 			texture1;
+	int 			texture2;
+	int 			baseTexture1;
+	int 			baseTexture2;
+	float			columnOffset1;
+	float			columnOffset2;
+	float			scrollDelta1;
+	float			scrollDelta2;
+	skysurface_t	surf;
+	TPlane			plane;
+	texinfo_t		texinfo;
+};
+
+class VSky
+{
+public:
+	enum
+	{
+		VDIVS			= 8,
+		HDIVS			= 16
+	};
+
+	sky_t			sky[HDIVS * VDIVS];
+	int				NumSkySurfs;
+	int				SideTex;
+	bool			bIsSkyBox;
+	bool			SideFlip;
+
+	void InitOldSky(int, int, float, float, bool, bool, bool);
+	void InitSkyBox(VName, VName);
+	void Init(int, int, float, float, bool, bool, bool, bool);
+	void Draw(int);
+};
+
 class VSkyPortal : public VPortal
 {
 public:
-	VSkyPortal(class VRenderLevel* ARLev)
+	VSky*			Sky;
+
+	VSkyPortal(class VRenderLevel* ARLev, VSky* ASky)
 	: VPortal(ARLev)
+	, Sky(ASky)
 	{}
 	void DrawContents();
+	bool MatchSky(VSky*);
 };
 
 class VRenderLevel : public VRenderLevelDrawer
 {
 private:
 	friend class VSkyPortal;
-
-	struct skysurface_t : surface_t
-	{
-		TVec			__verts[3];
-	};
-
-	struct sky_t
-	{
-		int 			texture1;
-		int 			texture2;
-		int 			baseTexture1;
-		int 			baseTexture2;
-		float			columnOffset1;
-		float			columnOffset2;
-		float			scrollDelta1;
-		float			scrollDelta2;
-		skysurface_t	surf;
-		TPlane			plane;
-		texinfo_t		texinfo;
-	};
-
-	enum
-	{
-		VDIVS			= 8,
-		HDIVS			= 16
-	};
 
 	struct light_t
 	{
@@ -242,9 +261,8 @@ private:
 	int				NextLightningFlash;
 	int				LightningFlash;
 	int*			LightningLightLevels;
-	sky_t			sky[HDIVS * VDIVS];
-	int				NumSkySurfs;
-	bool			bIsSkyBox;
+	VSky			BaseSky;
+	TArray<VSky*>	SideSkies;
 
 	//	Light variables
 	TArray<light_t>	Lights;
@@ -261,7 +279,7 @@ private:
 	vuint8*			BspVis;
 	int				FrustumIndexes[4][6];
 	bool			SkyIsVisible;
-	VSkyPortal		SkyPortal;
+	TArray<VPortal*>	Portals;
 
 	trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 
@@ -311,13 +329,10 @@ private:
 	void FreeSegParts(segpart_t*);
 
 	//	Sky methods
-	void InitOldSky();
-	void InitSkyBox(VName, VName);
 	void InitSky();
 	void AnimateSky(float);
 	void DoLightningFlash();
 	void DrawSky();
-	void DrawSkyPortal();
 
 	//	Light methods
 	static void CalcMinMaxs(surface_t*);

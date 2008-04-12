@@ -126,6 +126,7 @@ public:
 	VPortal(class VRenderLevel* ARLev);
 	virtual ~VPortal();
 	virtual void DrawContents() = 0;
+	virtual bool MatchSky(class VSky*);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
