@@ -87,6 +87,7 @@ enum
 //	Line specials used in sidedef loading.
 enum
 {
+	LNSPEC_StaticInit = 190,
 	LNSPEC_LineTranslucent = 208,
 	LNSPEC_TransferHeights = 209,
 };
@@ -626,15 +627,14 @@ void VLevel::LoadSideDefsPass2(int Lump)
 	//	Assign line specials to sidedefs midtexture and arg1 to toptexture.
 	for (int i = 0; i < NumLines; i++)
 	{
+		if (Lines[i].special == LNSPEC_StaticInit && Lines[i].arg2 != 1)
+		{
+			continue;
+		}
 		if (Lines[i].sidenum[0] != -1)
 		{
 			Sides[Lines[i].sidenum[0]].midtexture = Lines[i].special;
 			Sides[Lines[i].sidenum[0]].toptexture = Lines[i].arg1;
-		}
-		if (Lines[i].sidenum[1] != -1)
-		{
-			Sides[Lines[i].sidenum[1]].midtexture = Lines[i].special;
-			Sides[Lines[i].sidenum[1]].toptexture = Lines[i].arg1;
 		}
 	}
 
@@ -671,6 +671,38 @@ void VLevel::LoadSideDefsPass2(int Lump)
 			sd->midtexture = TexNumForName(midtexture, TEXTYPE_Wall, true);
 			sd->toptexture = TexNumForName(toptexture, TEXTYPE_Wall, true);
 			sd->bottomtexture = TexNumForName(bottomtexture, TEXTYPE_Wall, true);
+			break;
+
+		case LNSPEC_StaticInit:
+			{
+				bool HaveCol;
+				bool HaveFade;
+				vuint32 Col;
+				vuint32 Fade;
+				sd->midtexture = TexNumForName(midtexture, TEXTYPE_Wall);
+				int TmpTop = TexNumOrColour(toptexture, TEXTYPE_Wall,
+					HaveCol, Col);
+				sd->bottomtexture = TexNumOrColour(bottomtexture, TEXTYPE_Wall,
+					HaveFade, Fade);
+				if (HaveCol || HaveFade)
+				{
+					for (int j = 0; j < NumSectors; j++)
+					{
+						if (Sectors[j].tag == sd->toptexture)
+						{
+							if (HaveCol)
+							{
+								Sectors[j].params.LightColour = Col;
+							}
+							if (HaveFade)
+							{
+								Sectors[j].params.Fade = Fade;
+							}
+						}
+					}
+				}
+				sd->toptexture = TmpTop;
+			}
 			break;
 
 		default:
@@ -803,6 +835,7 @@ void VLevel::SetupLineSides(line_t* ld) const
 		Host_Error("Bad side-def index %d", ld->sidenum[0]);
 	}
 	ld->frontsector = Sides[ld->sidenum[0]].sector;
+	Sides[ld->sidenum[0]].LineNum = ld - Lines;
 
 	if (ld->sidenum[1] != -1)
 	{
@@ -811,6 +844,7 @@ void VLevel::SetupLineSides(line_t* ld) const
 			Host_Error("Bad side-def index %d", ld->sidenum[1]);
 		}
 		ld->backsector = Sides[ld->sidenum[1]].sector;
+		Sides[ld->sidenum[1]].LineNum = ld - Lines;
 		// Just a warning
 		if (!(ld->flags & ML_TWOSIDED))
 		{
@@ -1756,6 +1790,34 @@ int VLevel::TexNumForName(const char *name, int Type, bool CMap) const
 		GCon->Logf("FTNumForName: %s not found", *Name);
 		return GTextureManager.DefaultTexture;
 	}
+	return i;
+	unguard;
+}
+
+//==========================================================================
+//
+//  VLevel::TexNumOrColour
+//
+//==========================================================================
+
+int VLevel::TexNumOrColour(const char *name, int Type, bool& GotColour,
+	vuint32& Col) const
+{
+	guard(VLevel::TexNumOrColour);
+	VName Name(name, VName::AddLower8);
+	int i = GTextureManager.CheckNumForName(Name, Type, true, true);
+	if (i == -1)
+	{
+		char TmpName[9];
+		memcpy(TmpName, name, 8);
+		TmpName[8] = 0;
+		char* Stop;
+		Col = strtoul(TmpName, &Stop, 16);
+		GotColour = (*Stop == 0) && (Stop >= TmpName + 2) &&
+			(Stop <= TmpName + 6);
+		return 0;
+	}
+	GotColour = false;
 	return i;
 	unguard;
 }

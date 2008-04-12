@@ -209,6 +209,8 @@ enum
 	SPF_NOBLOCKSHOOT	= 4
 };
 
+const int SKY_FROM_SIDE	= 0x8000;
+
 //
 //	Sidedef flags.
 //
@@ -567,8 +569,8 @@ enum
 	LNSPEC_SectorSetFloorPanning,
 	LNSPEC_SectorSetCeilingScale,
 	LNSPEC_SectorSetFloorScale,
-
-	LNSPEC_SetPlayerProperty = 191,
+	LNSPEC_StaticInit,// 190
+	LNSPEC_SetPlayerProperty,
 	LNSPEC_CeilingLowerToHighestFloor,
 	LNSPEC_CeilingLowerInstant,
 	LNSPEC_CeilingRaiseInstant,
@@ -739,6 +741,8 @@ struct side_t
 	// Sector the SideDef is facing.
 	sector_t *sector;
 
+	int			LineNum;
+
 	int			Flags;
 };
 
@@ -892,6 +896,8 @@ struct sector_t
 	float		Friction;
 	float		MoveFactor;
 	float		Gravity;
+
+	int			Sky;
 };
 
 //

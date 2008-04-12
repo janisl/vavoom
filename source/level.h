@@ -170,6 +170,8 @@ struct side_t
 	// Sector the SideDef is facing.
 	sector_t	*sector;
 
+	int			LineNum;
+
 	vuint32		Flags;
 };
 
@@ -205,6 +207,8 @@ struct seg_t : public TPlane
 #define SPF_NOBLOCKING		1	//	Not blocking
 #define SPF_NOBLOCKSIGHT	2	//	Do not block sight
 #define SPF_NOBLOCKSHOOT	4	//	Do not block shooting
+
+#define SKY_FROM_SIDE		0x8000
 
 struct sec_plane_t : public TPlane
 {
@@ -361,6 +365,8 @@ struct sector_t
 	float		Friction;
 	float		MoveFactor;
 	float		Gravity;				// Sector gravity (1.0 is normal)
+
+	int			Sky;
 };
 
 //
@@ -583,6 +589,7 @@ struct rep_sector_t
 	float		ceil_BaseYOffs;
 	int			lightlevel;
 	int			Fade;
+	int			Sky;
 };
 
 struct rep_polyobj_t
@@ -826,6 +833,7 @@ private:
 	//	Map loading helpers.
 	int FindGLNodes(VName) const;
 	int TexNumForName(const char*, int, bool = false) const;
+	int TexNumOrColour(const char*, int, bool&, vuint32&) const;
 	void SetupLineSides(line_t*) const;
 	void CreateRepBase();
 	void CreateBlockMap();

@@ -538,6 +538,10 @@ void InitTranslationTables()
 	SetLineTrans(271, 0, -1, 255, 0, 0, 0, SPAC_CROSS, false); // LNSPEC_StaticInit
 	SetLineTrans(272, 0, -1, 255, 1, 0, 0, SPAC_CROSS, false); // LNSPEC_StaticInit
 
+	SetLineTrans(333, LNSPEC_StaticInit, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(334, LNSPEC_StaticInit, -1, 1, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(335, LNSPEC_StaticInit, -1, 2, 0, 0, 0, SPAC_CROSS, false);
+
 	SetLineTrans(340, LNSPEC_PlaneAlign, 1, 0, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(341, LNSPEC_PlaneAlign, 0, 1, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(342, LNSPEC_PlaneAlign, 1, 1, 0, 0, 0, SPAC_CROSS, false);

@@ -277,9 +277,11 @@ void VLevelChannel::Update()
 			mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs);
 		bool LightChanged = abs(RepSec->lightlevel - Sec->params.lightlevel) >= 4;
 		bool FadeChanged = RepSec->Fade != Sec->params.Fade;
+		bool SkyChanged = RepSec->Sky != Sec->Sky;
 		if (RepSec->floor_pic == Sec->floor.pic &&
 			RepSec->ceil_pic == Sec->ceiling.pic &&
-			!FloorChanged && !CeilChanged && !LightChanged && !FadeChanged)
+			!FloorChanged && !CeilChanged && !LightChanged && !FadeChanged &&
+			!SkyChanged)
 			continue;
 
 		Msg.WriteInt(CMD_Sector, CMD_MAX);
@@ -359,6 +361,11 @@ void VLevelChannel::Update()
 		if (FadeChanged)
 		{
 			Msg << Sec->params.Fade;
+		}
+		Msg.WriteBit(SkyChanged);
+		if (SkyChanged)
+		{
+			Msg.WriteInt(Sec->Sky, MAX_VUINT16);
 		}
 
 		RepSec->floor_pic = Sec->floor.pic;
@@ -605,9 +612,13 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				float PrevFloorDist = Sec->floor.dist;
 				float PrevCeilDist = Sec->ceiling.dist;
 				if (Msg.ReadBit())
+				{
 					Sec->floor.pic = Msg.ReadInt(MAX_VUINT16);
+				}
 				if (Msg.ReadBit())
+				{
 					Sec->ceiling.pic = Msg.ReadInt(MAX_VUINT16);
+				}
 				if (Msg.ReadBit())
 				{
 					if (Msg.ReadBit())
@@ -653,6 +664,10 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				if (Msg.ReadBit())
 				{
 					Msg << Sec->params.Fade;
+				}
+				if (Msg.ReadBit())
+				{
+					Sec->Sky = Msg.ReadInt(MAX_VUINT16);
 				}
 				if (PrevFloorDist != Sec->floor.dist ||
 					PrevCeilDist != Sec->ceiling.dist)

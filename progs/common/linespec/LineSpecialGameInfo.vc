@@ -860,6 +860,48 @@ void SetSectorFriction(Level InLevel, int tag, int amount, bool alterFlag)
 
 //==========================================================================
 //
+//  StaticInit
+//
+//==========================================================================
+
+void StaticInit(Level InLevel, line_t* line)
+{
+	int			s;
+	float		Grav;
+	int			Dmg;
+
+	switch (line->arg2)
+	{
+	case 0:
+		Grav = Length(*line->v2 - *line->v1) / 100.0;
+		for (s = InLevel.FindSectorFromTag(line->arg1, -1); s >= 0;
+			s = InLevel.FindSectorFromTag(line->arg1, s))
+		{
+			InLevel.Sectors[s].Gravity = Grav;
+		}
+		break;
+
+	case 2:
+		Dmg = ftoi(Length(*line->v2 - *line->v1));
+		for (s = InLevel.FindSectorFromTag(line->arg1, -1); s >= 0;
+			s = InLevel.FindSectorFromTag(line->arg1, s))
+		{
+			InLevel.Sectors[s].Damage = Dmg;
+		}
+		break;
+
+	case 255:
+		for (s = InLevel.FindSectorFromTag(line->arg1, -1); s >= 0;
+			s = InLevel.FindSectorFromTag(line->arg1, s))
+		{
+			InLevel.Sectors[s].Sky = line->sidenum[0] | SKY_FROM_SIDE;
+		}
+		break;
+	}
+}
+
+//==========================================================================
+//
 //  SpawnWorld
 //
 //==========================================================================
@@ -882,9 +924,25 @@ void SpawnWorld(Level InLevel)
 		{
 		case LNSPEC_LineSetIdentification:
 			line->special = 0;
+			line->LineTag = line->arg1 + (line->arg5 << 8);
+			line->flags |= line->arg2 << 16;
+			break;
 		case LNSPEC_LineTranslucent:
+			line->LineTag = line->arg1;
+			line->flags |= line->arg4 << 16;
+			break;
 		case LNSPEC_TeleportLine:
-			if (line->arg1)
+		case LNSPEC_ScrollTextureModel:
+			line->LineTag = line->arg1;
+			break;
+		case LNSPEC_PolyStartLine:
+			line->LineTag = line->arg4;
+			break;
+		case LNSPEC_PolyExplicitLine:
+			line->LineTag = line->arg5;
+			break;
+		case LNSPEC_StaticInit:
+			if (line->arg2 == 3)
 			{
 				line->LineTag = line->arg1;
 			}
@@ -996,6 +1054,10 @@ void SpawnWorld(Level InLevel)
 			break;
 		case LNSPEC_TransferHeights:
 			MakeHeightSec(InLevel, line);
+			line->special = 0;
+			break;
+		case LNSPEC_StaticInit:
+			StaticInit(InLevel, line);
 			line->special = 0;
 			break;
 		}
