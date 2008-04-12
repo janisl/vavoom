@@ -35,37 +35,11 @@
 #include "winlocal.h"
 #include "gamedefs.h"
 #include <d3d9.h>
-#include "cl_local.h"
-#include "r_shared.h"
+#include "r_hardware.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define BLOCK_WIDTH					128
-#define BLOCK_HEIGHT				128
-#define NUM_BLOCK_SURFS				32
-#define NUM_CACHE_BLOCKS			(8 * 1024)
-
 // TYPES -------------------------------------------------------------------
-
-struct surfcache_t
-{
-	int			s;			// position in light surface
-	int			t;
-	int			width;		// size
-	int			height;
-	surfcache_t	*bprev;		// line list in block
-	surfcache_t	*bnext;
-	surfcache_t	*lprev;		// cache list in line
-	surfcache_t	*lnext;
-	surfcache_t	*chain;		// list of drawable surfaces
-	surfcache_t	*addchain;	// list of specular surfaces
-	int			blocknum;	// light surface index
-	surfcache_t	**owner;
-	vuint32		Light;		// checked for strobe flash
-	int			dlight;
-	surface_t	*surf;
-	vuint32		lastframe;
-};
 
 struct MyD3DVertex
 {
@@ -154,15 +128,13 @@ public:
 	}
 };
 
-class VDirect3DDrawer : public VDrawer
+class VDirect3DDrawer : public VHardwareDrawer
 {
 public:
 	VDirect3DDrawer();
 	void Init();
-	void InitData();
 	bool SetResolution(int, int, int, bool);
 	void InitResolution();
-	void NewMap();
 	void StartUpdate();
 	void Update();
 	void BeginDirectUpdate();
@@ -170,7 +142,6 @@ public:
 	void Shutdown();
 	void* ReadScreen(int*, bool*);
 	void ReadBackScreen(int, int, rgba_t*);
-	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
 	void SetupView(VRenderLevelDrawer*, const refdef_t*);
@@ -178,7 +149,6 @@ public:
 	void EndView();
 
 	//	Texture stuff
-	void InitTextures();
 	void PrecacheTexture(VTexture*);
 
 	//	Polygon drawing
@@ -231,31 +201,21 @@ private:
 	void SetPic(VTexture*, VTextureTranslation*, int);
 	void GenerateTexture(VTexture*, void**, VTextureTranslation*, int);
 	void UploadTextureImage(LPDIRECT3DTEXTURE9, int, int, int, const rgba_t*);
-	void AdjustGamma(rgba_t *, int);
-	void ResampleTexture(int, int, const byte*, int, int, byte*);
-	void MipMap(int, int, byte*);
-	LPDIRECT3DTEXTURE9 UploadTexture8(int, int, const byte*, const rgba_t*);
+	LPDIRECT3DTEXTURE9 UploadTexture8(int, int, const vuint8*, const rgba_t*);
 	LPDIRECT3DTEXTURE9 UploadTexture(int, int, const rgba_t*);
-
-	void FlushCaches(bool);
-	void FlushOldCaches();
-	surfcache_t	*AllocBlock(int, int);
-	surfcache_t	*FreeBlock(surfcache_t*, bool);
-	void CacheSurface(surface_t*);
 
 	void SetFade(vuint32 NewFade);
 
-	word MakeCol16(byte r, byte g, byte b, byte a)
+	vuint16 MakeCol16(vuint8 r, vuint8 g, vuint8 b, vuint8 a)
 	{
-		return word(((a >> (8 - abits)) << ashift) |
-			((r >> (8 - rbits)) << rshift) |
-			((g >> (8 - gbits)) << gshift) |
-			((b >> (8 - bbits)) << bshift));
+		return vuint16(((a & 1) << 8) |
+			((r & 0xf8) << 7) |
+			((g & 0xf8) << 2) |
+			(b >> 3));
 	}
-	vuint32 MakeCol32(byte r, byte g, byte b, byte a)
+	vuint32 MakeCol32(vuint8 r, vuint8 g, vuint8 b, vuint8 a)
 	{
-		return (a << ashift32) | (r << rshift32) |
-			(g << gshift32) | (b << bshift32);
+		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
 
 	bool						Windowed;
@@ -276,20 +236,6 @@ private:
 	int							maxMultiTex;
 	int							TexStage;
 
-	int							abits;
-	int							ashift;
-	int							rbits;
-	int							rshift;
-	int							gbits;
-	int							gshift;
-	int							bbits;
-	int							bshift;
-
-	int							ashift32;
-	int							rshift32;
-	int							gshift32;
-	int							bshift32;
-
 	float						tex_iw;
 	float						tex_ih;
 
@@ -305,30 +251,11 @@ private:
 	LPDIRECT3DTEXTURE9			particle_texture;
     int                         tscount;
 
-	VRenderLevelDrawer*			RendLev;
-
-	surface_t*					SimpleSurfsHead;
-	surface_t*					SimpleSurfsTail;
-	surface_t*					SkyPortalsHead;
-	surface_t*					SkyPortalsTail;
-
 	//	Lightmaps.
-	LPDIRECT3DTEXTURE9			*light_surf;
-	rgba_t						light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
-	bool						block_changed[NUM_BLOCK_SURFS];
-	surfcache_t					*light_chain[NUM_BLOCK_SURFS];
+	LPDIRECT3DTEXTURE9			light_surf[NUM_BLOCK_SURFS];
 
 	//	Specular lightmaps.
-	LPDIRECT3DTEXTURE9			*add_surf;
-	rgba_t						add_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
-	bool						add_changed[NUM_BLOCK_SURFS];
-	surfcache_t					*add_chain[NUM_BLOCK_SURFS];
-
-	//	Surface cache.
-	surfcache_t					*freeblocks;
-	surfcache_t					*cacheblocks[NUM_BLOCK_SURFS];
-	surfcache_t					blockbuf[NUM_CACHE_BLOCKS];
-	vuint32						cacheframecount;
+	LPDIRECT3DTEXTURE9			add_surf[NUM_BLOCK_SURFS];
 
 	static VCvarI device;
 	static VCvarI clear;

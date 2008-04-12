@@ -38,15 +38,9 @@
 #endif
 
 #include "gamedefs.h"
-#include "cl_local.h"
-#include "r_shared.h"
+#include "r_hardware.h"
 
 // MACROS ------------------------------------------------------------------
-
-#define BLOCK_WIDTH					128
-#define BLOCK_HEIGHT				128
-#define NUM_BLOCK_SURFS				32
-#define NUM_CACHE_BLOCKS			(8 * 1024)
 
 // TYPES -------------------------------------------------------------------
 
@@ -85,43 +79,20 @@ typedef void (APIENTRY*PointParameterfv_t)(GLenum, const GLfloat *);
 #define GL_CLAMP_TO_EDGE_SGIS				0x812F
 #endif
 
-struct surfcache_t
-{
-	int			s;			// position in light surface
-	int			t;
-	int			width;		// size
-	int			height;
-	surfcache_t	*bprev;		// line list in block
-	surfcache_t	*bnext;
-	surfcache_t	*lprev;		// cache list in line
-	surfcache_t	*lnext;
-	surfcache_t	*chain;		// list of drawable surfaces
-	surfcache_t	*addchain;	// list of specular surfaces
-	int			blocknum;	// light surface index
-	surfcache_t	**owner;
-	vuint32		Light;		// checked for strobe flash
-	int			dlight;
-	surface_t	*surf;
-	vuint32		lastframe;
-};
-
-class VOpenGLDrawer : public VDrawer
+class VOpenGLDrawer : public VHardwareDrawer
 {
 public:
 	//
 	// VDrawer interface
 	//
 	VOpenGLDrawer();
-	void InitData();
 	void InitResolution();
-	void NewMap();
 	void StartUpdate();
 	void Setup2D();
 	void BeginDirectUpdate();
 	void EndDirectUpdate();
 	void* ReadScreen(int*, bool*);
 	void ReadBackScreen(int, int, rgba_t*);
-	void FreeSurfCache(surfcache_t*);
 
 	//	Rendering stuff
 	void SetupView(VRenderLevelDrawer*, const refdef_t*);
@@ -129,7 +100,6 @@ public:
 	void EndView();
 
 	//	Texture stuff
-	void InitTextures();
 	void PrecacheTexture(VTexture*);
 
 	//	Polygon drawing
@@ -176,27 +146,9 @@ protected:
 
 	GLuint		particle_texture;
 
-	VRenderLevelDrawer*	RendLev;
-
-	surface_t*	SimpleSurfsHead;
-	surface_t*	SimpleSurfsTail;
-	surface_t*	SkyPortalsHead;
-	surface_t*	SkyPortalsTail;
-
 	GLuint		lmap_id[NUM_BLOCK_SURFS];
-	rgba_t		light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
-	bool		block_changed[NUM_BLOCK_SURFS];
-	surfcache_t	*light_chain[NUM_BLOCK_SURFS];
 
 	GLuint		addmap_id[NUM_BLOCK_SURFS];
-	rgba_t		add_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
-	bool		add_changed[NUM_BLOCK_SURFS];
-	surfcache_t	*add_chain[NUM_BLOCK_SURFS];
-
-	surfcache_t	*freeblocks;
-	surfcache_t	*cacheblocks[NUM_BLOCK_SURFS];
-	surfcache_t	blockbuf[NUM_CACHE_BLOCKS];
-	vuint32		cacheframecount;
 
 	float		tex_iw;
 	float		tex_ih;
@@ -229,13 +181,6 @@ protected:
 
 	void SetFade(vuint32 NewFade);
 
-	void FlushCaches(bool);
-	void FlushOldCaches();
-	surfcache_t	*AllocBlock(int, int);
-	surfcache_t	*FreeBlock(surfcache_t*, bool);
-	void CacheSurface(surface_t*);
-
-	static int ToPowerOf2(int val);
 	void GenerateTextures();
 	void FlushTextures();
 	void DeleteTextures();
@@ -244,9 +189,6 @@ protected:
 	void SetSpriteLump(VTexture*, VTextureTranslation*, int);
 	void SetPic(VTexture*, VTextureTranslation*, int);
 	void GenerateTexture(VTexture*, GLuint*, VTextureTranslation*, int);
-	void AdjustGamma(rgba_t *, int);
-	void ResampleTexture(int, int, const byte*, int, int, byte*);
-	void MipMap(int, int, byte*);
 	void UploadTexture8(int, int, const vuint8*, const rgba_t*);
 	void UploadTexture(int, int, const rgba_t*);
 

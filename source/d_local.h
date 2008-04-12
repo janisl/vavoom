@@ -176,7 +176,6 @@ public:
 	void EndView();
 
 	//	Texture stuff
-	void InitTextures();
 	void PrecacheTexture(VTexture*);
 
 	//	Polygon drawing

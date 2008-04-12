@@ -79,17 +79,9 @@ VDirect3DDrawer::VDirect3DDrawer()
 , tscount(0)
 , light_surf(0)
 , add_surf(0)
-, freeblocks(0)
-, cacheframecount(0)
 {
-	memset(light_block, 0, sizeof(light_block));
-	memset(block_changed, 0, sizeof(block_changed));
-	memset(light_chain, 0, sizeof(light_chain));
-	memset(add_block, 0, sizeof(add_block));
-	memset(add_changed, 0, sizeof(add_changed));
-	memset(add_chain, 0, sizeof(add_chain));
-	memset(cacheblocks, 0, sizeof(cacheblocks));
-	memset(blockbuf, 0, sizeof(blockbuf));
+	memset(light_surf, 0, sizeof(light_surf));
+	memset(add_surf, 0, sizeof(add_surf));
 }
 
 //==========================================================================
@@ -127,16 +119,6 @@ void VDirect3DDrawer::Init()
 		Sys_Error("Failed to create Direct3D object");
 	}
 	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::InitData
-//
-//==========================================================================
-
-void VDirect3DDrawer::InitData()
-{
 }
 
 //==========================================================================
@@ -225,20 +207,6 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	}
 	RenderDevice->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, DeviceCaps.MaxAnisotropy);
 
-	abits = 1;
-	ashift = 15;
-	rbits = 5;
-	rshift = 10;
-	gbits = 5;
-	gshift = 5;
-	bbits = 5;
-	bshift = 0;
-
-	ashift32 = 24;
-	rshift32 = 16;
-	gshift32 = 8;
-	bshift32 = 0;
-
 	//	Set screen params
 	ScreenWidth = Width;
 	ScreenHeight = Height;
@@ -274,17 +242,6 @@ void VDirect3DDrawer::InitResolution()
 	RenderDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_FLAT);
 	RenderDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::NewMap
-//
-//==========================================================================
-
-void VDirect3DDrawer::NewMap()
-{
-	FlushCaches(false);
 }
 
 //==========================================================================

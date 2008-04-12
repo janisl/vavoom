@@ -140,7 +140,6 @@ void R_Init()
 	guard(R_Init);
 	R_InitSkyBoxes();
 	R_InitModels();
-	Drawer->InitTextures();
 	Drawer->InitData();
 
 	for (int i = 0; i < 256; i++)

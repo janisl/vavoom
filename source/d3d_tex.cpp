@@ -54,20 +54,6 @@
 
 //==========================================================================
 //
-//	VDirect3DDrawer::ToPowerOf2
-//
-//==========================================================================
-
-int VDirect3DDrawer::ToPowerOf2(int val)
-{
-	int answer = 1;
-	while (answer < val)
-		answer <<= 1;
-	return answer;
-}
-
-//==========================================================================
-//
 //	VDirect3DDrawer::CreateSurface
 //
 //==========================================================================
@@ -93,20 +79,6 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mi
 		Sys_Error("Create texture failed\n");
 	}
 	return surf;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::InitTextures
-//
-//==========================================================================
-
-void VDirect3DDrawer::InitTextures()
-{
-	guard(VDirect3DDrawer::InitTextures);
-	light_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
-	add_surf = (LPDIRECT3DTEXTURE9*)Z_Calloc(NUM_BLOCK_SURFS * 4);
 	unguard;
 }
 
@@ -296,7 +268,7 @@ void VDirect3DDrawer::GenerateTexture(VTexture* Tex, void** Data,
 	}
 	else
 	{
-		byte* block = SrcTex->GetPixels();
+		vuint8* block = SrcTex->GetPixels();
 		if (SrcTex->Format == TEXFMT_8 || SrcTex->Format == TEXFMT_8Pal)
 		{
 			*Data = UploadTexture8(SrcTex->GetWidth(),
@@ -358,201 +330,12 @@ void VDirect3DDrawer::UploadTextureImage(LPDIRECT3DTEXTURE9 tex, int level,
 
 //==========================================================================
 //
-//	VDirect3DDrawer::AdjustGamma
-//
-//==========================================================================
-
-void VDirect3DDrawer::AdjustGamma(rgba_t *data, int size)
-{
-	guard(VDirect3DDrawer::AdjustGamma);
-	byte *gt = gammatable[usegamma];
-	for (int i = 0; i < size; i++)
-	{
-		data[i].r = gt[data[i].r];
-		data[i].g = gt[data[i].g];
-		data[i].b = gt[data[i].b];
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::ResampleTexture
-//
-//	Resizes	texture.
-//	This is a simplified version of gluScaleImage from sources of MESA 3.0
-//
-//==========================================================================
-
-void VDirect3DDrawer::ResampleTexture(int widthin, int heightin,
-	const byte *datain, int widthout, int heightout, byte *dataout)
-{
-	guard(VDirect3DDrawer::ResampleTexture);
-	int i, j, k;
-	float sx, sy;
-
-	if (widthout > 1)
-		sx = float(widthin - 1) / float(widthout - 1);
-	else
-		sx = float(widthin - 1);
-	if (heightout > 1)
-		sy = float(heightin - 1) / float(heightout - 1);
-	else
-		sy = float(heightin - 1);
-
-//#define POINT_SAMPLE
-#ifdef POINT_SAMPLE
-	for (i = 0; i < heightout; i++)
-	{
-		int ii = int(i * sy);
-		for (j = 0; j < widthout; j++)
-		{
-			int jj = int(j * sx);
-
-			const byte *src = datain + (ii * widthin + jj) * 4;
-			byte *dst = dataout + (i * widthout + j) * 4;
-
-			for (k = 0; k < 4; k++)
-			{
-				*dst++ = *src++;
-			}
-		}
-	}
-#else
-	if (sx <= 1.0 && sy <= 1.0)
-	{
-		/* magnify both width and height:  use weighted sample of 4 pixels */
-		int i0, i1, j0, j1;
-		float alpha, beta;
-		const byte *src00, *src01, *src10, *src11;
-		float s1, s2;
-		byte *dst;
-
-		for (i = 0; i < heightout; i++)
-		{
-			i0 = int(i * sy);
-			i1 = i0 + 1;
-			if (i1 >= heightin) i1 = heightin-1;
-			alpha = i * sy - i0;
-			for (j = 0; j < widthout; j++)
-			{
-				j0 = int(j * sx);
-				j1 = j0 + 1;
-				if (j1 >= widthin) j1 = widthin-1;
-				beta = j * sx - j0;
-
-				/* compute weighted average of pixels in rect (i0,j0)-(i1,j1) */
-				src00 = datain + (i0 * widthin + j0) * 4;
-				src01 = datain + (i0 * widthin + j1) * 4;
-				src10 = datain + (i1 * widthin + j0) * 4;
-				src11 = datain + (i1 * widthin + j1) * 4;
-
-				dst = dataout + (i * widthout + j) * 4;
-
-				for (k = 0; k < 4; k++)
-				{
-					s1 = *src00++ * (1.0-beta) + *src01++ * beta;
-					s2 = *src10++ * (1.0-beta) + *src11++ * beta;
-					*dst++ = byte(s1 * (1.0-alpha) + s2 * alpha);
-				}
-			}
-		}
-	}
-	else
-	{
-		/* shrink width and/or height:  use an unweighted box filter */
-		int i0, i1;
-		int j0, j1;
-		int ii, jj;
-		int sum;
-		byte *dst;
-
-		for (i = 0; i < heightout; i++)
-		{
-			i0 = int(i * sy);
-			i1 = i0 + 1;
-			if (i1 >= heightin) i1 = heightin-1;
-			for (j = 0; j < widthout; j++)
-			{
-				j0 = int(j * sx);
-				j1 = j0 + 1;
-				if (j1 >= widthin) j1 = widthin-1;
-
-				dst = dataout + (i * widthout + j) * 4;
-
-				/* compute average of pixels in the rectangle (i0,j0)-(i1,j1) */
-				for (k = 0; k < 4; k++)
-				{
-					sum = 0;
-					for (ii = i0; ii <= i1; ii++)
-					{
-						for (jj = j0; jj <= j1; jj++)
-						{
-							sum += *(datain + (ii * widthin + jj) * 4 + k);
-						}
-					}
-					sum /= (j1 - j0 + 1) * (i1 - i0 + 1);
-					*dst++ = byte(sum);
-				}
-			}
-		}
-	}
-#endif
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::MipMap
-//
-//	Scales image down for next mipmap level, operates in place
-//
-//==========================================================================
-
-void VDirect3DDrawer::MipMap(int width, int height, byte *in)
-{
-	guard(VDirect3DDrawer::MipMap);
-	int		i, j;
-	byte	*out = in;
-
-	if (width == 1 || height == 1)
-	{
-		//	Special case when only one dimension is scaled
-		int total = width * height / 2;
-		for (i = 0; i < total; i++, in += 8, out += 4)
-		{
-			out[0] = byte((in[0] + in[4]) >> 1);
-			out[1] = byte((in[1] + in[5]) >> 1);
-			out[2] = byte((in[2] + in[6]) >> 1);
-			out[3] = byte((in[3] + in[7]) >> 1);
-		}
-		return;
-	}
-
-	//	Scale down in both dimensions
-	width <<= 2;
-	height >>= 1;
-	for (i = 0; i < height; i++, in += width)
-	{
-		for (j = 0; j < width; j += 8, in += 8, out += 4)
-		{
-			out[0] = byte((in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2);
-			out[1] = byte((in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2);
-			out[2] = byte((in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2);
-			out[3] = byte((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VDirect3DDrawer::UploadTexture8
 //
 //==========================================================================
 
 LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture8(int Width, int Height,
-	const byte* Data, const rgba_t* Pal)
+	const vuint8* Data, const rgba_t* Pal)
 {
 	rgba_t* NewData = (rgba_t*)Z_Calloc(Width * Height * 4);
 	for (int i = 0; i < Width * Height; i++)
@@ -576,8 +359,8 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const r
 {
 	guard(VDirect3DDrawer::UploadTexture);
 	int						w, h;
-	byte					*image;
-	byte					stackbuf[256 * 128 * 4];
+	vuint8					*image;
+	vuint8					stackbuf[256 * 128 * 4];
 	LPDIRECT3DTEXTURE9		surf;
 	UINT					level;
 
@@ -602,12 +385,12 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const r
 	}
 	else
 	{
-		image = (byte*)Z_Malloc(w * h * 4);
+		image = (vuint8*)Z_Malloc(w * h * 4);
 	}
 	if (w != width || h != height)
 	{
 		//	Must rescale image to get "top" mipmap texture image
-		ResampleTexture(width, height, (byte*)data, w, h, image);
+		ResampleTexture(width, height, (vuint8*)data, w, h, image);
 	}
 	else
 	{

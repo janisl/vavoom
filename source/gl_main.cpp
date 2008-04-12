@@ -67,19 +67,9 @@ VCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_Ar
 
 VOpenGLDrawer::VOpenGLDrawer()
 : texturesGenerated(false)
-, freeblocks(0)
-, cacheframecount(0)
 , lastgamma(0)
 , CurrentFade(0)
 {
-	memset(light_block, 0, sizeof(light_block));
-	memset(block_changed, 0, sizeof(block_changed));
-	memset(light_chain, 0, sizeof(light_chain));
-	memset(add_block, 0, sizeof(add_block));
-	memset(add_changed, 0, sizeof(add_changed));
-	memset(add_chain, 0, sizeof(add_chain));
-	memset(cacheblocks, 0, sizeof(cacheblocks));
-	memset(blockbuf, 0, sizeof(blockbuf));
 }
 
 //==========================================================================
@@ -216,17 +206,6 @@ bool VOpenGLDrawer::CheckExtension(const char *ext)
 	}
 	return false;
 	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenGLDrawer::NewMap
-//
-//==========================================================================
-
-void VOpenGLDrawer::NewMap()
-{
-	FlushCaches(false);
 }
 
 //==========================================================================

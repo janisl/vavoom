@@ -89,7 +89,6 @@ public:
 	virtual void EndView() = 0;
 
 	//	Texture stuff
-	virtual void InitTextures() = 0;
 	virtual void PrecacheTexture(VTexture*) = 0;
 
 	//	Polygon drawing
