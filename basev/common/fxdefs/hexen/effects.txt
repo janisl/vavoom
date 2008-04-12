@@ -187,6 +187,42 @@ pointlight FireBomb_X6
 	radius 15
 }
 
+pointlight TeleportFog3_1
+{
+	colour 1.0 0 0
+	radius 40
+}
+
+pointlight TeleportFog3_2
+{
+	colour 1.0 0 0
+	radius 80
+}
+
+pointlight TeleportFog3_3
+{
+	colour 1.0 0 0
+	radius 120
+}
+
+pointlight TeleportFog3_4
+{
+	colour 1.0 0 0
+	radius 160
+}
+
+pointlight TeleportFog3_5
+{
+	colour 1.0 0 0
+	radius 200
+}
+
+pointlight TeleportFog3_6
+{
+	colour 1.0 0 0
+	radius 240
+}
+
 class FireBomb
 {
 	frame XPL1A { light FireBomb_X1 }
@@ -205,4 +241,14 @@ class ThrowingBomb
 	frame CFCFW { light FireBomb_X4 }
 	frame CFCFX { light FireBomb_X5 }
 	frame CFCFZ { light FireBomb_X6 }
+}
+
+class TeleportFog
+{
+	frame TELEC { light TeleportFog3_1 }
+	frame TELED { light TeleportFog3_2 }
+	frame TELEE { light TeleportFog3_3 }
+	frame TELEF { light TeleportFog3_4 }
+	frame TELEG { light TeleportFog3_5 }
+	frame TELEH { light TeleportFog3_6 }
 }
