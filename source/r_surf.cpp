@@ -873,8 +873,6 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 	guard(VRenderLevel::CreateSegParts);
 	TVec		wv[4];
 	segpart_t	*sp;
-	float		hdelta;
-	float		offshdelta;
 
 	dseg->seg = seg;
 	dseg->next = seg->drawsegs;
@@ -912,26 +910,22 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Additive = false;
 		sp->texinfo.ColourMap = 0;
 
-		hdelta = topz2 - topz1;
-		offshdelta = hdelta * seg->offset / seg->length;
-
 		if (linedef->flags & ML_DONTPEGBOTTOM)
 		{
 			//	bottom of texture at bottom
-			sp->texinfo.toffs = MIN(botz1, botz2) + MTex->GetScaledHeight();
+			sp->texinfo.toffs = r_floor->TexZ + MTex->GetScaledHeight();
 		}
 		else if (linedef->flags & ML_DONTPEGTOP)
 		{
 			// top of texture at top of top region
 			sp->texinfo.toffs =
-				r_sub->sector->topregion->ceiling->GetPointZ(*seg->v1);
+				r_sub->sector->topregion->ceiling->TexZ;
 		}
 		else
 		{
 			// top of texture at top
-			sp->texinfo.toffs = topz1;
+			sp->texinfo.toffs = r_ceiling->TexZ;
 		}
-		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(MTex);
 		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(MTex);
 
@@ -990,10 +984,12 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		// hack to allow height changes in outdoor areas
 		float top_topz1 = topz1;
 		float top_topz2 = topz2;
+		float top_TexZ = r_ceiling->TexZ;
 		if (IsSky(r_ceiling) && IsSky(back_ceiling))
 		{
 			top_topz1 = back_topz1;
 			top_topz2 = back_topz2;
+			top_TexZ = back_ceiling->TexZ;
 		}
 
 		// top wall
@@ -1011,19 +1007,16 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Additive = false;
 		sp->texinfo.ColourMap = 0;
 
-		hdelta = top_topz2 - top_topz1;
-		offshdelta = hdelta * seg->offset / seg->length;
 		if (linedef->flags & ML_DONTPEGTOP)
 		{
 			// top of texture at top
-			sp->texinfo.toffs = top_topz1;
+			sp->texinfo.toffs = top_TexZ;
 		}
 		else
 		{
 			// bottom of texture
-			sp->texinfo.toffs = back_topz1 + TTex->GetScaledHeight();
+			sp->texinfo.toffs = back_ceiling->TexZ + TTex->GetScaledHeight();
 		}
-		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(TTex);
 		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(TTex);
 
@@ -1086,20 +1079,17 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Additive = false;
 		sp->texinfo.ColourMap = 0;
 
-		hdelta = back_botz2 - back_botz1;
-		offshdelta = hdelta * seg->offset / seg->length;
 		if (linedef->flags & ML_DONTPEGBOTTOM)
 		{
 			// bottom of texture at bottom
 			// top of texture at top
-			sp->texinfo.toffs = top_topz1;
+			sp->texinfo.toffs = top_TexZ;
 		}
 		else
 		{
 			// top of texture at top
-			sp->texinfo.toffs = back_botz1;
+			sp->texinfo.toffs = back_floor->TexZ;
 		}
-		sp->texinfo.toffs -= offshdelta;
 		sp->texinfo.toffs *= TextureTScale(BTex);
 		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(BTex);
 
@@ -1137,8 +1127,6 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		{
 			// masked midtexture
 			float texh = MTex->GetScaledHeight();
-			hdelta = midtopz2 - midtopz1;
-			offshdelta = hdelta * seg->offset / seg->length;
 
 			float			z_org;
 
@@ -1154,15 +1142,15 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			{
 				// bottom of texture at bottom
 				// top of texture at top
-				z_org = MIN(midbotz1, midbotz2) + texh;
+				z_org = MAX(r_floor->TexZ, back_floor->TexZ) + texh;
 			}
 			else
 			{
 				// top of texture at top
-				z_org = MAX(midtopz1, midtopz2);
+				z_org = MIN(r_ceiling->TexZ, back_ceiling->TexZ);
 			}
 			z_org += sidedef->rowoffset * (!MTex->bWorldPanning ?
-				1.0 : 1.0 / MTex->TScale) - offshdelta;
+				1.0 : 1.0 / MTex->TScale);
 
 			sp->texinfo.toffs = z_org * TextureTScale(MTex);
 
@@ -1193,8 +1181,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->next = dseg->extra;
 			dseg->extra = sp;
 
-			TPlane *extratop = reg->floor;
-			TPlane *extrabot = reg->prev->ceiling;
+			sec_plane_t* extratop = reg->floor;
+			sec_plane_t* extrabot = reg->prev->ceiling;
 			side_t *extraside = &Level->Sides[reg->prev->extraline->sidenum[0]];
 
 			float extratopz1 = extratop->GetPointZ(*seg->v1);
@@ -1209,9 +1197,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				seg->offset * TextureSScale(MTex) +
 				sidedef->textureoffset * TextureOffsetSScale(MTex);
 
-			hdelta = extratopz2 - extratopz1;
-			offshdelta = hdelta * seg->offset / seg->length;
-			sp->texinfo.toffs = (extratopz1 - offshdelta) *
+			sp->texinfo.toffs = extratop->TexZ *
 				TextureTScale(MTex) + sidedef->rowoffset *
 				TextureOffsetTScale(MTex);
 			sp->texinfo.Tex = MTex;
@@ -1325,27 +1311,23 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			FreeWSurfs(sp->surfs);
 			sp->surfs = NULL;
 
-			float hdelta = topz2 - topz1;
-			float offshdelta = hdelta * seg->offset / seg->length;
-
 			if (linedef->flags & ML_DONTPEGBOTTOM)
 			{
 				//	bottom of texture at bottom
-				sp->texinfo.toffs = MIN(botz1, botz2) +
+				sp->texinfo.toffs = r_floor->TexZ +
 					MTex->GetScaledHeight();
 			}
 			else if (linedef->flags & ML_DONTPEGTOP)
 			{
 				// top of texture at top of top region
 				sp->texinfo.toffs =
-					r_sub->sector->topregion->ceiling->GetPointZ(*seg->v1);
+					r_sub->sector->topregion->ceiling->TexZ;
 			}
 			else
 			{
 				// top of texture at top
-				sp->texinfo.toffs = topz1;
+				sp->texinfo.toffs = r_ceiling->TexZ;
 			}
-			sp->texinfo.toffs -= offshdelta;
 			sp->texinfo.toffs *= TextureTScale(MTex);
 			sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(MTex);
 			sp->texinfo.Tex = MTex;
@@ -1431,28 +1413,27 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			// hack to allow height changes in outdoor areas
 			float top_topz1 = topz1;
 			float top_topz2 = topz2;
+			float top_TexZ = r_ceiling->TexZ;
 			if (IsSky(r_ceiling) && IsSky(back_ceiling))
 			{
 				top_topz1 = back_topz1;
 				top_topz2 = back_topz2;
+				top_TexZ = back_ceiling->TexZ;
 			}
 
 			FreeWSurfs(sp->surfs);
 			sp->surfs = NULL;
 
-			float hdelta = top_topz2 - top_topz1;
-			float offshdelta = hdelta * seg->offset / seg->length;
 			if (linedef->flags & ML_DONTPEGTOP)
 			{
 				// top of texture at top
-				sp->texinfo.toffs = top_topz1;
+				sp->texinfo.toffs = top_TexZ;
 			}
 			else
 			{
 				// bottom of texture
-				sp->texinfo.toffs = back_topz1 + TTex->GetScaledHeight();
+				sp->texinfo.toffs = back_ceiling->TexZ + TTex->GetScaledHeight();
 			}
-			sp->texinfo.toffs -= offshdelta;
 			sp->texinfo.toffs *= TextureTScale(TTex);
 			sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(TTex);
 			sp->texinfo.Tex = TTex;
@@ -1527,6 +1508,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			float topz2 = r_ceiling->GetPointZ(*seg->v2);
 			float botz1 = r_floor->GetPointZ(*seg->v1);
 			float botz2 = r_floor->GetPointZ(*seg->v2);
+			float top_TexZ = r_ceiling->TexZ;
 
 			float back_botz1 = back_floor->GetPointZ(*seg->v1);
 			float back_botz2 = back_floor->GetPointZ(*seg->v2);
@@ -1536,25 +1518,23 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			{
 				topz1 = back_ceiling->GetPointZ(*seg->v1);
 				topz2 = back_ceiling->GetPointZ(*seg->v2);
+				top_TexZ = back_ceiling->TexZ;
 			}
 
 			FreeWSurfs(sp->surfs);
 			sp->surfs = NULL;
 
-			float hdelta = back_botz2 - back_botz1;
-			float offshdelta = hdelta * seg->offset / seg->length;
 			if (linedef->flags & ML_DONTPEGBOTTOM)
 			{
 				// bottom of texture at bottom
 				// top of texture at top
-				sp->texinfo.toffs = topz1;
+				sp->texinfo.toffs = top_TexZ;
 			}
 			else
 			{
 				// top of texture at top
-				sp->texinfo.toffs = back_botz1;
+				sp->texinfo.toffs = back_floor->TexZ;
 			}
-			sp->texinfo.toffs -= offshdelta;
 			sp->texinfo.toffs *= TextureTScale(BTex);
 			sp->texinfo.toffs += sidedef->rowoffset *
 				TextureOffsetTScale(BTex);
@@ -1621,8 +1601,6 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				float midbotz2 = MAX(botz2, back_botz2);
 
 				float texh = MTex->GetScaledHeight();
-				float hdelta = midtopz2 - midtopz1;
-				float offshdelta = hdelta * seg->offset / seg->length;
 
 				float			z_org;
 
@@ -1640,15 +1618,15 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				{
 					// bottom of texture at bottom
 					// top of texture at top
-					z_org = MIN(midbotz1, midbotz2) + texh;
+					z_org = MAX(r_floor->TexZ, back_floor->TexZ) + texh;
 				}
 				else
 				{
 					// top of texture at top
-					z_org = MAX(midtopz1, midtopz2);
+					z_org = MIN(r_ceiling->TexZ, back_ceiling->TexZ);
 				}
 				z_org += sidedef->rowoffset * (!MTex->bWorldPanning ?
-					1.0 : 1.0 / MTex->TScale) - offshdelta;
+					1.0 : 1.0 / MTex->TScale);
 
 				sp->texinfo.toffs = z_org * TextureTScale(MTex);
 
@@ -1694,8 +1672,8 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 		segpart_t *sp = dseg->extra;
 		for (reg = seg->backsector->botregion; reg->next; reg = reg->next)
 		{
-			TPlane *extratop = reg->next->floor;
-			TPlane *extrabot = reg->ceiling;
+			sec_plane_t* extratop = reg->next->floor;
+			sec_plane_t* extrabot = reg->ceiling;
 			side_t *extraside = &Level->Sides[reg->extraline->sidenum[0]];
 
 			sp->texinfo.ColourMap = ColourMap;
@@ -1719,9 +1697,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				FreeWSurfs(sp->surfs);
 				sp->surfs = NULL;
 
-				float hdelta = extratopz2 - extratopz1;
-				float offshdelta = hdelta * seg->offset / seg->length;
-				sp->texinfo.toffs = (extratopz1 - offshdelta) *
+				sp->texinfo.toffs = extratop->TexZ *
 					TextureTScale(ETex) + sidedef->rowoffset *
 					TextureOffsetTScale(ETex);
 

@@ -62,24 +62,30 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 {
 	bool		flag;
 	float		lastpos;
+	float		LastTexZ;
 
 	switch (floorOrCeiling)
 	{
 	case 0:
 		// FLOOR
 		lastpos = sector->floor.dist;
+		LastTexZ = sector->floor.TexZ;
 		switch (direction)
 		{
 		case -1:
 			// DOWN
 			sector->floor.dist -= amount * sector->floor.normal.z;
+			sector->floor.TexZ -= amount;
 			if (sector->floor.dist <= dest)
 			{
+				sector->floor.TexZ += (dest - sector->floor.dist) /
+					sector->floor.normal.z;
 				sector->floor.dist = dest;
 				flag = XLevel.ChangeSector(sector, crush);
 				if (flag)
 				{
 					sector->floor.dist = lastpos;
+					sector->floor.TexZ = LastTexZ;
 					XLevel.ChangeSector(sector, crush);
 				}
 				return RES_PASTDEST;
@@ -87,7 +93,7 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 			else
 			{
 				flag = XLevel.ChangeSector(sector, crush);
-				//	This is completely illigical and aparently in Strife they
+				//	This is completely illogical and aparently in Strife they
 				// fixed this one.
 				/*if (flag)
 				{
@@ -110,13 +116,17 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 				dest = -sector->ceiling.dist;
 			}
 			sector->floor.dist += amount * sector->floor.normal.z;
+			sector->floor.TexZ += amount;
 			if (sector->floor.dist > dest)
 			{
+				sector->floor.TexZ -= (dest - sector->floor.dist) /
+					sector->floor.normal.z;
 				sector->floor.dist = dest;
 				flag = XLevel.ChangeSector(sector, crush);
 				if (flag)
 				{
 					sector->floor.dist = lastpos;
+					sector->floor.TexZ = LastTexZ;
 					XLevel.ChangeSector(sector, crush);
 				}
 				return RES_PASTDEST;
@@ -130,6 +140,7 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 					if (!crush || StopOnCrush)
 					{
 						sector->floor.dist = lastpos;
+						sector->floor.TexZ = LastTexZ;
 						XLevel.ChangeSector(sector, crush);
 					}
 					return RES_CRUSHED;
@@ -142,6 +153,7 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 	case 1:
 		// CEILING
 		lastpos = sector->ceiling.dist;
+		LastTexZ = sector->ceiling.TexZ;
 		switch (direction)
 		{
 		case -1:
@@ -156,14 +168,18 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 				dest = -sector->floor.dist;
 			}
 			sector->ceiling.dist -= amount * sector->ceiling.normal.z;
+			sector->ceiling.TexZ -= amount;
 			if (sector->ceiling.dist > dest)
 			{
+				sector->ceiling.TexZ += (dest - sector->ceiling.dist) /
+					sector->ceiling.normal.z;
 				sector->ceiling.dist = dest;
 				flag = XLevel.ChangeSector(sector, crush);
 
 				if (flag)
 				{
 					sector->ceiling.dist = lastpos;
+					sector->ceiling.TexZ = LastTexZ;
 					XLevel.ChangeSector(sector, crush);
 				}
 				return RES_PASTDEST;
@@ -178,6 +194,7 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 					if (!crush || StopOnCrush)
 					{
 						sector->ceiling.dist = lastpos;
+						sector->ceiling.TexZ = LastTexZ;
 						XLevel.ChangeSector(sector, crush);
 					}
 					return RES_CRUSHED;
@@ -188,13 +205,17 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 		case 1:
 			// UP
 			sector->ceiling.dist += amount * sector->ceiling.normal.z;
+			sector->ceiling.TexZ += amount;
 			if (sector->ceiling.dist < dest)
 			{
+				sector->ceiling.TexZ -= (dest - sector->ceiling.dist) /
+					sector->ceiling.normal.z;
 				sector->ceiling.dist = dest;
 				flag = XLevel.ChangeSector(sector, crush);
 				if (flag)
 				{
 					sector->ceiling.dist = lastpos;
+					sector->ceiling.TexZ = LastTexZ;
 					XLevel.ChangeSector(sector, crush);
 				}
 				return RES_PASTDEST;

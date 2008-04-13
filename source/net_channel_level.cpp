@@ -314,7 +314,10 @@ void VLevelChannel::Update()
 		{
 			Msg.WriteBit(RepSec->floor_dist != Sec->floor.dist);
 			if (RepSec->floor_dist != Sec->floor.dist)
+			{
 				Msg << Sec->floor.dist;
+				Msg << Sec->floor.TexZ;
+			}
 			Msg.WriteBit(mround(RepSec->floor_xoffs) != mround(Sec->floor.xoffs));
 			if (mround(RepSec->floor_xoffs) != mround(Sec->floor.xoffs))
 				Msg.WriteInt(mround(Sec->floor.xoffs) & 63, 64);
@@ -345,7 +348,10 @@ void VLevelChannel::Update()
 		{
 			Msg.WriteBit(RepSec->ceil_dist != Sec->ceiling.dist);
 			if (RepSec->ceil_dist != Sec->ceiling.dist)
+			{
 				Msg << Sec->ceiling.dist;
+				Msg << Sec->ceiling.TexZ;
+			}
 			Msg.WriteBit(mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs));
 			if (mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs))
 				Msg.WriteInt(mround(Sec->ceiling.xoffs) & 63, 64);
@@ -643,7 +649,10 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				if (Msg.ReadBit())
 				{
 					if (Msg.ReadBit())
+					{
 						Msg << Sec->floor.dist;
+						Msg << Sec->floor.TexZ;
+					}
 					if (Msg.ReadBit())
 						Sec->floor.xoffs = Msg.ReadInt(64);
 					if (Msg.ReadBit())
@@ -664,7 +673,10 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				if (Msg.ReadBit())
 				{
 					if (Msg.ReadBit())
+					{
 						Msg << Sec->ceiling.dist;
+						Msg << Sec->ceiling.TexZ;
+					}
 					if (Msg.ReadBit())
 						Sec->ceiling.xoffs = Msg.ReadInt(64);
 					if (Msg.ReadBit())

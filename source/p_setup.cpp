@@ -526,6 +526,7 @@ void VLevel::LoadSectors(int Lump)
 
 		//	Floor
 		ss->floor.Set(TVec(0, 0, 1), floorheight);
+		ss->floor.TexZ = floorheight;
 		ss->floor.pic = TexNumForName(floorpic, TEXTYPE_Flat);
 		ss->floor.xoffs = 0;
 		ss->floor.yoffs = 0;
@@ -539,6 +540,7 @@ void VLevel::LoadSectors(int Lump)
 
 		//	Ceiling
 		ss->ceiling.Set(TVec(0, 0, -1), -ceilingheight);
+		ss->ceiling.TexZ = ceilingheight;
 		ss->ceiling.pic = TexNumForName(ceilingpic, TEXTYPE_Flat);
 		ss->ceiling.xoffs = 0;
 		ss->ceiling.yoffs = 0;

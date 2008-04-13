@@ -126,6 +126,7 @@ void VLevel::Serialise(VStream& Strm)
 	for (i = 0, sec = Sectors; i < NumSectors; i++, sec++)
 	{
 		Strm << sec->floor.dist
+			<< sec->floor.TexZ
 			<< sec->floor.pic
 			<< sec->floor.xoffs
 			<< sec->floor.yoffs
@@ -139,6 +140,7 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->floor.LightSourceSector
 			<< sec->floor.SkyBox
 			<< sec->ceiling.dist
+			<< sec->ceiling.TexZ
 			<< sec->ceiling.pic
 			<< sec->ceiling.xoffs
 			<< sec->ceiling.yoffs

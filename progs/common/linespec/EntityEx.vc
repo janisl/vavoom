@@ -484,7 +484,7 @@ bool Physics(float DeltaTime)
 		return BlasterPhysics(DeltaTime);
 	}
 
-	if (Sector->AffectorData && bColideWithWorld)
+	if (Sector->AffectorData && bColideWithWorld && !bNoSector)
 	{
 		// killough 3/7/98: Carry things on floor
 		// killough 3/20/98: use new sector list which reflects true members

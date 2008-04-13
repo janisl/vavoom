@@ -751,6 +751,9 @@ struct sec_plane_t : TPlane
 	float		minz;
 	float		maxz;
 
+	//	Use for wall texture mapping.
+	float		TexZ;
+
 	int			pic;
 
 	float		xoffs;
