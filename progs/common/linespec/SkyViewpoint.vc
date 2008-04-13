@@ -26,6 +26,16 @@
 class SkyViewpoint : Actor
 	__mobjinfo__(9080);
 
+bool			bAlways;
+SkyViewpoint	Mate;
+float			PlaneAlpha;
+
+replication
+{
+	reliable if (Role == ROLE_Authority)
+		bAlways, Mate, PlaneAlpha;
+}
+
 //==========================================================================
 //
 //	BeginPlay
@@ -86,6 +96,39 @@ void Destroyed()
 		}
 	}
 	::Destroyed();
+}
+
+//==========================================================================
+//
+//	SkyBoxGetAlways
+//
+//==========================================================================
+
+bool SkyBoxGetAlways()
+{
+	return bAlways;
+}
+
+//==========================================================================
+//
+//	SkyBoxGetMate
+//
+//==========================================================================
+
+Entity SkyBoxGetMate()
+{
+	return Mate;
+}
+
+//==========================================================================
+//
+//	SkyBoxGetPlaneAlpha
+//
+//==========================================================================
+
+float SkyBoxGetPlaneAlpha()
+{
+	return PlaneAlpha;
 }
 
 defaultproperties

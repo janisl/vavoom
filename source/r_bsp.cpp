@@ -89,7 +89,8 @@ void VRenderLevel::SetUpFrustumIndexes()
 //==========================================================================
 
 void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-	int clipflags, VEntity* SkyBox, int LightSourceSector)
+	int clipflags, VEntity* SkyBox, int LightSourceSector,
+	bool CheckSkyBoxAlways)
 {
 	guard(VRenderLevel::DrawSurfaces);
 	surface_t* surfs = InSurfs;
@@ -103,7 +104,19 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		return;
 	}
 
-	if (texinfo->Tex == GTextureManager[skyflatnum])
+	sec_params_t* LightParams = LightSourceSector == -1 ? r_region->params :
+		&Level->Sectors[LightSourceSector].params;
+	int lLev = FixedLight ? FixedLight :
+			MIN(255, LightParams->lightlevel + ExtraLight);
+	if (r_darken)
+	{
+		lLev = light_remap[lLev];
+	}
+	vuint32 Fade = GetFade(r_sub);
+
+	bool IsStack = SkyBox && CheckSkyBoxAlways &&
+		SkyBox->eventSkyBoxGetAlways();
+	if (texinfo->Tex == GTextureManager[skyflatnum] || IsStack)
 	{
 		SkyIsVisible = true;
 		if (!InPortals)
@@ -175,7 +188,21 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 					Portals.Append(Portal);
 				}
 			}
-			Portal->Surfs.Append(surfs);
+			do
+			{
+				Portal->Surfs.Append(surfs);
+				if (IsStack && SkyBox->eventSkyBoxGetPlaneAlpha())
+				{
+					surfs->Light = (lLev << 24) | LightParams->LightColour;
+					surfs->Fade = Fade;
+					surfs->dlightframe = r_sub->dlightframe;
+					surfs->dlightbits = r_sub->dlightbits;
+					DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
+						0, SkyBox->eventSkyBoxGetPlaneAlpha(), false, 0,
+						false, 0, 0, TVec(), 0, TVec(), TVec(), TVec());
+				}
+				surfs = surfs->next;
+			} while (surfs);
 		}
 
 		if (!Drawer->HasStencil)
@@ -185,15 +212,6 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		return;
 	}
 
-	sec_params_t* LightParams = LightSourceSector == -1 ? r_region->params :
-		&Level->Sectors[LightSourceSector].params;
-	int lLev = FixedLight ? FixedLight :
-			MIN(255, LightParams->lightlevel + ExtraLight);
-	if (r_darken)
-	{
-		lLev = light_remap[lLev];
-	}
-	vuint32 Fade = GetFade(r_sub);
 	do
 	{
 		surfs->Light = (lLev << 24) | LightParams->LightColour;
@@ -308,7 +326,7 @@ void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 	}
 
 	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags, SkyBox,
-		plane.LightSourceSector);
+		plane.LightSourceSector, true);
 	unguard;
 }
 

@@ -118,6 +118,18 @@ inline float TextureOffsetTScale(VTexture* pic)
 	return 1.0;
 }
 
+//==========================================================================
+//
+//	IsSky
+//
+//==========================================================================
+
+inline bool IsSky(sec_plane_t* SPlane)
+{
+	return SPlane->pic == skyflatnum || (SPlane->SkyBox &&
+		SPlane->SkyBox->eventSkyBoxGetAlways());
+}
+
 //**************************************************************************
 //**
 //**	Sector surfaces
@@ -147,6 +159,8 @@ void VRenderLevel::SetupSky()
 	sky_plane.Set(TVec(0, 0, -1), -skyheight);
 	sky_plane.pic = skyflatnum;
 	sky_plane.Alpha = 1.1;
+	sky_plane.LightSourceSector = -1;
+	sky_plane.SkyBox = NULL;
 	unguard;
 }
 
@@ -945,7 +959,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
 		sp->texinfo.ColourMap = 0;
-		if (r_ceiling->pic == skyflatnum)
+		if (IsSky(r_ceiling))
 		{
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
@@ -976,8 +990,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		// hack to allow height changes in outdoor areas
 		float top_topz1 = topz1;
 		float top_topz2 = topz2;
-		if (r_ceiling->pic == skyflatnum &&
-			back_ceiling->pic == skyflatnum)
+		if (IsSky(r_ceiling) && IsSky(back_ceiling))
 		{
 			top_topz1 = back_topz1;
 			top_topz2 = back_topz2;
@@ -1035,8 +1048,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 		//	Sky abowe top
 		dseg->topsky = pspart++;
-		if (r_ceiling->pic == skyflatnum &&
-			back_ceiling->pic != skyflatnum)
+		if (IsSky(r_ceiling) && !IsSky(back_ceiling))
 		{
 			sp = dseg->topsky;
 
@@ -1370,7 +1382,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 
 		sp = dseg->topsky;
 		sp->texinfo.ColourMap = ColourMap;
-		if (r_ceiling->pic == skyflatnum &&
+		if (IsSky(r_ceiling) &&
 			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
@@ -1419,8 +1431,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			// hack to allow height changes in outdoor areas
 			float top_topz1 = topz1;
 			float top_topz2 = topz2;
-			if (r_ceiling->pic == skyflatnum &&
-				back_ceiling->pic == skyflatnum)
+			if (IsSky(r_ceiling) && IsSky(back_ceiling))
 			{
 				top_topz1 = back_topz1;
 				top_topz2 = back_topz2;
@@ -1480,8 +1491,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 		//	Sky abowe top
 		sp = dseg->topsky;
 		sp->texinfo.ColourMap = ColourMap;
-		if (r_ceiling->pic == skyflatnum &&
-			back_ceiling->pic != skyflatnum &&
+		if (IsSky(r_ceiling) && !IsSky(back_ceiling) &&
 			FASI(sp->frontTopDist) != FASI(r_ceiling->dist))
 		{
 			float topz1 = r_ceiling->GetPointZ(*seg->v1);
@@ -1522,8 +1532,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			float back_botz2 = back_floor->GetPointZ(*seg->v2);
 
 			// hack to allow height changes in outdoor areas
-			if (r_ceiling->pic == skyflatnum &&
-				back_ceiling->pic == skyflatnum)
+			if (IsSky(r_ceiling) && IsSky(back_ceiling))
 			{
 				topz1 = back_ceiling->GetPointZ(*seg->v1);
 				topz2 = back_ceiling->GetPointZ(*seg->v2);
@@ -2018,7 +2027,7 @@ void VRenderLevel::UpdateSubsector(int num, float *bbox)
 	}
 
 	bbox[2] = r_sub->sector->floor.minz;
-	if (r_sub->sector->ceiling.pic == skyflatnum)
+	if (IsSky(&r_sub->sector->ceiling))
 	{
 		bbox[5] = skyheight;
 	}

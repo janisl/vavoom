@@ -102,6 +102,9 @@ REGISTER_NAME(GetStateTime)
 REGISTER_NAME(SetActorProperty)
 REGISTER_NAME(GetActorProperty)
 REGISTER_NAME(CheckForSectorActions)
+REGISTER_NAME(SkyBoxGetAlways)
+REGISTER_NAME(SkyBoxGetMate)
+REGISTER_NAME(SkyBoxGetPlaneAlpha)
 
 //	LevelInfo events
 REGISTER_NAME(SpawnSpecials)

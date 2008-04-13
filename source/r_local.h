@@ -369,7 +369,8 @@ private:
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
-	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int = -1);
+	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int = -1,
+		bool = false);
 	void RenderLine(drawseg_t*, int);
 	void RenderSecSurface(sec_surface_t*, int, VEntity*);
 	void RenderSubRegion(subregion_t*, int);

@@ -807,7 +807,16 @@ void VSkyBoxPortal::DrawContents()
 
 	//	Set view origin to be sky view origin.
 	RLev->ViewEnt = Viewport;
-	vieworg = Viewport->Origin;
+	VEntity* Mate = Viewport->eventSkyBoxGetMate();
+	if (Mate)
+	{
+		vieworg.x = vieworg.x + Viewport->Origin.x - Mate->Origin.x;
+		vieworg.y = vieworg.y + Viewport->Origin.y - Mate->Origin.y;
+	}
+	else
+	{
+		vieworg = Viewport->Origin;
+	}
 	r_viewleaf = RLev->Level->PointInSubsector(vieworg);
 
 	RLev->TransformFrustum();

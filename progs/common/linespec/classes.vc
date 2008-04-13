@@ -181,6 +181,9 @@ enum
 
 #include "SkyViewpoint.vc"
 #include "SkyPicker.vc"
+#include "StackPoint.vc"
+#include "UpperStackLookOnly.vc"
+#include "LowerStackLookOnly.vc"
 
 #include "LineSpecialClientGame.vc"
 

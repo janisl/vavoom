@@ -455,6 +455,21 @@ class VEntity : public VThinker
 		P_PASS_BOOL(OldAboveFakeCeiling);
 		EV_RET_VOID(NAME_CheckForSectorActions);
 	}
+	bool eventSkyBoxGetAlways()
+	{
+		P_PASS_SELF;
+		EV_RET_BOOL(NAME_SkyBoxGetAlways);
+	}
+	VEntity* eventSkyBoxGetMate()
+	{
+		P_PASS_SELF;
+		EV_RET_REF(VEntity, NAME_SkyBoxGetMate);
+	}
+	float eventSkyBoxGetPlaneAlpha()
+	{
+		P_PASS_SELF;
+		EV_RET_FLOAT(NAME_SkyBoxGetPlaneAlpha);
+	}
 
 	bool SetState(VState*);
 	void SetInitialState(VState*);
