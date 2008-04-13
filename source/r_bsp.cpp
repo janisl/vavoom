@@ -34,6 +34,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define HORIZON_SURF_SIZE	(sizeof(surface_t) + sizeof(TVec) * 3)
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -49,6 +51,7 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static subsector_t*		r_sub;
+static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
 
 // CODE --------------------------------------------------------------------
@@ -124,8 +127,8 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 			VSky* Sky = NULL;
 			if (!SkyBox && r_sub->sector->Sky & SKY_FROM_SIDE)
 			{
-				side_t* Side = &Level->Sides[r_sub->sector->Sky &
-					(SKY_FROM_SIDE - 1)];
+				side_t* Side = &Level->Sides[(r_sub->sector->Sky &
+					(SKY_FROM_SIDE - 1)) - 1];
 				int Tex = Side->toptexture;
 				bool Flip = !!Level->Lines[Side->LineNum].arg3;
 				if (GTextureManager[Tex]->Type != TEXTYPE_Null)
@@ -236,6 +239,116 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 //==========================================================================
 //
+//	VRenderLevel::RenderHorizon
+//
+// 	Clips the given segment and adds any visible pieces to the line list.
+//
+//==========================================================================
+
+void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
+{
+	guard(VRenderLevel::RenderHorizon);
+	seg_t* Seg = dseg->seg;
+
+	if (!dseg->HorizonTop)
+	{
+		dseg->HorizonTop = (surface_t*)Z_Malloc(HORIZON_SURF_SIZE);
+		dseg->HorizonBot = (surface_t*)Z_Malloc(HORIZON_SURF_SIZE);
+		memset(dseg->HorizonTop, 0, HORIZON_SURF_SIZE);
+		memset(dseg->HorizonBot, 0, HORIZON_SURF_SIZE);
+	}
+
+	//	Horizon is not supported in sectors with slopes, so just use TexZ.
+	float TopZ = r_region->ceiling->TexZ;
+	float BotZ = r_region->floor->TexZ;
+	float HorizonZ = vieworg.z;
+
+	//	Handle top part.
+	if (TopZ > HorizonZ)
+	{
+		sec_surface_t* Ceil = r_subregion->ceil;
+
+		//	Calculate light and fade.
+		sec_params_t* LightParams = Ceil->secplane->LightSourceSector != -1 ?
+			&Level->Sectors[Ceil->secplane->LightSourceSector].params :
+			r_region->params;
+		int lLev = FixedLight ? FixedLight :
+			MIN(255, LightParams->lightlevel + ExtraLight);
+		if (r_darken)
+		{
+			lLev = light_remap[lLev];
+		}
+		vuint32 Fade = GetFade(r_sub);
+
+		surface_t* Surf = dseg->HorizonTop;
+		Surf->plane = dseg->seg;
+		Surf->Light = (lLev << 24) | LightParams->LightColour;
+		Surf->Fade = Fade;
+		Surf->count = 4;
+		Surf->verts[0] = *Seg->v1;
+		Surf->verts[0].z = MAX(BotZ, HorizonZ);
+		Surf->verts[1] = *Seg->v1;
+		Surf->verts[1].z = TopZ;
+		Surf->verts[2] = *Seg->v2;
+		Surf->verts[2].z = TopZ;
+		Surf->verts[3] = *Seg->v2;
+		Surf->verts[3].z = MAX(BotZ, HorizonZ);
+		if (Ceil->secplane->pic == skyflatnum)
+		{
+			//	If it's a sky, render it as a regular sky surface.
+			DrawSurfaces(Surf, &Ceil->texinfo, clipflags,
+				r_region->ceiling->SkyBox);
+		}
+		else
+		{
+		}
+	}
+
+	//	Handle bottom part.
+	if (BotZ < HorizonZ)
+	{
+		sec_surface_t* Floor = r_subregion->floor;
+
+		//	Calculate light and fade.
+		sec_params_t* LightParams = Floor->secplane->LightSourceSector != -1 ?
+			&Level->Sectors[Floor->secplane->LightSourceSector].params :
+			r_region->params;
+		int lLev = FixedLight ? FixedLight :
+			MIN(255, LightParams->lightlevel + ExtraLight);
+		if (r_darken)
+		{
+			lLev = light_remap[lLev];
+		}
+		vuint32 Fade = GetFade(r_sub);
+
+		surface_t* Surf = dseg->HorizonBot;
+		Surf->plane = dseg->seg;
+		Surf->Light = (lLev << 24) | LightParams->LightColour;
+		Surf->Fade = Fade;
+		Surf->count = 4;
+		Surf->verts[0] = *Seg->v1;
+		Surf->verts[0].z = BotZ;
+		Surf->verts[1] = *Seg->v1;
+		Surf->verts[1].z = MIN(TopZ, HorizonZ);
+		Surf->verts[2] = *Seg->v2;
+		Surf->verts[2].z = MIN(TopZ, HorizonZ);
+		Surf->verts[3] = *Seg->v2;
+		Surf->verts[3].z = BotZ;
+		if (Floor->secplane->pic == skyflatnum)
+		{
+			//	If it's a sky, render it as a regular sky surface.
+			DrawSurfaces(Surf, &Floor->texinfo, clipflags,
+				r_region->floor->SkyBox);
+		}
+		else
+		{
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VRenderLevel::RenderLine
 //
 // 	Clips the given segment and adds any visible pieces to the line list.
@@ -276,8 +389,15 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 	if (!line->backsector)
 	{
 		// single sided line
-		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
-			r_region->ceiling->SkyBox);
+		if (line->linedef->special == LNSPEC_LineHorizon)
+		{
+			RenderHorizon(dseg, clipflags);
+		}
+		else
+		{
+			DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
+				r_region->ceiling->SkyBox);
+		}
 		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, clipflags,
 			r_region->ceiling->SkyBox);
 	}
@@ -354,6 +474,7 @@ void VRenderLevel::RenderSubRegion(subregion_t* region, int clipflags)
 		RenderSubRegion(region->next, clipflags);
 	}
 
+	r_subregion = region;
 	r_region = region->secregion;
 
 	if (r_sub->poly)

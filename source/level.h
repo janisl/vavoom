@@ -48,6 +48,18 @@
 // mapblocks are used to check movement against lines and things
 #define MapBlock(x)		((int)floor(x) >> 7)
 
+//	All line specials that are used by the engine.
+enum
+{
+	LNSPEC_LineHorizon = 9,
+	LNSPEC_DoorLockedRaise = 13,
+	LNSPEC_ACSLockedExecute = 83,
+	LNSPEC_ACSLockedExecuteDoor = 85,
+	LNSPEC_StaticInit = 190,
+	LNSPEC_LineTranslucent = 208,
+	LNSPEC_TransferHeights = 209,
+};
+
 // TYPES -------------------------------------------------------------------
 
 //==========================================================================

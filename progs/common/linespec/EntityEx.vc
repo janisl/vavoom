@@ -841,6 +841,14 @@ final void HitLine(tmtrace_t* tmtrace, float StepVelScale)
 				return;
 			}
 
+			if (tmtrace->BlockingLine && tmtrace->BlockingLine->special ==
+				LNSPEC_LineHorizon)
+			{
+				SightSound = '';
+				Destroy();
+				return;
+			}
+
 			// Struck a wall
 			BounceWall(BOUNCE_VAL);
 			if (!bNoBounceSound && !bNoWallBounceSnd && SightSound)
@@ -863,6 +871,19 @@ final void HitLine(tmtrace_t* tmtrace, float StepVelScale)
 			else if (bExplodeOnSky)
 			{
 				ExplodeMissile();
+			}
+			else
+			{
+				Destroy();
+			}
+			return;
+		}
+		if (tmtrace->BlockingLine && tmtrace->BlockingLine->special ==
+			LNSPEC_LineHorizon)
+		{
+			if (bBounceSky)
+			{
+				Velocity = vector(0.0, 0.0, -1.0 * 35.0);
 			}
 			else
 			{
@@ -2347,6 +2368,12 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 					// it's a sky hack wall
 					return false;
 				}
+			}
+
+			if (li->special == LNSPEC_LineHorizon)
+			{
+					//	Don't spawn puffs on sky.
+				return false;
 			}
 
 			//  Hit line
@@ -4233,7 +4260,16 @@ final bool CheckMissileSpawn()
 		if (!tmtrace.BlockingMobj || !bRip ||
 			EntityEx(tmtrace.BlockingMobj).bDontRip)
 		{
-			ExplodeMissile();
+			//	Don't explode missiles on horizon lines.
+			if (tmtrace.BlockingLine && tmtrace.BlockingLine->special ==
+				LNSPEC_LineHorizon)
+			{
+				Destroy();
+			}
+			else
+			{
+				ExplodeMissile();
+			}
 			return false;
 		}
 	}

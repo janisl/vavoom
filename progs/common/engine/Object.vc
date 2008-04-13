@@ -436,8 +436,8 @@ enum
 	LNSPEC_PolyMoveTimes8,
 	LNSPEC_PolyDoorSwing,
 	LNSPEC_PolyDoorSlide,
-
-	LNSPEC_DoorClose = 10,// 10
+	LNSPEC_LineHorizon,
+	LNSPEC_DoorClose,// 10
 	LNSPEC_DoorOpen,
 	LNSPEC_DoorRaise,
 	LNSPEC_DoorLockedRaise,

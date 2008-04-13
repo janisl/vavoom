@@ -84,14 +84,6 @@ enum
 //	Old subsector flag.
 #define	NF_SUBSECTOR_OLD	0x8000
 
-//	Line specials used in sidedef loading.
-enum
-{
-	LNSPEC_StaticInit = 190,
-	LNSPEC_LineTranslucent = 208,
-	LNSPEC_TransferHeights = 209,
-};
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------

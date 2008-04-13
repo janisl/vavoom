@@ -72,15 +72,15 @@ struct spriteframe_t
 //
 struct spritedef_t
 {
-	int					numframes;
-	spriteframe_t		*spriteframes;
+	int				numframes;
+	spriteframe_t*	spriteframes;
 };
 
 struct segpart_t
 {
-	segpart_t		*next;
+	segpart_t*		next;
 	texinfo_t		texinfo;
-	surface_t		*surfs;
+	surface_t*		surfs;
 	float			frontTopDist;
 	float			frontBotDist;
 	float			backTopDist;
@@ -91,37 +91,40 @@ struct segpart_t
 
 struct drawseg_t
 {
-	seg_t		*seg;
-	drawseg_t	*next;
+	seg_t*			seg;
+	drawseg_t*		next;
 
-	segpart_t	*top;
-	segpart_t	*mid;
-	segpart_t	*bot;
-	segpart_t	*topsky;
-	segpart_t	*extra;
+	segpart_t*		top;
+	segpart_t*		mid;
+	segpart_t*		bot;
+	segpart_t*		topsky;
+	segpart_t*		extra;
+
+	surface_t*		HorizonTop;
+	surface_t*		HorizonBot;
 };
 
 struct sec_surface_t
 {
-	sec_plane_t		*secplane;
+	sec_plane_t*	secplane;
 	texinfo_t		texinfo;
 	float			dist;
 	float			XScale;
 	float			YScale;
 	float			Angle;
-	surface_t		*surfs;
+	surface_t*		surfs;
 };
 
 struct subregion_t
 {
-	sec_region_t	*secregion;
-	subregion_t		*next;
-	sec_plane_t		*floorplane;
-	sec_plane_t		*ceilplane;
-	sec_surface_t	*floor;
-	sec_surface_t	*ceil;
+	sec_region_t*	secregion;
+	subregion_t*	next;
+	sec_plane_t*	floorplane;
+	sec_plane_t*	ceilplane;
+	sec_surface_t*	floor;
+	sec_surface_t*	ceil;
 	int				count;
-	drawseg_t		*lines;
+	drawseg_t*		lines;
 };
 
 struct fakefloor_t
@@ -371,6 +374,7 @@ private:
 	void SetUpFrustumIndexes();
 	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int = -1,
 		bool = false);
+	void RenderHorizon(drawseg_t*, int);
 	void RenderLine(drawseg_t*, int);
 	void RenderSecSurface(sec_surface_t*, int, VEntity*);
 	void RenderSubRegion(subregion_t*, int);

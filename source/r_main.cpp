@@ -250,6 +250,14 @@ VRenderLevel::~VRenderLevel()
 			FreeSegParts(ds->bot);
 			FreeSegParts(ds->topsky);
 			FreeSegParts(ds->extra);
+			if (ds->HorizonTop)
+			{
+				Z_Free(ds->HorizonTop);
+			}
+			if (ds->HorizonBot)
+			{
+				Z_Free(ds->HorizonBot);
+			}
 		}
 	}
 	//	Free allocated wall surface blocks.
