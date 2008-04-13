@@ -394,6 +394,28 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	matProj(2, 3) = 1;
 	RenderDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 
+	RenderDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+	RenderDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+	cacheframecount++;
+
+	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
+	SetupViewOrg();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirect3DDrawer::SetupViewOrg
+//
+//==========================================================================
+
+void VDirect3DDrawer::SetupViewOrg()
+{
+	guard(VDirect3DDrawer::SetupViewOrg);
 	// The view matrix defines the position and orientation of the camera.
 	MyD3DMatrix matView;
 	matView(0, 0) = viewright.x;
@@ -414,21 +436,12 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	matView(3, 3) = 1;
 	RenderDevice->SetTransform(D3DTS_VIEW, &matView);
 
-	RenderDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
-	RenderDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
 	SimpleSurfsHead = NULL;
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;
 	SkyPortalsTail = NULL;
-	cacheframecount++;
-
-	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
 	unguard;
 }
 

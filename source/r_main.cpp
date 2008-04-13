@@ -533,7 +533,7 @@ void VRenderLevel::SetupFrame()
 		FixedLight = 255;
 	}
 
-	r_viewleaf = Level->PointInSubsector(cl->ViewOrg);
+	r_viewleaf = Level->PointInSubsector(vieworg);
 
 	Drawer->SetupView(this, &refdef);
 	unguard;
@@ -1332,11 +1332,33 @@ VPortal::~VPortal()
 
 //==========================================================================
 //
+//	VPortal::NeedsDepthBuffer
+//
+//==========================================================================
+
+bool VPortal::NeedsDepthBuffer()
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	VPortal::MatchSky
 //
 //==========================================================================
 
 bool VPortal::MatchSky(VSky*)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VPortal::MatchSkyBox
+//
+//==========================================================================
+
+bool VPortal::MatchSkyBox(VEntity*)
 {
 	return false;
 }

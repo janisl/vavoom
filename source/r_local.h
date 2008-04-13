@@ -169,7 +169,7 @@ public:
 	void InitOldSky(int, int, float, float, bool, bool, bool);
 	void InitSkyBox(VName, VName);
 	void Init(int, int, float, float, bool, bool, bool, bool);
-	void Draw(int);
+	void Draw(int, bool);
 };
 
 class VSkyPortal : public VPortal
@@ -185,10 +185,25 @@ public:
 	bool MatchSky(VSky*);
 };
 
+class VSkyBoxPortal : public VPortal
+{
+public:
+	VEntity*		Viewport;
+
+	VSkyBoxPortal(class VRenderLevel* ARLev, VEntity* AViewport)
+	: VPortal(ARLev)
+	, Viewport(AViewport)
+	{}
+	void DrawContents();
+	bool NeedsDepthBuffer();
+	bool MatchSkyBox(VEntity*);
+};
+
 class VRenderLevel : public VRenderLevelDrawer
 {
 private:
 	friend class VSkyPortal;
+	friend class VSkyBoxPortal;
 
 	struct light_t
 	{
@@ -280,6 +295,7 @@ private:
 	int				FrustumIndexes[4][6];
 	bool			SkyIsVisible;
 	TArray<VPortal*>	Portals;
+	bool			InPortals;
 
 	trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
 
@@ -352,9 +368,9 @@ private:
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
-	void DrawSurfaces(surface_t*, texinfo_t*, int clipflags, int = -1);
+	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int = -1);
 	void RenderLine(drawseg_t*, int);
-	void RenderSecSurface(sec_surface_t*, int);
+	void RenderSecSurface(sec_surface_t*, int, VEntity*);
 	void RenderSubRegion(subregion_t*, int);
 	void RenderSubsector(int, int);
 	void RenderBSPNode(int, float*, int);

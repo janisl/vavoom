@@ -258,6 +258,17 @@ void VLevelChannel::Update()
 			!(Sec->SectorFlags & sector_t::SF_TransferSource))
 			continue;
 
+		VEntity* FloorSkyBox = Sec->floor.SkyBox;
+		if (FloorSkyBox && !Connection->ObjMap->CanSerialiseObject(FloorSkyBox))
+		{
+			FloorSkyBox = NULL;
+		}
+		VEntity* CeilSkyBox = Sec->ceiling.SkyBox;
+		if (CeilSkyBox && !Connection->ObjMap->CanSerialiseObject(CeilSkyBox))
+		{
+			CeilSkyBox = NULL;
+		}
+
 		rep_sector_t* RepSec = &Sectors[i];
 		bool FloorChanged = RepSec->floor_dist != Sec->floor.dist ||
 			mround(RepSec->floor_xoffs) != mround(Sec->floor.xoffs) ||
@@ -266,7 +277,8 @@ void VLevelChannel::Update()
 			RepSec->floor_YScale != Sec->floor.YScale ||
 			mround(RepSec->floor_Angle) != mround(Sec->floor.Angle) ||
 			mround(RepSec->floor_BaseAngle) != mround(Sec->floor.BaseAngle) ||
-			mround(RepSec->floor_BaseYOffs) != mround(Sec->floor.BaseYOffs);
+			mround(RepSec->floor_BaseYOffs) != mround(Sec->floor.BaseYOffs) ||
+			RepSec->floor_SkyBox != FloorSkyBox;
 		bool CeilChanged = RepSec->ceil_dist != Sec->ceiling.dist ||
 			mround(RepSec->ceil_xoffs) != mround(Sec->ceiling.xoffs) ||
 			mround(RepSec->ceil_yoffs) != mround(Sec->ceiling.yoffs) ||
@@ -274,7 +286,8 @@ void VLevelChannel::Update()
 			RepSec->ceil_YScale != Sec->ceiling.YScale ||
 			mround(RepSec->ceil_Angle) != mround(Sec->ceiling.Angle) ||
 			mround(RepSec->ceil_BaseAngle) != mround(Sec->ceiling.BaseAngle) ||
-			mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs);
+			mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs) ||
+			RepSec->ceil_SkyBox != CeilSkyBox;
 		bool LightChanged = abs(RepSec->lightlevel - Sec->params.lightlevel) >= 4;
 		bool FadeChanged = RepSec->Fade != Sec->params.Fade;
 		bool SkyChanged = RepSec->Sky != Sec->Sky;
@@ -323,6 +336,9 @@ void VLevelChannel::Update()
 			Msg.WriteBit(mround(RepSec->floor_BaseYOffs) != mround(Sec->floor.BaseYOffs));
 			if (mround(RepSec->floor_BaseYOffs) != mround(Sec->floor.BaseYOffs))
 				Msg.WriteInt(mround(Sec->floor.BaseYOffs) & 63, 64);
+			Msg.WriteBit(RepSec->floor_SkyBox != FloorSkyBox);
+			if (RepSec->floor_SkyBox != FloorSkyBox)
+				Msg << FloorSkyBox;
 		}
 		Msg.WriteBit(CeilChanged);
 		if (CeilChanged)
@@ -351,6 +367,9 @@ void VLevelChannel::Update()
 			Msg.WriteBit(mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs));
 			if (mround(RepSec->ceil_BaseYOffs) != mround(Sec->ceiling.BaseYOffs))
 				Msg.WriteInt(mround(Sec->ceiling.BaseYOffs) & 63, 64);
+			Msg.WriteBit(RepSec->ceil_SkyBox != CeilSkyBox);
+			if (RepSec->ceil_SkyBox != CeilSkyBox)
+				Msg << CeilSkyBox;
 		}
 		Msg.WriteBit(LightChanged);
 		if (LightChanged)
@@ -377,6 +396,7 @@ void VLevelChannel::Update()
 		RepSec->floor_Angle = Sec->floor.Angle;
 		RepSec->floor_BaseAngle = Sec->floor.BaseAngle;
 		RepSec->floor_BaseYOffs = Sec->floor.BaseYOffs;
+		RepSec->floor_SkyBox = FloorSkyBox;
 		RepSec->ceil_pic = Sec->ceiling.pic;
 		RepSec->ceil_dist = Sec->ceiling.dist;
 		RepSec->ceil_xoffs = Sec->ceiling.xoffs;
@@ -386,6 +406,7 @@ void VLevelChannel::Update()
 		RepSec->ceil_Angle = Sec->ceiling.Angle;
 		RepSec->ceil_BaseAngle = Sec->ceiling.BaseAngle;
 		RepSec->ceil_BaseYOffs = Sec->ceiling.BaseYOffs;
+		RepSec->ceil_SkyBox = CeilSkyBox;
 		RepSec->lightlevel = Sec->params.lightlevel;
 		RepSec->Fade = Sec->params.Fade;
 	}
@@ -637,6 +658,8 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 						Sec->floor.BaseAngle = Msg.ReadInt(360);
 					if (Msg.ReadBit())
 						Sec->floor.BaseYOffs = Msg.ReadInt(64);
+					if (Msg.ReadBit())
+						Msg << Sec->floor.SkyBox;
 				}
 				if (Msg.ReadBit())
 				{
@@ -656,6 +679,8 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 						Sec->ceiling.BaseAngle = Msg.ReadInt(360);
 					if (Msg.ReadBit())
 						Sec->ceiling.BaseYOffs = Msg.ReadInt(64);
+					if (Msg.ReadBit())
+						Msg << Sec->ceiling.SkyBox;
 				}
 				if (Msg.ReadBit())
 				{

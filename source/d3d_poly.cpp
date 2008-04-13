@@ -406,6 +406,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	int				i;
 	int				sidx[4];
 
+	SetFade(surf->Fade);
 	sidx[0] = 0;
 	sidx[1] = 1;
 	sidx[2] = 2;

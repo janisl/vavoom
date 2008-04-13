@@ -360,14 +360,6 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 
 	glMatrixMode(GL_MODELVIEW);			// Select The Modelview Matrix
 
-	glLoadIdentity();
-	glRotatef(-90, 1, 0, 0);
-	glRotatef(90, 0, 0, 1);
-	glRotatef(-viewangles.roll, 1, 0, 0);
-	glRotatef(-viewangles.pitch, 0, 1, 0);
-	glRotatef(-viewangles.yaw, 0, 0, 1);
-	glTranslatef(-vieworg.x, -vieworg.y, -vieworg.z);
-
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
 	glEnable(GL_CULL_FACE);
@@ -383,14 +375,36 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 		glPointSize(0x8000 >> shift);
 	}
 
+	PortalDepth = 0;
+	cacheframecount++;
+
+	SetupViewOrg();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::SetupViewOrg
+//
+//==========================================================================
+
+void VOpenGLDrawer::SetupViewOrg()
+{
+	guard(VOpenGLDrawer::SetupViewOrg);
+	glLoadIdentity();
+	glRotatef(-90, 1, 0, 0);
+	glRotatef(90, 0, 0, 1);
+	glRotatef(-viewangles.roll, 1, 0, 0);
+	glRotatef(-viewangles.pitch, 0, 1, 0);
+	glRotatef(-viewangles.yaw, 0, 0, 1);
+	glTranslatef(-vieworg.x, -vieworg.y, -vieworg.z);
+
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
 	SimpleSurfsHead = NULL;
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;
 	SkyPortalsTail = NULL;
-	PortalDepth = 0;
-	cacheframecount++;
 	unguard;
 }
 

@@ -1,0 +1,98 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SkyViewpoint : Actor
+	__mobjinfo__(9080);
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+	InitSkyBox();
+}
+
+//==========================================================================
+//
+//	InitSkyBox
+//
+//==========================================================================
+
+void InitSkyBox()
+{
+	if (TID == 0)
+	{
+		//	Set this as a default sky box.
+		int i;
+		for (i = 0; i < XLevel.NumSectors; i++)
+		{
+			if (!XLevel.Sectors[i].floor.SkyBox)
+			{
+				XLevel.Sectors[i].floor.SkyBox = self;
+			}
+			if (!XLevel.Sectors[i].ceiling.SkyBox)
+			{
+				XLevel.Sectors[i].ceiling.SkyBox = self;
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Destroyed
+//
+//==========================================================================
+
+void Destroyed()
+{
+	//	Removed all references to this sky box.
+	int i;
+	for (i = 0; i < XLevel.NumSectors; i++)
+	{
+		if (XLevel.Sectors[i].floor.SkyBox == self)
+		{
+			XLevel.Sectors[i].floor.SkyBox = none;
+		}
+		if (XLevel.Sectors[i].ceiling.SkyBox == self)
+		{
+			XLevel.Sectors[i].ceiling.SkyBox = none;
+		}
+	}
+	::Destroyed();
+}
+
+defaultproperties
+{
+	bNoSector = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoSplash = true;
+	bAlwaysRelevant = true;
+}

@@ -356,8 +356,6 @@ void VOpenGLDrawer::BeginSky()
 	//	Sky polys are alredy translated
 	glPushMatrix();
 	glTranslatef(vieworg.x, vieworg.y, vieworg.z);
-
-	SetFade(0);
 	unguard;
 }
 
@@ -375,6 +373,7 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	int		i;
 	int		sidx[4];
 
+	SetFade(surf->Fade);
 	sidx[0] = 0;
 	sidx[1] = 1;
 	sidx[2] = 2;
@@ -835,14 +834,29 @@ bool VOpenGLDrawer::StartPortal(VPortal* Portal)
 	//	Mark the portal area.
 	DrawPortalArea(Portal);
 
-	//	Enable drawing.
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthMask(GL_TRUE);
-	glEnable(GL_TEXTURE_2D);
-
 	//	Set up stencil test for portal
 	glStencilFunc(GL_EQUAL, PortalDepth + 1, ~0);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+	if (Portal->NeedsDepthBuffer())
+	{
+		glDepthMask(GL_TRUE);
+		//	Clear depth buffer
+		glDepthRange(1, 1);
+		glDisable(GL_DEPTH_TEST);
+		DrawPortalArea(Portal);
+		glEnable(GL_DEPTH_TEST);
+		glDepthRange(0, 1);
+	}
+	else
+	{
+		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
+	}
+
+	//	Enable drawing.
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_TEXTURE_2D);
 
 	PortalDepth++;
 	return true;
@@ -879,6 +893,25 @@ void VOpenGLDrawer::DrawPortalArea(VPortal* Portal)
 
 void VOpenGLDrawer::EndPortal(VPortal* Portal)
 {
+	if (Portal->NeedsDepthBuffer())
+	{
+		//	Clear depth buffer
+		glDepthRange(1, 1);
+		glDisable(GL_TEXTURE_2D);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
+		DrawPortalArea(Portal);
+		glEnable(GL_DEPTH_TEST);
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glEnable(GL_TEXTURE_2D);
+		glDepthRange(0, 1);
+	}
+	else
+	{
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+	}
+
 	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 	//	Draw proper z-buffer for the portal area.

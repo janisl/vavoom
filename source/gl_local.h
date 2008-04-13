@@ -96,6 +96,7 @@ public:
 
 	//	Rendering stuff
 	void SetupView(VRenderLevelDrawer*, const refdef_t*);
+	void SetupViewOrg();
 	void WorldDrawing();
 	void EndView();
 

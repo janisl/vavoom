@@ -90,6 +90,7 @@ public:
 
 	//	Rendring stuff
 	virtual void SetupView(VRenderLevelDrawer*, const refdef_t*) = 0;
+	virtual void SetupViewOrg() = 0;
 	virtual void WorldDrawing() = 0;
 	virtual void EndView() = 0;
 

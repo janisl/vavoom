@@ -484,10 +484,6 @@ void VSoftwareDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t* rd)
 	}
 #endif
 
-	d_roverwrapped = false;
-	r_cache_thrash = false;
-	d_initial_rover = sc_rover;
-
 	d_minmip = d_mipcap;
 	if (d_minmip > 3)
 		d_minmip = 3;
@@ -504,6 +500,24 @@ void VSoftwareDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t* rd)
 	Sys_LowFPPrecision();
 
 	UpdatePalette();
+
+	SetupViewOrg();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::SetupViewOrg
+//
+//==========================================================================
+
+void VSoftwareDrawer::SetupViewOrg()
+{
+	guard(VSoftwareDrawer::SetupViewOrg);
+	d_roverwrapped = false;
+	r_cache_thrash = false;
+	d_initial_rover = sc_rover;
+
 	BeginEdgeFrame();
 	unguard;
 }

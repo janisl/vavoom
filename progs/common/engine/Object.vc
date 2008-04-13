@@ -768,6 +768,8 @@ struct sec_plane_t : TPlane
 	float		Alpha;
 
 	int			LightSourceSector;
+
+	Entity		SkyBox;
 };
 
 struct sec_params_t

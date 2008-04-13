@@ -476,10 +476,19 @@ void VSky::Init(int Sky1Texture, int Sky2Texture, float Sky1ScrollDelta,
 //
 //==========================================================================
 
-void VSky::Draw(int ColourMap)
+void VSky::Draw(int ColourMap, bool AsPortal)
 {
 	guard(VSky::Draw);
-	Drawer->BeginSky();
+	TVec SavedViewOrg = vieworg;
+	if (AsPortal)
+	{
+		vieworg = TVec(0, 0, 0);
+		Drawer->SetupViewOrg();
+	}
+	else
+	{
+		Drawer->BeginSky();
+	}
 
 	for (int i = 0; i < NumSkySurfs; i++)
 	{
@@ -489,7 +498,15 @@ void VSky::Draw(int ColourMap)
 			ColourMap);
 	}
 
-	Drawer->EndSky();
+	if (AsPortal)
+	{
+		vieworg = SavedViewOrg;
+		Drawer->SetupViewOrg();
+	}
+	else
+	{
+		Drawer->EndSky();
+	}
 	unguard;
 }
 
@@ -744,7 +761,7 @@ void VRenderLevel::DrawSky()
 {
 	guard(VRenderLevel::DrawSky);
 	InitSky();
-	BaseSky.Draw(ColourMap);
+	BaseSky.Draw(ColourMap, false);
 	unguard;
 }
 
@@ -757,7 +774,7 @@ void VRenderLevel::DrawSky()
 void VSkyPortal::DrawContents()
 {
 	guard(VSkyPortal::DrawContents);
-	Sky->Draw(RLev->ColourMap);
+	Sky->Draw(RLev->ColourMap, true);
 	unguard;
 }
 
@@ -770,4 +787,84 @@ void VSkyPortal::DrawContents()
 bool VSkyPortal::MatchSky(VSky* ASky)
 {
 	return Sky == ASky;
+}
+
+//==========================================================================
+//
+//	VSkyBoxPortal::DrawContents
+//
+//==========================================================================
+
+void VSkyBoxPortal::DrawContents()
+{
+	guard(VSkyBoxPortal::DrawContents);
+	TVec SavedViewOrg = vieworg;
+	VEntity* SavedViewEnt = RLev->ViewEnt;
+	int SavedExtraLight = RLev->ExtraLight;
+	int SavedFixedLight = RLev->FixedLight;
+	vuint8* SavedBspVis = RLev->BspVis;
+
+	//	Set view origin to be sky view origin.
+	RLev->ViewEnt = Viewport;
+	vieworg = Viewport->Origin;
+	r_viewleaf = RLev->Level->PointInSubsector(vieworg);
+
+	RLev->TransformFrustum();
+	Drawer->SetupViewOrg();
+
+	//	No light flashes in the sky.
+	RLev->ExtraLight = 0;
+	if (RLev->ColourMap == CM_Default)
+	{
+		RLev->FixedLight = 0;
+	}
+
+	RLev->BspVis = new vuint8[RLev->VisSize];
+
+	RLev->MarkLeaves();
+
+	RLev->PushDlights();
+
+	RLev->UpdateWorld(&refdef);
+
+	RLev->RenderWorld(&refdef);
+
+	RLev->RenderMobjs();
+
+	RLev->DrawParticles();
+
+	RLev->DrawTranslucentPolys();
+
+	//	Restore render settings.
+	vieworg = SavedViewOrg;
+	RLev->ViewEnt = SavedViewEnt;
+	RLev->ExtraLight = SavedExtraLight;
+	RLev->FixedLight = SavedFixedLight;
+	delete[] RLev->BspVis;
+	RLev->BspVis = SavedBspVis;
+	RLev->TransformFrustum();
+	Drawer->SetupViewOrg();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSkyBoxPortal::NeedsDepthBuffer
+//
+//==========================================================================
+
+bool VSkyBoxPortal::NeedsDepthBuffer()
+{
+	return true;
+}
+
+//==========================================================================
+//
+//	VSkyBoxPortal::MatchSkyBox
+//
+//==========================================================================
+
+bool VSkyBoxPortal::MatchSkyBox(VEntity* AEnt)
+{
+	return Viewport == AEnt;
 }
