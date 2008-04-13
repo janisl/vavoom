@@ -894,7 +894,7 @@ void StaticInit(Level InLevel, line_t* line)
 		for (s = InLevel.FindSectorFromTag(line->arg1, -1); s >= 0;
 			s = InLevel.FindSectorFromTag(line->arg1, s))
 		{
-			InLevel.Sectors[s].Sky = line->sidenum[0] | SKY_FROM_SIDE;
+			InLevel.Sectors[s].Sky = (line->sidenum[0] + 1) | SKY_FROM_SIDE;
 		}
 		break;
 	}
@@ -1001,6 +1001,11 @@ void SpawnWorld(Level InLevel)
 	for (i = 0; i < InLevel.NumSectors; i++)
 	{
 		InLevel.Sectors[i].Friction = EntityEx::FRICTION_NORMAL;
+		//	Handle Sky2 sector special.
+		if (InLevel.Sectors[i].special == SECSPEC_Sky2)
+		{
+			InLevel.Sectors[i].Sky = SKY_FROM_SIDE;
+		}
 	}
 
 	//	Set up 3D floors, transfers of light, etc.

@@ -127,10 +127,20 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 			VSky* Sky = NULL;
 			if (!SkyBox && r_sub->sector->Sky & SKY_FROM_SIDE)
 			{
-				side_t* Side = &Level->Sides[(r_sub->sector->Sky &
-					(SKY_FROM_SIDE - 1)) - 1];
-				int Tex = Side->toptexture;
-				bool Flip = !!Level->Lines[Side->LineNum].arg3;
+				int Tex;
+				bool Flip;
+				if (r_sub->sector->Sky == SKY_FROM_SIDE)
+				{
+					Tex = Level->LevelInfo->Sky2Texture;
+					Flip = true;
+				}
+				else
+				{
+					side_t* Side = &Level->Sides[(r_sub->sector->Sky &
+						(SKY_FROM_SIDE - 1)) - 1];
+					Tex = Side->toptexture;
+					Flip = !!Level->Lines[Side->LineNum].arg3;
+				}
 				if (GTextureManager[Tex]->Type != TEXTYPE_Null)
 				{
 					for (int i = 0; i < SideSkies.Num(); i++)
