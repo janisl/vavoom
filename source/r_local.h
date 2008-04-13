@@ -297,7 +297,8 @@ private:
 	TArray<VPortal*>	Portals;
 	bool			InPortals;
 
-	trans_sprite_t	trans_sprites[MAX_TRANS_SPRITES];
+	trans_sprite_t	MainTransSprites[MAX_TRANS_SPRITES];
+	trans_sprite_t*	trans_sprites;
 
 	VEntity*		ViewEnt;
 

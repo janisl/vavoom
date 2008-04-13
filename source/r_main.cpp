@@ -185,12 +185,13 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 , Particles(0)
 , ActiveParticles(0)
 , FreeParticles(0)
+, trans_sprites(MainTransSprites)
 {
 	guard(VRenderLevel::VRenderLevel);
 	r_oldviewleaf = NULL;
 
 	memset(DLights, 0, sizeof(DLights));
-	memset(trans_sprites, 0, sizeof(trans_sprites));
+	memset(MainTransSprites, 0, sizeof(MainTransSprites));
 
 	VisSize = (Level->NumSubsectors + 7) >> 3;
 	BspVis = new vuint8[VisSize];

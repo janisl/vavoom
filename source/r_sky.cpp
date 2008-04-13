@@ -803,6 +803,7 @@ void VSkyBoxPortal::DrawContents()
 	int SavedExtraLight = RLev->ExtraLight;
 	int SavedFixedLight = RLev->FixedLight;
 	vuint8* SavedBspVis = RLev->BspVis;
+	VRenderLevel::trans_sprite_t* SavedTransSprites = RLev->trans_sprites;
 
 	//	Set view origin to be sky view origin.
 	RLev->ViewEnt = Viewport;
@@ -820,6 +821,10 @@ void VSkyBoxPortal::DrawContents()
 	}
 
 	RLev->BspVis = new vuint8[RLev->VisSize];
+
+	VRenderLevel::trans_sprite_t TransSprites[VRenderLevel::MAX_TRANS_SPRITES];
+	memset(TransSprites, 0, sizeof(TransSprites));
+	RLev->trans_sprites = TransSprites;
 
 	RLev->MarkLeaves();
 
@@ -842,6 +847,7 @@ void VSkyBoxPortal::DrawContents()
 	RLev->FixedLight = SavedFixedLight;
 	delete[] RLev->BspVis;
 	RLev->BspVis = SavedBspVis;
+	RLev->trans_sprites = SavedTransSprites;
 	RLev->TransformFrustum();
 	Drawer->SetupViewOrg();
 	unguard;
