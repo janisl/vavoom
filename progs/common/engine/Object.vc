@@ -877,6 +877,7 @@ struct sector_t
 	bool		bNoFakeLight;		//	heightsec does not change lighting
 	bool		bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
 	bool		bUnderWater;		//	Sector is underwater
+	bool		bSilent;			//	Actors don't make noise in this sector.
 
 	// 0 = untraversed, 1,2 = sndlines -1
 	int			soundtraversed;

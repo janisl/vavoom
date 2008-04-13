@@ -343,6 +343,7 @@ struct sector_t
 		SF_NoFakeLight		= 0x0020,	//	heightsec does not change lighting
 		SF_IgnoreHeightSec	= 0x0040,	//	heightsec is only for triggering sector actions
 		SF_UnderWater		= 0x0080,	//	Sector is underwater
+		SF_Silent			= 0x0100,	//	Actors don't make noise in this sector.
 	};
 	vuint32		SectorFlags;
 

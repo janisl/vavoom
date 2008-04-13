@@ -435,6 +435,10 @@ void VEntity::StartSound(VName Sound, vint32 Channel, float Volume,
 	float Attenuation, bool Loop)
 {
 	guard(VEntity::StartSound);
+	if (Sector->SectorFlags & sector_t::SF_Silent)
+	{
+		return;
+	}
 	Super::StartSound(Origin, SoundOriginID,
 		GSoundManager->ResolveEntitySound(SoundClass, SoundGender, Sound),
 		Channel, Volume, Attenuation, Loop);
@@ -451,6 +455,10 @@ void VEntity::StartLocalSound(VName Sound, vint32 Channel, float Volume,
 	float Attenuation)
 {
 	guard(VEntity::StartLocalSound);
+	if (Sector->SectorFlags & sector_t::SF_Silent)
+	{
+		return;
+	}
 	if (Player)
 	{
 		Player->eventClientStartSound(
@@ -482,6 +490,10 @@ void VEntity::StopSound(vint32 channel)
 void VEntity::StartSoundSequence(VName Name, vint32 ModeNum)
 {
 	guard(VEntity::StartSoundSequence);
+	if (Sector->SectorFlags & sector_t::SF_Silent)
+	{
+		return;
+	}
 	Super::StartSoundSequence(Origin, SoundOriginID, Name, ModeNum);
 	unguard;
 }
@@ -495,6 +507,10 @@ void VEntity::StartSoundSequence(VName Name, vint32 ModeNum)
 void VEntity::AddSoundSequenceChoice(VName Choice)
 {
 	guard(VEntity::AddSoundSequenceChoice);
+	if (Sector->SectorFlags & sector_t::SF_Silent)
+	{
+		return;
+	}
 	Super::AddSoundSequenceChoice(SoundOriginID, Choice);
 	unguard;
 }

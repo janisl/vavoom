@@ -175,6 +175,10 @@ void VLevelInfo::SectorStartSound(const sector_t* Sector, int SoundId,
 	guard(VLevelInfo::SectorStartSound);
 	if (Sector)
 	{
+		if (Sector->SectorFlags & sector_t::SF_Silent)
+		{
+			return;
+		}
 		StartSound(Sector->soundorg, (Sector - XLevel->Sectors) +
 			(SNDORG_Sector << 24), SoundId, Channel, Volume, Attenuation,
 			false);
@@ -212,6 +216,10 @@ void VLevelInfo::SectorStartSequence(const sector_t* Sector, VName Name,
 	guard(VLevelInfo::SectorStartSequence);
 	if (Sector)
 	{
+		if (Sector->SectorFlags & sector_t::SF_Silent)
+		{
+			return;
+		}
 		StartSoundSequence(Sector->soundorg, (Sector - XLevel->Sectors) +
 			(SNDORG_Sector << 24), Name, ModeNum);
 	}
@@ -245,6 +253,10 @@ void VLevelInfo::PolyobjStartSequence(const polyobj_t* Poly, VName Name,
 	int ModeNum)
 {
 	guard(VLevelInfo::PolyobjStartSequence);
+	if (Poly->subsector->sector->SectorFlags & sector_t::SF_Silent)
+	{
+		return;
+	}
 	StartSoundSequence(Poly->startSpot, (Poly - XLevel->PolyObjs) +
 		(SNDORG_PolyObj << 24), Name, ModeNum);
 	unguard;

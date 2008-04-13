@@ -184,6 +184,7 @@ enum
 #include "StackPoint.vc"
 #include "UpperStackLookOnly.vc"
 #include "LowerStackLookOnly.vc"
+#include "SectorSilencer.vc"
 
 #include "LineSpecialClientGame.vc"
 
