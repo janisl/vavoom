@@ -799,6 +799,10 @@ void VSkyBoxPortal::DrawContents()
 {
 	guard(VSkyBoxPortal::DrawContents);
 	TVec SavedViewOrg = vieworg;
+	TAVec SavedViewAngles = viewangles;
+	TVec SavedViewForward = viewforward;
+	TVec SavedViewRight = viewright;
+	TVec SavedViewUp = viewup;
 	VEntity* SavedViewEnt = RLev->ViewEnt;
 	int SavedExtraLight = RLev->ExtraLight;
 	int SavedFixedLight = RLev->FixedLight;
@@ -816,18 +820,20 @@ void VSkyBoxPortal::DrawContents()
 	else
 	{
 		vieworg = Viewport->Origin;
+		viewangles.yaw += Viewport->Angles.yaw;
+		AngleVectors(viewangles, viewforward, viewright, viewup);
+
+		//	No light flashes in the sky.
+		RLev->ExtraLight = 0;
+		if (RLev->ColourMap == CM_Default)
+		{
+			RLev->FixedLight = 0;
+		}
 	}
 	r_viewleaf = RLev->Level->PointInSubsector(vieworg);
 
 	RLev->TransformFrustum();
 	Drawer->SetupViewOrg();
-
-	//	No light flashes in the sky.
-	RLev->ExtraLight = 0;
-	if (RLev->ColourMap == CM_Default)
-	{
-		RLev->FixedLight = 0;
-	}
 
 	RLev->BspVis = new vuint8[RLev->VisSize];
 
@@ -851,6 +857,10 @@ void VSkyBoxPortal::DrawContents()
 
 	//	Restore render settings.
 	vieworg = SavedViewOrg;
+	viewangles = SavedViewAngles;
+	viewforward = SavedViewForward;
+	viewright = SavedViewRight;
+	viewup = SavedViewUp;
 	RLev->ViewEnt = SavedViewEnt;
 	RLev->ExtraLight = SavedExtraLight;
 	RLev->FixedLight = SavedFixedLight;

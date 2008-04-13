@@ -54,7 +54,7 @@ int						screenblocks = 0;
 TVec					vieworg;
 TVec					viewforward;
 TVec					viewright;
-TVec					viewup;	
+TVec					viewup;
 TAVec					viewangles;
 
 TClipPlane				view_clipplanes[4];
