@@ -904,6 +904,7 @@ void VOpenGLDrawer::EndPortal(VPortal* Portal)
 		glEnable(GL_DEPTH_TEST);
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glEnable(GL_TEXTURE_2D);
+		glEnable(GL_DEPTH_TEST);
 		glDepthRange(0, 1);
 	}
 	else
@@ -915,13 +916,18 @@ void VOpenGLDrawer::EndPortal(VPortal* Portal)
 	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
 
 	//	Draw proper z-buffer for the portal area.
+	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_TEXTURE_2D);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	DrawPortalArea(Portal);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
 	PortalDepth--;
+	glStencilFunc(GL_EQUAL, PortalDepth, ~0);
 	if (!PortalDepth)
 	{
 		glDisable(GL_STENCIL_TEST);

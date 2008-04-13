@@ -1,0 +1,79 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SkyPicker : Actor
+	__mobjinfo__(9081);
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+
+	//	Find sky viewpoint.
+	SkyViewpoint SkyBox = none;
+	if (Args[0])
+	{
+		Entity E;
+		int Search = -1;
+		for (E = Level.FindMobjFromTID(Args[0], &Search); E && !SkyBox;
+			E = Level.FindMobjFromTID(Args[0], &Search))
+		{
+			SkyBox = SkyViewpoint(E);
+		}
+	}
+
+	//	Assign it to the sector.
+	if (!SkyBox && Args[0])
+	{
+		print("Could not find sky viewpoint %d", Args[0]);
+	}
+	else
+	{
+		if (!(Args[1] & 1))
+		{
+			Sector->floor.SkyBox = SkyBox;
+		}
+		if (!(Args[1] & 2))
+		{
+			Sector->ceiling.SkyBox = SkyBox;
+		}
+	}
+
+	//	This actor goes away.
+	Destroy();
+}
+
+defaultproperties
+{
+	bNoSector = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bNoSplash = true;
+}

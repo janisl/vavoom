@@ -137,6 +137,7 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->floor.flags
 			<< sec->floor.Alpha
 			<< sec->floor.LightSourceSector
+			<< sec->floor.SkyBox
 			<< sec->ceiling.dist
 			<< sec->ceiling.pic
 			<< sec->ceiling.xoffs
@@ -149,6 +150,7 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->ceiling.flags
 			<< sec->ceiling.Alpha
 			<< sec->ceiling.LightSourceSector
+			<< sec->ceiling.SkyBox
 			<< sec->params.lightlevel
 			<< sec->params.LightColour
 			<< sec->params.Fade
@@ -166,7 +168,8 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->Damage
 			<< sec->Friction
 			<< sec->MoveFactor
-			<< sec->Gravity;
+			<< sec->Gravity
+			<< sec->Sky;
 		if (Strm.IsLoading())
 		{
 			CalcSecMinMaxs(sec);
