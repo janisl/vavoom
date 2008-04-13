@@ -246,8 +246,8 @@ void InitGen(int InType, line_t* SrcLine, int InAffectee)
 	else
 	{
 		//	The speed and direction are parameters to the special.
-		XSpeed = itof(SrcLine->arg4 - 128) * 32.0 * 35.0;
-		YSpeed = itof(SrcLine->arg5 - 128) * 32.0 * 35.0;
+		XSpeed = itof(SrcLine->arg4 - 128) * 35.0 / 32.0;
+		YSpeed = itof(SrcLine->arg5 - 128) * 35.0 / 32.0;
 	}
 
 	if (Type == SCROLLEV_Carry)
@@ -299,8 +299,8 @@ void InitScripted(int InType, int Arg2, int Arg3, int InAffectee)
 	Affectee = InAffectee;
 	Sector = &XLevel.Sectors[Affectee];
 	//	The speed and direction are parameters to the special.
-	XSpeed = itof(Arg2) * 32.0 * 35.0;
-	YSpeed = itof(Arg3) * 32.0 * 35.0;
+	XSpeed = itof(Arg2) * 35.0 / 32.0;
+	YSpeed = itof(Arg3) * 35.0 / 32.0;
 
 	if (Type == SCROLLEV_Carry)
 	{
