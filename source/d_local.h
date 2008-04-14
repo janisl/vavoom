@@ -359,6 +359,11 @@ void D_AliasProjectFinalVert(finalvert_t*, auxvert_t*);
 
 } // extern "C"
 
+//	Span drawers for horizons.
+void D_DrawHorizonSpans_8(espan_t*);
+void D_DrawHorizonSpans_16(espan_t*);
+void D_DrawHorizonSpans_32(espan_t*);
+
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //	Variables used by asm code.
@@ -382,6 +387,7 @@ extern int				cachewidth;
 extern vuint8*			d_transluc;
 extern vuint16*			d_srctranstab;
 extern vuint16*			d_dsttranstab;
+extern int				d_HorizonLight;
 
 extern int				ylookup[MAXSCREENHEIGHT];
 
@@ -435,6 +441,7 @@ extern spanfunc_t		spanfunc;
 extern spritespanfunc_t	spritespanfunc;
 
 extern spanfunc_t		D_DrawSpans;
+extern spanfunc_t		D_DrawHorizonSpans;
 extern spritespanfunc_t	D_DrawSpriteSpans;
 extern spritespanfunc_t	D_DrawFuzzSpriteSpans;
 extern spritespanfunc_t	D_DrawAltFuzzSpriteSpans;

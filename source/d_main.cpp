@@ -94,6 +94,7 @@ float					yprojection;
 int						ylookup[MAXSCREENHEIGHT];
 
 spanfunc_t				D_DrawSpans;
+spanfunc_t				D_DrawHorizonSpans;
 spritespanfunc_t		D_DrawSpriteSpans;
 spritespanfunc_t		D_DrawFuzzSpriteSpans;
 spritespanfunc_t		D_DrawAltFuzzSpriteSpans;
@@ -191,6 +192,7 @@ void VSoftwareDrawer::InitResolution()
 		bppindex = 0;
 
 		D_DrawSpans = D_DrawSpans8_8;
+		D_DrawHorizonSpans = D_DrawHorizonSpans_8;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_8;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_8;
 		D_DrawAltFuzzSpriteSpans = D_DrawAltFuzzSpriteSpans_8;
@@ -202,6 +204,7 @@ void VSoftwareDrawer::InitResolution()
 		bppindex = 1;
 
 		D_DrawSpans = D_DrawSpans8_16;
+		D_DrawHorizonSpans = D_DrawHorizonSpans_16;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_15;
@@ -213,6 +216,7 @@ void VSoftwareDrawer::InitResolution()
 		bppindex = 2;
 
 		D_DrawSpans = D_DrawSpans8_16;
+		D_DrawHorizonSpans = D_DrawHorizonSpans_16;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_16;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_16;
@@ -227,6 +231,7 @@ void VSoftwareDrawer::InitResolution()
 		boffs = bshift / 8;
 
 		D_DrawSpans = D_DrawSpans8_32;
+		D_DrawHorizonSpans = D_DrawHorizonSpans_32;
 		D_DrawSpriteSpans = D_DrawSpriteSpans_32;
 		D_DrawFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;
 		D_DrawAltFuzzSpriteSpans = D_DrawFuzzSpriteSpans_32;

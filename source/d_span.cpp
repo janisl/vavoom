@@ -509,3 +509,411 @@ extern "C" void D_DrawZSpans(espan_t *pspan)
 }
 
 #endif
+
+//==========================================================================
+//
+//	D_DrawHorizonSpans_8
+//
+//==========================================================================
+
+void D_DrawHorizonSpans_8(espan_t *pspan)
+{
+	int				count, spancount;
+	vuint8			*pdest;
+	fixed_t			s, t, snext, tnext, sstep, tstep;
+	float			sdivz, tdivz, zi, z, du, dv, spancountminus1;
+	float			sdivz8stepu, tdivz8stepu, zi8stepu;
+
+	sstep = 0;	// keep compiler happy
+	tstep = 0;	// ditto
+
+	vuint8* TexData = (vuint8*)miptexture + miptexture->offsets[0];
+	int TexW = miptexture->width;
+	int TexH = miptexture->height;
+	bbextents = TexW << 16;
+	bbextentt = TexH << 16;
+	vuint8* FadeTbl = &d_fadetable[d_HorizonLight << 8];
+
+	sdivz8stepu = d_sdivzstepu * 8;
+	tdivz8stepu = d_tdivzstepu * 8;
+	zi8stepu = d_zistepu * 8;
+
+	do
+	{
+	    pdest = (vuint8*)scrn + ylookup[pspan->v] + pspan->u;
+
+		count = pspan->count;
+
+		// calculate the initial s/z, t/z, 1/z, s, and t and clamp
+		du = (float)pspan->u;
+		dv = (float)pspan->v;
+
+		sdivz = d_sdivzorigin + dv*d_sdivzstepv + du*d_sdivzstepu;
+		tdivz = d_tdivzorigin + dv*d_tdivzstepv + du*d_tdivzstepu;
+		zi = d_ziorigin + dv*d_zistepv + du*d_zistepu;
+		z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+		s = (int)(sdivz * z) + sadjust;
+		t = (int)(tdivz * z) + tadjust;
+
+		do
+		{
+			// calculate s and t at the far end of the span
+			if (count >= 8)
+				spancount = 8;
+			else
+				spancount = count;
+
+			count -= spancount;
+
+			if (count)
+			{
+				// calculate s/z, t/z, zi->fixed s and t at far end of span,
+				// calculate s and t steps across span by shifting
+				sdivz += sdivz8stepu;
+				tdivz += tdivz8stepu;
+				zi += zi8stepu;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+				snext = (int)(sdivz * z) + sadjust;
+				tnext = (int)(tdivz * z) + tadjust;
+
+				sstep = (snext - s) >> 3;
+				tstep = (tnext - t) >> 3;
+			}
+			else
+			{
+				//	Calculate s/z, t/z, zi->fixed s and t at last pixel in
+				// span (so can't step off polygon), clamp, calculate s and
+				// t steps across span by division, biasing steps low so we
+				// don't run off the texture
+				spancountminus1 = (float)(spancount - 1);
+				sdivz += d_sdivzstepu * spancountminus1;
+				tdivz += d_tdivzstepu * spancountminus1;
+				zi += d_zistepu * spancountminus1;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+				snext = (int)(sdivz * z) + sadjust;
+				tnext = (int)(tdivz * z) + tadjust;
+
+				if (spancount > 1)
+				{
+					sstep = (snext - s) / (spancount - 1);
+					tstep = (tnext - t) / (spancount - 1);
+				}
+			}
+
+			s = s % bbextents;
+			if (s < 0)
+			{
+				s += bbextents;
+			}
+			t = t % bbextentt;
+			if (t < 0)
+			{
+				t += bbextentt;
+			}
+			sstep = sstep % bbextents;
+			if (sstep < 0)
+			{
+				sstep += bbextents;
+			}
+			tstep = tstep % bbextentt;
+			if (tstep < 0)
+			{
+				tstep += bbextentt;
+			}
+
+			do
+			{
+				*pdest++ = FadeTbl[TexData[(s >> 16) + (t >> 16) * TexW]];
+				s += sstep;
+				if (s >= bbextents)
+				{
+					s -= bbextents;
+				}
+				t += tstep;
+				if (t >= bbextentt)
+				{
+					t -= bbextentt;
+				}
+			} while (--spancount > 0);
+
+			s = snext;
+			t = tnext;
+
+		} while (count > 0);
+
+	} while ((pspan = pspan->pnext) != NULL);
+}
+
+//==========================================================================
+//
+//	D_DrawHorizonSpans_16
+//
+//==========================================================================
+
+void D_DrawHorizonSpans_16(espan_t *pspan)
+{
+	int				count, spancount;
+	vuint16			*pdest;
+	fixed_t			s, t, snext, tnext, sstep, tstep;
+	float			sdivz, tdivz, zi, z, du, dv, spancountminus1;
+	float			sdivz8stepu, tdivz8stepu, zi8stepu;
+
+	sstep = 0;	// keep compiler happy
+	tstep = 0;	// ditto
+
+	vuint8* TexData = (vuint8*)miptexture + miptexture->offsets[0];
+	int TexW = miptexture->width;
+	int TexH = miptexture->height;
+	bbextents = TexW << 16;
+	bbextentt = TexH << 16;
+	vuint16* FadeTbl = &d_fadetable16[d_HorizonLight << 8];
+
+	sdivz8stepu = d_sdivzstepu * 8;
+	tdivz8stepu = d_tdivzstepu * 8;
+	zi8stepu = d_zistepu * 8;
+
+	do
+	{
+	    pdest = (vuint16*)scrn + ylookup[pspan->v] + pspan->u;
+
+		count = pspan->count;
+
+		// calculate the initial s/z, t/z, 1/z, s, and t and clamp
+		du = (float)pspan->u;
+		dv = (float)pspan->v;
+
+		sdivz = d_sdivzorigin + dv*d_sdivzstepv + du*d_sdivzstepu;
+		tdivz = d_tdivzorigin + dv*d_tdivzstepv + du*d_tdivzstepu;
+		zi = d_ziorigin + dv*d_zistepv + du*d_zistepu;
+		z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+		s = (int)(sdivz * z) + sadjust;
+		t = (int)(tdivz * z) + tadjust;
+
+		do
+		{
+			// calculate s and t at the far end of the span
+			if (count >= 8)
+				spancount = 8;
+			else
+				spancount = count;
+
+			count -= spancount;
+
+			if (count)
+			{
+				// calculate s/z, t/z, zi->fixed s and t at far end of span,
+				// calculate s and t steps across span by shifting
+				sdivz += sdivz8stepu;
+				tdivz += tdivz8stepu;
+				zi += zi8stepu;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+				snext = (int)(sdivz * z) + sadjust;
+				tnext = (int)(tdivz * z) + tadjust;
+
+				sstep = (snext - s) >> 3;
+				tstep = (tnext - t) >> 3;
+			}
+			else
+			{
+				//	Calculate s/z, t/z, zi->fixed s and t at last pixel in
+				// span (so can't step off polygon), clamp, calculate s and
+				// t steps across span by division, biasing steps low so we
+				// don't run off the texture
+				spancountminus1 = (float)(spancount - 1);
+				sdivz += d_sdivzstepu * spancountminus1;
+				tdivz += d_tdivzstepu * spancountminus1;
+				zi += d_zistepu * spancountminus1;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+				snext = (int)(sdivz * z) + sadjust;
+				tnext = (int)(tdivz * z) + tadjust;
+
+				if (spancount > 1)
+				{
+					sstep = (snext - s) / (spancount - 1);
+					tstep = (tnext - t) / (spancount - 1);
+				}
+			}
+
+			s = s % bbextents;
+			if (s < 0)
+			{
+				s += bbextents;
+			}
+			t = t % bbextentt;
+			if (t < 0)
+			{
+				t += bbextentt;
+			}
+			sstep = sstep % bbextents;
+			if (sstep < 0)
+			{
+				sstep += bbextents;
+			}
+			tstep = tstep % bbextentt;
+			if (tstep < 0)
+			{
+				tstep += bbextentt;
+			}
+
+			do
+			{
+				*pdest++ = FadeTbl[TexData[(s >> 16) + (t >> 16) * TexW]];
+				s += sstep;
+				if (s >= bbextents)
+				{
+					s -= bbextents;
+				}
+				t += tstep;
+				if (t >= bbextentt)
+				{
+					t -= bbextentt;
+				}
+			} while (--spancount > 0);
+
+			s = snext;
+			t = tnext;
+
+		} while (count > 0);
+
+	} while ((pspan = pspan->pnext) != NULL);
+}
+
+//==========================================================================
+//
+//	D_DrawHorizonSpans_32
+//
+//==========================================================================
+
+void D_DrawHorizonSpans_32(espan_t *pspan)
+{
+	int				count, spancount;
+	vuint32			*pdest;
+	fixed_t			s, t, snext, tnext, sstep, tstep;
+	float			sdivz, tdivz, zi, z, du, dv, spancountminus1;
+	float			sdivz8stepu, tdivz8stepu, zi8stepu;
+
+	sstep = 0;	// keep compiler happy
+	tstep = 0;	// ditto
+
+	vuint8* TexData = (vuint8*)miptexture + miptexture->offsets[0];
+	int TexW = miptexture->width;
+	int TexH = miptexture->height;
+	bbextents = TexW << 16;
+	bbextentt = TexH << 16;
+	vuint32* FadeTbl = &d_fadetable32[d_HorizonLight << 8];
+
+	sdivz8stepu = d_sdivzstepu * 8;
+	tdivz8stepu = d_tdivzstepu * 8;
+	zi8stepu = d_zistepu * 8;
+
+	do
+	{
+	    pdest = (vuint32*)scrn + ylookup[pspan->v] + pspan->u;
+
+		count = pspan->count;
+
+		// calculate the initial s/z, t/z, 1/z, s, and t and clamp
+		du = (float)pspan->u;
+		dv = (float)pspan->v;
+
+		sdivz = d_sdivzorigin + dv*d_sdivzstepv + du*d_sdivzstepu;
+		tdivz = d_tdivzorigin + dv*d_tdivzstepv + du*d_tdivzstepu;
+		zi = d_ziorigin + dv*d_zistepv + du*d_zistepu;
+		z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+		s = (int)(sdivz * z) + sadjust;
+		t = (int)(tdivz * z) + tadjust;
+
+		do
+		{
+			// calculate s and t at the far end of the span
+			if (count >= 8)
+				spancount = 8;
+			else
+				spancount = count;
+
+			count -= spancount;
+
+			if (count)
+			{
+				// calculate s/z, t/z, zi->fixed s and t at far end of span,
+				// calculate s and t steps across span by shifting
+				sdivz += sdivz8stepu;
+				tdivz += tdivz8stepu;
+				zi += zi8stepu;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+
+				snext = (int)(sdivz * z) + sadjust;
+				tnext = (int)(tdivz * z) + tadjust;
+
+				sstep = (snext - s) >> 3;
+				tstep = (tnext - t) >> 3;
+			}
+			else
+			{
+				//	Calculate s/z, t/z, zi->fixed s and t at last pixel in
+				// span (so can't step off polygon), clamp, calculate s and
+				// t steps across span by division, biasing steps low so we
+				// don't run off the texture
+				spancountminus1 = (float)(spancount - 1);
+				sdivz += d_sdivzstepu * spancountminus1;
+				tdivz += d_tdivzstepu * spancountminus1;
+				zi += d_zistepu * spancountminus1;
+				z = (float)0x10000 / zi;	// prescale to 16.16 fixed-point
+				snext = (int)(sdivz * z) + sadjust;
+				tnext = (int)(tdivz * z) + tadjust;
+
+				if (spancount > 1)
+				{
+					sstep = (snext - s) / (spancount - 1);
+					tstep = (tnext - t) / (spancount - 1);
+				}
+			}
+
+			s = s % bbextents;
+			if (s < 0)
+			{
+				s += bbextents;
+			}
+			t = t % bbextentt;
+			if (t < 0)
+			{
+				t += bbextentt;
+			}
+			sstep = sstep % bbextents;
+			if (sstep < 0)
+			{
+				sstep += bbextents;
+			}
+			tstep = tstep % bbextentt;
+			if (tstep < 0)
+			{
+				tstep += bbextentt;
+			}
+
+			do
+			{
+				*pdest++ = FadeTbl[TexData[(s >> 16) + (t >> 16) * TexW]];
+				s += sstep;
+				if (s >= bbextents)
+				{
+					s -= bbextents;
+				}
+				t += tstep;
+				if (t >= bbextentt)
+				{
+					t -= bbextentt;
+				}
+			} while (--spancount > 0);
+
+			s = snext;
+			t = tnext;
+
+		} while (count > 0);
+
+	} while ((pspan = pspan->pnext) != NULL);
+}

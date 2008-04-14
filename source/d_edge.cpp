@@ -36,6 +36,7 @@
 #define SURF_SKY			1
 #define SURF_SKY_BOX		2
 #define SURF_BACKGROUND		4
+#define SURF_HORIZON		8
 
 //	Theoretically cliping can give only 4 new vertexes. In practice due to
 // roundof errors we can get more extra vertexes
@@ -152,6 +153,8 @@ edge_t			edge_tail;
 espan_t			*span_p, *max_span_p;
 
 int				current_iv;
+
+int				d_HorizonLight;
 
 }
 
@@ -424,27 +427,26 @@ extern "C" void D_ClipEdge(const TVec &v0, const TVec &v1,
 
 //==========================================================================
 //
-//	VSoftwareDrawer::DrawPolygon
+//	D_ClipPolygon
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
+static bool D_ClipPolygon(surface_t* surf, int clipflags, bool AddViewOrg,
+	int Flags)
 {
-	guard(VSoftwareDrawer::DrawPolygon);
-	int		i;
-
+	guard(D_ClipPolygon);
 	if (surface_p == surf_max)
 	{
 		outofsurfs++;
-		return;
+		return false;
 	}
 	if (edge_p + surf->count + 4 >= edge_max)
 	{
 		outofedges += surf->count;
-		return;
+		return false;
 	}
 
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		view_clipplanes[i].entered = false;
 		view_clipplanes[i].exited = false;
@@ -454,10 +456,21 @@ void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
 	r_nearzi = 0;
 	d_lastvertvalid = false;
 
-	for (i = 0; i < surf->count; i++)
+	if (!AddViewOrg)
 	{
-		D_ClipEdge(surf->verts[i ? i - 1 : surf->count - 1], surf->verts[i],
-			view_clipplanes, clipflags);
+		for (int i = 0; i < surf->count; i++)
+		{
+			D_ClipEdge(surf->verts[i ? i - 1 : surf->count - 1],
+				surf->verts[i], view_clipplanes, clipflags);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < surf->count; i++)
+		{
+			D_ClipEdge(surf->verts[i ? i - 1 : surf->count - 1] + vieworg,
+				surf->verts[i] + vieworg, view_clipplanes, clipflags);
+		}
 	}
 	if (d_lastvertvalid)
 	{
@@ -466,7 +479,7 @@ void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
 
 	if (!r_emited)
 	{
-		return;
+		return false;
 	}
 
 	surface_p->surf = surf;
@@ -477,9 +490,26 @@ void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
 	surface_p->key = r_currentkey++;
 	surface_p->last_u = 0;
 	surface_p->spanstate = 0;
-	surface_p->flags = 0;
+	surface_p->flags = Flags;
 	surface_p->nearzi = r_nearzi;
 
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::DrawPolygon
+//
+//==========================================================================
+
+void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
+{
+	guard(VSoftwareDrawer::DrawPolygon);
+	if (!D_ClipPolygon(surf, clipflags, false, 0))
+	{
+		return;
+	}
 	surface_p++;
 	unguard;
 }
@@ -515,55 +545,10 @@ void VSoftwareDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	int CMap)
 {
 	guard(VSoftwareDrawer::DrawSkyPolygon);
-	int		i;
-
-	if (surface_p == surf_max)
-	{
-		outofsurfs++;
-		return;
-	}
-	if (edge_p + surf->count + 4 >= edge_max)
-	{
-		outofedges += surf->count;
-		return;
-	}
-
-	for (i = 0; i < 4; i++)
-	{
-		view_clipplanes[i].entered = false;
-		view_clipplanes[i].exited = false;
-	}
-
-	r_emited = 0;
-	r_nearzi = 0;
-	d_lastvertvalid = false;
-
-	for (i = 0; i < surf->count; i++)
-	{
-		D_ClipEdge(surf->verts[i ? i - 1 : surf->count - 1] + vieworg,
-			surf->verts[i] + vieworg, view_clipplanes, 15);
-	}
-	if (d_lastvertvalid)
-	{
-		D_ClipEdge(firstvert, firstvert, NULL, 0);
-	}
-
-	if (!r_emited)
+	if (!D_ClipPolygon(surf, 15, true, bIsSkyBox ? SURF_SKY_BOX : SURF_SKY))
 	{
 		return;
 	}
-
-	surface_p->surf = surf;
-	surface_p->spans = NULL;
-
-	surface_p->next = NULL;
-	surface_p->prev = NULL;
-	surface_p->key = r_currentkey++;
-	surface_p->last_u = 0;
-	surface_p->spanstate = 0;
-	surface_p->flags = bIsSkyBox ? SURF_SKY_BOX : SURF_SKY;
-	surface_p->nearzi = r_nearzi;
-
 	surface_p->Texture1 = Texture1;
 	surface_p->Texture2 = Texture2;
 	surface_p->offs1 = offs1;
@@ -590,8 +575,15 @@ void VSoftwareDrawer::EndSky()
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawHorizonPolygon(surface_t*, int)
+void VSoftwareDrawer::DrawHorizonPolygon(surface_t* surf, int clipflags)
 {
+	guard(VSoftwareDrawer::DrawHorizonPolygon);
+	if (!D_ClipPolygon(surf, clipflags, false, SURF_HORIZON))
+	{
+		return;
+	}
+	surface_p++;
+	unguard;
 }
 
 //==========================================================================
@@ -957,6 +949,73 @@ static void D_CalcGradients(surface_t *pface, int miplevel, const TVec &modelorg
 
 //==========================================================================
 //
+//	D_CalcZGradients
+//
+//==========================================================================
+
+static void D_CalcZGradients(surface_t *pface)
+{
+	TVec		p_normal;
+
+	TransformVector(pface->plane->normal, p_normal);
+	float distinv = 1.0 / (pface->plane->dist - DotProduct(vieworg,
+		pface->plane->normal));
+
+	d_zistepu = p_normal.x * distinv / xprojection;
+	d_zistepv = p_normal.y * distinv / yprojection;
+	d_ziorigin = p_normal.z * distinv -
+			centrexfrac * d_zistepu -
+			centreyfrac * d_zistepv;
+}
+
+//==========================================================================
+//
+//	D_CalcHorizonGradients
+//
+//==========================================================================
+
+static void D_CalcHorizonGradients(sec_plane_t* Plane, texinfo_t* tex)
+{
+	TVec		p_normal;
+	float		t;
+
+	TransformVector(Plane->normal, p_normal);
+	float distinv = 1.0 / (Plane->dist - DotProduct(vieworg, Plane->normal));
+
+	d_zistepu = p_normal.x * distinv / xprojection;
+	d_zistepv = p_normal.y * distinv / yprojection;
+	d_ziorigin = p_normal.z * distinv -
+			centrexfrac * d_zistepu -
+			centreyfrac * d_zistepv;
+
+	TVec tr_saxis;
+	TVec tr_taxis;
+
+	TransformVector(tex->saxis, tr_saxis);
+	TransformVector(tex->taxis, tr_taxis);
+
+	t = 1.0 / xprojection;
+	d_sdivzstepu = tr_saxis.x * t;
+	d_tdivzstepu = tr_taxis.x * t;
+
+	t = 1.0 / yprojection;
+	d_sdivzstepv = tr_saxis.y * t;
+	d_tdivzstepv = tr_taxis.y * t;
+
+	d_sdivzorigin = tr_saxis.z -
+		centrexfrac * d_sdivzstepu - centreyfrac * d_sdivzstepv;
+	d_tdivzorigin = tr_taxis.z -
+		centrexfrac * d_tdivzstepu - centreyfrac * d_tdivzstepv;
+
+	t = 0x10000;
+	sadjust = ((fixed_t)(DotProduct(vieworg, tex->saxis) * t + 0.5)) +
+		((fixed_t)(tex->soffs * t));
+	tadjust = ((fixed_t)(DotProduct(vieworg, tex->taxis) * t + 0.5)) +
+		((fixed_t)(tex->toffs * t));
+}
+
+//==========================================================================
+//
 //	VSoftwareDrawer::DrawSurfaces
 //
 //==========================================================================
@@ -991,9 +1050,7 @@ void VSoftwareDrawer::DrawSurfaces()
 			cachewidth = cache->width;
 			cacheblock = cache->data;
 			D_DrawSpans(surf->spans);
-			d_ziorigin = 0;
-			d_zistepv = 0;
-			d_zistepu = 0;
+			D_CalcZGradients(surf->surf);
 			D_DrawZSpans(surf->spans);
 		}
 		else if (surf->flags & SURF_SKY_BOX)
@@ -1001,9 +1058,19 @@ void VSoftwareDrawer::DrawSurfaces()
 			D_CalcGradients(surf->surf, 0, TVec(0, 0, 0));
 			SetTexture(surf->Texture1, surf->ColourMap);
 			D_DrawSpans(surf->spans);
-			d_ziorigin = 0;
-			d_zistepv = 0;
-			d_zistepu = 0;
+			D_CalcZGradients(surf->surf);
+			D_DrawZSpans(surf->spans);
+		}
+		else if (surf->flags & SURF_HORIZON)
+		{
+			D_CalcHorizonGradients(surf->surf->HorizonPlane,
+				surf->surf->texinfo);
+			SetTexture(surf->surf->texinfo->Tex,
+				surf->surf->texinfo->ColourMap);
+			SetFade(surf->surf->Fade);
+			d_HorizonLight = 31 - (surf->surf->Light >> 27);
+			D_DrawHorizonSpans(surf->spans);
+			D_CalcZGradients(surf->surf);
 			D_DrawZSpans(surf->spans);
 		}
 		else if (surf->flags & SURF_BACKGROUND)
