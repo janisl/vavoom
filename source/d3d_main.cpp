@@ -77,8 +77,6 @@ VDirect3DDrawer::VDirect3DDrawer()
 , CurrentFade(0)
 , particle_texture(0)
 , tscount(0)
-, light_surf(0)
-, add_surf(0)
 {
 	memset(light_surf, 0, sizeof(light_surf));
 	memset(add_surf, 0, sizeof(add_surf));

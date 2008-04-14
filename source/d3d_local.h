@@ -197,7 +197,6 @@ private:
 	void FlushTextures();
 	void ReleaseTextures();
 	void FlushTexture(VTexture*);
-	static int ToPowerOf2(int);
 	LPDIRECT3DTEXTURE9 CreateSurface(int, int, int, bool);
 	void SetTexture(VTexture*, int);
 	void SetSpriteLump(VTexture*, VTextureTranslation*, int);
