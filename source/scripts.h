@@ -55,6 +55,8 @@ public:
 	void ExpectNumberWithSign();
 	bool CheckFloat();
 	void ExpectFloat();
+	bool CheckFloatWithSign();
+	void ExpectFloatWithSign();
 	void UnGet();
 	void Error(const char*);
 	TLocation GetLoc();

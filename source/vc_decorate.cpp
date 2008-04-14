@@ -2890,13 +2890,13 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("Speed"))
 		{
-			sc->ExpectFloat();
+			sc->ExpectFloatWithSign();
 			SetClassFieldFloat(Class, "Speed", sc->Float * 35.0);
 			continue;
 		}
 		if (!Prop.ICmp("VSpeed"))
 		{
-			sc->ExpectFloat();
+			sc->ExpectFloatWithSign();
 			TVec Val = GetClassFieldVec(Class, "Velocity");
 			Val.z = sc->Float * 35.0;
 			SetClassFieldVec(Class, "Velocity", Val);
@@ -2904,7 +2904,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("FastSpeed"))
 		{
-			sc->ExpectFloat();
+			sc->ExpectFloatWithSign();
 			SetClassFieldFloat(Class, "FastSpeed", sc->Float * 35.0);
 			continue;
 		}

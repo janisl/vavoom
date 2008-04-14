@@ -670,6 +670,49 @@ void VScriptParser::ExpectFloat()
 
 //==========================================================================
 //
+//	VScriptParser::CheckFloatWithSign
+//
+//==========================================================================
+
+bool VScriptParser::CheckFloatWithSign()
+{
+	guard(VScriptParser::CheckFloatWithSign);
+	if (Check("-"))
+	{
+		ExpectFloat();
+		Float = -Float;
+		return true;
+	}
+	else
+	{
+		return CheckFloat();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VScriptParser::ExpectFloatWithSign
+//
+//==========================================================================
+
+void VScriptParser::ExpectFloatWithSign()
+{
+	guard(VScriptParser::ExpectFloatWithSign);
+	if (Check("-"))
+	{
+		ExpectFloat();
+		Float = -Float;
+	}
+	else
+	{
+		ExpectFloat();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VScriptParser::UnGet
 //
 //	Assumes there is a valid string in sc_String.
