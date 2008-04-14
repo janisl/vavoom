@@ -116,6 +116,29 @@ void VOpenGLDrawer::DrawSkyPortal(surface_t* surf, int)
 
 //==========================================================================
 //
+//	VOpenGLDrawer::DrawHorizonPolygon
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
+{
+	guard(VOpenGLDrawer::DrawHorizonPolygon);
+	if (HorizonPortalsTail)
+	{
+		HorizonPortalsTail->DrawNext = surf;
+		HorizonPortalsTail = surf;
+	}
+	else
+	{
+		HorizonPortalsHead = surf;
+		HorizonPortalsTail = surf;
+	}
+	surf->DrawNext = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VOpenGLDrawer::WorldDrawing
 //
 //==========================================================================
@@ -129,6 +152,12 @@ void VOpenGLDrawer::WorldDrawing()
 	GLfloat		lights, lightt;
 	surface_t	*surf;
 	texinfo_t	*tex;
+
+	//	First draw horizons.
+	for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+	{
+		DoHorizonPolygon(surf);
+	}
 
 	//	For sky areas we just write to the depth buffer to prevent drawing
 	// polygons behind the sky.
@@ -339,6 +368,93 @@ void VOpenGLDrawer::WorldDrawing()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(1);		// back to normal Z buffering
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::DoHorizonPolygon
+//
+//==========================================================================
+
+void VOpenGLDrawer::DoHorizonPolygon(surface_t* Surf)
+{
+	guard(VOpenGLDrawer::DoHorizonPolygon);
+	float Dist = 4096.0;
+	TVec v[4];
+	if (Surf->HorizonPlane->normal.z > 0.0)
+	{
+		v[0] = Surf->verts[0];
+		v[3] = Surf->verts[3];
+		TVec HDir = -Surf->plane->normal;
+
+		TVec Dir1 = Normalise(vieworg - Surf->verts[1]);
+		TVec Dir2 = Normalise(vieworg - Surf->verts[2]);
+		float Mul1 = 1.0 / DotProduct(HDir, Dir1);
+		v[1] = Surf->verts[1] + Dir1 * Mul1 * Dist;
+		float Mul2 = 1.0 / DotProduct(HDir, Dir2);
+		v[2] = Surf->verts[2] + Dir2 * Mul2 * Dist;
+		if (v[1].z < v[0].z)
+		{
+			v[1] = Surf->verts[1] + Dir1 * Mul1 * Dist * (Surf->verts[1].z -
+				Surf->verts[0].z) / (Surf->verts[1].z - v[1].z);
+			v[2] = Surf->verts[2] + Dir2 * Mul2 * Dist * (Surf->verts[2].z -
+				Surf->verts[3].z) / (Surf->verts[2].z - v[2].z);
+		}
+	}
+	else
+	{
+		v[1] = Surf->verts[1];
+		v[2] = Surf->verts[2];
+		TVec HDir = -Surf->plane->normal;
+
+		TVec Dir1 = Normalise(vieworg - Surf->verts[0]);
+		TVec Dir2 = Normalise(vieworg - Surf->verts[3]);
+		float Mul1 = 1.0 / DotProduct(HDir, Dir1);
+		v[0] = Surf->verts[0] + Dir1 * Mul1 * Dist;
+		float Mul2 = 1.0 / DotProduct(HDir, Dir2);
+		v[3] = Surf->verts[3] + Dir2 * Mul2 * Dist;
+		if (v[1].z < v[0].z)
+		{
+			v[0] = Surf->verts[0] + Dir1 * Mul1 * Dist * (Surf->verts[1].z -
+				Surf->verts[0].z) / (v[0].z - Surf->verts[0].z);
+			v[3] = Surf->verts[3] + Dir2 * Mul2 * Dist * (Surf->verts[2].z -
+				Surf->verts[3].z) / (v[3].z - Surf->verts[3].z);
+		}
+	}
+
+	texinfo_t* Tex = Surf->texinfo;
+	SetTexture(Tex->Tex, Tex->ColourMap);
+
+	float lev = float(Surf->Light >> 24) / 255.0;
+	glColor4f(((Surf->Light >> 16) & 255) * lev / 255.0,
+		((Surf->Light >> 8) & 255) * lev / 255.0,
+		(Surf->Light & 255) * lev / 255.0, 1.0);
+	SetFade(Surf->Fade);
+
+	//	Draw it
+	glDepthMask(GL_FALSE);
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < 4; i++)
+	{
+		glTexCoord2f((DotProduct(v[i], Tex->saxis) + Tex->soffs) * tex_iw,
+			(DotProduct(v[i], Tex->taxis) + Tex->toffs) * tex_ih);
+		glVertex(v[i]);
+	}
+	glEnd();
+	glDepthMask(GL_TRUE);
+
+	//	Write to the depth buffer.
+	glDisable(GL_TEXTURE_2D);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < Surf->count; i++)
+	{
+		glVertex(Surf->verts[i]);
+	}
+	glEnd();
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_TEXTURE_2D);
 	unguard;
 }
 

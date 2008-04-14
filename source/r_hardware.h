@@ -83,6 +83,8 @@ protected:
 	surface_t*		SimpleSurfsTail;
 	surface_t*		SkyPortalsHead;
 	surface_t*		SkyPortalsTail;
+	surface_t*		HorizonPortalsHead;
+	surface_t*		HorizonPortalsTail;
 
 	enum { SHADEDOT_QUANT = 16 };
 	static float	r_avertexnormal_dots[SHADEDOT_QUANT][256];

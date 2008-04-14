@@ -140,6 +140,29 @@ void VDirect3DDrawer::DrawSkyPortal(surface_t* surf, int)
 
 //==========================================================================
 //
+//	VOpenGLDrawer::DrawHorizonPolygon
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
+{
+	guard(VOpenGLDrawer::DrawHorizonPolygon);
+	if (HorizonPortalsTail)
+	{
+		HorizonPortalsTail->DrawNext = surf;
+		HorizonPortalsTail = surf;
+	}
+	else
+	{
+		HorizonPortalsHead = surf;
+		HorizonPortalsTail = surf;
+	}
+	surf->DrawNext = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VDirect3DDrawer::WorldDrawing
 //
 //==========================================================================
@@ -154,6 +177,12 @@ void VDirect3DDrawer::WorldDrawing()
 	surface_t		*surf;
 	texinfo_t		*tex;
 	vuint32			light;
+
+	//	First draw horizons.
+	for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+	{
+		DoHorizonPolygon(surf);
+	}
 
 	//	For sky areas we just write to the depth buffer to prevent drawing
 	// polygons behind the sky.
@@ -375,6 +404,16 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);		// back to normal Z buffering
 	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	VDirect3DDrawer::DoHorizonPolygon
+//
+//==========================================================================
+
+void VDirect3DDrawer::DoHorizonPolygon(surface_t*)
+{
 }
 
 //==========================================================================

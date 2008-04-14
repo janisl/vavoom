@@ -405,6 +405,8 @@ void VOpenGLDrawer::SetupViewOrg()
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;
 	SkyPortalsTail = NULL;
+	HorizonPortalsHead = NULL;
+	HorizonPortalsTail = NULL;
 	unguard;
 }
 

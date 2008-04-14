@@ -492,8 +492,6 @@ void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
 
 void VSoftwareDrawer::DrawSkyPortal(surface_t*, int)
 {
-	guard(VSoftwareDrawer::DrawSkyPortal);
-	unguard;
 }
 
 //==========================================================================
@@ -583,6 +581,16 @@ void VSoftwareDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 //==========================================================================
 
 void VSoftwareDrawer::EndSky()
+{
+}
+
+//==========================================================================
+//
+//	VSoftwareDrawer::DrawHorizonPolygon
+//
+//==========================================================================
+
+void VSoftwareDrawer::DrawHorizonPolygon(surface_t*, int)
 {
 }
 

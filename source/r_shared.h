@@ -82,6 +82,7 @@ struct surface_t
 	surface_t*		DrawNext;
 	texinfo_t*		texinfo;
 	TPlane*			plane;
+	sec_plane_t*	HorizonPlane;
 	vuint32			Light;		//	Light level and colour.
 	vuint32			Fade;
 	vuint8*			lightmap;

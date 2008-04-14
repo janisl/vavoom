@@ -110,6 +110,7 @@ public:
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float,
 		int);
 	void EndSky();
+	void DrawHorizonPolygon(surface_t*, int);
 	void DrawMaskedPolygon(surface_t*, float, bool);
 	void DrawSpritePolygon(TVec*, VTexture*, float, bool, VTextureTranslation*,
 		int, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
@@ -197,6 +198,7 @@ protected:
 	void UploadTexture8(int, int, const vuint8*, const rgba_t*);
 	void UploadTexture(int, int, const rgba_t*);
 
+	void DoHorizonPolygon(surface_t*);
 	void DrawPortalArea(VPortal*);
 
 	bool				mtexable;

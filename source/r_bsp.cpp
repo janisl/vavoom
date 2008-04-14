@@ -292,6 +292,8 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 
 		surface_t* Surf = dseg->HorizonTop;
 		Surf->plane = dseg->seg;
+		Surf->texinfo = &Ceil->texinfo;
+		Surf->HorizonPlane = Ceil->secplane;
 		Surf->Light = (lLev << 24) | LightParams->LightColour;
 		Surf->Fade = Fade;
 		Surf->count = 4;
@@ -311,6 +313,7 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		}
 		else
 		{
+			Drawer->DrawHorizonPolygon(Surf, clipflags);
 		}
 	}
 
@@ -333,6 +336,8 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 
 		surface_t* Surf = dseg->HorizonBot;
 		Surf->plane = dseg->seg;
+		Surf->texinfo = &Floor->texinfo;
+		Surf->HorizonPlane = Floor->secplane;
 		Surf->Light = (lLev << 24) | LightParams->LightColour;
 		Surf->Fade = Fade;
 		Surf->count = 4;
@@ -352,6 +357,7 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		}
 		else
 		{
+			Drawer->DrawHorizonPolygon(Surf, clipflags);
 		}
 	}
 	unguard;

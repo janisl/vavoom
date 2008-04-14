@@ -440,6 +440,8 @@ void VDirect3DDrawer::SetupViewOrg()
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;
 	SkyPortalsTail = NULL;
+	HorizonPortalsHead = NULL;
+	HorizonPortalsTail = NULL;
 	unguard;
 }
 
