@@ -334,7 +334,8 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 		int ci = Msg.ReadInt(VMemberBase::GNetClassLookup.Num());
 		VClass* C = VMemberBase::GNetClassLookup[ci];
 	
-		VThinker* Th = Connection->Context->GetLevel()->SpawnThinker(C);
+		VThinker* Th = Connection->Context->GetLevel()->SpawnThinker(C,
+			TVec(0, 0, 0), TAVec(0, 0, 0), NULL, false);
 #ifdef CLIENT
 		if (Th->IsA(VLevelInfo::StaticClass()))
 		{
