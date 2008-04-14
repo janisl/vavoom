@@ -255,8 +255,8 @@ script << 0 >> (int type, int tag)
 		{
 			print(s:"You've destroyed the Converter!");
 			GiveInventory("QuestItem25", 1);
-			GiveInventory("UpgradeStamina", 1);
-			GiveInventory("UpgradeAccuracy", 1);
+			GiveInventory("UpgradeStamina", 10);
+			GiveInventory("UpgradeAccuracy", 10);
 		}
 		else
 		{
@@ -372,8 +372,8 @@ script << 0 >> (int type, int tag)
 		//	Lower floor, give stats upgrade.
 		if (Floor_LowerToHighest(tag, 8, 128))
 		{
-			GiveInventory("UpgradeStamina", 1);
-			GiveInventory("UpgradeAccuracy", 1);
+			GiveInventory("UpgradeStamina", 10);
+			GiveInventory("UpgradeAccuracy", 10);
 			print(s:"Congratulations! You have completed the training area");
 		}
 		else
