@@ -595,7 +595,7 @@ void VNetConnection::SendCommand(VStr Str)
 void VNetConnection::SetUpFatPVS()
 {
 	guard(VNetConnection::SetUpFatPVS);
-	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
+	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 	VLevel*	Level = Context->GetLevel();
 
 	LeafPvs = Level->LeafPVS(Owner->MO->SubSector);

@@ -2346,7 +2346,7 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 void VRenderLevel::UpdateWorld(const refdef_t* rd)
 {
 	guard(VRenderLevel::UpdateWorld);
-	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
+	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
 	ViewClip.ClearClipNodes(vieworg, Level);
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,

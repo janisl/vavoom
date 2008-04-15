@@ -613,7 +613,9 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 {
 	guard(VRenderLevel::RenderBSPNode);
 	if (ViewClip.ClipIsFull())
+	{
 		return;
+	}
 	int clipflags = AClipflags;
 	// cull the clipping planes if not trivial accept
 	if (clipflags)
@@ -621,7 +623,9 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 		for (int i = 0; i < 4; i++)
 		{
 			if (!(clipflags & view_clipplanes[i].clipflag))
+			{
 				continue;	// don't need to clip against it
+			}
 
 			// generate accept and reject points
 
@@ -639,7 +643,9 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			d -= view_clipplanes[i].dist;
 
 			if (d <= 0)
+			{
 				return;
+			}
 
 			TVec acceptpt;
 
@@ -651,7 +657,9 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			d -= view_clipplanes[i].dist;
 
 			if (d >= 0)
+			{
 				clipflags ^= view_clipplanes[i].clipflag;	// node is entirely on screen
+			}
 		}
 	}
 
@@ -664,9 +672,13 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 	if (bspnum & NF_SUBSECTOR)
 	{
 		if (bspnum == -1)
+		{
 			RenderSubsector(0, clipflags);
+		}
 		else
+		{
 			RenderSubsector(bspnum & (~NF_SUBSECTOR), clipflags);
+		}
 		return;
 	}
 
@@ -697,7 +709,7 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 void VRenderLevel::RenderWorld(const refdef_t* rd)
 {
 	guard(VRenderLevel::RenderWorld);
-	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 9999, 99999};
+	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
 	SetUpFrustumIndexes();
 	ViewClip.ClearClipNodes(vieworg, Level);
