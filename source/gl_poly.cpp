@@ -931,50 +931,63 @@ void VOpenGLDrawer::EndParticles()
 //
 //==========================================================================
 
-bool VOpenGLDrawer::StartPortal(VPortal* Portal)
+bool VOpenGLDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 {
 	guard(VOpenGLDrawer::StartPortal);
-	//	Disable drawing
-	glDisable(GL_TEXTURE_2D);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glDepthMask(GL_FALSE);
-
-	//	Set up stencil test.
-	if (!PortalDepth)
+	if (UseStencil)
 	{
-		glEnable(GL_STENCIL_TEST);
-	}
-	glStencilFunc(GL_EQUAL, PortalDepth, ~0);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
+		//	Disable drawing
+		glDisable(GL_TEXTURE_2D);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDepthMask(GL_FALSE);
 
-	//	Mark the portal area.
-	DrawPortalArea(Portal);
+		//	Set up stencil test.
+		if (!PortalDepth)
+		{
+			glEnable(GL_STENCIL_TEST);
+		}
+		glStencilFunc(GL_EQUAL, PortalDepth, ~0);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
-	//	Set up stencil test for portal
-	glStencilFunc(GL_EQUAL, PortalDepth + 1, ~0);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-	if (Portal->NeedsDepthBuffer())
-	{
-		glDepthMask(GL_TRUE);
-		//	Clear depth buffer
-		glDepthRange(1, 1);
-		glDepthFunc(GL_ALWAYS);
+		//	Mark the portal area.
 		DrawPortalArea(Portal);
-		glDepthFunc(GL_LEQUAL);
-		glDepthRange(0, 1);
+
+		//	Set up stencil test for portal
+		glStencilFunc(GL_EQUAL, PortalDepth + 1, ~0);
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+		if (Portal->NeedsDepthBuffer())
+		{
+			glDepthMask(GL_TRUE);
+			//	Clear depth buffer
+			glDepthRange(1, 1);
+			glDepthFunc(GL_ALWAYS);
+			DrawPortalArea(Portal);
+			glDepthFunc(GL_LEQUAL);
+			glDepthRange(0, 1);
+		}
+		else
+		{
+			glDepthMask(GL_FALSE);
+			glDisable(GL_DEPTH_TEST);
+		}
+
+		//	Enable drawing.
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glEnable(GL_TEXTURE_2D);
+
+		PortalDepth++;
 	}
 	else
 	{
-		glDepthMask(GL_FALSE);
-		glDisable(GL_DEPTH_TEST);
+		if (!Portal->NeedsDepthBuffer())
+		{
+			glDepthMask(GL_FALSE);
+			glDisable(GL_DEPTH_TEST);
+		}
+
+		PortalDepth++;
 	}
-
-	//	Enable drawing.
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glEnable(GL_TEXTURE_2D);
-
-	PortalDepth++;
 	return true;
 	unguard;
 }
@@ -1007,46 +1020,71 @@ void VOpenGLDrawer::DrawPortalArea(VPortal* Portal)
 //
 //==========================================================================
 
-void VOpenGLDrawer::EndPortal(VPortal* Portal)
+void VOpenGLDrawer::EndPortal(VPortal* Portal, bool UseStencil)
 {
-    guard(VOpenGLDrawer::EndPortal);
-	if (Portal->NeedsDepthBuffer())
+	guard(VOpenGLDrawer::EndPortal);
+	if (UseStencil)
 	{
-		//	Clear depth buffer
-		glDepthRange(1, 1);
+		if (Portal->NeedsDepthBuffer())
+		{
+			//	Clear depth buffer
+			glDepthRange(1, 1);
+			glDisable(GL_TEXTURE_2D);
+			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+			glDepthFunc(GL_ALWAYS);
+			DrawPortalArea(Portal);
+			glDepthFunc(GL_LEQUAL);
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			glEnable(GL_TEXTURE_2D);
+			glDepthRange(0, 1);
+		}
+		else
+		{
+			glDepthMask(GL_TRUE);
+			glEnable(GL_DEPTH_TEST);
+		}
+
+		glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
+
+		//	Draw proper z-buffer for the portal area.
+		glDepthFunc(GL_ALWAYS);
 		glDisable(GL_TEXTURE_2D);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		glDepthFunc(GL_ALWAYS);
 		DrawPortalArea(Portal);
-		glDepthFunc(GL_LEQUAL);
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glEnable(GL_TEXTURE_2D);
-		glDepthRange(0, 1);
+		glDepthFunc(GL_LEQUAL);
+
+		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+		PortalDepth--;
+		glStencilFunc(GL_EQUAL, PortalDepth, ~0);
+		if (!PortalDepth)
+		{
+			glDisable(GL_STENCIL_TEST);
+		}
 	}
 	else
 	{
-		glDepthMask(GL_TRUE);
-		glEnable(GL_DEPTH_TEST);
+		if (Portal->NeedsDepthBuffer())
+		{
+			//	Clear depth buffer
+			glClear(GL_DEPTH_BUFFER_BIT);
+		}
+		else
+		{
+			glDepthMask(GL_TRUE);
+			glEnable(GL_DEPTH_TEST);
+		}
+
+		//	Draw proper z-buffer for the portal area.
+		glDisable(GL_TEXTURE_2D);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		DrawPortalArea(Portal);
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glEnable(GL_TEXTURE_2D);
+
+		PortalDepth--;
 	}
-
-	glStencilOp(GL_KEEP, GL_KEEP, GL_DECR);
-
-	//	Draw proper z-buffer for the portal area.
-	glDepthFunc(GL_ALWAYS);
-	glDisable(GL_TEXTURE_2D);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	DrawPortalArea(Portal);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glEnable(GL_TEXTURE_2D);
-	glDepthFunc(GL_LEQUAL);
-
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-	PortalDepth--;
-	glStencilFunc(GL_EQUAL, PortalDepth, ~0);
-	if (!PortalDepth)
-	{
-		glDisable(GL_STENCIL_TEST);
-	}
-    unguard;
+	unguard;
 }

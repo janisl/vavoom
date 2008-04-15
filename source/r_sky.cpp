@@ -479,13 +479,7 @@ void VSky::Init(int Sky1Texture, int Sky2Texture, float Sky1ScrollDelta,
 void VSky::Draw(int ColourMap, bool AsPortal)
 {
 	guard(VSky::Draw);
-	TVec SavedViewOrg = vieworg;
-	if (AsPortal)
-	{
-		vieworg = TVec(0, 0, 0);
-		Drawer->SetupViewOrg();
-	}
-	else
+	if (!AsPortal)
 	{
 		Drawer->BeginSky();
 	}
@@ -498,12 +492,7 @@ void VSky::Draw(int ColourMap, bool AsPortal)
 			ColourMap);
 	}
 
-	if (AsPortal)
-	{
-		vieworg = SavedViewOrg;
-		Drawer->SetupViewOrg();
-	}
-	else
+	if (!AsPortal)
 	{
 		Drawer->EndSky();
 	}
@@ -767,15 +756,13 @@ void VRenderLevel::DrawSky()
 
 //==========================================================================
 //
-//	VSkyPortal::DrawContents
+//	VSkyPortal::IsSky
 //
 //==========================================================================
 
-void VSkyPortal::DrawContents()
+bool VSkyPortal::IsSky() const
 {
-	guard(VSkyPortal::DrawContents);
-	Sky->Draw(RLev->ColourMap, true);
-	unguard;
+	return true;
 }
 
 //==========================================================================
@@ -784,9 +771,68 @@ void VSkyPortal::DrawContents()
 //
 //==========================================================================
 
-bool VSkyPortal::MatchSky(VSky* ASky)
+bool VSkyPortal::MatchSky(VSky* ASky) const
 {
 	return Sky == ASky;
+}
+
+//==========================================================================
+//
+//	VSkyPortal::DrawContents
+//
+//==========================================================================
+
+void VSkyPortal::DrawContents()
+{
+	guard(VSkyPortal::DrawContents);
+	TVec SavedViewOrg = vieworg;
+	vieworg = TVec(0, 0, 0);
+	RLev->TransformFrustum();
+	Drawer->SetupViewOrg();
+
+	Sky->Draw(RLev->ColourMap, true);
+
+	if (!Drawer->HasStencil)
+	{
+		Drawer->WorldDrawing();
+	}
+	vieworg = SavedViewOrg;
+	RLev->TransformFrustum();
+	Drawer->SetupViewOrg();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSkyBoxPortal::NeedsDepthBuffer
+//
+//==========================================================================
+
+bool VSkyBoxPortal::NeedsDepthBuffer() const
+{
+	return true;
+}
+
+//==========================================================================
+//
+//	VSkyBoxPortal::IsSky
+//
+//==========================================================================
+
+bool VSkyBoxPortal::IsSky() const
+{
+	return !Viewport->eventSkyBoxGetAlways();
+}
+
+//==========================================================================
+//
+//	VSkyBoxPortal::MatchSkyBox
+//
+//==========================================================================
+
+bool VSkyBoxPortal::MatchSkyBox(VEntity* AEnt) const
+{
+	return Viewport == AEnt;
 }
 
 //==========================================================================
@@ -870,26 +916,4 @@ void VSkyBoxPortal::DrawContents()
 	RLev->TransformFrustum();
 	Drawer->SetupViewOrg();
 	unguard;
-}
-
-//==========================================================================
-//
-//	VSkyBoxPortal::NeedsDepthBuffer
-//
-//==========================================================================
-
-bool VSkyBoxPortal::NeedsDepthBuffer()
-{
-	return true;
-}
-
-//==========================================================================
-//
-//	VSkyBoxPortal::MatchSkyBox
-//
-//==========================================================================
-
-bool VSkyBoxPortal::MatchSkyBox(VEntity* AEnt)
-{
-	return Viewport == AEnt;
 }

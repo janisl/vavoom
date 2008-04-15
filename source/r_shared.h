@@ -126,10 +126,11 @@ public:
 
 	VPortal(class VRenderLevel* ARLev);
 	virtual ~VPortal();
+	virtual bool NeedsDepthBuffer() const;
+	virtual bool IsSky() const;
+	virtual bool MatchSky(class VSky*) const;
+	virtual bool MatchSkyBox(VEntity*) const;
 	virtual void DrawContents() = 0;
-	virtual bool NeedsDepthBuffer();
-	virtual bool MatchSky(class VSky*);
-	virtual bool MatchSkyBox(VEntity*);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

@@ -983,53 +983,66 @@ void VDirect3DDrawer::EndParticles()
 //
 //==========================================================================
 
-bool VDirect3DDrawer::StartPortal(VPortal* Portal)
+bool VDirect3DDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 {
 	guard(VDirect3DDrawer::StartPortal);
-	//	Disable drawing
-	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
-	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-
-	//	Set up stencil test.
-	if (!PortalDepth)
+	if (UseStencil)
 	{
-        RenderDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
-	}
-    RenderDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_EQUAL);
-    RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
-	RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_INCR);
+		//	Disable drawing
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
+		RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-	//	Mark the portal area.
-	DrawPortalArea(Portal);
+		//	Set up stencil test.
+		if (!PortalDepth)
+		{
+			RenderDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+		}
+		RenderDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_EQUAL);
+		RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
+		RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_INCR);
 
-	//	Set up stencil test for portal
-    RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth + 1);
-	RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
-
-	if (Portal->NeedsDepthBuffer())
-	{
-    	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-		//	Clear depth buffer
-		viewData.MinZ = 1.0;
-		RenderDevice->SetViewport(&viewData);
-        RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+		//	Mark the portal area.
 		DrawPortalArea(Portal);
-        RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-		viewData.MinZ = 0.0;
-		RenderDevice->SetViewport(&viewData);
+
+		//	Set up stencil test for portal
+		RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth + 1);
+		RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+
+		if (Portal->NeedsDepthBuffer())
+		{
+			RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			//	Clear depth buffer
+			viewData.MinZ = 1.0;
+			RenderDevice->SetViewport(&viewData);
+			RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+			DrawPortalArea(Portal);
+			RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+			viewData.MinZ = 0.0;
+			RenderDevice->SetViewport(&viewData);
+		}
+		else
+		{
+			RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+			RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+		}
+
+		//	Enable drawing.
+		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+		PortalDepth++;
 	}
 	else
 	{
-	    RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-        RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+		if (!Portal->NeedsDepthBuffer())
+		{
+			RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+			RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+		}
+
+		PortalDepth++;
 	}
-
-	//	Enable drawing.
-	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
-	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
-	PortalDepth++;
 	return true;
 	unguard;
 }
@@ -1063,48 +1076,73 @@ void VDirect3DDrawer::DrawPortalArea(VPortal* Portal)
 //
 //==========================================================================
 
-void VDirect3DDrawer::EndPortal(VPortal* Portal)
+void VDirect3DDrawer::EndPortal(VPortal* Portal, bool UseStencil)
 {
-    guard(VDirect3DDrawer::EndPortal);
-	if (Portal->NeedsDepthBuffer())
+	guard(VDirect3DDrawer::EndPortal);
+	if (UseStencil)
 	{
-		//	Clear depth buffer
-		viewData.MinZ = 1.0;
-		RenderDevice->SetViewport(&viewData);
+		if (Portal->NeedsDepthBuffer())
+		{
+			//	Clear depth buffer
+			viewData.MinZ = 1.0;
+			RenderDevice->SetViewport(&viewData);
+			RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+			RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
+			RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+			DrawPortalArea(Portal);
+			RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+			RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
+			RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+			viewData.MinZ = 0.0;
+			RenderDevice->SetViewport(&viewData);
+		}
+		else
+		{
+			RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+		}
+
+	    RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_DECR);
+
+		//	Draw proper z-buffer for the portal area.
+		RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
-		RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 		DrawPortalArea(Portal);
-        RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-		viewData.MinZ = 0.0;
-		RenderDevice->SetViewport(&viewData);
+		RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+
+		RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+
+		PortalDepth--;
+		RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
+		if (!PortalDepth)
+		{
+			RenderDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+		}
 	}
 	else
 	{
-	    RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-        RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+		if (Portal->NeedsDepthBuffer())
+		{
+			//	Clear depth buffer
+			RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
+		}
+		else
+		{
+			RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+			RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+		}
+
+		//	Draw proper z-buffer for the portal area.
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
+		DrawPortalArea(Portal);
+		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+		PortalDepth--;
 	}
-
-    RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_DECR);
-
-	//	Draw proper z-buffer for the portal area.
-	RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
-	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
-	DrawPortalArea(Portal);
-	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
-	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-    RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-
-    RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
-
-	PortalDepth--;
-    RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
-	if (!PortalDepth)
-	{
-        RenderDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
-	}
-    unguard;
+	unguard;
 }

@@ -184,8 +184,9 @@ public:
 	: VPortal(ARLev)
 	, Sky(ASky)
 	{}
+	bool IsSky() const;
+	bool MatchSky(VSky*) const;
 	void DrawContents();
-	bool MatchSky(VSky*);
 };
 
 class VSkyBoxPortal : public VPortal
@@ -197,9 +198,10 @@ public:
 	: VPortal(ARLev)
 	, Viewport(AViewport)
 	{}
+	bool NeedsDepthBuffer() const;
+	bool IsSky() const;
+	bool MatchSkyBox(VEntity*) const;
 	void DrawContents();
-	bool NeedsDepthBuffer();
-	bool MatchSkyBox(VEntity*);
 };
 
 class VRenderLevel : public VRenderLevelDrawer
@@ -253,6 +255,13 @@ private:
 		vuint32			Fade;
 	};
 
+	struct world_surf_t
+	{
+		surface_t*		Surf;
+		vuint8			ClipFlags;
+		vuint8			Type;
+	};
+
 	enum { MAX_TRANS_SPRITES	= 256 };
 
 	VLevel*			Level;
@@ -296,6 +305,7 @@ private:
 	int				VisSize;
 	vuint8*			BspVis;
 	int				FrustumIndexes[4][6];
+	TArray<world_surf_t>	WorldSurfs;
 	bool			SkyIsVisible;
 	TArray<VPortal*>	Portals;
 	bool			InPortals;

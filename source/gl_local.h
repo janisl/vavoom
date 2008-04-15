@@ -118,8 +118,8 @@ public:
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		mmdl_t*, int, VTexture*, VTextureTranslation*, int, vuint32, vuint32,
 		float, bool, bool);
-	bool StartPortal(VPortal*);
-	void EndPortal(VPortal*);
+	bool StartPortal(VPortal*, bool);
+	void EndPortal(VPortal*, bool);
 
 	//	Particles
 	void StartParticles();

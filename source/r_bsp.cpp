@@ -214,13 +214,24 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 						0, SkyBox->eventSkyBoxGetPlaneAlpha(), false, 0,
 						false, 0, 0, TVec(), 0, TVec(), TVec(), TVec());
 				}
+
+				if (!Drawer->HasStencil)
+				{
+					if (!InPortals)
+					{
+						world_surf_t& S = WorldSurfs.Alloc();
+						S.Surf = surfs;
+						S.ClipFlags = clipflags;
+						S.Type = 1;
+					}
+					else
+					{
+						Drawer->DrawSkyPortal(surfs, clipflags);
+					}
+				}
+
 				surfs = surfs->next;
 			} while (surfs);
-		}
-
-		if (!Drawer->HasStencil)
-		{
-			Drawer->DrawSkyPortal(surfs, clipflags);
 		}
 		return;
 	}
@@ -234,7 +245,17 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 		if (texinfo->Alpha > 1.0)
 		{
-			Drawer->DrawPolygon(surfs, clipflags);
+			if (!InPortals)
+			{
+				world_surf_t& S = WorldSurfs.Alloc();
+				S.Surf = surfs;
+				S.ClipFlags = clipflags;
+				S.Type = 0;
+			}
+			else
+			{
+				Drawer->DrawPolygon(surfs, clipflags);
+			}
 		}
 		else
 		{
@@ -313,7 +334,17 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		}
 		else
 		{
-			Drawer->DrawHorizonPolygon(Surf, clipflags);
+			if (!InPortals)
+			{
+				world_surf_t& S = WorldSurfs.Alloc();
+				S.Surf = Surf;
+				S.ClipFlags = clipflags;
+				S.Type = 2;
+			}
+			else
+			{
+				Drawer->DrawHorizonPolygon(Surf, clipflags);
+			}
 		}
 	}
 
@@ -357,7 +388,17 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		}
 		else
 		{
-			Drawer->DrawHorizonPolygon(Surf, clipflags);
+			if (!InPortals)
+			{
+				world_surf_t& S = WorldSurfs.Alloc();
+				S.Surf = Surf;
+				S.ClipFlags = clipflags;
+				S.Type = 2;
+			}
+			else
+			{
+				Drawer->DrawHorizonPolygon(Surf, clipflags);
+			}
 		}
 	}
 	unguard;
@@ -663,6 +704,10 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
 		rd->fovx, rd->fovy);
 	memset(BspVis, 0, VisSize);
+	if (!InPortals)
+	{
+		WorldSurfs.Resize(4096);
+	}
 
 	SkyIsVisible = false;
 
@@ -670,25 +715,77 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 
 	if (SkyIsVisible && !Drawer->HasStencil)
 	{
-		DrawSky();
+//		DrawSky();
+	}
+
+	if (!InPortals)
+	{
+		guard(Best sky);
+		//	Draw the most complex sky portal behind the scene first, without
+		// the need to use stencil buffer.
+		VPortal* BestSky = NULL;
+		int BestSkyIndex = -1;
+		for (int i = 0; i < Portals.Num(); i++)
+		{
+			if (Portals[i] && Portals[i]->IsSky() &&
+				(!BestSky || BestSky->Surfs.Num() < Portals[i]->Surfs.Num()))
+			{
+				BestSky = Portals[i];
+				BestSkyIndex = i;
+			}
+		}
+		if (BestSky)
+		{
+			InPortals = true;
+			Drawer->StartPortal(BestSky, false);
+			BestSky->DrawContents();
+			Drawer->EndPortal(BestSky, false);
+			delete BestSky;
+			Portals.RemoveIndex(BestSkyIndex);
+			InPortals = false;
+		}
+		unguard;
+
+		guard(World surfaces);
+		for (int i = 0; i < WorldSurfs.Num(); i++)
+		{
+			switch (WorldSurfs[i].Type)
+			{
+			case 0:
+				Drawer->DrawPolygon(WorldSurfs[i].Surf,
+					WorldSurfs[i].ClipFlags);
+				break;
+			case 1:
+				Drawer->DrawSkyPortal(WorldSurfs[i].Surf,
+					WorldSurfs[i].ClipFlags);
+				break;
+			case 2:
+				Drawer->DrawHorizonPolygon(WorldSurfs[i].Surf,
+					WorldSurfs[i].ClipFlags);
+				break;
+			}
+		}
+		WorldSurfs.Clear();
+		unguard;
 	}
 
 	Drawer->WorldDrawing();
 
 	if (!InPortals)
 	{
+		guard(Portals);
 		InPortals = true;
 		if (Drawer->HasStencil)
 		{
 			for (int i = 0; i < Portals.Num(); i++)
 			{
-				if (!Drawer->StartPortal(Portals[i]))
+				if (!Drawer->StartPortal(Portals[i], true))
 				{
 					//	All portal polygons are clipped away.
 					continue;
 				}
 				Portals[i]->DrawContents();
-				Drawer->EndPortal(Portals[i]);
+				Drawer->EndPortal(Portals[i], true);
 			}
 		}
 		for (int i = 0; i < Portals.Num(); i++)
@@ -697,6 +794,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 		}
 		Portals.Clear();
 		InPortals = false;
+		unguard;
 	}
 	unguard;
 }

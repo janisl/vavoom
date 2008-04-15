@@ -37,6 +37,7 @@
 #define SURF_SKY_BOX		2
 #define SURF_BACKGROUND		4
 #define SURF_HORIZON		8
+#define SURF_SKY_AREA		16
 
 //	Theoretically cliping can give only 4 new vertexes. In practice due to
 // roundof errors we can get more extra vertexes
@@ -520,8 +521,15 @@ void VSoftwareDrawer::DrawPolygon(surface_t* surf, int clipflags)
 //
 //==========================================================================
 
-void VSoftwareDrawer::DrawSkyPortal(surface_t*, int)
+void VSoftwareDrawer::DrawSkyPortal(surface_t* surf, int clipflags)
 {
+	guard(VSoftwareDrawer::DrawSkyPortal);
+	if (!D_ClipPolygon(surf, clipflags, false, SURF_SKY_AREA))
+	{
+		return;
+	}
+	surface_p++;
+	unguard;
 }
 
 //==========================================================================
@@ -1073,6 +1081,12 @@ void VSoftwareDrawer::DrawSurfaces()
 			D_CalcZGradients(surf->surf);
 			D_DrawZSpans(surf->spans);
 		}
+		else if (surf->flags & SURF_SKY_AREA)
+		{
+			//	Just fill in the z-buffer.
+			D_CalcZGradients(surf->surf);
+			D_DrawZSpans(surf->spans);
+		}
 		else if (surf->flags & SURF_BACKGROUND)
 		{
 			//FIXME
@@ -1190,9 +1204,9 @@ void VSoftwareDrawer::WorldDrawing()
 //
 //==========================================================================
 
-bool VSoftwareDrawer::StartPortal(VPortal*)
+bool VSoftwareDrawer::StartPortal(VPortal*, bool UseStencil)
 {
-	return false;
+	return !UseStencil;
 }
 
 //==========================================================================
@@ -1201,6 +1215,6 @@ bool VSoftwareDrawer::StartPortal(VPortal*)
 //
 //==========================================================================
 
-void VSoftwareDrawer::EndPortal(VPortal*)
+void VSoftwareDrawer::EndPortal(VPortal*, bool)
 {
 }

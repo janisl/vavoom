@@ -1345,7 +1345,18 @@ VPortal::~VPortal()
 //
 //==========================================================================
 
-bool VPortal::NeedsDepthBuffer()
+bool VPortal::NeedsDepthBuffer() const
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VPortal::IsSky
+//
+//==========================================================================
+
+bool VPortal::IsSky() const
 {
 	return false;
 }
@@ -1356,7 +1367,7 @@ bool VPortal::NeedsDepthBuffer()
 //
 //==========================================================================
 
-bool VPortal::MatchSky(VSky*)
+bool VPortal::MatchSky(VSky*) const
 {
 	return false;
 }
@@ -1367,7 +1378,7 @@ bool VPortal::MatchSky(VSky*)
 //
 //==========================================================================
 
-bool VPortal::MatchSkyBox(VEntity*)
+bool VPortal::MatchSkyBox(VEntity*) const
 {
 	return false;
 }
