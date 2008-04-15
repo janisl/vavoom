@@ -189,8 +189,7 @@ void VDirect3DDrawer::WorldDrawing()
 	if (SkyPortalsHead)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-		//FIXME is there another way how to disable colour writes?
-		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
 		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			for (i = 0; i < surf->count; i++)
@@ -199,7 +198,7 @@ void VDirect3DDrawer::WorldDrawing()
 			}
 			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
 		}
-		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+        RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	}
 
@@ -482,14 +481,13 @@ void VDirect3DDrawer::DoHorizonPolygon(surface_t* Surf)
 
 	//	Write to the depth buffer.
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	//FIXME is there another way how to disable colour writes?
-	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
 	for (int i = 0; i < Surf->count; i++)
 	{
 		out[i] = MyD3DVertex(Surf->verts[i], 0, 0, 0);
 	}
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
-	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 	unguard;
 }
@@ -990,8 +988,7 @@ bool VDirect3DDrawer::StartPortal(VPortal* Portal)
 	guard(VDirect3DDrawer::StartPortal);
 	//	Disable drawing
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	//FIXME is there another way how to disable colour writes?
-	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
 	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 	//	Set up stencil test.
@@ -1029,7 +1026,7 @@ bool VDirect3DDrawer::StartPortal(VPortal* Portal)
 	}
 
 	//	Enable drawing.
-	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 
 	PortalDepth++;
@@ -1075,12 +1072,11 @@ void VDirect3DDrawer::EndPortal(VPortal* Portal)
 		viewData.MinZ = 1.0;
 		RenderDevice->SetViewport(&viewData);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-		//FIXME is there another way how to disable colour writes?
-		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
 		RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 		DrawPortalArea(Portal);
         RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
-		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 		viewData.MinZ = 0.0;
 		RenderDevice->SetViewport(&viewData);
@@ -1096,10 +1092,9 @@ void VDirect3DDrawer::EndPortal(VPortal* Portal)
 	//	Draw proper z-buffer for the portal area.
 	RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
-	//FIXME is there another way how to disable colour writes?
-	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
 	DrawPortalArea(Portal);
-	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
     RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 
