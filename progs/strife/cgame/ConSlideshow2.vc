@@ -93,6 +93,7 @@ bool OnKeyDown(int key)
 	{
 	case K_ESCAPE:
 	case K_MOUSE2:
+		StopLocalSounds();
 		CmdBuf_AddText("Impulse 200\n");
 		ClGame.PopMenu();
 		return true;
