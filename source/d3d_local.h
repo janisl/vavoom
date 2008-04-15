@@ -210,6 +210,7 @@ private:
 	void SetFade(vuint32 NewFade);
 
 	void DoHorizonPolygon(surface_t*);
+	void DrawPortalArea(VPortal*);
 
 	vuint16 MakeCol16(vuint8 r, vuint8 g, vuint8 b, vuint8 a)
 	{

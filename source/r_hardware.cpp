@@ -76,6 +76,7 @@ VHardwareDrawer::VHardwareDrawer()
 , SimpleSurfsTail(NULL)
 , SkyPortalsHead(NULL)
 , SkyPortalsTail(NULL)
+, PortalDepth(0)
 {
 	memset(light_block, 0, sizeof(light_block));
 	memset(block_changed, 0, sizeof(block_changed));

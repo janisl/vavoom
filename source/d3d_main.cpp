@@ -186,6 +186,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	{
 		return false;
 	}
+    HasStencil = true;
 
 	D3DCAPS9 DeviceCaps;
 	RenderDevice->GetDeviceCaps(&DeviceCaps);

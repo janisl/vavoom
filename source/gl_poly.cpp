@@ -1009,6 +1009,7 @@ void VOpenGLDrawer::DrawPortalArea(VPortal* Portal)
 
 void VOpenGLDrawer::EndPortal(VPortal* Portal)
 {
+    guard(VOpenGLDrawer::EndPortal);
 	if (Portal->NeedsDepthBuffer())
 	{
 		//	Clear depth buffer
@@ -1047,4 +1048,5 @@ void VOpenGLDrawer::EndPortal(VPortal* Portal)
 	{
 		glDisable(GL_STENCIL_TEST);
 	}
+    unguard;
 }

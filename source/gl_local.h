@@ -166,8 +166,6 @@ protected:
 	GLenum		ClampToEdge;
 	GLfloat		max_anisotropy;
 
-	int			PortalDepth;
-
 	//
 	//	Console variables
 	//

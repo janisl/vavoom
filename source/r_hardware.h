@@ -86,6 +86,8 @@ protected:
 	surface_t*		HorizonPortalsHead;
 	surface_t*		HorizonPortalsTail;
 
+	int			    PortalDepth;
+
 	enum { SHADEDOT_QUANT = 16 };
 	static float	r_avertexnormal_dots[SHADEDOT_QUANT][256];
 

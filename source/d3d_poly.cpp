@@ -140,13 +140,13 @@ void VDirect3DDrawer::DrawSkyPortal(surface_t* surf, int)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::DrawHorizonPolygon
+//	VDirect3DDrawer::DrawHorizonPolygon
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
+void VDirect3DDrawer::DrawHorizonPolygon(surface_t* surf, int)
 {
-	guard(VOpenGLDrawer::DrawHorizonPolygon);
+	guard(VDirect3DDrawer::DrawHorizonPolygon);
 	if (HorizonPortalsTail)
 	{
 		HorizonPortalsTail->DrawNext = surf;
@@ -412,8 +412,86 @@ void VDirect3DDrawer::WorldDrawing()
 //
 //==========================================================================
 
-void VDirect3DDrawer::DoHorizonPolygon(surface_t*)
+void VDirect3DDrawer::DoHorizonPolygon(surface_t* Surf)
 {
+	guard(VDirect3DDrawer::DoHorizonPolygon);
+	float Dist = 4096.0;
+	TVec v[4];
+	if (Surf->HorizonPlane->normal.z > 0.0)
+	{
+		v[0] = Surf->verts[0];
+		v[3] = Surf->verts[3];
+		TVec HDir = -Surf->plane->normal;
+
+		TVec Dir1 = Normalise(vieworg - Surf->verts[1]);
+		TVec Dir2 = Normalise(vieworg - Surf->verts[2]);
+		float Mul1 = 1.0 / DotProduct(HDir, Dir1);
+		v[1] = Surf->verts[1] + Dir1 * Mul1 * Dist;
+		float Mul2 = 1.0 / DotProduct(HDir, Dir2);
+		v[2] = Surf->verts[2] + Dir2 * Mul2 * Dist;
+		if (v[1].z < v[0].z)
+		{
+			v[1] = Surf->verts[1] + Dir1 * Mul1 * Dist * (Surf->verts[1].z -
+				Surf->verts[0].z) / (Surf->verts[1].z - v[1].z);
+			v[2] = Surf->verts[2] + Dir2 * Mul2 * Dist * (Surf->verts[2].z -
+				Surf->verts[3].z) / (Surf->verts[2].z - v[2].z);
+		}
+	}
+	else
+	{
+		v[1] = Surf->verts[1];
+		v[2] = Surf->verts[2];
+		TVec HDir = -Surf->plane->normal;
+
+		TVec Dir1 = Normalise(vieworg - Surf->verts[0]);
+		TVec Dir2 = Normalise(vieworg - Surf->verts[3]);
+		float Mul1 = 1.0 / DotProduct(HDir, Dir1);
+		v[0] = Surf->verts[0] + Dir1 * Mul1 * Dist;
+		float Mul2 = 1.0 / DotProduct(HDir, Dir2);
+		v[3] = Surf->verts[3] + Dir2 * Mul2 * Dist;
+		if (v[1].z < v[0].z)
+		{
+			v[0] = Surf->verts[0] + Dir1 * Mul1 * Dist * (Surf->verts[1].z -
+				Surf->verts[0].z) / (v[0].z - Surf->verts[0].z);
+			v[3] = Surf->verts[3] + Dir2 * Mul2 * Dist * (Surf->verts[2].z -
+				Surf->verts[3].z) / (v[3].z - Surf->verts[3].z);
+		}
+	}
+
+	texinfo_t* Tex = Surf->texinfo;
+	SetTexture(Tex->Tex, Tex->ColourMap);
+
+	int lev = Surf->Light >> 24;
+	int lR = ((Surf->Light >> 16) & 255) * lev / 255;
+	int lG = ((Surf->Light >> 8) & 255) * lev / 255;
+	int lB = (Surf->Light & 255) * lev / 255;
+	vuint32 light = 0xff000000 | (lR << 16) | (lG << 8) | lB;
+	SetFade(Surf->Fade);
+
+	//	Draw it
+	MyD3DVertex	out[4];
+	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+	for (int i = 0; i < 4; i++)
+	{
+		out[i] = MyD3DVertex(v[i], light,
+			(DotProduct(v[i], Tex->saxis) + Tex->soffs) * tex_iw,
+			(DotProduct(v[i], Tex->taxis) + Tex->toffs) * tex_ih);
+	}
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
+	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+
+	//	Write to the depth buffer.
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+	//FIXME is there another way how to disable colour writes?
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	for (int i = 0; i < Surf->count; i++)
+	{
+		out[i] = MyD3DVertex(Surf->verts[i], 0, 0, 0);
+	}
+	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+	unguard;
 }
 
 //==========================================================================
@@ -907,9 +985,79 @@ void VDirect3DDrawer::EndParticles()
 //
 //==========================================================================
 
-bool VDirect3DDrawer::StartPortal(VPortal*)
+bool VDirect3DDrawer::StartPortal(VPortal* Portal)
 {
-	return false;
+	guard(VDirect3DDrawer::StartPortal);
+	//	Disable drawing
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+	//FIXME is there another way how to disable colour writes?
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+
+	//	Set up stencil test.
+	if (!PortalDepth)
+	{
+        RenderDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
+	}
+    RenderDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_EQUAL);
+    RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
+	RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_INCR);
+
+	//	Mark the portal area.
+	DrawPortalArea(Portal);
+
+	//	Set up stencil test for portal
+    RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth + 1);
+	RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+
+	if (Portal->NeedsDepthBuffer())
+	{
+    	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+		//	Clear depth buffer
+		viewData.MinZ = 1.0;
+		RenderDevice->SetViewport(&viewData);
+        RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+		DrawPortalArea(Portal);
+        RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+		viewData.MinZ = 0.0;
+		RenderDevice->SetViewport(&viewData);
+	}
+	else
+	{
+	    RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
+        RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	}
+
+	//	Enable drawing.
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+
+	PortalDepth++;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDirect3DDrawer::DrawPortalArea
+//
+//==========================================================================
+
+void VDirect3DDrawer::DrawPortalArea(VPortal* Portal)
+{
+	guard(VDirect3DDrawer::DrawPortalArea);
+	MyD3DVertex	out[256];
+	for (int i = 0; i < Portal->Surfs.Num(); i++)
+	{
+		const surface_t* Surf = Portal->Surfs[i];
+		for (int i = 0; i < Surf->count; i++)
+		{
+			out[i] = MyD3DVertex(Surf->verts[i], 0, 0, 0);
+		}
+	    RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, Surf->count - 2,
+            out, sizeof(MyD3DVertex));
+	}
+	unguard;
 }
 
 //==========================================================================
@@ -918,6 +1066,50 @@ bool VDirect3DDrawer::StartPortal(VPortal*)
 //
 //==========================================================================
 
-void VDirect3DDrawer::EndPortal(VPortal*)
+void VDirect3DDrawer::EndPortal(VPortal* Portal)
 {
+    guard(VDirect3DDrawer::EndPortal);
+	if (Portal->NeedsDepthBuffer())
+	{
+		//	Clear depth buffer
+		viewData.MinZ = 1.0;
+		RenderDevice->SetViewport(&viewData);
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+		//FIXME is there another way how to disable colour writes?
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+		DrawPortalArea(Portal);
+        RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		viewData.MinZ = 0.0;
+		RenderDevice->SetViewport(&viewData);
+	}
+	else
+	{
+	    RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
+        RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+	}
+
+    RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_DECR);
+
+	//	Draw proper z-buffer for the portal area.
+	RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+	//FIXME is there another way how to disable colour writes?
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	DrawPortalArea(Portal);
+	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+    RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
+
+    RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
+
+	PortalDepth--;
+    RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
+	if (!PortalDepth)
+	{
+        RenderDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
+	}
+    unguard;
 }
