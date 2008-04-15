@@ -756,6 +756,17 @@ void VRenderLevel::DrawSky()
 
 //==========================================================================
 //
+//	VSkyPortal::NeedsDepthBuffer
+//
+//==========================================================================
+
+bool VSkyPortal::NeedsDepthBuffer() const
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	VSkyPortal::IsSky
 //
 //==========================================================================
@@ -804,24 +815,13 @@ void VSkyPortal::DrawContents()
 
 //==========================================================================
 //
-//	VSkyBoxPortal::NeedsDepthBuffer
-//
-//==========================================================================
-
-bool VSkyBoxPortal::NeedsDepthBuffer() const
-{
-	return true;
-}
-
-//==========================================================================
-//
 //	VSkyBoxPortal::IsSky
 //
 //==========================================================================
 
 bool VSkyBoxPortal::IsSky() const
 {
-	return !Viewport->eventSkyBoxGetAlways();
+	return true;
 }
 
 //==========================================================================
@@ -857,25 +857,94 @@ void VSkyBoxPortal::DrawContents()
 
 	//	Set view origin to be sky view origin.
 	RLev->ViewEnt = Viewport;
-	VEntity* Mate = Viewport->eventSkyBoxGetMate();
-	if (Mate)
-	{
-		vieworg.x = vieworg.x + Viewport->Origin.x - Mate->Origin.x;
-		vieworg.y = vieworg.y + Viewport->Origin.y - Mate->Origin.y;
-	}
-	else
-	{
-		vieworg = Viewport->Origin;
-		viewangles.yaw += Viewport->Angles.yaw;
-		AngleVectors(viewangles, viewforward, viewright, viewup);
+	vieworg = Viewport->Origin;
+	viewangles.yaw += Viewport->Angles.yaw;
+	AngleVectors(viewangles, viewforward, viewright, viewup);
 
-		//	No light flashes in the sky.
-		RLev->ExtraLight = 0;
-		if (RLev->ColourMap == CM_Default)
-		{
-			RLev->FixedLight = 0;
-		}
+	//	No light flashes in the sky.
+	RLev->ExtraLight = 0;
+	if (RLev->ColourMap == CM_Default)
+	{
+		RLev->FixedLight = 0;
 	}
+	r_viewleaf = RLev->Level->PointInSubsector(vieworg);
+
+	RLev->TransformFrustum();
+	Drawer->SetupViewOrg();
+
+	RLev->BspVis = new vuint8[RLev->VisSize];
+
+	VRenderLevel::trans_sprite_t TransSprites[VRenderLevel::MAX_TRANS_SPRITES];
+	memset(TransSprites, 0, sizeof(TransSprites));
+	RLev->trans_sprites = TransSprites;
+
+	RLev->MarkLeaves();
+
+	RLev->PushDlights();
+
+	RLev->UpdateWorld(&refdef);
+
+	RLev->RenderWorld(&refdef);
+
+	RLev->RenderMobjs();
+
+	RLev->DrawParticles();
+
+	RLev->DrawTranslucentPolys();
+
+	//	Restore render settings.
+	vieworg = SavedViewOrg;
+	viewangles = SavedViewAngles;
+	viewforward = SavedViewForward;
+	viewright = SavedViewRight;
+	viewup = SavedViewUp;
+	RLev->ViewEnt = SavedViewEnt;
+	RLev->ExtraLight = SavedExtraLight;
+	RLev->FixedLight = SavedFixedLight;
+	delete[] RLev->BspVis;
+	RLev->BspVis = SavedBspVis;
+	RLev->trans_sprites = SavedTransSprites;
+	RLev->TransformFrustum();
+	Drawer->SetupViewOrg();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSectorStackPortal::MatchSkyBox
+//
+//==========================================================================
+
+bool VSectorStackPortal::MatchSkyBox(VEntity* AEnt) const
+{
+	return Viewport == AEnt;
+}
+
+//==========================================================================
+//
+//	VSectorStackPortal::DrawContents
+//
+//==========================================================================
+
+void VSectorStackPortal::DrawContents()
+{
+	guard(VSectorStackPortal::DrawContents);
+	TVec SavedViewOrg = vieworg;
+	TAVec SavedViewAngles = viewangles;
+	TVec SavedViewForward = viewforward;
+	TVec SavedViewRight = viewright;
+	TVec SavedViewUp = viewup;
+	VEntity* SavedViewEnt = RLev->ViewEnt;
+	int SavedExtraLight = RLev->ExtraLight;
+	int SavedFixedLight = RLev->FixedLight;
+	vuint8* SavedBspVis = RLev->BspVis;
+	VRenderLevel::trans_sprite_t* SavedTransSprites = RLev->trans_sprites;
+
+	//	Set view origin to be sky view origin.
+	RLev->ViewEnt = Viewport;
+	VEntity* Mate = Viewport->eventSkyBoxGetMate();
+	vieworg.x = vieworg.x + Viewport->Origin.x - Mate->Origin.x;
+	vieworg.y = vieworg.y + Viewport->Origin.y - Mate->Origin.y;
 	r_viewleaf = RLev->Level->PointInSubsector(vieworg);
 
 	RLev->TransformFrustum();

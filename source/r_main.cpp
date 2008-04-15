@@ -1347,7 +1347,7 @@ VPortal::~VPortal()
 
 bool VPortal::NeedsDepthBuffer() const
 {
-	return false;
+	return true;
 }
 
 //==========================================================================

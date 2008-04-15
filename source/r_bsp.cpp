@@ -117,9 +117,9 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	}
 	vuint32 Fade = GetFade(r_sub);
 
-	bool IsStack = SkyBox && CheckSkyBoxAlways &&
-		SkyBox->eventSkyBoxGetAlways();
-	if (texinfo->Tex == GTextureManager[skyflatnum] || IsStack)
+	bool IsStack = SkyBox && SkyBox->eventSkyBoxGetAlways();
+	if (texinfo->Tex == GTextureManager[skyflatnum] ||
+		IsStack && CheckSkyBoxAlways)
 	{
 		SkyIsVisible = true;
 		if (!InPortals)
@@ -181,7 +181,14 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 				}
 				if (!Portal)
 				{
-					Portal = new VSkyBoxPortal(this, SkyBox);
+					if (IsStack)
+					{
+						Portal = new VSectorStackPortal(this, SkyBox);
+					}
+					else
+					{
+						Portal = new VSkyBoxPortal(this, SkyBox);
+					}
 					Portals.Append(Portal);
 				}
 			}
@@ -204,7 +211,8 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 			do
 			{
 				Portal->Surfs.Append(surfs);
-				if (IsStack && SkyBox->eventSkyBoxGetPlaneAlpha())
+				if (IsStack && CheckSkyBoxAlways &&
+					SkyBox->eventSkyBoxGetPlaneAlpha())
 				{
 					surfs->Light = (lLev << 24) | LightParams->LightColour;
 					surfs->Fade = Fade;

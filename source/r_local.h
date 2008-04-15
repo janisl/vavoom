@@ -184,6 +184,7 @@ public:
 	: VPortal(ARLev)
 	, Sky(ASky)
 	{}
+	bool NeedsDepthBuffer() const;
 	bool IsSky() const;
 	bool MatchSky(VSky*) const;
 	void DrawContents();
@@ -198,8 +199,20 @@ public:
 	: VPortal(ARLev)
 	, Viewport(AViewport)
 	{}
-	bool NeedsDepthBuffer() const;
 	bool IsSky() const;
+	bool MatchSkyBox(VEntity*) const;
+	void DrawContents();
+};
+
+class VSectorStackPortal : public VPortal
+{
+public:
+	VEntity*		Viewport;
+
+	VSectorStackPortal(class VRenderLevel* ARLev, VEntity* AViewport)
+	: VPortal(ARLev)
+	, Viewport(AViewport)
+	{}
 	bool MatchSkyBox(VEntity*) const;
 	void DrawContents();
 };
@@ -209,6 +222,7 @@ class VRenderLevel : public VRenderLevelDrawer
 private:
 	friend class VSkyPortal;
 	friend class VSkyBoxPortal;
+	friend class VSectorStackPortal;
 
 	struct light_t
 	{
