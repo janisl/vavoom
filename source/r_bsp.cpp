@@ -754,9 +754,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		if (BestSky)
 		{
 			InPortals = true;
-			Drawer->StartPortal(BestSky, false);
-			BestSky->DrawContents();
-			Drawer->EndPortal(BestSky, false);
+			BestSky->Draw(false);
 			delete BestSky;
 			Portals.RemoveIndex(BestSkyIndex);
 			InPortals = false;
@@ -796,13 +794,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		{
 			for (int i = 0; i < Portals.Num(); i++)
 			{
-				if (!Drawer->StartPortal(Portals[i], true))
-				{
-					//	All portal polygons are clipped away.
-					continue;
-				}
-				Portals[i]->DrawContents();
-				Drawer->EndPortal(Portals[i], true);
+				Portals[i]->Draw(true);
 			}
 		}
 		for (int i = 0; i < Portals.Num(); i++)

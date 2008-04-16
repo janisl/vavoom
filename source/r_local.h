@@ -220,6 +220,7 @@ public:
 class VRenderLevel : public VRenderLevelDrawer
 {
 private:
+	friend class VPortal;
 	friend class VSkyPortal;
 	friend class VSkyBoxPortal;
 	friend class VSectorStackPortal;

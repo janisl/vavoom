@@ -117,6 +117,64 @@ bool VPortal::MatchSkyBox(VEntity*) const
 
 //==========================================================================
 //
+//	VPortal::Draw
+//
+//==========================================================================
+
+void VPortal::Draw(bool UseStencil)
+{
+	if (!Drawer->StartPortal(this, UseStencil))
+	{
+		//	All portal polygons are clipped away.
+		return;
+	}
+
+	//	Save renderer settings.
+	TVec SavedViewOrg = vieworg;
+	TAVec SavedViewAngles = viewangles;
+	TVec SavedViewForward = viewforward;
+	TVec SavedViewRight = viewright;
+	TVec SavedViewUp = viewup;
+	VEntity* SavedViewEnt = RLev->ViewEnt;
+	int SavedExtraLight = RLev->ExtraLight;
+	int SavedFixedLight = RLev->FixedLight;
+	vuint8* SavedBspVis = RLev->BspVis;
+	VRenderLevel::trans_sprite_t* SavedTransSprites = RLev->trans_sprites;
+
+	VRenderLevel::trans_sprite_t TransSprites[VRenderLevel::MAX_TRANS_SPRITES];
+
+	if (NeedsDepthBuffer())
+	{
+		//	Set up BSP visibility table and translated sprites. This has to
+		// be done only for portals that do rendering of view.
+		RLev->BspVis = new vuint8[RLev->VisSize];
+
+		memset(TransSprites, 0, sizeof(TransSprites));
+		RLev->trans_sprites = TransSprites;
+	}
+
+	DrawContents();
+
+	//	Restore render settings.
+	vieworg = SavedViewOrg;
+	viewangles = SavedViewAngles;
+	viewforward = SavedViewForward;
+	viewright = SavedViewRight;
+	viewup = SavedViewUp;
+	RLev->ViewEnt = SavedViewEnt;
+	RLev->ExtraLight = SavedExtraLight;
+	RLev->FixedLight = SavedFixedLight;
+	delete[] RLev->BspVis;
+	RLev->BspVis = SavedBspVis;
+	RLev->trans_sprites = SavedTransSprites;
+	RLev->TransformFrustum();
+	Drawer->SetupViewOrg();
+
+	Drawer->EndPortal(this, UseStencil);
+}
+
+//==========================================================================
+//
 //	VSkyPortal::NeedsDepthBuffer
 //
 //==========================================================================
@@ -157,20 +215,13 @@ bool VSkyPortal::MatchSky(VSky* ASky) const
 void VSkyPortal::DrawContents()
 {
 	guard(VSkyPortal::DrawContents);
-	TVec SavedViewOrg = vieworg;
 	vieworg = TVec(0, 0, 0);
 	RLev->TransformFrustum();
 	Drawer->SetupViewOrg();
 
 	Sky->Draw(RLev->ColourMap);
 
-	if (!Drawer->HasStencil)
-	{
-		Drawer->WorldDrawing();
-	}
-	vieworg = SavedViewOrg;
-	RLev->TransformFrustum();
-	Drawer->SetupViewOrg();
+	Drawer->WorldDrawing();
 	unguard;
 }
 
@@ -205,17 +256,6 @@ bool VSkyBoxPortal::MatchSkyBox(VEntity* AEnt) const
 void VSkyBoxPortal::DrawContents()
 {
 	guard(VSkyBoxPortal::DrawContents);
-	TVec SavedViewOrg = vieworg;
-	TAVec SavedViewAngles = viewangles;
-	TVec SavedViewForward = viewforward;
-	TVec SavedViewRight = viewright;
-	TVec SavedViewUp = viewup;
-	VEntity* SavedViewEnt = RLev->ViewEnt;
-	int SavedExtraLight = RLev->ExtraLight;
-	int SavedFixedLight = RLev->FixedLight;
-	vuint8* SavedBspVis = RLev->BspVis;
-	VRenderLevel::trans_sprite_t* SavedTransSprites = RLev->trans_sprites;
-
 	//	Set view origin to be sky view origin.
 	RLev->ViewEnt = Viewport;
 	vieworg = Viewport->Origin;
@@ -229,28 +269,7 @@ void VSkyBoxPortal::DrawContents()
 		RLev->FixedLight = 0;
 	}
 
-	RLev->BspVis = new vuint8[RLev->VisSize];
-
-	VRenderLevel::trans_sprite_t TransSprites[VRenderLevel::MAX_TRANS_SPRITES];
-	memset(TransSprites, 0, sizeof(TransSprites));
-	RLev->trans_sprites = TransSprites;
-
 	RLev->RenderScene(&refdef, NULL);
-
-	//	Restore render settings.
-	vieworg = SavedViewOrg;
-	viewangles = SavedViewAngles;
-	viewforward = SavedViewForward;
-	viewright = SavedViewRight;
-	viewup = SavedViewUp;
-	RLev->ViewEnt = SavedViewEnt;
-	RLev->ExtraLight = SavedExtraLight;
-	RLev->FixedLight = SavedFixedLight;
-	delete[] RLev->BspVis;
-	RLev->BspVis = SavedBspVis;
-	RLev->trans_sprites = SavedTransSprites;
-	RLev->TransformFrustum();
-	Drawer->SetupViewOrg();
 	unguard;
 }
 
@@ -274,17 +293,6 @@ bool VSectorStackPortal::MatchSkyBox(VEntity* AEnt) const
 void VSectorStackPortal::DrawContents()
 {
 	guard(VSectorStackPortal::DrawContents);
-	TVec SavedViewOrg = vieworg;
-	TAVec SavedViewAngles = viewangles;
-	TVec SavedViewForward = viewforward;
-	TVec SavedViewRight = viewright;
-	TVec SavedViewUp = viewup;
-	VEntity* SavedViewEnt = RLev->ViewEnt;
-	int SavedExtraLight = RLev->ExtraLight;
-	int SavedFixedLight = RLev->FixedLight;
-	vuint8* SavedBspVis = RLev->BspVis;
-	VRenderLevel::trans_sprite_t* SavedTransSprites = RLev->trans_sprites;
-
 	VViewClipper Range;
 	Range.ClearClipNodes(vieworg, RLev->Level);
 	for (int i = 0; i < Surfs.Num(); i++)
@@ -331,27 +339,6 @@ void VSectorStackPortal::DrawContents()
 	vieworg.x = vieworg.x + Viewport->Origin.x - Mate->Origin.x;
 	vieworg.y = vieworg.y + Viewport->Origin.y - Mate->Origin.y;
 
-	RLev->BspVis = new vuint8[RLev->VisSize];
-
-	VRenderLevel::trans_sprite_t TransSprites[VRenderLevel::MAX_TRANS_SPRITES];
-	memset(TransSprites, 0, sizeof(TransSprites));
-	RLev->trans_sprites = TransSprites;
-
 	RLev->RenderScene(&refdef, &Range);
-
-	//	Restore render settings.
-	vieworg = SavedViewOrg;
-	viewangles = SavedViewAngles;
-	viewforward = SavedViewForward;
-	viewright = SavedViewRight;
-	viewup = SavedViewUp;
-	RLev->ViewEnt = SavedViewEnt;
-	RLev->ExtraLight = SavedExtraLight;
-	RLev->FixedLight = SavedFixedLight;
-	delete[] RLev->BspVis;
-	RLev->BspVis = SavedBspVis;
-	RLev->trans_sprites = SavedTransSprites;
-	RLev->TransformFrustum();
-	Drawer->SetupViewOrg();
 	unguard;
 }
