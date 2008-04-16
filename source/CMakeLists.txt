@@ -166,6 +166,7 @@ set(MAIN_COMMON_SOURCES
 	r_local.h
 	r_main.cpp
 	r_model.cpp
+	r_particle.cpp
 	r_public.h
 	r_shared.h
 	r_sky.cpp

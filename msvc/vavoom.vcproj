@@ -809,6 +809,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\r_particle.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\r_public.h"
 				>
 			</File>
