@@ -212,8 +212,8 @@ void VViewClipper::ClipInitFrustrumRange(const TAVec& viewangles,
 	{
 		ClipHead = NewClipNode();
 		ClipTail = ClipHead;
-		ClipHead->From = a1;
-		ClipHead->To = a2;
+		ClipHead->From = a2;
+		ClipHead->To = a1;
 		ClipHead->Prev = NULL;
 		ClipHead->Next = NULL;
 	}
@@ -229,6 +229,44 @@ void VViewClipper::ClipInitFrustrumRange(const TAVec& viewangles,
 		ClipHead->Next = ClipTail;
 		ClipTail->Prev = ClipHead;
 		ClipTail->Next = NULL;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VViewClipper::ClipToRanges
+//
+//==========================================================================
+
+void VViewClipper::ClipToRanges(const VViewClipper& Range)
+{
+	guard(VViewClipper::ClipToRanges);
+	if (!Range.ClipHead)
+	{
+		//	No ranges, everything is clipped away.
+		DoAddClipRange(0.0, 360.0);
+		return;
+	}
+
+	//	Add head and tail ranges.
+	if (Range.ClipHead->From > 0.0)
+	{
+		DoAddClipRange(0.0, Range.ClipHead->From);
+	}
+	if (Range.ClipTail->To < 360.0)
+	{
+		DoAddClipRange(Range.ClipTail->To, 360.0);
+	}
+
+	//	Add middle ranges.
+	for (VClipNode* N = Range.ClipHead; N->Next; N = N->Next)
+	{
+		DoAddClipRange(N->To, N->Next->From);
+	}
+
+	for (VClipNode* N = ClipHead; N; N = N->Next)
+	{
 	}
 	unguard;
 }

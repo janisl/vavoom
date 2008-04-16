@@ -45,6 +45,7 @@ public:
 	void ClearClipNodes(const TVec&, VLevel*);
 	void ClipInitFrustrumRange(const TAVec&, const TVec&, const TVec&,
 		const TVec&, float, float);
+	void ClipToRanges(const VViewClipper&);
 	void AddClipRange(float, float);
 	bool IsRangeVisible(float, float);
 	bool ClipIsFull();

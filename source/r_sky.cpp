@@ -882,9 +882,9 @@ void VSkyBoxPortal::DrawContents()
 
 	RLev->PushDlights();
 
-	RLev->UpdateWorld(&refdef);
+	RLev->UpdateWorld(&refdef, NULL);
 
-	RLev->RenderWorld(&refdef);
+	RLev->RenderWorld(&refdef, NULL);
 
 	RLev->RenderMobjs();
 
@@ -940,7 +940,47 @@ void VSectorStackPortal::DrawContents()
 	vuint8* SavedBspVis = RLev->BspVis;
 	VRenderLevel::trans_sprite_t* SavedTransSprites = RLev->trans_sprites;
 
-	//	Set view origin to be sky view origin.
+	VViewClipper Range;
+	Range.ClearClipNodes(vieworg, RLev->Level);
+	for (int i = 0; i < Surfs.Num(); i++)
+	{
+		if (fabs(Surfs[i]->plane->normal.z) == 0)
+		{
+			//	Wall
+			seg_t* Seg = (seg_t*)Surfs[i]->plane;
+			check(Seg >= RLev->Level->Segs);
+			check(Seg < RLev->Level->Segs + RLev->Level->NumSegs);
+			Range.AddClipRange(Range.PointToClipAngle(*Seg->v2),
+				Range.PointToClipAngle(*Seg->v1));
+		}
+		else
+		{
+			//	Subsector
+			for (int j = 0; j < Surfs[i]->count; j++)
+			{
+				TVec v1 = Surfs[i]->verts[j];
+				TVec v2 = Surfs[i]->verts[j < Surfs[i]->count - 1 ? j + 1 : 0];
+				TVec Dir = v2 - v1;
+				Dir.z = 0;
+				if (Dir.x > -0.01 && Dir.x < 0.01 && Dir.y > -0.01 &&
+					Dir.y < 0.01)
+				{
+					//	Too short.
+					continue;
+				}
+				TPlane P;
+				P.SetPointDir(v1, Dir);
+				if (DotProduct(vieworg, P.normal) - P.dist < 0.01)
+				{
+					//	View origin is on the back side.
+					continue;
+				}
+				Range.AddClipRange(Range.PointToClipAngle(v2),
+					Range.PointToClipAngle(v1));
+			}
+		}
+	}
+
 	RLev->ViewEnt = Viewport;
 	VEntity* Mate = Viewport->eventSkyBoxGetMate();
 	vieworg.x = vieworg.x + Viewport->Origin.x - Mate->Origin.x;
@@ -960,9 +1000,9 @@ void VSectorStackPortal::DrawContents()
 
 	RLev->PushDlights();
 
-	RLev->UpdateWorld(&refdef);
+	RLev->UpdateWorld(&refdef, &Range);
 
-	RLev->RenderWorld(&refdef);
+	RLev->RenderWorld(&refdef, &Range);
 
 	RLev->RenderMobjs();
 

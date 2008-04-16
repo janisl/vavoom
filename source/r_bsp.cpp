@@ -714,7 +714,7 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 //
 //==========================================================================
 
-void VRenderLevel::RenderWorld(const refdef_t* rd)
+void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 {
 	guard(VRenderLevel::RenderWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
@@ -723,6 +723,11 @@ void VRenderLevel::RenderWorld(const refdef_t* rd)
 	ViewClip.ClearClipNodes(vieworg, Level);
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
 		rd->fovx, rd->fovy);
+	if (Range)
+	{
+		//	Range contains a valid range, so we must clip away holes in it.
+		ViewClip.ClipToRanges(*Range);
+	}
 	memset(BspVis, 0, VisSize);
 	if (!InPortals)
 	{

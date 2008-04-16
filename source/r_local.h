@@ -365,7 +365,7 @@ private:
 	void UpdateSubRegion(subregion_t*);
 	void UpdateSubsector(int, float*);
 	void UpdateBSPNode(int, float*);
-	void UpdateWorld(const refdef_t*);
+	void UpdateWorld(const refdef_t*, const VViewClipper*);
 	bool CopyPlaneIfValid(sec_plane_t*, const sec_plane_t*,
 		const sec_plane_t*);
 	void UpdateFakeFlats(sector_t*);
@@ -404,7 +404,7 @@ private:
 	void RenderSubRegion(subregion_t*, int);
 	void RenderSubsector(int, int);
 	void RenderBSPNode(int, float*, int);
-	void RenderWorld(const refdef_t*);
+	void RenderWorld(const refdef_t*, const VViewClipper*);
 
 	//	Things
 	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, bool, int,

@@ -840,9 +840,9 @@ void VRenderLevel::RenderPlayerView()
 
 	PushDlights();
 
-	UpdateWorld(&refdef);
+	UpdateWorld(&refdef, NULL);
 
-	RenderWorld(&refdef);
+	RenderWorld(&refdef, NULL);
 
 	RenderMobjs();
 
@@ -899,9 +899,9 @@ void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
 
 	PushDlights();
 
-	UpdateWorld(&CameraRefDef);
+	UpdateWorld(&CameraRefDef, NULL);
 
-	RenderWorld(&CameraRefDef);
+	RenderWorld(&CameraRefDef, NULL);
 
 	RenderMobjs();
 

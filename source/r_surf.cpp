@@ -2343,7 +2343,7 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 //
 //==========================================================================
 
-void VRenderLevel::UpdateWorld(const refdef_t* rd)
+void VRenderLevel::UpdateWorld(const refdef_t* rd, const VViewClipper* Range)
 {
 	guard(VRenderLevel::UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
@@ -2351,6 +2351,11 @@ void VRenderLevel::UpdateWorld(const refdef_t* rd)
 	ViewClip.ClearClipNodes(vieworg, Level);
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
 		rd->fovx, rd->fovy);
+	if (Range)
+	{
+		//	Range contains a valid range, so we must clip away holes in it.
+		ViewClip.ClipToRanges(*Range);
+	}
 
 	//	Update fake sectors.
 	for (int i = 0; i < Level->NumSectors; i++)
