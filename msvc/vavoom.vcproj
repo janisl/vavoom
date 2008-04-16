@@ -813,6 +813,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\r_portal.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\r_public.h"
 				>
 			</File>
