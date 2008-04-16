@@ -228,10 +228,6 @@ void VSkyBoxPortal::DrawContents()
 	{
 		RLev->FixedLight = 0;
 	}
-	r_viewleaf = RLev->Level->PointInSubsector(vieworg);
-
-	RLev->TransformFrustum();
-	Drawer->SetupViewOrg();
 
 	RLev->BspVis = new vuint8[RLev->VisSize];
 
@@ -239,19 +235,7 @@ void VSkyBoxPortal::DrawContents()
 	memset(TransSprites, 0, sizeof(TransSprites));
 	RLev->trans_sprites = TransSprites;
 
-	RLev->MarkLeaves();
-
-	RLev->PushDlights();
-
-	RLev->UpdateWorld(&refdef, NULL);
-
-	RLev->RenderWorld(&refdef, NULL);
-
-	RLev->RenderMobjs();
-
-	RLev->DrawParticles();
-
-	RLev->DrawTranslucentPolys();
+	RLev->RenderScene(&refdef, NULL);
 
 	//	Restore render settings.
 	vieworg = SavedViewOrg;
@@ -346,10 +330,6 @@ void VSectorStackPortal::DrawContents()
 	VEntity* Mate = Viewport->eventSkyBoxGetMate();
 	vieworg.x = vieworg.x + Viewport->Origin.x - Mate->Origin.x;
 	vieworg.y = vieworg.y + Viewport->Origin.y - Mate->Origin.y;
-	r_viewleaf = RLev->Level->PointInSubsector(vieworg);
-
-	RLev->TransformFrustum();
-	Drawer->SetupViewOrg();
 
 	RLev->BspVis = new vuint8[RLev->VisSize];
 
@@ -357,19 +337,7 @@ void VSectorStackPortal::DrawContents()
 	memset(TransSprites, 0, sizeof(TransSprites));
 	RLev->trans_sprites = TransSprites;
 
-	RLev->MarkLeaves();
-
-	RLev->PushDlights();
-
-	RLev->UpdateWorld(&refdef, &Range);
-
-	RLev->RenderWorld(&refdef, &Range);
-
-	RLev->RenderMobjs();
-
-	RLev->DrawParticles();
-
-	RLev->DrawTranslucentPolys();
+	RLev->RenderScene(&refdef, &Range);
 
 	//	Restore render settings.
 	vieworg = SavedViewOrg;

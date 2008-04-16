@@ -488,8 +488,6 @@ void VRenderLevel::SetupFrame()
 		vieworg = cl->ViewOrg;
 	}
 
-	TransformFrustum();
-
 	ExtraLight = ViewEnt->Player ? ViewEnt->Player->ExtraLight * 8 : 0;
 	if (cl->Camera == cl->MO)
 	{
@@ -540,8 +538,6 @@ void VRenderLevel::SetupFrame()
 		FixedLight = 255;
 	}
 
-	r_viewleaf = Level->PointInSubsector(vieworg);
-
 	Drawer->SetupView(this, &refdef);
 	unguard;
 }
@@ -589,13 +585,9 @@ void VRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
 
 	vieworg = Camera->Origin;
 
-	TransformFrustum();
-
 	ExtraLight = 0;
 	FixedLight = 0;
 	ColourMap = 0;
-
-	r_viewleaf = Level->PointInSubsector(vieworg);
 
 	Drawer->SetupView(this, rd);
 	set_resolutioon_needed = true;
@@ -644,6 +636,37 @@ void VRenderLevel::MarkLeaves()
 
 //==========================================================================
 //
+//  VRenderLevel::RenderScene
+//
+//==========================================================================
+
+void VRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
+{
+	guard(VRenderLevel::RenderScene);
+	r_viewleaf = Level->PointInSubsector(vieworg);
+
+	TransformFrustum();
+
+	Drawer->SetupViewOrg();
+
+	MarkLeaves();
+
+	PushDlights();
+
+	UpdateWorld(RD, Range);
+
+	RenderWorld(RD, Range);
+
+	RenderMobjs();
+
+	DrawParticles();
+
+	DrawTranslucentPolys();
+	unguard;
+}
+
+//==========================================================================
+//
 //  R_RenderPlayerView
 //
 //==========================================================================
@@ -686,19 +709,7 @@ void VRenderLevel::RenderPlayerView()
 
 	SetupFrame();
 
-	MarkLeaves();
-
-	PushDlights();
-
-	UpdateWorld(&refdef, NULL);
-
-	RenderWorld(&refdef, NULL);
-
-	RenderMobjs();
-
-	DrawParticles();
-
-	DrawTranslucentPolys();
+	RenderScene(&refdef, NULL);
 
 	// draw the psprites on top of everything
 	if (fov <= 90.0 && cl->MO == cl->Camera && !host_titlemap)
@@ -745,19 +756,7 @@ void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
 
 	SetupCameraFrame(Camera, Tex, FOV, &CameraRefDef);
 
-	MarkLeaves();
-
-	PushDlights();
-
-	UpdateWorld(&CameraRefDef, NULL);
-
-	RenderWorld(&CameraRefDef, NULL);
-
-	RenderMobjs();
-
-	DrawParticles();
-
-	DrawTranslucentPolys();
+	RenderScene(&CameraRefDef, NULL);
 
 	Drawer->EndView();
 

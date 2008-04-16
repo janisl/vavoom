@@ -406,7 +406,6 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	{
 		RenderDevice->Clear(0, NULL, D3DCLEAR_STENCILBUFFER, 0, 1.0, 0);
 	}
-	SetupViewOrg();
 	unguard;
 }
 

@@ -505,8 +505,6 @@ void VSoftwareDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t* rd)
 	Sys_LowFPPrecision();
 
 	UpdatePalette();
-
-	SetupViewOrg();
 	unguard;
 }
 

@@ -1065,6 +1065,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	rd.DrawCamera = false;
 
 	Drawer->SetupView(NULL, &rd);
+	Drawer->SetupViewOrg();
 
 	TAVec Angles;
 	Angles.yaw = Angle;
@@ -1124,6 +1125,7 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	rd.DrawCamera = false;
 
 	Drawer->SetupView(NULL, &rd);
+	Drawer->SetupViewOrg();
 
 	TAVec Angles;
 	Angles.yaw = Angle;

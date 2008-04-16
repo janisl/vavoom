@@ -377,8 +377,6 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 
 	PortalDepth = 0;
 	cacheframecount++;
-
-	SetupViewOrg();
 	unguard;
 }
 
