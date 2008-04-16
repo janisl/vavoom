@@ -100,10 +100,8 @@ public:
 	//	Polygon drawing
 	virtual void DrawPolygon(surface_t*, int) = 0;
 	virtual void DrawSkyPortal(surface_t*, int) = 0;
-	virtual void BeginSky() = 0;
 	virtual void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*,
 		float, int) = 0;
-	virtual void EndSky() = 0;
 	virtual void DrawHorizonPolygon(surface_t*, int) = 0;
 	virtual void DrawMaskedPolygon(surface_t*, float, bool) = 0;
 	virtual void DrawSpritePolygon(TVec*, VTexture*, float, bool,

@@ -460,23 +460,6 @@ void VOpenGLDrawer::DoHorizonPolygon(surface_t* Surf)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::BeginSky
-//
-//==========================================================================
-
-void VOpenGLDrawer::BeginSky()
-{
-	guard(VOpenGLDrawer::BeginSky);
-	glDepthMask(0);
-
-	//	Sky polys are alredy translated
-	glPushMatrix();
-	glTranslatef(vieworg.x, vieworg.y, vieworg.z);
-	unguard;
-}
-
-//==========================================================================
-//
 //	VOpenGLDrawer::DrawSkyPolygon
 //
 //==========================================================================
@@ -566,20 +549,6 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 			glDisable(GL_BLEND);
 		}
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenGLDrawer::EndSky
-//
-//==========================================================================
-
-void VOpenGLDrawer::EndSky()
-{
-	guard(VOpenGLDrawer::EndSky);
-	glPopMatrix();
-	glDepthMask(1);
 	unguard;
 }
 

@@ -121,7 +121,6 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	if (texinfo->Tex == GTextureManager[skyflatnum] ||
 		IsStack && CheckSkyBoxAlways)
 	{
-		SkyIsVisible = true;
 		if (!InPortals)
 		{
 			VSky* Sky = NULL;
@@ -734,14 +733,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		WorldSurfs.Resize(4096);
 	}
 
-	SkyIsVisible = false;
-
 	RenderBSPNode(Level->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
-
-	if (SkyIsVisible && !Drawer->HasStencil)
-	{
-//		DrawSky();
-	}
 
 	if (!InPortals)
 	{

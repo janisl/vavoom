@@ -494,20 +494,6 @@ void VDirect3DDrawer::DoHorizonPolygon(surface_t* Surf)
 
 //==========================================================================
 //
-//	VDirect3DDrawer::BeginSky
-//
-//==========================================================================
-
-void VDirect3DDrawer::BeginSky()
-{
-	guard(VDirect3DDrawer::BeginSky);
-	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
-	SetFade(0);
-	unguard;
-}
-
-//==========================================================================
-//
 //	VDirect3DDrawer::DrawSkyPolygon
 //
 //==========================================================================
@@ -590,19 +576,6 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 			RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 		}
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::EndSky
-//
-//==========================================================================
-
-void VDirect3DDrawer::EndSky()
-{
-	guard(VDirect3DDrawer::EndSky);
-	RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
 	unguard;
 }
 

@@ -162,7 +162,7 @@ void VSkyPortal::DrawContents()
 	RLev->TransformFrustum();
 	Drawer->SetupViewOrg();
 
-	Sky->Draw(RLev->ColourMap, true);
+	Sky->Draw(RLev->ColourMap);
 
 	if (!Drawer->HasStencil)
 	{

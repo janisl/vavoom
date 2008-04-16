@@ -475,25 +475,15 @@ void VSky::Init(int Sky1Texture, int Sky2Texture, float Sky1ScrollDelta,
 //
 //==========================================================================
 
-void VSky::Draw(int ColourMap, bool AsPortal)
+void VSky::Draw(int ColourMap)
 {
 	guard(VSky::Draw);
-	if (!AsPortal)
-	{
-		Drawer->BeginSky();
-	}
-
 	for (int i = 0; i < NumSkySurfs; i++)
 	{
 		Drawer->DrawSkyPolygon(&sky[i].surf, bIsSkyBox,
 			GTextureManager(sky[i].texture1), sky[i].columnOffset1,
 			GTextureManager(sky[i].texture2), sky[i].columnOffset2,
 			ColourMap);
-	}
-
-	if (!AsPortal)
-	{
-		Drawer->EndSky();
 	}
 	unguard;
 }
@@ -736,19 +726,5 @@ void VRenderLevel::ForceLightning()
 {
 	guard(VRenderLevel::ForceLightning);
 	NextLightningFlash = 0;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VRenderLevel::DrawSky
-//
-//==========================================================================
-
-void VRenderLevel::DrawSky()
-{
-	guard(VRenderLevel::DrawSky);
-	InitSky();
-	BaseSky.Draw(ColourMap, false);
 	unguard;
 }

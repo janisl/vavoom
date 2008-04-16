@@ -172,7 +172,7 @@ public:
 	void InitOldSky(int, int, float, float, bool, bool, bool);
 	void InitSkyBox(VName, VName);
 	void Init(int, int, float, float, bool, bool, bool, bool);
-	void Draw(int, bool);
+	void Draw(int);
 };
 
 class VSkyPortal : public VPortal
@@ -315,14 +315,13 @@ private:
 	particle_t*		FreeParticles;
 
 	//	World render variables
-	VViewClipper	ViewClip;
-	int				VisSize;
-	vuint8*			BspVis;
-	int				FrustumIndexes[4][6];
+	VViewClipper			ViewClip;
+	int						VisSize;
+	vuint8*					BspVis;
+	int						FrustumIndexes[4][6];
 	TArray<world_surf_t>	WorldSurfs;
-	bool			SkyIsVisible;
-	TArray<VPortal*>	Portals;
-	bool			InPortals;
+	TArray<VPortal*>		Portals;
+	bool					InPortals;
 
 	trans_sprite_t	MainTransSprites[MAX_TRANS_SPRITES];
 	trans_sprite_t*	trans_sprites;
@@ -377,7 +376,6 @@ private:
 	void InitSky();
 	void AnimateSky(float);
 	void DoLightningFlash();
-	void DrawSky();
 
 	//	Light methods
 	static void CalcMinMaxs(surface_t*);
