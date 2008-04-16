@@ -117,6 +117,17 @@ bool VPortal::MatchSkyBox(VEntity*) const
 
 //==========================================================================
 //
+//	VPortal::MatchMirror
+//
+//==========================================================================
+
+bool VPortal::MatchMirror(seg_t*) const
+{
+	return false;
+}
+
+//==========================================================================
+//
 //	VPortal::Draw
 //
 //==========================================================================
@@ -340,5 +351,47 @@ void VSectorStackPortal::DrawContents()
 	vieworg.y = vieworg.y + Viewport->Origin.y - Mate->Origin.y;
 
 	RLev->RenderScene(&refdef, &Range);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMirrorPortal::MatchSkyBox
+//
+//==========================================================================
+
+bool VMirrorPortal::MatchMirror(seg_t* ASeg) const
+{
+	return Seg == ASeg;
+}
+
+//==========================================================================
+//
+//	VMirrorPortal::DrawContents
+//
+//==========================================================================
+
+void VMirrorPortal::DrawContents()
+{
+	guard(VMirrorPortal::DrawContents);
+	RLev->ViewEnt = NULL;
+
+	float Dist = DotProduct(vieworg, Seg->normal) - Seg->dist;
+	vieworg -= 2 * Dist * Seg->normal;
+
+	Dist = DotProduct(viewforward, Seg->normal);
+	viewforward -= 2 * Dist * Seg->normal;
+	Dist = DotProduct(viewright, Seg->normal);
+	viewright -= 2 * Dist * Seg->normal;
+	Dist = DotProduct(viewup, Seg->normal);
+	viewup -= 2 * Dist * Seg->normal;
+	VectorAngles(viewforward, viewangles);
+//	viewangles.yaw += 180.0;
+//	AngleVectors(viewangles, viewforward, viewright, viewup);
+	//viewright = -viewright;
+	MirrorFlip = true;
+
+	RLev->RenderScene(&refdef, NULL);
+	MirrorFlip = false;
 	unguard;
 }

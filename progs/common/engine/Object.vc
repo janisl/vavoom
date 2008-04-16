@@ -561,8 +561,8 @@ enum
 
 	LNSPEC_ThingSetTranslation = 180,// 180
 	LNSPEC_PlaneAlign,
-
-	LNSPEC_LineAlignCeiling = 183,
+	LNSPEC_LineMirror,
+	LNSPEC_LineAlignCeiling,
 	LNSPEC_LineAlignFloor,
 	LNSPEC_SectorSetRotation,
 	LNSPEC_SectorSetCeilingPanning,

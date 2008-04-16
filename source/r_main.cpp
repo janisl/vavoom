@@ -78,6 +78,8 @@ refdef_t				refdef;
 
 float					PixelAspect;
 
+bool					MirrorFlip;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static FDrawerDesc		*DrawerList[DRAWER_MAX];

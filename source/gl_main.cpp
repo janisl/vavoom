@@ -392,6 +392,15 @@ void VOpenGLDrawer::SetupViewOrg()
 	glLoadIdentity();
 	glRotatef(-90, 1, 0, 0);
 	glRotatef(90, 0, 0, 1);
+	if (MirrorFlip)
+	{
+		glScalef(1, -1, 1);
+		glCullFace(GL_BACK);
+	}
+	else
+	{
+		glCullFace(GL_FRONT);
+	}
 	glRotatef(-viewangles.roll, 1, 0, 0);
 	glRotatef(-viewangles.pitch, 0, 1, 0);
 	glRotatef(-viewangles.yaw, 0, 0, 1);

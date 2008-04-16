@@ -217,6 +217,19 @@ public:
 	void DrawContents();
 };
 
+class VMirrorPortal : public VPortal
+{
+public:
+	seg_t*			Seg;
+
+	VMirrorPortal(class VRenderLevel* ARLev, seg_t* ASeg)
+	: VPortal(ARLev)
+	, Seg(ASeg)
+	{}
+	bool MatchMirror(seg_t*) const;
+	void DrawContents();
+};
+
 class VRenderLevel : public VRenderLevelDrawer
 {
 private:
@@ -224,6 +237,7 @@ private:
 	friend class VSkyPortal;
 	friend class VSkyBoxPortal;
 	friend class VSectorStackPortal;
+	friend class VMirrorPortal;
 
 	struct light_t
 	{
@@ -399,6 +413,7 @@ private:
 	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int = -1,
 		bool = false);
 	void RenderHorizon(drawseg_t*, int);
+	void RenderMirror(drawseg_t*, int);
 	void RenderLine(drawseg_t*, int);
 	void RenderSecSurface(sec_surface_t*, int, VEntity*);
 	void RenderSubRegion(subregion_t*, int);

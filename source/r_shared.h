@@ -130,6 +130,7 @@ public:
 	virtual bool IsSky() const;
 	virtual bool MatchSky(class VSky*) const;
 	virtual bool MatchSkyBox(VEntity*) const;
+	virtual bool MatchMirror(seg_t*) const;
 	void Draw(bool);
 	virtual void DrawContents() = 0;
 };
@@ -164,6 +165,8 @@ extern VCvarF			r_fog_density;
 extern "C" {
 extern TClipPlane		view_clipplanes[4];
 }
+
+extern bool				MirrorFlip;
 
 extern int				r_dlightframecount;
 extern bool				r_light_add;

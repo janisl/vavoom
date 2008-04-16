@@ -438,6 +438,15 @@ void VDirect3DDrawer::SetupViewOrg()
 	matView(3, 3) = 1;
 	RenderDevice->SetTransform(D3DTS_VIEW, &matView);
 
+	if (MirrorFlip)
+	{
+		RenderDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
+	}
+	else
+	{
+		RenderDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	}
+
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
 	SimpleSurfsHead = NULL;

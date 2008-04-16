@@ -279,8 +279,6 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 //
 //	VRenderLevel::RenderHorizon
 //
-// 	Clips the given segment and adds any visible pieces to the line list.
-//
 //==========================================================================
 
 void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
@@ -413,6 +411,49 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
+//	VRenderLevel::RenderMirror
+//
+//==========================================================================
+
+void VRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
+{
+	guard(VRenderLevel::RenderMirror);
+	seg_t* Seg = dseg->seg;
+
+	if (!InPortals && Drawer->HasStencil)
+	{
+		VPortal* Portal = NULL;
+		for (int i = 0; i < Portals.Num(); i++)
+		{
+			if (Portals[i] && Portals[i]->MatchMirror(Seg))
+			{
+				Portal = Portals[i];
+				break;
+			}
+		}
+		if (!Portal)
+		{
+			Portal = new VMirrorPortal(this, Seg);
+			Portals.Append(Portal);
+		}
+
+		surface_t* surfs = dseg->mid->surfs;
+		do
+		{
+			Portal->Surfs.Append(surfs);
+			surfs = surfs->next;
+		} while (surfs);
+	}
+	else
+	{
+		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
+			r_region->ceiling->SkyBox);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VRenderLevel::RenderLine
 //
 // 	Clips the given segment and adds any visible pieces to the line list.
@@ -456,6 +497,10 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 		if (line->linedef->special == LNSPEC_LineHorizon)
 		{
 			RenderHorizon(dseg, clipflags);
+		}
+		else if (line->linedef->special == LNSPEC_LineMirror)
+		{
+			RenderMirror(dseg, clipflags);
 		}
 		else
 		{
