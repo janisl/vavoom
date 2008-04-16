@@ -304,7 +304,7 @@ final void MovePlayer(float deltaTime)
 
 	if ((Buttons & BT_JUMP) && onground && !JumpTime)
 	{
-		MO.Velocity.z = PlayerPawn(MO).JumpVelZ;
+		MO.Velocity.z = PlayerPawn(MO).JumpVelZ * 1.1;
 		EntityEx(MO).bOnMobj = false;
 		JumpTime = 0.5;
 	}
