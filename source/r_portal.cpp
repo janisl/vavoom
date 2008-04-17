@@ -121,7 +121,7 @@ bool VPortal::MatchSkyBox(VEntity*) const
 //
 //==========================================================================
 
-bool VPortal::MatchMirror(seg_t*) const
+bool VPortal::MatchMirror(TPlane*) const
 {
 	return false;
 }
@@ -392,9 +392,9 @@ void VSectorStackPortal::DrawContents()
 //
 //==========================================================================
 
-bool VMirrorPortal::MatchMirror(seg_t* ASeg) const
+bool VMirrorPortal::MatchMirror(TPlane* APlane) const
 {
-	return Seg == ASeg;
+	return Plane->normal == APlane->normal && Plane->dist == APlane->dist;
 }
 
 //==========================================================================
@@ -408,15 +408,15 @@ void VMirrorPortal::DrawContents()
 	guard(VMirrorPortal::DrawContents);
 	RLev->ViewEnt = NULL;
 
-	float Dist = DotProduct(vieworg, Seg->normal) - Seg->dist;
-	vieworg -= 2 * Dist * Seg->normal;
+	float Dist = DotProduct(vieworg, Plane->normal) - Plane->dist;
+	vieworg -= 2 * Dist * Plane->normal;
 
-	Dist = DotProduct(viewforward, Seg->normal);
-	viewforward -= 2 * Dist * Seg->normal;
-	Dist = DotProduct(viewright, Seg->normal);
-	viewright -= 2 * Dist * Seg->normal;
-	Dist = DotProduct(viewup, Seg->normal);
-	viewup -= 2 * Dist * Seg->normal;
+	Dist = DotProduct(viewforward, Plane->normal);
+	viewforward -= 2 * Dist * Plane->normal;
+	Dist = DotProduct(viewright, Plane->normal);
+	viewright -= 2 * Dist * Plane->normal;
+	Dist = DotProduct(viewup, Plane->normal);
+	viewup -= 2 * Dist * Plane->normal;
 	VectorsAngles(viewforward, -viewright, viewup, viewangles);
 	MirrorFlip = true;
 

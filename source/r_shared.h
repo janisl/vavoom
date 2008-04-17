@@ -130,7 +130,7 @@ public:
 	virtual bool IsSky() const;
 	virtual bool MatchSky(class VSky*) const;
 	virtual bool MatchSkyBox(VEntity*) const;
-	virtual bool MatchMirror(seg_t*) const;
+	virtual bool MatchMirror(TPlane*) const;
 	void Draw(bool);
 	virtual void DrawContents() = 0;
 

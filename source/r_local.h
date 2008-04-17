@@ -220,13 +220,13 @@ public:
 class VMirrorPortal : public VPortal
 {
 public:
-	seg_t*			Seg;
+	TPlane*			Plane;
 
-	VMirrorPortal(class VRenderLevel* ARLev, seg_t* ASeg)
+	VMirrorPortal(class VRenderLevel* ARLev, TPlane* APlane)
 	: VPortal(ARLev)
-	, Seg(ASeg)
+	, Plane(APlane)
 	{}
-	bool MatchMirror(seg_t*) const;
+	bool MatchMirror(TPlane*) const;
 	void DrawContents();
 };
 
