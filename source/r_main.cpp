@@ -185,6 +185,7 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 , Particles(0)
 , ActiveParticles(0)
 , FreeParticles(0)
+, InPortals(false)
 , trans_sprites(MainTransSprites)
 {
 	guard(VRenderLevel::VRenderLevel);
