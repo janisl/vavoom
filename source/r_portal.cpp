@@ -385,10 +385,7 @@ void VMirrorPortal::DrawContents()
 	viewright -= 2 * Dist * Seg->normal;
 	Dist = DotProduct(viewup, Seg->normal);
 	viewup -= 2 * Dist * Seg->normal;
-	VectorAngles(viewforward, viewangles);
-//	viewangles.yaw += 180.0;
-//	AngleVectors(viewangles, viewforward, viewright, viewup);
-	//viewright = -viewright;
+	VectorsAngles(viewforward, -viewright, viewup, viewangles);
 	MirrorFlip = true;
 
 	RLev->RenderScene(&refdef, NULL);

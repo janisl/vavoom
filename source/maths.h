@@ -82,6 +82,8 @@ float AngleMod180(float angle);
 void AngleVectors(const TAVec &angles, TVec &forward, TVec &right, TVec &up);
 void AngleVector(const TAVec &angles, TVec &forward);
 void VectorAngles(const TVec &vec, TAVec &angles);
+void VectorsAngles(const TVec &forward, const TVec &right, const TVec &up,
+	TAVec &angles);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

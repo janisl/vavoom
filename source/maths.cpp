@@ -132,15 +132,15 @@ void AngleVectors(const TAVec &angles, TVec &forward, TVec &right, TVec &up)
 	sr = sin(ar);
 	cr = cos(ar);
 
-	forward[0] = cp * cy;
-	forward[1] = cp * sy;
-	forward[2] = -sp;
-	right[0] = -sr * sp * cy + cr * sy;
-	right[1] = -sr * sp * sy - cr * cy;
-	right[2] = -sr * cp;
-	up[0] = cr * sp * cy + sr * sy;
-	up[1] = cr * sp * sy - sr * cy;
-	up[2] = cr * cp;
+	forward.x = cp * cy;
+	forward.y = cp * sy;
+	forward.z = -sp;
+	right.x = -sr * sp * cy + cr * sy;
+	right.y = -sr * sp * sy - cr * cy;
+	right.z = -sr * cp;
+	up.x = cr * sp * cy + sr * sy;
+	up.y = cr * sp * sy - sr * cy;
+	up.z = cr * cp;
 }
 
 //==========================================================================
@@ -169,13 +169,12 @@ void AngleVector(const TAVec &angles, TVec &forward)
 //
 //==========================================================================
 
-void VectorAngles(const TVec &vec, TAVec &angles)
+void VectorAngles(const TVec& vec, TAVec& angles)
 {
 	double length = sqrt(vec.x * vec.x + vec.y * vec.y);
 	if (!length)
 	{
-		GCon->Logf(NAME_Dev, "Length 0, z = %f", vec.z);
-		angles.pitch = 0;
+		angles.pitch = vec.z > 0 ? 90 : 270;
 		angles.yaw = 0;
 		angles.roll = 0;
 		return;
@@ -183,6 +182,38 @@ void VectorAngles(const TVec &vec, TAVec &angles)
 	angles.pitch = -matan(vec.z, length);
 	angles.yaw = matan(vec.y, vec.x);
 	angles.roll = 0;
+}
+
+//==========================================================================
+//
+//	VectorsAngles
+//
+//==========================================================================
+
+void VectorsAngles(const TVec& forward, const TVec& right, const TVec& up,
+	TAVec& angles)
+{
+	if (!forward.x && !forward.y)
+	{
+		angles.yaw = 0;
+		if (forward.z > 0)
+		{
+			angles.pitch = 90;
+			angles.roll = matan(-up.y, -up.x);
+		}
+		else
+		{
+			angles.pitch = 270;
+			angles.roll = matan(-up.y, up.x);
+		}
+
+		return;
+	}
+
+	double length = sqrt(forward.x * forward.x + forward.y * forward.y);
+	angles.pitch = matan(-forward.z, length);
+	angles.yaw = matan(forward.y, forward.x);
+	angles.roll = matan(-right.z / length, up.z / length);
 }
 
 //==========================================================================
