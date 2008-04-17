@@ -134,6 +134,7 @@ bool VPortal::MatchMirror(TPlane*) const
 
 void VPortal::Draw(bool UseStencil)
 {
+	guard(VPortal::Draw);
 	if (!Drawer->StartPortal(this, UseStencil))
 	{
 		//	All portal polygons are clipped away.
@@ -175,13 +176,17 @@ void VPortal::Draw(bool UseStencil)
 	RLev->ViewEnt = SavedViewEnt;
 	RLev->ExtraLight = SavedExtraLight;
 	RLev->FixedLight = SavedFixedLight;
-	delete[] RLev->BspVis;
+	if (NeedsDepthBuffer())
+	{
+		delete[] RLev->BspVis;
+	}
 	RLev->BspVis = SavedBspVis;
 	RLev->trans_sprites = SavedTransSprites;
 	RLev->TransformFrustum();
 	Drawer->SetupViewOrg();
 
 	Drawer->EndPortal(this, UseStencil);
+	unguard;
 }
 
 //==========================================================================
