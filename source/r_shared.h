@@ -135,7 +135,7 @@ public:
 	virtual void DrawContents() = 0;
 
 protected:
-	void SetUpRanges(VViewClipper&);
+	void SetUpRanges(VViewClipper&, bool);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

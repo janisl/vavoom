@@ -190,7 +190,7 @@ void VPortal::Draw(bool UseStencil)
 //
 //==========================================================================
 
-void VPortal::SetUpRanges(VViewClipper& Range)
+void VPortal::SetUpRanges(VViewClipper& Range, bool Revert)
 {
 	guard(VPortal::SetUpRanges);
 	Range.ClearClipNodes(vieworg, RLev->Level);
@@ -204,7 +204,14 @@ void VPortal::SetUpRanges(VViewClipper& Range)
 			check(Seg < RLev->Level->Segs + RLev->Level->NumSegs);
 			float a1 = Range.PointToClipAngle(*Seg->v2);
 			float a2 = Range.PointToClipAngle(*Seg->v1);
-			Range.AddClipRange(a1, a2);
+			if (Revert)
+			{
+				Range.AddClipRange(a2, a1);
+			}
+			else
+			{
+				Range.AddClipRange(a1, a2);
+			}
 		}
 		else
 		{
@@ -213,7 +220,7 @@ void VPortal::SetUpRanges(VViewClipper& Range)
 			{
 				TVec v1;
 				TVec v2;
-				if (Surfs[i]->plane->normal.z < 0)
+				if ((Surfs[i]->plane->normal.z < 0) != Revert)
 				{
 					v1 = Surfs[i]->verts[j < Surfs[i]->count - 1 ? j + 1 : 0];
 					v2 = Surfs[i]->verts[j];
@@ -368,7 +375,7 @@ void VSectorStackPortal::DrawContents()
 {
 	guard(VSectorStackPortal::DrawContents);
 	VViewClipper Range;
-	VPortal::SetUpRanges(Range);
+	VPortal::SetUpRanges(Range, false);
 
 	RLev->ViewEnt = Viewport;
 	VEntity* Mate = Viewport->eventSkyBoxGetMate();
@@ -413,7 +420,10 @@ void VMirrorPortal::DrawContents()
 	VectorsAngles(viewforward, -viewright, viewup, viewangles);
 	MirrorFlip = true;
 
-	RLev->RenderScene(&refdef, NULL);
+	VViewClipper Range;
+	SetUpRanges(Range, true);
+
+	RLev->RenderScene(&refdef, &Range);
 	MirrorFlip = false;
 	unguard;
 }
