@@ -569,6 +569,37 @@ void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 		return;
 	}
 
+	if (plane.MirrorAlpha < 1.0 && !InPortals && Drawer->HasStencil)
+	{
+		VPortal* Portal = NULL;
+		for (int i = 0; i < Portals.Num(); i++)
+		{
+			if (Portals[i] && Portals[i]->MatchMirror(&plane))
+			{
+				Portal = Portals[i];
+				break;
+			}
+		}
+		if (!Portal)
+		{
+			Portal = new VMirrorPortal(this, &plane);
+			Portals.Append(Portal);
+		}
+
+		surface_t* surfs = ssurf->surfs;
+		do
+		{
+			Portal->Surfs.Append(surfs);
+			surfs = surfs->next;
+		} while (surfs);
+
+		if (plane.MirrorAlpha <= 0.0)
+		{
+			return;
+		}
+		ssurf->texinfo.Alpha = plane.MirrorAlpha;
+	}
+
 	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags, SkyBox,
 		plane.LightSourceSector, true);
 	unguard;
@@ -859,12 +890,18 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		{
 			for (int i = 0; i < Portals.Num(); i++)
 			{
-				Portals[i]->Draw(true);
+				if (Portals[i])
+				{
+					Portals[i]->Draw(true);
+				}
 			}
 		}
 		for (int i = 0; i < Portals.Num(); i++)
 		{
-			delete Portals[i];
+			if (Portals[i])
+			{
+				delete Portals[i];
+			}
 		}
 		Portals.Clear();
 		InPortals = false;

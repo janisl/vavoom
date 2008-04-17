@@ -1014,7 +1014,7 @@ void SpawnWorld(Level InLevel)
 		line = &InLevel.Lines[i];
 		switch (line->special)
 		{
-		case LNSPEC_3DFloor:
+		case LNSPEC_SectorSet3dFloor:
 			SpawnExtraFloors(InLevel, line);
 			line->special = 0;
 			break;

@@ -161,6 +161,7 @@ void VRenderLevel::SetupSky()
 	sky_plane.Alpha = 1.1;
 	sky_plane.LightSourceSector = -1;
 	sky_plane.SkyBox = NULL;
+	sky_plane.MirrorAlpha = 1.0;
 	unguard;
 }
 

@@ -291,10 +291,12 @@ void VLevelChannel::Update()
 		bool LightChanged = abs(RepSec->lightlevel - Sec->params.lightlevel) >= 4;
 		bool FadeChanged = RepSec->Fade != Sec->params.Fade;
 		bool SkyChanged = RepSec->Sky != Sec->Sky;
+		bool MirrorChanged = RepSec->floor_MirrorAlpha != Sec->floor.MirrorAlpha ||
+			RepSec->ceil_MirrorAlpha != Sec->ceiling.MirrorAlpha;
 		if (RepSec->floor_pic == Sec->floor.pic &&
 			RepSec->ceil_pic == Sec->ceiling.pic &&
 			!FloorChanged && !CeilChanged && !LightChanged && !FadeChanged &&
-			!SkyChanged)
+			!SkyChanged && !MirrorChanged)
 			continue;
 
 		Msg.WriteInt(CMD_Sector, CMD_MAX);
@@ -392,6 +394,12 @@ void VLevelChannel::Update()
 		{
 			Msg.WriteInt(Sec->Sky, MAX_VUINT16);
 		}
+		Msg.WriteBit(MirrorChanged);
+		if (MirrorChanged)
+		{
+			Msg << Sec->floor.MirrorAlpha;
+			Msg << Sec->ceiling.MirrorAlpha;
+		}
 
 		RepSec->floor_pic = Sec->floor.pic;
 		RepSec->floor_dist = Sec->floor.dist;
@@ -403,6 +411,7 @@ void VLevelChannel::Update()
 		RepSec->floor_BaseAngle = Sec->floor.BaseAngle;
 		RepSec->floor_BaseYOffs = Sec->floor.BaseYOffs;
 		RepSec->floor_SkyBox = FloorSkyBox;
+		RepSec->floor_MirrorAlpha = Sec->floor.MirrorAlpha;
 		RepSec->ceil_pic = Sec->ceiling.pic;
 		RepSec->ceil_dist = Sec->ceiling.dist;
 		RepSec->ceil_xoffs = Sec->ceiling.xoffs;
@@ -413,6 +422,7 @@ void VLevelChannel::Update()
 		RepSec->ceil_BaseAngle = Sec->ceiling.BaseAngle;
 		RepSec->ceil_BaseYOffs = Sec->ceiling.BaseYOffs;
 		RepSec->ceil_SkyBox = CeilSkyBox;
+		RepSec->ceil_MirrorAlpha = Sec->ceiling.MirrorAlpha;
 		RepSec->lightlevel = Sec->params.lightlevel;
 		RepSec->Fade = Sec->params.Fade;
 	}
@@ -705,6 +715,11 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 				if (Msg.ReadBit())
 				{
 					Sec->Sky = Msg.ReadInt(MAX_VUINT16);
+				}
+				if (Msg.ReadBit())
+				{
+					Msg << Sec->floor.MirrorAlpha;
+					Msg << Sec->ceiling.MirrorAlpha;
 				}
 				if (PrevFloorDist != Sec->floor.dist ||
 					PrevCeilDist != Sec->ceiling.dist)

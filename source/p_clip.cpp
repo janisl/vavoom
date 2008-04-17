@@ -264,10 +264,6 @@ void VViewClipper::ClipToRanges(const VViewClipper& Range)
 	{
 		DoAddClipRange(N->To, N->Next->From);
 	}
-
-	for (VClipNode* N = ClipHead; N; N = N->Next)
-	{
-	}
 	unguard;
 }
 

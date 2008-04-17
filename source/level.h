@@ -246,6 +246,7 @@ struct sec_plane_t : public TPlane
 
 	int			flags;
 	float		Alpha;
+	float		MirrorAlpha;
 
 	int			LightSourceSector;
 	VEntity*	SkyBox;
@@ -597,6 +598,7 @@ struct rep_sector_t
 	float		floor_BaseAngle;
 	float		floor_BaseYOffs;
 	VEntity*	floor_SkyBox;
+	float		floor_MirrorAlpha;
 	int			ceil_pic;
 	float		ceil_dist;
 	float		ceil_xoffs;
@@ -607,6 +609,7 @@ struct rep_sector_t
 	float		ceil_BaseAngle;
 	float		ceil_BaseYOffs;
 	VEntity*	ceil_SkyBox;
+	float		ceil_MirrorAlpha;
 	int			lightlevel;
 	int			Fade;
 	int			Sky;

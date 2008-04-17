@@ -137,6 +137,7 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->floor.BaseYOffs
 			<< sec->floor.flags
 			<< sec->floor.Alpha
+			<< sec->floor.MirrorAlpha
 			<< sec->floor.LightSourceSector
 			<< sec->floor.SkyBox
 			<< sec->ceiling.dist
@@ -151,6 +152,7 @@ void VLevel::Serialise(VStream& Strm)
 			<< sec->ceiling.BaseYOffs
 			<< sec->ceiling.flags
 			<< sec->ceiling.Alpha
+			<< sec->ceiling.MirrorAlpha
 			<< sec->ceiling.LightSourceSector
 			<< sec->ceiling.SkyBox
 			<< sec->params.lightlevel

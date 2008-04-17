@@ -780,6 +780,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_SectorSoundChange:
 		buttonSuccess = EV_SectorSoundChange(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
+	case LNSPEC_SectorSetPlaneReflection:
+		buttonSuccess = EV_SectorSetPlaneReflection(Arg1, Arg2, Arg3, Arg4,
+			Arg5);
+		break;
 	case LNSPEC_SectorSetCeilingScale2:
 		buttonSuccess = EV_SectorSetCeilingScale2(Arg1, Arg2, Arg3, Arg4,
 			Arg5);
@@ -5438,6 +5442,26 @@ final bool EV_LineTranslucent(int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//  EV_SectorSetPlaneReflection
+//
+//==========================================================================
+
+int EV_SectorSetPlaneReflection(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int			SecNum;
+
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		XLevel.Sectors[SecNum].floor.MirrorAlpha = itof(255 - Arg2) / 255.0;
+		XLevel.Sectors[SecNum].ceiling.MirrorAlpha = itof(255 - Arg3) / 255.0;
+	}
+	return 1;
 }
 
 //==========================================================================

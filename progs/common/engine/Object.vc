@@ -547,7 +547,8 @@ enum
 	LNSPEC_ThingSpawnFacing,
 	LNSPEC_SectorSoundChange,// 140
 
-	LNSPEC_3DFloor = 160,// 160
+	LNSPEC_SectorSetPlaneReflection = 159,
+	LNSPEC_SectorSet3dFloor,// 160
 	LNSPEC_Contents,
 
 	LNSPEC_SectorSetCeilingScale2 = 170,// 170
@@ -769,6 +770,7 @@ struct sec_plane_t : TPlane
 
 	int			flags;
 	float		Alpha;
+	float		MirrorAlpha;
 
 	int			LightSourceSector;
 

@@ -528,6 +528,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->floor.minz = floorheight;
 		ss->floor.maxz = floorheight;
 		ss->floor.Alpha = 1.0;
+		ss->floor.MirrorAlpha = 1.0;
 		ss->floor.LightSourceSector = -1;
 
 		//	Ceiling
@@ -542,6 +543,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->ceiling.minz = ceilingheight;
 		ss->ceiling.maxz = ceilingheight;
 		ss->ceiling.Alpha = 1.0;
+		ss->ceiling.MirrorAlpha = 1.0;
 		ss->ceiling.LightSourceSector = -1;
 
 		//	Params
@@ -2100,6 +2102,10 @@ void VLevel::CreateRepBase()
 		B.floor_XScale = S.floor.XScale;
 		B.floor_YScale = S.floor.YScale;
 		B.floor_Angle = S.floor.Angle;
+		B.floor_BaseAngle = S.floor.BaseAngle;
+		B.floor_BaseYOffs = S.floor.BaseYOffs;
+		B.floor_SkyBox = NULL;
+		B.floor_MirrorAlpha = S.floor.MirrorAlpha;
 		B.ceil_pic = S.ceiling.pic;
 		B.ceil_dist = S.ceiling.dist;
 		B.ceil_xoffs = S.ceiling.xoffs;
@@ -2107,8 +2113,13 @@ void VLevel::CreateRepBase()
 		B.ceil_XScale = S.ceiling.XScale;
 		B.ceil_YScale = S.ceiling.YScale;
 		B.ceil_Angle = S.ceiling.Angle;
+		B.ceil_BaseAngle = S.ceiling.BaseAngle;
+		B.ceil_BaseYOffs = S.ceiling.BaseYOffs;
+		B.ceil_SkyBox = NULL;
+		B.ceil_MirrorAlpha = S.ceiling.MirrorAlpha;
 		B.lightlevel = S.params.lightlevel;
 		B.Fade = S.params.Fade;
+		B.Sky = S.Sky;
 	}
 
 	BasePolyObjs = new rep_polyobj_t[NumPolyObjs];
