@@ -429,8 +429,6 @@ void VMirrorPortal::DrawContents()
 	VViewClipper Range;
 	SetUpRanges(Range, true);
 
-	RLev->RenderScene(&refdef, &Range);
-
 	view_clipplanes[4].normal = Plane->normal;
 	view_clipplanes[4].dist = Plane->dist;
 	view_clipplanes[3].next = &view_clipplanes[4];
@@ -451,6 +449,8 @@ void VMirrorPortal::DrawContents()
 			pindex[j + 3] = j;
 		}
 	}
+
+	RLev->RenderScene(&refdef, &Range);
 
 	MirrorFlip = false;
 	MirrorClip = false;
