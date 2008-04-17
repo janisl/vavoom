@@ -186,6 +186,69 @@ void VPortal::Draw(bool UseStencil)
 
 //==========================================================================
 //
+//	VPortal::SetUpRanges
+//
+//==========================================================================
+
+void VPortal::SetUpRanges(VViewClipper& Range)
+{
+	guard(VPortal::SetUpRanges);
+	Range.ClearClipNodes(vieworg, RLev->Level);
+	for (int i = 0; i < Surfs.Num(); i++)
+	{
+		if (Surfs[i]->plane->normal.z == 0)
+		{
+			//	Wall
+			seg_t* Seg = (seg_t*)Surfs[i]->plane;
+			check(Seg >= RLev->Level->Segs);
+			check(Seg < RLev->Level->Segs + RLev->Level->NumSegs);
+			float a1 = Range.PointToClipAngle(*Seg->v2);
+			float a2 = Range.PointToClipAngle(*Seg->v1);
+			Range.AddClipRange(a1, a2);
+		}
+		else
+		{
+			//	Subsector
+			for (int j = 0; j < Surfs[i]->count; j++)
+			{
+				TVec v1;
+				TVec v2;
+				if (Surfs[i]->plane->normal.z < 0)
+				{
+					v1 = Surfs[i]->verts[j < Surfs[i]->count - 1 ? j + 1 : 0];
+					v2 = Surfs[i]->verts[j];
+				}
+				else
+				{
+					v1 = Surfs[i]->verts[j];
+					v2 = Surfs[i]->verts[j < Surfs[i]->count - 1 ? j + 1 : 0];
+				}
+				TVec Dir = v2 - v1;
+				Dir.z = 0;
+				if (Dir.x > -0.01 && Dir.x < 0.01 && Dir.y > -0.01 &&
+					Dir.y < 0.01)
+				{
+					//	Too short.
+					continue;
+				}
+				TPlane P;
+				P.SetPointDir(v1, Dir);
+				if (DotProduct(vieworg, P.normal) - P.dist < 0.01)
+				{
+					//	View origin is on the back side.
+					continue;
+				}
+				float a1 = Range.PointToClipAngle(v2);
+				float a2 = Range.PointToClipAngle(v1);
+				Range.AddClipRange(a1, a2);
+			}
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VSkyPortal::NeedsDepthBuffer
 //
 //==========================================================================
@@ -305,45 +368,7 @@ void VSectorStackPortal::DrawContents()
 {
 	guard(VSectorStackPortal::DrawContents);
 	VViewClipper Range;
-	Range.ClearClipNodes(vieworg, RLev->Level);
-	for (int i = 0; i < Surfs.Num(); i++)
-	{
-		if (fabs(Surfs[i]->plane->normal.z) == 0)
-		{
-			//	Wall
-			seg_t* Seg = (seg_t*)Surfs[i]->plane;
-			check(Seg >= RLev->Level->Segs);
-			check(Seg < RLev->Level->Segs + RLev->Level->NumSegs);
-			Range.AddClipRange(Range.PointToClipAngle(*Seg->v2),
-				Range.PointToClipAngle(*Seg->v1));
-		}
-		else
-		{
-			//	Subsector
-			for (int j = 0; j < Surfs[i]->count; j++)
-			{
-				TVec v1 = Surfs[i]->verts[j];
-				TVec v2 = Surfs[i]->verts[j < Surfs[i]->count - 1 ? j + 1 : 0];
-				TVec Dir = v2 - v1;
-				Dir.z = 0;
-				if (Dir.x > -0.01 && Dir.x < 0.01 && Dir.y > -0.01 &&
-					Dir.y < 0.01)
-				{
-					//	Too short.
-					continue;
-				}
-				TPlane P;
-				P.SetPointDir(v1, Dir);
-				if (DotProduct(vieworg, P.normal) - P.dist < 0.01)
-				{
-					//	View origin is on the back side.
-					continue;
-				}
-				Range.AddClipRange(Range.PointToClipAngle(v2),
-					Range.PointToClipAngle(v1));
-			}
-		}
-	}
+	VPortal::SetUpRanges(Range);
 
 	RLev->ViewEnt = Viewport;
 	VEntity* Mate = Viewport->eventSkyBoxGetMate();

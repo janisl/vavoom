@@ -133,6 +133,9 @@ public:
 	virtual bool MatchMirror(seg_t*) const;
 	void Draw(bool);
 	virtual void DrawContents() = 0;
+
+protected:
+	void SetUpRanges(VViewClipper&);
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
