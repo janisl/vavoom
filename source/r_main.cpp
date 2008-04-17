@@ -57,7 +57,7 @@ TVec					viewright;
 TVec					viewup;
 TAVec					viewangles;
 
-TClipPlane				view_clipplanes[4];
+TClipPlane				view_clipplanes[5];
 
 int						r_visframecount;
 
@@ -79,6 +79,7 @@ refdef_t				refdef;
 float					PixelAspect;
 
 bool					MirrorFlip;
+bool					MirrorClip;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

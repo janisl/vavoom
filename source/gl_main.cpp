@@ -406,6 +406,19 @@ void VOpenGLDrawer::SetupViewOrg()
 	glRotatef(-viewangles.yaw, 0, 0, 1);
 	glTranslatef(-vieworg.x, -vieworg.y, -vieworg.z);
 
+	if (MirrorClip)
+	{
+		glEnable(GL_CLIP_PLANE0);
+		GLdouble eq[4] = { view_clipplanes[4].normal.x,
+			view_clipplanes[4].normal.y, view_clipplanes[4].normal.z,
+			-view_clipplanes[4].dist };
+		glClipPlane(GL_CLIP_PLANE0, eq);
+	}
+	else
+	{
+		glDisable(GL_CLIP_PLANE0);
+	}
+
 	memset(light_chain, 0, sizeof(light_chain));
 	memset(add_chain, 0, sizeof(add_chain));
 	SimpleSurfsHead = NULL;

@@ -582,7 +582,7 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub)
 //
 //==========================================================================
 
-void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub)
+void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 {
 	guard(VViewClipper::ClipAddSubsectorSegs);
 	for (int i = 0; i < Sub->numlines; i++)
@@ -601,8 +601,28 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub)
 			continue;
 		}
 
-		AddClipRange(PointToClipAngle(*line->v2),
-			PointToClipAngle(*line->v1));
+		TVec v1 = *line->v1;
+		TVec v2 = *line->v2;
+		if (Mirror)
+		{
+			//	Clip seg with mirror plane.
+			float Dist1 = DotProduct(v1, Mirror->normal) - Mirror->dist;
+			float Dist2 = DotProduct(v2, Mirror->normal) - Mirror->dist;
+			if (Dist1 <= 0 && Dist2 <= 0)
+			{
+				continue;
+			}
+			if (Dist1 > 0 && Dist2 < 0)
+			{
+				v2 = v1 + (v2 - v1) * Dist1 / (Dist1 - Dist2);
+			}
+			else if (Dist2 > 0 && Dist1 < 0)
+			{
+				v1 = v2 + (v1 - v2) * Dist2 / (Dist2 - Dist1);
+			}
+		}
+
+		AddClipRange(PointToClipAngle(v2), PointToClipAngle(v1));
 	}
 
 	if (Sub->poly)
@@ -624,8 +644,10 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub)
 				continue;
 			}
 
-			AddClipRange(PointToClipAngle(*line->v2),
-				PointToClipAngle(*line->v1));
+			TVec v1 = *line->v1;
+			TVec v2 = *line->v2;
+
+			AddClipRange(PointToClipAngle(v2), PointToClipAngle(v1));
 		}
 	}
 	unguard;

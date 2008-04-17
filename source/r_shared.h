@@ -166,10 +166,11 @@ extern VCvarF			r_fog_end;
 extern VCvarF			r_fog_density;
 
 extern "C" {
-extern TClipPlane		view_clipplanes[4];
+extern TClipPlane		view_clipplanes[5];
 }
 
 extern bool				MirrorFlip;
+extern bool				MirrorClip;
 
 extern int				r_dlightframecount;
 extern bool				r_light_add;

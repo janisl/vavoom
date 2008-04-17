@@ -53,6 +53,7 @@
 static subsector_t*		r_sub;
 static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
+static bool				MirrorClipSegs;
 
 // CODE --------------------------------------------------------------------
 
@@ -485,6 +486,20 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 		return;
 	}
 
+	if (MirrorClipSegs)
+	{
+		//	Clip away segs that are behind mirror.
+		float Dist1 = DotProduct(*line->v1, view_clipplanes[4].normal) -
+			view_clipplanes[4].dist;
+		float Dist2 = DotProduct(*line->v2, view_clipplanes[4].normal) -
+			view_clipplanes[4].dist;
+		if (Dist1 <= 0 && Dist2 <= 0)
+		{
+			//	Behind mirror.
+			return;
+		}
+	}
+
 	line_t *linedef = line->linedef;
 
 	//FIXME this marks all lines
@@ -648,7 +663,10 @@ void VRenderLevel::RenderSubsector(int num, int clipflags)
 
 	RenderSubRegion(Sub->regions, clipflags);
 
-	ViewClip.ClipAddSubsectorSegs(Sub);
+	//	Add subsector's segs to the clipper. Clipping against mirror
+	// is done only for vertical mirror planes.
+	ViewClip.ClipAddSubsectorSegs(Sub, MirrorClipSegs ? &view_clipplanes[4] :
+		NULL);
 	unguard;
 }
 
@@ -672,7 +690,7 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 	// cull the clipping planes if not trivial accept
 	if (clipflags)
 	{
-		for (int i = 0; i < 4; i++)
+		for (int i = 0; i < 5; i++)
 		{
 			if (!(clipflags & view_clipplanes[i].clipflag))
 			{
@@ -777,8 +795,10 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 	{
 		WorldSurfs.Resize(4096);
 	}
+	MirrorClipSegs = MirrorClip && !view_clipplanes[4].normal.z;
 
-	RenderBSPNode(Level->NumNodes - 1, dummy_bbox, 15);	// head node is the last node output
+	// head node is the last node output
+	RenderBSPNode(Level->NumNodes - 1, dummy_bbox, MirrorClip ? 31 : 15);
 
 	if (!InPortals)
 	{

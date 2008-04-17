@@ -52,5 +52,5 @@ public:
 	float PointToClipAngle(const TVec&);
 	bool ClipIsBBoxVisible(float*);
 	bool ClipCheckSubsector(subsector_t*);
-	void ClipAddSubsectorSegs(subsector_t*);
+	void ClipAddSubsectorSegs(subsector_t*, TPlane* = NULL);
 };

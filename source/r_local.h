@@ -333,7 +333,7 @@ private:
 	VViewClipper			ViewClip;
 	int						VisSize;
 	vuint8*					BspVis;
-	int						FrustumIndexes[4][6];
+	int						FrustumIndexes[5][6];
 	TArray<world_surf_t>	WorldSurfs;
 	TArray<VPortal*>		Portals;
 	bool					InPortals;

@@ -419,11 +419,36 @@ void VMirrorPortal::DrawContents()
 	viewup -= 2 * Dist * Plane->normal;
 	VectorsAngles(viewforward, -viewright, viewup, viewangles);
 	MirrorFlip = true;
+	MirrorClip = true;
 
 	VViewClipper Range;
 	SetUpRanges(Range, true);
 
 	RLev->RenderScene(&refdef, &Range);
+
+	view_clipplanes[4].normal = Plane->normal;
+	view_clipplanes[4].dist = Plane->dist;
+	view_clipplanes[3].next = &view_clipplanes[4];
+	view_clipplanes[4].next = NULL;
+	view_clipplanes[4].clipflag = 0x10;
+
+	int* pindex = RLev->FrustumIndexes[4];
+	for (int j = 0; j < 3; j++)
+	{
+		if (view_clipplanes[4].normal[j] < 0)
+		{
+			pindex[j] = j;
+			pindex[j + 3] = j + 3;
+		}
+		else
+		{
+			pindex[j] = j + 3;
+			pindex[j + 3] = j;
+		}
+	}
+
 	MirrorFlip = false;
+	MirrorClip = false;
+	view_clipplanes[3].next = NULL;
 	unguard;
 }
