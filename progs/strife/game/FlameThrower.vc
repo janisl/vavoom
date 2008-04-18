@@ -43,7 +43,7 @@ final void A_FireFlamethrower() self(Actor)
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
 	SetState(MissileState);
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0 / 8.0);
 	Player.bFixAngle = true;
 	A = SpawnPlayerMissile(FlameMissile);

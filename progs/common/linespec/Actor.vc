@@ -1678,7 +1678,7 @@ final void A_ThrowGrenade(class<Actor> ItemType, optional float SpawnHeight,
 		{
 			return;
 		}
-		if (UseAmmo && !Wpn.DepleteAmmo())
+		if (UseAmmo && !Wpn.DepleteAmmo(Wpn.FireMode))
 		{
 			return;
 		}
@@ -2802,7 +2802,7 @@ final void A_SpawnItem(class<Actor> ItemType, optional float Distance,
 		{
 			return;
 		}
-		if (UseAmmo && !Wpn.DepleteAmmo())
+		if (UseAmmo && !Wpn.DepleteAmmo(Wpn.FireMode))
 		{
 			return;
 		}
@@ -4069,7 +4069,7 @@ final void A_Punch()
 		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 		if (Wpn)
 		{
-			if (!Wpn.DepleteAmmo())
+			if (!Wpn.DepleteAmmo(Wpn.FireMode))
 			{
 				return;
 			}
@@ -4118,7 +4118,7 @@ final void A_FireAssaultGun()
 	{
 		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-		if (!Wpn.DepleteAmmo())
+		if (!Wpn.DepleteAmmo(Wpn.FireMode))
 		{
 			return;
 		}

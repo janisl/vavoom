@@ -6897,7 +6897,7 @@ final int SetNamedWeapon(name Name)
 		return true;
 	}
 	//	Check if weapon has enough ammo.
-	if (!Wpn.CheckAmmo(false))
+	if (!Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 	{
 		return false;
 	}

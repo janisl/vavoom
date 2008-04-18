@@ -73,7 +73,7 @@ final void A_MLightningAttack() self(Actor)
 		cmo.A_LightningZap();
 	}
 	PlaySound('MageLightningFire', CHAN_WEAPON);
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 }
 
 states

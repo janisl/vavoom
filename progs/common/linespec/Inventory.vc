@@ -736,7 +736,7 @@ final void A_JumpIfNoAmmo(state Label)
 		return;
 	}
 
-	if (!Wpn.CheckAmmo(false, true))
+	if (!Wpn.CheckAmmo(Wpn.FireMode, false, true))
 	{
 		DoJump(Label);
 	}
@@ -792,6 +792,16 @@ final void A_WeaponReady()
 		{
 			Player.bAttackDown = true;
 			PlayerEx(Player).FireWeapon();
+			return;
+		}
+	}
+	else if (Player.Buttons & BT_ALT_ATTACK &&
+		PlayerEx(Player).ReadyWeapon.FindState('AltFire'))
+	{
+		if (!Player.bAttackDown || !PlayerEx(Player).ReadyWeapon.bNoAutoFire)
+		{
+			Player.bAttackDown = true;
+			PlayerEx(Player).AltFireWeapon();
 			return;
 		}
 	}
@@ -941,7 +951,7 @@ final void A_ReFire()
 	else
 	{
 		PlayerEx(Player).Refire = 0;
-		Wpn.CheckAmmo(true);
+		Wpn.CheckAmmo(Wpn.FireMode, true);
 	}
 }
 
@@ -977,7 +987,7 @@ final void A_CheckReload()
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.CheckAmmo(true);
+	Wpn.CheckAmmo(Wpn.FireMode, true);
 }
 
 //===========================================================================
@@ -1118,7 +1128,7 @@ final void decorate_A_Saw(optional name FullSound, optional name HitSound,
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo())
+		if (!Wpn.DepleteAmmo(Wpn.FireMode))
 		{
 			return;
 		}
@@ -1202,7 +1212,7 @@ final void A_CustomPunch(int PunchDamage, optional bool NoRandom,
 	//	Use ammo only if hit something.
 	if (UseAmmo && AimTarget && Wpn)
 	{
-		if (!Wpn.DepleteAmmo())
+		if (!Wpn.DepleteAmmo(Wpn.FireMode))
 		{
 			return;
 		}
@@ -1269,7 +1279,7 @@ final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
 
 	if (UseAmmo && Wpn)
 	{
-		if (!Wpn.DepleteAmmo())
+		if (!Wpn.DepleteAmmo(Wpn.FireMode))
 		{
 			return;
 		}
@@ -1332,7 +1342,7 @@ final void A_FireCustomMissile(class<Actor> MissileType, optional float Angle,
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 	if (UseAmmo && Wpn)
 	{
-		if (!Wpn.DepleteAmmo())
+		if (!Wpn.DepleteAmmo(Wpn.FireMode))
 		{
 			return;
 		}
@@ -1393,7 +1403,7 @@ final void A_RailAttack(int RailDamage, optional float Offset,
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 	if (UseAmmo)
 	{
-		if (!Wpn.DepleteAmmo(, 1))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 		{
 			return;
 		}
@@ -1427,7 +1437,7 @@ final void A_FirePistol()
 		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 		if (Wpn)
 		{
-			if (!Wpn.DepleteAmmo(, 1))
+			if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 			{
 				return;
 			}
@@ -1470,7 +1480,7 @@ final void A_FireShotgun()
 
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo(, 1))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 		{
 			return;
 		}
@@ -1510,7 +1520,7 @@ final void A_FireShotgun2()
 
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo(, 2))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 2))
 		{
 			return;
 		}
@@ -1584,7 +1594,7 @@ final void A_FireCGun()
 
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo(, 1))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 		{
 			return;
 		}
@@ -1620,7 +1630,7 @@ final void A_FireMissile()
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo(, 1))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 		{
 			return;
 		}
@@ -1643,7 +1653,7 @@ final void A_FirePlasma()
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo(, 1))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 		{
 			return;
 		}
@@ -1674,7 +1684,7 @@ final void DoFireRailgun(float Offset)
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo(, 1))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 		{
 			return;
 		}
@@ -1762,7 +1772,7 @@ final void A_FireBFG()
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 	if (Wpn)
 	{
-		if (!Wpn.DepleteAmmo(, BFG9000.default.AmmoUse1))
+		if (!Wpn.DepleteAmmo(Wpn.FireMode,, BFG9000.default.AmmoUse1))
 		{
 			return;
 		}

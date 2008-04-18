@@ -918,15 +918,38 @@ void MovePsprites(float deltaTime)
 
 void FireWeapon()
 {
-	if (!ReadyWeapon.CheckAmmo(true))
+	if (!ReadyWeapon.CheckAmmo(Weapon::FIRE_Primary, true))
 	{
 		return;
 	}
 
 	MO.SetState(EntityEx(MO).MissileState);
 	SetViewState(ps_weapon, ReadyWeapon.GetAttackState(Refire));
+	ReadyWeapon.FireMode = Weapon::FIRE_Primary;
 	if (!ReadyWeapon.bNoAlert)
 		LineSpecialLevelInfo(Level).NoiseAlert(EntityEx(MO), EntityEx(MO));
+}
+
+//===========================================================================
+//
+//  AltFireWeapon
+//
+//===========================================================================
+
+void AltFireWeapon()
+{
+	if (!ReadyWeapon.CheckAmmo(Weapon::FIRE_Secondary, true))
+	{
+		return;
+	}
+
+	MO.SetState(EntityEx(MO).MissileState);
+	SetViewState(ps_weapon, ReadyWeapon.GetAltAttackState(Refire));
+	ReadyWeapon.FireMode = Weapon::FIRE_Secondary;
+	if (!ReadyWeapon.bNoAlert)
+	{
+		LineSpecialLevelInfo(Level).NoiseAlert(EntityEx(MO), EntityEx(MO));
+	}
 }
 
 //==========================================================================
@@ -947,7 +970,15 @@ final void ChangeWeapon(int newweapon)
 	Weapon NewWpn = GetSlotChangeWeapon(newweapon);
 	if (NewWpn && NewWpn != ReadyWeapon)
 	{
-		PendingWeapon = NewWpn;
+		if (!ReadyWeapon)
+		{
+			SetWeapon(NewWpn);
+			BringUpWeapon();
+		}
+		else
+		{
+			PendingWeapon = NewWpn;
+		}
 	}
 }
 
@@ -1030,7 +1061,7 @@ final Weapon BestWeapon(optional class<Ammo> AmmoType)
 			continue;
 		}
 		//	Make sure it has enough ammo.
-		if (!Wpn.CheckAmmo(false))
+		if (!Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 		{
 			continue;
 		}
@@ -1064,12 +1095,14 @@ final Weapon ChoosePowered(Weapon Wpn)
 
 final Weapon GetSlotChangeWeapon(int Slot)
 {
+print("Change slot %d", Slot);
 	int			i;
 	int			j;
 	LineSpecialGameInfo GI = LineSpecialGameInfo(Level.Game);
 
 	if (ReadyWeapon)
 	{
+print("Had ready");
 		for (i = 0; i < LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT; i++)
 		{
 			if (GI.WeaponSlots[Slot].Weapons[i] == ReadyWeapon.Class ||
@@ -1083,8 +1116,9 @@ final Weapon GetSlotChangeWeapon(int Slot)
 				{
 					Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
 						GI.WeaponSlots[Slot].Weapons[j]));
-					if (Wpn && Wpn.CheckAmmo(false))
+					if (Wpn && Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 					{
+print("Selected");
 						return ChoosePowered(Wpn);
 					}
 				}
@@ -1096,12 +1130,14 @@ final Weapon GetSlotChangeWeapon(int Slot)
 	{
 		Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
 			GI.WeaponSlots[Slot].Weapons[i]));
-		if (Wpn && Wpn.CheckAmmo(false))
+		if (Wpn && Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 		{
+print("Found");
 			return ChoosePowered(Wpn);
 		}
 	}
 
+print("Use current");
 	return ReadyWeapon;
 }
 
@@ -1136,7 +1172,7 @@ final Weapon GetPrevWeapon(Weapon Current)
 		Index = (Start + i) % LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT;
 		Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
 			GI.WeaponSlots[Slot].Weapons[Index]));
-		if (Wpn && Wpn.CheckAmmo(false))
+		if (Wpn && Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 		{
 			return ChoosePowered(Wpn);
 		}
@@ -1175,7 +1211,7 @@ final Weapon GetNextWeapon(Weapon Current)
 		Index = (Start + i) % LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT;
 		Weapon Wpn = Weapon(EntityEx(MO).FindInventory(
 			GI.WeaponSlots[Slot].Weapons[Index]));
-		if (Wpn && Wpn.CheckAmmo(false))
+		if (Wpn && Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 		{
 			return ChoosePowered(Wpn);
 		}

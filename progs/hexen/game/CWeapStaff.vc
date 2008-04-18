@@ -105,7 +105,7 @@ final void A_CStaffCheck() self(Actor)
 			Player.Health = newLife;
 			Player.SetViewState(ps_weapon, Wpn.FindState('Fire2'));
 		}
-		Wpn.DepleteAmmo(false);
+		Wpn.DepleteAmmo(Wpn.FireMode, false);
 	}
 }
 
@@ -125,7 +125,7 @@ final void A_CStaffAttack() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	mo = SpawnPlayerMissileAngle(CStaffMissile, Angles.yaw - (45.0 / 15.0));
 	if (mo)
 	{

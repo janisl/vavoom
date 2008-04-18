@@ -45,7 +45,7 @@ final void A_FirePhoenixPL1() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SpawnPlayerMissile(PhoenixFX1);
 	AngleVector(&Angles, &vforward);
 	Velocity -= vforward * 140.0;

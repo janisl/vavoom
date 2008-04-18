@@ -48,7 +48,7 @@ final void A_CFlameAttack() self(Actor)
 		Actor(mo).Special1 = 2;
 	}
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	PlaySound('ClericFlameFire', CHAN_WEAPON);
 }
 

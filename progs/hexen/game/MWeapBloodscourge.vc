@@ -72,7 +72,7 @@ final void A_MStaffAttack() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	angle = Angles.yaw;
 
 	MWeapBloodscourge(Wpn).MStaffSpawn(angle);
@@ -169,4 +169,5 @@ defaultproperties
 	BotCombatDist= 384.0;
 	bBotProjectile = true;
 	bExtremeDeath = true;
+	bPrimaryUsesBoth = true;
 }

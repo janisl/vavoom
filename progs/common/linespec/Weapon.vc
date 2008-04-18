@@ -32,6 +32,15 @@ const float RAISESPEED		= 6.0;
 const float WEAPONBOTTOM	= 128.0;
 const float WEAPONTOP		= 32.0;
 
+enum
+{
+	FIRE_Primary,
+	FIRE_Secondary,
+
+	//	Special value for CheckAmmo.
+	FIRE_Either
+};
+
 //	Type of ammo weapon needs to operate.
 class<Ammo>		AmmoType1;
 class<Ammo>		AmmoType2;
@@ -60,6 +69,8 @@ float			PSpriteSY;
 //	For displaying weapon with player model.
 int				PlayerModelVersion;
 
+byte			FireMode;
+
 float			BotCombatDist;
 
 //	Switch away if got ammo for more powerfull weapon.
@@ -74,12 +85,24 @@ bool			bStaff2Kickback;
 bool			bExtremeDeath;
 //	Ammo is optional
 bool			bAmmoOptional;
+//	Ammo is optional for alternate fire
+bool			bAltAmmoOptional;
 //	Half a chance to play the reay sound.
 bool			bReadySndHalf;
 //	Don't bob weapon.
 bool			bDontBob;
 //	Doesn't allert monsters when fired.
 bool			bNoAlert;
+//	Not considered a weapon by gimme cheat
+bool			bCheatNotWeapon;
+//	Use axe's blood splatter
+bool			bAxeBlood;
+//	Never switch to this weapon when picked up
+bool			bNoAutoSwitch;
+//	Primary fire uses both ammo types
+bool			bPrimaryUsesBoth;
+//	Alternate fire uses both ammo types
+bool			bAltUsesBoth;
 
 //	It's a melee weapon
 bool			bBotMelee;
@@ -87,12 +110,6 @@ bool			bBotMelee;
 bool			bBotProjectile;
 //	It's a BFG
 bool			bBotBfg;
-//	Not considered a weapon by gimme cheat
-bool			bCheatNotWeapon;
-//	Use axe's blood splatter
-bool			bAxeBlood;
-//	Never switch to this weapon when picked up
-bool			bNoAutoSwitch;
 
 //	Runtime in-inventory references.
 Ammo			Ammo1;
@@ -227,7 +244,7 @@ void AttachToOwner(EntityEx NewOwner)
 		}
 		LineSpecialGameInfo(Level.Game).FindWeaponSlot(
 			class<Weapon>(Class), NewSlot, NewIndex);
-		if (CheckAmmo(false) &&
+		if (CheckAmmo(FIRE_Either, false) &&
 			(LineSpecialGameInfo(Level.Game).bAlwaysSwitchNewWeapon ||
 			!PlayerEx(Owner.Player).ReadyWeapon || NewSlot > ReadySlot) ||
 			(NewSlot == ReadySlot && NewIndex < ReadyIndex))
@@ -476,6 +493,26 @@ state GetAttackState(bool Hold)
 
 //==========================================================================
 //
+//	GetAltAttackState
+//
+//==========================================================================
+
+state GetAltAttackState(bool Hold)
+{
+	state S = none;
+	if (Hold)
+	{
+		S = FindState('AltHold');
+	}
+	if (!S)
+	{
+		S = FindState('AltFire');
+	}
+	return S;
+}
+
+//==========================================================================
+//
 //  CheckAmmo
 //
 //  Returns true if there is enough mana to shoot.  If not, selects the
@@ -483,24 +520,43 @@ state GetAttackState(bool Hold)
 //
 //==========================================================================
 
-bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
+bool CheckAmmo(byte Mode, bool AutoSwitch, optional bool RequireAmmo)
 {
-	if (!RequireAmmo && bAmmoOptional)
+	if (Mode == FIRE_Either)
 	{
-		return true;
+		if (CheckAmmo(FIRE_Primary, false) || CheckAmmo(FIRE_Secondary, false))
+		{
+			return true;
+		}
 	}
-	bool Good = true;
-	if (Ammo1 && Ammo1.Amount < AmmoUse1)
+	else
 	{
-		Good = false;
-	}
-	if (Ammo2 && Ammo2.Amount < AmmoUse2)
-	{
-		Good = false;
-	}
-	if (Good)
-	{
-		return true;
+		if (!RequireAmmo && bAmmoOptional)
+		{
+			return true;
+		}
+
+		int Amount1 = Ammo1 ? Ammo1.Amount : 0;
+		int Amount2 = Ammo2 ? Ammo2.Amount : 0;
+
+		bool Good = true;
+		if ((Mode == FIRE_Primary || bAltUsesBoth) && Amount1 < AmmoUse1)
+		{
+			Good = false;
+		}
+		if ((Mode == FIRE_Secondary || bPrimaryUsesBoth) && Amount2 < AmmoUse2)
+		{
+			Good = false;
+		}
+		//	If weapon has no secondary fire, there's never enough ammo for it.
+		if (Mode == FIRE_Secondary && !FindState('AltFire'))
+		{
+			Good = false;
+		}
+		if (Good)
+		{
+			return true;
+		}
 	}
 
 	if (!AutoSwitch)
@@ -522,7 +578,8 @@ bool CheckAmmo(bool AutoSwitch, optional bool RequireAmmo)
 //
 //==========================================================================
 
-final bool DepleteAmmo(optional bool CheckEnough, optional int DehackedUse)
+final bool DepleteAmmo(byte Mode, optional bool CheckEnough,
+	optional int DehackedUse)
 {
 	//	Default parameter values
 	if (!specified_CheckEnough)
@@ -534,11 +591,12 @@ final bool DepleteAmmo(optional bool CheckEnough, optional int DehackedUse)
 		DehackedUse = AmmoUse1;
 	}
 
-	if (CheckEnough && !CheckAmmo(false))
+	if (CheckEnough && !CheckAmmo(Mode, false))
 	{
 		return false;
 	}
-	if (Ammo1)
+
+	if ((Mode == FIRE_Primary || bAltUsesBoth) && Ammo1)
 	{
 		if (LineSpecialGameInfo(Level.Game).bDehacked)
 		{
@@ -549,9 +607,19 @@ final bool DepleteAmmo(optional bool CheckEnough, optional int DehackedUse)
 			Ammo1.Amount -= AmmoUse1;
 		}
 	}
-	if (Ammo2)
+	if ((Mode == FIRE_Secondary || bPrimaryUsesBoth) && Ammo2)
 	{
 		Ammo2.Amount -= AmmoUse2;
+	}
+
+	//	Don't let ammo go below zero.
+	if (Ammo1 && Ammo1.Amount < 0)
+	{
+		Ammo1.Amount = 0;
+	}
+	if (Ammo2 && Ammo2.Amount < 0)
+	{
+		Ammo2.Amount = 0;
 	}
 	return true;
 }

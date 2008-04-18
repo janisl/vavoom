@@ -43,7 +43,7 @@ final void A_FireSkullRodPL1() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	if (!Wpn.DepleteAmmo())
+	if (!Wpn.DepleteAmmo(Wpn.FireMode))
 	{
 		return;
 	}
@@ -76,7 +76,7 @@ final void A_FireSkullRodPL2() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	A = HornRodFX2(SpawnPlayerMissileEx(HornRodFX2, true, AimTarget));
 	// Use MissileMobj instead of the return value from
 	// SpawnPlayerMissile because we need to give info to the mobj

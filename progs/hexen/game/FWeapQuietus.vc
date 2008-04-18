@@ -39,7 +39,7 @@ final void A_FSwordAttack() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, -10.0),
 		FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 4.0));
 	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, -5.0),
@@ -93,4 +93,5 @@ defaultproperties
 	BotCombatDist = 256.0;
 	bBotProjectile = true;
 	bExtremeDeath = true;
+	bPrimaryUsesBoth = true;
 }

@@ -54,6 +54,7 @@ void CreateControlKeyChoices()
 	AddControl("Centre look", "+LookCentre", "-LookCentre");
 	AddControl("Jump", "+Jump", "-Jump");
 	AddControl("Fire", "+Attack", "-Attack");
+	AddControl("Alt Fire", "+AltAttack", "-AltAttack");
 	AddControl("Use", "+Use", "-Use");
 	AddControl("Strafe", "+Strafe", "-Strafe");
 	AddControl("Run", "+Speed", "-Speed");

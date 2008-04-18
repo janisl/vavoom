@@ -42,7 +42,7 @@ final void A_FireGoldWandPL1() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	damage = 7 + (P_Random() & 7);
 	Aim(dir, 16.0 * 64.0);
 	if (Player(Player).Refire)
@@ -73,7 +73,7 @@ final void A_FireGoldWandPL2() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	Aim(dir, 16.0 * 64.0);
 	VectorAngles(&dir, &angles);
 	SpawnMissileAngles(GoldWandFX2,

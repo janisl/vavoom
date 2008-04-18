@@ -41,7 +41,7 @@ final void A_FireCrossbowPL1() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SpawnPlayerMissile(CrossbowFX1);
 	SpawnPlayerMissileAngle(CrossbowFX3,
 		AngleMod360(Angles.yaw - (45.0 / 10.0)));
@@ -63,7 +63,7 @@ final void A_FireCrossbowPL2() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SpawnPlayerMissile(CrossbowFX2);
 	SpawnPlayerMissileAngle(CrossbowFX2,
 		AngleMod360(Angles.yaw - (45.0 / 10.0)));

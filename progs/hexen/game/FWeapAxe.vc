@@ -232,8 +232,8 @@ final void A_FAxeAttack() self(Actor)
 
 	if (useMana == 2)
 	{
-		Wpn.DepleteAmmo(false);
-		if (!Wpn.CheckAmmo(false, true))
+		Wpn.DepleteAmmo(Wpn.FireMode, false);
+		if (!Wpn.CheckAmmo(Wpn.FireMode, false, true))
 		{
 			Player.SetViewState(ps_weapon, Wpn.FindState('NoMoreMana'));
 		}

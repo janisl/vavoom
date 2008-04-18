@@ -72,7 +72,7 @@ final void A_FireMacePL1() self(Actor)
 		return;
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-	if (!Wpn.DepleteAmmo())
+	if (!Wpn.DepleteAmmo(Wpn.FireMode))
 	{
 		return;
 	}
@@ -121,7 +121,7 @@ final void A_FireMacePL2() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	A = SpawnPlayerMissileEx(MaceFX4, false, AimTarget);
 	if (A)
 	{

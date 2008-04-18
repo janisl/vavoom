@@ -2057,14 +2057,12 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		}
 		if (!Flag.ICmp("Weapon.Alt_Ammo_Optional") || !Flag.ICmp("Alt_Ammo_Optional"))
 		{
-			//FIXME
-			GCon->Logf("Unsupported flag Weapon.Alt_Ammo_Optional in %s", Class->GetName());
+			SetClassFieldBool(Class, "bAltAmmoOptional", Value);
 			return true;
 		}
 		if (!Flag.ICmp("Weapon.Primary_Uses_Both") || !Flag.ICmp("Primary_Uses_Both"))
 		{
-			//FIXME
-			GCon->Logf("Unsupported flag Weapon.Primary_Uses_Both in %s", Class->GetName());
+			SetClassFieldBool(Class, "bPrimaryUsesBoth", Value);
 			return true;
 		}
 		if (!Flag.ICmp("Weapon.Wimpy_Weapon") || !Flag.ICmp("Wimpy_Weapon"))

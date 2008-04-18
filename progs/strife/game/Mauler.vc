@@ -50,7 +50,7 @@ final void A_FireBlaster1() self(Actor)
 
 	PlaySound('weapons/mauler1', CHAN_WEAPON);
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 
 	Aim(aimDir, 16.0 * 64.0);
 	for (i = 0; i < 20; i++)
@@ -99,7 +99,7 @@ final void A_FireBlaster2() self(Actor)
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
 	SetState(MissileState);
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SpawnPlayerMissile(MaulerTorpedo);
 	Damage(none, self, 20);
 	Thrust(Angles.yaw + 180.0, 125.0 / 16.0);

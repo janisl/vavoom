@@ -100,7 +100,7 @@ final void A_ShutdownPhoenixPL2() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 }
 
 states

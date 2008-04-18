@@ -62,7 +62,7 @@ final void A_FireElectricArrow() self(Actor)
 	savedangle = Angles.yaw;
 	Angles.yaw = AngleMod360(Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SetState(MissileState);
 	SpawnPlayerMissile(ElectricBolt);
 	Angles.yaw = savedangle;
@@ -88,7 +88,7 @@ final void A_FirePoisonArrow() self(Actor)
 	savedangle = Angles.yaw;
 	Angles.yaw = AngleMod360(Angles.yaw +
 		(Random() - Random()) * 45.0 / 8.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SetState(MissileState);
 	SpawnPlayerMissile(PoisonBolt);
 	Angles.yaw = savedangle;

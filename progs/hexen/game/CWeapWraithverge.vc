@@ -55,7 +55,7 @@ final void A_CHolyAttack() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	A = SpawnPlayerMissileEx(HolyMissile, false, AimTarget);
 	if (A)
 	{
@@ -154,4 +154,5 @@ defaultproperties
 	BotCombatDist = 384.0;
 	bBotProjectile = true;
 	bExtremeDeath = true;
+	bPrimaryUsesBoth = true;
 }

@@ -427,7 +427,7 @@ void SpawnPlayer(mthing_t * mthing)
 			{
 				Item.Destroy();
 			}
-			else if (Weapon(Item) && Weapon(Item).CheckAmmo(false))
+			else if (Weapon(Item) && Weapon(Item).CheckAmmo(Weapon::FIRE_Either, false))
 			{
 				SetWeapon(Weapon(Item));
 			}
@@ -619,10 +619,11 @@ void GotAmmo(Ammo NewAmmo)
 	// We were down to zero,
 	// so select a new weapon.
 	// Preferences are not user selectable.
-	if (ReadyWeapon.bWimpyWeapon)
+	if (!ReadyWeapon || ReadyWeapon.bWimpyWeapon)
 	{
 		Weapon Best = BestWeapon(class<Ammo>(NewAmmo.Class));
-		if (Best && Best.SelectionOrder < ReadyWeapon.SelectionOrder)
+		if (Best && (!ReadyWeapon ||
+			Best.SelectionOrder < ReadyWeapon.SelectionOrder))
 		{
 			PendingWeapon = Best;
 		}

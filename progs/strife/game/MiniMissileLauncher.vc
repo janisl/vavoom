@@ -45,7 +45,7 @@ final void A_FireMiniMissile() self(Actor)
 	savedangle = Angles.yaw;
 	Angles.yaw = AngleMod360(Angles.yaw +
 		(Random() - Random()) * 45.0 / 4.0 / itof(1 << (Player(Player).Accuracy * 5 / 100)));
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	SetState(MissileState);
 	SpawnPlayerMissile(MiniMissile);
 	Angles.yaw = savedangle;

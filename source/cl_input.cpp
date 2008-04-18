@@ -154,7 +154,7 @@ BUTTON(FlyCentre)
 BUTTON(Attack)
 BUTTON(Use)
 BUTTON(Jump)
-BUTTON(Button4)
+BUTTON(AltAttack)
 BUTTON(Button5)
 BUTTON(Button6)
 BUTTON(Button7)
@@ -559,7 +559,7 @@ static void BuildTiccmd()
 		cl->Buttons |= BT_JUMP;
 	}
 
-	if (KeyButton4.KeyState())
+	if (KeyAltAttack.KeyState())
 	{
 		cl->Buttons |= 0x08;
 	}

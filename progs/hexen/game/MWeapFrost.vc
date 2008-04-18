@@ -49,7 +49,7 @@ final void A_FireConePL1() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	Wpn.DepleteAmmo();
+	Wpn.DepleteAmmo(Wpn.FireMode);
 	PlaySound('MageShardsFire', CHAN_WEAPON);
 
 	damage = 90 + (P_Random() & 15);
