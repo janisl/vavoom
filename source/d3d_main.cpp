@@ -404,7 +404,7 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
 	if (HasStencil)
 	{
-		RenderDevice->Clear(0, NULL, D3DCLEAR_STENCILBUFFER, 0, 1.0, 0);
+        RenderDevice->Clear(0, NULL, D3DCLEAR_STENCIL, 0, 1.0, 0);
 	}
 	unguard;
 }
@@ -445,6 +445,19 @@ void VDirect3DDrawer::SetupViewOrg()
 	else
 	{
 		RenderDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	}
+
+	if (MirrorClip)
+	{
+        RenderDevice->SetRenderState(D3DRS_CLIPPLANEENABLE, 1);
+		float eq[4] = { view_clipplanes[4].normal.x,
+			view_clipplanes[4].normal.y, view_clipplanes[4].normal.z,
+			-view_clipplanes[4].dist };
+        RenderDevice->SetClipPlane(0, eq);
+	}
+	else
+	{
+        RenderDevice->SetRenderState(D3DRS_CLIPPLANEENABLE, 0);
 	}
 
 	memset(light_chain, 0, sizeof(light_chain));
