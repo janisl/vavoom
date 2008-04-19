@@ -803,19 +803,19 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 	}
 
 	tmtrace.BlockingMobj = Other;
-	if ((!(tmtrace.Thing->EntityFlags & EF_Float) || !(tmtrace.Thing->EntityFlags & EF_Missile) ||
-		!(tmtrace.Thing->EntityFlags & EF_NoGravity)) && (Other->EntityFlags & EF_Solid))
+	if ((!(tmtrace.Thing->EntityFlags & EF_Float) ||
+		!(tmtrace.Thing->EntityFlags & EF_Missile) ||
+		!(tmtrace.Thing->EntityFlags & EF_NoGravity)) &&
+		(Other->EntityFlags & EF_Solid) &&
+		(Other->EntityFlags & EF_ActLikeBridge))
 	{
 		// allow actors to walk on other actors as well as floors
 		if (Other->Origin.z + Other->Height >= tmtrace.FloorZ &&
-			Other->Origin.z + Other->Height <= tmtrace.End.z + tmtrace.Thing->MaxStepHeight)
+			Other->Origin.z + Other->Height <= tmtrace.Thing->Origin.z +
+			tmtrace.Thing->MaxStepHeight)
 		{
-			if (fabs(Other->Origin.x - tmtrace.End.x) <= Other->Radius &&
-				fabs(Other->Origin.y - tmtrace.End.y) <= Other->Radius)
-			{
-				tmtrace.StepThing = Other;
-				tmtrace.FloorZ = Other->Origin.z + Other->Height;
-			}
+			tmtrace.StepThing = Other;
+			tmtrace.FloorZ = Other->Origin.z + Other->Height;
 		}
 	}
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
@@ -1246,7 +1246,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			if (Origin.z < tmtrace.FloorZ)
 			{
 				// Check to make sure there's nothing in the way for the step up
-				if (TestMobjZ(newPos))
+				if (TestMobjZ(TVec(newPos.x, newPos.y, tmtrace.FloorZ)))
 				{
 					eventPushLine(&tmtrace);
 					return false;
