@@ -1082,11 +1082,13 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 					{
 						// continue checking for other things in to see if we hit something
 						if (tmtrace.BlockingMobj == NULL)
-						{ // slammed into something
+						{
+							// slammed into something
 							return false;
 						}
-						else if (!tmtrace.BlockingMobj->Player && !(tmtrace.BlockingMobj->EntityFlags & VEntity::EF_Float) &&
-							!(tmtrace.BlockingMobj->EntityFlags & VEntity::EF_Missile) &&
+						else if (!tmtrace.BlockingMobj->Player &&
+							!(EntityFlags & VEntity::EF_Float) &&
+							!(EntityFlags & VEntity::EF_Missile) &&
 							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height - Origin.z <= MaxStepHeight)
 						{
 							if (!thingblocker || tmtrace.BlockingMobj->Origin.z > thingblocker->Origin.z)
