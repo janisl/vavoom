@@ -29,13 +29,13 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "gamedefs.h"
 #include <signal.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include "gamedefs.h"
 
 #ifdef DJGPP
 #include <dpmi.h>
