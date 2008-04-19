@@ -60,4 +60,5 @@ defaultproperties
 	bSolid = true;
 	bNoGravity = true;
 	bNoLiftDrop = true;
+	bActLikeBridge = true;
 }
