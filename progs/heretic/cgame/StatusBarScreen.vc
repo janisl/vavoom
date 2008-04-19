@@ -419,38 +419,36 @@ void SB_DrawFullscreenStats()
 	//  Ammo
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
-		int y = 454;
-		if (cl.ReadyWeapon.Ammo2)
-		{
-			y -= 32;
-		}
-		SB_DrawNumber9(610, y + 2, cl.ReadyWeapon.Ammo1.Amount);
-		DrawPic(590, y, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.6);
+		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo1.Amount);
+		DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.6);
 	}
-	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo2)
+	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo2 &&
+		cl.ReadyWeapon.Ammo2 != cl.ReadyWeapon.Ammo1)
 	{
-		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo2.Amount);
-		DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.6);
+		SB_DrawNumber9(610, 424, cl.ReadyWeapon.Ammo2.Amount);
+		DrawPic(590, 422, R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.6);
 	}
 
 	//  Keys
-	if (EntityEx(cl.MO).FindInventory(KeyYellow))
+	int KeyX = 320;
+	Inventory Item;
+	for (Item = EntityEx(cl.MO).Inventory; Item; Item = Item.Inventory)
 	{
-		DrawPic(580, 444, pic_ykey, 0.6);
-	}
-	if (EntityEx(cl.MO).FindInventory(KeyGreen))
-	{
-		DrawPic(580, 452, pic_gkey, 0.6);
-	}
-	if (EntityEx(cl.MO).FindInventory(KeyBlue))
-	{
-		DrawPic(580, 460, pic_bkey, 0.6);
+		if (Key(Item))
+		{
+			int Pic = R_RegisterPic(Item.IconName);
+			if (Pic >= 0)
+			{
+				DrawPic(KeyX, 460, Pic, 0.6);
+				KeyX += 20;
+			}
+		}
 	}
 
 	if (cl.InventoryTime)
 	{
 		//  Inventory
-		Inventory Item = cl.InvFirst;
+		Item = cl.InvFirst;
 		for (i = 0; i < 7; i++)
 		{
 			DrawPic(210 + i * 31, 448, pic_artibox, 0.6);

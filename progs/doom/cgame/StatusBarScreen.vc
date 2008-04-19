@@ -436,51 +436,35 @@ void SB_DrawFullscreenStats()
 	{
 		if (cl.ReadyWeapon.Ammo1)
 		{
-			int y = ST_TDAMMOY;
-			if (cl.ReadyWeapon.Ammo2)
-			{
-				y -= 32;
-			}
-			SB_DrawTallNum(ST_TDAMMOX, y, cl.ReadyWeapon.Ammo1.Amount, 0.6,
-				false);
-			DrawPic(ST_TDAMMOX - 60, y + 15,
+			SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY,
+				cl.ReadyWeapon.Ammo1.Amount, 0.6, false);
+			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15,
 				R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.6);
 		}
-		if (cl.ReadyWeapon.Ammo2)
+		if (cl.ReadyWeapon.Ammo2 &&
+			cl.ReadyWeapon.Ammo2 != cl.ReadyWeapon.Ammo1)
 		{
-			SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY,
+			SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY - 32,
 				cl.ReadyWeapon.Ammo2.Amount, 0.6, false);
-			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15,
+			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY - 32 + 15,
 				R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.6);
 		}
 	}
 
 	// keys
-	if (EntityEx(cl.MO).FindInventory(BlueSkull))
+	int KeyX = 320;
+	Inventory Item;
+	for (Item = EntityEx(cl.MO).Inventory; Item; Item = Item.Inventory)
 	{
-		DrawPic(460, 470, pic_keys[3], 0.6);
-	}
-	else if (EntityEx(cl.MO).FindInventory(BlueCard))
-	{
-		DrawPic(460, 470, pic_keys[0], 0.6);
-	}
-
-	if (EntityEx(cl.MO).FindInventory(YellowSkull))
-	{
-		DrawPic(440, 470, pic_keys[4], 0.6);
-	}
-	else if (EntityEx(cl.MO).FindInventory(YellowCard))
-	{
-		DrawPic(440, 470, pic_keys[1], 0.6);
-	}
-
-	if (EntityEx(cl.MO).FindInventory(RedSkull))
-	{
-		DrawPic(420, 470, pic_keys[5], 0.6);
-	}
-	else if (EntityEx(cl.MO).FindInventory(RedCard))
-	{
-		DrawPic(420, 470, pic_keys[2], 0.6);
+		if (Key(Item))
+		{
+			int Pic = R_RegisterPic(Item.IconName);
+			if (Pic >= 0)
+			{
+				DrawPic(KeyX, 470, Pic, 0.6);
+				KeyX += 20;
+			}
+		}
 	}
 
 	if (ClGame.deathmatch)

@@ -420,18 +420,14 @@ void SB_DrawFullscreenStats()
 	// ready weapon ammo with icon
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
-		int y = 450;
-		if (cl.ReadyWeapon.Ammo2)
-		{
-			y -= 32;
-		}
-		SB_DrawTallNum(635, y, cl.ReadyWeapon.Ammo1.Amount, 0.7);
-		DrawPic(575, y, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.7);
+		SB_DrawTallNum(635, 450, cl.ReadyWeapon.Ammo1.Amount, 0.7);
+		DrawPic(575, 450, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.7);
 	}
-	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo2)
+	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo2 &&
+		cl.ReadyWeapon.Ammo2 != cl.ReadyWeapon.Ammo1)
 	{
-		SB_DrawTallNum(635, 450, cl.ReadyWeapon.Ammo2.Amount, 0.7);
-		DrawPic(575, 450, R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.7);
+		SB_DrawTallNum(635, 418, cl.ReadyWeapon.Ammo2.Amount, 0.7);
+		DrawPic(575, 418, R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.7);
 	}
 
 	Item = cl.InvFirst;
