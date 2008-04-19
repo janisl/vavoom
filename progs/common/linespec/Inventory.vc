@@ -764,6 +764,10 @@ final void A_WeaponReady()
 		return;
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (!Wpn)
+	{
+		return;
+	}
 
 	// get out of attack state
 	if (StateIsInSequence(State, MissileState) ||
@@ -788,17 +792,16 @@ final void A_WeaponReady()
 	// Check for fire.
 	if (Player.Buttons & BT_ATTACK)
 	{
-		if (!Player.bAttackDown || !PlayerEx(Player).ReadyWeapon.bNoAutoFire)
+		if (!Player.bAttackDown || !Wpn.bNoAutoFire)
 		{
 			Player.bAttackDown = true;
 			PlayerEx(Player).FireWeapon();
 			return;
 		}
 	}
-	else if (Player.Buttons & BT_ALT_ATTACK &&
-		PlayerEx(Player).ReadyWeapon.FindState('AltFire'))
+	else if (Player.Buttons & BT_ALT_ATTACK && Wpn.FindState('AltFire'))
 	{
-		if (!Player.bAttackDown || !PlayerEx(Player).ReadyWeapon.bNoAutoFire)
+		if (!Player.bAttackDown || !Wpn.bNoAutoFire)
 		{
 			Player.bAttackDown = true;
 			PlayerEx(Player).AltFireWeapon();
