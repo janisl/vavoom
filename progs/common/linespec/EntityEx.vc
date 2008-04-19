@@ -566,7 +566,7 @@ bool Physics(float DeltaTime)
 		ResetBlasted();
 	}
 
-	if (bFloatBob)
+	if (bFloatBob && bSpecial)
 	{
 		// Floating item bobbing motion (special1 is height)
 		if (Sector->bHasExtrafloors)
@@ -581,6 +581,16 @@ bool Physics(float DeltaTime)
 	}
 	else if (bPassMobj && !bMissile)
 	{
+		//	Floating bobbing motion for monsters.
+		if (bFloatBob)
+		{
+			Origin.z -= Level.Game.FloatBobOffsets[
+				ftoi(FloatBobPhase * 35.0) & 63];
+			FloatBobPhase += DeltaTime;
+			Origin.z += Level.Game.FloatBobOffsets[
+				ftoi(FloatBobPhase * 35.0) & 63];
+		}
+
 		// Handle Z momentum and gravity
 		onmo = EntityEx(CheckOnmobj());
 		if (onmo)
@@ -781,7 +791,7 @@ final void ZMovement(float DeltaTime)
 	// adjust height
 	Origin.z += Velocity.z * DeltaTime;
 
-	if (bFloat && Target)
+	if (bFloat && !bDormant && Target)
 	{
 		// float down towards enemy if too close
 		if (!bSkullFly && !bInFloat)
@@ -789,9 +799,15 @@ final void ZMovement(float DeltaTime)
 			dist = DistTo2(Target);
 			delta = Target.Origin.z + Height / 2.0 - Origin.z;
 			if (delta < 0.0 && dist < -delta * 3.0)
+			{
 				Origin.z -= FloatSpeed * DeltaTime;
+				Velocity.z = 0.0;
+			}
 			else if (delta > 0.0 && dist < delta * 3.0)
+			{
 				Origin.z += FloatSpeed * DeltaTime;
+				Velocity.z = 0.0;
+			}
 		}
 	}
 	if (bIsPlayer && bFly && !(Origin.z <= FloorZ) && XLevel.TicTime & 2)
@@ -8557,6 +8573,42 @@ void RespawnResetFlags()
 	bAlwaysFast = default.bAlwaysFast;
 	bNeverFast = default.bNeverFast;
 	bCanUseWalls = default.bCanUseWalls;
+}
+
+//==========================================================================
+//
+//	CalcFakeZMovement
+//
+//==========================================================================
+
+void CalcFakeZMovement(out TVec Ret, float DeltaTime)
+{
+	//
+	//  adjust height
+	//
+	Ret = Origin;
+	Ret.z += Velocity.z * DeltaTime;
+	if (bFloat && Target)
+	{
+		// float down towards enemy if too close
+		if (!bSkullFly && !bInFloat)
+		{
+			float dist = DistTo2(Target);
+			float delta = Target.Origin.z + Height / 2.0 - Ret.z;
+			if (delta < 0.0 && dist < -(delta * 3.0))
+			{
+				Ret.z -= FloatSpeed * DeltaTime;
+			}
+			else if (delta > 0.0 && dist < (delta * 3.0))
+			{
+				Ret.z += FloatSpeed * DeltaTime;
+			}
+		}
+	}
+	if (bIsPlayer && bFly && !(Ret.z <= FloorZ) && XLevel.TicTime & 2)
+	{
+		Ret.z += sin(90.0 * 35.0 / 20.0 * XLevel.Time);
+	}
 }
 
 bool IsTeammate(EntityEx Other)

@@ -470,6 +470,13 @@ class VEntity : public VThinker
 		P_PASS_SELF;
 		EV_RET_FLOAT(NAME_SkyBoxGetPlaneAlpha);
 	}
+	void eventCalcFakeZMovement(TVec& Ret, float DeltaTime)
+	{
+		P_PASS_SELF;
+		P_PASS_PTR(&Ret);
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID(NAME_CalcFakeZMovement);
+	}
 
 	bool SetState(VState*);
 	void SetInitialState(VState*);

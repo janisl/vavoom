@@ -829,11 +829,11 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 			return false;
 		}
 		// check if a mobj passed over/under another object
-		if (tmtrace.End.z >= Other->Origin.z + Other->Height)
+		if (tmtrace.End.z + 0.00001 >= Other->Origin.z + Other->Height)
 		{
 			return true;	// overhead
 		}
-		if (tmtrace.End.z + tmtrace.Thing->Height <= Other->Origin.z)
+		if (tmtrace.End.z + tmtrace.Thing->Height <= Other->Origin.z + 0.00001)
 		{
 			return true;	// underneath
 		}
@@ -1816,30 +1816,8 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 TVec VEntity::FakeZMovement()
 {
 	guard(VEntity::FakeZMovement);
-	//
-	//  adjust height
-	//
-	TVec Ret = Origin;
-	Ret.z += Velocity.z * host_frametime;
-#if 0
-	if (EntityFlags & EF_Float && Target)
-	{
-		// float down towards enemy if too close
-		if (!bSkullFly && !bInFloat)
-		{
-			float dist = MobjDist2(self, Target);
-			float delta = Target.Origin.z + Height / 2.0 - tzorg.z;
-			if (delta < 0.0 && dist < -(delta * 3.0))
-				tzorg.z -= FLOATSPEED * frametime;
-			else if (delta > 0.0 && dist < (delta * 3.0))
-				tzorg.z += FLOATSPEED * frametime;
-		}
-	}
-	if (EntityFlags & EF_IsPlayer && EntityFlags & EF_Fly && !(tzorg.z <= FloorZ) && level->tictime & 2)
-	{
-		tzorg.z += sin(90.0 * 35.0 / 20.0 * level->time);
-	}
-#endif
+	TVec Ret;
+	eventCalcFakeZMovement(Ret, host_frametime);
 
 	//
 	//  clip movement
