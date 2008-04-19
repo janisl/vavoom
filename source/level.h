@@ -220,6 +220,7 @@ struct seg_t : public TPlane
 #define SPF_NOBLOCKING		1	//	Not blocking
 #define SPF_NOBLOCKSIGHT	2	//	Do not block sight
 #define SPF_NOBLOCKSHOOT	4	//	Do not block shooting
+#define SPF_ADDITIVE		8	//	Additive translucency
 
 #define SKY_FROM_SIDE		0x8000
 

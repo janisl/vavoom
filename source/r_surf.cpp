@@ -442,7 +442,7 @@ sec_surface_t* VRenderLevel::CreateSecSurface(subsector_t* sub,
 	ssurf->texinfo.toffs = splane->yoffs + splane->BaseYOffs;
 	ssurf->texinfo.Tex = Tex;
 	ssurf->texinfo.Alpha = splane->Alpha < 1.0 ? splane->Alpha : 1.1;
-	ssurf->texinfo.Additive = false;
+	ssurf->texinfo.Additive = !!(splane->flags & SPF_ADDITIVE);
 	ssurf->texinfo.ColourMap = 0;
 	ssurf->XScale = splane->XScale;
 	ssurf->YScale = splane->YScale;
@@ -1202,9 +1202,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				TextureTScale(MTex) + sidedef->rowoffset *
 				TextureOffsetTScale(MTex);
 			sp->texinfo.Tex = MTex;
-			sp->texinfo.Alpha = reg->prev->extraline->alpha < 1.0 ?
-				reg->prev->extraline->alpha : 1.1;
-			sp->texinfo.Additive = !!(extraside->Flags & SDF_ADDITIVE);
+			sp->texinfo.Alpha = extrabot->Alpha < 1.0 ? extrabot->Alpha : 1.1;
+			sp->texinfo.Additive = !!(extrabot->flags & SPF_ADDITIVE);
 			sp->texinfo.ColourMap = 0;
 
 			wv[0].x = wv[1].x = seg->v1->x;
