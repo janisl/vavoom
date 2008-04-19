@@ -6917,15 +6917,7 @@ final int SetNamedWeapon(name Name)
 	{
 		return false;
 	}
-	if (!PlayerEx(Player).ReadyWeapon)
-	{
-		PlayerEx(Player).SetWeapon(Wpn);
-		PlayerEx(Player).BringUpWeapon();
-	}
-	else
-	{
-		PlayerEx(Player).PendingWeapon = Wpn;
-	}
+	PlayerEx(Player).PendingWeapon = Wpn;
 	return true;
 }
 

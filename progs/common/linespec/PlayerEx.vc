@@ -970,15 +970,7 @@ final void ChangeWeapon(int newweapon)
 	Weapon NewWpn = GetSlotChangeWeapon(newweapon);
 	if (NewWpn && NewWpn != ReadyWeapon)
 	{
-		if (!ReadyWeapon)
-		{
-			SetWeapon(NewWpn);
-			BringUpWeapon();
-		}
-		else
-		{
-			PendingWeapon = NewWpn;
-		}
+		PendingWeapon = NewWpn;
 	}
 }
 

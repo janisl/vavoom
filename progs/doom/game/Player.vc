@@ -864,6 +864,12 @@ void PlayerTick(float deltaTime)
 		bUseDown = false;
 	}
 
+	if (!ReadyWeapon && PendingWeapon)
+	{
+		SetWeapon(PendingWeapon);
+		BringUpWeapon();
+	}
+
 	//  cycle psprites
 	MovePsprites(deltaTime);
 
