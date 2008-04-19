@@ -190,6 +190,10 @@ public:
 	}
 	VStr GetString(int i) const
 	{
+		if (i >= NumStrings)
+		{
+			return "";
+		}
 		VStr Ret = Strings[i];
 		if (!Ret.IsValidUtf8())
 		{
