@@ -419,8 +419,18 @@ void SB_DrawFullscreenStats()
 	//  Ammo
 	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo1)
 	{
-		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo1.Amount);
-		DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.6);
+		int y = 454;
+		if (cl.ReadyWeapon.Ammo2)
+		{
+			y -= 32;
+		}
+		SB_DrawNumber9(610, y + 2, cl.ReadyWeapon.Ammo1.Amount);
+		DrawPic(590, y, R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.6);
+	}
+	if (cl.ReadyWeapon && cl.ReadyWeapon.Ammo2)
+	{
+		SB_DrawNumber9(610, 456, cl.ReadyWeapon.Ammo2.Amount);
+		DrawPic(590, 454, R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.6);
 	}
 
 	//  Keys

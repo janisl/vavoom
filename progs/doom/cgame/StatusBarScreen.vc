@@ -118,7 +118,6 @@ int pic_faces[Player::ST_NUMFACES];
 int pic_keys[6];
 int pic_pause;
 //For Icons in Fullscreen HUD
-int pic_ammoicon[4];
 int pic_health;
 int pic_armor[2];
 
@@ -178,10 +177,6 @@ void StartMap()
 	pic_pause = R_RegisterPic('m_pause');
 
 	// Fullscreen HUD stuff
-	pic_ammoicon[0] = R_RegisterPic('ammoa0');
-	pic_ammoicon[1] = R_RegisterPic('sboxa0');
-	pic_ammoicon[2] = R_RegisterPic('cella0');
-	pic_ammoicon[3] = R_RegisterPic('rocka0');
 	pic_health = R_RegisterPic('stima0');
 	pic_armor[0] = R_RegisterPic('arm1a0');
 	pic_armor[1] = R_RegisterPic('arm2a0');
@@ -441,23 +436,22 @@ void SB_DrawFullscreenStats()
 	{
 		if (cl.ReadyWeapon.Ammo1)
 		{
-			SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY, cl.ReadyWeapon.Ammo1.Amount, 0.6, false);
+			int y = ST_TDAMMOY;
+			if (cl.ReadyWeapon.Ammo2)
+			{
+				y -= 32;
+			}
+			SB_DrawTallNum(ST_TDAMMOX, y, cl.ReadyWeapon.Ammo1.Amount, 0.6,
+				false);
+			DrawPic(ST_TDAMMOX - 60, y + 15,
+				R_RegisterPic(cl.ReadyWeapon.Ammo1.IconName), 0.6);
 		}
-		if (cl.ReadyWeapon.AmmoType1 == Clip)
+		if (cl.ReadyWeapon.Ammo2)
 		{
-			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[0], 0.6);
-		}
-		else if (cl.ReadyWeapon.AmmoType1 == Shell)
-		{
-			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[1], 0.6);
-		}
-		else if (cl.ReadyWeapon.AmmoType1 == Cell)
-		{
-			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[2], 0.6);
-		}
-		else if (cl.ReadyWeapon.AmmoType1 == RocketAmmo)
-		{
-			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15, pic_ammoicon[3], 0.6);
+			SB_DrawTallNum(ST_TDAMMOX, ST_TDAMMOY,
+				cl.ReadyWeapon.Ammo2.Amount, 0.6, false);
+			DrawPic(ST_TDAMMOX - 60, ST_TDAMMOY + 15,
+				R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.6);
 		}
 	}
 

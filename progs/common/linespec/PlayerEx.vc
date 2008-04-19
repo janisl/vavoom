@@ -938,7 +938,7 @@ void FireWeapon()
 
 void AltFireWeapon()
 {
-	if (!ReadyWeapon.CheckAmmo(Weapon::FIRE_Secondary, true))
+	if (!ReadyWeapon.CheckAmmo(Weapon::FIRE_Secondary, false))
 	{
 		return;
 	}
