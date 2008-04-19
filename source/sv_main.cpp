@@ -1170,8 +1170,11 @@ COMMAND(Spawn)
 			false);
 	}
 
-	GLevel->Acs->StartTypedACScripts(SCRIPT_Enter, 0, 0, 0, Player->MO, true,
-		false);
+	if (!sv_loading)
+	{
+		GLevel->Acs->StartTypedACScripts(SCRIPT_Enter, 0, 0, 0, Player->MO,
+			true, false);
+	}
 
 	if (!netgame || svs.num_connected == sv_load_num_players)
 	{
