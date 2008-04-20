@@ -512,6 +512,8 @@ private:
 
 	void CreateSecNodeList();
 
+	void SetDecorateFlag(const VStr&, bool);
+
 public:
 	void LinkToWorld();
 	void UnlinkFromWorld();
@@ -555,4 +557,5 @@ public:
 	DECLARE_FUNCTION(UnlinkFromWorld)
 	DECLARE_FUNCTION(CanSee)
 	DECLARE_FUNCTION(RoughBlockSearch)
+	DECLARE_FUNCTION(A_ChangeFlag)
 };

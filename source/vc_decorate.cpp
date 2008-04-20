@@ -690,6 +690,88 @@ static void SetClassFieldVec(VClass* Class, const char* FieldName,
 
 //==========================================================================
 //
+//	SetFieldByte
+//
+//==========================================================================
+
+static void SetFieldByte(VObject* Obj, const char* FieldName,
+	vuint8 Value)
+{
+	guard(SetFieldByte);
+	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
+	vuint8* Ptr = (vuint8*)Obj + F->Ofs;
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetFieldFloat
+//
+//==========================================================================
+
+static void SetFieldFloat(VObject* Obj, const char* FieldName,
+	float Value, int Idx = 0)
+{
+	guard(SetFieldFloat);
+	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
+	float* Ptr = (float*)((vuint8*)Obj + F->Ofs);
+	Ptr[Idx] = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetFieldBool
+//
+//==========================================================================
+
+static void SetFieldBool(VObject* Obj, const char* FieldName, int Value)
+{
+	guard(SetFieldBool);
+	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
+	vuint32* Ptr = (vuint32*)((vuint8*)Obj + F->Ofs);
+	if (Value)
+		*Ptr |= F->Type.BitMask;
+	else
+		*Ptr &= ~F->Type.BitMask;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetFieldName
+//
+//==========================================================================
+
+static void SetFieldName(VObject* Obj, const char* FieldName,
+	VName Value)
+{
+	guard(SetFieldName);
+	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
+	VName* Ptr = (VName*)((vuint8*) + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetFieldClass
+//
+//==========================================================================
+
+static void SetFieldClass(VObject* Obj, const char* FieldName,
+	VClass* Value)
+{
+	guard(SetFieldClass);
+	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
+	VClass** Ptr = (VClass**)((vuint8*) + F->Ofs);
+	*Ptr = Value;
+	unguard;
+}
+
+//==========================================================================
+//
 //	AddClassFixup
 //
 //==========================================================================
@@ -1425,7 +1507,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 	//
 	if (!Flag.ICmp("LowGravity"))
 	{
-		SetClassFieldFloat(Class, "Gravity", 0.125);
+		SetClassFieldFloat(Class, "Gravity", Value ? 0.125 : 1.0);
 		return true;
 	}
 	if (!Flag.ICmp("HereticBounce"))
@@ -4519,5 +4601,195 @@ void ProcessDecorateScripts()
 
 	TLocation::ClearSourceFiles();
 	LineSpecialInfos.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::SetDecorateFlag
+//
+//==========================================================================
+
+void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
+{
+	guard(VEntity::SetDecorateFlag);
+	for (int j = 0; j < ARRAY_COUNT(FlagList); j++)
+	{
+		if (!IsA(FlagList[j].Class))
+		{
+			continue;
+		}
+		VFlagDef* Lst = FlagList[j].Flags;
+		for (int i = 0; i < FlagList[j].NumFlags; i++)
+		{
+			if (!Flag.ICmp(Lst[i].Name) ||
+				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))
+			{
+				SetFieldBool(this, Lst[i].PropName, Value);
+				return;
+			}
+		}
+	}
+
+	//
+	//	Physics
+	//
+	if (!Flag.ICmp("LowGravity"))
+	{
+		SetFieldFloat(this, "Gravity", Value ? 0.125 : 1.0);
+		return;
+	}
+	if (!Flag.ICmp("HereticBounce"))
+	{
+		SetFieldByte(this, "BounceType", Value ? BOUNCE_Heretic : BOUNCE_None);
+		return;
+	}
+	if (!Flag.ICmp("HexenBounce"))
+	{
+		SetFieldByte(this, "BounceType", Value ? BOUNCE_Hexen : BOUNCE_None);
+		return;
+	}
+	if (!Flag.ICmp("DoomBounce"))
+	{
+		SetFieldByte(this, "BounceType", Value ? BOUNCE_Doom : BOUNCE_None);
+		return;
+	}
+	//
+	//	Behavior
+	//
+	if (!Flag.ICmp("NoSplashAlert"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag NoSplashAlert in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("LongMeleeRange"))
+	{
+		SetFieldFloat(this, "MissileMinRange", Value ? 196.0 : 0.0);
+		return;
+	}
+	if (!Flag.ICmp("ShortMissileRange"))
+	{
+		SetFieldFloat(this, "MissileMaxRange", Value ? 896.0 : 0.0);
+		return;
+	}
+	//
+	//	Abilities
+	//
+	if (!Flag.ICmp("Frightened"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag Frightened in %s", GetClass()->GetName());
+		return;
+	}
+	//
+	//	Appearance and sound
+	//
+	if (!Flag.ICmp("NoBloodDecals"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag NoBloodDecals in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("FixMapThingPos"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag FixMapThingPos in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("GrenadeTrail"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag GrenadeTrail in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("NoSkin"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag NoSkin in %s", GetClass()->GetName());
+		return;
+	}
+	//
+	//	Projectile
+	//
+	if (!Flag.ICmp("FireDamage"))
+	{
+		SetFieldName(this, "DamageType", Value ? VName("Fire") : NAME_None);
+		return;
+	}
+	if (!Flag.ICmp("IceDamage"))
+	{
+		SetFieldName(this, "DamageType", Value ? VName("Ice") : NAME_None);
+		return;
+	}
+	if (!Flag.ICmp("BloodSplatter"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag BloodSplatter in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("DehExplosion"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag DehExplosion in %s", GetClass()->GetName());
+		return;
+	}
+	//
+	//	Miscellaneous
+	//
+	if (!Flag.ICmp("OldRadiusDmg"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag OldRadiusDmg in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("UseSpecial"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag UseSpecial in %s", GetClass()->GetName());
+		return;
+	}
+	//
+	//	Limited use
+	//
+	if (!Flag.ICmp("SeesDaggers"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag SeesDaggers in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("NoClip"))
+	{
+		SetFieldBool(this, "bColideWithThings", !Value);
+		SetFieldBool(this, "bColideWithWorld", !Value);
+		return;
+	}
+	if (!Flag.ICmp("ForceYBillboard"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag ForceYBillboard in %s", GetClass()->GetName());
+		return;
+	}
+	if (!Flag.ICmp("ForceXYBillboard"))
+	{
+		//FIXME
+		GCon->Logf("Unsupported flag ForceXYBillboard in %s", GetClass()->GetName());
+		return;
+	}
+
+	//
+	//	Inventory class flags.
+	//
+	if (IsA(InventoryClass))
+	{
+		if (!Flag.ICmp("Inventory.PickupFlash") || !Flag.ICmp("PickupFlash"))
+		{
+			SetFieldClass(this, "PickupFlashType", Value ?
+				VClass::FindClass("PickupFlash") : NULL);
+			return;
+		}
+	}
+
+	GCon->Logf("Unknown flag %s", *Flag);
 	unguard;
 }

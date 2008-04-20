@@ -129,7 +129,7 @@ class Actor extends Thinker
 	//
 	//	Flags and appearance
 	//
-	//A_ChangeFlag
+	action native A_ChangeFlag(string name, eval bool value);
 	action native A_SetFloorClip();
 	action native A_UnSetFloorClip();
 	action native A_HideThing();
