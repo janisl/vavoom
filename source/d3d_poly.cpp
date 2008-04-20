@@ -1013,8 +1013,6 @@ bool VDirect3DDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 			RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 			RenderDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 		}
-
-		PortalDepth++;
 	}
 	return true;
 	unguard;
@@ -1114,8 +1112,6 @@ void VDirect3DDrawer::EndPortal(VPortal* Portal, bool UseStencil)
 		DrawPortalArea(Portal);
 		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-
-		PortalDepth--;
 	}
 	unguard;
 }

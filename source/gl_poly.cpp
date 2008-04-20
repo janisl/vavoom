@@ -954,8 +954,6 @@ bool VOpenGLDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 			glDepthMask(GL_FALSE);
 			glDisable(GL_DEPTH_TEST);
 		}
-
-		PortalDepth++;
 	}
 	return true;
 	unguard;
@@ -1052,8 +1050,6 @@ void VOpenGLDrawer::EndPortal(VPortal* Portal, bool UseStencil)
 		DrawPortalArea(Portal);
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glEnable(GL_TEXTURE_2D);
-
-		PortalDepth--;
 	}
 	unguard;
 }

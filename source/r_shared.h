@@ -123,6 +123,7 @@ class VPortal
 public:
 	class VRenderLevel*		RLev;
 	TArray<surface_t*>		Surfs;
+	int						Level;
 
 	VPortal(class VRenderLevel* ARLev);
 	virtual ~VPortal();

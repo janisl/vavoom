@@ -59,6 +59,7 @@
 VPortal::VPortal(class VRenderLevel* ARLev)
 : RLev(ARLev)
 {
+	Level = RLev->PortalLevel + 1;
 }
 
 //==========================================================================
@@ -152,6 +153,9 @@ void VPortal::Draw(bool UseStencil)
 	int SavedFixedLight = RLev->FixedLight;
 	vuint8* SavedBspVis = RLev->BspVis;
 	VRenderLevel::trans_sprite_t* SavedTransSprites = RLev->trans_sprites;
+	bool SavedMirrorClip = MirrorClip;
+	TClipPlane SavedClip = view_clipplanes[4];
+	TClipPlane* SavedClipLink = view_clipplanes[3].next;
 
 	VRenderLevel::trans_sprite_t TransSprites[VRenderLevel::MAX_TRANS_SPRITES];
 
@@ -182,6 +186,9 @@ void VPortal::Draw(bool UseStencil)
 	}
 	RLev->BspVis = SavedBspVis;
 	RLev->trans_sprites = SavedTransSprites;
+	MirrorClip = SavedMirrorClip;
+	view_clipplanes[4] = SavedClip;
+	view_clipplanes[3].next = SavedClipLink;
 	RLev->TransformFrustum();
 	Drawer->SetupViewOrg();
 
@@ -289,7 +296,7 @@ bool VSkyPortal::IsSky() const
 
 bool VSkyPortal::MatchSky(VSky* ASky) const
 {
-	return Sky == ASky;
+	return Level == RLev->PortalLevel + 1 && Sky == ASky;
 }
 
 //==========================================================================
@@ -330,7 +337,7 @@ bool VSkyBoxPortal::IsSky() const
 
 bool VSkyBoxPortal::MatchSkyBox(VEntity* AEnt) const
 {
-	return Viewport == AEnt;
+	return Level == RLev->PortalLevel + 1 && Viewport == AEnt;
 }
 
 //==========================================================================
@@ -355,7 +362,12 @@ void VSkyBoxPortal::DrawContents()
 		RLev->FixedLight = 0;
 	}
 
+	//	Reuse FixedModel flag to prevent recursion
+	Viewport->EntityFlags |= VEntity::EF_FixedModel;
+
 	RLev->RenderScene(&refdef, NULL);
+
+	Viewport->EntityFlags &= ~VEntity::EF_FixedModel;
 	unguard;
 }
 
@@ -367,7 +379,7 @@ void VSkyBoxPortal::DrawContents()
 
 bool VSectorStackPortal::MatchSkyBox(VEntity* AEnt) const
 {
-	return Viewport == AEnt;
+	return Level == RLev->PortalLevel + 1 && Viewport == AEnt;
 }
 
 //==========================================================================
@@ -387,7 +399,12 @@ void VSectorStackPortal::DrawContents()
 	vieworg.x = vieworg.x + Viewport->Origin.x - Mate->Origin.x;
 	vieworg.y = vieworg.y + Viewport->Origin.y - Mate->Origin.y;
 
+	//	Reuse FixedModel flag to prevent recursion
+	Viewport->EntityFlags |= VEntity::EF_FixedModel;
+
 	RLev->RenderScene(&refdef, &Range);
+
+	Viewport->EntityFlags &= ~VEntity::EF_FixedModel;
 	unguard;
 }
 
@@ -399,7 +416,8 @@ void VSectorStackPortal::DrawContents()
 
 bool VMirrorPortal::MatchMirror(TPlane* APlane) const
 {
-	return Plane->normal == APlane->normal && Plane->dist == APlane->dist;
+	return Level == RLev->PortalLevel + 1 &&
+		Plane->normal == APlane->normal && Plane->dist == APlane->dist;
 }
 
 //==========================================================================
@@ -413,6 +431,10 @@ void VMirrorPortal::DrawContents()
 	guard(VMirrorPortal::DrawContents);
 	RLev->ViewEnt = NULL;
 
+	RLev->MirrorLevel++;
+	MirrorFlip = RLev->MirrorLevel & 1;
+	MirrorClip = true;
+
 	float Dist = DotProduct(vieworg, Plane->normal) - Plane->dist;
 	vieworg -= 2 * Dist * Plane->normal;
 
@@ -422,9 +444,8 @@ void VMirrorPortal::DrawContents()
 	viewright -= 2 * Dist * Plane->normal;
 	Dist = DotProduct(viewup, Plane->normal);
 	viewup -= 2 * Dist * Plane->normal;
-	VectorsAngles(viewforward, -viewright, viewup, viewangles);
-	MirrorFlip = true;
-	MirrorClip = true;
+	VectorsAngles(viewforward, MirrorFlip ? -viewright : viewright, viewup,
+		viewangles);
 
 	VViewClipper Range;
 	SetUpRanges(Range, true);
@@ -452,8 +473,7 @@ void VMirrorPortal::DrawContents()
 
 	RLev->RenderScene(&refdef, &Range);
 
-	MirrorFlip = false;
-	MirrorClip = false;
-	view_clipplanes[3].next = NULL;
+	RLev->MirrorLevel--;
+	MirrorFlip = RLev->MirrorLevel & 1;
 	unguard;
 }

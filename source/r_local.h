@@ -336,7 +336,8 @@ private:
 	int						FrustumIndexes[5][6];
 	TArray<world_surf_t>	WorldSurfs;
 	TArray<VPortal*>		Portals;
-	bool					InPortals;
+	int						PortalLevel;
+	int						MirrorLevel;
 
 	trans_sprite_t	MainTransSprites[MAX_TRANS_SPRITES];
 	trans_sprite_t*	trans_sprites;

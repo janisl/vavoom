@@ -55,6 +55,8 @@ static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
 static bool				MirrorClipSegs;
 
+static VCvarI			r_maxmirrors("r_maxmirrors", "4", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -118,129 +120,130 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	}
 	vuint32 Fade = GetFade(r_sub);
 
+	if (SkyBox && (SkyBox->EntityFlags & VEntity::EF_FixedModel))
+	{
+		SkyBox = NULL;
+	}
 	bool IsStack = SkyBox && SkyBox->eventSkyBoxGetAlways();
 	if (texinfo->Tex == GTextureManager[skyflatnum] ||
 		IsStack && CheckSkyBoxAlways)
 	{
-		if (!InPortals)
+		VSky* Sky = NULL;
+		if (!SkyBox && r_sub->sector->Sky & SKY_FROM_SIDE)
 		{
-			VSky* Sky = NULL;
-			if (!SkyBox && r_sub->sector->Sky & SKY_FROM_SIDE)
+			int Tex;
+			bool Flip;
+			if (r_sub->sector->Sky == SKY_FROM_SIDE)
 			{
-				int Tex;
-				bool Flip;
-				if (r_sub->sector->Sky == SKY_FROM_SIDE)
-				{
-					Tex = Level->LevelInfo->Sky2Texture;
-					Flip = true;
-				}
-				else
-				{
-					side_t* Side = &Level->Sides[(r_sub->sector->Sky &
-						(SKY_FROM_SIDE - 1)) - 1];
-					Tex = Side->toptexture;
-					Flip = !!Level->Lines[Side->LineNum].arg3;
-				}
-				if (GTextureManager[Tex]->Type != TEXTYPE_Null)
-				{
-					for (int i = 0; i < SideSkies.Num(); i++)
-					{
-						if (SideSkies[i]->SideTex == Tex &&
-							SideSkies[i]->SideFlip == Flip)
-						{
-							Sky = SideSkies[i];
-							break;
-						}
-					}
-					if (!Sky)
-					{
-						Sky = new VSky;
-						Sky->Init(Tex, Tex, 0, 0, false,
-							!!(Level->LevelInfo->LevelInfoFlags &
-							VLevelInfo::LIF_ForceNoSkyStretch), Flip, false);
-						SideSkies.Append(Sky);
-					}
-				}
-			}
-			if (!Sky && !SkyBox)
-			{
-				InitSky();
-				Sky = &BaseSky;
-			}
-
-			VPortal* Portal = NULL;
-			if (SkyBox)
-			{
-				for (int i = 0; i < Portals.Num(); i++)
-				{
-					if (Portals[i] && Portals[i]->MatchSkyBox(SkyBox))
-					{
-						Portal = Portals[i];
-						break;
-					}
-				}
-				if (!Portal)
-				{
-					if (IsStack)
-					{
-						Portal = new VSectorStackPortal(this, SkyBox);
-					}
-					else
-					{
-						Portal = new VSkyBoxPortal(this, SkyBox);
-					}
-					Portals.Append(Portal);
-				}
+				Tex = Level->LevelInfo->Sky2Texture;
+				Flip = true;
 			}
 			else
 			{
-				for (int i = 0; i < Portals.Num(); i++)
+				side_t* Side = &Level->Sides[(r_sub->sector->Sky &
+					(SKY_FROM_SIDE - 1)) - 1];
+				Tex = Side->toptexture;
+				Flip = !!Level->Lines[Side->LineNum].arg3;
+			}
+			if (GTextureManager[Tex]->Type != TEXTYPE_Null)
+			{
+				for (int i = 0; i < SideSkies.Num(); i++)
 				{
-					if (Portals[i] && Portals[i]->MatchSky(Sky))
+					if (SideSkies[i]->SideTex == Tex &&
+						SideSkies[i]->SideFlip == Flip)
 					{
-						Portal = Portals[i];
+						Sky = SideSkies[i];
 						break;
 					}
 				}
-				if (!Portal)
+				if (!Sky)
 				{
-					Portal = new VSkyPortal(this, Sky);
-					Portals.Append(Portal);
+					Sky = new VSky;
+					Sky->Init(Tex, Tex, 0, 0, false,
+						!!(Level->LevelInfo->LevelInfoFlags &
+						VLevelInfo::LIF_ForceNoSkyStretch), Flip, false);
+					SideSkies.Append(Sky);
 				}
 			}
-			do
-			{
-				Portal->Surfs.Append(surfs);
-				if (IsStack && CheckSkyBoxAlways &&
-					SkyBox->eventSkyBoxGetPlaneAlpha())
-				{
-					surfs->Light = (lLev << 24) | LightParams->LightColour;
-					surfs->Fade = Fade;
-					surfs->dlightframe = r_sub->dlightframe;
-					surfs->dlightbits = r_sub->dlightbits;
-					DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
-						0, SkyBox->eventSkyBoxGetPlaneAlpha(), false, 0,
-						false, 0, 0, TVec(), 0, TVec(), TVec(), TVec());
-				}
-
-				if (!Drawer->HasStencil)
-				{
-					if (!InPortals)
-					{
-						world_surf_t& S = WorldSurfs.Alloc();
-						S.Surf = surfs;
-						S.ClipFlags = clipflags;
-						S.Type = 1;
-					}
-					else
-					{
-						Drawer->DrawSkyPortal(surfs, clipflags);
-					}
-				}
-
-				surfs = surfs->next;
-			} while (surfs);
 		}
+		if (!Sky && !SkyBox)
+		{
+			InitSky();
+			Sky = &BaseSky;
+		}
+
+		VPortal* Portal = NULL;
+		if (SkyBox)
+		{
+			for (int i = 0; i < Portals.Num(); i++)
+			{
+				if (Portals[i] && Portals[i]->MatchSkyBox(SkyBox))
+				{
+					Portal = Portals[i];
+					break;
+				}
+			}
+			if (!Portal)
+			{
+				if (IsStack)
+				{
+					Portal = new VSectorStackPortal(this, SkyBox);
+				}
+				else
+				{
+					Portal = new VSkyBoxPortal(this, SkyBox);
+				}
+				Portals.Append(Portal);
+			}
+		}
+		else
+		{
+			for (int i = 0; i < Portals.Num(); i++)
+			{
+				if (Portals[i] && Portals[i]->MatchSky(Sky))
+				{
+					Portal = Portals[i];
+					break;
+				}
+			}
+			if (!Portal)
+			{
+				Portal = new VSkyPortal(this, Sky);
+				Portals.Append(Portal);
+			}
+		}
+		do
+		{
+			Portal->Surfs.Append(surfs);
+			if (IsStack && CheckSkyBoxAlways &&
+				SkyBox->eventSkyBoxGetPlaneAlpha())
+			{
+				surfs->Light = (lLev << 24) | LightParams->LightColour;
+				surfs->Fade = Fade;
+				surfs->dlightframe = r_sub->dlightframe;
+				surfs->dlightbits = r_sub->dlightbits;
+				DrawTranslucentPoly(surfs, surfs->verts, surfs->count,
+					0, SkyBox->eventSkyBoxGetPlaneAlpha(), false, 0,
+					false, 0, 0, TVec(), 0, TVec(), TVec(), TVec());
+			}
+
+			if (!Drawer->HasStencil)
+			{
+				if (PortalLevel == 0)
+				{
+					world_surf_t& S = WorldSurfs.Alloc();
+					S.Surf = surfs;
+					S.ClipFlags = clipflags;
+					S.Type = 1;
+				}
+				else
+				{
+					Drawer->DrawSkyPortal(surfs, clipflags);
+				}
+			}
+
+			surfs = surfs->next;
+		} while (surfs);
 		return;
 	}
 
@@ -253,7 +256,7 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 		if (texinfo->Alpha > 1.0)
 		{
-			if (!InPortals)
+			if (PortalLevel == 0)
 			{
 				world_surf_t& S = WorldSurfs.Alloc();
 				S.Surf = surfs;
@@ -340,7 +343,7 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		}
 		else
 		{
-			if (!InPortals)
+			if (PortalLevel == 0)
 			{
 				world_surf_t& S = WorldSurfs.Alloc();
 				S.Surf = Surf;
@@ -394,7 +397,7 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		}
 		else
 		{
-			if (!InPortals)
+			if (PortalLevel == 0)
 			{
 				world_surf_t& S = WorldSurfs.Alloc();
 				S.Surf = Surf;
@@ -421,7 +424,7 @@ void VRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
 	guard(VRenderLevel::RenderMirror);
 	seg_t* Seg = dseg->seg;
 
-	if (!InPortals && Drawer->HasStencil)
+	if (Drawer->HasStencil && MirrorLevel < r_maxmirrors)
 	{
 		VPortal* Portal = NULL;
 		for (int i = 0; i < Portals.Num(); i++)
@@ -569,7 +572,8 @@ void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 		return;
 	}
 
-	if (plane.MirrorAlpha < 1.0 && !InPortals && Drawer->HasStencil)
+	if (plane.MirrorAlpha < 1.0 && Drawer->HasStencil &&
+		MirrorLevel < r_maxmirrors)
 	{
 		VPortal* Portal = NULL;
 		for (int i = 0; i < Portals.Num(); i++)
@@ -822,7 +826,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		ViewClip.ClipToRanges(*Range);
 	}
 	memset(BspVis, 0, VisSize);
-	if (!InPortals)
+	if (PortalLevel == 0)
 	{
 		WorldSurfs.Resize(4096);
 	}
@@ -831,7 +835,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 	// head node is the last node output
 	RenderBSPNode(Level->NumNodes - 1, dummy_bbox, MirrorClip ? 31 : 15);
 
-	if (!InPortals)
+	if (PortalLevel == 0)
 	{
 		guard(Best sky);
 		//	Draw the most complex sky portal behind the scene first, without
@@ -849,11 +853,11 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		}
 		if (BestSky)
 		{
-			InPortals = true;
+			PortalLevel = 1;
 			BestSky->Draw(false);
 			delete BestSky;
 			Portals.RemoveIndex(BestSkyIndex);
-			InPortals = false;
+			PortalLevel = 0;
 		}
 		unguard;
 
@@ -882,30 +886,31 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 
 	Drawer->WorldDrawing();
 
-	if (!InPortals)
+	guard(Portals);
+	PortalLevel++;
+	if (Drawer->HasStencil)
 	{
-		guard(Portals);
-		InPortals = true;
-		if (Drawer->HasStencil)
-		{
-			for (int i = 0; i < Portals.Num(); i++)
-			{
-				if (Portals[i])
-				{
-					Portals[i]->Draw(true);
-				}
-			}
-		}
 		for (int i = 0; i < Portals.Num(); i++)
 		{
-			if (Portals[i])
+			if (Portals[i] && Portals[i]->Level == PortalLevel)
 			{
-				delete Portals[i];
+				Portals[i]->Draw(true);
 			}
 		}
-		Portals.Clear();
-		InPortals = false;
-		unguard;
 	}
+	for (int i = 0; i < Portals.Num(); i++)
+	{
+		if (Portals[i] && Portals[i]->Level == PortalLevel)
+		{
+			delete Portals[i];
+			Portals[i] = NULL;
+		}
+	}
+	PortalLevel--;
+	if (PortalLevel == 0)
+	{
+		Portals.Clear();
+	}
+	unguard;
 	unguard;
 }
