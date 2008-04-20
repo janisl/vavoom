@@ -5711,7 +5711,7 @@ final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 		TVec testPos;
 
 		testPos = Other.Origin + force * thrustDir * Game.frametime;
-		if (!Other.CheckPosition(testPos))
+		if (po->bHurtOnTouch || !Other.CheckPosition(testPos))
 		{
 			EntityEx(Other).Damage(none, none, 3, 'Crush');
 		}

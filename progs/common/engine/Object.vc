@@ -925,6 +925,7 @@ struct polyobj_t
 	int __bbox[4];
 	int validcount;
 	bool bCrush;			// should the polyobj attempt to crush mobjs?
+	bool bHurtOnTouch;
 	int seqType;
 	subsector_t *__subsector;
 	Thinker SpecialData;	// pointer a thinker, if the poly is moving

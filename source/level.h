@@ -51,6 +51,8 @@
 //	All line specials that are used by the engine.
 enum
 {
+	LNSPEC_PolyStartLine = 1,
+	LNSPEC_PolyExplicitLine = 5,
 	LNSPEC_LineHorizon = 9,
 	LNSPEC_DoorLockedRaise = 13,
 	LNSPEC_ACSLockedExecute = 83,
@@ -405,7 +407,8 @@ struct polyobj_t
 	int 		validcount;
 	enum
 	{
-		PF_Crush	= 0x01,		// should the polyobj attempt to crush mobjs?
+		PF_Crush		= 0x01,		// should the polyobj attempt to crush mobjs?
+		PF_HurtOnTouch	= 0x02,
 	};
 	vuint32		PolyFlags;
 	int 		seqType;
@@ -806,7 +809,7 @@ class VLevel : public VObject
 	void DestroyAllThinkers();
 
 	//	Poly-objects.
-	void SpawnPolyobj(float, float, int, int);
+	void SpawnPolyobj(float, float, int, bool, bool);
 	void AddPolyAnchorPoint(float, float, int);
 	void InitPolyobjs();
 	polyobj_t* GetPolyobj(int);

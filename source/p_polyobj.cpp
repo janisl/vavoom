@@ -55,7 +55,7 @@
 //
 //==========================================================================
 
-void VLevel::SpawnPolyobj(float x, float y, int tag, int crush)
+void VLevel::SpawnPolyobj(float x, float y, int tag, bool crush, bool hurt)
 {
 	guard(VLevel::SpawnPolyobj);
 	int index = NumPolyObjs++;
@@ -95,9 +95,21 @@ void VLevel::SpawnPolyobj(float x, float y, int tag, int crush)
 			IterFindPolySegs(*Segs[i].v2, PolyObjs[index].segs + 1,
 				PolySegCount, PolyStart);
 			if (crush)
+			{
 				PolyObjs[index].PolyFlags |= polyobj_t::PF_Crush;
+			}
 			else
+			{
 				PolyObjs[index].PolyFlags &= ~polyobj_t::PF_Crush;
+			}
+			if (hurt)
+			{
+				PolyObjs[index].PolyFlags |= polyobj_t::PF_HurtOnTouch;
+			}
+			else
+			{
+				PolyObjs[index].PolyFlags &= ~polyobj_t::PF_HurtOnTouch;
+			}
 			PolyObjs[index].tag = tag;
 			PolyObjs[index].seqType = Segs[i].linedef->arg3;
 //			if (PolyObjs[index].seqType < 0 ||
@@ -847,12 +859,13 @@ bool VLevel::PolyCheckMobjBlocking(seg_t* seg, polyobj_t* po)
 
 IMPLEMENT_FUNCTION(VLevel, SpawnPolyobj)
 {
-	P_GET_INT(flags);
+	P_GET_BOOL(hurt);
+	P_GET_BOOL(crush);
 	P_GET_INT(tag);
 	P_GET_FLOAT(y);
 	P_GET_FLOAT(x);
 	P_GET_SELF;
-	Self->SpawnPolyobj(x, y, tag, flags);
+	Self->SpawnPolyobj(x, y, tag, crush, hurt);
 }
 
 IMPLEMENT_FUNCTION(VLevel, AddPolyAnchorPoint)

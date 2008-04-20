@@ -40,6 +40,7 @@ const int
 	PO_ANCHOR_TYPE = 9300,
 	PO_SPAWN_TYPE = 9301,
 	PO_SPAWNCRUSH_TYPE = 9302,
+	PO_SPAWNHURT_TYPE = 9303,
 
 	SLOPE_FLOOR_POINT_LINE_TYPE = 9500,
 	SLOPE_CEILING_POINT_LINE_TYPE = 9501,
@@ -1134,10 +1135,12 @@ void SpawnWorld(Level InLevel)
 			}
 		case PO_SPAWN_TYPE:
 		case PO_SPAWNCRUSH_TYPE:
+		case PO_SPAWNHURT_TYPE:
 			// Polyobj StartSpot Pt.
 			InLevel.SpawnPolyobj(mthing->x, mthing->y, mthing->angle,
 				mthing->type == PO_SPAWNCRUSH_TYPE_HEXEN ||
-				mthing->type == PO_SPAWNCRUSH_TYPE);
+				mthing->type == PO_SPAWNCRUSH_TYPE,
+				mthing->type == PO_SPAWNHURT_TYPE);
 			mthing->type = 0;
 			break;
 
