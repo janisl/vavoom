@@ -62,6 +62,20 @@ struct VLineSpecInfo
 	int			Number;
 };
 
+struct VFlagDef
+{
+	const char*		Name;
+	const char*		AltName;
+	const char*		PropName;
+};
+
+struct VFlagList
+{
+	VFlagDef*		Flags;
+	int				NumFlags;
+	VClass*			Class;
+};
+
 //==========================================================================
 //
 //	VDecorateInvocation
@@ -121,6 +135,204 @@ static VMethod*			FuncA_FreezeDeath;
 static VMethod*			FuncA_FreezeDeathChunks;
 
 static TArray<VLineSpecInfo>	LineSpecialInfos;
+
+static VFlagDef ActorFlags[] =
+{
+	//
+	//	Physics
+	//
+	{ "Solid", NULL, "bSolid" },
+	{ "Shootable", NULL, "bShootable" },
+	{ "Float", NULL, "bFloat" },
+	{ "NoGravity", NULL, "bNoGravity" },
+	{ "WindThrust", NULL, "bWindThrust" },
+	{ "Pushable", NULL, "bPushable" },
+	{ "DontFall", NULL, "bNoGravKill" },
+	{ "CanPass", NULL, "bPassMobj" },
+	{ "ActLikeBridge", NULL, "bActLikeBridge" },
+	{ "NoBlockmap", NULL, "bNoBlockmap" },
+	{ "NoLiftDrop", NULL, "bNoLiftDrop" },
+	{ "SlidesOnWalls", NULL, "bSlide" },
+	{ "NoDropOff", NULL, "bNoDropOff" },
+	//
+	//	Behavior
+	//
+	{ "Ambush", NULL, "bAmbush" },
+	{ "Boss", NULL, "bBoss" },
+	{ "LookAllAround", NULL, "bLookAllAround" },
+	{ "StandStill", NULL, "bStanding" },
+	{ "QuickToRetaliate", NULL, "bNoGrudge" },
+	{ "Dormant", NULL, "bDormant" },
+	{ "Friendly", NULL, "bFriendly" },
+	{ "MissileMore", NULL, "bTriggerHappy" },
+	{ "MissileEvenMore", NULL, "bMissileEvenMore" },
+	{ "NoTargetSwitch", NULL, "bNoTargetSwitch" },
+	//
+	//	Abilities
+	//
+	{ "CannotPush", NULL, "bCannotPush" },
+	{ "NoTeleport", NULL, "bNoTeleport" },
+	{ "ActivateImpact", NULL, "bActivateImpact" },
+	{ "CanPushWalls", NULL, "bActivatePushWall" },
+	{ "CanUseWalls", NULL, "bCanUseWalls" },
+	{ "ActivateMCross", NULL, "bActivateMCross" },
+	{ "ActivatePCross", NULL, "bActivatePCross" },
+	{ "CantLeaveFloorPic", NULL, "bCantLeaveFloorpic" },
+	{ "Telestomp", NULL, "bTelestomp" },
+	{ "StayMorphed", NULL, "bStayMorphed" },
+	{ "CanBlast", NULL, "bCanBlast" },
+	{ "NoBlockMonst", NULL, "bNoBlockMonst" },
+	{ "CanBounceWater", NULL, "bCanBounceWater" },
+	{ "ThruGhost", NULL, "bThruGhost" },
+	{ "Spectral", NULL, "bSpectral" },
+	//
+	//	Defenses
+	//
+	{ "Invulnerable", NULL, "bInvulnerable" },
+	{ "Reflective", NULL, "bReflective" },
+	{ "ShieldReflect", NULL, "bShieldReflect" },
+	{ "Deflect", NULL, "bDeflect" },
+	{ "FireResist", NULL, "bFireResist" },
+	{ "NoRadiusDmg", NULL, "bNoRadiusDamage" },
+	{ "DontBlast", NULL, "bDontBlast" },
+	{ "NoTarget", NULL, "bNeverTarget" },
+	{ "Ghost", NULL, "bGhost" },
+	{ "DontMorph", NULL, "bNoMorph" },
+	{ "DontSquash", NULL, "bDontSquash" },
+	{ "NoTeleOther", NULL, "bNoTeleOther" },
+	{ "DontHurtSpecies", NULL, "bDontHurtSpecies" },
+	{ "NoDamage", NULL, "bNoDamage" },
+	//
+	//	Appearance and sound
+	//
+	{ "Invisible", NULL, "bInvisible" },
+	{ "Shadow", NULL, "bShadow" },
+	{ "NoBlood", NULL, "bNoBlood" },
+	{ "Stealth", NULL, "bStealth" },
+	{ "FloorClip", NULL, "bFloorClip" },
+	{ "SpawnFloat", NULL, "bSpawnFloat" },
+	{ "SpawnCeiling", NULL, "bSpawnCeiling" },
+	{ "FloatBob", NULL, "bFloatBob" },
+	{ "NoIceDeath", NULL, "bNoIceDeath" },
+	{ "DontGib", NULL, "bDontGib" },
+	{ "DontSplash", NULL, "bNoSplash" },
+	{ "DontOverlap", NULL, "bDontOverlap" },
+	{ "Randomize", NULL, "bRandomise" },
+	{ "FullVolActive", NULL, "bFullVolActive" },
+	{ "FullVolDeath", NULL, "bFullVolDeath" },
+	{ "NoWallBounceSnd", NULL, "bNoWallBounceSnd" },
+	{ "VisibilityPulse", NULL, "bVisibilityPulse" },
+	{ "RocketTrail", NULL, "bLeaveTrail" },
+	{ "NoBounceSound", NULL, "bNoBounceSound" },
+	{ "DontTranslate", NULL, "bDontTranslate" },
+	{ "NoPain", NULL, "bNoPain" },
+	//
+	//	Projectile
+	//
+	{ "Missile", NULL, "bMissile" },
+	{ "Ripper", NULL, "bRip" },
+	{ "NoDamageThrust", NULL, "bNoDamageThrust" },
+	{ "DontReflect", NULL, "bDontReflect" },
+	{ "FloorHugger", NULL, "bIgnoreFloorStep" },
+	{ "CeilingHugger", NULL, "bIgnoreCeilingStep" },
+	{ "BloodlessImpact", NULL, "bBloodlessImpact" },
+	{ "FoilInvul", NULL, "bDamageInvulnerable" },
+	{ "SeekerMissile", NULL, "bSeekerMissile" },
+	{ "SkyExplode", NULL, "bExplodeOnSky" },
+	{ "NoExplodeFloor", NULL, "bNoExplodeFloor" },
+	{ "StrifeDamage", NULL, "bStrifeDamage" },
+	{ "ExtremeDeath", NULL, "bExtremeDeath" },
+	{ "NoExtremeDeath", NULL, "bNoExtremeDeath" },
+	{ "BounceOnActors", NULL, "bBounceOnActors" },
+	{ "ExplodeOnWater", NULL, "bExplodeOnWater" },
+	{ "PierceArmor", NULL, "bPierceArmor" },
+	{ "ForceRadiusDmg", NULL, "bForceRadiusDmg" },
+	{ "SpawnSoundSource", NULL, "bSpawnSoundSource" },
+	//
+	//	Miscellaneous
+	//
+	{ "Dropped", NULL, "bDropped" },
+	{ "IsMonster", NULL, "bMonster" },
+	{ "Corpse", NULL, "bCorpse" },
+	{ "CountKill", NULL, "bCountKill" },
+	{ "CountItem", NULL, "bCountItem" },
+	{ "NotDMatch", NULL, "bNoDeathmatch" },
+	{ "NonShootable", NULL, "bNonShootable" },
+	{ "DropOff", NULL, "bDropOff" },
+	{ "PuffOnActors", NULL, "bPuffOnActors" },
+	{ "AllowParticles", NULL, "bPuffParticles" },
+	{ "AlwaysPuff", NULL, "bAlwaysPuff" },
+	{ "Synchronized", NULL, "bSynchronised" },
+	{ "Faster", NULL, "bFaster" },
+	{ "AlwaysFast", NULL, "bAlwaysFast" },
+	{ "NeverFast", NULL, "bNeverFast" },
+	{ "FastMelee", NULL, "bFastMelee" },
+	{ "BossDeath", NULL, "bBossDeath" },
+	//
+	//	Limited use
+	//
+	{ "InCombat", NULL, "bInCombat" },
+	{ "NoSector", NULL, "bNoSector" },
+	{ "IceCorpse", NULL, "bIceCorpse" },
+	{ "JustHit", NULL, "bJustHit" },
+	{ "JustAttacked", NULL, "bJustAttacked" },
+	{ "Teleport", NULL, "bTeleport" },
+	//
+	//	Not documented
+	//
+	{ "InFloat", NULL, "bInFloat" },
+	{ "SkullFly", NULL, "bSkullFly" },
+	{ "Blasted", NULL, "bBlasted" },
+	{ "AlwaysRespawn", NULL, "bAlwaysRespawn" },
+	{ "NeverRespawn", NULL, "bNeverRespawn" },
+	{ "DontRip", NULL, "bDontRip" },
+};
+static VFlagDef InventoryFlags[] =
+{
+	{ "Inventory.Quiet", "Quiet", "bQuiet" },
+	{ "Inventory.AutoActivate", "AutoActivate", "bAutoActivate" },
+	{ "Inventory.Undroppable", "Undroppable", "bUndroppable" },
+	{ "Inventory.InvBar", "InvBar", "bInvBar" },
+	{ "Inventory.HubPower", "HubPower", "bHubPower" },
+	{ "Inventory.InterHubStrip", "InterHubStrip", "bInterHubStrip" },
+	{ "Inventory.AlwaysPickup", "AlwaysPickup", "bAlwaysPickup" },
+	{ "Inventory.FancyPickupSound", "FancyPickupSound", "bFullVolPickupSound" },
+	{ "Inventory.BigPowerup", "BigPowerup", "bBigPowerup" },
+	{ "Inventory.KeepDepleted", "KeepDepleted", "bKeepDepleted" },
+	{ "Inventory.IgnoreSkill", "IgnoreSkill", "bIgnoreSkill" },
+	{ "Inventory.AdditiveTime", "AdditiveTime", "bAdditiveTime" },
+};
+static VFlagDef WeaponFlags[] =
+{
+	{ "Weapon.NoAutoFire", "NoAutoFire", "bNoAutoFire" },
+	{ "Weapon.ReadySndHalf", "ReadySndHalf", "bReadySndHalf" },
+	{ "Weapon.DontBob", "DontBob", "bDontBob" },
+	{ "Weapon.AxeBlood", "AxeBlood", "bAxeBlood" },
+	{ "Weapon.NoAlert", "NoAlert", "bNoAlert" },
+	{ "Weapon.Ammo_Optional", "Ammo_Optional", "bAmmoOptional" },
+	{ "Weapon.Alt_Ammo_Optional", "Alt_Ammo_Optional", "bAltAmmoOptional" },
+	{ "Weapon.Primary_Uses_Both", "Primary_Uses_Both", "bPrimaryUsesBoth" },
+	{ "Weapon.Wimpy_Weapon", "Wimpy_Weapon", "bWimpyWeapon" },
+	{ "Weapon.Powered_Up", "Powered_Up", "bPoweredUp" },
+	{ "Weapon.Staff2_Kickback", "Staff2_Kickback", "bStaff2Kickback" },
+	{ "Weapon.Explosive", "Explosive", "bBotProjectile" },
+	{ "Weapon.MeleeWeapon", "MeleeWeapon", "bBotMelee" },
+	{ "Weapon.BFG", "BFG", "bBotBfg" },
+	{ "Weapon.CheatNotWeapon", "CheatNotWeapon", "bCheatNotWeapon" },
+	{ "Weapon.No_Auto_Switch", "No_Auto_Switch", "bNoAutoSwitch" },
+};
+static VFlagDef PlayerFlags[] =
+{
+	{ "PickUp", NULL, "bPickUp" },
+};
+
+static VFlagList FlagList[] =
+{
+	{ ActorFlags, ARRAY_COUNT(ActorFlags) },
+	{ InventoryFlags, ARRAY_COUNT(InventoryFlags) },
+	{ WeaponFlags, ARRAY_COUNT(WeaponFlags) },
+	{ PlayerFlags, ARRAY_COUNT(PlayerFlags) },
+};
 
 // CODE --------------------------------------------------------------------
 
@@ -1190,37 +1402,30 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		Flag += sc->String;
 	}
 
+	for (int j = 0; j < ARRAY_COUNT(FlagList); j++)
+	{
+		if (!Class->IsChildOf(FlagList[j].Class))
+		{
+			continue;
+		}
+		VFlagDef* Lst = FlagList[j].Flags;
+		for (int i = 0; i < FlagList[j].NumFlags; i++)
+		{
+			if (!Flag.ICmp(Lst[i].Name) ||
+				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))
+			{
+				SetClassFieldBool(Class, Lst[i].PropName, Value);
+				return true;
+			}
+		}
+	}
+
 	//
 	//	Physics
 	//
-	if (!Flag.ICmp("Solid"))
-	{
-		SetClassFieldBool(Class, "bSolid", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Shootable"))
-	{
-		SetClassFieldBool(Class, "bShootable", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Float"))
-	{
-		SetClassFieldBool(Class, "bFloat", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoGravity"))
-	{
-		SetClassFieldBool(Class, "bNoGravity", Value);
-		return true;
-	}
 	if (!Flag.ICmp("LowGravity"))
 	{
 		SetClassFieldFloat(Class, "Gravity", 0.125);
-		return true;
-	}
-	if (!Flag.ICmp("WindThrust"))
-	{
-		SetClassFieldBool(Class, "bWindThrust", Value);
 		return true;
 	}
 	if (!Flag.ICmp("HereticBounce"))
@@ -1238,88 +1443,13 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		SetClassFieldByte(Class, "BounceType", Value ? BOUNCE_Doom : BOUNCE_None);
 		return true;
 	}
-	if (!Flag.ICmp("Pushable"))
-	{
-		SetClassFieldBool(Class, "bPushable", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontFall"))
-	{
-		SetClassFieldBool(Class, "bNoGravKill", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CanPass"))
-	{
-		SetClassFieldBool(Class, "bPassMobj", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ActLikeBridge"))
-	{
-		SetClassFieldBool(Class, "bActLikeBridge", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoBlockmap"))
-	{
-		SetClassFieldBool(Class, "bNoBlockmap", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoLiftDrop"))
-	{
-		SetClassFieldBool(Class, "bNoLiftDrop", Value);
-		return true;
-	}
-	if (!Flag.ICmp("SlidesOnWalls"))
-	{
-		SetClassFieldBool(Class, "bSlide", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoDropOff"))
-	{
-		SetClassFieldBool(Class, "bNoDropOff", Value);
-		return true;
-	}
 	//
 	//	Behavior
 	//
-	if (!Flag.ICmp("Ambush"))
-	{
-		SetClassFieldBool(Class, "bAmbush", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Boss"))
-	{
-		SetClassFieldBool(Class, "bBoss", Value);
-		return true;
-	}
 	if (!Flag.ICmp("NoSplashAlert"))
 	{
 		//FIXME
 		GCon->Logf("Unsupported flag NoSplashAlert in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("LookAllAround"))
-	{
-		SetClassFieldBool(Class, "bLookAllAround", Value);
-		return true;
-	}
-	if (!Flag.ICmp("StandStill"))
-	{
-		SetClassFieldBool(Class, "bStanding", Value);
-		return true;
-	}
-	if (!Flag.ICmp("QuickToRetaliate"))
-	{
-		SetClassFieldBool(Class, "bNoGrudge", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Dormant"))
-	{
-		SetClassFieldBool(Class, "bDormant", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Friendly"))
-	{
-		SetClassFieldBool(Class, "bFriendly", Value);
 		return true;
 	}
 	if (!Flag.ICmp("LongMeleeRange"))
@@ -1327,104 +1457,14 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		SetClassFieldFloat(Class, "MissileMinRange", Value ? 196.0 : 0.0);
 		return true;
 	}
-	if (!Flag.ICmp("MissileMore"))
-	{
-		SetClassFieldBool(Class, "bTriggerHappy", Value);
-		return true;
-	}
-	if (!Flag.ICmp("MissileEvenMore"))
-	{
-		SetClassFieldBool(Class, "bMissileEvenMore", Value);
-		return true;
-	}
 	if (!Flag.ICmp("ShortMissileRange"))
 	{
 		SetClassFieldFloat(Class, "MissileMaxRange", Value ? 896.0 : 0.0);
 		return true;
 	}
-	if (!Flag.ICmp("NoTargetSwitch"))
-	{
-		SetClassFieldBool(Class, "bNoTargetSwitch", Value);
-		return true;
-	}
 	//
 	//	Abilities
 	//
-	if (!Flag.ICmp("CannotPush"))
-	{
-		SetClassFieldBool(Class, "bCannotPush", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoTeleport"))
-	{
-		SetClassFieldBool(Class, "bNoTeleport", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ActivateImpact"))
-	{
-		SetClassFieldBool(Class, "bActivateImpact", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CanPushWalls"))
-	{
-		SetClassFieldBool(Class, "bActivatePushWall", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CanUseWalls"))
-	{
-		SetClassFieldBool(Class, "bCanUseWalls", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ActivateMCross"))
-	{
-		SetClassFieldBool(Class, "bActivateMCross", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ActivatePCross"))
-	{
-		SetClassFieldBool(Class, "bActivatePCross", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CantLeaveFloorPic"))
-	{
-		SetClassFieldBool(Class, "bCantLeaveFloorpic", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Telestomp"))
-	{
-		SetClassFieldBool(Class, "bTelestomp", Value);
-		return true;
-	}
-	if (!Flag.ICmp("StayMorphed"))
-	{
-		SetClassFieldBool(Class, "bStayMorphed", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CanBlast"))
-	{
-		SetClassFieldBool(Class, "bCanBlast", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoBlockMonst"))
-	{
-		SetClassFieldBool(Class, "bNoBlockMonst", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CanBounceWater"))
-	{
-		SetClassFieldBool(Class, "bCanBounceWater", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ThruGhost"))
-	{
-		SetClassFieldBool(Class, "bThruGhost", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Spectral"))
-	{
-		SetClassFieldBool(Class, "bSpectral", Value);
-		return true;
-	}
 	if (!Flag.ICmp("Frightened"))
 	{
 		//FIXME
@@ -1432,150 +1472,12 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		return true;
 	}
 	//
-	//	Defenses
-	//
-	if (!Flag.ICmp("Invulnerable"))
-	{
-		SetClassFieldBool(Class, "bInvulnerable", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Reflective"))
-	{
-		SetClassFieldBool(Class, "bReflective", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ShieldReflect"))
-	{
-		SetClassFieldBool(Class, "bShieldReflect", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Deflect"))
-	{
-		SetClassFieldBool(Class, "bDeflect", Value);
-		return true;
-	}
-	if (!Flag.ICmp("FireResist"))
-	{
-		SetClassFieldBool(Class, "bFireResist", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoRadiusDmg"))
-	{
-		SetClassFieldBool(Class, "bNoRadiusDamage", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontBlast"))
-	{
-		SetClassFieldBool(Class, "bDontBlast", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoTarget"))
-	{
-		SetClassFieldBool(Class, "bNeverTarget", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Ghost"))
-	{
-		SetClassFieldBool(Class, "bGhost", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontMorph"))
-	{
-		SetClassFieldBool(Class, "bNoMorph", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontSquash"))
-	{
-		SetClassFieldBool(Class, "bDontSquash", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoTeleOther"))
-	{
-		SetClassFieldBool(Class, "bNoTeleOther", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontHurtSpecies"))
-	{
-		SetClassFieldBool(Class, "bDontHurtSpecies", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoDamage"))
-	{
-		SetClassFieldBool(Class, "bNoDamage", Value);
-		return true;
-	}
-	//
 	//	Appearance and sound
 	//
-	if (!Flag.ICmp("Invisible"))
-	{
-		SetClassFieldBool(Class, "bInvisible", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Shadow"))
-	{
-		SetClassFieldBool(Class, "bShadow", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoBlood"))
-	{
-		SetClassFieldBool(Class, "bNoBlood", Value);
-		return true;
-	}
 	if (!Flag.ICmp("NoBloodDecals"))
 	{
 		//FIXME
 		GCon->Logf("Unsupported flag NoBloodDecals in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("Stealth"))
-	{
-		SetClassFieldBool(Class, "bStealth", Value);
-		return true;
-	}
-	if (!Flag.ICmp("FloorClip"))
-	{
-		SetClassFieldBool(Class, "bFloorClip", Value);
-		return true;
-	}
-	if (!Flag.ICmp("SpawnFloat"))
-	{
-		SetClassFieldBool(Class, "bSpawnFloat", Value);
-		return true;
-	}
-	if (!Flag.ICmp("SpawnCeiling"))
-	{
-		SetClassFieldBool(Class, "bSpawnCeiling", Value);
-		return true;
-	}
-	if (!Flag.ICmp("FloatBob"))
-	{
-		SetClassFieldBool(Class, "bFloatBob", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoIceDeath"))
-	{
-		SetClassFieldBool(Class, "bNoIceDeath", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontGib"))
-	{
-		SetClassFieldBool(Class, "bDontGib", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontSplash"))
-	{
-		SetClassFieldBool(Class, "bNoSplash", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontOverlap"))
-	{
-		SetClassFieldBool(Class, "bDontOverlap", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Randomize"))
-	{
-		SetClassFieldBool(Class, "bRandomise", Value);
 		return true;
 	}
 	if (!Flag.ICmp("FixMapThingPos"))
@@ -1584,40 +1486,10 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		GCon->Logf("Unsupported flag FixMapThingPos in %s", Class->GetName());
 		return true;
 	}
-	if (!Flag.ICmp("FullVolActive"))
-	{
-		SetClassFieldBool(Class, "bFullVolActive", Value);
-		return true;
-	}
-	if (!Flag.ICmp("FullVolDeath"))
-	{
-		SetClassFieldBool(Class, "bFullVolDeath", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoWallBounceSnd"))
-	{
-		SetClassFieldBool(Class, "bNoWallBounceSnd", Value);
-		return true;
-	}
-	if (!Flag.ICmp("VisibilityPulse"))
-	{
-		SetClassFieldBool(Class, "bVisibilityPulse", Value);
-		return true;
-	}
-	if (!Flag.ICmp("RocketTrail"))
-	{
-		SetClassFieldBool(Class, "bLeaveTrail", Value);
-		return true;
-	}
 	if (!Flag.ICmp("GrenadeTrail"))
 	{
 		//FIXME
 		GCon->Logf("Unsupported flag GrenadeTrail in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("NoBounceSound"))
-	{
-		SetClassFieldBool(Class, "bNoBounceSound", Value);
 		return true;
 	}
 	if (!Flag.ICmp("NoSkin"))
@@ -1626,29 +1498,9 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		GCon->Logf("Unsupported flag NoSkin in %s", Class->GetName());
 		return true;
 	}
-	if (!Flag.ICmp("DontTranslate"))
-	{
-		SetClassFieldBool(Class, "bDontTranslate", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoPain"))
-	{
-		SetClassFieldBool(Class, "bNoPain", Value);
-		return true;
-	}
 	//
 	//	Projectile
 	//
-	if (!Flag.ICmp("Missile"))
-	{
-		SetClassFieldBool(Class, "bMissile", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Ripper"))
-	{
-		SetClassFieldBool(Class, "bRip", Value);
-		return true;
-	}
 	if (!Flag.ICmp("FireDamage"))
 	{
 		SetClassFieldName(Class, "DamageType", Value ? VName("Fire") : NAME_None);
@@ -1659,80 +1511,10 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		SetClassFieldName(Class, "DamageType", Value ? VName("Ice") : NAME_None);
 		return true;
 	}
-	if (!Flag.ICmp("NoDamageThrust"))
-	{
-		SetClassFieldBool(Class, "bNoDamageThrust", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontReflect"))
-	{
-		SetClassFieldBool(Class, "bDontReflect", Value);
-		return true;
-	}
-	if (!Flag.ICmp("FloorHugger"))
-	{
-		SetClassFieldBool(Class, "bIgnoreFloorStep", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CeilingHugger"))
-	{
-		SetClassFieldBool(Class, "bIgnoreCeilingStep", Value);
-		return true;
-	}
-	if (!Flag.ICmp("BloodlessImpact"))
-	{
-		SetClassFieldBool(Class, "bBloodlessImpact", Value);
-		return true;
-	}
 	if (!Flag.ICmp("BloodSplatter"))
 	{
 		//FIXME
 		GCon->Logf("Unsupported flag BloodSplatter in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("FoilInvul"))
-	{
-		SetClassFieldBool(Class, "bDamageInvulnerable", Value);
-		return true;
-	}
-	if (!Flag.ICmp("SeekerMissile"))
-	{
-		SetClassFieldBool(Class, "bSeekerMissile", Value);
-		return true;
-	}
-	if (!Flag.ICmp("SkyExplode"))
-	{
-		SetClassFieldBool(Class, "bExplodeOnSky", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoExplodeFloor"))
-	{
-		SetClassFieldBool(Class, "bNoExplodeFloor", Value);
-		return true;
-	}
-	if (!Flag.ICmp("StrifeDamage"))
-	{
-		SetClassFieldBool(Class, "bStrifeDamage", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ExtremeDeath"))
-	{
-		SetClassFieldBool(Class, "bExtremeDeath", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoExtremeDeath"))
-	{
-		SetClassFieldBool(Class, "bNoExtremeDeath", Value);
-		return true;
-	}
-	if (!Flag.ICmp("BounceOnActors"))
-	{
-		SetClassFieldBool(Class, "bBounceOnActors", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ExplodeOnWater"))
-	{
-		SetClassFieldBool(Class, "bExplodeOnWater", Value);
 		return true;
 	}
 	if (!Flag.ICmp("DehExplosion"))
@@ -1741,104 +1523,9 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		GCon->Logf("Unsupported flag DehExplosion in %s", Class->GetName());
 		return true;
 	}
-	if (!Flag.ICmp("PierceArmor"))
-	{
-		SetClassFieldBool(Class, "bPierceArmor", Value);
-		return true;
-	}
-	if (!Flag.ICmp("ForceRadiusDmg"))
-	{
-		SetClassFieldBool(Class, "bForceRadiusDmg", Value);
-		return true;
-	}
-	if (!Flag.ICmp("SpawnSoundSource"))
-	{
-		SetClassFieldBool(Class, "bSpawnSoundSource", Value);
-		return true;
-	}
 	//
 	//	Miscellaneous
 	//
-	if (!Flag.ICmp("Dropped"))
-	{
-		SetClassFieldBool(Class, "bDropped", Value);
-		return true;
-	}
-	if (!Flag.ICmp("IsMonster"))
-	{
-		SetClassFieldBool(Class, "bMonster", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Corpse"))
-	{
-		SetClassFieldBool(Class, "bCorpse", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CountKill"))
-	{
-		SetClassFieldBool(Class, "bCountKill", Value);
-		return true;
-	}
-	if (!Flag.ICmp("CountItem"))
-	{
-		SetClassFieldBool(Class, "bCountItem", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NotDMatch"))
-	{
-		SetClassFieldBool(Class, "bNoDeathmatch", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NonShootable"))
-	{
-		SetClassFieldBool(Class, "bNonShootable", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DropOff"))
-	{
-		SetClassFieldBool(Class, "bDropOff", Value);
-		return true;
-	}
-	if (!Flag.ICmp("PuffOnActors"))
-	{
-		SetClassFieldBool(Class, "bPuffOnActors", Value);
-		return true;
-	}
-	if (!Flag.ICmp("AllowParticles"))
-	{
-		SetClassFieldBool(Class, "bPuffParticles", Value);
-		return true;
-	}
-	if (!Flag.ICmp("AlwaysPuff"))
-	{
-		SetClassFieldBool(Class, "bAlwaysPuff", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Synchronized"))
-	{
-		SetClassFieldBool(Class, "bSynchronised", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Faster"))
-	{
-		SetClassFieldBool(Class, "bFaster", Value);
-		return true;
-	}
-	if (!Flag.ICmp("AlwaysFast"))
-	{
-		SetClassFieldBool(Class, "bAlwaysFast", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NeverFast"))
-	{
-		SetClassFieldBool(Class, "bNeverFast", Value);
-		return true;
-	}
-	if (!Flag.ICmp("FastMelee"))
-	{
-		SetClassFieldBool(Class, "bFastMelee", Value);
-		return true;
-	}
 	if (!Flag.ICmp("OldRadiusDmg"))
 	{
 		//FIXME
@@ -1851,11 +1538,6 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		GCon->Logf("Unsupported flag UseSpecial in %s", Class->GetName());
 		return true;
 	}
-	if (!Flag.ICmp("BossDeath"))
-	{
-		SetClassFieldBool(Class, "bBossDeath", Value);
-		return true;
-	}
 	//
 	//	Limited use
 	//
@@ -1865,40 +1547,10 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		GCon->Logf("Unsupported flag SeesDaggers in %s", Class->GetName());
 		return true;
 	}
-	if (!Flag.ICmp("InCombat"))
-	{
-		SetClassFieldBool(Class, "bInCombat", Value);
-		return true;
-	}
 	if (!Flag.ICmp("NoClip"))
 	{
 		SetClassFieldBool(Class, "bColideWithThings", !Value);
 		SetClassFieldBool(Class, "bColideWithWorld", !Value);
-		return true;
-	}
-	if (!Flag.ICmp("NoSector"))
-	{
-		SetClassFieldBool(Class, "bNoSector", Value);
-		return true;
-	}
-	if (!Flag.ICmp("IceCorpse"))
-	{
-		SetClassFieldBool(Class, "bIceCorpse", Value);
-		return true;
-	}
-	if (!Flag.ICmp("JustHit"))
-	{
-		SetClassFieldBool(Class, "bJustHit", Value);
-		return true;
-	}
-	if (!Flag.ICmp("JustAttacked"))
-	{
-		SetClassFieldBool(Class, "bJustAttacked", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Teleport"))
-	{
-		SetClassFieldBool(Class, "bTeleport", Value);
 		return true;
 	}
 	if (!Flag.ICmp("ForceYBillboard"))
@@ -1913,208 +1565,16 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		GCon->Logf("Unsupported flag ForceXYBillboard in %s", Class->GetName());
 		return true;
 	}
-	//
-	//	Not documented
-	//
-	if (!Flag.ICmp("InFloat"))
-	{
-		SetClassFieldBool(Class, "bInFloat", Value);
-		return true;
-	}
-	if (!Flag.ICmp("SkullFly"))
-	{
-		SetClassFieldBool(Class, "bSkullFly", Value);
-		return true;
-	}
-	if (!Flag.ICmp("Blasted"))
-	{
-		SetClassFieldBool(Class, "bBlasted", Value);
-		return true;
-	}
-	if (!Flag.ICmp("AlwaysRespawn"))
-	{
-		SetClassFieldBool(Class, "bAlwaysRespawn", Value);
-		return true;
-	}
-	if (!Flag.ICmp("NeverRespawn"))
-	{
-		SetClassFieldBool(Class, "bNeverRespawn", Value);
-		return true;
-	}
-	if (!Flag.ICmp("DontRip"))
-	{
-		SetClassFieldBool(Class, "bDontRip", Value);
-		return true;
-	}
 
 	//
 	//	Inventory class flags.
 	//
 	if (Class->IsChildOf(InventoryClass))
 	{
-		if (!Flag.ICmp("Inventory.Quiet") || !Flag.ICmp("Quiet"))
-		{
-			SetClassFieldBool(Class, "bQuiet", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.AutoActivate") || !Flag.ICmp("AutoActivate"))
-		{
-			SetClassFieldBool(Class, "bAutoActivate", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.Undroppable") || !Flag.ICmp("Undroppable"))
-		{
-			SetClassFieldBool(Class, "bUndroppable", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.InvBar") || !Flag.ICmp("InvBar"))
-		{
-			SetClassFieldBool(Class, "bInvBar", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.HubPower") || !Flag.ICmp("HubPower"))
-		{
-			SetClassFieldBool(Class, "bHubPower", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.InterHubStrip") || !Flag.ICmp("InterHubStrip"))
-		{
-			SetClassFieldBool(Class, "bInterHubStrip", Value);
-			return true;
-		}
 		if (!Flag.ICmp("Inventory.PickupFlash") || !Flag.ICmp("PickupFlash"))
 		{
 			AddClassFixup(Class, "PickupFlashType", Value ? "PickupFlash" :
 				"None", ClassFixups);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.AlwaysPickup") || !Flag.ICmp("AlwaysPickup"))
-		{
-			SetClassFieldBool(Class, "bAlwaysPickup", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.FancyPickupSound") || !Flag.ICmp("FancyPickupSound"))
-		{
-			SetClassFieldBool(Class, "bFullVolPickupSound", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.BigPowerup") || !Flag.ICmp("BigPowerup"))
-		{
-			SetClassFieldBool(Class, "bBigPowerup", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.KeepDepleted") || !Flag.ICmp("KeepDepleted"))
-		{
-			SetClassFieldBool(Class, "bKeepDepleted", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.IgnoreSkill") || !Flag.ICmp("IgnoreSkill"))
-		{
-			SetClassFieldBool(Class, "bIgnoreSkill", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Inventory.AdditiveTime") || !Flag.ICmp("AdditiveTime"))
-		{
-			SetClassFieldBool(Class, "bAdditiveTime", Value);
-			return true;
-		}
-	}
-
-	//
-	//	Weapon class flags.
-	//
-	if (Class->IsChildOf(WeaponClass))
-	{
-		if (!Flag.ICmp("Weapon.NoAutoFire") || !Flag.ICmp("NoAutoFire"))
-		{
-			SetClassFieldBool(Class, "bNoAutoFire", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.ReadySndHalf") || !Flag.ICmp("ReadySndHalf"))
-		{
-			SetClassFieldBool(Class, "bReadySndHalf", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.DontBob") || !Flag.ICmp("DontBob"))
-		{
-			SetClassFieldBool(Class, "bDontBob", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.AxeBlood") || !Flag.ICmp("AxeBlood"))
-		{
-			SetClassFieldBool(Class, "bAxeBlood", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.NoAlert") || !Flag.ICmp("NoAlert"))
-		{
-			SetClassFieldBool(Class, "bNoAlert", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.Ammo_Optional") || !Flag.ICmp("Ammo_Optional"))
-		{
-			SetClassFieldBool(Class, "bAmmoOptional", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.Alt_Ammo_Optional") || !Flag.ICmp("Alt_Ammo_Optional"))
-		{
-			SetClassFieldBool(Class, "bAltAmmoOptional", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.Primary_Uses_Both") || !Flag.ICmp("Primary_Uses_Both"))
-		{
-			SetClassFieldBool(Class, "bPrimaryUsesBoth", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.Wimpy_Weapon") || !Flag.ICmp("Wimpy_Weapon"))
-		{
-			SetClassFieldBool(Class, "bWimpyWeapon", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.Powered_Up") || !Flag.ICmp("Powered_Up"))
-		{
-			SetClassFieldBool(Class, "bPoweredUp", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.Staff2_Kickback") || !Flag.ICmp("Staff2_Kickback"))
-		{
-			SetClassFieldBool(Class, "bStaff2Kickback", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.Explosive") || !Flag.ICmp("Explosive"))
-		{
-			SetClassFieldBool(Class, "bBotProjectile", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.MeleeWeapon") || !Flag.ICmp("MeleeWeapon"))
-		{
-			SetClassFieldBool(Class, "bBotMelee", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.BFG") || !Flag.ICmp("BFG"))
-		{
-			SetClassFieldBool(Class, "bBotBfg", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.CheatNotWeapon") || !Flag.ICmp("CheatNotWeapon"))
-		{
-			SetClassFieldBool(Class, "bCheatNotWeapon", Value);
-			return true;
-		}
-		if (!Flag.ICmp("Weapon.No_Auto_Switch") || !Flag.ICmp("No_Auto_Switch"))
-		{
-			SetClassFieldBool(Class, "bNoAutoSwitch", Value);
-			return true;
-		}
-	}
-
-	//
-	//	PlayerPawn class flags.
-	//
-	if (Class->IsChildOf(PlayerPawnClass))
-	{
-		if (!Flag.ICmp("PickUp"))
-		{
-			SetClassFieldBool(Class, "bPickUp", Value);
 			return true;
 		}
 	}
@@ -4956,6 +4416,11 @@ void ProcessDecorateScripts()
 	FuncA_ExplodeParms = ActorClass->FindMethodChecked("A_ExplodeParms");
 	FuncA_FreezeDeath = ActorClass->FindMethodChecked("A_FreezeDeath");
 	FuncA_FreezeDeathChunks = ActorClass->FindMethodChecked("A_FreezeDeathChunks");
+
+	FlagList[0].Class = ActorClass;
+	FlagList[1].Class = InventoryClass;
+	FlagList[2].Class = WeaponClass;
+	FlagList[3].Class = PlayerPawnClass;
 
 	//	Parse scripts.
 	TArray<VClassFixup> ClassFixups;
