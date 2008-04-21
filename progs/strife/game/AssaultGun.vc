@@ -38,7 +38,8 @@ Select:
 	RIFG A 1 A_Raise
 	Loop
 Fire:
-	RIFF ABD 3 A_FireAssaultGun
+	RIFF AB 3 A_FireAssaultGun
+	RIFG D 3 A_FireAssaultGun
 	RIFG C 0 A_ReFire
 	RIFG B 2 A_Light0
 	Goto Ready
