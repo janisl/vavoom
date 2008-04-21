@@ -465,7 +465,7 @@ IMPLEMENT_FUNCTION(VObject, IsA)
 IMPLEMENT_FUNCTION(VObject, IsDestroyed)
 {
 	P_GET_SELF;
-	RET_BOOL(Self->GetFlags() & _OF_Destroyed);
+	RET_BOOL(Self->GetFlags() & _OF_DelayedDestroy);
 }
 
 //**************************************************************************
