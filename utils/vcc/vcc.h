@@ -206,7 +206,7 @@ public:
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void FatalError(char *text, ...) __attribute__((noreturn, format(printf, 1, 2)));
+void FatalError(const char *text, ...) __attribute__((noreturn, format(printf, 1, 2)));
 void ParseError(TLocation, ECompileError error);
 void ParseError(TLocation, ECompileError error, const char *text, ...) __attribute__ ((format(printf, 3, 4)));
 void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));

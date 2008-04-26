@@ -45,7 +45,7 @@ int			NumErrors = 0;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static char* ErrorNames[NUM_ERRORS] =
+static const char* ErrorNames[NUM_ERRORS] =
 {
 	"No error.",
 	//  File errors
@@ -83,7 +83,7 @@ static char* ErrorNames[NUM_ERRORS] =
 //
 //==========================================================================
 
-void FatalError(char *text, ...)
+void FatalError(const char *text, ...)
 {
 	char	workString[256];
 	va_list	argPtr;
