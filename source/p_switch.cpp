@@ -145,6 +145,7 @@ bool VLevelInfo::ChangeSwitchTexture(int sidenum, bool useAgain,
 		Quest = sw->Quest;
 		return true;
 	}
+	Quest = false;
 	return false;
 	unguard;
 }

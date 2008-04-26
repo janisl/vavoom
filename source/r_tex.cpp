@@ -1644,6 +1644,8 @@ void P_InitSwitchList()
 			Def2->Tex = t2;
 			Def1->NumFrames = 1;
 			Def2->NumFrames = 1;
+			Def1->Quest = false;
+			Def2->Quest = false;
 			Def1->Frames = new TSwitchFrame[1];
 			Def2->Frames = new TSwitchFrame[1];
 			Def1->Frames[0].Texture = t2;
