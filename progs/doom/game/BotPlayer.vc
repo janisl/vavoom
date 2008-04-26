@@ -579,7 +579,7 @@ bool CheckPath(float ang, float dist)
  	x2 = x1 + dist * bottracedir.x;
  	y2 = y1 + dist * bottracedir.y;
 
-	player.P_UseLines();
+	EntityEx(player.MO).UseLines(Player::USERANGE, Player::USETHINGRANGE, '*usefail');
 
 	foreach botmo.PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES)
 	{

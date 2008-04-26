@@ -257,6 +257,7 @@ bool bNeverRespawn;		// Never respawns, regardless of skill.
 bool bDontRip;			// Ripping projectiles explode when hitting this actor.
 bool bCanUseWalls;		// Can activate "use" specials.
 transient bool bInChase;// Used to prevent recursion in A_Chase.
+bool bUseSpecial;		// Execute special when this thing is being used.
 
 //  Params
 float			Speed;
@@ -8414,6 +8415,172 @@ final void CheckFakeFloorTriggers(float OldZ, optional bool OldHasViewH)
 			}
 		}
 	}
+}
+
+//==========================================================================
+//
+//  UseLines
+//
+//  Looks for special lines in front of the actor to activate.
+//
+//==========================================================================
+
+final bool UseLines(float UseRange, float UseThingRange, name FailSound)
+{
+	bool action;
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+	TVec useDir;
+	intercept_t* in;
+	TVec hit_point;
+	opening_t *open;
+
+	action = false;
+	AngleVector(&Angles, &useDir);
+	x1 = Origin.x;
+	y1 = Origin.y;
+
+	x2 = x1 + UseThingRange * useDir.x;
+	y2 = y1 + UseThingRange * useDir.y;
+	foreach PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS)
+	{
+		if (!in->bIsALine)
+		{
+			//	Check height.
+			if (Origin.z >= in->Thing.Origin.z + in->Thing.Height ||
+				Origin.z + Height <= in->Thing.Origin.z)
+			{
+				continue;
+			}
+			if (UseThing(EntityEx(in->Thing)))
+			{
+				action = true;
+				break;
+			}
+			continue;
+		}
+
+		if (!(in->line->flags & ML_TWOSIDED))
+		{
+			break;	// stop
+		}
+
+		hit_point = Origin + (UseThingRange * in->frac) * useDir;
+		open = LineOpenings(in->line, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + Height);
+		if (!open || open->range < 1.0)
+		{
+			// can't use through a wall
+			break;
+		}
+		continue;
+	}
+
+	x2 = x1 + UseRange * useDir.x;
+	y2 = y1 + UseRange * useDir.y;
+	bool DoSecAct = true;
+	bool FoundLine = false;
+	foreach PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES)
+	{
+		line_t* line;
+		float pheight;
+
+		line = in->line;
+		if (!line->special || (Level.GET_SPAC(line->flags) != SPAC_USE &&
+			Level.GET_SPAC(line->flags) != SPAC_USETHROUGH))
+		{
+			hit_point = Origin + (UseRange * in->frac) * useDir;
+			open = LineOpenings(line, hit_point);
+			open = FindOpening(open, hit_point.z,
+				hit_point.z + Height);
+			if (!open)
+			{
+				DoSecAct = false;
+
+				//	Let sector intercept the use.
+				if (Sector->ActionList &&
+					SectorAction(Sector->ActionList).TriggerAction(
+					self, SectorAction::SECSPAC_Use))
+				{
+					break;
+				}
+
+				sector_t* Sec = PointOnPlaneSide(Origin, line) == 0 ?
+					line->frontsector : line->backsector;
+				if (Sec->ActionList &&
+					SectorAction(Sec->ActionList).TriggerAction(
+					self, SectorAction::SECSPAC_UseWall))
+				{
+					break;
+				}
+
+				PlaySound(FailSound, CHAN_VOICE);
+
+				// can't use through a wall
+				break;
+			}
+			// not a special line, but keep checking
+			pheight = Origin.z + Height / 2.0;
+			if ((open->top < pheight) || (open->bottom > pheight))
+			{
+				PlaySound(FailSound, CHAN_VOICE);
+			}
+			FoundLine = true;
+			continue;
+		}
+
+		if (PointOnPlaneSide(Origin, line) == 1)
+		{
+			//	Don't use back side unless it's a two-sided line.
+			if (line->backsector != NULL)
+			{
+				continue;
+			}
+			break;
+		}
+
+		LineSpecialLevelInfo(Level).ActivateLine(line, self, 0, SPAC_USE);
+		action = true;
+
+		//WAS can't use more than one special line in a row
+		//jff 3/21/98 NOW multiple use allowed with enabling line flag
+		if (Level.GET_SPAC(line->flags) != SPAC_USETHROUGH)
+		{
+			DoSecAct = false;
+			break;
+		}
+	}
+
+	if (DoSecAct && Sector->ActionList)
+	{
+		//	Let sector intercept the use.
+		int Spac = SectorAction::SECSPAC_Use;
+		if (FoundLine)
+		{
+			Spac |= SectorAction::SECSPAC_UseWall;
+		}
+		SectorAction(Sector->ActionList).TriggerAction(self, Spac);
+	}
+	return action;
+}
+
+//==========================================================================
+//
+//  UseThing
+//
+//==========================================================================
+
+bool UseThing(EntityEx Other)
+{
+	if (Other.bUseSpecial && Other.Special && Level.ExecuteActionSpecial(
+		Other.Special, Other.Args[0], Other.Args[1], Other.Args[2],
+		Other.Args[3], Other.Args[4], NULL, 0, self))
+	{
+		return true;
+	}
+	return LineSpecialLevelInfo(Level).StartConversation(self, Other);
 }
 
 //==========================================================================

@@ -268,6 +268,7 @@ static VFlagDef ActorFlags[] =
 	{ "NeverFast", NULL, "bNeverFast" },
 	{ "FastMelee", NULL, "bFastMelee" },
 	{ "BossDeath", NULL, "bBossDeath" },
+	{ "UseSpecial", NULL, "bUseSpecial" },
 	//
 	//	Limited use
 	//
@@ -1612,12 +1613,6 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 	{
 		//FIXME
 		GCon->Logf("Unsupported flag OldRadiusDmg in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("UseSpecial"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag UseSpecial in %s", Class->GetName());
 		return true;
 	}
 	//
