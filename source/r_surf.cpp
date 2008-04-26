@@ -976,6 +976,17 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 		sec_plane_t* back_floor = &seg->backsector->floor;
 		sec_plane_t* back_ceiling = &seg->backsector->ceiling;
+		if (seg->backsector->fakefloors)
+		{
+			if (back_floor == &seg->backsector->floor)
+			{
+				back_floor = &seg->backsector->fakefloors->floorplane;
+			}
+			if (back_ceiling == &seg->backsector->ceiling)
+			{
+				back_ceiling = &seg->backsector->fakefloors->ceilplane;
+			}
+		}
 
 		float back_topz1 = back_ceiling->GetPointZ(*seg->v1);
 		float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
@@ -1113,10 +1124,20 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->textureoffset = sidedef->textureoffset;
 		sp->rowoffset = sidedef->rowoffset;
 
-		float midtopz1 = MIN(topz1, back_topz1);
-		float midtopz2 = MIN(topz2, back_topz2);
-		float midbotz1 = MAX(botz1, back_botz1);
-		float midbotz2 = MAX(botz2, back_botz2);
+		float midtopz1 = topz1;
+		float midtopz2 = topz2;
+		float midbotz1 = botz1;
+		float midbotz2 = botz2;
+		if (topz1 > back_topz1 && sidedef->toptexture > 0)
+		{
+			midtopz1 = back_topz1;
+			midtopz2 = back_topz2;
+		}
+		if (botz1 < back_botz1 && sidedef->bottomtexture > 0)
+		{
+			midbotz1 = back_botz1;
+			midbotz2 = back_botz2;
+		}
 
 		dseg->mid = pspart++;
 		sp = dseg->mid;
@@ -1391,6 +1412,17 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 	{
 		sec_plane_t* back_floor = &seg->backsector->floor;
 		sec_plane_t* back_ceiling = &seg->backsector->ceiling;
+		if (seg->backsector->fakefloors)
+		{
+			if (back_floor == &seg->backsector->floor)
+			{
+				back_floor = &seg->backsector->fakefloors->floorplane;
+			}
+			if (back_ceiling == &seg->backsector->ceiling)
+			{
+				back_ceiling = &seg->backsector->fakefloors->ceilplane;
+			}
+		}
 
 		// top wall
 		sp = dseg->top;
@@ -1595,10 +1627,20 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				float back_botz1 = back_floor->GetPointZ(*seg->v1);
 				float back_botz2 = back_floor->GetPointZ(*seg->v2);
 
-				float midtopz1 = MIN(topz1, back_topz1);
-				float midtopz2 = MIN(topz2, back_topz2);
-				float midbotz1 = MAX(botz1, back_botz1);
-				float midbotz2 = MAX(botz2, back_botz2);
+				float midtopz1 = topz1;
+				float midtopz2 = topz2;
+				float midbotz1 = botz1;
+				float midbotz2 = botz2;
+				if (topz1 > back_topz1 && sidedef->toptexture > 0)
+				{
+					midtopz1 = back_topz1;
+					midtopz2 = back_topz2;
+				}
+				if (botz1 < back_botz1 && sidedef->bottomtexture > 0)
+				{
+					midbotz1 = back_botz1;
+					midbotz2 = back_botz2;
+				}
 
 				float texh = MTex->GetScaledHeight();
 
