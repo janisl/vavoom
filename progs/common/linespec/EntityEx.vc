@@ -8495,7 +8495,7 @@ final bool UseLines(float UseRange, float UseThingRange, name FailSound)
 			open = LineOpenings(line, hit_point);
 			open = FindOpening(open, hit_point.z,
 				hit_point.z + Height);
-			if (!open)
+			if (!open || open->range <= 0.0)
 			{
 				DoSecAct = false;
 
