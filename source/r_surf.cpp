@@ -2135,12 +2135,12 @@ bool VRenderLevel::CopyPlaneIfValid(sec_plane_t* dest,
 	}
 	else if (opp->normal != -dest->normal)
 	{
-		if (source->dist < dest->dist)
+		if (source->dist > dest->dist)
 		{
 			copy = true;
 		}
 	}
-	else if (source->dist < dest->dist && source->dist > -opp->dist)
+	else if (source->dist > dest->dist && source->dist < -opp->dist)
 	{
 		copy = true;
 	}
