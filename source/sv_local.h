@@ -90,7 +90,7 @@ public:
 	void CheckAcsStore();
 	bool Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
 		VEntity* Activator, line_t* Line, int Side, bool Always,
-		bool WantResult);
+		bool WantResult, bool Net = false);
 	bool Terminate(int Number, int MapNum);
 	bool Suspend(int Number, int MapNum);
 	VAcs* SpawnScript(VAcsInfo* Info, VAcsObject* Object, VEntity* Activator,

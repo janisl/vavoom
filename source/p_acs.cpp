@@ -1485,7 +1485,8 @@ void VAcsLevel::CheckAcsStore()
 //==========================================================================
 
 bool VAcsLevel::Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
-	VEntity* Activator, line_t* Line, int Side, bool Always, bool WantResult)
+	VEntity* Activator, line_t* Line, int Side, bool Always, bool WantResult,
+	bool Net)
 {
 	guard(VAcsLevel::Start);
 	if (MapNum)
@@ -1505,6 +1506,12 @@ bool VAcsLevel::Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
 	{
 		//	Script not found
 		GCon->Logf(NAME_Dev, "Start ACS ERROR: Unknown script %d", Number);
+		return false;
+	}
+	if (Net && netgame && !Info->Flags & SCRIPTF_Net)
+	{
+		GCon->Logf("%s tried to puke script %d",
+			*Activator->Player->PlayerName, Number);
 		return false;
 	}
 	VAcs* script = SpawnScript(Info, Object, Activator, Line, Side, Arg1,
@@ -4900,4 +4907,49 @@ IMPLEMENT_FUNCTION(VLevel, StartTypedACScripts)
 	P_GET_SELF;
 	Self->Acs->StartTypedACScripts(Type, Arg1, Arg2, Arg3, Activator, Always,
 		RunNow);
+}
+
+//==========================================================================
+//
+//	Puke
+//
+//==========================================================================
+
+COMMAND(Puke)
+{
+	guard(COMMAND Puke);
+	if (Source == SRC_Command)
+	{
+#ifdef CLIENT
+		ForwardToServer();
+#endif
+		return;
+	}
+
+	if (Args.Num() < 2)
+	{
+		return;
+	}
+	int Script = atoi(*Args[1]);
+	if (Script == 0)
+	{
+		//	Script 0 is special
+		return;
+	}
+	int ScArgs[3];
+	for (int i = 0; i < 3; i++)
+	{
+		if (Args.Num() >= i + 3)
+		{
+			ScArgs[i] = atoi(*Args[i + 2]);
+		}
+		else
+		{
+			ScArgs[i] = 0;
+		}
+	}
+
+	Player->Level->XLevel->Acs->Start(abs(Script), 0, ScArgs[0], ScArgs[1],
+		ScArgs[2], GGameInfo->Players[0]->MO, NULL, 0, Script < 0, false, true);
+	unguard;
 }
