@@ -988,6 +988,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			}
 		}
 
+		VTexture* TTex = GTextureManager(sidedef->toptexture);
+
 		float back_topz1 = back_ceiling->GetPointZ(*seg->v1);
 		float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
 		float back_botz1 = back_floor->GetPointZ(*seg->v1);
@@ -999,16 +1001,22 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		float top_TexZ = r_ceiling->TexZ;
 		if (IsSky(r_ceiling) && IsSky(back_ceiling))
 		{
-			top_topz1 = back_topz1;
-			top_topz2 = back_topz2;
-			top_TexZ = back_ceiling->TexZ;
+			if (r_ceiling->SkyBox == back_ceiling->SkyBox)
+			{
+				top_topz1 = back_topz1;
+				top_topz2 = back_topz2;
+				top_TexZ = back_ceiling->TexZ;
+			}
+			else
+			{
+				TTex = GTextureManager[skyflatnum];
+			}
 		}
 
 		// top wall
 		dseg->top = pspart++;
 		sp = dseg->top;
 
-		VTexture* TTex = GTextureManager(sidedef->toptexture);
 		sp->texinfo.saxis = segdir * TextureSScale(TTex);
 		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(TTex);
 		sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
@@ -1428,6 +1436,11 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 		sp = dseg->top;
 		sp->texinfo.ColourMap = ColourMap;
 		VTexture* TTex = GTextureManager(sidedef->toptexture);
+		if (IsSky(r_ceiling) && IsSky(back_ceiling) &&
+			r_ceiling->SkyBox != back_ceiling->SkyBox)
+		{
+			TTex = GTextureManager[skyflatnum];
+		}
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
 			FASI(sp->backTopDist) != FASI(back_ceiling->dist) ||
@@ -1446,7 +1459,8 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			float top_topz1 = topz1;
 			float top_topz2 = topz2;
 			float top_TexZ = r_ceiling->TexZ;
-			if (IsSky(r_ceiling) && IsSky(back_ceiling))
+			if (IsSky(r_ceiling) && IsSky(back_ceiling) &&
+				r_ceiling->SkyBox == back_ceiling->SkyBox)
 			{
 				top_topz1 = back_topz1;
 				top_topz2 = back_topz2;
