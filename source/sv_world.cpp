@@ -445,7 +445,11 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 		(sector->heightsec->SectorFlags & sector_t::SF_UnderWater) &&
 		p.z < sector->heightsec->floor.GetPointZ(p))
 	{
-		return 1;
+		return 9;
+	}
+	if (sector->SectorFlags & sector_t::SF_UnderWater)
+	{
+		return 9;
 	}
 
 	for (reg = sector->botregion; reg; reg = reg->next)
