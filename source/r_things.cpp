@@ -36,6 +36,7 @@
 
 #include "gamedefs.h"
 #include "r_local.h"
+#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -607,7 +608,7 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 	{
 		light = LightPoint(mobj->Origin);
 	}
-	vuint32 Fade = GetFade(mobj->SubSector);
+	vuint32 Fade = GetFade(SV_PointInRegion(mobj->Sector, mobj->Origin));
 
 	//	Try to draw a model. If it's a script and it doesn't
 	// specify model for this frame, draw sprite instead.
@@ -849,7 +850,7 @@ void VRenderLevel::DrawPlayerSprites()
 		{
 			light = LightPoint(vieworg);
 		}
-		vuint32 Fade = GetFade(Level->PointInSubsector(cl->ViewOrg));
+		vuint32 Fade = GetFade(SV_PointInRegion(r_viewleaf->sector, cl->ViewOrg));
 		float Alpha = cl->ViewEntAlpha;
 		bool Additive = false;
 

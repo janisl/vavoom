@@ -118,7 +118,7 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	{
 		lLev = light_remap[lLev];
 	}
-	vuint32 Fade = GetFade(r_sub);
+	vuint32 Fade = GetFade(r_region);
 
 	if (SkyBox && (SkyBox->EntityFlags & VEntity::EF_FixedModel))
 	{
@@ -318,7 +318,7 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		{
 			lLev = light_remap[lLev];
 		}
-		vuint32 Fade = GetFade(r_sub);
+		vuint32 Fade = GetFade(r_region);
 
 		surface_t* Surf = dseg->HorizonTop;
 		Surf->plane = dseg->seg;
@@ -372,7 +372,7 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		{
 			lLev = light_remap[lLev];
 		}
-		vuint32 Fade = GetFade(r_sub);
+		vuint32 Fade = GetFade(r_region);
 
 		surface_t* Surf = dseg->HorizonBot;
 		Surf->plane = dseg->seg;

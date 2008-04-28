@@ -357,7 +357,7 @@ private:
 	void SetupCameraFrame(VEntity*, VTexture*, int, refdef_t*);
 	void MarkLeaves();
 	void RenderScene(const refdef_t*, const VViewClipper*);
-	vuint32 GetFade(subsector_t*);
+	vuint32 GetFade(sec_region_t*);
 	void UpdateCameraTexture(VEntity*, int, int);
 	VTextureTranslation* GetTranslation(int);
 	void BuildPlayerTranslations();

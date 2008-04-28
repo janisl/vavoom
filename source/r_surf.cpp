@@ -2177,7 +2177,8 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 	const sector_t *s = sec->heightsec;
 	sector_t *heightsec = r_viewleaf->sector->heightsec;
 	bool underwater = /*r_fakingunderwater ||*/
-		(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg));
+		//(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg));
+		(s && vieworg.z <= s->floor.GetPointZ(vieworg));
 	bool doorunderwater = false;
 	int diffTex = !!(s->SectorFlags & sector_t::SF_ClipFakePlanes);
 
@@ -2199,9 +2200,11 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 			if (underwater)
 			{
 //				tempsec->ColourMap = s->ColourMap;
+				ff->params.Fade = s->params.Fade;
 				if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
 				{
 					ff->params.lightlevel = s->params.lightlevel;
+					ff->params.LightColour = s->params.LightColour;
 
 /*					if (floorlightlevel != NULL)
 					{
@@ -2276,6 +2279,7 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 		ff->ceilplane.normal = -s->floor.normal;
 		ff->ceilplane.dist = -s->floor.dist/* + 1*/;
 //		ff->ColourMap = s->ColourMap;
+		ff->params.Fade = s->params.Fade;
 	}
 
 	// killough 11/98: prevent sudden light changes from non-water sectors:
@@ -2321,6 +2325,7 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 		if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
 		{
 			ff->params.lightlevel = s->params.lightlevel;
+			ff->params.LightColour = s->params.LightColour;
 
 /*			if (floorlightlevel != NULL)
 			{
@@ -2342,7 +2347,8 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 		ff->ceilplane.dist		= s->ceiling.dist;
 		ff->floorplane.normal	= -s->ceiling.normal;
 		ff->floorplane.dist		= -s->ceiling.dist/* + 1*/;
-//		ff->ColourMap			= s->ColourMap;
+		ff->params.Fade 		= s->params.Fade;
+//		ff->params.ColourMap	= s->params.ColourMap;
 
 		ff->ceilplane.pic = diffTex ? sec->ceiling.pic : s->ceiling.pic;
 		ff->floorplane.pic									= s->ceiling.pic;
@@ -2369,6 +2375,7 @@ void VRenderLevel::UpdateFakeFlats(sector_t* sec)
 		if (!(s->SectorFlags & sector_t::SF_NoFakeLight))
 		{
 			ff->params.lightlevel  = s->params.lightlevel;
+			ff->params.LightColour = s->params.LightColour;
 
 /*			if (floorlightlevel != NULL)
 			{

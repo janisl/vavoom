@@ -775,7 +775,7 @@ void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
 //
 //==========================================================================
 
-vuint32 VRenderLevel::GetFade(subsector_t* Sub)
+vuint32 VRenderLevel::GetFade(sec_region_t* Reg)
 {
 	guard(VRenderLevel::GetFade);
 	if (r_fog_test)
@@ -783,11 +783,11 @@ vuint32 VRenderLevel::GetFade(subsector_t* Sub)
 		return 0xff000000 | (int(255 * r_fog_r) << 16) |
 			(int(255 * r_fog_g) << 8) | int(255 * r_fog_b);
 	}
-	if (Sub->sector->params.Fade)
+	if (Reg->params->Fade)
 	{
-		return Sub->sector->params.Fade;
+		return Reg->params->Fade;
 	}
-	if (Level->LevelInfo->OutsideFog && Sub->sector->ceiling.pic == skyflatnum)
+	if (Level->LevelInfo->OutsideFog && Reg->ceiling->pic == skyflatnum)
 	{
 		return Level->LevelInfo->OutsideFog;
 	}
