@@ -1513,6 +1513,11 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			FreeWSurfs(sp->surfs);
 			sp->surfs = NULL;
 
+			sp->texinfo.Tex = GTextureManager[skyflatnum];
+			sp->texinfo.Alpha = 1.1;
+			sp->texinfo.Additive = false;
+			sp->texinfo.ColourMap = 0;
+
 			wv[0].x = wv[1].x = seg->v1->x;
 			wv[0].y = wv[1].y = seg->v1->y;
 			wv[2].x = wv[3].x = seg->v2->x;
