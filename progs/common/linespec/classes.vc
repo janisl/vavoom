@@ -187,6 +187,8 @@ enum
 #include "LowerStackLookOnly.vc"
 #include "SectorSilencer.vc"
 
+#include "SecretTrigger.vc"
+
 #include "LineSpecialClientGame.vc"
 
 //	We need Doom classes because of the DECORATE.
