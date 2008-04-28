@@ -188,6 +188,7 @@ enum
 #include "SectorSilencer.vc"
 
 #include "SecretTrigger.vc"
+#include "HateTarget.vc"
 
 #include "LineSpecialClientGame.vc"
 

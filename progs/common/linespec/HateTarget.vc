@@ -1,0 +1,101 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+//**
+//**	Something for monsters to hate and shoot at
+//**
+//**************************************************************************
+
+class HateTarget : Actor
+	__mobjinfo__(9076);
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	::BeginPlay();
+	if (Angles.yaw)
+	{
+		//	Each degree translates into 5 units of health and the result is
+		// rounded up to nearest 10.
+		Health = (ftoi(Angles.yaw) + 1) / 2 * 10;
+	}
+	else
+	{
+		Special2 = 1;
+		Health = 1000001;
+	}
+}
+
+//==========================================================================
+//
+//  TakeSpecialDamage
+//
+//==========================================================================
+
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
+{
+	if (Special2)
+	{
+		return 0;
+	}
+	else
+	{
+		return damage;
+	}
+}
+
+//==========================================================================
+//
+//  AngleIncrements
+//
+//==========================================================================
+
+int AngleIncrements()
+{
+	return 1;
+}
+
+states
+{
+Spawn:
+	TNT1 A -1
+	Stop
+}
+
+defaultproperties
+{
+	Radius = 20.0;
+	Height = 56.0;
+	Mass = 99999.0;
+	bShootable = true;
+	bNoGravity = true;
+	bNoBlood = true;
+	bNoSplash = true;
+}
