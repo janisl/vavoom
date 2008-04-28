@@ -226,7 +226,7 @@ BloodyLower:
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	if (!bRaised)
 	{
@@ -246,7 +246,7 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
 	if (bRaised)
 	{

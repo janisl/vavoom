@@ -47,11 +47,11 @@ int AngleIncrements()
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	int			i;
 
-	::Activate();
+	::Activate(Activator);
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		if (!Level.Game.Players[i])

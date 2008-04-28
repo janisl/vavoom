@@ -743,10 +743,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 			Arg5, A);
 		break;
 	case LNSPEC_ThingActivate:
-		buttonSuccess = EV_ThingActivate(Arg1);
+		buttonSuccess = EV_ThingActivate(Arg1, A);
 		break;
 	case LNSPEC_ThingDeactivate:
-		buttonSuccess = EV_ThingDeactivate(Arg1);
+		buttonSuccess = EV_ThingDeactivate(Arg1, A);
 		break;
 	case LNSPEC_ThingRemove:
 		buttonSuccess = EV_ThingRemove(Arg1);
@@ -3872,7 +3872,7 @@ final int AcsSpawnSpotFacing(name Name, int SpotTid, int Tid)
 //
 //==========================================================================
 
-final bool EV_ThingActivate(int tid)
+final bool EV_ThingActivate(int tid, EntityEx Activator)
 {
 	Entity	A;
 	int		searcher;
@@ -3883,7 +3883,7 @@ final bool EV_ThingActivate(int tid)
 	for (A = FindMobjFromTID(tid, &searcher); A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
-		if (A.Activate())
+		if (EntityEx(A).Activate(Activator))
 		{
 			success = true;
 		}
@@ -3897,7 +3897,7 @@ final bool EV_ThingActivate(int tid)
 //
 //==========================================================================
 
-final bool EV_ThingDeactivate(int tid)
+final bool EV_ThingDeactivate(int tid, EntityEx Activator)
 {
 	Entity	A;
 	int		searcher;
@@ -3908,7 +3908,7 @@ final bool EV_ThingDeactivate(int tid)
 	for (A = FindMobjFromTID(tid, &searcher); A;
 		A = FindMobjFromTID(tid, &searcher))
 	{
-		if (A.Deactivate())
+		if (EntityEx(A).Deactivate(Activator))
 		{
 			success = true;
 		}

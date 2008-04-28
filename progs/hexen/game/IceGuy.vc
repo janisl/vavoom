@@ -140,9 +140,9 @@ Death:
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
-	::Deactivate();
+	::Deactivate(Activator);
 	SetState(FindState('Dormant'));
 	return true;
 }

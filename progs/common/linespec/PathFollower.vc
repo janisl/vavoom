@@ -187,7 +187,7 @@ void BeginPlay()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
 	bActive = false;
 	return true;
@@ -199,7 +199,7 @@ bool Deactivate()
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	if (!bActive)
 	{
@@ -263,9 +263,9 @@ void Tick(float DeltaTime)
 			if (CurrNode != none)
 				NewNode();
 			if (CurrNode == none || CurrNode.NextPoint == none)
-				Deactivate();
+				Deactivate(none);
 			if ((Args[2] & 1) == 0 && CurrNode.NextPoint.NextPoint == none)
-				Deactivate();
+				Deactivate(none);
 		}
 	}
 }

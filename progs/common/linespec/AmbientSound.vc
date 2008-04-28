@@ -38,7 +38,7 @@ bool			bActive;
 void BeginPlay()
 {
 	::BeginPlay();
-	Activate();
+	Activate(none);
 }
 
 //==========================================================================
@@ -47,9 +47,9 @@ void BeginPlay()
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
-	::Activate();
+	::Activate(Activator);
 
 	FAmbientSound* Amb = GetAmbientSound(Args[0]);
 	if (!Amb || !Amb->Sound)
@@ -72,9 +72,9 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
-	::Deactivate();
+	::Deactivate(Activator);
 	if (bActive)
 	{
 		bActive = false;

@@ -130,12 +130,12 @@ bool Interpolate()
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	if (Target == none || bActive)
 		return false;
 
-	::Activate();
+	::Activate(Activator);
 	bSavedNoGravity = Target.bNoGravity;
 	bSavedNoBlockmap = Target.bNoBlockmap;
 	bSavedSolid = Target.bSolid;
@@ -161,9 +161,9 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
-	::Deactivate();
+	::Deactivate(Activator);
 	if (Target != none)
 	{
 		Target.bSolid = bSavedSolid;

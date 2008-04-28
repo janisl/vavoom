@@ -91,7 +91,7 @@ void BeginPlay()
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	//	Projectiles cannot activate.
 	bDormant = false;
@@ -104,7 +104,7 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
 	//	Projectiles can activate.
 	bDormant = true;

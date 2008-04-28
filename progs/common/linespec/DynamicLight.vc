@@ -78,7 +78,7 @@ void BeginPlay()
 
 	if (!bDormant)
 	{
-		Activate();
+		Activate(none);
 	}
 }
 
@@ -88,7 +88,7 @@ void BeginPlay()
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	bDormant = false;
 	LightTime = 0.0;
@@ -102,7 +102,7 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
 	bDormant = true;
 	return true;

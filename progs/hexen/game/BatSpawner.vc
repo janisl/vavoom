@@ -101,7 +101,7 @@ Inactive:
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	SetState(FindState('Active'));
 	return true;
@@ -113,7 +113,7 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
 	SetState(FindState('Inactive'));
 	return true;

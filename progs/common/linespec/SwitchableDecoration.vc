@@ -36,7 +36,7 @@ class SwitchableDecoration : Actor
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	SetState(FindState('Active'));
 	bDynamicLight = true;
@@ -52,7 +52,7 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
 	SetState(FindState('Inactive'));
 	bDynamicLight = false;

@@ -44,7 +44,7 @@ final void A_BellReset1()
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
 	if (Health > 0)
 	{

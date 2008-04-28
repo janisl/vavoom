@@ -70,9 +70,9 @@ replication
 //
 //==========================================================================
 
-bool Activate()
+bool Activate(EntityEx Activator)
 {
-	if (::Activate())
+	if (::Activate(Activator))
 	{
 		bFountain = true;
 		return true;
@@ -86,9 +86,9 @@ bool Activate()
 //
 //==========================================================================
 
-bool Deactivate()
+bool Deactivate(EntityEx Activator)
 {
-	if (::Deactivate())
+	if (::Deactivate(Activator))
 	{
 		bFountain = false;
 		return true;
