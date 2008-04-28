@@ -1048,7 +1048,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 		{
 			GLevelInfo->eventSpawnMapThing(&GLevel->Things[i]);
 		}
-		if (deathmatch && GLevelInfo->NumDeathmatchStarts < 4)
+		if (deathmatch && GLevelInfo->DeathmatchStarts.Num() < 4)
 		{
 			Host_Error("Level needs more deathmatch start spots");
 		}

@@ -64,8 +64,8 @@ void SpawnClient()
 	}
 	else
 	{
-		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			GetPlayerNum()]);
+		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
+			Level.Game.RebornPosition));
 	}
 }
 
@@ -94,26 +94,26 @@ void NetGameReborn()
 		return;
 	}
 
-	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		GetPlayerNum()]))
+	if (CheckSpot(Level.GetPlayerStart(GetPlayerNum(),
+		Level.Game.RebornPosition)))
 	{
-		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			GetPlayerNum()]);
+		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
+			Level.Game.RebornPosition));
 		return;
 	}
 
 	// try to spawn at one of the other players spots
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]))
+		if (CheckSpot(Level.GetPlayerStart(i, Level.Game.RebornPosition)))
 		{
-			SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]);
+			SpawnPlayer(Level.GetPlayerStart(i, Level.Game.RebornPosition));
 			return;
 		}
 		// he's going to be inside something.  Too bad.
 	}
-	SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		GetPlayerNum()]);
+	SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
+		Level.Game.RebornPosition));
 }
 
 //==========================================================================
@@ -162,7 +162,7 @@ void DeathMatchSpawnPlayer()
 
 	for (j = 0; j < 20; j++)
 	{
-		i = P_Random() % Level.NumDeathmatchStarts;
+		i = P_Random() % Level.DeathmatchStarts.Num;
 		if (CheckSpot(&Level.DeathmatchStarts[i]))
 		{
 			SpawnPlayer(&Level.DeathmatchStarts[i]);
@@ -171,7 +171,7 @@ void DeathMatchSpawnPlayer()
 	}
 
 	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(&Level.PlayerStarts[GetPlayerNum()]);
+	SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(), 0));
 }
 
 //==========================================================================

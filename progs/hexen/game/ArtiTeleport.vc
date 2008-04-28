@@ -42,16 +42,16 @@ bool Use(bool Pickup)
 
 	if (Level.Game.deathmatch)
 	{
-		i = P_Random() % Level.NumDeathmatchStarts;
+		i = P_Random() % Level.DeathmatchStarts.Num;
 		destX = Level.DeathmatchStarts[i].x;
 		destY = Level.DeathmatchStarts[i].y;
 		destAngle = itof(45 * (Level.DeathmatchStarts[i].angle / 45));
 	}
 	else
 	{
-		destX = Level.PlayerStarts[0].x;
-		destY = Level.PlayerStarts[0].y;
-		destAngle = itof(45 * (Level.PlayerStarts[0].angle / 45));
+		destX = Level.GetPlayerStart(0, 0)->x;
+		destY = Level.GetPlayerStart(0, 0)->y;
+		destAngle = itof(45 * (Level.GetPlayerStart(0, 0)->angle / 45));
 	}
 	EntityEx(Owner).Teleport(vector(destX, destY, EntityEx::ONFLOORZ),
 		destAngle, true, true, false);

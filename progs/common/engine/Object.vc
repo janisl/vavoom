@@ -150,9 +150,6 @@ enum
 	RES_PASTDEST
 };
 
-const int MAXDEATHMATCHSTARTS	= 16;
-const int MAX_PLAYER_STARTS		= 32;
-
 const float MAXRADIUS			= 32.0;
 
 //

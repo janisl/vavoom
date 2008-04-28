@@ -92,9 +92,8 @@ class VLevelInfo : public VThinker
 	float			CompletitionTime;	//	For intermission
 
 	// Maintain single and multi player starting spots.
-	mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];  // Player spawn spots for deathmatch.
-	int				NumDeathmatchStarts;
-	mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];// Player spawn spots.
+	TArray<mthing_t>	DeathmatchStarts;	// Player spawn spots for deathmatch.
+	TArray<mthing_t>	PlayerStarts;		// Player spawn spots.
 
 	TArray<int>			TIDList;	// +1 for termination marker
 	TArray<VEntity*>	TIDMobj;

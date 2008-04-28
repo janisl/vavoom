@@ -75,8 +75,8 @@ void SpawnClient()
 	}
 	else
 	{
-		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			GetPlayerNum()]);
+		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
+			Level.Game.RebornPosition));
 	}
 
 	if (Level.Game.netgame && !Level.Game.deathmatch && playerWasReborn)
@@ -150,12 +150,12 @@ void NetGameReborn()
 	}
 
 	foundSpot = false;
-	if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-		GetPlayerNum()]))
+	if (CheckSpot(Level.GetPlayerStart(GetPlayerNum(),
+		Level.Game.RebornPosition)))
 	{
 		// Appropriate player start spot is open
-		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			GetPlayerNum()]);
+		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
+			Level.Game.RebornPosition));
 		foundSpot = true;
 	}
 	else
@@ -163,10 +163,10 @@ void NetGameReborn()
 		// Try to spawn at one of the other player start spots
 		for (i = 0; i < MAXPLAYERS; i++)
 		{
-			if (CheckSpot(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]))
+			if (CheckSpot(Level.GetPlayerStart(i, Level.Game.RebornPosition)))
 			{
 				// Found an open start spot
-				SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS + i]);
+				SpawnPlayer(Level.GetPlayerStart(i, Level.Game.RebornPosition));
 				foundSpot = true;
 				break;
 			}
@@ -176,8 +176,8 @@ void NetGameReborn()
 	if (!foundSpot)
 	{
 		// Player's going to be inside something
-		SpawnPlayer(&Level.PlayerStarts[Level.Game.RebornPosition * MAXPLAYERS +
-			GetPlayerNum()]);
+		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
+			Level.Game.RebornPosition));
 	}
 
 	// Restore keys and weapons
@@ -261,7 +261,7 @@ void DeathMatchSpawnPlayer()
 
 	for (j = 0; j < 20; j++)
 	{
-		i = P_Random() % Level.NumDeathmatchStarts;
+		i = P_Random() % Level.DeathmatchStarts.Num;
 		if (CheckSpot(&Level.DeathmatchStarts[i]))
 		{
 			SpawnPlayer(&Level.DeathmatchStarts[i]);
@@ -270,7 +270,7 @@ void DeathMatchSpawnPlayer()
 	}
 
 	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(&Level.PlayerStarts[GetPlayerNum()]);
+	SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(), 0));
 }
 
 //==========================================================================

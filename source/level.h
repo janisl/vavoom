@@ -656,9 +656,6 @@ struct VCameraTextureInfo
 
 enum
 {
-	MAXDEATHMATCHSTARTS		= 16,
-	MAX_PLAYER_STARTS 		= 32,
-
 	MAX_LEVEL_TRANSLATIONS	= 0xffff,
 	MAX_BODY_QUEUE_TRANSLATIONS = 0xff,
 };

@@ -5942,11 +5942,8 @@ final void SpawnMapThing(mthing_t* mthing)
 	// count deathmatch start positions
 	if (mthing->type == 11)
 	{
-		if (NumDeathmatchStarts < MAXDEATHMATCHSTARTS)
-		{
-			CopyMThing(mthing, &DeathmatchStarts[NumDeathmatchStarts]);
-			NumDeathmatchStarts++;
-		}
+		DeathmatchStarts.Num = DeathmatchStarts.Num + 1;
+		CopyMThing(mthing, &DeathmatchStarts[DeathmatchStarts.Num - 1]);
 		return;
 	}
 
@@ -5961,12 +5958,8 @@ final void SpawnMapThing(mthing_t* mthing)
 	if (mthing->type <= 4)
 	{
 		// save spots for respawning in network games
-		if (mthing->arg1 >= MAX_PLAYER_STARTS)
-		{
-			Error("Bad player start index %d", mthing->arg1);
-		}
-		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 1]);
+		PlayerStarts.Num = PlayerStarts.Num + 1;
+		CopyMThing(mthing, &PlayerStarts[PlayerStarts.Num - 1]);
 		return;
 	}
 	// Check for player starts 5 to 8
@@ -5975,8 +5968,8 @@ final void SpawnMapThing(mthing_t* mthing)
 		//	Change type to range 5-8.
 		mthing->type = 5 + mthing->type - ExtPlayersBase;
 		// save spots for respawning in network games
-		CopyMThing(mthing, &PlayerStarts[mthing->arg1 * MAXPLAYERS +
-			mthing->type - 1]);
+		PlayerStarts.Num = PlayerStarts.Num + 1;
+		CopyMThing(mthing, &PlayerStarts[PlayerStarts.Num - 1]);
 		return;
 	}
 

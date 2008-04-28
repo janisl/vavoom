@@ -89,9 +89,8 @@ int				CurrentSecret;
 float			CompletitionTime;	//	For intermission
 
 // Maintain single and multi player starting spots.
-mthing_t		DeathmatchStarts[MAXDEATHMATCHSTARTS];	// Player spawn spots for deathmatch.
-int				NumDeathmatchStarts;
-mthing_t		PlayerStarts[MAX_PLAYER_STARTS * MAXPLAYERS];	// Player spawn spots.
+array<mthing_t>	DeathmatchStarts;	// Player spawn spots for deathmatch.
+array<mthing_t>	PlayerStarts;	// Player spawn spots.
 
 array<int>		TIDList;			// +1 for termination marker
 array<Entity>	TIDMobj;
@@ -1072,6 +1071,40 @@ void CopyMThing(mthing_t * from, mthing_t * to)
 	to->arg3 = from->arg3;
 	to->arg4 = from->arg4;
 	to->arg5 = from->arg5;
+}
+
+//==========================================================================
+//
+//	GetPlayerStart
+//
+//==========================================================================
+
+final mthing_t* GetPlayerStart(int PNum, int Position)
+{
+	mthing_t* Best = NULL;
+	int i;
+	for (i = 0; i < PlayerStarts.Num; i++)
+	{
+		if (PlayerStarts[i].type != PNum + 1)
+		{
+			continue;
+		}
+		if (PlayerStarts[i].arg1 == Position)
+		{
+			return &PlayerStarts[i];
+		}
+		if (!Best)
+		{
+			Best = &PlayerStarts[i];
+		}
+	}
+
+	if (!Best)
+	{
+		Error("Player %d has no start spots", PNum + 1);
+	}
+	print("Player %d has no start spot for position %d", PNum + 1, Position);
+	return Best;
 }
 
 //==========================================================================
