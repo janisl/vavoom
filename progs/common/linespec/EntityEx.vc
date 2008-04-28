@@ -752,12 +752,12 @@ final void XYMovement(float DeltaTime)
 		ptryy = Origin.y + StepYMove;
 
 		tmtrace_t tmtrace;
-		if (!TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z)))
+		if (!TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z), true))
 		{
 			// blocked move
 			if (tmtrace.BlockingMobj)
 			{
-				HitMobj(tmtrace.BlockingMobj);
+				HitMobj(tmtrace.BlockingMobj, ptryx, ptryy);
 			}
 			else
 			{
@@ -928,7 +928,7 @@ final void HitLine(tmtrace_t* tmtrace, float StepVelScale)
 //
 //==========================================================================
 
-final void HitMobj(Entity Other)
+final void HitMobj(Entity Other, float ptryx, float ptryy)
 {
 	float	angle;
 	float	speed;
@@ -986,13 +986,11 @@ final void HitMobj(Entity Other)
 	{
 		// Try to slide along it
 		// Slide against mobj
-//		if (TryMove(vector(Origin.x, ptryy, Origin.z)))
-		if (TryMove(vector(Origin.x, Origin.y + Velocity.y * Level.Game.frametime, Origin.z)))
+		if (TryMove(vector(Origin.x, ptryy, Origin.z), true))
 		{
 			Velocity.x = 0.0;
 		}
-//		else if (TryMove(vector(ptryx, Origin.y, Origin.z)))
-		else if (TryMove(vector(Origin.x + Velocity.x * Level.Game.frametime, Origin.y, Origin.z)))
+		else if (TryMove(vector(ptryx, Origin.y, Origin.z), true))
 		{
 			Velocity.y = 0.0;
 		}
@@ -1494,7 +1492,7 @@ final bool BlasterPhysics(float DeltaTime)
 			if (changexy)
 			{
 				if (!TryMoveEx(&tmtrace, vector(Origin.x + xfrac,
-					Origin.y + yfrac, Origin.z)))
+					Origin.y + yfrac, Origin.z), true))
 				{
 					// Blocked move
 					if (tmtrace.BlockingMobj)
@@ -3831,14 +3829,16 @@ final bool StepMove()
 	for (i = 1; i < steps; i++)
 	{
 		try_ok = TryMoveEx(&tmtrace, vector(origx + (deltax / itof(steps * i)), origy +
-					(deltay / itof(steps * i)), Origin.z));
+					(deltay / itof(steps * i)), Origin.z), false);
 		if (!try_ok)
 			break;
 	}
 
 	// killough 3/15/98: don't jump over dropoffs:
 	if (try_ok)
-		try_ok = TryMoveEx(&tmtrace, vector(tryx, tryy, Origin.z));
+	{
+		try_ok = TryMoveEx(&tmtrace, vector(tryx, tryy, Origin.z), false);
+	}
 
 	if (!try_ok)
 	{
@@ -4271,7 +4271,7 @@ final bool CheckMissileSpawn()
 	}
 	LinkToWorld();
 	tmtrace_t tmtrace;
-	if (!TryMoveEx(&tmtrace, Origin))
+	if (!TryMoveEx(&tmtrace, Origin, false))
 	{
 		//	Don't explode ripping missiles that spawn inside another thing.
 		if (!tmtrace.BlockingMobj || !bRip ||
@@ -7981,7 +7981,7 @@ final void PainShootSkull(class<Actor> SpawnType, float angle)
 
 	// Check for movements.
 	if (!newSkull.TryMove(newSkull.Origin + vector(
-	    prestep * cos(angle), prestep * sin(angle), 8.0)))
+	    prestep * cos(angle), prestep * sin(angle), 8.0), false))
 	{
 		// kill it immediately
 		newSkull.Damage(self, self, 10000);

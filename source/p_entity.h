@@ -491,7 +491,7 @@ class VEntity : public VThinker
 	bool CheckWater();
 	bool CheckPosition(TVec);
 	bool CheckRelPosition(tmtrace_t&, TVec);
-	bool TryMove(tmtrace_t&, TVec);
+	bool TryMove(tmtrace_t&, TVec, bool);
 	VEntity* TestMobjZ(const TVec&);
 	void SlideMove(float);
 	void BounceWall(float);

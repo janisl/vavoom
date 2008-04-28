@@ -329,8 +329,8 @@ native final bool CheckSides(TVec lsPos);
 native final void CheckDropOff(out float DeltaX, out float DeltaY);
 native final bool CheckPosition(TVec Pos);
 native final bool CheckRelPosition(tmtrace_t* tmtrace, TVec Pos);
-native final bool TryMove(TVec newPos);
-native final bool TryMoveEx(tmtrace_t* tmtrace, TVec newPos);
+native final bool TryMove(TVec newPos, bool AllowDropOff);
+native final bool TryMoveEx(tmtrace_t* tmtrace, TVec newPos, bool AllowDropOff);
 native final bool TestMobjZ();
 
 native final void SlideMove(float StepVelScale);

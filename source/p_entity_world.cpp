@@ -1176,7 +1176,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 //
 //==========================================================================
 
-bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
+bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 {
 	guard(VEntity::TryMove);
 	bool check;
@@ -1261,13 +1261,13 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 //			eventPushLine();
 //		}
 		// killough 3/15/98: Allow certain objects to drop off
-		if ((!(EntityFlags & EF_DropOff) && !(EntityFlags & EF_Float)) ||
-			(EntityFlags & EF_AvoidingDropoff) || (EntityFlags & EF_NoDropOff))
+		if ((!AllowDropOff && !(EntityFlags & EF_DropOff) &&
+			!(EntityFlags & EF_Float) && !(EntityFlags & EF_Missile)) ||
+			(EntityFlags & EF_NoDropOff))
 		{
-			float floorz = tmtrace.FloorZ;
-
 			if (!(EntityFlags & EF_AvoidingDropoff))
 			{
+				float floorz = tmtrace.FloorZ;
 				// [RH] If the thing is standing on something, use its current z as the floorz.
 				// This is so that it does not walk off of things onto a drop off.
 				if (EntityFlags & EF_OnMobj)
@@ -1286,9 +1286,11 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos)
 			{
 				// special logic to move a monster off a dropoff
 				// this intentionally does not check for standing on things.
-				if (floorz - tmtrace.FloorZ > MaxDropoffHeight ||
+				if (FloorZ - tmtrace.FloorZ > MaxDropoffHeight ||
 					DropOffZ - tmtrace.DropOffZ > MaxDropoffHeight)
+				{
 					return false;
+				}
 			}
 		}
 		if (EntityFlags & EF_CantLeaveFloorpic &&
@@ -1491,9 +1493,11 @@ void VEntity::SlideMove(float StepVelScale)
 		if (++hitcount == 3)
 		{
 			// don't loop forever
-			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove, Origin.z)))
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove, Origin.z),
+				true))
 			{
-				TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y, Origin.z));
+				TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y, Origin.z),
+					true);
 			}
 			return;
 		}
@@ -1532,9 +1536,11 @@ void VEntity::SlideMove(float StepVelScale)
 		if (BestSlideFrac == 1.00001f)
 		{
 			// the move must have hit the middle, so stairstep
-			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove, Origin.z)))
+			if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove, Origin.z),
+				true))
 			{
-				TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y, Origin.z));
+				TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y, Origin.z),
+					true);
 			}
 			return;
 		}
@@ -1547,13 +1553,13 @@ void VEntity::SlideMove(float StepVelScale)
 			newy = YMove * BestSlideFrac;
 
 			if (!TryMove(tmtrace, TVec(Origin.x + newx, Origin.y + newy,
-				Origin.z)))
+				Origin.z), true))
 			{
 				if (!TryMove(tmtrace, TVec(Origin.x, Origin.y + YMove,
-					Origin.z)))
+					Origin.z), true))
 				{
 					TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y,
-						Origin.z));
+						Origin.z), true);
 				}
 				return;
 			}
@@ -1580,7 +1586,7 @@ void VEntity::SlideMove(float StepVelScale)
 		YMove = Velocity.y * StepVelScale;
 	}
 	while (!TryMove(tmtrace, TVec(Origin.x + XMove, Origin.y + YMove,
-		Origin.z)));
+		Origin.z), true));
 	unguard;
 }
 
@@ -2332,18 +2338,20 @@ IMPLEMENT_FUNCTION(VEntity, CheckSides)
 
 IMPLEMENT_FUNCTION(VEntity, TryMove)
 {
+	P_GET_BOOL(AllowDropOff);
 	P_GET_VEC(Pos);
 	P_GET_SELF;
 	tmtrace_t tmtrace;
-	RET_BOOL(Self->TryMove(tmtrace, Pos));
+	RET_BOOL(Self->TryMove(tmtrace, Pos, AllowDropOff));
 }
 
 IMPLEMENT_FUNCTION(VEntity, TryMoveEx)
 {
+	P_GET_BOOL(AllowDropOff);
 	P_GET_VEC(Pos);
 	P_GET_PTR(tmtrace_t, tmtrace);
 	P_GET_SELF;
-	RET_BOOL(Self->TryMove(*tmtrace, Pos));
+	RET_BOOL(Self->TryMove(*tmtrace, Pos, AllowDropOff));
 }
 
 IMPLEMENT_FUNCTION(VEntity, TestMobjZ)

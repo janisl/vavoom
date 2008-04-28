@@ -602,7 +602,7 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 		}
 		if (bCantLeaveFloorpic && Sector->floor.pic != oldFloor)
 		{
-			TryMove(vector(oldX, oldY, Origin.z));
+			TryMove(vector(oldX, oldY, Origin.z), false);
 			NewChaseDir();
 		}
 	}
@@ -3773,7 +3773,7 @@ final void A_BishopMissileWeave()
 	WeaveXY = (WeaveXY + 2) & 63;
 	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
 	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 2.0;
-	TryMove(vector(newX, newY, Origin.z));
+	TryMove(vector(newX, newY, Origin.z), false);
 	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ];
 	WeaveZ = (WeaveZ + 2) & 63;
 	Origin.z += Level.Game.FloatBobOffsets[WeaveZ];
@@ -3795,7 +3795,7 @@ final void A_CStaffMissileSlither()
 	WeaveXY = (WeaveXY + 3) & 63;
 	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY];
 	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY];
-	TryMove(vector(newX, newY, Origin.z));
+	TryMove(vector(newX, newY, Origin.z), false);
 	Special2 = WeaveXY;
 }
 

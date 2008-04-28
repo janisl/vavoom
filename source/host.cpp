@@ -382,8 +382,10 @@ void Host_Frame()
 #ifdef SERVER
 		if (sv.active)
 		{
+clock(host_cycles[0]);
 			//	Server operations
 			ServerFrame(host_frametics);
+unclock(host_cycles[0]);
 		}
 #endif
 

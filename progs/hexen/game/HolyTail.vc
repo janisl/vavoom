@@ -47,7 +47,7 @@ void CHolyTailFollow(float dist)
 			Origin.x - child.Origin.x);
 		oldDistance = DistTo(child);
 		if (child.TryMove(vector(Origin.x + dist * cos(an),
-				Origin.y + dist * sin(an), child.Origin.z)))
+				Origin.y + dist * sin(an), child.Origin.z), false))
 		{
 			newDistance = DistTo2(child) - 1.0;
 			if (oldDistance < 1.0)
@@ -108,7 +108,7 @@ final void A_CHolyTail()
 		}
 		else if (TryMove(vector(
 				parent.Origin.x - 14.0 * cos(parent.Angles.yaw),
-				parent.Origin.y - 14.0 * sin(parent.Angles.yaw), Origin.z)))
+				parent.Origin.y - 14.0 * sin(parent.Angles.yaw), Origin.z), false))
 		{
 			Origin.z = parent.Origin.z - 5.0;
 		}
