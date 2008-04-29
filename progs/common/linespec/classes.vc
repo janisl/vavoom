@@ -50,7 +50,15 @@ enum
 	CONTENTS_SOLID = -1
 };
 
-#include "EntityEx.vc"
+#include "EntityEx.Head.vc"
+#include "EntityEx.Physics.vc"
+#include "EntityEx.LineAttack.vc"
+#include "EntityEx.AiUtils.vc"
+#include "EntityEx.SpawnMissile.vc"
+#include "EntityEx.Damage.vc"
+#include "EntityEx.Inventory.vc"
+#include "EntityEx.Misc.vc"
+#include "EntityEx.Defaults.vc"
 #include "Actor.vc"
 #include "PlayerPawn.vc"
 #include "PlayerChunk.vc"

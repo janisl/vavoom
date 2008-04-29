@@ -1,0 +1,389 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class EntityEx : Entity
+	abstract;
+
+const int
+	GAME_Doom				= 0x01,
+	GAME_Heretic			= 0x02,
+	GAME_Hexen				= 0x04,
+	GAME_Strife				= 0x08,
+	GAME_Raven				= GAME_Heretic | GAME_Hexen;
+
+const float ONFLOORZ		= -99999.0;
+const float ONCEILINGZ		= 99999.0;
+const float FLOATRANDZ		= 99998.0;
+
+const float FRICTION_NORMAL	= 3.28125;
+const float FRICTION_LOW	= 0.95703125;
+const float FRICTION_FLY	= 2.87109375;
+const float FRICTION_WATER	= 3.0;
+
+const float MAXMOVE			= 1050.0;
+const float MAXMOVESTEP		= MAXMOVE / (35.0 * 2.0);
+const float STOPSPEED		= 2.1875;
+
+const float BOUNCE_VAL		= 1.5;
+
+// follow a player exlusively for 3 seconds
+const int BASETHRESHOLD		= 100;
+
+const float MELEERANGE		= 64.0;
+const float MISSILERANGE	= (32.0 * 64.0);
+
+const float MONS_LOOK_RANGE	= (20.0 * 64.0);
+const int MONS_LOOK_LIMIT	= 64;
+
+enum
+{
+	BOUNCE_None,
+	BOUNCE_Doom,
+	BOUNCE_Heretic,
+	BOUNCE_Hexen
+};
+
+enum
+{
+	APROP_Health		= 0,
+	APROP_Speed			= 1,
+	APROP_Damage		= 2,
+	APROP_Alpha			= 3,
+	APROP_RenderStyle	= 4,
+	APROP_Ambush		= 10,
+	APROP_Invulnerable	= 11,
+	APROP_JumpZ			= 12,
+	APROP_ChaseGoal		= 13,
+	APROP_Frightened	= 14,
+	APROP_Gravity		= 15,
+	APROP_Friendly		= 16,
+	APROP_SeeSound		= 5,	// Sounds can only be set, not gotten
+	APROP_AttackSound	= 6,
+	APROP_PainSound		= 7,
+	APROP_DeathSound	= 8,
+	APROP_ActiveSound	= 9
+};
+
+enum
+{
+	PROP_FROZEN					= 0,
+	PROP_NOTARGET				= 1,
+	PROP_INSTANTWEAPONSWITCH	= 2,
+	PROP_FLY					= 3,
+	PROP_TOTALLYFROZEN			= 4,
+	PROP_INVULNERABILITY		= 5,
+	PROP_STRENGTH				= 6,
+	PROP_INVISIBILITY			= 7,
+	PROP_RADIATIONSUIT			= 8,
+	PROP_ALLMAP					= 9,
+	PROP_INFRARED				= 10,
+	PROP_WEAPONLEVEL2			= 11,
+	PROP_FLIGHT					= 12,
+	PROP_SPEED					= 15
+};
+
+//  States
+state			IdleState;
+state			SeeState;
+state			MeleeState;
+state			MissileState;
+
+//	Sounds
+name			SightSound;
+name			ActiveSound;
+name			AttackSound;
+name			PainSound;
+name			DeathSound;
+name			HowlSound;
+name			CrunchSound;
+
+//	Flags
+bool bSpecial;			// call P_SpecialThing when touched
+bool bShootable;		// Can be hit.
+bool bAmbush;
+bool bJustHit;			// try to attack right back
+bool bJustAttacked;		// take at least one step before attacking
+bool bSpawnCeiling;		// hang from ceiling instead of floor
+// movement flags
+bool bPickUp;			// for players to pick up items
+bool bDropped;			// dropped by a demon, not level spawned
+bool bNoBlood;			// don't bleed when shot (use puff)
+bool bInFloat;			// floating to a height for a move, don't
+						// auto float to target's height
+bool bSkullFly;			// skull in flight
+bool bCountKill;		// count towards intermission kill total
+bool bCountItem;		// count towards intermission item total
+bool bWindThrust;		// gets pushed around by the wind specials
+bool bActivateImpact;	// an MF_MISSILE mobj can activate
+						// SPAC_IMPACT
+bool bActivatePushWall;	// mobj can push walls
+bool bActivateMCross;	// can activate monster cross lines
+bool bActivatePCross;	// can activate projectile cross lines
+bool bDormant;			// thing is dormant
+bool bWaterJump;
+bool bNoTeleport;		// does not teleport
+bool bTelestomp;		// mobj can stomp another
+bool bCannotPush;		// cannot push other pushable mobjs
+bool bSmallSplash;		// Always use small splash
+bool bNoSplash;			// Things that don't splash
+bool bStaticLight;		// Static light source.
+bool bStaticLightSpwned;
+bool bDynamicLight;		// Dynamic light source.
+bool bLeaveTrail;		// Leave particles trail.
+bool bTriggerHappy;
+bool bBlaster;
+bool bFloatBob;			// use float bobbing z movement
+bool bOnmobjCopyVel;
+bool bNoBounceSound;	//	Don't make sound when bouncing
+bool bNoWallBounceSnd;	//	Don't make sound when bouncing off a wall
+bool bBounceSky;		//	Bounce when hitting the sky
+bool bExplodeOnSky;		//	Explodes when hits the sky
+bool bBounceOnActors;	//	Bounces against other actors
+bool bSlide;			// slides against walls
+bool bReflective;		// reflects missiles
+bool bSeekerMissile;	// is a seeker (for reflection)
+bool bNoExplodeFloor;	//	Don't explode when hitting the floor
+bool bIceCorpse;		//	a frozen corpse (for blasting)
+bool bExplodeOnWater;	//	Explode on water surfaces
+bool bCanBounceWater;	//	Bounce on water surfaces
+bool bFallingFriction;	//	Apply friction while falling
+bool bNoRadiusDamage;	//	Does not take radius damage
+bool bCantAutoAim;		//	Can't auto aim at this actor
+bool bPuffOnActors;		//	Spawn this puff when hitting actors
+bool bInvulnerable;		// mobj is invulnerable
+bool bFriendly;			// Will fight on player's side
+bool bRandomise;		//	Randomise initial state time
+bool bFullVolDeath;		//	Play missile death sound at full volume
+bool bExploCount;		//	Use explosion counters.
+bool bSpectral;			// Can be killed only with Sigil
+bool bDamageInvulnerable;	// These inflictors aren't foiled by invulnerability
+bool bSkullFlyInvulnerable;	//	Invulnerable during skull fly attack
+bool bNoDamageThrust;	// does not thrust target when damaging
+bool bConditionalFireDamage;
+bool bNoExtremeDeath;	// Does never gib enemies.
+bool bExtremeDeath;		// Always gibs enemies.
+bool bLightning;		//	Electrocutes victims
+bool bHowlVictims;		//	Make victims play howl sound when damaged
+bool bNoGrudge;
+bool bNeverTarget;		//	Never switch target to this actor
+bool bNoTargetSwitch;	//	Never switches target until current one is dead
+bool bNoGravKill;		//	Doesn't set NoGravity to false when killed
+bool bFaster;
+bool bFastMelee;
+bool bStanding;			// Don't walk around.
+bool bBoss;				// mobj is a major boss
+bool bNonShootable;		// mobj is totally non-shootable,
+						// but still considered solid
+bool bThruGhost;		// missile will pass through ghosts
+bool bRip;				// missile rips through solid targets
+bool bPushable;			// can be pushed by other moving mobjs
+bool bBloodlessImpact;	//	Don't spawn blood when hitting a thing
+bool bMonster;
+bool bNoDeathmatch;
+bool bTeleport;			// don't cross lines or look at heights
+bool bSpawnFloat;		// spawn random float z
+bool bNoMorph;			// Don't morph into chicken/pig.
+bool bNoBlockMonst;		// Can cross ML_BLOCKMONSTERS lines
+bool bLookAllAround;	// Actor can see all around.
+bool bNeutral;			// Neutral characters (peasants and beggars)
+bool bStandMustSeeTarget;	//COUNTITEM	800000
+bool bInCombat;			// Actors in combat won't talk
+bool bFullVolActive;	//	Play active sound at full volume
+bool bDehackedSpecial;	// Old style special handling
+bool bUnknown2;			//8000000
+bool bPuffParticles;	// Puff spawns particles
+bool bExplodeParticles;	// Use particle explosion
+bool bStealth;			// Andy Baker's Stealth monsters
+bool bChaseGoal;		// Walks to goal instead of target if a valid goal is set.
+bool bExplosionDontHurtSelf;// For A_Explodearms
+bool bNoSightCheck;		// Go after target without checking sight.
+bool bHuntPlayers;		// With TIDToHate, hate players too.
+bool bNoHatePlayers;	// Ignore player attacks.
+bool bStrifeDamage;		// Missiles do 4x damage instead of 8x
+bool bDontBlast;		// Not blasted by blast radius.
+bool bVisibilityPulse;	// Pulse visibility in and out.
+bool bArgsDefined;		// Args are already defined
+bool bShadow;			// Actor is hard for monsters to see
+bool bGhost;			// Actor is a ghost
+bool bBossDeath;		// A_FreezeDeathChunks calls A_BossDeath
+bool bNoIceDeath;		// Don't use generic ice death
+bool bDontTranslate;	// Don't use translation
+bool bMissileEvenMore;
+bool bNoLiftDrop;		// Don't fall down with the lift
+bool bStayMorphed;		// Don't unmorph
+bool bCanBlast;			// Special cases that can be blasted
+bool bShieldReflect;	// Centaur style shield reflection
+bool bDontShieldReflect;	// Projectile not reflected by shield reflection
+bool bDeflect;			// Different projectile reflection style
+bool bDontReflect;		// Projectile cannot be reflected
+bool bFireResist;		// Actor takes half damage from fire.
+bool bDontSquash;		// Death ball can't squash this actor
+bool bNoTeleOther;		// Monster is not affected by teleport other artifact
+bool bDontHurtSpecies;	// Don't hurt own species with explosions.
+bool bNoDamage;			// Actor reacts to pain but does not take any damage.
+bool bDontGib;			// Don't crunch this corpse to gibs.
+bool bNoPain;			// Don't enter pain state.
+bool bPierceArmor;		// Damage from this actor is not protected by armor.
+bool bForceRadiusDmg;	// Override NoRadiusDmg
+bool bSpawnSoundSource;	// Play missile's see sound on spawning object.
+bool bAlwaysPuff;		// Always show puff, even when hit nothing.
+bool bSynchronised;		// For map spawned things don't randomise tics.
+bool bAlwaysFast;		// Always uses 'fast' attack logic
+bool bNeverFast;		// Never uses 'fast' attack logic
+bool bAlwaysRespawn;	// Always respawns, regardless of skill.
+bool bNeverRespawn;		// Never respawns, regardless of skill.
+bool bDontRip;			// Ripping projectiles explode when hitting this actor.
+bool bCanUseWalls;		// Can activate "use" specials.
+transient bool bInChase;// Used to prevent recursion in A_Chase.
+bool bUseSpecial;		// Execute special when this thing is being used.
+
+//  Params
+float			Speed;
+float			FastSpeed;
+float			FloatSpeed;
+
+int				WoundHealth;
+int				GibsHealth;
+
+//	Damage info.
+array<DamageFactor>		DamageFactors;
+float					PainChance;
+array<PainChanceInfo>	PainChances;
+
+float			MissileChance;
+float			MissileMinRange;
+float			MissileMaxRange;
+
+byte			BounceType;
+byte			BounceCount;
+float			BounceFactor;
+
+// Thing being chased/attacked (or NULL).
+// Also the originator for missiles.
+EntityEx		Target;
+// Last known enemy -- killogh 2/15/98
+EntityEx		LastEnemy;
+EntityEx		Tracer;
+// Monster's goal if not chasing anything
+EntityEx		Goal;
+//	Master entity
+EntityEx		Master;
+
+// Player number last looked for.
+int				LastLook;
+//	The same for actor.
+int				LastLookActor;
+
+//	TID of things to hate, 0 if none.
+int				TIDToHate;
+
+int				MissileDamage;	// For missiles
+int				MissilePoisonDamage;
+
+// For nightmare respawn.
+mthing_t		SpawnPoint;
+
+// Reaction time: if non 0, don't attack yet.
+int				ReactionCount;
+// Used by player to freeze a bit after teleporting.
+float			ReactionTime;
+
+// If >0, the target will be chased
+// no matter what (even if shot)
+int				Threshold;
+
+// Movement direction, movement generation (zig-zagging).
+int				MoveDir;		// 0-7
+int				MoveCount;		// when 0, select a new dir
+int				strafecount;    // killough 9/8/98: monster strafing
+int				FastChaseStrafeCount;
+
+int				VisDir;
+
+float			RDFactor;
+
+// Static light parameters.
+TVec			LightOffset;
+int				LightColour;
+float			LightRadius;
+
+// Dynamic light parameters.
+int				DLightColour;
+float			DLightRadius;
+int				ExplodeEffect;
+
+float			MeleeRange;
+
+int				Special1;	// Special info
+int				Special2;	// Special info
+float			Special1f;
+float			Special2f;
+class<EntityEx>	SpecialCID;
+
+name			DamageType;
+
+float			DeathHeight;
+float			BurnHeight;
+
+string			StrifeName;
+
+// Identifier in conversation scripts, originaly index into mobjinfo.
+int				ConversationID;
+int				CurrentSpeech;	// Current speech index.
+
+//	Actor's inventory
+Inventory		Inventory;
+
+float			FloatBobPhase;
+
+//	For A_ExplodeParms
+int				ExplosionDamage;
+int				ExplosionRadius;
+
+string			Obituary;
+string			HitObituary;
+
+state			PrevEffectState;
+
+int				MeleeDamage;
+name			MeleeSound;
+float			MissileHeight;
+class<Actor>	MissileType;
+
+//	View offset when used as a player camera
+float			CameraHeight;
+
+//	Customiseable blood
+class<Actor>	BloodType;
+class<Actor>	BloodSplatterType;
+class<Actor>	AxeBloodType;
+
+array<DropItemInfo>	DropItemList;
+
+replication
+{
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		Inventory;
+}

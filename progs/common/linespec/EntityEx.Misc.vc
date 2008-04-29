@@ -1,0 +1,3493 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//  Destroyed
+//
+//==========================================================================
+
+void Destroyed()
+{
+	if (Role == ROLE_Authority)
+	{
+		//	Remove inventory.
+		while (Inventory)
+		{
+			Inventory.Destroy();
+		}
+	}
+	::Destroyed();
+}
+
+//==========================================================================
+//
+//  SetOrigin2
+//
+//==========================================================================
+
+final void SetOrigin2(TVec origin)
+{
+	UnlinkFromWorld();
+
+	Origin = origin;
+
+	// Set subsector and/or block links.
+	LinkToWorld();
+
+	if (origin.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
+	else if (origin.z == ONCEILINGZ)
+	{
+		Origin.z = CeilingZ - Height;
+	}
+	else if (origin.z == FLOATRANDZ)
+	{
+		float space = CeilingZ - Height - FloorZ;
+		if (space > 48.0)
+		{
+			space -= 40.0;
+			Origin.z = space * Random() + FloorZ + 40.0;
+		}
+		else
+		{
+			Origin.z = FloorZ;
+		}
+	}
+	else if (bFloatBob)
+	{
+		Origin.z = FloorZ + Origin.z;	// artifact z passed in as height
+	}
+
+	VTerrainInfo* TInfo = GetFloorType();
+	if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
+	{
+		FloorClip = TInfo->FootClip;
+	}
+	else
+	{
+		FloorClip = 0.0;
+	}
+}
+
+//**************************************************************************
+//
+//  RADIUS ATTACK
+//
+//**************************************************************************
+
+//==========================================================================
+//
+//	RadiusAttack
+//
+//	Source is the creature that caused the explosion at spot.
+//
+//==========================================================================
+
+final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
+	bool DamageSource, optional name BombDmgType, optional bool DoDamage)
+{
+	EntityEx	Other;
+	float		dist;
+	int			damage;
+
+	if (!specified_DoDamage)
+	{
+		DoDamage = true;
+	}
+	foreach RadiusThings(Other, Origin, BombDistance)
+	{
+		if (!Other.bShootable)
+		{
+			continue;
+		}
+
+		//	Check for actors that take no damage from concussion.
+		if (Other.bNoRadiusDamage && !bForceRadiusDmg)
+		{
+			continue;
+		}
+
+		if (!DamageSource && Other == Source)
+		{
+			// don't damage the source of the explosion
+			continue;
+		}
+
+		//	Option for monsters that fire explosive projectiles not to hurt
+		// monsters of the same class with it's projectiles.
+		if (Source && Other.Class == Source.Class && !Other.bIsPlayer &&
+			Source.bDontHurtSpecies)
+		{
+			continue;
+		}
+
+		dist = Length(Other.GetCentre() - GetCentre()) - Other.Radius;
+		if (dist < 0.0)
+		{
+			dist = 0.0;
+		}
+
+		if (dist >= BombDistance)
+		{
+			// out of range
+			continue;
+		}
+
+		if (Other.CanSee(self))
+		{
+			// OK to damage, target is in direct path
+			damage = ftoi(itof(BombDamage) * RDFactor *
+				(BombDistance - dist) / BombDistance);
+			if (DoDamage)
+			{
+				Other.Damage(self, Source, damage, BombDmgType);
+			}
+			else
+			{
+				Other.bBlasted = true;
+			}
+
+			if (!Other.bIceCorpse && (!DoDamage || !bNoDamageThrust))
+			{
+				float Thrust = itof(damage) * 0.5 / Other.Mass;
+				float VelZ = (Other.Origin.z + Other.Height * 0.5 -
+					Origin.z) * Thrust;
+				if (Source != Other)
+				{
+					VelZ *= 0.5;
+				}
+				else
+				{
+					VelZ *= 0.8;
+				}
+				TVec Dir = Other.Origin - Origin;
+				Dir.z = 0.0;
+				if (Length(Dir) < 0.001)
+				{
+					//	Zero length. In this case Doom would use angle 0
+					Dir = vector(1.0, 0.0, 0.0);
+				}
+				Other.Velocity += Normalise(Dir) * Thrust * 35.0;
+				if (DoDamage)
+				{
+					Other.Velocity.z += VelZ * 35.0;
+				}
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  TeleportMove
+//
+//==========================================================================
+
+final bool TeleportMove(TVec org, optional bool ForceTelestomp)
+{
+	EntityEx	Other;
+	float		blockdist;
+
+	// kill anything occupying the position
+	// stomp on any things contacted
+	foreach RadiusThings(Other, org, Radius)
+	{
+		if (!Other.bShootable)
+		{
+			continue;
+		}
+
+		blockdist = Other.Radius + Radius;
+
+		if (fabs(Other.Origin.x - org.x) >= blockdist ||
+			fabs(Other.Origin.y - org.y) >= blockdist)
+		{
+			// didn't hit it
+			continue;
+		}
+
+		// don't clip against self
+		if (Other == self)
+		{
+			continue;
+		}
+
+		//	Z-Check
+		if ((bPassMobj || Other.bActLikeBridge) &&
+			(!bDontOverlap || !Other.bDontOverlap))
+		{
+			if (Other.Origin.z > org.z + Height)
+			{
+				continue;
+			}
+			if (Other.Origin.z + Other.Height < org.z)
+			{
+				continue;
+			}
+		}
+
+		//  Check if allowed to stomp things
+		if (!ForceTelestomp && !bTelestomp && !Level.bAllowMonsterTelefrags)
+		{
+			return false;
+		}
+
+		Other.Damage(self, self, 10000, 'Telefrag');
+	}
+
+	// the move is ok,
+	// so link the thing into its new position
+	UnlinkFromWorld();
+	Origin = org;
+	LinkToWorld();
+	if (org.z == ONFLOORZ)
+	{
+		Origin.z = FloorZ;
+	}
+
+	return true;
+}
+
+//==========================================================================
+//
+//  Teleport
+//
+//==========================================================================
+
+final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
+	bool KeepDir)
+{
+	TVec		oldOrg;
+	float		aboveFloor;
+	float		fogDelta;
+	EntityEx	fog;
+	bool		ResetPitch = false;
+
+	oldOrg = Origin;
+	aboveFloor = Origin.z - FloorZ;
+	if (Dst.z == ONFLOORZ)
+	{
+		sector_t* DstSec = XLevel.PointInSector(Dst);
+		float DstFloorZ = GetPlanePointZ(&DstSec->floor, Dst);
+		float DstCeilZ = GetPlanePointZ(&DstSec->floor, Dst);
+		if (bIsPlayer)
+		{
+			if (FindInventory(PowerFlight) && aboveFloor)
+			{
+				Dst.z = DstFloorZ + aboveFloor;
+				if (Dst.z + Height > DstCeilZ)
+				{
+					Dst.z = DstCeilZ - Height;
+				}
+			}
+			else
+			{
+				Dst.z = DstFloorZ;
+				if (!KeepDir)
+				{
+					ResetPitch = true;
+				}
+			}
+		}
+		else if (bMissile)
+		{
+			Dst.z = Dst.z + aboveFloor;
+			if (Dst.z + Height > DstCeilZ)
+			{
+				Dst.z = DstCeilZ - Height;
+			}
+		}
+		else
+		{
+			Dst.z = DstFloorZ;
+		}
+	}
+	if (!TeleportMove(Dst))
+	{
+		return false;
+	}
+	if (bIsPlayer)
+	{
+		Player.ViewOrg = Origin + vector(0.0, 0.0,
+			PlayerEx(Player).ViewHeight);
+		if (ResetPitch)
+		{
+			Angles.pitch = 0.0;
+		}
+	}
+	// spawn teleport fog at source and destination
+	fogDelta = bMissile ? 0.0 : LineSpecialGameInfo(Level.Game).TeleFogHeight;
+	if (SrcFog)
+	{
+		fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+			oldOrg + vector(0.0, 0.0, fogDelta));
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
+	}
+	if (DstFog)
+	{
+		fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, Origin +
+			vector(20.0 * cos(angle), 20.0 * sin(angle), fogDelta));
+		fog.PlaySound('misc/teleport', CHAN_VOICE);
+	}
+	if (!KeepDir)
+	{
+		if (bIsPlayer && !FindInventory(PowerWeaponLevel2) &&
+			!FindInventory(PowerSpeed))
+		{
+			//	Don't move for a bit, freeze player for about .5 sec
+			ReactionTime = 0.5;
+		}
+		Angles.yaw = angle;
+		if (bIsPlayer)
+		{
+			Player.bFixAngle = true;
+		}
+	}
+	HandleFloorclip();
+	if (bMissile)
+	{
+		Velocity.x = Speed * cos(angle);
+		Velocity.y = Speed * sin(angle);
+	}
+	else if (!KeepDir)	// no fog doesn't alter the player's momentums
+	{
+		Velocity = vector(0.0, 0.0, 0.0);
+	}
+	return true;
+}
+
+//===========================================================================
+//
+//  MoveThing
+//
+//===========================================================================
+
+final bool MoveThing(TVec Pos, bool Fog)
+{
+	EntityEx fogAct;
+	TVec OldOrg = Origin;
+
+	UnlinkFromWorld();
+	Origin = Pos;
+	LinkToWorld();
+	if (TestLocation())
+	{
+		if (Fog)
+		{
+			fogAct = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+				Pos + vector(0.0, 0.0,
+				LineSpecialGameInfo(Level.Game).TeleFogHeight));
+			fogAct.PlaySound('misc/teleport', CHAN_VOICE);
+
+			fogAct = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+				OldOrg + vector(0.0, 0.0,
+				LineSpecialGameInfo(Level.Game).TeleFogHeight));
+			fogAct.PlaySound('misc/teleport', CHAN_VOICE);
+		}
+		return true;
+	}
+	else
+	{
+		UnlinkFromWorld();
+		Origin = OldOrg;
+		LinkToWorld();
+		return false;
+	}
+}
+
+//==========================================================================
+//
+//  TestLocation
+//
+//  Returns true if the mobj is not blocked by anything at its current
+// location, otherwise returns false.
+//
+//==========================================================================
+
+final bool TestLocation()
+{
+	if (!bColideWithThings && !bColideWithWorld)
+		return true;
+
+	if (CheckPosition(Origin))
+	{
+		// XY is ok, now check Z
+		if ((Origin.z < FloorZ) || (Origin.z + Height > CeilingZ))
+		{
+			// Bad Z
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  Thrust
+//
+//==========================================================================
+
+final void Thrust(float angle, float move)
+{
+	Velocity.x += move * cos(angle) * 35.0;
+	Velocity.y += move * sin(angle) * 35.0;
+}
+
+//==========================================================================
+//
+//  FaceActor
+//
+//  Returns 1 if 'source' needs to turn clockwise, or 0 if 'source' needs
+// to turn counter clockwise.  'delta' is set to the amount 'source'
+// needs to turn.
+//
+//==========================================================================
+
+int FaceActor(EntityEx target, out float delta)
+{
+	float diff;
+	float angle1;
+	float angle2;
+
+	angle1 = Angles.yaw;
+	angle2 = atan2(target.Origin.y - Origin.y, target.Origin.x - Origin.x);
+	if (angle2 > angle1)
+	{
+		diff = AngleMod360(angle2 - angle1);
+		if (diff > 180.0)
+		{
+			delta = 360.0 - diff;
+			return 0;
+		}
+		else
+		{
+			delta = diff;
+			return 1;
+		}
+	}
+	else
+	{
+		diff = AngleMod360(angle1 - angle2);
+		if (diff > 180.0)
+		{
+			delta = 360.0 - diff;
+			return 1;
+		}
+		else
+		{
+			delta = diff;
+			return 0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  HeightClip
+//
+//  Takes a valid thing and adjusts the thing->FloorZ, thing->CeilingZ, and
+// possibly thing->z. This is called for all nearby monsters whenever a
+// sector changes height. If the thing doesn't fit, the z will be set to the
+// lowest value and false will be returned.
+//
+//==========================================================================
+
+final bool HeightClip()
+{
+	bool onfloor;
+	float OldZ = Origin.z;
+
+	onfloor = (Origin.z == FloorZ);
+
+	tmtrace_t tmtrace;
+	CheckRelPosition(&tmtrace, Origin);
+	// what about stranding a monster partially off an edge?
+
+	Floor = tmtrace.Floor;
+	Ceiling = tmtrace.Ceiling;
+	FloorZ = tmtrace.FloorZ;
+	CeilingZ = tmtrace.CeilingZ;
+
+	if (onfloor && (!bNoGravity || !bNoLiftDrop))
+	{
+		// walking monsters rise and fall with the floor
+		if ((Origin.z - FloorZ < 9.0) || bNoGravity || !XLevel.bExtended)
+		{
+			Origin.z = FloorZ;
+		}
+	}
+	else
+	{
+		// don't adjust a floating monster unless forced to
+		if (Origin.z + Height > CeilingZ)
+			Origin.z = CeilingZ - Height;
+	}
+
+	CheckFakeFloorTriggers(OldZ);
+
+	if (CeilingZ - FloorZ < Height)
+		return false;
+
+	return true;
+}
+
+//==========================================================================
+//
+//	GetStateTime
+//
+//==========================================================================
+
+final float GetStateTime(state AState, float AStateTime)
+{
+	if (IsFast())
+	{
+		if (bFaster && StateIsInRange(AState, SeeState, none, 8))
+		{
+			AStateTime /= 2.0;
+		}
+		if (bFastMelee && StateIsInRange(AState, MeleeState, none, 3))
+		{
+			AStateTime /= 2.0;
+		}
+	}
+	return AStateTime;
+}
+
+//==========================================================================
+//
+//  NightmareRespawn
+//
+//==========================================================================
+
+final void NightmareRespawn()
+{
+	float x;
+	float y;
+	float z;
+	EntityEx A;
+
+	x = SpawnPoint.x;
+	y = SpawnPoint.y;
+
+	// somthing is occupying it's position?
+	if (!CheckPosition(vector(x, y, ONFLOORZ)))
+		return;	// no respwan
+
+	// spawn a teleport fog at old spot
+	A = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+		vector(Origin.x, Origin.y, ONFLOORZ));
+	A.Origin.z += LineSpecialGameInfo(Level.Game).TeleFogHeight;
+	A.PlaySound('misc/teleport', CHAN_BODY);
+
+	// spawn a teleport fog at the new spot
+	A = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+		vector(x, y, ONFLOORZ));
+	A.Origin.z += LineSpecialGameInfo(Level.Game).TeleFogHeight;
+	A.PlaySound('misc/teleport', CHAN_BODY);
+
+	// spawn the new monster
+
+	// spawn it
+	if (bSpawnCeiling)
+		z = ONCEILINGZ;
+	else
+		z = ONFLOORZ;
+
+	// inherit attributes from deceased one
+	A = Spawn(class<EntityEx>(Class), vector(x, y, z),,, false);
+	Level.CopyMThing(&SpawnPoint, &A.SpawnPoint);
+	A.Angles.yaw = itof(45 * (SpawnPoint.angle / 45));
+
+	if (SpawnPoint.options & LineSpecialLevelInfo::MTF_AMBUSH)
+		A.bAmbush = true;
+	if (SpawnPoint.options & LineSpecialLevelInfo::MTF_STANDSTILL)
+		A.bStanding = true;
+
+	A.ReactionCount = 18;
+
+	//	Copy custom translation
+	A.Translation = Translation;
+
+	// remove the old monster
+	Destroy();
+}
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+bool Touch(Entity InOther)
+{
+	bool solid;
+	int damage;
+	EntityEx Other;
+
+	Other = EntityEx(InOther);
+
+	//	For Korax Arena
+	if (Other.IsTouched(self))
+	{
+		return !Other.bSolid && !Other.bSpecial && !Other.bShootable;
+	}
+	
+	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+	{
+		return true;
+	}
+
+	// check for skulls slamming into things
+	if (bSkullFly && Health > 0)
+	{
+		return Slam(Other);
+	}
+
+	// Check for blasted thing running into another
+	if (bBlasted && Other.bShootable)
+	{
+		if (!Other.bBoss && Other.bCountKill)
+		{
+			Other.Velocity.x += Velocity.x;
+			Other.Velocity.y += Velocity.y;
+			if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
+			{
+				damage = (ftoi(Mass) / 100) + 1;
+				Other.Damage(self, self, damage);
+				damage = (ftoi(Other.Mass) / 100) + 1;
+				Damage(Other, Other, damage >> 2);
+			}
+			return false;
+		}
+	}
+
+	// missiles can hit other things
+	if (bMissile)
+	{
+		// Check for a non-shootable mobj
+		if (Other.bNonShootable)
+		{
+			return true;
+		}
+		// Check for passing through a ghost
+		if (Other.bGhost && bThruGhost)
+		{
+			return true;
+		}
+
+		if ((BounceType == BOUNCE_Doom || BounceType == BOUNCE_Hexen) &&
+			MissileDamage == 0)
+		{
+			return Target == Other || !Other.bSolid;
+		}
+
+		switch (SpecialMissileHit(Other))
+		{
+		case 0:
+			return false;
+		case 1:
+			return true;
+		}
+
+		if (Target && Target.GetSpecies() == Other.GetSpecies())
+		{
+			// Don't hit same species as originator.
+			if (Other == Target)
+			{
+				// Don't missile self
+				return true;
+			}
+			if (!Other.bIsPlayer)
+			{
+				// Explode, but do no damage.
+				// Let players missile other players.
+				return false;
+			}
+		}
+
+		if (!Other.bShootable)
+		{
+			// didn't do any damage
+			return !Other.bSolid;
+		}
+
+		//	Don't hit spectres with non-sigil weapons.
+		if (Other.bSpectral && !bSpectral)
+		{
+			return true;
+		}
+
+		if (bRip && !Other.bDontRip)
+		{
+			if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
+			{
+				// Ok to spawn some blood
+				SpawnRipperBlood();
+			}
+			PlaySound('misc/ripslop', CHAN_BODY);
+			damage = GetMissileDamage(3, 2);
+			Other.Damage(self, Target, damage, DamageType);
+			if (Other.bPushable && !bCannotPush)
+			{
+				// Push thing
+				Other.Velocity.x += Velocity.x / 4.0;
+				Other.Velocity.y += Velocity.y / 4.0;
+			}
+//WHAT A FUCK IS THIS???????			numspechit = 0;
+			return true;
+		}
+
+		// damage / explode
+		damage = GetMissileDamage(bStrifeDamage ? 3 : 7, 1);
+		if (damage > 0)
+		{
+			if (LineSpecialGameInfo(Level.Game).bBloodSplatter &&
+				!Other.bNoBlood && !Other.bReflective &&
+				!Other.bInvulnerable && !Other.bDormant &&
+				!bBloodlessImpact && P_Random() < 192)
+			{
+				Other.SpawnBloodSplatter(Origin, damage);
+			}
+			Other.Damage(self, Target, damage, DamageType);
+		}
+		// don't traverse any more
+		return false;
+	}
+
+	if (Other.bPushable && !bCannotPush)
+	{
+		// Push thing
+		Other.Velocity.x += Velocity.x / 4.0;
+		Other.Velocity.y += Velocity.y / 4.0;
+	}
+
+	solid = Other.bSolid &&
+			Other.bColideWithThings &&
+			bSolid;
+
+	// check for special pickup
+	if (Other.bSpecial/* &&
+		Other.Origin.z < Origin.z + Height - MaxStepHeight*/)
+	{
+		if (Other.bDehackedSpecial)
+		{
+			Other.TouchDehackedSpecial(self);
+		}
+		else
+		{
+			Other.TouchSpecial(self);	// Can remove thing
+		}
+	}
+
+	return !solid;
+}
+
+//==========================================================================
+//
+//	IsTouched
+//
+//	For Korax Arena
+//
+//==========================================================================
+
+bool IsTouched(Entity Toucher)
+{
+	return false;
+}
+
+//===========================================================================
+//
+//	Slam
+//
+//===========================================================================
+
+bool Slam(EntityEx Other)
+{
+	bSkullFly = false;
+	Velocity = vector(0.0, 0.0, 0.0);
+	if (!bDormant)
+	{
+		int damage = GetMissileDamage(7, 1);
+		Other.Damage(self, self, damage, 'Melee');
+		SetState(SeeState ? SeeState : IdleState);
+	}
+	else
+	{
+		SetState(IdleState);
+		StateTime = -1.0;
+	}
+	return false;	// stop moving
+}
+
+//==========================================================================
+//
+//	GetMissileDamage
+//
+//==========================================================================
+
+int GetMissileDamage(int Mask, int Add)
+{
+	if (!MissileDamage)
+	{
+		return 0;
+	}
+	if (!Mask)
+	{
+		return Add * MissileDamage;
+	}
+	return ((P_Random() & Mask) + Add) * MissileDamage;
+}
+
+//==========================================================================
+//
+//	SpecialMissileHit
+//
+//==========================================================================
+
+int SpecialMissileHit(EntityEx Other)
+{
+	return -1;
+}
+
+//==========================================================================
+//
+//	GetSpecies
+//
+//==========================================================================
+
+class<EntityEx> GetSpecies()
+{
+	class<EntityEx> Ret = class<EntityEx>(Class);
+	//	Go up in the inheritance hierarchy while there's a monster flag
+	// and use the top one as species.
+	if (bMonster)
+	{
+		while (class<EntityEx>(GetClassParent(Ret)) &&
+			class<EntityEx>(GetClassParent(Ret)).default.bMonster)
+		{
+			Ret = class<EntityEx>(GetClassParent(Ret));
+		}
+	}
+	return Ret;
+}
+
+//===========================================================================
+//
+//	CheckForPushSpecial
+//
+//===========================================================================
+
+final void CheckForPushSpecial(line_t* line, int side)
+{
+	if (line->special)
+	{
+		if (bActivatePushWall)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(line, self, side, SPAC_PUSH);
+		}
+		else if (bActivateImpact)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(line,
+				bMissile ? Target : self, side, SPAC_IMPACT);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	BlockedByLine
+//
+//==========================================================================
+
+final void BlockedByLine(line_t* ld)
+{
+	if (bBlasted)
+	{
+		Damage(none, none, ftoi(Mass) >> 5);
+	}
+	CheckForPushSpecial(ld, 0);
+}
+
+//==========================================================================
+//
+//  PushLine
+//
+//==========================================================================
+
+final void PushLine(tmtrace_t* tmtrace)
+{
+	if (bColideWithWorld)
+	{
+		int numSpecHitTemp;
+		line_t *ld;
+		int side;
+
+		if (bBlasted)
+		{
+			Damage(none, none, ftoi(Mass) >> 5);
+		}
+		numSpecHitTemp = tmtrace->SpecHit.Num;
+		while (numSpecHitTemp > 0)
+		{
+			numSpecHitTemp--;
+			// see if the line was crossed
+			ld = tmtrace->SpecHit[numSpecHitTemp];
+			side = PointOnPlaneSide(Origin, ld);
+			CheckForPushSpecial(ld, side);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	CrossSpecialLine
+//
+//==========================================================================
+
+final void CrossSpecialLine(line_t *ld, int side)
+{
+	if (bIsPlayer)
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_CROSS);
+	}
+	else if (bActivateMCross)
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
+	}
+	else if (bActivatePCross)
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCROSS);
+	}
+	else if (ld->special == LNSPEC_Teleport ||
+		ld->special == LNSPEC_TeleportNoFog ||
+		ld->special == LNSPEC_TeleportLine)
+	{
+		//	Teleport hack
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
+	}
+}
+
+//==========================================================================
+//
+//	Activate
+//
+//==========================================================================
+
+bool Activate(EntityEx Activator)
+{
+	if (bMonster)
+	{
+		// Monster
+		if (bDormant)
+		{
+			bDormant = false;
+			StateTime = 0.1;
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	Deactivate
+//
+//==========================================================================
+
+bool Deactivate(EntityEx Activator)
+{
+	if (bMonster)
+	{
+		// Monster
+		if (!bDormant)
+		{
+			bDormant = true;
+			StateTime = -1.0;
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  FaceMovementDirection
+//
+//==========================================================================
+
+final void FaceMovementDirection()
+{
+	switch (MoveDir)
+	{
+	case DI_EAST:
+		Angles.yaw = 0.0;
+		break;
+	case DI_NORTHEAST:
+		Angles.yaw = 45.0;
+		break;
+	case DI_NORTH:
+		Angles.yaw = 90.0;
+		break;
+	case DI_NORTHWEST:
+		Angles.yaw = 135.0;
+		break;
+	case DI_WEST:
+		Angles.yaw = 180.0;
+		break;
+	case DI_SOUTHWEST:
+		Angles.yaw = 225.0;
+		break;
+	case DI_SOUTH:
+		Angles.yaw = 270.0;
+		break;
+	case DI_SOUTHEAST:
+		Angles.yaw = 315.0;
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	OnMapSpawn
+//
+//==========================================================================
+
+void OnMapSpawn(mthing_t* mthing)
+{
+	if (IsFast())
+	{
+		ReactionCount = 0;
+	}
+
+	LastLook = P_Random() % MAXPLAYERS;
+
+	bCheckLineBlocking = false;
+	bCheckLineBlockMonsters = false;
+	if (!bMissile)
+	{
+		bCheckLineBlocking = true;
+		if (!bNoBlockMonst)
+		{
+			bCheckLineBlockMonsters = true;
+		}
+	}
+
+	if (!IdleState)
+	{
+		IdleState = FindState('Spawn');
+	}
+	if (!SeeState)
+	{
+		SeeState = FindState('See');
+	}
+	if (!MeleeState)
+	{
+		MeleeState = FindState('Melee');
+	}
+	if (!MissileState)
+	{
+		MissileState = FindState('Missile');
+	}
+
+	if (Level.Game.fastparm && FastSpeed)
+	{
+		Speed = FastSpeed;
+	}
+
+	//	Set the state, but do not use SetState, because action routines can't
+	// be called yet.  If the spawnstate has an action routine, it will not
+	// be called.
+	SetInitialState(IdleState);
+
+	if (mthing)
+	{
+		float x;
+		float y;
+		float z;
+
+		if (bNoDeathmatch && Level.Game.deathmatch)
+		{
+			Destroy();
+			return;
+		}
+
+		Level.CopyMThing(mthing, &SpawnPoint);
+
+		x = mthing->x;
+		y = mthing->y;
+		if (bSpawnCeiling)
+		{
+			z = ONCEILINGZ;
+		}
+		else if (bSpawnFloat)
+		{
+			z = FLOATRANDZ;
+		}
+		else if (bFloatBob)
+		{
+			z = mthing->height;
+		}
+		else
+		{
+			z = ONFLOORZ;
+		}
+		SetOrigin2(vector(x, y, z));
+		if (z == ONFLOORZ)
+		{
+			Origin.z += mthing->height;
+		}
+		else if (z == ONCEILINGZ)
+		{
+			Origin.z -= mthing->height;
+		}
+		LinkToWorld();
+
+		TID = mthing->tid;
+		Special = mthing->special;
+		if (!bArgsDefined)
+		{
+			Args[0] = mthing->arg1;
+			Args[1] = mthing->arg2;
+			Args[2] = mthing->arg3;
+			Args[3] = mthing->arg4;
+			Args[4] = mthing->arg5;
+		}
+		if (bFloatBob)
+		{
+			// Seed random starting index for bobbing motion
+			FloatBobPhase = Random() * 256.0 / 35.0;
+			Special1f = mthing->height;
+		}
+		if (!bSynchronised && StateTime > 0.0)
+		{
+			StateTime = 0.1 + Random() * StateTime;
+		}
+		if (bCountKill)
+		{
+			Level.TotalKills++;
+		}
+		if (bCountItem)
+		{
+			Level.TotalItems++;
+		}
+
+		Angles.yaw = itof(AngleIncrements() * (mthing->angle /
+			AngleIncrements()));
+		if (mthing->options & LineSpecialLevelInfo::MTF_AMBUSH)
+		{
+			bAmbush = true;
+		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_STANDSTILL)
+		{
+			bStanding = true;
+		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_DORMANT)
+		{
+			Deactivate(none);
+		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_FRIENDLY)
+		{
+			bFriendly = true;
+			//	Friendlies don't count as kills.
+			if (bCountKill)
+			{
+				bCountKill = false;
+				Level.TotalKills--;
+			}
+		}
+		if (mthing->options & LineSpecialLevelInfo::MTF_SHADOW)
+		{
+			bShadow = true;
+			RenderStyle = STYLE_Translucent;
+			Alpha = 0.25;
+		}
+		else if (mthing->options & LineSpecialLevelInfo::MTF_ALTSHADOW)
+		{
+			RenderStyle = STYLE_None;
+		}
+	}
+	else
+	{
+		SetOrigin2(Origin);
+	}
+
+	if (bStaticLight && mthing && !TID)
+	{
+		if (LightColour == 0xffffffff)
+		{
+			Level.AddStaticLight(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius);
+		}
+		else
+		{
+			Level.AddStaticLightRGB(Origin + LightOffset, mthing->arg1 ?
+				itof(mthing->arg1) * 8.0 : LightRadius, LightColour);
+		}
+		bStaticLightSpwned = true;
+	}
+}
+
+//==========================================================================
+//
+//  SeekerMissile
+//
+//  The missile Tracer field must be Actor target. Returns true if
+// target was tracked, false if not.
+//
+//==========================================================================
+
+final bool SeekerMissile(float thresh, float turnMax)
+{
+	int dir;
+	float dist;
+	float delta;
+	float angle;
+
+	if (!Tracer)
+	{
+		return false;
+	}
+	if (!Tracer.bShootable)
+	{
+		// Target died
+		Tracer = none;
+		return false;
+	}
+	dir = FaceActor(Tracer, delta);
+	if (delta > thresh)
+	{
+		delta /= 2.0;
+		if (delta > turnMax)
+		{
+			delta = turnMax;
+		}
+	}
+	if (dir)
+	{
+		// Turn clockwise
+		Angles.yaw = AngleMod360(Angles.yaw + delta);
+	}
+	else
+	{
+		// Turn counter clockwise
+		Angles.yaw = AngleMod360(Angles.yaw - delta);
+	}
+	angle = Angles.yaw;
+	Velocity.x = Speed * cos(angle);
+	Velocity.y = Speed * sin(angle);
+	if (Origin.z + Height < Tracer.Origin.z ||
+		Tracer.Origin.z + Tracer.Height < Origin.z)
+	{
+		// Need to seek vertically
+		dist = DistTo2(Tracer);
+		dist = dist / Speed;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = (Tracer.Origin.z + Tracer.Height / 2.0 -
+			Origin.z - Height / 2.0) / dist;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  PlayActiveSound
+//
+//==========================================================================
+
+void PlayActiveSound()
+{
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE, 1.0,
+			bFullVolActive ? ATTN_NONE : ATTN_NORMAL);
+	}
+}
+
+//==========================================================================
+//
+//  DropItem
+//
+//==========================================================================
+
+final void DropItem(class<EntityEx> type, int amount, float chance)
+{
+	EntityEx	A;
+
+	if (Random() > chance)
+	{
+		return;
+	}
+	A = Spawn(type, Origin + vector(0.0, 0.0, Height / 2.0));
+	A.bDropped = true;	// special versions of items
+	if (Inventory(A))
+	{
+		Inventory Item = Inventory(A);
+		if (amount > 0)
+		{
+			Item.Amount = amount;
+		}
+		else if (Ammo(Item))
+		{
+			//	Half ammo when dropped by bad guys.
+			if (Ammo(Item).DropAmount)
+			{
+				Item.Amount = Ammo(Item).DropAmount;
+			}
+			else
+			{
+				Item.Amount = Item.Amount / 2;
+				if (Item.Amount < 1)
+				{
+					Item.Amount = 1;
+				}
+			}
+		}
+		else if (Weapon(Item))
+		{
+			//	The same fror dropped weapons.
+			Weapon(Item).AmmoGive1 = Weapon(Item).AmmoGive1 / 2;
+			if (Weapon(Item).AmmoGive1 < 1)
+			{
+				Weapon(Item).AmmoGive1 = 1;
+			}
+			Weapon(Item).AmmoGive2 = Weapon(Item).AmmoGive2 / 2;
+			if (Weapon(Item).AmmoGive2 < 1)
+			{
+				Weapon(Item).AmmoGive2 = 1;
+			}
+		}
+		if (Item.SpecialDropAction(self))
+		{
+			return;
+		}
+	}
+	A.Velocity.x = (Random() - Random()) * 35.0;
+	A.Velocity.y = (Random() - Random()) * 35.0;
+	A.Velocity.z = (5.0 + Random() * 4.0) * 35.0;
+}
+
+//==========================================================================
+//
+//	NoBlockingSet
+//
+//==========================================================================
+
+void NoBlockingSet()
+{
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	Inventory		Item;
+
+	//	Handle powerup effects.
+	for (Item = Inventory; Item && Item.Owner == self; Item = Item.Inventory)
+	{
+		Item.DoEffect();
+	}
+
+	if (bVisibilityPulse)
+	{
+		//	Pulse visibility in and out
+		if (VisDir > 0)
+		{
+			Alpha += 0.75 * deltaTime;
+			if (Alpha > 1.0)
+			{
+				Alpha = 1.0;
+				VisDir = -1;
+			}
+		}
+		else
+		{
+			Alpha -= 0.75 * deltaTime;
+			if (Alpha < 0.25)
+			{
+				Alpha = 0.25;
+				VisDir = 1;
+			}
+		}
+	}
+	else if (bStealth)
+	{
+		//	Fade a stealth monster in and out of visibility
+		if (VisDir > 0)
+		{
+			Alpha += 2.0 * deltaTime;
+			if (Alpha > 1.0)
+			{
+				Alpha = 1.0;
+				VisDir = 0;
+			}
+		}
+		else if (VisDir < 0)
+		{
+			Alpha -= 3.0 * deltaTime / 2.0;
+			if (Alpha < 0.0)
+			{
+				Alpha = 0.0;
+				VisDir = 0;
+			}
+		}
+	}
+
+	if (!Physics(deltaTime))
+	{
+		return;
+	}
+
+	// Cycle through states, calling action functions at transitions
+	if (StateTime != -1.0)
+	{
+		if (!AdvanceState(deltaTime))
+		{
+			// freed itself
+			return;
+		}
+	}
+	else
+	{
+		// Check for nightmare respawn
+		if (!bAlwaysRespawn)
+		{
+			if (!bMonster || bDormant || bNeverRespawn)
+			{
+				return;
+			}
+			if (!LineSpecialGameInfo(Level.Game).respawnmonsters)
+			{
+				return;
+			}
+		}
+
+		MoveCount++;
+		if (MoveCount < 12 * 35)
+		{
+			return;
+		}
+		if (XLevel.TicTime & 31)
+		{
+			return;
+		}
+		if (P_Random() > 4)
+		{
+			return;
+		}
+		NightmareRespawn();
+	}
+}
+
+//==========================================================================
+//
+//	SectorChanged
+//
+//==========================================================================
+
+final bool SectorChanged(int CrushChange)
+{
+	EntityEx	A;
+
+	if (HeightClip())
+	{
+		return true;
+	}
+
+	//	Crunch bodies to giblets
+	if (bCorpse && !bDontGib && Health <= 0)
+	{
+		if (bNoBlood)
+		{
+			Destroy();
+		}
+		else
+		{
+			state CrunchState = FindState('Crunch');
+			if (CrunchState && AreStateSpritesPresent(CrunchState))
+			{
+				SetState(CrunchState);
+			}
+			bCorpse = false;
+			bSolid = false;
+			Height = 0.0;
+			Radius = 0.0;
+			if (CrunchSound)
+			{
+				PlaySound(CrunchSound, CHAN_VOICE);
+			}
+		}
+		return true;
+	}
+
+	//	Crunch dropped items
+	if (bDropped)
+	{
+		Destroy();
+		return true;
+	}
+
+	if (!bShootable)
+	{
+		//	Assume it is bloody gibs or something
+		return true;
+	}
+
+	if (CrushChange && !(XLevel.TicTime & 3))
+	{
+		Damage(none, none, CrushChange);
+
+		//	Spray blood in a random direction
+		if (!bNoBlood && !bInvulnerable && BloodType)
+		{
+			A = Spawn(BloodType, Origin + vector(0.0, 0.0, Height / 2.0));
+			A.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
+		}
+	}
+	return false;	//	Don't fit
+}
+
+//==========================================================================
+//
+//	ClientTick
+//
+//==========================================================================
+
+void ClientTick(float DeltaTime)
+{
+	dlight_t*	dl;
+	TVec		fv;
+	int			i, c;
+
+	if (bInvisible || bNoSector)
+	{
+		return;
+	}
+
+	DoStateEffects(DeltaTime);
+
+	if (bDynamicLight)
+	{
+		// Update dynamic lights
+		dl = AllocDlight(self);
+		dl->origin = Origin;
+		dl->radius = DLightRadius;
+		dl->colour = DLightColour;
+		dl->die = XLevel.Time + 0.1;
+	}
+
+	if (bLeaveTrail)
+	{
+		c = P_Random() >> 1;
+		LineSpecialLevelInfo(Level).ParticleEffect(ftoi(DeltaTime * 256.0), LineSpecialLevelInfo::pt_static, 0, Origin,
+				0.0, vector(16.0, 16.0, 64.0), 0.5, 2.5, 0.0, RGB(c, c, c), 0.5,  0.0);
+	}
+}
+
+//==========================================================================
+//
+//	DoStateEffects
+//
+//==========================================================================
+
+final void DoStateEffects(float DeltaTime)
+{
+	array<LightEffectDef*>		Lights;
+	array<ParticleEffectDef*>	Particles;
+	int							i;
+	TVec						Forward;
+	TVec						Right;
+	TVec						Up;
+
+	GetStateEffects(Lights, Particles);
+	if (!Lights.Num && !Particles.Num)
+	{
+		return;
+	}
+
+	AngleVectors(&Angles, &Forward, &Right, &Up);
+
+	if (!bStaticLightSpwned)
+	{
+		//	Dynamic lights.
+		for (i = 0; i < Lights.Num; i++)
+		{
+			LightEffectDef* L = Lights[i];
+			dlight_t* dl = AllocDlight(self);
+			dl->origin = Origin + Forward * L->Offset.x - Right * L->Offset.y +
+				Up * L->Offset.z;
+			switch (L->Type)
+			{
+			case 0:
+				dl->radius = L->Radius;
+				break;
+			case 1:
+				dl->radius = L->Radius + Random() * (L->Radius2 - L->Radius);
+				break;
+			}
+			dl->colour = L->Colour;
+			dl->minlight = L->MinLight;
+			dl->die = XLevel.Time + 0.01;
+		}
+	}
+
+	if (State != PrevEffectState)
+	{
+		//	Particle effects
+		for (i = 0; i < Particles.Num; i++)
+		{
+			ParticleEffectDef* P = Particles[i];
+			Level.ParticleEffect(P->Count, P->Type, P->Type2, Origin +
+				Forward * P->Offset.x - Right * P->Offset.y +
+				Up * P->Offset.z, P->OrgRnd, P->Velocity, P->VelRnd,
+				P->Accel, P->Grav, P->Colour, P->Duration, P->Ramp);
+		}
+		PrevEffectState = State;
+	}
+}
+
+//==========================================================================
+//
+//	TouchDehackedSpecial
+//
+//==========================================================================
+
+final void TouchDehackedSpecial(EntityEx Toucher)
+{
+	if (!Toucher.bPickUp)
+	{
+		// can't remove thing
+		return;
+	}
+	// Dead thing touching.
+	// Can happen with a sliding player corpse.
+	if (Toucher.Health <= 0)
+	{
+		return;
+	}
+
+	class<Inventory> ItemType = LineSpecialLevelInfo(Level).GetDehackedItemType(self);
+	if (!ItemType)
+	{
+		return;
+	}
+	Inventory Item = Spawn(ItemType,,,, false);
+	Item.bDropped = bDropped;
+	if (bDropped)
+	{
+		if (Ammo(Item))
+		{
+			//	Half ammo when dropped by bad guys.
+			Item.Amount = Item.Amount / 2;
+			if (Item.Amount < 1)
+			{
+				Item.Amount = 1;
+			}
+		}
+	}
+	if (!Item.TryPickup(Toucher))
+	{
+		Item.Destroy();
+		return;
+	}
+
+	if (Special)
+	{
+		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2], Args[3],
+			Args[4], NULL, 0, Toucher);
+		Special = 0;
+	}
+	if (bCountItem)
+	{
+		Toucher.Player.ItemCount++;
+		Level.CurrentItems++;
+	}
+	Toucher.Player.cprint(Item.GetPickupMessage());
+	Toucher.PlaySound(Item.PickupSound, CHAN_ITEM);
+	if (bDropped)
+	{
+		Destroy();
+	}
+	else if (!Item.ShouldStay())
+	{
+		if (Item.ShouldRespawn())
+		{
+			bInvisible = true;
+			bSpecial = false;
+			SetState(FindState('DehackedDormantPickup'));
+		}
+		else
+		{
+			Destroy();
+		}
+	}
+	PlayerEx(Toucher.Player).BonusFlash += Inventory::BONUSADD;
+	//	Destroy item if it wasn't added to the toucher's inventory.
+	if (!Item.Owner)
+	{
+		Item.Destroy();
+	}
+}
+
+//==========================================================================
+//
+//	GiveBody
+//
+//	Returns false if the body isn't needed at all.
+//
+//==========================================================================
+
+final bool GiveBody(int num)
+{
+	int		max;
+
+	if (bIsPlayer)
+	{
+		max = PlayerEx(Player).GetMaxHealth();
+		if (num < 0)
+		{
+			//	For Strife negative body sets you to the percentage of your
+			// full health
+			num = max * -num / 100;
+			if (Player.Health < num)
+			{
+				Player.Health = num;
+				Health = num;
+				return true;
+			}
+		}
+		else if (Player.Health < max)
+		{
+			Player.Health += num;
+			if (Player.Health > max)
+			{
+				Player.Health = max;
+			}
+			Health = Player.Health;
+			return true;
+		}
+	}
+	else
+	{
+		max = default.Health;
+		if (num < 0)
+		{
+			num = max * -num / 100;
+			if (Health < num)
+			{
+				Health = num;
+				return true;
+			}
+		}
+		else if (Health < max)
+		{
+			Health += num;
+			if (Health > max)
+			{
+				Health = max;
+			}
+			return true;
+		}
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  SpawnPuff
+//
+//==========================================================================
+
+final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
+	bool HitThing)
+{
+	int i, c;
+	EntityEx puff;
+
+	if (PuffType.default.bPuffParticles)
+	{
+		c = P_Random() >> 1;
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Level.Game.Players[i])
+				continue;
+			if (!Level.Game.Players[i].bSpawned)
+				continue;
+			PlayerEx(Level.Game.Players[i]).ParticleEffect(20, LineSpecialLevelInfo::pt_static,
+						LineSpecialLevelInfo::pt_explode2, Org, 0.0, vector(32.0, 32.0, 32.0),
+						0.5, 10.0, 40.0, RGB(c, c, c), 0.8, 0.0);
+		}
+	}
+
+	Org.z += (Random() - Random()) * 4.0;
+
+	puff = Spawn(PuffType, Org);
+	if (!HitThing && puff.FindState('Crash'))
+	{
+		puff.SetState(puff.FindState('Crash'));
+	}
+	else if (Range == MELEERANGE && puff.MeleeState)
+	{
+		puff.SetState(puff.MeleeState);
+	}
+
+	if (HitThing && puff.SightSound)
+	{
+		// Hit thing sound
+		puff.PlaySound(puff.SightSound, CHAN_VOICE);
+	}
+	else if (puff.AttackSound)
+	{
+		puff.PlaySound(puff.AttackSound, CHAN_VOICE);
+	}
+
+	if (puff.ExplodeEffect)
+	{
+		SendExplosion(ExplodeEffect, DLightRadius, Org);
+	}
+	LineSpecialLevelInfo(Level).bPuffSpawned = true;
+}
+
+//==========================================================================
+//
+//  SpawnBlood
+// 
+//==========================================================================
+
+final void SpawnBlood(TVec Org, int damage)
+{
+	EntityEx	A;
+	int			i, c;
+
+	Org.z += (Random() - Random()) * 4.0;
+	damage = damage > 255 ? 255 : damage;
+	c = P_Random() >> 1;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+		{
+			continue;
+		}
+		if (!Level.Game.Players[i].bSpawned)
+		{
+			continue;
+		}
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(damage, LineSpecialLevelInfo::pt_static,
+				0, Org,	0.0, vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0, RGB(32 + c, c >> 4, c >> 4),
+				0.6, 0.0);
+	}
+
+	if (!BloodType)
+	{
+		return;
+	}
+	A = Spawn(BloodType, Org);
+	A.Velocity.z = 2.0 * 35.0;
+	if (LineSpecialGameInfo(Level.Game).bBloodRandomiseTime)
+	{
+		A.StateTime -= Random() * 0.1;
+		if (A.StateTime < 0.1)
+		{
+			A.StateTime = 0.1;
+		}
+	}
+
+	if (LineSpecialGameInfo(Level.Game).bBloodSpray)
+	{
+		if (damage > 13)
+		{
+			A.SetState(A.FindState('Spray'));
+		}
+		else
+		{
+			damage += 2;
+		}
+	}
+	if (damage <= 12 && damage >= 9)
+	{
+		A.SetState(GetStatePlus(A.IdleState, 1));
+	}
+	else if (damage < 9)
+	{
+		A.SetState(GetStatePlus(A.IdleState, 2));
+	}
+}
+
+//==========================================================================
+//
+//  SpawnBloodSplatter
+//
+//==========================================================================
+
+final void SpawnBloodSplatter(TVec org, int damage)
+{
+	EntityEx	mo;
+	int			i, c;
+
+	damage = damage > 255 ? 255 : damage;
+	c = P_Random() >> 1;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(damage, LineSpecialLevelInfo::pt_static,
+				0, org,	0.0, vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0, RGB(32 + c, c >> 4, c >> 4),
+				0.6, 0.0);
+	}
+
+	if (!BloodSplatterType)
+	{
+		return;
+	}
+	mo = Spawn(BloodSplatterType, org);
+	mo.Target = self;
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 3.0 * 35.0;
+}
+
+//===========================================================================
+//
+//  SpawnBloodSplatter2
+//
+//===========================================================================
+
+final void SpawnBloodSplatter2(TVec org)
+{
+	EntityEx	mo;
+
+	if (!AxeBloodType)
+	{
+		return;
+	}
+	org.x += (Random() - 0.5) * 8.0;
+	org.y += (Random() - 0.5) * 8.0;
+	mo = Spawn(AxeBloodType, org);
+	mo.Target = self;
+}
+
+//==========================================================================
+//
+//  SpawnRipperBlood
+//
+//==========================================================================
+
+final void SpawnRipperBlood()
+{
+	EntityEx	th;
+	TVec		org;
+
+	if (!BloodType)
+	{
+		return;
+	}
+	org.x = Origin.x + (Random() - Random()) * 16.0;
+	org.y = Origin.y + (Random() - Random()) * 16.0;
+	org.z = Origin.z + (Random() - Random()) * 16.0;
+	th = Spawn(BloodType, org);
+	if (LineSpecialGameInfo(Level.Game).bRipperBloodNoGravity)
+	{
+		th.bNoGravity = true;
+	}
+	th.Velocity.x = Velocity.x / 2.0;
+	th.Velocity.y = Velocity.y / 2.0;
+	th.StateTime += Random() * 0.1;
+}
+
+//==========================================================================
+//
+//  SendExplosion
+//
+//==========================================================================
+
+final void SendExplosion(int colour, float rad, TVec org)
+{
+	int i;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i])
+			continue;
+		if (!Level.Game.Players[i].bSpawned)
+			continue;
+		PlayerEx(Level.Game.Players[i]).ClientExplosion(colour, rad, org);
+	}
+}
+
+//==========================================================================
+//
+//  AngleIncrements
+//
+//==========================================================================
+
+int AngleIncrements()
+{
+	return bMonster ? 45 : LineSpecialGameInfo(
+		Level.Game).NonMonsterAngleIncrements;
+}
+
+//==========================================================================
+//
+//	PreExplode
+//
+//==========================================================================
+
+void PreExplode()
+{
+}
+
+//==========================================================================
+//
+//	GetExplodeParms
+//
+//==========================================================================
+
+void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+{
+}
+
+//==========================================================================
+//
+//	CheckBossDeath
+//
+//==========================================================================
+
+final bool CheckBossDeath()
+{
+	// make sure there is a player alive for victory
+	int i;
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned &&
+			Level.Game.Players[i].Health > 0)
+		{
+			break;
+		}
+	}
+
+	if (i == MAXPLAYERS)
+	{
+		// no one left alive, so do not end game
+		return false;
+	}
+
+	// scan the remaining thinkers to see if all bosses are dead
+	EntityEx Other;
+	foreach AllThinkers(class<Thinker>(Class), Other)
+	{
+		if (Other != self && Other.Class == Class && Other.Health > 0)
+		{
+			// Found a living boss
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	MonsterMorphed
+//
+//==========================================================================
+
+void MonsterMorphed()
+{
+}
+
+//==========================================================================
+//
+//	GetSpeechIndex
+//
+//==========================================================================
+
+final int GetSpeechIndex(RogueConSpeech *List, int Count, int ID, int Num)
+{
+	int Found;
+	int i;
+
+	Found = 0;
+	for (i = 0; i < Count; i++)
+	{
+		if (List[i].SpeakerID == ID)
+		{
+			Found++;
+			if (Found == Num)
+			{
+				return i + 1;
+			}
+		}
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	GetSpeech
+//
+//==========================================================================
+
+final int GetSpeech()
+{
+	int Index;
+
+	if (!CurrentSpeech)
+	{
+		CurrentSpeech = 1;
+	}
+	Index = GetSpeechIndex(XLevel.LevelSpeeches, XLevel.NumLevelSpeeches,
+		ConversationID, CurrentSpeech);
+	if (Index)
+	{
+		return Index;
+	}
+	return -GetSpeechIndex(XLevel.GenericSpeeches, XLevel.NumGenericSpeeches,
+		ConversationID, CurrentSpeech);
+}
+
+//==========================================================================
+//
+//  TossUpObject
+//
+//==========================================================================
+
+final EntityEx TossUpObject(class<EntityEx> type)
+{
+	EntityEx	A;
+	float		an;
+	float		randomspeed;
+
+	randomspeed = Random() * 8.0 - 6.0;
+
+	A = Spawn(type, GetCentre());
+	if (A)
+	{
+		an = AngleMod360(Angles.yaw + Random() * 360.0);
+		A.Angles.yaw = an;
+		A.Tracer = Target;
+		A.Target = self;
+		A.Velocity.x = randomspeed * cos(an) * 35.0;
+		A.Velocity.y = randomspeed * sin(an) * 35.0;
+		A.Velocity.z = (12.0 + Random() / 8.0) * 35.0;
+	}
+	return A;
+}
+
+//==========================================================================
+//
+//	SetActorProperty
+//
+//==========================================================================
+
+final void SetActorProperty(int Prop, int IntVal, string StrVal)
+{
+	switch (Prop)
+	{
+	case APROP_Health:
+		Health = IntVal;
+		if (bIsPlayer)
+		{
+			Player.Health = IntVal;
+		}
+		break;
+
+	case APROP_Speed:
+		Speed = itof(IntVal) / 65536.0 * 35.0;
+		break;
+
+	case APROP_Damage:
+		MissileDamage = IntVal;
+		break;
+
+	case APROP_Alpha:
+		Alpha = itof(IntVal) / 65536.0;
+		break;
+
+	case APROP_RenderStyle:
+		RenderStyle = IntVal;
+		break;
+
+	case APROP_Ambush:
+		bAmbush = !!IntVal;
+		break;
+
+	case APROP_Invulnerable:
+		bInvulnerable = !!IntVal;
+		break;
+
+	case APROP_JumpZ:
+		PlayerPawn(self).JumpVelZ = itof(IntVal) / 65536.0 * 35.0;
+		break;
+
+	case APROP_ChaseGoal:
+		bChaseGoal = !!IntVal;
+		break;
+
+	case APROP_Frightened:
+		print("Frightened property is not implemented");
+		break;
+
+	case APROP_Gravity:
+		Gravity = itof(IntVal) / 65536.0;
+		break;
+
+	case APROP_Friendly:
+		bFriendly = !!IntVal;
+		break;
+
+	case APROP_SeeSound:
+		SightSound = StrToName(StrVal);
+		break;
+
+	case APROP_AttackSound:
+		AttackSound = StrToName(StrVal);
+		break;
+
+	case APROP_PainSound:
+		PainSound = StrToName(StrVal);
+		break;
+
+	case APROP_DeathSound:
+		DeathSound = StrToName(StrVal);
+		break;
+
+	case APROP_ActiveSound:
+		ActiveSound = StrToName(StrVal);
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	GetActorProperty
+//
+//==========================================================================
+
+final int GetActorProperty(int Prop)
+{
+	switch (Prop)
+	{
+	case APROP_Health:
+		return Health;
+
+	case APROP_Speed:
+		return ftoi(Speed / 35.0 * 65536.0);
+
+	case APROP_Damage:
+		return MissileDamage;
+
+	case APROP_Alpha:
+		return ftoi(Alpha * 65536.0);
+
+	case APROP_RenderStyle:
+		return RenderStyle;
+
+	case APROP_Ambush:
+		return bAmbush;
+
+	case APROP_Invulnerable:
+		return bInvulnerable;
+
+	case APROP_JumpZ:
+		return ftoi(PlayerPawn(self).JumpVelZ / 35.0 * 65536.0);
+
+	case APROP_ChaseGoal:
+		return bChaseGoal;
+
+	case APROP_Frightened:
+		return 0;
+
+	case APROP_Gravity:
+		return ftoi(Gravity * 65536.0);
+
+	case APROP_Friendly:
+		return bFriendly;
+	}
+	return 0;
+}
+
+//==========================================================================
+//
+//	SetPlayerProperty
+//
+//==========================================================================
+
+final bool SetPlayerProperty(int Prop, int Set)
+{
+	class<Inventory> InvClass = none;
+	switch (Prop)
+	{
+	case PROP_FROZEN:
+		PlayerEx(Player).bFrozen = !!Set;
+		return true;
+
+	case PROP_NOTARGET:
+		PlayerEx(Player).bNoTarget = !!Set;
+		return true;
+
+	case PROP_INSTANTWEAPONSWITCH:
+		PlayerEx(Player).bInstantWeaponSwitch = !!Set;
+		return true;
+
+	case PROP_FLY:
+		PlayerEx(Player).bFly = !!Set;
+		bFly = !!Set;
+		bNoGravity = !!Set;
+		return true;
+
+	case PROP_TOTALLYFROZEN:
+		PlayerEx(Player).bTotallyFrozen = !!Set;
+		return true;
+
+	case PROP_INVULNERABILITY:
+		InvClass = PowerInvulnerable;
+		break;
+
+	case PROP_STRENGTH:
+		InvClass = PowerStrength;
+		break;
+
+	case PROP_INVISIBILITY:
+		InvClass = PowerInvisibility;
+		break;
+
+	case PROP_RADIATIONSUIT:
+		InvClass = PowerIronFeet;
+		break;
+
+	case PROP_ALLMAP:
+		if (Set)
+		{
+			PlayerEx(Player).AddRevealedMap();
+		}
+		else
+		{
+			PlayerEx(Player).RemoveRevealedMap();
+		}
+		return true;
+
+	case PROP_INFRARED:
+		InvClass = PowerLightAmp;
+		break;
+
+	case PROP_WEAPONLEVEL2:
+		InvClass = PowerWeaponLevel2;
+		break;
+
+	case PROP_FLIGHT:
+		InvClass = PowerFlight;
+		break;
+
+	case PROP_SPEED:
+		InvClass = PowerSpeed;
+		break;
+
+	default:
+		return false;
+	}
+
+	if (Set)
+	{
+		GiveInventoryType(InvClass);
+	}
+	else
+	{
+		Inventory Item = FindInventory(InvClass);
+		if (Item)
+		{
+			Item.Destroy();
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	decorate_random
+//
+//==========================================================================
+
+final int decorate_random(int From, int To)
+{
+	if (From > To)
+	{
+		int Tmp = From;
+		From = To;
+		To = Tmp;
+	}
+	int RVal;
+	if (To - From > 255)
+	{
+		RVal = (P_Random() << 24) | (P_Random() << 16) | (P_Random() << 8) |
+			P_Random();
+	}
+	else
+	{
+		RVal = P_Random();
+	}
+	return From + RVal % (To - From + 1);
+}
+
+//==========================================================================
+//
+//	decorate_random2
+//
+//==========================================================================
+
+final int decorate_random2(optional int Mask)
+{
+	if (specified_Mask)
+	{
+		return (P_Random() & Mask) - (P_Random() & Mask);
+	}
+	else
+	{
+		return P_Random() - P_Random();
+	}
+}
+
+//==========================================================================
+//
+//	decorate_sin
+//
+//==========================================================================
+
+final float decorate_sin(float Angle)
+{
+	return sin(Angle);
+}
+
+//==========================================================================
+//
+//	decorate_cos
+//
+//==========================================================================
+
+final float decorate_cos(float Angle)
+{
+	return cos(Angle);
+}
+
+//==========================================================================
+//
+//	ShouldDropItems
+//
+//==========================================================================
+
+bool ShouldDropItems()
+{
+	return true;
+}
+
+//==========================================================================
+//
+//  PainShootSkull
+//
+//  Spawn a lost soul and launch it at the target
+//
+//==========================================================================
+
+final void PainShootSkull(class<Actor> SpawnType, float angle)
+{
+	EntityEx mo;
+	Actor newSkull;
+	float prestep;
+	int count;
+
+	if (!SpawnType)
+	{
+		SpawnType = LostSoul;
+	}
+
+	// count total number of skull currently on the level
+	count = 0;
+	foreach AllThinkers(SpawnType, mo)
+	{
+		count++;
+	}
+
+	// if there are allready 20 skulls on the level,
+	// don't spit another one
+	if (count > 20)
+	{
+		return;
+	}
+
+	// okay, there's place for another one
+	prestep = 4.0 + 3.0 * (Radius + SpawnType.default.Radius) / 2.0;
+
+	// Check whether the Lost Soul is being fired through a 1-sided
+	// wall or an impassible line, or a "monsters can't cross" line.
+	// If it is, then we don't allow the spawn.
+	if (CheckSides(Origin + vector(
+	    prestep * cos(angle), prestep * sin(angle), 8.0)))
+	{
+		return;
+	}
+
+	newSkull = Spawn(SpawnType, Origin);
+
+	// Check to see if the new Lost Soul's z value is above the
+	// ceiling of its new sector, or below the floor. If so, kill it.
+	if ((newSkull.Origin.z > (newSkull.CeilingZ - newSkull.Height)) ||
+        (newSkull.Origin.z < newSkull.FloorZ))
+	{
+		// kill it immediately
+		newSkull.Damage(self, self, 10000);
+		return;
+	}
+
+	// Check for movements.
+	if (!newSkull.TryMove(newSkull.Origin + vector(
+	    prestep * cos(angle), prestep * sin(angle), 8.0), false))
+	{
+		// kill it immediately
+		newSkull.Damage(self, self, 10000);
+		return;
+	}
+
+	newSkull.Target = Target;
+	newSkull.A_SkullAttack();
+}
+
+//==========================================================================
+//
+//  AutoUseHealth
+//
+//==========================================================================
+
+final void AutoUseHealth(int saveHealth)
+{
+	int i;
+	int count;
+
+	Inventory normal = FindInventory(ArtiHealth);
+	Inventory super = FindInventory(ArtiSuperHealth);
+	if ((Level.Game.gameskill == sk_baby) && normal &&
+		(normal.Amount * 25 >= saveHealth))
+	{
+		// Use quartz flasks
+		count = (saveHealth + 24) / 25;
+		for (i = 0; i < count; i++)
+		{
+			Health += 25;
+			if (!(--normal.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				normal.Destroy();
+			}
+		}
+	}
+	else if (super && super.Amount * 100 >= saveHealth)
+	{
+		// Use mystic urns
+		count = (saveHealth + 99) / 100;
+		for (i = 0; i < count; i++)
+		{
+			Health += 100;
+			if (!(--super.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				super.Destroy();
+			}
+		}
+	}
+	else if ((Level.Game.gameskill == sk_baby) &&
+		((super ? super.Amount * 100 : 0) +
+		(normal ? normal.Amount * 25 : 0) >= saveHealth))
+	{
+		// Use mystic urns and quartz flasks
+		count = (saveHealth + 24) / 25;
+		saveHealth -= count * 25;
+		for (i = 0; normal && i < count; i++)
+		{
+			Health += 25;
+			if (!(--normal.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				normal.Destroy();
+				normal = none;
+			}
+		}
+		count = (saveHealth + 99) / 100;
+		for (i = 0; super && i < count; i++)
+		{
+			Health += 100;
+			if (!(--super.Amount))
+			{
+				// Used last of a type - compact the artifact list
+				super.Destroy();
+				super = none;
+			}
+		}
+	}
+	Player.Health = Health;
+}
+
+//==========================================================================
+//
+//  AutoUseStrifeHealth
+//
+//==========================================================================
+
+final void AutoUseStrifeHealth(int saveHealth)
+{
+	int i;
+
+	Inventory Item = FindInventory(MedicalKit);
+	if (Item && Item.Amount * 25 >= saveHealth)
+	{
+		// Use medical kits
+		i = (saveHealth + 24) / 25;
+		while (i--)
+		{
+			Health += 25;
+			saveHealth -= 25;
+			if (!(--Item.Amount))
+			{
+				Item.Destroy();
+			}
+			PlaySound('misc/invuse', CHAN_BODY);
+		}
+	}
+	
+	Item = FindInventory(MedPatch);
+	if (saveHealth > 0 && Item && Item.Amount * 10 >= saveHealth)
+	{
+		i = (saveHealth + 9) / 10;
+		while (i--)
+		{
+			Health += 10;
+			if (!(--Item.Amount))
+			{
+				Item.Destroy();
+			}
+			PlaySound('misc/invuse', CHAN_BODY);
+		}
+	}
+	Player.Health = Health;
+}
+
+//==========================================================================
+//
+//  AutoUseArmor
+//
+//==========================================================================
+
+final void AutoUseArmor()
+{
+	Inventory Item = FindInventory(MetalArmor);
+	if (Item)
+	{
+		// Use metal armor
+		Item.Use(false);
+		if (!(--Item.Amount))
+		{
+			Item.Destroy();
+		}
+	}
+	else
+	{
+		Item = FindInventory(LeatherArmor);
+		if (Item)
+		{
+			// Use leather armor
+			Item.Use(false);
+			if (!(--Item.Amount))
+			{
+				Item.Destroy();
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  HITDICE
+//
+//  Most damage in HERETIC and HEXEN defined using HITDICE
+//
+//==========================================================================
+
+final int HITDICE(int a)
+{
+	return (1 + (P_Random() & 7)) * a;
+}
+
+//==========================================================================
+//
+//  SpawnDirt
+//
+//  Dirt stuff
+//
+//==========================================================================
+
+final void SpawnDirt(float radius)
+{
+	float angle;
+	TVec org;
+	class<EntityEx> dtype;
+	EntityEx dirt;
+
+	angle = 360.0 * Random();
+	org.x = Origin.x + radius * cos(angle);
+	org.y = Origin.y + radius * sin(angle);
+	org.z = Origin.z + Random() * 2.0 + 1.0;
+	switch (P_Random() % 6)
+	{
+	case 0:
+		dtype = Dirt1;
+		break;
+	case 1:
+		dtype = Dirt2;
+		break;
+	case 2:
+		dtype = Dirt3;
+		break;
+	case 3:
+		dtype = Dirt4;
+		break;
+	case 4:
+		dtype = Dirt5;
+		break;
+	case 5:
+		dtype = Dirt6;
+		break;
+	}
+	dirt = Spawn(dtype, org);
+	if (dirt)
+	{
+		dirt.Velocity.z = Random() * 4.0 * 35.0;
+	}
+}
+
+//===========================================================================
+//
+//  GunShot
+//
+//===========================================================================
+
+final void GunShot(int accurate, TVec dir)
+{
+	int damage;
+
+	//  Make a copy of angles because inacurate shoot will modify them
+	if (!accurate)
+	{
+		TAVec angles;
+
+		VectorAngles(&dir, &angles);
+		angles.yaw = AngleMod360(angles.yaw +
+			(Random() - Random()) * 45.0 / 8.0);
+		AngleVector(&angles, &dir);
+	}
+
+	damage = 5 * (P_Random() % 3 + 1);
+
+	LineAttack(dir, MISSILERANGE, damage, BulletPuff);
+}
+
+//===========================================================================
+//
+//  IsMissile
+//
+//===========================================================================
+
+final bool IsMissile(bool Precise)
+{
+	return bMissile || (Precise && default.bMissile);
+}
+
+//===========================================================================
+//
+//  FindJumpState
+//
+//===========================================================================
+
+final state FindJumpState(name Label)
+{
+	if (XLevel.StateCall)
+	{
+		return XLevel.StateCall->Item.FindState(Label);
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_weapon].State)
+	{
+		return PlayerEx(Player).ReadyWeapon.FindState(Label);
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_flash].State)
+	{
+		return PlayerEx(Player).ReadyWeapon.FindState(Label);
+	}
+	else
+	{
+		return FindState(Label);
+	}
+}
+
+//===========================================================================
+//
+//  DoJump
+//
+//===========================================================================
+
+final void DoJump(state State)
+{
+	if (XLevel.StateCall)
+	{
+		XLevel.StateCall->State = State;
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_weapon].State)
+	{
+		Player.SetViewState(ps_weapon, State);
+	}
+	else if (bIsPlayer && XLevel.CallingState == Player.ViewStates[ps_flash].State)
+	{
+		Player.SetViewState(ps_flash, State);
+	}
+	else
+	{
+		SetState(State);
+	}
+}
+
+//==========================================================================
+//
+//	CheckForSectorActions
+//
+//==========================================================================
+
+void CheckForSectorActions(sector_t* OldSec, bool OldAboveFakeFloor,
+	bool OldAboveFakeCeiling)
+{
+	//	Check for crossing fake floor or ceiling
+	if (OldSec->heightsec && Sector->heightsec && Sector->ActionList)
+	{
+		float EyeZ = bIsPlayer ? Player.ViewOrg.z : Origin.z + Height * 0.5;
+		float FakeZ = GetPlanePointZ(&Sector->heightsec->floor, Origin);
+
+		if (!OldAboveFakeFloor && EyeZ > FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesSurface);
+		}
+		else if (OldAboveFakeFloor && EyeZ <= FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesDive);
+		}
+
+		if (!Sector->heightsec->bFakeFloorOnly)
+		{
+			FakeZ = GetPlanePointZ(&Sector->heightsec->ceiling, Origin);
+			if (!OldAboveFakeCeiling && EyeZ > FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesSurface);
+			}
+			else if (OldAboveFakeCeiling && EyeZ <= FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesBelowC);
+			}
+		}
+	}
+
+	//	Check for sector change triggers.
+	if (OldSec != Sector)
+	{
+		if (OldSec->ActionList)
+		{
+			SectorAction(OldSec->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_Exit);
+		}
+		if (Sector->ActionList)
+		{
+			int Spac = SectorAction::SECSPAC_Enter;
+			if (Origin.z <= GetPlanePointZ(&Sector->floor, Origin))
+			{
+				Spac |= SectorAction::SECSPAC_HitFloor;
+			}
+			if (Origin.z + Height >= GetPlanePointZ(&Sector->ceiling,
+				Origin))
+			{
+				Spac |= SectorAction::SECSPAC_HitCeiling;
+			}
+			if (Sector->heightsec && Origin.z ==
+				GetPlanePointZ(&Sector->heightsec->floor, Origin))
+			{
+				Spac |= SectorAction::SECSPAC_HitFakeFloor;
+			}
+			SectorAction(Sector->ActionList).TriggerAction(self, Spac);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	CheckFakeFloorTriggers
+//
+//==========================================================================
+
+final void CheckFakeFloorTriggers(float OldZ, optional bool OldHasViewH)
+{
+	if (Sector && Sector->heightsec && Sector->ActionList)
+	{
+		float ViewH = bIsPlayer ? PlayerEx(Player).ViewHeight : Height * 0.5;
+		float FakeZ = GetPlanePointZ(&Sector->heightsec->floor, Origin);
+
+		if (OldZ > FakeZ && Origin.z <= FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_HitFakeFloor);
+		}
+
+		float EyeZ = Origin.z + ViewH;
+		if (!OldHasViewH)
+		{
+			OldZ += ViewH;
+		}
+
+		if (OldZ <= FakeZ && EyeZ > FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesSurface);
+		}
+		else if (OldZ > FakeZ && EyeZ <= FakeZ)
+		{
+			SectorAction(Sector->ActionList).TriggerAction(self,
+				SectorAction::SECSPAC_EyesDive);
+		}
+
+		if (!Sector->heightsec->bFakeFloorOnly)
+		{
+			FakeZ = GetPlanePointZ(&Sector->heightsec->ceiling, Origin);
+			if (OldZ <= FakeZ && EyeZ > FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesAboveC);
+			}
+			else if (OldZ > FakeZ && EyeZ <= FakeZ)
+			{
+				SectorAction(Sector->ActionList).TriggerAction(self,
+					SectorAction::SECSPAC_EyesBelowC);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  UseLines
+//
+//  Looks for special lines in front of the actor to activate.
+//
+//==========================================================================
+
+final bool UseLines(float UseRange, float UseThingRange, name FailSound)
+{
+	bool action;
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+	TVec useDir;
+	intercept_t* in;
+	TVec hit_point;
+	opening_t *open;
+
+	action = false;
+	AngleVector(&Angles, &useDir);
+	x1 = Origin.x;
+	y1 = Origin.y;
+
+	x2 = x1 + UseThingRange * useDir.x;
+	y2 = y1 + UseThingRange * useDir.y;
+	foreach PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES | PT_ADDTHINGS)
+	{
+		if (!in->bIsALine)
+		{
+			//	Check height.
+			if (Origin.z >= in->Thing.Origin.z + in->Thing.Height ||
+				Origin.z + Height <= in->Thing.Origin.z)
+			{
+				continue;
+			}
+			if (UseThing(EntityEx(in->Thing)))
+			{
+				action = true;
+				break;
+			}
+			continue;
+		}
+
+		if (!(in->line->flags & ML_TWOSIDED))
+		{
+			break;	// stop
+		}
+
+		hit_point = Origin + (UseThingRange * in->frac) * useDir;
+		open = LineOpenings(in->line, hit_point);
+		open = FindOpening(open, hit_point.z, hit_point.z + Height);
+		if (!open || open->range < 1.0)
+		{
+			// can't use through a wall
+			break;
+		}
+		continue;
+	}
+
+	x2 = x1 + UseRange * useDir.x;
+	y2 = y1 + UseRange * useDir.y;
+	bool DoSecAct = true;
+	bool FoundLine = false;
+	foreach PathTraverse(in, x1, y1, x2, y2, PT_ADDLINES)
+	{
+		line_t* line;
+		float pheight;
+
+		line = in->line;
+		if (!line->special || (Level.GET_SPAC(line->flags) != SPAC_USE &&
+			Level.GET_SPAC(line->flags) != SPAC_USETHROUGH))
+		{
+			hit_point = Origin + (UseRange * in->frac) * useDir;
+			open = LineOpenings(line, hit_point);
+			open = FindOpening(open, hit_point.z,
+				hit_point.z + Height);
+			if (!open || open->range <= 0.0)
+			{
+				DoSecAct = false;
+
+				//	Let sector intercept the use.
+				if (Sector->ActionList &&
+					SectorAction(Sector->ActionList).TriggerAction(
+					self, SectorAction::SECSPAC_Use))
+				{
+					break;
+				}
+
+				sector_t* Sec = PointOnPlaneSide(Origin, line) == 0 ?
+					line->frontsector : line->backsector;
+				if (Sec->ActionList &&
+					SectorAction(Sec->ActionList).TriggerAction(
+					self, SectorAction::SECSPAC_UseWall))
+				{
+					break;
+				}
+
+				PlaySound(FailSound, CHAN_VOICE);
+
+				// can't use through a wall
+				break;
+			}
+			// not a special line, but keep checking
+			pheight = Origin.z + Height / 2.0;
+			if ((open->top < pheight) || (open->bottom > pheight))
+			{
+				PlaySound(FailSound, CHAN_VOICE);
+			}
+			FoundLine = true;
+			continue;
+		}
+
+		if (PointOnPlaneSide(Origin, line) == 1)
+		{
+			//	Don't use back side unless it's a two-sided line.
+			if (line->backsector != NULL)
+			{
+				continue;
+			}
+			break;
+		}
+
+		LineSpecialLevelInfo(Level).ActivateLine(line, self, 0, SPAC_USE);
+		action = true;
+
+		//WAS can't use more than one special line in a row
+		//jff 3/21/98 NOW multiple use allowed with enabling line flag
+		if (Level.GET_SPAC(line->flags) != SPAC_USETHROUGH)
+		{
+			DoSecAct = false;
+			break;
+		}
+	}
+
+	if (DoSecAct && Sector->ActionList)
+	{
+		//	Let sector intercept the use.
+		int Spac = SectorAction::SECSPAC_Use;
+		if (FoundLine)
+		{
+			Spac |= SectorAction::SECSPAC_UseWall;
+		}
+		SectorAction(Sector->ActionList).TriggerAction(self, Spac);
+	}
+	return action;
+}
+
+//==========================================================================
+//
+//  UseThing
+//
+//==========================================================================
+
+bool UseThing(EntityEx Other)
+{
+	if (Other.bUseSpecial && Other.Special && Level.ExecuteActionSpecial(
+		Other.Special, Other.Args[0], Other.Args[1], Other.Args[2],
+		Other.Args[3], Other.Args[4], NULL, 0, self))
+	{
+		return true;
+	}
+	return LineSpecialLevelInfo(Level).StartConversation(self, Other);
+}
+
+//==========================================================================
+//
+//	IsFast
+//
+//==========================================================================
+
+final bool IsFast()
+{
+	if (bAlwaysFast)
+	{
+		return true;
+	}
+	if (bNeverFast)
+	{
+		return false;
+	}
+	return Level.Game.fastparm;
+}
+
+//==========================================================================
+//
+//	RespawnResetFlags
+//
+//	Reset most of the flags to the default values on respawn.
+//
+//==========================================================================
+
+void RespawnResetFlags()
+{
+	bSpecial = default.bSpecial;
+	bSolid = default.bSolid;
+	bShootable = default.bShootable;
+	bAmbush = default.bAmbush;
+	bJustHit = default.bJustHit;
+	bJustAttacked = default.bJustAttacked;
+	bSpawnCeiling = default.bSpawnCeiling;
+	bNoGravity = default.bNoGravity;
+	bDropOff = default.bDropOff;
+	bPickUp = default.bPickUp;
+	bFloat = default.bFloat;
+	bMissile = default.bMissile;
+	bDropped = default.bDropped;
+	bShadow = default.bShadow;
+	bNoBlood = default.bNoBlood;
+	bCorpse = default.bCorpse;
+	bInFloat = default.bInFloat;
+	bCountKill = default.bCountKill;
+	bCountItem = default.bCountItem;
+	bSkullFly = default.bSkullFly;
+	bNoDeathmatch = default.bNoDeathmatch;
+	bSpawnSoundSource = default.bSpawnSoundSource;
+	bNoLiftDrop = default.bNoLiftDrop;
+	bStealth = default.bStealth;
+	bIceCorpse = default.bIceCorpse;
+
+	bDontReflect = default.bDontReflect;
+	bWindThrust = default.bWindThrust;
+	bBlasted = default.bBlasted;
+	bFly = default.bFly;
+	bFloorClip = default.bFloorClip;
+	bSpawnFloat = default.bSpawnFloat;
+	bNoTeleport = default.bNoTeleport;
+	bRip = default.bRip;
+	bPushable = default.bPushable;
+	bSlide = default.bSlide;
+	bOnMobj = default.bOnMobj;
+	bPassMobj = default.bPassMobj;
+	bCannotPush = default.bCannotPush;
+	bThruGhost = default.bThruGhost;
+	bBoss = default.bBoss;
+	bDontTranslate = default.bDontTranslate;
+	bNoDamageThrust = default.bNoDamageThrust;
+	bTelestomp = default.bTelestomp;
+	bFloatBob = default.bFloatBob;
+	bActivateImpact = default.bActivateImpact;
+	bActivatePushWall = default.bActivatePushWall;
+	bActivateMCross = default.bActivateMCross;
+	bActivatePCross = default.bActivatePCross;
+	bCantLeaveFloorpic = default.bCantLeaveFloorpic;
+	bNonShootable = default.bNonShootable;
+	bInvulnerable = default.bInvulnerable;
+	bSeekerMissile = default.bSeekerMissile;
+	bReflective = default.bReflective;
+
+	bIgnoreFloorStep = default.bIgnoreFloorStep;
+	bIgnoreCeilingStep = default.bIgnoreCeilingStep;
+	bNoRadiusDamage = default.bNoRadiusDamage;
+	bGhost = default.bGhost;
+	bAlwaysPuff = default.bAlwaysPuff;
+	bNoSplash = default.bNoSplash;
+	bDontOverlap = default.bDontOverlap;
+	bNoMorph = default.bNoMorph;
+	bDontSquash = default.bDontSquash;
+	bFullVolActive = default.bFullVolActive;
+	bMonster = default.bMonster;
+	bExplodeOnSky = default.bExplodeOnSky;
+	bStayMorphed = default.bStayMorphed;
+	bDontBlast = default.bDontBlast;
+	bCanBlast = default.bCanBlast;
+	bNeverTarget = default.bNeverTarget;
+	bDontGib = default.bDontGib;
+	bNoBlockMonst = default.bNoBlockMonst;
+	bFullVolDeath = default.bFullVolDeath;
+	bCanBounceWater = default.bCanBounceWater;
+	bNoWallBounceSnd = default.bNoWallBounceSnd;
+	bDamageInvulnerable = default.bDamageInvulnerable;
+	bNoTeleOther = default.bNoTeleOther;
+	bBloodlessImpact = default.bBloodlessImpact;
+	bNoExplodeFloor = default.bNoExplodeFloor;
+	bPuffOnActors = default.bPuffOnActors;
+
+	bNoGrudge = default.bNoGrudge;
+	bNoIceDeath = default.bNoIceDeath;
+	bBossDeath = default.bBossDeath;
+	bRandomise = default.bRandomise;
+	bActLikeBridge = default.bActLikeBridge;
+	bStrifeDamage = default.bStrifeDamage;
+	bTriggerHappy = default.bTriggerHappy;
+	bMissileEvenMore = default.bMissileEvenMore;
+	bForceRadiusDmg = default.bForceRadiusDmg;
+	bNoGravKill = default.bNoGravKill;
+	bInCombat = default.bInCombat;
+	bLookAllAround = default.bLookAllAround;
+	bStanding = default.bStanding;
+	bSpectral = default.bSpectral;
+	bFireResist = default.bFireResist;
+	bSynchronised = default.bSynchronised;
+	bNoTargetSwitch = default.bNoTargetSwitch;
+	bDontHurtSpecies = default.bDontHurtSpecies;
+	bShieldReflect = default.bShieldReflect;
+	bDeflect = default.bDeflect;
+	bPuffParticles = default.bPuffParticles;
+	bNoExtremeDeath = default.bNoExtremeDeath;
+	bExtremeDeath = default.bExtremeDeath;
+	bNoBounceSound = default.bNoBounceSound;
+
+	bFaster = default.bFaster;
+	bFastMelee = default.bFastMelee;
+	bNoDropOff = default.bNoDropOff;
+	bBounceOnActors = default.bBounceOnActors;
+	bExplodeOnWater = default.bExplodeOnWater;
+	bAvoidingDropoff = default.bAvoidingDropoff;
+	bNoDamage = default.bNoDamage;
+	bChaseGoal = default.bChaseGoal;
+	bPierceArmor = default.bPierceArmor;
+	bNoPain = default.bNoPain;
+	bAlwaysFast = default.bAlwaysFast;
+	bNeverFast = default.bNeverFast;
+	bCanUseWalls = default.bCanUseWalls;
+}
+
+//==========================================================================
+//
+//	CalcFakeZMovement
+//
+//==========================================================================
+
+void CalcFakeZMovement(out TVec Ret, float DeltaTime)
+{
+	//
+	//  adjust height
+	//
+	Ret = Origin;
+	Ret.z += Velocity.z * DeltaTime;
+	if (bFloat && Target)
+	{
+		// float down towards enemy if too close
+		if (!bSkullFly && !bInFloat)
+		{
+			float dist = DistTo2(Target);
+			float delta = Target.Origin.z + Height / 2.0 - Ret.z;
+			if (delta < 0.0 && dist < -(delta * 3.0))
+			{
+				Ret.z -= FloatSpeed * DeltaTime;
+			}
+			else if (delta > 0.0 && dist < (delta * 3.0))
+			{
+				Ret.z += FloatSpeed * DeltaTime;
+			}
+		}
+	}
+	if (bIsPlayer && bFly && !(Ret.z <= FloorZ) && XLevel.TicTime & 2)
+	{
+		Ret.z += sin(90.0 * 35.0 / 20.0 * XLevel.Time);
+	}
+}
+
+bool IsTeammate(EntityEx Other)
+{
+	return bIsPlayer && Other.bIsPlayer && Level.Game.netgame &&
+		!Level.Game.deathmatch;
+}
+
+bool IsNotAttackingMaster(EntityEx Other)
+{
+	return false;
+}
+
+bool IsMaster(EntityEx Other)
+{
+	return false;
+}
+
+bool IsServant()
+{
+	return false;
+}
+
+void TouchSpecial(EntityEx Toucher)
+{
+}
+
+states
+{
+DehackedDormantPickup:
+	TNT1 A 1050
+	TNT1 A -1
+	{
+		EntityEx	A;
+
+		bInvisible = false;
+		bSpecial = true;
+		SetState(IdleState);
+
+		// spawn a teleport fog at the new spot
+		A = Spawn(ItemFog, Origin);
+		A.PlaySound('misc/spawn', CHAN_ITEM);
+	}
+	Stop
+}
+
+float decorate_alpha
+{
+	get { return Alpha; }
+}
+
+float decorate_angle
+{
+	get { return AngleMod360(Angles.yaw); }
+}
+
+int* decorate_args
+{
+	get { return &Args[0]; }
+}
+
+float decorate_ceilingz
+{
+	get { return CeilingZ; }
+}
+
+float decorate_floorz
+{
+	get { return FloorZ; }
+}
+
+int decorate_health
+{
+	get { return Health; }
+}
+
+float decorate_pitch
+{
+	get { return AngleMod360(Angles.pitch); }
+}
+
+int decorate_special
+{
+	get { return Special; }
+}
+
+int decorate_tid
+{
+	get { return TID; }
+}
+
+int decorate_tidtohate
+{
+	get { return TIDToHate; }
+}
+
+int decorate_waterlevel
+{
+	get { return WaterLevel; }
+}
+
+float decorate_x
+{
+	get { return Origin.x; }
+}
+
+float decorate_y
+{
+	get { return Origin.y; }
+}
+
+float decorate_z
+{
+	get { return Origin.z; }
+}
+
+float decorate_momx
+{
+	get { return Velocity.x / 35.0; }
+}
+
+float decorate_momy
+{
+	get { return Velocity.y / 35.0; }
+}
+
+float decorate_momz
+{
+	get { return Velocity.z / 35.0; }
+}

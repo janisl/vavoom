@@ -1,0 +1,783 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//	Damage
+//
+//  Damages both enemies and players.
+//  "inflictor" is the thing that caused the damage, creature or missile,
+// can be NULL (slime, etc).
+//  "source" is the thing to target after taking damage, creature or NULL.
+//  Source and inflictor are the same for melee attacks. Source can be NULL
+// for slime, barrel explosions and other environmental stuff.
+//
+//==========================================================================
+
+final void Damage(EntityEx inflictor, EntityEx source, int damage,
+	optional name DmgType, optional bool NoArmor)
+{
+	int			i;
+
+	if (!bShootable)
+	{
+		// shouldn't happen...
+		return;
+	}
+
+	if (Health <= 0)
+	{
+		if (inflictor && DmgType == 'Ice')
+		{
+			return;
+		}
+		else if (bIceCorpse)	// frozen
+		{
+			StateTime = 0.1;
+			Velocity.x = 0.0;
+			Velocity.y = 0.0;
+		}
+		return;
+	}
+
+	if (bInvulnerable && damage < 10000)
+	{
+		// Actor is invulnerable
+		if (bIsPlayer)
+		{
+			if (LineSpecialGameInfo(Level.Game).bNoDamageThrustInvulnerable)
+			{
+				// For player, no exceptions
+				return;
+			}
+		}
+		else if (!inflictor || !inflictor.bDamageInvulnerable)
+		{
+			return;
+		}
+	}
+
+	if (inflictor && inflictor.bPierceArmor)
+	{
+		NoArmor = true;
+	}
+
+	//	Spectral targets only take damage from spectral projectiles.
+	if (bSpectral)
+	{
+		if (!inflictor || !inflictor.bSpectral)
+		{
+			if (MissileState)
+			{
+				SetState(MissileState);
+			}
+			return;
+		}
+	}
+
+	//	Andy Baker's Stealth monsters
+	if (bStealth)
+	{
+		Alpha = 1.0;
+		VisDir = -1;
+	}
+
+	if (bSkullFly)
+	{
+		if (bSkullFlyInvulnerable)
+		{
+			// Invulnerable during charge attack
+			return;
+		}
+		Velocity = vector(0.0, 0.0, 0.0);
+		SetState(SeeState);
+	}
+
+	if (bDormant)
+	{
+		// Invulnerable, and won't wake up
+		return;
+	}
+
+	if (bIsPlayer && Level.Game.gameskill == sk_baby)
+	{
+		// Take half damage in trainer mode
+		damage >>= 1;
+	}
+
+	// Special damage types
+	if (inflictor)
+	{
+		damage = inflictor.DoSpecialDamage(self, source, damage);
+		if (damage == -1)
+		{
+			return;
+		}
+	}
+
+	if (DmgType == 'Fire' && bFireResist)
+	{
+		damage >>= 1;
+	}
+	else
+	{
+		for (i = 0; i < DamageFactors.Num; i++)
+		{
+			if (DamageFactors[i].DamageType == DmgType)
+			{
+				damage = ftoi(itof(damage) * DamageFactors[i].Factor);
+				if (damage <= 0)
+				{
+					return;
+				}
+				break;
+			}
+		}
+	}
+
+	damage = TakeSpecialDamage(inflictor, source, damage, DmgType);
+	if (damage == -1)
+	{
+		return;
+	}
+
+	//	Push the target unless using a weapon that should not inflict
+	// thrust
+	if (inflictor && inflictor != self && bColideWithThings &&
+		!inflictor.bNoDamageThrust)
+	{
+		float kickback;
+		if (!source || !source.bIsPlayer)
+		{
+			kickback = LineSpecialGameInfo(Level.Game).DefaultKickBack;
+		}
+		else
+		{
+			kickback = PlayerEx(source.Player).ReadyWeapon.Kickback;
+		}
+		if (kickback)
+		{
+			TVec dir;
+			float thrust;
+
+			thrust = kickback / 8.0 * itof(damage) / Mass;
+			if (thrust < 0.0 || thrust > 10.0)
+			{
+				thrust = 10.0;
+			}
+			// make fall forwards sometimes
+			if ((damage < 40) && (damage > Health)
+				 && (Origin.z - inflictor.Origin.z > 64.0)
+				 && (P_Random() & 1)
+				 // [RH] But only if not too fast and not flying
+				 && thrust < 10.0
+				 && !(bNoGravity))
+			{
+				Angles.yaw += 180.0;
+				thrust *= 4.0;
+			}
+			dir = GetCentre() - inflictor.GetCentre();
+			if (Length(dir) < 0.001)
+			{
+				//	Zero length. In this case Doom would use angle 0
+				dir = vector(1.0, 0.0, 0.0);
+			}
+			if (source && source.bIsPlayer && (source == inflictor) &&
+				PlayerEx(source.Player).ReadyWeapon.bStaff2Kickback)
+			{
+				// Staff power level 2
+				dir.z = 0.0;
+				Velocity += 35.0 * 10.0 * Normalise(dir);
+				Velocity.z += 35.0 * 5.0;
+			}
+			else
+			{
+				Velocity += 35.0 * thrust * Normalise(dir);
+			}
+		}
+	}
+
+	// player specific
+	if (bIsPlayer)
+	{
+		if (PlayerEx(Player).CheckFriendlyFire(source, damage))
+		{
+			return;
+		}
+
+		//	End of game hell hack.
+		if ((Sector->special & SECSPEC_BASE_MASK) ==
+			SECSPEC_DamageSuperHellslimeExit && damage >= Health)
+		{
+			damage = Health - 1;
+		}
+
+		// Below certain threshold, ignore damage in GOD mode, or with INVUL power.
+		if (damage < 1000 && (bInvulnerable ||
+			(PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE)))
+		{
+			return;
+		}
+
+		if (!NoArmor && Inventory)
+		{
+			int NewDmg = damage;
+			Inventory.AbsorbDamage(damage, DmgType, NewDmg);
+			damage = NewDmg;
+			if (damage <= 0)
+			{
+				return;
+			}
+		}
+
+		if (damage >= Health && ((Level.Game.gameskill == sk_baby) ||
+			Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
+		{
+			// Try to use some inventory health
+			AutoUseHealth(damage - Health + 1);
+		}
+		if (Health < 50 || damage >= Health)
+		{
+			// Try to use some inventory health
+			AutoUseStrifeHealth(damage - Health + 1);
+		}
+
+		Player.Health -= damage;	// mirror mobj health here for Dave
+		if (Player.Health < 0)
+		{
+			Player.Health = 0;
+		}
+		PlayerEx(Player).Attacker = source;
+		PlayerEx(Player).DamageFlash += itof(damage) / 35.0;	// add damage after armor / invuln
+		if (PlayerEx(Player).DamageFlash > 3.0)
+		{
+			PlayerEx(Player).DamageFlash = 3.0;	// teleport stomp does 10k points...
+		}
+
+		// For Korax Arena
+		PlayerEx(Player).Damaged(inflictor);
+	}
+
+	// do the damage    
+	Health -= damage;
+	if (Health <= 0)
+	{
+		// Death
+		Special1 = damage;
+		// check for special fire damage or ice damage deaths
+		if (DmgType == 'Fire')
+		{
+			if (bIsPlayer && !PlayerEx(Player).MorphTime)
+			{
+				// Check for flame death
+				if (!inflictor || !inflictor.bConditionalFireDamage ||
+					(Health > -50 && damage > 25))
+				{
+					DamageType = 'Fire';
+				}
+			}
+			else
+			{
+				DamageType = 'Fire';
+			}
+		}
+		else
+		{
+			DamageType = DmgType;
+		}
+		if (source && source.IsServant())
+		{
+			// Minotaur's kills go to his master
+			EntityEx master = source.Tracer;
+			// Make sure still alive and not a pointer to fighter head
+			if (master && master.bIsPlayer && (master.Player.MO == master))
+			{
+				source = master;
+			}
+		}
+		Died(source, inflictor);
+		return;
+	}
+
+	state WoundState = FindState('Wound', DmgType, false);
+	if (Health <= WoundHealth && WoundState)
+	{
+		SetState(WoundState);
+		return;
+	}
+
+	float PChance = PainChance;
+	for (i = 0; i < PainChances.Num; i++)
+	{
+		if (PainChances[i].DamageType == DmgType)
+		{
+			PChance = PainChances[i].Chance;
+			break;
+		}
+	}
+
+	if (!bNoPain && (Random() < PChance) && !bSkullFly)
+	{
+		if (inflictor && inflictor.bLightning)
+		{
+			if (P_Random() < 96)
+			{
+				bJustHit = true;	// fight back!
+				SetState(FindState('Pain', DmgType, false));
+			}
+			else
+			{
+				// "electrocute" the target
+				bFullBright = true;
+				if (HowlSound && bCountKill && P_Random() < 128 &&
+					!GetSoundPlayingInfo(self, GetSoundID(HowlSound)))
+				{
+					PlaySound(HowlSound, CHAN_VOICE);
+				}
+			}
+		}
+		else
+		{
+			bJustHit = true;	// fight back!
+			SetState(FindState('Pain', DmgType, false));
+			if (inflictor && inflictor.bHowlVictims)
+			{
+				if (HowlSound && bCountKill && P_Random() < 128 &&
+					!GetSoundPlayingInfo(self, GetSoundID(HowlSound)))
+				{
+					PlaySound(HowlSound, CHAN_VOICE);
+				}
+			}
+		}
+	}
+
+	ReactionCount = 0;	// we're awake now...
+
+	if (source)
+	{
+		if (source == Target)
+		{
+			Threshold = BASETHRESHOLD;
+			if (State == IdleState && SeeState)
+			{
+				SetState(SeeState);
+			}
+		}
+		else if (OkayToSwitchTarget(source))
+		{
+			// Target actor is not intent on another actor,
+			// so make him chase after source
+
+			// killough 2/15/98: remember last enemy, to prevent
+			// sleeping early; 2/21/98: Place priority on players
+
+			if (!LastEnemy || (!LastEnemy.bIsPlayer && !TIDToHate) ||
+				LastEnemy.Health <= 0)
+			{
+				LastEnemy = Target; // remember last enemy - killough
+			}
+			Target = source;
+			Threshold = BASETHRESHOLD;
+			if (State == IdleState && SeeState)
+			{
+				SetState(SeeState);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.bIsPlayer && MissilePoisonDamage > 0)
+	{
+		victim.PoisonPlayer(source, MissilePoisonDamage);
+		damage >>= 1;
+	}
+	return damage;
+}
+
+//==========================================================================
+//
+//  TakeSpecialDamage
+//
+//==========================================================================
+
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
+{
+	if (bNoDamage)
+	{
+		return 0;
+	}
+
+	//	Always apply damage if actor has regular death state or no death
+	// states at all.
+	if (FindState('Death') || !HasSpecialStates('Death'))
+	{
+		return damage;
+	}
+	//	If there's no corresponding death state, actor takes no damage at
+	// all.
+	if (DmgType == 'Ice')
+	{
+		if (FindState('Death', 'Ice', true))
+		{
+			return damage;
+		}
+		if ((bIsPlayer || bMonster) && !bNoIceDeath)
+		{
+			return damage;
+		}
+		return -1;
+	}
+	else
+	{
+		return FindState('Death', DmgType) ? damage : -1;
+	}
+}
+
+//==========================================================================
+//
+//  OkayToSwitchTarget
+//
+//==========================================================================
+
+bool OkayToSwitchTarget(EntityEx source)
+{
+	if (source == self)
+	{
+		//	Don't hate self.
+		return false;
+	}
+
+	if (Threshold && !bNoGrudge)
+	{
+		return false;
+	}
+	if (source.bNeverTarget)
+	{
+		return false;
+	}
+	if (bNoTargetSwitch)
+	{
+		return false;
+	}
+	if (source.bIsPlayer && bNoHatePlayers)
+	{
+		return false;
+	}
+	if (!Level.Game.deathmatch && source.bFriendly && bFriendly)
+	{
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	Died
+//
+//==========================================================================
+
+void Died(EntityEx source, EntityEx inflictor)
+{
+	Inventory	Item;
+
+	//	Notify actor's items.
+	for (Item = Inventory; Item;)
+	{
+		Inventory Next = Item.Inventory;
+		Item.OwnerDied();
+		Item = Next;
+	}
+
+	if (source)
+	{
+		//	Set Target to the thing that killed it. It's needed for Strife's
+		// special dropped items.
+		Target = source;
+	}
+
+	if (inflictor && inflictor.bNoExtremeDeath)
+	{
+		//	Prevent gibing animation.
+		Health = -1;
+	}
+
+	if (source && (source.bIsPlayer) &&
+		PlayerEx(source.Player).IsWeaponAlwaysExtremeDeath())
+	{
+		// Always extreme death.
+		Health = -5000;
+	}
+
+	if (bIsPlayer && Level.bDeathSlideShow)
+	{
+		//	Start sad finale.
+		PlayerEx(Player).StartDeathSlideShow();
+	}
+
+	bShootable = false;
+	bFloat = false;
+	bSkullFly = false;
+	if (!bNoGravKill)
+	{
+		bNoGravity = false;
+	}
+	bDropOff = true;
+	bCorpse = true;
+	bPassMobj = false;
+
+	float NewHeight = 0.0;
+	if (DamageType == 'Fire')
+	{
+		NewHeight = BurnHeight;
+	}
+	if (!NewHeight)
+	{
+		NewHeight = DeathHeight;
+	}
+	if (NewHeight < 0.0)
+	{
+		Height = 0.0;
+	}
+	else if (NewHeight)
+	{
+		Height = NewHeight;
+	}
+	else
+	{
+		Height /= 4.0;
+	}
+
+	if (Special && (!bSpecial || bCountKill))
+	{
+		// Initiate monster death actions
+		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
+			Args[3], Args[4], NULL, 0, self);
+	}
+	if (bCountKill)
+	{
+		Level.CurrentKills++;
+	}
+	if (source && source.bIsPlayer)
+	{
+		if (bCountKill)
+		{
+			// count for intermission
+			source.Player.KillCount++;
+		}
+		PlayerEx(source.Player).KilledActor(self);
+	}
+	else if (!Level.Game.netgame && bCountKill)
+	{
+		// Count all monster deaths,
+		// even those caused by other monsters
+		Level.Game.Players[0].KillCount++;
+	}
+
+	if (bIsPlayer)
+	{
+		//	Display obituary.
+		PlayerEx(Player).DisplayObituary(inflictor, source, DamageType);
+
+		XLevel.StartTypedACScripts(Level::SCRIPT_Death, 0, 0, 0, self, true,
+			false);
+
+		PlayerEx(Player).Deaths++;
+
+		// Count environment kills against you
+		if (!source)
+		{
+			Player.Frags--;
+		}
+
+		PlayerEx(Player).Killed(source, inflictor);
+
+		bSolid = false;
+		bFly = false;
+		Player.PlayerState = PST_DEAD;
+		PlayerEx(Player).DropWeapon();
+#ifdef FIXME
+		if (Player == Level.Game.Players[consoleplayer] && automapactive)
+		{
+			// Don't die in auto map, switch view prior to dying
+			AM_Stop();
+		}
+#endif
+	}
+
+	state DeathState = none;
+	if (DamageType)
+	{
+		// Specialised death state for this damage type (ice, etc).
+		DeathState = FindState('Death', DamageType, true);
+		if (DamageType == 'Ice' && !bNoIceDeath && (bIsPlayer || bMonster))
+		{
+			DeathState = FindState('GenericFreezeDeath');
+		}
+	}
+	if (!DeathState)
+	{
+		//	Calculate gibs health
+		int GHealth = GibsHealth;
+		if (!GHealth)
+		{
+			GHealth = ftoi(itof(-default.Health) *
+				LineSpecialGameInfo(Level.Game).GibsHealthFactor);
+		}
+
+		//	Don't pass damage type unless it's a massacre damage.
+		if (DamageType != 'Massacre')
+		{
+			DamageType = '';
+		}
+
+		if (Health < GHealth)
+		{
+			// Extreme death
+			DeathState = FindState('Death', 'Extreme', true);
+		}
+		if (!DeathState)
+		{
+			// Normal death
+			DeathState = FindState('Death');
+		}
+	}
+
+	if (DeathState)
+	{
+		SetState(DeathState);
+		StateTime -= Random() * 0.1;
+		if (StateTime < 1.0 / 35.0)
+		{
+			StateTime = 1.0 / 35.0;
+		}
+	}
+	else
+	{
+		Destroy();
+	}
+}
+
+//==========================================================================
+//
+//  PoisonPlayer - Sets up all data concerning poisoning
+//
+//==========================================================================
+
+final void PoisonPlayer(EntityEx poisoner, int poison)
+{
+	if ((PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE) || bInvulnerable)
+	{
+		return;
+	}
+	PlayerEx(Player).PoisonCount += poison;
+	PlayerEx(Player).Poisoner = poisoner;
+	PlayerEx(Player).PoisonerPlayer = poisoner ? PlayerEx(poisoner.Player) :
+		none;
+	if (PlayerEx(Player).PoisonCount > 100)
+	{
+		PlayerEx(Player).PoisonCount = 100;
+	}
+	PlayerEx(Player).LastPoisonTime = XLevel.Time;
+}
+
+//==========================================================================
+//
+//  PoisonDamage
+//
+//  Similar to Actor::Damage
+//
+//==========================================================================
+
+final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
+	bool playPainSound)
+{
+	if (Health <= 0)
+	{
+		return;
+	}
+	if (bInvulnerable && damage < 10000)
+	{	// mobj is invulnerable
+		return;
+	}
+	if (bIsPlayer && Level.Game.gameskill == sk_baby)
+	{
+		// Take half damage in trainer mode
+		damage >>= 1;
+	}
+	if (damage < 1000 && ((PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE) ||
+		bInvulnerable))
+	{
+		return;
+	}
+	if (damage >= Player.Health && ((Level.Game.gameskill == sk_baby) ||
+		Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
+	{
+		// Try to use some inventory health
+		AutoUseHealth(damage - Player.Health + 1);
+	}
+	Player.Health -= damage;	// mirror mobj health here for Dave
+	if (Player.Health < 0)
+	{
+		Player.Health = 0;
+	}
+	PlayerEx(Player).Attacker = source;
+
+	//
+	// do the damage
+	//
+	Health -= damage;
+	if (Health <= 0)
+	{
+		// Death
+		Special1 = damage;
+		if (bIsPlayer && inflictor && !PlayerEx(Player).MorphTime)
+		{
+			// Check for flame death
+			if (inflictor.DamageType == 'Fire' && (Health > -50) && (damage > 25))
+			{
+				DamageType = 'Fire';
+			}
+			else
+			{
+				DamageType = inflictor.DamageType;
+			}
+		}
+		Died(source, inflictor);
+		return;
+	}
+	if (!(XLevel.TicTime & 63) && playPainSound)
+	{
+		SetState(FindState('Pain'));
+	}
+}

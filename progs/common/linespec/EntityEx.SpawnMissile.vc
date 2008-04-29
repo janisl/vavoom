@@ -1,0 +1,522 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//	PlayMissileSpawnSound
+//
+//==========================================================================
+
+final void PlayMissileSpawnSound(EntityEx Source)
+{
+	if (SightSound)
+	{
+		if (!bSpawnSoundSource)
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+		else if (Source)
+		{
+			Source.PlaySound(SightSound, CHAN_WEAPON);
+		}
+		else
+		{
+			PlaySound(SightSound, CHAN_WEAPON);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  CheckMissileSpawn
+//
+//  Moves the missile forward a bit and possibly explodes it right there.
+//
+//==========================================================================
+
+final bool CheckMissileSpawn()
+{
+	if (bRandomise && StateTime > 0.0)
+	{
+		StateTime -= Random() * 0.1;
+		if (StateTime < 1.0 / 35.0)
+			StateTime = 1.0 / 35.0;
+	}
+
+	// move a little forward so an angle can be computed if it
+	// immediately explodes
+	UnlinkFromWorld();
+	if (Speed > 100.0 * 35.0)
+	{
+		//	Ultra-fast missile
+		Origin += Velocity * 0.0142857143 / 8.0;
+	}
+	else
+	{
+		//	Normal missile
+		Origin += Velocity * 0.0142857143;
+	}
+	LinkToWorld();
+	tmtrace_t tmtrace;
+	if (!TryMoveEx(&tmtrace, Origin, false))
+	{
+		//	Don't explode ripping missiles that spawn inside another thing.
+		if (!tmtrace.BlockingMobj || !bRip ||
+			EntityEx(tmtrace.BlockingMobj).bDontRip)
+		{
+			//	Don't explode missiles on horizon lines.
+			if (tmtrace.BlockingLine && tmtrace.BlockingLine->special ==
+				LNSPEC_LineHorizon)
+			{
+				Destroy();
+			}
+			else
+			{
+				ExplodeMissile();
+			}
+			return false;
+		}
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//  ExplodeMissile
+//
+//==========================================================================
+
+final bool ExplodeMissile()
+{
+	if (bExploCount)
+	{
+		Special2++;
+		if (Special2 < Special1)
+		{
+			return true;
+		}
+	}
+
+	Velocity = vector(0.0, 0.0, 0.0);
+
+	if (!SetState(FindState('Death')))
+	{
+		return false;
+	}
+
+	if (bRandomise)
+	{
+		StateTime -= Random() * 0.1;
+		if (StateTime < 1.0 / 35.0)
+			StateTime = 1.0 / 35.0;
+	}
+
+	bMissile = false;
+
+	if (DeathSound)
+	{
+		PlaySound(DeathSound, CHAN_VOICE, 1.0, bFullVolDeath ? ATTN_NONE :
+			ATTN_NORMAL);
+	}
+
+	if (!bLeaveTrail && bDynamicLight)
+	{
+		SendExplosion(DLightColour, DLightRadius, Origin);
+		bDynamicLight = false;
+	}
+	bLeaveTrail = false;
+	return true;
+}
+
+//==========================================================================
+//
+//  SpawnMissile
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
+	optional float SpawnHeight)
+{
+	EntityEx A;
+	TVec org;
+	TVec dir;
+
+	org = Origin;
+	if (specified_SpawnHeight)
+	{
+		org.z = Origin.z + SpawnHeight;
+	}
+	else if (type.default.bIgnoreFloorStep)
+	{
+		org.z = ONFLOORZ + FloorClip;
+	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
+	}
+	else
+	{
+		org.z = Origin.z + 32.0;
+	}
+	org.z -= FloorClip;
+	A = Spawn(type, org);
+
+	A.PlayMissileSpawnSound(self);
+
+	A.Target = self;	// where it came from
+
+	if (dest)
+	{
+		dir = dest.Origin - Origin;
+		if (dest.bShadow)
+		{
+			// Invisible target
+			VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+		}
+	}
+	else
+	{
+		dir = Velocity;
+	}
+	dir = Normalise(dir);
+	A.Velocity = dir * A.Speed;
+
+	VectorAngles(&dir, &A.Angles);
+
+	return A.CheckMissileSpawn() ? A : none;
+}
+
+//==========================================================================
+//
+//  SpawnMissileXYZ
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+final EntityEx SpawnMissileXYZ(TVec org, EntityEx dest, class<EntityEx> type)
+{
+	TVec		dir;
+	EntityEx	A;
+
+	org.z -= FloorClip;
+	A = Spawn(type, org);
+	A.PlayMissileSpawnSound(self);
+	A.Target = self;	// Originator
+	dir = dest.Origin - Origin;
+	if (dest.bShadow)
+	{
+		// Invisible target
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
+	}
+	dir = Normalise(dir);
+	A.Velocity = dir * A.Speed;
+	VectorAngles(&dir, &A.Angles);
+	return A.CheckMissileSpawn() ? A : none;
+}
+
+//==========================================================================
+//
+//  SpawnMissileZAimed
+//
+//==========================================================================
+
+final EntityEx SpawnMissileZAimed(float z, EntityEx dest, class<EntityEx> type)
+{
+	EntityEx	A;
+	TVec		dir;
+	float		dist;
+
+	A = Spawn(type, Origin + vector(0.0, 0.0, z - FloorClip));
+
+	A.PlayMissileSpawnSound(self);
+
+	A.Target = self;	// where it came from
+
+	dist = DistTo2(dest);
+	dir.x = cos(Angles.yaw);
+	dir.y = sin(Angles.yaw);
+	dir.z = dist != 0.0 ? (dest.Origin.z - Origin.z) / dist : A.Speed;
+	// fuzzy player
+	if (dest.bShadow)
+	{
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0 / 2.0);
+	}
+	dir = Normalise(dir);
+	A.Velocity = dir * A.Speed;
+
+	VectorAngles(&dir, &A.Angles);
+
+	return A.CheckMissileSpawn() ? A : none;
+}
+
+//==========================================================================
+//
+//  SpawnMissileAngles
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+final EntityEx SpawnMissileAngles(class<EntityEx> type, float yaw, float pitch,
+	optional float SpawnHeight)
+{
+	TVec		org;
+	EntityEx	A;
+	TVec		dir;
+
+	org = Origin;
+	if (specified_SpawnHeight)
+	{
+		org.z = Origin.z + SpawnHeight;
+	}
+	else if (type.default.bIgnoreFloorStep)
+	{
+		org.z = ONFLOORZ + FloorClip;
+	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
+	}
+	else
+	{
+		org.z = Origin.z + 32.0;
+	}
+	org.z -= FloorClip;
+	A = Spawn(type, org);
+	A.PlayMissileSpawnSound(self);
+	A.Target = self;	// Originator
+	A.Angles.yaw = yaw;
+	A.Angles.pitch = pitch;
+	AngleVector(&A.Angles, &dir);
+	A.Velocity = A.Speed * dir;
+	return A.CheckMissileSpawn() ? A : none;
+}
+
+//==========================================================================
+//
+//  SpawnMissileAngle
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+final EntityEx SpawnMissileAngle(class<EntityEx> type, float angle,
+	float momz, optional float SpawnHeight)
+{
+	TVec org;
+	EntityEx mo;
+
+	org = Origin;
+	if (specified_SpawnHeight)
+	{
+		org.z = Origin.z + SpawnHeight;
+	}
+	else if (type.default.bIgnoreFloorStep)
+	{
+		// Minotaur floor fire missile
+		org.z = ONFLOORZ + FloorClip;
+	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
+	}
+	else
+	{
+		org.z = Origin.z + 32.0;
+	}
+	org.z -= FloorClip;
+	mo = Spawn(type, org);
+	mo.PlayMissileSpawnSound(self);
+	mo.Target = self;	// Originator
+	mo.Angles.yaw = angle;
+	mo.Velocity.x = mo.Speed * cos(angle);
+	mo.Velocity.y = mo.Speed * sin(angle);
+	mo.Velocity.z = momz;
+	return mo.CheckMissileSpawn() ? mo : none;
+}
+
+//==========================================================================
+//
+//  SpawnMissileAngleSpeed
+//
+//  Returns NULL if the missile exploded immediately, otherwise returns
+// a Actor reference to the missile.
+//
+//==========================================================================
+
+final EntityEx SpawnMissileAngleSpeed(class<EntityEx> type, float angle,
+	float momz, float speed)
+{
+	TVec org;
+	EntityEx mo;
+
+	org = Origin;
+	org.z -= FloorClip;
+	mo = Spawn(type, org);
+	mo.Tracer = self;	// Originator
+	mo.Angles.yaw = angle;
+	mo.Velocity.x = speed * cos(angle);
+	mo.Velocity.y = speed * sin(angle);
+	mo.Velocity.z = momz;
+	mo.PlayMissileSpawnSound(self);
+	return mo.CheckMissileSpawn() ? mo : none;
+}
+
+//==========================================================================
+//
+//	SpawnSubMissile
+//
+//==========================================================================
+
+final EntityEx SpawnSubMissile(class<EntityEx> type, EntityEx AInstigator)
+{
+	EntityEx	other;
+	TVec		dir;
+
+	other = Spawn(type, Origin);
+	if (!other)
+	{
+		return none;
+	}
+
+	other.Target = AInstigator;
+	other.Angles = Angles;
+
+	other.Velocity.x = other.Speed * cos(Angles.yaw);
+	other.Velocity.y = other.Speed * sin(Angles.yaw);
+	AimLineAttack(dir, Angles, 1024.0);
+	other.Velocity.z = other.Speed * dir.z;
+	other.CheckMissileSpawn();
+	return other;
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissile
+//
+//==========================================================================
+
+final EntityEx SpawnPlayerMissile(class<EntityEx> type)
+{
+	EntityEx	AimTarget;
+
+	return SpawnPlayerMissileEx(type, false, AimTarget);
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissileAngle
+//
+//==========================================================================
+
+final EntityEx SpawnPlayerMissileAngle(class<EntityEx> type, float angle)
+{
+	EntityEx	AimTarget;
+
+	return SpawnPlayerMissileEx(type, false, AimTarget, angle);
+}
+
+//===========================================================================
+//
+//  SpawnPlayerMissileAngleXYZ
+//
+//===========================================================================
+
+final EntityEx SpawnPlayerMissileAngleXYZ(TVec org, class<EntityEx> type,
+	float angle)
+{
+	EntityEx	AimTarget;
+
+	return SpawnPlayerMissileEx(type, false, AimTarget, angle, org);
+}
+
+//==========================================================================
+//
+//  SpawnPlayerMissileEx
+//
+//  Tries to aim at a nearby monster
+//
+//==========================================================================
+
+final EntityEx SpawnPlayerMissileEx(class<EntityEx> type, bool RetExploded,
+	out EntityEx AimTarget, optional float angle, optional TVec SpawnOrg)
+{
+	EntityEx	A;
+	TVec		dir;
+	TVec		org;
+
+	// Try to find a target
+	if (specified_angle)
+	{
+		AimTarget = Aim(dir, 16.0 * 64.0, angle);
+	}
+	else
+	{
+		AimTarget = Aim(dir, 16.0 * 64.0);
+	}
+
+	org = specified_SpawnOrg ? SpawnOrg : Origin;
+	if (type.default.bIgnoreFloorStep)
+	{
+		org.z = ONFLOORZ;
+		dir.z = 0.0;
+		dir = Normalise(dir);
+	}
+	else if (type.default.bIgnoreCeilingStep)
+	{
+		org.z = ONCEILINGZ;
+		dir.z = 0.0;
+		dir = Normalise(dir);
+	}
+	else
+	{
+		org.z += Height * 0.5 - FloorClip;
+		//	Missiles are spawned 4 units lower than hitscan attacks.
+		if (bIsPlayer)
+		{
+			org.z += PlayerPawn(Player.MO).AttackZOffset - 4.0;
+		}
+		else
+		{
+			org.z += 4.0;
+		}
+	}
+	A = Spawn(type, org);
+
+	A.PlayMissileSpawnSound(self);
+
+	A.Target = self;
+	A.Velocity = dir * A.Speed;
+	VectorAngles(&dir, &A.Angles);
+
+	return A.CheckMissileSpawn() || RetExploded ? A : none;
+}
