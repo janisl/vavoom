@@ -636,7 +636,9 @@ COMMAND(Alias)
 	for (i = 2; i < c; i++)
 	{
 		if (i != 2)
+		{
 			tmp += " ";
+		}
 		tmp += Args[i];
 	}
 
@@ -653,6 +655,7 @@ COMMAND(Alias)
 		a = new VAlias;
 		a->Name = Args[1];
 		a->Next = VCommand::Alias;
+		a->Save = !ParsingKeyConf;
 		VCommand::Alias = a;
 	}
 	a->CmdLine = tmp;

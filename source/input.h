@@ -192,7 +192,7 @@ public:
 	//	Handling of key bindings.
 	virtual void GetBindingKeys(const VStr&, int&, int&) = 0;
 	virtual void GetBinding(int, VStr&, VStr&) = 0;
-	virtual void SetBinding(int, const VStr&, const VStr&) = 0;
+	virtual void SetBinding(int, const VStr&, const VStr&, bool = true) = 0;
 	virtual void WriteBindings(FILE*) = 0;
 
 	virtual int TranslateKey(int) = 0;

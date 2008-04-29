@@ -62,7 +62,7 @@ public:
 	//	Handling of key bindings.
 	void GetBindingKeys(const VStr&, int&, int&);
 	void GetBinding(int, VStr&, VStr&);
-	void SetBinding(int, const VStr&, const VStr&);
+	void SetBinding(int, const VStr&, const VStr&, bool);
 	void WriteBindings(FILE*);
 
 	int TranslateKey(int);
@@ -81,6 +81,7 @@ private:
 
 	VStr			KeyBindingsDown[256];
 	VStr			KeyBindingsUp[256];
+	bool			KeyBindingsSave[256];
 
 	static const char*	KeyNames[SCANCODECOUNT];
 	static const char	ShiftXForm[];
@@ -271,6 +272,7 @@ VInput::VInput()
 , EventHead(0)
 , EventTail(0)
 {
+	memset(KeyBindingsSave, 0, sizeof(KeyBindingsSave));
 }
 
 //==========================================================================
@@ -552,14 +554,22 @@ void VInput::GetBinding(int KeyNum, VStr& Down, VStr& Up)
 //
 //==========================================================================
 
-void VInput::SetBinding(int KeyNum, const VStr& Down, const VStr& Up)
+void VInput::SetBinding(int KeyNum, const VStr& Down, const VStr& Up,
+	bool Save)
 {
 	guard(VInput::SetBinding);
 	if (KeyNum == -1)
+	{
 		return;
+	}
+	if (!Down && !Up && !KeyBindingsSave[KeyNum])
+	{
+		return;
+	}
 
 	KeyBindingsDown[KeyNum] = Down;
 	KeyBindingsUp[KeyNum] = Up;
+	KeyBindingsSave[KeyNum] = Save;
 	unguard;
 }
 
@@ -577,7 +587,7 @@ void VInput::WriteBindings(FILE* f)
 	fprintf(f, "UnbindAll\n");
 	for (int i = 0; i < 256; i++)
 	{
-		if (KeyBindingsDown[i] || KeyBindingsUp[i])
+		if ((KeyBindingsDown[i] || KeyBindingsUp[i]) && KeyBindingsSave[i])
 		{
 			fprintf(f, "bind \"%s\" \"%s\" \"%s\"\n", *KeyNameForNum(i),
 				*KeyBindingsDown[i], *KeyBindingsUp[i]);
@@ -733,6 +743,43 @@ COMMAND(Bind)
 			GCon->Logf("%s is not bound", *Args[1]);
 		return;
 	}
-	GInput->SetBinding(b, Args[2], c > 3 ? Args[3] : VStr());
+	GInput->SetBinding(b, Args[2], c > 3 ? Args[3] : VStr(), !ParsingKeyConf);
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND DefaultBind
+//
+//==========================================================================
+
+COMMAND(DefaultBind)
+{
+	guard(COMMAND DefaultBind);
+	int c = Args.Num();
+
+	if (c != 2 && c != 3 && c != 4)
+	{
+		GCon->Log("defaultbind <key> [down_command] [up_command]: attach a command to a key");
+		return;
+	}
+	int b = GInput->KeyNumForName(Args[1]);
+	if (b == -1)
+	{
+		GCon->Log(VStr("\"") + Args[1] + "\" isn\'t a valid key");
+		return;
+	}
+
+	if (c == 2)
+	{
+		VStr Down, Up;
+		GInput->GetBinding(b, Down, Up);
+		if (Down || Up)
+			GCon->Log(Args[1] + " = \"" + Down + "\" / \"" + Up + "\"");
+		else
+			GCon->Logf("%s is not bound", *Args[1]);
+		return;
+	}
+	GInput->SetBinding(b, Args[2], c > 3 ? Args[3] : VStr(), !ParsingKeyConf);
 	unguard;
 }

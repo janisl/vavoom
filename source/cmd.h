@@ -42,6 +42,7 @@ private:
 		VStr		Name;
 		VStr		CmdLine;
 		VAlias*		Next;
+		bool		Save;
 	};
 
 	const char*					Name;
