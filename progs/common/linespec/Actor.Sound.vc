@@ -1,0 +1,383 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//	Sound functions
+//**************************************************************************
+
+//==========================================================================
+//
+//  A_PlaySound
+//
+//==========================================================================
+
+final void A_PlaySound(string Sound)
+{
+	PlaySound(StrToName(Sound), CHAN_BODY);
+}
+
+//==========================================================================
+//
+//  A_PlaySoundEx
+//
+//==========================================================================
+
+final void A_PlaySoundEx(string Sound, string Channel, optional bool Loop,
+	optional int Attenuation)
+{
+	//	Channel
+	int Chan;
+	if (!stricmp(Channel, "Auto"))
+	{
+		Chan = CHAN_AUTO;
+	}
+	else if (!stricmp(Channel, "Weapon"))
+	{
+		Chan = CHAN_WEAPON;
+	}
+	else if (!stricmp(Channel, "Voice"))
+	{
+		Chan = CHAN_VOICE;
+	}
+	else if (!stricmp(Channel, "Item"))
+	{
+		Chan = CHAN_ITEM;
+	}
+	else if (!stricmp(Channel, "Body"))
+	{
+		Chan = CHAN_BODY;
+	}
+	else if (!stricmp(Channel, "SoundSlot5"))
+	{
+		Chan = 5;
+	}
+	else if (!stricmp(Channel, "SoundSlot6"))
+	{
+		Chan = 6;
+	}
+	else if (!stricmp(Channel, "SoundSlot7"))
+	{
+		Chan = 7;
+	}
+
+	//	Attenuation
+	float Atten = ATTN_NORMAL;
+	switch (Attenuation)
+	{
+	case -1:
+		Atten = ATTN_STATIC;
+		break;
+	case 1:
+		Atten = ATTN_NONE;
+		break;
+	case 2:
+		Atten = ATTN_SURROUND;
+		break;
+	}
+
+	PlaySound(StrToName(Sound), Chan,, Atten, Loop);
+}
+
+//==========================================================================
+//
+//  A_PlayWeaponSound
+//
+//==========================================================================
+
+final void A_PlayWeaponSound(string Sound)
+{
+	PlaySound(StrToName(Sound), CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//	A_ActiveSound
+//
+//==========================================================================
+
+final void A_ActiveSound()
+{
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	A_LoopActiveSound
+//
+//==========================================================================
+
+final void A_LoopActiveSound()
+{
+	if (ActiveSound)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE,,, true);
+	}
+}
+
+//==========================================================================
+//
+//	A_FLoopActiveSound
+//
+//==========================================================================
+
+final void A_FLoopActiveSound()
+{
+	if (ActiveSound && !GetSoundPlayingInfo(self, GetSoundID(ActiveSound)))
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	A_StopSound
+//
+//==========================================================================
+
+final void A_StopSound()
+{
+	StopSound(CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//	A_StopSoundEx
+//
+//==========================================================================
+
+final void A_StopSoundEx(string Channel)
+{
+	//	Channel
+	int Chan;
+	if (!stricmp(Channel, "Auto"))
+	{
+		Chan = CHAN_AUTO;
+	}
+	else if (!stricmp(Channel, "Weapon"))
+	{
+		Chan = CHAN_WEAPON;
+	}
+	else if (!stricmp(Channel, "Voice"))
+	{
+		Chan = CHAN_VOICE;
+	}
+	else if (!stricmp(Channel, "Item"))
+	{
+		Chan = CHAN_ITEM;
+	}
+	else if (!stricmp(Channel, "Body"))
+	{
+		Chan = CHAN_BODY;
+	}
+	else if (!stricmp(Channel, "SoundSlot5"))
+	{
+		Chan = 5;
+	}
+	else if (!stricmp(Channel, "SoundSlot6"))
+	{
+		Chan = 6;
+	}
+	else if (!stricmp(Channel, "SoundSlot7"))
+	{
+		Chan = 7;
+	}
+
+	StopSound(Chan);
+}
+
+//==========================================================================
+//
+//  A_Pain
+//
+//==========================================================================
+
+final void A_Pain()
+{
+	if (bIsPlayer && !PlayerEx(Player).MorphTime)
+	{
+		if (Health < 25)
+		{
+			PlaySound('*pain25', CHAN_VOICE);
+		}
+		else if (Health < 50)
+		{
+			PlaySound('*pain50', CHAN_VOICE);
+		}
+		else if (Health < 75)
+		{
+			PlaySound('*pain75', CHAN_VOICE);
+		}
+		else
+		{
+			PlaySound('*pain100', CHAN_VOICE);
+		}
+	}
+	else if (PainSound)
+	{
+		PlaySound(PainSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	A_Scream
+//
+//  Death sound.
+//
+//==========================================================================
+
+final void A_Scream()
+{
+	//  Remove muzzle flash & other light effects
+	bDynamicLight = false;
+
+	if (DeathSound)
+	{
+		// Make boss death sounds full volume
+		PlaySound(DeathSound, CHAN_VOICE, 1.0, bBoss ? ATTN_NONE : ATTN_NORMAL);
+	}
+}
+
+//==========================================================================
+//
+//	A_XScream
+//
+//  Explode death sound.
+//
+//==========================================================================
+
+final void A_XScream()
+{
+	if (bIsPlayer)
+	{
+		PlaySound('*gibbed', CHAN_BODY);
+	}
+	else
+	{
+		PlaySound('misc/gibbed', CHAN_BODY);
+	}
+}
+
+//==========================================================================
+//
+//  A_VileStart
+//
+//  Arch-vile attack start sound.
+//
+//==========================================================================
+
+final void A_VileStart()
+{
+	PlaySound('vile/start', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_BrainPain
+//
+//  Brain pain sound.
+//
+//==========================================================================
+
+final void A_BrainPain()
+{
+	PlaySound('brain/pain', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_BrainAwake
+//
+//  Init boss spawner.
+//
+//==========================================================================
+
+final void A_BrainAwake()
+{
+	//	Do just a sound, like in Boom.
+	PlaySound('brain/sight', CHAN_VOICE, 1.0, ATTN_NONE);
+}
+
+//==========================================================================
+//
+//  A_PlayerScream
+//
+//==========================================================================
+
+final void A_PlayerScream()
+{
+	if (!bIsPlayer || DeathSound)
+	{
+		PlaySound(DeathSound, CHAN_VOICE);
+		return;
+	}
+
+	name Sound;
+	int Chan = CHAN_VOICE;
+
+	// Handle the different player death screams
+	if ((Level.bFallingDamage || Level.bOldFallingDamage ||
+		Level.bStrifeFallingDamage) && Velocity.z <= -39.0 * 35.0 &&
+		IsSoundPresent('*splat'))
+	{
+		// Falling splat
+		Sound = '*splat';
+		Chan = CHAN_BODY;
+	}
+	if (!Sound && Special1 < 10 && IsSoundPresent('*wimpydeath'))
+	{
+		// Wimpy death sound
+		Sound = '*wimpydeath';
+	}
+	if (!Sound && Health <= -50)
+	{
+		if (Health > -100 && IsSoundPresent('*crazydeath'))
+		{
+			// Crazy death sound
+			Sound = '*crazydeath';
+		}
+		if (!Sound && IsSoundPresent('*xdeath'))
+		{
+			// Extreme death sound
+			Sound = '*xdeath';
+		}
+		if (!Sound && IsSoundPresent('*gibbed'))
+		{
+			// Extreme death sound
+			Sound = '*gibbed';
+			Chan = CHAN_BODY;
+		}
+	}
+	if (!Sound)
+	{
+		// Normal death sound
+		Sound = '*death';
+	}
+
+	PlaySound(Sound, Chan);
+}

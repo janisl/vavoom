@@ -1,0 +1,203 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//**************************************************************************
+//	Monster specific functions for Doom
+//**************************************************************************
+
+//==========================================================================
+//
+//  A_Hoof
+//
+//  Cyberdemon move with hoof sound.
+//
+//==========================================================================
+
+final void A_Hoof()
+{
+	PlaySound('cyber/hoof', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_Metal
+//
+//  Cyberdemon move with metal sound.
+//
+//==========================================================================
+
+final void A_Metal()
+{
+	PlaySound('spider/walk', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_BabyMetal
+//
+//  Arachnotron move with metal sound.
+//
+//==========================================================================
+
+final void A_BabyMetal()
+{
+	PlaySound('baby/walk', CHAN_BODY);
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_FatRaise
+//
+//  Mancubus attack sound.
+//
+//==========================================================================
+
+final void A_FatRaise()
+{
+	A_FaceTarget();
+	PlaySound('fatso/raiseguns', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_SkelWhosh
+//
+//  Ravenant attack sound.
+//
+//==========================================================================
+
+final void A_SkelWhoosh()
+{
+	if (!Target)
+	{
+		return;
+	}
+	A_FaceTarget();
+	PlaySound('skeleton/swing', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_StartFire
+//
+//  Make fire start sound.
+//
+//==========================================================================
+
+final void A_StartFire()
+{
+	PlaySound('vile/firestrt', CHAN_VOICE);
+	A_Fire();
+}
+
+//==========================================================================
+//
+//  A_FireCrackle
+//
+//  Fire sound.
+//
+//==========================================================================
+
+final void A_FireCrackle()
+{
+	PlaySound('vile/firecrkl', CHAN_VOICE);
+	A_Fire();
+}
+
+//===========================================================================
+//
+//  A_BFGSpray
+//
+//  Spawn a BFG explosion on every monster in view
+//
+//===========================================================================
+
+final void A_BFGSpray()
+{
+	decorate_A_BFGSpray();
+}
+
+//===========================================================================
+//
+//  decorate_A_BFGSpray
+//
+//  Spawn a BFG explosion on every monster in view
+//
+//===========================================================================
+
+final void decorate_A_BFGSpray(optional class<EntityEx> FlashType,
+	optional int NumRays, optional int DamageAmount)
+{
+	int			i;
+	int			j;
+	int			damage;
+	TAVec		aimAng;
+	EntityEx	emo;
+	TVec		Dir;
+	EntityEx	AimTarget;
+
+	if (!FlashType)
+	{
+		FlashType = BFGExtra;
+	}
+	if (NumRays <= 0)
+	{
+		NumRays = 40;
+	}
+	if (DamageAmount <= 0)
+	{
+		DamageAmount = 15;
+	}
+
+	// offset angles from its attack angle
+	for (i = 0; i < NumRays; i++)
+	{
+		aimAng = Angles;
+		aimAng.yaw = AngleMod360(aimAng.yaw - 45.0 + 90.0 / itof(NumRays) *
+			itof(i));
+
+		// target is the originator (player)
+		//  of the missile
+		AimTarget = Target.AimLineAttack(Dir, aimAng, 16.0 * 64.0);
+		if (!AimTarget)
+		{
+			continue;
+		}
+
+		emo = Spawn(FlashType, AimTarget.Origin +
+			vector(0.0, 0.0, AimTarget.Height / 4.0));
+
+		damage = 0;
+		for (j = 0; j < DamageAmount; j++)
+		{
+			damage += (P_Random() & 7) + 1;
+		}
+
+		AimTarget.Damage(Target, Target, damage);
+	}
+}
