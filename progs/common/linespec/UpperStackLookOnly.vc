@@ -42,7 +42,7 @@ void InitSkyBox()
 	for (E = Level.FindMobjFromTID(TID, &Search); E;
 		E = Level.FindMobjFromTID(TID, &Search))
 	{
-		if (LowerStackLookOnly(E) && LowerStackLookOnly(E).bAlways)
+		if (LowerStackLookOnly(E))
 		{
 			SkyBox = LowerStackLookOnly(E);
 		}
