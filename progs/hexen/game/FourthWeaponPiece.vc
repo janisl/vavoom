@@ -110,7 +110,6 @@ bool TryPickup(EntityEx Toucher)
 	Hold.PieceMask |= PieceValue;
 	if (Hold.PieceMask == (WPIECE1 | WPIECE2 | WPIECE3))
 	{
-		gaveWeapon = true;
 		Weapon Wpn = Level.Spawn(WeaponType);
 		if (!Wpn.TryPickup(Toucher))
 		{
@@ -118,6 +117,7 @@ bool TryPickup(EntityEx Toucher)
 		}
 		else
 		{
+			gaveWeapon = true;
 			Player(Toucher.Player).PendingWeapon = Wpn;
 			GivenWeapon = Wpn;
 		}
