@@ -223,6 +223,10 @@ void VLevel::Serialise(VStream& Strm)
 				<< si->Flags;
 		}
 	}
+	if (Strm.IsLoading())
+	{
+		HashLines();
+	}
 	unguard;
 
 	//
@@ -837,6 +841,52 @@ int VLevel::SetBodyQueueTrans(int Slot, int Trans)
 
 //==========================================================================
 //
+//	VLevel::FindSectorFromTag
+//
+//==========================================================================
+
+int VLevel::FindSectorFromTag(int tag, int start)
+{
+	guard(VLevel::FindSectorFromTag);
+	for (int i = start  < 0 ? Sectors[(vuint32)tag %
+		(vuint32)NumSectors].HashFirst : Sectors[start].HashNext;
+		i >= 0; i = Sectors[i].HashNext)
+	{
+		if (Sectors[i].tag == tag)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::FindLine
+//
+//==========================================================================
+
+line_t* VLevel::FindLine(int lineTag, int* searchPosition)
+{
+	guard(VLevel::FindLine);
+	for (int i = *searchPosition < 0 ? Lines[(vuint32)lineTag %
+		(vuint32)NumLines].HashFirst : Lines[*searchPosition].HashNext;
+		i >= 0; i = Lines[i].HashNext)
+	{
+		if (Lines[i].LineTag == lineTag)
+		{
+			*searchPosition = i;
+			return &Lines[i];
+		}
+	}
+	*searchPosition = -1;
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //  CalcLine
 //
 //==========================================================================
@@ -1175,18 +1225,15 @@ IMPLEMENT_FUNCTION(VLevel, FindSectorFromTag)
 	P_GET_INT(start);
 	P_GET_INT(tag);
 	P_GET_SELF;
-	int Ret = -1;
-	for (int i = start  < 0 ? Self->Sectors[(vuint32)tag %
-		(vuint32)Self->NumSectors].HashFirst : Self->Sectors[start].HashNext;
-		i >= 0; i = Self->Sectors[i].HashNext)
-	{
-		if (Self->Sectors[i].tag == tag)
-		{
-			Ret = i;
-			break;
-		}
-	}
-	RET_INT(Ret);
+	RET_INT(Self->FindSectorFromTag(tag, start));
+}
+
+IMPLEMENT_FUNCTION(VLevel, FindLine)
+{
+	P_GET_PTR(int, searchPosition);
+	P_GET_INT(lineTag);
+	P_GET_SELF;
+	RET_PTR(Self->FindLine(lineTag, searchPosition));
 }
 
 IMPLEMENT_FUNCTION(VLevel, SetBodyQueueTrans)

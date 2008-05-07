@@ -719,6 +719,8 @@ struct line_t : TPlane
 	int arg5;
 
 	int			LineTag;
+	int			HashFirst;
+	int			HashNext;
 };
 
 //

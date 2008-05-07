@@ -308,6 +308,7 @@ void VLevel::LoadMap(VName AMapName)
 	//	Set up polyobjs, slopes, 3D floors and some other static stuff.
 	double SpawnWorldTime = -Sys_Time();
 	GGameInfo->eventSpawnWorld(this);
+	HashLines();
 	SpawnWorldTime += Sys_Time();
 	double InitPolysTime = -Sys_Time();
 	InitPolyobjs();	// Initialise the polyobjs
@@ -2153,6 +2154,31 @@ void VLevel::HashSectors()
 		vuint32 HashIndex = (vuint32)Sectors[i].tag % (vuint32)NumSectors;
 		Sectors[i].HashNext = Sectors[HashIndex].HashFirst;
 		Sectors[HashIndex].HashFirst = i;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VLevel::HashLines
+//
+//==========================================================================
+
+void VLevel::HashLines()
+{
+	guard(VLevel::HashLines);
+	//	Clear hash.
+	for (int i = 0; i < NumLines; i++)
+	{
+		Lines[i].HashFirst = -1;
+	}
+	//	Create hash. Process lines in backward order so that they get
+	// processed in original order.
+	for (int i = NumLines - 1; i >= 0; i--)
+	{
+		vuint32 HashIndex = (vuint32)Lines[i].LineTag % (vuint32)NumLines;
+		Lines[i].HashNext = Lines[HashIndex].HashFirst;
+		Lines[HashIndex].HashFirst = i;
 	}
 	unguard;
 }

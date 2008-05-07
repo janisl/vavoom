@@ -172,6 +172,7 @@ native final void SetHeightSector(sector_t* Sector, sector_t* SrcSector, int Fla
 
 //  Return next sector # that line tag refers to
 native final int FindSectorFromTag(int tag, int start);
+native final line_t* FindLine(int lineTag, int* searchPosition);
 
 //
 //  Polyobj functions

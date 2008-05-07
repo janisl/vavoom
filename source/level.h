@@ -158,6 +158,8 @@ struct line_t : public TPlane
 	int			arg5;
 
 	int			LineTag;
+	int			HashFirst;
+	int			HashNext;
 };
 
 enum
@@ -826,6 +828,9 @@ class VLevel : public VObject
 	msecnode_t* DelSecnode(msecnode_t*);
 	void DelSectorList();
 
+	int FindSectorFromTag(int, int);
+	line_t* FindLine(int, int*);
+
 	bool IsForServer() const
 	{
 		return !!(LevelFlags & LF_ForServer);
@@ -863,6 +868,7 @@ private:
 	void CreateBlockMap();
 	void BuildNodes();
 	void HashSectors();
+	void HashLines();
 
 	//	Post-loading routines.
 	void GroupLines() const;
@@ -906,6 +912,7 @@ private:
 	DECLARE_FUNCTION(SetHeightSector)
 
 	DECLARE_FUNCTION(FindSectorFromTag)
+	DECLARE_FUNCTION(FindLine)
 
 	//	Polyobj functions
 	DECLARE_FUNCTION(SpawnPolyobj)

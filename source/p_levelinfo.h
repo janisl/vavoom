@@ -160,13 +160,6 @@ class VLevelInfo : public VThinker
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_AfterUnarchiveThinkers);
 	}
-	line_t* eventFindLine(int lineTag, int *searchPosition)
-	{
-		P_PASS_SELF;
-		P_PASS_INT(lineTag);
-		P_PASS_PTR(searchPosition);
-		EV_RET_PTR(line_t, NAME_FindLine);
-	}
 	void eventPolyThrustMobj(VEntity* A, TVec thrustDir, polyobj_t* po)
 	{
 		P_PASS_SELF;

@@ -2674,8 +2674,8 @@ int VAcs::RunScript(float DeltaTime)
 				int Tex = GTextureManager.NumForName(GetName8(sp[-1]),
 					TEXTYPE_Wall, true, true);
 				int searcher = -1;
-				for (line_t *line = Level->eventFindLine(sp[-4], &searcher);
-					line != NULL; line = Level->eventFindLine(sp[-4], &searcher))
+				for (line_t *line = XLevel->FindLine(sp[-4], &searcher);
+					line != NULL; line = XLevel->FindLine(sp[-4], &searcher))
 				{
 					if (sp[-2] == TEXTURE_MIDDLE)
 					{
@@ -2698,8 +2698,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_SetLineBlocking)
 			{
 				int searcher = -1;
-				for (line_t* line = Level->eventFindLine(sp[-2], &searcher);
-					line != NULL; line = Level->eventFindLine(sp[-2], &searcher))
+				for (line_t* line = XLevel->FindLine(sp[-2], &searcher);
+					line != NULL; line = XLevel->FindLine(sp[-2], &searcher))
 				{
 					switch (sp[-1])
 					{
@@ -2728,8 +2728,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_SetLineSpecial)
 			{
 				int searcher = -1;
-				for (line_t* line = Level->eventFindLine(sp[-7], &searcher);
-					line != NULL; line = Level->eventFindLine(sp[-7], &searcher))
+				for (line_t* line = XLevel->FindLine(sp[-7], &searcher);
+					line != NULL; line = XLevel->FindLine(sp[-7], &searcher))
 				{
 					line->special = sp[-6];
 					line->arg1 = sp[-5];
@@ -2786,8 +2786,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_SetLineMonsterBlocking)
 			{
 				int searcher = -1;
-				for (line_t* line = Level->eventFindLine(sp[-2], &searcher);
-					line != NULL; line = Level->eventFindLine(sp[-2], &searcher))
+				for (line_t* line = XLevel->FindLine(sp[-2], &searcher);
+					line != NULL; line = XLevel->FindLine(sp[-2], &searcher))
 				{
 					if (sp[-1])
 						line->flags |= ML_BLOCKMONSTERS;

@@ -2810,8 +2810,8 @@ final void SpawnScrollTextureModel(line_t* Line)
 	line_t*		Other;
 
 	Searcher = -1;
-	for (Other = FindLine(Line->arg1, &Searcher); Other;
-		Other = FindLine(Line->arg1, &Searcher))
+	for (Other = XLevel.FindLine(Line->arg1, &Searcher); Other;
+		Other = XLevel.FindLine(Line->arg1, &Searcher))
 	{
 		if (Line != Other)
 		{
@@ -2898,8 +2898,8 @@ final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
 		line_t*		Other;
 
 		Searcher = -1;
-		for (Other = FindLine(Arg1, &Searcher); Other;
-			Other = FindLine(Arg1, &Searcher))
+		for (Other = XLevel.FindLine(Arg1, &Searcher); Other;
+			Other = XLevel.FindLine(Arg1, &Searcher))
 		{
 			//	Check if this line already has scroller.
 			for (i = 0; i < FoundScrollers.Num; i++)
@@ -3493,8 +3493,8 @@ final bool EV_LineAlignFloor(int Arg1, int Arg2, int Arg3, int Arg4,
 
 	Searcher = -1;
 	Ret = false;
-	for (Line = FindLine(Arg1, &Searcher); Line;
-		Line = FindLine(Arg1, &Searcher))
+	for (Line = XLevel.FindLine(Arg1, &Searcher); Line;
+		Line = XLevel.FindLine(Arg1, &Searcher))
 	{
 		Sec = Arg2 ? Line->backsector : Line->frontsector;
 		if (!Sec)
@@ -3546,8 +3546,8 @@ final bool EV_LineAlignCeiling(int Arg1, int Arg2, int Arg3, int Arg4,
 
 	Searcher = -1;
 	Ret = false;
-	for (Line = FindLine(Arg1, &Searcher); Line;
-		Line = FindLine(Arg1, &Searcher))
+	for (Line = XLevel.FindLine(Arg1, &Searcher); Line;
+		Line = XLevel.FindLine(Arg1, &Searcher))
 	{
 		Sec = Arg2 ? Line->backsector : Line->frontsector;
 		if (!Sec)
@@ -4998,7 +4998,8 @@ final bool EV_SilentLineTeleport(line_t *line, int side, EntityEx thing,
 	}
 
 	searcher = -1;
-	for (l = FindLine(id, &searcher); l; l = FindLine(id, &searcher))
+	for (l = XLevel.FindLine(id, &searcher); l;
+		l = XLevel.FindLine(id, &searcher))
 	{
 		TVec SrcXAxis;
 		TVec SrcYAxis;
@@ -5416,8 +5417,8 @@ final bool EV_LineTranslucent(int Arg1, int Arg2, int Arg3, int Arg4,
 	line_t*		Other;
 
 	Searcher = -1;
-	for (Other = FindLine(Arg1, &Searcher); Other;
-		Other = FindLine(Arg1, &Searcher))
+	for (Other = XLevel.FindLine(Arg1, &Searcher); Other;
+		Other = XLevel.FindLine(Arg1, &Searcher))
 	{
 		Other->alpha = itof(Arg2) / 255.0;
 		if (Arg3 == 0)
@@ -5600,28 +5601,6 @@ final bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	while (target);
 
 	return success;
-}
-
-//==========================================================================
-//
-//  FindLine
-//
-//==========================================================================
-
-final line_t* FindLine(int lineTag, int* searchPosition)
-{
-	int i;
-
-	for (i = *searchPosition + 1; i < XLevel.NumLines; i++)
-	{
-		if (XLevel.Lines[i].LineTag == lineTag)
-		{
-			*searchPosition = i;
-			return &XLevel.Lines[i];
-		}
-	}
-	*searchPosition = -1;
-	return NULL;
 }
 
 //==========================================================================
