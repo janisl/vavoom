@@ -3264,3 +3264,94 @@
  and keys.
   In Strife I changed finale to show credits at the end.
   I added missing saving of ACS map arrays.
+
+******************************************************************************
+                            VERSION 1.27.1
+******************************************************************************
+
+12.04.2008
+  I created a base class for hardware accelerated renderers and moved some
+ shared code to it.
+  I implemented renderer API for portal rendering.
+  I implemented Static_Init line special.
+  I fixed sector damage not working in sectors with no special.
+  I fixed skies not being fliiped as it was originally.
+  I implemented sky portal that enables rendering of multiple different skies
+ in the same scene.
+13.04.2008
+  I implemented support for advanced skyboxes and sector stacks.
+  I added sector silencer, in a case you want to use noisy actors in your sky
+ boxes.
+  I fixed scrolling speed for floor and ceiling scrollers.
+  I changed texture alignment in sectors with slopes to be consistent with
+ ZDoom.
+  I added Line_Horizon line special. Renderer currently only handles special
+ cases when corresponding sector planes use sky texture.
+  I properly implemented Sky2 sector special. Originally in Hexen it only
+ applied to floor, but there are many wads that depend on having effect on
+ ceiling too.
+14.04.2008
+  I fixed a bug in Strife where incorrect stamina and accuracy amounts were
+ given.
+  I fixed client side in network game using replacement classes. It should use
+ exactly the same class the server uses.
+  I implemented rendering of horizon lines.
+15.04.2008
+  As an optimisation before drawing level first draw sky with the biggest
+ amount of portal surfaces. This also makes advanced skyboxes work in software
+ and fixes an old problem with software renderer where polygons are visible
+ behind sky.
+  I also optimised rendering of sector stacks by initialising angle clipper to
+ cover only the area of the portal.
+16.04.2008
+  I fixed a bug in angle clipper when itialising it for frustrum.
+  I added RenderScene method that does all needed rendering sequence. This
+ replaces repeated sequences in main view, camera textures and portals.
+  I implemented rendering of mirrors. It still has some limitations, but it
+ was surprisingly easy to implement.
+17.04.2008
+  I fixed rendering mirrors when viewer has some roll angle.
+  I speeded up rendering of mirrors by limiting view and merging co-planar
+ mirrors.
+  I added clipping against mirror plane to remove requirement of having enough
+ void space behind mirror.
+  I implemented support for reflective floors and ceilings.
+18.04.2008
+  I added initial implementation for alternate weapon fire.
+19.04.2008
+  I added support for additive translucency for 3D floors.
+  I fixed some weapon bugs.
+  I fixed enter scripts being executed when loading a savegame.
+  I fixed some of the collision bugs.
+20.04.2008
+  I implemented support for portals in portals.
+  I implemented support for polyobjs that hurt actors when touched.
+  I implemented DECORATE actor property ClearFlags and state action method
+ A_ChangeFlag.
+21.04.2008
+  I fixed Strife's assault gun animation.
+22.04.2008
+  I changed the way sector stacks are linked to fix problem with Zen Dynamics
+ which uses the same tag for different sector stacks.
+25.04.2008
+  I fixed mi-texture clipping and rendering of top and bottom textures when
+ used with Boom's fake floors special.
+26.04.2008
+  I moved UseLines to the EntityEx class and implemented UseSpecial flag.
+  I fixed break glass special giving quest when it shouldn't.
+28.04.2008
+  I fixed lines being possible to use through a closed opening.
+  I fixed crash when ceiling texture gets changed to the sky texture.
+  I removed limit on player and deathmatch start spots.
+  I fixed fade to work properly with 3D floors and Boom water.
+  I fixed transfer heights with clip fake planes flag not being rendered.
+  I implemented secret trigger and hate target classes.
+  I added allow drop-off flag to TryMove. This solves problem with actor movers
+ moving things, such as sky viewpoint.
+29.04.2008
+  I did some changes to make bindings defined in keycong work.
+  I finally got sector stacks to work as expected.
+  I split source files for EntityEx and Actor classes into multiple ones.
+06.05.2008
+  I fixed crash in Hexen when picking up fourth weapon piece when you aready
+ have the weapon.
