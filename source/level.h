@@ -318,38 +318,40 @@ struct sector_t
 	sec_region_t	*topregion;	//	Highest region
 	sec_region_t	*botregion;	//	Lowest region
 
-	float		floorheight;
-	float		ceilingheight;
-	int			special;
-	int			tag;
+	float			floorheight;
+	float			ceilingheight;
+	int				special;
+	int				tag;
+	int				HashFirst;
+	int				HashNext;
 
-	float		skyheight;
+	float			skyheight;
 
 	// stone, metal, heavy, etc...
-	int			seqType;
+	int				seqType;
 
 	// mapblock bounding box for height changes
-	int			blockbox[4];
+	int				blockbox[4];
 
 	// origin for any sounds played by the sector
-	TVec		soundorg;
+	TVec			soundorg;
 
 	// if == validcount, already checked
-	int			validcount;
+	int				validcount;
 
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
-	subsector_t	*subsectors;
+	subsector_t*	subsectors;
 
 	//	List of things in sector.
-	VEntity*	ThingList;
-	msecnode_t*	TouchingThingList;
+	VEntity*		ThingList;
+	msecnode_t*		TouchingThingList;
 
-	int			linecount;
-	line_t		**lines;  // [linecount] size
+	int				linecount;
+	line_t**		lines;  // [linecount] size
 
 	//	Boom's fake floors.
-	sector_t*	heightsec;
+	sector_t*		heightsec;
 	fakefloor_t*	fakefloors;			//	Info for rendering.
 
 	//	Flags.
@@ -365,30 +367,30 @@ struct sector_t
 		SF_UnderWater		= 0x0080,	//	Sector is underwater
 		SF_Silent			= 0x0100,	//	Actors don't make noise in this sector.
 	};
-	vuint32		SectorFlags;
+	vuint32			SectorFlags;
 
 	// 0 = untraversed, 1,2 = sndlines -1
-	vint32		soundtraversed;
+	vint32			soundtraversed;
 
 	// thing that made a sound (or null)
-	VEntity*	SoundTarget;
+	VEntity*		SoundTarget;
 
 	// Thinker for reversable actions
-	VThinker*	FloorData;
-	VThinker*	CeilingData;
-	VThinker*	LightingData;
-	VThinker*	AffectorData;
+	VThinker*		FloorData;
+	VThinker*		CeilingData;
+	VThinker*		LightingData;
+	VThinker*		AffectorData;
 
 	//	Sector action triggers.
-	VEntity*	ActionList;
+	VEntity*		ActionList;
 
-	vint32		Damage;
+	vint32			Damage;
 
-	float		Friction;
-	float		MoveFactor;
-	float		Gravity;				// Sector gravity (1.0 is normal)
+	float			Friction;
+	float			MoveFactor;
+	float			Gravity;				// Sector gravity (1.0 is normal)
 
-	int			Sky;
+	int				Sky;
 };
 
 //
@@ -862,6 +864,7 @@ private:
 	void CreateRepBase();
 	void CreateBlockMap();
 	void BuildNodes();
+	void HashSectors();
 
 	//	Post-loading routines.
 	void GroupLines() const;

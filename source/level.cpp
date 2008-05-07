@@ -180,6 +180,10 @@ void VLevel::Serialise(VStream& Strm)
 			sec->ThingList = NULL;
 		}
 	}
+	if (Strm.IsLoading())
+	{
+		HashSectors();
+	}
 	unguard;
 
 	//
@@ -1175,12 +1179,16 @@ IMPLEMENT_FUNCTION(VLevel, FindSectorFromTag)
 	P_GET_INT(tag);
 	P_GET_SELF;
 	int Ret = -1;
-	for (int i = start + 1; i < Self->NumSectors; i++)
+	for (int i = start  < 0 ? Self->Sectors[(vuint32)tag %
+		(vuint32)Self->NumSectors].HashFirst : Self->Sectors[start].HashNext;
+		i >= 0; i = Self->Sectors[i].HashNext)
+	{
 		if (Self->Sectors[i].tag == tag)
 		{
 			Ret = i;
 			break;
 		}
+	}
 	RET_INT(Ret);
 }
 

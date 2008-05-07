@@ -568,6 +568,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->Gravity = 1.0;	// default sector gravity of 1.0
 	}
 	delete Strm;
+	HashSectors();
 	unguard;
 }
 
@@ -2129,6 +2130,31 @@ void VLevel::CreateRepBase()
 		rep_polyobj_t& B = BasePolyObjs[i];
 		B.startSpot = P.startSpot;
 		B.angle = P.angle;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//  VLevel::HashSectors
+//
+//==========================================================================
+
+void VLevel::HashSectors()
+{
+	guard(VLevel::HashSectors);
+	//	Clear hash.
+	for (int i = 0; i < NumSectors; i++)
+	{
+		Sectors[i].HashFirst = -1;
+	}
+	//	Create hash. Process sectors in backward order so that they get
+	// processed in original order.
+	for (int i = NumSectors - 1; i >= 0; i--)
+	{
+		vuint32 HashIndex = (vuint32)Sectors[i].tag % (vuint32)NumSectors;
+		Sectors[i].HashNext = Sectors[HashIndex].HashFirst;
+		Sectors[HashIndex].HashFirst = i;
 	}
 	unguard;
 }

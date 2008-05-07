@@ -831,80 +831,82 @@ struct msecnode_t
 //
 struct sector_t
 {
-	sec_plane_t floor;
-	sec_plane_t ceiling;
-	sec_params_t params;
+	sec_plane_t		floor;
+	sec_plane_t		ceiling;
+	sec_params_t	params;
 
-	sec_region_t *topregion;	//  Highest region
-	sec_region_t *botregion;	//  Lowest region
+	sec_region_t*	topregion;	//  Highest region
+	sec_region_t*	botregion;	//  Lowest region
 
-	float floorheight;
-	float ceilingheight;
-	int special;
-	int tag;
+	float			floorheight;
+	float			ceilingheight;
+	int				special;
+	int				tag;
+	int				HashFirst;
+	int 			HashNext;
 
-	float skyheight;
+	float			skyheight;
 
 	// stone, metal, heavy, etc...
-	int seqType;
+	int				seqType;
 
 	// mapblock bounding box for height changes
-	int blockbox[4];
+	int				blockbox[4];
 
 	// origin for any sounds played by the sector
-	TVec soundorg;
+	TVec			soundorg;
 
 	// if == validcount, already checked
-	int validcount;
+	int				validcount;
 
 	// list of subsectors in sector
 	// used to check if client can see this sector (it needs to be updated)
-	void* __subsectors;
+	void*			__subsectors;
 
 	//	List of things in sector.
-	Entity		ThingList;
-	msecnode_t*	TouchingThingList;
+	Entity			ThingList;
+	msecnode_t*		TouchingThingList;
 
-	int linecount;
-	line_t **lines;	// [linecount] size
+	int				linecount;
+	line_t**		lines;	// [linecount] size
 
 	//	Boom's fake floors.
-	sector_t* heightsec;
-	void* fakefloorinfo;			//	Info for rendering.
+	sector_t*		heightsec;
+	void*			fakefloorinfo;		//	Info for rendering.
 
 	//	Flags.
-	bool		bHasExtrafloors;	//	This sector has extrafloors.
-	bool		bExtrafloorSource;	//	This sector is a source of an extrafloor.
-	bool		bTransferSource;	//	Source of an heightsec or transfer light.
-	bool		bFakeFloorOnly;		//	When used as heightsec in R_FakeFlat, only copies floor
-	bool		bClipFakePlanes;	//	As a heightsec, clip planes to target sector's planes
-	bool		bNoFakeLight;		//	heightsec does not change lighting
-	bool		bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
-	bool		bUnderWater;		//	Sector is underwater
-	bool		bSilent;			//	Actors don't make noise in this sector.
+	bool			bHasExtrafloors;	//	This sector has extrafloors.
+	bool			bExtrafloorSource;	//	This sector is a source of an extrafloor.
+	bool			bTransferSource;	//	Source of an heightsec or transfer light.
+	bool			bFakeFloorOnly;		//	When used as heightsec in R_FakeFlat, only copies floor
+	bool			bClipFakePlanes;	//	As a heightsec, clip planes to target sector's planes
+	bool			bNoFakeLight;		//	heightsec does not change lighting
+	bool			bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
+	bool			bUnderWater;		//	Sector is underwater
+	bool			bSilent;			//	Actors don't make noise in this sector.
 
 	// 0 = untraversed, 1,2 = sndlines -1
-	int			soundtraversed;
+	int				soundtraversed;
 
 	// thing that made a sound (or null)
-	Entity		SoundTarget;
+	Entity			SoundTarget;
 
 	// Thinker for reversable actions
-	Thinker		FloorData;
-	Thinker		CeilingData;
-	Thinker		LightingData;
-	Thinker		AffectorData;
+	Thinker			FloorData;
+	Thinker			CeilingData;
+	Thinker			LightingData;
+	Thinker			AffectorData;
 
 	//	Sector action triggers.
-	Entity		ActionList;
+	Entity			ActionList;
 
-	int			Damage;
+	int				Damage;
 
-	float		Friction;
-	float		MoveFactor;
-	float		Gravity;
+	float			Friction;
+	float			MoveFactor;
+	float			Gravity;
 
-	int			Sky;
+	int				Sky;
 };
 
 //
