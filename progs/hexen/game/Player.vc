@@ -323,7 +323,7 @@ bool CheckSpot(mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	A = HexenLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		sec->floorheight + MainGameInfo::TELEFOGHEIGHT));
+		sec->floor.TexZ + MainGameInfo::TELEFOGHEIGHT));
 	A.PlaySound('Teleport', CHAN_VOICE);
 
 	return true;

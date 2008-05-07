@@ -316,7 +316,7 @@ bool CheckSpot(mthing_t * mthing)
 	an = itof(45 * (mthing->angle / 45));
 
 	A = DoomLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		sec->floorheight));
+		sec->floor.TexZ));
 	A.PlaySound('misc/teleport', CHAN_VOICE);
 
 	return true;

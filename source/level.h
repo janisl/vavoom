@@ -318,8 +318,6 @@ struct sector_t
 	sec_region_t	*topregion;	//	Highest region
 	sec_region_t	*botregion;	//	Lowest region
 
-	float			floorheight;
-	float			ceilingheight;
 	int				special;
 	int				tag;
 	int				HashFirst;

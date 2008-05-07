@@ -559,8 +559,6 @@ void VLevel::LoadSectors(int Lump)
 		ss->topregion = region;
 		ss->botregion = region;
 
-		ss->floorheight = floorheight;
-		ss->ceilingheight = ceilingheight;
 		ss->special = special;
 		ss->tag = tag;
 		ss->seqType = -1;	// default seqType

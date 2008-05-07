@@ -596,13 +596,14 @@ bool CheckPath(float ang, float dist)
 				return false;
 			}
 
+			diffheight = GetPlanePointZ(&back->floor, hit_point) -
+				GetPlanePointZ(&front->floor, hit_point);
+
 			// No cliff jumping unless we're going after something
-			if ((front->floorheight - back->floorheight) > 32.0 && !enemy)
+			if (-diffheight > 32.0 && !enemy)
 			{
 				return false;
 			}
-
-			diffheight = back->floorheight - front->floorheight;
 
 			if (diffheight > 0.0)
 			{

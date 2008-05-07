@@ -1024,19 +1024,19 @@ void SwapPlanes(sector_t *s)
 	float tempHeight;
 	int tempTexture;
 
-	tempHeight = s->floorheight;
+	tempHeight = s->floor.TexZ;
 	tempTexture = s->floor.pic;
 
 	//	Floor
-	s->floorheight = s->ceilingheight;
-	s->floor.dist = s->floorheight;
-	s->floor.minz = s->floorheight;
-	s->floor.maxz = s->floorheight;
+	s->floor.TexZ = s->ceiling.TexZ;
+	s->floor.dist = s->floor.TexZ;
+	s->floor.minz = s->floor.TexZ;
+	s->floor.maxz = s->floor.TexZ;
 
-	s->ceilingheight = tempHeight;
-	s->ceiling.dist = -s->ceilingheight;
-	s->ceiling.minz = s->ceilingheight;
-	s->ceiling.maxz = s->ceilingheight;
+	s->ceiling.TexZ = tempHeight;
+	s->ceiling.dist = -s->ceiling.TexZ;
+	s->ceiling.minz = s->ceiling.TexZ;
+	s->ceiling.maxz = s->ceiling.TexZ;
 
 	s->floor.pic = s->ceiling.pic;
 	s->ceiling.pic = tempTexture;
@@ -1103,9 +1103,6 @@ void CalcSecMinMaxs(sector_t *sector)
 		sector->ceiling.minz = minz;
 		sector->ceiling.maxz = maxz;
 	}
-
-	sector->floorheight = sector->floor.minz;
-	sector->ceilingheight = sector->ceiling.maxz;
 	unguard;
 }
 

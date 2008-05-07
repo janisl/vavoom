@@ -429,15 +429,15 @@ void MakeVertexFloorHeights(Level InLevel)
 		}
 		if (p1.z == 0.1)
 		{
-			p1.z = sec->floorheight;
+			p1.z = sec->floor.TexZ;
 		}
 		if (p2.z == 0.1)
 		{
-			p2.z = sec->floorheight;
+			p2.z = sec->floor.TexZ;
 		}
 		if (p3.z == 0.1)
 		{
-			p3.z = sec->floorheight;
+			p3.z = sec->floor.TexZ;
 		}
 		if (PointOnPlaneSide(p3, sec->lines[0]) == 0)
 		{
@@ -500,15 +500,15 @@ void MakeVertexCeilingHeights(Level InLevel)
 		}
 		if (p1.z == 0.1)
 		{
-			p1.z = sec->ceilingheight;
+			p1.z = sec->ceiling.TexZ;
 		}
 		if (p2.z == 0.1)
 		{
-			p2.z = sec->ceilingheight;
+			p2.z = sec->ceiling.TexZ;
 		}
 		if (p3.z == 0.1)
 		{
-			p3.z = sec->ceilingheight;
+			p3.z = sec->ceiling.TexZ;
 		}
 		if (PointOnPlaneSide(p3, sec->lines[0]) == 0)
 		{
@@ -590,8 +590,8 @@ void AlignPlane(Level InLevel, sector_t *sec, line_t *line, int which)
 
 	refplane = (which == 0) ? &refsec->floor : &refsec->ceiling;
 	srcplane = (which == 0) ? &sec->floor : &sec->ceiling;
-	srcheight = (which == 0) ? sec->floorheight : sec->ceilingheight;
-	destheight = (which == 0) ? refsec->floorheight : refsec->ceilingheight;
+	srcheight = (which == 0) ? sec->floor.TexZ : sec->ceiling.TexZ;
+	destheight = (which == 0) ? refsec->floor.TexZ : refsec->ceiling.TexZ;
 
 	p.z = destheight;
 	v1.z = 0.0;

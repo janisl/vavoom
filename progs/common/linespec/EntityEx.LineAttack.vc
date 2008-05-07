@@ -103,7 +103,9 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 			li = in->line;
 
 			if (!(li->flags & ML_TWOSIDED))
+			{
 				break;	// stop
+			}
 
 			// Crosses a two sided line.
 			// A two sided line will restrict
@@ -119,27 +121,27 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 			open = FindOpening(open, hit_point.z, hit_point.z);
 
 			if (!open || open->bottom >= open->top)
-				break;	// stop
-
-			dist = aim_range2d * in->frac;
-			if (li->frontsector->floorheight != li->backsector->floorheight)
 			{
-				slope = (open->bottom - aim_z) / dist;
-
-				if (slope > aim_bottomslope)
-					aim_bottomslope = slope;
+				break;	// stop
 			}
 
-			if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+			dist = aim_range2d * in->frac;
+			slope = (open->bottom - aim_z) / dist;
+			if (slope > aim_bottomslope)
 			{
-				slope = (open->top - aim_z) / dist;
+				aim_bottomslope = slope;
+			}
 
-				if (slope < aim_topslope)
-					aim_topslope = slope;
+			slope = (open->top - aim_z) / dist;
+			if (slope < aim_topslope)
+			{
+				aim_topslope = slope;
 			}
 
 			if (aim_topslope <= aim_bottomslope)
+			{
 				break;	// stop
+			}
 
 			continue;	// shot continues
 		}
