@@ -346,7 +346,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			sc->ExpectNumber();
 			info->Cluster = sc->Number;
-			if (!P_GetClusterDef(info->Cluster))
+			if (P_GetClusterDef(info->Cluster) == &DefaultClusterDef)
 			{
 				//	Add empty cluster def if it doesn't exist yet.
 				VClusterDef& C = ClusterDefs.Alloc();
@@ -358,6 +358,10 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 				C.Music = NAME_None;
 				C.CDTrack = 0;
 				C.CDId = 0;
+				if (HexenMode)
+				{
+					C.Flags |= CLUSTERF_Hub;
+				}
 			}
 		}
 		else if (sc->Check("warptrans"))
