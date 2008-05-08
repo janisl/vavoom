@@ -69,6 +69,17 @@ enum playerstate_t
 	PST_REBORN		
 };
 
+//
+// Button/action code definitions.
+//
+enum
+{
+	BT_ATTACK		= 1,		// Press "Fire".
+	BT_USE			= 2,		// Use button, to open doors, activate switches.
+	BT_JUMP			= 4,
+	BT_ALT_ATTACK	= 8,
+};
+
 struct VViewState
 {
 	VState*			State;

@@ -566,7 +566,7 @@ static void BuildTiccmd()
 
 	if (KeyAltAttack.KeyState())
 	{
-		cl->Buttons |= 0x08;
+		cl->Buttons |= BT_ALT_ATTACK;
 	}
 
 	if (KeyButton5.KeyState())

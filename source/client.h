@@ -27,22 +27,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-// Player macros shared with client
-
-#define MAXNAME			32
-
-#define IT_ALL_MAP		1
-
-//
-// Button/action code definitions.
-//
-#define	BT_ATTACK		1           // Press "Fire".
-#define	BT_USE			2           // Use button, to open doors, activate switches.
-#define BT_JUMP			4
-
 // TYPES -------------------------------------------------------------------
-
-struct VModel;
 
 enum cactive_t
 {

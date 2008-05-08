@@ -81,8 +81,8 @@ class VLevelInfo : public VThinker
 		LIF_MonsterFallingDamage		= 0x00200000,
 		LIF_NoFreelook					= 0x00400000,
 		LIF_NoJump						= 0x00800000,
-		LIF_ClusterHub					= 0x00400000,
-		LIF_BegunPlay					= 0x00800000,
+		LIF_ClusterHub					= 0x01000000,
+		LIF_BegunPlay					= 0x02000000,
 	};
 	vuint32			LevelInfoFlags;
 
