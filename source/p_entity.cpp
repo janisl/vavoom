@@ -131,6 +131,12 @@ void VEntity::DestroyThinker()
 	{
 		eventDestroyed();
 
+		if (TID)
+		{
+			// Remove from TID list
+			RemoveFromTIDList();
+		}
+
 		// stop any playing sound
 		StopSound(0);
 	}
@@ -158,6 +164,77 @@ void VEntity::AddedToLevel()
 	}
 	SoundOriginID = XLevel->NextSoundOriginID + (SNDORG_Entity << 24);
 	XLevel->NextSoundOriginID = (XLevel->NextSoundOriginID + 1) & 0x00ffffff;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::SetTID
+//
+//==========================================================================
+
+void VEntity::SetTID(int tid)
+{
+	guard(VEntity::SetTID);
+	RemoveFromTIDList();
+	if (tid)
+	{
+		InsertIntoTIDList(tid);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::InsertIntoTIDList
+//
+//==========================================================================
+
+void VEntity::InsertIntoTIDList(int tid)
+{
+	guard(VEntity::InsertIntoTIDList);
+	TID = tid;
+	int HashIndex = tid & (VLevelInfo::TID_HASH_SIZE - 1);
+	TIDHashPrev = NULL;
+	TIDHashNext = Level->TIDHash[HashIndex];
+	if (TIDHashNext)
+	{
+		TIDHashNext->TIDHashPrev = this;
+	}
+	Level->TIDHash[HashIndex] = this;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::RemoveFromTIDList
+//
+//==========================================================================
+
+void VEntity::RemoveFromTIDList()
+{
+	guard(VEntity::RemoveFromTIDList);
+	if (!TID)
+	{
+		//	No TID, which means it's not in the cache.
+		return;
+	}
+
+	if (TIDHashNext)
+	{
+		TIDHashNext->TIDHashPrev = TIDHashPrev;
+	}
+	if (TIDHashPrev)
+	{
+		TIDHashPrev->TIDHashNext = TIDHashNext;
+	}
+	else
+	{
+		int HashIndex = TID & (VLevelInfo::TID_HASH_SIZE - 1);
+		check(Level->TIDHash[HashIndex] == this);
+		Level->TIDHash[HashIndex] = TIDHashNext;
+	}
+	TID = 0;
 	unguard;
 }
 
@@ -533,6 +610,13 @@ void VEntity::StopSoundSequence()
 //	Script natives
 //
 //==========================================================================
+
+IMPLEMENT_FUNCTION(VEntity, SetTID)
+{
+	P_GET_INT(tid);
+	P_GET_SELF;
+	Self->SetTID(tid);
+}
 
 IMPLEMENT_FUNCTION(VEntity, SetState)
 {

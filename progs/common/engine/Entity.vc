@@ -259,7 +259,10 @@ float			Height;
 // Only valid if type == MT_PLAYER
 BasePlayer		Player;
 
-int				TID;		// thing identifier
+readonly int	TID;		// thing identifier
+readonly private Entity	TIDHashNext;
+readonly private Entity	TIDHashPrev;
+
 int				Special;	// special
 int				Args[5];	// special arguments
 
@@ -303,6 +306,8 @@ replication
 //
 //	Natives
 //
+
+native final void SetTID(int tid);
 
 native final bool SetState(state State);
 native final void SetInitialState(state State);
@@ -379,11 +384,6 @@ void BeginPlay()
 
 void Destroyed()
 {
-	if (TID)
-	{
-		// Remove from TID list
-		RemoveFromTIDList();
-	}
 }
 
 //==========================================================================
@@ -667,65 +667,11 @@ void CalcFakeZMovement(out TVec Ret, float DeltaTime)
 //
 //==========================================================================
 
-void SetOrigin(TVec NewOrigin)
+final void SetOrigin(TVec NewOrigin)
 {
 	UnlinkFromWorld();
 	Origin = NewOrigin;
 	LinkToWorld();
-}
-
-//==========================================================================
-//
-//	InsertIntoTIDList
-//
-//==========================================================================
-
-void InsertIntoTIDList(int tid)
-{
-	int i;
-	int index;
-
-	index = -1;
-	for (i = 0; i < Level.TIDList.Num; i++)
-	{
-		if (Level.TIDList[i] == -1)
-		{
-			// Found empty slot
-			index = i;
-			break;
-		}
-	}
-	if (index == -1)
-	{
-		// Append required
-		index = i;
-	}
-	TID = tid;
-	Level.TIDList[index] = tid;
-	Level.TIDMobj[index] = self;
-}
-
-//==========================================================================
-//
-//	RemoveFromTIDList
-//
-//==========================================================================
-
-void RemoveFromTIDList()
-{
-	int i;
-
-	for (i = 0; i < Level.TIDList.Num; i++)
-	{
-		if (Level.TIDMobj[i] == self)
-		{
-			Level.TIDList[i] = -1;
-			Level.TIDMobj[i] = none;
-			TID = 0;
-			return;
-		}
-	}
-	TID = 0;
 }
 
 //==========================================================================
@@ -745,7 +691,7 @@ void RemoveThing()
 //
 //==========================================================================
 
-float DistTo(Entity Other)
+final float DistTo(Entity Other)
 {
 	return Length(Other.GetCentre() - GetCentre());
 }
@@ -756,7 +702,7 @@ float DistTo(Entity Other)
 //
 //==========================================================================
 
-float DistTo2(Entity Other)
+final float DistTo2(Entity Other)
 {
 	TVec dir;
 
@@ -771,7 +717,7 @@ float DistTo2(Entity Other)
 //
 //==========================================================================
 
-TVec GetCentre()
+final TVec GetCentre()
 {
 	return Origin + vector(0.0, 0.0, Height * 0.5 - FloorClip);
 }

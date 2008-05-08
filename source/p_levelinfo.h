@@ -27,6 +27,8 @@ class VLevelInfo : public VThinker
 {
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
 
+	enum { TID_HASH_SIZE = 64 };
+
 	VGameInfo*		Game;
 	VWorldInfo*		World;
 
@@ -95,8 +97,7 @@ class VLevelInfo : public VThinker
 	TArray<mthing_t>	DeathmatchStarts;	// Player spawn spots for deathmatch.
 	TArray<mthing_t>	PlayerStarts;		// Player spawn spots.
 
-	TArray<int>			TIDList;	// +1 for termination marker
-	TArray<VEntity*>	TIDMobj;
+	VEntity*		TIDHash[TID_HASH_SIZE];
 
 	float			Gravity;								// Level Gravity
 	float			AirControl;
@@ -120,6 +121,7 @@ class VLevelInfo : public VThinker
 	bool StartButton(int, vuint8, int, VName, bool);
 
 	void ForceLightning();
+	VEntity* FindMobjFromTID(int, VEntity*);
 
 	VStr GetLevelName() const
 	{
@@ -144,6 +146,7 @@ class VLevelInfo : public VThinker
 	//	Special thinker utilites
 	DECLARE_FUNCTION(ChangeSwitchTexture)
 	DECLARE_FUNCTION(ForceLightning)
+	DECLARE_FUNCTION(FindMobjFromTID)
 
 	void eventSpawnSpecials()
 	{
@@ -187,13 +190,6 @@ class VLevelInfo : public VThinker
 		P_PASS_NAME(TypeName);
 		P_PASS_INT(tid);
 		EV_RET_INT(NAME_ThingCount);
-	}
-	VEntity* eventFindMobjFromTID(int tid, int *searchPosition)
-	{
-		P_PASS_SELF;
-		P_PASS_INT(tid);
-		P_PASS_PTR(searchPosition);
-		EV_RET_REF(VEntity, NAME_FindMobjFromTID);
 	}
 	int eventExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		int Arg4, int Arg5, line_t* Line, int Side, VEntity* A)

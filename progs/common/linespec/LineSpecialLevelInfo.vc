@@ -279,8 +279,6 @@ void SpawnSpecials()
 	}
 
 	SpawnPushers();
-
-	CreateTIDList();
 }
 
 //==========================================================================
@@ -3631,11 +3629,9 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 	class<EntityEx>	moType;
 	Entity		A;
 	EntityEx	newA;
-	int			searcher;
 	bool		success;
 
 	success = false;
-	searcher = -1;
 	if (TypeName)
 	{
 		moType = class<EntityEx>(FindClassLowerCase(TypeName));
@@ -3657,14 +3653,13 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 	angle = itof(AAngle) * (360.0 / 256.0);
 	speed = itof(ASpeed) / 8.0;
 	vspeed = itof(AVSpeed) / 8.0;
-	for (A = tid ? FindMobjFromTID(tid, &searcher) : Activator; A;
-		A = FindMobjFromTID(tid, &searcher))
+	for (A = tid ? FindMobjFromTID(tid, none) : Activator; A;
+		A = FindMobjFromTID(tid, A))
 	{
 		Entity Targ = ForceDest;
 		if (DestTID)
 		{
-			int TempSearcher;
-			Targ = FindMobjFromTID(DestTID, &TempSearcher);
+			Targ = FindMobjFromTID(DestTID, none);
 			if (!Targ)
 			{
 				continue;
@@ -3697,10 +3692,7 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 			newA.bNoGravity = false;
 			newA.Gravity = 0.125;
 		}
-		if (newtid)
-		{
-			newA.InsertIntoTIDList(newtid);
-		}
+		newA.SetTID(newtid);
 		if (newA.CheckMissileSpawn())
 		{
 			success = true;
@@ -3727,12 +3719,10 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	Entity			A;
 	EntityEx		newAct;
 	class<EntityEx>	moType;
-	int				searcher;
 	bool			success;
 	EntityEx		fogAct;
 
 	success = false;
-	searcher = -1;
 	tid = Arg1;
 	moType = class<EntityEx>(FindClassFromScriptId(Arg2,
 		LineSpecialGameInfo(Game).GameFilterFlag));
@@ -3746,8 +3736,8 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		return false;
 	}
 	angle = itof(Arg3) * 360.0 / 256.0;
-	for (A = tid ? FindMobjFromTID(tid, &searcher) : Activator; A;
-		A = FindMobjFromTID(tid, &searcher))
+	for (A = tid ? FindMobjFromTID(tid, none) : Activator; A;
+		A = FindMobjFromTID(tid, A))
 	{
 		newAct = Spawn(moType, A.Origin);
 		if (newAct.bFloatBob)
@@ -3763,8 +3753,7 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		else
 		{
 			newAct.Angles.yaw = Facing ? A.Angles.yaw : angle;
-			if (Arg4)
-				newAct.InsertIntoTIDList(Arg4);
+			newAct.SetTID(Arg4);
 			if (fog == true)
 			{
 				fogAct = Spawn(LineSpecialGameInfo(Game).TeleportFogClass,
@@ -3820,10 +3809,7 @@ final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 	NewAct.bPassMobj = PrevPassMobj;
 
 	NewAct.Angles.yaw = Angle;
-	if (Tid)
-	{
-		NewAct.InsertIntoTIDList(Tid);
-	}
+	NewAct.SetTID(Tid);
 	NewAct.bDropped = true;	// Don't respawn
 	return true;
 }
@@ -3837,10 +3823,9 @@ final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 final int AcsSpawnSpot(name Name, int SpotTid, int Tid, float Angle)
 {
 	int NumSpawned = 0;
-	int Searcher = -1;
 	Entity A;
-	for (A = FindMobjFromTID(SpotTid, &Searcher); A;
-		A = FindMobjFromTID(SpotTid, &Searcher))
+	for (A = FindMobjFromTID(SpotTid, none); A;
+		A = FindMobjFromTID(SpotTid, A))
 	{
 		NumSpawned += AcsSpawnThing(Name, A.Origin, Tid, Angle);
 	}
@@ -3856,10 +3841,9 @@ final int AcsSpawnSpot(name Name, int SpotTid, int Tid, float Angle)
 final int AcsSpawnSpotFacing(name Name, int SpotTid, int Tid)
 {
 	int NumSpawned = 0;
-	int Searcher = -1;
 	Entity A;
-	for (A = FindMobjFromTID(SpotTid, &Searcher); A;
-		A = FindMobjFromTID(SpotTid, &Searcher))
+	for (A = FindMobjFromTID(SpotTid, none); A;
+		A = FindMobjFromTID(SpotTid, A))
 	{
 		NumSpawned += AcsSpawnThing(Name, A.Origin, Tid, A.Angles.yaw);
 	}
@@ -3875,13 +3859,10 @@ final int AcsSpawnSpotFacing(name Name, int SpotTid, int Tid)
 final bool EV_ThingActivate(int tid, EntityEx Activator)
 {
 	Entity	A;
-	int		searcher;
 	bool	success;
 
 	success = false;
-	searcher = -1;
-	for (A = FindMobjFromTID(tid, &searcher); A;
-		A = FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, none); A; A = FindMobjFromTID(tid, A))
 	{
 		if (EntityEx(A).Activate(Activator))
 		{
@@ -3900,13 +3881,10 @@ final bool EV_ThingActivate(int tid, EntityEx Activator)
 final bool EV_ThingDeactivate(int tid, EntityEx Activator)
 {
 	Entity	A;
-	int		searcher;
 	bool	success;
 
 	success = false;
-	searcher = -1;
-	for (A = FindMobjFromTID(tid, &searcher); A;
-		A = FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, none); A; A = FindMobjFromTID(tid, A))
 	{
 		if (EntityEx(A).Deactivate(Activator))
 		{
@@ -3925,13 +3903,10 @@ final bool EV_ThingDeactivate(int tid, EntityEx Activator)
 final bool EV_ThingRemove(int tid)
 {
 	Entity	A;
-	int		searcher;
 	bool	success;
 
 	success = false;
-	searcher = -1;
-	for (A = FindMobjFromTID(tid, &searcher); A;
-		A = FindMobjFromTID(tid, &searcher))
+	for (A = FindMobjFromTID(tid, none); A; A = FindMobjFromTID(tid, A))
 	{
 		A.RemoveThing();
 		success = true;
@@ -3948,13 +3923,11 @@ final bool EV_ThingRemove(int tid)
 final bool EV_ThingDestroy(int tid)
 {
 	EntityEx	A;
-	int			searcher;
 	bool		success;
 
 	success = false;
-	searcher = -1;
-	for (A = EntityEx(FindMobjFromTID(tid, &searcher)); A;
-		A = EntityEx(FindMobjFromTID(tid, &searcher)))
+	for (A = EntityEx(FindMobjFromTID(tid, none)); A;
+		A = EntityEx(FindMobjFromTID(tid, A)))
 	{
 		if (A.bShootable)
 		{
@@ -4029,13 +4002,11 @@ final int EV_ThingDamage(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 final int DoThingDamage(int Tid, int Amount, name DmgType, Entity Activator)
 {
 	Entity	A;
-	int		Searcher;
 	int		NumDamaged;
 
 	NumDamaged = 0;
-	Searcher = -1;
-	for (A = Tid ? FindMobjFromTID(Tid, &Searcher) : Activator; A;
-		A = FindMobjFromTID(Tid, &Searcher))
+	for (A = Tid ? FindMobjFromTID(Tid, none) : Activator; A;
+		A = FindMobjFromTID(Tid, A))
 	{
 		if (EntityEx(A).bShootable)
 		{
@@ -4076,9 +4047,8 @@ final bool EV_ThingSetGoal(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
 	Entity Ent;
 	EntityEx NewGoal = none;
-	int Searcher = -1;
-	for (Ent = FindMobjFromTID(Arg2, &Searcher); Ent;
-		Ent = FindMobjFromTID(Arg2, &Searcher))
+	for (Ent = FindMobjFromTID(Arg2, none); Ent;
+		Ent = FindMobjFromTID(Arg2, Ent))
 	{
 		if (!Ent.IsA('PatrolPoint'))
 		{
@@ -4089,9 +4059,8 @@ final bool EV_ThingSetGoal(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	}
 
 	bool Ret = false;
-	Searcher = -1;
-	for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
-		Ent = FindMobjFromTID(Arg1, &Searcher))
+	for (Ent = FindMobjFromTID(Arg1, none); Ent;
+		Ent = FindMobjFromTID(Arg1, Ent))
 	{
 		EntityEx E = EntityEx(Ent);
 		Ret = true;
@@ -4120,8 +4089,7 @@ final bool EV_ChangeCamera(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	Entity Camera = none;
 	if (Arg1)
 	{
-		int Searcher = -1;
-		Camera = FindMobjFromTID(Arg1, &Searcher);
+		Camera = FindMobjFromTID(Arg1, none);
 	}
 
 	if (!A || !A.Player || Arg2)
@@ -4188,10 +4156,9 @@ final bool EV_ThingSetTranslation(int Arg1, int Arg2, int Arg3, int Arg4,
 	}
 
 	Entity Ent;
-	int Searcher = -1;
 	bool Ret = false;
-	for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
-		Ent = FindMobjFromTID(Arg1, &Searcher))
+	for (Ent = FindMobjFromTID(Arg1, none); Ent;
+		Ent = FindMobjFromTID(Arg1, Ent))
 	{
 		Ret = true;
 		Ent.Translation = Trans ? Trans : Ent.default.Translation;
@@ -4210,11 +4177,10 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 {
 	EntityEx Hatee = none;
 	bool NothingToHate = false;
-	int HateeSearcher = -1;
 	if (Arg2)
 	{
-		for (Hatee = EntityEx(FindMobjFromTID(Arg2, &HateeSearcher)); Hatee;
-			Hatee = EntityEx(FindMobjFromTID(Arg2, &HateeSearcher)))
+		for (Hatee = EntityEx(FindMobjFromTID(Arg2, none)); Hatee;
+			Hatee = EntityEx(FindMobjFromTID(Arg2, Hatee)))
 		{
 			if (Hatee.bShootable &&	// can't hate nonshootable things
 				Hatee.Health > 0 &&	// can't hate dead things
@@ -4231,7 +4197,6 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	}
 
 	EntityEx Hater;
-	int HaterSearcher = -1;
 	if (Arg1 == 0)
 	{
 		if (A && A.bIsPlayer)
@@ -4246,8 +4211,8 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	}
 	else
 	{
-		for (Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)); Hater;
-			Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)))
+		for (Hater = EntityEx(FindMobjFromTID(Arg1, none)); Hater;
+			Hater = EntityEx(FindMobjFromTID(Arg1, Hater)))
 		{
 			if (Hater.Health > 0 && Hater.bShootable)
 			{
@@ -4267,7 +4232,7 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			if (Arg3)
 			{
 				Hater.TIDToHate = Arg2;
-				Hater.LastLookActor = -1;
+				Hater.LastLookActor = none;
 
 				// If the TID to hate is 0, then don't forget the target and
 				// lastenemy fields.
@@ -4311,11 +4276,7 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			{
 				do
 				{
-					Hatee = EntityEx(FindMobjFromTID(Arg2, &HateeSearcher));
-					if (!Hatee)
-					{
-						HateeSearcher = -1;
-					}
+					Hatee = EntityEx(FindMobjFromTID(Arg2, Hatee));
 				}
 				while (!Hatee ||
 					Hatee == Hater ||		// can't hate self
@@ -4342,8 +4303,8 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		}
 		if (Arg1)
 		{
-			for (Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)); Hater;
-				Hater = EntityEx(FindMobjFromTID(Arg1, &HaterSearcher)))
+			for (Hater = EntityEx(FindMobjFromTID(Arg1, Hater)); Hater;
+				Hater = EntityEx(FindMobjFromTID(Arg1, Hater)))
 			{
 				if (Hater.Health > 0 && Hater.bShootable)
 				{
@@ -4368,16 +4329,12 @@ final bool EV_ThingHate(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 final bool EV_ThingMove(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	EntityEx A)
 {
-	int			Searcher;
-
 	if (Arg1)
 	{
-		Searcher = -1;
-		A = EntityEx(FindMobjFromTID(Arg1, &Searcher));
+		A = EntityEx(FindMobjFromTID(Arg1, none));
 	}
 
-	Searcher = -1;
-	EntityEx Dest = EntityEx(FindMobjFromTID(Arg2, &Searcher));
+	EntityEx Dest = EntityEx(FindMobjFromTID(Arg2, none));
 
 	if (A && Dest)
 	{
@@ -4420,9 +4377,8 @@ final bool EV_ThingSetSpecial(int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5)
 {
 	Entity Ent;
-	int Searcher = -1;
-	for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
-		Ent = FindMobjFromTID(Arg1, &Searcher))
+	for (Ent = FindMobjFromTID(Arg1, none); Ent;
+		Ent = FindMobjFromTID(Arg1, Ent))
 	{
 		Ent.Special = Arg2;
 		Ent.Args[0] = Arg3;
@@ -4450,9 +4406,8 @@ final bool EV_ThrustThingZ(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	if (Arg1)
 	{
 		Entity Ent;
-		int Searcher = -1;
-		for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
-			Ent = FindMobjFromTID(Arg1, &Searcher))
+		for (Ent = FindMobjFromTID(Arg1, none); Ent;
+			Ent = FindMobjFromTID(Arg1, Ent))
 		{
 			if (!Arg4)
 			{
@@ -4493,25 +4448,16 @@ final bool EV_ThingChangeTID(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	{
 		if (A)
 		{
-			A.RemoveFromTIDList();
-			if (Arg2)
-			{
-				A.InsertIntoTIDList(Arg2);
-			}
+			A.SetTID(Arg2);
 		}
 	}
 	else
 	{
 		Entity Ent;
-		int Searcher = -1;
-		for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
-			Ent = FindMobjFromTID(Arg1, &Searcher))
+		for (Ent = FindMobjFromTID(Arg1, none); Ent;
+			Ent = FindMobjFromTID(Arg1, Ent))
 		{
-			Ent.RemoveFromTIDList();
-			if (Arg2)
-			{
-				Ent.InsertIntoTIDList(Arg2);
-			}
+			Ent.SetTID(Arg2);
 		}
 	}
 	return true;
@@ -4538,9 +4484,8 @@ final bool EV_ThingStop(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	else
 	{
 		Entity Ent;
-		int Searcher = -1;
-		for (Ent = FindMobjFromTID(Arg1, &Searcher); Ent;
-			Ent = FindMobjFromTID(Arg1, &Searcher))
+		for (Ent = FindMobjFromTID(Arg1, none); Ent;
+			Ent = FindMobjFromTID(Arg1, Ent))
 		{
 			Ent.Velocity = vector(0.0, 0.0, 0.0);
 			Ret = true;
@@ -4659,7 +4604,6 @@ final bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	int			i;
 	int			count;
 	EntityEx	A;
-	int			searcher;
 	int			SecTag;
 	int			SecNum;
 	sector_t*	Sec;
@@ -4695,9 +4639,8 @@ final bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	if (Arg1)
 	{
 		count = 0;
-		searcher = -1;
-		for (A = EntityEx(FindMobjFromTID(Arg1, &searcher)); A;
-			A = EntityEx(FindMobjFromTID(Arg1, &searcher)))
+		for (A = EntityEx(FindMobjFromTID(Arg1, none)); A;
+			A = EntityEx(FindMobjFromTID(Arg1, A)))
 		{
 			if (SecTag == 0 || A.Sector->tag == SecTag)
 			{
@@ -4709,12 +4652,12 @@ final bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			return false;
 		}
 		count = 1 + (P_Random() % count);
-		searcher = -1;
+		A = none;
 		for (i = 0; i < count; i++)
 		{
 			do
 			{
-				A = EntityEx(FindMobjFromTID(Arg1, &searcher));
+				A = EntityEx(FindMobjFromTID(Arg1, A));
 			}
 			while (A && SecTag != 0 && A.Sector->tag != SecTag);
 		}
@@ -4795,15 +4738,13 @@ final bool EV_Teleport(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 final bool EV_TeleportOther(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
 	bool		Ret;
-	int			Searcher;
 	EntityEx	A;
 
 	Ret = false;
 	if (Arg1 && Arg2)
 	{
-		Searcher = -1;
-		for (A = EntityEx(FindMobjFromTID(Arg1, &Searcher)); A;
-			A = EntityEx(FindMobjFromTID(Arg1, &Searcher)))
+		for (A = EntityEx(FindMobjFromTID(Arg1, none)); A;
+			A = EntityEx(FindMobjFromTID(Arg1, A)))
 		{
 			Ret |= EV_Teleport(Arg2, 0, 0, 0, 0, A, NULL, !!Arg3);
 		}
@@ -4851,22 +4792,20 @@ final bool EV_TeleportGroup(int group_tid, int source_tid, int dest_tid,
 {
 	EntityEx	sourceOrigin;
 	EntityEx	destOrigin;
-	int			Searcher;
 	bool		didSomething;
 	bool		floorz;
 
-	Searcher = -1;
-	sourceOrigin = EntityEx(FindMobjFromTID(source_tid, &Searcher));
+	sourceOrigin = EntityEx(FindMobjFromTID(source_tid, none));
 	if (!sourceOrigin)
 	{
 		//	If there is no source origin, behave like TeleportOther
 		return EV_TeleportOther(group_tid, dest_tid, fog, 0, 0);
 	}
 
-	Searcher = -1;
+	destOrigin = none;
 	do
 	{
-		destOrigin = EntityEx(FindMobjFromTID(dest_tid, &Searcher));
+		destOrigin = EntityEx(FindMobjFromTID(dest_tid, destOrigin));
 	}
 	while (destOrigin && !TeleportDest(destOrigin));
 	if (!destOrigin)
@@ -4888,9 +4827,8 @@ final bool EV_TeleportGroup(int group_tid, int source_tid, int dest_tid,
 		// For each actor with tid matching arg0, move it to the same
 		// position relative to destOrigin as it is relative to
 		// sourceOrigin before the teleport.
-		Searcher = -1;
-		for (victim = EntityEx(FindMobjFromTID(group_tid, &Searcher)); victim;
-			victim = EntityEx(FindMobjFromTID(group_tid, &Searcher)))
+		for (victim = EntityEx(FindMobjFromTID(group_tid, none)); victim;
+			victim = EntityEx(FindMobjFromTID(group_tid, victim)))
 		{
 			didSomething |= DoGroupForOne(victim, sourceOrigin, destOrigin,
 				floorz, fog);
@@ -4923,24 +4861,22 @@ final bool EV_TeleportSector(int tag, int source_tid, int dest_tid, bool fog,
 {
 	EntityEx	sourceOrigin;
 	EntityEx	destOrigin;
-	int			Searcher;
 	bool		didSomething;
 	bool		floorz;
 	int			secnum;
 	sector_t*	sec;
 	EntityEx	A;
 
-	Searcher = -1;
-	sourceOrigin = EntityEx(FindMobjFromTID(source_tid, &Searcher));
+	sourceOrigin = EntityEx(FindMobjFromTID(source_tid, none));
 	if (!sourceOrigin)
 	{
 		return false;
 	}
 
-	Searcher = -1;
+	destOrigin = none;
 	do
 	{
-		destOrigin = EntityEx(FindMobjFromTID(dest_tid, &Searcher));
+		destOrigin = EntityEx(FindMobjFromTID(dest_tid, destOrigin));
 	}
 	while (destOrigin && !TeleportDest(destOrigin));
 	if (!destOrigin)
@@ -5175,7 +5111,6 @@ final bool EV_NoiseAlert(EntityEx A, int Arg1, int Arg2, int Arg3, int Arg4,
 {
 	EntityEx	ASource;
 	EntityEx	ATarget;
-	int			Search;
 
 	if (!Arg1)
 	{
@@ -5183,8 +5118,7 @@ final bool EV_NoiseAlert(EntityEx A, int Arg1, int Arg2, int Arg3, int Arg4,
 	}
 	else
 	{
-		Search = -1;
-		ASource = EntityEx(FindMobjFromTID(Arg1, &Search));
+		ASource = EntityEx(FindMobjFromTID(Arg1, none));
 	}
 
 	if (!Arg2)
@@ -5193,8 +5127,7 @@ final bool EV_NoiseAlert(EntityEx A, int Arg1, int Arg2, int Arg3, int Arg4,
 	}
 	else
 	{
-		Search = -1;
-		ATarget = EntityEx(FindMobjFromTID(Arg2, &Search));
+		ATarget = EntityEx(FindMobjFromTID(Arg2, none));
 	}
 
 	NoiseAlert(ASource, ATarget);
@@ -5279,7 +5212,6 @@ final void SpawnPushers()
 	int			s;
 	Pusher		P;
 	EntityEx	thing;
-	int			searcher;
 
 	for (i = 0; i < XLevel.NumLines; i++)
 	{
@@ -5330,10 +5262,9 @@ final void SpawnPushers()
 			else
 			{
 				// [RH] Find thing by tid
-				searcher = -1;
-				for (thing = EntityEx(FindMobjFromTID(l->arg2, &searcher));
+				for (thing = EntityEx(FindMobjFromTID(l->arg2, none));
 					thing;
-					thing = EntityEx(FindMobjFromTID(l->arg2, &searcher)))
+					thing = EntityEx(FindMobjFromTID(l->arg2, thing)))
 				{
 					if (PointPuller(thing) || PointPusher(thing))
 					{
@@ -5578,27 +5509,22 @@ final bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 {
 	QuakeFocus focus;
 	EntityEx target;
-	int lastfound = 0;
 	int success = false;
 
 	// Find all quake foci
-	do
+	for (target = EntityEx(FindMobjFromTID(Arg5, none)); target;
+		target = EntityEx(FindMobjFromTID(Arg5, target)))
 	{
-		target = EntityEx(FindMobjFromTID(Arg5, &lastfound));
-		if (target)
+		focus = Spawn(QuakeFocus, target.Origin);
+		if (focus)
 		{
-			focus = Spawn(QuakeFocus, target.Origin);
-			if (focus)
-			{
-				focus.Richters = Arg1;
-				focus.QuakeDuration = Arg2 >> 1;	// decremented every 2 tics
-				focus.DamageRadius = itof(Arg3) * 64.0;
-				focus.TremorRadius = itof(Arg4) * 64.0;
-				success = true;
-			}
+			focus.Richters = Arg1;
+			focus.QuakeDuration = Arg2 >> 1;	// decremented every 2 tics
+			focus.DamageRadius = itof(Arg3) * 64.0;
+			focus.TremorRadius = itof(Arg4) * 64.0;
+			success = true;
 		}
 	}
-	while (target);
 
 	return success;
 }
@@ -5772,16 +5698,14 @@ final int ThingCount(int type, name TypeName, int tid)
 final int DoThingCount(class<EntityEx> moType, int tid)
 {
 	int					count;
-	int					searcher;
 	EntityEx			Ent;
 
 	count = 0;
-	searcher = -1;
 	if (tid)
 	{
 		// Count TID things
-		for (Ent = EntityEx(FindMobjFromTID(tid, &searcher)); Ent != none;
-			Ent = EntityEx(FindMobjFromTID(tid, &searcher)))
+		for (Ent = EntityEx(FindMobjFromTID(tid, none)); Ent != none;
+			Ent = EntityEx(FindMobjFromTID(tid, Ent)))
 		{
 			if (Ent.bMonster && Ent.Health <= 0)
 			{

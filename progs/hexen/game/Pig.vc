@@ -79,18 +79,17 @@ int UpdateMorphedMonster(int tics)
 		return false;
 	}
 	LinkToWorld();
-	RemoveFromTIDList();
+	SetTID(0);
 	SetState(FindState('FreeTargMobj'));
 	mo.Angles.yaw = oldAngle;
 	mo.Target = oldTarget;
-	mo.TID = oldTID;
 	mo.Special = oldSpecial;
 	mo.Args[0] = oldArgs[0];
 	mo.Args[1] = oldArgs[1];
 	mo.Args[2] = oldArgs[2];
 	mo.Args[3] = oldArgs[3];
 	mo.Args[4] = oldArgs[4];
-	mo.InsertIntoTIDList(oldTID);
+	mo.SetTID(oldTID);
 	mo.bNoSightCheck = bNoSightCheck;
 	mo.bHuntPlayers = bHuntPlayers;
 	mo.bNoHatePlayers = bNoHatePlayers;

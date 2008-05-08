@@ -41,7 +41,6 @@ defaultproperties
 	BounceFactor = 0.7;
 	RDFactor = 1.0;
 	MeleeRange = 44.0;	//	MELEERANGE(64.0) - 20.0
-	LastLookActor = -1;
 	MissileHeight = 32.0;
 	WoundHealth = 6;
 	BloodType = Blood;

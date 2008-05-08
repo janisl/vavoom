@@ -242,6 +242,9 @@ class VEntity : public VThinker
 	VBasePlayer		*Player;
 
 	int				TID;			// thing identifier
+	VEntity*		TIDHashNext;
+	VEntity*		TIDHashPrev;
+
 	int				Special;		// special
 	int				Args[5];		// special arguments
 
@@ -290,6 +293,10 @@ class VEntity : public VThinker
 	//	VThinker interface.
 	void DestroyThinker();
 	void AddedToLevel();
+
+	void SetTID(int);
+	void InsertIntoTIDList(int);
+	void RemoveFromTIDList();
 
 	VEntity* GetTopOwner()
 	{
@@ -526,6 +533,7 @@ public:
 	void AddSoundSequenceChoice(VName);
 	void StopSoundSequence();
 
+	DECLARE_FUNCTION(SetTID)
 	DECLARE_FUNCTION(SetState)
 	DECLARE_FUNCTION(SetInitialState)
 	DECLARE_FUNCTION(AdvanceState)

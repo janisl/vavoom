@@ -43,10 +43,9 @@ final void A_Look()
 	//	Set goal now if appropriate.
 	if (Special == LNSPEC_ThingSetGoal && Args[0] == 0)
 	{
-		int Searcher = -1;
 		Goal = none;
-		for (Ent = Level.FindMobjFromTID(Args[1], &Searcher); Ent;
-			Ent = Level.FindMobjFromTID(Args[1], &Searcher))
+		for (Ent = Level.FindMobjFromTID(Args[1], none); Ent;
+			Ent = Level.FindMobjFromTID(Args[1], Ent))
 		{
 			if (!Ent.IsA('PatrolPoint'))
 			{
@@ -428,9 +427,8 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			// Execute the specials of any PatrolSpecials with the same TID
 			// as the goal.
 			Entity Ent;
-			int Searcher = -1;
-			for (Ent = Level.FindMobjFromTID(Goal.TID, &Searcher); Ent;
-				Ent = Level.FindMobjFromTID(Goal.TID, &Searcher))
+			for (Ent = Level.FindMobjFromTID(Goal.TID, none); Ent;
+				Ent = Level.FindMobjFromTID(Goal.TID, Ent))
 			{
 				if (Ent.Class != PatrolSpecial)
 				{
@@ -444,9 +442,8 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			float LastGoalAng = Goal.Angles.yaw;
 			int Delay;
 			EntityEx NewGoal = none;
-			Searcher = -1;
-			for (Ent = Level.FindMobjFromTID(Goal.Args[0], &Searcher); Ent;
-				Ent = Level.FindMobjFromTID(Goal.Args[0], &Searcher))
+			for (Ent = Level.FindMobjFromTID(Goal.Args[0], none); Ent;
+				Ent = Level.FindMobjFromTID(Goal.Args[0], Ent))
 			{
 				if (!Ent.IsA('PatrolPoint'))
 				{

@@ -27,6 +27,8 @@ class LevelInfo : Thinker
 	native
 	abstract;
 
+const int TID_HASH_SIZE = 64;
+
 native readonly GameInfo	Game;
 native readonly WorldInfo	World;
 
@@ -92,8 +94,7 @@ float			CompletitionTime;	//	For intermission
 array<mthing_t>	DeathmatchStarts;	// Player spawn spots for deathmatch.
 array<mthing_t>	PlayerStarts;	// Player spawn spots.
 
-array<int>		TIDList;			// +1 for termination marker
-array<Entity>	TIDMobj;
+private Entity	TIDHash[TID_HASH_SIZE];
 
 float			Gravity;			// Level Gravity
 float			AirControl;
@@ -137,6 +138,7 @@ native final void Completed(int Map, int Position, int SaveAngle);
 native final bool ChangeSwitchTexture(int SideNum, int useAgain,
 	name DefaultSound, out byte Quest);
 native final void ForceLightning();
+native final Entity FindMobjFromTID(int tid, Entity Prev);
 
 //==========================================================================
 //
@@ -224,28 +226,6 @@ int ThingCount(int type, name TypeName, int tid)
 
 //==========================================================================
 //
-//	FindMobjFromTID
-//
-//==========================================================================
-
-Entity FindMobjFromTID(int tid, int *searchPosition)
-{
-	int i;
-
-	for (i = *searchPosition + 1; i < TIDList.Num; i++)
-	{
-		if (TIDList[i] == tid)
-		{
-			*searchPosition = i;
-			return TIDMobj[i];
-		}
-	}
-	*searchPosition = -1;
-	return none;
-}
-
-//==========================================================================
-//
 //  ExecuteActionSpecial
 //
 //==========================================================================
@@ -280,31 +260,6 @@ void StartPlaneWatcher(Entity it, line_t* line, int lineSide, bool ceiling,
 {
 }
 
-//==========================================================================
-//
-//	CreateTIDList
-//
-//==========================================================================
-
-void CreateTIDList()
-{
-	int i;
-	Entity mobj;
-
-	TIDList.Num = 0;
-	TIDMobj.Num = 0;
-	i = 0;
-	foreach AllThinkers(Entity, mobj)
-	{
-		if (mobj.TID != 0)
-		{
-			//	Add to list
-			TIDList[i] = mobj.TID;
-			TIDMobj[i++] = mobj;
-		}
-	}
-}
-
 //**************************************************************************
 //**
 //**    Special thinker utilites.
@@ -319,7 +274,7 @@ void CreateTIDList()
 //
 //==========================================================================
 
-sector_t *getNextSector(line_t * line, sector_t * sec)
+final sector_t *getNextSector(line_t * line, sector_t * sec)
 {
 	if (!(line->flags & ML_TWOSIDED))
 	{
@@ -346,7 +301,7 @@ sector_t *getNextSector(line_t * line, sector_t * sec)
 //
 //==========================================================================
 
-float FindLowestFloorSurrounding(sector_t* sec, TVec* v)
+final float FindLowestFloorSurrounding(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -393,7 +348,7 @@ float FindLowestFloorSurrounding(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindHighestFloorSurrounding(sector_t* sec, TVec* v)
+final float FindHighestFloorSurrounding(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -442,7 +397,7 @@ float FindHighestFloorSurrounding(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindNextHighestFloor(sector_t* sec, TVec* v)
+final float FindNextHighestFloor(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -498,7 +453,7 @@ float FindNextHighestFloor(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindNextLowestFloor(sector_t* sec, TVec* v)
+final float FindNextLowestFloor(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -554,7 +509,7 @@ float FindNextLowestFloor(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindNextLowestCeiling(sector_t* sec, TVec* v)
+final float FindNextLowestCeiling(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -610,7 +565,7 @@ float FindNextLowestCeiling(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindNextHighestCeiling(sector_t* sec, TVec* v)
+final float FindNextHighestCeiling(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -662,7 +617,7 @@ float FindNextHighestCeiling(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindLowestCeilingSurrounding(sector_t* sec, TVec* v)
+final float FindLowestCeilingSurrounding(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -707,7 +662,7 @@ float FindLowestCeilingSurrounding(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindHighestCeilingSurrounding(sector_t* sec, TVec* v)
+final float FindHighestCeilingSurrounding(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		check;
@@ -755,7 +710,7 @@ float FindHighestCeilingSurrounding(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindShortestTextureAround(sector_t* sec)
+final float FindShortestTextureAround(sector_t* sec)
 {
 	int			i;
 	float		minsize;
@@ -800,7 +755,7 @@ float FindShortestTextureAround(sector_t* sec)
 //
 //==========================================================================
 
-float FindShortestUpperAround(sector_t* sec)
+final float FindShortestUpperAround(sector_t* sec)
 {
 	int			i;
 	float		minsize;
@@ -849,7 +804,7 @@ float FindShortestUpperAround(sector_t* sec)
 //
 //==========================================================================
 
-sector_t* FindModelFloorSector(sector_t* sec, float height)
+final sector_t* FindModelFloorSector(sector_t* sec, float height)
 {
 	int			i;
 	line_t*		check;
@@ -889,7 +844,7 @@ sector_t* FindModelFloorSector(sector_t* sec, float height)
 //
 //==========================================================================
 
-sector_t* FindModelCeilingSector(sector_t* sec, float height)
+final sector_t* FindModelCeilingSector(sector_t* sec, float height)
 {
 	int			i;
 	line_t*		check;
@@ -919,7 +874,7 @@ sector_t* FindModelCeilingSector(sector_t* sec, float height)
 //
 //==========================================================================
 
-int FindMinSurroundingLight(sector_t* sector, int min)
+final int FindMinSurroundingLight(sector_t* sector, int min)
 {
 	int			i;
 	line_t*		line;
@@ -947,7 +902,7 @@ int FindMinSurroundingLight(sector_t* sector, int min)
 //
 //==========================================================================
 
-float FindHighestFloorPoint(sector_t* sec, TVec* v)
+final float FindHighestFloorPoint(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		line;
@@ -992,7 +947,7 @@ float FindHighestFloorPoint(sector_t* sec, TVec* v)
 //
 //==========================================================================
 
-float FindLowestCeilingPoint(sector_t* sec, TVec* v)
+final float FindLowestCeilingPoint(sector_t* sec, TVec* v)
 {
 	int			i;
 	line_t*		line;
@@ -1045,7 +1000,7 @@ void SpawnMapThing(mthing_t* mthing)
 //
 //==========================================================================
 
-void CopyMThing(mthing_t * from, mthing_t * to)
+final void CopyMThing(mthing_t * from, mthing_t * to)
 {
 	to->tid = from->tid;
 	to->x = from->x;

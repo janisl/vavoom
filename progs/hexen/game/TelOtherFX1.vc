@@ -60,7 +60,7 @@ final void TeleportOther(Actor victim)
 		// If death action, run it upon teleport
 		if (victim.bMonster && victim.Special)
 		{
-			victim.RemoveFromTIDList();
+			victim.SetTID(0);
 			Level.ExecuteActionSpecial(victim.Special, victim.Args[0],
 				victim.Args[1], victim.Args[2], victim.Args[3],
 				victim.Args[4], NULL, 0, victim);

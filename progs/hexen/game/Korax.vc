@@ -74,6 +74,8 @@ float CommandOffset;
 //  Special1    last teleport destination
 bool bDidBelowHalfHealth;	//  set if "below half" script not yet run
 
+Entity LastSpot;
+
 //==========================================================================
 //
 //  A_KoraxStep
@@ -106,12 +108,10 @@ final void A_KoraxStep2()
 final void A_KoraxChase()
 {
 	Actor spot;
-	int search;
 
 	if (!bDidBelowHalfHealth && (Health <= (default.Health / 2)))
 	{
-		search = 0;
-		spot = Actor(Level.FindMobjFromTID(FirstTeleportTID, &search));
+		spot = Actor(Level.FindMobjFromTID(FirstTeleportTID, none));
 		if (spot)
 		{
 			Teleport(spot.Origin, spot.Angles.yaw, true, true, false);
@@ -139,7 +139,8 @@ final void A_KoraxChase()
 	{
 		if (Random() < 0.0390625)
 		{
-			spot = Actor(Level.FindMobjFromTID(TeleportTID, &Special1));
+			spot = Actor(Level.FindMobjFromTID(TeleportTID, LastSpot));
+			LastSpot = spot;
 			if (spot)
 			{
 				Teleport(spot.Origin, spot.Angles.yaw, true, true, false);

@@ -1168,7 +1168,7 @@ void OnMapSpawn(mthing_t* mthing)
 		}
 		LinkToWorld();
 
-		TID = mthing->tid;
+		SetTID(mthing->tid);
 		Special = mthing->special;
 		if (!bArgsDefined)
 		{

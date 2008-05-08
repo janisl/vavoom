@@ -497,17 +497,16 @@ final bool LookForTID(bool AllAround)
 		}
 
 		Target = Other;
-		LastLookActor = -1;
+		LastLookActor = none;
 		return true;
 	}
 
 	bool ReachedEnd = false;
 	// Look for between 7 and 38 hatees at a time
 	int Cnt = (P_Random() & 31) + 7;
-	int Searcher = LastLookActor;
-	for (Tmp = Level.FindMobjFromTID(TIDToHate, &Searcher);
-		Searcher != LastLookActor;
-		Tmp = Level.FindMobjFromTID(TIDToHate, &Searcher))
+	for (Tmp = Level.FindMobjFromTID(TIDToHate, LastLookActor);
+		Tmp != LastLookActor;
+		Tmp = Level.FindMobjFromTID(TIDToHate, Tmp))
 	{
 		if (!Tmp)
 		{
@@ -519,7 +518,6 @@ final bool LookForTID(bool AllAround)
 				break;
 			}
 			ReachedEnd = true;
-			Searcher = -1;
 			continue;
 		}
 		EntityEx Other = EntityEx(Tmp);
@@ -582,10 +580,10 @@ final bool LookForTID(bool AllAround)
 		}
 
 		Target = Other;
-		LastLookActor = Searcher;
+		LastLookActor = Other;
 		return true;
 	}
-	LastLookActor = Searcher;
+	LastLookActor = Tmp;
 	if (!Target)
 	{
 		//	Use goal as target

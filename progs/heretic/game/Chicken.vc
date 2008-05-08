@@ -75,18 +75,17 @@ bool UpdateChicken(int tics)
 		return false;
 	}
 	LinkToWorld();
-	RemoveFromTIDList();
+	SetTID(0);
 	SetState(FindState('FreeTargMobj'));
 	A.Angles.yaw = oldAngle;
 	A.Target = oldTarget;
-	A.TID = oldTID;
 	A.Special = oldSpecial;
 	A.Args[0] = oldArgs[0];
 	A.Args[1] = oldArgs[1];
 	A.Args[2] = oldArgs[2];
 	A.Args[3] = oldArgs[3];
 	A.Args[4] = oldArgs[4];
-	A.InsertIntoTIDList(oldTID);
+	A.SetTID(oldTID);
 	A.bNoSightCheck = bNoSightCheck;
 	A.bHuntPlayers = bHuntPlayers;
 	A.bNoHatePlayers = bNoHatePlayers;

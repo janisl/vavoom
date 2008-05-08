@@ -41,9 +41,8 @@ void BeginPlay()
 	if (Args[0])
 	{
 		Entity E;
-		int Search = -1;
-		for (E = Level.FindMobjFromTID(Args[0], &Search); E && !SkyBox;
-			E = Level.FindMobjFromTID(Args[0], &Search))
+		for (E = Level.FindMobjFromTID(Args[0], none); E && !SkyBox;
+			E = Level.FindMobjFromTID(Args[0], E))
 		{
 			SkyBox = SkyViewpoint(E);
 		}

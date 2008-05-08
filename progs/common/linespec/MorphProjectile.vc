@@ -91,15 +91,14 @@ final bool MorphMonster(Actor victim)
 	monster.bGhost = victim.bGhost;
 	monster.Target = victim.Target;
 	monster.Angles.yaw = victim.Angles.yaw;
-	monster.TID = victim.TID;
 	monster.Special = victim.Special;
-	monster.InsertIntoTIDList(victim.TID);
+	monster.SetTID(victim.TID);
 	for (i = 0; i < 5; i++)
 	{
 		monster.Args[i] = victim.Args[i];
 	}
 
-	victim.RemoveFromTIDList();
+	victim.SetTID(0);
 
 	victim.SetState(victim.FindState('FreeTargMobj'));
 	victim.MonsterMorphed();

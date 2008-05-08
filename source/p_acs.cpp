@@ -363,8 +363,7 @@ private:
 		}
 		else
 		{
-			int search = -1;
-			return Level->eventFindMobjFromTID(TID, &search);
+			return Level->FindMobjFromTID(TID, NULL);
 		}
 	}
 	int FindSectorFromTag(int, int);
@@ -2745,9 +2744,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_ThingSound)
 			{
 				VName sound = GetName(sp[-2]);
-				int searcher = -1;
-				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
-					mobj != NULL; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				for (VEntity* mobj = Level->FindMobjFromTID(sp[-3], NULL);
+					mobj; mobj = Level->FindMobjFromTID(sp[-3], mobj))
 				{
 					mobj->StartSound(sound, 0, sp[-1] / 127.0, 1.0, false);
 				}
@@ -3275,9 +3273,8 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SetThingSpecial)
 			{
-				int searcher = -1;
-				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-7], &searcher);
-					Ent; Ent = Level->eventFindMobjFromTID(sp[-7], &searcher))
+				for (VEntity* Ent = Level->FindMobjFromTID(sp[-7], NULL);
+					Ent; Ent = Level->FindMobjFromTID(sp[-7], Ent))
 				{
 					Ent->Special = sp[-6];
 					Ent->Args[0] = sp[-5];
@@ -3870,9 +3867,8 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			else
 			{
-				int searcher = -1;
-				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-3], &searcher);
-					Ent; Ent = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				for (VEntity* Ent = Level->FindMobjFromTID(sp[-3], NULL);
+					Ent; Ent = Level->FindMobjFromTID(sp[-3], Ent))
 				{
 					Ent->eventSetActorProperty(sp[-2], sp[-1], GetStr(sp[-1]));
 				}
@@ -4178,9 +4174,8 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			else
 			{
-				int searcher = -1;
-				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-2], &searcher);
-					Ent; Ent = Level->eventFindMobjFromTID(sp[-2], &searcher))
+				for (VEntity* Ent = Level->FindMobjFromTID(sp[-2], NULL);
+					Ent; Ent = Level->FindMobjFromTID(sp[-2], Ent))
 				{
 					Ent->Angles.yaw = (float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000;
 				}
@@ -4221,9 +4216,8 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_ClearActorInventory)
 			{
-				int searcher = -1;
-				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-1], &searcher);
-					mobj; mobj = Level->eventFindMobjFromTID(sp[-1], &searcher))
+				for (VEntity* mobj = Level->FindMobjFromTID(sp[-1], NULL);
+					mobj; mobj = Level->FindMobjFromTID(sp[-1], mobj))
 				{
 					mobj->eventClearInventory();
 				}
@@ -4233,9 +4227,8 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_GiveActorInventory)
 			{
-				int searcher = -1;
-				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
-					mobj; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				for (VEntity* mobj = Level->FindMobjFromTID(sp[-3], NULL);
+					mobj; mobj = Level->FindMobjFromTID(sp[-3], mobj))
 				{
 					mobj->eventGiveInventory(GetNameLowerCase(sp[-2]), sp[-1]);
 				}
@@ -4246,8 +4239,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_TakeActorInventory)
 			{
 				int searcher = -1;
-				for (VEntity* mobj = Level->eventFindMobjFromTID(sp[-3], &searcher);
-					mobj; mobj = Level->eventFindMobjFromTID(sp[-3], &searcher))
+				for (VEntity* mobj = Level->FindMobjFromTID(sp[-3], NULL);
+					mobj; mobj = Level->FindMobjFromTID(sp[-3], mobj))
 				{
 					mobj->eventTakeInventory(GetNameLowerCase(sp[-2]), sp[-1]);
 				}
@@ -4661,9 +4654,8 @@ int VAcs::RunScript(float DeltaTime)
 			}
 			else
 			{
-				int searcher = -1;
-				for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-2], &searcher);
-					Ent; Ent = Level->eventFindMobjFromTID(sp[-2], &searcher))
+				for (VEntity* Ent = Level->FindMobjFromTID(sp[-2], NULL);
+					Ent; Ent = Level->FindMobjFromTID(sp[-2], Ent))
 				{
 					Ent->Angles.pitch = AngleMod180(
 						(float)(sp[-1] & 0xffff) * 360.0 / (float)0x10000);
@@ -4698,11 +4690,9 @@ int VAcs::RunScript(float DeltaTime)
 				}
 				else
 				{
-					int searcher = -1;
 					int Count = 0;
-					for (VEntity* Ent = Level->eventFindMobjFromTID(sp[-3],
-						&searcher); Ent; Ent = Level->eventFindMobjFromTID(
-						sp[-2], &searcher))
+					for (VEntity* Ent = Level->FindMobjFromTID(sp[-3], NULL);
+						Ent; Ent = Level->FindMobjFromTID(sp[-2], Ent))
 					{
 						VStateLabel* Lbl = Ent->GetClass()->FindStateLabel(
 							Names, !!sp[-1]);

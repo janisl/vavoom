@@ -294,7 +294,7 @@ EntityEx		Master;
 // Player number last looked for.
 int				LastLook;
 //	The same for actor.
-int				LastLookActor;
+Entity			LastLookActor;
 
 //	TID of things to hate, 0 if none.
 int				TIDToHate;

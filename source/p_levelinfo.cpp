@@ -381,6 +381,27 @@ void VLevelInfo::ForceLightning()
 
 //==========================================================================
 //
+//	VLevelInfo::FindMobjFromTID
+//
+//==========================================================================
+
+VEntity* VLevelInfo::FindMobjFromTID(int tid, VEntity* Prev)
+{
+	guard(VLevelInfo::FindMobjFromTID);
+	for (VEntity* E = Prev ? Prev->TIDHashNext : TIDHash[tid &
+		(TID_HASH_SIZE - 1)]; E; E = E->TIDHashNext)
+	{
+		if (E->TID == tid)
+		{
+			return E;
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLevelInfo natives
 //
 //==========================================================================
@@ -499,4 +520,12 @@ IMPLEMENT_FUNCTION(VLevelInfo, ForceLightning)
 {
 	P_GET_SELF;
 	Self->ForceLightning();
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, FindMobjFromTID)
+{
+	P_GET_REF(VEntity, Prev);
+	P_GET_INT(tid);
+	P_GET_SELF;
+	RET_REF(Self->FindMobjFromTID(tid, Prev));
 }
