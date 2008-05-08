@@ -3008,23 +3008,23 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 				sc->ExpectString();
 				VStr Msg = sc->String;
 				int Filter = 0;
-				if (Msg.ICmp("Doom"))
+				if (!Msg.ICmp("Doom"))
 				{
 					Filter = GAME_Doom;
 				}
-				else if (Msg.ICmp("Heretic"))
+				else if (!Msg.ICmp("Heretic"))
 				{
 					Filter = GAME_Heretic;
 				}
-				else if (Msg.ICmp("Hexen"))
+				else if (!Msg.ICmp("Hexen"))
 				{
 					Filter = GAME_Hexen;
 				}
-				else if (Msg.ICmp("Raven"))
+				else if (!Msg.ICmp("Raven"))
 				{
 					Filter = GAME_Raven;
 				}
-				else if (Msg.ICmp("Strife"))
+				else if (!Msg.ICmp("Strife"))
 				{
 					Filter = GAME_Strife;
 				}
@@ -4736,12 +4736,6 @@ void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 	{
 		//FIXME
 		GCon->Logf("Unsupported flag OldRadiusDmg in %s", GetClass()->GetName());
-		return;
-	}
-	if (!Flag.ICmp("UseSpecial"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag UseSpecial in %s", GetClass()->GetName());
 		return;
 	}
 	//
