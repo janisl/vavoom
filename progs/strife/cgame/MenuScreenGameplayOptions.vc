@@ -180,7 +180,7 @@ bool ChangeTrans(Object Sender, float newValue)
 
 defaultproperties
 {
-	ChoicesStartX = 160;
+	ChoicesStartX = 190;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;
 	Title = "GAMEPLAY OPTIONS";
