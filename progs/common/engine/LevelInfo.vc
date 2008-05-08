@@ -84,6 +84,7 @@ bool			bClusterHub;
 bool			bActivateOwnSpecial;
 bool			bMissilesActivateImpact;
 bool			bFilterStarts;
+bool			bInfiniteFlightPowerup;
 readonly bool	bBegunPlay;
 
 int				TotalKills;

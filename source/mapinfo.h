@@ -53,6 +53,7 @@ enum
 	MAPINFOF_ActivateOwnSpecial			= 0x02000000,
 	MAPINFOF_MissilesActivateImpact		= 0x04000000,
 	MAPINFOF_FilterStarts				= 0x08000000,
+	MAPINFOF_InfiniteFlightPowerup		= 0x10000000,
 };
 
 struct mapInfo_t

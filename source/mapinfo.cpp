@@ -297,7 +297,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 				MAPINFOF_MonsterFallingDamage |
 				MAPINFOF_NoAutoSndSeq |
 				MAPINFOF_ActivateOwnSpecial |
-				MAPINFOF_MissilesActivateImpact;
+				MAPINFOF_MissilesActivateImpact |
+				MAPINFOF_InfiniteFlightPowerup;
 		}
 
 		// Map name must follow the number
@@ -615,6 +616,14 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_FilterStarts;
 		}
+		else if (sc->Check("infiniteflightpowerup"))
+		{
+			info->Flags |= MAPINFOF_InfiniteFlightPowerup;
+		}
+		else if (sc->Check("noinfiniteflightpowerup"))
+		{
+			info->Flags &= ~MAPINFOF_InfiniteFlightPowerup;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -841,6 +850,55 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("totalinfighting"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand totalinfighting");
+		}
+		else if (sc->Check("allowrespawn"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand allowrespawn");
+		}
+		else if (sc->Check("teamdamage"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand teamdamage");
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("fogdensity"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand fogdensity");
+			sc->ExpectNumber();
+		}
+		else if (sc->Check("outsidefogdensity"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand outsidefogdensity");
+			sc->ExpectNumber();
+		}
+		else if (sc->Check("skyfog"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand skyfog");
+			sc->ExpectNumber();
+		}
+		else if (sc->Check("teamplayon"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand teamplayon");
+		}
+		else if (sc->Check("teamplayoff"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand teamplayoff");
+		}
+		else if (sc->Check("checkswitchrange"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand checkswitchrange");
+		}
+		else if (sc->Check("nocheckswitchrange"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand nocheckswitchrange");
+		}
+		else if (sc->Check("translator"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand translator");
+			sc->ExpectString();
+		}
+		else if (sc->Check("unfreezesingleplayerconversations"))
+		{
+			GCon->Logf("Unimplemented MAPINFO comand unfreezesingleplayerconversations");
 		}
 		else
 		{

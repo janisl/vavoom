@@ -33,8 +33,9 @@ class PowerFlight : Powerup;
 
 void Tick(float DeltaTime)
 {
-	//	Flight expires only in multiplayer and non-hub games.
-	if (!Level.Game.netgame && Level.bClusterHub)
+	//	Flight expires in multiplayer of when in current level it's not
+	// infinite.
+	if (!Level.Game.netgame && Level.bInfiniteFlightPowerup)
 	{
 		EffectTime += DeltaTime;
 	}

@@ -169,6 +169,8 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		LevelInfoFlags |= LIF_MissilesActivateImpact;
 	if (Info.Flags & MAPINFOF_FilterStarts)
 		LevelInfoFlags |= LIF_FilterStarts;
+	if (Info.Flags & MAPINFOF_InfiniteFlightPowerup)
+		LevelInfoFlags |= LIF_InfiniteFlightPowerup;
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 		LevelInfoFlags |= LIF_ClusterHub;
