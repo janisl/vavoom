@@ -84,7 +84,8 @@ class VLevelInfo : public VThinker
 		LIF_ClusterHub					= 0x01000000,
 		LIF_ActivateOwnSpecial			= 0x02000000,
 		LIF_MissilesActivateImpact		= 0x04000000,
-		LIF_BegunPlay					= 0x08000000,
+		LIF_FilterStarts				= 0x08000000,
+		LIF_BegunPlay					= 0x10000000,
 	};
 	vuint32			LevelInfoFlags;
 

@@ -611,6 +611,10 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags &= ~MAPINFOF_MissilesActivateImpact;
 		}
+		else if (sc->Check("filterstarts"))
+		{
+			info->Flags |= MAPINFOF_FilterStarts;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -660,10 +664,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			GCon->Logf("Unimplemented MAPINFO comand horizwallshade");
 			sc->ExpectFloat();
-		}
-		else if (sc->Check("filterstarts"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand filterstarts");
 		}
 		else if (sc->Check("noinventorybar"))
 		{

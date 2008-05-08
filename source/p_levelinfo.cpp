@@ -167,6 +167,8 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		LevelInfoFlags |= LIF_ActivateOwnSpecial;
 	if (Info.Flags & MAPINFOF_MissilesActivateImpact)
 		LevelInfoFlags |= LIF_MissilesActivateImpact;
+	if (Info.Flags & MAPINFOF_FilterStarts)
+		LevelInfoFlags |= LIF_FilterStarts;
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 		LevelInfoFlags |= LIF_ClusterHub;

@@ -5858,18 +5858,68 @@ final void SpawnMapThing(mthing_t* mthing)
 	}
 
 	// Check for player starts 1 to 4
+	bool IsPlayerStart = false;
 	if (mthing->type <= 4)
 	{
-		// save spots for respawning in network games
-		PlayerStarts.Num = PlayerStarts.Num + 1;
-		CopyMThing(mthing, &PlayerStarts[PlayerStarts.Num - 1]);
-		return;
+		IsPlayerStart = true;
 	}
 	// Check for player starts 5 to 8
 	if (mthing->type >= ExtPlayersBase && mthing->type < ExtPlayersBase + 4)
 	{
 		//	Change type to range 5-8.
 		mthing->type = 5 + mthing->type - ExtPlayersBase;
+		IsPlayerStart = true;
+	}
+
+	if (!IsPlayerStart || bFilterStarts)
+	{
+		// Check current game type with spawn flags
+		if (Game.netgame == false)
+		{
+			spawnMask = MTF_GSINGLE;
+		}
+		else if (Game.deathmatch)
+		{
+			spawnMask = MTF_GDEATHMATCH;
+		}
+		else
+		{
+			spawnMask = MTF_GCOOP;
+		}
+		if (!(mthing->options & spawnMask))
+		{
+			return;
+		}
+
+		// Check current skill with spawn flags
+		if (Game.gameskill == sk_baby || Game.gameskill == sk_easy)
+		{
+			spawnMask = MTF_EASY;
+		}
+		else if (Game.gameskill == sk_hard || Game.gameskill == sk_nightmare)
+		{
+			spawnMask = MTF_HARD;
+		}
+		else
+		{
+			spawnMask = MTF_NORMAL;
+		}
+		if (!(mthing->options & spawnMask))
+		{
+			return;
+		}
+
+		// Check current character classes with spawn flags
+		spawnMask = GetPClassSpawnFlags();
+		if (spawnMask && !(mthing->options & spawnMask))
+		{
+			// Not for current class
+			return;
+		}
+	}
+
+	if (IsPlayerStart)
+	{
 		// save spots for respawning in network games
 		PlayerStarts.Num = PlayerStarts.Num + 1;
 		CopyMThing(mthing, &PlayerStarts[PlayerStarts.Num - 1]);
@@ -5909,50 +5959,6 @@ final void SpawnMapThing(mthing_t* mthing)
 	{
 		mthing->arg1 = mthing->type - 14000;
 		mthing->type = 14065;
-	}
-
-	// Check current game type with spawn flags
-	if (Game.netgame == false)
-	{
-		spawnMask = MTF_GSINGLE;
-	}
-	else if (Game.deathmatch)
-	{
-		spawnMask = MTF_GDEATHMATCH;
-	}
-	else
-	{
-		spawnMask = MTF_GCOOP;
-	}
-	if (!(mthing->options & spawnMask))
-	{
-		return;
-	}
-
-	// Check current skill with spawn flags
-	if (Game.gameskill == sk_baby || Game.gameskill == sk_easy)
-	{
-		spawnMask = MTF_EASY;
-	}
-	else if (Game.gameskill == sk_hard || Game.gameskill == sk_nightmare)
-	{
-		spawnMask = MTF_HARD;
-	}
-	else
-	{
-		spawnMask = MTF_NORMAL;
-	}
-	if (!(mthing->options & spawnMask))
-	{
-		return;
-	}
-
-	// Check current character classes with spawn flags
-	spawnMask = GetPClassSpawnFlags();
-	if (spawnMask && !(mthing->options & spawnMask))
-	{
-		// Not for current class
-		return;
 	}
 
 	// find which type to spawn
