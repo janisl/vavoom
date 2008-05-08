@@ -64,37 +64,20 @@ final void A_InquisitorChase()
 	ZSpeed = fabs(Velocity.z);
 	if (Origin.z < Target.Origin.z)
 	{
-		if (TestMobjZ())
-			Origin.z = FloorZ + 80.0;
-		else
-		{
-			return;
-		}
+		Origin.z = FloorZ + 80.0;
 
-		if (TestMobjZ())
-		{
-			A_FaceTarget();
+		A_FaceTarget();
 
-			if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
-			{
-				SetState(FindState('Jump'));
-			}
-		}
-		else
+		if (/*Radius &&*/Origin.z + Height + 54.0 < CeilingZ)
 		{
-			return;
+			SetState(FindState('Jump'));
 		}
 	}
 	else if (Origin.z != Target.Origin.z && Origin.z != FloorZ && 
 		ZSpeed > 21.0)
 	{
 		A_FaceTarget();
-		if (TestMobjZ())
-		{
-			SetState(FindState('Jump'));
-		}
-		else
-			return;
+		SetState(FindState('Jump'));
 	}
 }
 
