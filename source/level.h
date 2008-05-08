@@ -148,6 +148,7 @@ enum
 	ML_RAILING				= 0x00020000,
 	ML_BLOCK_FLOATERS		= 0x00040000,
 	ML_CLIP_MIDTEX			= 0x00080000,	// Automatic for every Strife line
+	ML_WRAP_MIDTEX			= 0x00100000,
 };
 #define GET_SPAC(_flags_)		(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
 

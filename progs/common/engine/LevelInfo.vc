@@ -86,6 +86,7 @@ bool			bMissilesActivateImpact;
 bool			bFilterStarts;
 bool			bInfiniteFlightPowerup;
 bool			bClipMidTex;
+bool			bWrapMidTex;
 bool			bClusterHub;
 readonly bool	bBegunPlay;
 

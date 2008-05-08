@@ -256,7 +256,7 @@ VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
 		((VEntity*)Ret)->Origin = AOrigin;
 		((VEntity*)Ret)->Angles = AAngles;
 		((VEntity*)Ret)->eventOnMapSpawn(mthing);
-		if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_BegunPlay)
+		if (GLevelInfo->LevelInfoFlags2 & VLevelInfo::LIF2_BegunPlay)
 		{
 			((VEntity*)Ret)->eventBeginPlay();
 		}
@@ -1101,7 +1101,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	{
 		Ent->eventBeginPlay();
 	}
-	GLevelInfo->LevelInfoFlags |= VLevelInfo::LIF_BegunPlay;
+	GLevelInfo->LevelInfoFlags2 |= VLevelInfo::LIF2_BegunPlay;
 
 	if (!host_standalone)
 	{

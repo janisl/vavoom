@@ -55,6 +55,7 @@ enum
 	MAPINFOF_FilterStarts				= 0x08000000,
 	MAPINFOF_InfiniteFlightPowerup		= 0x10000000,
 	MAPINFOF_ClipMidTex					= 0x20000000,
+	MAPINFOF_WrapMidTex					= 0x40000000,
 };
 
 struct mapInfo_t

@@ -87,10 +87,15 @@ class VLevelInfo : public VThinker
 		LIF_FilterStarts				= 0x08000000,
 		LIF_InfiniteFlightPowerup		= 0x10000000,
 		LIF_ClipMidTex					= 0x20000000,
-		LIF_ClusterHub					= 0x40000000,
-		LIF_BegunPlay					= 0x80000000,
+		LIF_WrapMidTex					= 0x40000000,
+		LIF_ClusterHub					= 0x80000000,
 	};
 	vuint32			LevelInfoFlags;
+	enum
+	{
+		LIF2_BegunPlay					= 0x00000001,
+	};
+	vuint32			LevelInfoFlags2;
 
 	int				TotalKills;
 	int				TotalItems;

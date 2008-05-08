@@ -628,6 +628,10 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_ClipMidTex;
 		}
+		else if (sc->Check("wrapmidtextures"))
+		{
+			info->Flags |= MAPINFOF_WrapMidTex;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -756,10 +760,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			GCon->Logf("Unimplemented MAPINFO comand soundinfo");
 			sc->ExpectName8();
-		}
-		else if (sc->Check("wrapmidtextures"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand wrapmidtextures");
 		}
 		else if (sc->Check("allowcrouch"))
 		{

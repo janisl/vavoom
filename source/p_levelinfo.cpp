@@ -115,7 +115,7 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 	}
 
 	//	Copy flags from mapinfo.
-	LevelInfoFlags = Info.Flags & ~(LIF_ClusterHub | LIF_BegunPlay);
+	LevelInfoFlags = Info.Flags & ~LIF_ClusterHub;
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 	{
@@ -132,11 +132,15 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		}
 	}
 
-	if (Info.Flags & MAPINFOF_ClipMidTex)
+	for (int i = 0; i < XLevel->NumLines; i++)
 	{
-		for (int i = 0; i < XLevel->NumLines; i++)
+		if (Info.Flags & MAPINFOF_ClipMidTex)
 		{
 			XLevel->Lines[i].flags |= ML_CLIP_MIDTEX;
+		}
+		if (Info.Flags & MAPINFOF_WrapMidTex)
+		{
+			XLevel->Lines[i].flags |= ML_WRAP_MIDTEX;
 		}
 	}
 	unguard;
