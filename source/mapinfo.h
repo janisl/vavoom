@@ -50,6 +50,8 @@ enum
 	MAPINFOF_NoFreelook					= 0x00400000,
 	MAPINFOF_NoJump						= 0x00800000,
 	MAPINFOF_NoAutoSndSeq				= 0x01000000,
+	MAPINFOF_ActivateOwnSpecial			= 0x02000000,
+	MAPINFOF_MissilesActivateImpact		= 0x04000000,
 };
 
 struct mapInfo_t

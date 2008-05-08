@@ -295,7 +295,9 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 			info->Flags |= MAPINFOF_NoIntermission |
 				MAPINFOF_FallingDamage |
 				MAPINFOF_MonsterFallingDamage |
-				MAPINFOF_NoAutoSndSeq;
+				MAPINFOF_NoAutoSndSeq |
+				MAPINFOF_ActivateOwnSpecial |
+				MAPINFOF_MissilesActivateImpact;
 		}
 
 		// Map name must follow the number
@@ -593,6 +595,22 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_NoAutoSndSeq;
 		}
+		else if (sc->Check("activateowndeathspecials"))
+		{
+			info->Flags |= MAPINFOF_ActivateOwnSpecial;
+		}
+		else if (sc->Check("killeractivatesdeathspecials"))
+		{
+			info->Flags &= ~MAPINFOF_ActivateOwnSpecial;
+		}
+		else if (sc->Check("missilesactivateimpactlines"))
+		{
+			info->Flags |= MAPINFOF_MissilesActivateImpact;
+		}
+		else if (sc->Check("missileshootersactivetimpactlines"))
+		{
+			info->Flags &= ~MAPINFOF_MissilesActivateImpact;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -646,22 +664,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("filterstarts"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand filterstarts");
-		}
-		else if (sc->Check("activateowndeathspecials"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand activateowndeathspecials");
-		}
-		else if (sc->Check("killeractivatesdeathspecials"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand killeractivatesdeathspecials");
-		}
-		else if (sc->Check("missilesactivateimpactlines"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand missilesactivateimpactlines");
-		}
-		else if (sc->Check("missileshootersactivetimpactlines"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand missileshootersactivetimpactlines");
 		}
 		else if (sc->Check("noinventorybar"))
 		{

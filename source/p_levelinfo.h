@@ -82,7 +82,9 @@ class VLevelInfo : public VThinker
 		LIF_NoFreelook					= 0x00400000,
 		LIF_NoJump						= 0x00800000,
 		LIF_ClusterHub					= 0x01000000,
-		LIF_BegunPlay					= 0x02000000,
+		LIF_ActivateOwnSpecial			= 0x02000000,
+		LIF_MissilesActivateImpact		= 0x04000000,
+		LIF_BegunPlay					= 0x08000000,
 	};
 	vuint32			LevelInfoFlags;
 

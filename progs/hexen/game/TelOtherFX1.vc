@@ -51,9 +51,13 @@ final void TeleportOther(Actor victim)
 	if (victim.bIsPlayer)
 	{
 		if (Level.Game.deathmatch)
+		{
 			TeleportToDeathmatchStarts(victim);
+		}
 		else
+		{
 			TeleportToPlayerStarts(victim);
+		}
 	}
 	else
 	{
@@ -63,7 +67,8 @@ final void TeleportOther(Actor victim)
 			victim.SetTID(0);
 			Level.ExecuteActionSpecial(victim.Special, victim.Args[0],
 				victim.Args[1], victim.Args[2], victim.Args[3],
-				victim.Args[4], NULL, 0, victim);
+				victim.Args[4], NULL, 0, Level.bActivateOwnSpecial ? victim :
+				Target);
 			victim.Special = 0;
 		}
 

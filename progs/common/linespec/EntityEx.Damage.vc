@@ -582,7 +582,8 @@ void Died(EntityEx source, EntityEx inflictor)
 	{
 		// Initiate monster death actions
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
-			Args[3], Args[4], NULL, 0, self);
+			Args[3], Args[4], NULL, 0, Level.bActivateOwnSpecial ? self :
+			source);
 	}
 	if (bCountKill)
 	{

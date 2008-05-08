@@ -163,6 +163,10 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		LevelInfoFlags |= LIF_NoFreelook;
 	if (Info.Flags & MAPINFOF_NoJump)
 		LevelInfoFlags |= LIF_NoJump;
+	if (Info.Flags & MAPINFOF_ActivateOwnSpecial)
+		LevelInfoFlags |= LIF_ActivateOwnSpecial;
+	if (Info.Flags & MAPINFOF_MissilesActivateImpact)
+		LevelInfoFlags |= LIF_MissilesActivateImpact;
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 		LevelInfoFlags |= LIF_ClusterHub;
