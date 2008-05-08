@@ -49,6 +49,7 @@ enum
 	MAPINFOF_MonsterFallingDamage		= 0x00200000,
 	MAPINFOF_NoFreelook					= 0x00400000,
 	MAPINFOF_NoJump						= 0x00800000,
+	MAPINFOF_NoAutoSndSeq				= 0x01000000,
 };
 
 struct mapInfo_t

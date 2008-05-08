@@ -134,10 +134,6 @@ int P_Massacre()
 defaultproperties
 {
 	DefaultDoorSound = 'HereticDoor';
-	DefaultCeilingSound = 'CeilingNormal';
-	DefaultSilentCeilingSound = 'CeilingSemiSilent';
-	DefaultFloorSound = 'Floor';
 	DefaultFloorAltSound = 'FloorAlt';
 	DefaultStairStepSound = 'FloorStairStep';
-	DefaultPlatformSound = 'Platform';
 }

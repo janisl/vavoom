@@ -368,11 +368,4 @@ final void SetMarineSprite(int Tid, name SrcClassName, Entity Activator)
 
 defaultproperties
 {
-	DefaultDoorSound = 'DoorNormal';
-	DefaultCeilingSound = 'CeilingNormal';
-	DefaultSilentCeilingSound = 'CeilingSemiSilent';
-	DefaultFloorSound = 'Floor';
-	DefaultFloorAltSound = 'Floor';
-	DefaultStairStepSound = 'Floor';
-	DefaultPlatformSound = 'Platform';
 }

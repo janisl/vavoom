@@ -294,7 +294,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_NoIntermission |
 				MAPINFOF_FallingDamage |
-				MAPINFOF_MonsterFallingDamage;
+				MAPINFOF_MonsterFallingDamage |
+				MAPINFOF_NoAutoSndSeq;
 		}
 
 		// Map name must follow the number
@@ -588,6 +589,10 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_NoJump;
 		}
+		else if (sc->Check("noautosequences"))
+		{
+			info->Flags |= MAPINFOF_NoAutoSndSeq;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -622,10 +627,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("evenlighting"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand evenlighting");
-		}
-		else if (sc->Check("noautosequences"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand noautosequences");
 		}
 		else if (sc->Check("cdid"))
 		{

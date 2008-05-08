@@ -187,7 +187,9 @@ name GetDefaultDoorSound(sector_t* Sector)
 	for (i = 0; i < Sector->linecount; i++)
 	{
 		if (!Sector->lines[i]->backsector)
+		{
 			continue;
+		}
 
 		string TexName = va("%n", GetTextureName(XLevel.Sides[
 			Sector->lines[i]->sidenum[0]].toptexture));
@@ -215,12 +217,6 @@ name GetDefaultDoorSound(sector_t* Sector)
 defaultproperties
 {
 	DefaultDoorSound = 'DoorSmallMetal';
-	DefaultCeilingSound = 'CeilingNormal';
-	DefaultSilentCeilingSound = 'CeilingSemiSilent';
-	DefaultFloorSound = 'Floor';
-	DefaultFloorAltSound = 'Floor';
-	DefaultStairStepSound = 'Floor';
-	DefaultPlatformSound = 'Platform';
 	bTeleportNewMapBothSides = true;
 	bCheckStrifeStartSpots = true;
 	ExtPlayersBase = 5;

@@ -166,6 +166,14 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 		LevelInfoFlags |= LIF_ClusterHub;
+
+	if (Info.Flags & MAPINFOF_NoAutoSndSeq)
+	{
+		for (int i = 0; i < XLevel->NumSectors; i++)
+		{
+			XLevel->Sectors[i].seqType = 0;
+		}
+	}
 	unguard;
 }
 

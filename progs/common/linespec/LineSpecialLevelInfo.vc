@@ -6683,4 +6683,11 @@ defaultproperties
 	Lock103Message = "That doesn't seem to work";
 	BodyQueSize = BODYQUESIZE;
 	CorpseQueSize = CORPSEQUEUESIZE;
+	DefaultDoorSound = 'DoorNormal';
+	DefaultCeilingSound = 'CeilingNormal';
+	DefaultSilentCeilingSound = 'CeilingSemiSilent';
+	DefaultFloorSound = 'Floor';
+	DefaultFloorAltSound = 'Floor';
+	DefaultStairStepSound = 'Floor';
+	DefaultPlatformSound = 'Platform';
 }
