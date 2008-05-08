@@ -1397,7 +1397,7 @@ static void ParseAction(VScriptParser* sc, VClass* Class)
 	}
 	if (M->ReturnType.Type != TYPE_Void)
 	{
-		sc->Error(va("State action %s desn't return void", *sc->String));
+		sc->Error(va("State action %s doesn't return void", *sc->String));
 	}
 	VDecorateStateAction& A = Class->DecorateStateActions.Alloc();
 	A.Name = *sc->String.ToLower();
