@@ -80,11 +80,13 @@ bool			bStrifeFallingDamage;
 bool			bMonsterFallingDamage;
 bool			bNoFreelook;
 bool			bNoJump;
-bool			bClusterHub;
+bool			bNoAutoSndSeq;
 bool			bActivateOwnSpecial;
 bool			bMissilesActivateImpact;
 bool			bFilterStarts;
 bool			bInfiniteFlightPowerup;
+bool			bClipMidTex;
+bool			bClusterHub;
 readonly bool	bBegunPlay;
 
 int				TotalKills;

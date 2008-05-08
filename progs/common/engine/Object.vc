@@ -156,23 +156,23 @@ const float MAXRADIUS			= 32.0;
 // LineDef attributes.
 //
 const int
-	ML_BLOCKING			= 0x0001,	// Solid, is an obstacle.
-	ML_BLOCKMONSTERS	= 0x0002,	// Blocks monsters only.
-	ML_TWOSIDED			= 0x0004,	// Backside will not be present at all
-	ML_DONTPEGTOP		= 0x0008,	// upper texture unpegged
-	ML_DONTPEGBOTTOM	= 0x0010,	// lower texture unpegged
-	ML_SECRET			= 0x0020,	// don't map as two sided: IT'S A SECRET!
-	ML_SOUNDBLOCK		= 0x0040,	// don't let sound cross two of these
-	ML_DONTDRAW			= 0x0080,	// don't draw on the automap
-	ML_MAPPED			= 0x0100,	// set if already drawn in automap
-	ML_REPEAT_SPECIAL	= 0x0200,	// special is repeatable
-	ML_SPAC_SHIFT		= 10,
-	ML_SPAC_MASK		= 0x1c00,
-	ML_MONSTERSCANACTIVATE	= 0x2000,	//	Monsters (as well as players) can activate the line
-	ML_BLOCKEVERYTHING	= 0x8000,	//	Line blocks everything.
-	ML_RAILING			= 0x20000,
-	ML_BLOCK_FLOATERS	= 0x40000,
-	ML_CLIP_MIDTEX		= 0x80000;	// Automatic for every Strife line
+	ML_BLOCKING				= 0x00000001,	// Solid, is an obstacle.
+	ML_BLOCKMONSTERS		= 0x00000002,	// Blocks monsters only.
+	ML_TWOSIDED				= 0x00000004,	// Backside will not be present at all
+	ML_DONTPEGTOP			= 0x00000008,	// upper texture unpegged
+	ML_DONTPEGBOTTOM		= 0x00000010,	// lower texture unpegged
+	ML_SECRET				= 0x00000020,	// don't map as two sided: IT'S A SECRET!
+	ML_SOUNDBLOCK			= 0x00000040,	// don't let sound cross two of these
+	ML_DONTDRAW				= 0x00000080,	// don't draw on the automap
+	ML_MAPPED				= 0x00000100,	// set if already drawn in automap
+	ML_REPEAT_SPECIAL		= 0x00000200,	// special is repeatable
+	ML_SPAC_SHIFT			= 10,
+	ML_SPAC_MASK			= 0x00001c00,
+	ML_MONSTERSCANACTIVATE	= 0x00002000,	//	Monsters (as well as players) can activate the line
+	ML_BLOCKEVERYTHING		= 0x00008000,	//	Line blocks everything.
+	ML_RAILING				= 0x00020000,
+	ML_BLOCK_FLOATERS		= 0x00040000,
+	ML_CLIP_MIDTEX			= 0x00080000;	// Automatic for every Strife line
 
 //	These will be converted.
 const int 
@@ -194,7 +194,7 @@ enum
 	SPAC_PUSH		= 4,	// when player/monster pushes line
 	SPAC_PCROSS		= 5,	// when projectile crosses line
 	SPAC_USETHROUGH	= 6,	// SPAC_USE, but passes it through
-	SPAC_PTOUCH		= 7	// when a projectiles crosses or hits line
+	SPAC_PTOUCH		= 7		// when a projectiles crosses or hits line
 };
 
 //

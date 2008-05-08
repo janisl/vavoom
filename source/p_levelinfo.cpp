@@ -115,71 +115,28 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 	}
 
 	//	Copy flags from mapinfo.
-	if (Info.Flags & MAPINFOF_DoubleSky)
-		LevelInfoFlags |= LIF_DoubleSky;
-	if (Info.Flags & MAPINFOF_Lightning)
-		LevelInfoFlags |= LIF_Lightning;
-	if (Info.Flags & MAPINFOF_Map07Special)
-		LevelInfoFlags |= LIF_Map07Special;
-	if (Info.Flags & MAPINFOF_BaronSpecial)
-		LevelInfoFlags |= LIF_BaronSpecial;
-	if (Info.Flags & MAPINFOF_CyberDemonSpecial)
-		LevelInfoFlags |= LIF_CyberDemonSpecial;
-	if (Info.Flags & MAPINFOF_SpiderMastermindSpecial)
-		LevelInfoFlags |= LIF_SpiderMastermindSpecial;
-	if (Info.Flags & MAPINFOF_MinotaurSpecial)
-		LevelInfoFlags |= LIF_MinotaurSpecial;
-	if (Info.Flags & MAPINFOF_DSparilSpecial)
-		LevelInfoFlags |= LIF_DSparilSpecial;
-	if (Info.Flags & MAPINFOF_IronLichSpecial)
-		LevelInfoFlags |= LIF_IronLichSpecial;
-	if (Info.Flags & MAPINFOF_SpecialActionOpenDoor)
-		LevelInfoFlags |= LIF_SpecialActionOpenDoor;
-	if (Info.Flags & MAPINFOF_SpecialActionLowerFloor)
-		LevelInfoFlags |= LIF_SpecialActionLowerFloor;
-	if (Info.Flags & MAPINFOF_SpecialActionKillMonsters)
-		LevelInfoFlags |= LIF_SpecialActionKillMonsters;
-	if (Info.Flags & MAPINFOF_NoIntermission)
-		LevelInfoFlags |= LIF_NoIntermission;
-	if (Info.Flags & MAPINFOF_AllowMonsterTelefrags)
-		LevelInfoFlags |= LIF_AllowMonsterTelefrags;
-	if (Info.Flags & MAPINFOF_NoAllies)
-		LevelInfoFlags |= LIF_NoAllies;
-	if (Info.Flags & MAPINFOF_DeathSlideShow)
-		LevelInfoFlags |= LIF_DeathSlideShow;
-	if (Info.Flags & MAPINFOF_ForceNoSkyStretch)
-		LevelInfoFlags |= LIF_ForceNoSkyStretch;
-	if (Info.Flags & MAPINFOF_LookupName)
-		LevelInfoFlags |= LIF_LookupName;
-	if (Info.Flags & MAPINFOF_FallingDamage)
-		LevelInfoFlags |= LIF_FallingDamage;
-	if (Info.Flags & MAPINFOF_OldFallingDamage)
-		LevelInfoFlags |= LIF_OldFallingDamage;
-	if (Info.Flags & MAPINFOF_StrifeFallingDamage)
-		LevelInfoFlags |= LIF_StrifeFallingDamage;
-	if (Info.Flags & MAPINFOF_MonsterFallingDamage)
-		LevelInfoFlags |= LIF_MonsterFallingDamage;
-	if (Info.Flags & MAPINFOF_NoFreelook)
-		LevelInfoFlags |= LIF_NoFreelook;
-	if (Info.Flags & MAPINFOF_NoJump)
-		LevelInfoFlags |= LIF_NoJump;
-	if (Info.Flags & MAPINFOF_ActivateOwnSpecial)
-		LevelInfoFlags |= LIF_ActivateOwnSpecial;
-	if (Info.Flags & MAPINFOF_MissilesActivateImpact)
-		LevelInfoFlags |= LIF_MissilesActivateImpact;
-	if (Info.Flags & MAPINFOF_FilterStarts)
-		LevelInfoFlags |= LIF_FilterStarts;
-	if (Info.Flags & MAPINFOF_InfiniteFlightPowerup)
-		LevelInfoFlags |= LIF_InfiniteFlightPowerup;
+	LevelInfoFlags = Info.Flags & ~(LIF_ClusterHub | LIF_BegunPlay);
 
 	if (CInfo->Flags & CLUSTERF_Hub)
+	{
 		LevelInfoFlags |= LIF_ClusterHub;
+	}
 
+	//	No auto sequences flag sets all sectors to use sequence 0 by
+	// default.
 	if (Info.Flags & MAPINFOF_NoAutoSndSeq)
 	{
 		for (int i = 0; i < XLevel->NumSectors; i++)
 		{
 			XLevel->Sectors[i].seqType = 0;
+		}
+	}
+
+	if (Info.Flags & MAPINFOF_ClipMidTex)
+	{
+		for (int i = 0; i < XLevel->NumLines; i++)
+		{
+			XLevel->Lines[i].flags |= ML_CLIP_MIDTEX;
 		}
 	}
 	unguard;

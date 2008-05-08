@@ -77,7 +77,6 @@
 #include "vc_dehacked.h"//	DeHackEd support
 #include "scripts.h"	//	Script parsing
 #include "input.h"		//	Input from keyboard, mouse and joystick
-#include "waddefs.h"    // 	External data types
 #include "video.h"		//	Graphics
 #include "screen.h"
 #include "automap.h"

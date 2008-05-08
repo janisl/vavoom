@@ -624,6 +624,10 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags &= ~MAPINFOF_InfiniteFlightPowerup;
 		}
+		else if (sc->Check("clipmidtextures"))
+		{
+			info->Flags |= MAPINFOF_ClipMidTex;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -752,10 +756,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			GCon->Logf("Unimplemented MAPINFO comand soundinfo");
 			sc->ExpectName8();
-		}
-		else if (sc->Check("clipmidtextures"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand clipmidtextures");
 		}
 		else if (sc->Check("wrapmidtextures"))
 		{
