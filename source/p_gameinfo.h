@@ -58,7 +58,7 @@ class VGameInfo : public VObject
 
 	enum
 	{
-		GIF_DefaultMonsterFallingDamage		= 0x00000001,
+		GIF_DefaultBloodSplatter		= 0x00000001,
 	};
 	vuint32			Flags;
 

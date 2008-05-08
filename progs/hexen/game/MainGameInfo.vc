@@ -347,7 +347,7 @@ defaultproperties
 {
 	LevelInfoClass = HexenLevelInfo;
 	GameFilterFlag = EntityEx::GAME_Hexen;
-	bDefaultMonsterFallingDamage = true;
+	bDefaultBloodSplatter = true;
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;
 	bNoDamageThrustInvulnerable = true;

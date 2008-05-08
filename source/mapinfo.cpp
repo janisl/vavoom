@@ -293,7 +293,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		if (HexenMode)
 		{
 			info->Flags |= MAPINFOF_NoIntermission |
-				MAPINFOF_FallingDamage;
+				MAPINFOF_FallingDamage |
+				MAPINFOF_MonsterFallingDamage;
 		}
 
 		// Map name must follow the number
@@ -1120,10 +1121,6 @@ static void ParseMapInfo(VScriptParser* sc)
 	info->TitlePatch = NAME_None;
 	info->ParTime = 0;
 	info->SuckTime = 0;
-	if (GGameInfo->Flags & VGameInfo::GIF_DefaultMonsterFallingDamage)
-	{
-		info->Flags |= MAPINFOF_MonsterFallingDamage;
-	}
 
 	while (!sc->AtEnd())
 	{
