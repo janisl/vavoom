@@ -88,12 +88,13 @@ class VLevelInfo : public VThinker
 		LIF_InfiniteFlightPowerup		= 0x10000000,
 		LIF_ClipMidTex					= 0x20000000,
 		LIF_WrapMidTex					= 0x40000000,
-		LIF_ClusterHub					= 0x80000000,
+		LIF_KeepFullInventory			= 0x80000000,
 	};
 	vuint32			LevelInfoFlags;
 	enum
 	{
-		LIF2_BegunPlay					= 0x00000001,
+		LIF2_ClusterHub					= 0x00000001,
+		LIF2_BegunPlay					= 0x00000002,
 	};
 	vuint32			LevelInfoFlags2;
 

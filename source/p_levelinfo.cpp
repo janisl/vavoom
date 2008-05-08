@@ -115,11 +115,11 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 	}
 
 	//	Copy flags from mapinfo.
-	LevelInfoFlags = Info.Flags & ~LIF_ClusterHub;
+	LevelInfoFlags = Info.Flags;
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 	{
-		LevelInfoFlags |= LIF_ClusterHub;
+		LevelInfoFlags2 |= LIF2_ClusterHub;
 	}
 
 	//	No auto sequences flag sets all sectors to use sequence 0 by

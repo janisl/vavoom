@@ -87,6 +87,8 @@ bool			bFilterStarts;
 bool			bInfiniteFlightPowerup;
 bool			bClipMidTex;
 bool			bWrapMidTex;
+bool			bKeepFullInventory;
+
 bool			bClusterHub;
 readonly bool	bBegunPlay;
 

@@ -405,11 +405,14 @@ void PlayerExitMap(bool clusterChange)
 	int i;
 	Inventory Item;
 
-	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	if (clusterChange && !Level.bKeepFullInventory)
 	{
-		if (Item.bInvBar)
+		for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
 		{
-			Item.Amount = 1;
+			if (Item.bInvBar && Item.Amount > 1)
+			{
+				Item.Amount = 1;
+			}
 		}
 	}
 

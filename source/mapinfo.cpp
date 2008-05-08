@@ -632,6 +632,10 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_WrapMidTex;
 		}
+		else if (sc->Check("keepfullinventory"))
+		{
+			info->Flags |= MAPINFOF_KeepFullInventory;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -741,10 +745,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 				sc->ExpectNumber();
 			}
 			sc->SetCMode(false);
-		}
-		else if (sc->Check("keepfullinventory"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand keepfullinventory");
 		}
 		else if (sc->Check("sndseq"))
 		{

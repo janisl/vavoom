@@ -56,6 +56,7 @@ enum
 	MAPINFOF_InfiniteFlightPowerup		= 0x10000000,
 	MAPINFOF_ClipMidTex					= 0x20000000,
 	MAPINFOF_WrapMidTex					= 0x40000000,
+	MAPINFOF_KeepFullInventory			= 0x80000000,
 };
 
 struct mapInfo_t
