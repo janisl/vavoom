@@ -47,6 +47,8 @@ enum
 	MAPINFOF_OldFallingDamage			= 0x00080000,
 	MAPINFOF_StrifeFallingDamage		= 0x00100000,
 	MAPINFOF_MonsterFallingDamage		= 0x00200000,
+	MAPINFOF_NoFreelook					= 0x00400000,
+	MAPINFOF_NoJump						= 0x00800000,
 };
 
 struct mapInfo_t

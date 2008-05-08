@@ -582,6 +582,15 @@ void SV_RunClients()
 			{
 				Player->SideMove = -sv_maxmove;
 			}
+			//	Check for disabled freelook and jumping
+			if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_NoFreelook)
+			{
+				Player->ViewAngles.pitch = 0;
+			}
+			if (GLevelInfo->LevelInfoFlags & VLevelInfo::LIF_NoJump)
+			{
+				Player->Buttons &= ~BT_JUMP;
+			}
 			Player->eventPlayerTick(host_frametime);
 		}
 	}

@@ -79,6 +79,8 @@ class VLevelInfo : public VThinker
 		LIF_OldFallingDamage			= 0x00080000,
 		LIF_StrifeFallingDamage			= 0x00100000,
 		LIF_MonsterFallingDamage		= 0x00200000,
+		LIF_NoFreelook					= 0x00400000,
+		LIF_NoJump						= 0x00800000,
 		LIF_ClusterHub					= 0x00400000,
 		LIF_BegunPlay					= 0x00800000,
 	};

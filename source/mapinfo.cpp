@@ -571,6 +571,22 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_DeathSlideShow;
 		}
+		else if (sc->Check("allowfreelook"))
+		{
+			info->Flags &= ~MAPINFOF_NoFreelook;
+		}
+		else if (sc->Check("nofreelook"))
+		{
+			info->Flags |= MAPINFOF_NoFreelook;
+		}
+		else if (sc->Check("allowjump"))
+		{
+			info->Flags &= ~MAPINFOF_NoJump;
+		}
+		else if (sc->Check("nojump"))
+		{
+			info->Flags |= MAPINFOF_NoJump;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -609,22 +625,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("noautosequences"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand noautosequences");
-		}
-		else if (sc->Check("allowfreelook"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand allowfreelook");
-		}
-		else if (sc->Check("nofreelook"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand nofreelook");
-		}
-		else if (sc->Check("allowjump"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand allowjump");
-		}
-		else if (sc->Check("nojump"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand nojump");
 		}
 		else if (sc->Check("cdid"))
 		{

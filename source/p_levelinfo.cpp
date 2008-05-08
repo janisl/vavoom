@@ -157,6 +157,12 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		LevelInfoFlags |= LIF_OldFallingDamage;
 	if (Info.Flags & MAPINFOF_StrifeFallingDamage)
 		LevelInfoFlags |= LIF_StrifeFallingDamage;
+	if (Info.Flags & MAPINFOF_MonsterFallingDamage)
+		LevelInfoFlags |= LIF_MonsterFallingDamage;
+	if (Info.Flags & MAPINFOF_NoFreelook)
+		LevelInfoFlags |= LIF_NoFreelook;
+	if (Info.Flags & MAPINFOF_NoJump)
+		LevelInfoFlags |= LIF_NoJump;
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 		LevelInfoFlags |= LIF_ClusterHub;

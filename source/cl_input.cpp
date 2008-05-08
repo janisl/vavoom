@@ -453,6 +453,11 @@ static void AdjustAngles()
 	{
 		cl->ViewAngles.roll = -80.0;
 	}
+
+	if (cl->Level->LevelInfoFlags & VLevelInfo::LIF_NoFreelook)
+	{
+		cl->ViewAngles.pitch = 0;
+	}
 	unguard;
 }
 

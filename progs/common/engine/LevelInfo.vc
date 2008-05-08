@@ -78,6 +78,8 @@ bool			bFallingDamage;
 bool			bOldFallingDamage;
 bool			bStrifeFallingDamage;
 bool			bMonsterFallingDamage;
+bool			bNoFreelook;
+bool			bNoJump;
 bool			bClusterHub;
 readonly bool	bBegunPlay;
 
@@ -106,7 +108,8 @@ replication
 		Sky1ScrollDelta, Sky2ScrollDelta, SkyBox, FadeTable, Fade, OutsideFog,
 		SongLump, CDTrack, bDoubleSky, bLightning, bNoIntermission,
 		bForceNoSkyStretch, bLookupName, TotalKills, TotalItems, TotalSecret,
-		CurrentKills, CurrentItems, CurrentSecret, CompletitionTime;
+		CurrentKills, CurrentItems, CurrentSecret, CompletitionTime,
+		bNoFreelook;
 }
 
 //
