@@ -258,6 +258,6 @@ actor PuzzGear4 : PuzzleItem 9021
 	{
 	Spawn:
 		AGR4 ABCDEFGH 4 Bright
-		Stop
+		Loop
 	}
 }
