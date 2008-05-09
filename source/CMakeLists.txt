@@ -283,7 +283,6 @@ set(MAIN_COMMON_SOURCES
 	video.h
 	wad.cpp
 	wad.h
-	waddefs.h
 	xml.cpp
 	xml.h
 	zipstream.cpp
