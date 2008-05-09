@@ -212,7 +212,7 @@ private:
 
 	vuint16 MakeCol16(vuint8 r, vuint8 g, vuint8 b, vuint8 a)
 	{
-		return vuint16(((a & 1) << 8) |
+		return vuint16(((a & 0x80) << 8) |
 			((r & 0xf8) << 7) |
 			((g & 0xf8) << 2) |
 			(b >> 3));
