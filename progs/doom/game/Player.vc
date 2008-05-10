@@ -638,7 +638,8 @@ void GotAmmo(Ammo NewAmmo)
 
 int GetMaxHealth()
 {
-	return MAXHEALTH;
+	return PlayerPawn(MO).MaxHealth > 0 ? PlayerPawn(MO).MaxHealth :
+		(Level.CompatDehHealth ? MAXHEALTH : HealthBonus.default.MaxAmount / 2);
 }
 
 //==========================================================================

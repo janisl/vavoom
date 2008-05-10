@@ -133,6 +133,11 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 	}
 
+	if (Level.CompatNoDoorLight)
+	{
+		LightTag = 0;
+	}
+
 	Height = Level.FindHighestFloorPoint(Sector, &BotSpot);
 	BotDist = DotProduct(vector(BotSpot.x, BotSpot.y, Height),
 		Sector->ceiling.normal);

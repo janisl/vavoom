@@ -59,6 +59,10 @@ bool Physics(float DeltaTime)
 		// Move objects only if on floor or underwater,
 		// non-floating, and clipped.
 
+		float CummX = 0.0;
+		float CummY = 0.0;
+		int CountX = 0;
+		int CountY = 0;
 		for (SecThink = SectorThinker(Sector->AffectorData); SecThink;
 			SecThink = SecThink.NextAffector)
 		{
@@ -92,9 +96,35 @@ bool Physics(float DeltaTime)
 				}
 			}
 
-			Velocity.x += scrollx;
-			Velocity.y += scrolly;
+			CummX += scrollx;
+			CummY += scrolly;
+			if (scrollx)
+			{
+				CountX++;
+			}
+			if (scrolly)
+			{
+				CountY++;
+			}
 		}
+
+		// Some levels designed with Boom in mind actually want things to accelerate
+		// at neighboring scrolling sector boundaries. But it is only important for
+		// non-player objects.
+		if (bIsPlayer || !Level.CompatBoomScroll)
+		{
+			if (CountX > 1)
+			{
+				CummX /= itof(CountX);
+			}
+			if (CountY > 1)
+			{
+				CummY /= itof(CountY);
+			}
+		}
+
+		Velocity.x += CummX;
+		Velocity.y += CummY;
 	}
 
 	CheckWater();
@@ -144,7 +174,7 @@ bool Physics(float DeltaTime)
 		Origin.z = FloorZ + Special1f +
 			Level.Game.FloatBobOffsets[ftoi(FloatBobPhase * 35.0) & 63];
 	}
-	else if (bPassMobj && !bMissile)
+	else if (bPassMobj && !bMissile && !Level.CompatNoPassOver)
 	{
 		//	Floating bobbing motion for monsters.
 		if (bFloatBob)

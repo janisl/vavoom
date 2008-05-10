@@ -89,6 +89,20 @@ bool			bClipMidTex;
 bool			bWrapMidTex;
 bool			bKeepFullInventory;
 
+bool			bCompatShortTex;
+bool			bCompatStairs;
+bool			bCompatLimitPain;
+bool			bCompatNoPassOver;
+bool			bCompatNoTossDrops;
+bool			bCompatUseBlocking;
+bool			bCompatNoDoorLight;
+bool			bCompatRavenScroll;
+bool			bCompatSoundTarget;
+bool			bCompatDehHealth;
+bool			bCompatTrace;
+bool			bCompatDropOff;
+bool			bCompatBoomScroll;
+bool			bCompatInvisibility;
 bool			bClusterHub;
 readonly bool	bBegunPlay;
 
@@ -119,6 +133,105 @@ replication
 		bForceNoSkyStretch, bLookupName, TotalKills, TotalItems, TotalSecret,
 		CurrentKills, CurrentItems, CurrentSecret, CompletitionTime,
 		bNoFreelook;
+}
+
+bool CompatShortTex
+{
+	get
+	{
+		return bCompatShortTex || GetCvar('compat_shorttex');
+	}
+}
+bool CompatStairs
+{
+	get
+	{
+		return bCompatStairs || GetCvar('compat_stairs');
+	}
+}
+bool CompatLimitPain
+{
+	get
+	{
+		return bCompatLimitPain || GetCvar('compat_limitpain');
+	}
+}
+bool CompatNoPassOver
+{
+	get
+	{
+		return bCompatNoPassOver || GetCvar('compat_nopassover');
+	}
+}
+bool CompatNoTossDrops
+{
+	get
+	{
+		return bCompatNoTossDrops || GetCvar('compat_notossdrops');
+	}
+}
+bool CompatUseBlocking
+{
+	get
+	{
+		return bCompatUseBlocking || GetCvar('compat_useblocking');
+	}
+}
+bool CompatNoDoorLight
+{
+	get
+	{
+		return bCompatNoDoorLight || GetCvar('compat_nodoorlight');
+	}
+}
+bool CompatRavenScroll
+{
+	get
+	{
+		return bCompatRavenScroll || GetCvar('compat_ravenscroll');
+	}
+}
+bool CompatSoundTarget
+{
+	get
+	{
+		return bCompatSoundTarget || GetCvar('compat_soundtarget');
+	}
+}
+bool CompatDehHealth
+{
+	get
+	{
+		return bCompatDehHealth || GetCvar('compat_dehhealth');
+	}
+}
+bool CompatTrace
+{
+	get
+	{
+		return bCompatTrace || GetCvar('compat_trace');
+	}
+}
+bool CompatDropOff
+{
+	get
+	{
+		return bCompatDropOff || GetCvar('compat_dropoff');
+	}
+}
+bool CompatBoomScroll
+{
+	get
+	{
+		return bCompatBoomScroll || GetCvar('compat_boomscroll');
+	}
+}
+bool CompatInvisibility
+{
+	get
+	{
+		return bCompatInvisibility || GetCvar('compat_invisibility');
+	}
 }
 
 //
@@ -735,7 +848,7 @@ final float FindShortestTextureAround(sector_t* sec)
 			continue;
 
 		texnum = XLevel.Sides[sec->lines[i]->sidenum[0]].bottomtexture;
-		if (texnum >= 0)
+		if (texnum > 0 || (texnum == 0 && CompatShortTex))
 		{
 			if (TextureHeight(texnum) < minsize)
 			{
@@ -743,7 +856,7 @@ final float FindShortestTextureAround(sector_t* sec)
 			}
 		}
 		texnum = XLevel.Sides[sec->lines[i]->sidenum[1]].bottomtexture;
-		if (texnum >= 0)
+		if (texnum > 0 || (texnum == 0 && CompatShortTex))
 		{
 			if (TextureHeight(texnum) < minsize)
 			{

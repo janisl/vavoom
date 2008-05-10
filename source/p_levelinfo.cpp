@@ -42,6 +42,21 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+VCvarI	compat_shorttex("compat_shorttex", "0", 0);
+VCvarI	compat_stairs("compat_stairs", "0", 0);
+VCvarI	compat_limitpain("compat_limitpain", "0", 0);
+VCvarI	compat_nopassover("compat_nopassover", "0", 0);
+VCvarI	compat_notossdrops("compat_notossdrops", "0", 0);
+VCvarI	compat_useblocking("compat_useblocking", "0", 0);
+VCvarI	compat_nodoorlight("compat_nodoorlight", "0", 0);
+VCvarI	compat_ravenscroll("compat_ravenscroll", "0", 0);
+VCvarI	compat_soundtarget("compat_soundtarget", "0", 0);
+VCvarI	compat_dehhealth("compat_dehhealth", "0", 0);
+VCvarI	compat_trace("compat_trace", "0", 0);
+VCvarI	compat_dropoff("compat_dropoff", "0", 0);
+VCvarI	compat_boomscroll("compat_boomscroll", "0", 0);
+VCvarI	compat_invisibility("compat_invisibility", "0", 0);
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 IMPLEMENT_CLASS(V, LevelInfo)
@@ -116,6 +131,7 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 
 	//	Copy flags from mapinfo.
 	LevelInfoFlags = Info.Flags;
+	LevelInfoFlags2 = Info.Flags2;
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 	{

@@ -117,6 +117,8 @@ public:
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern VCvarI	compat_nopassover;
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
@@ -803,7 +805,9 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 	}
 
 	tmtrace.BlockingMobj = Other;
-	if ((!(tmtrace.Thing->EntityFlags & EF_Float) ||
+	if (!(tmtrace.Thing->Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver) &&
+		!compat_nopassover &&
+		(!(tmtrace.Thing->EntityFlags & EF_Float) ||
 		!(tmtrace.Thing->EntityFlags & EF_Missile) ||
 		!(tmtrace.Thing->EntityFlags & EF_NoGravity)) &&
 		(Other->EntityFlags & EF_Solid) &&
@@ -819,9 +823,11 @@ bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
 		}
 	}
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if ((tmtrace.Thing->EntityFlags & EF_PassMobj) ||
-		(tmtrace.Thing->EntityFlags & EF_Missile) ||
-		(Other->EntityFlags & EF_ActLikeBridge))
+	if ((((tmtrace.Thing->EntityFlags & EF_PassMobj) ||
+		(Other->EntityFlags & EF_ActLikeBridge)) &&
+		!(tmtrace.Thing->Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver) &&
+		!compat_nopassover) ||
+		(tmtrace.Thing->EntityFlags & EF_Missile))
 	{
 		//	Prevent some objects from overlapping
 		if (tmtrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
@@ -1081,7 +1087,8 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 					if (!PIT_CheckRelThing(&tmtrace, Ent))
 					{
 						// continue checking for other things in to see if we hit something
-						if (tmtrace.BlockingMobj == NULL)
+						if (!tmtrace.BlockingMobj || compat_nopassover ||
+							(Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver))
 						{
 							// slammed into something
 							return false;
@@ -1197,6 +1204,11 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			tmtrace.CeilingZ - (O->Origin.z + O->Height) < Height)
 		{
 			eventPushLine(&tmtrace);
+			return false;
+		}
+		if (!(EntityFlags & EF_PassMobj) || compat_nopassover ||
+			(Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver))
+		{
 			return false;
 		}
 	}

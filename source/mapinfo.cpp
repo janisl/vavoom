@@ -228,6 +228,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->Gravity = 0;
 		info->AirControl = 0;
 		info->Flags = 0;
+		info->Flags2 = 0;
 		info->TitlePatch = NAME_None;
 		info->ParTime = 0;
 		info->SuckTime = 0;
@@ -286,6 +287,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->Gravity = DefaultMap.Gravity;
 		info->AirControl = DefaultMap.AirControl;
 		info->Flags = DefaultMap.Flags;
+		info->Flags2 = DefaultMap.Flags2;
 		info->TitlePatch = DefaultMap.TitlePatch;
 		info->ParTime = DefaultMap.ParTime;
 		info->SuckTime = DefaultMap.SuckTime;
@@ -636,6 +638,63 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags |= MAPINFOF_KeepFullInventory;
 		}
+		else if (sc->Check("compat_shorttex"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatShortTex;
+		}
+		else if (sc->Check("compat_stairs"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatStairs;
+		}
+		else if (sc->Check("compat_limitpain"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatLimitPain;
+		}
+		else if (sc->Check("compat_nopassover"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatNoPassOver;
+		}
+		else if (sc->Check("compat_notossdrops"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatNoTossDrops;
+		}
+		else if (sc->Check("compat_useblocking"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatUseBlocking;
+		}
+		else if (sc->Check("compat_nodoorlight"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatNoDoorLight;
+		}
+		else if (sc->Check("compat_ravenscroll"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatRavenScroll;
+		}
+		else if (sc->Check("compat_soundtarget"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatSoundTarget;
+		}
+		else if (sc->Check("compat_dehhealth"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatDehHealth;
+		}
+		else if (sc->Check("compat_trace"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatTrace;
+		}
+		else if (sc->Check("compat_dropoff"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatDropOff;
+		}
+		else if (sc->Check("compat_boomscroll") ||
+			sc->Check("additive_scrollers"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatBoomScroll;
+		}
+		else if (sc->Check("compat_invisibility"))
+		{
+			info->Flags2 |= MAPINFOF2_CompatInvisibility;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -704,10 +763,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			GCon->Logf("Unimplemented MAPINFO comand laxmonsteractivation");
 		}
-		else if (sc->Check("additive_scrollers"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand additive_scrollers");
-		}
 		else if (sc->Check("interpic"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand interpic");
@@ -772,62 +827,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		else if (sc->Check("pausemusicinmenus"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand pausemusicinmenus");
-		}
-		else if (sc->Check("compat_shorttex"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_shorttex");
-		}
-		else if (sc->Check("compat_stairs"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_stairs");
-		}
-		else if (sc->Check("compat_limitpain"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_limitpain");
-		}
-		else if (sc->Check("compat_nopassover"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_nopassover");
-		}
-		else if (sc->Check("compat_notossdrops"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_notossdrops");
-		}
-		else if (sc->Check("compat_useblocking"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_useblocking");
-		}
-		else if (sc->Check("compat_nodoorlight"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_nodoorlight");
-		}
-		else if (sc->Check("compat_ravenscroll"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_ravenscroll");
-		}
-		else if (sc->Check("compat_soundtarget"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_soundtarget");
-		}
-		else if (sc->Check("compat_dehhealth"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_dehhealth");
-		}
-		else if (sc->Check("compat_trace"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_trace");
-		}
-		else if (sc->Check("compat_dropoff"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_dropoff");
-		}
-		else if (sc->Check("compat_boomscroll"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_boomscroll");
-		}
-		else if (sc->Check("compat_invisibility"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand compat_invisibility");
 		}
 		else if (sc->Check("bordertexture"))
 		{
@@ -1179,6 +1178,7 @@ static void ParseMapInfo(VScriptParser* sc)
 	info->Gravity = 0.0;
 	info->AirControl = 0.0;
 	info->Flags = 0;
+	info->Flags2 = 0;
 	info->TitlePatch = NAME_None;
 	info->ParTime = 0;
 	info->SuckTime = 0;

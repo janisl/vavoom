@@ -458,6 +458,11 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 
 			LineStart = LineEnd;
 
+			if (Level.CompatTrace && li->frontsector == li->backsector)
+			{
+				continue;
+			}
+
 			//  Execute line special after checking for hitting floor or ceiling
 			// when we know that it actally hits line
 			if (li->special)

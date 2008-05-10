@@ -1653,7 +1653,9 @@ final int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	int			OldSecNum;
 
 	if (!Arg1 && (!Line || !Line->backsector))
+	{
 		return false;
+	}
 
 	if (Generic)
 	{
@@ -1674,7 +1676,9 @@ final int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 		// ALREADY MOVING?  IF SO, KEEP GOING...
 		if (Sec->FloorData)
+		{
 			continue;
+		}
 
 		// new floor thinker
 		Rtn = 1;
@@ -1731,7 +1735,10 @@ final int EV_BuildStairsOld(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			}
 		}
 		while (Ok);
-		SecNum = OldSecNum;	//jff 3/4/98 restore loop index
+		if (!Level.CompatStairs)
+		{
+			SecNum = OldSecNum;	//jff 3/4/98 restore loop index
+		}
 	}
 	return Rtn;
 }
@@ -1763,7 +1770,9 @@ final int EV_BuildStairs(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 
 		// ALREADY MOVING?  IF SO, KEEP GOING...
 		if (Sec->FloorData)
+		{
 			continue;
+		}
 
 		StairStep = Spawn(StairStepMover);
 		StairStep.Init(Sec, Arg1, Arg2, Arg3, Arg4, Arg5,

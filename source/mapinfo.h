@@ -57,6 +57,21 @@ enum
 	MAPINFOF_ClipMidTex					= 0x20000000,
 	MAPINFOF_WrapMidTex					= 0x40000000,
 	MAPINFOF_KeepFullInventory			= 0x80000000,
+
+	MAPINFOF2_CompatShortTex			= 0x00000001,
+	MAPINFOF2_CompatStairs				= 0x00000002,
+	MAPINFOF2_CompatLimitPain			= 0x00000004,
+	MAPINFOF2_CompatNoPassOver			= 0x00000008,
+	MAPINFOF2_CompatNoTossDrops			= 0x00000010,
+	MAPINFOF2_CompatUseBlocking			= 0x00000020,
+	MAPINFOF2_CompatNoDoorLight			= 0x00000040,
+	MAPINFOF2_CompatRavenScroll			= 0x00000080,
+	MAPINFOF2_CompatSoundTarget			= 0x00000100,
+	MAPINFOF2_CompatDehHealth			= 0x00000200,
+	MAPINFOF2_CompatTrace				= 0x00000400,
+	MAPINFOF2_CompatDropOff				= 0x00000800,
+	MAPINFOF2_CompatBoomScroll			= 0x00001000,
+	MAPINFOF2_CompatInvisibility		= 0x00002000,
 };
 
 struct mapInfo_t
@@ -81,6 +96,7 @@ struct mapInfo_t
 	float		Gravity;		// Map gravity
 	float		AirControl;		// Air control in this map.
 	vuint32		Flags;
+	vuint32		Flags2;
 	VName		TitlePatch;
 	vint32		ParTime;
 	vint32		SuckTime;

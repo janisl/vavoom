@@ -395,7 +395,8 @@ final bool LookForPlayers(bool allaround)
 			}
 		}
 
-		if (EntityEx(P.MO).bShadow || EntityEx(P.MO).bGhost)
+		if ((EntityEx(P.MO).bShadow && !Level.CompatInvisibility) ||
+			EntityEx(P.MO).bGhost)
 		{
 			// Player is invisible
 			if (DistTo(P.MO) > 2.0 * MELEERANGE &&
@@ -938,7 +939,8 @@ final void NewChaseDir()
 
 	// Try to move away from a dropoff
 	if (FloorZ - DropOffZ > MaxDropoffHeight &&
-		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat)
+		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat &&
+		!Level.CompatDropOff)
 	{
 		float AvoidDeltaX;
 		float AvoidDeltaY;

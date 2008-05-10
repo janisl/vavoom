@@ -93,8 +93,22 @@ class VLevelInfo : public VThinker
 	vuint32			LevelInfoFlags;
 	enum
 	{
-		LIF2_ClusterHub					= 0x00000001,
-		LIF2_BegunPlay					= 0x00000002,
+		LIF2_CompatShortTex				= 0x00000001,
+		LIF2_CompatStairs				= 0x00000002,
+		LIF2_CompatLimitPain			= 0x00000004,
+		LIF2_CompatNoPassOver			= 0x00000008,
+		LIF2_CompatNoTossDrops			= 0x00000010,
+		LIF2_CompatUseBlocking			= 0x00000020,
+		LIF2_CompatNoDoorLight			= 0x00000040,
+		LIF2_CompatRavenScroll			= 0x00000080,
+		LIF2_CompatSoundTarget			= 0x00000100,
+		LIF2_CompatDehHealth			= 0x00000200,
+		LIF2_CompatTrace				= 0x00000400,
+		LIF2_CompatDropOff				= 0x00000800,
+		LIF2_CompatBoomScroll			= 0x00001000,
+		LIF2_CompatInvisibility			= 0x00002000,
+		LIF2_ClusterHub					= 0x00004000,
+		LIF2_BegunPlay					= 0x00008000,
 	};
 	vuint32			LevelInfoFlags2;
 
