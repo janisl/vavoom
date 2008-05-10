@@ -197,6 +197,31 @@ static VName ParseNextMapName(VScriptParser* sc, bool HexenMode)
 
 //==========================================================================
 //
+//	DoCompatFlag
+//
+//==========================================================================
+
+static void DoCompatFlag(VScriptParser* sc, mapInfo_t* info, int Flag)
+{
+	guard(DoCompatFlag);
+	int Set = 1;
+	if (sc->CheckNumber())
+	{
+		Set = sc->Number;
+	}
+	if (Set)
+	{
+		info->Flags2 |= Flag;
+	}
+	else
+	{
+		info->Flags2 &= ~Flag;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseMap
 //
 //==========================================================================
@@ -644,60 +669,60 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		}
 		else if (sc->Check("compat_shorttex"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatShortTex;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatShortTex);
 		}
 		else if (sc->Check("compat_stairs"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatStairs;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatStairs);
 		}
 		else if (sc->Check("compat_limitpain"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatLimitPain;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatLimitPain);
 		}
 		else if (sc->Check("compat_nopassover"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatNoPassOver;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatNoPassOver);
 		}
 		else if (sc->Check("compat_notossdrops"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatNoTossDrops;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatNoTossDrops);
 		}
 		else if (sc->Check("compat_useblocking"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatUseBlocking;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatUseBlocking);
 		}
 		else if (sc->Check("compat_nodoorlight"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatNoDoorLight;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatNoDoorLight);
 		}
 		else if (sc->Check("compat_ravenscroll"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatRavenScroll;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatRavenScroll);
 		}
 		else if (sc->Check("compat_soundtarget"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatSoundTarget;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatSoundTarget);
 		}
 		else if (sc->Check("compat_dehhealth"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatDehHealth;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatDehHealth);
 		}
 		else if (sc->Check("compat_trace"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatTrace;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatTrace);
 		}
 		else if (sc->Check("compat_dropoff"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatDropOff;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatDropOff);
 		}
 		else if (sc->Check("compat_boomscroll") ||
 			sc->Check("additive_scrollers"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatBoomScroll;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatBoomScroll);
 		}
 		else if (sc->Check("compat_invisibility"))
 		{
-			info->Flags2 |= MAPINFOF2_CompatInvisibility;
+			DoCompatFlag(sc, info, MAPINFOF2_CompatInvisibility);
 		}
 		else if (sc->Check("evenlighting"))
 		{
