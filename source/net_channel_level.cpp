@@ -207,7 +207,9 @@ void VLevelChannel::Update()
 			Side->bottomtexture == RepSide->bottomtexture &&
 			Side->midtexture == RepSide->midtexture &&
 			Side->textureoffset == RepSide->textureoffset &&
-			Side->rowoffset == RepSide->rowoffset)
+			Side->rowoffset == RepSide->rowoffset &&
+			Side->Flags == RepSide->Flags &&
+			Side->Light == RepSide->Light)
 			continue;
 
 		Msg.WriteInt(CMD_Side, CMD_MAX);
@@ -247,6 +249,12 @@ void VLevelChannel::Update()
 		{
 			Msg.WriteInt(Side->Flags, 0x000f);
 			RepSide->Flags = Side->Flags;
+		}
+		Msg.WriteBit(Side->Light != RepSide->Light);
+		if (Side->Light != RepSide->Light)
+		{
+			Msg << Side->Light;
+			RepSide->Light = Side->Light;
 		}
 	}
 
@@ -640,6 +648,8 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 					Msg << Side->rowoffset;
 				if (Msg.ReadBit())
 					Side->Flags = Msg.ReadInt(0x000f);
+				if (Msg.ReadBit())
+					Msg << Side->Light;
 			}
 			break;
 

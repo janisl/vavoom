@@ -111,7 +111,7 @@ static VCvarI show_level_load_times("show_level_load_times", "0", CVAR_Archive);
 //
 //==========================================================================
 
-void VLevel::LoadMap(VName AMapName)
+void VLevel::LoadMap(VName MapName)
 {
 	guard(VLevel::LoadMap);
 	bool AuxiliaryMap = false;
@@ -120,7 +120,6 @@ void VLevel::LoadMap(VName AMapName)
 
 	double TotalTime = -Sys_Time();
 	double InitTime = -Sys_Time();
-	MapName = AMapName;
 	//	If working with a devlopment map, reload it.
 	VStr aux_file_name = va("maps/%s.wad", *MapName);
 	if (FL_FileExists(aux_file_name))
@@ -322,6 +321,30 @@ void VLevel::LoadMap(VName AMapName)
 	}
 	MinMaxTime += Sys_Time();
 
+	double WallShadesTime = -Sys_Time();
+	const mapInfo_t& MInfo = P_GetMapInfo(MapName);
+	for (int i = 0; i < NumLines; i++)
+	{
+		line_t* Line = Lines + i;
+		if (!Line->normal.x)
+		{
+			Sides[Line->sidenum[0]].Light = MInfo.HorizWallShade;
+			if (Line->sidenum[1] >= 0)
+			{
+				Sides[Lines[i].sidenum[1]].Light = MInfo.HorizWallShade;
+			}
+		}
+		else if (!Line->normal.y)
+		{
+			Sides[Line->sidenum[0]].Light = MInfo.VertWallShade;
+			if (Line->sidenum[1] >= 0)
+			{
+				Sides[Lines[i].sidenum[1]].Light = MInfo.VertWallShade;
+			}
+		}
+	}
+	WallShadesTime += Sys_Time();
+
 	double RepBaseTime = -Sys_Time();
 	CreateRepBase();
 	RepBaseTime += Sys_Time();
@@ -357,6 +380,8 @@ void VLevel::LoadMap(VName AMapName)
 		GCon->Logf("Conversations    %f", ConvTime);
 		GCon->Logf("Spawn world      %f", SpawnWorldTime);
 		GCon->Logf("Polyobjs         %f", InitPolysTime);
+		GCon->Logf("Sector minmaxs   %f", MinMaxTime);
+		GCon->Logf("Wall shades      %f", WallShadesTime);
 		GCon->Logf("");
 	}
 	unguard;
@@ -2088,6 +2113,7 @@ void VLevel::CreateRepBase()
 		B.bottomtexture = S.bottomtexture;
 		B.midtexture = S.midtexture;
 		B.Flags = S.Flags;
+		B.Light = S.Light;
 	}
 
 	BaseSectors = new rep_sector_t[NumSectors];

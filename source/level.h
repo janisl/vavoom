@@ -218,6 +218,7 @@ struct line_t : public TPlane
 enum
 {
 	SDF_ADDITIVE		= 0x0001,	//	Additive translucency.
+	SDF_ABSLIGHT		= 0x0002,	//	Light is absolute value.
 };
 
 //
@@ -243,6 +244,8 @@ struct side_t
 	int			LineNum;
 
 	vuint32		Flags;
+
+	int			Light;
 };
 
 struct subsector_t;
@@ -648,6 +651,7 @@ struct rep_side_t
 	int			bottomtexture;
 	int			midtexture;
 	vuint32		Flags;
+	int			Light;
 };
 
 struct rep_sector_t

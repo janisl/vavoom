@@ -232,6 +232,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->TitlePatch = NAME_None;
 		info->ParTime = 0;
 		info->SuckTime = 0;
+		info->HorizWallShade = -8;
+		info->VertWallShade = 8;
 	}
 	else
 	{
@@ -291,6 +293,8 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->TitlePatch = DefaultMap.TitlePatch;
 		info->ParTime = DefaultMap.ParTime;
 		info->SuckTime = DefaultMap.SuckTime;
+		info->HorizWallShade = DefaultMap.HorizWallShade;
+		info->VertWallShade = DefaultMap.VertWallShade;
 
 		if (HexenMode)
 		{
@@ -695,6 +699,21 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Flags2 |= MAPINFOF2_CompatInvisibility;
 		}
+		else if (sc->Check("evenlighting"))
+		{
+			info->HorizWallShade = 0;
+			info->VertWallShade = 0;
+		}
+		else if (sc->Check("vertwallshade"))
+		{
+			sc->ExpectNumber();
+			info->VertWallShade = MID(-128, sc->Number, 127);
+		}
+		else if (sc->Check("horizwallshade"))
+		{
+			sc->ExpectNumber();
+			info->HorizWallShade = MID(-128, sc->Number, 127);
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -726,24 +745,10 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 			cd_NonLevelTracks[CD_TITLETRACK] = sc->Number;
 		}
 		//	These are stubs for now.
-		else if (sc->Check("evenlighting"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand evenlighting");
-		}
 		else if (sc->Check("cdid"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand cdid");
 			sc->ExpectString();
-		}
-		else if (sc->Check("vertwallshade"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand vertwallshade");
-			sc->ExpectFloat();
-		}
-		else if (sc->Check("horizwallshade"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand horizwallshade");
-			sc->ExpectFloat();
 		}
 		else if (sc->Check("noinventorybar"))
 		{
@@ -1182,6 +1187,8 @@ static void ParseMapInfo(VScriptParser* sc)
 	info->TitlePatch = NAME_None;
 	info->ParTime = 0;
 	info->SuckTime = 0;
+	info->HorizWallShade = -8;
+	info->VertWallShade = 8;
 
 	while (!sc->AtEnd())
 	{

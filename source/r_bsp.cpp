@@ -95,8 +95,8 @@ void VRenderLevel::SetUpFrustumIndexes()
 //==========================================================================
 
 void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-	int clipflags, VEntity* SkyBox, int LightSourceSector,
-	bool CheckSkyBoxAlways)
+	int clipflags, VEntity* SkyBox, int LightSourceSector, int SideLight,
+	bool AbsSideLight, bool CheckSkyBoxAlways)
 {
 	guard(VRenderLevel::DrawSurfaces);
 	surface_t* surfs = InSurfs;
@@ -112,8 +112,8 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 	sec_params_t* LightParams = LightSourceSector == -1 ? r_region->params :
 		&Level->Sectors[LightSourceSector].params;
-	int lLev = FixedLight ? FixedLight :
-			MIN(255, LightParams->lightlevel + ExtraLight);
+	int lLev = (AbsSideLight ? 0 : LightParams->lightlevel) + SideLight;
+	lLev = FixedLight ? FixedLight : MIN(255, lLev + ExtraLight);
 	if (r_darken)
 	{
 		lLev = light_remap[lLev];
@@ -339,7 +339,8 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		{
 			//	If it's a sky, render it as a regular sky surface.
 			DrawSurfaces(Surf, &Ceil->texinfo, clipflags,
-				r_region->ceiling->SkyBox);
+				r_region->ceiling->SkyBox, -1, Seg->sidedef->Light,
+				!!(Seg->sidedef->Flags & SDF_ABSLIGHT), false);
 		}
 		else
 		{
@@ -393,7 +394,8 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 		{
 			//	If it's a sky, render it as a regular sky surface.
 			DrawSurfaces(Surf, &Floor->texinfo, clipflags,
-				r_region->floor->SkyBox);
+				r_region->floor->SkyBox, -1, Seg->sidedef->Light,
+				!!(Seg->sidedef->Flags & SDF_ABSLIGHT), false);
 		}
 		else
 		{
@@ -451,7 +453,8 @@ void VRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
 	else
 	{
 		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
-			r_region->ceiling->SkyBox);
+			r_region->ceiling->SkyBox, -1, Seg->sidedef->Light,
+			!!(Seg->sidedef->Flags & SDF_ABSLIGHT), false);
 	}
 	unguard;
 }
@@ -504,6 +507,7 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 	}
 
 	line_t *linedef = line->linedef;
+	side_t *sidedef = line->sidedef;
 
 	//FIXME this marks all lines
 	// mark the segment as visible for auto map
@@ -523,26 +527,33 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 		else
 		{
 			DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
-				r_region->ceiling->SkyBox);
+				r_region->ceiling->SkyBox, -1, sidedef->Light,
+				!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		}
 		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, clipflags,
-			r_region->ceiling->SkyBox);
+			r_region->ceiling->SkyBox, -1, sidedef->Light,
+			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 	}
 	else
 	{
 		// two sided line
 		DrawSurfaces(dseg->top->surfs, &dseg->top->texinfo, clipflags,
-			r_region->ceiling->SkyBox);
+			r_region->ceiling->SkyBox, -1, sidedef->Light,
+			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, clipflags,
-			r_region->ceiling->SkyBox);
+			r_region->ceiling->SkyBox, -1, sidedef->Light,
+			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		DrawSurfaces(dseg->bot->surfs, &dseg->bot->texinfo, clipflags,
-			r_region->ceiling->SkyBox);
+			r_region->ceiling->SkyBox, -1, sidedef->Light,
+			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
-			r_region->ceiling->SkyBox);
+			r_region->ceiling->SkyBox, -1, sidedef->Light,
+			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		for (segpart_t *sp = dseg->extra; sp; sp = sp->next)
 		{
 			DrawSurfaces(sp->surfs, &sp->texinfo, clipflags,
-				r_region->ceiling->SkyBox);
+				r_region->ceiling->SkyBox, -1, sidedef->Light,
+				!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		}
 	}
 	unguard;
@@ -605,7 +616,7 @@ void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 	}
 
 	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags, SkyBox,
-		plane.LightSourceSector, true);
+		plane.LightSourceSector, 0, false, true);
 	unguard;
 }
 

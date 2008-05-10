@@ -214,10 +214,9 @@ const int SKY_FROM_SIDE	= 0x8000;
 //
 //	Sidedef flags.
 //
-enum
-{
-	SDF_ADDITIVE		= 0x0001	//	Additive translucency.
-};
+const int
+	SDF_ADDITIVE		= 0x0001,	//	Additive translucency.
+	SDF_ABSLIGHT		= 0x0002;	//	Light is absolute value.
 
 const float ATTN_NONE		= 0.0;
 const float ATTN_NORMAL		= 1.0;
@@ -747,6 +746,8 @@ struct side_t
 	int			LineNum;
 
 	int			Flags;
+
+	int			Light;
 };
 
 struct sec_plane_t : TPlane

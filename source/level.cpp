@@ -220,7 +220,8 @@ void VLevel::Serialise(VStream& Strm)
 				<< si->toptexture
 				<< si->bottomtexture
 				<< si->midtexture
-				<< si->Flags;
+				<< si->Flags
+				<< si->Light;
 		}
 	}
 	if (Strm.IsLoading())

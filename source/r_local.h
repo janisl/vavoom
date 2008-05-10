@@ -411,8 +411,8 @@ private:
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
-	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int = -1,
-		bool = false);
+	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int, int, bool,
+		bool);
 	void RenderHorizon(drawseg_t*, int);
 	void RenderMirror(drawseg_t*, int);
 	void RenderLine(drawseg_t*, int);
