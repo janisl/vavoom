@@ -259,6 +259,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->SuckTime = 0;
 		info->HorizWallShade = -8;
 		info->VertWallShade = 8;
+		info->Infighting = 0;
 	}
 	else
 	{
@@ -320,6 +321,7 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		info->SuckTime = DefaultMap.SuckTime;
 		info->HorizWallShade = DefaultMap.HorizWallShade;
 		info->VertWallShade = DefaultMap.VertWallShade;
+		info->Infighting = DefaultMap.Infighting;
 
 		if (HexenMode)
 		{
@@ -739,6 +741,18 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 			sc->ExpectNumber();
 			info->HorizWallShade = MID(-128, sc->Number, 127);
 		}
+		else if (sc->Check("noinfighting"))
+		{
+			info->Infighting = -1;
+		}
+		else if (sc->Check("normalinfighting"))
+		{
+			info->Infighting = 0;
+		}
+		else if (sc->Check("totalinfighting"))
+		{
+			info->Infighting = 1;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -867,18 +881,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			GCon->Logf("Unimplemented MAPINFO comand f1");
 			sc->ExpectString();
-		}
-		else if (sc->Check("noinfighting"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand noinfighting");
-		}
-		else if (sc->Check("normalinfighting"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand normalinfighting");
-		}
-		else if (sc->Check("totalinfighting"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand totalinfighting");
 		}
 		else if (sc->Check("allowrespawn"))
 		{
@@ -1214,6 +1216,7 @@ static void ParseMapInfo(VScriptParser* sc)
 	info->SuckTime = 0;
 	info->HorizWallShade = -8;
 	info->VertWallShade = 8;
+	info->Infighting = 0;
 
 	while (!sc->AtEnd())
 	{

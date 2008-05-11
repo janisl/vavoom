@@ -123,6 +123,7 @@ private Entity	TIDHash[TID_HASH_SIZE];
 
 float			Gravity;			// Level Gravity
 float			AirControl;
+int				Infighting;
 
 replication
 {

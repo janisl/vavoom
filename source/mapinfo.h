@@ -100,8 +100,9 @@ struct mapInfo_t
 	VName		TitlePatch;
 	vint32		ParTime;
 	vint32		SuckTime;
-	vint32		HorizWallShade;
-	vint32		VertWallShade;
+	vint8		HorizWallShade;
+	vint8		VertWallShade;
+	vint8		Infighting;
 
 	VStr GetName() const
 	{

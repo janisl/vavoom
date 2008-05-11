@@ -715,7 +715,7 @@ bool Touch(Entity InOther)
 			return true;
 		}
 
-		if (Target && Target.GetSpecies() == Other.GetSpecies())
+		if (Target)
 		{
 			// Don't hit same species as originator.
 			if (Other == Target)
@@ -723,11 +723,57 @@ bool Touch(Entity InOther)
 				// Don't missile self
 				return true;
 			}
-			if (!Other.bIsPlayer)
+			//	Let players missile other players.
+			if (!Target.bIsPlayer && !Other.bIsPlayer)
 			{
-				// Explode, but do no damage.
-				// Let players missile other players.
-				return false;
+				int Inf = GetInfighting();
+				if (Inf < 0)
+				{
+					//	Monsters can't hurt each other, but make exception
+					// depending on friendliness and hate status.
+					if (Target.bShootable)
+					{
+						if (!Other.bMonster)
+						{
+							return false;
+						}
+						//	Hostile monsters can always hurt each other.
+						if (!Other.IsHostile(Target))
+						{
+							//	The same if the shooter hates the target.
+							if (!Other.TID || Target.TIDToHate != Other.TID)
+							{
+								return false;
+							}
+						}
+					}
+				}
+				else if (Inf == 0)
+				{
+					if (Other.IsFriend(Target))
+					{
+						//	Don't hurt friends.
+						return false;
+					}
+					if (Other.TIDToHate && Other.TIDToHate == Target.TIDToHate)
+					{
+						//	Don't hurt monsters that hate the same thing as you do.
+						return false;
+					}
+					if (Target.GetSpecies() == Other.GetSpecies())
+					{
+						//	Don't hurt same species, but only if the target
+						// isn't one's hostile.
+						if (!Other.IsHostile(Target))
+						{
+							//	Allow hurting monsters the shooter hates.
+							if (Other.TID == 0 || Target.TIDToHate != Other.TID)
+							{
+								return false;
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -3390,6 +3436,47 @@ void CalcFakeZMovement(out TVec Ret, float DeltaTime)
 	{
 		Ret.z += sin(90.0 * 35.0 / 20.0 * XLevel.Time);
 	}
+}
+
+//==========================================================================
+//
+//	GetInfighting
+//
+//==========================================================================
+
+final int GetInfighting()
+{
+	if (bNoInfighting)
+	{
+		return -1;
+	}
+	if (Level.Infighting)
+	{
+		return Level.Infighting;
+	}
+	return GetCvar('infighting');
+}
+
+//==========================================================================
+//
+//	IsHostile
+//
+//==========================================================================
+
+final bool IsHostile(EntityEx Other)
+{
+	return !IsFriend(Other);
+}
+
+//==========================================================================
+//
+//	IsFriend
+//
+//==========================================================================
+
+final bool IsFriend(EntityEx Other)
+{
+	return bFriendly == Other.bFriendly;
 }
 
 bool IsTeammate(EntityEx Other)

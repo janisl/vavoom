@@ -129,6 +129,8 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 		AirControl = sv_aircontrol;
 	}
 
+	Infighting = Info.Infighting;
+
 	//	Copy flags from mapinfo.
 	LevelInfoFlags = Info.Flags;
 	LevelInfoFlags2 = Info.Flags2;

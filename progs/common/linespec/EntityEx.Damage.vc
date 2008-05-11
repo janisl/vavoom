@@ -477,25 +477,60 @@ bool OkayToSwitchTarget(EntityEx source)
 		//	Don't hate self.
 		return false;
 	}
-
+	if (!source.bShootable)
+	{
+		//	Don't hate actors that cannot be hurt.
+		return false;
+	}
+	if (bNoTargetSwitch && Target)
+	{
+		return false;
+	}
+	if ((Master && source.IsA(GetClassName(Master.Class))) ||		// don't attack your master (or others of its type)
+		(source.Master && IsA(GetClassName(source.Master.Class))))	// don't attack your minion (or those of others of your type)
+	{
+		if (!IsHostile(source) &&								// allow target switch if other is considered hostile
+			(source.TID != TIDToHate || TIDToHate == 0) &&		// or has the tid we hate
+			source.TIDToHate == TIDToHate)						// or has different hate information
+		{
+			return false;
+		}
+	}
+	if (source.bNeverTarget && (source.TID != TIDToHate || TIDToHate == 0) &&
+		!IsHostile(source))
+	{
+		return false;
+	}
 	if (Threshold && !bNoGrudge)
 	{
 		return false;
 	}
-	if (source.bNeverTarget)
+	if (IsFriend(source))
 	{
+		//	Don't hate friends.
 		return false;
 	}
-	if (bNoTargetSwitch)
+
+	int Inf = GetInfighting();
+	if (Inf < 0 && !source.bIsPlayer && !IsHostile(source))
 	{
+		//	Infighting is off, so don't target it if it's not hostile.
+		return false;
+	}
+
+	if (TIDToHate && TIDToHate == source.TIDToHate)
+	{
+		//	Don't target actors that hate the same thing.
 		return false;
 	}
 	if (source.bIsPlayer && bNoHatePlayers)
 	{
 		return false;
 	}
-	if (!Level.Game.deathmatch && source.bFriendly && bFriendly)
+	if (Target && Target.Health > 0 && TIDToHate &&
+		Target.TID == TIDToHate && Random() < 0.5 && CanSee(Target))
 	{
+		//	Don't be too quick to give up things we hate
 		return false;
 	}
 	return true;

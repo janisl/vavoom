@@ -58,6 +58,8 @@ struct VDehFlag
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+VCvarI			Infighting("infighting", "0", CVAR_ServerInfo);
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static char*					Patch;
@@ -1275,7 +1277,14 @@ static void ReadMisc(int)
 		{
 			SetClassFieldInt(BfgClass, "AmmoUse1", value);
 		}
-		else if (!VStr::ICmp(String, "Monsters Infight"));	//	What's that?
+		else if (!VStr::ICmp(String, "Monsters Infight"))
+		{
+			Infighting = value;
+		}
+		else if (!VStr::ICmp(String, "Monsters Ignore Each Other"))
+		{
+			Infighting = value ? -1 : 0;
+		}
 		else if (!VStr::ICmp(String, "Powerup Color Invulnerability"))
 		{
 			DoPowerupColour("PowerInvulnerable");
@@ -1313,6 +1322,16 @@ static void ReadMisc(int)
 			DoPowerupColour("PowerMinotaur");
 		}
 		else GCon->Logf("WARNING! Invalid misc %s", String);
+	}
+
+	//	0xdd means "enable infighting"
+	if (Infighting == 0xdd)
+	{
+		Infighting = 1;
+	}
+	else if (Infighting != -1)
+	{
+		Infighting = 0;
 	}
 	unguard;
 }

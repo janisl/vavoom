@@ -129,6 +129,7 @@ class VLevelInfo : public VThinker
 
 	float			Gravity;								// Level Gravity
 	float			AirControl;
+	int				Infighting;
 
 	VLevelInfo();
 

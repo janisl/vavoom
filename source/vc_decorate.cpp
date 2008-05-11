@@ -167,6 +167,7 @@ static VFlagDef ActorFlags[] =
 	{ "MissileMore", NULL, "bTriggerHappy" },
 	{ "MissileEvenMore", NULL, "bMissileEvenMore" },
 	{ "NoTargetSwitch", NULL, "bNoTargetSwitch" },
+	{ "NoInfighting", NULL, "bNoInfighting" },
 	//
 	//	Abilities
 	//
