@@ -554,6 +554,7 @@ enum
 	LNSPEC_SectorSetFloorScale2,
 	LNSPEC_PlaneUpNearestWaitDownStay,
 	LNSPEC_NoiseAlert,
+	LNSPEC_SendToCommunicator,
 
 	LNSPEC_ThingChangeTID = 176,
 	LNSPEC_ThingHate,

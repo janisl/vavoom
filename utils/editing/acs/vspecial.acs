@@ -11,6 +11,7 @@ special
 	6:Polyobj_MoveTimes8(4),
 	7:Polyobj_DoorSwing(4),
 	8:Polyobj_DoorSlide(5),
+	9:Line_Horizon(0),
 	10:Door_Close(2),
 	11:Door_Open(2, 3),
 	12:Door_Raise(3, 4),
@@ -103,10 +104,12 @@ special
 	138:Floor_Waggle(5),
 	139:Thing_SpawnFacing(2,4),
 	140:Sector_ChangeSound(2),
+	159:Sector_SetPlaneReflection(3),
 	170:Sector_SetCeilingScale2(3),
 	171:Sector_SetFloorScale2(3),
 	172:Plat_UpNearestWaitDownStay(3),
 	173:NoiseAlert(2),
+	174:SendToCommunicator(4),
 	176:Thing_ChangeTID(2),
 	177:Thing_Hate(2,3),
 	178:Thing_ProjectileAimed(4,5),
@@ -179,12 +182,9 @@ special
 	255:Ceiling_CrushRaiseAndStaySilA(4);
 /*
 special
-	  9:Line_Horizon(0),
 	 15:Autosave(0),
 	 17:Thing_Raise(1),
 	 18:StartConversation(1,2),
-	159:Sector_SetPlaneReflection(3),
-	174:SendToCommunicator(4),
 	175:Thing_ProjectileIntercept(5),
 	179:ChangeSkill(1),
 */

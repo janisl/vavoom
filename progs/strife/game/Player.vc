@@ -37,7 +37,7 @@ const int
 replication
 {
 	reliable if (!bIsClient)
-		ClientVoice, ClientSlideshow1, ClientSlideshow2, ClientFinaleType;
+		ClientSlideshow1, ClientSlideshow2, ClientFinaleType;
 }
 
 //==========================================================================
@@ -1152,17 +1152,6 @@ void Cheat_Gimme()
 void Cheat_KillAll()
 {
 	cprint("%d MONSTERS KILLED", LineSpecialLevelInfo(Level).P_Massacre());
-}
-
-//==========================================================================
-//
-//  ClientVoice
-//
-//==========================================================================
-
-void ClientVoice(int VoiceNum)
-{
-	LocalSound(StrToName(va("svox/voc%d", VoiceNum)));
 }
 
 //==========================================================================

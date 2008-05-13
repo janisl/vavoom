@@ -127,7 +127,7 @@ replication
 		ClientSparkParticles, ClientRailTrail;
 
 	reliable if (!bIsClient)
-		ClientSpeech;
+		ClientVoice, ClientSpeech;
 }
 
 //==========================================================================
@@ -1920,6 +1920,17 @@ void ClientRailTrail(TVec From, TVec To, int Col1, int Col2, float MaxDiff)
 		p->vel = Up;
 		p->accel = vector(0.0, 0.0, 0.0);
 	}
+}
+
+//==========================================================================
+//
+//  ClientVoice
+//
+//==========================================================================
+
+void ClientVoice(int VoiceNum)
+{
+	LocalSound(StrToName(va("svox/voc%d", VoiceNum)));
 }
 
 //==========================================================================

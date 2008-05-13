@@ -6,7 +6,6 @@
 //**************************************************************************
 
 #include "vcommon.acs"
-#include "stspec.acs"
 
 #library "strfhelp"
 
@@ -89,16 +88,6 @@ script << 0 >> (int type, int tag)
 		{
 			Floor_RaiseByValue(tag, 128, 64);
 		}
-		else if (GetSigilPieces() > 0 && ((tag / 100) == 3))
-		{
-			//	Abandoned front base.
-			Teleport_NewMap(30, tag % 100, TRUE);
-		}
-		else if (GetSigilPieces() > 0 && ((tag / 100) == 7))
-		{
-			//	New front base.
-			Teleport_NewMap(10, tag % 100, TRUE);
-		}
 		else
 		{
 			Teleport_NewMap(tag / 100, tag % 100, TRUE);
@@ -158,16 +147,6 @@ script << 0 >> (int type, int tag)
 		{
 			Floor_RaiseByValue(tag, 128, 64);
 		}
-		else if (GetSigilPieces() > 0 && ((tag / 100) == 3))
-		{
-			//	Abandoned front base.
-			Teleport_NewMap(30, tag % 100, TRUE);
-		}
-		else if (GetSigilPieces() > 0 && ((tag / 100) == 7))
-		{
-			//	New front base.
-			Teleport_NewMap(10, tag % 100, TRUE);
-		}
 		else
 		{
 			Teleport_NewMap(tag / 100, tag % 100, TRUE);
@@ -222,7 +201,7 @@ script << 0 >> (int type, int tag)
 
 	case 196:
 		//	Lower floor if killed Bishop.
-		//UNUSED Probably because 197 does the same thing.
+		//UNUSED
 		if (GetSigilPieces() > 1)
 		{
 			Floor_LowerToLowest(tag, 8);
@@ -481,17 +460,4 @@ script << 0 >> (int type, int tag)
 		ChangeSky("SKYMNT01", "SKYMNT01");
 		break;
 	}
-}
-
-//	When the Programmer dies, he executes script 250.
-script 250 (void)
-{
-	int i;
-
-	//	The next time you visit maps 1-9, their skies need to change.
-	for (i = 1; i < 10; i++)
-	{
-	    ACS_Execute(0, i, 256, 0, 0);
-	}
-	Teleport_NewMap(10, 0);
 }

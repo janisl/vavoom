@@ -4,7 +4,8 @@ defaultmap
 forcenoskystretch
 nointermission
 strifefallingdamage
-sky1 skymnt02 0
+clipmidtextures
+noinfighting
 
 //------------------------------------------------------
 //  Retail maps
@@ -27,6 +28,7 @@ sky1 skymnt02 0
 music d_danger
 cluster 1
 noallies
+redirect Sigil map30
 
 map map04 lookup shustr_4
 next map05
@@ -51,6 +53,7 @@ next map08
 sky1 skymnt02 0
 music d_strike
 cluster 1
+redirect Sigil map10
 
 map map08 lookup shustr_8
 next map09
@@ -63,6 +66,14 @@ next map10
 sky1 skymnt02 0
 music d_tribal
 cluster 1
+specialaction Programmer, ACS_Execute, 0, 1, 256
+specialaction Programmer, ACS_Execute, 0, 2, 256
+specialaction Programmer, ACS_Execute, 0, 3, 256
+specialaction Programmer, ACS_Execute, 0, 4, 256
+specialaction Programmer, ACS_Execute, 0, 5, 256
+specialaction Programmer, ACS_Execute, 0, 6, 256
+specialaction Programmer, ACS_Execute, 0, 7, 256
+specialaction Programmer, ACS_Execute, 0, 8, 256
 
 map map10 lookup shustr_10
 next map11

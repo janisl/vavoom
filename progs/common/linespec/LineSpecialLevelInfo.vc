@@ -892,6 +892,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_NoiseAlert:
 		buttonSuccess = EV_NoiseAlert(A, Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
+	case LNSPEC_SendToCommunicator:
+		buttonSuccess = EV_SendToCommunicator(A, Arg1, Arg2, Arg3, Arg4,
+			Arg5, Side);
+		break;
 	case LNSPEC_ThingChangeTID:
 		buttonSuccess = EV_ThingChangeTID(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
@@ -5589,6 +5593,42 @@ final bool EV_GlassBreak(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	}
 	//	We already changed the switch texture, so don't make the main code
 	// switch it back.
+	return false;
+}
+
+//==========================================================================
+//
+//  EV_SendToCommunicator
+//
+//==========================================================================
+
+final bool EV_SendToCommunicator(EntityEx A, int Arg1, int Arg2, int Arg3,
+	int Arg4, int Arg5, int Side)
+{
+	if (Arg2 && Side)
+	{
+		return false;
+	}
+
+	if (A && A.bIsPlayer && A.FindInventory(Communicator))
+	{
+		if (!Arg4)
+		{
+			PlayerEx(A.Player).SetObjectives(Arg1);
+		}
+
+		PlayerEx(A.Player).ClientVoice(Arg1);
+
+		if (Arg3 == 0)
+		{
+			A.Player.cprint("Incoming Message");
+		}
+		else if (Arg3 == 1)
+		{
+			A.Player.cprint("Incoming Message from BlackBird");
+		}
+		return true;
+	}
 	return false;
 }
 

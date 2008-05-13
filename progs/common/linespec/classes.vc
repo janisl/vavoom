@@ -295,3 +295,4 @@ class MedPatch : HealthPickup decorate;
 class MetalArmor : BasicArmorPickup decorate;
 class LeatherArmor : BasicArmorPickup decorate;
 class QuestItem29 : Inventory decorate;
+class Communicator : Inventory decorate;
