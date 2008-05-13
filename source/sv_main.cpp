@@ -718,6 +718,41 @@ void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
 
 //==========================================================================
 //
+//	CheckRedirects
+//
+//==========================================================================
+
+static VName CheckRedirects(VName Map)
+{
+	guard(CheckRedirects);
+	const mapInfo_t& Info = P_GetMapInfo(Map);
+	if (Info.RedirectType == NAME_None || Info.RedirectMap == NAME_None)
+	{
+		//	No redirect for this map.
+		return Map;
+	}
+
+	//	Check all players.
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		VBasePlayer* P = GGameInfo->Players[i];
+		if (!P || !(P->PlayerFlags & VBasePlayer::PF_Spawned))
+		{
+			continue;
+		}
+		if (P->MO->eventCheckInventory(Info.RedirectType) > 0)
+		{
+			return CheckRedirects(Info.RedirectMap);
+		}
+	}
+
+	//	None of the players have required item, no redirect.
+	return Map;
+	unguard;
+}
+
+//==========================================================================
+//
 //	G_DoCompleted
 //
 //==========================================================================
@@ -743,6 +778,8 @@ static void G_DoCompleted()
 
 	GLevel->Acs->StartTypedACScripts(SCRIPT_Unloading, 0, 0, 0, NULL, false,
 		true);
+
+	GLevelInfo->NextMap = CheckRedirects(GLevelInfo->NextMap);
 
 	const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
 	const mapInfo_t& new_info = P_GetMapInfo(GLevelInfo->NextMap);

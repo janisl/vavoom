@@ -1099,6 +1099,7 @@ defaultproperties
 {
 	LevelInfoClass = DoomLevelInfo;
 	GameFilterFlag = EntityEx::GAME_Doom;
+	bDefaultLaxMonsterActivation = true;
 	bNoClipIgnoreFloor = true;
 	bBabyNightmareDoubleAmmo = true;
 	bAlwaysSwitchNewWeapon = true;

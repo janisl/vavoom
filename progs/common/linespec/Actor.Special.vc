@@ -38,6 +38,27 @@
 final void A_BossDeath()
 {
 	name Cls = GetClassName(Class);
+
+	if (!CheckBossDeath())
+	{
+		return;
+	}
+
+	//	Check generic actions first.
+	int i;
+	for (i = 0; i < Level.SpecialActions.Num; i++)
+	{
+		if (Class == FindClassLowerCase(Level.SpecialActions[i].TypeName))
+		{
+			Level.ExecuteActionSpecial(Level.SpecialActions[i].Special,
+				Level.SpecialActions[i].Args[0],
+				Level.SpecialActions[i].Args[1],
+				Level.SpecialActions[i].Args[2],
+				Level.SpecialActions[i].Args[3],
+				Level.SpecialActions[i].Args[4], NULL, 0, self);
+		}
+	}
+
 	if (!((Cls == 'BaronOfHell' && Level.bBaronSpecial) ||
 		(Cls == 'Cyberdemon' && Level.bCyberDemonSpecial) ||
 		(Cls == 'SpiderMastermind' && Level.bSpiderMastermindSpecial) ||
@@ -46,11 +67,6 @@ final void A_BossDeath()
 		(Cls == 'Ironlich' && Level.bIronLichSpecial) ||
 		(Cls == 'Minotaur' && Level.bMinotaurSpecial) ||
 		(Cls == 'Sorcerer2' && Level.bDSparilSpecial)))
-	{
-		return;
-	}
-
-	if (!CheckBossDeath())
 	{
 		return;
 	}

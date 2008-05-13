@@ -111,7 +111,7 @@ static VCvarI show_level_load_times("show_level_load_times", "0", CVAR_Archive);
 //
 //==========================================================================
 
-void VLevel::LoadMap(VName MapName)
+void VLevel::LoadMap(VName AMapName)
 {
 	guard(VLevel::LoadMap);
 	bool AuxiliaryMap = false;
@@ -120,6 +120,7 @@ void VLevel::LoadMap(VName MapName)
 
 	double TotalTime = -Sys_Time();
 	double InitTime = -Sys_Time();
+	MapName = AMapName;
 	//	If working with a devlopment map, reload it.
 	VStr aux_file_name = va("maps/%s.wad", *MapName);
 	if (FL_FileExists(aux_file_name))

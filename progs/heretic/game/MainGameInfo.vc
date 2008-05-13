@@ -521,6 +521,7 @@ defaultproperties
 {
 	LevelInfoClass = HereticLevelInfo;
 	GameFilterFlag = EntityEx::GAME_Heretic;
+	bDefaultLaxMonsterActivation = true;
 	bDefaultBloodSplatter = true;
 	bUseHexenPolyobjTypes = true;
 	bBloodSplatter = true;

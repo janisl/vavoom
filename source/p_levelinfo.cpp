@@ -130,10 +130,18 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 	}
 
 	Infighting = Info.Infighting;
+	SpecialActions = Info.SpecialActions;
 
 	//	Copy flags from mapinfo.
 	LevelInfoFlags = Info.Flags;
 	LevelInfoFlags2 = Info.Flags2;
+
+	//	Doom format maps use strict monster activation by default.
+	if (!(XLevel->LevelFlags & VLevel::LF_Extended) &&
+		!(LevelInfoFlags2 & LIF2_HaveMonsterActivation))
+	{
+		LevelInfoFlags2 &= ~LIF2_LaxMonsterActivation;
+	}
 
 	if (CInfo->Flags & CLUSTERF_Hub)
 	{

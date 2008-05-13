@@ -56,12 +56,6 @@ struct VClassFixup
 	VClass*		Class;
 };
 
-struct VLineSpecInfo
-{
-	VStr		Name;
-	int			Number;
-};
-
 struct VFlagDef
 {
 	const char*		Name;
@@ -107,6 +101,8 @@ static VExpression* ParseExpressionPriority13(VScriptParser* sc);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+TArray<VLineSpecInfo>	LineSpecialInfos;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VPackage*		DecPkg;
@@ -133,8 +129,6 @@ static VMethod*			FuncA_ActiveAndUnblock;
 static VMethod*			FuncA_ExplodeParms;
 static VMethod*			FuncA_FreezeDeath;
 static VMethod*			FuncA_FreezeDeathChunks;
-
-static TArray<VLineSpecInfo>	LineSpecialInfos;
 
 static VFlagDef ActorFlags[] =
 {
@@ -3467,9 +3461,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			}
 			if (!Prop.ICmp("Player.MaxHealth"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property Player.MaxHealth in %s is not yet supported", Class->GetName());
+				SetClassFieldInt(Class, "MaxHealth", sc->Number);
 				continue;
 			}
 			if (!Prop.ICmp("Player.RunHealth"))
@@ -4443,7 +4436,7 @@ static void ParseDecorate(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 //
 //==========================================================================
 
-static void ReadLineSpecialInfos()
+void ReadLineSpecialInfos()
 {
 	guard(ReadLineSpecialInfos);
 	VStream* Strm = FL_OpenFileRead("line_specials.txt");
@@ -4471,8 +4464,6 @@ void ProcessDecorateScripts()
 {
 	guard(ProcessDecorateScripts);
 	GCon->Logf(NAME_Init, "Processing DECORATE scripts");
-
-	ReadLineSpecialInfos();
 
 	DecPkg = new VPackage(NAME_decorate);
 
@@ -4596,7 +4587,6 @@ void ProcessDecorateScripts()
 	VClass::StaticReinitStatesLookup();
 
 	TLocation::ClearSourceFiles();
-	LineSpecialInfos.Clear();
 	unguard;
 }
 

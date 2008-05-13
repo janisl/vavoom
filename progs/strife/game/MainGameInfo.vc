@@ -618,6 +618,7 @@ defaultproperties
 	GenericConScript = 'script00';
 	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 100.0;
+	bDefaultLaxMonsterActivation = true;
 	bBabyNightmareDoubleAmmo = true;
 	bNightmareExtraAmmo = false;
 	bAlwaysSwitchNewWeapon = true;

@@ -35,4 +35,13 @@ enum
 
 enum { MAX_DECORATE_TRANSLATIONS = 0xffff };
 
+struct VLineSpecInfo
+{
+	VStr		Name;
+	int			Number;
+};
+
+void ReadLineSpecialInfos();
 void ProcessDecorateScripts();
+
+extern TArray<VLineSpecInfo>	LineSpecialInfos;

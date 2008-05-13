@@ -72,6 +72,15 @@ enum
 	MAPINFOF2_CompatDropOff				= 0x00000800,
 	MAPINFOF2_CompatBoomScroll			= 0x00001000,
 	MAPINFOF2_CompatInvisibility		= 0x00002000,
+	MAPINFOF2_LaxMonsterActivation		= 0x00004000,
+	MAPINFOF2_HaveMonsterActivation		= 0x00008000,
+};
+
+struct VMapSpecialAction
+{
+	VName		TypeName;
+	vint32		Special;
+	vint32		Args[5];
 };
 
 struct mapInfo_t
@@ -103,6 +112,9 @@ struct mapInfo_t
 	vint8		HorizWallShade;
 	vint8		VertWallShade;
 	vint8		Infighting;
+	TArray<VMapSpecialAction>	SpecialActions;
+	VName		RedirectType;
+	VName		RedirectMap;
 
 	VStr GetName() const
 	{

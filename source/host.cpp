@@ -164,6 +164,8 @@ void Host_Init()
 	GNet = VNetworkPublic::Create();
 	GNet->Init();
 
+	ReadLineSpecialInfos();
+
 #ifdef CLIENT
 	GInput = VInputPublic::Create();
 	GInput->Init();
@@ -762,6 +764,7 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(FL_Shutdown, ())
 	SAFE_SHUTDOWN(W_Shutdown, ())
 	SAFE_SHUTDOWN(GLanguage.FreeData, ())
+	SAFE_SHUTDOWN(LineSpecialInfos.Clear, ())
 
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())

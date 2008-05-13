@@ -1674,41 +1674,13 @@ void Cheat_Gimme()
 
 //==========================================================================
 //
-//  P_Massacre
-//
-//  Kills all monsters.
-//
-//==========================================================================
-
-int P_Massacre()
-{
-	int count;
-	Actor mo;
-
-	count = 0;
-	foreach MO.AllThinkers(Actor, mo)
-	{
-		if (mo.bMonster && mo.Health > 0)
-		{
-			mo.bNonShootable = false;
-			mo.bInvulnerable = false;
-			mo.bShootable = true;
-			mo.Damage(none, none, 10000);
-			count++;
-		}
-	}
-	return count;
-}
-
-//==========================================================================
-//
 //  Cheat_KillAll
 //
 //==========================================================================
 
 void Cheat_KillAll()
 {
-	cprint("%d MONSTERS KILLED", P_Massacre());
+	cprint("%d MONSTERS KILLED", LineSpecialLevelInfo(Level).P_Massacre());
 }
 
 //==========================================================================

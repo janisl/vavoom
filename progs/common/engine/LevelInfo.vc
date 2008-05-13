@@ -29,6 +29,13 @@ class LevelInfo : Thinker
 
 const int TID_HASH_SIZE = 64;
 
+struct MapSpecialAction
+{
+	name		TypeName;
+	int			Special;
+	int			Args[5];
+};
+
 native readonly GameInfo	Game;
 native readonly WorldInfo	World;
 
@@ -103,6 +110,8 @@ bool			bCompatTrace;
 bool			bCompatDropOff;
 bool			bCompatBoomScroll;
 bool			bCompatInvisibility;
+bool			bLaxMonsterActivation;
+bool			bHaveMonsterActivation;
 bool			bClusterHub;
 readonly bool	bBegunPlay;
 
@@ -124,6 +133,7 @@ private Entity	TIDHash[TID_HASH_SIZE];
 float			Gravity;			// Level Gravity
 float			AirControl;
 int				Infighting;
+array<MapSpecialAction>	SpecialActions;
 
 replication
 {
@@ -894,7 +904,7 @@ final float FindShortestUpperAround(sector_t* sec)
 			continue;
 
 		texnum = XLevel.Sides[sec->lines[i]->sidenum[0]].toptexture;
-		if (texnum >= 0)
+		if (texnum > 0 || (texnum == 0 && CompatShortTex))
 		{
 			if (TextureHeight(texnum) < minsize)
 			{
@@ -902,7 +912,7 @@ final float FindShortestUpperAround(sector_t* sec)
 			}
 		}
 		texnum = XLevel.Sides[sec->lines[i]->sidenum[1]].toptexture;
-		if (texnum >= 0)
+		if (texnum > 0 || (texnum == 0 && CompatShortTex))
 		{
 			if (TextureHeight(texnum) < minsize)
 			{

@@ -70,8 +70,11 @@ final void A_ProgrammerDeath()
 	{
 		return;
 	}
-	//	Call death script.
-	XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
+
+	Level.ExecuteActionSpecial(LNSPEC_ExitNormal, 0, 0, 0, 0, 0, NULL, 0,
+		self);
+	//	This will execute sky changes.
+	A_BossDeath();
 }
 
 states

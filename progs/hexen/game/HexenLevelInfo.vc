@@ -27,50 +27,6 @@ class HexenLevelInfo : LineSpecialLevelInfo;
 
 //==========================================================================
 //
-//  CheckActivation
-//
-//==========================================================================
-
-bool CheckActivation(int activationType, line_t * line, EntityEx A)
-{
-	int lineActivation;
-
-	lineActivation = GET_SPAC(line->flags);
-	if (lineActivation == SPAC_PTOUCH &&
-		(activationType == SPAC_PCROSS || activationType == SPAC_IMPACT))
-	{
-		lineActivation = activationType;
-	}
-	else if (lineActivation == SPAC_USETHROUGH)
-	{
-		lineActivation = SPAC_USE;
-	}
-	else if (line->special == LNSPEC_Teleport &&
-		lineActivation == SPAC_CROSS && activationType == SPAC_PCROSS &&
-		A && A.bMissile)
-	{
-		// Let missiles use regular player teleports
-		lineActivation = SPAC_PCROSS;
-	}
-	if (lineActivation != activationType)
-	{
-		return false;
-	}
-	if (!A.bIsPlayer && !A.bMissile)
-	{
-		if (lineActivation != SPAC_MCROSS)
-		{
-			// currently, monsters can only activate the MCROSS activation type
-			return false;
-		}
-		if (line->flags & ML_SECRET)
-			return false;	// never open secret doors
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //  GetClassSpawnFlags
 //
 //==========================================================================

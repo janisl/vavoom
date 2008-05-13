@@ -113,6 +113,62 @@ void InitMapInfo()
 				*MapInfo[i].SecretMap + 4));
 		}
 	}
+
+	//	Set up default map info returned for maps that have not defined in
+	// MAPINFO
+	DefaultMap.Name = "Unnamed";
+	DefaultMap.Sky1Texture = GTextureManager.CheckNumForName("sky1",
+		TEXTYPE_Wall, true, true);
+	DefaultMap.FadeTable = NAME_colormap;
+	DefaultMap.HorizWallShade = -8;
+	DefaultMap.VertWallShade = 8;
+	unguard;
+}
+
+//==========================================================================
+//
+//	SetMapDefaults
+//
+//==========================================================================
+
+static void SetMapDefaults(mapInfo_t& Info)
+{
+	guard(SetMapDefaults);
+	Info.LumpName = NAME_None;
+	Info.Name = VStr();
+	Info.LevelNum = 0;
+	Info.Cluster = 0;
+	Info.WarpTrans = 0;
+	Info.NextMap = NAME_None;
+	Info.SecretMap = NAME_None;
+	Info.SongLump = NAME_None;
+	Info.CDTrack = 0;
+	Info.Sky1Texture = GTextureManager.DefaultTexture;
+	Info.Sky2Texture = GTextureManager.DefaultTexture;
+	Info.Sky1ScrollDelta = 0;
+	Info.Sky2ScrollDelta = 0;
+	Info.SkyBox = NAME_None;
+	Info.FadeTable = NAME_colormap;
+	Info.Fade = 0;
+	Info.OutsideFog = 0;
+	Info.Gravity = 0;
+	Info.AirControl = 0;
+	Info.Flags = 0;
+	Info.Flags2 = 0;
+	Info.TitlePatch = NAME_None;
+	Info.ParTime = 0;
+	Info.SuckTime = 0;
+	Info.HorizWallShade = -8;
+	Info.VertWallShade = 8;
+	Info.Infighting = 0;
+	Info.SpecialActions.Clear();
+	Info.RedirectType = NAME_None;
+	Info.RedirectMap = NAME_None;
+
+	if (GGameInfo->Flags & VGameInfo::GIF_DefaultLaxMonsterActivation)
+	{
+		Info.Flags2 |= MAPINFOF2_LaxMonsterActivation;
+	}
 	unguard;
 }
 
@@ -222,156 +278,13 @@ static void DoCompatFlag(VScriptParser* sc, mapInfo_t* info, int Flag)
 
 //==========================================================================
 //
-//	ParseMap
+//	ParseMapCommon
 //
 //==========================================================================
 
-static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
+static void ParseMapCommon(VScriptParser* sc, mapInfo_t* info, bool& HexenMode)
 {
-	guard(ParseMap);
-	mapInfo_t* info = NULL;
-	if (IsDefault)
-	{
-		info = &DefaultMap;
-		info->LumpName = NAME_None;
-		info->Name = VStr();
-		info->LevelNum = 0;
-		info->Cluster = 0;
-		info->WarpTrans = 0;
-		info->NextMap = NAME_None;
-		info->SecretMap = NAME_None;
-		info->SongLump = NAME_None;
-		info->CDTrack = 0;
-		info->Sky1Texture = GTextureManager.DefaultTexture;
-		info->Sky2Texture = GTextureManager.DefaultTexture;
-		info->Sky1ScrollDelta = 0;
-		info->Sky2ScrollDelta = 0;
-		info->SkyBox = NAME_None;
-		info->FadeTable = NAME_colormap;
-		info->Fade = 0;
-		info->OutsideFog = 0;
-		info->Gravity = 0;
-		info->AirControl = 0;
-		info->Flags = 0;
-		info->Flags2 = 0;
-		info->TitlePatch = NAME_None;
-		info->ParTime = 0;
-		info->SuckTime = 0;
-		info->HorizWallShade = -8;
-		info->VertWallShade = 8;
-		info->Infighting = 0;
-	}
-	else
-	{
-		VName MapLumpName;
-		if (sc->CheckNumber())
-		{
-			//	Map number, for Hexen compatibility
-			HexenMode = true;
-			if (sc->Number < 1 || sc->Number > 99)
-			{
-				sc->Error("Map number out or range");
-			}
-			MapLumpName = va("map%02d", sc->Number);
-		}
-		else
-		{
-			//	Map name
-			sc->ExpectName8();
-			MapLumpName = sc->Name8;
-		}
-
-		//	Check for replaced map info.
-		for (int i = 0; i < MapInfo.Num(); i++)
-		{
-			if (MapLumpName == MapInfo[i].LumpName)
-			{
-				info = &MapInfo[i];
-				break;
-			}
-		}
-		if (!info)
-		{
-			info = &MapInfo.Alloc();
-		}
-
-		// Copy defaults to current map definition
-		info->LumpName = MapLumpName;
-		info->LevelNum = DefaultMap.LevelNum;
-		info->Cluster = DefaultMap.Cluster;
-		info->WarpTrans = DefaultMap.WarpTrans;
-		info->NextMap = DefaultMap.NextMap;
-		info->SecretMap = DefaultMap.SecretMap;
-		info->SongLump = DefaultMap.SongLump;
-		info->CDTrack = DefaultMap.CDTrack;
-		info->Sky1Texture = DefaultMap.Sky1Texture;
-		info->Sky2Texture = DefaultMap.Sky2Texture;
-		info->Sky1ScrollDelta = DefaultMap.Sky1ScrollDelta;
-		info->Sky2ScrollDelta = DefaultMap.Sky2ScrollDelta;
-		info->SkyBox = DefaultMap.SkyBox;
-		info->FadeTable = DefaultMap.FadeTable;
-		info->Fade = DefaultMap.Fade;
-		info->OutsideFog = DefaultMap.OutsideFog;
-		info->Gravity = DefaultMap.Gravity;
-		info->AirControl = DefaultMap.AirControl;
-		info->Flags = DefaultMap.Flags;
-		info->Flags2 = DefaultMap.Flags2;
-		info->TitlePatch = DefaultMap.TitlePatch;
-		info->ParTime = DefaultMap.ParTime;
-		info->SuckTime = DefaultMap.SuckTime;
-		info->HorizWallShade = DefaultMap.HorizWallShade;
-		info->VertWallShade = DefaultMap.VertWallShade;
-		info->Infighting = DefaultMap.Infighting;
-
-		if (HexenMode)
-		{
-			info->Flags |= MAPINFOF_NoIntermission |
-				MAPINFOF_FallingDamage |
-				MAPINFOF_MonsterFallingDamage |
-				MAPINFOF_NoAutoSndSeq |
-				MAPINFOF_ActivateOwnSpecial |
-				MAPINFOF_MissilesActivateImpact |
-				MAPINFOF_InfiniteFlightPowerup;
-		}
-
-		// Map name must follow the number
-		if (sc->Check("lookup"))
-		{
-			info->Flags |= MAPINFOF_LookupName;
-			sc->ExpectString();
-			info->Name = sc->String.ToLower();
-		}
-		else
-		{
-			info->Flags &= ~MAPINFOF_LookupName;
-			sc->ExpectString();
-			info->Name = sc->String;
-		}
-
-		//	Set song lump name from SNDINFO script
-		for (int i = 0; i < MapSongList.Num(); i++)
-		{
-			if (MapSongList[i].MapName == info->LumpName)
-			{
-				info->SongLump = MapSongList[i].SongName;
-			}
-		}
-
-		//	Set default levelnum for this map.
-		const char* mn = *MapLumpName;
-		if (mn[0] == 'm' && mn[1] == 'a' && mn[2] == 'p' && mn[5] == 0)
-		{
-			int num = atoi(mn + 3);
-			if  (num >= 1 && num <= 99)
-				info->LevelNum = num;
-		}
-		else if (mn[0] == 'e' && mn[1] >= '0' && mn[1] <= '9' &&
-			mn[2] == 'm' && mn[3] >= '0' && mn[3] <= '9')
-		{
-			info->LevelNum = (mn[1] - '1') * 10 + (mn[3] - '0');
-		}
-	}
-
+	guard(ParseMapCommon);
 	// Process optional tokens
 	while (1)
 	{
@@ -753,6 +666,51 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			info->Infighting = 1;
 		}
+		else if (sc->Check("specialaction"))
+		{
+			VMapSpecialAction& A = info->SpecialActions.Alloc();
+			sc->SetCMode(true);
+			sc->ExpectString();
+			A.TypeName = *sc->String.ToLower();
+			sc->Expect(",");
+			sc->ExpectString();
+			A.Special = 0;
+			for (int i = 0; i < LineSpecialInfos.Num(); i++)
+			{
+				if (!LineSpecialInfos[i].Name.ICmp(sc->String))
+				{
+					A.Special = LineSpecialInfos[i].Number;
+					break;
+				}
+			}
+			if (!A.Special)
+			{
+				GCon->Logf("Unknown action special %s", *sc->String);
+			}
+			memset(A.Args, 0, sizeof(A.Args));
+			for (int i = 0; i < 5 && sc->Check(","); i++)
+			{
+				sc->ExpectNumber();
+				A.Args[i] = sc->Number;
+			}
+			sc->SetCMode(false);
+		}
+		else if (sc->Check("redirect"))
+		{
+			sc->ExpectString();
+			info->RedirectType = *sc->String.ToLower();
+			info->RedirectMap = ParseNextMapName(sc, HexenMode);
+		}
+		else if (sc->Check("strictmonsteractivation"))
+		{
+			info->Flags2 &= ~MAPINFOF2_LaxMonsterActivation;
+			info->Flags2 |= MAPINFOF2_HaveMonsterActivation;
+		}
+		else if (sc->Check("laxmonsteractivation"))
+		{
+			info->Flags2 |= MAPINFOF2_LaxMonsterActivation;
+			info->Flags2 |= MAPINFOF2_HaveMonsterActivation;
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -793,20 +751,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			GCon->Logf("Unimplemented MAPINFO comand noinventorybar");
 		}
-		else if (sc->Check("redirect"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand redirect");
-			sc->ExpectString();
-			ParseNextMapName(sc, HexenMode);
-		}
-		else if (sc->Check("strictmonsteractivation"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand strictmonsteractivation");
-		}
-		else if (sc->Check("laxmonsteractivation"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand laxmonsteractivation");
-		}
 		else if (sc->Check("interpic"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand interpic");
@@ -831,19 +775,6 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		{
 			GCon->Logf("Unimplemented MAPINFO comand airsupply");
 			sc->ExpectNumber();
-		}
-		else if (sc->Check("specialaction"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand specialaction");
-			sc->SetCMode(true);
-			sc->ExpectString();
-			sc->Expect(",");
-			sc->ExpectString();
-			for (int i = 0; i < 5 && sc->Check(","); i++)
-			{
-				sc->ExpectNumber();
-			}
-			sc->SetCMode(false);
 		}
 		else if (sc->Check("sndseq"))
 		{
@@ -937,21 +868,149 @@ static void ParseMap(VScriptParser* sc, bool IsDefault, bool& HexenMode)
 		}
 	}
 
+	//	Second sky defaults to first sky
+	if (info->Sky2Texture == GTextureManager.DefaultTexture)
+	{
+		info->Sky2Texture = info->Sky1Texture;
+	}
+
 	if (info->Flags & MAPINFOF_DoubleSky)
 	{
 		GTextureManager.SetFrontSkyLayer(info->Sky1Texture);
 	}
+	unguard;
+}
 
-	if (!IsDefault)
+//==========================================================================
+//
+//	ParseMap
+//
+//==========================================================================
+
+static void ParseMap(VScriptParser* sc, bool& HexenMode, mapInfo_t& Default)
+{
+	guard(ParseMap);
+	mapInfo_t* info = NULL;
+	VName MapLumpName;
+	if (sc->CheckNumber())
 	{
-		//	Avoid duplicate levelnums, later one takes precedance.
-		for (int i = 0; i < MapInfo.Num(); i++)
+		//	Map number, for Hexen compatibility
+		HexenMode = true;
+		if (sc->Number < 1 || sc->Number > 99)
 		{
-			if (MapInfo[i].LevelNum == info->LevelNum &&
-				&MapInfo[i] != info)
-			{
-				MapInfo[i].LevelNum = 0;
-			}
+			sc->Error("Map number out or range");
+		}
+		MapLumpName = va("map%02d", sc->Number);
+	}
+	else
+	{
+		//	Map name
+		sc->ExpectName8();
+		MapLumpName = sc->Name8;
+	}
+
+	//	Check for replaced map info.
+	for (int i = 0; i < MapInfo.Num(); i++)
+	{
+		if (MapLumpName == MapInfo[i].LumpName)
+		{
+			info = &MapInfo[i];
+			break;
+		}
+	}
+	if (!info)
+	{
+		info = &MapInfo.Alloc();
+	}
+
+	// Copy defaults to current map definition
+	info->LumpName = MapLumpName;
+	info->LevelNum = Default.LevelNum;
+	info->Cluster = Default.Cluster;
+	info->WarpTrans = Default.WarpTrans;
+	info->NextMap = Default.NextMap;
+	info->SecretMap = Default.SecretMap;
+	info->SongLump = Default.SongLump;
+	info->CDTrack = Default.CDTrack;
+	info->Sky1Texture = Default.Sky1Texture;
+	info->Sky2Texture = Default.Sky2Texture;
+	info->Sky1ScrollDelta = Default.Sky1ScrollDelta;
+	info->Sky2ScrollDelta = Default.Sky2ScrollDelta;
+	info->SkyBox = Default.SkyBox;
+	info->FadeTable = Default.FadeTable;
+	info->Fade = Default.Fade;
+	info->OutsideFog = Default.OutsideFog;
+	info->Gravity = Default.Gravity;
+	info->AirControl = Default.AirControl;
+	info->Flags = Default.Flags;
+	info->Flags2 = Default.Flags2;
+	info->TitlePatch = Default.TitlePatch;
+	info->ParTime = Default.ParTime;
+	info->SuckTime = Default.SuckTime;
+	info->HorizWallShade = Default.HorizWallShade;
+	info->VertWallShade = Default.VertWallShade;
+	info->Infighting = Default.Infighting;
+	info->SpecialActions = Default.SpecialActions;
+	info->RedirectType = Default.RedirectType;
+	info->RedirectMap = Default.RedirectMap;
+
+	if (HexenMode)
+	{
+		info->Flags |= MAPINFOF_NoIntermission |
+			MAPINFOF_FallingDamage |
+			MAPINFOF_MonsterFallingDamage |
+			MAPINFOF_NoAutoSndSeq |
+			MAPINFOF_ActivateOwnSpecial |
+			MAPINFOF_MissilesActivateImpact |
+			MAPINFOF_InfiniteFlightPowerup;
+	}
+
+	// Map name must follow the number
+	if (sc->Check("lookup"))
+	{
+		info->Flags |= MAPINFOF_LookupName;
+		sc->ExpectString();
+		info->Name = sc->String.ToLower();
+	}
+	else
+	{
+		info->Flags &= ~MAPINFOF_LookupName;
+		sc->ExpectString();
+		info->Name = sc->String;
+	}
+
+	//	Set song lump name from SNDINFO script
+	for (int i = 0; i < MapSongList.Num(); i++)
+	{
+		if (MapSongList[i].MapName == info->LumpName)
+		{
+			info->SongLump = MapSongList[i].SongName;
+		}
+	}
+
+	//	Set default levelnum for this map.
+	const char* mn = *MapLumpName;
+	if (mn[0] == 'm' && mn[1] == 'a' && mn[2] == 'p' && mn[5] == 0)
+	{
+		int num = atoi(mn + 3);
+		if  (num >= 1 && num <= 99)
+			info->LevelNum = num;
+	}
+	else if (mn[0] == 'e' && mn[1] >= '0' && mn[1] <= '9' &&
+		mn[2] == 'm' && mn[3] >= '0' && mn[3] <= '9')
+	{
+		info->LevelNum = (mn[1] - '1') * 10 + (mn[3] - '0');
+	}
+
+	ParseMapCommon(sc, info, HexenMode);
+
+	//	Avoid duplicate levelnums, later one takes precedance.
+	for (int i = 0; i < MapInfo.Num(); i++)
+	{
+		if (MapInfo[i].LevelNum == info->LevelNum &&
+			&MapInfo[i] != info)
+		{
+			MapInfo[i].LevelNum = 0;
 		}
 	}
 	unguard;
@@ -1188,45 +1247,24 @@ static void ParseMapInfo(VScriptParser* sc)
 	guard(ParseMapInfo);
 	bool HexenMode = false;
 
-	// Put defaults into MapInfo[0]
-	mapInfo_t* info = &DefaultMap;
-	info->Name = "Unnamed";
-	info->Cluster = 0;
-	info->WarpTrans = 0;
-	info->NextMap = NAME_None;
-	info->CDTrack = 0;
-	info->Sky1Texture = GTextureManager.CheckNumForName("sky1",
-		TEXTYPE_Wall, true, false);
-	if (info->Sky1Texture < 0)
-	{
-		info->Sky1Texture = GTextureManager.DefaultTexture;
-	}
-	info->Sky2Texture = info->Sky1Texture;
-	info->Sky1ScrollDelta = 0.0;
-	info->Sky2ScrollDelta = 0.0;
-	info->FadeTable = NAME_colormap;
-	info->Fade = 0;
-	info->OutsideFog = 0;
-	info->Gravity = 0.0;
-	info->AirControl = 0.0;
-	info->Flags = 0;
-	info->Flags2 = 0;
-	info->TitlePatch = NAME_None;
-	info->ParTime = 0;
-	info->SuckTime = 0;
-	info->HorizWallShade = -8;
-	info->VertWallShade = 8;
-	info->Infighting = 0;
+	//	Set up default map info.
+	mapInfo_t Default;
+	SetMapDefaults(Default);
 
 	while (!sc->AtEnd())
 	{
 		if (sc->Check("map"))
 		{
-			ParseMap(sc, false, HexenMode);
+			ParseMap(sc, HexenMode, Default);
 		}
 		else if (sc->Check("defaultmap"))
 		{
-			ParseMap(sc, true, HexenMode);
+			SetMapDefaults(Default);
+			ParseMapCommon(sc, &Default, HexenMode);
+		}
+		else if (sc->Check("adddefaultmap"))
+		{
+			ParseMapCommon(sc, &Default, HexenMode);
 		}
 		else if (sc->Check("clusterdef"))
 		{

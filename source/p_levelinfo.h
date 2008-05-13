@@ -107,8 +107,10 @@ class VLevelInfo : public VThinker
 		LIF2_CompatDropOff				= 0x00000800,
 		LIF2_CompatBoomScroll			= 0x00001000,
 		LIF2_CompatInvisibility			= 0x00002000,
-		LIF2_ClusterHub					= 0x00004000,
-		LIF2_BegunPlay					= 0x00008000,
+		LIF2_LaxMonsterActivation		= 0x00004000,
+		LIF2_HaveMonsterActivation		= 0x00008000,
+		LIF2_ClusterHub					= 0x00010000,
+		LIF2_BegunPlay					= 0x00020000,
 	};
 	vuint32			LevelInfoFlags2;
 
@@ -130,6 +132,7 @@ class VLevelInfo : public VThinker
 	float			Gravity;								// Level Gravity
 	float			AirControl;
 	int				Infighting;
+	TArray<VMapSpecialAction>	SpecialActions;
 
 	VLevelInfo();
 
