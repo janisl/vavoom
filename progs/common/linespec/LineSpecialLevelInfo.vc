@@ -493,6 +493,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_TextureChangeDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Line, A);
 		break;
+	case LNSPEC_StartConversation:
+		buttonSuccess = EV_StartConversation(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
 	case LNSPEC_ThingStop:
 		buttonSuccess = EV_ThingStop(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
@@ -5628,6 +5631,38 @@ final bool EV_SendToCommunicator(EntityEx A, int Arg1, int Arg2, int Arg3,
 			A.Player.cprint("Incoming Message from BlackBird");
 		}
 		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//  EV_StartConversation
+//
+//==========================================================================
+
+final bool EV_StartConversation(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, EntityEx A)
+{
+	EntityEx	Ent;
+
+	if (!A || !A.bIsPlayer)
+	{
+		return false;
+	}
+	for (Ent = EntityEx(FindMobjFromTID(Arg1, none)); Ent;
+		Ent = EntityEx(FindMobjFromTID(Arg1, Ent)))
+	{
+		if (StartConversation(A, Ent))
+		{
+			if (Arg2)
+			{
+				A.Angles.yaw = atan2(Ent.Origin.y - A.Origin.y,
+					Ent.Origin.x - A.Origin.x);
+				A.Player.bFixAngle = true;
+			}
+			return true;
+		}
 	}
 	return false;
 }

@@ -442,7 +442,8 @@ enum
 	LNSPEC_DoorLockedRaise,
 	LNSPEC_DoorAnimated,
 
-	LNSPEC_ThingStop = 19,
+	LNSPEC_StartConversation = 18,
+	LNSPEC_ThingStop,
 	LNSPEC_FloorLowerByValue,// 20
 	LNSPEC_FloorLowerToLowest,
 	LNSPEC_FloorLowerToNearest,
