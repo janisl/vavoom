@@ -368,7 +368,9 @@ final bool LookForPlayers(bool allaround)
 		}
 
 		if (!P.bSpawned || !P.MO)
+		{
 			continue;	//  not spawned yet
+		}
 
 		if (PlayerEx(P).bNoTarget)
 		{
@@ -377,10 +379,20 @@ final bool LookForPlayers(bool allaround)
 		}
 
 		if (P.Health <= 0)
+		{
 			continue;	// dead
+		}
+
+		if (!EntityEx(P.MO).bShootable)
+		{
+			//	Not shootable.
+			continue;
+		}
 
 		if (!CanSee(P.MO))
+		{
 			continue;	//  out of sight
+		}
 
 		if (!allaround)
 		{
