@@ -782,7 +782,7 @@ void SV_SaveGame(int slot, const char* description)
 	*Saver << Seg;
 
 	// Write current map and difficulty
-	byte Skill = (byte)gameskill;
+	byte Skill = (byte)GGameInfo->gameskill;
 	*Saver << Skill;
 	*Saver << GLevel->MapName;
 
@@ -858,11 +858,11 @@ void SV_LoadGame(int slot)
 
 	AssertSegment(ASEG_GAME_HEADER);
 
-	gameskill = (skill_t)Streamer<byte>(*Loader);
+	GGameInfo->gameskill = Streamer<byte>(*Loader);
 	*Loader << mapname;
 
 	//	Init skill hacks
-	GGameInfo->eventInitNewGame(gameskill);
+	GGameInfo->eventInitNewGame(GGameInfo->gameskill);
 
 	AssertSegment(ASEG_END);
 

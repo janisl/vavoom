@@ -62,8 +62,6 @@ int				sv_load_num_players;
 
 VBasePlayer*	GPlayersBase[MAXPLAYERS];
 
-skill_t         gameskill; 
-
 bool			paused;
 
 vuint8			deathmatch = false;   	// only if started as net death
@@ -1070,7 +1068,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	netgame = svs.max_clients > 1;
 	deathmatch = DeathMatch;
 
-	GGameInfo->gameskill = gameskill;
 	GGameInfo->netgame = netgame;
 	GGameInfo->deathmatch = deathmatch;
 
@@ -1583,9 +1580,9 @@ COMMAND(Map)
 		Skill = sk_nightmare;
 
 	// Set up a bunch of globals
-	gameskill = (skill_t)(int)Skill;
+	GGameInfo->gameskill = (skill_t)(int)Skill;
 	GGameInfo->netgame = svs.max_clients > 1;
-	GGameInfo->eventInitNewGame(gameskill);
+	GGameInfo->eventInitNewGame(GGameInfo->gameskill);
 
 	SV_SpawnServer(*mapname, true, false);
 #ifdef CLIENT
@@ -1613,9 +1610,9 @@ bool Host_StartTitleMap()
 	// Default the player start spot group to 0
 	RebornPosition = 0;
 	GGameInfo->RebornPosition = RebornPosition;
-	gameskill = sk_medium;
+	GGameInfo->gameskill = sk_medium;
 	GGameInfo->netgame = false;
-	GGameInfo->eventInitNewGame(gameskill);
+	GGameInfo->eventInitNewGame(GGameInfo->gameskill);
 
 	SV_SpawnServer("titlemap", true, true);
 #ifdef CLIENT
