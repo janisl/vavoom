@@ -558,8 +558,8 @@ enum
 	LNSPEC_PlaneUpNearestWaitDownStay,
 	LNSPEC_NoiseAlert,
 	LNSPEC_SendToCommunicator,
-
-	LNSPEC_ThingChangeTID = 176,
+	LNSPEC_ThingProjectileIntercept,
+	LNSPEC_ThingChangeTID,
 	LNSPEC_ThingHate,
 	LNSPEC_ThingProjectileAimed,
 	LNSPEC_ChangeSkill,
@@ -1443,16 +1443,34 @@ native static final float AngleMod180(float angle);
 native static final int abs(int val);
 //  Absolute value
 native static final float fabs(float val);
+//  Minimal value
+native static final int Min(int v1, int v2);
+//  Minimal value
+native static final float FMin(float v1, float v2);
+//  Maximal value
+native static final int Max(int v1, int v2);
+//  Maximal value
+native static final float FMax(float v1, float v2);
+//  Clamped value
+native static final int Clamp(int Val, int Min, int Max);
+//  Clamped value
+native static final float FClamp(float Val, float Min, float Max);
 //  Sine
 native static final float sin(float angle);
 //  Cosine
 native static final float cos(float angle);
 //  Tangent
 native static final float tan(float angle);
+//  Arcsine
+native static final float asin(float x);
+//  Arccosine
+native static final float acos(float x);
 //  Arctangent
 native static final float atan(float slope);
 //  Arctangent
 native static final float atan2(float y, float x);
+//  Square root
+native static final float sqrt(float x);
 //  Vector length
 native static final float Length(TVec vec);
 //  Normalises vector
@@ -1477,6 +1495,9 @@ native static final int PointOnPlaneSide(TVec point, TPlane * plane);
 native static final TVec RotateDirectionVector(TVec vec, TAVec rot);
 //  Rotates vector around Z axis
 native static final void VectorRotateAroundZ(TVec * vec, float angle);
+//	Rotates vector around another vector
+native static final TVec RotateVectorAroundVector(TVec Vector, TVec Axis,
+	float angle);
 
 //
 //  Random numbers

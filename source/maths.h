@@ -84,6 +84,7 @@ void AngleVector(const TAVec &angles, TVec &forward);
 void VectorAngles(const TVec &vec, TAVec &angles);
 void VectorsAngles(const TVec &forward, const TVec &right, const TVec &up,
 	TAVec &angles);
+TVec RotateVectorAroundVector(const TVec&, const TVec&, float);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
@@ -100,6 +101,16 @@ inline float mcos(float angle)
 inline float mtan(float angle)
 {
 	return tan(DEG2RAD(angle));
+}
+
+inline float masin(float x)
+{
+	return RAD2DEG(asin(x));
+}
+
+inline float macos(float x)
+{
+	return RAD2DEG(acos(x));
 }
 
 inline float matan(float y, float x)

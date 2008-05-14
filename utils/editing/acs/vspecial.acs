@@ -113,6 +113,7 @@ special
 	172:Plat_UpNearestWaitDownStay(3),
 	173:NoiseAlert(2),
 	174:SendToCommunicator(4),
+	175:Thing_ProjectileIntercept(5),
 	176:Thing_ChangeTID(2),
 	177:Thing_Hate(2,3),
 	178:Thing_ProjectileAimed(4,5),
@@ -184,7 +185,3 @@ special
 	253:Ceiling_LowerToLowest(2),
 	254:Ceiling_LowerToFloor(2),
 	255:Ceiling_CrushRaiseAndStaySilA(4);
-/*
-special
-	175:Thing_ProjectileIntercept(5),
-*/

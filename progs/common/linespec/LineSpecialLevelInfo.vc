@@ -906,6 +906,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_SendToCommunicator(A, Arg1, Arg2, Arg3, Arg4,
 			Arg5, Side);
 		break;
+	case LNSPEC_ThingProjectileIntercept:
+		buttonSuccess = EV_ThingProjectileIntercept(Arg1, Arg2, Arg3, Arg4,
+			Arg5, A);
+		break;
 	case LNSPEC_ThingChangeTID:
 		buttonSuccess = EV_ThingChangeTID(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
@@ -3719,7 +3723,7 @@ final bool EV_ThingProjectile(int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5, bool gravity, int newtid, name TypeName, Entity Activator)
 {
 	return DoThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, gravity, newtid,
-		TypeName, Activator, 0, none);
+		TypeName, Activator, 0, none, false);
 }
 
 //==========================================================================
@@ -3732,7 +3736,20 @@ final bool EV_ThingProjectileAimed(int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5, Entity Activator)
 {
 	return DoThingProjectile(Arg1, Arg2, 0, Arg3, 0, 0, Arg5, '', Activator,
-		Arg4, Activator);
+		Arg4, Activator, false);
+}
+
+//==========================================================================
+//
+//	EV_ThingProjectileIntercept
+//
+//==========================================================================
+
+final bool EV_ThingProjectileIntercept(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5, Entity Activator)
+{
+	return DoThingProjectile(Arg1, Arg2, 0, Arg3, 0, 0, Arg5, '', Activator,
+		Arg4, Activator, true);
 }
 
 //==========================================================================
@@ -3743,7 +3760,7 @@ final bool EV_ThingProjectileAimed(int Arg1, int Arg2, int Arg3, int Arg4,
 
 final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 	int AVSpeed, bool gravity, int newtid, name TypeName, Entity Activator,
-	int DestTID, Entity ForceDest)
+	int DestTID, Entity ForceDest, bool Intercept)
 {
 	float		angle;
 	float		speed;
@@ -3798,8 +3815,50 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 		{
 			TVec TargOrg = Targ.Origin + vector(0.0, 0.0, Targ.Height / 2.0);
 			TVec Delta = TargOrg - newA.Origin;
-			newA.Angles.yaw = atan2(Delta.y, Delta.x);
-			newA.Velocity = Normalise(Delta) * speed * 35.0;
+			TVec TargVel = Targ.Velocity;
+			if (!Targ.bNoGravity && Targ.WaterLevel < 3)
+			{
+				// If the target is subject to gravity and not underwater,
+				// assume that it isn't moving vertically. Thanks to gravity,
+				// even if we did consider the vertical component of the target's
+				// velocity, we would still miss more often than not.
+				TargVel.z = 0.0;
+			}
+
+			if (Intercept && speed > 0.0 && (TargVel.x || TargVel.y || TargVel.z))
+			{
+				// Aiming at the target's position some time in the future
+				// is basically just an application of the law of sines:
+				//     a/sin(A) = b/sin(B)
+
+				float Dist = Length(Delta);
+				float TargSpeed = Length(TargVel) / 35.0;
+				float YDotX = DotProduct(-Delta, TargVel) / 35.0;
+				float a = acos(FClamp(YDotX / TargSpeed / Dist, -1.0, 1.0));
+				float Multiplier = (Random() - Random()) * 0.1 + 1.1;
+				float SinB = FClamp(TargSpeed * Multiplier * sin(a) / speed, -1.0, 1.0);
+
+				//	Use the cross product of two of the triangle's sides to
+				// get a rotation vector.
+				TVec rv = CrossProduct(TargVel, Delta);
+				//	The vector must be normalized.
+				rv = Normalise(rv);
+				//	Rotate around this vector.
+				TVec AimVec = RotateVectorAroundVector(Delta, rv, asin(SinB));
+				// And make the projectile follow that vector at the desired speed.
+				float AimScale = speed / Dist * 35.0;
+				newA.Velocity = AimVec * AimScale;
+				newA.Angles.yaw = atan2(newA.Velocity.y, newA.Velocity.x);
+			}
+			else
+			{
+				newA.Angles.yaw = atan2(Delta.y, Delta.x);
+				newA.Velocity = Normalise(Delta) * speed * 35.0;
+			}
+			if (newA.bSeekerMissile)
+			{
+				newA.Tracer = EntityEx(Targ);
+			}
 		}
 		else
 		{

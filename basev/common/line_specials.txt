@@ -104,6 +104,7 @@
 172	Plat_UpNearestWaitDownStay
 173	NoiseAlert
 174	SendToCommunicator
+175	Thing_ProjectileIntercept
 176	Thing_ChangeTID
 177	Thing_Hate
 178	Thing_ProjectileAimed

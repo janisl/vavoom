@@ -567,6 +567,50 @@ IMPLEMENT_FUNCTION(VObject, fabs)
 	RET_FLOAT(fabs(i));
 }
 
+IMPLEMENT_FUNCTION(VObject, Min)
+{
+	P_GET_INT(v2);
+	P_GET_INT(v1);
+	RET_INT(MIN(v1, v2));
+}
+
+IMPLEMENT_FUNCTION(VObject, FMin)
+{
+	P_GET_FLOAT(v2);
+	P_GET_FLOAT(v1);
+	RET_FLOAT(MIN(v1, v2));
+}
+
+IMPLEMENT_FUNCTION(VObject, Max)
+{
+	P_GET_INT(v2);
+	P_GET_INT(v1);
+	RET_INT(MAX(v1, v2));
+}
+
+IMPLEMENT_FUNCTION(VObject, FMax)
+{
+	P_GET_FLOAT(v2);
+	P_GET_FLOAT(v1);
+	RET_FLOAT(MAX(v1, v2));
+}
+
+IMPLEMENT_FUNCTION(VObject, Clamp)
+{
+	P_GET_INT(Max);
+	P_GET_INT(Min);
+	P_GET_INT(Val);
+	RET_INT(MID(Min, Val, Max));
+}
+
+IMPLEMENT_FUNCTION(VObject, FClamp)
+{
+	P_GET_FLOAT(Max);
+	P_GET_FLOAT(Min);
+	P_GET_FLOAT(Val);
+	RET_FLOAT(MID(Min, Val, Max));
+}
+
 IMPLEMENT_FUNCTION(VObject, sin)
 {
 	P_GET_FLOAT(an);
@@ -585,6 +629,18 @@ IMPLEMENT_FUNCTION(VObject, tan)
 	RET_FLOAT(mtan(an));
 }
 
+IMPLEMENT_FUNCTION(VObject, asin)
+{
+	P_GET_FLOAT(x);
+	RET_FLOAT(masin(x));
+}
+
+IMPLEMENT_FUNCTION(VObject, acos)
+{
+	P_GET_FLOAT(x);
+	RET_FLOAT(acos(x));
+}
+
 IMPLEMENT_FUNCTION(VObject, atan)
 {
 	P_GET_FLOAT(slope);
@@ -596,6 +652,12 @@ IMPLEMENT_FUNCTION(VObject, atan2)
 	P_GET_FLOAT(x);
 	P_GET_FLOAT(y);
 	RET_FLOAT(matan(y, x));
+}
+
+IMPLEMENT_FUNCTION(VObject, sqrt)
+{
+	P_GET_FLOAT(x);
+	RET_FLOAT(sqrt(x));
 }
 
 IMPLEMENT_FUNCTION(VObject, Length)
@@ -687,6 +749,14 @@ IMPLEMENT_FUNCTION(VObject, VectorRotateAroundZ)
 
 	vec->x = dstx;
 	vec->y = dsty;
+}
+
+IMPLEMENT_FUNCTION(VObject, RotateVectorAroundVector)
+{
+	P_GET_FLOAT(Angle);
+	P_GET_VEC(Axis);
+	P_GET_VEC(Vector);
+	RET_VEC(RotateVectorAroundVector(Vector, Axis, Angle));
 }
 
 //**************************************************************************
