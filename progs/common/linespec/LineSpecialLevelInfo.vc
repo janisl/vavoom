@@ -493,6 +493,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_TextureChangeDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Line, A);
 		break;
+	case LNSPEC_Autosave:
+		AutoSave();
+		buttonSuccess = true;
+		break;
 	case LNSPEC_ThingRaise:
 		buttonSuccess = EV_ThingRaise(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;

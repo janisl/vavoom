@@ -441,6 +441,7 @@ enum
 	LNSPEC_DoorRaise,
 	LNSPEC_DoorLockedRaise,
 	LNSPEC_DoorAnimated,
+	LNSPEC_Autosave,
 
 	LNSPEC_ThingRaise = 17,
 	LNSPEC_StartConversation,

@@ -9,6 +9,7 @@
 12	Door_Raise
 13	Door_LockedRaise
 14	Door_Animated
+15	Autosave
 17	Thing_Raise
 18	StartConversation
 19	Thing_Stop

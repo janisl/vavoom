@@ -33,8 +33,6 @@
 
 #define TOCENTRE				-128
 
-#define REBORN_DESCRIPTION		"TEMP GAME"
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------

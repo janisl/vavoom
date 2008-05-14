@@ -179,6 +179,7 @@ class VLevelInfo : public VThinker
 	DECLARE_FUNCTION(ChangeSwitchTexture)
 	DECLARE_FUNCTION(ForceLightning)
 	DECLARE_FUNCTION(FindMobjFromTID)
+	DECLARE_FUNCTION(AutoSave)
 
 	void eventSpawnSpecials()
 	{

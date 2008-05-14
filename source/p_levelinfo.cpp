@@ -538,3 +538,12 @@ IMPLEMENT_FUNCTION(VLevelInfo, FindMobjFromTID)
 	P_GET_SELF;
 	RET_REF(Self->FindMobjFromTID(tid, Prev));
 }
+
+IMPLEMENT_FUNCTION(VLevelInfo, AutoSave)
+{
+	P_GET_SELF;
+	if (!netgame)
+	{
+		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
+	}
+}
