@@ -562,8 +562,8 @@ enum
 	LNSPEC_ThingChangeTID = 176,
 	LNSPEC_ThingHate,
 	LNSPEC_ThingProjectileAimed,
-
-	LNSPEC_ThingSetTranslation = 180,// 180
+	LNSPEC_ChangeSkill,
+	LNSPEC_ThingSetTranslation,// 180
 	LNSPEC_PlaneAlign,
 	LNSPEC_LineMirror,
 	LNSPEC_LineAlignCeiling,

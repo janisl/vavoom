@@ -107,6 +107,7 @@
 176	Thing_ChangeTID
 177	Thing_Hate
 178	Thing_ProjectileAimed
+179	ChangeSkill
 180	Thing_SetTranslation
 183	Line_AlignCeiling
 184	Line_AlignFloor

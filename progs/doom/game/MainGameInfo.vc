@@ -75,11 +75,22 @@ void Init()
 
 void InitNewGame(int skill)
 {
-	respawnmonsters = skill == sk_nightmare || GetCvar('RespawnMonsters');
+	SetSkill(skill);
 	nomonsters = GetCvar('NoMonsters');
-	fastparm = skill == sk_nightmare || GetCvar('Fast');
 	bRespawnItems = GetCvar('deathmatch') >= 2;
 	bWeaponsStay = netgame && GetCvar('deathmatch') < 2;
+}
+
+//==========================================================================
+//
+//	SetSkill
+//
+//==========================================================================
+
+void SetSkill(int NewSkill)
+{
+	::SetSkill(NewSkill);
+	respawnmonsters = gameskill == sk_nightmare || GetCvar('RespawnMonsters');
 }
 
 //==========================================================================

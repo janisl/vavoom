@@ -132,6 +132,26 @@ void Init()
 
 //==========================================================================
 //
+//	SetSkill
+//
+//==========================================================================
+
+void SetSkill(int NewSkill)
+{
+	if (NewSkill < sk_baby)
+	{
+		NewSkill = sk_baby;
+	}
+	else if (NewSkill > sk_nightmare)
+	{
+		NewSkill = sk_nightmare;
+	}
+	gameskill = NewSkill;
+	fastparm = gameskill == sk_nightmare || GetCvar('Fast');
+}
+
+//==========================================================================
+//
 //  MakeSlope
 //
 //==========================================================================

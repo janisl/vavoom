@@ -73,9 +73,9 @@ void Init()
 
 void InitNewGame(int skill)
 {
+	SetSkill(skill);
 	respawnmonsters = GetCvar('RespawnMonsters');
 	nomonsters = GetCvar('NoMonsters');
-	fastparm = gameskill == sk_nightmare || GetCvar('Fast');
 	bRespawnItems = !!GetCvar('deathmatch');
 	bWeaponsStay = netgame && !GetCvar('deathmatch');
 }

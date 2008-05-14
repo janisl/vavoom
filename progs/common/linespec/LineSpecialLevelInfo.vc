@@ -916,6 +916,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_ThingProjectileAimed(Arg1, Arg2, Arg3, Arg4, Arg5,
 			A);
 		break;
+	case LNSPEC_ChangeSkill:
+		LineSpecialGameInfo(Game).SetSkill(Arg1);
+		buttonSuccess = true;
+		break;
 	case LNSPEC_ThingSetTranslation:
 		buttonSuccess = EV_ThingSetTranslation(Arg1, Arg2, Arg3, Arg4, Arg5,
 			A);

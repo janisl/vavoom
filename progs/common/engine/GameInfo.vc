@@ -32,7 +32,7 @@ name				GenericConScript;
 
 readonly byte		netgame;
 readonly byte		deathmatch;
-readonly byte		gameskill;
+byte				gameskill;
 byte				respawn;
 byte				nomonsters;
 byte				fastparm;
