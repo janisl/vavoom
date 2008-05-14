@@ -620,22 +620,6 @@ final bool CheckForResurrect(bool UseVileStates)
 			float maxdist;
 			bool check;
 
-			if (!Other.bCorpse)
-			{
-				continue;	// not a monster
-			}
-
-			if (Other.StateTime != -1.0)
-			{
-				continue;	// not lying still yet
-			}
-
-			state RaiseState = Other.FindState('Raise');
-			if (!RaiseState)
-			{
-				continue;	// monster doesn't have a raise state
-			}
-
 			maxdist = Other.Radius + Radius;
 
 			if (fabs(Other.Origin.x - viletryx) > maxdist ||
@@ -649,25 +633,14 @@ final bool CheckForResurrect(bool UseVileStates)
 				continue;	//  Con't see, possibly in other region
 			}
 
-			EntityEx CorpseHit = EntityEx(Other);
-			CorpseHit.Velocity.x = 0.0;
-			CorpseHit.Velocity.y = 0.0;
-			float OldHeight = CorpseHit.Height;
-			bool OldSolid = CorpseHit.bSolid;
-			CorpseHit.bSolid = true;
-			CorpseHit.Height = CorpseHit.default.Height;
-			check = CorpseHit.CheckPosition(CorpseHit.Origin);
-			CorpseHit.bSolid = OldSolid;
-			CorpseHit.Height = OldHeight;
-
-			if (!check)
+			if (!EntityEx(Other).DoThingRaise())
 			{
-				continue;	// doesn't fit here
+				continue;
 			}
 
 			// got one!
 			EntityEx temp = Target;
-			Target = CorpseHit;
+			Target = EntityEx(Other);
 			A_FaceTarget();
 			Target = temp;
 
@@ -683,19 +656,7 @@ final bool CheckForResurrect(bool UseVileStates)
 			{
 				SetState(HealState);
 			}
-			CorpseHit.PlaySound('vile/raise', CHAN_BODY);
 
-			CorpseHit.SetState(RaiseState);
-			CorpseHit.Height = CorpseHit.default.Height;
-			CorpseHit.bShootable = true;
-			CorpseHit.bFloat = CorpseHit.default.bFloat;
-			CorpseHit.bNoGravity = CorpseHit.default.bNoGravity;
-			CorpseHit.bDropOff = false;
-			CorpseHit.bSolid = true;
-			CorpseHit.bCorpse = false;
-			CorpseHit.Health = CorpseHit.default.Health;
-			CorpseHit.Target = none;
-			CorpseHit.LastEnemy = none;
 			return true;
 		}
 	}

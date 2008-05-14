@@ -9,6 +9,8 @@
 12	Door_Raise
 13	Door_LockedRaise
 14	Door_Animated
+17	Thing_Raise
+18	StartConversation
 19	Thing_Stop
 20	Floor_LowerByValue
 21	Floor_LowerToLowest
@@ -100,6 +102,7 @@
 171	Sector_SetFloorScale2
 172	Plat_UpNearestWaitDownStay
 173	NoiseAlert
+174	SendToCommunicator
 176	Thing_ChangeTID
 177	Thing_Hate
 178	Thing_ProjectileAimed

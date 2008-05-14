@@ -3438,6 +3438,61 @@ void CalcFakeZMovement(out TVec Ret, float DeltaTime)
 	}
 }
 
+//===========================================================================
+//
+//	DoThingRaise
+//
+//===========================================================================
+
+final bool DoThingRaise()
+{
+	if (!bCorpse)
+	{
+		return false;	// not a monster
+	}
+
+	if (StateTime != -1.0)
+	{
+		return false;	// not lying still yet
+	}
+
+	state RaiseState = FindState('Raise');
+	if (!RaiseState)
+	{
+		return false;	// monster doesn't have a raise state
+	}
+
+	Velocity.x = 0.0;
+	Velocity.y = 0.0;
+	float OldHeight = Height;
+	float OldRadius = Radius;
+	bool OldSolid = bSolid;
+	bSolid = true;
+	Height = default.Height;
+
+	if (!CheckPosition(Origin))
+	{
+		Height = OldHeight;
+		Radius = OldRadius;
+		bSolid = OldSolid;
+		return false;	// doesn't fit here
+	}
+
+	PlaySound('vile/raise', CHAN_BODY);
+
+	SetState(RaiseState);
+	bShootable = true;
+	bFloat = default.bFloat;
+	bNoGravity = default.bNoGravity;
+	bDropOff = false;
+	bSolid = true;
+	bCorpse = false;
+	Health = default.Health;
+	Target = none;
+	LastEnemy = none;
+	return true;
+}
+
 //==========================================================================
 //
 //	GetInfighting

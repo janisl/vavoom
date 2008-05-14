@@ -493,6 +493,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_TextureChangeDoor(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Line, A);
 		break;
+	case LNSPEC_ThingRaise:
+		buttonSuccess = EV_ThingRaise(Arg1, Arg2, Arg3, Arg4, Arg5, A);
+		break;
 	case LNSPEC_StartConversation:
 		buttonSuccess = EV_StartConversation(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
@@ -4639,6 +4642,53 @@ final bool EV_SetPlayerProperty(int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 		return Ret;
 	}
+}
+
+//===========================================================================
+//
+//	EV_ThingRaise
+//
+//===========================================================================
+
+final bool EV_ThingRaise(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
+	EntityEx A)
+{
+	bool Ret = false;
+	if (!Arg1)
+	{
+		if (A)
+		{
+			Ret = DoThingRaise(A);
+		}
+	}
+	else
+	{
+		Entity Ent;
+		for (Ent = FindMobjFromTID(Arg1, none); Ent;
+			Ent = FindMobjFromTID(Arg1, Ent))
+		{
+			if (DoThingRaise(EntityEx(Ent)))
+			{
+				Ret = true;
+			}
+		}
+	}
+	return true;
+}
+
+//===========================================================================
+//
+//	DoThingRaise
+//
+//===========================================================================
+
+final bool DoThingRaise(EntityEx A)
+{
+	if (!A.DoThingRaise())
+	{
+		return false;
+	}
+	return true;
 }
 
 //**************************************************************************
