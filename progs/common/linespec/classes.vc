@@ -164,6 +164,7 @@ enum
 #include "PlaneWatcher.vc"
 #include "Pusher.vc"
 #include "QuakeFocus.vc"
+#include "WallLightTransfer.vc"
 
 #include "SectorAction.vc"
 #include "SecActEnter.vc"

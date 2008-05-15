@@ -117,7 +117,9 @@ void SpawnSpecials()
 	{
 		sector = &XLevel.Sectors[i];
 		if (!sector->special)
+		{
 			continue;
+		}
 		if (sector->special & SECSPEC_SECRET_MASK)
 		{
 			//	Secret sector.
@@ -273,6 +275,10 @@ void SpawnSpecials()
 			break;
 		case LNSPEC_ScrollTextureOffsets:
 			SpawnWallOffsetsScroller(&XLevel.Lines[i]);
+			XLevel.Lines[i].special = 0;
+			break;
+		case LNSPEC_TransferWallLight:
+			SpawnTransferWallLight(&XLevel.Lines[i]);
 			XLevel.Lines[i].special = 0;
 			break;
 		}
@@ -2803,6 +2809,21 @@ final bool EV_LightStop(int Tag)
 		}
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//	SpawnTransferWallLight
+//
+//==========================================================================
+
+final void SpawnTransferWallLight(line_t* Line)
+{
+	WallLightTransfer	Tr;
+
+	Tr = Spawn(WallLightTransfer);
+	Tr.Init(Line->frontsector, Line->arg1, Line->arg2, Line->arg3,
+		Line->arg4, Line->arg5);
 }
 
 //**************************************************************************

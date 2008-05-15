@@ -1,0 +1,117 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class WallLightTransfer : SectorThinker;
+
+enum
+{
+	WLF_SIDE1			= 1,
+	WLF_SIDE2			= 2,
+	WLF_NOFAKECONTRAST	= 4
+};
+
+int				TargetId;
+int				Flags;
+int				LastLight;
+
+//==========================================================================
+//
+//	EV_ThingSpawn
+//
+//==========================================================================
+
+final void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	Sector = InSector;
+	TargetId = Arg1;
+	Flags = Arg2;
+
+	//	Do a manual search, because tags hash is not yet set up.
+	int i;
+	for (i = 0; i < XLevel.NumLines; i++)
+	{
+		if (XLevel.Lines[i].LineTag == TargetId)
+		{
+			line_t* Line = &XLevel.Lines[i];
+			DoTransfer(Line, Sector->params.lightlevel);
+			if (Flags & WLF_SIDE1 && Line->sidenum[0] != -1)
+			{
+				XLevel.Sides[Line->sidenum[0]].Flags |= SDF_ABSLIGHT;
+			}
+			if (Flags & WLF_SIDE2 && Line->sidenum[1] != -1)
+			{
+				XLevel.Sides[Line->sidenum[1]].Flags |= SDF_ABSLIGHT;
+			}
+		}
+	}
+	LastLight = Sector->params.lightlevel;
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	int Light = Sector->params.lightlevel;
+	if (Light != LastLight)
+	{
+		int			Searcher;
+		line_t*		Line;
+
+		Searcher = -1;
+		for (Line = XLevel.FindLine(TargetId, &Searcher); Line;
+			Line = XLevel.FindLine(TargetId, &Searcher))
+		{
+			DoTransfer(Line, Light);
+		}
+		LastLight = Light;
+	}
+}
+
+//==========================================================================
+//
+//	DoTransfer
+//
+//==========================================================================
+
+final void DoTransfer(line_t* Line, int Light)
+{
+	if (Flags & WLF_SIDE1 && Line->sidenum[0] != -1)
+	{
+		XLevel.Sides[Line->sidenum[0]].Light = Light;
+	}
+	if (Flags & WLF_SIDE2 && Line->sidenum[1] != -1)
+	{
+		XLevel.Sides[Line->sidenum[1]].Light = Light;
+	}
+}
+
+defaultproperties
+{
+}
