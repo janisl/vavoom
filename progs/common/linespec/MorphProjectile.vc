@@ -160,9 +160,12 @@ final bool MorphPlayer(Actor victim)
 	Armor.Amount = 0;
 	Armor.SavePercent = 0.0;
 	HexenArmor HArmor = HexenArmor(victim.FindInventory(HexenArmor));
-	for (i = 0; i < 4; i++)
+	if (HArmor)
 	{
-		HArmor.Slots[i] = 0.0;
+		for (i = 0; i < 4; i++)
+		{
+			HArmor.Slots[i] = 0.0;
+		}
 	}
 	Inventory Pw = victim.FindInventory(PowerGhost);
 	if (Pw)
@@ -179,8 +182,8 @@ final bool MorphPlayer(Actor victim)
 	beastMo.bGhost = victim.bGhost;
 	beastMo.bFly = victim.bFly;
 	PlayerEx(victim.Player).MorphTime = MORPHTIME;
-	PlayerEx(victim.Player).ActivateMorphWeapon();
 	PlayerEx(victim.Player).PlayerMorphed(victim);
+	PlayerEx(victim.Player).ActivateMorphWeapon();
 
 	victim.SetState(victim.FindState('FreeTargMobj'));
 
