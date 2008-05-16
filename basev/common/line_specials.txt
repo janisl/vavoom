@@ -99,6 +99,7 @@
 138	Floor_Waggle
 139	Thing_SpawnFacing
 140	Sector_ChangeSound
+169	Generic_Crusher2
 170	Sector_SetCeilingScale2
 171	Sector_SetFloorScale2
 172	Plat_UpNearestWaitDownStay

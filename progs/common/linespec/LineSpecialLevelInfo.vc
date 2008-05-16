@@ -80,6 +80,7 @@ name			DefaultPlatformSound;
 
 bool			bTeleportNewMapBothSides;
 bool			bCheckStrifeStartSpots;
+bool			bDefaultStopOnCrush;
 
 bool			bPuffSpawned;
 
@@ -892,6 +893,10 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_SectorSetPlaneReflection:
 		buttonSuccess = EV_SectorSetPlaneReflection(Arg1, Arg2, Arg3, Arg4,
 			Arg5);
+		break;
+	case LNSPEC_CeilingGenericCrush2:
+		buttonSuccess = EV_DoCeiling(Arg1, Arg2, Arg3, Arg4, Arg5,
+			CeilingMover::CEILEV_GenericCrush2, Line);
 		break;
 	case LNSPEC_SectorSetCeilingScale2:
 		buttonSuccess = EV_SectorSetCeilingScale2(Arg1, Arg2, Arg3, Arg4,

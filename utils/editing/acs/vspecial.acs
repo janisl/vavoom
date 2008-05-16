@@ -108,6 +108,7 @@ special
 	139:Thing_SpawnFacing(2,4),
 	140:Sector_ChangeSound(2),
 	159:Sector_SetPlaneReflection(3),
+	169:Generic_Crusher2(5),
 	170:Sector_SetCeilingScale2(3),
 	171:Sector_SetFloorScale2(3),
 	172:Plat_UpNearestWaitDownStay(3),

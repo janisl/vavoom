@@ -51,7 +51,8 @@ enum
 	CEILEV_GenericChange0,
 	CEILEV_GenericChangeT,
 	CEILEV_GenericChange,
-	CEILEV_GenericCrush
+	CEILEV_GenericCrush,
+	CEILEV_GenericCrush2
 };
 
 int			Type;
@@ -91,6 +92,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Speed = itof(Arg2) * 35.0 / 8.0;
 	Spot = *Sector->lines[0]->v1;
 	SeqName = 'CeilingNormal';
+	bStopOnCrush = LineSpecialLevelInfo(Level).bDefaultStopOnCrush;
 	switch (Type)
 	{
 	case CEILEV_LowerToFloor:
@@ -202,7 +204,14 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight + 8.0;
 		BottomDist = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		bStopOnCrush = true;
+		if (Arg4 == 1)
+		{
+			bStopOnCrush = false;
+		}
+		else if (Arg4 == 2)
+		{
+			bStopOnCrush = true;
+		}
 		break;
 
 	case CEILEV_CrushAndRaise:
@@ -213,7 +222,14 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Spot.z = DestHeight + 8.0;
 		BottomDist = DotProduct(Sector->ceiling.normal, Spot);
 		Direction = -1;
-		bStopOnCrush = true;
+		if (Arg4 == 1)
+		{
+			bStopOnCrush = false;
+		}
+		else if (Arg4 == 2)
+		{
+			bStopOnCrush = true;
+		}
 		break;
 
 	case CEILEV_CrushAndRaiseSilA:
@@ -229,6 +245,14 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		Direction = -1;
 		DnSpeed = itof(Arg2) * 35.0 / 8.0;
 		UpSpeed = itof(Arg3) * 35.0 / 8.0;
+		if (Arg5 == 1)
+		{
+			bStopOnCrush = false;
+		}
+		else if (Arg5 == 2)
+		{
+			bStopOnCrush = true;
+		}
 		break;
 
 	case CEILEV_Generic:
@@ -321,6 +345,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		break;
 
 	case CEILEV_GenericCrush:
+	case CEILEV_GenericCrush2:
 		Type = Arg4 ? CEILEV_CrushAndRaiseSilA : CEILEV_CrushAndRaiseA;
 		Crush = Arg5;	// args[4] = crushing value
 		TopDist = Sector->ceiling.dist;
@@ -331,7 +356,10 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		DnSpeed = itof(Arg2) * 35.0 / 8.0;
 		UpSpeed = itof(Arg3) * 35.0 / 8.0;
 		if (Arg4)
+		{
 			SeqName = 'CeilingSemiSilent';
+		}
+		bStopOnCrush = Type == CEILEV_GenericCrush2;
 		break;
 	}
 	StartCeilingSound();

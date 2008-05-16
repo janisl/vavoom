@@ -553,7 +553,8 @@ enum
 	LNSPEC_SectorSet3dFloor,// 160
 	LNSPEC_Contents,
 
-	LNSPEC_SectorSetCeilingScale2 = 170,// 170
+	LNSPEC_CeilingGenericCrush2 = 169,
+	LNSPEC_SectorSetCeilingScale2,// 170
 	LNSPEC_SectorSetFloorScale2,
 	LNSPEC_PlaneUpNearestWaitDownStay,
 	LNSPEC_NoiseAlert,
