@@ -46,7 +46,7 @@ name GetDefaultDoorSound(sector_t* Sector)
 		}
 
 		string TexName = va("%n", GetTextureName(XLevel.Sides[
-			Sector->lines[i]->sidenum[0]].toptexture));
+			Sector->lines[i]->sidenum[0]].TopTexture));
 		if (StrStartsWith(TexName, "dors"))
 		{
 			SeqName = 'DoorStone';

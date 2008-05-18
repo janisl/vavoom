@@ -142,7 +142,7 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 			{
 				side_t* Side = &Level->Sides[(r_sub->sector->Sky &
 					(SKY_FROM_SIDE - 1)) - 1];
-				Tex = Side->toptexture;
+				Tex = Side->TopTexture;
 				Flip = !!Level->Lines[Side->LineNum].arg3;
 			}
 			if (GTextureManager[Tex]->Type != TEXTYPE_Null)

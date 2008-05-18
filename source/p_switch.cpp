@@ -97,9 +97,9 @@ bool VLevelInfo::ChangeSwitchTexture(int sidenum, bool useAgain,
 	VName DefaultSound, bool& Quest)
 {
 	guard(VLevelInfo::ChangeSwitchTexture);
-	int texTop = XLevel->Sides[sidenum].toptexture;
-	int texMid = XLevel->Sides[sidenum].midtexture;
-	int texBot = XLevel->Sides[sidenum].bottomtexture;
+	int texTop = XLevel->Sides[sidenum].TopTexture;
+	int texMid = XLevel->Sides[sidenum].MidTexture;
+	int texBot = XLevel->Sides[sidenum].BottomTexture;
 
 	for (int  i = 0; i < Switches.Num(); i++)
 	{
@@ -109,17 +109,17 @@ bool VLevelInfo::ChangeSwitchTexture(int sidenum, bool useAgain,
 		if (sw->Tex == texTop)
 		{
 			where = SWITCH_Top;
-			XLevel->Sides[sidenum].toptexture = sw->Frames[0].Texture;
+			XLevel->Sides[sidenum].TopTexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texMid)
 		{
 			where = SWITCH_Middle;
-			XLevel->Sides[sidenum].midtexture = sw->Frames[0].Texture;
+			XLevel->Sides[sidenum].MidTexture = sw->Frames[0].Texture;
 		}
 		else if (sw->Tex == texBot)
 		{
 			where = SWITCH_Bottom;
-			XLevel->Sides[sidenum].bottomtexture = sw->Frames[0].Texture;
+			XLevel->Sides[sidenum].BottomTexture = sw->Frames[0].Texture;
 		}
 		else
 		{
@@ -139,7 +139,7 @@ bool VLevelInfo::ChangeSwitchTexture(int sidenum, bool useAgain,
 
 		if (PlaySound)
 		{
-			SectorStartSound(XLevel->Sides[sidenum].sector, sw->Sound ?
+			SectorStartSound(XLevel->Sides[sidenum].Sector, sw->Sound ?
 				sw->Sound : GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
 		}
 		Quest = sw->Quest;
@@ -222,7 +222,7 @@ void VButton::Tick(float DeltaTime)
 			SwitchDef = Def->PairIndex;
 			Def = Switches[Def->PairIndex];
 			Frame = -1;
-			Level->SectorStartSound(XLevel->Sides[Side].sector,
+			Level->SectorStartSound(XLevel->Sides[Side].Sector,
 				Def->Sound ? Def->Sound :
 				GSoundManager->GetSoundID(DefaultSound), 0, 1, 1);
 			UseAgain = false;
@@ -231,15 +231,15 @@ void VButton::Tick(float DeltaTime)
 		bool KillMe = AdvanceFrame();
 		if (Where == SWITCH_Middle)
 		{
-			XLevel->Sides[Side].midtexture = Def->Frames[Frame].Texture;
+			XLevel->Sides[Side].MidTexture = Def->Frames[Frame].Texture;
 		}
 		else if (Where == SWITCH_Bottom)
 		{
-			XLevel->Sides[Side].bottomtexture = Def->Frames[Frame].Texture;
+			XLevel->Sides[Side].BottomTexture = Def->Frames[Frame].Texture;
 		}
 		else
 		{ // TEXTURE_TOP
-			XLevel->Sides[Side].toptexture = Def->Frames[Frame].Texture;
+			XLevel->Sides[Side].TopTexture = Def->Frames[Frame].Texture;
 		}
 		if (KillMe)
 		{

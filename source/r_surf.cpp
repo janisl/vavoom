@@ -900,12 +900,12 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		dseg->mid = pspart++;
 		sp = dseg->mid;
 
-		VTexture* MTex = GTextureManager(sidedef->midtexture);
+		VTexture* MTex = GTextureManager(sidedef->MidTexture);
 		sp->texinfo.saxis = segdir * TextureSScale(MTex);
 		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(MTex);
 		sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 			seg->offset * TextureSScale(MTex) +
-			sidedef->textureoffset * TextureOffsetSScale(MTex);
+			sidedef->MidTextureOffset * TextureOffsetSScale(MTex);
 		sp->texinfo.Tex = MTex;
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
@@ -928,7 +928,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.toffs = r_ceiling->TexZ;
 		}
 		sp->texinfo.toffs *= TextureTScale(MTex);
-		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(MTex);
+		sp->texinfo.toffs += sidedef->MidRowOffset * TextureOffsetTScale(MTex);
 
 		wv[0].x = wv[1].x = seg->v1->x;
 		wv[0].y = wv[1].y = seg->v1->y;
@@ -944,8 +944,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 		sp->frontTopDist = r_ceiling->dist;
 		sp->frontBotDist = r_floor->dist;
-		sp->textureoffset = sidedef->textureoffset;
-		sp->rowoffset = sidedef->rowoffset;
+		sp->TextureOffset = sidedef->MidTextureOffset;
+		sp->RowOffset = sidedef->MidRowOffset;
 
 		//	Sky above line.
 		dseg->topsky = pspart++;
@@ -988,7 +988,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			}
 		}
 
-		VTexture* TTex = GTextureManager(sidedef->toptexture);
+		VTexture* TTex = GTextureManager(sidedef->TopTexture);
 
 		float back_topz1 = back_ceiling->GetPointZ(*seg->v1);
 		float back_topz2 = back_ceiling->GetPointZ(*seg->v2);
@@ -1021,7 +1021,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(TTex);
 		sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 			seg->offset * TextureSScale(TTex) +
-			sidedef->textureoffset * TextureOffsetSScale(TTex);
+			sidedef->TopTextureOffset * TextureOffsetSScale(TTex);
 		sp->texinfo.Tex = TTex;
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
@@ -1038,7 +1038,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.toffs = back_ceiling->TexZ + TTex->GetScaledHeight();
 		}
 		sp->texinfo.toffs *= TextureTScale(TTex);
-		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(TTex);
+		sp->texinfo.toffs += sidedef->TopRowOffset * TextureOffsetTScale(TTex);
 
 		wv[0].x = wv[1].x = seg->v1->x;
 		wv[0].y = wv[1].y = seg->v1->y;
@@ -1056,8 +1056,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->frontBotDist = r_floor->dist;
 		sp->backTopDist = back_ceiling->dist;
 		sp->backBotDist = back_floor->dist;
-		sp->textureoffset = sidedef->textureoffset;
-		sp->rowoffset = sidedef->rowoffset;
+		sp->TextureOffset = sidedef->TopTextureOffset;
+		sp->RowOffset = sidedef->TopRowOffset;
 
 		//	Sky abowe top
 		dseg->topsky = pspart++;
@@ -1088,12 +1088,12 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		dseg->bot = pspart++;
 		sp = dseg->bot;
 
-		VTexture* BTex = GTextureManager(sidedef->bottomtexture);
+		VTexture* BTex = GTextureManager(sidedef->BottomTexture);
 		sp->texinfo.saxis = segdir * TextureSScale(BTex);
 		sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(BTex);
 		sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 			seg->offset * TextureSScale(BTex) +
-			sidedef->textureoffset * TextureOffsetSScale(BTex);
+			sidedef->BotTextureOffset * TextureOffsetSScale(BTex);
 		sp->texinfo.Tex = BTex;
 		sp->texinfo.Alpha = 1.1;
 		sp->texinfo.Additive = false;
@@ -1111,7 +1111,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.toffs = back_floor->TexZ;
 		}
 		sp->texinfo.toffs *= TextureTScale(BTex);
-		sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(BTex);
+		sp->texinfo.toffs += sidedef->BotRowOffset * TextureOffsetTScale(BTex);
 
 		wv[0].x = wv[1].x = seg->v1->x;
 		wv[0].y = wv[1].y = seg->v1->y;
@@ -1129,19 +1129,19 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->frontBotDist = r_floor->dist;
 		sp->backTopDist = back_ceiling->dist;
 		sp->backBotDist = back_floor->dist;
-		sp->textureoffset = sidedef->textureoffset;
-		sp->rowoffset = sidedef->rowoffset;
+		sp->TextureOffset = sidedef->BotTextureOffset;
+		sp->RowOffset = sidedef->BotRowOffset;
 
 		float midtopz1 = topz1;
 		float midtopz2 = topz2;
 		float midbotz1 = botz1;
 		float midbotz2 = botz2;
-		if (topz1 > back_topz1 && sidedef->toptexture > 0)
+		if (topz1 > back_topz1 && sidedef->TopTexture > 0)
 		{
 			midtopz1 = back_topz1;
 			midtopz2 = back_topz2;
 		}
-		if (botz1 < back_botz1 && sidedef->bottomtexture > 0)
+		if (botz1 < back_botz1 && sidedef->BottomTexture > 0)
 		{
 			midbotz1 = back_botz1;
 			midbotz2 = back_botz2;
@@ -1150,12 +1150,12 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		dseg->mid = pspart++;
 		sp = dseg->mid;
 
-		VTexture* MTex = GTextureManager(sidedef->midtexture);
+		VTexture* MTex = GTextureManager(sidedef->MidTexture);
 		sp->texinfo.Tex = MTex;
 		sp->texinfo.ColourMap = 0;
 		if (MTex->Type != TEXTYPE_Null)
 		{
-			// masked midtexture
+			// masked MidTexture
 			float texh = MTex->GetScaledHeight();
 
 			float			z_org;
@@ -1164,7 +1164,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(MTex);
 			sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 				seg->offset * TextureSScale(MTex) +
-				sidedef->textureoffset * TextureOffsetSScale(MTex);
+				sidedef->MidTextureOffset * TextureOffsetSScale(MTex);
 			sp->texinfo.Alpha = linedef->alpha;
 			sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
 
@@ -1179,7 +1179,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				// top of texture at top
 				z_org = MIN(r_ceiling->TexZ, back_ceiling->TexZ);
 			}
-			z_org += sidedef->rowoffset * (!MTex->bWorldPanning ?
+			z_org += sidedef->MidRowOffset * (!MTex->bWorldPanning ?
 				1.0 : 1.0 / MTex->TScale);
 
 			sp->texinfo.toffs = z_org * TextureTScale(MTex);
@@ -1211,8 +1211,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->frontBotDist = r_floor->dist;
 		sp->backTopDist = back_ceiling->dist;
 		sp->backBotDist = back_floor->dist;
-		sp->textureoffset = sidedef->textureoffset;
-		sp->rowoffset = sidedef->rowoffset;
+		sp->TextureOffset = sidedef->MidTextureOffset;
+		sp->RowOffset = sidedef->MidRowOffset;
 
 		sec_region_t *reg;
 		for (reg = seg->backsector->topregion; reg->prev; reg = reg->prev)
@@ -1230,15 +1230,15 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			float extrabotz1 = extrabot->GetPointZ(*seg->v1);
 			float extrabotz2 = extrabot->GetPointZ(*seg->v2);
 
-			VTexture* MTex = GTextureManager(extraside->midtexture);
+			VTexture* MTex = GTextureManager(extraside->MidTexture);
 			sp->texinfo.saxis = segdir * TextureSScale(MTex);
 			sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(MTex);
 			sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 				seg->offset * TextureSScale(MTex) +
-				sidedef->textureoffset * TextureOffsetSScale(MTex);
+				sidedef->MidTextureOffset * TextureOffsetSScale(MTex);
 
 			sp->texinfo.toffs = extratop->TexZ *
-				TextureTScale(MTex) + sidedef->rowoffset *
+				TextureTScale(MTex) + sidedef->MidRowOffset *
 				TextureOffsetTScale(MTex);
 			sp->texinfo.Tex = MTex;
 			sp->texinfo.Alpha = extrabot->Alpha < 1.0 ? extrabot->Alpha : 1.1;
@@ -1261,8 +1261,8 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			sp->frontBotDist = r_floor->dist;
 			sp->backTopDist = extratop->dist;
 			sp->backBotDist = extrabot->dist;
-			sp->textureoffset = sidedef->textureoffset;
-			sp->rowoffset = sidedef->rowoffset;
+			sp->TextureOffset = sidedef->MidTextureOffset;
+			sp->RowOffset = sidedef->MidRowOffset;
 		}
 	}
 	unguard;
@@ -1274,12 +1274,12 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 //
 //==========================================================================
 
-void VRenderLevel::UpdateRowOffset(segpart_t *sp, float rowoffset)
+void VRenderLevel::UpdateRowOffset(segpart_t *sp, float RowOffset)
 {
 	guard(VRenderLevel::UpdateRowOffset);
-	sp->texinfo.toffs += (rowoffset - sp->rowoffset) *
+	sp->texinfo.toffs += (RowOffset - sp->RowOffset) *
 		TextureOffsetTScale(sp->texinfo.Tex);
-	sp->rowoffset = rowoffset;
+	sp->RowOffset = RowOffset;
 	FlushSurfCaches(sp->surfs);
 	InitSurfs(sp->surfs, &sp->texinfo, NULL, r_sub);
 	unguard;
@@ -1291,12 +1291,12 @@ void VRenderLevel::UpdateRowOffset(segpart_t *sp, float rowoffset)
 //
 //==========================================================================
 
-void VRenderLevel::UpdateTextureOffset(segpart_t* sp, float textureoffset)
+void VRenderLevel::UpdateTextureOffset(segpart_t* sp, float TextureOffset)
 {
 	guard(VRenderLevel::UpdateTextureOffset);
-	sp->texinfo.soffs += (textureoffset - sp->textureoffset) *
+	sp->texinfo.soffs += (TextureOffset - sp->TextureOffset) *
 		TextureOffsetSScale(sp->texinfo.Tex);
-	sp->textureoffset = textureoffset;
+	sp->TextureOffset = TextureOffset;
 	FlushSurfCaches(sp->surfs);
 	InitSurfs(sp->surfs, &sp->texinfo, NULL, r_sub);
 	unguard;
@@ -1335,7 +1335,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 	{
 		sp = dseg->mid;
 		sp->texinfo.ColourMap = ColourMap;
-		VTexture* MTex = GTextureManager(sidedef->midtexture);
+		VTexture* MTex = GTextureManager(sidedef->MidTexture);
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
 			sp->texinfo.Tex->SScale != MTex->SScale ||
@@ -1368,7 +1368,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				sp->texinfo.toffs = r_ceiling->TexZ;
 			}
 			sp->texinfo.toffs *= TextureTScale(MTex);
-			sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(MTex);
+			sp->texinfo.toffs += sidedef->MidRowOffset * TextureOffsetTScale(MTex);
 			sp->texinfo.Tex = MTex;
 
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -1385,20 +1385,20 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
-			sp->rowoffset = sidedef->rowoffset;
+			sp->RowOffset = sidedef->MidRowOffset;
 		}
-		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
+		else if (FASI(sp->RowOffset) != FASI(sidedef->MidRowOffset))
 		{
 			sp->texinfo.Tex = MTex;
-			UpdateRowOffset(sp, sidedef->rowoffset);
+			UpdateRowOffset(sp, sidedef->MidRowOffset);
 		}
 		else
 		{
 			sp->texinfo.Tex = MTex;
 		}
-		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
+		if (FASI(sp->TextureOffset) != FASI(sidedef->MidTextureOffset))
 		{
-			UpdateTextureOffset(sp, sidedef->textureoffset);
+			UpdateTextureOffset(sp, sidedef->MidTextureOffset);
 		}
 
 		sp = dseg->topsky;
@@ -1445,7 +1445,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 		// top wall
 		sp = dseg->top;
 		sp->texinfo.ColourMap = ColourMap;
-		VTexture* TTex = GTextureManager(sidedef->toptexture);
+		VTexture* TTex = GTextureManager(sidedef->TopTexture);
 		if (IsSky(r_ceiling) && IsSky(back_ceiling) &&
 			r_ceiling->SkyBox != back_ceiling->SkyBox)
 		{
@@ -1491,7 +1491,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				sp->texinfo.toffs = back_ceiling->TexZ + TTex->GetScaledHeight();
 			}
 			sp->texinfo.toffs *= TextureTScale(TTex);
-			sp->texinfo.toffs += sidedef->rowoffset * TextureOffsetTScale(TTex);
+			sp->texinfo.toffs += sidedef->TopRowOffset * TextureOffsetTScale(TTex);
 			sp->texinfo.Tex = TTex;
 
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -1509,20 +1509,20 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
 			sp->backTopDist = back_ceiling->dist;
-			sp->rowoffset = sidedef->rowoffset;
+			sp->RowOffset = sidedef->TopRowOffset;
 		}
-		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
+		else if (FASI(sp->RowOffset) != FASI(sidedef->TopRowOffset))
 		{
 			sp->texinfo.Tex = TTex;
-			UpdateRowOffset(sp, sidedef->rowoffset);
+			UpdateRowOffset(sp, sidedef->TopRowOffset);
 		}
 		else
 		{
 			sp->texinfo.Tex = TTex;
 		}
-		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
+		if (FASI(sp->TextureOffset) != FASI(sidedef->TopTextureOffset))
 		{
-			UpdateTextureOffset(sp, sidedef->textureoffset);
+			UpdateTextureOffset(sp, sidedef->TopTextureOffset);
 		}
 
 		//	Sky abowe top
@@ -1559,7 +1559,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 		// bottom wall
 		sp = dseg->bot;
 		sp->texinfo.ColourMap = ColourMap;
-		VTexture* BTex = GTextureManager(sidedef->bottomtexture);
+		VTexture* BTex = GTextureManager(sidedef->BottomTexture);
 		sp->texinfo.Tex = BTex;
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
@@ -1597,7 +1597,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				sp->texinfo.toffs = back_floor->TexZ;
 			}
 			sp->texinfo.toffs *= TextureTScale(BTex);
-			sp->texinfo.toffs += sidedef->rowoffset *
+			sp->texinfo.toffs += sidedef->BotRowOffset *
 				TextureOffsetTScale(BTex);
 
 			wv[0].x = wv[1].x = seg->v1->x;
@@ -1615,26 +1615,26 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			sp->frontTopDist = r_ceiling->dist;
 			sp->frontBotDist = r_floor->dist;
 			sp->backBotDist = back_floor->dist;
-			sp->rowoffset = sidedef->rowoffset;
+			sp->RowOffset = sidedef->BotRowOffset;
 		}
-		else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
+		else if (FASI(sp->RowOffset) != FASI(sidedef->BotRowOffset))
 		{
-			UpdateRowOffset(sp, sidedef->rowoffset);
+			UpdateRowOffset(sp, sidedef->BotRowOffset);
 		}
-		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
+		if (FASI(sp->TextureOffset) != FASI(sidedef->BotTextureOffset))
 		{
-			UpdateTextureOffset(sp, sidedef->textureoffset);
+			UpdateTextureOffset(sp, sidedef->BotTextureOffset);
 		}
 
-		// masked midtexture
+		// masked MidTexture
 		sp = dseg->mid;
 		sp->texinfo.ColourMap = ColourMap;
-		VTexture* MTex = GTextureManager(sidedef->midtexture);
+		VTexture* MTex = GTextureManager(sidedef->MidTexture);
 		if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 			FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
 			FASI(sp->backTopDist) != FASI(back_ceiling->dist) ||
 			FASI(sp->backBotDist) != FASI(back_floor->dist) ||
-			FASI(sp->rowoffset) != FASI(sidedef->rowoffset) ||
+			FASI(sp->RowOffset) != FASI(sidedef->MidRowOffset) ||
 			sp->texinfo.Tex->SScale != MTex->SScale ||
 			sp->texinfo.Tex->TScale != MTex->TScale ||
 			sp->texinfo.Tex->GetHeight() != MTex->GetHeight() ||
@@ -1644,7 +1644,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			sp->surfs = NULL;
 
 			sp->texinfo.Tex = MTex;
-			if (sidedef->midtexture)
+			if (sidedef->MidTexture)
 			{
 				float topz1 = r_ceiling->GetPointZ(*seg->v1);
 				float topz2 = r_ceiling->GetPointZ(*seg->v2);
@@ -1660,12 +1660,12 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				float midtopz2 = topz2;
 				float midbotz1 = botz1;
 				float midbotz2 = botz2;
-				if (topz1 > back_topz1 && sidedef->toptexture > 0)
+				if (topz1 > back_topz1 && sidedef->TopTexture > 0)
 				{
 					midtopz1 = back_topz1;
 					midtopz2 = back_topz2;
 				}
-				if (botz1 < back_botz1 && sidedef->bottomtexture > 0)
+				if (botz1 < back_botz1 && sidedef->BottomTexture > 0)
 				{
 					midbotz1 = back_botz1;
 					midbotz2 = back_botz2;
@@ -1681,7 +1681,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				sp->texinfo.taxis = TVec(0, 0, -1) * TextureTScale(MTex);
 				sp->texinfo.soffs = -DotProduct(*seg->v1, sp->texinfo.saxis) +
 					seg->offset * TextureSScale(MTex) +
-					sidedef->textureoffset * TextureOffsetSScale(MTex);
+					sidedef->MidTextureOffset * TextureOffsetSScale(MTex);
 				sp->texinfo.Alpha = linedef->alpha;
 				sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
 
@@ -1696,7 +1696,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 					// top of texture at top
 					z_org = MIN(r_ceiling->TexZ, back_ceiling->TexZ);
 				}
-				z_org += sidedef->rowoffset * (!MTex->bWorldPanning ?
+				z_org += sidedef->MidRowOffset * (!MTex->bWorldPanning ?
 					1.0 : 1.0 / MTex->TScale);
 
 				sp->texinfo.toffs = z_org * TextureTScale(MTex);
@@ -1733,20 +1733,20 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			sp->frontBotDist = r_floor->dist;
 			sp->backTopDist = back_ceiling->dist;
 			sp->backBotDist = back_floor->dist;
-			sp->rowoffset = sidedef->rowoffset;
+			sp->RowOffset = sidedef->MidRowOffset;
 		}
 		else
 		{
 			sp->texinfo.Tex = MTex;
-			if (sidedef->midtexture)
+			if (sidedef->MidTexture)
 			{
 				sp->texinfo.Alpha = linedef->alpha;
 				sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
 			}
 		}
-		if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
+		if (FASI(sp->TextureOffset) != FASI(sidedef->MidTextureOffset))
 		{
-			UpdateTextureOffset(sp, sidedef->textureoffset);
+			UpdateTextureOffset(sp, sidedef->MidTextureOffset);
 		}
 
 		sec_region_t *reg;
@@ -1758,7 +1758,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			side_t *extraside = &Level->Sides[reg->extraline->sidenum[0]];
 
 			sp->texinfo.ColourMap = ColourMap;
-			VTexture* ETex = GTextureManager(extraside->midtexture);
+			VTexture* ETex = GTextureManager(extraside->MidTexture);
 			sp->texinfo.Tex = ETex;
 			if (FASI(sp->frontTopDist) != FASI(r_ceiling->dist) ||
 				FASI(sp->frontBotDist) != FASI(r_floor->dist) ||
@@ -1779,7 +1779,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				sp->surfs = NULL;
 
 				sp->texinfo.toffs = extratop->TexZ *
-					TextureTScale(ETex) + sidedef->rowoffset *
+					TextureTScale(ETex) + sidedef->MidRowOffset *
 					TextureOffsetTScale(ETex);
 
 				wv[0].x = wv[1].x = seg->v1->x;
@@ -1798,15 +1798,15 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				sp->frontBotDist = r_floor->dist;
 				sp->backTopDist = extratop->dist;
 				sp->backBotDist = extrabot->dist;
-				sp->rowoffset = sidedef->rowoffset;
+				sp->RowOffset = sidedef->MidRowOffset;
 			}
-			else if (FASI(sp->rowoffset) != FASI(sidedef->rowoffset))
+			else if (FASI(sp->RowOffset) != FASI(sidedef->MidRowOffset))
 			{
-				UpdateRowOffset(sp, sidedef->rowoffset);
+				UpdateRowOffset(sp, sidedef->MidRowOffset);
 			}
-			if (FASI(sp->textureoffset) != FASI(sidedef->textureoffset))
+			if (FASI(sp->TextureOffset) != FASI(sidedef->MidTextureOffset))
 			{
-				UpdateTextureOffset(sp, sidedef->textureoffset);
+				UpdateTextureOffset(sp, sidedef->MidTextureOffset);
 			}
 			sp = sp->next;
 		}
@@ -1839,7 +1839,7 @@ void VRenderLevel::SegMoved(seg_t* seg)
 	seg->drawsegs->mid->texinfo.soffs = -DotProduct(*seg->v1,
 		seg->drawsegs->mid->texinfo.saxis) +
 		seg->offset * TextureSScale(Tex) +
-		seg->sidedef->textureoffset * TextureOffsetSScale(Tex);
+		seg->sidedef->MidTextureOffset * TextureOffsetSScale(Tex);
 
 	//	Force update
 	seg->drawsegs->mid->frontTopDist += 0.346;

@@ -226,20 +226,23 @@ enum
 //
 struct side_t
 {
-	// add this to the calculated texture column
-	float		textureoffset;
+	//	Add this to the calculated texture column
+	float		TopTextureOffset;
+	float		BotTextureOffset;
+	float		MidTextureOffset;
 
-	// add this to the calculated texture top
-	float		rowoffset;
+	//	Add this to the calculated texture top
+	float		TopRowOffset;
+	float		BotRowOffset;
+	float		MidRowOffset;
 
-	// Texture indices.
-	// We do not maintain names here.
-	int			toptexture;
-	int			bottomtexture;
-	int			midtexture;
+	//	Texture indices. We do not maintain names here.
+	int			TopTexture;
+	int			BottomTexture;
+	int			MidTexture;
 
-	// Sector the SideDef is facing.
-	sector_t	*sector;
+	//	Sector the SideDef is facing.
+	sector_t*	Sector;
 
 	int			LineNum;
 
@@ -645,11 +648,15 @@ struct rep_line_t
 
 struct rep_side_t
 {
-	float		textureoffset;
-	float		rowoffset;
-	int			toptexture;
-	int			bottomtexture;
-	int			midtexture;
+	float		TopTextureOffset;
+	float		BotTextureOffset;
+	float		MidTextureOffset;
+	float		TopRowOffset;
+	float		BotRowOffset;
+	float		MidRowOffset;
+	int			TopTexture;
+	int			BottomTexture;
+	int			MidTexture;
 	vuint32		Flags;
 	int			Light;
 };

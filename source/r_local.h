@@ -85,8 +85,8 @@ struct segpart_t
 	float			frontBotDist;
 	float			backTopDist;
 	float			backBotDist;
-	float			textureoffset;
-	float			rowoffset;
+	float			TextureOffset;
+	float			RowOffset;
 };
 
 struct drawseg_t

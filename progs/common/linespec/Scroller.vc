@@ -45,6 +45,7 @@ float			LastHeight;
 float			CarryScrollX;
 float			CarryScrollY;
 line_t*			AffecteeSrcLine;
+int				SideParts;
 
 //==========================================================================
 //
@@ -84,6 +85,7 @@ void InitWall(line_t* Line, int XDir, int YDir)
 	Affectee = Line->sidenum[0];
 	XSpeed = itof(XDir * Line->arg1) * 35.0 / 64.0;
 	YSpeed = itof(YDir * Line->arg1) * 35.0 / 64.0;
+	SideParts = 7;
 }
 
 //==========================================================================
@@ -98,8 +100,9 @@ void InitWallOffsets(line_t* Line)
 	Type = SCROLLEV_Side;
 	AffecteeSrcLine = Line;
 	Affectee = Line->sidenum[0];
-	XSpeed = -XLevel.Sides[Affectee].textureoffset * 35.0;
-	YSpeed = XLevel.Sides[Affectee].rowoffset * 35.0;
+	XSpeed = -XLevel.Sides[Affectee].MidTextureOffset * 35.0;
+	YSpeed = XLevel.Sides[Affectee].MidRowOffset * 35.0;
+	SideParts = 7;
 }
 
 //==========================================================================
@@ -117,6 +120,7 @@ void InitTextureBoth(line_t* Line, int Arg2, int Arg3, int Arg4, int Arg5,
 	Affectee = Line->sidenum[WhichSide];
 	XSpeed = itof(Arg2 - Arg3) * 35.0 / 64.0;
 	YSpeed = itof(Arg5 - Arg4) * 35.0 / 64.0;
+	SideParts = 7;
 }
 
 //==========================================================================
@@ -181,6 +185,7 @@ void InitTextureModel(line_t* Line, line_t* SrcLine)
 	Affectee = Line->sidenum[0];
 	XSpeed = x * 35.0;
 	YSpeed = y * 35.0;
+	SideParts = 7;
 
 	//	Set up control sector and acceleration.
 	if (SrcLine->arg2 & 3)
@@ -376,13 +381,28 @@ void Tick(float DeltaTime)
 	CarryScrollY = 0.0;
 
 	if (!XDelta && !YDelta)		// no-op if both (x,y) offsets are 0
+	{
 		return;
+	}
 
 	switch (Type)
 	{
 	case SCROLLEV_Side:
-		XLevel.Sides[Affectee].textureoffset += XDelta;
-		XLevel.Sides[Affectee].rowoffset += YDelta;
+		if (SideParts & 1)
+		{
+			XLevel.Sides[Affectee].TopTextureOffset += XDelta;
+			XLevel.Sides[Affectee].TopRowOffset += YDelta;
+		}
+		if (SideParts & 2)
+		{
+			XLevel.Sides[Affectee].MidTextureOffset += XDelta;
+			XLevel.Sides[Affectee].MidRowOffset += YDelta;
+		}
+		if (SideParts & 4)
+		{
+			XLevel.Sides[Affectee].BotTextureOffset += XDelta;
+			XLevel.Sides[Affectee].BotRowOffset += YDelta;
+		}
 		break;
 
 	case SCROLLEV_Floor:

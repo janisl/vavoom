@@ -857,9 +857,9 @@ void VRenderLevel::PrecacheLevel()
 	
 	for (i = 0; i < Level->NumSides; i++)
 	{
-		texturepresent[Level->Sides[i].toptexture] = true;
-		texturepresent[Level->Sides[i].midtexture] = true;
-		texturepresent[Level->Sides[i].bottomtexture] = true;
+		texturepresent[Level->Sides[i].TopTexture] = true;
+		texturepresent[Level->Sides[i].MidTexture] = true;
+		texturepresent[Level->Sides[i].BottomTexture] = true;
 	}
 
 	// Precache textures.

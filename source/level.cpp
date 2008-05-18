@@ -215,11 +215,15 @@ void VLevel::Serialise(VStream& Strm)
 				continue;
 			}
 			si = &Sides[li->sidenum[j]];
-			Strm << si->textureoffset
-				<< si->rowoffset
-				<< si->toptexture
-				<< si->bottomtexture
-				<< si->midtexture
+			Strm << si->TopTextureOffset
+				<< si->BotTextureOffset
+				<< si->MidTextureOffset
+				<< si->TopRowOffset
+				<< si->BotRowOffset
+				<< si->MidRowOffset
+				<< si->TopTexture
+				<< si->BottomTexture
+				<< si->MidTexture
 				<< si->Flags
 				<< si->Light;
 		}
@@ -561,14 +565,35 @@ void VLevel::ClampOffsets()
 	//	Clamp side offsets.
 	for (int i = 0; i < NumSides; i++)
 	{
-		if (Sides[i].textureoffset > 0x7fff ||
-			Sides[i].textureoffset < -0x8000)
+		if (Sides[i].TopTextureOffset > 0x7fff ||
+			Sides[i].TopTextureOffset < -0x8000)
 		{
-			Sides[i].textureoffset = 0;
+			Sides[i].TopTextureOffset = 0;
 		}
-		if (Sides[i].rowoffset > 0x7fff || Sides[i].rowoffset < -0x8000)
+		if (Sides[i].BotTextureOffset > 0x7fff ||
+			Sides[i].BotTextureOffset < -0x8000)
 		{
-			Sides[i].rowoffset = 0;
+			Sides[i].BotTextureOffset = 0;
+		}
+		if (Sides[i].MidTextureOffset > 0x7fff ||
+			Sides[i].MidTextureOffset < -0x8000)
+		{
+			Sides[i].MidTextureOffset = 0;
+		}
+		if (Sides[i].TopRowOffset > 0x7fff ||
+			Sides[i].TopRowOffset < -0x8000)
+		{
+			Sides[i].TopRowOffset = 0;
+		}
+		if (Sides[i].BotRowOffset > 0x7fff ||
+			Sides[i].BotRowOffset < -0x8000)
+		{
+			Sides[i].BotRowOffset = 0;
+		}
+		if (Sides[i].MidRowOffset > 0x7fff ||
+			Sides[i].MidRowOffset < -0x8000)
+		{
+			Sides[i].MidRowOffset = 0;
 		}
 	}
 

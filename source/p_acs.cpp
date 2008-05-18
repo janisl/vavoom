@@ -2678,16 +2678,16 @@ int VAcs::RunScript(float DeltaTime)
 				{
 					if (sp[-2] == TEXTURE_MIDDLE)
 					{
-						GLevel->Sides[line->sidenum[sp[-3]]].midtexture = Tex;
+						GLevel->Sides[line->sidenum[sp[-3]]].MidTexture = Tex;
 					}
 					else if (sp[-2] == TEXTURE_BOTTOM)
 					{
-						GLevel->Sides[line->sidenum[sp[-3]]].bottomtexture = Tex;
+						GLevel->Sides[line->sidenum[sp[-3]]].BottomTexture = Tex;
 					}
 					else
 					{
 						// TEXTURE_TOP
-						GLevel->Sides[line->sidenum[sp[-3]]].toptexture = Tex;
+						GLevel->Sides[line->sidenum[sp[-3]]].TopTexture = Tex;
 					}
 				}
 				sp -= 4;
@@ -3983,7 +3983,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetLineRowOffset)
-			*sp = line ? (vint32)XLevel->Sides[line->sidenum[0]].rowoffset : 0;
+			*sp = line ? (vint32)XLevel->Sides[line->sidenum[0]].MidRowOffset : 0;
 			sp++;
 			ACSVM_BREAK;
 
@@ -4592,19 +4592,19 @@ int VAcs::RunScript(float DeltaTime)
 				for (int i = 0; i < XLevel->NumSides; i++)
 				{
 					if (!(sp[-1] & NOT_TOP) &&
-						XLevel->Sides[i].toptexture == FromTex)
+						XLevel->Sides[i].TopTexture == FromTex)
 					{
-						XLevel->Sides[i].toptexture = ToTex;
+						XLevel->Sides[i].TopTexture = ToTex;
 					}
 					if (!(sp[-1] & NOT_MIDDLE) &&
-						XLevel->Sides[i].midtexture == FromTex)
+						XLevel->Sides[i].MidTexture == FromTex)
 					{
-						XLevel->Sides[i].midtexture = ToTex;
+						XLevel->Sides[i].MidTexture = ToTex;
 					}
 					if (!(sp[-1] & NOT_BOTTOM) &&
-						XLevel->Sides[i].bottomtexture == FromTex)
+						XLevel->Sides[i].BottomTexture == FromTex)
 					{
-						XLevel->Sides[i].bottomtexture = ToTex;
+						XLevel->Sides[i].BottomTexture = ToTex;
 					}
 				}
 			}

@@ -224,10 +224,12 @@ static void SetUpSidedefs(VLevel* Level)
 	for (int i = 0; i < Level->NumSides; i++, pSrc++)
 	{
 		sidedef_t* Side = NewSidedef();
-		Side->sector = !pSrc->sector ? NULL :
-			LookupSector(pSrc->sector - Level->Sectors);
+		Side->sector = !pSrc->Sector ? NULL :
+			LookupSector(pSrc->Sector - Level->Sectors);
 		if (Side->sector)
+		{
 			Side->sector->ref_count++;
+		}
 		Side->index = i;
 	}
 	unguard;
@@ -382,15 +384,21 @@ static void CopySegs(VLevel* Level, vertex_t* GLVertexes)
 			line_t* ldef = &Level->Lines[SrcSeg->linedef->index];
 			li->linedef = ldef;
 			li->sidedef = &Level->Sides[ldef->sidenum[SrcSeg->side]];
-			li->frontsector = Level->Sides[ldef->sidenum[SrcSeg->side]].sector;
+			li->frontsector = Level->Sides[ldef->sidenum[SrcSeg->side]].Sector;
 
 			if (ldef->flags & ML_TWOSIDED)
-				li->backsector = Level->Sides[ldef->sidenum[SrcSeg->side ^ 1]].sector;
+			{
+				li->backsector = Level->Sides[ldef->sidenum[SrcSeg->side ^ 1]].Sector;
+			}
 
 			if (SrcSeg->side)
+			{
 				li->offset = Length(*li->v1 - *ldef->v2);
+			}
 			else
+			{
 				li->offset = Length(*li->v1 - *ldef->v1);
+			}
 			li->length = Length(*li->v2 - *li->v1);
 			li->side = SrcSeg->side;
 		}
@@ -428,7 +436,7 @@ static void CopySubsectors(VLevel* Level)
 		{
 			if (seg[j].linedef)
 			{
-				ss->sector = seg[j].sidedef->sector;
+				ss->sector = seg[j].sidedef->Sector;
 				ss->seclink = ss->sector->subsectors;
 				ss->sector->subsectors = ss;
 				break;

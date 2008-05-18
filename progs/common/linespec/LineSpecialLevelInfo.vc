@@ -330,8 +330,8 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 	}
 	if (changeBack)
 	{
-		XLevel.Sides[Line->sidenum[1]].midtexture =
-			XLevel.Sides[Line->sidenum[0]].midtexture;
+		XLevel.Sides[Line->sidenum[1]].MidTexture =
+			XLevel.Sides[Line->sidenum[0]].MidTexture;
 	}
 	if (!repeat && buttonSuccess)
 	{
@@ -1256,7 +1256,7 @@ final int EV_DoDoor(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			return false;
 	
 		// if the sector has an active thinker, use it
-		Sec = XLevel.Sides[Line->sidenum[1]].sector;
+		Sec = XLevel.Sides[Line->sidenum[1]].Sector;
 		if (Sec->CeilingData)
 		{
 			Door = VerticalDoor(Sec->CeilingData);
@@ -1413,7 +1413,7 @@ final int EV_TextureChangeDoor(int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 	
 		// new door thinker
-		if (FindAnimDoor(XLevel.Sides[Line->sidenum[0]].toptexture))
+		if (FindAnimDoor(XLevel.Sides[Line->sidenum[0]].TopTexture))
 		{
 			Door = Spawn(TextureChangeDoor);
 			Door.Init(Line->backsector, Arg1, Arg2, Arg3, Arg4, Arg5, Line);
@@ -1438,7 +1438,7 @@ final int EV_TextureChangeDoor(int Arg1, int Arg2, int Arg3, int Arg4,
 					continue;
 				}
 				//	New door thinker
-				if (FindAnimDoor(XLevel.Sides[Line->sidenum[0]].toptexture))
+				if (FindAnimDoor(XLevel.Sides[Line->sidenum[0]].TopTexture))
 				{
 					Rtn = true;
 					Door = Spawn(TextureChangeDoor);
@@ -4831,8 +4831,8 @@ final bool EV_RemoveForceField(int Arg1, int Arg2, int Arg3, int Arg4,
 			if (!(secline->flags & ML_TWOSIDED))
 				continue;
 
-			XLevel.Sides[secline->sidenum[0]].midtexture = 0;
-			XLevel.Sides[secline->sidenum[1]].midtexture = 0;
+			XLevel.Sides[secline->sidenum[0]].MidTexture = 0;
+			XLevel.Sides[secline->sidenum[1]].MidTexture = 0;
 			secline->special = 0;
 			secline->flags &= ~ML_BLOCKING;
 		}
@@ -5300,32 +5300,46 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 	for (i = 0; i < sec->linecount; i++)
 	{
 		check = sec->lines[i];
-		if (check->sidenum[1] == -1	||
-		    !(check->flags & ML_TWOSIDED))
+		if (check->sidenum[1] == -1 || !(check->flags & ML_TWOSIDED))
+		{
 			continue;
+		}
 
 		// Early out for intra-sector lines
-		if (XLevel.Sides[check->sidenum[0]].sector == XLevel.Sides[check->sidenum[1]].sector)
+		if (check->frontsector == check->backsector)
+		{
 			continue;
+		}
 
 		if (!LineOpenings(check, *check->v1))
 		{
 			if (!LineOpenings(check, *check->v2))
-				continue;	// closed door
+			{
+				//	Closed door
+				continue;
+			}
 		}
 
-		if (XLevel.Sides[check->sidenum[0]].sector == sec)
-			other = XLevel.Sides[check->sidenum[1]].sector;
+		if (check->frontsector == sec)
+		{
+			other = check->backsector;
+		}
 		else
-			other = XLevel.Sides[check->sidenum[0]].sector;
+		{
+			other = check->frontsector;
+		}
 
 		if (check->flags & ML_SOUNDBLOCK)
 		{
 			if (!soundblocks)
+			{
 				RecursiveSound(other, 1, soundtarget);
+			}
 		}
 		else
+		{
 			RecursiveSound(other, soundblocks, soundtarget);
+		}
 	}
 }
 

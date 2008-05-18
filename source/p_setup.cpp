@@ -626,9 +626,13 @@ void VLevel::LoadSideDefsPass1(int Lump)
 		if (sector < 0 || sector >= NumSectors)
 			Host_Error("Bad sector index %d", sector);
 
-		sd->textureoffset = textureoffset;
-		sd->rowoffset = rowoffset;
-		sd->sector = &Sectors[sector];
+		sd->TopTextureOffset = textureoffset;
+		sd->BotTextureOffset = textureoffset;
+		sd->MidTextureOffset = textureoffset;
+		sd->TopRowOffset = rowoffset;
+		sd->BotRowOffset = rowoffset;
+		sd->MidRowOffset = rowoffset;
+		sd->Sector = &Sectors[sector];
 	}
 	delete Strm;
 	unguard;
@@ -655,8 +659,8 @@ void VLevel::LoadSideDefsPass2(int Lump)
 		}
 		if (Lines[i].sidenum[0] != -1)
 		{
-			Sides[Lines[i].sidenum[0]].midtexture = Lines[i].special;
-			Sides[Lines[i].sidenum[0]].toptexture = Lines[i].arg1;
+			Sides[Lines[i].sidenum[0]].MidTexture = Lines[i].special;
+			Sides[Lines[i].sidenum[0]].TopTexture = Lines[i].arg1;
 		}
 	}
 
@@ -674,25 +678,25 @@ void VLevel::LoadSideDefsPass2(int Lump)
 		Strm->Serialise(midtexture, 8);
 		Strm->Seek(Strm->Tell() + 2);
 
-		switch (sd->midtexture)
+		switch (sd->MidTexture)
 		{
 		case LNSPEC_LineTranslucent:
 			//	In BOOM midtexture can be translucency table lump name.
-			sd->midtexture = GTextureManager.CheckNumForName(
+			sd->MidTexture = GTextureManager.CheckNumForName(
 				VName(midtexture, VName::AddLower8),
 				TEXTYPE_Wall, true, true);
-			if (sd->midtexture == -1)
+			if (sd->MidTexture == -1)
 			{
-				sd->midtexture = 0;
+				sd->MidTexture = 0;
 			}
-			sd->toptexture = TexNumForName(toptexture, TEXTYPE_Wall);
-			sd->bottomtexture = TexNumForName(bottomtexture, TEXTYPE_Wall);
+			sd->TopTexture = TexNumForName(toptexture, TEXTYPE_Wall);
+			sd->BottomTexture = TexNumForName(bottomtexture, TEXTYPE_Wall);
 			break;
 
 		case LNSPEC_TransferHeights:
-			sd->midtexture = TexNumForName(midtexture, TEXTYPE_Wall, true);
-			sd->toptexture = TexNumForName(toptexture, TEXTYPE_Wall, true);
-			sd->bottomtexture = TexNumForName(bottomtexture, TEXTYPE_Wall, true);
+			sd->MidTexture = TexNumForName(midtexture, TEXTYPE_Wall, true);
+			sd->TopTexture = TexNumForName(toptexture, TEXTYPE_Wall, true);
+			sd->BottomTexture = TexNumForName(bottomtexture, TEXTYPE_Wall, true);
 			break;
 
 		case LNSPEC_StaticInit:
@@ -701,16 +705,16 @@ void VLevel::LoadSideDefsPass2(int Lump)
 				bool HaveFade;
 				vuint32 Col;
 				vuint32 Fade;
-				sd->midtexture = TexNumForName(midtexture, TEXTYPE_Wall);
+				sd->MidTexture = TexNumForName(midtexture, TEXTYPE_Wall);
 				int TmpTop = TexNumOrColour(toptexture, TEXTYPE_Wall,
 					HaveCol, Col);
-				sd->bottomtexture = TexNumOrColour(bottomtexture, TEXTYPE_Wall,
+				sd->BottomTexture = TexNumOrColour(bottomtexture, TEXTYPE_Wall,
 					HaveFade, Fade);
 				if (HaveCol || HaveFade)
 				{
 					for (int j = 0; j < NumSectors; j++)
 					{
-						if (Sectors[j].tag == sd->toptexture)
+						if (Sectors[j].tag == sd->TopTexture)
 						{
 							if (HaveCol)
 							{
@@ -723,14 +727,14 @@ void VLevel::LoadSideDefsPass2(int Lump)
 						}
 					}
 				}
-				sd->toptexture = TmpTop;
+				sd->TopTexture = TmpTop;
 			}
 			break;
 
 		default:
-			sd->midtexture = TexNumForName(midtexture, TEXTYPE_Wall);
-			sd->toptexture = TexNumForName(toptexture, TEXTYPE_Wall);
-			sd->bottomtexture = TexNumForName(bottomtexture, TEXTYPE_Wall);
+			sd->MidTexture = TexNumForName(midtexture, TEXTYPE_Wall);
+			sd->TopTexture = TexNumForName(toptexture, TEXTYPE_Wall);
+			sd->BottomTexture = TexNumForName(bottomtexture, TEXTYPE_Wall);
 			break;
 		}
 	}
@@ -856,7 +860,7 @@ void VLevel::SetupLineSides(line_t* ld) const
 	{
 		Host_Error("Bad side-def index %d", ld->sidenum[0]);
 	}
-	ld->frontsector = Sides[ld->sidenum[0]].sector;
+	ld->frontsector = Sides[ld->sidenum[0]].Sector;
 	Sides[ld->sidenum[0]].LineNum = ld - Lines;
 
 	if (ld->sidenum[1] != -1)
@@ -865,7 +869,7 @@ void VLevel::SetupLineSides(line_t* ld) const
 		{
 			Host_Error("Bad side-def index %d", ld->sidenum[1]);
 		}
-		ld->backsector = Sides[ld->sidenum[1]].sector;
+		ld->backsector = Sides[ld->sidenum[1]].Sector;
 		Sides[ld->sidenum[1]].LineNum = ld - Lines;
 		// Just a warning
 		if (!(ld->flags & ML_TWOSIDED))
@@ -1002,15 +1006,21 @@ void VLevel::LoadGLSegs(int Lump, int NumBaseVerts)
 			line_t* ldef = &Lines[linedef];
 			li->linedef = ldef;
 			li->sidedef = &Sides[ldef->sidenum[side]];
-			li->frontsector = Sides[ldef->sidenum[side]].sector;
+			li->frontsector = Sides[ldef->sidenum[side]].Sector;
 
 			if (ldef->flags & ML_TWOSIDED)
-				li->backsector = Sides[ldef->sidenum[side ^ 1]].sector;
+			{
+				li->backsector = Sides[ldef->sidenum[side ^ 1]].Sector;
+			}
 
 			if (side)
+			{
 				li->offset = Length(*li->v1 - *ldef->v2);
+			}
 			else
+			{
 				li->offset = Length(*li->v1 - *ldef->v1);
+			}
 			li->length = Length(*li->v2 - *li->v1);
 			li->side = side;
 		}
@@ -1095,14 +1105,16 @@ void VLevel::LoadSubsectors(int Lump)
 		{
 			if (seg[j].linedef)
 			{
-				ss->sector = seg[j].sidedef->sector;
+				ss->sector = seg[j].sidedef->Sector;
 				ss->seclink = ss->sector->subsectors;
 				ss->sector->subsectors = ss;
 				break;
 			}
 		}
 		if (!ss->sector)
+		{
 			Host_Error("Subsector %d without sector", i);
+		}
 	}
 	delete Strm;
 	unguard;
@@ -1301,10 +1313,12 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 			line_t* ldef = &Lines[linedef];
 			li->linedef = ldef;
 			li->sidedef = &Sides[ldef->sidenum[side]];
-			li->frontsector = Sides[ldef->sidenum[side]].sector;
+			li->frontsector = Sides[ldef->sidenum[side]].Sector;
 
 			if (ldef->flags & ML_TWOSIDED)
-				li->backsector = Sides[ldef->sidenum[side ^ 1]].sector;
+			{
+				li->backsector = Sides[ldef->sidenum[side ^ 1]].Sector;
+			}
 
 			if (side)
 			{
@@ -1390,7 +1404,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 		{
 			if (seg[j].linedef)
 			{
-				ss->sector = seg[j].sidedef->sector;
+				ss->sector = seg[j].sidedef->Sector;
 				ss->seclink = ss->sector->subsectors;
 				ss->sector->subsectors = ss;
 				break;
@@ -2108,11 +2122,15 @@ void VLevel::CreateRepBase()
 	{
 		side_t& S = Sides[i];
 		rep_side_t& B = BaseSides[i];
-		B.textureoffset = S.textureoffset;
-		B.rowoffset = S.rowoffset;
-		B.toptexture = S.toptexture;
-		B.bottomtexture = S.bottomtexture;
-		B.midtexture = S.midtexture;
+		B.TopTextureOffset = S.TopTextureOffset;
+		B.BotTextureOffset = S.BotTextureOffset;
+		B.MidTextureOffset = S.MidTextureOffset;
+		B.TopRowOffset = S.TopRowOffset;
+		B.BotRowOffset = S.BotRowOffset;
+		B.MidRowOffset = S.MidRowOffset;
+		B.TopTexture = S.TopTexture;
+		B.BottomTexture = S.BottomTexture;
+		B.MidTexture = S.MidTexture;
 		B.Flags = S.Flags;
 		B.Light = S.Light;
 	}

@@ -56,16 +56,18 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	for (i = 0; i < Sector->linecount; i++)
 	{
 		if (Sector->lines[i] == Line1)
+		{
 			continue;
-		if (XLevel.Sides[Sector->lines[i]->sidenum[0]].toptexture ==
-			XLevel.Sides[Line1->sidenum[0]].toptexture)
+		}
+		if (XLevel.Sides[Sector->lines[i]->sidenum[0]].TopTexture ==
+			XLevel.Sides[Line1->sidenum[0]].TopTexture)
 		{
 			Line2 = Sector->lines[i];
 			break;
 		}
 	}
 
-	int texTop = XLevel.Sides[Line1->sidenum[0]].toptexture;
+	int texTop = XLevel.Sides[Line1->sidenum[0]].TopTexture;
 	VAnimDoorDef* Def = FindAnimDoor(texTop);
 
 	Height = Level.FindLowestCeilingSurrounding(Sector, &Spot);
@@ -113,7 +115,7 @@ bool StartClosing()
 		return false;
 	}
 
-	int texTop = XLevel.Sides[Line1->sidenum[0]].toptexture;
+	int texTop = XLevel.Sides[Line1->sidenum[0]].TopTexture;
 	VAnimDoorDef* Def = FindAnimDoor(texTop);
 
 	Direction = -1;	// time to go back down
@@ -139,7 +141,7 @@ void Tick(float deltaTime)
 	int		res;
 	int		texTop;
 
-	texTop = XLevel.Sides[Line1->sidenum[0]].toptexture;	
+	texTop = XLevel.Sides[Line1->sidenum[0]].TopTexture;	
 	VAnimDoorDef* Def = FindAnimDoor(texTop);
 	switch (Direction)
 	{
@@ -213,10 +215,10 @@ void Tick(float deltaTime)
 
 void SetAnimTexture(int NewTex)
 {
-	XLevel.Sides[Line1->sidenum[0]].midtexture = NewTex;
-	XLevel.Sides[Line1->sidenum[1]].midtexture = NewTex;
-	XLevel.Sides[Line2->sidenum[0]].midtexture = NewTex;
-	XLevel.Sides[Line2->sidenum[1]].midtexture = NewTex;
+	XLevel.Sides[Line1->sidenum[0]].MidTexture = NewTex;
+	XLevel.Sides[Line1->sidenum[1]].MidTexture = NewTex;
+	XLevel.Sides[Line2->sidenum[0]].MidTexture = NewTex;
+	XLevel.Sides[Line2->sidenum[1]].MidTexture = NewTex;
 }
 
 defaultproperties
