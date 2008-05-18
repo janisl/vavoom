@@ -606,10 +606,9 @@ void VLevel::LoadSectors(int Lump)
 void VLevel::CreateSides()
 {
 	guard(VLevel::CreateSides);
-	//	Allocate memory for side defs.
-	Sides = new side_t[NumSides];
-	memset(Sides, 0, sizeof(side_t) * NumSides);
-
+	//	Perform side index and two-sided flag checks and count number of
+	// sides needed.
+	int NumNewSides = 0;
 	line_t* Line = Lines;
 	for (int i = 0; i < NumLines; i++, Line++)
 	{
@@ -629,7 +628,7 @@ void VLevel::CreateSides()
 		{
 			Host_Error("Bad side-def index %d", Line->sidenum[0]);
 		}
-		Sides[Line->sidenum[0]].LineNum = i;
+		NumNewSides++;
 
 		if (Line->sidenum[1] != -1)
 		{
@@ -637,13 +636,13 @@ void VLevel::CreateSides()
 			{
 				Host_Error("Bad side-def index %d", Line->sidenum[1]);
 			}
-			Sides[Line->sidenum[1]].LineNum = i;
 			// Just a warning
 			if (!(Line->flags & ML_TWOSIDED))
 			{
 				GCon->Logf("Bad WAD: Line %d is two-sided but has no TWO-SIDED "
 					"flag set", i);
 			}
+			NumNewSides++;
 		}
 		else
 		{
@@ -662,18 +661,39 @@ void VLevel::CreateSides()
 				}
 			}
 		}
+	}
+
+	//	Allocate memory for side defs.
+	Sides = new side_t[NumNewSides];
+	memset(Sides, 0, sizeof(side_t) * NumNewSides);
+
+	int CurrentSide = 0;
+	Line = Lines;
+	for (int i = 0; i < NumLines; i++, Line++)
+	{
+		Sides[CurrentSide].BottomTexture = Line->sidenum[0];
+		Sides[CurrentSide].LineNum = i;
+		Line->sidenum[0] = CurrentSide;
+		CurrentSide++;
+		if (Line->sidenum[1] != -1)
+		{
+			Sides[CurrentSide].BottomTexture = Line->sidenum[1];
+			Sides[CurrentSide].LineNum = i;
+			Line->sidenum[1] = CurrentSide;
+			CurrentSide++;
+		}
 
 		//	Assign line specials to sidedefs midtexture and arg1 to toptexture.
 		if (Line->special == LNSPEC_StaticInit && Line->arg2 != 1)
 		{
 			continue;
 		}
-		if (Line->sidenum[0] != -1)
-		{
-			Sides[Line->sidenum[0]].MidTexture = Line->special;
-			Sides[Line->sidenum[0]].TopTexture = Line->arg1;
-		}
+		Sides[Line->sidenum[0]].MidTexture = Line->special;
+		Sides[Line->sidenum[0]].TopTexture = Line->arg1;
 	}
+	check(CurrentSide == NumNewSides);
+
+	NumSides = NumNewSides;
 	unguard;
 }
 
@@ -694,6 +714,7 @@ void VLevel::LoadSideDefs(int Lump)
 	side_t* sd = Sides;
 	for (int i = 0; i < NumSides; i++, sd++)
 	{
+		Strm->Seek(sd->BottomTexture * 30);
 		vint16 textureoffset;
 		vint16 rowoffset;
 		char toptexture[8];
