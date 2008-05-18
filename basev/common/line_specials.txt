@@ -41,7 +41,8 @@
 45	Ceiling_CrushRaiseAndStay
 46	Floor_CrushStop
 47	Ceiling_MoveToValue
-49	GlassBreak(0,1),
+49	GlassBreak
+53	Line_SetTextureOffset
 60	Plat_PerpetualRaise
 61	Plat_Stop
 62	Plat_DownWaitUpStay

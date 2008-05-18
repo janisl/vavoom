@@ -477,6 +477,8 @@ enum
 
 	LNSPEC_GlassBreak = 49,
 
+	LNSPEC_LineSetTextureOffset = 53,
+
 	LNSPEC_PlatPerpetualRaise = 60,
 	LNSPEC_PlatStop,
 	LNSPEC_PlatDownWaitUpStay,

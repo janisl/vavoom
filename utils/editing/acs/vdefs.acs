@@ -487,6 +487,8 @@
 #define MARINEWEAPON_Railgun		10
 #define MARINEWEAPON_BFG			11
 
+#define NO_CHANGE					32767.0
+
 /*
 
 // Return values for PlayMovie ----------------------------------------------

@@ -627,6 +627,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_GlassBreak:
 		buttonSuccess = EV_GlassBreak(Arg1, Arg2, Arg3, Arg4, Arg5, Line, A);
 		break;
+	case LNSPEC_LineSetTextureOffset:
+		buttonSuccess = EV_LineSetTextureOffset(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_PlatPerpetualRaise:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
 			Platform::PLATEV_PerpetualRaise, Line);
@@ -3731,6 +3734,115 @@ final bool EV_LineAlignCeiling(int Arg1, int Arg2, int Arg3, int Arg4,
 		Ret = true;
 	}
 	return Ret;
+}
+
+//==========================================================================
+//
+//	EV_LineSetTextureOffset
+//
+//==========================================================================
+
+final bool EV_LineSetTextureOffset(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int			Searcher;
+	line_t*		Line;
+
+	//	Check if side is valid.
+	if (Arg4 < 0 || Arg4 > 1)
+	{
+		return false;
+	}
+
+	int NoChange = 0x7fff0000;
+
+	Searcher = -1;
+	for (Line = XLevel.FindLine(Arg1, &Searcher); Line;
+		Line = XLevel.FindLine(Arg1, &Searcher))
+	{
+		if (Line->sidenum[Arg4] < 0)
+		{
+			continue;
+		}
+		side_t* Side = &XLevel.Sides[Line->sidenum[Arg4]];
+
+		//	X offset
+		if (Arg2 != NoChange)
+		{
+			float Offs = itof(Arg2) / itof(0x10000);
+			if (!(Arg5 & 8))
+			{
+				//	Set
+				if (Arg5 & 1)
+				{
+					Side->TopTextureOffset = Offs;
+				}
+				if (Arg5 & 2)
+				{
+					Side->MidTextureOffset = Offs;
+				}
+				if (Arg5 & 4)
+				{
+					Side->BotTextureOffset = Offs;
+				}
+			}
+			else
+			{
+				//	Add
+				if (Arg5 & 1)
+				{
+					Side->TopTextureOffset += Offs;
+				}
+				if (Arg5 & 2)
+				{
+					Side->MidTextureOffset += Offs;
+				}
+				if (Arg5 & 4)
+				{
+					Side->BotTextureOffset += Offs;
+				}
+			}
+		}
+
+		//	Y offset
+		if (Arg3 != NoChange)
+		{
+			float Offs = itof(Arg3) / itof(0x10000);
+			if (!(Arg5 & 8))
+			{
+				//	Set
+				if (Arg5 & 1)
+				{
+					Side->TopRowOffset = Offs;
+				}
+				if (Arg5 & 2)
+				{
+					Side->MidRowOffset = Offs;
+				}
+				if (Arg5 & 4)
+				{
+					Side->BotRowOffset = Offs;
+				}
+			}
+			else
+			{
+				//	Add
+				if (Arg5 & 1)
+				{
+					Side->TopRowOffset += Offs;
+				}
+				if (Arg5 & 2)
+				{
+					Side->MidRowOffset += Offs;
+				}
+				if (Arg5 & 4)
+				{
+					Side->BotRowOffset += Offs;
+				}
+			}
+		}
+	}
+	return true;
 }
 
 //**************************************************************************
