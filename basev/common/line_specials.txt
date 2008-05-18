@@ -42,6 +42,7 @@
 46	Floor_CrushStop
 47	Ceiling_MoveToValue
 49	GlassBreak
+52	Scroll_Wall
 53	Line_SetTextureOffset
 60	Plat_PerpetualRaise
 61	Plat_Stop

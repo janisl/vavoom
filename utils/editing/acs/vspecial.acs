@@ -50,6 +50,7 @@ special
 	46:Floor_CrushStop(1),
 	47:Ceiling_MoveToValue(4),
 	49:GlassBreak(0,1),
+	52:Scroll_Wall(5),
 	53:Line_SetTextureOffset(5),
 	60:Plat_PerpetualRaise(3),
 	61:Plat_Stop(1),

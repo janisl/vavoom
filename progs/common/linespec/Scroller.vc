@@ -111,16 +111,16 @@ void InitWallOffsets(line_t* Line)
 //
 //==========================================================================
 
-void InitTextureBoth(line_t* Line, int Arg2, int Arg3, int Arg4, int Arg5,
-	int WhichSide)
+void InitTextureBoth(line_t* Line, float AXSpeed, float AYSpeed,
+	int WhichSide, int Where)
 {
 	Sector = Line->frontsector;
 	Type = SCROLLEV_Side;
 	AffecteeSrcLine = Line;
 	Affectee = Line->sidenum[WhichSide];
-	XSpeed = itof(Arg2 - Arg3) * 35.0 / 64.0;
-	YSpeed = itof(Arg5 - Arg4) * 35.0 / 64.0;
-	SideParts = 7;
+	XSpeed = AXSpeed * 35.0;
+	YSpeed = AYSpeed * 35.0;
+	SideParts = Where;
 }
 
 //==========================================================================
@@ -129,10 +129,10 @@ void InitTextureBoth(line_t* Line, int Arg2, int Arg3, int Arg4, int Arg5,
 //
 //==========================================================================
 
-void AdjustTextureBoth(int Arg2, int Arg3, int Arg4, int Arg5)
+void AdjustTextureBoth(float AXSpeed, float AYSpeed)
 {
-	XSpeed = itof(Arg2 - Arg3) * 35.0 / 64.0;
-	YSpeed = itof(Arg5 - Arg4) * 35.0 / 64.0;
+	XSpeed = AXSpeed * 35.0;
+	YSpeed = AYSpeed * 35.0;
 }
 
 //==========================================================================

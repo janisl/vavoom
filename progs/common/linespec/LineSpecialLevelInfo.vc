@@ -627,6 +627,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 	case LNSPEC_GlassBreak:
 		buttonSuccess = EV_GlassBreak(Arg1, Arg2, Arg3, Arg4, Arg5, Line, A);
 		break;
+	case LNSPEC_ScrollWall:
+		buttonSuccess = EV_ScrollWall(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
 	case LNSPEC_LineSetTextureOffset:
 		buttonSuccess = EV_LineSetTextureOffset(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
@@ -2894,8 +2897,8 @@ final void SpawnTextureBothScroller(line_t* Line)
 	Scroller	Scroll;
 
 	Scroll = Spawn(Scroller);
-	Scroll.InitTextureBoth(Line, Line->arg2, Line->arg3, Line->arg4,
-		Line->arg5, 0);
+	Scroll.InitTextureBoth(Line, itof(Line->arg2 - Line->arg3) / 64.0,
+		itof(Line->arg5 - Line->arg4) / 64.0, 0, 7);
 }
 
 //==========================================================================
@@ -2996,10 +2999,50 @@ final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
 		Arg1 = -Arg1;
 	}
 
+	SetWallScroller(Arg1, itof(Arg2 - Arg3) / 64.0, itof(Arg5 - Arg4) / 64.0,
+		WhichSide, 7);
+	return true;
+}
+
+//==========================================================================
+//
+//	EV_ScrollWall
+//
+//==========================================================================
+
+final bool EV_ScrollWall(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	if (!Arg1)
+	{
+		//	No lines to adjust.
+		return false;
+	}
+
+	SetWallScroller(Arg1, itof(Arg2) / itof(0x10000),
+		itof(Arg3) / itof(0x10000), !!Arg4, Arg5);
+	return true;
+}
+
+//==========================================================================
+//
+//	SetWallScroller
+//
+//==========================================================================
+
+final void SetWallScroller(int LineId, float XSpeed, float YSpeed,
+	int WhichSide, int Where)
+{
 	Scroller	Scroll;
 	int			i;
 
-	if (Arg2 - Arg3 == 0 && Arg5 - Arg4 == 0)
+	Where &= 7;
+	if (!Where)
+	{
+		return;
+	}
+
+	if (!XSpeed && !YSpeed)
 	{
 		//	As a special case with no deltas remove any texture scrolers.
 		foreach AllThinkers(Scroller, Scroll)
@@ -3009,12 +3052,17 @@ final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
 				continue;
 			}
 			//	Check if line has a correct tag.
-			if (Scroll.AffecteeSrcLine->LineTag != Arg1)
+			if (Scroll.AffecteeSrcLine->LineTag != LineId)
 			{
 				continue;
 			}
 			//	Check if it's the correct side.
 			if (Scroll.AffecteeSrcLine->sidenum[WhichSide] != Scroll.Affectee)
+			{
+				continue;
+			}
+			//	Check if it's scrolling the same wall parts
+			if (Scroll.SideParts != Where)
 			{
 				continue;
 			}
@@ -3033,7 +3081,7 @@ final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
 				continue;
 			}
 			//	Check if line has a correct tag.
-			if (Scroll.AffecteeSrcLine->LineTag != Arg1)
+			if (Scroll.AffecteeSrcLine->LineTag != LineId)
 			{
 				continue;
 			}
@@ -3042,8 +3090,13 @@ final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
 			{
 				continue;
 			}
+			//	Check if it's scrolling the same wall parts
+			if (Scroll.SideParts != Where)
+			{
+				continue;
+			}
 			//	Found it.
-			Scroll.AdjustTextureBoth(Arg2, Arg3, Arg4, Arg5);
+			Scroll.AdjustTextureBoth(XSpeed, YSpeed);
 			FoundScrollers[FoundScrollers.Num] = Scroll;
 		}
 
@@ -3051,8 +3104,8 @@ final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
 		line_t*		Other;
 
 		Searcher = -1;
-		for (Other = XLevel.FindLine(Arg1, &Searcher); Other;
-			Other = XLevel.FindLine(Arg1, &Searcher))
+		for (Other = XLevel.FindLine(LineId, &Searcher); Other;
+			Other = XLevel.FindLine(LineId, &Searcher))
 		{
 			//	Check if this line already has scroller.
 			for (i = 0; i < FoundScrollers.Num; i++)
@@ -3066,12 +3119,11 @@ final bool EV_ScrollTextureBoth(int Arg1, int Arg2, int Arg3, int Arg4,
 			{
 				//	Start a new scroller.
 				Scroll = Spawn(Scroller);
-				Scroll.InitTextureBoth(Other, Arg2, Arg3, Arg4, Arg5,
-					WhichSide);
+				Scroll.InitTextureBoth(Other, XSpeed, YSpeed, WhichSide,
+					Where);
 			}
 		}
 	}
-	return true;
 }
 
 //==========================================================================
