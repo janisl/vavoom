@@ -958,6 +958,11 @@ final void FallingDamage()
 	float	mom;
 	float	dist;
 
+	if (Sector->bNoFallingDamage)
+	{
+		return;
+	}
+
 	mom = fabs(Velocity.z);
 
 	if (Level.bFallingDamage)
@@ -1039,6 +1044,10 @@ final void MonsterFallingDamage()
 	float	mom;
 
 	if (!Level.bMonsterFallingDamage)
+	{
+		return;
+	}
+	if (Sector->bNoFallingDamage)
 	{
 		return;
 	}

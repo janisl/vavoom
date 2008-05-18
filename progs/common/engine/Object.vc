@@ -479,6 +479,7 @@ enum
 
 	LNSPEC_ScrollWall = 52,
 	LNSPEC_LineSetTextureOffset,
+	LNSPEC_SectorChangeFlags,
 
 	LNSPEC_PlatPerpetualRaise = 60,
 	LNSPEC_PlatStop,
@@ -897,6 +898,7 @@ struct sector_t
 	bool			bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
 	bool			bUnderWater;		//	Sector is underwater
 	bool			bSilent;			//	Actors don't make noise in this sector.
+	bool			bNoFallingDamage;	//	No falling damage in this sector.
 
 	// 0 = untraversed, 1,2 = sndlines -1
 	int				soundtraversed;

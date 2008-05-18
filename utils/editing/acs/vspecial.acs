@@ -52,6 +52,7 @@ special
 	49:GlassBreak(0,1),
 	52:Scroll_Wall(5),
 	53:Line_SetTextureOffset(5),
+	54:Sector_ChangeFlags(3),
 	60:Plat_PerpetualRaise(3),
 	61:Plat_Stop(1),
 	62:Plat_DownWaitUpStay(3),

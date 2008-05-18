@@ -44,6 +44,7 @@
 49	GlassBreak
 52	Scroll_Wall
 53	Line_SetTextureOffset
+54	Sector_ChangeFlags
 60	Plat_PerpetualRaise
 61	Plat_Stop
 62	Plat_DownWaitUpStay

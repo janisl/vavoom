@@ -70,6 +70,10 @@ const int DAMAGE_SUBCLASSES_PROTECT	= 8;
 const int BODYQUESIZE				= 32;
 const int CORPSEQUEUESIZE			= 64;
 
+const int
+	SECF_SILENT 					= 1,
+	SECF_NOFALLINGDAMAGE			= 2;
+
 name			DefaultDoorSound;
 name			DefaultCeilingSound;
 name			DefaultSilentCeilingSound;
@@ -632,6 +636,9 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_LineSetTextureOffset:
 		buttonSuccess = EV_LineSetTextureOffset(Arg1, Arg2, Arg3, Arg4, Arg5);
+		break;
+	case LNSPEC_SectorChangeFlags:
+		buttonSuccess = EV_SectorChangeFlags(Arg1, Arg2, Arg3, Arg4, Arg5);
 		break;
 	case LNSPEC_PlatPerpetualRaise:
 		buttonSuccess = EV_DoPlat(Arg1, Arg2, Arg3, Arg4, Arg5,
@@ -3479,6 +3486,48 @@ final bool EV_SectorSetFriction(int Arg1, int Arg2, int Arg3, int Arg4,
 		Ret = true;
 	}
 	return Ret;
+}
+
+//=========================================================================
+//
+//	EV_SectorChangeFlags
+//
+//=========================================================================
+
+final bool EV_SectorChangeFlags(int Arg1, int Arg2, int Arg3, int Arg4,
+	int Arg5)
+{
+	int		SecNum;
+	bool	Rtn;
+
+	if (!Arg1)
+	{
+		return false;
+	}
+	Rtn = false;
+	for (SecNum = XLevel.FindSectorFromTag(Arg1, -1); SecNum >= 0;
+		SecNum = XLevel.FindSectorFromTag(Arg1, SecNum))
+	{
+		sector_t* Sec = &XLevel.Sectors[SecNum];
+		if (Arg3 & SECF_SILENT)
+		{
+			Sec->bSilent = false;
+		}
+		else if (Arg2 & SECF_SILENT)
+		{
+			Sec->bSilent = true;
+		}
+		if (Arg3 & SECF_NOFALLINGDAMAGE)
+		{
+			Sec->bNoFallingDamage = false;
+		}
+		else if (Arg2 & SECF_NOFALLINGDAMAGE)
+		{
+			Sec->bNoFallingDamage = true;
+		}
+		Rtn = true;
+	}
+	return Rtn;
 }
 
 //==========================================================================
