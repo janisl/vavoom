@@ -914,8 +914,7 @@ private:
 	//	Map loaders.
 	void LoadVertexes(int, int, int&);
 	void LoadSectors(int);
-	void LoadSideDefsPass1(int);
-	void LoadSideDefsPass2(int);
+	void LoadSideDefs(int);
 	void LoadLineDefs1(int, int);
 	void LoadLineDefs2(int, int);
 	void LoadGLSegs(int, int);
@@ -933,7 +932,8 @@ private:
 	int FindGLNodes(VName) const;
 	int TexNumForName(const char*, int, bool = false) const;
 	int TexNumOrColour(const char*, int, bool&, vuint32&) const;
-	void SetupLineSides(line_t*) const;
+	void CreateSides();
+	void FinaliseLines();
 	void CreateRepBase();
 	void CreateBlockMap();
 	void BuildNodes();

@@ -223,9 +223,6 @@ void VLevel::LoadMap(VName AMapName)
 	double SectorsTime = -Sys_Time();
 	LoadSectors(lumpnum + ML_SECTORS);
 	SectorsTime += Sys_Time();
-	double SidesTime = -Sys_Time();
-	LoadSideDefsPass1(lumpnum + ML_SIDEDEFS);
-	SidesTime += Sys_Time();
 	double LinesTime = -Sys_Time();
 	double ThingsTime;
 	if (!(LevelFlags & LF_Extended))
@@ -243,6 +240,22 @@ void VLevel::LoadMap(VName AMapName)
 		LoadThings2(lumpnum + ML_THINGS);
 	}
 	ThingsTime += Sys_Time();
+
+	double TranslTime = -Sys_Time();
+	if (!(LevelFlags & LF_Extended))
+	{
+		//	Translate level to Hexen format
+		GGameInfo->eventTranslateLevel(this);
+	}
+	TranslTime += Sys_Time();
+	//	Set up textures after loading lines because for some Boom line
+	// specials there can be special meaning of some texture names.
+	double SidesTime = -Sys_Time();
+	LoadSideDefs(lumpnum + ML_SIDEDEFS);
+	SidesTime += Sys_Time();
+	double Lines2Time = -Sys_Time();
+	FinaliseLines();
+	Lines2Time += Sys_Time();
 
 	double NodesTime = -Sys_Time();
 	if (NeedNodesBuild)
@@ -279,19 +292,6 @@ void VLevel::LoadMap(VName AMapName)
 		LoadACScripts(-1);
 	}
 	AcsTime += Sys_Time();
-
-	double TranslTime = -Sys_Time();
-	if (!(LevelFlags & LF_Extended))
-	{
-		//	Translate level to Hexen format
-		GGameInfo->eventTranslateLevel(this);
-	}
-	TranslTime += Sys_Time();
-	//	Set up textures after loading lines because for some Boom line
-	// specials there can be special meaning of some texture names.
-	double Sides2Time = -Sys_Time();
-	LoadSideDefsPass2(lumpnum + ML_SIDEDEFS);
-	Sides2Time += Sys_Time();
 
 	double GroupLinesTime = -Sys_Time();
 	GroupLines();
@@ -368,15 +368,15 @@ void VLevel::LoadMap(VName AMapName)
 		GCon->Logf("Node build       %f", NodeBuildTime);
 		GCon->Logf("Vertexes         %f", VertexTime);
 		GCon->Logf("Sectors          %f", SectorsTime);
-		GCon->Logf("Sides            %f", SidesTime);
 		GCon->Logf("Lines            %f", LinesTime);
 		GCon->Logf("Things           %f", ThingsTime);
+		GCon->Logf("Translation      %f", TranslTime);
+		GCon->Logf("Sides            %f", SidesTime);
+		GCon->Logf("Lines 2          %f", Lines2Time);
 		GCon->Logf("Nodes            %f", NodesTime);
 		GCon->Logf("Block map        %f", BlockMapTime);
 		GCon->Logf("Reject           %f", RejectTime);
 		GCon->Logf("ACS              %f", AcsTime);
-		GCon->Logf("Translation      %f", TranslTime);
-		GCon->Logf("Sides 2          %f", Sides2Time);
 		GCon->Logf("Group lines      %f", GroupLinesTime);
 		GCon->Logf("Conversations    %f", ConvTime);
 		GCon->Logf("Spawn world      %f", SpawnWorldTime);
@@ -599,32 +599,117 @@ void VLevel::LoadSectors(int Lump)
 
 //==========================================================================
 //
-//	VLevel::LoadSideDefsPass1
-//
-//	Pass 1: Create side defs and load data, except texture information.
+//	VLevel::CreateSides
 //
 //==========================================================================
 
-void VLevel::LoadSideDefsPass1(int Lump)
+void VLevel::CreateSides()
 {
-	guard(VLevel::LoadSideDefs);
+	guard(VLevel::CreateSides);
 	//	Allocate memory for side defs.
-	NumSides = W_LumpLength(Lump) / 30;
 	Sides = new side_t[NumSides];
 	memset(Sides, 0, sizeof(side_t) * NumSides);
+
+	line_t* Line = Lines;
+	for (int i = 0; i < NumLines; i++, Line++)
+	{
+		if (Line->sidenum[0] == -1)
+		{
+			if (strict_level_errors)
+			{
+				Host_Error("Bad WAD: Line %d has no front side", i);
+			}
+			else
+			{
+				GCon->Logf("Bad WAD: Line %d has no front side", i);
+				Line->sidenum[0] = 0;
+			}
+		}
+		if (Line->sidenum[0] < 0 || Line->sidenum[0] >= NumSides)
+		{
+			Host_Error("Bad side-def index %d", Line->sidenum[0]);
+		}
+		Sides[Line->sidenum[0]].LineNum = i;
+
+		if (Line->sidenum[1] != -1)
+		{
+			if (Line->sidenum[1] < 0 || Line->sidenum[1] >= NumSides)
+			{
+				Host_Error("Bad side-def index %d", Line->sidenum[1]);
+			}
+			Sides[Line->sidenum[1]].LineNum = i;
+			// Just a warning
+			if (!(Line->flags & ML_TWOSIDED))
+			{
+				GCon->Logf("Bad WAD: Line %d is two-sided but has no TWO-SIDED "
+					"flag set", i);
+			}
+		}
+		else
+		{
+			if (Line->flags & ML_TWOSIDED)
+			{
+				if (strict_level_errors)
+				{
+					Host_Error("Bad WAD: Line %d is marked as TWO-SIDED but has "
+						"only one side", i);
+				}
+				else
+				{
+					GCon->Logf("Bad WAD: Line %d is marked as TWO-SIDED but has "
+						"only one side", i);
+					Line->flags &= ~ML_TWOSIDED;
+				}
+			}
+		}
+
+		//	Assign line specials to sidedefs midtexture and arg1 to toptexture.
+		if (Line->special == LNSPEC_StaticInit && Line->arg2 != 1)
+		{
+			continue;
+		}
+		if (Line->sidenum[0] != -1)
+		{
+			Sides[Line->sidenum[0]].MidTexture = Line->special;
+			Sides[Line->sidenum[0]].TopTexture = Line->arg1;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::LoadSideDefs
+//
+//==========================================================================
+
+void VLevel::LoadSideDefs(int Lump)
+{
+	guard(VLevel::LoadSideDefs);
+	NumSides = W_LumpLength(Lump) / 30;
+	CreateSides();
 
 	//	Load data.
 	VStream* Strm = W_CreateLumpReaderNum(Lump);
 	side_t* sd = Sides;
 	for (int i = 0; i < NumSides; i++, sd++)
 	{
-		vint16 textureoffset, rowoffset, sector;
+		vint16 textureoffset;
+		vint16 rowoffset;
+		char toptexture[8];
+		char bottomtexture[8];
+		char midtexture[8];
+		vint16 sector;
 		*Strm << textureoffset << rowoffset;
-		Strm->Seek(Strm->Tell() + 24);	//	Skip texture names.
+		Strm->Serialise(toptexture, 8);
+		Strm->Serialise(bottomtexture, 8);
+		Strm->Serialise(midtexture, 8);
 		*Strm << sector;
 
 		if (sector < 0 || sector >= NumSectors)
+		{
 			Host_Error("Bad sector index %d", sector);
+		}
 
 		sd->TopTextureOffset = textureoffset;
 		sd->BotTextureOffset = textureoffset;
@@ -633,50 +718,6 @@ void VLevel::LoadSideDefsPass1(int Lump)
 		sd->BotRowOffset = rowoffset;
 		sd->MidRowOffset = rowoffset;
 		sd->Sector = &Sectors[sector];
-	}
-	delete Strm;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VLevel::LoadSideDefsPass2
-//
-//	Pass 2: Load texture definitions. It's been split out because in Boom
-// meaning of some texture names depend on line special.
-//
-//==========================================================================
-
-void VLevel::LoadSideDefsPass2(int Lump)
-{
-	guard(VLevel::LoadSideDefs);
-	//	Assign line specials to sidedefs midtexture and arg1 to toptexture.
-	for (int i = 0; i < NumLines; i++)
-	{
-		if (Lines[i].special == LNSPEC_StaticInit && Lines[i].arg2 != 1)
-		{
-			continue;
-		}
-		if (Lines[i].sidenum[0] != -1)
-		{
-			Sides[Lines[i].sidenum[0]].MidTexture = Lines[i].special;
-			Sides[Lines[i].sidenum[0]].TopTexture = Lines[i].arg1;
-		}
-	}
-
-	//	Load data.
-	VStream* Strm = W_CreateLumpReaderNum(Lump);
-	side_t* sd = Sides;
-	for (int i = 0; i < NumSides; i++, sd++)
-	{
-		char toptexture[8];
-		char bottomtexture[8];
-		char midtexture[8];
-		Strm->Seek(Strm->Tell() + 4);
-		Strm->Serialise(toptexture, 8);
-		Strm->Serialise(bottomtexture, 8);
-		Strm->Serialise(midtexture, 8);
-		Strm->Seek(Strm->Tell() + 2);
 
 		switch (sd->MidTexture)
 		{
@@ -765,9 +806,13 @@ void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts)
 		*Strm << v1 << v2 << flags << special << tag << side0 << side1;
 
 		if (v1 < 0 || v1 >= NumBaseVerts)
+		{
 			Host_Error("Bad vertex index %d", v1);
+		}
 		if (v2 < 0 || v2 >= NumBaseVerts)
+		{
 			Host_Error("Bad vertex index %d", v2);
+		}
 
 		ld->flags = flags;
 		ld->special = special;
@@ -776,7 +821,9 @@ void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts)
 		ld->v2 = &Vertexes[v2];
 		ld->sidenum[0] = side0;
 		ld->sidenum[1] = side1;
-		SetupLineSides(ld);
+
+		ld->alpha = 1.0;
+		ld->LineTag = -1;
 	}
 	delete Strm;
 	unguard;
@@ -808,9 +855,13 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 			<< arg5 << side0 << side1;
 
 		if (v1 < 0 || v1 >= NumBaseVerts)
+		{
 			Host_Error("Bad vertex index %d", v1);
+		}
 		if (v2 < 0 || v2 >= NumBaseVerts)
+		{
 			Host_Error("Bad vertex index %d", v2);
+		}
 
 		ld->flags = flags;
 
@@ -826,7 +877,9 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 		ld->v2 = &Vertexes[v2];
 		ld->sidenum[0] = side0;
 		ld->sidenum[1] = side1;
-		SetupLineSides(ld);
+
+		ld->alpha = 1.0;
+		ld->LineTag = -1;
 	}
 	delete Strm;
 	unguard;
@@ -834,68 +887,28 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 
 //==========================================================================
 //
-//	VLevel::SetupLineSides
+//	VLevel::FinaliseLines
 //
 //==========================================================================
 
-void VLevel::SetupLineSides(line_t* ld) const
+void VLevel::FinaliseLines()
 {
-	ld->alpha = 1.0;
-	ld->LineTag = -1;
-
-	CalcLine(ld);
-	if (ld->sidenum[0] == -1)
+	guard(VLevel::FinaliseLines);
+	line_t* Line = Lines;
+	for (int i = 0; i < NumLines; i++, Line++)
 	{
-		if (strict_level_errors)
+		CalcLine(Line);
+		Line->frontsector = Sides[Line->sidenum[0]].Sector;
+		if (Line->sidenum[1] != -1)
 		{
-			Host_Error("Bad WAD: Line %d has no front side", ld - Lines);
+			Line->backsector = Sides[Line->sidenum[1]].Sector;
 		}
 		else
 		{
-			GCon->Logf("Bad WAD: Line %d has no front side", ld - Lines);
-			ld->sidenum[0] = 0;
+			Line->backsector = NULL;
 		}
 	}
-	if (ld->sidenum[0] < 0 || ld->sidenum[0] >= NumSides)
-	{
-		Host_Error("Bad side-def index %d", ld->sidenum[0]);
-	}
-	ld->frontsector = Sides[ld->sidenum[0]].Sector;
-	Sides[ld->sidenum[0]].LineNum = ld - Lines;
-
-	if (ld->sidenum[1] != -1)
-	{
-		if (ld->sidenum[1] < 0 || ld->sidenum[1] >= NumSides)
-		{
-			Host_Error("Bad side-def index %d", ld->sidenum[1]);
-		}
-		ld->backsector = Sides[ld->sidenum[1]].Sector;
-		Sides[ld->sidenum[1]].LineNum = ld - Lines;
-		// Just a warning
-		if (!(ld->flags & ML_TWOSIDED))
-		{
-			GCon->Logf("Bad WAD: Line %d is two-sided but has no TWO-SIDED "
-				"flag set", ld - Lines);
-		}
-	}
-	else
-	{
-		if (ld->flags & ML_TWOSIDED)
-		{
-			if (strict_level_errors)
-			{
-				Host_Error("Bad WAD: Line %d is marked as TWO-SIDED but has "
-					"only one side", ld - Lines);
-			}
-			else
-			{
-				GCon->Logf("Bad WAD: Line %d is marked as TWO-SIDED but has "
-					"only one side", ld - Lines);
-				ld->flags &= ~ML_TWOSIDED;
-			}
-		}
-		ld->backsector = 0;
-	}
+	unguard;
 }
 
 //==========================================================================
