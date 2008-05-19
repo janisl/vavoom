@@ -42,5 +42,6 @@ defaultproperties
 	Height = 4.0;
 	Gravity = 0.125;
 	bMissile = true;
+	bBloodSplatter = true;
 	DeathSound = 'Drip';
 }

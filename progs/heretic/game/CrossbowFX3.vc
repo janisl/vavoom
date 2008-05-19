@@ -52,4 +52,5 @@ defaultproperties
 	bWindThrust = true;
 	bThruGhost = true;
 	DeathSound = 'weapons/bowhit';
+	bBloodSplatter = true;
 }

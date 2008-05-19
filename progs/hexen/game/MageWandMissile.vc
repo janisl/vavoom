@@ -77,4 +77,5 @@ defaultproperties
 	bCannotPush = true;
 	bNoDamageThrust = true;
 	bBlaster = true;
+	bBloodSplatter = true;
 }

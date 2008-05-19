@@ -67,5 +67,6 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bThruGhost = true;
+	bBloodSplatter = true;
 	DeathSound = 'hknight/hit';
 }

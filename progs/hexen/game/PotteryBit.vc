@@ -108,4 +108,5 @@ defaultproperties
 	Height = 5.0;
 	bMissile = true;
 	bNoTeleport = true;
+	bBloodSplatter = true;
 }

@@ -94,6 +94,7 @@ defaultproperties
 	bActivatePCross = true;
 	bThruGhost = true;
 	bActivateImpact = true;
+	bBloodSplatter = true;
 	DamageType = 'Fire';
 	bConditionalFireDamage = true;
 	bExplodeParticles = true;

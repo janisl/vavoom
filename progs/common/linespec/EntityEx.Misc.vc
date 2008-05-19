@@ -813,8 +813,7 @@ bool Touch(Entity InOther)
 		damage = GetMissileDamage(bStrifeDamage ? 3 : 7, 1);
 		if (damage > 0)
 		{
-			if (LineSpecialGameInfo(Level.Game).bBloodSplatter &&
-				!Other.bNoBlood && !Other.bReflective &&
+			if (bBloodSplatter && !Other.bNoBlood && !Other.bReflective &&
 				!Other.bInvulnerable && !Other.bDormant &&
 				!bBloodlessImpact && P_Random() < 192)
 			{

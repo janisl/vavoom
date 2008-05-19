@@ -349,7 +349,6 @@ defaultproperties
 	GameFilterFlag = EntityEx::GAME_Hexen;
 	bDefaultBloodSplatter = true;
 	bUseHexenPolyobjTypes = true;
-	bBloodSplatter = true;
 	bNoDamageThrustInvulnerable = true;
 	bNightmareFastChase = true;
 	bRavenStylePickupRespawn = true;

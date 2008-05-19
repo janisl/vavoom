@@ -259,6 +259,7 @@ bool bCanUseWalls;		// Can activate "use" specials.
 transient bool bInChase;// Used to prevent recursion in A_Chase.
 bool bUseSpecial;		// Execute special when this thing is being used.
 bool bNoInfighting;		// Disable infighting for this actor.
+bool bBloodSplatter;	// Use blood splatter like in Raven games.
 
 //  Params
 float			Speed;

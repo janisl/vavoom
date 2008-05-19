@@ -90,4 +90,5 @@ defaultproperties
 	bNoBlockmap = true;
 	bDropOff = true;
 	bNoTeleport = true;
+	bBloodSplatter = true;
 }

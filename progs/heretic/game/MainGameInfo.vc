@@ -524,7 +524,6 @@ defaultproperties
 	bDefaultLaxMonsterActivation = true;
 	bDefaultBloodSplatter = true;
 	bUseHexenPolyobjTypes = true;
-	bBloodSplatter = true;
 	bNightmareFastChase = true;
 	bRavenStylePickupRespawn = true;
 	TeleFogHeight = TELEFOGHEIGHT;

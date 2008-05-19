@@ -141,5 +141,6 @@ defaultproperties
 	bActivatePCross = true;
 	bSeekerMissile = true;
 	bExtremeDeath = true;
+	bBloodSplatter = true;
 	DeathSound = 'MageStaffExplode';
 }

@@ -48,4 +48,5 @@ defaultproperties
 	bDropOff = true;
 	bNoTeleport = true;
 	bActivatePCross = true;
+	bBloodSplatter = true;
 }

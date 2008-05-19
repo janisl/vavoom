@@ -199,4 +199,5 @@ defaultproperties
 	bNoTeleport = true;
 	bColideWithWorld = false;
 	bColideWithThings = false;
+	bBloodSplatter = true;
 }

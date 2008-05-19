@@ -116,5 +116,6 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bActivateImpact = true;
+	bBloodSplatter = true;
 	DeathSound = 'weapons/blasterhit';
 }

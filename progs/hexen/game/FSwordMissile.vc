@@ -102,5 +102,6 @@ defaultproperties
 	bActivateImpact = true;
 	bActivatePCross = true;
 	bExtremeDeath = true;
+	bBloodSplatter = true;
 	DeathSound = 'FighterSwordExplode';
 }

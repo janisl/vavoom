@@ -69,4 +69,5 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bWindThrust = true;
+	bBloodSplatter = true;
 }

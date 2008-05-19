@@ -73,5 +73,6 @@ defaultproperties
 	bNoGravity = true;
 	bNoTeleport = true;
 	bSeekerMissile = true;
+	bBloodSplatter = true;
 	DeathSound = 'BishopMissileExplode';
 }

@@ -51,6 +51,7 @@ defaultproperties
 	bActivateImpact = true;
 	bActivatePCross = true;
 	bFloorClip = true;
+	bBloodSplatter = true;
 	DamageType = 'Fire';
 	DeathSound = 'FireDemonMissileHit';
 }

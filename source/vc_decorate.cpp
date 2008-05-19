@@ -243,6 +243,7 @@ static VFlagDef ActorFlags[] =
 	{ "PierceArmor", NULL, "bPierceArmor" },
 	{ "ForceRadiusDmg", NULL, "bForceRadiusDmg" },
 	{ "SpawnSoundSource", NULL, "bSpawnSoundSource" },
+	{ "BloodSplatter", NULL, "bBloodSplatter" },
 	//
 	//	Miscellaneous
 	//
@@ -1589,12 +1590,6 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		SetClassFieldName(Class, "DamageType", Value ? VName("Ice") : NAME_None);
 		return true;
 	}
-	if (!Flag.ICmp("BloodSplatter"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag BloodSplatter in %s", Class->GetName());
-		return true;
-	}
 	if (!Flag.ICmp("DehExplosion"))
 	{
 		//FIXME
@@ -2796,6 +2791,10 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			SetClassFieldBool(Class, "bActivateImpact", true);
 			SetClassFieldBool(Class, "bActivatePCross", true);
 			SetClassFieldBool(Class, "bNoTeleport", true);
+			if (GGameInfo->Flags & VGameInfo::GIF_DefaultBloodSplatter)
+			{
+				SetClassFieldBool(Class, "bBloodSplatter", true);
+			}
 			continue;
 		}
 		//
@@ -4706,12 +4705,6 @@ void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 	if (!Flag.ICmp("IceDamage"))
 	{
 		SetFieldName(this, "DamageType", Value ? VName("Ice") : NAME_None);
-		return;
-	}
-	if (!Flag.ICmp("BloodSplatter"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag BloodSplatter in %s", GetClass()->GetName());
 		return;
 	}
 	if (!Flag.ICmp("DehExplosion"))

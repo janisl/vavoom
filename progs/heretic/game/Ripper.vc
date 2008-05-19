@@ -71,5 +71,6 @@ defaultproperties
 	bActivatePCross = true;
 	bRip = true;
 	bActivateImpact = true;
+	bBloodSplatter = true;
 	DeathSound = 'weapons/blasterpowhit';
 }

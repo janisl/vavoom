@@ -238,4 +238,5 @@ defaultproperties
 	bNoGravity = true;
 	bNoTeleport = true;
 	bBloodlessImpact = true;
+	bBloodSplatter = true;
 }

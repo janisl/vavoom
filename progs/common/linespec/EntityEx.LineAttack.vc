@@ -556,8 +556,9 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 
 		bool UseAxeBlood = bIsPlayer && PlayerEx(Player).ReadyWeapon &&
 			PlayerEx(Player).ReadyWeapon.bAxeBlood;
-		bool UseBloodSplatter = UseAxeBlood ||
-			LineSpecialGameInfo(Level.Game).bBloodSplatter;
+		bool UseBloodSplatter = UseAxeBlood || bBloodSplatter ||
+			(bIsPlayer && PlayerEx(Player).ReadyWeapon &&
+			PlayerEx(Player).ReadyWeapon.bBloodSplatter);
 
 		// Spawn bullet puffs or blod spots, depending on target type.
 		if (PuffType.default.bPuffOnActors || th.bNoBlood ||

@@ -50,6 +50,7 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bActivateImpact = true;
+	bBloodSplatter = true;
 	SightSound = 'weapons/bowshoot';
 	DeathSound = 'weapons/bowhit';
 }

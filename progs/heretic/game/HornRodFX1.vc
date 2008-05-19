@@ -53,6 +53,7 @@ defaultproperties
 	bActivatePCross = true;
 	bWindThrust = true;
 	bActivateImpact = true;
+	bBloodSplatter = true;
 	SightSound = 'weapons/hornrodshoot';
 	DeathSound = 'weapons/hornrodhit';
 }

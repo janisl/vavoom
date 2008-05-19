@@ -331,5 +331,6 @@ defaultproperties
 	bExtremeDeath = true;
 	bCanBlast = true;
 	bDontShieldReflect = true;
+	bBloodSplatter = true;
 	DeathSound = 'SpiritDie';
 }

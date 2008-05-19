@@ -169,5 +169,6 @@ defaultproperties
 	BotCombatDist = 1.0;
 	bWimpyWeapon = true;
 	bBotMelee = true;
+	bBloodSplatter = true;
 	UpSound = 'weapons/gauntletsactivate';
 }

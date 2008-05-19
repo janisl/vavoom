@@ -90,6 +90,7 @@ defaultproperties
 	bNoTeleport = true;
 	bNoGravity = false;
 	bNoTeleport = false;
+	bBloodSplatter = true;
 	SightSound = 'FlechetteBounce';
 	DeathSound = 'FlechetteExplode';
 }

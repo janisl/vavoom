@@ -188,6 +188,7 @@ defaultproperties
 	bActivateImpact = true;
 	bActivatePCross = true;
 	bInvisible = true;
+	bBloodSplatter = true;
 	DamageType = 'Fire';
 	bBlaster = true;
 	FlameSpeed = 9.0 / 20.0 * 35.0;

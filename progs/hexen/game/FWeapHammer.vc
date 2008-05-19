@@ -157,4 +157,5 @@ defaultproperties
 	BotCombatDist = 192.0;
 	bAmmoOptional = true;
 	bBotProjectile = true;
+	bBloodSplatter = true;
 }

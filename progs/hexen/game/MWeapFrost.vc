@@ -121,4 +121,5 @@ defaultproperties
 	PickupMessage = "$txt_weapon_m2";
 	BotCombatDist = 256.0;
 	bBotProjectile = true;
+	bBloodSplatter = true;
 }

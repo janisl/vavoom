@@ -282,4 +282,5 @@ defaultproperties
 	bActivateImpact = true;
 	bActivatePCross = true;
 	bLightning = true;
+	bBloodSplatter = true;
 }

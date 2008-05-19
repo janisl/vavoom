@@ -104,6 +104,7 @@ defaultproperties
 	bNoTeleport = true;
 	bNoWallBounceSnd = true;
 	bFullVolDeath = true;
+	bBloodSplatter = true;
 	SightSound = 'SorcererBallBounce';
 	DeathSound = 'SorcererHeadScream';
 }

@@ -154,4 +154,5 @@ defaultproperties
 	bDropOff = true;
 	bNoGravity = true;
 	bLightning = true;
+	bBloodSplatter = true;
 }

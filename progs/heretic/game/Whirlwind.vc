@@ -126,6 +126,7 @@ defaultproperties
 	bNoTeleport = true;
 	bActivatePCross = true;
 	bExploCount = true;
+	bBloodSplatter = true;
 	Special2 = 50;
 	Special1 = 60;
 }

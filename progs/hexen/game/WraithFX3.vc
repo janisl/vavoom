@@ -45,5 +45,6 @@ defaultproperties
 	bDropOff = true;
 	bNoTeleport = true;
 	bFloorClip = true;
+	bBloodSplatter = true;
 	DeathSound = 'Drip';
 }

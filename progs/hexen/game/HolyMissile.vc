@@ -128,4 +128,5 @@ defaultproperties
 	bNoGravity = true;
 	bNoTeleport = true;
 	bExtremeDeath = true;
+	bBloodSplatter = true;
 }

@@ -114,4 +114,5 @@ defaultproperties
 	PickupMessage = "$txt_wpnblaster";
 	SisterWeaponType = BlasterPowered;
 	BotCombatDist = 256.0;
+	bBloodSplatter = true;
 }

@@ -49,4 +49,5 @@ defaultproperties
 	bNoGravity = true;
 	bNoTeleport = true;
 	bLeaveTrail = true;
+	bBloodSplatter = true;
 }

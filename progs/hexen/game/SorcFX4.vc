@@ -77,5 +77,6 @@ defaultproperties
 	bDropOff = true;
 	bNoGravity = true;
 	bNoTeleport = true;
+	bBloodSplatter = true;
 	DeathSound = 'SorcererBallExplode';
 }
