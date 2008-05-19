@@ -34,6 +34,11 @@ readonly float					SkillAmmoFactor;
 readonly float					SkillDoubleAmmoFactor;
 readonly float					SkillDamageFactor;
 
+readonly bool					bSkillFastMonsters;
+readonly bool					bSkillDisableCheats;
+readonly bool					bSkillEasyBossBrain;
+readonly bool					bSkillAutoUseHealth;
+
 native final void SetSkill(int Skill);
 
 defaultproperties

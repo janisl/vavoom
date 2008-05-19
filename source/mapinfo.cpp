@@ -1268,6 +1268,7 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->AmmoFactor = 1.0;
 	SDef->DoubleAmmoFactor = 2.0;
 	SDef->DamageFactor = 1.0;
+	SDef->Flags = 0;
 
 	while (1)
 	{
@@ -1286,19 +1287,23 @@ static void ParseSkillDef(VScriptParser* sc)
 			sc->ExpectFloat();
 			SDef->DamageFactor = sc->Float;
 		}
+		else if (sc->Check("FastMonsters"))
+		{
+			SDef->Flags |= SKILLF_FastMonsters;
+		}
+		else if (sc->Check("DisableCheats"))
+		{
+			SDef->Flags |= SKILLF_DisableCheats;
+		}
+		else if (sc->Check("EasyBossBrain"))
+		{
+			SDef->Flags |= SKILLF_EasyBossBrain;
+		}
+		else if (sc->Check("AutoUseHealth"))
+		{
+			SDef->Flags |= SKILLF_AutoUseHealth;
+		}
 
-		else if (sc->Check("fastmonsters"))
-		{
-		}
-		else if (sc->Check("disablecheats"))
-		{
-		}
-		else if (sc->Check("easybossbrain"))
-		{
-		}
-		else if (sc->Check("autousehealth"))
-		{
-		}
 		else if (sc->Check("respawntime"))
 		{
 			sc->ExpectFloat();

@@ -105,6 +105,7 @@ void VWorldInfo::SetSkill(int ASkill)
 	SkillAmmoFactor = SDef->AmmoFactor;
 	SkillDoubleAmmoFactor = SDef->DoubleAmmoFactor;
 	SkillDamageFactor = SDef->DamageFactor;
+	Flags = SDef->Flags;
 	unguard;
 }
 

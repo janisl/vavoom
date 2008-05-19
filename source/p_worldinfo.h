@@ -36,6 +36,15 @@ class VWorldInfo : public VObject
 	float			SkillDoubleAmmoFactor;
 	float			SkillDamageFactor;
 
+	enum
+	{
+		WIF_SkillFastMonsters		= 0x00000001,
+		WIF_SkillDisableCheats		= 0x00000002,
+		WIF_SkillEasyBossBrain		= 0x00000004,
+		WIF_SkillAutoUseHealth		= 0x00000008,
+	};
+	vuint32			Flags;
+
 	VWorldInfo();
 
 	void Serialise(VStream& Strm);

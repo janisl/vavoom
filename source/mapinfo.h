@@ -160,12 +160,21 @@ struct VEpisodeDef
 	VStr		Key;
 };
 
+enum
+{
+	SKILLF_FastMonsters			= 0x00000001,
+	SKILLF_DisableCheats		= 0x00000002,
+	SKILLF_EasyBossBrain		= 0x00000004,
+	SKILLF_AutoUseHealth		= 0x00000008,
+};
+
 struct VSkillDef
 {
 	VStr		Name;
 	float		AmmoFactor;
 	float		DoubleAmmoFactor;
 	float		DamageFactor;
+	vuint32		Flags;
 };
 
 void InitMapInfo();

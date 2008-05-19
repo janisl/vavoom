@@ -141,7 +141,7 @@ void SetSkill(int NewSkill)
 		NewSkill = sk_nightmare;
 	}
 	WorldInfo.SetSkill(NewSkill);
-	fastparm = WorldInfo.GameSkill == sk_nightmare || GetCvar('Fast');
+	fastparm = WorldInfo.bSkillFastMonsters || GetCvar('Fast');
 }
 
 //==========================================================================

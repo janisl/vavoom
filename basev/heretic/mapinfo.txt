@@ -5,6 +5,8 @@ skill baby
 AmmoFactor 1.5
 DoubleAmmoFactor 1.5
 DamageFactor 0.5
+EasyBossBrain
+AutoUseHealth
 
 skill easy
 DoubleAmmoFactor 1.5
@@ -18,6 +20,8 @@ DoubleAmmoFactor 1.5
 skill nightmare
 AmmoFactor 1.5
 DoubleAmmoFactor 1.5
+FastMonsters
+DisableCheats
 
 //--------------------------------------------------------
 // EPISODE 1 - THE CITY OF THE DAMNED

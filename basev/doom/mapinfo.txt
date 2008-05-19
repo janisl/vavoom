@@ -4,6 +4,8 @@
 skill baby
 AmmoFactor 2
 DamageFactor 0.5
+EasyBossBrain
+AutoUseHealth
 
 skill easy
 
@@ -13,3 +15,5 @@ skill hard
 
 skill nightmare
 AmmoFactor 2
+FastMonsters
+DisableCheats
