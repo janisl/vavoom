@@ -160,6 +160,11 @@ struct VEpisodeDef
 	VStr		Key;
 };
 
+struct VSkillDef
+{
+	VStr		Name;
+};
+
 void InitMapInfo();
 void ShutdownMapInfo();
 const mapInfo_t& P_GetMapInfo(VName);
@@ -171,6 +176,7 @@ void P_PutMapSongLump(int, VName);
 const VClusterDef* P_GetClusterDef(int);
 int P_GetNumEpisodes();
 VEpisodeDef* P_GetEpisodeDef(int);
+const VSkillDef* P_GetSkillDef(int);
 void P_GetMusicLumpNames(TArray<FReplacedString>&);
 void P_ReplaceMusicLumpNames(TArray<FReplacedString>&);
 void P_SetParTime(VName, int);

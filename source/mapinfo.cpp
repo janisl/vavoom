@@ -70,6 +70,7 @@ static TArray<FMapSongInfo>	MapSongList;
 static VClusterDef			DefaultClusterDef;
 static TArray<VClusterDef>	ClusterDefs;
 static TArray<VEpisodeDef>	EpisodeDefs;
+static TArray<VSkillDef>	SkillDefs;
 // Non-level specific song cd track numbers
 static int					cd_NonLevelTracks[6];
 
@@ -1238,6 +1239,143 @@ static void ParseEpisodeDef(VScriptParser* sc)
 
 //==========================================================================
 //
+//	ParseSkillDef
+//
+//==========================================================================
+
+static void ParseSkillDef(VScriptParser* sc)
+{
+	guard(ParseSkillDef);
+	VSkillDef* SDef = NULL;
+	sc->ExpectString();
+
+	//	Check for replaced skill.
+	for (int i = 0; i < SkillDefs.Num(); i++)
+	{
+		if (sc->String.ICmp(SkillDefs[i].Name))
+		{
+			SDef = &SkillDefs[i];
+			break;
+		}
+	}
+	if (!SDef)
+	{
+		SDef = &SkillDefs.Alloc();
+		SDef->Name = sc->String;
+	}
+
+	//	Set defaults.
+
+	while (1)
+	{
+		if (sc->Check("ammofactor"))
+		{
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("doubleammofactor"))
+		{
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("damagefactor"))
+		{
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("fastmonsters"))
+		{
+		}
+		else if (sc->Check("disablecheats"))
+		{
+		}
+		else if (sc->Check("easybossbrain"))
+		{
+		}
+		else if (sc->Check("autousehealth"))
+		{
+		}
+		else if (sc->Check("respawntime"))
+		{
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("respawnlimit"))
+		{
+			sc->ExpectNumber();
+		}
+		else if (sc->Check("Aggressiveness"))
+		{
+			sc->ExpectFloat();
+		}
+		else if (sc->Check("SpawnFilter"))
+		{
+			if (sc->CheckNumber())
+			{
+				if (sc->Number > 0)
+				{
+				}
+			}
+			else
+			{
+				if (sc->Check("baby"))
+				{
+				}
+				else if (sc->Check("easy"))
+				{
+				}
+				else if (sc->Check("normal"))
+				{
+				}
+				else if (sc->Check("hard"))
+				{
+				}
+				else if (sc->Check("nightmare"))
+				{
+				}
+				else
+				{
+					sc->ExpectString();
+				}
+			}
+		}
+		else if (sc->Check("ACSReturn"))
+		{
+			sc->ExpectNumber();
+		}
+		else if (sc->Check("Name"))
+		{
+			sc->ExpectString();
+		}
+		else if (sc->Check("PlayerClassName"))
+		{
+			sc->ExpectString();
+			sc->ExpectString();
+		}
+		else if (sc->Check("PicName"))
+		{
+			sc->ExpectString();
+		}
+		else if (sc->Check("MustConfirm"))
+		{
+			if (sc->CheckQuotedString())
+			{
+			}
+		}
+		else if (sc->Check("Key"))
+		{
+			sc->ExpectString();
+		}
+		else if (sc->Check("TextColor"))
+		{
+			sc->ExpectString();
+		}
+		else
+		{
+			break;
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseMapInfo
 //
 //==========================================================================
@@ -1277,6 +1415,14 @@ static void ParseMapInfo(VScriptParser* sc)
 		else if (sc->Check("clearepisodes"))
 		{
 			EpisodeDefs.Clear();
+		}
+		else if (sc->Check("skill"))
+		{
+			ParseSkillDef(sc);
+		}
+		else if (sc->Check("clearskills"))
+		{
+			SkillDefs.Clear();
 		}
 		else
 		{
@@ -1445,6 +1591,17 @@ VEpisodeDef* P_GetEpisodeDef(int Index)
 
 //==========================================================================
 //
+//	P_GetSkillDef
+//
+//==========================================================================
+
+const VSkillDef* P_GetSkillDef(int Index)
+{
+	return &SkillDefs[Index];
+}
+
+//==========================================================================
+//
 //	P_GetMusicLumpNames
 //
 //==========================================================================
@@ -1608,5 +1765,6 @@ void ShutdownMapInfo()
 	MapSongList.Clear();
 	ClusterDefs.Clear();
 	EpisodeDefs.Clear();
+	SkillDefs.Clear();
 	unguard;
 }
