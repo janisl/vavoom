@@ -90,7 +90,7 @@ void InitNewGame(int skill)
 void SetSkill(int NewSkill)
 {
 	::SetSkill(NewSkill);
-	respawnmonsters = gameskill == sk_nightmare || GetCvar('RespawnMonsters');
+	respawnmonsters = WorldInfo.GameSkill == sk_nightmare || GetCvar('RespawnMonsters');
 }
 
 //==========================================================================

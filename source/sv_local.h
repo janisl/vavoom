@@ -35,7 +35,6 @@ struct tmtrace_t;
 class VMessageOut;
 
 extern VGameInfo*		GGameInfo;
-extern VWorldInfo*		GWorldInfo;
 extern VLevelInfo*		GLevelInfo;
 
 //==========================================================================

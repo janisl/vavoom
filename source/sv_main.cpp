@@ -69,7 +69,6 @@ bool			netgame;                // only true if packets are broadcast
 
 int 			TimerGame;
 
-VWorldInfo*		GWorldInfo;
 VLevelInfo*		GLevelInfo;
 
 int 			LeavePosition;
@@ -1046,7 +1045,10 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	else
 	{
 		//	New game
-		GWorldInfo = GGameInfo->eventCreateWorldInfo();
+		GGameInfo->WorldInfo = GGameInfo->eventCreateWorldInfo();
+
+		GGameInfo->WorldInfo->SetSkill(Skill);
+		GGameInfo->eventInitNewGame(GGameInfo->WorldInfo->GameSkill);
 
 		host_titlemap = titlemap;
 		host_standalone = (svs.max_clients == 1 && use_standalone) ||
@@ -1061,7 +1063,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	//	Load it
 	SV_LoadLevel(VName(mapname, VName::AddLower8));
 	GLevel->NetContext = ServerNetContext;
-	GLevel->WorldInfo = GWorldInfo;
+	GLevel->WorldInfo = GGameInfo->WorldInfo;
 
 	const mapInfo_t& info = P_GetMapInfo(GLevel->MapName);
 
@@ -1080,7 +1082,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 			GGameInfo->LevelInfoClass);
 		GLevelInfo->Level = GLevelInfo;
 		GLevelInfo->Game = GGameInfo;
-		GLevelInfo->World = GWorldInfo;
+		GLevelInfo->World = GGameInfo->WorldInfo;
 		GLevel->LevelInfo = GLevelInfo;
 		GLevelInfo->SetMapInfo(info);
 
@@ -1310,10 +1312,10 @@ void SV_ShutdownServer(bool crash)
 		delete GLevel;
 		GLevel = NULL;
 	}
-	if (GWorldInfo)
+	if (GGameInfo->WorldInfo)
 	{
-		delete GWorldInfo;
-		GWorldInfo = NULL;
+		delete GGameInfo->WorldInfo;
+		GGameInfo->WorldInfo = NULL;
 	}
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
@@ -1580,9 +1582,7 @@ COMMAND(Map)
 		Skill = sk_nightmare;
 
 	// Set up a bunch of globals
-	GGameInfo->gameskill = (skill_t)(int)Skill;
 	GGameInfo->netgame = svs.max_clients > 1;
-	GGameInfo->eventInitNewGame(GGameInfo->gameskill);
 
 	SV_SpawnServer(*mapname, true, false);
 #ifdef CLIENT
@@ -1610,9 +1610,7 @@ bool Host_StartTitleMap()
 	// Default the player start spot group to 0
 	RebornPosition = 0;
 	GGameInfo->RebornPosition = RebornPosition;
-	GGameInfo->gameskill = sk_medium;
 	GGameInfo->netgame = false;
-	GGameInfo->eventInitNewGame(GGameInfo->gameskill);
 
 	SV_SpawnServer("titlemap", true, true);
 #ifdef CLIENT

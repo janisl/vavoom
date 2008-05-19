@@ -57,8 +57,8 @@ bool HandlePickup(Inventory Item)
 			{
 				continue;
 			}
-			if (Level.Game.gameskill == sk_baby ||
-				(Level.Game.gameskill == sk_nightmare &&
+			if (Level.World.GameSkill == sk_baby ||
+				(Level.World.GameSkill == sk_nightmare &&
 				LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
 			{
 				// extra ammo in baby mode and nightmare mode
@@ -131,8 +131,8 @@ Inventory CreateCopy(EntityEx Toucher)
 		{
 			continue;
 		}
-		if (Level.Game.gameskill == sk_baby ||
-			(Level.Game.gameskill == sk_nightmare &&
+		if (Level.World.GameSkill == sk_baby ||
+			(Level.World.GameSkill == sk_nightmare &&
 			LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
 		{
 			// extra ammo in baby mode and nightmare mode

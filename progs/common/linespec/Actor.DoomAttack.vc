@@ -769,7 +769,7 @@ final void A_BrainSpit()
 	}
 
 	BState.bEasy = !BState.bEasy;
-	if (Level.Game.gameskill <= sk_easy && !BState.bEasy)
+	if (Level.World.GameSkill <= sk_easy && !BState.bEasy)
 	{
 		return;
 	}

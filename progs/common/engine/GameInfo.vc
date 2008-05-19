@@ -32,13 +32,14 @@ name				GenericConScript;
 
 readonly byte		netgame;
 readonly byte		deathmatch;
-byte				gameskill;
 byte				respawn;
 byte				nomonsters;
 byte				fastparm;
 
 readonly int*		validcount;
 readonly int		skyflatnum;
+
+readonly WorldInfo	WorldInfo;
 
 readonly BasePlayer	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 

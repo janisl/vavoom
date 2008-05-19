@@ -2660,7 +2660,7 @@ final void AutoUseHealth(int saveHealth)
 
 	Inventory normal = FindInventory(ArtiHealth);
 	Inventory super = FindInventory(ArtiSuperHealth);
-	if ((Level.Game.gameskill == sk_baby) && normal &&
+	if ((Level.World.GameSkill == sk_baby) && normal &&
 		(normal.Amount * 25 >= saveHealth))
 	{
 		// Use quartz flasks
@@ -2689,7 +2689,7 @@ final void AutoUseHealth(int saveHealth)
 			}
 		}
 	}
-	else if ((Level.Game.gameskill == sk_baby) &&
+	else if ((Level.World.GameSkill == sk_baby) &&
 		((super ? super.Amount * 100 : 0) +
 		(normal ? normal.Amount * 25 : 0) >= saveHealth))
 	{

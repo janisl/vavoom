@@ -27,7 +27,11 @@ class WorldInfo : Object
 	native
 	abstract;
 
-native private readonly void*		Acs;
+native private readonly void*	Acs;
+
+readonly byte					GameSkill;
+
+native final void SetSkill(int Skill);
 
 defaultproperties
 {

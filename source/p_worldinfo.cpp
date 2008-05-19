@@ -89,3 +89,29 @@ void VWorldInfo::Destroy()
 	Super::Destroy();
 	unguard;
 }
+
+//==========================================================================
+//
+//	VWorldInfo::SetSkill
+//
+//==========================================================================
+
+void VWorldInfo::SetSkill(int ASkill)
+{
+	guard(VWorldInfo::SetSkill);
+	GameSkill = ASkill;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VWorldInfo
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VWorldInfo, SetSkill)
+{
+	P_GET_INT(Skill);
+	P_GET_SELF;
+	Self->SetSkill(Skill);
+}

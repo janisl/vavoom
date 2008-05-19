@@ -499,13 +499,13 @@ static void ArchiveThinkers()
 	Saver->Exports.Append(GLevel);
 	Saver->ObjectsMap[GLevel->GetIndex()] = Saver->Exports.Num();
 
-	//	Agg world info
+	//	Add world info
 	vuint8 WorldInfoSaved = (byte)SavingPlayers;
 	*Saver << WorldInfoSaved;
 	if (WorldInfoSaved)
 	{
-		Saver->Exports.Append(GWorldInfo);
-		Saver->ObjectsMap[GWorldInfo->GetIndex()] = Saver->Exports.Num();
+		Saver->Exports.Append(GGameInfo->WorldInfo);
+		Saver->ObjectsMap[GGameInfo->WorldInfo->GetIndex()] = Saver->Exports.Num();
 	}
 
 	//	Add players.
@@ -574,7 +574,7 @@ static void UnarchiveThinkers()
 	*Loader << WorldInfoSaved;
 	if (WorldInfoSaved)
 	{
-		Loader->Exports.Append(GWorldInfo);
+		Loader->Exports.Append(GGameInfo->WorldInfo);
 	}
 
 	//	Add players.
@@ -611,7 +611,7 @@ static void UnarchiveThinkers()
 		{
 			GLevelInfo = (VLevelInfo*)Obj;
 			GLevelInfo->Game = GGameInfo;
-			GLevelInfo->World = GWorldInfo;
+			GLevelInfo->World = GGameInfo->WorldInfo;
 			GLevel->LevelInfo = GLevelInfo;
 		}
 
@@ -619,7 +619,7 @@ static void UnarchiveThinkers()
 	}
 
 	GLevelInfo->Game = GGameInfo;
-	GLevelInfo->World = GWorldInfo;
+	GLevelInfo->World = GGameInfo->WorldInfo;
 
 	for (int i = 0; i < Loader->Exports.Num(); i++)
 	{
@@ -781,9 +781,7 @@ void SV_SaveGame(int slot, const char* description)
 	vint32 Seg = ASEG_GAME_HEADER;
 	*Saver << Seg;
 
-	// Write current map and difficulty
-	byte Skill = (byte)GGameInfo->gameskill;
-	*Saver << Skill;
+	// Write current map
 	*Saver << GLevel->MapName;
 
 	// Place a termination marker
@@ -858,11 +856,7 @@ void SV_LoadGame(int slot)
 
 	AssertSegment(ASEG_GAME_HEADER);
 
-	GGameInfo->gameskill = Streamer<byte>(*Loader);
 	*Loader << mapname;
-
-	//	Init skill hacks
-	GGameInfo->eventInitNewGame(GGameInfo->gameskill);
 
 	AssertSegment(ASEG_END);
 
@@ -873,6 +867,9 @@ void SV_LoadGame(int slot)
 
 	// Load the current map
 	SV_LoadMap(mapname, BASE_SLOT);
+
+	//	Init skill hacks
+	GGameInfo->eventInitNewGame(GGameInfo->WorldInfo->GameSkill);
 
 #ifdef CLIENT
 	if (cls.state != ca_dedicated)

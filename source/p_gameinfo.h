@@ -32,13 +32,14 @@ class VGameInfo : public VObject
 
 	vuint8			netgame;
 	vuint8			deathmatch;
-	vuint8			gameskill;
 	vuint8			respawn;
 	vuint8			nomonsters;
 	vuint8			fastparm;
 
 	vint32*			validcount;
 	vint32			skyflatnum;
+
+	VWorldInfo*		WorldInfo;
 
 	VBasePlayer*	Players[MAXPLAYERS]; // Bookkeeping on players - state.
 

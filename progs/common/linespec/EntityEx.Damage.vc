@@ -121,7 +121,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		return;
 	}
 
-	if (bIsPlayer && Level.Game.gameskill == sk_baby)
+	if (bIsPlayer && Level.World.GameSkill == sk_baby)
 	{
 		// Take half damage in trainer mode
 		damage >>= 1;
@@ -252,7 +252,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			}
 		}
 
-		if (damage >= Health && ((Level.Game.gameskill == sk_baby) ||
+		if (damage >= Health && ((Level.World.GameSkill == sk_baby) ||
 			Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
 		{
 			// Try to use some inventory health
@@ -766,7 +766,7 @@ final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
 	{	// mobj is invulnerable
 		return;
 	}
-	if (bIsPlayer && Level.Game.gameskill == sk_baby)
+	if (bIsPlayer && Level.World.GameSkill == sk_baby)
 	{
 		// Take half damage in trainer mode
 		damage >>= 1;
@@ -776,7 +776,7 @@ final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
 	{
 		return;
 	}
-	if (damage >= Player.Health && ((Level.Game.gameskill == sk_baby) ||
+	if (damage >= Player.Health && ((Level.World.GameSkill == sk_baby) ||
 		Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
 	{
 		// Try to use some inventory health

@@ -65,8 +65,8 @@ bool HandlePickup(Inventory Item)
 		}
 
 		int ReceiveAmount = Item.Amount;
-		if (!bIgnoreSkill && (Level.Game.gameskill == sk_baby ||
-			(Level.Game.gameskill == sk_nightmare &&
+		if (!bIgnoreSkill && (Level.World.GameSkill == sk_baby ||
+			(Level.World.GameSkill == sk_nightmare &&
 			LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
 		{
 			// extra ammo in baby mode and nightmare mode
@@ -113,8 +113,8 @@ bool HandlePickup(Inventory Item)
 Inventory CreateCopy(EntityEx Toucher)
 {
 	int NewAmount = Amount;
-	if (!bIgnoreSkill && (Level.Game.gameskill == sk_baby ||
-		(Level.Game.gameskill == sk_nightmare &&
+	if (!bIgnoreSkill && (Level.World.GameSkill == sk_baby ||
+		(Level.World.GameSkill == sk_nightmare &&
 		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
 	{
 		// extra ammo in baby mode and nightmare mode

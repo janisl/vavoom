@@ -2640,7 +2640,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GameSkill)
-			*sp = GGameInfo->gameskill;
+			*sp = Level->World->GameSkill;
 			sp++;
 			ACSVM_BREAK;
 

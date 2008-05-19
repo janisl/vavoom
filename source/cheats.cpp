@@ -68,7 +68,7 @@ static bool CheatAllowed()
 		GCon->Log("You cannot cheat in a network game!");
 		return false;
 	}
-	if (GGameInfo->gameskill == sk_nightmare)
+	if (GGameInfo->WorldInfo->GameSkill == sk_nightmare)
 	{
 		GCon->Log("You are too good to cheat!");
 		return false;

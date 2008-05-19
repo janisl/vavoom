@@ -35,7 +35,7 @@ bool TryPickup(EntityEx Toucher)
 {
 	int			Amount;
 
-	switch (Level.Game.gameskill)
+	switch (Level.World.GameSkill)
 	{
 	case sk_baby:
 	case sk_nightmare:

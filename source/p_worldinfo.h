@@ -31,8 +31,14 @@ class VWorldInfo : public VObject
 
 	VAcsGlobal*		Acs;
 
+	vuint8			GameSkill;
+
 	VWorldInfo();
 
 	void Serialise(VStream& Strm);
 	void Destroy();
+
+	void SetSkill(int);
+
+	DECLARE_FUNCTION(SetSkill)
 };
