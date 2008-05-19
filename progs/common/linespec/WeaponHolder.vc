@@ -22,48 +22,26 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
+//**
+//**	Holds info about picked up weapon pieces.
+//**
+//**************************************************************************
 
-class HexenWeapon : Weapon
+class WeaponHolder : Inventory
 	abstract;
 
-int WeaponClass;
+int				PieceMask;
+class<Weapon>	WeaponType;
 
-//==========================================================================
-//
-//  TryPickup
-//
-//==========================================================================
-
-bool TryPickup(EntityEx Toucher)
+replication
 {
-	if (Toucher.Player.PClass != WeaponClass)
-	{
-		// Wrong class, but try to pick up for mana
-		if (ShouldStay() && !bDropped)
-		{
-			return false;
-		}
-		bool gaveMana = false;
-		if (Player(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1))
-		{
-			gaveMana = true;
-		}
-		if (Player(Toucher.Player).GiveAmmo(AmmoType2, AmmoGive2))
-		{
-			gaveMana = true;
-		}
-		if (gaveMana)
-		{
-			GoAwayAndDie();
-			GiveQuest(Toucher);
-			return true;
-		}
-		return false;
-	}
-
-	return ::TryPickup(Toucher);
+	reliable if (Role == ROLE_Authority && bNetOwner)
+		PieceMask, WeaponType;
 }
 
 defaultproperties
 {
+	bNoBlockmap = true;
+	bNoSector = true;
+	bUndroppable = true;
 }

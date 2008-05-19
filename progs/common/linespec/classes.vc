@@ -111,6 +111,8 @@ enum
 #include "MapRevealer.vc"
 #include "FakeInventory.vc"
 #include "CustomInventory.vc"
+#include "WeaponPiece.vc"
+#include "WeaponHolder.vc"
 
 #include "TeleportDest.vc"
 #include "TeleportDest2.vc"

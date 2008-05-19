@@ -548,68 +548,6 @@ void PlayerExitMap(bool clusterChange)
 
 //==========================================================================
 //
-//	GiveAmmo
-//
-//	Returns false if the ammo can't be picked up at all
-//
-//==========================================================================
-
-bool GiveAmmo(class<Ammo> ammo, int count)
-{
-	int oldammo;
-
-	if (!ammo)
-	{
-		return false;
-	}
-
-	Ammo AmmoItem = Ammo(EntityEx(MO).FindInventory(ammo));
-	if (!AmmoItem)
-	{
-		AmmoItem = Level.Spawn(ammo,,,, false);
-		AmmoItem.AttachToOwner(EntityEx(MO));
-		AmmoItem.Amount = 0;
-	}
-	if (!count)
-	{
-		return false;
-	}
-	if (AmmoItem.Amount == AmmoItem.MaxAmount)
-	{
-		return false;
-	}
-
-	if (Level.Game.gameskill == sk_baby ||
-		(Level.Game.gameskill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
-	{
-		// extra ammo in baby mode and nightmare mode
-		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
-		{
-			count <<= 1;
-		}
-		else
-		{
-			count += count >> 1;
-		}
-	}
-
-	oldammo = AmmoItem.Amount;
-	AmmoItem.Amount += count;
-	if (AmmoItem.Amount > AmmoItem.MaxAmount)
-	{
-		AmmoItem.Amount = AmmoItem.MaxAmount;
-	}
-
-	if (oldammo <= 0)
-	{
-		GotAmmo(AmmoItem);
-	}
-	return true;
-}
-
-//==========================================================================
-//
 //	GotAmmo
 //
 //==========================================================================

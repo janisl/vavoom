@@ -86,8 +86,8 @@ bool Use(bool Pickup)
 		{
 			// Radius mana boost
 			amount = 50 + (P_Random() % 50);
-			if ((Player(P.Player).GiveMana(Mana1, amount)) ||
-				(Player(P.Player).GiveMana(Mana2, amount)))
+			if ((Player(P.Player).GiveAmmo(Mana1, amount)) ||
+				(Player(P.Player).GiveAmmo(Mana2, amount)))
 			{
 				effective = true;
 				P.PlaySound('MysticIncant', CHAN_ITEM);

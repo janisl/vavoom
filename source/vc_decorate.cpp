@@ -117,7 +117,7 @@ static VClass*			HealthClass;
 static VClass*			PowerupGiverClass;
 static VClass*			PuzzleItemClass;
 static VClass*			WeaponClass;
-//static VClass*			WeaponPieceClass;
+static VClass*			WeaponPieceClass;
 static VClass*			PlayerPawnClass;
 static VClass*			MorphProjectileClass;
 
@@ -3331,23 +3331,21 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		//
 		//	WeaponPiece class properties.
 		//
-/*		if (Class->IsChildOf(WeaponPieceClass))
+		if (Class->IsChildOf(WeaponPieceClass))
 		{
 			if (!Prop.ICmp("WeaponPiece.Number"))
 			{
-				//FIXME
 				sc->ExpectNumber();
-				GCon->Logf("Property WeaponPiece.Number in %s is not yet supported", Class->GetName());
+				SetClassFieldInt(Class, "PieceValue", 1 << (sc->Number - 1));
 				continue;
 			}
 			if (!Prop.ICmp("WeaponPiece.Weapon"))
 			{
-				//FIXME
 				sc->ExpectString();
-				GCon->Logf("Property WeaponPiece.Weapon in %s is not yet supported", Class->GetName());
+				AddClassFixup(Class, "WeaponType", sc->String, ClassFixups);
 				continue;
 			}
-		}*/
+		}
 
 		//
 		//	PlayerPawn class properties.
@@ -4477,7 +4475,7 @@ void ProcessDecorateScripts()
 	PowerupGiverClass = VClass::FindClass("PowerupGiver");
 	PuzzleItemClass = VClass::FindClass("PuzzleItem");
 	WeaponClass = VClass::FindClass("Weapon");
-//	WeaponPieceClass = VClass::FindClass("WeaponPiece");
+	WeaponPieceClass = VClass::FindClass("WeaponPiece");
 	PlayerPawnClass = VClass::FindClass("PlayerPawn");
 	MorphProjectileClass = VClass::FindClass("MorphProjectile");
 
