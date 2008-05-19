@@ -161,9 +161,10 @@ final bool CheckMissileRange()
 		dist /= 8.0;
 	}
 
-	if (dist > MissileChance)
+	float MChance = MissileChance * Level.World.SkillAggressiveness;
+	if (dist > MChance)
 	{
-		dist = MissileChance;
+		dist = MChance;
 	}
 
 	if (Random() * 256.0 < dist)

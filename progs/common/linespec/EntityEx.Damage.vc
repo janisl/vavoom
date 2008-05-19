@@ -252,7 +252,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			}
 		}
 
-		if (damage >= Health && ((Level.World.GameSkill == sk_baby) ||
+		if (damage >= Health && (Level.World.bSkillAutoUseHealth ||
 			Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
 		{
 			// Try to use some inventory health
@@ -776,7 +776,7 @@ final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
 	{
 		return;
 	}
-	if (damage >= Player.Health && ((Level.World.GameSkill == sk_baby) ||
+	if (damage >= Player.Health && (Level.World.bSkillAutoUseHealth ||
 		Level.Game.deathmatch) && !PlayerEx(Player).MorphTime)
 	{
 		// Try to use some inventory health

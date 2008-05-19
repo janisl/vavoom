@@ -1270,6 +1270,7 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->DamageFactor = 1.0;
 	SDef->RespawnTime = 0.0;
 	SDef->RespawnLimit = 0;
+	SDef->Aggressiveness = 1.0;
 	SDef->Flags = 0;
 
 	while (1)
@@ -1315,11 +1316,12 @@ static void ParseSkillDef(VScriptParser* sc)
 			sc->ExpectNumber();
 			SDef->RespawnLimit = sc->Number;
 		}
-
 		else if (sc->Check("Aggressiveness"))
 		{
 			sc->ExpectFloat();
+			SDef->Aggressiveness = 1.0 - MID(0.0, sc->Float, 1.0);
 		}
+
 		else if (sc->Check("SpawnFilter"))
 		{
 			if (sc->CheckNumber())

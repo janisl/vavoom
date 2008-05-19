@@ -176,6 +176,7 @@ struct VSkillDef
 	float		DamageFactor;
 	float		RespawnTime;
 	int			RespawnLimit;
+	float		Aggressiveness;
 	vuint32		Flags;
 };
 
