@@ -65,19 +65,11 @@ bool HandlePickup(Inventory Item)
 		}
 
 		int ReceiveAmount = Item.Amount;
-		if (!bIgnoreSkill && (Level.World.GameSkill == sk_baby ||
-			(Level.World.GameSkill == sk_nightmare &&
-			LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
+		if (!Item.bIgnoreSkill)
 		{
-			// extra ammo in baby mode and nightmare mode
-			if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
-			{
-				ReceiveAmount <<= 1;
-			}
-			else
-			{
-				ReceiveAmount += ReceiveAmount >> 1;
-			}
+			//	Extra ammo in baby mode and nightmare mode
+			ReceiveAmount = ftoi(itof(ReceiveAmount) *
+				Level.World.SkillAmmoFactor);
 		}
 
 		int oldammo = Amount;
@@ -113,19 +105,10 @@ bool HandlePickup(Inventory Item)
 Inventory CreateCopy(EntityEx Toucher)
 {
 	int NewAmount = Amount;
-	if (!bIgnoreSkill && (Level.World.GameSkill == sk_baby ||
-		(Level.World.GameSkill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
+	if (!bIgnoreSkill)
 	{
-		// extra ammo in baby mode and nightmare mode
-		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
-		{
-			NewAmount <<= 1;
-		}
-		else
-		{
-			NewAmount += NewAmount >> 1;
-		}
+		//	Extra ammo in baby mode and nightmare mode
+		NewAmount = ftoi(itof(NewAmount) * Level.World.SkillAmmoFactor);
 	}
 
 	Inventory Copy;

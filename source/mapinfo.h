@@ -163,6 +163,8 @@ struct VEpisodeDef
 struct VSkillDef
 {
 	VStr		Name;
+	float		AmmoFactor;
+	float		DoubleAmmoFactor;
 };
 
 void InitMapInfo();

@@ -269,19 +269,10 @@ final Ammo AddAmmo(EntityEx Toucher, class<Ammo> AmmoType, int count)
 		return none;
 	}
 
-	if (!bIgnoreSkill && (Level.World.GameSkill == sk_baby ||
-		(Level.World.GameSkill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
+	if (!bIgnoreSkill)
 	{
-		// extra ammo in baby mode and nightmare mode
-		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
-		{
-			count <<= 1;
-		}
-		else
-		{
-			count += count >> 1;
-		}
+		//	Extra ammo in baby mode and nightmare mode
+		count = ftoi(itof(count) * Level.World.SkillAmmoFactor);
 	}
 
 	Ammo AmmoItem = Ammo(Toucher.FindInventory(AmmoType));
@@ -322,19 +313,10 @@ final bool AddExistingAmmo(Ammo AmmoItem, int count)
 		return false;
 	}
 
-	if (!bIgnoreSkill && (Level.World.GameSkill == sk_baby ||
-		(Level.World.GameSkill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo)))
+	if (!bIgnoreSkill)
 	{
-		// extra ammo in baby mode and nightmare mode
-		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
-		{
-			count <<= 1;
-		}
-		else
-		{
-			count += count >> 1;
-		}
+		//	Extra ammo in baby mode and nightmare mode
+		count = ftoi(itof(count) * Level.World.SkillAmmoFactor);
 	}
 
 	oldammo = AmmoItem.Amount;

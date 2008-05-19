@@ -15,6 +15,7 @@ animated.lmp			@CMAKE_CURRENT_SOURCE_DIR@/animated.lmp
 animdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/animdefs.txt
 dehinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/dehinfo.txt
 lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
+mapinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/mapinfo.txt
 sndinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndinfo.txt
 sndseq.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndseq.txt
 skyboxes.txt			@CMAKE_CURRENT_SOURCE_DIR@/skyboxes.txt

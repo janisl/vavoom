@@ -71,10 +71,6 @@ bool			bNoDamageThrustInvulnerable;
 bool			bNightmareFastChase;
 //	Use pickup respawn effects like in Raven's games.
 bool			bRavenStylePickupRespawn;
-//	Give double ammo in baby and nightmare skills
-bool			bBabyNightmareDoubleAmmo;
-//	Wether to give extra ammo in nightmare mode
-bool			bNightmareExtraAmmo;
 //	Always to switch to a newly picked up weapon.
 bool			bAlwaysSwitchNewWeapon;
 //	Randomise blood's initial state time
@@ -1401,7 +1397,6 @@ defaultproperties
 	ramp2[12] = 0x3fbf772f; ramp2[13] = 0x2faf632f; ramp2[14] = 0x1f8f4333; ramp2[15] = 0x0f733723;
 
 	NonMonsterAngleIncrements = 45;
-	bNightmareExtraAmmo = true;
 	InvDefaultMaxAmount = 25;
 	IceMoveFactor = 0.5;
 	GibsHealthFactor = 0.5;

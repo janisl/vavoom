@@ -100,6 +100,10 @@ void VWorldInfo::SetSkill(int ASkill)
 {
 	guard(VWorldInfo::SetSkill);
 	GameSkill = ASkill;
+	const VSkillDef* SDef = P_GetSkillDef(GameSkill);
+
+	SkillAmmoFactor = SDef->AmmoFactor;
+	SkillDoubleAmmoFactor = SDef->DoubleAmmoFactor;
 	unguard;
 }
 

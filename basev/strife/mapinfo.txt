@@ -1,4 +1,19 @@
 //------------------------------------------------------
+//  Skill definitions
+
+skill baby
+AmmoFactor 2
+
+skill easy
+
+skill normal
+
+skill hard
+
+skill nightmare
+AmmoFactor 2
+
+//------------------------------------------------------
 //  Default map
 defaultmap
 forcenoskystretch

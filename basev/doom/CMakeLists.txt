@@ -13,6 +13,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		animdefs.txt
 		dehinfo.txt
 		lockdefs.txt
+		mapinfo.txt
 		palette.pcx
 		skyboxes.txt
 		sndinfo.txt

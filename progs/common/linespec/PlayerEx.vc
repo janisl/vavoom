@@ -1966,20 +1966,8 @@ final bool GiveAmmo(class<Ammo> ammo, int count)
 		return false;
 	}
 
-	if (Level.World.GameSkill == sk_baby ||
-		(Level.World.GameSkill == sk_nightmare &&
-		LineSpecialGameInfo(Level.Game).bNightmareExtraAmmo))
-	{
-		// extra ammo in baby mode and nightmare mode
-		if (LineSpecialGameInfo(Level.Game).bBabyNightmareDoubleAmmo)
-		{
-			count <<= 1;
-		}
-		else
-		{
-			count += count >> 1;
-		}
-	}
+	//	Extra ammo in baby mode and nightmare mode
+	count = ftoi(itof(count) * Level.World.SkillAmmoFactor);
 
 	oldammo = AmmoItem.Amount;
 	AmmoItem.Amount += count;

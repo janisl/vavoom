@@ -1,6 +1,29 @@
 //	MAPINFO for Hexen.
 //	This one just defines clusters, the rest is in hexen.wad
 
+//------------------------------------------------------
+//  Skill definitions
+
+skill baby
+AmmoFactor 1.5
+DoubleAmmoFactor 1.5
+
+skill easy
+DoubleAmmoFactor 1.5
+
+skill normal
+DoubleAmmoFactor 1.5
+
+skill hard
+DoubleAmmoFactor 1.5
+
+skill nightmare
+AmmoFactor 1.5
+DoubleAmmoFactor 1.5
+
+//------------------------------------------------------
+//  Cluster definitions
+
 clusterdef 1
 hub
 exittext clus1msg

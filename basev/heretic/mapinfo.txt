@@ -1,3 +1,23 @@
+//------------------------------------------------------
+//  Skill definitions
+
+skill baby
+AmmoFactor 1.5
+DoubleAmmoFactor 1.5
+
+skill easy
+DoubleAmmoFactor 1.5
+
+skill normal
+DoubleAmmoFactor 1.5
+
+skill hard
+DoubleAmmoFactor 1.5
+
+skill nightmare
+AmmoFactor 1.5
+DoubleAmmoFactor 1.5
+
 //--------------------------------------------------------
 // EPISODE 1 - THE CITY OF THE DAMNED
 

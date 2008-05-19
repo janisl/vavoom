@@ -1252,7 +1252,7 @@ static void ParseSkillDef(VScriptParser* sc)
 	//	Check for replaced skill.
 	for (int i = 0; i < SkillDefs.Num(); i++)
 	{
-		if (sc->String.ICmp(SkillDefs[i].Name))
+		if (!sc->String.ICmp(SkillDefs[i].Name))
 		{
 			SDef = &SkillDefs[i];
 			break;
@@ -1265,17 +1265,22 @@ static void ParseSkillDef(VScriptParser* sc)
 	}
 
 	//	Set defaults.
+	SDef->AmmoFactor = 1.0;
+	SDef->DoubleAmmoFactor = 2.0;
 
 	while (1)
 	{
-		if (sc->Check("ammofactor"))
+		if (sc->Check("AmmoFactor"))
 		{
 			sc->ExpectFloat();
+			SDef->AmmoFactor = sc->Float;
 		}
 		else if (sc->Check("doubleammofactor"))
 		{
 			sc->ExpectFloat();
+			SDef->DoubleAmmoFactor = sc->Float;
 		}
+
 		else if (sc->Check("damagefactor"))
 		{
 			sc->ExpectFloat();
@@ -1597,6 +1602,7 @@ VEpisodeDef* P_GetEpisodeDef(int Index)
 
 const VSkillDef* P_GetSkillDef(int Index)
 {
+dprintf("Skill %d of %d\n", Index, SkillDefs.Num());
 	return &SkillDefs[Index];
 }
 
