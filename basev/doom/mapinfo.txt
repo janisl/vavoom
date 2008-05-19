@@ -3,6 +3,7 @@
 
 skill baby
 AmmoFactor 2
+DamageFactor 0.5
 
 skill easy
 

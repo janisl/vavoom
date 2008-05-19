@@ -32,6 +32,7 @@ native private readonly void*	Acs;
 readonly byte					GameSkill;
 readonly float					SkillAmmoFactor;
 readonly float					SkillDoubleAmmoFactor;
+readonly float					SkillDamageFactor;
 
 native final void SetSkill(int Skill);
 

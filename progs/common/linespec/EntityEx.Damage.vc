@@ -121,10 +121,10 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		return;
 	}
 
-	if (bIsPlayer && Level.World.GameSkill == sk_baby)
+	if (bIsPlayer)
 	{
 		// Take half damage in trainer mode
-		damage >>= 1;
+		damage = ftoi(itof(damage) * Level.World.SkillDamageFactor);
 	}
 
 	// Special damage types
@@ -766,10 +766,10 @@ final void PoisonDamage(EntityEx inflictor, EntityEx source, int damage,
 	{	// mobj is invulnerable
 		return;
 	}
-	if (bIsPlayer && Level.World.GameSkill == sk_baby)
+	if (bIsPlayer)
 	{
 		// Take half damage in trainer mode
-		damage >>= 1;
+		damage = ftoi(itof(damage) * Level.World.SkillDamageFactor);
 	}
 	if (damage < 1000 && ((PlayerEx(Player).Cheats & PlayerEx::CF_GODMODE) ||
 		bInvulnerable))

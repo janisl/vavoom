@@ -1267,6 +1267,7 @@ static void ParseSkillDef(VScriptParser* sc)
 	//	Set defaults.
 	SDef->AmmoFactor = 1.0;
 	SDef->DoubleAmmoFactor = 2.0;
+	SDef->DamageFactor = 1.0;
 
 	while (1)
 	{
@@ -1275,16 +1276,17 @@ static void ParseSkillDef(VScriptParser* sc)
 			sc->ExpectFloat();
 			SDef->AmmoFactor = sc->Float;
 		}
-		else if (sc->Check("doubleammofactor"))
+		else if (sc->Check("DoubleAmmoFactor"))
 		{
 			sc->ExpectFloat();
 			SDef->DoubleAmmoFactor = sc->Float;
 		}
-
-		else if (sc->Check("damagefactor"))
+		else if (sc->Check("DamageFactor"))
 		{
 			sc->ExpectFloat();
+			SDef->DamageFactor = sc->Float;
 		}
+
 		else if (sc->Check("fastmonsters"))
 		{
 		}

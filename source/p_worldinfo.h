@@ -34,6 +34,7 @@ class VWorldInfo : public VObject
 	vuint8			GameSkill;
 	float			SkillAmmoFactor;
 	float			SkillDoubleAmmoFactor;
+	float			SkillDamageFactor;
 
 	VWorldInfo();
 

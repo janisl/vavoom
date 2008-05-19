@@ -165,6 +165,7 @@ struct VSkillDef
 	VStr		Name;
 	float		AmmoFactor;
 	float		DoubleAmmoFactor;
+	float		DamageFactor;
 };
 
 void InitMapInfo();
