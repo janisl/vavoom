@@ -384,6 +384,8 @@ class<Actor>	AxeBloodType;
 
 array<DropItemInfo>	DropItemList;
 
+int				SkillRespawnCount;
+
 replication
 {
 	reliable if (Role == ROLE_Authority && bNetOwner)

@@ -33,6 +33,8 @@ readonly byte					GameSkill;
 readonly float					SkillAmmoFactor;
 readonly float					SkillDoubleAmmoFactor;
 readonly float					SkillDamageFactor;
+readonly float					SkillRespawnTime;
+readonly int					SkillRespawnLimit;
 
 readonly bool					bSkillFastMonsters;
 readonly bool					bSkillDisableCheats;

@@ -1268,6 +1268,8 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->AmmoFactor = 1.0;
 	SDef->DoubleAmmoFactor = 2.0;
 	SDef->DamageFactor = 1.0;
+	SDef->RespawnTime = 0.0;
+	SDef->RespawnLimit = 0;
 	SDef->Flags = 0;
 
 	while (1)
@@ -1303,15 +1305,17 @@ static void ParseSkillDef(VScriptParser* sc)
 		{
 			SDef->Flags |= SKILLF_AutoUseHealth;
 		}
-
-		else if (sc->Check("respawntime"))
+		else if (sc->Check("RespawnTime"))
 		{
 			sc->ExpectFloat();
+			SDef->RespawnTime = sc->Float;
 		}
-		else if (sc->Check("respawnlimit"))
+		else if (sc->Check("RespawnLimit"))
 		{
 			sc->ExpectNumber();
+			SDef->RespawnLimit = sc->Number;
 		}
+
 		else if (sc->Check("Aggressiveness"))
 		{
 			sc->ExpectFloat();

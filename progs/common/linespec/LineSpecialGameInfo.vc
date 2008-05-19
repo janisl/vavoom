@@ -82,7 +82,6 @@ bool			bRipperBloodNoGravity;
 
 bool			bDehacked;
 
-bool			respawnmonsters;
 bool			bRespawnItems;
 bool			bRespawnBigItems;
 bool			bWeaponsStay;
@@ -113,6 +112,8 @@ int				ramp2[16];
 
 WeaponSlot		WeaponSlots[NUM_WEAPON_SLOTS];
 
+float			RespawnTime;
+
 //==========================================================================
 //
 //	Init
@@ -142,6 +143,11 @@ void SetSkill(int NewSkill)
 	}
 	WorldInfo.SetSkill(NewSkill);
 	fastparm = WorldInfo.bSkillFastMonsters || GetCvar('Fast');
+	RespawnTime = WorldInfo.SkillRespawnTime;
+	if (!RespawnTime && GetCvar('RespawnMonsters'))
+	{
+		RespawnTime = 12.0 / 35.0;
+	}
 }
 
 //==========================================================================

@@ -592,6 +592,8 @@ final void NightmareRespawn()
 	float z;
 	EntityEx A;
 
+	SkillRespawnCount++;
+
 	x = SpawnPoint.x;
 	y = SpawnPoint.y;
 
@@ -633,6 +635,8 @@ final void NightmareRespawn()
 
 	//	Copy custom translation
 	A.Translation = Translation;
+
+	A.SkillRespawnCount = SkillRespawnCount;
 
 	// remove the old monster
 	Destroy();
@@ -1544,14 +1548,19 @@ void Tick(float deltaTime)
 			{
 				return;
 			}
-			if (!LineSpecialGameInfo(Level.Game).respawnmonsters)
+			if (!LineSpecialGameInfo(Level.Game).RespawnTime)
+			{
+				return;
+			}
+			if (Level.World.SkillRespawnLimit > 0 &&
+				SkillRespawnCount >= Level.World.SkillRespawnLimit)
 			{
 				return;
 			}
 		}
 
 		MoveCount++;
-		if (MoveCount < 12 * 35)
+		if (MoveCount < ftoi(LineSpecialGameInfo(Level.Game).RespawnTime * 35.0))
 		{
 			return;
 		}

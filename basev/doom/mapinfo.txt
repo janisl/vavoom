@@ -17,3 +17,4 @@ skill nightmare
 AmmoFactor 2
 FastMonsters
 DisableCheats
+RespawnTime 12

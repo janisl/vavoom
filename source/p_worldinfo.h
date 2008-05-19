@@ -35,6 +35,8 @@ class VWorldInfo : public VObject
 	float			SkillAmmoFactor;
 	float			SkillDoubleAmmoFactor;
 	float			SkillDamageFactor;
+	float			SkillRespawnTime;
+	int				SkillRespawnLimit;
 
 	enum
 	{
