@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class StrifeWorldInfo : WorldInfo;
+class StrifeWorldInfo : WorldInfoEx;
 
 defaultproperties
 {

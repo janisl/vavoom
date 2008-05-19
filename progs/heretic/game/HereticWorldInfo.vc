@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HereticWorldInfo : WorldInfo;
+class HereticWorldInfo : WorldInfoEx;
 
 defaultproperties
 {

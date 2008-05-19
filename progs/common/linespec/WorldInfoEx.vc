@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HexenWorldInfo : WorldInfoEx;
+class WorldInfoEx : WorldInfo;
 
 defaultproperties
 {

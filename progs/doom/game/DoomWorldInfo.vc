@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class DoomWorldInfo : WorldInfo;
+class DoomWorldInfo : WorldInfoEx;
 
 defaultproperties
 {

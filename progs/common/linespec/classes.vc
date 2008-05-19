@@ -139,6 +139,7 @@ enum
 
 #include "LineSpecialLevelInfo.vc"
 #include "LineSpecialGameInfo.vc"
+#include "WorldInfoEx.vc"
 #include "SectorThinker.vc"
 #include "SectorMover.vc"
 #include "VerticalDoor.vc"
