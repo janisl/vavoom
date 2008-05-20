@@ -58,6 +58,11 @@ void CreateChoices()
 				Btn.PicHandle = 0;
 			}
 		}
+		if (strlen(SDef->TextColour) > 0)
+		{
+			Btn.Text = strcat(strcat("\c[", SDef->TextColour),
+				strcat("]", Btn.Text));
+		}
 		Btn.SkillIndex = i;
 		Btn.bMustConfirm = SDef->bMustConfirm;
 		Btn.ConfirmationText = SDef->ConfirmationText;

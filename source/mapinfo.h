@@ -190,6 +190,8 @@ struct VSkillDef
 	VStr		MenuName;
 	TArray<VSkillPlayerClassName>	PlayerClassNames;
 	VStr		ConfirmationText;
+	VStr		Key;
+	VStr		TextColour;
 	vuint32		Flags;
 };
 

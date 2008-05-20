@@ -1276,6 +1276,8 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->MenuName.Clean();
 	SDef->PlayerClassNames.Clear();
 	SDef->ConfirmationText.Clean();
+	SDef->Key.Clean();
+	SDef->TextColour.Clean();
 	SDef->Flags = 0;
 
 	while (1)
@@ -1396,14 +1398,15 @@ static void ParseSkillDef(VScriptParser* sc)
 				SDef->ConfirmationText = sc->String;
 			}
 		}
-
 		else if (sc->Check("Key"))
 		{
 			sc->ExpectString();
+			SDef->Key = sc->String;
 		}
 		else if (sc->Check("TextColor"))
 		{
 			sc->ExpectString();
+			SDef->TextColour = sc->String;
 		}
 		else
 		{
@@ -1647,7 +1650,6 @@ int P_GetNumSkills()
 
 const VSkillDef* P_GetSkillDef(int Index)
 {
-dprintf("Skill %d of %d\n", Index, SkillDefs.Num());
 	return &SkillDefs[Index];
 }
 
