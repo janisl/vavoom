@@ -12,21 +12,33 @@ EasyBossBrain
 AutoUseHealth
 SpawnFilter Baby
 Name "$mnu_wetnurse"
+PlayerClassName "fighter" "$mnu_squire"
+PlayerClassName "cleric" "$mnu_altarboy"
+PlayerClassName "mage" "$mnu_apprentice"
 
 skill easy
 DoubleAmmoFactor 1.5
 SpawnFilter Easy
 Name "$mnu_yellowbellies"
+PlayerClassName "fighter" "$mnu_knight"
+PlayerClassName "cleric" "$mnu_acolyte"
+PlayerClassName "mage" "$mnu_enchanter"
 
 skill normal
 DoubleAmmoFactor 1.5
 SpawnFilter Normal
 Name "$mnu_bringest"
+PlayerClassName "fighter" "$mnu_warrior"
+PlayerClassName "cleric" "$mnu_priest"
+PlayerClassName "mage" "$mnu_sorcerer"
 
 skill hard
 DoubleAmmoFactor 1.5
 SpawnFilter Hard
 Name "$mnu_smite"
+PlayerClassName "fighter" "$mnu_berserker"
+PlayerClassName "cleric" "$mnu_cardinal"
+PlayerClassName "mage" "$mnu_warlock"
 
 skill nightmare
 AmmoFactor 1.5
@@ -35,6 +47,9 @@ FastMonsters
 DisableCheats
 SpawnFilter Nightmare
 Name "$mnu_blackplague"
+PlayerClassName "fighter" "$mnu_titan"
+PlayerClassName "cleric" "$mnu_pope"
+PlayerClassName "mage" "$mnu_archmage"
 
 //------------------------------------------------------
 //  Cluster definitions

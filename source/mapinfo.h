@@ -168,6 +168,12 @@ enum
 	SKILLF_AutoUseHealth		= 0x00000008,
 };
 
+struct VSkillPlayerClassName
+{
+	VStr		ClassName;
+	VStr		MenuName;
+};
+
 struct VSkillDef
 {
 	VStr		Name;
@@ -180,6 +186,7 @@ struct VSkillDef
 	int			SpawnFilter;
 	int			AcsReturn;
 	VStr		MenuName;
+	TArray<VSkillPlayerClassName>	PlayerClassNames;
 	vuint32		Flags;
 };
 

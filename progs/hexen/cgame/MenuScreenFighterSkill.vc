@@ -25,7 +25,7 @@
 
 class MenuScreenFighterSkill : MenuScreen;
 
-string SkillNames[5];
+string ClassName;
 
 //==========================================================================
 //
@@ -35,32 +35,26 @@ string SkillNames[5];
 
 void CreateChoices()
 {
-	MenuTextButton		Btn;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY);
-	Btn.Text = SkillNames[0];
-	Btn.Activated = ActivateBaby;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 18);
-	Btn.Text = SkillNames[1];
-	Btn.Activated = ActivateEasy;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 2 * 18);
-	Btn.Text = SkillNames[2];
-	Btn.Activated = ActivateNormal;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 3 * 18);
-	Btn.Text = SkillNames[3];
-	Btn.Activated = ActivateHard;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 4 * 18);
-	Btn.Text = SkillNames[4];
-	Btn.Activated = ActivateNightmare;
+	int i;
+	int j;
+	int CurY = ChoicesStartY;
+	for (i = 0; i < P_GetNumSkills(); i++)
+	{
+		MenuChoiceSkill Btn = MenuChoiceSkill(NewChild(MenuChoiceSkill));
+		SkillDef* SDef = P_GetSkillDef(i);
+		Btn.SetPos(ChoicesStartX, CurY);
+		Btn.SetText(SDef->MenuName);
+		for (j = 0; j < SDef->PlayerClassNames.Num; j++)
+		{
+			if (!stricmp(SDef->PlayerClassNames[j].ClassName, ClassName))
+			{
+				Btn.SetText(SDef->PlayerClassNames[j].MenuName);
+			}
+		}
+		Btn.SkillIndex = i;
+		Btn.Activated = ActivateSkill;
+		CurY += Btn.Height;
+	}
 }
 
 //==========================================================================
@@ -78,66 +72,18 @@ void SetDefaultChoice()
 
 //==========================================================================
 //
-//	ActivateBaby
+//	ActivateSkill
 //
 //==========================================================================
 
-void ActivateBaby(Object Sender)
+void ActivateSkill(Object Sender)
 {
-	ClGame.NewGame(sk_baby);
-}
-
-//==========================================================================
-//
-//	ActivateEasy
-//
-//==========================================================================
-
-void ActivateEasy(Object Sender)
-{
-	ClGame.NewGame(sk_easy);
-}
-
-//==========================================================================
-//
-//	ActivateNormal
-//
-//==========================================================================
-
-void ActivateNormal(Object Sender)
-{
-	ClGame.NewGame(sk_medium);
-}
-
-//==========================================================================
-//
-//	ActivateHard
-//
-//==========================================================================
-
-void ActivateHard(Object Sender)
-{
-	ClGame.NewGame(sk_hard);
-}
-
-//==========================================================================
-//
-//	ActivateNightmare
-//
-//==========================================================================
-
-void ActivateNightmare(Object Sender)
-{
-	ClGame.NewGame(sk_nightmare);
+	ClGame.NewGame(MenuChoiceSkill(Sender).SkillIndex);
 }
 
 defaultproperties
 {
-	SkillNames[0] = "SQUIRE";
-	SkillNames[1] = "KNIGHT";
-	SkillNames[2] = "WARRIOR";
-	SkillNames[3] = "BERSERKER";
-	SkillNames[4] = "TITAN";
+	ClassName = "fighter";
 	ChoicesStartX = 120;
 	ChoicesStartY = 44;
 	SelectorType = MenuSelector_Big;

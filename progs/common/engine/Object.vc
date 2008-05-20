@@ -1223,6 +1223,12 @@ struct EpisodeDef
 	string		Key;
 };
 
+struct SkillPlayerClassName
+{
+	string		ClassName;
+	string		MenuName;
+};
+
 struct SkillDef
 {
 	string		Name;
@@ -1235,6 +1241,7 @@ struct SkillDef
 	int			SpawnFilter;
 	int			AcsReturn;
 	string		MenuName;
+	array<SkillPlayerClassName>	PlayerClassNames;
 	bool		bFastMonsters;
 	bool		bDisableCheats;
 	bool		bEasyBossBrain;

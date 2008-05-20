@@ -1274,6 +1274,7 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->SpawnFilter = 0;
 	SDef->AcsReturn = SkillDefs.Num() - 1;
 	SDef->MenuName.Clean();
+	SDef->PlayerClassNames.Clear();
 	SDef->Flags = 0;
 
 	while (1)
@@ -1371,12 +1372,15 @@ static void ParseSkillDef(VScriptParser* sc)
 			sc->ExpectString();
 			SDef->MenuName = sc->String;
 		}
-
 		else if (sc->Check("PlayerClassName"))
 		{
+			VSkillPlayerClassName& CN = SDef->PlayerClassNames.Alloc();
 			sc->ExpectString();
+			CN.ClassName = sc->String;
 			sc->ExpectString();
+			CN.MenuName = sc->String;
 		}
+
 		else if (sc->Check("PicName"))
 		{
 			sc->ExpectString();

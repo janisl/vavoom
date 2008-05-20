@@ -27,10 +27,6 @@ class MenuScreenMageSkill : MenuScreenFighterSkill;
 
 defaultproperties
 {
-	SkillNames[0] = "APPRENTICE";
-	SkillNames[1] = "ENCHANTER";
-	SkillNames[2] = "SORCERER";
-	SkillNames[3] = "WARLOCK";
-	SkillNames[4] = "ARCHIMAGE";
+	ClassName = "mage";
 	ChoicesStartX = 112;
 }

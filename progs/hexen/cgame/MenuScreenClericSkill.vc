@@ -27,10 +27,6 @@ class MenuScreenClericSkill : MenuScreenFighterSkill;
 
 defaultproperties
 {
-	SkillNames[0] = "ALTAR BOY";
-	SkillNames[1] = "ACOLYTE";
-	SkillNames[2] = "PRIEST";
-	SkillNames[3] = "CARDINAL";
-	SkillNames[4] = "POPE";
+	ClassName = "cleric";
 	ChoicesStartX = 116;
 }
