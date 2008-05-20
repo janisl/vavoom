@@ -33,39 +33,25 @@ class MenuScreenSkill : MenuScreen;
 
 void CreateChoices()
 {
-	MenuTextButton		Btn;
-	int					currentY;
-
-	currentY = ChoicesStartY;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
-	Btn.Text = "I\'m too young to die.";
-	Btn.Activated = ActivateBaby;
-	currentY += Btn.Height;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
-	Btn.Text = "Hey, not too rough.";
-	Btn.Activated = ActivateEasy;
-	currentY += Btn.Height;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
-	Btn.Text = "Hurt me plenty.";
-	Btn.Activated = ActivateNormal;
-	currentY += Btn.Height;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
-	Btn.Text = "Ultra - Violence.";
-	Btn.Activated = ActivateHard;
-	currentY += Btn.Height;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, currentY);
-	Btn.Text = "Nightmare";
-	Btn.Activated = ActivateNightmare;
+	int i;
+	int CurY = ChoicesStartY;
+	for (i = 0; i < P_GetNumSkills(); i++)
+	{
+		MenuChoiceSkill Btn = MenuChoiceSkill(NewChild(MenuChoiceSkill));
+		SkillDef* SDef = P_GetSkillDef(i);
+		Btn.SetPos(ChoicesStartX, CurY);
+		if (SDef->bMenuNameIsPic)
+		{
+			Btn.PicHandle = R_RegisterPic(StrToName(SDef->MenuName));
+		}
+		else
+		{
+			Btn.SetText(SDef->MenuName);
+		}
+		Btn.SkillIndex = i;
+		Btn.Activated = ActivateSkill;
+		CurY += Btn.Height;
+	}
 }
 
 //==========================================================================
@@ -83,58 +69,21 @@ void SetDefaultChoice()
 
 //==========================================================================
 //
-//	ActivateBaby
+//	ActivateSkill
 //
 //==========================================================================
 
-void ActivateBaby(Object Sender)
+void ActivateSkill(Object Sender)
 {
-	ClGame.NewGame(sk_baby);
-}
-
-//==========================================================================
-//
-//	ActivateEasy
-//
-//==========================================================================
-
-void ActivateEasy(Object Sender)
-{
-	ClGame.NewGame(sk_easy);
-}
-
-//==========================================================================
-//
-//	ActivateNormal
-//
-//==========================================================================
-
-void ActivateNormal(Object Sender)
-{
-	ClGame.NewGame(sk_medium);
-}
-
-//==========================================================================
-//
-//	ActivateHard
-//
-//==========================================================================
-
-void ActivateHard(Object Sender)
-{
-	ClGame.NewGame(sk_hard);
-}
-
-//==========================================================================
-//
-//	ActivateNightmare
-//
-//==========================================================================
-
-void ActivateNightmare(Object Sender)
-{
-	ClGame.MessageBoxStartMessage("are you sure? this skill level\nisn\'t even remotely fair.\n\npress y or n.",
-		ClientGame::MB_Nightmare, true);
+	if (MenuChoiceSkill(Sender).SkillIndex == sk_nightmare)
+	{
+		ClGame.MessageBoxStartMessage("are you sure? this skill level\nisn\'t even remotely fair.\n\npress y or n.",
+			ClientGame::MB_Nightmare, true);
+	}
+	else
+	{
+		ClGame.NewGame(MenuChoiceSkill(Sender).SkillIndex);
+	}
 }
 
 defaultproperties

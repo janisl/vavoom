@@ -1371,6 +1371,7 @@ static void ParseSkillDef(VScriptParser* sc)
 		{
 			sc->ExpectString();
 			SDef->MenuName = sc->String;
+			SDef->Flags &= ~SKILLF_MenuNameIsPic;
 		}
 		else if (sc->Check("PlayerClassName"))
 		{
@@ -1380,11 +1381,13 @@ static void ParseSkillDef(VScriptParser* sc)
 			sc->ExpectString();
 			CN.MenuName = sc->String;
 		}
-
 		else if (sc->Check("PicName"))
 		{
 			sc->ExpectString();
+			SDef->MenuName = sc->String.ToLower();
+			SDef->Flags |= SKILLF_MenuNameIsPic;
 		}
+
 		else if (sc->Check("MustConfirm"))
 		{
 			if (sc->CheckQuotedString())

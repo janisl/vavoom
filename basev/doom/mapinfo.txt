@@ -7,15 +7,23 @@ DamageFactor 0.5
 EasyBossBrain
 AutoUseHealth
 SpawnFilter Baby
+PicName "m_jkill"
+Key i
 
 skill easy
 SpawnFilter Easy
+PicName "m_rough"
+Key h
 
 skill normal
 SpawnFilter Normal
+PicName "m_hurt"
+Key h
 
 skill hard
 SpawnFilter Hard
+PicName "m_ultra"
+Key u
 
 skill nightmare
 AmmoFactor 2
@@ -23,3 +31,6 @@ FastMonsters
 DisableCheats
 RespawnTime 12
 SpawnFilter Nightmare
+PicName "m_nmare"
+MustConfirm
+Key n

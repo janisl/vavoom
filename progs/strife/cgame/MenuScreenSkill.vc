@@ -33,32 +33,25 @@ class MenuScreenSkill : MenuScreen;
 
 void CreateChoices()
 {
-	MenuTextButton		Btn;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY);
-	Btn.Text = "training";
-	Btn.Activated = ActivateBaby;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 23);
-	Btn.Text = "rookie";
-	Btn.Activated = ActivateEasy;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 2 * 23);
-	Btn.Text = "veteran";
-	Btn.Activated = ActivateNormal;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 3 * 23);
-	Btn.Text = "elite";
-	Btn.Activated = ActivateHard;
-
-	Btn = MenuTextButton(NewChild(MenuBigTextButton));
-	Btn.SetPos(ChoicesStartX, ChoicesStartY + 4 * 23);
-	Btn.Text = "bloodbath";
-	Btn.Activated = ActivateNightmare;
+	int i;
+	int CurY = ChoicesStartY;
+	for (i = 0; i < P_GetNumSkills(); i++)
+	{
+		MenuChoiceSkill Btn = MenuChoiceSkill(NewChild(MenuChoiceSkill));
+		SkillDef* SDef = P_GetSkillDef(i);
+		Btn.SetPos(ChoicesStartX, CurY);
+		if (SDef->bMenuNameIsPic)
+		{
+			Btn.PicHandle = R_RegisterPic(StrToName(SDef->MenuName));
+		}
+		else
+		{
+			Btn.SetText(SDef->MenuName);
+		}
+		Btn.SkillIndex = i;
+		Btn.Activated = ActivateSkill;
+		CurY += Btn.Height;
+	}
 }
 
 //==========================================================================
@@ -76,57 +69,13 @@ void SetDefaultChoice()
 
 //==========================================================================
 //
-//	ActivateBaby
+//	ActivateSkill
 //
 //==========================================================================
 
-void ActivateBaby(Object Sender)
+void ActivateSkill(Object Sender)
 {
-	ClGame.NewGame(sk_baby);
-}
-
-//==========================================================================
-//
-//	ActivateEasy
-//
-//==========================================================================
-
-void ActivateEasy(Object Sender)
-{
-	ClGame.NewGame(sk_easy);
-}
-
-//==========================================================================
-//
-//	ActivateNormal
-//
-//==========================================================================
-
-void ActivateNormal(Object Sender)
-{
-	ClGame.NewGame(sk_medium);
-}
-
-//==========================================================================
-//
-//	ActivateHard
-//
-//==========================================================================
-
-void ActivateHard(Object Sender)
-{
-	ClGame.NewGame(sk_hard);
-}
-
-//==========================================================================
-//
-//	ActivateNightmare
-//
-//==========================================================================
-
-void ActivateNightmare(Object Sender)
-{
-	ClGame.NewGame(sk_nightmare);
+	ClGame.NewGame(MenuChoiceSkill(Sender).SkillIndex);
 }
 
 defaultproperties

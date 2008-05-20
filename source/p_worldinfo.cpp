@@ -110,7 +110,7 @@ void VWorldInfo::SetSkill(int ASkill)
 	SkillAggressiveness = SDef->Aggressiveness;
 	SkillSpawnFilter = SDef->SpawnFilter;
 	SkillAcsReturn = SDef->AcsReturn;
-	Flags = SDef->Flags;
+	Flags = (Flags & 0xfffffff0) | (SDef->Flags & 0x0000000f);
 	unguard;
 }
 

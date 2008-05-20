@@ -166,6 +166,7 @@ enum
 	SKILLF_DisableCheats		= 0x00000002,
 	SKILLF_EasyBossBrain		= 0x00000004,
 	SKILLF_AutoUseHealth		= 0x00000008,
+	SKILLF_MenuNameIsPic		= 0x00000010,
 };
 
 struct VSkillPlayerClassName
