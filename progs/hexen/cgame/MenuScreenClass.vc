@@ -142,7 +142,7 @@ void FighterFocusReceived(Object Sender)
 
 void FighterActivate(Object Sender)
 {
-	ActivateClass(HexenDefs::PCLASS_FIGHTER, MenuScreenFighterSkill);
+	ActivateClass(HexenDefs::PCLASS_FIGHTER, "fighter");
 }
 
 //==========================================================================
@@ -177,7 +177,7 @@ void ClericFocusReceived(Object Sender)
 
 void ClericActivate(Object Sender)
 {
-	ActivateClass(HexenDefs::PCLASS_CLERIC, MenuScreenClericSkill);
+	ActivateClass(HexenDefs::PCLASS_CLERIC, "cleric");
 }
 
 //==========================================================================
@@ -212,7 +212,7 @@ void MageFocusReceived(Object Sender)
 
 void MageActivate(Object Sender)
 {
-	ActivateClass(HexenDefs::PCLASS_MAGE, MenuScreenMageSkill);
+	ActivateClass(HexenDefs::PCLASS_MAGE, "mage");
 }
 
 //==========================================================================
@@ -221,10 +221,10 @@ void MageActivate(Object Sender)
 //
 //==========================================================================
 
-void ActivateClass(int PClass, class<MenuScreen> SkillMenuType)
+void ActivateClass(int PClass, string ClassName)
 {
 	ClientGame(ClGame).MenuPClass = PClass;
-	ClientGame(ClGame).SkillMenuType = SkillMenuType;
+	ClGame.SkillClassName = ClassName;
 	if (P_GetNumEpisodes() > 1)
 	{
 		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenEpisode));
@@ -238,13 +238,13 @@ void ActivateClass(int PClass, class<MenuScreen> SkillMenuType)
 		}
 		else
 		{
-			ClGame.PushMenuScreen(ClGame.SpawnMenu(SkillMenuType));
+			ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
 		}
 	}
 	else
 	{
 		ClGame.MenuStartMap = P_TranslateMap(1);
-		ClGame.PushMenuScreen(ClGame.SpawnMenu(SkillMenuType));
+		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
 	}
 }
 

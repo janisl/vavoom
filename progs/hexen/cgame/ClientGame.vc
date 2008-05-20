@@ -30,7 +30,6 @@ IntermissionScreen	GImission;
 FinaleScreen		GFinale;
 
 int MenuPClass;
-class<MenuScreen> SkillMenuType;
 
 int pic_bordt;
 int pic_bordb;

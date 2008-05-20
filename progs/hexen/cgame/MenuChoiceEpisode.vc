@@ -38,7 +38,7 @@ void ActivateEvent()
 	}
 	else
 	{
-		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(ClientGame(GetClGame()).SkillMenuType));
+		GetClGame().PushMenuScreen(GetClGame().SpawnMenu(MenuScreenSkill));
 	}
 }
 

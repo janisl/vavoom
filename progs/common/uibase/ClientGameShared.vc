@@ -49,6 +49,7 @@ MenuControlKey			CurrentCtl;
 int						ControlColumn;	// menu column for controls
 
 name					MenuStartMap;
+string					SkillClassName;
 int						SkillToConfirm;
 
 //

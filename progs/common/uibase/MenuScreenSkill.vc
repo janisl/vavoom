@@ -34,6 +34,7 @@ class MenuScreenSkill : MenuScreen;
 void CreateChoices()
 {
 	int i;
+	int j;
 	int CurY = ChoicesStartY;
 	for (i = 0; i < P_GetNumSkills(); i++)
 	{
@@ -47,6 +48,15 @@ void CreateChoices()
 		else
 		{
 			Btn.SetText(SDef->MenuName);
+		}
+		for (j = 0; j < SDef->PlayerClassNames.Num; j++)
+		{
+			if (!stricmp(SDef->PlayerClassNames[j].ClassName,
+				ClGame.SkillClassName))
+			{
+				Btn.SetText(SDef->PlayerClassNames[j].MenuName);
+				Btn.PicHandle = 0;
+			}
 		}
 		Btn.SkillIndex = i;
 		Btn.bMustConfirm = SDef->bMustConfirm;
@@ -84,7 +94,7 @@ void ActivateSkill(Object Sender)
 		ClGame.MessageBoxStartMessage(
 			strlen(Btn.ConfirmationText) > 0 ? Btn.ConfirmationText :
 			"are you sure? this skill level\nisn\'t even remotely fair.\n\npress y or n.",
-			ClientGame::MB_Nightmare, true);
+			ClientGameShared::MB_Nightmare, true);
 	}
 	else
 	{
@@ -94,7 +104,7 @@ void ActivateSkill(Object Sender)
 
 defaultproperties
 {
-	ChoicesStartX = 48;
+	ChoicesStartX = 38;
 	ChoicesStartY = 40;
 	SelectorType = MenuSelector_Big;
 	Title = "CHOOSE SKILL LEVEL:";
