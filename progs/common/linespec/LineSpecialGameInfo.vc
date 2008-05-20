@@ -133,14 +133,6 @@ void Init()
 
 void SetSkill(int NewSkill)
 {
-	if (NewSkill < sk_baby)
-	{
-		NewSkill = sk_baby;
-	}
-	else if (NewSkill > sk_nightmare)
-	{
-		NewSkill = sk_nightmare;
-	}
 	WorldInfo.SetSkill(NewSkill);
 	fastparm = WorldInfo.bSkillFastMonsters || GetCvar('Fast');
 	RespawnTime = WorldInfo.SkillRespawnTime;

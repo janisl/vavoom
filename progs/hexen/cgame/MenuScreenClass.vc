@@ -234,7 +234,7 @@ void ActivateClass(int PClass, string ClassName)
 		ClGame.MenuStartMap = P_GetEpisodeDef(0)->Name;
 		if (P_GetEpisodeDef(0)->bNoSkillMenu)
 		{
-			ClGame.NewGame(sk_medium);
+			ClGame.NewGame(2);
 		}
 		else
 		{

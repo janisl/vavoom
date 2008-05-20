@@ -130,7 +130,7 @@ void ActivateEpisode(Object Sender)
 	ClGame.MenuStartMap = Epi.EpisodeMap;
 	if (Epi.bNoSkillMenu)
 	{
-		ClGame.NewGame(sk_medium);
+		ClGame.NewGame(2);
 	}
 	else
 	{

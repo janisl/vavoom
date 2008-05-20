@@ -40,7 +40,7 @@ void ActivateEvent()
 	GetClGame().MenuStartMap = EpisodeMap;
 	if (bNoSkillMenu)
 	{
-		GetClGame().NewGame(sk_medium);
+		GetClGame().NewGame(2);
 	}
 	else
 	{

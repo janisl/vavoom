@@ -1576,10 +1576,14 @@ COMMAND(Map)
 	RebornPosition = 0;
 	GGameInfo->RebornPosition = RebornPosition;
 
-	if ((int)Skill < sk_baby)
-		Skill = sk_baby;
-	if ((int)Skill > sk_nightmare)
-		Skill = sk_nightmare;
+	if ((int)Skill < 0)
+	{
+		Skill = 0;
+	}
+	else if ((int)Skill >= P_GetNumSkills())
+	{
+		Skill = P_GetNumSkills() - 1;
+	}
 
 	// Set up a bunch of globals
 	GGameInfo->netgame = svs.max_clients > 1;

@@ -51,16 +51,6 @@ const int TICRATE				= 35;
 
 const int MAXPLAYERS			= 8;
 
-// Difficulty/skill settings/filters.
-enum
-{
-	sk_baby,
-	sk_easy,
-	sk_medium,
-	sk_hard,
-	sk_nightmare
-};
-
 enum
 {
 	//  Generate the sprite's axes, with sprup straight up in worldspace,

@@ -89,7 +89,7 @@ void ActivateNewGame(Object Sender)
 		}
 		if (P_GetEpisodeDef(0)->bNoSkillMenu)
 		{
-			ClGame.NewGame(sk_medium);
+			ClGame.NewGame(2);
 		}
 		else
 		{

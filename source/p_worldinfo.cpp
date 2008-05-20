@@ -99,7 +99,18 @@ void VWorldInfo::Destroy()
 void VWorldInfo::SetSkill(int ASkill)
 {
 	guard(VWorldInfo::SetSkill);
-	GameSkill = ASkill;
+	if (ASkill < 0)
+	{
+		GameSkill = 0;
+	}
+	else if (ASkill >= P_GetNumSkills())
+	{
+		GameSkill = P_GetNumSkills() - 1;
+	}
+	else
+	{
+		GameSkill = ASkill;
+	}
 	const VSkillDef* SDef = P_GetSkillDef(GameSkill);
 
 	SkillAmmoFactor = SDef->AmmoFactor;

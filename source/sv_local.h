@@ -239,16 +239,6 @@ extern bool		completed;
 //
 //==========================================================================
 
-// Difficulty/skill settings/filters.
-enum skill_t
-{
-	sk_baby,
-	sk_easy,
-	sk_medium,
-	sk_hard,
-	sk_nightmare
-};
-
 void G_TeleportNewMap(int map, int position);
 void G_WorldDone();
 void G_PlayerReborn(int player);
