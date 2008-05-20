@@ -1275,6 +1275,7 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->AcsReturn = SkillDefs.Num() - 1;
 	SDef->MenuName.Clean();
 	SDef->PlayerClassNames.Clear();
+	SDef->ConfirmationText.Clean();
 	SDef->Flags = 0;
 
 	while (1)
@@ -1387,13 +1388,15 @@ static void ParseSkillDef(VScriptParser* sc)
 			SDef->MenuName = sc->String.ToLower();
 			SDef->Flags |= SKILLF_MenuNameIsPic;
 		}
-
 		else if (sc->Check("MustConfirm"))
 		{
+			SDef->Flags |= SKILLF_MustConfirm;
 			if (sc->CheckQuotedString())
 			{
+				SDef->ConfirmationText = sc->String;
 			}
 		}
+
 		else if (sc->Check("Key"))
 		{
 			sc->ExpectString();

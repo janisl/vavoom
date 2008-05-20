@@ -49,6 +49,7 @@ MenuControlKey			CurrentCtl;
 int						ControlColumn;	// menu column for controls
 
 name					MenuStartMap;
+int						SkillToConfirm;
 
 //
 //  MESSAGE BOX
@@ -351,9 +352,11 @@ void ControlResponse(int key)
 final void VerifyNightmare(int ch)
 {
 	if (ch != K_y)
+	{
 		return;
+	}
 
-	NewGame(sk_nightmare);
+	NewGame(SkillToConfirm);
 }
 
 //==========================================================================

@@ -167,6 +167,7 @@ enum
 	SKILLF_EasyBossBrain		= 0x00000004,
 	SKILLF_AutoUseHealth		= 0x00000008,
 	SKILLF_MenuNameIsPic		= 0x00000010,
+	SKILLF_MustConfirm			= 0x00000020,
 };
 
 struct VSkillPlayerClassName
@@ -188,6 +189,7 @@ struct VSkillDef
 	int			AcsReturn;
 	VStr		MenuName;
 	TArray<VSkillPlayerClassName>	PlayerClassNames;
+	VStr		ConfirmationText;
 	vuint32		Flags;
 };
 

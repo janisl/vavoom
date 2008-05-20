@@ -1242,11 +1242,13 @@ struct SkillDef
 	int			AcsReturn;
 	string		MenuName;
 	array<SkillPlayerClassName>	PlayerClassNames;
+	string		ConfirmationText;
 	bool		bFastMonsters;
 	bool		bDisableCheats;
 	bool		bEasyBossBrain;
 	bool		bAutoUseHealth;
 	bool		bMenuNameIsPic;
+	bool		bMustConfirm;
 };
 
 struct LockGroup

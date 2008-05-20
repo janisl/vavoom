@@ -27,6 +27,8 @@ class MenuChoiceSkill : MenuBigTextButton;
 
 int				PicHandle;
 int				SkillIndex;
+bool			bMustConfirm;
+string			ConfirmationText;
 
 //==========================================================================
 //

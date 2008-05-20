@@ -49,6 +49,8 @@ void CreateChoices()
 			Btn.SetText(SDef->MenuName);
 		}
 		Btn.SkillIndex = i;
+		Btn.bMustConfirm = SDef->bMustConfirm;
+		Btn.ConfirmationText = SDef->ConfirmationText;
 		Btn.Activated = ActivateSkill;
 		CurY += Btn.Height;
 	}
@@ -75,14 +77,18 @@ void SetDefaultChoice()
 
 void ActivateSkill(Object Sender)
 {
-	if (MenuChoiceSkill(Sender).SkillIndex == sk_nightmare)
+	MenuChoiceSkill Btn = MenuChoiceSkill(Sender);
+	if (Btn.bMustConfirm)
 	{
-		ClGame.MessageBoxStartMessage("are you sure? this skill level\nisn\'t even remotely fair.\n\npress y or n.",
+		ClGame.SkillToConfirm = Btn.SkillIndex;
+		ClGame.MessageBoxStartMessage(
+			strlen(Btn.ConfirmationText) > 0 ? Btn.ConfirmationText :
+			"are you sure? this skill level\nisn\'t even remotely fair.\n\npress y or n.",
 			ClientGame::MB_Nightmare, true);
 	}
 	else
 	{
-		ClGame.NewGame(MenuChoiceSkill(Sender).SkillIndex);
+		ClGame.NewGame(Btn.SkillIndex);
 	}
 }
 
