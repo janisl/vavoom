@@ -39,6 +39,7 @@ class VWorldInfo : public VObject
 	int				SkillRespawnLimit;
 	float			SkillAggressiveness;
 	int				SkillSpawnFilter;
+	int				SkillAcsReturn;
 
 	enum
 	{

@@ -1038,3 +1038,27 @@ ob_stfbishop = "%o was blown away by the Bishop.";
 ob_loremaster = "%o couldn't escape from the Lore Master's grasp.";
 ob_alienspecte = "%o was struck down by the Spectre.";
 ob_entity = "%o felt the wrath of The One God.";
+
+mnu_wetnurse = "THOU NEEDETH A WET-NURSE";
+mnu_yellowbellies = "YELLOWBELLIES-R-US";
+mnu_bringest = "BRINGEST THEM ONETH";
+mnu_smite = "THOU ART A SMITE-MEISTER";
+mnu_blackplague = "BLACK PLAGUE POSSESSES THEE";
+
+mnu_squire = "SQUIRE";
+mnu_knight = "KNIGHT";
+mnu_warrior = "WARRIOR";
+mnu_berserker = "BERSERKER";
+mnu_titan = "TITAN";
+
+mnu_altarboy = "ALTAR BOY";
+mnu_acolyte = "ACOLYTE";
+mnu_priest = "PRIEST";
+mnu_cardinal = "CARDINAL";
+mnu_pope = "POPE";
+
+mnu_apprentice = "APPRENTICE";
+mnu_enchanter = "ENCHANTER";
+mnu_sorcerer = "SORCERER";
+mnu_warlock = "WARLOCK";
+mnu_archmage = "ARCHMAGE";

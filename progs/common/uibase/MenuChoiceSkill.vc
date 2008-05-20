@@ -23,64 +23,29 @@
 //**
 //**************************************************************************
 
-class MenuTextButton : MenuChoice;
+class MenuChoiceSkill : MenuBigTextButton;
 
-name ActivateSound;
-string Text;
-name TextFont;
-int TextColour;
-int TextColourFocus;
-int TextHAlign;
-int TextVAlign;
+int				PicHandle;
+int				SkillIndex;
 
-delegate void Activated(Object Sender);
-
-void SetText(string AText)
-{
-	if (StrStartsWith(AText, "$"))
-	{
-		Text = GetLangString(StrToName(substr(AText, 1, strlen(AText) - 1)));
-	}
-	else
-	{
-		Text = AText;
-	}
-}
-
-void ActivateEvent()
-{
-	if (Activated)
-		Activated(self);
-}
-
-bool OnKeyDown(int key)
-{
-	if (key == K_ENTER || key == K_PADENTER ||
-		key == K_MOUSE1 || key == K_JOY1)
-	{
-		ActivateEvent();
-		LocalSound(ActivateSound);
-		return true;
-	}
-	return false;
-}
-
-void OnMouseClick(int X, int Y)
-{
-	ActivateEvent();
-	LocalSound(ActivateSound);
-}
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
 
 void OnDraw()
 {
-	SetFont(TextFont);
-	SetTextAlign(TextHAlign, TextVAlign);
-	DrawText(CursorXOffs, 0, Text, IsFocus() ? TextColourFocus : TextColour);
+	if (PicHandle > 0)
+	{
+		DrawPic(0, 0, PicHandle);
+	}
+	else
+	{
+		::OnDraw();
+	}
 }
 
 defaultproperties
 {
-	ActivateSound = 'menu/choose';
-	TextColour = CR_UNTRANSLATED;
-	TextColourFocus = CR_UNTRANSLATED;
 }

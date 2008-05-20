@@ -38,6 +38,7 @@ MenuChoiceEnum		Level;
 void CreateChoices()
 {
 	MenuTextButton	startGame;
+	int				i;
 
 	startGame = MenuTextButton(NewChild(MenuSmallTextButton));
 	startGame.SetOrigin(ChoicesStartX, ChoicesStartY);
@@ -75,11 +76,10 @@ void CreateChoices()
 	Skill = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Skill.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Skill.Text = "Skill";
-	Skill.AddItem("Baby");
-	Skill.AddItem("Easy");
-	Skill.AddItem("Normal");
-	Skill.AddItem("Hard");
-	Skill.AddItem("Nightmare");
+	for (i = 0; i < P_GetNumSkills(); i++)
+	{
+		Skill.AddItem(P_GetSkillDef(i)->Name);
+	}
 	Skill.SetInitialValue(2);
 	ChoicesStartY += Skill.Height;
 

@@ -1272,6 +1272,8 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->RespawnLimit = 0;
 	SDef->Aggressiveness = 1.0;
 	SDef->SpawnFilter = 0;
+	SDef->AcsReturn = SkillDefs.Num() - 1;
+	SDef->MenuName.Clean();
 	SDef->Flags = 0;
 
 	while (1)
@@ -1359,15 +1361,17 @@ static void ParseSkillDef(VScriptParser* sc)
 				}
 			}
 		}
-
 		else if (sc->Check("ACSReturn"))
 		{
 			sc->ExpectNumber();
+			SDef->AcsReturn = sc->Number;
 		}
 		else if (sc->Check("Name"))
 		{
 			sc->ExpectString();
+			SDef->MenuName = sc->String;
 		}
+
 		else if (sc->Check("PlayerClassName"))
 		{
 			sc->ExpectString();
@@ -1612,6 +1616,17 @@ int P_GetNumEpisodes()
 VEpisodeDef* P_GetEpisodeDef(int Index)
 {
 	return &EpisodeDefs[Index];
+}
+
+//==========================================================================
+//
+//	P_GetNumSkills
+//
+//==========================================================================
+
+int P_GetNumSkills()
+{
+	return SkillDefs.Num();
 }
 
 //==========================================================================

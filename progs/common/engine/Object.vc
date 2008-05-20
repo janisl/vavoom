@@ -1223,6 +1223,24 @@ struct EpisodeDef
 	string		Key;
 };
 
+struct SkillDef
+{
+	string		Name;
+	float		AmmoFactor;
+	float		DoubleAmmoFactor;
+	float		DamageFactor;
+	float		RespawnTime;
+	int			RespawnLimit;
+	float		Aggressiveness;
+	int			SpawnFilter;
+	int			AcsReturn;
+	string		MenuName;
+	bool		bFastMonsters;
+	bool		bDisableCheats;
+	bool		bEasyBossBrain;
+	bool		bAutoUseHealth;
+};
+
 struct LockGroup
 {
 	array<class>		AnyKeyList;
@@ -1694,6 +1712,8 @@ native static final name P_GetMapLumpName(int map);
 native static final name P_TranslateMap(int map);
 native static final int P_GetNumEpisodes();
 native static final EpisodeDef* P_GetEpisodeDef(int i);
+native static final int P_GetNumSkills();
+native static final SkillDef* P_GetSkillDef(int i);
 native static final bool SV_GetSaveString(int i, string* buf);
 native static final void StartSearch();
 native static final slist_t * GetSlist();

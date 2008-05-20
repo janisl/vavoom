@@ -11,18 +11,22 @@ DamageFactor 0.5
 EasyBossBrain
 AutoUseHealth
 SpawnFilter Baby
+Name "$mnu_wetnurse"
 
 skill easy
 DoubleAmmoFactor 1.5
 SpawnFilter Easy
+Name "$mnu_yellowbellies"
 
 skill normal
 DoubleAmmoFactor 1.5
 SpawnFilter Normal
+Name "$mnu_bringest"
 
 skill hard
 DoubleAmmoFactor 1.5
 SpawnFilter Hard
+Name "$mnu_smite"
 
 skill nightmare
 AmmoFactor 1.5
@@ -30,6 +34,7 @@ DoubleAmmoFactor 1.5
 FastMonsters
 DisableCheats
 SpawnFilter Nightmare
+Name "$mnu_blackplague"
 
 //------------------------------------------------------
 //  Cluster definitions

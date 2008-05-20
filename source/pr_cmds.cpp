@@ -658,6 +658,17 @@ IMPLEMENT_FUNCTION(VObject, P_GetEpisodeDef)
 	RET_PTR(P_GetEpisodeDef(Index));
 }
 
+IMPLEMENT_FUNCTION(VObject, P_GetNumSkills)
+{
+	RET_INT(P_GetNumSkills());
+}
+
+IMPLEMENT_FUNCTION(VObject, P_GetSkillDef)
+{
+	P_GET_INT(Index);
+	RET_PTR(const_cast<VSkillDef*>(P_GetSkillDef(Index)));
+}
+
 IMPLEMENT_FUNCTION(VObject, KeyNameForNum)
 {
 	P_GET_INT(keynum);

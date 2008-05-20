@@ -178,6 +178,8 @@ struct VSkillDef
 	int			RespawnLimit;
 	float		Aggressiveness;
 	int			SpawnFilter;
+	int			AcsReturn;
+	VStr		MenuName;
 	vuint32		Flags;
 };
 
@@ -192,6 +194,7 @@ void P_PutMapSongLump(int, VName);
 const VClusterDef* P_GetClusterDef(int);
 int P_GetNumEpisodes();
 VEpisodeDef* P_GetEpisodeDef(int);
+int P_GetNumSkills();
 const VSkillDef* P_GetSkillDef(int);
 void P_GetMusicLumpNames(TArray<FReplacedString>&);
 void P_ReplaceMusicLumpNames(TArray<FReplacedString>&);

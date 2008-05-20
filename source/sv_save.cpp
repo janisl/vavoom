@@ -868,9 +868,6 @@ void SV_LoadGame(int slot)
 	// Load the current map
 	SV_LoadMap(mapname, BASE_SLOT);
 
-	//	Init skill hacks
-	GGameInfo->eventInitNewGame(GGameInfo->WorldInfo->GameSkill);
-
 #ifdef CLIENT
 	if (cls.state != ca_dedicated)
 		GCmdBuf << "Connect local\n";
