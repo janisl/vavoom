@@ -6441,11 +6441,11 @@ final void SpawnMapThing(mthing_t* mthing)
 		}
 
 		// Check current skill with spawn flags
-		if (World.GameSkill == sk_baby || World.GameSkill == sk_easy)
+		if (World.SkillSpawnFilter == 1 || World.SkillSpawnFilter == 2)
 		{
 			spawnMask = MTF_EASY;
 		}
-		else if (World.GameSkill == sk_hard || World.GameSkill == sk_nightmare)
+		else if (World.SkillSpawnFilter == 8 || World.SkillSpawnFilter == 16)
 		{
 			spawnMask = MTF_HARD;
 		}

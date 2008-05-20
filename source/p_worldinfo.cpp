@@ -108,6 +108,7 @@ void VWorldInfo::SetSkill(int ASkill)
 	SkillRespawnTime = SDef->RespawnTime;
 	SkillRespawnLimit = SDef->RespawnLimit;
 	SkillAggressiveness = SDef->Aggressiveness;
+	SkillSpawnFilter = SDef->SpawnFilter;
 	Flags = SDef->Flags;
 	unguard;
 }

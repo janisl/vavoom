@@ -6,18 +6,23 @@ AmmoFactor 2
 DamageFactor 0.5
 EasyBossBrain
 AutoUseHealth
+SpawnFilter Baby
 
 skill easy
+SpawnFilter Easy
 
 skill normal
+SpawnFilter Normal
 
 skill hard
+SpawnFilter Hard
 
 skill nightmare
 AmmoFactor 2
 FastMonsters
 DisableCheats
 RespawnTime 16
+SpawnFilter Nightmare
 
 //------------------------------------------------------
 //  Default map

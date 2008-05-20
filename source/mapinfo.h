@@ -177,6 +177,7 @@ struct VSkillDef
 	float		RespawnTime;
 	int			RespawnLimit;
 	float		Aggressiveness;
+	int			SpawnFilter;
 	vuint32		Flags;
 };
 

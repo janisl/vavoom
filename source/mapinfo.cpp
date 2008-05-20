@@ -1271,6 +1271,7 @@ static void ParseSkillDef(VScriptParser* sc)
 	SDef->RespawnTime = 0.0;
 	SDef->RespawnLimit = 0;
 	SDef->Aggressiveness = 1.0;
+	SDef->SpawnFilter = 0;
 	SDef->Flags = 0;
 
 	while (1)
@@ -1321,31 +1322,36 @@ static void ParseSkillDef(VScriptParser* sc)
 			sc->ExpectFloat();
 			SDef->Aggressiveness = 1.0 - MID(0.0, sc->Float, 1.0);
 		}
-
 		else if (sc->Check("SpawnFilter"))
 		{
 			if (sc->CheckNumber())
 			{
 				if (sc->Number > 0)
 				{
+					SDef->SpawnFilter = 1 << (sc->Number - 1);
 				}
 			}
 			else
 			{
-				if (sc->Check("baby"))
+				if (sc->Check("Baby"))
 				{
+					SDef->SpawnFilter = 1;
 				}
-				else if (sc->Check("easy"))
+				else if (sc->Check("Easy"))
 				{
+					SDef->SpawnFilter = 2;
 				}
-				else if (sc->Check("normal"))
+				else if (sc->Check("Normal"))
 				{
+					SDef->SpawnFilter = 4;
 				}
-				else if (sc->Check("hard"))
+				else if (sc->Check("Hard"))
 				{
+					SDef->SpawnFilter = 8;
 				}
-				else if (sc->Check("nightmare"))
+				else if (sc->Check("Nightmare"))
 				{
+					SDef->SpawnFilter = 16;
 				}
 				else
 				{
@@ -1353,6 +1359,7 @@ static void ParseSkillDef(VScriptParser* sc)
 				}
 			}
 		}
+
 		else if (sc->Check("ACSReturn"))
 		{
 			sc->ExpectNumber();

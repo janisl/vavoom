@@ -7,21 +7,26 @@ DoubleAmmoFactor 1.5
 DamageFactor 0.5
 EasyBossBrain
 AutoUseHealth
+SpawnFilter Baby
 
 skill easy
 DoubleAmmoFactor 1.5
+SpawnFilter Easy
 
 skill normal
 DoubleAmmoFactor 1.5
+SpawnFilter Normal
 
 skill hard
 DoubleAmmoFactor 1.5
+SpawnFilter Hard
 
 skill nightmare
 AmmoFactor 1.5
 DoubleAmmoFactor 1.5
 FastMonsters
 DisableCheats
+SpawnFilter Nightmare
 
 //--------------------------------------------------------
 // EPISODE 1 - THE CITY OF THE DAMNED
