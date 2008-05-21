@@ -37,8 +37,8 @@
 #include <sys/stat.h>
 
 //	Generate all GUIDs
-#define DIRECTINPUT_VERSION		0x0500
-#define DIRECTSOUND_VERSION		0x0700
+#define DIRECTINPUT_VERSION		0x0800
+#define DIRECTSOUND_VERSION		0x0900
 #include <dinput.h>
 #include <ddraw.h>
 #include <dsound.h>

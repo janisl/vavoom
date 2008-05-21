@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define DIRECTINPUT_VERSION		0x0500
+#define DIRECTINPUT_VERSION		0x0800
 #include "winlocal.h"
 #include <dinput.h>
 #include "gamedefs.h"
@@ -44,17 +44,17 @@ public:
 	void SetActiveWindow(HWND window);
 
 private:
-	LPDIRECTINPUT			DInput;
+	LPDIRECTINPUT8			DInput;
 
-	LPDIRECTINPUTDEVICE		lpKeyboard;
+	LPDIRECTINPUTDEVICE8A	lpKeyboard;
 
-	LPDIRECTINPUTDEVICE		lpMouse;
+	LPDIRECTINPUTDEVICE8A	lpMouse;
 	bool					mousepresent;
 	int						old_mouse_x;
 	int						old_mouse_y;
 	int						old_mouse_z;
 
-	LPDIRECTINPUTDEVICE2	lpJoystick;
+	LPDIRECTINPUTDEVICE8A	lpJoystick;
 	bool					joystick_started;
 
 	static const vuint8			scan2key[256];
@@ -502,8 +502,8 @@ VDirectInputDevice::VDirectInputDevice()
 	guard(VDirectInputDevice::VDirectInputDevice);
 	HRESULT		result;
 
-	result = CoCreateInstance(CLSID_DirectInput, NULL,
-		CLSCTX_INPROC_SERVER, IID_IDirectInput, (void**)&DInput);
+	result = CoCreateInstance(CLSID_DirectInput8, NULL,
+		CLSCTX_INPROC_SERVER, IID_IDirectInput8, (void**)&DInput);
 	if (result != DI_OK)
 		Sys_Error("Failed to create DirectInput object");
 
@@ -897,7 +897,7 @@ void VDirectInputDevice::StartupJoystick()
   	if (GArgs.CheckParm("-nojoy"))
 		return;
 
-	DInput->EnumDevices(DIDEVTYPE_JOYSTICK, JoystickEnumCallback, this,
+	DInput->EnumDevices(DI8DEVCLASS_GAMECTRL, JoystickEnumCallback, this,
 		DIEDFL_ATTACHEDONLY);
 	unguard;
 }
@@ -923,7 +923,7 @@ int FAR PASCAL VDirectInputDevice::JoystickEnumCallback(
 int VDirectInputDevice::JoystickEnumCallback(LPCDIDEVICEINSTANCE pdinst)
 {
 	HRESULT					Result;
-	LPDIRECTINPUTDEVICE		lpJoystick1;
+	LPDIRECTINPUTDEVICE8A	lpJoystick1;
 	DIPROPRANGE				diprg; 
 	DIPROPDWORD				dipdw;
 

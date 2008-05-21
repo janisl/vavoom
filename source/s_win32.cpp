@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define DIRECTSOUND_VERSION		0x0700
+#define DIRECTSOUND_VERSION		0x0900
 #include "winlocal.h"
 #include <dsound.h>
 #include "eax.h"
@@ -46,21 +46,21 @@ public:
 	{
 		bool					Playing;	//	Is buffer taken.
 		int						SoundID;	//	Sound loaded in buffer.
-		LPDIRECTSOUNDBUFFER		Buffer;		//	DirectSound buffer.
+		LPDIRECTSOUNDBUFFER8		Buffer;		//	DirectSound buffer.
 		double					FreeTime;	//	Time buffer was stopped.
 	};
 
 	bool					SupportEAX;
 
-	LPDIRECTSOUND			DSound;
-	LPDIRECTSOUNDBUFFER		PrimarySoundBuffer;
-	LPDIRECTSOUND3DLISTENER	Listener;
-	IKsPropertySet*			PropertySet;
+	LPDIRECTSOUND8				DSound;
+	LPDIRECTSOUNDBUFFER8		PrimarySoundBuffer;
+	LPDIRECTSOUND3DLISTENER8	Listener;
+	IKsPropertySet*				PropertySet;
 
 	FBuffer*				Buffers;
 	int						NumBuffers;		// number of buffers available
 
-	LPDIRECTSOUNDBUFFER		StrmBuffer;
+	LPDIRECTSOUNDBUFFER8	StrmBuffer;
 	int						StrmNextUpdatePart;
 	void*					StrmLockBuffer1;
 	void*					StrmLockBuffer2;
@@ -147,8 +147,8 @@ bool VDirectSoundDevice::Init()
 	GCon->Log(NAME_Init, "Initialising DirectSound driver.");
 
 	// Create DirectSound object
-	result = CoCreateInstance(CLSID_DirectSound, NULL,
-		CLSCTX_INPROC_SERVER, IID_IDirectSound, (void**)&DSound);
+	result = CoCreateInstance(CLSID_DirectSound8, NULL,
+		CLSCTX_INPROC_SERVER, IID_IDirectSound8, (void**)&DSound);
 	if (result != DS_OK)
 		Sys_Error("Failed to create DirectSound object");
 
@@ -191,7 +191,7 @@ bool VDirectSoundDevice::Init()
 		dsbdesc.dwFlags |= DSBCAPS_CTRL3D;
 	}
 
-	result = DSound->CreateSoundBuffer(&dsbdesc, &PrimarySoundBuffer, NULL);
+	result = DSound->CreateSoundBuffer(&dsbdesc, (LPDIRECTSOUNDBUFFER *)&PrimarySoundBuffer, NULL);
 	if (result != DS_OK)
 		Sys_Error("Failed to create primary sound buffer\n%s", DS_Error(result));
 
@@ -424,7 +424,7 @@ const char* VDirectSoundDevice::DS_Error(HRESULT result)
 int VDirectSoundDevice::CreateBuffer(int sound_id)
 {
 	HRESULT					result;
-	LPDIRECTSOUNDBUFFER		dsbuffer;
+	LPDIRECTSOUNDBUFFER8	dsbuffer;
 	DSBUFFERDESC			dsbdesc;
 	WAVEFORMATEX			pcmwf;
 	void					*buffer;
@@ -480,7 +480,7 @@ int VDirectSoundDevice::CreateBuffer(int sound_id)
 		if (!Buffers[Handle].SoundID)
 			break;
 	}
-	result = DSound->CreateSoundBuffer(&dsbdesc, &dsbuffer, NULL);
+	result = DSound->CreateSoundBuffer(&dsbdesc, (LPDIRECTSOUNDBUFFER *)&dsbuffer, NULL);
 	if (Handle == NumBuffers || result != DS_OK)
 	{
 		int		best = -1;
@@ -502,7 +502,7 @@ int VDirectSoundDevice::CreateBuffer(int sound_id)
 			if (Handle == NumBuffers)
 				Handle = best;
 			if (result != DS_OK)
-				result = DSound->CreateSoundBuffer(&dsbdesc, &dsbuffer, NULL);
+				result = DSound->CreateSoundBuffer(&dsbdesc, (LPDIRECTSOUNDBUFFER *)&dsbuffer, NULL);
 		}
 		else
 		{
@@ -561,12 +561,12 @@ int VDirectSoundDevice::PlaySound(int sound_id, float vol, float sep,
 
 	if (Sound3D)
 	{
-		LPDIRECTSOUND3DBUFFER	Buf3D; 
+		LPDIRECTSOUND3DBUFFER8	Buf3D; 
 
 		Buffers[Handle].Buffer->SetVolume((LONG)(4096.0 * (vol - 1.0)));
 
 		result = Buffers[Handle].Buffer->QueryInterface(
-			IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
+			IID_IDirectSound3DBuffer8, (LPVOID *)&Buf3D); 
 		if (FAILED(result))
 		{
 			Sys_Error("Failed to get 3D buffer");
@@ -609,7 +609,7 @@ int VDirectSoundDevice::PlaySound3D(int sound_id, const TVec &origin,
 {
 	guard(VDirectSoundDevice::PlaySound3D);
 	HRESULT					result;
-	LPDIRECTSOUND3DBUFFER	Buf3D; 
+	LPDIRECTSOUND3DBUFFER8	Buf3D; 
 
 	int Handle = CreateBuffer(sound_id);
 	if (Handle == -1)
@@ -623,7 +623,7 @@ int VDirectSoundDevice::PlaySound3D(int sound_id, const TVec &origin,
 	Buffers[Handle].Buffer->SetVolume((LONG)(4096.0 * (volume - 1.0)));
 
 	result = Buffers[Handle].Buffer->QueryInterface(
-		IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D); 
+		IID_IDirectSound3DBuffer8, (LPVOID *)&Buf3D); 
 	if (FAILED(result))
 	{
 		Sys_Error("Failed to get 3D buffer");
@@ -679,14 +679,14 @@ void VDirectSoundDevice::UpdateChannel3D(int Handle, const TVec& Org,
 {
 	guard(VDirectSoundDevice::PlaySound3D);
 	HRESULT					result;
-	LPDIRECTSOUND3DBUFFER	Buf3D; 
+	LPDIRECTSOUND3DBUFFER8	Buf3D; 
 
 	if (Handle == -1)
 	{
 		return;
 	}
 	result = Buffers[Handle].Buffer->QueryInterface(
-		IID_IDirectSound3DBuffer, (LPVOID *)&Buf3D);
+		IID_IDirectSound3DBuffer8, (LPVOID *)&Buf3D);
 	if (FAILED(result))
 	{
 		return;
@@ -822,7 +822,7 @@ bool VDirectSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 	dsbdesc.dwBufferBytes = STRM_LEN * 4;
 	dsbdesc.lpwfxFormat = &pcmwf;
 
-	result = DSound->CreateSoundBuffer(&dsbdesc, &StrmBuffer, NULL);
+	result = DSound->CreateSoundBuffer(&dsbdesc, (LPDIRECTSOUNDBUFFER *)&StrmBuffer, NULL);
 	if (result != DS_OK)
 	{
 		int		best = -1;
@@ -841,7 +841,7 @@ bool VDirectSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 		{
 			Buffers[best].Buffer->Release();
 			Buffers[best].SoundID = 0;
-			result = DSound->CreateSoundBuffer(&dsbdesc, &StrmBuffer, NULL);
+			result = DSound->CreateSoundBuffer(&dsbdesc, (LPDIRECTSOUNDBUFFER *)&StrmBuffer, NULL);
 		}
 	}
 	if (result != DS_OK)
