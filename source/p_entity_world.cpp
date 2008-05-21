@@ -2067,7 +2067,7 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 
 bool VEntity::CanSee(VEntity* Other)
 {
-	guard(P_CheckSight);
+	guard(VEntity::CanSee);
 	int			s1;
 	int			s2;
 	int			pnum;
