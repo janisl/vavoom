@@ -552,6 +552,7 @@ struct mthing_t
 	int 		angle;
 	int			type;
 	int			options;
+	int			SkillClassFilter;
 	int 		special;
 	int 		arg1;
 	int 		arg2;

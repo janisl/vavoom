@@ -34,21 +34,19 @@ const int
 // Map things flags
 //
 const int
-	MTF_EASY		= 0x0001,	// Skill flags.
-	MTF_NORMAL		= 0x0002,
-	MTF_HARD		= 0x0004,
 	MTF_AMBUSH		= 0x0008,	// Deaf monsters/do not react to sound.
 	MTF_DORMANT		= 0x0010,	// The thing is dormant
-	MTF_FIGHTER		= 0x0020,	// Thing appearing in player classes
-	MTF_CLERIC		= 0x0040,
-	MTF_MAGE		= 0x0080,
 	MTF_GSINGLE		= 0x0100,	// Appearing in game modes
 	MTF_GCOOP		= 0x0200,
 	MTF_GDEATHMATCH	= 0x0400,
 	MTF_SHADOW		= 0x0800,
 	MTF_ALTSHADOW	= 0x1000,
 	MTF_FRIENDLY	= 0x2000,
-	MTF_STANDSTILL	= 0x4000;
+	MTF_STANDSTILL	= 0x4000,
+
+	MTF2_FIGHTER	= 0x000010000,	// Thing appearing in player classes
+	MTF2_CLERIC		= 0x000020000,
+	MTF2_MAGE		= 0x000040000;
 
 enum
 {
@@ -6440,26 +6438,14 @@ final void SpawnMapThing(mthing_t* mthing)
 		}
 
 		// Check current skill with spawn flags
-		if (World.SkillSpawnFilter == 1 || World.SkillSpawnFilter == 2)
-		{
-			spawnMask = MTF_EASY;
-		}
-		else if (World.SkillSpawnFilter == 8 || World.SkillSpawnFilter == 16)
-		{
-			spawnMask = MTF_HARD;
-		}
-		else
-		{
-			spawnMask = MTF_NORMAL;
-		}
-		if (!(mthing->options & spawnMask))
+		if (!(mthing->SkillClassFilter & World.SkillSpawnFilter))
 		{
 			return;
 		}
 
 		// Check current character classes with spawn flags
 		spawnMask = GetPClassSpawnFlags();
-		if (spawnMask && !(mthing->options & spawnMask))
+		if (spawnMask && !(mthing->SkillClassFilter & spawnMask))
 		{
 			// Not for current class
 			return;

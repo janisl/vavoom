@@ -1146,6 +1146,7 @@ final void CopyMThing(mthing_t * from, mthing_t * to)
 	to->angle = from->angle;
 	to->type = from->type;
 	to->options = from->options;
+	to->SkillClassFilter = from->SkillClassFilter;
 	to->special = from->special;
 	to->arg1 = from->arg1;
 	to->arg2 = from->arg2;

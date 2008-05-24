@@ -357,9 +357,9 @@ defaultproperties
 	DefaultKickBack = 150.0;
 	NonMonsterAngleIncrements = 1;
 
-	classFlags[0] = HexenLevelInfo::MTF_FIGHTER;
-	classFlags[1] = HexenLevelInfo::MTF_CLERIC;
-	classFlags[2] = HexenLevelInfo::MTF_MAGE;
+	classFlags[0] = HexenLevelInfo::MTF2_FIGHTER;
+	classFlags[1] = HexenLevelInfo::MTF2_CLERIC;
+	classFlags[2] = HexenLevelInfo::MTF2_MAGE;
 
 	botskill = 2;
 

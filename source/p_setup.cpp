@@ -1743,7 +1743,20 @@ void VLevel::LoadThings1(int Lump)
 		th->y = y;
 		th->angle = angle;
 		th->type = type;
-		th->options = options;
+		th->options = options & ~7;
+		th->SkillClassFilter = 0xffff0000;
+		if (options & 1)
+		{
+			th->SkillClassFilter |= 0x03;
+		}
+		if (options & 2)
+		{
+			th->SkillClassFilter |= 0x04;
+		}
+		if (options & 4)
+		{
+			th->SkillClassFilter |= 0x18;
+		}
 	}
 	delete Strm;
 	unguard;
@@ -1777,7 +1790,20 @@ void VLevel::LoadThings2(int Lump)
 		th->height = height;
 		th->angle = angle;
 		th->type = type;
-		th->options = options;
+		th->options = options & ~0xe7;
+		th->SkillClassFilter = (options & 0xe0) << 11;
+		if (options & 1)
+		{
+			th->SkillClassFilter |= 0x03;
+		}
+		if (options & 2)
+		{
+			th->SkillClassFilter |= 0x04;
+		}
+		if (options & 4)
+		{
+			th->SkillClassFilter |= 0x18;
+		}
 		th->special = special;
 		th->arg1 = arg1;
 		th->arg2 = arg2;
