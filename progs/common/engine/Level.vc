@@ -57,6 +57,7 @@ native readonly name			MapName;
 native readonly private bool	bForServer;	//	True if this level belongs to the server.
 native readonly bool			bExtended;	//	True if level was in Hexen format.
 native readonly private bool	bGLNodesV5;	//	True if using version 5 GL nodes.
+native readonly bool			bTextMap;	//	UDMF format map.
 
 //
 //	MAP related Lookup tables.

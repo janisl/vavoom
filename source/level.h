@@ -739,6 +739,8 @@ class VLevel : public VObject
 	DECLARE_CLASS(VLevel, VObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
 
+	friend class VUdmfParser;
+
 	VName				MapName;
 
 	//	Flags.
@@ -747,6 +749,7 @@ class VLevel : public VObject
 		LF_ForServer	= 0x01,	//	True if this level belongs to the server.
 		LF_Extended		= 0x02,	//	True if level was in Hexen format.
 		LF_GLNodesV5	= 0x04,	//	True if using version 5 GL nodes.
+		LF_TextMap		= 0x08,	//	UDMF format map.
 	};
 	vuint32				LevelFlags;
 
@@ -929,6 +932,7 @@ private:
 	void LoadThings1(int);
 	void LoadThings2(int);
 	void LoadACScripts(int);
+	void LoadTextMap(int);
 
 	//	Map loading helpers.
 	int FindGLNodes(VName) const;
@@ -949,7 +953,7 @@ private:
 	void AddToBox(float*, float, float) const;
 
 	//	Loader of the Strife conversations.
-	void LoadRogueConScript(VName, FRogueConSpeech*&, int&) const;
+	void LoadRogueConScript(VName, int, FRogueConSpeech*&, int&) const;
 
 	//	Internal poly-object methods
 	void IterFindPolySegs(const TVec&, seg_t**, int&, const TVec&);

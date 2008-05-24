@@ -2269,6 +2269,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_setup_udmf.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_switch.cpp"
 				>
 			</File>

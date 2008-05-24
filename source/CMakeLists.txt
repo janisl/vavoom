@@ -144,6 +144,7 @@ set(MAIN_COMMON_SOURCES
 	p_playerreplicationinfo.h
 	p_polyobj.cpp
 	p_setup.cpp
+	p_setup_udmf.cpp
 	p_switch.cpp
 	p_terrain.cpp
 	p_thinker.cpp
@@ -461,6 +462,7 @@ set(SERVER_COMMON_SOURCES
 	p_playerreplicationinfo.cpp
 	p_polyobj.cpp
 	p_setup.cpp
+	p_setup_udmf.cpp
 	p_switch.cpp
 	p_terrain.cpp
 	p_thinker.cpp
