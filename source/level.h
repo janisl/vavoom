@@ -181,6 +181,7 @@ struct line_t : public TPlane
 
 	// Animation related.
 	int			flags;
+	int			SpacFlags;
 
 	// Visual appearance: SideDefs.
 	//  sidenum[1] will be -1 if one sided

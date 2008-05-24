@@ -3152,8 +3152,8 @@ final bool UseLines(float UseRange, float UseThingRange, name FailSound)
 		float pheight;
 
 		line = in->line;
-		if (!line->special || (Level.GET_SPAC(line->flags) != SPAC_USE &&
-			Level.GET_SPAC(line->flags) != SPAC_USETHROUGH))
+		if (!line->special || (!(line->SpacFlags & (1 << SPAC_USE)) &&
+			!(line->SpacFlags & (1 << SPAC_USETHROUGH))))
 		{
 			hit_point = Origin + (UseRange * in->frac) * useDir;
 			open = LineOpenings(line, hit_point);
@@ -3213,7 +3213,7 @@ final bool UseLines(float UseRange, float UseThingRange, name FailSound)
 		//jff 3/21/98 NOW multiple use allowed with enabling line flag
 		if (Level.CompatUseBlocking)
 		{
-			if (Level.GET_SPAC(line->flags) != SPAC_USETHROUGH)
+			if (!(line->SpacFlags & (1 << SPAC_USETHROUGH)))
 			{
 				DoSecAct = false;
 				break;
@@ -3221,7 +3221,7 @@ final bool UseLines(float UseRange, float UseThingRange, name FailSound)
 		}
 		else
 		{
-			if (Level.GET_SPAC(line->flags) == SPAC_USE)
+			if (line->SpacFlags & (1 << SPAC_USE))
 			{
 				DoSecAct = false;
 				break;

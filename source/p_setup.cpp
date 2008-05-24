@@ -884,7 +884,8 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 			Host_Error("Bad vertex index %d", v2);
 		}
 
-		ld->flags = flags;
+		ld->flags = flags & ~ML_SPAC_MASK;
+		ld->SpacFlags = 1 << GET_SPAC(flags);
 
 		// New line special info ...
 		ld->special = special;
@@ -918,7 +919,10 @@ void VLevel::FinaliseLines()
 	line_t* Line = Lines;
 	for (int i = 0; i < NumLines; i++, Line++)
 	{
+		//	Calculate line's plane, slopetype, etc.
 		CalcLine(Line);
+
+		//	Set up sector references.
 		Line->frontsector = Sides[Line->sidenum[0]].Sector;
 		if (Line->sidenum[1] != -1)
 		{

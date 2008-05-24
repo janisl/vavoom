@@ -412,7 +412,7 @@ void TranslateLine(line_t* line)
 		line->arg5 = spec_trans_tab[OldSpec].arg5;
 	}
 	//	Activation flags.
-	line->flags |= spec_trans_tab[OldSpec].spac << ML_SPAC_SHIFT;
+	line->SpacFlags = 1 << spec_trans_tab[OldSpec].spac;
 	if (spec_trans_tab[OldSpec].repeat)
 	{
 		line->flags |= ML_REPEAT_SPECIAL;

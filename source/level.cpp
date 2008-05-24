@@ -200,6 +200,7 @@ void VLevel::Serialise(VStream& Strm)
 		}
 #endif
 		Strm << li->flags
+			<< li->SpacFlags
 			<< li->special
 			<< li->arg1
 			<< li->arg2
