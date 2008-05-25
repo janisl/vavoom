@@ -10,6 +10,7 @@ actor KeyGreen : HereticKey 73
 	Game Heretic
 	SpawnID 86
 	Inventory.PickupMessage "$txt_gotgreenkey"
+	Inventory.Icon "gkeyicon"
 	states
 	{
 	Spawn:
@@ -24,6 +25,7 @@ actor KeyBlue : HereticKey 79
 	Game Heretic
 	SpawnID 85
 	Inventory.PickupMessage "$txt_gotbluekey"
+	Inventory.Icon "bkeyicon"
 	states
 	{
 	Spawn:
@@ -38,6 +40,7 @@ actor KeyYellow : HereticKey 80
 	Game Heretic
 	SpawnID 87
 	Inventory.PickupMessage "$txt_gotyellowkey"
+	Inventory.Icon "ykeyicon"
 	states
 	{
 	Spawn:
