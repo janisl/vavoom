@@ -166,6 +166,10 @@ void Host_Init()
 
 	ReadLineSpecialInfos();
 
+#ifdef SERVER
+	SV_Init();
+#endif
+
 #ifdef CLIENT
 	GInput = VInputPublic::Create();
 	GInput->Init();
@@ -185,10 +189,6 @@ void Host_Init()
 	MN_Init();
 	AM_Init();
 	SB_Init();
-#endif
-
-#ifdef SERVER
-	SV_Init();
 #endif
 
 	R_ParseEffectDefs();
