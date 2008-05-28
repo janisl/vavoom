@@ -149,6 +149,7 @@ enum
 	ML_BLOCK_FLOATERS		= 0x00040000,
 	ML_CLIP_MIDTEX			= 0x00080000,	// Automatic for every Strife line
 	ML_WRAP_MIDTEX			= 0x00100000,
+	ML_FIRSTSIDEONLY		= 0x00800000,	// Actiavte only when crossed from front side.
 };
 #define GET_SPAC(_flags_)		(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
 

@@ -304,7 +304,7 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 	bool buttonSuccess;
 	bool changeBack;
 
-	if (!CheckActivation(ActivationType, Line, A))
+	if (!CheckActivation(ActivationType, Line, Side, A))
 	{
 		return false;
 	}
@@ -350,8 +350,14 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 //
 //==========================================================================
 
-final bool CheckActivation(int activationType, line_t * line, EntityEx A)
+final bool CheckActivation(int activationType, line_t* line, int Side,
+	EntityEx A)
 {
+	if ((line->flags & ML_FIRSTSIDEONLY) && Side == 1)
+	{
+		return false;
+	}
+
 	int lineActivation = line->SpacFlags;
 	if ((lineActivation & (1 << SPAC_PTOUCH)) &&
 		(activationType == SPAC_PCROSS || activationType == SPAC_IMPACT))
