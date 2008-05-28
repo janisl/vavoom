@@ -352,11 +352,7 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 
 final bool CheckActivation(int activationType, line_t * line, EntityEx A)
 {
-	int lineActivation;
-	bool noway;
-
-	noway = true;
-	lineActivation = line->SpacFlags;
+	int lineActivation = line->SpacFlags;
 	if ((lineActivation & (1 << SPAC_PTOUCH)) &&
 		(activationType == SPAC_PCROSS || activationType == SPAC_IMPACT))
 	{
@@ -379,6 +375,7 @@ final bool CheckActivation(int activationType, line_t * line, EntityEx A)
 		return false;
 	}
 	if (A && !A.bIsPlayer && !A.bMissile &&
+		!(line->flags & ML_MONSTERSCANACTIVATE) &&
 		(activationType != SPAC_MCROSS || !(lineActivation & (1 << SPAC_MCROSS))))
 	{
 		//	With lax monster activation monsters can activate several line
@@ -395,11 +392,16 @@ final bool CheckActivation(int activationType, line_t * line, EntityEx A)
 			return false;	// never open secret doors
 		}
 
+		bool noway = true;
 		if (lineActivation & (1 << SPAC_CROSS))
 		{
 			switch (line->special)
 			{
 			case LNSPEC_DoorRaise:
+				if (line->arg2 >= 64)
+				{
+					break;
+				}
 			case LNSPEC_PlatDownWaitUpStay:
 			case LNSPEC_Teleport:
 			case LNSPEC_TeleportNoFog:
@@ -414,8 +416,10 @@ final bool CheckActivation(int activationType, line_t * line, EntityEx A)
 			switch (line->special)
 			{
 			case LNSPEC_DoorRaise:
-				if (line->arg1 == 0)
+				if (line->arg1 == 0 && line->arg2 < 64)
+				{
 					noway = false;
+				}
 				break;
 			case LNSPEC_Teleport:
 			case LNSPEC_TeleportNoFog:
@@ -429,10 +433,12 @@ final bool CheckActivation(int activationType, line_t * line, EntityEx A)
 		{
 			noway = false;
 		}
-		if (noway)
-		{
-			return false;
-		}
+		return !noway;
+	}
+	if (activationType == SPAC_MCROSS && !(lineActivation & (1 << SPAC_MCROSS)) &&
+		!(line->flags & ML_MONSTERSCANACTIVATE))
+	{
+		return false;
 	}
 	return true;
 }

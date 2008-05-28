@@ -37,6 +37,7 @@ struct spec_trans_t
 	int arg5;
 	int spac;
 	int repeat;
+	int monst;
 };
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
@@ -87,17 +88,17 @@ WorldInfo CreateWorldInfo()
 void InitTranslationTables()
 {
 	//  0
-	SetLineTrans(1, LNSPEC_DoorRaise, 0, 16, 150, 0, 0, SPAC_USE, true);
+	SetLineTrans(1, LNSPEC_DoorRaise, 0, 16, 150, 0, 0, SPAC_USE, true, true);
 	SetLineTrans(2, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(3, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(4, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(4, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, false, true);
 	SetLineTrans(5, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(6, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, false);
 	SetLineTrans(7, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_USE, false);
 	SetLineTrans(8, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(9, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, false);
 
-	SetLineTrans(10, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(10, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false, true);
 	SetLineTrans(11, LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_USE, false); // --
 	SetLineTrans(12, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(13, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, false);
@@ -120,15 +121,15 @@ void InitTranslationTables()
 	SetLineTrans(29, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, false);
 
 	SetLineTrans(30, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(31, LNSPEC_DoorOpen, 0, 16, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(32, LNSPEC_DoorLockedRaise, 0, 16, 0, 4, 0, SPAC_USE, false);
-	SetLineTrans(33, LNSPEC_DoorLockedRaise, 0, 16, 0, 11, 0, SPAC_USE, false);
-	SetLineTrans(34, LNSPEC_DoorLockedRaise, 0, 16, 0, 3, 0, SPAC_USE, false);
+	SetLineTrans(31, LNSPEC_DoorOpen, 0, 16, 0, 0, 0, SPAC_USE, false, true);
+	SetLineTrans(32, LNSPEC_DoorLockedRaise, 0, 16, 0, 4, 0, SPAC_USE, false, true);
+	SetLineTrans(33, LNSPEC_DoorLockedRaise, 0, 16, 0, 11, 0, SPAC_USE, false, true);
+	SetLineTrans(34, LNSPEC_DoorLockedRaise, 0, 16, 0, 3, 0, SPAC_USE, false, true);
 	SetLineTrans(35, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(36, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(37, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(38, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(39, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(39, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, false, true);
 
 	SetLineTrans(40, LNSPEC_ACSExecuteWithResult, 0, 40, -1, 0, 0, SPAC_USE, false);
 	SetLineTrans(41, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false);
@@ -136,7 +137,7 @@ void InitTranslationTables()
 	SetLineTrans(43, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true);
 	SetLineTrans(44, LNSPEC_CeilingLowerAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(45, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, true);
-	SetLineTrans(46, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_IMPACT, true);
+	SetLineTrans(46, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_IMPACT, true, true);
 	SetLineTrans(47, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_IMPACT, false);
 	SetLineTrans(48, LNSPEC_ScrollTextureLeft, 64, 0, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(49, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, false);
@@ -182,7 +183,7 @@ void InitTranslationTables()
 	//  85
 	SetLineTrans(86, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(87, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(88, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(88, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, true, true);
 	SetLineTrans(89, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, true);
 
 	SetLineTrans(90, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, true);
@@ -192,7 +193,7 @@ void InitTranslationTables()
 	SetLineTrans(94, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(95, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(96, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(97, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(97, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, true, true);
 	SetLineTrans(98, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(99, LNSPEC_DoorLockedRaise, -1, 64, 0, 4, 0, SPAC_USE, true);
 
@@ -244,7 +245,7 @@ void InitTranslationTables()
 	SetLineTrans(141, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_CROSS, false);
 	SetLineTrans(142, LNSPEC_ScrollTextureUp, 64, 0, 0, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(143, LNSPEC_ScrollTextureDown, 64, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(144, LNSPEC_DoorAnimated, -1, 4, 105, 0, 0, SPAC_USE, true);
+	SetLineTrans(144, LNSPEC_DoorAnimated, -1, 4, 105, 0, 0, SPAC_USE, true, true);
 	SetLineTrans(145, LNSPEC_ACSExecuteWithResult, 0, 145, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(146, LNSPEC_StairsGeneric, -1, 16, 16, 0, 0, SPAC_USE, false);
 	SetLineTrans(147, LNSPEC_ClearForceField, -1, 0, 0, 0, 0, SPAC_USE, false);
@@ -286,10 +287,10 @@ void InitTranslationTables()
 
 	SetLineTrans(180, LNSPEC_ACSExecuteWithResult, 0, 180, -1, 0, 0, SPAC_IMPACT, false);
 	SetLineTrans(181, LNSPEC_ACSExecuteWithResult, 0, 181, -1, 0, 0, SPAC_USE, false);
-	SetLineTrans(182, 49, -1, 255, 0, 0, 0, SPAC_PTOUCH, false);
+	SetLineTrans(182, LNSPEC_GlassBreak, -1, 255, 0, 0, 0, SPAC_PTOUCH, false, true);
 	SetLineTrans(183, LNSPEC_ACSExecuteWithResult, 0, 183, -1, 0, 0, SPAC_CROSS, false);
 	SetLineTrans(184, LNSPEC_ACSExecuteWithResult, 0, 184, -1, 0, 0, SPAC_CROSS, true); // SR?
-	SetLineTrans(185, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(185, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_CROSS, true, true);
 	SetLineTrans(186, LNSPEC_ACSExecuteWithResult, 0, 186, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(187, LNSPEC_ACSExecuteWithResult, 0, 187, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(188, LNSPEC_ACSExecuteWithResult, 0, 188, -1, 0, 0, SPAC_CROSS, true);
@@ -300,7 +301,7 @@ void InitTranslationTables()
 	SetLineTrans(192, LNSPEC_DoorLockedRaise, -1, 16, 0, 16, 0, SPAC_USE, false);
 	SetLineTrans(193, LNSPEC_ACSExecuteWithResult, 0, 193, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(194, LNSPEC_ACSExecuteWithResult, 0, 194, -1, 0, 0, SPAC_USE, false);
-	SetLineTrans(195, LNSPEC_TeleportZombieChanger, 0, -1, 0, 0, 0, SPAC_MCROSS, true);
+	SetLineTrans(195, LNSPEC_TeleportZombieChanger, 0, -1, 0, 0, 0, SPAC_CROSS, true, true);
 	SetLineTrans(196, LNSPEC_ACSExecuteWithResult, 0, 196, -1, 0, 0, SPAC_CROSS, true); // TRIGGER? UNUSED
 	SetLineTrans(197, LNSPEC_ACSExecuteWithResult, 0, 197, -1, 0, 0, SPAC_CROSS, true);
 	SetLineTrans(198, LNSPEC_ACSExecuteWithResult, 0, 198, -1, 0, 0, SPAC_CROSS, true);
@@ -340,7 +341,7 @@ void InitTranslationTables()
 	SetLineTrans(229, LNSPEC_ACSExecuteWithResult, 0, 229, -1, 0, 0, SPAC_USE, true);
 
 	SetLineTrans(230, LNSPEC_ACSExecuteWithResult, 0, 230, -1, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(231, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCROSS, true); // ??? (InSou)
+	SetLineTrans(231, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, true, true); // ??? (InSou)
 	SetLineTrans(232, LNSPEC_ACSExecuteWithResult, 0, 232, -1, 0, 0, SPAC_USE, true);
 	SetLineTrans(233, LNSPEC_ACSExecuteWithResult, 0, 233, -1, 0, 0, SPAC_USE, false);
 	SetLineTrans(234, LNSPEC_ACSExecuteWithResult, 0, 234, -1, 0, 0, SPAC_USE, true);
@@ -354,7 +355,7 @@ void InitTranslationTables()
 //==========================================================================
 
 void SetLineTrans(int i, int special, int arg1, int arg2, int arg3,
-	int arg4, int arg5, int spac, int repeat)
+	int arg4, int arg5, int spac, int repeat, optional int monst)
 {
 	spec_trans_tab[i].special = special;
 	spec_trans_tab[i].arg1 = arg1;
@@ -364,6 +365,7 @@ void SetLineTrans(int i, int special, int arg1, int arg2, int arg3,
 	spec_trans_tab[i].arg5 = arg5;
 	spec_trans_tab[i].spac = spac;
 	spec_trans_tab[i].repeat = repeat;
+	spec_trans_tab[i].monst = monst;
 }
 
 //==========================================================================
@@ -461,6 +463,15 @@ void TranslateLine(line_t* line)
 	if (spec_trans_tab[OldSpec].repeat)
 	{
 		line->flags |= ML_REPEAT_SPECIAL;
+	}
+	if (spec_trans_tab[OldSpec].monst)
+	{
+		line->flags |= ML_MONSTERSCANACTIVATE;
+	}
+	if ((line->flags & ML_SECRET) && line->SpacFlags & ((1 << SPAC_USE) |
+		(1 << SPAC_USETHROUGH)))
+	{
+		line->flags &= ~ML_MONSTERSCANACTIVATE;
 	}
 
 	if (OldFlags & ML_TRANSLUCENT_STRIFE)
