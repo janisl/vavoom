@@ -144,6 +144,7 @@ enum
 	ML_SPAC_SHIFT			= 10,
 	ML_SPAC_MASK			= 0x00001c00,
 	ML_MONSTERSCANACTIVATE	= 0x00002000,	//	Monsters (as well as players) can activate the line
+	ML_BLOCKPLAYERS			= 0x00004000,	//	Blocks players only.
 	ML_BLOCKEVERYTHING		= 0x00008000,	//	Line blocks everything.
 	ML_RAILING				= 0x00020000,
 	ML_BLOCK_FLOATERS		= 0x00040000,

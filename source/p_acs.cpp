@@ -299,7 +299,8 @@ private:
 		BLOCK_NOTHING,
 		BLOCK_CREATURES,
 		BLOCK_EVERYTHING,
-		BLOCK_RAILING
+		BLOCK_RAILING,
+		BLOCK_PLAYERS,
 	};
 
 	enum
@@ -2703,20 +2704,27 @@ int VAcs::RunScript(float DeltaTime)
 					switch (sp[-1])
 					{
 					case BLOCK_NOTHING:
-						line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING | ML_RAILING);
+						line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING |
+							ML_RAILING | ML_BLOCKPLAYERS);
 						break;
 					case BLOCK_CREATURES:
 					default:
-						line->flags &= ~(ML_BLOCKEVERYTHING | ML_RAILING);
+						line->flags &= ~(ML_BLOCKEVERYTHING | ML_RAILING |
+							ML_BLOCKPLAYERS);
 						line->flags |= ML_BLOCKING;
 						break;
 					case BLOCK_EVERYTHING:
-						line->flags &= ~ML_RAILING;
+						line->flags &= ~(ML_RAILING | ML_BLOCKPLAYERS);
 						line->flags |= ML_BLOCKING | ML_BLOCKEVERYTHING;
 						break;
 					case BLOCK_RAILING:
-						line->flags &= ~ML_BLOCKEVERYTHING;
+						line->flags &= ~(ML_BLOCKEVERYTHING | ML_BLOCKPLAYERS);
 						line->flags |= ML_BLOCKING | ML_RAILING;
+						break;
+					case BLOCK_PLAYERS:
+						line->flags &= ~(ML_BLOCKING | ML_BLOCKEVERYTHING |
+							ML_RAILING);
+						line->flags |= ML_BLOCKPLAYERS;
 						break;
 					}
 				}

@@ -598,7 +598,7 @@ bool CheckPath(float ang, float dist)
 			hit_point = botmo.Origin + (bottracerange * in->frac) * bottracedir;
 
 			// Line is impassible
-			if (!(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKING))
+			if (!(ld->flags & ML_TWOSIDED) || (ld->flags & (ML_BLOCKING | ML_BLOCKPLAYERS | ML_BLOCKEVERYTHING)))
 				return false;
 
 			// Line isn't two sided

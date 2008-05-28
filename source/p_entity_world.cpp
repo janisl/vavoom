@@ -605,6 +605,13 @@ bool VEntity::PIT_CheckLine(void* arg, line_t * ld)
 			return false;
 		}
 
+		if (cptrace.Thing->EntityFlags & VEntity::EF_IsPlayer &&
+			ld->flags & ML_BLOCKPLAYERS)
+		{
+			// Block players only
+			return false;
+		}
+
 		if (cptrace.Thing->EntityFlags & VEntity::EF_Float &&
 			ld->flags & ML_BLOCK_FLOATERS)
 		{
@@ -916,6 +923,13 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 		if (tmtrace.Thing->EntityFlags & VEntity::EF_CheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
 		{
 			// Block monsters only
+			tmtrace.Thing->eventBlockedByLine(ld);
+			return false;
+		}
+
+		if (tmtrace.Thing->EntityFlags & VEntity::EF_IsPlayer && ld->flags & ML_BLOCKPLAYERS)
+		{
+			// Block players only
 			tmtrace.Thing->eventBlockedByLine(ld);
 			return false;
 		}
@@ -1419,16 +1433,34 @@ void VEntity::SlidePathTraverse(float& BestSlideFrac, line_t*& BestSlideLine,
 
 		line_t* li = in->line;
 
-		// set openrange, opentop, openbottom
-		TVec hit_point = SlideOrg + in->frac * SlideDir;
-		opening_t* open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);
-		open = SV_FindOpening(open, Origin.z, Origin.z + Height);
+		bool IsBlocked = false;
+		if (!(li->flags & ML_TWOSIDED) || !li->backsector)
+		{
+			if (li->PointOnSide(Origin))
+			{
+				// don't hit the back side
+				continue;
+			}
+			IsBlocked = true;
+		}
+		else if (li->flags & (ML_BLOCKING | ML_BLOCKEVERYTHING))
+		{
+			IsBlocked = true;
+		}
+		else if ((EntityFlags & EF_IsPlayer) && (li->flags & ML_BLOCKPLAYERS))
+		{
+			IsBlocked = true;
+		}
+		else if ((EntityFlags & EF_CheckLineBlockMonsters) && (li->flags & ML_BLOCKMONSTERS))
+		{
+			IsBlocked = true;
+		}
 
-		if (li->flags & ML_TWOSIDED)
+		if (!IsBlocked)
 		{
 			// set openrange, opentop, openbottom
-			hit_point = SlideOrg + in->frac * SlideDir;
-			open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);
+			TVec hit_point = SlideOrg + in->frac * SlideDir;
+			opening_t* open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);
 			open = SV_FindOpening(open, Origin.z, Origin.z + Height);
 
 			if (open && (open->range >= Height) &&	//  fits
@@ -1450,14 +1482,6 @@ void VEntity::SlidePathTraverse(float& BestSlideFrac, line_t*& BestSlideLine,
 				{
 					continue;
 				}
-			}
-		}
-		else
-		{
-			if (li->PointOnSide(Origin))
-			{
-				// don't hit the back side
-				continue;
 			}
 		}
 
