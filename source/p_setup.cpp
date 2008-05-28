@@ -958,7 +958,15 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 		}
 
 		ld->flags = flags & ~ML_SPAC_MASK;
-		ld->SpacFlags = 1 << GET_SPAC(flags);
+		int Spac = GET_SPAC(flags);
+		if (Spac == 7)
+		{
+			ld->SpacFlags = SPAC_Impact | SPAC_PCross;
+		}
+		else
+		{
+			ld->SpacFlags = 1 << Spac;
+		}
 
 		// New line special info ...
 		ld->special = special;

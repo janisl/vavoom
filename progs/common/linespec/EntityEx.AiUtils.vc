@@ -754,8 +754,8 @@ final bool StepMove()
 			// if the special is not a door
 			// that can be opened,
 			// return false
-			if ((bCanUseWalls && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_USE)) ||
-			    (bActivatePushWall && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_PUSH)))
+			if ((bCanUseWalls && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Use)) ||
+			    (bActivatePushWall && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Push)))
 			{
 				good |= ld == tmtrace.BlockingLine ? 1 : 2;//true;
 			}

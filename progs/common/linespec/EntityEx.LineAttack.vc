@@ -467,7 +467,7 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 			// when we know that it actally hits line
 			if (li->special)
 			{
-				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_IMPACT);
+				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_Impact);
 			}
 
 			if (li->flags & ML_TWOSIDED)
@@ -807,7 +807,7 @@ final void RailAttack(TVec Dir, float Offset, int RailDamage,
 			// when we know that it actally hits line
 			if (li->special)
 			{
-				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_IMPACT);
+				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_Impact);
 			}
 
 			if (li->flags & ML_TWOSIDED)

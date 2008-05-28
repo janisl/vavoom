@@ -188,7 +188,7 @@ bool ReUse(int InType, line_t* Line, Entity Thing)
 			Direction = 1;
 			return true;
 		}
-		else if (!(Line->SpacFlags & (1 << SPAC_PUSH)))
+		else if (!(Line->SpacFlags & (SPAC_Push | SPAC_MPush)))
 		//	Activate push doors don't go back down when you run into them
 		// (otherwise opening them would be a real pain).
 		{

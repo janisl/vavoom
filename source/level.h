@@ -159,14 +159,17 @@ enum
 //
 enum
 {
-	SPAC_Cross,			// when player crosses line
-	SPAC_Use,			// when player uses line
-	SPAC_MCross,		// when monster crosses line
-	SPAC_Impact,		// when projectile hits line
-	SPAC_Push,			// when player/monster pushes line
-	SPAC_PCross,		// when projectile crosses line
-	SPAC_UseThrough,	// SPAC_USE, but passes it through
-	SPAC_PTouch			// when a projectiles crosses or hits line
+	SPAC_Cross		= 0x0001,	// when player crosses line
+	SPAC_Use		= 0x0002,	// when player uses line
+	SPAC_MCross		= 0x0004,	// when monster crosses line
+	SPAC_Impact		= 0x0008,	// when projectile hits line
+	SPAC_Push		= 0x0010,	// when player pushes line
+	SPAC_PCross		= 0x0020,	// when projectile crosses line
+	SPAC_UseThrough	= 0x0040,	// SPAC_USE, but passes it through
+	//	SPAC_PTouch is remapped as SPAC_Impact | SPAC_PCross
+	SPAC_AnyCross	= 0x0080,
+	SPAC_MUse		= 0x0100,	// when monster uses line
+	SPAC_MPush		= 0x0200,	// when monster pushes line
 };
 
 //

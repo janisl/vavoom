@@ -481,35 +481,35 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 		{
 			if (!Key.ICmp("playercross"))
 			{
-				Flag(L.L.SpacFlags, 1 << SPAC_Cross, Val);
+				Flag(L.L.SpacFlags, SPAC_Cross, Val);
 			}
 			else if (!Key.ICmp("playeruse"))
 			{
-				Flag(L.L.SpacFlags, 1 << SPAC_Use, Val);
+				Flag(L.L.SpacFlags, SPAC_Use, Val);
 			}
 			else if (!Key.ICmp("monstercross"))
 			{
-				Flag(L.L.SpacFlags, 1 << SPAC_MCross, Val);
+				Flag(L.L.SpacFlags, SPAC_MCross, Val);
 			}
 			else if (!Key.ICmp("monsteruse"))
 			{
-				//Flag(L.L.SpacFlags, 1 << SPAC_CROSS, Val);
+				Flag(L.L.SpacFlags, SPAC_MUse, Val);
 			}
 			else if (!Key.ICmp("impact"))
 			{
-				Flag(L.L.SpacFlags, 1 << SPAC_Impact, Val);
+				Flag(L.L.SpacFlags, SPAC_Impact, Val);
 			}
 			else if (!Key.ICmp("playerpush"))
 			{
-				Flag(L.L.SpacFlags, 1 << SPAC_Push, Val);
+				Flag(L.L.SpacFlags, SPAC_Push, Val);
 			}
 			else if (!Key.ICmp("monsterpush"))
 			{
-				//Flag(L.L.SpacFlags, 1 << SPAC_CROSS, Val);
+				Flag(L.L.SpacFlags, SPAC_MPush, Val);
 			}
 			else if (!Key.ICmp("missilecross"))
 			{
-				Flag(L.L.SpacFlags, 1 << SPAC_PCross, Val);
+				Flag(L.L.SpacFlags, SPAC_PCross, Val);
 			}
 			else if (!Key.ICmp("repeatspecial"))
 			{

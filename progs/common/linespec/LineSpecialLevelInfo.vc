@@ -310,18 +310,13 @@ final bool ActivateLine(line_t* Line, EntityEx A, int Side,
 	}
 
 	lineActivation = Line->SpacFlags;
-	if (lineActivation & (1 << SPAC_PTOUCH))
-	{
-		lineActivation = 1 << ActivationType;
-	}
 	repeat = Line->flags & ML_REPEAT_SPECIAL;
 	buttonSuccess = ExecuteActionSpecial(Line->special, Line->arg1,
 		Line->arg2, Line->arg3, Line->arg4, Line->arg5, Line, Side, A);
 	changeBack = Line->special == LNSPEC_GlassBreak &&
 		(Line->flags & ML_TWOSIDED) && buttonSuccess;
-	if (((lineActivation & (1 << SPAC_USE)) ||
-		(lineActivation & (1 << SPAC_IMPACT)) ||
-		(lineActivation & (1 << SPAC_USETHROUGH))) && buttonSuccess)
+	if ((lineActivation & (SPAC_Use | SPAC_Impact | SPAC_UseThrough)) &&
+		buttonSuccess)
 	{
 		byte Quest;
 		ChangeSwitchTexture(Line->sidenum[0], repeat,
@@ -359,30 +354,43 @@ final bool CheckActivation(int activationType, line_t* line, int Side,
 	}
 
 	int lineActivation = line->SpacFlags;
-	if ((lineActivation & (1 << SPAC_PTOUCH)) &&
-		(activationType == SPAC_PCROSS || activationType == SPAC_IMPACT))
+	if (lineActivation & SPAC_UseThrough)
 	{
-		lineActivation = 1 << activationType;
-	}
-	else if (lineActivation & (1 << SPAC_USETHROUGH))
-	{
-		lineActivation = 1 << SPAC_USE;
+		lineActivation |= SPAC_Use;
 	}
 	else if (line->special == LNSPEC_Teleport &&
-		(lineActivation & (1 << SPAC_CROSS)) && activationType == SPAC_PCROSS &&
+		(lineActivation & SPAC_Cross) && activationType == SPAC_PCross &&
 		A && A.bMissile)
 	{
 		// Let missiles use regular player teleports
-		lineActivation = 1 << SPAC_PCROSS;
+		lineActivation |= SPAC_PCross;
 	}
-	if (!(lineActivation & (1 << activationType)) &&
-		(activationType != SPAC_MCROSS || !(lineActivation & (1 << SPAC_CROSS))))
+	//	BOOM's generalized line types that allow monster use can actually be
+	// activated by anything except projectiles.
+	if (lineActivation & SPAC_AnyCross)
 	{
-		return false;
+		lineActivation |= SPAC_Cross | SPAC_MCross;
+	}
+	if (!(lineActivation & activationType))
+	{
+		if (activationType == SPAC_Use && (lineActivation & SPAC_MUse) &&
+			!A.bIsPlayer && A.bCanUseWalls)
+		{
+			return true;
+		}
+		if (activationType == SPAC_Push && (lineActivation & SPAC_MPush) &&
+			!A.bIsPlayer && A.bActivatePushWall)
+		{
+			return true;
+		}
+		if (activationType != SPAC_MCross || !(lineActivation & SPAC_Cross))
+		{
+			return false;
+		}
 	}
 	if (A && !A.bIsPlayer && !A.bMissile &&
 		!(line->flags & ML_MONSTERSCANACTIVATE) &&
-		(activationType != SPAC_MCROSS || !(lineActivation & (1 << SPAC_MCROSS))))
+		(activationType != SPAC_MCross || !(lineActivation & SPAC_MCross)))
 	{
 		//	With lax monster activation monsters can activate several line
 		// specials even when not marked as monster activateable. This is
@@ -392,33 +400,41 @@ final bool CheckActivation(int activationType, line_t* line, int Side,
 			return false;
 		}
 
-		if ((activationType == SPAC_USE || activationType == SPAC_PUSH) &&
+		if ((activationType == SPAC_Use || activationType == SPAC_Push) &&
 			(line->flags & ML_SECRET))
 		{
 			return false;	// never open secret doors
 		}
 
 		bool noway = true;
-		if (lineActivation & (1 << SPAC_CROSS))
+		switch (activationType)
 		{
-			switch (line->special)
+		case SPAC_MCross:
+			if (!(lineActivation & SPAC_MCross))
 			{
-			case LNSPEC_DoorRaise:
-				if (line->arg2 >= 64)
+				switch (line->special)
 				{
-					break;
+				case LNSPEC_DoorRaise:
+					if (line->arg2 >= 64)
+					{
+						break;
+					}
+				case LNSPEC_PlatDownWaitUpStay:
+				case LNSPEC_Teleport:
+				case LNSPEC_TeleportNoFog:
+				case LNSPEC_PlatDownWaitUpStayLip:
+				case LNSPEC_TeleportLine:
+					noway = false;
 				}
-			case LNSPEC_PlatDownWaitUpStay:
-			case LNSPEC_Teleport:
-			case LNSPEC_TeleportNoFog:
-			case LNSPEC_PlatDownWaitUpStayLip:
-			case LNSPEC_TeleportLine:
+			}
+			else
+			{
 				noway = false;
 			}
-		}
-		else if ((lineActivation & (1 << SPAC_USE)) ||
-			(lineActivation & (1 << SPAC_PUSH)))
-		{
+			break;
+
+		case SPAC_Use:
+		case SPAC_Push:
 			switch (line->special)
 			{
 			case LNSPEC_DoorRaise:
@@ -431,17 +447,15 @@ final bool CheckActivation(int activationType, line_t* line, int Side,
 			case LNSPEC_TeleportNoFog:
 				noway = false;
 			}
-		}
-		else if ((lineActivation & (1 << SPAC_IMPACT)) ||
-			(lineActivation & (1 << SPAC_PCROSS)) ||
-			// shouldn't really be here if not a missile
-			(lineActivation & (1 << SPAC_MCROSS)))
-		{
+			break;
+
+		default:
 			noway = false;
+			break;
 		}
 		return !noway;
 	}
-	if (activationType == SPAC_MCROSS && !(lineActivation & (1 << SPAC_MCROSS)) &&
+	if (activationType == SPAC_MCross && !(lineActivation & SPAC_MCross) &&
 		!(line->flags & ML_MONSTERSCANACTIVATE))
 	{
 		return false;

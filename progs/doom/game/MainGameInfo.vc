@@ -238,318 +238,318 @@ void SetBotType(int i, string Name, int accuracy, int intelect, int evade,
 void InitTranslationTables()
 {
 	//  0
-	SetLineTrans(1, LNSPEC_DoorRaise, 0, 16, 150, 0, 0, SPAC_USE, true, true);
-	SetLineTrans(2, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(3, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(4, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, false, true);
-	SetLineTrans(5, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(6, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, false);
-	SetLineTrans(7, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_USE, false);
-	SetLineTrans(8, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(9, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, false);
+	SetLineTrans(1, LNSPEC_DoorRaise, 0, 16, 150, 0, 0, SPAC_Use, true, true);
+	SetLineTrans(2, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(3, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(4, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_Cross, false, true);
+	SetLineTrans(5, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(6, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_Cross, false);
+	SetLineTrans(7, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_Use, false);
+	SetLineTrans(8, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_Cross, false);
+	SetLineTrans(9, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_Use, false);
 
-	SetLineTrans(10, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, false, true);
-	SetLineTrans(11, LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(12, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(13, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(14, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, false);
-	SetLineTrans(15, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, false);
-	SetLineTrans(16, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(17, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(18, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(19, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(10, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_Cross, false, true);
+	SetLineTrans(11, LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(12, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(13, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(14, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_Use, false);
+	SetLineTrans(15, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_Use, false);
+	SetLineTrans(16, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_Cross, false);
+	SetLineTrans(17, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_Cross, false);
+	SetLineTrans(18, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(19, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(20, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(21, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_USE, false);
-	SetLineTrans(22, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(23, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(24, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_IMPACT, false);
-	SetLineTrans(25, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_CROSS, false);
-	SetLineTrans(26, LNSPEC_DoorLockedRaise, 0, 16, 150, 2 | 128, 0, SPAC_USE, true);
-	SetLineTrans(27, LNSPEC_DoorLockedRaise, 0, 16, 150, 3 | 128, 0, SPAC_USE, true);
-	SetLineTrans(28, LNSPEC_DoorLockedRaise, 0, 16, 150, 1 | 128, 0, SPAC_USE, true);
-	SetLineTrans(29, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, false);
+	SetLineTrans(20, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(21, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_Use, false);
+	SetLineTrans(22, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(23, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(24, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_Impact, false);
+	SetLineTrans(25, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_Cross, false);
+	SetLineTrans(26, LNSPEC_DoorLockedRaise, 0, 16, 150, 2 | 128, 0, SPAC_Use, true);
+	SetLineTrans(27, LNSPEC_DoorLockedRaise, 0, 16, 150, 3 | 128, 0, SPAC_Use, true);
+	SetLineTrans(28, LNSPEC_DoorLockedRaise, 0, 16, 150, 1 | 128, 0, SPAC_Use, true);
+	SetLineTrans(29, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_Use, false);
 
-	SetLineTrans(30, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(31, LNSPEC_DoorOpen, 0, 16, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(32, LNSPEC_DoorLockedRaise, 0, 16, 0, 2 | 128, 0, SPAC_USE, false, true);
-	SetLineTrans(33, LNSPEC_DoorLockedRaise, 0, 16, 0, 1 | 128, 0, SPAC_USE, false, true);
-	SetLineTrans(34, LNSPEC_DoorLockedRaise, 0, 16, 0, 3 | 128, 0, SPAC_USE, false, true);
-	SetLineTrans(35, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(36, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(37, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(38, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(39, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, false, true);
+	SetLineTrans(30, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(31, LNSPEC_DoorOpen, 0, 16, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(32, LNSPEC_DoorLockedRaise, 0, 16, 0, 2 | 128, 0, SPAC_Use, false, true);
+	SetLineTrans(33, LNSPEC_DoorLockedRaise, 0, 16, 0, 1 | 128, 0, SPAC_Use, false, true);
+	SetLineTrans(34, LNSPEC_DoorLockedRaise, 0, 16, 0, 3 | 128, 0, SPAC_Use, false, true);
+	SetLineTrans(35, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(36, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_Cross, false);
+	SetLineTrans(37, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(38, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(39, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_Cross, false, true);
 
-	SetLineTrans(40, LNSPEC_CeilingGeneric, -1, 8, 0, 1, 8, SPAC_CROSS, false);
-	SetLineTrans(41, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(42, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(43, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(44, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(45, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, true);
-	SetLineTrans(46, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_IMPACT, true, true);
-	SetLineTrans(47, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_IMPACT, false);
-	SetLineTrans(48, LNSPEC_ScrollTextureLeft, 64, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(49, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, false);
+	SetLineTrans(40, LNSPEC_CeilingGeneric, -1, 8, 0, 1, 8, SPAC_Cross, false);
+	SetLineTrans(41, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(42, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(43, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(44, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(45, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_Use, true);
+	SetLineTrans(46, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_Impact, true, true);
+	SetLineTrans(47, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Impact, false);
+	SetLineTrans(48, LNSPEC_ScrollTextureLeft, 64, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(49, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_Use, false);
 
-	SetLineTrans(50, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(51, LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(52, LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(53, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(54, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(55, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, false);
-	SetLineTrans(56, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(57, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(58, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(59, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(50, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(51, LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(52, LNSPEC_ExitNormal, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(53, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_Cross, false);
+	SetLineTrans(54, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(55, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_Use, false);
+	SetLineTrans(56, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_Cross, false);
+	SetLineTrans(57, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(58, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_Cross, false);
+	SetLineTrans(59, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(60, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(61, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(62, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_USE, true);
-	SetLineTrans(63, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_USE, true);
-	SetLineTrans(64, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(65, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_USE, true);
-	SetLineTrans(66, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_USE, true);
-	SetLineTrans(67, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_USE, true);
-	SetLineTrans(68, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(69, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(60, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(61, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(62, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_Use, true);
+	SetLineTrans(63, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_Use, true);
+	SetLineTrans(64, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(65, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_Use, true);
+	SetLineTrans(66, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_Use, true);
+	SetLineTrans(67, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_Use, true);
+	SetLineTrans(68, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(69, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_Use, true);
 
-	SetLineTrans(70, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_USE, true);
-	SetLineTrans(71, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_USE, false);
-	SetLineTrans(72, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(73, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_CROSS, true);
-	SetLineTrans(74, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(75, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(76, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(77, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_CROSS, true);
-	SetLineTrans(78, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(79, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(70, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_Use, true);
+	SetLineTrans(71, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_Use, false);
+	SetLineTrans(72, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(73, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_Cross, true);
+	SetLineTrans(74, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(75, LNSPEC_DoorClose, -1, 16, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(76, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_Cross, true);
+	SetLineTrans(77, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_Cross, true);
+	SetLineTrans(78, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(79, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_Cross, true);
 
-	SetLineTrans(80, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(81, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(82, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(83, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(84, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(85, LNSPEC_ScrollTextureRight, 64, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(86, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(87, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(88, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_CROSS, true, true);
-	SetLineTrans(89, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(80, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(81, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(82, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(83, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_Cross, true);
+	SetLineTrans(84, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(85, LNSPEC_ScrollTextureRight, 64, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(86, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(87, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_Cross, true);
+	SetLineTrans(88, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_Cross, true, true);
+	SetLineTrans(89, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_Cross, true);
 
-	SetLineTrans(90, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(91, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(92, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(93, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(94, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(95, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(96, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(97, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_CROSS, true, true);
-	SetLineTrans(98, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(99, LNSPEC_DoorLockedRaise, -1, 64, 0, 2 | 128, 0, SPAC_USE, true);
+	SetLineTrans(90, LNSPEC_DoorRaise, -1, 16, 150, 0, 0, SPAC_Cross, true);
+	SetLineTrans(91, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(92, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_Cross, true);
+	SetLineTrans(93, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_Cross, true);
+	SetLineTrans(94, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_Cross, true);
+	SetLineTrans(95, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(96, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(97, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_Cross, true, true);
+	SetLineTrans(98, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_Cross, true);
+	SetLineTrans(99, LNSPEC_DoorLockedRaise, -1, 64, 0, 2 | 128, 0, SPAC_Use, true);
 
-	SetLineTrans(100, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(101, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(102, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_USE, false);
-	SetLineTrans(103, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(104, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(105, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(106, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(107, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(108, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(109, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(100, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_Cross, false);
+	SetLineTrans(101, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(102, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_Use, false);
+	SetLineTrans(103, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(104, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(105, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_Cross, true);
+	SetLineTrans(106, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(107, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(108, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_Cross, false);
+	SetLineTrans(109, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(110, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(111, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_USE, false);
-	SetLineTrans(112, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(113, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(114, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_USE, true);
-	SetLineTrans(115, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(116, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(117, LNSPEC_DoorRaise, 0, 64, 150, 0, 0, SPAC_USE, true);
-	SetLineTrans(118, LNSPEC_DoorOpen, 0, 64, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(119, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(110, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(111, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_Use, false);
+	SetLineTrans(112, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(113, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(114, LNSPEC_DoorRaise, -1, 64, 150, 0, 0, SPAC_Use, true);
+	SetLineTrans(115, LNSPEC_DoorOpen, -1, 64, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(116, LNSPEC_DoorClose, -1, 64, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(117, LNSPEC_DoorRaise, 0, 64, 150, 0, 0, SPAC_Use, true);
+	SetLineTrans(118, LNSPEC_DoorOpen, 0, 64, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(119, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(120, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(121, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(122, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_USE, false);
-	SetLineTrans(123, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_USE, true);
-	SetLineTrans(124, LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(125, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCROSS, false);
-	SetLineTrans(126, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCROSS, true);
-	SetLineTrans(127, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_USE, false);
-	SetLineTrans(128, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(129, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(120, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_Cross, true);
+	SetLineTrans(121, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_Cross, false);
+	SetLineTrans(122, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_Use, false);
+	SetLineTrans(123, LNSPEC_PlatDownWaitUpStayLip, -1, 64, 105, 0, 0, SPAC_Use, true);
+	SetLineTrans(124, LNSPEC_ExitSecret, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(125, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCross, false);
+	SetLineTrans(126, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_MCross, true);
+	SetLineTrans(127, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_Use, false);
+	SetLineTrans(128, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(129, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Cross, true);
 
-	SetLineTrans(130, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(131, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(132, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(133, LNSPEC_DoorLockedRaise, -1, 64, 0, 2 | 128, 0, SPAC_USE, false);
-	SetLineTrans(134, LNSPEC_DoorLockedRaise, -1, 64, 0, 1 | 128, 0, SPAC_USE, true);
-	SetLineTrans(135, LNSPEC_DoorLockedRaise, -1, 64, 0, 1 | 128, 0, SPAC_USE, false);
-	SetLineTrans(136, LNSPEC_DoorLockedRaise, -1, 64, 0, 3 | 128, 0, SPAC_USE, true);
-	SetLineTrans(137, LNSPEC_DoorLockedRaise, -1, 64, 0, 3 | 128, 0, SPAC_USE, false);
-	SetLineTrans(138, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(139, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_USE, true);
+	SetLineTrans(130, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(131, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(132, LNSPEC_FloorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(133, LNSPEC_DoorLockedRaise, -1, 64, 0, 2 | 128, 0, SPAC_Use, false);
+	SetLineTrans(134, LNSPEC_DoorLockedRaise, -1, 64, 0, 1 | 128, 0, SPAC_Use, true);
+	SetLineTrans(135, LNSPEC_DoorLockedRaise, -1, 64, 0, 1 | 128, 0, SPAC_Use, false);
+	SetLineTrans(136, LNSPEC_DoorLockedRaise, -1, 64, 0, 3 | 128, 0, SPAC_Use, true);
+	SetLineTrans(137, LNSPEC_DoorLockedRaise, -1, 64, 0, 3 | 128, 0, SPAC_Use, false);
+	SetLineTrans(138, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(139, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_Use, true);
 
-	SetLineTrans(140, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_USE, false);
-	SetLineTrans(141, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_CROSS, false);
-	SetLineTrans(142, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(143, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(144, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(145, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(146, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(147, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(148, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(149, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_CROSS, true);
+	SetLineTrans(140, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_Use, false);
+	SetLineTrans(141, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_Cross, false);
+	SetLineTrans(142, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_Cross, false);
+	SetLineTrans(143, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_Cross, false);
+	SetLineTrans(144, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_Cross, false);
+	SetLineTrans(145, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(146, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_Cross, false);
+	SetLineTrans(147, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_Cross, true);
+	SetLineTrans(148, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_Cross, true);
+	SetLineTrans(149, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_Cross, true);
 
-	SetLineTrans(150, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_CROSS, true);
-	SetLineTrans(151, LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(152, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(153, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(154, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(155, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(156, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(157, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(158, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(159, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(150, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_Cross, true);
+	SetLineTrans(151, LNSPEC_FloorAndCeilingLowerRaise, -1, 8, 8, 0, 0, SPAC_Cross, true);
+	SetLineTrans(152, LNSPEC_CeilingLowerToFloor, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(153, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(154, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(155, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_Cross, true);
+	SetLineTrans(156, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_Cross, true);
+	SetLineTrans(157, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(158, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(159, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_Use, false);
 
-	SetLineTrans(160, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_USE, false);
-	SetLineTrans(161, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_USE, false);
-	SetLineTrans(162, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_USE, false);
-	SetLineTrans(163, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(164, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_USE, false);
-	SetLineTrans(165, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_USE, false);
-	SetLineTrans(166, LNSPEC_CeilingGeneric, -1, 8, 0, 1, 8, SPAC_USE, false);
-	SetLineTrans(167, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(168, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(169, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(160, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_Use, false);
+	SetLineTrans(161, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_Use, false);
+	SetLineTrans(162, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_Use, false);
+	SetLineTrans(163, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(164, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_Use, false);
+	SetLineTrans(165, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_Use, false);
+	SetLineTrans(166, LNSPEC_CeilingGeneric, -1, 8, 0, 1, 8, SPAC_Use, false);
+	SetLineTrans(167, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(168, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(169, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_Use, false);
 
-	SetLineTrans(170, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(171, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(172, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_USE, false);
-	SetLineTrans(173, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(174, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_USE, false, true);
-	SetLineTrans(175, LNSPEC_DoorCloseWaitOpen, -1, 8, 240, 0, 0, SPAC_USE, false);
-	SetLineTrans(176, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(177, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(178, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_USE, true);
-	SetLineTrans(179, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_USE, true);
+	SetLineTrans(170, LNSPEC_LightChangeToValue, -1, 35, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(171, LNSPEC_LightChangeToValue, -1, 255, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(172, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_Use, false);
+	SetLineTrans(173, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(174, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_Use, false, true);
+	SetLineTrans(175, LNSPEC_DoorCloseWaitOpen, -1, 8, 240, 0, 0, SPAC_Use, false);
+	SetLineTrans(176, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(177, LNSPEC_FloorLowerToLowestChange, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(178, LNSPEC_FloorRaiseByValueTimes8, -1, 8, 64, 0, 0, SPAC_Use, true);
+	SetLineTrans(179, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_Use, true);
 
-	SetLineTrans(180, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_USE, true);
-	SetLineTrans(181, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_USE, true);
-	SetLineTrans(182, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(183, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_USE, true);
-	SetLineTrans(184, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_USE, true);
-	SetLineTrans(185, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_USE, true);
-	SetLineTrans(186, LNSPEC_CeilingGeneric, -1, 8, 0, 1, 8, SPAC_USE, true);
-	SetLineTrans(187, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(188, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(189, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(180, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_Use, true);
+	SetLineTrans(181, LNSPEC_PlatPerpetualRaiseLip, -1, 8, 105, 0, 0, SPAC_Use, true);
+	SetLineTrans(182, LNSPEC_PlatStop, -1, 0, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(183, LNSPEC_CeilingCrushAndRaiseA, -1, 16, 16, 10, 0, SPAC_Use, true);
+	SetLineTrans(184, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_Use, true);
+	SetLineTrans(185, LNSPEC_CeilingCrushAndRaiseSilentA, -1, 8, 8, 10, 0, SPAC_Use, true);
+	SetLineTrans(186, LNSPEC_CeilingGeneric, -1, 8, 0, 1, 8, SPAC_Use, true);
+	SetLineTrans(187, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(188, LNSPEC_CeilingCrushStop, -1, 0, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(189, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_Use, false);
 
-	SetLineTrans(190, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(191, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_USE, true);
-	SetLineTrans(192, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(193, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_USE, true);
-	SetLineTrans(194, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(195, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_USE, true, true);
-	SetLineTrans(196, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_USE, true);
-	SetLineTrans(197, LNSPEC_ExitNormal, 0, 0, 0, 0, 0, SPAC_IMPACT, false);
-	SetLineTrans(198, LNSPEC_ExitSecret, 0, 0, 0, 0, 0, SPAC_IMPACT, false);
-	SetLineTrans(199, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(190, LNSPEC_FloorTransferTrigger, -1, 0, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(191, LNSPEC_FloorDonut, -1, 4, 4, 0, 0, SPAC_Use, true);
+	SetLineTrans(192, LNSPEC_LightMaxNeighbor, -1, 0, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(193, LNSPEC_LightStrobeDoom, -1, 5, 35, 0, 0, SPAC_Use, true);
+	SetLineTrans(194, LNSPEC_LightMinNeighbor, -1, 0, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(195, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_Use, true, true);
+	SetLineTrans(196, LNSPEC_DoorCloseWaitOpen, -1, 16, 240, 0, 0, SPAC_Use, true);
+	SetLineTrans(197, LNSPEC_ExitNormal, 0, 0, 0, 0, 0, SPAC_Impact, false);
+	SetLineTrans(198, LNSPEC_ExitSecret, 0, 0, 0, 0, 0, SPAC_Impact, false);
+	SetLineTrans(199, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(200, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(201, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(202, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(203, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(204, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(205, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(206, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(207, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_CROSS, false, true);
-	SetLineTrans(208, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_CROSS, true, true);
-	SetLineTrans(209, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_USE, false, true);
+	SetLineTrans(200, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(201, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(202, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(203, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(204, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(205, LNSPEC_CeilingLowerToLowest, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(206, LNSPEC_CeilingLowerToHighestFloor, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(207, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_Cross, false, true);
+	SetLineTrans(208, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_Cross, true, true);
+	SetLineTrans(209, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_Use, false, true);
 
-	SetLineTrans(210, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_USE, true, true);
-	SetLineTrans(211, LNSPEC_PlatToggle, -1, 0, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(212, LNSPEC_PlatToggle, -1, 0, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(213, LNSPEC_TransferFloorLight, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(214, LNSPEC_ScrollCeiling, -1, 6, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(215, LNSPEC_ScrollFloor, -1, 6, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(216, LNSPEC_ScrollFloor, -1, 6, 1, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(217, LNSPEC_ScrollFloor, -1, 6, 2, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(218, LNSPEC_ScrollTextureModel, -1, 2, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(219, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(210, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_Use, true, true);
+	SetLineTrans(211, LNSPEC_PlatToggle, -1, 0, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(212, LNSPEC_PlatToggle, -1, 0, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(213, LNSPEC_TransferFloorLight, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(214, LNSPEC_ScrollCeiling, -1, 6, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(215, LNSPEC_ScrollFloor, -1, 6, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(216, LNSPEC_ScrollFloor, -1, 6, 1, 0, 0, SPAC_Cross, false);
+	SetLineTrans(217, LNSPEC_ScrollFloor, -1, 6, 2, 0, 0, SPAC_Cross, false);
+	SetLineTrans(218, LNSPEC_ScrollTextureModel, -1, 2, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(219, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(220, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(221, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(222, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(223, LNSPEC_SectorSetFriction, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(224, LNSPEC_SectorSetWind, -1, 0, 0, 1, 0, SPAC_CROSS, false);
-	SetLineTrans(225, LNSPEC_SectorSetCurrent, -1, 0, 0, 1, 0, SPAC_CROSS, false);
-	SetLineTrans(226, LNSPEC_PointPushSetForce, -1, 0, 0, 1, 0, SPAC_CROSS, false);
-	SetLineTrans(227, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(228, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(229, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_USE, false);
+	SetLineTrans(220, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(221, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(222, LNSPEC_FloorLowerToNearest, -1, 8, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(223, LNSPEC_SectorSetFriction, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(224, LNSPEC_SectorSetWind, -1, 0, 0, 1, 0, SPAC_Cross, false);
+	SetLineTrans(225, LNSPEC_SectorSetCurrent, -1, 0, 0, 1, 0, SPAC_Cross, false);
+	SetLineTrans(226, LNSPEC_PointPushSetForce, -1, 0, 0, 1, 0, SPAC_Cross, false);
+	SetLineTrans(227, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(228, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(229, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Use, false);
 
-	SetLineTrans(230, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(231, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(232, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(233, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(234, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(235, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(236, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(237, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(238, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_USE, true);
-	SetLineTrans(239, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(230, LNSPEC_ElevatorRaiseToNearest, -1, 32, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(231, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(232, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(233, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(234, LNSPEC_ElevatorLowerToNearest, -1, 32, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(235, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(236, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(237, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(238, LNSPEC_ElevatorMoveToFloor, -1, 32, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(239, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(240, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(241, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_USE, false);
-	SetLineTrans(242, LNSPEC_TransferHeights, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(243, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_CROSS, false, true);
-	SetLineTrans(244, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_CROSS, true, true);
-	SetLineTrans(245, LNSPEC_ScrollCeiling, -1, 5, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(246, LNSPEC_ScrollFloor, -1, 5, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(247, LNSPEC_ScrollFloor, -1, 5, 1, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(248, LNSPEC_ScrollFloor, -1, 5, 2, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(249, LNSPEC_ScrollTextureModel, -1, 1, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(240, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(241, LNSPEC_FloorTransferNumeric, -1, 0, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(242, LNSPEC_TransferHeights, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(243, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_Cross, false, true);
+	SetLineTrans(244, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_Cross, true, true);
+	SetLineTrans(245, LNSPEC_ScrollCeiling, -1, 5, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(246, LNSPEC_ScrollFloor, -1, 5, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(247, LNSPEC_ScrollFloor, -1, 5, 1, 0, 0, SPAC_Cross, false);
+	SetLineTrans(248, LNSPEC_ScrollFloor, -1, 5, 2, 0, 0, SPAC_Cross, false);
+	SetLineTrans(249, LNSPEC_ScrollTextureModel, -1, 1, 0, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(250, LNSPEC_ScrollCeiling, -1, 4, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(251, LNSPEC_ScrollFloor, -1, 4, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(252, LNSPEC_ScrollFloor, -1, 4, 1, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(253, LNSPEC_ScrollFloor, -1, 4, 2, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(254, LNSPEC_ScrollTextureModel, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(255, LNSPEC_ScrollTextureOffsets, 0, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(256, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(257, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_CROSS, true);
-	SetLineTrans(258, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_USE, true);
-	SetLineTrans(259, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_USE, true);
+	SetLineTrans(250, LNSPEC_ScrollCeiling, -1, 4, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(251, LNSPEC_ScrollFloor, -1, 4, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(252, LNSPEC_ScrollFloor, -1, 4, 1, 0, 0, SPAC_Cross, false);
+	SetLineTrans(253, LNSPEC_ScrollFloor, -1, 4, 2, 0, 0, SPAC_Cross, false);
+	SetLineTrans(254, LNSPEC_ScrollTextureModel, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(255, LNSPEC_ScrollTextureOffsets, 0, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(256, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_Cross, true);
+	SetLineTrans(257, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_Cross, true);
+	SetLineTrans(258, LNSPEC_StairsBuildUpDoom, -1, 2, 8, 0, 0, SPAC_Use, true);
+	SetLineTrans(259, LNSPEC_StairsBuildUpDoom, -1, 32, 16, 0, 0, SPAC_Use, true);
 
-	SetLineTrans(260, LNSPEC_LineTranslucent, -1, 128, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(261, LNSPEC_TransferCeilingLight, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(262, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_CROSS, false, true);
-	SetLineTrans(263, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_CROSS, true, true);
-	SetLineTrans(264, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_MCROSS, false);
-	SetLineTrans(265, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_MCROSS, true);
-	SetLineTrans(266, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_MCROSS, false);
-	SetLineTrans(267, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_MCROSS, true);
-	SetLineTrans(268, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_MCROSS, false);
-	SetLineTrans(269, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_MCROSS, true);
+	SetLineTrans(260, LNSPEC_LineTranslucent, -1, 128, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(261, LNSPEC_TransferCeilingLight, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(262, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_Cross, false, true);
+	SetLineTrans(263, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_Cross, true, true);
+	SetLineTrans(264, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_MCross, false);
+	SetLineTrans(265, LNSPEC_TeleportLine, -1, -1, 1, 0, 0, SPAC_MCross, true);
+	SetLineTrans(266, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_MCross, false);
+	SetLineTrans(267, LNSPEC_TeleportLine, -1, -1, 0, 0, 0, SPAC_MCross, true);
+	SetLineTrans(268, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_MCross, false);
+	SetLineTrans(269, LNSPEC_TeleportNoFog, 0, 0, -1, 0, 0, SPAC_MCross, true);
 
 	//	270
-	SetLineTrans(271, 0, -1, 255, 0, 0, 0, SPAC_CROSS, false); // LNSPEC_StaticInit
-	SetLineTrans(272, 0, -1, 255, 1, 0, 0, SPAC_CROSS, false); // LNSPEC_StaticInit
+	SetLineTrans(271, 0, -1, 255, 0, 0, 0, SPAC_Cross, false); // LNSPEC_StaticInit
+	SetLineTrans(272, 0, -1, 255, 1, 0, 0, SPAC_Cross, false); // LNSPEC_StaticInit
 
-	SetLineTrans(333, LNSPEC_StaticInit, -1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(334, LNSPEC_StaticInit, -1, 1, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(335, LNSPEC_StaticInit, -1, 2, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(333, LNSPEC_StaticInit, -1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(334, LNSPEC_StaticInit, -1, 1, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(335, LNSPEC_StaticInit, -1, 2, 0, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(340, LNSPEC_PlaneAlign, 1, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(341, LNSPEC_PlaneAlign, 0, 1, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(342, LNSPEC_PlaneAlign, 1, 1, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(343, LNSPEC_PlaneAlign, 2, 0, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(344, LNSPEC_PlaneAlign, 0, 2, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(345, LNSPEC_PlaneAlign, 2, 2, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(346, LNSPEC_PlaneAlign, 2, 1, 0, 0, 0, SPAC_CROSS, false);
-	SetLineTrans(347, LNSPEC_PlaneAlign, 1, 2, 0, 0, 0, SPAC_CROSS, false);
+	SetLineTrans(340, LNSPEC_PlaneAlign, 1, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(341, LNSPEC_PlaneAlign, 0, 1, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(342, LNSPEC_PlaneAlign, 1, 1, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(343, LNSPEC_PlaneAlign, 2, 0, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(344, LNSPEC_PlaneAlign, 0, 2, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(345, LNSPEC_PlaneAlign, 2, 2, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(346, LNSPEC_PlaneAlign, 2, 1, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(347, LNSPEC_PlaneAlign, 1, 2, 0, 0, 0, SPAC_Cross, false);
 }
 
 //==========================================================================
@@ -609,19 +609,23 @@ void TranslateLine(Level InLevel, line_t* line)
 		switch (OldSpec & 0x0006)
 		{
 		case 0:
-			line->SpacFlags = 1 << SPAC_CROSS;
+			line->SpacFlags = SPAC_Cross;
 			break;
 
 		case 2:
 		case 6:
 			if (OldFlags & 0x0200)
-				line->SpacFlags = 1 << SPAC_USETHROUGH;
+			{
+				line->SpacFlags = SPAC_UseThrough;
+			}
 			else
-				line->SpacFlags = 1 << SPAC_USE;
+			{
+				line->SpacFlags = SPAC_Use;
+			}
 			break;
 
 		case 4:
-			line->SpacFlags = 1 << SPAC_IMPACT;
+			line->SpacFlags = SPAC_Impact;
 			break;
 		}
 		if (OldSpec & 1)
@@ -799,6 +803,11 @@ void TranslateLine(Level InLevel, line_t* line)
 			line->arg5 =  ((OldSpec & 0x0c00) >> 10) |
 						  ((OldSpec & 0x0060) >> 3) |
 						  ((OldSpec & 0x1000) >> 8);
+		}
+		if (line->flags & ML_MONSTERSCANACTIVATE && line->SpacFlags == SPAC_Cross)
+		{
+			// In Boom anything can activate such a line so set the proper type here.
+			line->SpacFlags = SPAC_AnyCross;
 		}
 		return;
 	}
@@ -999,13 +1008,13 @@ void TranslateLine(Level InLevel, line_t* line)
 	}
 
 	//	Activation flags.
-	if (OldFlags & 0x0200 && spec_trans_tab[OldSpec].spac == SPAC_USE)
+	if (OldFlags & 0x0200 && spec_trans_tab[OldSpec].spac == SPAC_Use)
 	{
-		line->SpacFlags = 1 << SPAC_USETHROUGH;
+		line->SpacFlags = SPAC_UseThrough;
 	}
 	else
 	{
-		line->SpacFlags = 1 << spec_trans_tab[OldSpec].spac;
+		line->SpacFlags = spec_trans_tab[OldSpec].spac;
 	}
 	if (spec_trans_tab[OldSpec].repeat)
 	{
@@ -1015,8 +1024,8 @@ void TranslateLine(Level InLevel, line_t* line)
 	{
 		line->flags |= ML_MONSTERSCANACTIVATE;
 	}
-	if ((line->flags & ML_SECRET) && line->SpacFlags & ((1 << SPAC_USE) |
-		(1 << SPAC_USETHROUGH)))
+	if ((line->flags & ML_SECRET) && line->SpacFlags & (SPAC_Use |
+		SPAC_UseThrough))
 	{
 		line->flags &= ~ML_MONSTERSCANACTIVATE;
 	}

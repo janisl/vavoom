@@ -959,13 +959,13 @@ final void CheckForPushSpecial(line_t* line, int side)
 		if (bActivatePushWall)
 		{
 			LineSpecialLevelInfo(Level).ActivateLine(line, self, side,
-				SPAC_PUSH);
+				SPAC_Push);
 		}
 		else if (bActivateImpact)
 		{
 			LineSpecialLevelInfo(Level).ActivateLine(line,
 				Level.bMissilesActivateImpact || !bMissile || !Target ?
-				self : Target, side, SPAC_IMPACT);
+				self : Target, side, SPAC_Impact);
 		}
 	}
 }
@@ -1025,22 +1025,26 @@ final void CrossSpecialLine(line_t *ld, int side)
 {
 	if (bIsPlayer)
 	{
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_CROSS);
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_Cross);
 	}
 	else if (bActivateMCross)
 	{
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCross);
 	}
 	else if (bActivatePCross)
 	{
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCROSS);
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCross);
 	}
 	else if (ld->special == LNSPEC_Teleport ||
 		ld->special == LNSPEC_TeleportNoFog ||
 		ld->special == LNSPEC_TeleportLine)
 	{
 		//	Teleport hack
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCROSS);
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCross);
+	}
+	else
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_AnyCross);
 	}
 }
 
@@ -3152,8 +3156,7 @@ final bool UseLines(float UseRange, float UseThingRange, name FailSound)
 		float pheight;
 
 		line = in->line;
-		if (!line->special || (!(line->SpacFlags & (1 << SPAC_USE)) &&
-			!(line->SpacFlags & (1 << SPAC_USETHROUGH))))
+		if (!line->special || (!(line->SpacFlags & (SPAC_Use | SPAC_UseThrough))))
 		{
 			hit_point = Origin + (UseRange * in->frac) * useDir;
 			open = LineOpenings(line, hit_point);
@@ -3206,14 +3209,14 @@ final bool UseLines(float UseRange, float UseThingRange, name FailSound)
 			break;
 		}
 
-		LineSpecialLevelInfo(Level).ActivateLine(line, self, 0, SPAC_USE);
+		LineSpecialLevelInfo(Level).ActivateLine(line, self, 0, SPAC_Use);
 		action = true;
 
 		//WAS can't use more than one special line in a row
 		//jff 3/21/98 NOW multiple use allowed with enabling line flag
 		if (Level.CompatUseBlocking)
 		{
-			if (!(line->SpacFlags & (1 << SPAC_USETHROUGH)))
+			if (!(line->SpacFlags & SPAC_UseThrough))
 			{
 				DoSecAct = false;
 				break;
@@ -3221,7 +3224,7 @@ final bool UseLines(float UseRange, float UseThingRange, name FailSound)
 		}
 		else
 		{
-			if (line->SpacFlags & (1 << SPAC_USE))
+			if (line->SpacFlags & SPAC_Use)
 			{
 				DoSecAct = false;
 				break;
