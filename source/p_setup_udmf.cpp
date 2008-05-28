@@ -55,6 +55,21 @@ enum
 class VUdmfParser
 {
 public:
+	//	Supported namespaces. Use bits to have faster cheks.
+	enum
+	{
+		//	Standard namespaces.
+		NS_Doom				= 0x01,
+		NS_Heretic			= 0x02,
+		NS_Hexen			= 0x04,
+		NS_Strife			= 0x08,
+		//	Vavoom's namespace.
+		NS_Vavoom			= 0x10,
+		//	ZDoom's namespaces.
+		NS_ZDoom			= 0x20,
+		NS_ZDoomTranslated	= 0x40,
+	};
+
 	struct VParsedLine
 	{
 		line_t		L;
@@ -72,7 +87,7 @@ public:
 	};
 
 	bool				bExtended;
-	bool				bCanTranslate;
+	vuint8				NS;
 	TArray<vertex_t>	ParsedVertexes;
 	TArray<sector_t>	ParsedSectors;
 	TArray<VParsedLine>	ParsedLines;
@@ -114,45 +129,52 @@ void VUdmfParser::Parse(VLevel* Level, int Lump)
 	VScriptParser sc("textmap", W_CreateLumpReaderNum(Lump));
 	sc.SetCMode(true);
 
+	bExtended = false;
+
 	//	Get namespace name.
 	sc.Expect("namespace");
 	sc.Expect("=");
 	sc.ExpectString();
 	VStr Namespace = sc.String;
 	sc.Expect(";");
-	bExtended = false;
-	bCanTranslate = true;
 	//	Vavoom's namespace.
 	if (!Namespace.ICmp("Vavoom"))
 	{
+		NS = NS_Vavoom;
 		bExtended = true;
 	}
 	//	Standard namespaces.
 	else if (!Namespace.ICmp("Doom"))
 	{
+		NS = NS_Doom;
 	}
 	else if (!Namespace.ICmp("Heretic"))
 	{
+		NS = NS_Heretic;
 	}
 	else if (!Namespace.ICmp("Hexen"))
 	{
+		NS = NS_Hexen;
 		bExtended = true;
 	}
 	else if (!Namespace.ICmp("Strife"))
 	{
+		NS = NS_Strife;
 	}
 	//	ZDoom namespaces.
 	else if (!Namespace.ICmp("ZDoom"))
 	{
+		NS = NS_ZDoom;
 		bExtended = true;
 	}
 	else if (!Namespace.ICmp("ZDoomTranslated"))
 	{
+		NS = NS_ZDoomTranslated;
 	}
 	else
 	{
 		//	Unknown namespace.
-		bCanTranslate = false;
+		NS = 0;
 	}
 
 	while (!sc.AtEnd())
@@ -388,29 +410,6 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 		{
 			Flag(L.L.flags, ML_MAPPED, Val);
 		}
-		else if (!Key.ICmp("passuse"))
-		{
-			if (bExtended)
-			{
-				HavePassUse = !Val.ICmp("true");
-			}
-			else
-			{
-				Flag(L.L.flags, ML_PASSUSE_BOOM, Val);
-			}
-		}
-		else if (!Key.ICmp("translucent"))
-		{
-			L.L.alpha = 0.666;
-		}
-		else if (!Key.ICmp("jumpover"))
-		{
-			Flag(L.L.flags, ML_RAILING, Val);
-		}
-		else if (!Key.ICmp("blockfloaters"))
-		{
-			Flag(L.L.flags, ML_BLOCK_FLOATERS, Val);
-		}
 		else if (!Key.ICmp("special"))
 		{
 			L.L.special = atoi(*Val);
@@ -444,7 +443,41 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 			L.L.sidenum[1] = atoi(*Val);
 		}
 
-		if (bExtended)
+		//	Doom specific flags.
+		if (NS & (NS_Doom | NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
+		{
+			if (!Key.ICmp("passuse"))
+			{
+				if (bExtended)
+				{
+					HavePassUse = !Val.ICmp("true");
+				}
+				else
+				{
+					Flag(L.L.flags, ML_PASSUSE_BOOM, Val);
+				}
+			}
+		}
+
+		//	Strife specific flags.
+		if (NS & (NS_Strife | NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
+		{
+			if (!Key.ICmp("translucent"))
+			{
+				L.L.alpha = 0.666;
+			}
+			else if (!Key.ICmp("jumpover"))
+			{
+				Flag(L.L.flags, ML_RAILING, Val);
+			}
+			else if (!Key.ICmp("blockfloaters"))
+			{
+				Flag(L.L.flags, ML_BLOCK_FLOATERS, Val);
+			}
+		}
+
+		//	Hexen's extensions.
+		if (NS & (NS_Hexen | NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
 		{
 			if (!Key.ICmp("playercross"))
 			{
@@ -612,26 +645,6 @@ void VUdmfParser::ParseThing(VScriptParser& sc)
 		{
 			Flag(T.options, MTF_GCOOP, Val);
 		}
-		else if (!Key.ICmp("friend"))
-		{
-			Flag(T.options, MTF_FRIENDLY, Val);
-		}
-		else if (!Key.ICmp("standing"))
-		{
-			Flag(T.options, MTF_STANDSTILL, Val);
-		}
-		else if (!Key.ICmp("strifeally"))
-		{
-			Flag(T.options, MTF_FRIENDLY, Val);
-		}
-		else if (!Key.ICmp("translucent"))
-		{
-			Flag(T.options, MTF_SHADOW, Val);
-		}
-		else if (!Key.ICmp("invisible"))
-		{
-			Flag(T.options, MTF_ALTSHADOW, Val);
-		}
 		else if (!Key.ICmp("skill1"))
 		{
 			Flag(T.SkillClassFilter, 0x0001, Val);
@@ -697,7 +710,38 @@ void VUdmfParser::ParseThing(VScriptParser& sc)
 			Flag(T.SkillClassFilter, 0x8000, Val);
 		}
 
-		if (bExtended)
+		//	MBF friendly flag.
+		if (NS & (NS_Hexen | NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
+		{
+			if (!Key.ICmp("friend"))
+			{
+				Flag(T.options, MTF_FRIENDLY, Val);
+			}
+		}
+
+		//	Strife specific flags.
+		if (NS & (NS_Hexen | NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
+		{
+			if (!Key.ICmp("standing"))
+			{
+				Flag(T.options, MTF_STANDSTILL, Val);
+			}
+			else if (!Key.ICmp("strifeally"))
+			{
+				Flag(T.options, MTF_FRIENDLY, Val);
+			}
+			else if (!Key.ICmp("translucent"))
+			{
+				Flag(T.options, MTF_SHADOW, Val);
+			}
+			else if (!Key.ICmp("invisible"))
+			{
+				Flag(T.options, MTF_ALTSHADOW, Val);
+			}
+		}
+
+		//	Hexen's extensions.
+		if (NS & (NS_Hexen | NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
 		{
 			if (!Key.ICmp("id"))
 			{
