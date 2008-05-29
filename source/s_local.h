@@ -109,6 +109,61 @@ struct seq_info_t
 	vint32		StopSound;
 };
 
+enum
+{
+	REVERBF_ReflectionsScale		= 0x01,
+	REVERBF_ReflectionsDelayScale	= 0x02,
+	REVERBF_DecayTimeScale			= 0x04,
+	REVERBF_DecayHFLimit			= 0x08,
+	REVERBF_ReverbScale				= 0x10,
+	REVERBF_ReverbDelayScale		= 0x20,
+	REVERBF_EchoTimeScale			= 0x40,
+	REVERBF_ModulationTimeScale		= 0x80,
+};
+
+struct VReverbProperties
+{
+	int					Environment;
+	float				EnvironmentSize;
+	float				EnvironmentDiffusion;
+	int					Room;
+	int					RoomHF;
+	int					RoomLF;
+	float				DecayTime;
+	float				DecayHFRatio;
+	float				DecayLFRatio;
+	int					Reflections;
+	float				ReflectionsDelay;
+	float				ReflectionsPanX;
+	float				ReflectionsPanY;
+	float				ReflectionsPanZ;
+	int					Reverb;
+	float				ReverbDelay;
+	float				ReverbPanX;
+	float				ReverbPanY;
+	float				ReverbPanZ;
+	float				EchoTime;
+	float				EchoDepth;
+	float				ModulationTime;
+	float				ModulationDepth;
+	float				AirAbsorptionHF;
+	float				HFReference;
+	float				LFReference;
+	float				RoomRolloffFactor;
+	float				Diffusion;
+	float				Density;
+	int					Flags;
+};
+
+struct VReverbInfo
+{
+	VReverbInfo*		Next;
+	const char*			Name;
+	int					Id;
+	bool				Builtin;
+	VReverbProperties	Props;
+};
+
 //
 //	VSoundDevice
 //

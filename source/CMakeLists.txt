@@ -192,6 +192,7 @@ set(MAIN_COMMON_SOURCES
 	s_data.cpp
 	s_local.h
 	s_qmus2mid.cpp
+	s_reverbs.cpp
 	s_sound.cpp
 	s_streamplayer.cpp
 	s_tmidty.cpp
@@ -487,6 +488,7 @@ set(SERVER_COMMON_SOURCES
 	r_tex_tga.cpp
 	r_tex_warp.cpp
 	s_data.cpp
+	s_reverbs.cpp
 	sc_man.cpp
 	str.cpp
 	stream.cpp

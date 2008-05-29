@@ -111,6 +111,17 @@ VSoundManager::~VSoundManager()
 			delete[] SeqInfo[i].Data;
 		}
 	}
+
+	for (VReverbInfo* R = Environments; R;)
+	{
+		VReverbInfo* Next = R->Next;
+		if (!R->Builtin)
+		{
+			delete[] const_cast<char*>(R->Name);
+			delete R;
+		}
+		R = Next;
+	}
 	unguard;
 }
 
@@ -152,13 +163,6 @@ void VSoundManager::Init()
 		}
 	}
 
-	//	Optionally parse script file.
-	if (fl_devmode && FL_FileExists("scripts/sndinfo.txt"))
-	{
-		ParseSndinfo(new VScriptParser("scripts/sndinfo.txt",
-			FL_OpenFileRead("scripts/sndinfo.txt")));
-	}
-
 	S_sfx.Condense();
 
 	//	Load script SNDSEQ
@@ -173,11 +177,16 @@ void VSoundManager::Init()
 		}
 	}
 
-	//	Optionally parse script file.
-	if (fl_devmode && FL_FileExists("scripts/sndseq.txt"))
+	//	Load script REVERBS
+	Environments = NULL;
+	for (Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
-		ParseSequenceScript(new VScriptParser("scripts/sndseq.txt",
-			FL_OpenFileRead("scripts/sndseq.txt")));
+		if (W_LumpName(Lump) == NAME_reverbs)
+		{
+			ParseReverbs(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)));
+		}
 	}
 	unguard;
 }

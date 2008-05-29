@@ -32,6 +32,7 @@ enum seqtype_t
 
 struct sfxinfo_t;
 struct seq_info_t;
+struct VReverbInfo;
 
 enum ESoundType
 {
@@ -112,6 +113,7 @@ private:
 	FAmbientSound*			AmbientSounds[NUM_AMBIENT_SOUNDS];
 	TArray<VMusicVolume>	MusicVolumes;
 	int						SeqTrans[64 * 3];
+	VReverbInfo*			Environments;
 
 	void ParseSndinfo(VScriptParser*);
 	int AddSoundLump(VName, int);
@@ -129,6 +131,8 @@ private:
 
 	void ParseSequenceScript(VScriptParser*);
 	void AssignSeqTranslations(VScriptParser*, int, seqtype_t);
+
+	void ParseReverbs(VScriptParser*);
 };
 
 //

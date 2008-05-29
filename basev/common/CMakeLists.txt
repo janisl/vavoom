@@ -9,6 +9,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		default.cfg
 		language.en
 		lockdefs.txt
+		reverbs.txt
 		startup.vs
 		terrain.txt
 		textcolo.txt

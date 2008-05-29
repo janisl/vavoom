@@ -1941,6 +1941,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\s_reverbs.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\s_sdl.cpp"
 				>
 				<FileConfiguration
