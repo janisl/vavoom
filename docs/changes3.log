@@ -3355,3 +3355,77 @@
 06.05.2008
   I fixed crash in Hexen when picking up fourth weapon piece when you aready
  have the weapon.
+07.05.2008
+  I changed MAPINFO parser to mark all new clusters as hubs if script is in
+ Hexen format.
+  I added hashed sector and line tag search. I also noticed that sector still
+ has floorheight and ceilngheight fields and decided to remove them.
+08.05.2008
+  I implemented hashed TID search.
+  I fixed parsing of game specific pickup message DECORATE property.
+  I implemented many of the missing MAPINFO flags.
+09.05.2008
+  I fixed a bug in Direct3D renderer.
+  Firebrand fixed one of the Hexen's puzzle items dissapearing.
+10.05.2008
+  I implemented compatibility flags that are settable in MAPINFO.
+  I implemented MAPINFO options for horizontal and vertical wall shade.
+11.05.2008
+  I implemented MAPINFO commands that control monster infighting.
+12.05.2008
+  I implemented MAPINFO commands specialaction and redirect.
+  I changed LookForPlayers to skip players that don't habe shootable flag set.
+  I changed floor movers that change texture and special to check if it's
+ activated by a line, so that if they are used in a script, it doesn't crash.
+13.05.2008
+  I implemented MAPINFO commands for lax/strict monster activation.
+  I made line special SendToCommunicator available in all games and implemented
+ line special StartConversation.
+14.05.2008
+  I implemented line specials Thing_Raise, Thing_ProjectileIntercept, Autosave,
+ ChangeSkill.
+15.05.2008
+  I implemented Transfer_WallLight special.
+16.05.2008
+  I added additional argument to the ceiling crushers that allows you to set
+ wether use Doom, Hexen or or game's default behavior, added Generic_Crusher2
+ special.
+  I fixed some crashes while morphing.
+18.05.2008
+  I added separate texture offsets for top, middle and bottom wall textures.
+  I added sector flag that disables falling damage in that sector.
+  I implemented Line_SetTextureOffset, Scroll_Wall and Sector_ChangeFlags
+ specials.
+  I reorganised loading of side defs so that it's done in one pass after line
+ defs have been loaded. I also added decompression of the compressed side defs
+ lump.
+19.05.2008
+  I implemented blood splatter actor flag.
+  I implemented WeaponPiece class.
+  I started to implement support for custom skill definitions. Most of the
+ skill properties are done.
+20.05.2008
+  I finished implementing support for custom skill definitions.
+24.05.2008
+  I split out SPAC flags as bitflags, so line can have multiple activation
+ types.
+  I split thing's skill and class filters into separate field and added support
+ for up to 16 skill and class filter flags.
+  I implemented UDMF map parser.
+  Firebrand updated Windows sound and input drivers to use latest versions of
+ DirectSound and DirectInput.
+25.05.2008
+  I added icon names for Heretic keys.
+27.05.2008
+  I changed server to be initialised before client.
+28.05.2008
+  I added proper namespace checks to the UDMF parser.
+  I implemented monsters can activate, first side only and block players line
+ flags.
+  I changed SPAC constants to be bitflags, added missing ones.
+29.05.2008
+  I implemented parsing of REVERBS script.
+30.05.2008
+  I implemented setting up sector sound environment zones, changing them and
+ setting corresponding EAX listener properties.
+  I moved parsing of KEYCONF to be done after initialising input.
