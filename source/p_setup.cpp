@@ -362,6 +362,10 @@ void VLevel::LoadMap(VName AMapName)
 	GroupLines();
 	GroupLinesTime += Sys_Time();
 
+	double FloodZonesTime = -Sys_Time();
+	FloodZones();
+	FloodZonesTime += Sys_Time();
+
 	double ConvTime = -Sys_Time();
 	//	Load conversations.
 	LoadRogueConScript(GGameInfo->GenericConScript, -1, GenericSpeeches,
@@ -451,6 +455,7 @@ void VLevel::LoadMap(VName AMapName)
 		GCon->Logf("Reject           %f", RejectTime);
 		GCon->Logf("ACS              %f", AcsTime);
 		GCon->Logf("Group lines      %f", GroupLinesTime);
+		GCon->Logf("Flood zones      %f", FloodZonesTime);
 		GCon->Logf("Conversations    %f", ConvTime);
 		GCon->Logf("Spawn world      %f", SpawnWorldTime);
 		GCon->Logf("Polyobjs         %f", InitPolysTime);
@@ -661,9 +666,10 @@ void VLevel::LoadSectors(int Lump)
 
 		ss->special = special;
 		ss->tag = tag;
-		ss->seqType = -1;	// default seqType
 
+		ss->seqType = -1;	// default seqType
 		ss->Gravity = 1.0;	// default sector gravity of 1.0
+		ss->Zone = -1;
 	}
 	delete Strm;
 	HashSectors();
@@ -2387,6 +2393,61 @@ void VLevel::HashLines()
 		vuint32 HashIndex = (vuint32)Lines[i].LineTag % (vuint32)NumLines;
 		Lines[i].HashNext = Lines[HashIndex].HashFirst;
 		Lines[HashIndex].HashFirst = i;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::FloodZones
+//
+//==========================================================================
+
+void VLevel::FloodZones()
+{
+	guard(VLevel::FloodZones);
+	for (int i = 0; i < NumSectors; i++)
+	{
+		if (Sectors[i].Zone == -1)
+		{
+			FloodZone(&Sectors[i], NumZones);
+			NumZones++;
+		}
+	}
+
+	Zones = new vint32[NumZones];
+	for (int i = 0; i < NumZones; i++)
+	{
+		Zones[i] = 0;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::FloodZone
+//
+//==========================================================================
+
+void VLevel::FloodZone(sector_t* Sec, int Zone)
+{
+	guard(VLevel::FloodZone);
+	Sec->Zone = Zone;
+	for (int i = 0; i < Sec->linecount; i++)
+	{
+		line_t* Line = Sec->lines[i];
+		if (Line->flags & ML_ZONEBOUNDARY)
+		{
+			continue;
+		}
+		if (Line->frontsector && Line->frontsector->Zone == -1)
+		{
+			FloodZone(Line->frontsector, Zone);
+		}
+		if (Line->backsector && Line->backsector->Zone == -1)
+		{
+			FloodZone(Line->backsector, Zone);
+		}
 	}
 	unguard;
 }

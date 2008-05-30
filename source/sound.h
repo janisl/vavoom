@@ -88,6 +88,8 @@ public:
 	void GetSoundLumpNames(TArray<FReplacedString>&);
 	void ReplaceSoundLumpNames(TArray<FReplacedString>&);
 
+	VReverbInfo* FindEnvironment(int);
+
 private:
 	struct FPlayerSound
 	{

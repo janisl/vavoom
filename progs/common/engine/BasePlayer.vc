@@ -126,6 +126,8 @@ native readonly byte	ClientNum;
 
 native readonly float	ViewEntAlpha;
 
+int						SoundEnvironment;
+
 native readonly ClientGameBase	ClGame;	//	Valid only on client side
 
 PlayerReplicationInfo	PlayerReplicationInfo;
@@ -136,7 +138,7 @@ replication
 		Health, Frags, Deaths, ExtraLight, FixedColourmap, CShift,
 		PSpriteSY, KillCount, ItemCount, SecretCount, ViewStates,
 		ViewEntAlpha, ClientNum, WorldTimer, MO, Camera, bAutomapRevealed,
-		bAutomapShowThings;
+		bAutomapShowThings, SoundEnvironment;
 
 	unreliable if (!bIsClient)
 		ClientStartSound, ClientStopSound, ClientForceLightning,

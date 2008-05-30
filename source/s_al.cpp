@@ -82,7 +82,8 @@ public:
 	void UpdateChannel3D(int, const TVec&, const TVec&);
 	bool IsChannelPlaying(int);
 	void StopChannel(int);
-	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&, const TVec&);
+	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&,
+		const TVec&, VReverbInfo*);
 
 	bool OpenStream(int, int, int);
 	void CloseStream();
@@ -462,7 +463,7 @@ void VOpenALDevice::StopChannel(int Handle)
 //==========================================================================
 
 void VOpenALDevice::UpdateListener(const TVec& org, const TVec& vel,
-	const TVec& fwd, const TVec&, const TVec& up)
+	const TVec& fwd, const TVec&, const TVec& up, VReverbInfo* Env)
 {
 	guard(VOpenALDevice::UpdateListener);
 	alListener3f(AL_POSITION, org.x, org.y, org.z);
@@ -476,15 +477,36 @@ void VOpenALDevice::UpdateListener(const TVec& org, const TVec& vel,
 
 	if (supportEAX)
 	{
-		int envId = eax_environment;
-		if (envId < 0 || envId >= EAX_ENVIRONMENT_COUNT)
-			envId = EAX_ENVIRONMENT_GENERIC;
+		EAXLISTENERPROPERTIES Prop;
+		Prop.lRoom = Env->Props.Room;
+		Prop.lRoomHF = Env->Props.RoomHF;
+		Prop.flRoomRolloffFactor = Env->Props.RoomRolloffFactor;
+		Prop.flDecayTime = Env->Props.DecayTime;
+		Prop.flDecayHFRatio = Env->Props.DecayHFRatio;
+		Prop.lReflections = Env->Props.Reflections;
+		Prop.flReflectionsDelay = Env->Props.ReflectionsDelay;
+		Prop.lReverb = Env->Props.Reverb;
+		Prop.flReverbDelay = Env->Props.ReverbDelay;
+		Prop.dwEnvironment = Env->Props.Environment;
+		Prop.flEnvironmentSize = Env->Props.EnvironmentSize;
+		Prop.flEnvironmentDiffusion = Env->Props.EnvironmentDiffusion;
+		Prop.flAirAbsorptionHF = Env->Props.AirAbsorptionHF;
+		Prop.dwFlags = Env->Props.Flags & 0x3f;
 		pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
-			DSPROPERTY_EAXLISTENER_ENVIRONMENT, 0, &envId, sizeof(int));
+			DSPROPERTY_EAXLISTENER_ALLPARAMETERS, 0, &Prop, sizeof(Prop));
 
-		float envSize = GAudio->EAX_CalcEnvSize();
-		pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
-			DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE, 0, &envSize, sizeof(float));
+		if (Env->Id == 1)
+		{
+			int envId = eax_environment;
+			if (envId < 0 || envId >= EAX_ENVIRONMENT_COUNT)
+				envId = EAX_ENVIRONMENT_GENERIC;
+			pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
+				DSPROPERTY_EAXLISTENER_ENVIRONMENT, 0, &envId, sizeof(int));
+
+			float envSize = GAudio->EAX_CalcEnvSize();
+			pEAXSet(&DSPROPSETID_EAX_ListenerProperties,
+				DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE, 0, &envSize, sizeof(float));
+		}
 	}
 	unguard;
 }

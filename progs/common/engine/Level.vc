@@ -117,6 +117,10 @@ native readonly private void*	PolyObjs;
 native readonly private int		NumPolyAnchorPoints;
 native readonly private void*	PolyAnchorPoints;
 
+//	Sound environments for sector zones.
+native readonly int				NumZones;
+native readonly int*			Zones;
+
 native readonly private Thinker	ThinkerHead;
 native readonly private Thinker	ThinkerTail;
 

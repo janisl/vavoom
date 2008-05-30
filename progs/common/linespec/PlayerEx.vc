@@ -1087,14 +1087,12 @@ final Weapon ChoosePowered(Weapon Wpn)
 
 final Weapon GetSlotChangeWeapon(int Slot)
 {
-print("Change slot %d", Slot);
 	int			i;
 	int			j;
 	LineSpecialGameInfo GI = LineSpecialGameInfo(Level.Game);
 
 	if (ReadyWeapon)
 	{
-print("Had ready");
 		for (i = 0; i < LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT; i++)
 		{
 			if (GI.WeaponSlots[Slot].Weapons[i] == ReadyWeapon.Class ||
@@ -1110,7 +1108,6 @@ print("Had ready");
 						GI.WeaponSlots[Slot].Weapons[j]));
 					if (Wpn && Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 					{
-print("Selected");
 						return ChoosePowered(Wpn);
 					}
 				}
@@ -1124,12 +1121,10 @@ print("Selected");
 			GI.WeaponSlots[Slot].Weapons[i]));
 		if (Wpn && Wpn.CheckAmmo(Weapon::FIRE_Either, false))
 		{
-print("Found");
 			return ChoosePowered(Wpn);
 		}
 	}
 
-print("Use current");
 	return ReadyWeapon;
 }
 

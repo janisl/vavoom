@@ -376,6 +376,16 @@ void VLevel::Serialise(VStream& Strm)
 		}
 	}
 	unguard;
+
+	//
+	//	Zones
+	//
+	guard(Zones);
+	for (i = 0; i < NumZones; i++)
+	{
+		Strm << STRM_INDEX(Zones[i]);
+	}
+	unguard;
 	unguard;
 }
 
@@ -507,6 +517,7 @@ void VLevel::Destroy()
 	delete[] BlockLinks;
 	delete[] RejectMatrix;
 	delete[] Things;
+	delete[] Zones;
 
 	delete[] BaseLines;
 	delete[] BaseSides;

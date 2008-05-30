@@ -894,6 +894,21 @@ void SetViewPos()
 	PaletteFlash();
 
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
+
+	SoundEnvironment = Level.XLevel.Zones[Camera.Sector->Zone];
+	if (!SoundEnvironment)
+	{
+		if (Camera.WaterLevel >= 3)
+		{
+			//	Under water
+			SoundEnvironment = 0x1600;
+		}
+		else
+		{
+			//	Generic
+			SoundEnvironment = 1;
+		}
+	}
 }
 
 //==========================================================================

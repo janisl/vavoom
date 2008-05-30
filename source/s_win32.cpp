@@ -77,7 +77,8 @@ public:
 	void UpdateChannel3D(int, const TVec&, const TVec&);
 	bool IsChannelPlaying(int);
 	void StopChannel(int);
-	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&, const TVec&);
+	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&,
+		const TVec&, VReverbInfo*);
 
 	bool OpenStream(int, int, int);
 	void CloseStream();
@@ -757,7 +758,7 @@ void VDirectSoundDevice::StopChannel(int Handle)
 //==========================================================================
 
 void VDirectSoundDevice::UpdateListener(const TVec& org, const TVec& vel,
-	const TVec& fwd, const TVec&, const TVec& up)
+	const TVec& fwd, const TVec&, const TVec& up, VReverbInfo* Env)
 {
 	guard(VDirectSoundDevice::UpdateListener);
 	//	Set position, velocity and orientation.
@@ -773,17 +774,39 @@ void VDirectSoundDevice::UpdateListener(const TVec& org, const TVec& vel,
 	if (SupportEAX)
 	{
 		//	Set environment properties.
-		DWORD envId = eax_environment;
-		if (envId < 0 || envId >= EAX_ENVIRONMENT_COUNT)
-			envId = EAX_ENVIRONMENT_GENERIC;
+		EAXLISTENERPROPERTIES Prop;
+		Prop.lRoom = Env->Props.Room;
+		Prop.lRoomHF = Env->Props.RoomHF;
+		Prop.flRoomRolloffFactor = Env->Props.RoomRolloffFactor;
+		Prop.flDecayTime = Env->Props.DecayTime;
+		Prop.flDecayHFRatio = Env->Props.DecayHFRatio;
+		Prop.lReflections = Env->Props.Reflections;
+		Prop.flReflectionsDelay = Env->Props.ReflectionsDelay;
+		Prop.lReverb = Env->Props.Reverb;
+		Prop.flReverbDelay = Env->Props.ReverbDelay;
+		Prop.dwEnvironment = Env->Props.Environment;
+		Prop.flEnvironmentSize = Env->Props.EnvironmentSize;
+		Prop.flEnvironmentDiffusion = Env->Props.EnvironmentDiffusion;
+		Prop.flAirAbsorptionHF = Env->Props.AirAbsorptionHF;
+		Prop.dwFlags = Env->Props.Flags & 0x3f;
 		PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
-			DSPROPERTY_EAXLISTENER_ENVIRONMENT |
-			DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envId, sizeof(DWORD));
+			DSPROPERTY_EAXLISTENER_ALLPARAMETERS |
+			DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &Prop, sizeof(Prop));
 
-		float envSize = GAudio->EAX_CalcEnvSize();
-		PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
-			DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE |
-			DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envSize, sizeof(float));
+		if (Env->Id == 1)
+		{
+			DWORD envId = eax_environment;
+			if (envId < 0 || envId >= EAX_ENVIRONMENT_COUNT)
+				envId = EAX_ENVIRONMENT_GENERIC;
+			PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
+				DSPROPERTY_EAXLISTENER_ENVIRONMENT |
+				DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envId, sizeof(DWORD));
+
+			float envSize = GAudio->EAX_CalcEnvSize();
+			PropertySet->Set(DSPROPSETID_EAX_ListenerProperties,
+				DSPROPERTY_EAXLISTENER_ENVIRONMENTSIZE |
+				DSPROPERTY_EAXLISTENER_DEFERRED, NULL, 0, &envSize, sizeof(float));
+		}
 	}
 
 	//	Commit settings.

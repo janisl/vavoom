@@ -764,3 +764,21 @@ void VSoundManager::ParseReverbs(VScriptParser* sc)
 	delete sc;
 	unguard;
 }
+
+//==========================================================================
+//
+//	VSoundManager::FindEnvironment
+//
+//==========================================================================
+
+VReverbInfo* VSoundManager::FindEnvironment(int Id)
+{
+	guard(VSoundManager::FindEnvironment);
+	VReverbInfo* Check = Environments;
+	while (Check->Next && Check->Next->Id <= Id)
+	{
+		Check = Check->Next;
+	}
+	return Check;
+	unguard;
+}

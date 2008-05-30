@@ -274,6 +274,7 @@ void VUdmfParser::ParseSector(VScriptParser& sc, VLevel* Level)
 	S.params.LightColour = 0x00ffffff;
 	S.seqType = -1;	// default seqType
 	S.Gravity = 1.0;	// default sector gravity of 1.0
+	S.Zone = -1;
 
 	sc.Expect("{");
 	while (!sc.Check("}"))

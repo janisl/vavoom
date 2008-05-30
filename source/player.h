@@ -176,6 +176,8 @@ class VBasePlayer : public VObject
 
 	float			ViewEntAlpha;
 
+	vint32			SoundEnvironment;
+
 	VClientGameBase*	ClGame;
 
 	VPlayerReplicationInfo*	PlayerReplicationInfo;

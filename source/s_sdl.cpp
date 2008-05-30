@@ -61,7 +61,8 @@ public:
 	void UpdateChannel3D(int, const TVec&, const TVec&);
 	bool IsChannelPlaying(int);
 	void StopChannel(int);
-	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&, const TVec&);
+	void UpdateListener(const TVec&, const TVec&, const TVec&, const TVec&,
+		const TVec&, VReverbInfo*);
 
 	bool OpenStream(int, int, int);
 	void CloseStream();
@@ -437,7 +438,7 @@ void VSDLSoundDevice::StopChannel(int Voice)
 //==========================================================================
 
 void VSDLSoundDevice::UpdateListener(const TVec&, const TVec&, const TVec&,
-	const TVec&, const TVec&)
+	const TVec&, const TVec&, VReverbInfo*)
 {
 }
 

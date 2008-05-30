@@ -129,6 +129,8 @@ enum
 #include "SoundSequence.vc"
 #include "SoundSequenceSlot.vc"
 
+#include "SoundEnvironment.vc"
+
 #include "SecurityCamera.vc"
 #include "AimingCamera.vc"
 #include "InterpolationPoint.vc"

@@ -146,6 +146,7 @@ enum
 	ML_MONSTERSCANACTIVATE	= 0x00002000,	//	Monsters (as well as players) can activate the line
 	ML_BLOCKPLAYERS			= 0x00004000,	//	Blocks players only.
 	ML_BLOCKEVERYTHING		= 0x00008000,	//	Line blocks everything.
+	ML_ZONEBOUNDARY			= 0x00010000,	//	Boundary of reverb zones.
 	ML_RAILING				= 0x00020000,
 	ML_BLOCK_FLOATERS		= 0x00040000,
 	ML_CLIP_MIDTEX			= 0x00080000,	// Automatic for every Strife line
@@ -457,6 +458,8 @@ struct sector_t
 	float			Gravity;				// Sector gravity (1.0 is normal)
 
 	int				Sky;
+
+	int				Zone;
 };
 
 //
@@ -829,6 +832,10 @@ class VLevel : public VObject
 	vint32				NumPolyAnchorPoints;
 	PolyAnchorPoint_t*	PolyAnchorPoints;
 
+	//	Sound environments for sector zones.
+	vint32				NumZones;
+	vint32*				Zones;
+
 	VThinker*			ThinkerHead;
 	VThinker*			ThinkerTail;
 
@@ -956,6 +963,8 @@ private:
 	void LinkNode(int, node_t*) const;
 	void ClearBox(float*) const;
 	void AddToBox(float*, float, float) const;
+	void FloodZones();
+	void FloodZone(sector_t*, int);
 
 	//	Loader of the Strife conversations.
 	void LoadRogueConScript(VName, int, FRogueConSpeech*&, int&) const;

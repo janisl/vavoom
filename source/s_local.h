@@ -111,12 +111,12 @@ struct seq_info_t
 
 enum
 {
-	REVERBF_ReflectionsScale		= 0x01,
-	REVERBF_ReflectionsDelayScale	= 0x02,
-	REVERBF_DecayTimeScale			= 0x04,
-	REVERBF_DecayHFLimit			= 0x08,
-	REVERBF_ReverbScale				= 0x10,
-	REVERBF_ReverbDelayScale		= 0x20,
+	REVERBF_DecayTimeScale			= 0x01,
+	REVERBF_ReflectionsScale		= 0x02,
+	REVERBF_ReflectionsDelayScale	= 0x04,
+	REVERBF_ReverbScale				= 0x08,
+	REVERBF_ReverbDelayScale		= 0x10,
+	REVERBF_DecayHFLimit			= 0x20,
 	REVERBF_EchoTimeScale			= 0x40,
 	REVERBF_ModulationTimeScale		= 0x80,
 };
@@ -190,7 +190,7 @@ public:
 	virtual bool IsChannelPlaying(int) = 0;
 	virtual void StopChannel(int) = 0;
 	virtual void UpdateListener(const TVec&, const TVec&, const TVec&,
-		const TVec&, const TVec&) = 0;
+		const TVec&, const TVec&, VReverbInfo*) = 0;
 
 	virtual bool OpenStream(int, int, int) = 0;
 	virtual void CloseStream() = 0;

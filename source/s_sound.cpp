@@ -983,7 +983,8 @@ void VAudio::UpdateSfx()
 	if (SoundDevice->Sound3D && cl)
 	{
 		SoundDevice->UpdateListener(cl->ViewOrg, TVec(0, 0, 0),
-			ListenerForward, ListenerRight, ListenerUp);
+			ListenerForward, ListenerRight, ListenerUp,
+			GSoundManager->FindEnvironment(cl->SoundEnvironment));
 	}
 
 	SoundDevice->Tick(host_frametime);
