@@ -191,6 +191,8 @@ void Host_Init()
 	SB_Init();
 #endif
 
+	VCommand::ProcessKeyConf();
+
 	R_ParseEffectDefs();
 
 	InitMapInfo();

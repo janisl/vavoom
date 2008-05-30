@@ -201,6 +201,43 @@ void VCommand::Shutdown()
 
 //==========================================================================
 //
+//	VCommand::ProcessKeyConf
+//
+//==========================================================================
+
+void VCommand::ProcessKeyConf()
+{
+	guard(VCommand::ProcessKeyConf);
+	//	Enable special mode for console commands.
+	ParsingKeyConf = true;
+
+	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+		Lump = W_IterateNS(Lump, WADNS_Global))
+	{
+		if (W_LumpName(Lump) == NAME_keyconf)
+		{
+			//	Read it.
+			VStream* Strm = W_CreateLumpReaderNum(Lump);
+			char* Buf = new char[Strm->TotalSize() + 1];
+			Strm->Serialise(Buf, Strm->TotalSize());
+			Buf[Strm->TotalSize()] = 0;
+			delete Strm;
+
+			//	Parse it
+			VCmdBuf CmdBuf;
+			CmdBuf << Buf;
+			CmdBuf.Exec();
+			delete[] Buf;
+		}
+	}
+
+	//	Back to normal console command execution.
+	ParsingKeyConf = false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VCommand::AddToAutoComplete
 //
 //==========================================================================

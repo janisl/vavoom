@@ -74,6 +74,7 @@ public:
 	static void Init();
 	static void WriteAlias(FILE*);
 	static void Shutdown();
+	static void ProcessKeyConf();
 
 	static void AddToAutoComplete(const char*);
 	static VStr GetAutoComplete(const VStr&, int&, bool);
