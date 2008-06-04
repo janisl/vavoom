@@ -110,10 +110,10 @@ public:
 	TArray<mthing_t>	ParsedThings;
 
 	VUdmfParser(int);
-	void Parse(VLevel*);
+	void Parse(VLevel*, const mapInfo_t&);
 	void ParseVertex();
 	void ParseSector(VLevel*);
-	void ParseLineDef();
+	void ParseLineDef(const mapInfo_t&);
 	void ParseSideDef();
 	void ParseThing();
 	void ParseKey();
@@ -155,7 +155,7 @@ VUdmfParser::VUdmfParser(int Lump)
 //
 //==========================================================================
 
-void VUdmfParser::Parse(VLevel* Level)
+void VUdmfParser::Parse(VLevel* Level, const mapInfo_t& MInfo)
 {
 	guard(VUdmfParser::Parse);
 	sc.SetCMode(true);
@@ -220,7 +220,7 @@ void VUdmfParser::Parse(VLevel* Level)
 		}
 		else if (sc.Check("linedef"))
 		{
-			ParseLineDef();
+			ParseLineDef(MInfo);
 		}
 		else if (sc.Check("sidedef"))
 		{
@@ -346,7 +346,7 @@ void VUdmfParser::ParseSector(VLevel* Level)
 //
 //==========================================================================
 
-void VUdmfParser::ParseLineDef()
+void VUdmfParser::ParseLineDef(const mapInfo_t& MInfo)
 {
 	guard(VUdmfParser::ParseLineDef);
 	VParsedLine& L = ParsedLines.Alloc();
@@ -357,6 +357,14 @@ void VUdmfParser::ParseLineDef()
 	L.L.LineTag = bExtended ? -1 : 0;
 	L.L.sidenum[0] = -1;
 	L.L.sidenum[1] = -1;
+	if (MInfo.Flags & MAPINFOF_ClipMidTex)
+	{
+		L.L.flags |= ML_CLIP_MIDTEX;
+	}
+	if (MInfo.Flags & MAPINFOF_WrapMidTex)
+	{
+		L.L.flags |= ML_WRAP_MIDTEX;
+	}
 	bool HavePassUse = false;
 
 	sc.Expect("{");
@@ -1001,11 +1009,11 @@ void VUdmfParser::Flag(int& Field, int Mask, const VStr& Val)
 //
 //==========================================================================
 
-void VLevel::LoadTextMap(int Lump)
+void VLevel::LoadTextMap(int Lump, const mapInfo_t& MInfo)
 {
 	guard(VLevel::LoadTextMap);
 	VUdmfParser Parser(Lump);
-	Parser.Parse(this);
+	Parser.Parse(this, MInfo);
 
 	if (Parser.bExtended)
 	{

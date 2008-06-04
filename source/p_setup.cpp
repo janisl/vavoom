@@ -148,6 +148,7 @@ void VLevel::LoadMap(VName AMapName)
 	int CompressedGLNodesLump = -1;
 	bool UseComprGLNodes = false;
 	bool NeedNodesBuild = false;
+	const mapInfo_t& MInfo = P_GetMapInfo(MapName);
 
 	//	Check for UDMF map
 	if (W_LumpName(lumpnum + 1) == NAME_textmap)
@@ -278,7 +279,7 @@ void VLevel::LoadMap(VName AMapName)
 	if (LevelFlags & LF_TextMap)
 	{
 		VertexTime = -Sys_Time();
-		LoadTextMap(lumpnum + 1);
+		LoadTextMap(lumpnum + 1, MInfo);
 		VertexTime += Sys_Time();
 	}
 	else
@@ -294,14 +295,14 @@ void VLevel::LoadMap(VName AMapName)
 		LinesTime = -Sys_Time();
 		if (!(LevelFlags & LF_Extended))
 		{
-			LoadLineDefs1(lumpnum + ML_LINEDEFS, NumBaseVerts);
+			LoadLineDefs1(lumpnum + ML_LINEDEFS, NumBaseVerts, MInfo);
 			LinesTime += Sys_Time();
 			ThingsTime = -Sys_Time();
 			LoadThings1(lumpnum + ML_THINGS);
 		}
 		else
 		{
-			LoadLineDefs2(lumpnum + ML_LINEDEFS, NumBaseVerts);
+			LoadLineDefs2(lumpnum + ML_LINEDEFS, NumBaseVerts, MInfo);
 			LinesTime += Sys_Time();
 			ThingsTime = -Sys_Time();
 			LoadThings2(lumpnum + ML_THINGS);
@@ -400,7 +401,6 @@ void VLevel::LoadMap(VName AMapName)
 	MinMaxTime += Sys_Time();
 
 	double WallShadesTime = -Sys_Time();
-	const mapInfo_t& MInfo = P_GetMapInfo(MapName);
 	for (int i = 0; i < NumLines; i++)
 	{
 		line_t* Line = Lines + i;
@@ -891,7 +891,7 @@ void VLevel::LoadSideDefs(int Lump)
 //
 //==========================================================================
 
-void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts)
+void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 {
 	guard(VLevel::LoadLineDefs1);
 	NumLines = W_LumpLength(Lump) / 14;
@@ -924,6 +924,15 @@ void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts)
 
 		ld->alpha = 1.0;
 		ld->LineTag = -1;
+
+		if (MInfo.Flags & MAPINFOF_ClipMidTex)
+		{
+			ld->flags |= ML_CLIP_MIDTEX;
+		}
+		if (MInfo.Flags & MAPINFOF_WrapMidTex)
+		{
+			ld->flags |= ML_WRAP_MIDTEX;
+		}
 	}
 	delete Strm;
 	unguard;
@@ -937,7 +946,7 @@ void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts)
 //
 //==========================================================================
 
-void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
+void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 {
 	guard(VLevel::LoadLineDefs2);
 	NumLines = W_LumpLength(Lump) / 16;
@@ -989,6 +998,15 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts)
 
 		ld->alpha = 1.0;
 		ld->LineTag = -1;
+
+		if (MInfo.Flags & MAPINFOF_ClipMidTex)
+		{
+			ld->flags |= ML_CLIP_MIDTEX;
+		}
+		if (MInfo.Flags & MAPINFOF_WrapMidTex)
+		{
+			ld->flags |= ML_WRAP_MIDTEX;
+		}
 	}
 	delete Strm;
 	unguard;

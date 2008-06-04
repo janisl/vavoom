@@ -77,6 +77,7 @@ class VAcsLevel;
 class VNetContext;
 
 struct sector_t;
+struct mapInfo_t;
 
 class	VThinker;
 class		VLevelInfo;
@@ -932,8 +933,8 @@ private:
 	void LoadVertexes(int, int, int&);
 	void LoadSectors(int);
 	void LoadSideDefs(int);
-	void LoadLineDefs1(int, int);
-	void LoadLineDefs2(int, int);
+	void LoadLineDefs1(int, int, const mapInfo_t&);
+	void LoadLineDefs2(int, int, const mapInfo_t&);
 	void LoadGLSegs(int, int);
 	void LoadSubsectors(int);
 	void LoadNodes(int);
@@ -944,7 +945,7 @@ private:
 	void LoadThings1(int);
 	void LoadThings2(int);
 	void LoadACScripts(int);
-	void LoadTextMap(int);
+	void LoadTextMap(int, const mapInfo_t&);
 
 	//	Map loading helpers.
 	int FindGLNodes(VName) const;

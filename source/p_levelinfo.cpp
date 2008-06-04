@@ -157,18 +157,6 @@ void VLevelInfo::SetMapInfo(const mapInfo_t& Info)
 			XLevel->Sectors[i].seqType = 0;
 		}
 	}
-
-	for (int i = 0; i < XLevel->NumLines; i++)
-	{
-		if (Info.Flags & MAPINFOF_ClipMidTex)
-		{
-			XLevel->Lines[i].flags |= ML_CLIP_MIDTEX;
-		}
-		if (Info.Flags & MAPINFOF_WrapMidTex)
-		{
-			XLevel->Lines[i].flags |= ML_WRAP_MIDTEX;
-		}
-	}
 	unguard;
 }
 
