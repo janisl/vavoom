@@ -58,6 +58,7 @@ public:
 	bool CheckFloatWithSign();
 	void ExpectFloatWithSign();
 	void UnGet();
+	void Message(const char*);
 	void Error(const char*);
 	TLocation GetLoc();
 

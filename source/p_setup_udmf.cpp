@@ -70,6 +70,15 @@ public:
 		NS_ZDoomTranslated	= 0x40,
 	};
 
+	enum
+	{
+		TK_None,
+		TK_Int,
+		TK_Float,
+		TK_String,
+		TK_Identifier,
+	};
+
 	struct VParsedLine
 	{
 		line_t		L;
@@ -86,20 +95,32 @@ public:
 		int			SectorIndex;
 	};
 
+	VScriptParser		sc;
 	bool				bExtended;
 	vuint8				NS;
+	VStr				Key;
+	int					ValType;
+	int					ValInt;
+	float				ValFloat;
+	VStr				Val;
 	TArray<vertex_t>	ParsedVertexes;
 	TArray<sector_t>	ParsedSectors;
 	TArray<VParsedLine>	ParsedLines;
 	TArray<VParsedSide>	ParsedSides;
 	TArray<mthing_t>	ParsedThings;
 
-	void Parse(VLevel*, int);
-	void ParseVertex(VScriptParser&);
-	void ParseSector(VScriptParser&, VLevel*);
-	void ParseLineDef(VScriptParser&);
-	void ParseSideDef(VScriptParser&);
-	void ParseThing(VScriptParser&);
+	VUdmfParser(int);
+	void Parse(VLevel*);
+	void ParseVertex();
+	void ParseSector(VLevel*);
+	void ParseLineDef();
+	void ParseSideDef();
+	void ParseThing();
+	void ParseKey();
+	int CheckInt();
+	float CheckFloat();
+	bool CheckBool();
+	VStr CheckString();
 	void Flag(int&, int, const VStr&);
 };
 
@@ -119,14 +140,24 @@ public:
 
 //==========================================================================
 //
+//	VUdmfParser::VUdmfParser
+//
+//==========================================================================
+
+VUdmfParser::VUdmfParser(int Lump)
+: sc("textmap", W_CreateLumpReaderNum(Lump))
+{
+}
+
+//==========================================================================
+//
 //	VUdmfParser::Parse
 //
 //==========================================================================
 
-void VUdmfParser::Parse(VLevel* Level, int Lump)
+void VUdmfParser::Parse(VLevel* Level)
 {
 	guard(VUdmfParser::Parse);
-	VScriptParser sc("textmap", W_CreateLumpReaderNum(Lump));
 	sc.SetCMode(true);
 
 	bExtended = false;
@@ -181,23 +212,23 @@ void VUdmfParser::Parse(VLevel* Level, int Lump)
 	{
 		if (sc.Check("vertex"))
 		{
-			ParseVertex(sc);
+			ParseVertex();
 		}
 		else if (sc.Check("sector"))
 		{
-			ParseSector(sc, Level);
+			ParseSector(Level);
 		}
 		else if (sc.Check("linedef"))
 		{
-			ParseLineDef(sc);
+			ParseLineDef();
 		}
 		else if (sc.Check("sidedef"))
 		{
-			ParseSideDef(sc);
+			ParseSideDef();
 		}
 		else if (sc.Check("thing"))
 		{
-			ParseThing(sc);
+			ParseThing();
 		}
 		else
 		{
@@ -213,7 +244,7 @@ void VUdmfParser::Parse(VLevel* Level, int Lump)
 //
 //==========================================================================
 
-void VUdmfParser::ParseVertex(VScriptParser& sc)
+void VUdmfParser::ParseVertex()
 {
 	guard(VUdmfParser::ParseVertex);
 	//	Allocate a new vertex.
@@ -223,25 +254,14 @@ void VUdmfParser::ParseVertex(VScriptParser& sc)
 	sc.Expect("{");
 	while (!sc.Check("}"))
 	{
-		//	Get key and value.
-		sc.ExpectString();
-		VStr Key = sc.String;
-		sc.Expect("=");
-		sc.ExpectString();
-		VStr Val = sc.String;
-		if (Val == "-" && sc.CheckFloat())
-		{
-			Val += sc.String;
-		}
-		sc.Expect(";");
-
+		ParseKey();
 		if (!Key.ICmp("x"))
 		{
-			V.x = atof(*Val);
+			V.x = CheckFloat();
 		}
 		else if (!Key.ICmp("y"))
 		{
-			V.y = atof(*Val);
+			V.y = CheckFloat();
 		}
 	}
 	unguard;
@@ -253,7 +273,7 @@ void VUdmfParser::ParseVertex(VScriptParser& sc)
 //
 //==========================================================================
 
-void VUdmfParser::ParseSector(VScriptParser& sc, VLevel* Level)
+void VUdmfParser::ParseSector(VLevel* Level)
 {
 	guard(VUdmfParser::ParseSector);
 	sector_t& S = ParsedSectors.Alloc();
@@ -279,20 +299,10 @@ void VUdmfParser::ParseSector(VScriptParser& sc, VLevel* Level)
 	sc.Expect("{");
 	while (!sc.Check("}"))
 	{
-		sc.ExpectString();
-		VStr Key = sc.String;
-		sc.Expect("=");
-		sc.ExpectString();
-		VStr Val = sc.String;
-		if (Val == "-" && sc.CheckFloat())
-		{
-			Val += sc.String;
-		}
-		sc.Expect(";");
-
+		ParseKey();
 		if (!Key.ICmp("heightfloor"))
 		{
-			float FVal = atof(*Val);
+			float FVal = CheckFloat();
 			S.floor.dist = FVal;
 			S.floor.TexZ = FVal;
 			S.floor.minz = FVal;
@@ -300,7 +310,7 @@ void VUdmfParser::ParseSector(VScriptParser& sc, VLevel* Level)
 		}
 		else if (!Key.ICmp("heightceiling"))
 		{
-			float FVal = atof(*Val);
+			float FVal = CheckFloat();
 			S.ceiling.dist = -FVal;
 			S.ceiling.TexZ = FVal;
 			S.ceiling.minz = FVal;
@@ -316,15 +326,15 @@ void VUdmfParser::ParseSector(VScriptParser& sc, VLevel* Level)
 		}
 		else if (!Key.ICmp("lightlevel"))
 		{
-			S.params.lightlevel = atoi(*Val);
+			S.params.lightlevel = CheckInt();
 		}
 		else if (!Key.ICmp("special"))
 		{
-			S.special = atoi(*Val);
+			S.special = CheckInt();
 		}
 		else if (!Key.ICmp("id"))
 		{
-			S.tag = atoi(*Val);
+			S.tag = CheckInt();
 		}
 	}
 	unguard;
@@ -336,7 +346,7 @@ void VUdmfParser::ParseSector(VScriptParser& sc, VLevel* Level)
 //
 //==========================================================================
 
-void VUdmfParser::ParseLineDef(VScriptParser& sc)
+void VUdmfParser::ParseLineDef()
 {
 	guard(VUdmfParser::ParseLineDef);
 	VParsedLine& L = ParsedLines.Alloc();
@@ -352,28 +362,18 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 	sc.Expect("{");
 	while (!sc.Check("}"))
 	{
-		sc.ExpectString();
-		VStr Key = sc.String;
-		sc.Expect("=");
-		sc.ExpectString();
-		VStr Val = sc.String;
-		if (Val == "-" && sc.CheckFloat())
-		{
-			Val += sc.String;
-		}
-		sc.Expect(";");
-
+		ParseKey();
 		if (!Key.ICmp("id"))
 		{
-			L.L.LineTag = atoi(*Val);
+			L.L.LineTag = CheckInt();
 		}
 		else if (!Key.ICmp("v1"))
 		{
-			L.V1Index = atoi(*Val);
+			L.V1Index = CheckInt();
 		}
 		else if (!Key.ICmp("v2"))
 		{
-			L.V2Index = atoi(*Val);
+			L.V2Index = CheckInt();
 		}
 		else if (!Key.ICmp("blocking"))
 		{
@@ -413,35 +413,35 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 		}
 		else if (!Key.ICmp("special"))
 		{
-			L.L.special = atoi(*Val);
+			L.L.special = CheckInt();
 		}
 		else if (!Key.ICmp("arg0"))
 		{
-			L.L.arg1 = atoi(*Val);
+			L.L.arg1 = CheckInt();
 		}
 		else if (!Key.ICmp("arg1"))
 		{
-			L.L.arg2 = atoi(*Val);
+			L.L.arg2 = CheckInt();
 		}
 		else if (!Key.ICmp("arg2"))
 		{
-			L.L.arg3 = atoi(*Val);
+			L.L.arg3 = CheckInt();
 		}
 		else if (!Key.ICmp("arg3"))
 		{
-			L.L.arg4 = atoi(*Val);
+			L.L.arg4 = CheckInt();
 		}
 		else if (!Key.ICmp("arg4"))
 		{
-			L.L.arg5 = atoi(*Val);
+			L.L.arg5 = CheckInt();
 		}
 		else if (!Key.ICmp("sidefront"))
 		{
-			L.L.sidenum[0] = atoi(*Val);
+			L.L.sidenum[0] = CheckInt();
 		}
 		else if (!Key.ICmp("sideback"))
 		{
-			L.L.sidenum[1] = atoi(*Val);
+			L.L.sidenum[1] = CheckInt();
 		}
 
 		//	Doom specific flags.
@@ -451,7 +451,7 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 			{
 				if (bExtended)
 				{
-					HavePassUse = !Val.ICmp("true");
+					HavePassUse = CheckBool();
 				}
 				else
 				{
@@ -465,7 +465,7 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 		{
 			if (!Key.ICmp("translucent"))
 			{
-				L.L.alpha = 0.666;
+				L.L.alpha = CheckBool() ? 0.666 : 1.0;
 			}
 			else if (!Key.ICmp("jumpover"))
 			{
@@ -527,7 +527,7 @@ void VUdmfParser::ParseLineDef(VScriptParser& sc)
 //
 //==========================================================================
 
-void VUdmfParser::ParseSideDef(VScriptParser& sc)
+void VUdmfParser::ParseSideDef()
 {
 	guard(VUdmfParser::ParseSideDef);
 	VParsedSide& S = ParsedSides.Alloc();
@@ -539,46 +539,36 @@ void VUdmfParser::ParseSideDef(VScriptParser& sc)
 	sc.Expect("{");
 	while (!sc.Check("}"))
 	{
-		sc.ExpectString();
-		VStr Key = sc.String;
-		sc.Expect("=");
-		sc.ExpectString();
-		VStr Val = sc.String;
-		if (Val == "-" && sc.CheckFloat())
-		{
-			Val += sc.String;
-		}
-		sc.Expect(";");
-
+		ParseKey();
 		if (!Key.ICmp("offsetx"))
 		{
-			float FVal = atof(*Val);
+			float FVal = CheckFloat();
 			S.S.TopTextureOffset = FVal;
 			S.S.MidTextureOffset = FVal;
 			S.S.BotTextureOffset = FVal;
 		}
 		else if (!Key.ICmp("offsety"))
 		{
-			float FVal = atof(*Val);
+			float FVal = CheckFloat();
 			S.S.TopRowOffset = FVal;
 			S.S.MidRowOffset = FVal;
 			S.S.BotRowOffset = FVal;
 		}
 		else if (!Key.ICmp("texturetop"))
 		{
-			S.TopTexture = Val;
+			S.TopTexture = CheckString();
 		}
 		else if (!Key.ICmp("texturebottom"))
 		{
-			S.BotTexture = Val;
+			S.BotTexture = CheckString();
 		}
 		else if (!Key.ICmp("texturemiddle"))
 		{
-			S.MidTexture = Val;
+			S.MidTexture = CheckString();
 		}
 		else if (!Key.ICmp("sector"))
 		{
-			S.SectorIndex = atoi(*Val);
+			S.SectorIndex = CheckInt();
 		}
 	}
 	unguard;
@@ -590,7 +580,7 @@ void VUdmfParser::ParseSideDef(VScriptParser& sc)
 //
 //==========================================================================
 
-void VUdmfParser::ParseThing(VScriptParser& sc)
+void VUdmfParser::ParseThing()
 {
 	guard(VUdmfParser::ParseThing);
 	mthing_t& T = ParsedThings.Alloc();
@@ -599,36 +589,26 @@ void VUdmfParser::ParseThing(VScriptParser& sc)
 	sc.Expect("{");
 	while (!sc.Check("}"))
 	{
-		sc.ExpectString();
-		VStr Key = sc.String;
-		sc.Expect("=");
-		sc.ExpectString();
-		VStr Val = sc.String;
-		if (Val == "-" && sc.CheckFloat())
-		{
-			Val += sc.String;
-		}
-		sc.Expect(";");
-
+		ParseKey();
 		if (!Key.ICmp("x"))
 		{
-			T.x = atof(*Val);
+			T.x = CheckFloat();
 		}
 		else if (!Key.ICmp("y"))
 		{
-			T.y = atof(*Val);
+			T.y = CheckFloat();
 		}
 		else if (!Key.ICmp("height"))
 		{
-			T.height = atof(*Val);
+			T.height = CheckFloat();
 		}
 		else if (!Key.ICmp("angle"))
 		{
-			T.angle = atoi(*Val);
+			T.angle = CheckInt();
 		}
 		else if (!Key.ICmp("type"))
 		{
-			T.type = atoi(*Val);
+			T.type = CheckInt();
 		}
 		else if (!Key.ICmp("ambush"))
 		{
@@ -746,7 +726,7 @@ void VUdmfParser::ParseThing(VScriptParser& sc)
 		{
 			if (!Key.ICmp("id"))
 			{
-				T.tid = atoi(*Val);
+				T.tid = CheckInt();
 			}
 			else if (!Key.ICmp("dormant"))
 			{
@@ -818,31 +798,181 @@ void VUdmfParser::ParseThing(VScriptParser& sc)
 			}
 			else if (!Key.ICmp("special"))
 			{
-				T.special = atoi(*Val);
+				T.special = CheckInt();
 			}
 			else if (!Key.ICmp("arg0"))
 			{
-				T.arg1 = atoi(*Val);
+				T.arg1 = CheckInt();
 			}
 			else if (!Key.ICmp("arg1"))
 			{
-				T.arg2 = atoi(*Val);
+				T.arg2 = CheckInt();
 			}
 			else if (!Key.ICmp("arg2"))
 			{
-				T.arg3 = atoi(*Val);
+				T.arg3 = CheckInt();
 			}
 			else if (!Key.ICmp("arg3"))
 			{
-				T.arg4 = atoi(*Val);
+				T.arg4 = CheckInt();
 			}
 			else if (!Key.ICmp("arg4"))
 			{
-				T.arg5 = atoi(*Val);
+				T.arg5 = CheckInt();
 			}
 		}
 	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	VUdmfParser::ParseKey
+//
+//==========================================================================
+
+void VUdmfParser::ParseKey()
+{
+	guard(VUdmfParser::ParseKey);
+	//	Get key and value.
+	sc.ExpectString();
+	Key = sc.String;
+	sc.Expect("=");
+
+	ValType = TK_None;
+	if (sc.Check("+"))
+	{
+		if (sc.CheckNumber())
+		{
+			ValType = TK_Int;
+			ValInt = sc.Number;
+		}
+		else if (sc.CheckFloat())
+		{
+			ValType = TK_Float;
+			ValFloat = sc.Float;
+		}
+		else
+		{
+			sc.Message("Numeric constant expected");
+		}
+	}
+	else if (sc.Check("-"))
+	{
+		if (sc.CheckNumber())
+		{
+			ValType = TK_Int;
+			ValInt = -sc.Number;
+		}
+		else if (sc.CheckFloat())
+		{
+			ValType = TK_Float;
+			ValFloat = -sc.Float;
+		}
+		else
+		{
+			sc.Message("Numeric constant expected");
+		}
+	}
+	else if (sc.CheckNumber())
+	{
+		ValType = TK_Int;
+		ValInt = sc.Number;
+	}
+	else if (sc.CheckFloat())
+	{
+		ValType = TK_Float;
+		ValFloat = sc.Float;
+	}
+	else if (sc.CheckQuotedString())
+	{
+		ValType = TK_String;
+		Val = sc.String;
+	}
+	else
+	{
+		sc.ExpectString();
+		ValType = TK_Identifier;
+		Val = sc.String;
+	}
+	sc.Expect(";");
+	unguard;
+}
+
+//==========================================================================
+//
+//	VUdmfParser::CheckInt
+//
+//==========================================================================
+
+int VUdmfParser::CheckInt()
+{
+	guardSlow(VUdmfParser::CheckInt);
+	if (ValType != TK_Int)
+	{
+		sc.Message(va("Integer value expected for key %s", *Key));
+	}
+	return ValInt;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VUdmfParser::CheckFloat
+//
+//==========================================================================
+
+float VUdmfParser::CheckFloat()
+{
+	guardSlow(VUdmfParser::CheckFloat);
+	if (ValType != TK_Int && ValType != TK_Float)
+	{
+		sc.Message(va("Float value expected for key %s", *Key));
+	}
+	return ValType == TK_Int ? ValInt : ValFloat;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VUdmfParser::CheckBool
+//
+//==========================================================================
+
+bool VUdmfParser::CheckBool()
+{
+	guardSlow(VUdmfParser::CheckBool);
+	if (ValType == TK_Identifier)
+	{
+		if (!Val.ICmp("true"))
+		{
+			return true;
+		}
+		if (!Val.ICmp("false"))
+		{
+			return false;
+		}
+	}
+	sc.Message(va("Boolean value expected for key %s", *Key));
+	return false;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VUdmfParser::CheckString
+//
+//==========================================================================
+
+VStr VUdmfParser::CheckString()
+{
+	guardSlow(VUdmfParser::CheckString);
+	if (ValType != TK_String)
+	{
+		sc.Message(va("String value expected for key %s", *Key));
+	}
+	return Val;
+	unguardSlow;
 }
 
 //==========================================================================
@@ -854,7 +984,7 @@ void VUdmfParser::ParseThing(VScriptParser& sc)
 void VUdmfParser::Flag(int& Field, int Mask, const VStr& Val)
 {
 	guard(VUdmfParser::Flag);
-	if (!Val.ICmp("true"))
+	if (CheckBool())
 	{
 		Field |= Mask;
 	}
@@ -874,8 +1004,8 @@ void VUdmfParser::Flag(int& Field, int Mask, const VStr& Val)
 void VLevel::LoadTextMap(int Lump)
 {
 	guard(VLevel::LoadTextMap);
-	VUdmfParser Parser;
-	Parser.Parse(this, Lump);
+	VUdmfParser Parser(Lump);
+	Parser.Parse(this);
 
 	if (Parser.bExtended)
 	{

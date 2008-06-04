@@ -728,6 +728,20 @@ void VScriptParser::UnGet()
 
 //==========================================================================
 //
+//	VScriptParser::Message
+//
+//==========================================================================
+
+void VScriptParser::Message(const char* message)
+{
+	guard(VScriptParser::Message)
+	const char* Msg = message ? message : "Bad syntax.";
+	GCon->Logf("\"%s\" line %d: %s", *ScriptName, Line, Msg);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VScriptParser::Error
 //
 //==========================================================================
