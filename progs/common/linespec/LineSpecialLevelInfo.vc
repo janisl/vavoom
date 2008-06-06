@@ -5858,19 +5858,11 @@ final bool EV_LineTranslucent(int Arg1, int Arg2, int Arg3, int Arg4,
 		Other->alpha = itof(Arg2) / 255.0;
 		if (Arg3 == 0)
 		{
-			XLevel.Sides[Other->sidenum[0]].Flags &= ~SDF_ADDITIVE;
-			if (Other->sidenum[0] >= 0)
-			{
-				XLevel.Sides[Other->sidenum[1]].Flags &= ~SDF_ADDITIVE;
-			}
+			Other->flags &= ~ML_ADDITIVE;
 		}
 		else if (Arg3 == 1)
 		{
-			XLevel.Sides[Other->sidenum[0]].Flags |= SDF_ADDITIVE;
-			if (Other->sidenum[0] >= 0)
-			{
-				XLevel.Sides[Other->sidenum[1]].Flags |= SDF_ADDITIVE;
-			}
+			Other->flags |= ML_ADDITIVE;
 		}
 		else
 		{

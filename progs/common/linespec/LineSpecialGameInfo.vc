@@ -1098,13 +1098,7 @@ void SpawnWorld(Level InLevel)
 						InLevel.Lines[j].alpha = alpha;
 						if (line->arg3 == 1)
 						{
-							InLevel.Sides[InLevel.Lines[j].sidenum[
-								0]].Flags |= SDF_ADDITIVE;
-							if (InLevel.Lines[j].sidenum[0] >= 0)
-							{
-								InLevel.Sides[InLevel.Lines[j].sidenum[
-									1]].Flags |= SDF_ADDITIVE;
-							}
+							InLevel.Lines[j].flags |= ML_ADDITIVE;
 						}
 					}
 				}
@@ -1114,11 +1108,7 @@ void SpawnWorld(Level InLevel)
 				line->alpha = alpha;
 				if (line->arg3 == 1)
 				{
-					InLevel.Sides[line->sidenum[0]].Flags |= SDF_ADDITIVE;
-					if (line->sidenum[1] >= 0)
-					{
-						InLevel.Sides[line->sidenum[1]].Flags |= SDF_ADDITIVE;
-					}
+					line->flags |= ML_ADDITIVE;
 				}
 			}
 			line->special = 0;

@@ -1166,7 +1166,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 				seg->offset * TextureSScale(MTex) +
 				sidedef->MidTextureOffset * TextureOffsetSScale(MTex);
 			sp->texinfo.Alpha = linedef->alpha;
-			sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
+			sp->texinfo.Additive = !!(linedef->flags & ML_ADDITIVE);
 
 			if (linedef->flags & ML_DONTPEGBOTTOM)
 			{
@@ -1683,7 +1683,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 					seg->offset * TextureSScale(MTex) +
 					sidedef->MidTextureOffset * TextureOffsetSScale(MTex);
 				sp->texinfo.Alpha = linedef->alpha;
-				sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
+				sp->texinfo.Additive = !!(linedef->flags & ML_ADDITIVE);
 
 				if (linedef->flags & ML_DONTPEGBOTTOM)
 				{
@@ -1741,7 +1741,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			if (sidedef->MidTexture)
 			{
 				sp->texinfo.Alpha = linedef->alpha;
-				sp->texinfo.Additive = !!(sidedef->Flags & SDF_ADDITIVE);
+				sp->texinfo.Additive = !!(linedef->flags & ML_ADDITIVE);
 			}
 		}
 		if (FASI(sp->TextureOffset) != FASI(sidedef->MidTextureOffset))

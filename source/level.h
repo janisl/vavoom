@@ -142,8 +142,7 @@ enum
 	ML_DONTDRAW				= 0x00000080,	// don't draw on the automap
 	ML_MAPPED				= 0x00000100,	// set if already drawn in automap
 	ML_REPEAT_SPECIAL		= 0x00000200,	// special is repeatable
-	ML_SPAC_SHIFT			= 10,
-	ML_SPAC_MASK			= 0x00001c00,
+	ML_ADDITIVE				= 0x00000400,	//	Additive translucency.
 	ML_MONSTERSCANACTIVATE	= 0x00002000,	//	Monsters (as well as players) can activate the line
 	ML_BLOCKPLAYERS			= 0x00004000,	//	Blocks players only.
 	ML_BLOCKEVERYTHING		= 0x00008000,	//	Line blocks everything.
@@ -153,6 +152,9 @@ enum
 	ML_CLIP_MIDTEX			= 0x00080000,	// Automatic for every Strife line
 	ML_WRAP_MIDTEX			= 0x00100000,
 	ML_FIRSTSIDEONLY		= 0x00800000,	// Actiavte only when crossed from front side.
+
+	ML_SPAC_SHIFT			= 10,
+	ML_SPAC_MASK			= 0x00001c00,
 };
 #define GET_SPAC(_flags_)		(((_flags_) & ML_SPAC_MASK) >> ML_SPAC_SHIFT)
 
@@ -225,8 +227,7 @@ struct line_t : public TPlane
 
 enum
 {
-	SDF_ADDITIVE		= 0x0001,	//	Additive translucency.
-	SDF_ABSLIGHT		= 0x0002,	//	Light is absolute value.
+	SDF_ABSLIGHT		= 0x0001,	//	Light is absolute value.
 };
 
 //

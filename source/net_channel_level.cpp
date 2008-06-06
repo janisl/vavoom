@@ -192,6 +192,7 @@ void VLevelChannel::Update()
 		if (Line->alpha != RepLine->alpha)
 		{
 			Msg << Line->alpha;
+			Msg.WriteBit(!!(Line->flags & ML_ADDITIVE));
 			RepLine->alpha = Line->alpha;
 		}
 	}
@@ -824,7 +825,17 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 			{
 				line_t* Line = &Level->Lines[Msg.ReadInt(Level->NumLines)];
 				if (Msg.ReadBit())
+				{
 					Msg << Line->alpha;
+					if (Msg.ReadBit())
+					{
+						Line->flags |= ML_ADDITIVE;
+					}
+					else
+					{
+						Line->flags &= ~ML_ADDITIVE;
+					}
+				}
 			}
 			break;
 
