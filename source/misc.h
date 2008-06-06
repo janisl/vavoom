@@ -64,4 +64,5 @@ int superatoi(const char *s);
 char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 int PassFloat(float f);
 
+int ParseHex(const char* Str);
 vuint32 M_ParseColour(VStr Name);

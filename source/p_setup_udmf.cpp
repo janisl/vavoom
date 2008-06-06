@@ -121,7 +121,8 @@ public:
 	float CheckFloat();
 	bool CheckBool();
 	VStr CheckString();
-	void Flag(int&, int, const VStr&);
+	void Flag(int&, int);
+	void Flag(vuint32&, int);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -336,6 +337,71 @@ void VUdmfParser::ParseSector(VLevel* Level)
 		{
 			S.tag = CheckInt();
 		}
+
+		//	Extensions.
+		if (NS & (NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
+		{
+			if (!Key.ICmp("xpanningfloor"))
+			{
+				S.floor.xoffs = CheckFloat();
+			}
+			else if (!Key.ICmp("ypanningfloor"))
+			{
+				S.floor.yoffs = CheckFloat();
+			}
+			else if (!Key.ICmp("xpanningceiling"))
+			{
+				S.ceiling.xoffs = CheckFloat();
+			}
+			else if (!Key.ICmp("ypanningceiling"))
+			{
+				S.ceiling.yoffs = CheckFloat();
+			}
+			else if (!Key.ICmp("xscalefloor"))
+			{
+				S.floor.XScale = CheckFloat();
+			}
+			else if (!Key.ICmp("yscalefloor"))
+			{
+				S.floor.YScale = CheckFloat();
+			}
+			else if (!Key.ICmp("xscaleceiling"))
+			{
+				S.ceiling.XScale = CheckFloat();
+			}
+			else if (!Key.ICmp("yscaleceiling"))
+			{
+				S.ceiling.YScale = CheckFloat();
+			}
+			else if (!Key.ICmp("rotationfloor"))
+			{
+				S.floor.Angle = CheckFloat();
+			}
+			else if (!Key.ICmp("rotationceiling"))
+			{
+				S.ceiling.Angle = CheckFloat();
+			}
+			else if (!Key.ICmp("gravity"))
+			{
+				S.Gravity = CheckFloat();
+			}
+			else if (!Key.ICmp("lightcolor"))
+			{
+				S.params.LightColour = ParseHex(*CheckString());
+			}
+			else if (!Key.ICmp("fadecolor"))
+			{
+				S.params.Fade = ParseHex(*CheckString());
+			}
+			else if (!Key.ICmp("silent"))
+			{
+				Flag(S.SectorFlags, sector_t::SF_Silent);
+			}
+			else if (!Key.ICmp("nofallingdamage"))
+			{
+				Flag(S.SectorFlags, sector_t::SF_NoFallingDamage);
+			}
+		}
 	}
 	unguard;
 }
@@ -385,39 +451,39 @@ void VUdmfParser::ParseLineDef(const mapInfo_t& MInfo)
 		}
 		else if (!Key.ICmp("blocking"))
 		{
-			Flag(L.L.flags, ML_BLOCKING, Val);
+			Flag(L.L.flags, ML_BLOCKING);
 		}
 		else if (!Key.ICmp("blockmonsters"))
 		{
-			Flag(L.L.flags, ML_BLOCKMONSTERS, Val);
+			Flag(L.L.flags, ML_BLOCKMONSTERS);
 		}
 		else if (!Key.ICmp("twosided"))
 		{
-			Flag(L.L.flags, ML_TWOSIDED, Val);
+			Flag(L.L.flags, ML_TWOSIDED);
 		}
 		else if (!Key.ICmp("dontpegtop"))
 		{
-			Flag(L.L.flags, ML_DONTPEGTOP, Val);
+			Flag(L.L.flags, ML_DONTPEGTOP);
 		}
 		else if (!Key.ICmp("dontpegbottom"))
 		{
-			Flag(L.L.flags, ML_DONTPEGBOTTOM, Val);
+			Flag(L.L.flags, ML_DONTPEGBOTTOM);
 		}
 		else if (!Key.ICmp("secret"))
 		{
-			Flag(L.L.flags, ML_SECRET, Val);
+			Flag(L.L.flags, ML_SECRET);
 		}
 		else if (!Key.ICmp("blocksound"))
 		{
-			Flag(L.L.flags, ML_SOUNDBLOCK, Val);
+			Flag(L.L.flags, ML_SOUNDBLOCK);
 		}
 		else if (!Key.ICmp("dontdraw"))
 		{
-			Flag(L.L.flags, ML_DONTDRAW, Val);
+			Flag(L.L.flags, ML_DONTDRAW);
 		}
 		else if (!Key.ICmp("mapped"))
 		{
-			Flag(L.L.flags, ML_MAPPED, Val);
+			Flag(L.L.flags, ML_MAPPED);
 		}
 		else if (!Key.ICmp("special"))
 		{
@@ -463,7 +529,7 @@ void VUdmfParser::ParseLineDef(const mapInfo_t& MInfo)
 				}
 				else
 				{
-					Flag(L.L.flags, ML_PASSUSE_BOOM, Val);
+					Flag(L.L.flags, ML_PASSUSE_BOOM);
 				}
 			}
 		}
@@ -477,11 +543,11 @@ void VUdmfParser::ParseLineDef(const mapInfo_t& MInfo)
 			}
 			else if (!Key.ICmp("jumpover"))
 			{
-				Flag(L.L.flags, ML_RAILING, Val);
+				Flag(L.L.flags, ML_RAILING);
 			}
 			else if (!Key.ICmp("blockfloaters"))
 			{
-				Flag(L.L.flags, ML_BLOCK_FLOATERS, Val);
+				Flag(L.L.flags, ML_BLOCK_FLOATERS);
 			}
 		}
 
@@ -490,39 +556,97 @@ void VUdmfParser::ParseLineDef(const mapInfo_t& MInfo)
 		{
 			if (!Key.ICmp("playercross"))
 			{
-				Flag(L.L.SpacFlags, SPAC_Cross, Val);
+				Flag(L.L.SpacFlags, SPAC_Cross);
 			}
 			else if (!Key.ICmp("playeruse"))
 			{
-				Flag(L.L.SpacFlags, SPAC_Use, Val);
+				Flag(L.L.SpacFlags, SPAC_Use);
 			}
 			else if (!Key.ICmp("monstercross"))
 			{
-				Flag(L.L.SpacFlags, SPAC_MCross, Val);
+				Flag(L.L.SpacFlags, SPAC_MCross);
 			}
 			else if (!Key.ICmp("monsteruse"))
 			{
-				Flag(L.L.SpacFlags, SPAC_MUse, Val);
+				Flag(L.L.SpacFlags, SPAC_MUse);
 			}
 			else if (!Key.ICmp("impact"))
 			{
-				Flag(L.L.SpacFlags, SPAC_Impact, Val);
+				Flag(L.L.SpacFlags, SPAC_Impact);
 			}
 			else if (!Key.ICmp("playerpush"))
 			{
-				Flag(L.L.SpacFlags, SPAC_Push, Val);
+				Flag(L.L.SpacFlags, SPAC_Push);
 			}
 			else if (!Key.ICmp("monsterpush"))
 			{
-				Flag(L.L.SpacFlags, SPAC_MPush, Val);
+				Flag(L.L.SpacFlags, SPAC_MPush);
 			}
 			else if (!Key.ICmp("missilecross"))
 			{
-				Flag(L.L.SpacFlags, SPAC_PCross, Val);
+				Flag(L.L.SpacFlags, SPAC_PCross);
 			}
 			else if (!Key.ICmp("repeatspecial"))
 			{
-				Flag(L.L.flags, ML_REPEAT_SPECIAL, Val);
+				Flag(L.L.flags, ML_REPEAT_SPECIAL);
+			}
+		}
+
+		//	Extensions.
+		if (NS & (NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
+		{
+			if (!Key.ICmp("alpha"))
+			{
+				L.L.alpha = CheckFloat();
+				L.L.alpha = MID(0, L.L.alpha, 1);
+			}
+			else if (!Key.ICmp("renderstyle"))
+			{
+				VStr RS = CheckString();
+				if (!RS.ICmp("translucent"))
+				{
+					L.L.flags &= ~ML_ADDITIVE;
+				}
+				else if (!RS.ICmp("add"))
+				{
+					L.L.flags |= ML_ADDITIVE;
+				}
+				else
+				{
+					sc.Message("Bad render style");
+				}
+			}
+			else if (!Key.ICmp("anycross"))
+			{
+				Flag(L.L.SpacFlags, SPAC_AnyCross);
+			}
+			else if (!Key.ICmp("monsteractivate"))
+			{
+				Flag(L.L.flags, ML_MONSTERSCANACTIVATE);
+			}
+			else if (!Key.ICmp("blockplayers"))
+			{
+				Flag(L.L.flags, ML_BLOCKPLAYERS);
+			}
+			else if (!Key.ICmp("blockeverything"))
+			{
+				Flag(L.L.flags, ML_BLOCKEVERYTHING);
+			}
+			else if (!Key.ICmp("firstsideonly"))
+			{
+				Flag(L.L.flags, ML_FIRSTSIDEONLY);
+			}
+			else if (!Key.ICmp("zoneboundary"))
+			{
+				Flag(L.L.flags, ML_ZONEBOUNDARY);
+			}
+			else if (!Key.ICmp("clipmidtex"))
+			{
+				Flag(L.L.flags, ML_CLIP_MIDTEX);
+			}
+			else if (!Key.ICmp("wrapmidtex"))
+			{
+				Flag(L.L.flags, ML_WRAP_MIDTEX);
 			}
 		}
 	}
@@ -543,6 +667,8 @@ void VUdmfParser::ParseSideDef()
 	S.TopTexture = "-";
 	S.MidTexture = "-";
 	S.BotTexture = "-";
+	float XOffs = 0;
+	float YOffs = 0;
 
 	sc.Expect("{");
 	while (!sc.Check("}"))
@@ -550,17 +676,11 @@ void VUdmfParser::ParseSideDef()
 		ParseKey();
 		if (!Key.ICmp("offsetx"))
 		{
-			float FVal = CheckFloat();
-			S.S.TopTextureOffset = FVal;
-			S.S.MidTextureOffset = FVal;
-			S.S.BotTextureOffset = FVal;
+			XOffs = CheckFloat();
 		}
 		else if (!Key.ICmp("offsety"))
 		{
-			float FVal = CheckFloat();
-			S.S.TopRowOffset = FVal;
-			S.S.MidRowOffset = FVal;
-			S.S.BotRowOffset = FVal;
+			YOffs = CheckFloat();
 		}
 		else if (!Key.ICmp("texturetop"))
 		{
@@ -578,7 +698,51 @@ void VUdmfParser::ParseSideDef()
 		{
 			S.SectorIndex = CheckInt();
 		}
+
+		//	Extensions.
+		if (NS & (NS_Vavoom | NS_ZDoom | NS_ZDoomTranslated))
+		{
+			if (!Key.ICmp("offsetx_top"))
+			{
+				S.S.TopTextureOffset = CheckFloat();
+			}
+			else if (!Key.ICmp("offsety_top"))
+			{
+				S.S.TopRowOffset = CheckFloat();
+			}
+			else if (!Key.ICmp("offsetx_mid"))
+			{
+				S.S.MidTextureOffset = CheckFloat();
+			}
+			else if (!Key.ICmp("offsety_mid"))
+			{
+				S.S.MidRowOffset = CheckFloat();
+			}
+			else if (!Key.ICmp("offsetx_bottom"))
+			{
+				S.S.BotTextureOffset = CheckFloat();
+			}
+			else if (!Key.ICmp("offsety_bottom"))
+			{
+				S.S.BotRowOffset = CheckFloat();
+			}
+			else if (!Key.ICmp("light"))
+			{
+				S.S.Light = CheckInt();
+			}
+			else if (!Key.ICmp("lightabsolute"))
+			{
+				Flag(S.S.Flags, SDF_ABSLIGHT);
+			}
+		}
 	}
+
+	S.S.TopTextureOffset += XOffs;
+	S.S.MidTextureOffset += XOffs;
+	S.S.BotTextureOffset += XOffs;
+	S.S.TopRowOffset += YOffs;
+	S.S.MidRowOffset += YOffs;
+	S.S.BotRowOffset += YOffs;
 	unguard;
 }
 
@@ -620,83 +784,83 @@ void VUdmfParser::ParseThing()
 		}
 		else if (!Key.ICmp("ambush"))
 		{
-			Flag(T.options, MTF_AMBUSH, Val);
+			Flag(T.options, MTF_AMBUSH);
 		}
 		else if (!Key.ICmp("single"))
 		{
-			Flag(T.options, MTF_GSINGLE, Val);
+			Flag(T.options, MTF_GSINGLE);
 		}
 		else if (!Key.ICmp("dm"))
 		{
-			Flag(T.options, MTF_GDEATHMATCH, Val);
+			Flag(T.options, MTF_GDEATHMATCH);
 		}
 		else if (!Key.ICmp("coop"))
 		{
-			Flag(T.options, MTF_GCOOP, Val);
+			Flag(T.options, MTF_GCOOP);
 		}
 		else if (!Key.ICmp("skill1"))
 		{
-			Flag(T.SkillClassFilter, 0x0001, Val);
+			Flag(T.SkillClassFilter, 0x0001);
 		}
 		else if (!Key.ICmp("skill2"))
 		{
-			Flag(T.SkillClassFilter, 0x0002, Val);
+			Flag(T.SkillClassFilter, 0x0002);
 		}
 		else if (!Key.ICmp("skill3"))
 		{
-			Flag(T.SkillClassFilter, 0x0004, Val);
+			Flag(T.SkillClassFilter, 0x0004);
 		}
 		else if (!Key.ICmp("skill4"))
 		{
-			Flag(T.SkillClassFilter, 0x0008, Val);
+			Flag(T.SkillClassFilter, 0x0008);
 		}
 		else if (!Key.ICmp("skill5"))
 		{
-			Flag(T.SkillClassFilter, 0x0010, Val);
+			Flag(T.SkillClassFilter, 0x0010);
 		}
 		else if (!Key.ICmp("skill6"))
 		{
-			Flag(T.SkillClassFilter, 0x0020, Val);
+			Flag(T.SkillClassFilter, 0x0020);
 		}
 		else if (!Key.ICmp("skill7"))
 		{
-			Flag(T.SkillClassFilter, 0x0040, Val);
+			Flag(T.SkillClassFilter, 0x0040);
 		}
 		else if (!Key.ICmp("skill8"))
 		{
-			Flag(T.SkillClassFilter, 0x0080, Val);
+			Flag(T.SkillClassFilter, 0x0080);
 		}
 		else if (!Key.ICmp("skill9"))
 		{
-			Flag(T.SkillClassFilter, 0x0100, Val);
+			Flag(T.SkillClassFilter, 0x0100);
 		}
 		else if (!Key.ICmp("skill10"))
 		{
-			Flag(T.SkillClassFilter, 0x0200, Val);
+			Flag(T.SkillClassFilter, 0x0200);
 		}
 		else if (!Key.ICmp("skill11"))
 		{
-			Flag(T.SkillClassFilter, 0x0400, Val);
+			Flag(T.SkillClassFilter, 0x0400);
 		}
 		else if (!Key.ICmp("skill12"))
 		{
-			Flag(T.SkillClassFilter, 0x0800, Val);
+			Flag(T.SkillClassFilter, 0x0800);
 		}
 		else if (!Key.ICmp("skill13"))
 		{
-			Flag(T.SkillClassFilter, 0x1000, Val);
+			Flag(T.SkillClassFilter, 0x1000);
 		}
 		else if (!Key.ICmp("skill14"))
 		{
-			Flag(T.SkillClassFilter, 0x2000, Val);
+			Flag(T.SkillClassFilter, 0x2000);
 		}
 		else if (!Key.ICmp("skill15"))
 		{
-			Flag(T.SkillClassFilter, 0x4000, Val);
+			Flag(T.SkillClassFilter, 0x4000);
 		}
 		else if (!Key.ICmp("skill16"))
 		{
-			Flag(T.SkillClassFilter, 0x8000, Val);
+			Flag(T.SkillClassFilter, 0x8000);
 		}
 
 		//	MBF friendly flag.
@@ -704,7 +868,7 @@ void VUdmfParser::ParseThing()
 		{
 			if (!Key.ICmp("friend"))
 			{
-				Flag(T.options, MTF_FRIENDLY, Val);
+				Flag(T.options, MTF_FRIENDLY);
 			}
 		}
 
@@ -713,19 +877,19 @@ void VUdmfParser::ParseThing()
 		{
 			if (!Key.ICmp("standing"))
 			{
-				Flag(T.options, MTF_STANDSTILL, Val);
+				Flag(T.options, MTF_STANDSTILL);
 			}
 			else if (!Key.ICmp("strifeally"))
 			{
-				Flag(T.options, MTF_FRIENDLY, Val);
+				Flag(T.options, MTF_FRIENDLY);
 			}
 			else if (!Key.ICmp("translucent"))
 			{
-				Flag(T.options, MTF_SHADOW, Val);
+				Flag(T.options, MTF_SHADOW);
 			}
 			else if (!Key.ICmp("invisible"))
 			{
-				Flag(T.options, MTF_ALTSHADOW, Val);
+				Flag(T.options, MTF_ALTSHADOW);
 			}
 		}
 
@@ -738,71 +902,71 @@ void VUdmfParser::ParseThing()
 			}
 			else if (!Key.ICmp("dormant"))
 			{
-				Flag(T.options, MTF_DORMANT, Val);
+				Flag(T.options, MTF_DORMANT);
 			}
 			else if (!Key.ICmp("class1"))
 			{
-				Flag(T.SkillClassFilter, 0x00010000, Val);
+				Flag(T.SkillClassFilter, 0x00010000);
 			}
 			else if (!Key.ICmp("class2"))
 			{
-				Flag(T.SkillClassFilter, 0x00020000, Val);
+				Flag(T.SkillClassFilter, 0x00020000);
 			}
 			else if (!Key.ICmp("class3"))
 			{
-				Flag(T.SkillClassFilter, 0x00040000, Val);
+				Flag(T.SkillClassFilter, 0x00040000);
 			}
 			else if (!Key.ICmp("class4"))
 			{
-				Flag(T.SkillClassFilter, 0x00080000, Val);
+				Flag(T.SkillClassFilter, 0x00080000);
 			}
 			else if (!Key.ICmp("class5"))
 			{
-				Flag(T.SkillClassFilter, 0x00100000, Val);
+				Flag(T.SkillClassFilter, 0x00100000);
 			}
 			else if (!Key.ICmp("class6"))
 			{
-				Flag(T.SkillClassFilter, 0x00200000, Val);
+				Flag(T.SkillClassFilter, 0x00200000);
 			}
 			else if (!Key.ICmp("class7"))
 			{
-				Flag(T.SkillClassFilter, 0x00400000, Val);
+				Flag(T.SkillClassFilter, 0x00400000);
 			}
 			else if (!Key.ICmp("class8"))
 			{
-				Flag(T.SkillClassFilter, 0x00800000, Val);
+				Flag(T.SkillClassFilter, 0x00800000);
 			}
 			else if (!Key.ICmp("class9"))
 			{
-				Flag(T.SkillClassFilter, 0x01000000, Val);
+				Flag(T.SkillClassFilter, 0x01000000);
 			}
 			else if (!Key.ICmp("class10"))
 			{
-				Flag(T.SkillClassFilter, 0x02000000, Val);
+				Flag(T.SkillClassFilter, 0x02000000);
 			}
 			else if (!Key.ICmp("class11"))
 			{
-				Flag(T.SkillClassFilter, 0x04000000, Val);
+				Flag(T.SkillClassFilter, 0x04000000);
 			}
 			else if (!Key.ICmp("class12"))
 			{
-				Flag(T.SkillClassFilter, 0x08000000, Val);
+				Flag(T.SkillClassFilter, 0x08000000);
 			}
 			else if (!Key.ICmp("class13"))
 			{
-				Flag(T.SkillClassFilter, 0x10000000, Val);
+				Flag(T.SkillClassFilter, 0x10000000);
 			}
 			else if (!Key.ICmp("class14"))
 			{
-				Flag(T.SkillClassFilter, 0x20000000, Val);
+				Flag(T.SkillClassFilter, 0x20000000);
 			}
 			else if (!Key.ICmp("class15"))
 			{
-				Flag(T.SkillClassFilter, 0x40000000, Val);
+				Flag(T.SkillClassFilter, 0x40000000);
 			}
 			else if (!Key.ICmp("class16"))
 			{
-				Flag(T.SkillClassFilter, 0x80000000, Val);
+				Flag(T.SkillClassFilter, 0x80000000);
 			}
 			else if (!Key.ICmp("special"))
 			{
@@ -989,7 +1153,27 @@ VStr VUdmfParser::CheckString()
 //
 //==========================================================================
 
-void VUdmfParser::Flag(int& Field, int Mask, const VStr& Val)
+void VUdmfParser::Flag(int& Field, int Mask)
+{
+	guard(VUdmfParser::Flag);
+	if (CheckBool())
+	{
+		Field |= Mask;
+	}
+	else
+	{
+		Field &= ~Mask;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VUdmfParser::Flag
+//
+//==========================================================================
+
+void VUdmfParser::Flag(vuint32& Field, int Mask)
 {
 	guard(VUdmfParser::Flag);
 	if (CheckBool())
