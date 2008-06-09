@@ -149,6 +149,10 @@ public:
 				}
 				if (!I.Obj)
 				{
+					I.Obj = VClass::FindClass(*I.Name);
+				}
+				if (!I.Obj)
+				{
 					VClass* Tmp = new VClass(I.Name, NULL, TLocation());
 					Tmp->MemberType = MEMBER_DecorateClass;
 					Tmp->ParentClassName = I.ParentClassName;
