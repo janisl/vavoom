@@ -945,8 +945,7 @@ if(ENABLE_WRAPPERS)
 "#!/bin/sh
 # Needed to make symlinks/shortcuts work.
 # the binaries must run with correct working directory
-cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
-\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom.bin\" $* ${IWADDIR}
+\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom.bin\" $* -basedir \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\" ${IWADDIR}
 exit $?
 ")
 	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom DESTINATION ${BINDIR})
@@ -985,8 +984,7 @@ if(ENABLE_WRAPPERS)
 "#!/bin/sh
 # Needed to make symlinks/shortcuts work.
 # the binaries must run with correct working directory
-cd \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\"
-\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom-dedicated.bin\" $* ${IWADDIR}
+\"${CMAKE_INSTALL_PREFIX}/${BINDIR}/vavoom-dedicated.bin\" $* -basedir \"${CMAKE_INSTALL_PREFIX}/${DATADIR}\" ${IWADDIR}
 exit $?
 ")
 	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/vavoom-dedicated DESTINATION ${BINDIR})
