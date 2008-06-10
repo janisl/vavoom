@@ -15,6 +15,11 @@ progs/svprogs.dat		progs/svprogs.dat
 //	ACS helper
 acs/strfhelp.o			strfhelp.o
 
+//	Temporary solution to make teaser versions work.
+script32.lmp			@CMAKE_CURRENT_SOURCE_DIR@/script32.lmp
+script33.lmp			@CMAKE_CURRENT_SOURCE_DIR@/script33.lmp
+script34.lmp			@CMAKE_CURRENT_SOURCE_DIR@/script34.lmp
+
 //	Scripts
 animdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/animdefs.txt
 lockdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/lockdefs.txt
