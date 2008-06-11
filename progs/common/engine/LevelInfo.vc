@@ -1165,7 +1165,7 @@ final mthing_t* GetPlayerStart(int PNum, int Position)
 {
 	mthing_t* Best = NULL;
 	int i;
-	for (i = 0; i < PlayerStarts.Num; i++)
+	for (i = PlayerStarts.Num - 1; i >= 0; i--)
 	{
 		if (PlayerStarts[i].type != PNum + 1)
 		{
