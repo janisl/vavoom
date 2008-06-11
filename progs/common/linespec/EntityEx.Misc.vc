@@ -3542,7 +3542,7 @@ final bool IsHostile(EntityEx Other)
 
 final bool IsFriend(EntityEx Other)
 {
-	return bFriendly == Other.bFriendly;
+	return bFriendly && Other.bFriendly;
 }
 
 bool IsTeammate(EntityEx Other)
