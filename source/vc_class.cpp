@@ -778,14 +778,14 @@ VStateLabel* VClass::FindStateLabel(VName AName, VName SubLabel, bool Exact)
 	guard(VClass::FindStateLabel);
 	for (int i = 0; i < StateLabels.Num(); i++)
 	{
-		if (StateLabels[i].Name == AName)
+		if (!VStr::ICmp(*StateLabels[i].Name, *AName))
 		{
 			if (SubLabel != NAME_None)
 			{
 				TArray<VStateLabel>& SubList = StateLabels[i].SubLabels;
 				for (int j = 0; j < SubList.Num(); j++)
 				{
-					if (SubList[j].Name == SubLabel)
+					if (!VStr::ICmp(*SubList[j].Name, *SubLabel))
 					{
 						return &SubList[j];
 					}
@@ -818,7 +818,7 @@ VStateLabel* VClass::FindStateLabel(TArray<VName>& Names, bool Exact)
 		VStateLabel* Lbl = NULL;
 		for (int i = 0; i < List->Num(); i++)
 		{
-			if ((*List)[i].Name == Names[ni])
+			if (!VStr::ICmp(*(*List)[i].Name, *Names[ni]))
 			{
 				Lbl = &(*List)[i];
 				break;
