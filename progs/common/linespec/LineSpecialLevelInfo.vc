@@ -898,7 +898,7 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_ThingRemove(Arg1);
 		break;
 	case LNSPEC_ThingDestroy:
-		buttonSuccess = EV_ThingDestroy(Arg1);
+		buttonSuccess = EV_ThingDestroy(Arg1, Arg2);
 		break;
 	case LNSPEC_ThingProjectile:
 		buttonSuccess = EV_ThingProjectile(Arg1, Arg2, Arg3, Arg4, Arg5, 0,
@@ -4363,7 +4363,7 @@ final bool EV_ThingRemove(int tid)
 //
 //==========================================================================
 
-final bool EV_ThingDestroy(int tid)
+final bool EV_ThingDestroy(int tid, int Extreme)
 {
 	EntityEx	A;
 	bool		success;
@@ -4374,7 +4374,7 @@ final bool EV_ThingDestroy(int tid)
 	{
 		if (A.bShootable)
 		{
-			A.Damage(none, none, 10000, '');
+			A.Damage(none, none, Extreme ? 1000000 : A.Health, '');
 			success = true;
 		}
 	}
