@@ -213,7 +213,7 @@ void VOpenGLDrawer::WorldDrawing()
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		SelectTexture(1);
 		glEnable(GL_TEXTURE_2D);
-		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_BLEND);
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		SelectTexture(0);
 		glColor4f(1, 1, 1, 1);
 

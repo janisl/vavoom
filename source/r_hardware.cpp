@@ -450,9 +450,9 @@ void VHardwareDrawer::CacheSurface(surface_t *surface)
 		{
 			rgba_t &lb = light_block[bnum][(j + cache->t) * BLOCK_WIDTH +
 				i + cache->s];
-			lb.r = byte(blocklightsr[j * smax + i] >> 8);
-			lb.g = byte(blocklightsg[j * smax + i] >> 8);
-			lb.b = byte(blocklightsb[j * smax + i] >> 8);
+			lb.r = 255 - byte(blocklightsr[j * smax + i] >> 8);
+			lb.g = 255 - byte(blocklightsg[j * smax + i] >> 8);
+			lb.b = 255 - byte(blocklightsb[j * smax + i] >> 8);
 			lb.a = 255;
 		}
 	}
