@@ -120,6 +120,7 @@ void InitMapInfo()
 	DefaultMap.Name = "Unnamed";
 	DefaultMap.Sky1Texture = GTextureManager.CheckNumForName("sky1",
 		TEXTYPE_Wall, true, true);
+	DefaultMap.Sky2Texture = DefaultMap.Sky1Texture;
 	DefaultMap.FadeTable = NAME_colormap;
 	DefaultMap.HorizWallShade = -8;
 	DefaultMap.VertWallShade = 8;
