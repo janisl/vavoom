@@ -101,7 +101,10 @@ bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		default_mode = true;
 	}
 
-	if (BPP == 15) BPP = 16;
+	if (BPP == 15)
+	{
+		BPP = 16;
+	}
 
 	if (BPP < 16)
 	{
@@ -117,22 +120,35 @@ bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 
 	allegro_gl_clear_settings();
 	allegro_gl_set(AGL_COLOR_DEPTH, BPP);
-	allegro_gl_set(AGL_Z_DEPTH, 8);
+	allegro_gl_set(AGL_Z_DEPTH, 24);
+	allegro_gl_set(AGL_STENCIL_DEPTH, 8);
 	allegro_gl_set(AGL_WINDOWED, Windowed);
 	allegro_gl_set(AGL_DOUBLEBUFFER, 1);
 	allegro_gl_set(AGL_RENDERMETHOD, 1);
 	allegro_gl_set(AGL_SUGGEST, AGL_COLOR_DEPTH | AGL_DOUBLEBUFFER
 			| AGL_RENDERMETHOD | AGL_Z_DEPTH | AGL_WINDOWED);
 
+	HasStencil = true;
 	set_color_depth(BPP);
 	if (set_gfx_mode(GFX_OPENGL, Width, Height, 0, 0))
-	{	
-		allegro_message("Error setting OpenGL graphics mode:\n%s\n"
-			"Allegro GL error : %s\n",
-			allegro_error, allegro_gl_error);
-		return false;
+	{
+		//	Try without stencil.
+		HasStencil = false;
+		allegro_gl_set(AGL_Z_DEPTH, 8);
+		allegro_gl_set(AGL_STENCIL_DEPTH, 0);
+		if (set_gfx_mode(GFX_OPENGL, Width, Height, 0, 0))
+		{
+			allegro_message("Error setting OpenGL graphics mode:\n%s\n"
+				"Allegro GL error : %s\n",
+				allegro_error, allegro_gl_error);
+			return false;
+		}
 	}
-	
+	if (HasStencil)
+	{
+		GCon->Logf(NAME_Init, "Stencil buffer available");
+	}
+
 	ScreenWidth = Width;
 	ScreenHeight = Height;
 	ScreenBPP = BPP;
