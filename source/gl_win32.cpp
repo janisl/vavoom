@@ -217,17 +217,31 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		0,								// Shift Bit Ignored
 		0,								// No Accumulation Buffer
 		0, 0, 0, 0,						// Accumulation Bits Ignored
-		32,								// 32Bit Z-Buffer (Depth Buffer)
-		0,								// No Stencil Buffer
+		24,								// 24 bit Z-Buffer (Depth Buffer)
+		8,								// 8 bit Stencil Buffer
 		0,								// No Auxiliary Buffer
 		PFD_MAIN_PLANE,					// Main Drawing Layer
 		0,								// Reserved
 		0, 0, 0							// Layer Masks Ignored
 	};
 
-	if ((pixelformat = ChoosePixelFormat(DeviceContext, &pfd)) == 0)
+	HasStencil = true;
+	pixelformat = ChoosePixelFormat(DeviceContext, &pfd);
+	if (pixelformat == 0)
 	{
-		Sys_Error("ChoosePixelFormat failed");
+		//	Try without stencil.
+		HasStencil = false;
+		pfd.cDepthBits = 32;
+		pfd.cStencilBits = 0;
+		pixelformat = ChoosePixelFormat(DeviceContext, &pfd);
+		if (pixelformat == 0)
+		{
+			Sys_Error("ChoosePixelFormat failed");
+		}
+	}
+	if (HasStencil)
+	{
+		GCon->Logf(NAME_Init, "Stencil buffer available");
 	}
 
 	if (SetPixelFormat(DeviceContext, pixelformat, &pfd) == FALSE)
