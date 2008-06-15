@@ -53,6 +53,9 @@ private:
 	bool				mouse_started;
 	int					old_mouse_x;
 	int					old_mouse_y;
+	int					old_mouse_z;
+	int					old_z_delta;
+	int 				lastbuttons;
 
 	bool				joystick_started;
 	int					joy_oldx;
@@ -127,6 +130,9 @@ VAllegroInputDevice::VAllegroInputDevice()
 , mouse_started(false)
 , old_mouse_x(0)
 , old_mouse_y(0)
+, old_mouse_z(0)
+, old_z_delta(0)
+, lastbuttons(0)
 , joystick_started(false)
 , joy_oldx(0)
 , joy_oldy(0)
@@ -306,13 +312,13 @@ void VAllegroInputDevice::ReadMouse()
 	int			mouse_x;
 	int			mouse_y;
 	int			buttons;
-	static int 	lastbuttons = 0;
 
 	if (!mouse_started)
 		return;
 
 	poll_mouse();
 	get_mouse_mickeys(&xmickeys, &ymickeys);
+	int Wheel = mouse_z;
 	buttons = mouse_b;
 
 	if (m_filter == 2)
@@ -354,6 +360,19 @@ void VAllegroInputDevice::ReadMouse()
 		}
 	}
 	lastbuttons = buttons;
+
+	//	Handle mouse wheel.
+	int ZDelta = Wheel - old_mouse_z;
+	if (ZDelta > 0 || old_mouse_z > 0)
+	{
+		GInput->KeyEvent(K_MWHEELUP, ZDelta > 0);
+	}
+	if (ZDelta < 0 || old_mouse_z < 0)
+	{
+		GInput->KeyEvent(K_MWHEELDOWN, ZDelta < 0);
+	}
+	old_mouse_z = Wheel;
+	old_z_delta = ZDelta;
 	unguard;
 }
 
