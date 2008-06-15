@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                  Version 1.27.1
+                                                    Version 1.28
 
 Contents:
     0. Disclaimer
@@ -1089,6 +1089,21 @@ Version 1.27.1
 ==============================================================================
 
 * A lots of bug fixes.
+
+==============================================================================
+Version 1.28
+==============================================================================
+
+* Implemented support for many line specials and extended flags.
+* Added support for multiple different skies in a level.
+* Added support for advanced skyboxes and sector stacks.
+* Added support for mirrors and reflective floors and ceilings.
+* Added support for additive translucency for 3D floors.
+* Added secret trigger and hate target classes.
+* Implemented many of the missing MAPINFO properties.
+* Added separate texture offsets for top, middle and bottom wall textures.
+* Implement support for custom skill definitions.
+* Implemented support for UDMF format maps.
 
 *****************************************************************************
 8. Licensing

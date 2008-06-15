@@ -3275,7 +3275,7 @@
   I implemented renderer API for portal rendering.
   I implemented Static_Init line special.
   I fixed sector damage not working in sectors with no special.
-  I fixed skies not being fliiped as it was originally.
+  I fixed skies not being flipped as it was originally.
   I implemented sky portal that enables rendering of multiple different skies
  in the same scene.
 13.04.2008
@@ -3429,3 +3429,35 @@
   I implemented setting up sector sound environment zones, changing them and
  setting corresponding EAX listener properties.
   I moved parsing of KEYCONF to be done after initialising input.
+04.06.2008
+  I added value type checks to the UDMF parser.
+  I changed midtex related MAPINFO flags to be set in lines during loading.
+06.06.2008
+  I moved additive translucency flag from sidedef to linedef, since it's being
+ set for both sides anyway.
+  I added extended sector, linedef and sidedef UDMF properties.
+09.06.2008
+  I fixed resolving of DECORATE imports while loading client progs.
+10.06.2008
+  I added Strife dialogue scripts for teaser version maps to the PK3 file. This
+ is just a temporary solution to make it work.
+  I changed wrapper scripts so that -file option works relative to the current
+ directory.
+11.06.2008
+  I changed state label search to be case insensitive.
+  I changed Thing_Destroy to work with actors with huge amounts of health.
+  I changed player start spot search to be backwards so that in levels with
+ start spots for voodoo dolls player is spawned in correct location.
+  I fixed friendlyness check.
+14.06.2008
+  I fixed rendering of surfaces with lightmaps in Direct3D renderer.
+  I added missing initialisation of sky 2 texture in mapinfo of unknown maps.
+  I added initialisation of stencil buffer in Windows and Allegro OpenGL
+ drivers.
+  I added mouse wheel support to the Allegro input driver.
+15.06.2008
+  I fixed rendering of midtextures when combined with 3D floors.
+
+******************************************************************************
+                            VERSION 1.28
+******************************************************************************
