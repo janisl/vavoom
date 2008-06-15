@@ -1172,12 +1172,14 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 			{
 				// bottom of texture at bottom
 				// top of texture at top
-				z_org = MAX(r_floor->TexZ, back_floor->TexZ) + texh;
+				z_org = MAX(seg->frontsector->floor.TexZ,
+					seg->backsector->floor.TexZ) + texh;
 			}
 			else
 			{
 				// top of texture at top
-				z_org = MIN(r_ceiling->TexZ, back_ceiling->TexZ);
+				z_org = MIN(seg->frontsector->ceiling.TexZ,
+					seg->backsector->ceiling.TexZ);
 			}
 			z_org += sidedef->MidRowOffset * (!MTex->bWorldPanning ?
 				1.0 : 1.0 / MTex->TScale);
@@ -1689,12 +1691,14 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 				{
 					// bottom of texture at bottom
 					// top of texture at top
-					z_org = MAX(r_floor->TexZ, back_floor->TexZ) + texh;
+					z_org = MAX(seg->frontsector->floor.TexZ,
+						seg->backsector->floor.TexZ) + texh;
 				}
 				else
 				{
 					// top of texture at top
-					z_org = MIN(r_ceiling->TexZ, back_ceiling->TexZ);
+					z_org = MIN(seg->frontsector->ceiling.TexZ,
+						seg->backsector->ceiling.TexZ);
 				}
 				z_org += sidedef->MidRowOffset * (!MTex->bWorldPanning ?
 					1.0 : 1.0 / MTex->TScale);
