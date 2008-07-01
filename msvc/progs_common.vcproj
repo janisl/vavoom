@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="progs_common"
 	ProjectGUID="{EE79378F-9689-40B8-99F4-B0E5872A6337}"
 	RootNamespace="progs_common_engine"
@@ -212,7 +212,59 @@
 			Name="linespec"
 			>
 			<File
-				RelativePath="..\progs\common\linespec\Actor.vc"
+				RelativePath="..\progs\common\linespec\Actor.DoomAttack.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.DoomSpecific.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.FlagsAndAppearance.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.FreezeDeath.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.GenericAttacks.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.Inventory.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.Misc.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.MissileMovement.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.MonsterAi.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.Sound.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.Spawn.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.Special.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.StateJump.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.States.vc"
 				>
 			</File>
 			<File
@@ -312,7 +364,39 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\EntityEx.vc"
+				RelativePath="..\progs\common\linespec\EntityEx.AiUtils.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.Damage.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.Defaults.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.Head.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.Inventory.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.LineAttack.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.Misc.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.Physics.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\EntityEx.SpawnMissile.vc"
 				>
 			</File>
 			<File
@@ -329,6 +413,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\FireFlicker.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FlashFader.vc"
 				>
 			</File>
 			<File
@@ -361,6 +449,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\GreenParticleFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\HateTarget.vc"
 				>
 			</File>
 			<File
@@ -452,6 +544,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\LowerStackLookOnly.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\MapRevealer.vc"
 				>
 			</File>
@@ -469,6 +565,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\MiniMissilePuff.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MorphProjectile.vc"
 				>
 			</File>
 			<File
@@ -700,6 +800,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\SecretTrigger.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\SectorAction.vc"
 				>
 			</File>
@@ -712,11 +816,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\SectorSilencer.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\SectorThinker.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\SecurityCamera.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SkyPicker.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SkyViewpoint.vc"
 				>
 			</File>
 			<File
@@ -740,6 +856,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\StackPoint.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\StairStepMover.vc"
 				>
 			</File>
@@ -749,6 +869,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\StaticRGBLightSource.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\StrifeHumanoid.vc"
 				>
 			</File>
 			<File
@@ -788,7 +912,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\UpperStackLookOnly.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\VerticalDoor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\WallLightTransfer.vc"
 				>
 			</File>
 			<File
@@ -800,7 +932,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\WeaponHolder.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\WeaponPiece.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\WhiteParticleFountain.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\WorldInfoEx.vc"
 				>
 			</File>
 			<File
@@ -868,6 +1012,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\uibase\MenuChoiceSkill.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\uibase\MenuChoiceSlider.vc"
 				>
 			</File>
@@ -921,6 +1069,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\uibase\MenuScreenScreenResolution.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenSkill.vc"
 				>
 			</File>
 			<File

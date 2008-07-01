@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="progs_strife"
 	ProjectGUID="{1CD88557-1039-4B0C-9DF6-AB181E799536}"
 	RootNamespace="progs_doom_shared"
@@ -312,47 +312,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Armorer.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\AssaultGun.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\AssaultGunStanding.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\BarKeep.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Beggar.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Beggar1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Beggar2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Beggar3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Beggar4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Beggar5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\BishopMissile.vc"
 				>
 			</File>
 			<File
@@ -401,10 +365,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\DummyStrifeItem.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Effect.vc"
 				>
 			</File>
 			<File
@@ -528,14 +488,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Medic.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Merchant.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\MiniMissile.vc"
 				>
 			</File>
@@ -557,98 +509,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\Pawn.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant10.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant11.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant12.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant13.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant14.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant15.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant16.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant17.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant18.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant19.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant20.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant21.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant22.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant6.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant7.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant8.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Peasant9.vc"
 				>
 			</File>
 			<File
@@ -692,19 +552,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\Projectile.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\PunchDagger.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\RaiseAlarm.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\RatBuddy.vc"
 				>
 			</File>
 			<File
@@ -844,10 +696,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\StrifeBishop.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\StrifeCrossbow.vc"
 				>
 			</File>
@@ -864,15 +712,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\strife\game\StrifeHumanoid.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\strife\game\StrifeLevelInfo.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\StrifePlayer.vc"
 				>
 			</File>
 			<File
@@ -909,18 +749,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\UpgradeStamina.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\WeaponSmith.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\Zombie.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\strife\game\ZombieSpawner.vc"
 				>
 			</File>
 		</Filter>

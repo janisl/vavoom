@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="progs_hexen"
 	ProjectGUID="{DD00F5CF-9520-44D2-BDC4-45130B5024FA}"
 	RootNamespace="progs_doom_game"
@@ -256,10 +256,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\ArtiPork.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\ArtiTeleport.vc"
 				>
 			</File>
@@ -312,10 +308,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\BloodySkull.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\BotPlayer.vc"
 				>
 			</File>
@@ -325,34 +317,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\BridgeBall.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Carcas.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Centaur.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\CentaurFX.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\CentaurLeader.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\CentaurMash.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\CentaurShield.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\CentaurSword.vc"
 				>
 			</File>
 			<File
@@ -377,10 +341,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\ClericBoss.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\ClericPlayer.vc"
 				>
 			</File>
 			<File
@@ -436,70 +396,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Demon1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon1Chunk1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon1Chunk2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon1Chunk3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon1Chunk4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon1Chunk5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon1FX1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon1Mash.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2Chunk1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2Chunk2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2Chunk3.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2Chunk4.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2Chunk5.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2FX1.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Demon2Mash.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\DirtClump.vc"
 				>
 			</File>
@@ -516,27 +412,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Effect.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Ettin.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\EttinMace.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\EttinMash.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\FighterBoss.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\FighterPlayer.vc"
 				>
 			</File>
 			<File
@@ -624,10 +500,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Fragment.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\FrostMissile.vc"
 				>
 			</File>
@@ -665,10 +537,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\FWeapQuietus.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Gibs.vc"
 				>
 			</File>
 			<File
@@ -796,23 +664,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\MagePlayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\MageStaffFX.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\MageStaffFX2.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\MageWandMissile.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\MageWandPuff.vc"
 				>
 			</File>
 			<File
@@ -888,10 +744,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\Pawn.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\Pig.vc"
 				>
 			</File>
@@ -916,10 +768,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\hexen\game\PorkFX.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\hexen\game\Pottery1.vc"
 				>
 			</File>
@@ -933,10 +781,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\hexen\game\PotteryBit.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\hexen\game\Projectile.vc"
 				>
 			</File>
 			<File
