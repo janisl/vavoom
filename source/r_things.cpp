@@ -815,7 +815,7 @@ bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 	}
 
 	return DrawAliasModel(origin, cl->ViewAngles, 1.0, 1.0, VSt->State,
-		NULL, NULL, 0, light, Fade, Alpha, Additive, true, TimeFrac);
+		NULL, 0, light, Fade, Alpha, Additive, true, TimeFrac);
 	unguard;
 }
 

@@ -175,7 +175,6 @@ float			StateTime;			// state tic counter
 byte			SpriteType;				//  How to draw sprite
 name			FixedSpriteName;
 string			FixedModelName;
-string			ModelSkin;
 byte			ModelVersion;
 
 byte			RenderStyle;
@@ -289,9 +288,9 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime, SpriteType,
-		FixedSpriteName, ModelSkin, ModelVersion, RenderStyle, Alpha,
-		Translation, ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright,
-		bFixedModel, bNetLocalPlayer, SoundOriginID, bUseDispState;
+		FixedSpriteName, ModelVersion, RenderStyle, Alpha, Translation,
+		ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright, bFixedModel,
+		bNetLocalPlayer, SoundOriginID, bUseDispState;
 
 	reliable if (Role == ROLE_Authority && bUseDispState)
 		DispState;

@@ -231,7 +231,6 @@ void SetClientModel()
 	if (!model)
 	{
 		MO.bFixedModel = false;
-		MO.ModelSkin = "";
 		return;
 	}
 

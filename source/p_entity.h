@@ -152,7 +152,6 @@ class VEntity : public VThinker
 	vuint8			SpriteType;		//  How to draw sprite
 	VName			FixedSpriteName;
 	VStr			FixedModelName;
-	VStr			ModelSkin;
 	vuint8			ModelVersion;
 
 	vuint8			RenderStyle;

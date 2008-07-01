@@ -47,12 +47,6 @@ enum
 	MODEL_Script,
 };
 
-struct VSkinInfo
-{
-	VName				Name;
-	VStr				Desc;
-};
-
 class VScriptSubModel
 {
 public:
@@ -67,19 +61,12 @@ public:
 		int		SkinIndex;
 	};
 
-	struct VSkin
-	{
-		VName			Name;
-		VStr			File;
-	};
-
 	VModel*				Model;
 	VModel*				PositionModel;
 	int					SkinAnimSpeed;
 	int					SkinAnimRange;
 	int					Version;
 	TArray<VFrame>		Frames;
-	TArray<VSkin>		Skins;
 };
 
 class VScriptModel
@@ -116,7 +103,6 @@ class VScriptedModel
 {
 public:
 	TArray<VScriptModel>		Models;
-	TArray<VSkinInfo>			Skins;
 	VClassModelScript*			DefaultClass;
 };
 
@@ -544,21 +530,13 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 			}
 
 			//	Process skins.
-			for (VXmlNode* SkN = SN->FindChild("skin"); SkN; SkN = SkN->FindNext())
+/*			for (VXmlNode* SkN = SN->FindChild("skin"); SkN; SkN = SkN->FindNext())
 			{
 				VScriptSubModel::VSkin& S = Md2.Skins.Alloc();
 				S.Name = *SkN->GetAttribute("name").ToLower();
 				S.File = SkN->GetAttribute("file").ToLower().FixFileSlashes();
-			}
+			}*/
 		}
-	}
-
-	//	Process skin definitions.
-	for (VXmlNode* SkN = Doc->Root.FindChild("skin"); SkN; SkN = SkN->FindNext())
-	{
-		VSkinInfo& S = Mdl->Skins.Alloc();
-		S.Name = *SkN->GetAttribute("name").ToLower();
-		S.Desc = SkN->GetAttribute("desc");
 	}
 
 	bool ClassDefined = false;
@@ -751,9 +729,8 @@ static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 
 static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx,
-	const char* Skin, VTextureTranslation* Trans, int ColourMap, int Version,
-	vuint32 Light, vuint32 Fade, float Alpha, bool Additive, bool IsViewModel,
-	float Inter)
+	VTextureTranslation* Trans, int ColourMap, int Version, vuint32 Light,
+	vuint32 Fade, float Alpha, bool Additive, bool IsViewModel, float Inter)
 {
 	guard(DrawModel);
 	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
@@ -798,18 +775,6 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		{
 			SkinID = GTextureManager.AddFileTexture(
 				SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
-		}
-		if (Skin && *Skin)
-		{
-			VName Search = *VStr(Skin).ToLower();
-			for (int si = 0; si < SubMdl.Skins.Num(); si++)
-			{
-				if (SubMdl.Skins[si].Name == Search)
-				{
-					SkinID = GTextureManager.AddFileTexture(
-						*SubMdl.Skins[si].File, TEXTYPE_Skin);
-				}
-			}
 		}
 
 		//	Get and verify frame number.
@@ -873,7 +838,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 //==========================================================================
 
 bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VModel* Mdl, int Frame, const char* Skin,
+	float ScaleX, float ScaleY, VModel* Mdl, int Frame,
 	VTextureTranslation* Trans, int Version, vuint32 Light, vuint32 Fade,
 	float Alpha, bool Additive, bool IsViewModel, float Inter)
 {
@@ -893,8 +858,8 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	}
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
-		Skin, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
-		IsViewModel, Inter);
+		Trans, ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel,
+		Inter);
 	return true;
 	unguard;
 }
@@ -906,9 +871,9 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 //==========================================================================
 
 bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VState* State, const char* Skin,
-	VTextureTranslation* Trans, int Version, vuint32 Light, vuint32 Fade,
-	float Alpha, bool Additive, bool IsViewModel, float Inter)
+	float ScaleX, float ScaleY, VState* State, VTextureTranslation* Trans,
+	int Version, vuint32 Light, vuint32 Fade, float Alpha, bool Additive,
+	bool IsViewModel, float Inter)
 {
 	guard(VRenderLevel::DrawAliasModel);
 	VClassModelScript* Cls = NULL;
@@ -930,7 +895,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		return false;
 	}
 
-	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, Skin, Trans,
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, Trans,
 		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel, Inter);
 	return true;
 	unguard;
@@ -962,16 +927,15 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 		}
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, Mdl,
-			DispState->InClassIndex, *Ent->ModelSkin,
-			GetTranslation(Ent->Translation), Ent->ModelVersion, Light, Fade,
-			Alpha, Additive, false, Inter);
+			DispState->InClassIndex, GetTranslation(Ent->Translation),
+			Ent->ModelVersion, Light, Fade, Alpha, Additive, false, Inter);
 	}
 	else
 	{
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, DispState,
-			*Ent->ModelSkin, GetTranslation(Ent->Translation),
-			Ent->ModelVersion, Light, Fade, Alpha, Additive, false, Inter);
+			GetTranslation(Ent->Translation), Ent->ModelVersion, Light, Fade,
+			Alpha, Additive, false, Inter);
 	}
 	unguard;
 }
@@ -1073,7 +1037,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	Angles.roll = 0;
 
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *SMdl->DefaultClass, FIdx,
-		Skin, R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
+		R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
 		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false, 0);
 
 	Drawer->EndView();
@@ -1132,37 +1096,9 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	Angles.pitch = 0;
 	Angles.roll = 0;
 
-	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Cls, FIdx, "", NULL, 0,
-		0, 0xffffffff, 0, 1.0, false, false, 0);
+	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Cls, FIdx, NULL, 0, 0,
+		0xffffffff, 0, 1.0, false, false, 0);
 
 	Drawer->EndView();
 	return true;
-}
-
-//==========================================================================
-//
-//	R_GetModelSkinInfo
-//
-//==========================================================================
-
-bool R_GetModelSkinInfo(VModel* Model, int Index, VName& Name, VStr& Desc)
-{
-	guard(R_GetModelSkinInfo);
-	void* MData = Mod_Extradata(Model);
-	if (Model->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	if (Index < 0 || Index >= SMdl->Skins.Num())
-	{
-		Name = NAME_None;
-		Desc = "";
-		return false;
-	}
-	Name = SMdl->Skins[Index].Name;
-	Desc = SMdl->Skins[Index].Desc;
-	return true;
-	unguard;
 }

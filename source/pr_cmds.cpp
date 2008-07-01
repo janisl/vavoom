@@ -519,21 +519,6 @@ IMPLEMENT_FUNCTION(VObject, InstallModel)
 
 //==========================================================================
 //
-//	PF_GetModelSkinInfo
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, GetModelSkinInfo)
-{
-	P_GET_PTR(VStr, SkinDesc);
-	P_GET_PTR(VName, SkinName);
-	P_GET_INT(Index);
-	P_GET_PTR(VModel, Model);
-	RET_BOOL(R_GetModelSkinInfo(Model, Index, *SkinName, *SkinDesc));
-}
-
-//==========================================================================
-//
 //	PF_R_DrawModelFrame
 //
 //==========================================================================

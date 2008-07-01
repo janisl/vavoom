@@ -244,7 +244,6 @@ void R_DrawModelFrame(const TVec&, float, VModel*, int, const char*, int,
 	int, int, float);
 
 VModel* Mod_FindName(const VStr&);
-bool R_GetModelSkinInfo(VModel*, int, VName&, VStr&);
 
 void SCR_SetVirtualScreen(int, int);
 
