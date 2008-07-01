@@ -68,6 +68,7 @@ public:
 	int					Version;
 	TArray<VFrame>		Frames;
 	TArray<VName>		Skins;
+	bool				FullBright;
 };
 
 class VScriptModel
@@ -461,6 +462,13 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 				Scale.z = atof(*SN->GetAttribute("scale_z"));
 			}
 
+			//	Full-bright flag.
+			Md2.FullBright = false;
+			if (SN->HasAttribute("fullbright"))
+			{
+				Md2.FullBright = !SN->GetAttribute("fullbright").ICmp("true");
+			}
+
 			//	Process frames.
 			for (VXmlNode* FN = SN->FindChild("frame"); FN; FN = FN->FindNext())
 			{
@@ -840,9 +848,16 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		Scale.y = F.Scale.y * ScaleX;
 		Scale.z = F.Scale.z * ScaleY;
 
+		//	Light
+		vuint32 Md2Light = Light;
+		if (SubMdl.FullBright)
+		{
+			Md2Light = 0xffffffff;
+		}
+
 		Drawer->DrawAliasModel(Md2Org, Md2Angle, F.Offset, F.Scale, pmdl,
-			Md2Frame, GTextureManager(SkinID), Trans, ColourMap, Light, Fade,
-			Md2Alpha, Additive, IsViewModel);
+			Md2Frame, GTextureManager(SkinID), Trans, ColourMap, Md2Light,
+			Fade, Md2Alpha, Additive, IsViewModel);
 	}
 	unguard;
 }
