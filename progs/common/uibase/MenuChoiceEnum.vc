@@ -172,6 +172,36 @@ bool OnKeyDown(int key)
 	return false;
 }
 
+void OnMouseClick(int X, int Y)
+{
+	int newValue;
+
+	if (Value < EnumNames.Num - 1)
+		newValue = Value + 1;
+	else
+		newValue = 0;
+	if (SetNewValue(newValue))
+	{
+		Value = newValue;
+		LocalSound('menu/change');
+	}
+}
+
+void OnRMouseClick(int X, int Y)
+{
+	int newValue;
+
+	if (Value > 0)
+		newValue = Value - 1;
+	else
+		newValue = EnumNames.Num - 1;
+	if (SetNewValue(newValue))
+	{
+		Value = newValue;
+		LocalSound('menu/change');
+	}
+}
+
 defaultproperties
 {
 	Width = 360;

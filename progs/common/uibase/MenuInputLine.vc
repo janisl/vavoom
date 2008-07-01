@@ -110,6 +110,21 @@ bool OnKeyDown(int key)
 	return false;
 }
 
+void OnMouseClick(int X, int Y)
+{
+	if (bEnteringText)
+	{
+		bEnteringText = false;
+		Value = EnterText;
+		OnValueChanged();
+	}
+
+	// we are going to be intercepting all chars
+	bEnteringText = true;
+	EnterText = Value;
+	LocalSound('menu/choose');
+}
+
 defaultproperties
 {
 	Height = 30;

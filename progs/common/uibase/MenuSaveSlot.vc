@@ -111,6 +111,22 @@ bool OnKeyDown(int key)
 	return false;
 }
 
+void OnMouseClick(int X, int Y)
+{
+	if (bEnteringText)
+	{
+		bEnteringText = false;
+		if (strlen(EnterText))
+		{
+			Text = EnterText;
+			CmdBuf_AddText("Save %d \"%s\"\n", SlotNum, Text);
+			GetClGame().ForceMenuOff();
+		}
+	}
+	
+	ActivateSlot();
+}
+
 defaultproperties
 {
 }

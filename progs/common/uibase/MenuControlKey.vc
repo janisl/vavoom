@@ -107,6 +107,13 @@ bool OnKeyDown(int key)
 	return false;
 }
 
+void OnMouseClick(int X, int Y)
+{
+	GetClGame().CurrentCtl = self;
+	GetClGame().MessageBoxStartMessage("Press new key\n\nESC to cancel",
+		ClientGameShared::MB_Control, false);
+}
+
 defaultproperties
 {
 	CursorXOffs = 160;

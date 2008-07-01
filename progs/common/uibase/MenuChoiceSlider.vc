@@ -168,6 +168,38 @@ bool OnKeyDown(int key)
 	return ::OnKeyDown(key);
 }
 
+void OnMouseClick(int X, int Y)
+{
+	float newValue;
+
+	newValue = Value + ValueDelta;
+	if (newValue > MaxValue)
+	{
+		newValue = MaxValue;
+	}
+	if (SetNewValue(newValue))
+	{
+		Value = newValue;
+		LocalSound('menu/change');
+	}
+}
+
+void OnRMouseClick(int X, int Y)
+{
+	float newValue;
+
+	newValue = Value - ValueDelta;
+	if (newValue < MinValue)
+	{
+		newValue = MinValue;
+	}
+	if (SetNewValue(newValue))
+	{
+		Value = newValue;
+		LocalSound('menu/change');
+	}
+}
+
 defaultproperties
 {
 	Width = 360;
