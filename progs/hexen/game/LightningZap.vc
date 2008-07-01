@@ -120,7 +120,7 @@ final void A_ZapMimic()
 		if (!LightningOwner.bMissile ||
 			LightningOwner.State == FindState('FreeTargMobj'))
 		{
-			ExplodeMissile();
+			ExplodeMissile(none);
 		}
 		else
 		{

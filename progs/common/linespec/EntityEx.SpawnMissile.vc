@@ -94,7 +94,7 @@ final bool CheckMissileSpawn()
 			}
 			else
 			{
-				ExplodeMissile();
+				ExplodeMissile(EntityEx(tmtrace.BlockingMobj));
 			}
 			return false;
 		}
@@ -108,7 +108,7 @@ final bool CheckMissileSpawn()
 //
 //==========================================================================
 
-final bool ExplodeMissile()
+final bool ExplodeMissile(EntityEx Victim)
 {
 	if (bExploCount)
 	{
@@ -121,7 +121,24 @@ final bool ExplodeMissile()
 
 	Velocity = vector(0.0, 0.0, 0.0);
 
-	if (!SetState(FindState('Death')))
+	state ExplState = none;
+	if (Victim && (Victim.bShootable || Victim.bCorpse))
+	{
+		if (Victim.bNoBlood)
+		{
+			ExplState = FindState('Crash');
+		}
+		if (!ExplState)
+		{
+			ExplState = FindState('Death', 'Extreme');
+		}
+	}
+	if (!ExplState)
+	{
+		ExplState = FindState('Death');
+	}
+
+	if (!SetState(ExplState))
 	{
 		return false;
 	}

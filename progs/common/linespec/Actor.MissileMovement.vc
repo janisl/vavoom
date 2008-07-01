@@ -250,7 +250,7 @@ final void A_Countdown()
 {
 	if (--ReactionCount <= 0)
 	{
-		ExplodeMissile();
+		ExplodeMissile(none);
 		bSkullFly = false;
 	}
 }
@@ -271,7 +271,7 @@ final void A_CountdownArg(int Index)
 	{
 		if (bMissile)
 		{
-			ExplodeMissile();
+			ExplodeMissile(none);
 		}
 		else if (bShootable)
 		{

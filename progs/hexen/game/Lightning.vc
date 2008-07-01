@@ -186,7 +186,7 @@ final void A_LightningClip()
 	{
 		if (targ.Health <= 0)
 		{
-			ExplodeMissile();
+			ExplodeMissile(targ);
 		}
 		else
 		{
@@ -261,7 +261,7 @@ final void A_LightningRemove()
 	if (LightningLink)
 	{
 		LightningLink.LightningLink = none;
-		LightningLink.ExplodeMissile();
+		LightningLink.ExplodeMissile(none);
 	}
 }
 
