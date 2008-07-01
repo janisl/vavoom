@@ -67,6 +67,7 @@ public:
 	int					SkinAnimRange;
 	int					Version;
 	TArray<VFrame>		Frames;
+	TArray<VName>		Skins;
 };
 
 class VScriptModel
@@ -530,12 +531,10 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 			}
 
 			//	Process skins.
-/*			for (VXmlNode* SkN = SN->FindChild("skin"); SkN; SkN = SkN->FindNext())
+			for (VXmlNode* SkN = SN->FindChild("skin"); SkN; SkN = SkN->FindNext())
 			{
-				VScriptSubModel::VSkin& S = Md2.Skins.Alloc();
-				S.Name = *SkN->GetAttribute("name").ToLower();
-				S.File = SkN->GetAttribute("file").ToLower().FixFileSlashes();
-			}*/
+				Md2.Skins.Append(*SkN->GetAttribute("file").ToLower().FixFileSlashes());
+			}
 		}
 	}
 
@@ -766,15 +765,32 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 
 		//	Get the proper skin texture ID.
 		int SkinID;
-		if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
+		if (SubMdl.Skins.Num())
 		{
-			SkinID = GTextureManager.AddFileTexture(
-				SubMdl.Model->Skins[0], TEXTYPE_Skin);
+			//	Skins defined in definition file override all skins in MD2 file.
+			if (Md2SkinIdx < 0 || Md2SkinIdx >= SubMdl.Skins.Num())
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Skins[0], TEXTYPE_Skin);
+			}
+			else
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Skins[Md2SkinIdx], TEXTYPE_Skin);
+			}
 		}
 		else
 		{
-			SkinID = GTextureManager.AddFileTexture(
-				SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
+			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Model->Skins[0], TEXTYPE_Skin);
+			}
+			else
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
+			}
 		}
 
 		//	Get and verify frame number.
