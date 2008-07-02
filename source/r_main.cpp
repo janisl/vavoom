@@ -656,8 +656,6 @@ void VRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
 
 	MarkLeaves();
 
-	PushDlights();
-
 	UpdateWorld(RD, Range);
 
 	RenderWorld(RD, Range);
@@ -704,6 +702,8 @@ void VRenderLevel::RenderPlayerView()
 	AnimateSky(host_frametime);
 
 	UpdateParticles(host_frametime);
+
+	PushDlights();
 
 	//	Update camera textures that were visible in last frame.
 	for (int i = 0; i < Level->CameraTextures.Num(); i++)
