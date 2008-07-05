@@ -35,8 +35,6 @@ int botskill;
 
 int classFlags[3];
 
-bool randomclass;
-
 //==========================================================================
 //
 //	Init
@@ -83,7 +81,7 @@ void InitNewGame(int skill)
 {
 	SetSkill(skill);
 	nomonsters = GetCvar('NoMonsters');
-	randomclass = GetCvar('RandomClass');
+	bRandomClass = GetCvar('RandomClass');
 	bRespawnItems = !!GetCvar('deathmatch');
 	bWeaponsStay = netgame && !GetCvar('deathmatch');
 }

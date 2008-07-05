@@ -85,6 +85,7 @@ bool			bDehacked;
 bool			bRespawnItems;
 bool			bRespawnBigItems;
 bool			bWeaponsStay;
+bool			bRandomClass;
 
 float			windTab[3];
 float			pushTab[5];

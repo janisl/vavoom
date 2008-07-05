@@ -95,111 +95,30 @@ replication
 
 //==========================================================================
 //
-//  PutClientIntoServer
+//  CreateBot
 //
 //==========================================================================
 
-void PutClientIntoServer()
+void CreateBot()
 {
-	if (bIsBot)
-	{
-		Bot = BotPlayer(SpawnObject(BotPlayer));
-		Bot.player = self;
-		Bot.OnBeginPlay();
-	}
+	Bot = BotPlayer(SpawnObject(BotPlayer));
+	Bot.player = self;
+	Bot.OnBeginPlay();
 }
 
 //==========================================================================
 //
-//  SpawnClient
+//  DestroyBot
 //
 //==========================================================================
 
-void SpawnClient()
+void DestroyBot()
 {
-	if (Level.Game.deathmatch)
-	{
-		DeathMatchSpawnPlayer();
-	}
-	else
-	{
-		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
-			Level.Game.RebornPosition));
-	}
-}
-
-//==========================================================================
-//
-//  NetGameReborn
-//
-//	Respawn at the start
-//
-//==========================================================================
-
-void NetGameReborn()
-{
-	int i;
-
-	// remove pitch and roll angles from corpse
-	MO.Angles.pitch = 0.0;
-	MO.Angles.roll = 0.0;
-
-	// first dissasociate the corpse
-	MO.Player = none;
-	MO.bIsPlayer = false;
-
-	// spawn at random spot if in death match
-	if (Level.Game.deathmatch)
-	{
-		DeathMatchSpawnPlayer();
-		return;
-	}
-
-	if (CheckSpot(Level.GetPlayerStart(GetPlayerNum(),
-		Level.Game.RebornPosition)))
-	{
-		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
-			Level.Game.RebornPosition));
-		return;
-	}
-
-	// try to spawn at one of the other players spots
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (CheckSpot(Level.GetPlayerStart(i, Level.Game.RebornPosition)))
-		{
-			SpawnPlayer(Level.GetPlayerStart(i, Level.Game.RebornPosition));
-			return;
-		}
-		// he's going to be inside something.  Too bad.
-	}
-	SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
-		Level.Game.RebornPosition));
-}
-
-//==========================================================================
-//
-//  DisconnectClient
-//
-//==========================================================================
-
-void DisconnectClient()
-{
-	int i;
-
 	if (Bot != none)
 	{
 		Bot.Destroy();
 		Bot = none;
 	}
-	if (MO)
-	{
-		MO.Player = none;
-		MO.bIsPlayer = false;
-		Actor(MO).Damage(none, none, 10000);
-	}
-	Level.bprint("%s left the game\n", PlayerName);
-	MO.PlaySound('misc/chat', CHAN_AUTO, 1.0, ATTN_NONE);
 }
 
 //==========================================================================
@@ -240,309 +159,54 @@ void SetClientModel()
 
 //==========================================================================
 //
-//  DeathMatchSpawnPlayer
-//
-//  Spawns a player at one of the random death match spots called at level
-// load and each death
+//  ResetPlayerOnSpawn
 //
 //==========================================================================
 
-void DeathMatchSpawnPlayer()
+void ResetPlayerOnSpawn()
 {
-	int i;
-	int j;
-
-	for (j = 0; j < 20; j++)
-	{
-		i = P_Random() % Level.DeathmatchStarts.Num;
-		if (CheckSpot(&Level.DeathmatchStarts[i]))
-		{
-			SpawnPlayer(&Level.DeathmatchStarts[i]);
-			return;
-		}
-	}
-
-	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(), 0));
-}
-
-//==========================================================================
-//
-//  CheckSpot
-//
-//  Returns false if the player cannot be respawned at the given mthing_t
-// spot because something is occupying it
-//
-//==========================================================================
-
-bool CheckSpot(mthing_t * mthing)
-{
-	float x;
-	float y;
-	sector_t *sec;
-	float an;
-	Actor A;
-	int mtnum;
-	int sfxnum;
-	int i;
-
-	if (!MO)
-	{
-		// first spawn of level, before corpses
-		for (i = 0; i < MAXPLAYERS; i++)
-			if (Level.Game.Players[i] && Level.Game.Players[i].MO &&
-				Level.Game.Players[i].MO.Origin.x == mthing->x &&
-				Level.Game.Players[i].MO.Origin.y == mthing->y)
-				return false;
-		return true;
-	}
-
-	x = mthing->x;
-	y = mthing->y;
-
-	if (!MO.CheckPosition(vector(x, y, Actor::ONFLOORZ)))
-	{
-		return false;
-	}
-
-	if (!PlayerChunk(MO))
-	{
-		LineSpecialLevelInfo(Level).AddPlayerCorpse(EntityEx(MO));
-	}
-
-	// spawn a teleport fog 
-	sec = Level.XLevel.PointInSector(vector(x, y, 0.0));
-	an = itof(45 * (mthing->angle / 45));
-
-	A = DoomLevelInfo(Level).Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
-		sec->floor.TexZ));
-	A.PlaySound('misc/teleport', CHAN_VOICE);
-
-	return true;
-}
-
-//==========================================================================
-//
-//  SpawnPlayer
-//
-//  Called when a player is spawned on the level. Most of the player
-// structure stays unchanged between levels.
-//
-//==========================================================================
-
-void SpawnPlayer(mthing_t * mthing)
-{
-	int i;
-	float x;
-	float y;
-	float z;
-	PlayerPawn PP;
-	bool ResetInventory = false;
-	Inventory Item;
-	class<Inventory> Cls;
-
-	if (PlayerState == PST_REBORN)
-	{
-		PlayerReborn();
-		ResetInventory = true;
-	}
-
-	x = mthing->x;
-	y = mthing->y;
-	z = Actor::ONFLOORZ;
-	if (PClass >= Level.Game.PlayerClasses.Num)
-	{
-		Error("Player::SpawnPlayer : Unknown class type");
-	}
-	PP = Level.Spawn(class<PlayerPawn>(Level.Game.PlayerClasses[PClass]),
-		vector(x, y, z),,, false);
-	PP.Origin.z += mthing->height;
-	PP.LinkToWorld();
-
-	// set colour translations for player sprites
-	TranslStart = PP.TranslStart;
-	TranslEnd = PP.TranslEnd;
-	PP.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
-		GetPlayerNum();
-
-	PP.Angles.yaw = itof(mthing->angle);
-	PP.Player = self;
-	PP.bIsPlayer = true;
-	PP.Health = Health;
-
-	MO = PP;
-	Camera = PP;
-	PlayerState = PST_LIVE;
-	Refire = 0;
-	DamageFlash = 0.0;
-	BonusFlash = 0.0;
-	PoisonCount = 0;
-	ExtraLight = 0;
-	FixedColourmap = 0;
-	LastSectorDamageTime = 0.0;
-	LastHazardTime = 0.0;
-	ViewHeight = PP.ViewHeight;
-	ViewOrg = MO.Origin;
-	ViewOrg.z += ViewHeight;
-	ViewAngles = PP.Angles;
-	bFixAngle = true;
+	::ResetPlayerOnSpawn();
 
 	sb_faceindex = 0;
 	sb_oldhealth = -1;
 	sb_GotWeapon = false;
-
-	PP.Inventory = SavedInventory;
-	for (Item = PP.Inventory; Item; Item = Item.Inventory)
-	{
-		Item.Owner = MO;
-	}
-
-	if (ResetInventory)
-	{
-		while (PP.Inventory)
-		{
-			PP.Inventory.Destroy();
-		}
-
-		BasicArmor BArmor = Level.Spawn(BasicArmor,,,, false);
-		BArmor.Amount = 0;
-		BArmor.AttachToOwner(PP);
-
-		for (i = 0; i < PP.DropItemList.Num; i++)
-		{
-			Item = Inventory(Level.Spawn(PP.DropItemList[i].Type,,,, false));
-			Item.bIgnoreSkill = true;
-			if (PP.DropItemList[i].Amount > 0)
-			{
-				Item.Amount = PP.DropItemList[i].Amount;
-			}
-			if (Weapon(Item))
-			{
-				//	For better control empty weapon's ammo.
-				Weapon(Item).AmmoGive1 = 0;
-				Weapon(Item).AmmoGive2 = 0;
-			}
-			if (!Item.TryPickup(PP))
-			{
-				Item.Destroy();
-			}
-			else if (Weapon(Item) && Weapon(Item).CheckAmmo(Weapon::FIRE_Either, false))
-			{
-				SetWeapon(Weapon(Item));
-			}
-		}
-	}
-
-	// setup gun psprite
-	SetupPsprites();
-
-	// give all cards in death match mode
-	if (Level.Game.deathmatch)
-	{
-		foreach AllClasses(Key, Cls)
-		{
-			if (!FindClassState(Cls, 'Spawn'))
-			{
-				//	Abstract class
-				continue;
-			}
-			EntityEx(MO).GiveInventoryType(Cls);
-		}
-	}
-
-	// wake up the status bar
-	SB_Start();
-
-	if (bIsBot)
-	{
-		Bot.OnSpawn();
-	}
-
-	SetClientModel();
-
-	UpdateRevealedMap();
-
-	if (ResetInventory)
-	{
-		Level.XLevel.StartTypedACScripts(Level::SCRIPT_Respawn, 0, 0, 0, MO,
-			true, false);
-	}
 }
 
 //==========================================================================
 //
-//  PlayerReborn
-//
-//  Called after a player dies almost everything is cleared and initialised
+//  BotOnSpawn
 //
 //==========================================================================
 
-void PlayerReborn()
+void BotOnSpawn()
+{
+	Bot.OnSpawn();
+}
+
+//==========================================================================
+//
+//  DoClearPlayer
+//
+//==========================================================================
+
+void DoClearPlayer()
 {
 	BotPlayer b;
 
-	//  Clear player struct
 	b = Bot;
-	ClearPlayer();
+	::DoClearPlayer();
 	Bot = b;
-
-	//  Set initial data
-	bUseDown = true;	// don't do anything immediately
-	bAttackDown = true;
-	PlayerState = PST_LIVE;
-	Health = MainGameInfo(Level.Game).INITIAL_HEALTH;
-	LocalQuakeHappening = 0;
 }
 
 //==========================================================================
 //
-//  PlayerExitMap
-//
-//  Call when a player completes a level.
+//  GetRebornHealth
 //
 //==========================================================================
 
-void PlayerExitMap(bool clusterChange)
+int GetRebornHealth()
 {
-	Inventory	Item;
-
-	for (Item = EntityEx(MO).Inventory; Item;)
-	{
-		Inventory Next = Item.Inventory;
-		if (Powerup(Item) && (Level.Game.deathmatch ||
-			clusterChange || !Item.bHubPower))
-		{
-			Item.Destroy();
-		}
-		Item = Next;
-	}
-
-	if (clusterChange)
-	{
-		for (Item = EntityEx(MO).Inventory; Item;)
-		{
-			Inventory Next = Item.Inventory;
-			if (Item.bInterHubStrip)
-			{
-				Item.Destroy();
-			}
-			Item = Next;
-		}
-	}
-
-	MO.Angles.pitch = 0.0;
-	MO.RenderStyle = Entity::STYLE_Normal;
-	MO.Alpha = 1.0;
-	EntityEx(MO).bShadow = false;	// cancel invisibility
-	ExtraLight = 0;			// cancel gun flashes
-	FixedColourmap = 0;		// cancel ir gogles
-	DamageFlash = 0.0;		// no palette changes
-	BonusFlash = 0.0;
-	PoisonCount = 0;
-	BlendR = 0.0;
-	BlendG = 0.0;
-	BlendB = 0.0;
-	BlendA = 0.0;
+	return MainGameInfo(Level.Game).INITIAL_HEALTH;
 }
 
 //==========================================================================
