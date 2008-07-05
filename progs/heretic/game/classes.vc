@@ -143,7 +143,6 @@ class SkullRodAmmo : Ammo decorate;
 class PhoenixRodAmmo : Ammo decorate;
 class BlasterAmmo : Ammo decorate;
 class BagOfHolding : BackpackItem decorate;
-class ArtiFly : PowerupGiver decorate;
 class HereticPlayer : PlayerPawn decorate;
 class Puffy : Actor decorate;
 class ArtiEgg : CustomInventory decorate;

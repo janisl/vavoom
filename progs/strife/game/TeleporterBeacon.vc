@@ -54,7 +54,7 @@ bool Use(bool Pickup)
 {
 	//	Increase item count because ItemThrow also decreases it.
 	Amount++;
-	EntityEx A = Player(Owner.Player).InvThrow();
+	EntityEx A = Player(Owner.Player).InventoryThrow();
 	if (A)
 	{
 		A.SetState(A.SeeState);

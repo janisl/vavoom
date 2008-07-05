@@ -169,154 +169,6 @@ int GetMaxHealth()
 
 //==========================================================================
 //
-//  InventoryLeft
-//
-//==========================================================================
-
-void InventoryLeft()
-{
-	if (!InventoryTime)
-	{
-		InventoryTime = 5.0;
-		return;
-	}
-	InventoryTime = 5.0;
-	if (InvPtr)
-	{
-		Inventory Prev = InvPtr.PrevInv();
-		if (Prev)
-		{
-			InvPtr = Prev;
-			AdjustInvFirst();
-		}
-	}
-}
-
-//==========================================================================
-//
-//  InventoryRight
-//
-//==========================================================================
-
-void InventoryRight()
-{
-	if (!InventoryTime)
-	{
-		InventoryTime = 5.0;
-		return;
-	}
-	InventoryTime = 5.0;
-	if (InvPtr)
-	{
-		Inventory Next = InvPtr.NextInv();
-		if (Next)
-		{
-			InvPtr = Next;
-			AdjustInvFirst();
-		}
-	}
-}
-
-//==========================================================================
-//
-//  InventoryUse
-//
-//==========================================================================
-
-Inventory InventoryUse()
-{
-	// flag to denote that it's okay to use an artifact
-	if (InventoryTime)
-	{
-		InventoryTime = 0.0;
-		return none;
-	}
-	else
-	{
-		return InvPtr;
-	}
-}
-
-//==========================================================================
-//
-//  InventoryTick
-//
-//==========================================================================
-
-void InventoryTick(float deltaTime)
-{
-	// turn inventory off after a certain amount of time
-	if (InventoryTime)
-	{
-		InventoryTime -= deltaTime;
-		if (InventoryTime <= 0.0)
-		{
-			InventoryTime = 0.0;
-		}
-	}
-	if (ArtifactFlash)
-	{
-		ArtifactFlash--;
-	}
-}
-
-//==========================================================================
-//
-//	AdjustInvFirst
-//
-//==========================================================================
-
-void AdjustInvFirst()
-{
-	Inventory Item;
-
-	if (!InvPtr)
-	{
-		InvFirst = none;
-		return;
-	}
-
-	//	Count how many items are following the current one, also make sure
-	// that first is not after this one.
-	int NumFollowing = 0;
-	for (Item = InvPtr.NextInv(); Item; Item = Item.NextInv())
-	{
-		NumFollowing++;
-		if (InvFirst == Item)
-		{
-			InvFirst = InvPtr;
-		}
-	}
-	int FirstOffs = 0;
-	for (Item = InvPtr; Item && Item != InvFirst; Item = Item.PrevInv())
-	{
-		FirstOffs++;
-	}
-	while (FirstOffs > 6)
-	{
-		InvFirst = InvFirst.NextInv();
-		FirstOffs--;
-	}
-	while (NumFollowing + FirstOffs < 6 && InvFirst.PrevInv())
-	{
-		InvFirst = InvFirst.PrevInv();
-		FirstOffs++;
-	}
-}
-
-//==========================================================================
-//
-//  UseFlyPower
-//
-//==========================================================================
-
-void UseFlyPower()
-{
-	PlayerUseArtifactType(ArtiFly);
-}
-
-//==========================================================================
-//
 //  PlayerImpulse
 //
 //==========================================================================
@@ -344,7 +196,7 @@ void PlayerImpulse()
 	}
 	else if (impulse == 15)
 	{
-		Arti = InventoryUse();
+		InventoryUse();
 	}
 	else if (impulse == 16)
 	{
@@ -905,46 +757,6 @@ void SetViewPos()
 			SoundEnvironment = 1;
 		}
 	}
-}
-
-//==========================================================================
-//
-//  PlayerUseArtifact
-//
-//==========================================================================
-
-void PlayerUseArtifactType(class<Inventory> arti)
-{
-	Inventory Item = EntityEx(MO).FindInventory(arti);
-	if (Item)
-	{
-		EntityEx(MO).UseInventory(Item);
-	}
-}
-
-//==========================================================================
-//
-//  PlayerNextArtifact
-//
-//==========================================================================
-
-void PlayerNextArtifact()
-{
-	if (!InvPtr)
-	{
-		return;
-	}
-	Inventory NewPtr = InvPtr.PrevInv();
-	if (!NewPtr)
-	{
-		NewPtr = InvPtr;
-		while (NewPtr.NextInv())
-		{
-			NewPtr = NewPtr.NextInv();
-		}
-	}
-	InvPtr = NewPtr;
-	AdjustInvFirst();
 }
 
 //==========================================================================

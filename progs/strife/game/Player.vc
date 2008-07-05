@@ -96,118 +96,6 @@ int GetMaxHealth()
 
 //==========================================================================
 //
-//	InvRight
-//
-//==========================================================================
-
-void InvRight()
-{
-	if (InvPtr)
-	{
-		Inventory Next = InvPtr.NextInv();
-		if (Next)
-		{
-			InvPtr = Next;
-			AdjustInvFirst();
-		}
-	}
-}
-
-//==========================================================================
-//
-//	InvLeft
-//
-//==========================================================================
-
-void InvLeft()
-{
-	if (InvPtr)
-	{
-		Inventory Prev = InvPtr.PrevInv();
-		if (Prev)
-		{
-			InvPtr = Prev;
-			AdjustInvFirst();
-		}
-	}
-}
-
-//==========================================================================
-//
-//	InvUse
-//
-//==========================================================================
-
-void InvUse()
-{
-	if (!InvPtr)
-	{
-		return;
-	}
-	EntityEx(MO).UseInventory(InvPtr);
-}
-
-//==========================================================================
-//
-//	AdjustInvFirst
-//
-//==========================================================================
-
-void AdjustInvFirst()
-{
-	Inventory Item;
-
-	if (!InvPtr)
-	{
-		InvFirst = none;
-		return;
-	}
-
-	//	Count how many items are following the current one, also make sure
-	// that first is not after this one.
-	int NumFollowing = 0;
-	for (Item = InvPtr.NextInv(); Item; Item = Item.NextInv())
-	{
-		NumFollowing++;
-		if (InvFirst == Item)
-		{
-			InvFirst = InvPtr;
-		}
-	}
-	int FirstOffs = 0;
-	for (Item = InvPtr; Item && Item != InvFirst; Item = Item.PrevInv())
-	{
-		FirstOffs++;
-	}
-	while (FirstOffs > 5)
-	{
-		InvFirst = InvFirst.NextInv();
-		FirstOffs--;
-	}
-	while (NumFollowing + FirstOffs < 5 && InvFirst.PrevInv())
-	{
-		InvFirst = InvFirst.PrevInv();
-		FirstOffs++;
-	}
-}
-
-//==========================================================================
-//
-//	InvThrow
-//
-//==========================================================================
-
-EntityEx InvThrow()
-{
-	if (!InvPtr)
-	{
-		return none;
-	}
-	return EntityEx(MO).DropInventory(InvPtr);
-}
-
-//==========================================================================
-//
 //  DeathPlayerTick
 //
 //  Fall on your face when dying. Decrease POV height to floor height.
@@ -294,19 +182,19 @@ void PlayerImpulse()
 	}
 	else if (impulse == 11)
 	{
-		InvThrow();
+		InventoryThrow();
 	}
 	else if (impulse == 13)
 	{
-		InvLeft();
+		InventoryLeft();
 	}
 	else if (impulse == 14)
 	{
-		InvRight();
+		InventoryRight();
 	}
 	else if (impulse == 15)
 	{
-		InvUse();
+		InventoryUse();
 	}
 	else if (impulse == 16)
 	{
@@ -818,4 +706,6 @@ int GetSigilPieces()
 
 defaultproperties
 {
+	bInventoryAlwaysOpen = true;
+	InvSize = 5;
 }
