@@ -730,7 +730,7 @@ bool Touch(Entity InOther)
 			//	Let players missile other players.
 			if (!Target.bIsPlayer && !Other.bIsPlayer)
 			{
-				int Inf = GetInfighting();
+				int Inf = Target.GetInfighting();
 				if (Inf < 0)
 				{
 					//	Monsters can't hurt each other, but make exception
@@ -3525,24 +3525,38 @@ final int GetInfighting()
 
 //==========================================================================
 //
-//	IsHostile
-//
-//==========================================================================
-
-final bool IsHostile(EntityEx Other)
-{
-	return !IsFriend(Other);
-}
-
-//==========================================================================
-//
 //	IsFriend
 //
 //==========================================================================
 
 final bool IsFriend(EntityEx Other)
 {
-	return bFriendly && Other.bFriendly;
+	if (bFriendly && Other.bFriendly)
+	{
+		return true;
+	}
+	return false;
+}
+
+//==========================================================================
+//
+//	IsHostile
+//
+//==========================================================================
+
+final bool IsHostile(EntityEx Other)
+{
+	//	If bot monsters are not friendles, hostiles depend on infighting.
+	if (!bFriendly && !Other.bFriendly)
+	{
+		return false;
+	}
+
+	if (bFriendly && Other.bFriendly)
+	{
+		return false;
+	}
+	return true;
 }
 
 bool IsTeammate(EntityEx Other)
