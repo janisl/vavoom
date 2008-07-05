@@ -931,36 +931,39 @@ void SpawnWorld(Level InLevel)
 	line_t*		line;
 
 	//	Set up tagged lines.
-	for (i = 0; i < InLevel.NumLines; i++)
+	if (!InLevel.bTextMap)
 	{
-		line = &InLevel.Lines[i];
-		switch (line->special)
+		for (i = 0; i < InLevel.NumLines; i++)
 		{
-		case LNSPEC_LineSetIdentification:
-			line->special = 0;
-			line->LineTag = line->arg1 + (line->arg5 << 8);
-			line->flags |= line->arg2 << 16;
-			break;
-		case LNSPEC_LineTranslucent:
-			line->LineTag = line->arg1;
-			line->flags |= line->arg4 << 16;
-			break;
-		case LNSPEC_TeleportLine:
-		case LNSPEC_ScrollTextureModel:
-			line->LineTag = line->arg1;
-			break;
-		case LNSPEC_PolyStartLine:
-			line->LineTag = line->arg4;
-			break;
-		case LNSPEC_PolyExplicitLine:
-			line->LineTag = line->arg5;
-			break;
-		case LNSPEC_StaticInit:
-			if (line->arg2 == 3)
+			line = &InLevel.Lines[i];
+			switch (line->special)
 			{
+			case LNSPEC_LineSetIdentification:
+				line->special = 0;
+				line->LineTag = line->arg1 + (line->arg5 << 8);
+				line->flags |= line->arg2 << 16;
+				break;
+			case LNSPEC_LineTranslucent:
 				line->LineTag = line->arg1;
+				line->flags |= line->arg4 << 16;
+				break;
+			case LNSPEC_TeleportLine:
+			case LNSPEC_ScrollTextureModel:
+				line->LineTag = line->arg1;
+				break;
+			case LNSPEC_PolyStartLine:
+				line->LineTag = line->arg4;
+				break;
+			case LNSPEC_PolyExplicitLine:
+				line->LineTag = line->arg5;
+				break;
+			case LNSPEC_StaticInit:
+				if (line->arg2 == 3)
+				{
+					line->LineTag = line->arg1;
+				}
+				break;
 			}
-			break;
 		}
 	}
 
