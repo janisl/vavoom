@@ -210,6 +210,10 @@ void PlayerImpulse()
 	{
 		NextWeapon();
 	}
+	else if (impulse >= 200 && impulse <= 205)
+	{
+		LineSpecialLevelInfo(Level).ConChoiceImpulse(impulse - 200);
+	}
 	// Hexen artifact hot keys
 	if (!Arti)
 	{
@@ -253,604 +257,58 @@ void PlayerImpulse()
 
 //==========================================================================
 //
-//  MorphPlayerThink
+//  BotTick
 //
 //==========================================================================
 
-void MorphPlayerThink()
+void BotTick(float deltaTime)
 {
-	//FIXME this sucks
-	if (ftoi(32.0 * MorphTime) & 15)
-	{
-		return;
-	}
-	if (!(MO.Velocity.x + MO.Velocity.y) && P_Random() < 64)
-	{
-		// Snout sniff
-		Snout(ReadyWeapon).SnoutSniff();
-		MO.PlaySound('PigActive1', CHAN_VOICE);	// snort
-		return;
-	}
-	if (P_Random() < 48)
-	{
-		if (P_Random() < 128)
-		{
-			MO.PlaySound('PigActive1', CHAN_VOICE);
-		}
-		else
-		{
-			MO.PlaySound('PigActive2', CHAN_VOICE);
-		}
-	}
+	Bot.BotTick(deltaTime);
 }
 
 //==========================================================================
 //
-//  UndoPlayerMorph
+//  SpawnSpeedEffect
 //
 //==========================================================================
 
-bool UndoPlayerMorph()
+void SpawnSpeedEffect()
 {
-	Actor fog;
-	Actor A;
-
-	MO.UnlinkFromWorld();
-	if (BaseClass >= Level.Game.PlayerClasses.Num)
+	Actor speedA = HexenLevelInfo(Level).Spawn(PlayerSpeed, MO.Origin);
+	if (speedA)
 	{
-		Error("UndoPlayerMorph: Unknown class type");
-	}
-	A = Level.Spawn(class<PlayerPawn>(Level.Game.PlayerClasses[BaseClass]),
-		MO.Origin,,, false);
-	if (!A.TestLocation())
-	{
-		// Didn't fit
-		A.Destroy();
-		MO.LinkToWorld();
-		MorphTime = 2.0;
-		return false;
-	}
-	MO.LinkToWorld();
-	A.Angles = MO.Angles;
-	A.Player = self;
-	A.bIsPlayer = true;
-	A.ReactionTime = 0.5;
-	if (MO.bFly)
-	{
-		A.bFly = true;
-		A.bNoGravity = true;
-	}
-	A.bShadow = EntityEx(MO).bShadow;
-	A.bGhost = EntityEx(MO).bGhost;
-	A.ObtainInventory(EntityEx(MO));
-	MorphTime = 0.0;
-	A.Health = MAXHEALTH;
-	Health = A.Health;
-	PClass = BaseClass;
-	A.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
-		GetPlayerNum();
-	PostMorphWeapon(Weapon(Actor(MO).Tracer));
-
-	fog = HexenLevelInfo(Level).Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
-		20.0 * sin(MO.Angles.yaw), MainGameInfo::TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
-
-	MO.SetState(MO.FindState('FreeTargMobj'));
-	MO = A;
-	Camera = A;
-	return true;
-}
-
-//==========================================================================
-//
-//  DeathPlayerTick
-//
-//  Fall on your face when dying. Decrease POV height to floor height.
-//
-//==========================================================================
-
-void DeathPlayerTick(float deltaTime)
-{
-	int dir;
-	float delta;
-	int lookDelta;
-
-	MovePsprites(deltaTime);
-	if (MO.WaterLevel > 1)
-	{
-		MO.Velocity.z -= 60.0;	// drift towards bottom
-	}
-
-	onground = (MO.Origin.z <= MO.FloorZ);
-
-	if (PlayerChunk(MO))
-	{
-		// Flying bloody skull or flying ice chunk
-		ViewHeight = 6.0;
-		DeltaViewHeight = 0.0;
-		//player->damagecount = 20;
-		if (onground)
+		speedA.Angles.yaw = MO.Angles.yaw;
+		speedA.Translation = MO.Translation;
+		speedA.Target = Actor(MO);
+		speedA.Special1 = PClass;
+		if (speedA.Special1 > 2)
 		{
+			speedA.Special1 = 0;
+		}
+		int Idx;
+		switch (PClass)
+		{
+		case HexenDefs::PCLASS_FIGHTER:
+			Idx = 0;
+			break;
+		case HexenDefs::PCLASS_CLERIC:
+			Idx = 2;
+			break;
+		case HexenDefs::PCLASS_MAGE:
+			Idx = 4;
+			break;
+		case HexenDefs::PCLASS_PIG:
+			Idx = 6;
+			break;
+		}
+		speedA.SetState(GetStatePlus(speedA.IdleState, Idx, true));
+		speedA.FloorClip = MO.FloorClip;
 #ifdef FIXME
-			if (lookdir < 60)
-			{
-				lookDelta = (60 - lookdir) / 8;
-				if (lookDelta < 1 && (Level.Game.level->tictime & 1))
-				{
-					lookDelta = 1;
-				}
-				else if (lookDelta > 6)
-				{
-					lookDelta = 6;
-				}
-				lookdir += lookDelta;
-			}
-#endif
-		}
-	}
-	else if (Actor(MO).DamageType != 'Ice')
-	{
-		// Fall to ground (if not frozen)
-		DeltaViewHeight = 0.0;
-		if (ViewHeight > 6.0)
+		if (self == GPlayers[consoleplayer])
 		{
-			ViewHeight -= 35.0 * deltaTime;
-		}
-		if (ViewHeight < 6.0)
-		{
-			ViewHeight = 6.0;
-		}
-#ifdef FIXME
-		if (lookdir > 0)
-		{
-			lookdir -= 6;
-		}
-		else if (lookdir < 0)
-		{
-			lookdir += 6;
-		}
-		if (abs(lookdir) < 6)
-		{
-			lookdir = 0;
+			speedA.bHidden = true;
 		}
 #endif
-	}
-	CalcHeight(deltaTime);
-
-	if (Attacker && Attacker != MO)
-	{
-		// Watch killer
-		dir = EntityEx(MO).FaceActor(EntityEx(Attacker), delta);
-		if (delta < 10.0)
-		{
-			// Looking at killer, so fade damage and poison counters
-			if (DamageFlash)
-			{
-				DamageFlash -= deltaTime;
-				if (DamageFlash <= 0.0)
-					DamageFlash = 0.0;
-			}
-			if (PoisonCount)
-			{
-				PoisonCount--;
-			}
-		}
-		delta = delta / 8.0;
-		if (delta > 5.0)
-		{
-			delta = 5.0;
-		}
-		if (dir)
-		{
-			// Turn clockwise
-			MO.Angles.yaw += delta;
-		}
-		else
-		{	// Turn counter clockwise
-			MO.Angles.yaw -= delta;
-		}
-	}
-	else if (DamageFlash)
-	{
-		DamageFlash -= deltaTime;
-		if (DamageFlash <= 0.0)
-			DamageFlash = 0.0;
-	}
-	else if (PoisonCount)
-	{
-		PoisonCount--;
-	}
-
-	if (Buttons & BT_USE)
-	{
-		InvPtr = none;
-		InvFirst = none;
-		PlayerState = PST_REBORN;
-		Actor(MO).Special1 = PClass;
-		if (Actor(MO).Special1 > 2)
-		{
-			Actor(MO).Special1 = 0;
-		}
-	}
-}
-
-//==========================================================================
-//
-//  PlayerTick
-//
-//==========================================================================
-
-void PlayerTick(float deltaTime)
-{
-	int newweapon;
-	Actor speedA;
-
-	if (bIsBot)
-	{
-		Bot.BotTick(deltaTime);
-	}
-
-	// Copy view angles
-	if (MO == Camera)
-	{
-		MO.Angles = ViewAngles;
-	}
-
-	// fixme: do this in the cheat code
-	if (Cheats & CF_NOCLIP)
-	{
-		MO.bColideWithThings = false;
-		MO.bColideWithWorld = false;
-	}
-	else
-	{
-		MO.bColideWithThings = true;
-		MO.bColideWithWorld = true;
-	}
-
-	if (Actor(MO).bJustAttacked)
-	{
-		ForwardMove = 100.0;
-		SideMove = 0.0;
-		Actor(MO).bJustAttacked = false;
-	}
-
-	if (bTotallyFrozen)
-	{
-		Buttons &= BT_USE;
-		Impulse = 0;
-		ViewAngles = MO.Angles;
-		ForwardMove = 0.0;
-		SideMove = 0.0;
-		FlyMove = 0.0;
-	}
-	else if (bFrozen)
-	{
-		ForwardMove = 0.0;
-		SideMove = 0.0;
-		FlyMove = 0.0;
-	}
-
-	WorldTimer += deltaTime;
-	InventoryTick(deltaTime);
-
-	if (PlayerState == PST_DEAD)
-	{
-		DeathPlayerTick(deltaTime);
-		return;
-	}
-
-	if (JumpTime)
-	{
-		JumpTime -= deltaTime;
-		if (JumpTime <= 0.0)
-			JumpTime = 0.0;
-	}
-	if (MorphTime)
-	{
-		MorphPlayerThink();
-	}
-
-	//  Move around.
-	//  ReactionTime is used to prevent movement for a bit after a teleport.
-	if (Actor(MO).ReactionTime)
-	{
-		Actor(MO).ReactionTime -= deltaTime;
-		if (Actor(MO).ReactionTime <= 0.0)
-			Actor(MO).ReactionTime = 0.0;
-		if (Actor(MO).bWaterJump)
-			WaterJump();
-	}
-	else
-	{
-		if (MO.WaterLevel >= 2)
-			WaterMove(deltaTime);
-		else
-			MovePlayer(deltaTime);
-		if (EntityEx(MO).FindInventory(PowerSpeed) &&
-			!(Level.XLevel.TicTime & 1) && Length(MO.Velocity) > 12.0 * 35.0)
-		{
-			speedA = HexenLevelInfo(Level).Spawn(PlayerSpeed, MO.Origin);
-			if (speedA)
-			{
-				speedA.Angles.yaw = MO.Angles.yaw;
-				speedA.Translation = MO.Translation;
-				speedA.Target = Actor(MO);
-				speedA.Special1 = PClass;
-				if (speedA.Special1 > 2)
-				{
-					speedA.Special1 = 0;
-				}
-				int Idx;
-				switch (PClass)
-				{
-				case HexenDefs::PCLASS_FIGHTER:
-					Idx = 0;
-					break;
-				case HexenDefs::PCLASS_CLERIC:
-					Idx = 2;
-					break;
-				case HexenDefs::PCLASS_MAGE:
-					Idx = 4;
-					break;
-				case HexenDefs::PCLASS_PIG:
-					Idx = 6;
-					break;
-				}
-				speedA.SetState(GetStatePlus(speedA.IdleState, Idx, true));
-				speedA.FloorClip = MO.FloorClip;
-#ifdef FIXME
-				if (self == GPlayers[consoleplayer])
-				{
-					speedA.bHidden = true;
-				}
-#endif
-			}
-		}
-	}
-
-	CalcHeight(deltaTime);
-
-	if (MO.Sector->special || MO.Sector->Damage)
-	{
-		PlayerInSpecialSector(deltaTime);
-	}
-	PlayerOnSpecialFlat(Actor(MO).GetFloorType());
-	PlayerInContents(deltaTime);
-
-	if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
-		!MorphTime && !GetSoundPlayingInfo(MO, GetSoundID('*falling')))
-	{
-		MO.PlaySound('*falling', CHAN_VOICE);
-	}
-
-	// Check for weapon change.
-	if (Impulse)
-	{
-		PlayerImpulse();
-	}
-
-	// check for use
-	if (Buttons & BT_USE)
-	{
-		if (!bUseDown)
-		{
-			EntityEx(MO).UseLines(USERANGE, USETHINGRANGE, '*usefail');
-			bUseDown = true;
-		}
-	}
-	else
-	{
-		bUseDown = false;
-	}
-
-	// Morph counter
-	if (MorphTime)
-	{
-		MorphTime -= deltaTime;
-		if (MorphTime <= 0.0)
-		{
-			// Attempt to undo the pig
-			MorphTime = 0.0;
-			UndoPlayerMorph();
-		}
-	}
-
-	// cycle psprites
-	MovePsprites(deltaTime);
-
-	// Counters
-
-	if (PoisonCount && Level.XLevel.Time - LastPoisonTime >= 0.5)
-	{
-		PoisonCount -= 5;
-		if (PoisonCount < 0)
-		{
-			PoisonCount = 0;
-		}
-		LastPoisonTime = Level.XLevel.Time;
-		Actor(MO).PoisonDamage(Poisoner, Poisoner, 1, true);
-	}
-
-	if (DamageFlash)
-	{
-		DamageFlash -= deltaTime;
-		if (DamageFlash <= 0.0)
-			DamageFlash = 0.0;
-	}
-
-	if (BonusFlash)
-	{
-		BonusFlash -= deltaTime;
-		if (BonusFlash <= 0.0)
-			BonusFlash = 0.0;
-	}
-
-	if (HazardTime)
-	{
-		HazardTime -= deltaTime;
-		if (HazardTime <= 0.0)
-			HazardTime = 0.0;
-		if (Level.XLevel.Time - LastHazardTime >= 32.0 / 35.0 &&
-			HazardTime > 16.0)
-		{
-			LastHazardTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 5);
-		}
-	}
-}
-
-//==========================================================================
-//
-//  SetViewPos
-//
-//==========================================================================
-
-void SetViewPos()
-{
-	int		i;
-
-	//	Just in a case camera entity has been destroyed
-	if (!Camera)
-	{
-		Camera = MO;
-	}
-
-	if (MO != Camera)
-	{
-		ViewOrg = Camera.Origin;
-		ViewOrg.z += EntityEx(Camera).CameraHeight;
-		ViewAngles = Camera.Angles;
-	}
-	else
-	{
-		ViewOrg.x = MO.Origin.x;
-		ViewOrg.y = MO.Origin.y;
-
-		if (LocalQuakeHappening)
-		{
-			float intensity;
-
-			intensity = itof(LocalQuakeHappening);
-			ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
-			ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
-		}
-
-		ViewAngles = MO.Angles;
-	}
-
-	PaletteFlash();
-
-	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
-
-	SoundEnvironment = Level.XLevel.Zones[Camera.Sector->Zone];
-	if (!SoundEnvironment)
-	{
-		if (Camera.WaterLevel >= 3)
-		{
-			//	Under water
-			SoundEnvironment = 0x1600;
-		}
-		else
-		{
-			//	Generic
-			SoundEnvironment = 1;
-		}
-	}
-}
-
-//==========================================================================
-//
-//  AdjustPlayerAngle
-//
-//==========================================================================
-
-void AdjustPlayerAngle(EntityEx AimTarget)
-{
-	float angle;
-	float difference;
-
-	angle = atan2(AimTarget.Origin.y - MO.Origin.y,
-		AimTarget.Origin.x - MO.Origin.x);
-	difference = AngleMod180(angle - MO.Angles.yaw);
-	if (fabs(difference) > 5.0)
-	{
-		MO.Angles.yaw += difference > 0.0 ? 5.0 : -5.0;
-	}
-	else
-	{
-		MO.Angles.yaw = angle;
-	}
-	bFixAngle = true;
-}
-
-//==========================================================================
-//
-//  ActivateMorphWeapon
-//
-//==========================================================================
-
-void ActivateMorphWeapon()
-{
-	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
-	Weapon Wpn = Level.Spawn(Snout);
-	if (!Wpn.TryPickup(EntityEx(MO)))
-	{
-		Wpn.Destroy();
-	}
-	SetWeapon(Weapon(EntityEx(MO).FindInventory(Snout)));	// Snout is the first weapon
-	SetViewState(ps_weapon, ReadyWeapon.GetReadyState());
-}
-
-//==========================================================================
-//
-//  PostMorphWeapon
-//
-//==========================================================================
-
-void PostMorphWeapon(Weapon weapon)
-{
-	ReadyWeapon.Destroy();
-	SetWeapon(weapon);
-	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
-	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
-}
-
-//==========================================================================
-//
-//  Cheat_God
-//
-//==========================================================================
-
-void Cheat_God()
-{
-	Cheats ^= CF_GODMODE;
-	if (Cheats & CF_GODMODE)
-	{
-		cprint("GOD MODE ON");
-	}
-	else
-	{
-		cprint("GOD MODE OFF");
-	}
-}
-
-//==========================================================================
-//
-//  Cheat_NoClip
-//
-//==========================================================================
-
-void Cheat_NoClip()
-{
-	Cheats ^= CF_NOCLIP;
-	if (Cheats & CF_NOCLIP)
-	{
-		cprint("NO CLIPPING ON");
-	}
-	else
-	{
-		cprint("NO CLIPPING OFF");
 	}
 }
 
@@ -1015,17 +473,6 @@ void Cheat_Gimme()
 
 //==========================================================================
 //
-//  Cheat_KillAll
-//
-//==========================================================================
-
-void Cheat_KillAll()
-{
-	cprint("%d MONSTERS KILLED", LineSpecialLevelInfo(Level).P_Massacre());
-}
-
-//==========================================================================
-//
 //  Cheat_Morph
 //
 //==========================================================================
@@ -1043,44 +490,6 @@ void Cheat_Morph()
 		Tmp.Destroy();
 	}
 	cprint("SQUEAL!!");
-}
-
-//==========================================================================
-//
-//  Cheat_NoWeapons
-//
-//==========================================================================
-
-void Cheat_NoWeapons()
-{
-	if (MorphTime)
-	{
-		return;
-	}
-	//	Find weakest weapon.
-	Inventory Item;
-	Weapon Weakest = none;
-	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
-	{
-		if (Weapon(Item) && (!Weakest ||
-			Weakest.SelectionOrder < Weapon(Item).SelectionOrder))
-		{
-			Weakest = Weapon(Item);
-		}
-	}
-	//	Removed all others.
-	for (Item = EntityEx(MO).Inventory; Item; )
-	{
-		Inventory Next = Item.Inventory;
-		if ((Weapon(Item) && Item != Weakest) || FourthWeaponHolder(Item))
-		{
-			Item.Destroy();
-		}
-		Item = Next;
-	}
-	SetWeapon(Weakest);
-	PendingWeapon = Weakest;
-	cprint("CHEATER - YOU DON'T DESERVE WEAPONS");
 }
 
 //==========================================================================

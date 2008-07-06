@@ -115,6 +115,8 @@ WeaponSlot		WeaponSlots[NUM_WEAPON_SLOTS];
 
 float			RespawnTime;
 
+int				GOD_HEALTH;
+
 //==========================================================================
 //
 //	Init

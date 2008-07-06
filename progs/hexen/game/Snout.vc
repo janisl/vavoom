@@ -61,17 +61,6 @@ final void A_SnoutAttack() self(Actor)
 	}
 }
 
-//==========================================================================
-//
-//	SnoutSniff
-//
-//==========================================================================
-
-void SnoutSniff()
-{
-	Owner.Player.SetViewState(ps_weapon, FindState('Sniff'));
-}
-
 states
 {
 Ready:
@@ -87,7 +76,7 @@ Fire:
 	WPIG A 4 A_SnoutAttack
 	WPIG B 8 A_SnoutAttack
 	Goto Ready
-Sniff:
+Flash:
 	WPIG B 8
 	Goto Ready
 }

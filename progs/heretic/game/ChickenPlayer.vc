@@ -25,6 +25,45 @@
 
 class ChickenPlayer : PlayerPawn;
 
+//==========================================================================
+//
+//  MorphPlayerThink
+//
+//==========================================================================
+
+void MorphPlayerThink()
+{
+	if (Health > 0)
+	{
+		// Handle beak movement
+		Player.ViewStates[ps_weapon].SY = Weapon::WEAPONTOP +
+			itof(PlayerEx(Player).ChickenPeck) / 2.0;
+	}
+	if (ftoi(32.0 * PlayerEx(Player).MorphTime) & 15)
+	{
+		return;
+	}
+	if (!(Velocity.x + Velocity.y) && P_Random() < 160)
+	{
+		// Twitch view angle
+		Angles.yaw = AngleMod360(Angles.yaw +
+			(Random() - Random()) * 45.0 / 4.0);
+		Player.bFixAngle = true;
+	}
+	if ((Origin.z <= FloorZ) && (P_Random() < 32))
+	{
+		// Jump and noise
+		Velocity.z += 1.0 * 35.0;
+		SetState(FindState('Pain'));
+		return;
+	}
+	if (P_Random() < 48)
+	{
+		// Just noise
+		PlaySound('chicken/attack', CHAN_VOICE);
+	}
+}
+
 states
 {
 Spawn:

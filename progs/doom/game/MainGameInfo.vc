@@ -50,7 +50,6 @@ bool shareware;
 #endif
 
 int INITIAL_HEALTH;
-int GOD_HEALTH;
 
 //==========================================================================
 //

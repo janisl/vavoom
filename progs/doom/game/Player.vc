@@ -245,80 +245,6 @@ int GetMaxHealth()
 
 //==========================================================================
 //
-//  DeathPlayerTick
-//
-//  Fall on your face when dying. Decrease POV height to floor height.
-//
-//==========================================================================
-
-void DeathPlayerTick(float deltaTime)
-{
-	float angle;
-	float delta;
-
-	MovePsprites(deltaTime);
-
-	if (MO.WaterLevel > 1)
-	{
-		MO.Velocity.z = -60.0;	// drift towards bottom
-	}
-
-	// fall to the ground
-	if (ViewHeight > 6.0)
-		ViewHeight -= 1.0;
-
-	if (ViewHeight < 6.0)
-		ViewHeight = 6.0;
-
-	DeltaViewHeight = 0.0;
-	CalcHeight(deltaTime);
-
-	if (Attacker && Attacker != MO)
-	{
-		angle = atan2(Attacker.Origin.y - MO.Origin.y,
-			Attacker.Origin.x - MO.Origin.x);
-
-		delta = AngleMod180(angle - ViewAngles.yaw);
-
-		if (delta < 5.0 || delta > -5.0)
-		{
-			// Looking at killer,
-			//  so fade damage flash down.
-			ViewAngles.yaw = angle;
-
-			if (DamageFlash)
-			{
-				DamageFlash -= deltaTime;
-				if (DamageFlash <= 0.0)
-					DamageFlash = 0.0;
-			}
-			if (PoisonCount)
-			{
-				PoisonCount--;
-			}
-		}
-		else if (delta > 0.0)
-			ViewAngles.yaw += 5.0;
-		else
-			ViewAngles.yaw -= 5.0;
-	}
-	else if (DamageFlash)
-	{
-		DamageFlash -= deltaTime;
-		if (DamageFlash <= 0.0)
-			DamageFlash = 0.0;
-	}
-	else if (PoisonCount)
-	{
-		PoisonCount--;
-	}
-
-	if (Buttons & BT_USE)
-		PlayerState = PST_REBORN;
-}
-
-//==========================================================================
-//
 //  PlayerImpulse
 //
 //==========================================================================
@@ -347,172 +273,21 @@ void PlayerImpulse()
 	{
 		NextWeapon();
 	}
+	else if (impulse >= 200 && impulse <= 205)
+	{
+		LineSpecialLevelInfo(Level).ConChoiceImpulse(impulse - 200);
+	}
 }
 
 //==========================================================================
 //
-//  PlayerTick
+//  BotTick
 //
 //==========================================================================
 
-void PlayerTick(float deltaTime)
+void BotTick(float deltaTime)
 {
-	if (bIsBot)
-	{
-		Bot.BotTick(deltaTime);
-	}
-
-	// fixme: do this in the cheat code
-	if (Cheats & CF_NOCLIP)
-	{
-		MO.bColideWithThings = false;
-		MO.bColideWithWorld = false;
-	}
-	else
-	{
-		MO.bColideWithThings = true;
-		MO.bColideWithWorld = true;
-	}
-
-	if (Actor(MO).bJustAttacked)
-	{
-		ForwardMove = 100.0;
-		SideMove = 0.0;
-		Actor(MO).bJustAttacked = false;
-	}
-
-	//	You can only press use while totally frozen
-	if (bTotallyFrozen)
-	{
-		Buttons &= BT_USE;
-		Impulse = 0;
-		ViewAngles = MO.Angles;
-		ForwardMove = 0.0;
-		SideMove = 0.0;
-		FlyMove = 0.0;
-	}
-	else if (bFrozen)
-	{
-		ForwardMove = 0.0;
-		SideMove = 0.0;
-		FlyMove = 0.0;
-	}
-
-	if (PlayerState == PST_DEAD)
-	{
-		DeathPlayerTick(deltaTime);
-		return;
-	}
-
-	// Copy view angles
-	if (MO == Camera)
-	{
-		MO.Angles = ViewAngles;
-	}
-
-	if (JumpTime)
-	{
-		JumpTime -= deltaTime;
-		if (JumpTime < 0.0)
-		{
-			JumpTime = 0.0;
-		}
-	}
-
-	// Move around.
-	// Reactiontime is used to prevent movement
-	//  for a bit after a teleport.
-	if (Actor(MO).ReactionTime)
-	{
-		Actor(MO).ReactionTime -= deltaTime;
-		if (Actor(MO).ReactionTime <= 0.0)
-			Actor(MO).ReactionTime = 0.0;
-		if (Actor(MO).bWaterJump)
-			WaterJump();
-	}
-	else
-	{
-		if (MO.WaterLevel > 1)
-			WaterMove(deltaTime);
-		else
-			MovePlayer(deltaTime);
-	}
-
-	CalcHeight(deltaTime);
-
-	if (MO.Sector->special || MO.Sector->Damage)
-	{
-		PlayerInSpecialSector(deltaTime);
-	}
-	PlayerInContents(deltaTime);
-
-	// Check for weapon change.
-	if (Impulse)
-	{
-		PlayerImpulse();
-	}
-
-	// check for use
-	if (Buttons & BT_USE)
-	{
-		if (!bUseDown)
-		{
-			EntityEx(MO).UseLines(USERANGE, USETHINGRANGE, '*usefail');
-			bUseDown = true;
-		}
-	}
-	else
-	{
-		bUseDown = false;
-	}
-
-	if (!ReadyWeapon && PendingWeapon)
-	{
-		SetWeapon(PendingWeapon);
-		BringUpWeapon();
-	}
-
-	//  cycle psprites
-	MovePsprites(deltaTime);
-
-	//  Counters.
-
-	if (PoisonCount && Level.XLevel.Time - LastPoisonTime >= 0.5)
-	{
-		PoisonCount -= 5;
-		if (PoisonCount < 0)
-		{
-			PoisonCount = 0;
-		}
-		LastPoisonTime = Level.XLevel.Time;
-		Actor(MO).PoisonDamage(Poisoner, Poisoner, 1, true);
-	}
-
-	if (DamageFlash)
-	{
-		DamageFlash -= deltaTime;
-		if (DamageFlash <= 0.0)
-			DamageFlash = 0.0;
-	}
-
-	if (BonusFlash)
-	{
-		BonusFlash -= deltaTime;
-		if (BonusFlash <= 0.0)
-			BonusFlash = 0.0;
-	}
-
-	if (HazardTime)
-	{
-		HazardTime -= deltaTime;
-		if (HazardTime <= 0.0)
-			HazardTime = 0.0;
-		if (Level.XLevel.Time - LastHazardTime >= 32.0 / 35.0 && HazardTime > 16.0)
-		{
-			LastHazardTime = Level.XLevel.Time;
-			Actor(MO).Damage(none, none, 5);
-		}
-	}
+	Bot.BotTick(deltaTime);
 }
 
 //==========================================================================
@@ -713,103 +488,6 @@ void UpdateFaceWidget(float FrameTime)
 
 //==========================================================================
 //
-//  SetViewPos
-//
-//==========================================================================
-
-void SetViewPos()
-{
-	//	Just in a case camera entity has been destroyed
-	if (!Camera)
-	{
-		Camera = MO;
-	}
-
-	if (MO != Camera)
-	{
-		ViewOrg = Camera.Origin;
-		ViewOrg.z += EntityEx(Camera).CameraHeight;
-		ViewAngles = Camera.Angles;
-	}
-	else
-	{
-		ViewOrg.x = MO.Origin.x;
-		ViewOrg.y = MO.Origin.y;
-
-		if (LocalQuakeHappening)
-		{
-			float intensity;
-
-			intensity = itof(LocalQuakeHappening);
-			ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
-			ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
-		}
-
-		if (PlayerState != PST_DEAD)
-		{
-			ViewAngles = MO.Angles;
-		}
-	}
-
-	PaletteFlash();
-
-	UpdateFaceWidget(Level.Game.frametime);
-
-	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
-
-	SoundEnvironment = Level.XLevel.Zones[Camera.Sector->Zone];
-	if (!SoundEnvironment)
-	{
-		if (Camera.WaterLevel >= 3)
-		{
-			//	Under water
-			SoundEnvironment = 0x1600;
-		}
-		else
-		{
-			//	Generic
-			SoundEnvironment = 1;
-		}
-	}
-}
-
-//==========================================================================
-//
-//  Cheat_God
-//
-//==========================================================================
-
-void Cheat_God()
-{
-	Cheats ^= CF_GODMODE;
-	if (Cheats & CF_GODMODE)
-	{
-		if (MO)
-			MO.Health = MainGameInfo(Level.Game).GOD_HEALTH;
-		Health = MainGameInfo(Level.Game).GOD_HEALTH;
-		cprint("Degreelessness Mode On");
-	}
-	else
-		cprint("Degreelessness Mode Off");
-}
-
-//==========================================================================
-//
-//  Cheat_NoClip
-//
-//==========================================================================
-
-void Cheat_NoClip()
-{
-	Cheats ^= CF_NOCLIP;
-	if (Cheats & CF_NOCLIP)
-		cprint("No Clipping Mode ON");
-	else
-		cprint("No Clipping Mode OFF");
-}
-
-//==========================================================================
-//
 //  Cheat_Gimme
 //
 //==========================================================================
@@ -978,17 +656,6 @@ void Cheat_Gimme()
 		EntityEx(MO).GiveInventoryType(BlueArmor);
 	}
 	cprint("YOU GOT IT");
-}
-
-//==========================================================================
-//
-//  Cheat_KillAll
-//
-//==========================================================================
-
-void Cheat_KillAll()
-{
-	cprint("%d MONSTERS KILLED", DoomLevelInfo(Level).P_Massacre());
 }
 
 //==========================================================================

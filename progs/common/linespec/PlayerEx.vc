@@ -119,6 +119,11 @@ float			BlendG;
 float			BlendB;
 float			BlendA;
 
+int				ChickenPeck;	// chicken peck countdown
+
+Actor			Rain1;	// active rain maker 1
+Actor			Rain2;	// active rain maker 2
+
 replication
 {
 	reliable if (!bIsClient)
@@ -2250,6 +2255,8 @@ void ResetPlayerOnSpawn()
 	FixedColourmap = 0;
 	LastSectorDamageTime = 0.0;
 	LastHazardTime = 0.0;
+	Rain1 = none;
+	Rain2 = none;
 }
 
 //==========================================================================
@@ -2523,6 +2530,8 @@ void PlayerExitMap(bool clusterChange)
 	BlendG = 0.0;
 	BlendB = 0.0;
 	BlendA = 0.0;
+	Rain1 = none;
+	Rain2 = none;
 }
 
 //==========================================================================
@@ -2735,6 +2744,653 @@ final void PlayerNextArtifact()
 
 //==========================================================================
 //
+//  DeathPlayerTick
+//
+//  Fall on your face when dying. Decrease POV height to floor height.
+//
+//==========================================================================
+
+final void DeathPlayerTick(float deltaTime)
+{
+	int dir;
+	float delta;
+
+	MovePsprites(deltaTime);
+
+	if (MO.WaterLevel > 1)
+	{
+		MO.Velocity.z = -60.0;	// drift towards bottom
+	}
+
+	onground = (MO.Origin.z <= MO.FloorZ);
+
+	if (PlayerChunk(MO))
+	{
+		// Flying bloody skull or flying ice chunk
+		ViewHeight = 6.0;
+		DeltaViewHeight = 0.0;
+		//damagecount = 20;
+		if (onground)
+		{
+#ifdef FIXME
+			if (lookdir < 60)
+			{
+				int lookDelta = (60 - lookdir) / 8;
+				if (lookDelta < 1 && (level->tictime & 1))
+				{
+					lookDelta = 1;
+				}
+				else if (lookDelta > 6)
+				{
+					lookDelta = 6;
+				}
+				lookdir += lookDelta;
+			}
+#endif
+		}
+	}
+	else if (Actor(MO).DamageType != 'Ice')
+	{
+		// Fall to ground (if not frozen)
+		DeltaViewHeight = 0.0;
+		if (ViewHeight > 6.0)
+		{
+			ViewHeight -= 35.0 * deltaTime;
+		}
+		if (ViewHeight < 6.0)
+		{
+			ViewHeight = 6.0;
+		}
+#ifdef FIXME
+		if (lookdir > 0)
+		{
+			lookdir -= 6;
+		}
+		else if (lookdir < 0)
+		{
+			lookdir += 6;
+		}
+		if (abs(lookdir) < 6)
+		{
+			lookdir = 0;
+		}
+#endif
+	}
+	CalcHeight(deltaTime);
+
+	if (Attacker && Attacker != MO)
+	{
+		// Watch killer
+		dir = EntityEx(MO).FaceActor(EntityEx(Attacker), delta);
+		if (delta < 10.0)
+		{
+			// Looking at killer, so fade damage and poison counters
+			if (DamageFlash)
+			{
+				DamageFlash -= deltaTime;
+				if (DamageFlash <= 0.0)
+					DamageFlash = 0.0;
+			}
+			if (PoisonCount)
+			{
+				PoisonCount--;
+			}
+		}
+		delta = delta / 8.0;
+		if (delta > 5.0)
+		{
+			delta = 5.0;
+		}
+		if (dir)
+		{
+			// Turn clockwise
+			MO.Angles.yaw += delta;
+		}
+		else
+		{
+			// Turn counter clockwise
+			MO.Angles.yaw -= delta;
+		}
+	}
+	else if (DamageFlash)
+	{
+		DamageFlash -= deltaTime;
+		if (DamageFlash <= 0.0)
+			DamageFlash = 0.0;
+	}
+	else if (PoisonCount)
+	{
+		PoisonCount--;
+	}
+
+	if (CheckForRespawn(deltaTime))
+	{
+		InvPtr = none;
+		InvFirst = none;
+		PlayerState = PST_REBORN;
+	}
+}
+
+//==========================================================================
+//
+//  CheckForRespawn
+//
+//==========================================================================
+
+bool CheckForRespawn(float deltaTime)
+{
+	return !!(Buttons & BT_USE);
+}
+
+//==========================================================================
+//
+//  PlayerTick
+//
+//==========================================================================
+
+void PlayerTick(float deltaTime)
+{
+	if (bIsBot)
+	{
+		BotTick(deltaTime);
+	}
+
+	// fixme: do this in the cheat code
+	if (Cheats & CF_NOCLIP)
+	{
+		MO.bColideWithThings = false;
+		MO.bColideWithWorld = false;
+	}
+	else
+	{
+		MO.bColideWithThings = true;
+		MO.bColideWithWorld = true;
+	}
+
+	if (Actor(MO).bJustAttacked)
+	{
+		ForwardMove = 100.0;
+		SideMove = 0.0;
+		Actor(MO).bJustAttacked = false;
+	}
+
+	//	You can only press use while totally frozen
+	if (bTotallyFrozen)
+	{
+		Buttons &= BT_USE;
+		Impulse = 0;
+		ViewAngles = MO.Angles;
+		ForwardMove = 0.0;
+		SideMove = 0.0;
+		FlyMove = 0.0;
+	}
+	else if (bFrozen)
+	{
+		ForwardMove = 0.0;
+		SideMove = 0.0;
+		FlyMove = 0.0;
+	}
+
+	WorldTimer += deltaTime;
+	InventoryTick(deltaTime);
+
+	if (PlayerState == PST_DEAD)
+	{
+		DeathPlayerTick(deltaTime);
+		return;
+	}
+
+	// Copy view angles
+	if (MO == Camera)
+	{
+		MO.Angles = ViewAngles;
+	}
+
+	if (JumpTime)
+	{
+		JumpTime -= deltaTime;
+		if (JumpTime <= 0.0)
+		{
+			JumpTime = 0.0;
+		}
+	}
+	if (MorphTime)
+	{
+		PlayerPawn(MO).MorphPlayerThink();
+	}
+
+	//	Move around.
+	//	ReactionTime is used to prevent movement for a bit after a teleport.
+	if (Actor(MO).ReactionTime)
+	{
+		Actor(MO).ReactionTime -= deltaTime;
+		if (Actor(MO).ReactionTime <= 0.0)
+			Actor(MO).ReactionTime = 0.0;
+		if (Actor(MO).bWaterJump)
+			WaterJump();
+	}
+	else
+	{
+		if (MO.WaterLevel > 1)
+			WaterMove(deltaTime);
+		else
+			MovePlayer(deltaTime);
+		if (EntityEx(MO).FindInventory(PowerSpeed) &&
+			!(Level.XLevel.TicTime & 1) && Length(MO.Velocity) > 12.0 * 35.0)
+		{
+			SpawnSpeedEffect();
+		}
+	}
+
+	CalcHeight(deltaTime);
+
+	if (MO.Sector->special || MO.Sector->Damage)
+	{
+		PlayerInSpecialSector(deltaTime);
+	}
+	PlayerOnSpecialFlat(Actor(MO).GetFloorType());
+	PlayerInContents(deltaTime);
+
+	if (MO.Velocity.z <= -35.0 * 35.0 && MO.Velocity.z >= -40.0 * 35.0 &&
+		!MorphTime && MO.WaterLevel == 0 &&
+		!GetSoundPlayingInfo(MO, GetSoundID('*falling')))
+	{
+		MO.PlaySound('*falling', CHAN_VOICE);
+	}
+
+	// Check for weapon change.
+	if (Impulse)
+	{
+		PlayerImpulse();
+	}
+
+	// check for use
+	if (Buttons & BT_USE)
+	{
+		if (!bUseDown)
+		{
+			EntityEx(MO).UseLines(USERANGE, USETHINGRANGE, '*usefail');
+			bUseDown = true;
+		}
+	}
+	else
+	{
+		bUseDown = false;
+	}
+
+	if (!ReadyWeapon && PendingWeapon)
+	{
+		SetWeapon(PendingWeapon);
+		BringUpWeapon();
+	}
+
+	// Morph counter
+	if (MorphTime)
+	{
+		if (ChickenPeck)
+		{
+			// Chicken attack counter
+			ChickenPeck -= 3;
+		}
+		MorphTime -= deltaTime;
+		if (MorphTime <= 0.0)
+		{
+			// Attempt to undo the chicken/pig
+			MorphTime = 0.0;
+			UndoPlayerMorph();
+		}
+	}
+
+	//	Cycle psprites
+	MovePsprites(deltaTime);
+
+	//	Counters.
+
+	if (PoisonCount && Level.XLevel.Time - LastPoisonTime >= 0.5)
+	{
+		PoisonCount -= 5;
+		if (PoisonCount < 0)
+		{
+			PoisonCount = 0;
+		}
+		LastPoisonTime = Level.XLevel.Time;
+		Actor(MO).PoisonDamage(Poisoner, Poisoner, 1, true);
+	}
+
+	if (DamageFlash)
+	{
+		DamageFlash -= deltaTime;
+		if (DamageFlash <= 0.0)
+			DamageFlash = 0.0;
+	}
+
+	if (BonusFlash)
+	{
+		BonusFlash -= deltaTime;
+		if (BonusFlash <= 0.0)
+			BonusFlash = 0.0;
+	}
+
+	if (HazardTime)
+	{
+		HazardTime -= deltaTime;
+		if (HazardTime <= 0.0)
+			HazardTime = 0.0;
+		if (Level.XLevel.Time - LastHazardTime >= 32.0 / 35.0 &&
+			HazardTime > 16.0)
+		{
+			LastHazardTime = Level.XLevel.Time;
+			Actor(MO).Damage(none, none, 5);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  SetViewPos
+//
+//==========================================================================
+
+final void SetViewPos()
+{
+	//	Just in a case camera entity has been destroyed
+	if (!Camera)
+	{
+		Camera = MO;
+	}
+
+	if (MO != Camera)
+	{
+		ViewOrg = Camera.Origin;
+		ViewOrg.z += EntityEx(Camera).CameraHeight;
+		ViewAngles = Camera.Angles;
+	}
+	else
+	{
+		ViewOrg.x = MO.Origin.x;
+		ViewOrg.y = MO.Origin.y;
+
+		if (LocalQuakeHappening)
+		{
+			float intensity;
+
+			intensity = itof(LocalQuakeHappening);
+			ViewOrg.x += (Random() - 0.5) * (intensity * 4.0);
+			ViewOrg.y += (Random() - 0.5) * (intensity * 4.0);
+		}
+
+		if (PlayerState != PST_DEAD)
+		{
+			ViewAngles = MO.Angles;
+		}
+		else
+		{
+			ViewAngles.yaw = MO.Angles.yaw;
+			ViewAngles.pitch = MO.Angles.pitch;
+		}
+
+		if (MorphTime && ChickenPeck)
+		{
+			// Set chicken attack view position
+			ViewOrg.x += itof(ChickenPeck) * cos(MO.Angles.yaw);
+			ViewOrg.y += itof(ChickenPeck) * sin(MO.Angles.yaw);
+		}
+	}
+
+	PaletteFlash();
+
+	UpdateFaceWidget(Level.Game.frametime);
+
+	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
+
+	SoundEnvironment = Level.XLevel.Zones[Camera.Sector->Zone];
+	if (!SoundEnvironment)
+	{
+		if (Camera.WaterLevel >= 3)
+		{
+			//	Under water
+			SoundEnvironment = 0x1600;
+		}
+		else
+		{
+			//	Generic
+			SoundEnvironment = 1;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  AdjustPlayerAngle
+//
+//==========================================================================
+
+final void AdjustPlayerAngle(EntityEx AimTarget)
+{
+	float angle;
+	float difference;
+
+	angle = atan2(AimTarget.Origin.y - MO.Origin.y,
+		AimTarget.Origin.x - MO.Origin.x);
+	difference = AngleMod180(angle - MO.Angles.yaw);
+	if (fabs(difference) > 5.0)
+	{
+		MO.Angles.yaw += difference > 0.0 ? 5.0 : -5.0;
+	}
+	else
+	{
+		MO.Angles.yaw = angle;
+	}
+	bFixAngle = true;
+}
+
+//==========================================================================
+//
+//  UndoPlayerMorph
+//
+//==========================================================================
+
+final bool UndoPlayerMorph()
+{
+	EntityEx fog;
+	Actor A;
+
+	MO.UnlinkFromWorld();
+	if (BaseClass >= Level.Game.PlayerClasses.Num)
+	{
+		Error("UndoPlayerMorph: Unknown class type");
+	}
+	A = Level.Spawn(class<PlayerPawn>(Level.Game.PlayerClasses[BaseClass]),
+		MO.Origin,,, false);
+	if (!A.TestLocation())
+	{
+		// Didn't fit
+		A.Destroy();
+		MO.LinkToWorld();
+		MorphTime = 2.0;
+		return false;
+	}
+	MO.LinkToWorld();
+	// Set colour translation
+	A.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
+		GetPlayerNum();
+	A.Angles = MO.Angles;
+	A.Player = self;
+	A.bIsPlayer = true;
+	A.ReactionTime = 0.5;
+	if (MO.bFly)
+	{
+		A.bFly = true;
+		A.bNoGravity = true;
+	}
+	A.bShadow = EntityEx(MO).bShadow;
+	A.bGhost = EntityEx(MO).bGhost;
+	A.ObtainInventory(EntityEx(MO));
+	MorphTime = 0.0;
+	Inventory Pw = EntityEx(MO).FindInventory(PowerWeaponLevel2);
+	if (Pw)
+	{
+		Pw.Destroy();
+	}
+	A.Health = GetRebornHealth();
+	Health = A.Health;
+	PClass = BaseClass;
+	PostMorphWeapon(Weapon(Actor(MO).Tracer));
+
+	fog = Level.Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
+		MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
+		20.0 * sin(MO.Angles.yaw),
+		LineSpecialGameInfo(Level.Game).TeleFogHeight));
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
+
+	MO.SetState(MO.FindState('FreeTargMobj'));
+	MO = A;
+	Camera = A;
+	PlayerUnmorphed();
+	return true;
+}
+
+//===========================================================================
+//
+//  ActivateMorphWeapon
+//
+//===========================================================================
+
+final void ActivateMorphWeapon()
+{
+	class<Weapon> WpnClass = PlayerPawn(MO).MorphWeapon;
+	Weapon Wpn = Level.Spawn(WpnClass);
+	if (!Wpn.TryPickup(EntityEx(MO)))
+	{
+		Wpn.Destroy();
+	}
+	SetWeapon(Weapon(EntityEx(MO).FindInventory(WpnClass)));
+	SetViewState(ps_weapon, ReadyWeapon.GetReadyState());
+	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
+}
+
+//===========================================================================
+//
+//  PostMorphWeapon
+//
+//===========================================================================
+
+final void PostMorphWeapon(Weapon weapon)
+{
+	ReadyWeapon.Destroy();
+	SetWeapon(weapon);
+	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
+	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
+}
+
+//==========================================================================
+//
+//  Cheat_God
+//
+//==========================================================================
+
+final void Cheat_God()
+{
+	Cheats ^= CF_GODMODE;
+	if (Cheats & CF_GODMODE)
+	{
+		if (LineSpecialGameInfo(Level.Game).GOD_HEALTH)
+		{
+			if (MO)
+			{
+				MO.Health = LineSpecialGameInfo(Level.Game).GOD_HEALTH;
+			}
+			Health = LineSpecialGameInfo(Level.Game).GOD_HEALTH;
+			cprint("Degreelessness Mode On");
+		}
+		else
+		{
+			cprint("GOD MODE ON");
+		}
+	}
+	else
+	{
+		if (LineSpecialGameInfo(Level.Game).GOD_HEALTH)
+		{
+			cprint("Degreelessness Mode Off");
+		}
+		else
+		{
+			cprint("GOD MODE OFF");
+		}
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_NoClip
+//
+//==========================================================================
+
+final void Cheat_NoClip()
+{
+	Cheats ^= CF_NOCLIP;
+	if (Cheats & CF_NOCLIP)
+	{
+		cprint("No Clipping Mode ON");
+	}
+	else
+	{
+		cprint("No Clipping Mode OFF");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_KillAll
+//
+//==========================================================================
+
+final void Cheat_KillAll()
+{
+	cprint("%d MONSTERS KILLED", LineSpecialLevelInfo(Level).P_Massacre());
+}
+
+//==========================================================================
+//
+//  Cheat_NoWeapons
+//
+//==========================================================================
+
+final void Cheat_NoWeapons()
+{
+	if (MorphTime)
+	{
+		return;
+	}
+	//	Find weakest weapon.
+	Inventory Item;
+	Weapon Weakest = none;
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
+	{
+		if (Weapon(Item) && (!Weakest ||
+			Weakest.SelectionOrder < Weapon(Item).SelectionOrder))
+		{
+			Weakest = Weapon(Item);
+		}
+	}
+	//	Removed all others.
+	for (Item = EntityEx(MO).Inventory; Item; )
+	{
+		Inventory Next = Item.Inventory;
+		if ((Weapon(Item) && Item != Weakest) || FourthWeaponHolder(Item))
+		{
+			Item.Destroy();
+		}
+		Item = Next;
+	}
+	SetWeapon(Weakest);
+	PendingWeapon = Weakest;
+	cprint("CHEATER - YOU DON'T DESERVE WEAPONS");
+}
+
+//==========================================================================
+//
 //  Cheat_Fly
 //
 //==========================================================================
@@ -2830,10 +3486,6 @@ int GetSigilPieces()
 	return 0;
 }
 
-void ActivateMorphWeapon()
-{
-}
-
 void PlayerMorphed(Actor OldMO)
 {
 }
@@ -2861,6 +3513,26 @@ void SetClientModel()
 int GetRebornHealth()
 {
 	return 0;
+}
+
+void BotTick(float deltaTime)
+{
+}
+
+void SpawnSpeedEffect()
+{
+}
+
+void PlayerImpulse()
+{
+}
+
+void UpdateFaceWidget(float DeltaTime)
+{
+}
+
+void PlayerUnmorphed()
+{
 }
 
 defaultproperties

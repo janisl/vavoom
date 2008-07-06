@@ -50,7 +50,6 @@ import linespec;
 #include "MWeapFrost.vc"
 #include "MWeapLightning.vc"
 #include "FourthWeaponPiece.vc"
-#include "FourthWeaponHolder.vc"
 #include "FighterWeaponPiece.vc"
 #include "FWeaponPiece1.vc"
 #include "FWeaponPiece2.vc"

@@ -113,6 +113,7 @@ enum
 #include "CustomInventory.vc"
 #include "WeaponPiece.vc"
 #include "WeaponHolder.vc"
+#include "FourthWeaponHolder.vc"
 
 #include "TeleportDest.vc"
 #include "TeleportDest2.vc"
