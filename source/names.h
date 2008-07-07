@@ -66,6 +66,7 @@ REGISTER_NAME(ActorDisplayWindow)
 REGISTER_NAME(ClientGameBase)
 REGISTER_NAME(ClientState)
 REGISTER_NAME(ScriptsParser)
+REGISTER_NAME(LightningThinker)
 
 //	Special struct names
 REGISTER_NAME(TVec)

@@ -135,12 +135,6 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSequence)
 	GAudio->StopSequence(OriginId);
 }
 
-IMPLEMENT_FUNCTION(VBasePlayer, ClientForceLightning)
-{
-	P_GET_SELF;
-	GClLevel->RenderData->ForceLightning();
-}
-
 IMPLEMENT_FUNCTION(VBasePlayer, ClientPrint)
 {
 	P_GET_STR(Str);

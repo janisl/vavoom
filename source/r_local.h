@@ -228,31 +228,6 @@ public:
 	void DrawContents();
 };
 
-class VLightning
-{
-private:
-	bool			Initialised;
-	bool			LevelHasLightning;
-	int				Sky1Texture;
-	int				Sky2Texture;
-	int				NextLightningFlash;
-	int				LightningFlash;
-	int*			LightningLightLevels;
-public:
-	VLevel*			XLevel;
-	VLevelInfo*		Level;
-
-	VLightning()
-	: Initialised(false)
-	, LightningLightLevels(0)
-	{}
-	~VLightning();
-	void Init();
-	void Tick(float);
-	void DoLightningFlash();
-	void ForceLightning();
-};
-
 class VRenderLevel : public VRenderLevelDrawer
 {
 private:
@@ -338,7 +313,6 @@ private:
 	bool			CurrentLightning;
 	VSky			BaseSky;
 	TArray<VSky*>	SideSkies;
-	VLightning		Lightning;
 
 	//	Light variables
 	TArray<light_t>	Lights;
@@ -475,8 +449,6 @@ public:
 	void PreRender();
 	void SegMoved(seg_t*);
 	void SetupFakeFloors(sector_t*);
-
-	void ForceLightning();
 
 	void AddStaticLight(const TVec&, float, vuint32);
 	dlight_t* AllocDlight(VThinker*);

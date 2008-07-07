@@ -358,26 +358,6 @@ void VLevelInfo::Completed(int InMap, int InPosition, int SaveAngle)
 
 //==========================================================================
 //
-//	VLevelInfo::ForceLightning
-//
-//==========================================================================
-
-void VLevelInfo::ForceLightning()
-{
-	guard(VLevelInfo::ForceLightning);
-	for (int i = 0; i < MAXPLAYERS; i++)
-	{
-		if (!Game->Players[i])
-			continue;
-		if (!(Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned))
-			continue;
-		Game->Players[i]->eventClientForceLightning();
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VLevelInfo::FindMobjFromTID
 //
 //==========================================================================

@@ -209,7 +209,6 @@ class VBasePlayer : public VObject
 	DECLARE_FUNCTION(ClientStartSequence)
 	DECLARE_FUNCTION(ClientAddSequenceChoice)
 	DECLARE_FUNCTION(ClientStopSequence)
-	DECLARE_FUNCTION(ClientForceLightning)
 	DECLARE_FUNCTION(ClientPrint)
 	DECLARE_FUNCTION(ClientCentrePrint)
 	DECLARE_FUNCTION(ClientSetAngles)
@@ -358,11 +357,6 @@ class VBasePlayer : public VObject
 		P_PASS_SELF;
 		P_PASS_INT(OriginId);
 		EV_RET_VOID(NAME_ClientStopSequence);
-	}
-	void eventClientForceLightning()
-	{
-		P_PASS_SELF;
-		EV_RET_VOID(NAME_ClientForceLightning);
 	}
 	void eventClientPrint(VStr Str)
 	{
