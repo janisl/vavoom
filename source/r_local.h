@@ -143,8 +143,6 @@ struct sky_t
 {
 	int 			texture1;
 	int 			texture2;
-	int 			baseTexture1;
-	int 			baseTexture2;
 	float			columnOffset1;
 	float			columnOffset2;
 	float			scrollDelta1;
@@ -230,6 +228,31 @@ public:
 	void DrawContents();
 };
 
+class VLightning
+{
+private:
+	bool			Initialised;
+	bool			LevelHasLightning;
+	int				Sky1Texture;
+	int				Sky2Texture;
+	int				NextLightningFlash;
+	int				LightningFlash;
+	int*			LightningLightLevels;
+public:
+	VLevel*			XLevel;
+	VLevelInfo*		Level;
+
+	VLightning()
+	: Initialised(false)
+	, LightningLightLevels(0)
+	{}
+	~VLightning();
+	void Init();
+	void Tick(float);
+	void DoLightningFlash();
+	void ForceLightning();
+};
+
 class VRenderLevel : public VRenderLevelDrawer
 {
 private:
@@ -313,12 +336,9 @@ private:
 	int				CurrentSky2Texture;
 	bool			CurrentDoubleSky;
 	bool			CurrentLightning;
-	bool			LevelHasLightning;
-	int				NextLightningFlash;
-	int				LightningFlash;
-	int*			LightningLightLevels;
 	VSky			BaseSky;
 	TArray<VSky*>	SideSkies;
+	VLightning		Lightning;
 
 	//	Light variables
 	TArray<light_t>	Lights;
@@ -391,7 +411,6 @@ private:
 	//	Sky methods
 	void InitSky();
 	void AnimateSky(float);
-	void DoLightningFlash();
 
 	//	Light methods
 	static void CalcMinMaxs(surface_t*);

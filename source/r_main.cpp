@@ -182,7 +182,6 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 , CurrentSky2Texture(-1)
 , CurrentDoubleSky(false)
 , CurrentLightning(false)
-, LightningLightLevels(0)
 , Particles(0)
 , ActiveParticles(0)
 , FreeParticles(0)
@@ -276,12 +275,6 @@ VRenderLevel::~VRenderLevel()
 	delete[] AllocatedSubRegions;
 	delete[] AllocatedDrawSegs;
 	delete[] AllocatedSegParts;
-
-	if (LightningLightLevels)
-	{
-		delete[] LightningLightLevels;
-		LightningLightLevels = NULL;
-	}
 
 	delete[] Particles;
 	delete[] BspVis;

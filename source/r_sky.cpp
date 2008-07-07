@@ -285,18 +285,16 @@ float tk = skyh / RADIUS;
 
 	for (j = 0; j < NumSkySurfs; j++)
 	{
-		sky[j].baseTexture1 = Sky1Texture;
-		sky[j].baseTexture2 = Sky2Texture;
 		if (DoubleSky)
 		{
-			sky[j].texture1 = sky[j].baseTexture2;
-			sky[j].texture2 = sky[j].baseTexture1;
+			sky[j].texture1 = Sky2Texture;
+			sky[j].texture2 = Sky1Texture;
 			sky[j].scrollDelta1 = Sky2ScrollDelta;
 			sky[j].scrollDelta2 = Sky1ScrollDelta;
 		}
 		else
 		{
-			sky[j].texture1 = sky[j].baseTexture1;
+			sky[j].texture1 = Sky1Texture;
 			sky[j].scrollDelta1 = Sky1ScrollDelta;
 		}
 		sky[j].surf.plane = &sky[j].plane;
@@ -408,8 +406,6 @@ void VSky::InitSkyBox(VName Name1, VName Name2)
 	for (int j = 0; j < 6; j++)
 	{
 		sky[j].texture1 = s1info.surfs[j].texture;
-		sky[j].baseTexture1 = s1info.surfs[j].texture;
-		sky[j].baseTexture2 = s2info.surfs[j].texture;
 		sky[j].surf.plane = &sky[j].plane;
 		sky[j].surf.texinfo = &sky[j].texinfo;
 		sky[j].surf.count = 4;
@@ -512,28 +508,9 @@ void VRenderLevel::InitSky()
 	CurrentLightning = !!(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning);
 
 	// Check if the level is a lightning level
-	LevelHasLightning = false;
-	LightningFlash = 0;
-	if (Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_Lightning)
-	{
-		int secCount = 0;
-		for (int i = 0; i < Level->NumSectors; i++)
-		{
-			if (Level->Sectors[i].ceiling.pic == skyflatnum ||
-				Level->Sectors[i].special == LIGHTNING_OUTDOOR ||
-				Level->Sectors[i].special == LIGHTNING_SPECIAL ||
-				Level->Sectors[i].special == LIGHTNING_SPECIAL2)
-			{
-				secCount++;
-			}
-		}
-		if (secCount)
-		{
-			LevelHasLightning = true;
-			LightningLightLevels = new int[secCount];
-			NextLightningFlash = ((rand() & 15) + 5) * 35; // don't flash at level start
-		}
-	}
+	Lightning.XLevel = Level;
+	Lightning.Level = Level->LevelInfo;
+	Lightning.Init();
 
 	if (Level->LevelInfo->SkyBox != NAME_None)
 	{
@@ -568,6 +545,76 @@ void VRenderLevel::AnimateSky(float frametime)
 		BaseSky.sky[i].columnOffset2 += BaseSky.sky[i].scrollDelta2 * frametime;
 	}
 
+	Lightning.Tick(frametime);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLightning::~VLightning
+//
+//==========================================================================
+
+VLightning::~VLightning()
+{
+	if (LightningLightLevels)
+	{
+		delete[] LightningLightLevels;
+		LightningLightLevels = NULL;
+	}
+}
+
+//==========================================================================
+//
+//	VLightning::Init
+//
+//==========================================================================
+
+void VLightning::Init()
+{
+	guard(VLightning::Init);
+	if (Initialised)
+	{
+		return;
+	}
+	Initialised = true;
+
+	Sky1Texture = Level->Sky1Texture;
+	Sky2Texture = Level->Sky2Texture;
+	LevelHasLightning = false;
+	LightningFlash = 0;
+	if (Level->LevelInfoFlags & VLevelInfo::LIF_Lightning)
+	{
+		int secCount = 0;
+		for (int i = 0; i < XLevel->NumSectors; i++)
+		{
+			if (XLevel->Sectors[i].ceiling.pic == skyflatnum ||
+				XLevel->Sectors[i].special == LIGHTNING_OUTDOOR ||
+				XLevel->Sectors[i].special == LIGHTNING_SPECIAL ||
+				XLevel->Sectors[i].special == LIGHTNING_SPECIAL2)
+			{
+				secCount++;
+			}
+		}
+		if (secCount)
+		{
+			LevelHasLightning = true;
+			LightningLightLevels = new int[secCount];
+			NextLightningFlash = ((rand() & 15) + 5) * 35; // don't flash at level start
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLightning::Tick
+//
+//==========================================================================
+
+void VLightning::Tick(float DeltaTime)
+{
+	guard(VLightning::Tick);
 	//	Update lightning
 	if (LevelHasLightning)
 	{
@@ -585,13 +632,13 @@ void VRenderLevel::AnimateSky(float frametime)
 
 //==========================================================================
 //
-//	VRenderLevel::DoLightningFlash
+//	VLightning::DoLightningFlash
 //
 //==========================================================================
 
-void VRenderLevel::DoLightningFlash()
+void VLightning::DoLightningFlash()
 {
-	guard(VRenderLevel::DoLightningFlash);
+	guard(VLightning::DoLightningFlash);
 	int 		i;
 	sector_t 	*tempSec;
 	int 		*tempLight;
@@ -604,8 +651,8 @@ void VRenderLevel::DoLightningFlash()
 		if (LightningFlash)
 		{
 			tempLight = LightningLightLevels;
-			tempSec = Level->Sectors;
-			for (i = 0; i < Level->NumSectors; i++, tempSec++)
+			tempSec = XLevel->Sectors;
+			for (i = 0; i < XLevel->NumSectors; i++, tempSec++)
 			{
 				if (tempSec->ceiling.pic == skyflatnum ||
 					tempSec->special == LIGHTNING_OUTDOOR ||
@@ -619,12 +666,13 @@ void VRenderLevel::DoLightningFlash()
 					tempLight++;
 				}
 			}
-		}					
+		}
 		else
-		{ // remove the alternate lightning flash special
+		{
+			// remove the alternate lightning flash special
 			tempLight = LightningLightLevels;
-			tempSec = Level->Sectors;
-			for (i = 0; i < Level->NumSectors; i++, tempSec++)
+			tempSec = XLevel->Sectors;
+			for (i = 0; i < XLevel->NumSectors; i++, tempSec++)
 			{
 				if (tempSec->ceiling.pic == skyflatnum ||
 					tempSec->special == LIGHTNING_OUTDOOR ||
@@ -635,20 +683,17 @@ void VRenderLevel::DoLightningFlash()
 					tempLight++;
 				}
 			}
-			for (i = 0; i < BaseSky.NumSkySurfs; i++)
-			{
-				BaseSky.sky[i].texture1 = BaseSky.sky[i].baseTexture1;
-			}
+			Level->Sky1Texture = Sky1Texture;
 		}
 		return;
 	}
 
 	LightningFlash = (rand() & 7) + 8;
 	flashLight = 200 + (rand() & 31);
-	tempSec = Level->Sectors;
+	tempSec = XLevel->Sectors;
 	tempLight = LightningLightLevels;
 	foundSec = false;
-	for (i = 0; i < Level->NumSectors; i++, tempSec++)
+	for (i = 0; i < XLevel->NumSectors; i++, tempSec++)
 	{
 		if (tempSec->ceiling.pic == skyflatnum ||
 			tempSec->special == LIGHTNING_OUTDOOR ||
@@ -686,10 +731,7 @@ void VRenderLevel::DoLightningFlash()
 	}
 	if (foundSec)
 	{
-		for (i = 0; i < BaseSky.NumSkySurfs; i++)
-		{
-			BaseSky.sky[i].texture1 = BaseSky.sky[i].baseTexture2; // set alternate sky
-		}
+		Level->Sky1Texture = Sky2Texture; // set alternate sky
 		GAudio->PlaySound(GSoundManager->GetSoundID("world/thunder"),
 			TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1, 0, false);
 	}
@@ -703,7 +745,7 @@ void VRenderLevel::DoLightningFlash()
 		}
 		else
 		{
-			if ((rand() & 0xff) < 128 && !(Level->TicTime & 32))
+			if ((rand() & 0xff) < 128 && !(XLevel->TicTime & 32))
 			{
 				NextLightningFlash = ((rand() & 7) + 2) * 35;
 			}
@@ -718,6 +760,18 @@ void VRenderLevel::DoLightningFlash()
 
 //==========================================================================
 //
+//	VLightning::ForceLightning
+//
+//==========================================================================
+
+void VLightning::ForceLightning()
+{
+	guard(VLightning::ForceLightning);
+	NextLightningFlash = 0;
+	unguard;
+}
+//==========================================================================
+//
 //	VRenderLevel::ForceLightning
 //
 //==========================================================================
@@ -725,6 +779,6 @@ void VRenderLevel::DoLightningFlash()
 void VRenderLevel::ForceLightning()
 {
 	guard(VRenderLevel::ForceLightning);
-	NextLightningFlash = 0;
+	Lightning.ForceLightning();
 	unguard;
 }
