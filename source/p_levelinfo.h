@@ -152,7 +152,6 @@ class VLevelInfo : public VThinker
 	bool ChangeSwitchTexture(int, bool, VName, bool&);
 	bool StartButton(int, vuint8, int, VName, bool);
 
-	void ForceLightning();
 	VEntity* FindMobjFromTID(int, VEntity*);
 
 	VStr GetLevelName() const
@@ -177,7 +176,6 @@ class VLevelInfo : public VThinker
 
 	//	Special thinker utilites
 	DECLARE_FUNCTION(ChangeSwitchTexture)
-	DECLARE_FUNCTION(ForceLightning)
 	DECLARE_FUNCTION(FindMobjFromTID)
 	DECLARE_FUNCTION(AutoSave)
 

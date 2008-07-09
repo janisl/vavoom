@@ -493,12 +493,6 @@ IMPLEMENT_FUNCTION(VLevelInfo, ChangeSwitchTexture)
 	RET_BOOL(Ret);
 }
 
-IMPLEMENT_FUNCTION(VLevelInfo, ForceLightning)
-{
-	P_GET_SELF;
-	Self->ForceLightning();
-}
-
 IMPLEMENT_FUNCTION(VLevelInfo, FindMobjFromTID)
 {
 	P_GET_REF(VEntity, Prev);

@@ -273,7 +273,6 @@ native final void Completed(int Map, int Position, int SaveAngle);
 //
 native final bool ChangeSwitchTexture(int SideNum, int useAgain,
 	name DefaultSound, out byte Quest);
-native final void ForceLightning();
 native final Entity FindMobjFromTID(int tid, Entity Prev);
 native final void AutoSave();
 

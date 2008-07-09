@@ -115,6 +115,12 @@ void SpawnSpecials()
 	sector_t *sector;
 	int i;
 
+	if (Level.bLightning)
+	{
+		LightningThinker Lightning = Spawn(LightningThinker);
+		Lightning.Init();
+	}
+
 	//  Init special SECTORs.
 	for (i = 0; i < XLevel.NumSectors; i++)
 	{
@@ -6091,6 +6097,29 @@ final bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 	}
 
 	return success;
+}
+
+//==========================================================================
+//
+//	ForceLightning
+//
+//==========================================================================
+
+final void ForceLightning()
+{
+	LightningThinker Lightning = none;
+	Thinker Th;
+	foreach AllThinkers(LightningThinker, Th)
+	{
+		Lightning = LightningThinker(Th);
+		break;
+	}
+	if (!Lightning)
+	{
+		Lightning = Spawn(LightningThinker);
+		Lightning.Init();
+	}
+	Lightning.ForceLightning();
 }
 
 //==========================================================================

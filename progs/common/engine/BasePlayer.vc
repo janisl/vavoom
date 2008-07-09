@@ -141,8 +141,7 @@ replication
 		bAutomapShowThings, SoundEnvironment;
 
 	unreliable if (!bIsClient)
-		ClientStartSound, ClientStopSound, ClientForceLightning,
-		ClientSetViewOrg;
+		ClientStartSound, ClientStopSound, ClientSetViewOrg;
 
 	reliable if (!bIsClient)
 		ClientStartSequence, ClientAddSequenceChoice, ClientStopSequence,
@@ -178,7 +177,6 @@ native void ClientStartSequence(TVec Origin, int OriginId, name Name,
 	int ModeNum);
 native void ClientAddSequenceChoice(int OriginId, name Choice);
 native void ClientStopSequence(int OriginId);
-native void ClientForceLightning();
 native void ClientPrint(string Str);
 native void ClientCentrePrint(string Str);
 native void ClientSetAngles(TAVec Angles);

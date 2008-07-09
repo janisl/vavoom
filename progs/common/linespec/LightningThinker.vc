@@ -1,0 +1,225 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class LightningThinker : Actor;
+
+int				Sky1Texture;
+int				Sky2Texture;
+int				NextLightningFlash;
+int				LightningFlash;
+array<int>		LightningLightLevels;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+void Init()
+{
+	// Check if the level is a lightning level
+	Sky1Texture = Level.Sky1Texture;
+	Sky2Texture = Level.Sky2Texture;
+	LightningFlash = 0;
+	int secCount = 0;
+	int i;
+	for (i = 0; i < XLevel.NumSectors; i++)
+	{
+		if (XLevel.Sectors[i].ceiling.pic == Level.Game.skyflatnum ||
+			XLevel.Sectors[i].special == SECSPEC_LightningOutdoor ||
+			XLevel.Sectors[i].special == SECSPEC_LightningIndoor1 ||
+			XLevel.Sectors[i].special == SECSPEC_Lightningindoor2)
+		{
+			secCount++;
+		}
+	}
+	if (secCount)
+	{
+		LightningLightLevels.Num = secCount;
+		NextLightningFlash = ((P_Random() & 15) + 5) * 35; // don't flash at level start
+	}
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	//	Update lightning
+	if (!NextLightningFlash || LightningFlash)
+	{
+		DoLightningFlash();
+	}
+	else
+	{
+		NextLightningFlash--;
+	}
+}
+
+//==========================================================================
+//
+//	DoLightningFlash
+//
+//==========================================================================
+
+void DoLightningFlash()
+{
+	int			i;
+	sector_t*	tempSec;
+	int			Idx;
+	bool		foundSec;
+	int			flashLight;
+
+	if (LightningFlash)
+	{
+		LightningFlash--;
+		if (LightningFlash)
+		{
+			Idx = 0;
+			for (i = 0; i < XLevel.NumSectors; i++)
+			{
+				tempSec = &XLevel.Sectors[i];
+				if (tempSec->ceiling.pic == Level.Game.skyflatnum ||
+					tempSec->special == SECSPEC_LightningOutdoor ||
+					tempSec->special == SECSPEC_LightningIndoor1 ||
+					tempSec->special == SECSPEC_Lightningindoor2)
+				{
+					if (LightningLightLevels[Idx] < tempSec->params.lightlevel - 4)
+					{
+						tempSec->params.lightlevel -= 4;
+					}
+					Idx++;
+				}
+			}
+		}
+		else
+		{
+			// remove the alternate lightning flash special
+			Idx = 0;
+			for (i = 0; i < XLevel.NumSectors; i++)
+			{
+				tempSec = &XLevel.Sectors[i];
+				if (tempSec->ceiling.pic == Level.Game.skyflatnum ||
+					tempSec->special == SECSPEC_LightningOutdoor ||
+					tempSec->special == SECSPEC_LightningIndoor1 ||
+					tempSec->special == SECSPEC_Lightningindoor2)
+				{
+					tempSec->params.lightlevel = LightningLightLevels[Idx];
+					Idx++;
+				}
+			}
+			Level.Sky1Texture = Sky1Texture;
+		}
+		return;
+	}
+
+	LightningFlash = (P_Random() & 7) + 8;
+	flashLight = 200 + (P_Random() & 31);
+	Idx = 0;
+	foundSec = false;
+	for (i = 0; i < XLevel.NumSectors; i++)
+	{
+		tempSec = &XLevel.Sectors[i];
+		if (tempSec->ceiling.pic == Level.Game.skyflatnum ||
+			tempSec->special == SECSPEC_LightningOutdoor ||
+			tempSec->special == SECSPEC_LightningIndoor1 ||
+			tempSec->special == SECSPEC_Lightningindoor2)
+		{
+			LightningLightLevels[Idx] = tempSec->params.lightlevel;
+			if (tempSec->special == SECSPEC_LightningIndoor1)
+			{
+				tempSec->params.lightlevel += 64;
+				if (tempSec->params.lightlevel > flashLight)
+				{
+					tempSec->params.lightlevel = flashLight;
+				}
+			}
+			else if (tempSec->special == SECSPEC_Lightningindoor2)
+			{
+				tempSec->params.lightlevel += 32;
+				if (tempSec->params.lightlevel > flashLight)
+				{
+					tempSec->params.lightlevel = flashLight;
+				}
+			}
+			else
+			{
+				tempSec->params.lightlevel = flashLight;
+			}
+			if (tempSec->params.lightlevel < LightningLightLevels[Idx])
+			{
+				tempSec->params.lightlevel = LightningLightLevels[Idx];
+			}
+			Idx++;
+			foundSec = true;
+		}
+	}
+	if (foundSec)
+	{
+		Level.Sky1Texture = Sky2Texture; // set alternate sky
+		PlaySound('world/thunder', CHAN_VOICE, 1.0, ATTN_NONE);
+	}
+	// Calculate the next lighting flash
+	if (!NextLightningFlash)
+	{
+		if (P_Random() < 50)
+		{
+			// Immediate Quick flash
+			NextLightningFlash = (P_Random() & 15) + 16;
+		}
+		else
+		{
+			if (P_Random() < 128 && !(XLevel.TicTime & 32))
+			{
+				NextLightningFlash = ((P_Random() & 7) + 2) * 35;
+			}
+			else
+			{
+				NextLightningFlash = ((P_Random() & 15) + 5) * 35;
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//	ForceLightning
+//
+//==========================================================================
+
+void ForceLightning()
+{
+	NextLightningFlash = 0;
+}
+
+defaultproperties
+{
+	bNoSector = true;
+	bNoBlockmap = true;
+	bNoSplash = true;
+}

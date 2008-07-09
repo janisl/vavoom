@@ -171,6 +171,7 @@ enum
 #include "Pusher.vc"
 #include "QuakeFocus.vc"
 #include "WallLightTransfer.vc"
+#include "LightningThinker.vc"
 
 #include "SectorAction.vc"
 #include "SecActEnter.vc"
