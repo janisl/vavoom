@@ -27,8 +27,8 @@ class LightningThinker : Actor;
 
 int				Sky1Texture;
 int				Sky2Texture;
-int				NextLightningFlash;
-int				LightningFlash;
+float			NextLightningFlash;
+float			LightningFlash;
 array<int>		LightningLightLevels;
 array<byte>		LightningSectors;
 bool			bStopping;
@@ -44,10 +44,10 @@ void Init()
 	// Check if the level is a lightning level
 	Sky1Texture = Level.Sky1Texture;
 	Sky2Texture = Level.Sky2Texture;
-	LightningFlash = 0;
+	LightningFlash = 0.0;
 	LightningLightLevels.Num = XLevel.NumSectors;
 	LightningSectors.Num = (XLevel.NumSectors + 7) / 8;
-	NextLightningFlash = ((P_Random() & 15) + 5) * 35; // don't flash at level start
+	NextLightningFlash = Random() * 15.0 + 5.0; // don't flash at level start
 }
 
 //==========================================================================
@@ -61,11 +61,15 @@ void Tick(float DeltaTime)
 	//	Update lightning
 	if (!NextLightningFlash || LightningFlash)
 	{
-		DoLightningFlash();
+		DoLightningFlash(DeltaTime);
 	}
 	else
 	{
-		NextLightningFlash--;
+		NextLightningFlash -= DeltaTime;
+		if (NextLightningFlash < 0.0)
+		{
+			NextLightningFlash = 0.0;
+		}
 		if (bStopping)
 		{
 			Destroy();
@@ -79,7 +83,7 @@ void Tick(float DeltaTime)
 //
 //==========================================================================
 
-void DoLightningFlash()
+void DoLightningFlash(float DeltaTime)
 {
 	int			i;
 	sector_t*	tempSec;
@@ -88,8 +92,8 @@ void DoLightningFlash()
 
 	if (LightningFlash)
 	{
-		LightningFlash--;
-		if (LightningFlash)
+		LightningFlash -= DeltaTime;
+		if (LightningFlash > 0.0)
 		{
 			for (i = 0; i < XLevel.NumSectors; i++)
 			{
@@ -106,6 +110,7 @@ void DoLightningFlash()
 		else
 		{
 			// remove the alternate lightning flash special
+			LightningFlash = 0.0;
 			for (i = 0; i < XLevel.NumSectors; i++)
 			{
 				tempSec = &XLevel.Sectors[i];
@@ -119,7 +124,7 @@ void DoLightningFlash()
 		return;
 	}
 
-	LightningFlash = (P_Random() & 7) + 8;
+	LightningFlash = Random() * 0.25 + 0.25;
 	flashLight = 200 + (P_Random() & 31);
 	foundSec = false;
 	for (i = (XLevel.NumSectors + 7) / 8 - 1; i >= 0; i--)
@@ -179,17 +184,17 @@ void DoLightningFlash()
 		if (P_Random() < 50)
 		{
 			// Immediate Quick flash
-			NextLightningFlash = (P_Random() & 15) + 16;
+			NextLightningFlash = (Random() * 0.5) + 0.5;
 		}
 		else
 		{
-			if (P_Random() < 128 && !(XLevel.TicTime & 32))
+			if (Random() < 0.5 && !(XLevel.TicTime & 32))
 			{
-				NextLightningFlash = ((P_Random() & 7) + 2) * 35;
+				NextLightningFlash = Random() * 8.0 + 2.0;
 			}
 			else
 			{
-				NextLightningFlash = ((P_Random() & 15) + 5) * 35;
+				NextLightningFlash = Random() * 16.0 + 5.0;
 			}
 		}
 	}
@@ -206,11 +211,11 @@ void ForceLightning(int Mode)
 	switch (Mode)
 	{
 	default:
-		NextLightningFlash = 0;
+		NextLightningFlash = 0.0;
 		break;
 
 	case 1:
-		NextLightningFlash = 0;
+		NextLightningFlash = 0.0;
 		bStopping = true;
 		break;
 
