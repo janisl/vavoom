@@ -31,6 +31,7 @@ int				NextLightningFlash;
 int				LightningFlash;
 array<int>		LightningLightLevels;
 array<byte>		LightningSectors;
+bool			bStopping;
 
 //==========================================================================
 //
@@ -65,6 +66,10 @@ void Tick(float DeltaTime)
 	else
 	{
 		NextLightningFlash--;
+		if (bStopping)
+		{
+			Destroy();
+		}
 	}
 }
 
@@ -196,9 +201,23 @@ void DoLightningFlash()
 //
 //==========================================================================
 
-void ForceLightning()
+void ForceLightning(int Mode)
 {
-	NextLightningFlash = 0;
+	switch (Mode)
+	{
+	default:
+		NextLightningFlash = 0;
+		break;
+
+	case 1:
+		NextLightningFlash = 0;
+		bStopping = true;
+		break;
+
+	case 2:
+		bStopping = true;
+		break;
+	}
 }
 
 defaultproperties

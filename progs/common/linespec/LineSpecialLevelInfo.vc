@@ -845,7 +845,7 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		break;
 	case LNSPEC_LightForceLightning:
 		buttonSuccess = true;
-		ForceLightning();
+		ForceLightning(Arg1);
 		break;
 	case LNSPEC_LightRaiseByValue:
 		buttonSuccess = EV_LightRaiseByValue(Arg1, Arg2, Arg3, Arg4, Arg5);
@@ -6105,7 +6105,7 @@ final bool A_LocalQuake(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5)
 //
 //==========================================================================
 
-final void ForceLightning()
+final void ForceLightning(int Mode)
 {
 	LightningThinker Lightning = none;
 	Thinker Th;
@@ -6119,7 +6119,7 @@ final void ForceLightning()
 		Lightning = Spawn(LightningThinker);
 		Lightning.Init();
 	}
-	Lightning.ForceLightning();
+	Lightning.ForceLightning(Mode);
 }
 
 //==========================================================================
