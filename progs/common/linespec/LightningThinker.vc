@@ -30,6 +30,7 @@ int				Sky2Texture;
 int				NextLightningFlash;
 int				LightningFlash;
 array<int>		LightningLightLevels;
+array<byte>		LightningSectors;
 
 //==========================================================================
 //
@@ -43,23 +44,9 @@ void Init()
 	Sky1Texture = Level.Sky1Texture;
 	Sky2Texture = Level.Sky2Texture;
 	LightningFlash = 0;
-	int secCount = 0;
-	int i;
-	for (i = 0; i < XLevel.NumSectors; i++)
-	{
-		if (XLevel.Sectors[i].ceiling.pic == Level.Game.skyflatnum ||
-			XLevel.Sectors[i].special == SECSPEC_LightningOutdoor ||
-			XLevel.Sectors[i].special == SECSPEC_LightningIndoor1 ||
-			XLevel.Sectors[i].special == SECSPEC_Lightningindoor2)
-		{
-			secCount++;
-		}
-	}
-	if (secCount)
-	{
-		LightningLightLevels.Num = secCount;
-		NextLightningFlash = ((P_Random() & 15) + 5) * 35; // don't flash at level start
-	}
+	LightningLightLevels.Num = XLevel.NumSectors;
+	LightningSectors.Num = (XLevel.NumSectors + 7) / 8;
+	NextLightningFlash = ((P_Random() & 15) + 5) * 35; // don't flash at level start
 }
 
 //==========================================================================
@@ -91,7 +78,6 @@ void DoLightningFlash()
 {
 	int			i;
 	sector_t*	tempSec;
-	int			Idx;
 	bool		foundSec;
 	int			flashLight;
 
@@ -100,37 +86,27 @@ void DoLightningFlash()
 		LightningFlash--;
 		if (LightningFlash)
 		{
-			Idx = 0;
 			for (i = 0; i < XLevel.NumSectors; i++)
 			{
 				tempSec = &XLevel.Sectors[i];
-				if (tempSec->ceiling.pic == Level.Game.skyflatnum ||
-					tempSec->special == SECSPEC_LightningOutdoor ||
-					tempSec->special == SECSPEC_LightningIndoor1 ||
-					tempSec->special == SECSPEC_Lightningindoor2)
+				if (LightningSectors[i / 8] & (1 << (i & 7)))
 				{
-					if (LightningLightLevels[Idx] < tempSec->params.lightlevel - 4)
+					if (LightningLightLevels[i] < tempSec->params.lightlevel - 4)
 					{
 						tempSec->params.lightlevel -= 4;
 					}
-					Idx++;
 				}
 			}
 		}
 		else
 		{
 			// remove the alternate lightning flash special
-			Idx = 0;
 			for (i = 0; i < XLevel.NumSectors; i++)
 			{
 				tempSec = &XLevel.Sectors[i];
-				if (tempSec->ceiling.pic == Level.Game.skyflatnum ||
-					tempSec->special == SECSPEC_LightningOutdoor ||
-					tempSec->special == SECSPEC_LightningIndoor1 ||
-					tempSec->special == SECSPEC_Lightningindoor2)
+				if (LightningSectors[i / 8] & (1 << (i & 7)))
 				{
-					tempSec->params.lightlevel = LightningLightLevels[Idx];
-					Idx++;
+					tempSec->params.lightlevel = LightningLightLevels[i];
 				}
 			}
 			Level.Sky1Texture = Sky1Texture;
@@ -140,17 +116,22 @@ void DoLightningFlash()
 
 	LightningFlash = (P_Random() & 7) + 8;
 	flashLight = 200 + (P_Random() & 31);
-	Idx = 0;
 	foundSec = false;
+	for (i = (XLevel.NumSectors + 7) / 8 - 1; i >= 0; i--)
+	{
+		LightningSectors[i] = 0;
+	}
 	for (i = 0; i < XLevel.NumSectors; i++)
 	{
 		tempSec = &XLevel.Sectors[i];
+		int Spec = tempSec->special & SECSPEC_BASE_MASK;
 		if (tempSec->ceiling.pic == Level.Game.skyflatnum ||
-			tempSec->special == SECSPEC_LightningOutdoor ||
-			tempSec->special == SECSPEC_LightningIndoor1 ||
-			tempSec->special == SECSPEC_Lightningindoor2)
+			Spec == SECSPEC_LightningOutdoor ||
+			Spec == SECSPEC_LightningIndoor1 ||
+			Spec == SECSPEC_Lightningindoor2)
 		{
-			LightningLightLevels[Idx] = tempSec->params.lightlevel;
+			LightningLightLevels[i] = tempSec->params.lightlevel;
+			LightningSectors[i / 8] |= 1 << (i & 7);
 			if (tempSec->special == SECSPEC_LightningIndoor1)
 			{
 				tempSec->params.lightlevel += 64;
@@ -171,11 +152,10 @@ void DoLightningFlash()
 			{
 				tempSec->params.lightlevel = flashLight;
 			}
-			if (tempSec->params.lightlevel < LightningLightLevels[Idx])
+			if (tempSec->params.lightlevel < LightningLightLevels[i])
 			{
-				tempSec->params.lightlevel = LightningLightLevels[Idx];
+				tempSec->params.lightlevel = LightningLightLevels[i];
 			}
-			Idx++;
 			foundSec = true;
 		}
 	}
