@@ -124,6 +124,22 @@ replication
 
 //==========================================================================
 //
+//	Destroyed
+//
+//==========================================================================
+
+void Destroyed()
+{
+	if (SisterWeapon)
+	{
+		SisterWeapon.SisterWeapon = none;
+		SisterWeapon.Destroy();
+	}
+	::Destroyed();
+}
+
+//==========================================================================
+//
 //	TryPickup
 //
 //==========================================================================
@@ -204,6 +220,7 @@ Inventory CreateTossable()
 		//	If weapon has a sister weapon, remove it too.
 		if (SisterWeapon)
 		{
+			SisterWeapon.SisterWeapon = none;
 			SisterWeapon.Destroy();
 		}
 		//	Dropped weapons don't have ammo to prevent cheating.
