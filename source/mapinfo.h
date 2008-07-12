@@ -217,3 +217,4 @@ int P_GetCDEnd2Track();
 int P_GetCDEnd3Track();
 int P_GetCDIntermissionTrack();
 int P_GetCDTitleTrack();
+bool IsMapPresent(VName);

@@ -1253,3 +1253,9 @@ IMPLEMENT_FUNCTION(VObject, LoadBinaryLump)
 	P_GET_INT(Lump);
 	W_LoadLumpIntoArray(Lump, *Array);
 }
+
+IMPLEMENT_FUNCTION(VObject, IsMapPresent)
+{
+	P_GET_NAME(MapName);
+	RET_BOOL(IsMapPresent(MapName));
+}

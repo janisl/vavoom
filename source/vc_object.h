@@ -338,6 +338,7 @@ public:
 	DECLARE_FUNCTION(TextColourString)
 	DECLARE_FUNCTION(StartTitleMap)
 	DECLARE_FUNCTION(LoadBinaryLump)
+	DECLARE_FUNCTION(IsMapPresent)
 
 #ifdef CLIENT
 	DECLARE_FUNCTION(P_GetMapName)

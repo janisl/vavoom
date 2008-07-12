@@ -1720,6 +1720,28 @@ void P_SetParTime(VName Map, int Par)
 
 //==========================================================================
 //
+//	IsMapPresent
+//
+//==========================================================================
+
+bool IsMapPresent(VName MapName)
+{
+	guard(IsMapPresent);
+	if (W_CheckNumForName(MapName) >= 0)
+	{
+		return true;
+	}
+	VStr FileName = va("maps/%s.wad", *MapName);
+	if (FL_FileExists(FileName))
+	{
+		return true;
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 // P_GetCDStartTrack
 //
 //==========================================================================
@@ -1795,7 +1817,7 @@ COMMAND(MapList)
 	guard(COMMAND MapList);
 	for (int i = 0; i < MapInfo.Num(); i++)
 	{
-		if (W_CheckNumForName(MapInfo[i].LumpName) >= 0)
+		if (IsMapPresent(MapInfo[i].LumpName))
 		{
 			GCon->Log(VStr(MapInfo[i].LumpName) + " - " +
 				((MapInfo[i].Flags & MAPINFOF_LookupName) ?
