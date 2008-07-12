@@ -44,6 +44,8 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static VCvarF		net_test_loss("net_test_loss", "0");
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -486,9 +488,12 @@ void VNetConnection::Flush()
 	}
 
 	//	Send the message.
-	if (NetCon->SendMessage(Out.GetData(), Out.GetNumBytes()) == -1)
+	if (net_test_loss == 0 || Random() * 100.0 <= net_test_loss)
 	{
-		State = NETCON_Closed;
+		if (NetCon->SendMessage(Out.GetData(), Out.GetNumBytes()) == -1)
+		{
+			State = NETCON_Closed;
+		}
 	}
 	LastSendTime = Driver->NetTime;
 
