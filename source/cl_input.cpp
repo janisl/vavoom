@@ -636,7 +636,7 @@ void CL_SendMove()
 
 	if (cl->Net)
 	{
-		cl->Net->Flush();
+		cl->Net->Tick();
 	}
 	unguard;
 }
