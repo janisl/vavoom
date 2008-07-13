@@ -39,82 +39,35 @@ void CreateChoices()
 	EpisodeDef*			EDef;
 
 	currentY = ChoicesStartY;
-
-	if (P_GetNumEpisodes() > 0)
+	for (i = 0; i < P_GetNumEpisodes(); i++)
 	{
-		for (i = 0; i < P_GetNumEpisodes(); i++)
+		EDef = P_GetEpisodeDef(i);
+		if (EDef->bOptional && !IsMapPresent(EDef->Name))
 		{
-			EDef = P_GetEpisodeDef(i);
-			Epi = MenuChoiceEpisode(NewChild(MenuChoiceEpisode));
-			Epi.SetPos(ChoicesStartX, currentY);
-			if (EDef->PicName)
-			{
-				Epi.PicHandle = R_RegisterPic(EDef->PicName);
-			}
-			else if (EDef->bLookupText)
-			{
-				Epi.Text = GetLangString(StrToName(EDef->Text));
-			}
-			else
-			{
-				Epi.Text = EDef->Text;
-			}
-			Epi.EpisodeMap = EDef->Name;
-			Epi.bNoSkillMenu = EDef->bNoSkillMenu;
-			Epi.Activated = ActivateEpisode;
-			currentY += Epi.Height;
+			continue;
 		}
-	}
-	else
-	{
-		//	Episode 1
 		Epi = MenuChoiceEpisode(NewChild(MenuChoiceEpisode));
 		Epi.SetPos(ChoicesStartX, currentY);
-		Epi.PicHandle = R_RegisterPic('m_epi1');
-		Epi.EpisodeMap = 'e1m1';
+		if (EDef->PicName)
+		{
+			Epi.PicHandle = R_RegisterPic(EDef->PicName);
+		}
+		else if (EDef->bLookupText)
+		{
+			Epi.Text = GetLangString(StrToName(EDef->Text));
+		}
+		else
+		{
+			Epi.Text = EDef->Text;
+		}
+		Epi.EpisodeMap = EDef->Name;
+		if (EDef->TeaserName && !IsMapPresent(EDef->Name))
+		{
+			Epi.EpisodeMap = EDef->TeaserName;
+		}
+		Epi.bNoSkillMenu = EDef->bNoSkillMenu;
 		Epi.Activated = ActivateEpisode;
 		currentY += Epi.Height;
-
-		//	Episode 2
-		Epi = MenuChoiceEpisode(NewChild(MenuChoiceEpisode));
-		Epi.SetPos(ChoicesStartX, currentY);
-		Epi.PicHandle = R_RegisterPic('m_epi2');
-		Epi.EpisodeMap = 'e2m1';
-		if (WadLumpPresent('e2m1'))
-		{
-			Epi.Activated = ActivateEpisode;
-		}
-		else
-		{
-			Epi.Activated = ActivateEpisodeShareware;
-		}
-		currentY += Epi.Height;
-
-		//	Episode 3
-		Epi = MenuChoiceEpisode(NewChild(MenuChoiceEpisode));
-		Epi.SetPos(ChoicesStartX, currentY);
-		Epi.PicHandle = R_RegisterPic('m_epi3');
-		Epi.EpisodeMap = 'e3m1';
-		if (WadLumpPresent('e2m1'))
-		{
-			Epi.Activated = ActivateEpisode;
-		}
-		else
-		{
-			Epi.Activated = ActivateEpisodeShareware;
-		}
-		currentY += Epi.Height;
-
-		//	Episode 4
-		if (WadLumpPresent('e2m1') && WadLumpPresent('e4m1'))
-		{
-			Epi = MenuChoiceEpisode(NewChild(MenuChoiceEpisode));
-			Epi.SetPos(ChoicesStartX, currentY);
-			Epi.PicHandle = R_RegisterPic('m_epi4');
-			Epi.EpisodeMap = 'e4m1';
-			Epi.Activated = ActivateEpisode;
-			currentY += Epi.Height;
-		}
 	}
 }
 
@@ -127,6 +80,12 @@ void CreateChoices()
 void ActivateEpisode(Object Sender)
 {
 	MenuChoiceEpisode Epi = MenuChoiceEpisode(Sender);
+	if (!IsMapPresent(Epi.EpisodeMap))
+	{
+		ClGame.MessageBoxStartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
+			ClientGameShared::MB_Shareware, false);
+		return;
+	}
 	ClGame.MenuStartMap = Epi.EpisodeMap;
 	if (Epi.bNoSkillMenu)
 	{
@@ -136,18 +95,6 @@ void ActivateEpisode(Object Sender)
 	{
 		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
 	}
-}
-
-//==========================================================================
-//
-//	ActivateEpisodeShareware
-//
-//==========================================================================
-
-void ActivateEpisodeShareware(Object Sender)
-{
-	ClGame.MessageBoxStartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
-		ClientGame::MB_Shareware, false);
 }
 
 defaultproperties

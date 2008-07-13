@@ -590,6 +590,13 @@ txt_needyellowkey = "YOU NEED A YELLOW KEY TO OPEN THIS DOOR";
 txt_needgreenkey = "YOU NEED A GREEN KEY TO OPEN THIS DOOR";
 txt_needbluekey = "YOU NEED A BLUE KEY TO OPEN THIS DOOR";
 
+//	Episode names
+mnu_cotd = "CITY OF THE DAMNED";
+mnu_hellsmaw = "HELL'S MAW";
+mnu_dome = "THE DOME OF D'SPARIL";
+mnu_ossuary = "THE OSSUARY";
+mnu_demense = "THE STAGNANT DEMESNE";
+
 //	Level names
 hhustr_e1m1 = "THE DOCKS";
 hhustr_e1m2 = "THE DUNGEONS";

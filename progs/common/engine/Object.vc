@@ -1218,6 +1218,7 @@ struct EpisodeDef
 	name		PicName;
 	bool		bLookupText;
 	bool		bNoSkillMenu;
+	bool		bOptional;
 	string		Key;
 };
 

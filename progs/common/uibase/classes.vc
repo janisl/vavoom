@@ -46,11 +46,13 @@ import linespec;
 #include "MenuSaveSlot.vc"
 #include "MenuChoice_LoadSlot.vc"
 #include "MenuChoice_SaveSlot.vc"
+#include "MenuChoiceEpisode.vc"
 #include "MenuChoiceSkill.vc"
 #include "MenuSelector_SmallLeft.vc"
 #include "MenuSelector_SmallRight.vc"
 #include "MenuSelector_Big.vc"
 
+#include "MenuScreenEpisode.vc"
 #include "MenuScreenSkill.vc"
 #include "MenuScreenLoadGame.vc"
 #include "MenuScreenSaveGame.vc"

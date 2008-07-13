@@ -148,6 +148,7 @@ enum
 {
 	EPISODEF_LookupText		= 0x0001,
 	EPISODEF_NoSkillMenu	= 0x0002,
+	EPISODEF_Optional		= 0x0004,
 };
 
 struct VEpisodeDef

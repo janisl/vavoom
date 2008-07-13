@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MenuChoiceEpisode : MenuTextButton;
+class MenuChoiceEpisode : MenuBigTextButton;
 
 int PicHandle;
 name EpisodeMap;
@@ -43,13 +43,10 @@ void OnDraw()
 	}
 	else
 	{
-		SetFont('bigfont');
-		SetTextAlign(hleft, vtop);
-		DrawText(0, 0, Text);
+		::OnDraw();
 	}
 }
 
 defaultproperties
 {
-	Height = 18;
 }

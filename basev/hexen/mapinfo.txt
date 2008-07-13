@@ -2,6 +2,13 @@
 //	This one just defines clusters, the rest is in hexen.wad
 
 //------------------------------------------------------
+//  Episode definition
+clearepisodes
+
+episode "&wt@01"
+name "Hexen"
+
+//------------------------------------------------------
 //  Skill definitions
 
 skill baby

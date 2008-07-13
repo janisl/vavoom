@@ -1,4 +1,11 @@
 //------------------------------------------------------
+//  Episode definition
+clearepisodes
+
+episode map02 teaser map33
+name "Quest for the Sigil"
+
+//------------------------------------------------------
 //  Skill definitions
 
 skill baby

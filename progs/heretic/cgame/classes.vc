@@ -28,8 +28,6 @@ import uibase;
 
 #include "MenuScreenMain.vc"
 #include "MenuScreenSinglePlayer.vc"
-#include "MenuChoice_Episode1.vc"
-#include "MenuScreenEpisode.vc"
 #include "MenuScreenMultiplayer.vc"
 #include "MenuScreenNewNetGame.vc"
 #include "MenuScreenPlayerSetup.vc"

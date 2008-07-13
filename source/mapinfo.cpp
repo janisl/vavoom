@@ -114,6 +114,19 @@ void InitMapInfo()
 				*MapInfo[i].SecretMap + 4));
 		}
 	}
+	for (int i = 0; i < EpisodeDefs.Num(); i++)
+	{
+		if (VStr(EpisodeDefs[i].Name).StartsWith("&wt@"))
+		{
+			EpisodeDefs[i].Name = P_TranslateMap(atoi(
+				*EpisodeDefs[i].Name + 4));
+		}
+		if (VStr(EpisodeDefs[i].TeaserName).StartsWith("&wt@"))
+		{
+			EpisodeDefs[i].TeaserName = P_TranslateMap(atoi(
+				*EpisodeDefs[i].TeaserName + 4));
+		}
+	}
 
 	//	Set up default map info returned for maps that have not defined in
 	// MAPINFO
@@ -1229,6 +1242,10 @@ static void ParseEpisodeDef(VScriptParser* sc)
 		else if (sc->Check("noskillmenu"))
 		{
 			EDef->Flags |= EPISODEF_NoSkillMenu;
+		}
+		else if (sc->Check("optional"))
+		{
+			EDef->Flags |= EPISODEF_Optional;
 		}
 		else
 		{
