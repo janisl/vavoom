@@ -371,23 +371,6 @@ void SharewareResponse(int key)
 
 //==========================================================================
 //
-//	NewGame
-//
-//==========================================================================
-
-void NewGame(int SkillLevel)
-{
-	SetCvar('Skill', SkillLevel);
-
-	CmdBuf_AddText("Disconnect\n");
-	CmdBuf_AddText("MaxPlayers 1\n");
-	CmdBuf_AddText("Map %n\n", MenuStartMap);
-
-	ForceMenuOff();
-}
-
-//==========================================================================
-//
 //  InitBorder
 //
 //==========================================================================

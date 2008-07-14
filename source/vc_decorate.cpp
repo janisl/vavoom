@@ -3493,13 +3493,13 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			if (!Prop.ICmp("Player.SoundClass"))
 			{
 				sc->ExpectString();
-				SetClassFieldName(Class, "SoundClass", *sc->String);
+				SetClassFieldName(Class, "SoundClass", *sc->String.ToLower());
 				continue;
 			}
 			if (!Prop.ICmp("Player.SpawnClass"))
 			{
 				sc->ExpectString();
-				SetClassFieldName(Class, "SpawnClass", *sc->String);
+				SetClassFieldName(Class, "SpawnClass", *sc->String.ToLower());
 				continue;
 			}
 			if (!Prop.ICmp("Player.StartItem"))

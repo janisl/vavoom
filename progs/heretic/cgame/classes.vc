@@ -27,7 +27,6 @@ import svprogs;
 import uibase;
 
 #include "MenuScreenMain.vc"
-#include "MenuScreenSinglePlayer.vc"
 #include "MenuScreenMultiplayer.vc"
 #include "MenuScreenNewNetGame.vc"
 #include "MenuScreenPlayerSetup.vc"

@@ -75,34 +75,13 @@ void ActivateNewGame(Object Sender)
 	{
 		return;
 	}
-	if (P_GetNumEpisodes() > 1)
+	if (ClGame.Game.PlayerClasses.Num > 1)
 	{
-		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenEpisode));
-	}
-	else if (P_GetNumEpisodes() == 1)
-	{
-		ClGame.MenuStartMap = P_GetEpisodeDef(0)->Name;
-		if (P_GetEpisodeDef(0)->TeaserName &&
-			!WadLumpPresent(P_GetEpisodeDef(0)->Name))
-		{
-			ClGame.MenuStartMap = P_GetEpisodeDef(0)->TeaserName;
-		}
-		if (P_GetEpisodeDef(0)->bNoSkillMenu)
-		{
-			ClGame.NewGame(2);
-		}
-		else
-		{
-			ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
-		}
+		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenClass));
 	}
 	else
 	{
-		if (!WadLumpPresent('map01'))
-			ClGame.MenuStartMap = 'map33';
-		else
-			ClGame.MenuStartMap = 'map02';
-		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
+		ClientGameShared(ClGame).SetPClass(0);
 	}
 }
 

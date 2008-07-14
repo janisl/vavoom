@@ -60,12 +60,7 @@ void CreateChoices()
 		{
 			Epi.Text = EDef->Text;
 		}
-		Epi.EpisodeMap = EDef->Name;
-		if (EDef->TeaserName && !IsMapPresent(EDef->Name))
-		{
-			Epi.EpisodeMap = EDef->TeaserName;
-		}
-		Epi.bNoSkillMenu = EDef->bNoSkillMenu;
+		Epi.EDef = EDef;
 		Epi.Activated = ActivateEpisode;
 		currentY += Epi.Height;
 	}
@@ -80,21 +75,13 @@ void CreateChoices()
 void ActivateEpisode(Object Sender)
 {
 	MenuChoiceEpisode Epi = MenuChoiceEpisode(Sender);
-	if (!IsMapPresent(Epi.EpisodeMap))
+	if (!IsMapPresent(Epi.EDef->Name))
 	{
 		ClGame.MessageBoxStartMessage("ONLY AVAILABLE IN THE REGISTERED VERSION",
 			ClientGameShared::MB_Shareware, false);
 		return;
 	}
-	ClGame.MenuStartMap = Epi.EpisodeMap;
-	if (Epi.bNoSkillMenu)
-	{
-		ClGame.NewGame(2);
-	}
-	else
-	{
-		ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSkill));
-	}
+	ClientGameShared(ClGame).SetEpisode(Epi.EDef);
 }
 
 defaultproperties

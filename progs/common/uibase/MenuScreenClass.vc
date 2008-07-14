@@ -1,0 +1,176 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenClass : MenuScreen;
+
+MenuStaticBitmap	FighterBox;
+MenuStaticAnim		FighterWalk;
+MenuStaticBitmap	ClericBox;
+MenuStaticAnim		ClericWalk;
+MenuStaticBitmap	MageBox;
+MenuStaticAnim		MageWalk;
+
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
+void CreateChoices()
+{
+	if (WadLumpPresent('m_fbox'))
+	{
+		FighterBox = NewChild(MenuStaticBitmap);
+		FighterBox.SetOrigin(174, 28);
+		FighterBox.SetPic('m_fbox');
+		FighterBox.Hide();
+
+		FighterWalk = NewChild(MenuStaticAnim);
+		FighterWalk.SetOrigin(174 + 24, 28 + 12);
+		FighterWalk.Speed = 8;
+		FighterWalk.AddFrame('m_fwalk1');
+		FighterWalk.AddFrame('m_fwalk2');
+		FighterWalk.AddFrame('m_fwalk3');
+		FighterWalk.AddFrame('m_fwalk4');
+		FighterWalk.Hide();
+
+		ClericBox = NewChild(MenuStaticBitmap);
+		ClericBox.SetOrigin(174, 28);
+		ClericBox.SetPic('m_cbox');
+		ClericBox.Hide();
+
+		ClericWalk = NewChild(MenuStaticAnim);
+		ClericWalk.SetOrigin(174 + 24, 28 + 12);
+		ClericWalk.Speed = 8;
+		ClericWalk.AddFrame('m_cwalk1');
+		ClericWalk.AddFrame('m_cwalk2');
+		ClericWalk.AddFrame('m_cwalk3');
+		ClericWalk.AddFrame('m_cwalk4');
+		ClericWalk.Hide();
+
+		MageBox = NewChild(MenuStaticBitmap);
+		MageBox.SetOrigin(174, 28);
+		MageBox.SetPic('m_mbox');
+		MageBox.Hide();
+
+		MageWalk = NewChild(MenuStaticAnim);
+		MageWalk.SetOrigin(174 + 24, 28 + 12);
+		MageWalk.Speed = 8;
+		MageWalk.AddFrame('m_mwalk1');
+		MageWalk.AddFrame('m_mwalk2');
+		MageWalk.AddFrame('m_mwalk3');
+		MageWalk.AddFrame('m_mwalk4');
+		MageWalk.Hide();
+	}
+
+	int currentY = ChoicesStartY;
+	int i;
+	for (i = 0; i < ClGame.Game.PlayerClasses.Num; i++)
+	{
+		MenuChoicePClass Btn = NewChild(MenuChoicePClass);
+		Btn.SetPos(ChoicesStartX, currentY);
+		Btn.Text = class<PlayerPawn>(ClGame.Game.PlayerClasses[
+			i]).default.DisplayName;
+		Btn.FocusLost = PClassItemFocusLost;
+		Btn.FocusReceived = PClassItemFocusReceived;
+		Btn.Activated = PClassItemActivate;
+		Btn.Index = i;
+		currentY += Btn.Height;
+		if (i == 0)
+		{
+			PClassItemFocusReceived(Btn);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	PClassItemFocusLost
+//
+//==========================================================================
+
+void PClassItemFocusLost(Object Sender)
+{
+	if (FighterBox)
+	{
+		FighterBox.Hide();
+		FighterWalk.Hide();
+		ClericBox.Hide();
+		ClericWalk.Hide();
+		MageBox.Hide();
+		MageWalk.Hide();
+	}
+}
+
+//==========================================================================
+//
+//	PClassPClassItemFocusReceived
+//
+//==========================================================================
+
+void PClassItemFocusReceived(Object Sender)
+{
+	if (FighterBox)
+	{
+		MenuChoicePClass Btn = MenuChoicePClass(Sender);
+		name CName = class<PlayerPawn>(ClGame.Game.PlayerClasses[
+			Btn.Index]).default.SpawnClass;
+		if (CName == 'fighter')
+		{
+			FighterBox.Show();
+			FighterWalk.Show();
+		}
+		else if (CName == 'cleric')
+		{
+			ClericBox.Show();
+			ClericWalk.Show();
+		}
+		else if (CName == 'mage')
+		{
+			MageBox.Show();
+			MageWalk.Show();
+		}
+	}
+}
+
+//==========================================================================
+//
+//	PClassItemActivate
+//
+//==========================================================================
+
+void PClassItemActivate(Object Sender)
+{
+	ClientGameShared(ClGame).SetPClass(MenuChoicePClass(Sender).Index);
+}
+
+defaultproperties
+{
+	ChoicesStartX = 66;
+	ChoicesStartY = 66;
+	SelectorType = MenuSelector_Big;
+	Title = "CHOOSE CLASS:";
+	// 34, TEXT_BIG
+}

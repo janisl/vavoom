@@ -93,6 +93,7 @@ void CL_Init()
 	ClientNetContext = new VClientNetContext();
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(
 		VClass::FindClass("ClientGame"));
+	GClGame->Game = GGameInfo;
 	unguard;
 }
 
@@ -368,7 +369,6 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
-	GClGame->Game = GGameInfo;
 	if (host_standalone)
 	{
 		VBasePlayer* Player = GPlayersBase[0];

@@ -25,9 +25,8 @@
 
 class MenuChoiceEpisode : MenuBigTextButton;
 
-int PicHandle;
-name EpisodeMap;
-bool bNoSkillMenu;
+int				PicHandle;
+EpisodeDef*		EDef;
 
 //==========================================================================
 //

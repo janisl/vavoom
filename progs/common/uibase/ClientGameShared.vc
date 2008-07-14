@@ -48,6 +48,7 @@ MenuScreen				CurrentMenuScreen;
 MenuControlKey			CurrentCtl;
 int						ControlColumn;	// menu column for controls
 
+int						MenuPClass;
 name					MenuStartMap;
 string					SkillClassName;
 int						SkillToConfirm;
@@ -410,11 +411,70 @@ void AddHudMessage(string Message, name Font, int Type, int Id, int Colour,
 		HudWidth, HudHeight, HoldTime, Time1, Time2);
 }
 
-void menu_quit()
+//==========================================================================
+//
+//	SetPClass
+//
+//==========================================================================
+
+final void SetPClass(int PClass)
 {
+	MenuPClass = PClass;
+	SkillClassName = va("%n", class<PlayerPawn>(Game.PlayerClasses[
+		PClass]).default.SpawnClass);
+	if (P_GetNumEpisodes() > 1)
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenEpisode));
+	}
+	else
+	{
+		SetEpisode(P_GetEpisodeDef(0));
+	}
 }
 
-void NewGame(int skill)
+//==========================================================================
+//
+//  SetEpisode
+//
+//==========================================================================
+
+final void SetEpisode(EpisodeDef* EDef)
+{
+	MenuStartMap = EDef->Name;
+	if (EDef->TeaserName && !IsMapPresent(EDef->Name))
+	{
+		MenuStartMap = EDef->TeaserName;
+	}
+
+	if (EDef->bNoSkillMenu)
+	{
+		NewGame(2);
+	}
+	else
+	{
+		PushMenuScreen(SpawnMenu(MenuScreenSkill));
+	}
+}
+
+//==========================================================================
+//
+//  NewGame
+//
+//==========================================================================
+
+final void NewGame(int SkillLevel)
+{
+	SetCvar('Skill', SkillLevel);
+	SetCvar('Class', MenuPClass);
+
+	CmdBuf_AddText("Disconnect\n");
+	CmdBuf_AddText("MaxPlayers 1\n");
+	CmdBuf_AddText("Map %n\n", MenuStartMap);
+
+	ForceMenuOff();
+}
+
+void menu_quit()
 {
 }
 
