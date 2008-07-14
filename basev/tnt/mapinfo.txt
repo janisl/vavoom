@@ -1,3 +1,11 @@
+//------------------------------------------------------
+//  Episode definition
+clearepisodes
+
+episode map01
+name "Doom 2: TNT Evilution"
+
+//------------------------------------------------------
 map map01 lookup thustr_1
 titlepatch cwilv00
 cluster 5

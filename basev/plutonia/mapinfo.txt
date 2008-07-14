@@ -1,3 +1,11 @@
+//------------------------------------------------------
+//  Episode definition
+clearepisodes
+
+episode map01
+name "Doom 2: The Plutonia Experiment"
+
+//------------------------------------------------------
 map map01 lookup phustr_1
 titlepatch cwilv00
 cluster 5
