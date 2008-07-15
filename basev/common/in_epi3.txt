@@ -1,0 +1,43 @@
+Background wimap2
+
+Animation 104 168 11
+{
+	wia20000
+	wia20001
+	wia20002
+}
+
+Animation 40 136 11
+{
+	wia20100
+	wia20101
+	wia20102
+}
+
+Animation 160 96 11
+{
+	wia20200
+	wia20201
+	wia20202
+}
+
+Animation 104 80 11
+{
+	wia20300
+	wia20301
+	wia20302
+}
+
+Animation 120 32 11
+{
+	wia20400
+	wia20401
+	wia20402
+}
+
+Animation 40 0 8
+{
+	wia20500
+	wia20501
+	wia20502
+}

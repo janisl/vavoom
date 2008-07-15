@@ -55,9 +55,6 @@ int im_map;
 int im_nextepisode;
 int im_nextmap;
 
-// background (map of levels).
-int patchINTERPIC;
-
 int hours;
 int minutes;
 int seconds;
@@ -92,6 +89,8 @@ string HubText;
 name TextFlat;
 int TextPic;
 
+IntermissionBackground		Background;
+
 //==========================================================================
 //
 //  Start
@@ -102,6 +101,14 @@ void Start()
 {
 	FindEpisodeAndMap(ClGame.im->LeaveMap, &im_episode, &im_map);
 	FindEpisodeAndMap(ClGame.im->EnterMap, &im_nextepisode, &im_nextmap);
+
+	if (!Background)
+	{
+		Background = NewChild(IntermissionBackground);
+		Background.ScaleX = itof(Width) / itof(Background.Width);
+		Background.ScaleY = itof(Height) / itof(Background.Height);
+	}
+
 	IM_LoadPics();
 	IM_InitStats();
 }
@@ -166,9 +173,11 @@ void Tick(float DeltaTime)
 		switch (interstate)
 		{
 		case IMS_PrevLoc:
+			IM_LoadPics();
 			oldintertime = intertime + 6.0;
 			break;
 		case IMS_NextLoc:
+			IM_LoadPics();
 			oldintertime = 99999.0;
 			break;
 		case IMS_Text:
@@ -213,11 +222,11 @@ void Tick(float DeltaTime)
 
 //==========================================================================
 //
-//  OnDraw
+//  OnPostDraw
 //
 //==========================================================================
 
-void OnDraw()
+void OnPostDraw()
 {
 	if (interstate == IMS_Done)
 	{
@@ -232,8 +241,6 @@ void OnDraw()
 	switch (interstate)
 	{
 	case IMS_Stats:	// draw stats
-		IM_DrawBackground();
-
 		if (ClGame.maxclients == 1)
 			IM_DrawSingleStats();
 		else if (!ClGame.deathmatch)
@@ -242,16 +249,12 @@ void OnDraw()
 			IM_DrawDMStats();
 		break;
 	case IMS_PrevLoc:	// leaving old level
-		IM_DrawBackground();
-
 		if (im_episode < 4)
 		{
 			IM_DrawOldLevel();
 		}
 		break;
 	case IMS_NextLoc:	// going to the next level
-		IM_DrawBackground();
-
 		if (im_episode < 4)
 		{
 			IM_DrawYAH();
@@ -273,20 +276,27 @@ void OnDraw()
 
 void IM_LoadPics()
 {
-	switch (im_episode)
+	if (interstate == IMS_Stats)
 	{
-	case 1:
-		patchINTERPIC = R_RegisterPic('mape1');
-		break;
-	case 2:
-		patchINTERPIC = R_RegisterPic('mape2');
-		break;
-	case 3:
-		patchINTERPIC = R_RegisterPic('mape3');
-		break;
-	default:
-		patchINTERPIC = 0;
-		break;
+		Background.InitFlat('floor16', ClientGameShared(ClGame));
+	}
+	else
+	{
+		switch (im_episode)
+		{
+		case 1:
+			Background.Init('$in_htc1', !!interstate, ClientGameShared(ClGame));
+			break;
+		case 2:
+			Background.Init('$in_htc2', !!interstate, ClientGameShared(ClGame));
+			break;
+		case 3:
+			Background.Init('$in_htc3', !!interstate, ClientGameShared(ClGame));
+			break;
+		default:
+			Background.Init('floor16', !!interstate, ClientGameShared(ClGame));
+			break;
+		}
 	}
 	patchBEENTHERE = R_RegisterPic('in_x');
 	patchGOINGTHERE = R_RegisterPic('in_yah');
@@ -309,26 +319,6 @@ void IM_LoadPics()
 
 void IM_UnloadPics()
 {
-}
-
-//==========================================================================
-//
-//  IM_DrawBackground
-//
-//==========================================================================
-
-void IM_DrawBackground()
-{
-	if (interstate == IMS_Stats)
-	{
-		FillRectWithFlat(0, 0, 640, 480, 'floor16');
-	}
-	else if (im_episode < 4)
-	{
-		SetVirtualScreen(320, 200);
-		R_DrawPic(0, 0, patchINTERPIC);
-		SetVirtualScreen(640, 480);
-	}
 }
 
 //========================================================================

@@ -124,11 +124,15 @@ int				ChickenPeck;	// chicken peck countdown
 Actor			Rain1;	// active rain maker 1
 Actor			Rain2;	// active rain maker 2
 
+const int MAX_MAPS_VISITED = 100;
+
+name			MapsVisited[MAX_MAPS_VISITED];
+
 replication
 {
 	reliable if (!bIsClient)
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash,
-		Objectives, MorphTime, Accuracy, Stamina;
+		Objectives, MorphTime, Accuracy, Stamina, MapsVisited;
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,
@@ -2014,6 +2018,8 @@ void SpawnClient()
 	Attacker = none;
 	Poisoner = none;
 
+	AddVisitedMap(Level.XLevel.MapName);
+
 	if (Level.Game.netgame && !Level.Game.deathmatch)
 	{
 		// Cooperative net-play, retain keys and weapons
@@ -3281,6 +3287,29 @@ final void PostMorphWeapon(Weapon weapon)
 	SetWeapon(weapon);
 	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
+}
+
+//==========================================================================
+//
+//	AddVisitedMap
+//
+//==========================================================================
+
+final void AddVisitedMap(name Map)
+{
+	int i;
+	for (i = 0; i < MAX_MAPS_VISITED; i++)
+	{
+		if (MapsVisited[i] == Map)
+		{
+			return;
+		}
+		if (!MapsVisited[i])
+		{
+			MapsVisited[i] = Map;
+			return;
+		}
+	}
 }
 
 //==========================================================================

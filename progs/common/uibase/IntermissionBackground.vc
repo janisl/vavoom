@@ -1,0 +1,403 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class IntermissionBackground : Widget;
+
+enum
+{
+	COND_None,
+	COND_IfLeaving,
+	COND_IfNotLeaving,
+	COND_IfEntering,
+	COND_IfNotEntering,
+	COND_IfVisited,
+	COND_IfNotVisited,
+	COND_IfTravelling,
+	COND_IfNotTravelling
+};
+
+struct AnimInfo
+{
+	byte			Cond;
+
+	name			MapName1;
+	name			MapName2;
+
+	//	Location of animation
+	int				X;
+	int				Y;
+
+	//	Period in seconds between animations
+	float			Period;
+
+	//	Actual graphics for frames of animations
+	array<int>		Pics;
+
+	//	Next value of btime (used in conjunction with period)
+	float			NextTime;
+
+	//	Next frame number to animate
+	int				Ctr;
+
+	bool			bOnce;
+};
+
+ClientGameShared	ClGame;
+
+int					BackgroundPic;
+name				BackgroundFlat;
+
+//	Used for timing of background animation
+float				btime;
+
+array<AnimInfo>		Anims;
+
+bool				bIsEntering;
+name				LeaveMap;
+name				EnterMap;
+
+//==========================================================================
+//
+//	Init
+//
+//==========================================================================
+
+final void Init(name Name, bool AIsEntering, ClientGameShared AClGame)
+{
+	Clean();
+
+	bIsEntering = AIsEntering;
+	ClGame = AClGame;
+
+	string NameStr = va("%n", Name);
+	if (StrStartsWith(NameStr, "$"))
+	{
+		ParseScript(StrToName(substr(NameStr, 1, strlen(NameStr) - 1)));
+	}
+	else
+	{
+		BackgroundPic = R_RegisterPic(Name);
+	}
+}
+
+//==========================================================================
+//
+//	InitPic
+//
+//==========================================================================
+
+final void InitPic(name Name, ClientGameShared AClGame)
+{
+	Clean();
+	ClGame = AClGame;
+	BackgroundPic = R_RegisterPic(Name);
+}
+
+//==========================================================================
+//
+//	InitFlat
+//
+//==========================================================================
+
+final void InitFlat(name Name, ClientGameShared AClGame)
+{
+	Clean();
+	ClGame = AClGame;
+	BackgroundFlat = Name;
+}
+
+//==========================================================================
+//
+//	Clean
+//
+//==========================================================================
+
+final void Clean()
+{
+	BackgroundPic = 0;
+	BackgroundFlat = '';
+	btime = 0.0;
+	Anims.Num = 0;
+}
+
+//==========================================================================
+//
+//	ParseScript
+//
+//==========================================================================
+
+final void ParseScript(name ScriptName)
+{
+	if (!WadLumpPresent(ScriptName))
+	{
+		print("Intermission script %n doesn't exist", ScriptName);
+		BackgroundPic = R_RegisterPic('interpic');
+		return;
+	}
+
+	ScriptsParser sc = ScriptsParser(SpawnObject(ScriptsParser));
+	sc.OpenLumpName(ScriptName);
+	while (!sc.AtEnd())
+	{
+		if (sc.Check("Background"))
+		{
+			sc.ExpectString();
+			BackgroundPic = R_RegisterPic(StrToName(strlwr(sc.String)));
+			continue;
+		}
+
+		int i = Anims.Num;
+		Anims.Num = i + 1;
+
+		if (sc.Check("IfLeaving"))
+		{
+			Anims[i].Cond = COND_IfLeaving;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+		}
+		else if (sc.Check("IfNotLeaving"))
+		{
+			Anims[i].Cond = COND_IfNotLeaving;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+		}
+		else if (sc.Check("IfEntering"))
+		{
+			Anims[i].Cond = COND_IfEntering;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+		}
+		else if (sc.Check("IfNotEntering"))
+		{
+			Anims[i].Cond = COND_IfNotEntering;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+		}
+		else if (sc.Check("IfVisited"))
+		{
+			Anims[i].Cond = COND_IfVisited;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+		}
+		else if (sc.Check("IfNotVisited"))
+		{
+			Anims[i].Cond = COND_IfNotVisited;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+		}
+		else if (sc.Check("IfTravelling"))
+		{
+			Anims[i].Cond = COND_IfTravelling;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+			sc.ExpectString();
+			Anims[i].MapName2 = StrToName(strlwr(sc.String));
+		}
+		else if (sc.Check("IfNotTravelling"))
+		{
+			Anims[i].Cond = COND_IfTravelling;
+			sc.ExpectString();
+			Anims[i].MapName1 = StrToName(strlwr(sc.String));
+			sc.ExpectString();
+			Anims[i].MapName2 = StrToName(strlwr(sc.String));
+		}
+
+		if (sc.Check("Animation"))
+		{
+			sc.ExpectNumber();
+			Anims[i].X = sc.Number;
+			sc.ExpectNumber();
+			Anims[i].Y = sc.Number;
+			sc.ExpectNumber();
+			Anims[i].Period = itof(sc.Number) / 35.0;
+			if (sc.Check("Once"))
+			{
+				Anims[i].bOnce = true;
+			}
+			sc.Expect("{");
+			while (!sc.Check("}"))
+			{
+				int j = Anims[i].Pics.Num;
+				Anims[i].Pics.Num = j + 1;
+				sc.ExpectString();
+				Anims[i].Pics[j] = R_RegisterPic(StrToName(strlwr(sc.String)));
+			}
+			// init variables
+			Anims[i].Ctr = -1;
+			// specify the next time to draw it
+			Anims[i].NextTime = btime + 0.01 + Random() * Anims[i].Period;
+		}
+		else if (sc.Check("Pic"))
+		{
+			sc.ExpectNumber();
+			Anims[i].X = sc.Number;
+			sc.ExpectNumber();
+			Anims[i].Y = sc.Number;
+			Anims[i].Period = 0.0;
+			Anims[i].Pics.Num = 1;
+			sc.ExpectString();
+			Anims[i].Pics[0] = R_RegisterPic(StrToName(strlwr(sc.String)));
+			// init variables
+			Anims[i].Ctr = -1;
+			// specify the next time to draw it
+			Anims[i].NextTime = btime + 0.01;
+		}
+		else
+		{
+			sc.ScriptError("Bad syntax");
+		}
+	}
+	sc.Destroy();
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//  Updates stuff each frame
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	//	Counter for general background animation
+	btime += DeltaTime;
+
+	int i;
+	for (i = 0; i < Anims.Num; i++)
+	{
+		if (btime >= Anims[i].NextTime)
+		{
+			Anims[i].Ctr++;
+			if (Anims[i].Ctr >= Anims[i].Pics.Num)
+			{
+				if (Anims[i].bOnce)
+				{
+					Anims[i].Ctr = Anims[i].Pics.Num - 1;
+				}
+				else
+				{
+					Anims[i].Ctr = 0;
+				}
+			}
+			Anims[i].NextTime = btime + Anims[i].Period;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	OnDraw
+//
+//==========================================================================
+
+void OnDraw()
+{
+	if (BackgroundPic > 0)
+	{
+		DrawPic(0, 0, BackgroundPic);
+	}
+	else if (BackgroundFlat)
+	{
+		FillRectWithFlat(0, 0, Width, Height, BackgroundFlat);
+	}
+	int i;
+	for (i = 0; i < Anims.Num; i++)
+	{
+		if (!CheckCond(Anims[i].Cond, Anims[i].MapName1, Anims[i].MapName2))
+		{
+			continue;
+		}
+		if (Anims[i].Ctr >= 0)
+		{
+			DrawPic(Anims[i].X, Anims[i].Y, Anims[i].Pics[Anims[i].Ctr]);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	CheckCond
+//
+//==========================================================================
+
+final bool CheckCond(byte Cond, name MapName1, name MapName2)
+{
+	switch (Cond)
+	{
+	case COND_IfLeaving:
+		return !bIsEntering && MapName1 == ClGame.im->LeaveMap;
+
+	case COND_IfNotLeaving:
+		return bIsEntering || MapName1 != ClGame.im->LeaveMap;
+
+	case COND_IfEntering:
+		return bIsEntering && MapName1 == ClGame.im->EnterMap;
+
+	case COND_IfNotEntering:
+		return !bIsEntering || MapName1 != ClGame.im->EnterMap;
+
+	case COND_IfVisited:
+		return IsVisited(MapName1);
+
+	case COND_IfNotVisited:
+		return !IsVisited(MapName1);
+
+	case COND_IfTravelling:
+		return MapName1 == ClGame.im->LeaveMap &&
+			MapName2 == ClGame.im->EnterMap;
+
+	case COND_IfNotTravelling:
+		return MapName1 != ClGame.im->LeaveMap ||
+			MapName2 != ClGame.im->EnterMap;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	IsVisited
+//
+//==========================================================================
+
+final bool IsVisited(name Map)
+{
+	int i;
+	for (i = 0; i < PlayerEx::MAX_MAPS_VISITED; i++)
+	{
+		if (PlayerEx(ClGame.cl).MapsVisited[i] == Map)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+defaultproperties
+{
+	Width = 320;
+	Height = 200;
+	bTickEnabled = true;
+}

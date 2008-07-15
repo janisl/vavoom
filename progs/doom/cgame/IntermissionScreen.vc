@@ -80,60 +80,13 @@ const float TEXTWAIT	= 7.0;
 
 #ifndef DOOM2
 
-enum
-{
-	ANIM_ALWAYS,
-	ANIM_RANDOM,
-	ANIM_LEVEL
-};
-
 struct point_t
 {
 	int x;
 	int y;
 };
 
-//
-// Animation.
-//
-struct anim_t
-{
-	int type;
-
-	// period in seconds between animations
-	float period;
-
-	// number of animation frames
-	int nanims;
-
-	// location of animation
-	point_t loc;
-
-	// LEVEL: level
-	int level;
-
-	// RANDOM: period deviation (<8),
-	float data1;
-
-	// RANDOM: random base period,
-	float data2;
-
-	// actual graphics for frames of animations
-	int p[3];
-
-	// following must be initialised to zero before use!
-
-	// next value of btime (used in conjunction with period)
-	float nexttime;
-
-	// next frame number to animate
-	int ctr;
-};
-
 #endif
-
-// background (map of levels).
-int patchINTERPIC;
 
 int LeaveTitlePic;
 int EnterTitlePic;
@@ -179,9 +132,6 @@ int im_map;
 int im_nextepisode;
 int im_nextmap;
 
-anim_t *anims;
-int numanims;
-
 bool snl_pointeron;
 
 //
@@ -196,17 +146,11 @@ int yah[2];
 // splat
 int splat;
 
-//
-//  Animation locations. Using patches saves a lot of space, as they replace
-// 320x200 full screen frames.
-//
-anim_t epsd0animinfo[10];
-anim_t epsd1animinfo[9];
-anim_t epsd2animinfo[6];
-
 point_t lnodes[NUMEPISODES * NUMMAPS];
 
 #endif
+
+IntermissionBackground		Background;
 
 //==========================================================================
 //
@@ -217,34 +161,6 @@ point_t lnodes[NUMEPISODES * NUMMAPS];
 void Start()
 {
 #ifndef DOOM2
-	SetAnim(&epsd0animinfo[0], ANIM_ALWAYS, 1.0 / 3.0, 3, 224, 104);
-	SetAnim(&epsd0animinfo[1], ANIM_ALWAYS, 1.0 / 3.0, 3, 184, 160);
-	SetAnim(&epsd0animinfo[2], ANIM_ALWAYS, 1.0 / 3.0, 3, 112, 136);
-	SetAnim(&epsd0animinfo[3], ANIM_ALWAYS, 1.0 / 3.0, 3, 72, 112);
-	SetAnim(&epsd0animinfo[4], ANIM_ALWAYS, 1.0 / 3.0, 3, 88, 96);
-	SetAnim(&epsd0animinfo[5], ANIM_ALWAYS, 1.0 / 3.0, 3, 64, 48);
-	SetAnim(&epsd0animinfo[6], ANIM_ALWAYS, 1.0 / 3.0, 3, 192, 40);
-	SetAnim(&epsd0animinfo[7], ANIM_ALWAYS, 1.0 / 3.0, 3, 136, 16);
-	SetAnim(&epsd0animinfo[8], ANIM_ALWAYS, 1.0 / 3.0, 3, 80, 16);
-	SetAnim(&epsd0animinfo[9], ANIM_ALWAYS, 1.0 / 3.0, 3, 64, 24);
-
-	SetAnim2(&epsd1animinfo[0], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 1);
-	SetAnim2(&epsd1animinfo[1], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 2);
-	SetAnim2(&epsd1animinfo[2], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 3);
-	SetAnim2(&epsd1animinfo[3], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 4);
-	SetAnim2(&epsd1animinfo[4], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 5);
-	SetAnim2(&epsd1animinfo[5], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 6);
-	SetAnim2(&epsd1animinfo[6], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 7);
-	SetAnim2(&epsd1animinfo[7], ANIM_LEVEL, 1.0 / 3.0, 3, 192, 144, 8);
-	SetAnim2(&epsd1animinfo[8], ANIM_LEVEL, 1.0 / 3.0, 1, 128, 136, 8);
-
-	SetAnim(&epsd2animinfo[0], ANIM_ALWAYS, 1.0 / 3.0, 3, 104, 168);
-	SetAnim(&epsd2animinfo[1], ANIM_ALWAYS, 1.0 / 3.0, 3, 40, 136);
-	SetAnim(&epsd2animinfo[2], ANIM_ALWAYS, 1.0 / 3.0, 3, 160, 96);
-	SetAnim(&epsd2animinfo[3], ANIM_ALWAYS, 1.0 / 3.0, 3, 104, 80);
-	SetAnim(&epsd2animinfo[4], ANIM_ALWAYS, 1.0 / 3.0, 3, 120, 32);
-	SetAnim(&epsd2animinfo[5], ANIM_ALWAYS, 1.0 / 4.0, 3, 40, 0);
-
 	// Episode 0 World Map
 	SetLN(0, 0, 185, 164);	// location of level 0 (CJ)
 	SetLN(0, 1, 148, 143);	// location of level 1 (CJ)
@@ -283,12 +199,19 @@ void Start()
 	cnt = 0.0;
 	btime = 0.0;
 
+	if (!Background)
+	{
+		Background = NewChild(IntermissionBackground);
+		Background.ScaleX = itof(Width) / itof(Background.Width);
+		Background.ScaleY = itof(Height) / itof(Background.Height);
+	}
+
 #ifndef DOOM2
 	FindEpisodeAndMap(ClGame.im->LeaveMap, &im_episode, &im_map);
 	FindEpisodeAndMap(ClGame.im->EnterMap, &im_nextepisode, &im_nextmap);
+#endif
 
 	IM_InitAnimatedBack();
-#endif
 
 	TotalKills = ClGame.cl.Level.TotalKills;
 	TotalItems = ClGame.cl.Level.TotalItems;
@@ -336,37 +259,6 @@ void Start()
 }
 
 #ifndef DOOM2
-//==========================================================================
-//
-//  SetAnim
-//
-//==========================================================================
-
-void SetAnim(anim_t* a, int Type, float Period, int NAnims, int x, int y)
-{
-	a->type = Type;
-	a->period = Period;
-	a->nanims = NAnims;
-	a->loc.x = x;
-	a->loc.y = y;
-}
-
-//==========================================================================
-//
-//  SetAnim2
-//
-//==========================================================================
-
-void SetAnim2(anim_t* a, int Type, float Period, int NAnims, int x, int y, int level)
-{
-	a->type = Type;
-	a->period = Period;
-	a->nanims = NAnims;
-	a->loc.x = x;
-	a->loc.y = y;
-	a->level = level;
-}
-
 //==========================================================================
 //
 //  SetLN
@@ -420,9 +312,6 @@ void Tick(float DeltaTime)
 	// counter for general background animation
 	btime += DeltaTime;
 
-#ifndef DOOM2
-	IM_UpdateBackground();
-#endif
 	switch (interstate)
 	{
 	case IMS_Stats:
@@ -455,19 +344,17 @@ void Tick(float DeltaTime)
 
 //==========================================================================
 //
-//  OnDraw
+//  OnPostDraw
 //
 //==========================================================================
 
-void OnDraw()
+void OnPostDraw()
 {
 	SetFont('bigfont');
 
 	switch (interstate)
 	{
 	case IMS_Stats:
-		IM_DrawBackground();
-
 		if (ClGame.deathmatch)
 		{
 			IM_DrawDeathmatchStats();
@@ -484,15 +371,11 @@ void OnDraw()
 
 #ifndef DOOM2
 	case IMS_NextLoc:
-		IM_DrawBackground();
-
 		IM_DrawNextLoc();
 		break;
 #endif
 
 	case IMS_NoState:
-		IM_DrawBackground();
-
 		IM_DrawNoState();
 		break;
 
@@ -511,8 +394,6 @@ void OnDraw()
 //**
 //**************************************************************************
 
-#ifndef DOOM2
-
 //==========================================================================
 //
 //  IM_InitAnimatedBack
@@ -521,146 +402,20 @@ void OnDraw()
 
 void IM_InitAnimatedBack()
 {
-	int i;
-	anim_t *a;
-
-	switch (im_episode)
-	{
-	case 1:
-		anims = &epsd0animinfo[0];
-		numanims = 10;
-		break;
-
-	case 2:
-		anims = &epsd1animinfo[0];
-		numanims = 9;
-		break;
-
-	case 3:
-		anims = &epsd2animinfo[0];
-		numanims = 6;
-		break;
-
-	default:
-		return;
-	}
-
-	for (i = 0; i < numanims; i++)
-	{
-		a = &anims[i];
-
-		// init variables
-		a->ctr = -1;
-
-		// specify the next time to draw it
-		if (a->type == ANIM_ALWAYS)
-			a->nexttime = btime + 0.1 + Random() * a->period;
-		else if (a->type == ANIM_RANDOM)
-			a->nexttime = btime + 0.1 + a->data2 + Random() * a->data1;
-		else if (a->type == ANIM_LEVEL)
-			a->nexttime = btime + 0.1;
-	}
-}
-
-//==========================================================================
-//
-//  IM_DrawBackground
-//
-//==========================================================================
-
-void IM_DrawBackground()
-{
-	SetVirtualScreen(320, 200);
-	R_DrawPic(0, 0, patchINTERPIC);
-	// draw animated background
-	if (im_episode <= 3)
-	{
-		int i;
-		anim_t *a;
-
-		for (i = 0; i < numanims; i++)
-		{
-			a = &anims[i];
-			if (a->ctr >= 0)
-			{
-				R_DrawPic(a->loc.x, a->loc.y, a->p[a->ctr]);
-			}
-		}
-	}
-	SetVirtualScreen(640, 480);
-}
-
-//==========================================================================
-//
-//  IM_UpdateBackground
-//
-//==========================================================================
-
-void IM_UpdateBackground()
-{
-	int i;
-	anim_t *a;
-
-	if (im_episode > 3)
-		return;
-
-	for (i = 0; i < numanims; i++)
-	{
-		a = &anims[i];
-
-		if (btime >= a->nexttime)
-		{
-			switch (a->type)
-			{
-			case ANIM_ALWAYS:
-				if (++a->ctr >= a->nanims)
-					a->ctr = 0;
-				a->nexttime = btime + a->period;
-				break;
-
-			case ANIM_RANDOM:
-				a->ctr++;
-				if (a->ctr == a->nanims)
-				{
-					a->ctr = -1;
-					a->nexttime = btime + a->data2 + Random() * a->data1;
-				}
-				else
-				{
-					a->nexttime = btime + a->period;
-				}
-				break;
-
-			case ANIM_LEVEL:
-				// gawd-awful hack for level anims
-				if ((interstate || i != 7) && im_nextmap - 1 == a->level)
-				{
-					a->ctr++;
-					if (a->ctr == a->nanims)
-						a->ctr--;
-					a->nexttime = btime + a->period;
-				}
-				break;
-			}
-		}
-	}
-}
-#endif
 #ifdef DOOM2
-
-//==========================================================================
-//
-//  IM_DrawBackground
-//
-//==========================================================================
-
-void IM_DrawBackground()
-{
-	SetVirtualScreen(320, 200);
-	R_DrawPic(0, 0, patchINTERPIC);
-	SetVirtualScreen(640, 480);
-}
+	Background.Init('interpic', false, ClientGameShared(ClGame));
+#else
+	if (im_episode > 3)
+	{
+		Background.Init('interpic', !!interstate, ClientGameShared(ClGame));
+	}
+	else
+	{
+		Background.Init(StrToName(va("$in_epi%d", im_episode)), !!interstate,
+			ClientGameShared(ClGame));
+	}
 #endif
+}
 
 //==========================================================================
 //
@@ -673,23 +428,7 @@ void IM_LoadData()
 	picinfo_t info;
 	int i;
 
-	// background
-#ifdef DOOM2
-	patchINTERPIC = R_RegisterPic('interpic');
-#else
-	int j;
-	anim_t *a;
-
-	if (im_episode > 3)
-	{
-		patchINTERPIC = R_RegisterPic('interpic');
-	}
-	else
-	{
-		patchINTERPIC =
-			R_RegisterPic(StrToName(va("wimap%d", im_episode - 1)));
-	}
-
+#ifndef DOOM2
 	// you are here
 	yah[0] = R_RegisterPic('wiurh0');
 
@@ -698,29 +437,6 @@ void IM_LoadData()
 
 	// splat
 	splat = R_RegisterPic('wisplat');
-
-	if (im_episode < 4)
-	{
-		for (j = 0; j < numanims; j++)
-		{
-			a = &anims[j];
-			for (i = 0; i < a->nanims; i++)
-			{
-				// MONDO HACK!
-				if (im_episode != 2 || j != 8)
-				{
-					// animations
-					a->p[i] = R_RegisterPic(StrToName(va("wia%d0%d0%d",
-						im_episode - 1, j, i)));
-				}
-				else
-				{
-					// HACK ALERT!
-					a->p[i] = epsd1animinfo[4].p[i];
-				}
-			}
-		}
-	}
 #endif
 
 	if (ClGame.im->LeaveTitlePatch)
@@ -1715,6 +1431,10 @@ void IM_UpdateText(float DeltaTime)
 void OnVisibilityChanged(bool bNewVisibility)
 {
 	bTickEnabled = bNewVisibility;
+	if (Background)
+	{
+		Background.bTickEnabled = bNewVisibility;
+	}
 }
 
 defaultproperties

@@ -76,3 +76,5 @@ import linespec;
 #include "HUDMessageFadeOut.vc"
 #include "HUDMessageTypeOnFadeOut.vc"
 #include "HUDMessageFadeInOut.vc"
+
+#include "IntermissionBackground.vc"

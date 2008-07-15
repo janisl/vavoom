@@ -1,0 +1,71 @@
+Background wimap0
+
+Animation 224 104 11
+{
+	wia00000
+	wia00001
+	wia00002
+}
+
+Animation 184 160 11
+{
+	wia00100
+	wia00101
+	wia00102
+}
+
+Animation 112 136 11
+{
+	wia00200
+	wia00201
+	wia00202
+}
+
+Animation 72 112 11
+{
+	wia00300
+	wia00301
+	wia00302
+}
+
+Animation 88 96 11
+{
+	wia00400
+	wia00401
+	wia00402
+}
+
+Animation 64 48 11
+{
+	wia00500
+	wia00501
+	wia00502
+}
+
+Animation 192 40 11
+{
+	wia00600
+	wia00601
+	wia00602
+}
+
+Animation 136 16 11
+{
+	wia00700
+	wia00701
+	wia00702
+}
+
+Animation 80 16 11
+{
+	wia00800
+	wia00801
+	wia00802
+}
+
+Animation 64 24 11
+{
+	wia00900
+	wia00901
+	wia00902
+}

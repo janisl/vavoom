@@ -45,10 +45,6 @@ spec_trans_t spec_trans_tab[NUM_SPECIALS];
 int botskill;
 BotPlayer::botinfo_t botinfo[12];
 
-#ifndef DOOM2
-bool shareware;
-#endif
-
 int INITIAL_HEALTH;
 
 //==========================================================================
@@ -60,9 +56,6 @@ int INITIAL_HEALTH;
 void Init()
 {
 	::Init();
-#ifndef DOOM2
-	shareware = !WadLumpPresent('e2m1');
-#endif
 	InitTranslationTables();
 	InitBotTypes();
 }
