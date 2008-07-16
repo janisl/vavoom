@@ -59,6 +59,7 @@ bool Use(bool Pickup)
 	{
 		A.SetState(A.SeeState);
 		A.Target = EntityEx(Owner);
+		Amount--;
 		return true;
 	}
 	else
@@ -76,8 +77,8 @@ bool Use(bool Pickup)
 
 final void A_SummonRebel()
 {
-	Actor	A;
-	Actor	TFog;
+	EntityEx	A;
+	EntityEx	TFog;
 
 	A = Spawn(Rebel1, Origin + vector((Random() - 0.5) * 64.0,
 		(Random() - 0.5) * 64.0, 0.0));
@@ -89,38 +90,42 @@ final void A_SummonRebel()
 	//	Once the rebels start teleporting in, you can't pick up the beacon
 	// anymore.
 	bRebelSpawned = true;
-/*	AActor *owner = self->target;
-	ARebel *rebel;
+	EntityEx Owner = self.Target;
 	int friendNum;
-	angle_t an;
+	int i;
 
 	// Set up the new rebel.
-	friendNum = owner->player != NULL ? owner->player - players + 1 : 0;
-	rebel->FriendPlayer = friendNum;
-	rebel->threshold = 100;
-	rebel->target = NULL;*/
-	A.bInCombat = true;
-/*	rebel->LastHeard = owner;	// Make sure the rebels look for targets
-	if (deathmatch)
+	for (i = 0; i < MAXPLAYERS; i++)
 	{
-		rebel->health *= 2;
+		if (!Level.Game.Players[i] || !Level.Game.Players[i].bSpawned)
+			continue;
+		if (Owner.Player && Level.Game.Players[i] == Owner.Player)
+			break;
 	}
-	if (owner != NULL)
+
+	friendNum = Owner.Player ? i + 1 : 0;
+	Rebel1(A).FriendPlayer = friendNum;
+	A.Threshold = 100;
+	A.bFriendly = true;
+	A.bInCombat = true;
+	if (Level.Game.deathmatch)
+	{
+		A.Health *= 2;
+	}
+	if (Owner)
 	{
 		// Rebels are the same colour as their owner
-		rebel->Translation = owner->Translation;
+		A.Translation = Owner.Translation;
 		// Set the rebel's target to whatever last hurt the player, so long as it's not
 		// one of the player's other rebels.
-		if (owner->target != NULL &&
-			(!(owner->target->flags & MF_FRIENDLY) ||
-			 owner->target->FriendPlayer == 0 ||
-			 owner->target->FriendPlayer != friendNum))
+		if (Owner.Target &&	!(Owner.Target.bFriendly)/* ||
+			Owner.Target.FriendPlayer == 0 ||
+			Owner.Target.FriendPlayer != friendNum)*/)
 		{
-			rebel->target = owner->target;
+			A.Target = Owner.Target;
 		}
 	}
-	rebel->SetState (rebel->SeeState);
-*/
+	A.SetState (A.SeeState);
 	A.Angles = Angles;
 
 	TFog = Spawn(TeleportFog, A.Origin);
