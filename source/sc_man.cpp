@@ -45,6 +45,7 @@ class VScriptsParser : public VObject
 	DECLARE_FUNCTION(get_String)
 	DECLARE_FUNCTION(get_Number)
 	DECLARE_FUNCTION(get_Float)
+	DECLARE_FUNCTION(get_Crossed)
 	DECLARE_FUNCTION(SetCMode)
 	DECLARE_FUNCTION(AtEnd)
 	DECLARE_FUNCTION(GetString)
@@ -842,6 +843,13 @@ IMPLEMENT_FUNCTION(VScriptsParser, get_Float)
 	P_GET_SELF;
 	Self->CheckInt();
 	RET_FLOAT(Self->Int->Float);
+}
+
+IMPLEMENT_FUNCTION(VScriptsParser, get_Crossed)
+{
+	P_GET_SELF;
+	Self->CheckInt();
+	RET_BOOL(Self->Int->Crossed);
 }
 
 IMPLEMENT_FUNCTION(VScriptsParser, SetCMode)

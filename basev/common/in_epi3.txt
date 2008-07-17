@@ -1,4 +1,6 @@
 Background wimap2
+Splat wisplat
+Pointer wiurh0 wiurh1
 
 Animation 104 168 11
 {
@@ -40,4 +42,17 @@ Animation 40 0 8
 	wia20500
 	wia20501
 	wia20502
+}
+
+Spots
+{
+	e3m1 156 168
+	e3m2 48 154
+	e3m3 174 95
+	e3m4 265 75
+	e3m5 130 48
+	e3m6 279 23
+	e3m7 198 48
+	e3m8 140 25
+	e3m9 281 136
 }

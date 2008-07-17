@@ -1,1 +1,17 @@
 Background mape2
+NoAutoStartMap
+Splat in_x
+Pointer in_yah
+
+Spots
+{
+	e2m1 218 57
+	e2m2 137 81
+	e2m3 155 124
+	e2m4 171 68
+	e2m5 250 86
+	e2m6 136 98
+	e2m7 203 90
+	e2m8 220 140
+	e2m9 279 106
+}

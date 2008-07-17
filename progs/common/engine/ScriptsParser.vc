@@ -31,6 +31,7 @@ native private readonly void*		Int;
 native string String { get; }
 native int Number { get; }
 native float Float { get; }
+native bool Crossed { get; }
 
 native void OpenLumpName(name Name);
 native void SetCMode(bool On);

@@ -40,12 +40,6 @@ const float TEXTWAIT	= 7.0;
 
 ClientGameBase ClGame;
 
-struct yahpt_t
-{
-	int x;
-	int y;
-};
-
 // specifies current state
 int interstate;
 float intertime;
@@ -74,15 +68,10 @@ int slaughterboy;	// in DM, the player with the most kills
 int oldinterstate;
 float oldintertime;
 
-int patchBEENTHERE;
-int patchGOINGTHERE;
-
 int im_sounds;
 
 // used for general timing
 float cnt;
-
-yahpt_t YAHspot[3 * 9];
 
 float HubCount;
 string HubText;
@@ -109,8 +98,8 @@ void Start()
 		Background.ScaleY = itof(Height) / itof(Background.Height);
 	}
 
-	IM_LoadPics();
 	IM_InitStats();
+	IM_LoadPics();
 }
 
 //==========================================================================
@@ -184,6 +173,7 @@ void Tick(float DeltaTime)
 			IM_InitText();
 			break;
 		case IMS_Done:
+			Background.State = IntermissionBackground::STATE_Done;
 			cnt = 0.3;
 			break;
 		default:
@@ -215,6 +205,7 @@ void Tick(float DeltaTime)
 		{
 			ClGame.skipintermission = false;
 			interstate = IMS_Done;
+			Background.State = IntermissionBackground::STATE_Done;
 			cnt = 0.3;
 		}
 	}
@@ -228,10 +219,6 @@ void Tick(float DeltaTime)
 
 void OnPostDraw()
 {
-	if (interstate == IMS_Done)
-	{
-		return;
-	}
 	if (oldinterstate != IMS_NextLoc && interstate == IMS_NextLoc)
 	{
 		LocalSound('plats/pt1_stop');
@@ -282,24 +269,38 @@ void IM_LoadPics()
 	}
 	else
 	{
+		byte BgState;
+		switch (interstate)
+		{
+		case IMS_Stats:
+			BgState = IntermissionBackground::STATE_Default;
+			break;
+		case IMS_PrevLoc:
+			BgState = IntermissionBackground::STATE_PrevLoc;
+			break;
+		case IMS_Done:
+			BgState = IntermissionBackground::STATE_Done;
+			break;
+		default:
+			BgState = IntermissionBackground::STATE_NextLoc;
+			break;
+		}
 		switch (im_episode)
 		{
 		case 1:
-			Background.Init('$in_htc1', !!interstate, ClientGameShared(ClGame));
+			Background.Init('$in_htc1', BgState, ClientGameShared(ClGame));
 			break;
 		case 2:
-			Background.Init('$in_htc2', !!interstate, ClientGameShared(ClGame));
+			Background.Init('$in_htc2', BgState, ClientGameShared(ClGame));
 			break;
 		case 3:
-			Background.Init('$in_htc3', !!interstate, ClientGameShared(ClGame));
+			Background.Init('$in_htc3', BgState, ClientGameShared(ClGame));
 			break;
 		default:
-			Background.Init('floor16', !!interstate, ClientGameShared(ClGame));
+			Background.InitFlat('floor16', ClientGameShared(ClGame));
 			break;
 		}
 	}
-	patchBEENTHERE = R_RegisterPic('in_x');
-	patchGOINGTHERE = R_RegisterPic('in_yah');
 
 	patchFaceOkay[0] = R_RegisterPic('facea0');
 	patchFaceOkay[1] = R_RegisterPic('facea1');
@@ -685,8 +686,6 @@ void IM_DrawDMStats()
 
 void IM_DrawOldLevel()
 {
-	int i;
-
 	SetTextAlign(hcentre, vtop);
 
 	SetTextShadow(true);
@@ -696,43 +695,6 @@ void IM_DrawOldLevel()
 
 	SetFont('smallfont');
 	DrawText(320, 25, "FINISHED");
-
-	if (im_map == 9)
-	{
-		for (i = 0; i < im_nextmap - 1; i++)
-		{
-			DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
-				YAHspot[(im_episode - 1) * 9 + i].y * 480 / 200,
-				patchBEENTHERE);
-		}
-		if (!(ftoi(32.0 * intertime) & 16))
-		{
-			DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
-				YAHspot[(im_episode - 1) * 9 + 8].y * 480 / 200,
-				patchBEENTHERE);
-		}
-	}
-	else
-	{
-		for (i = 0; i < im_map - 1; i++)
-		{
-			DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
-				YAHspot[(im_episode - 1) * 9 + i].y * 480 / 200,
-				patchBEENTHERE);
-		}
-		if (ClGame.cl.bDidSecret)
-		{
-			DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
-				YAHspot[(im_episode - 1) * 9 + 8].y * 480 / 200,
-				patchBEENTHERE);
-		}
-		if (!(ftoi(32.0 * intertime) & 16))
-		{
-			DrawPic(YAHspot[(im_episode - 1) * 9 + im_map - 1].x * 2,
-				YAHspot[(im_episode - 1) * 9 + im_map - 1].y * 480 / 200,
-				patchBEENTHERE);
-		}
-	}
 }
 
 //========================================================================
@@ -743,8 +705,6 @@ void IM_DrawOldLevel()
 
 void IM_DrawYAH()
 {
-	int i;
-
 	SetTextAlign(hcentre, vtop);
 
 	SetFont('smallfont');
@@ -754,30 +714,6 @@ void IM_DrawYAH()
 	SetFont('bigfont');
 	DrawText(320, 20, ClGame.im->EnterName);
 	SetTextShadow(false);
-
-	if (im_map == 9)
-	{
-		im_map = im_nextmap - 1;
-	}
-	for (i = 0; i < im_map; i++)
-	{
-		DrawPic(YAHspot[(im_episode - 1) * 9 + i].x * 2,
-			YAHspot[(im_episode - 1) * 9 + i].y * 480 / 200,
-			patchBEENTHERE);
-	}
-	if (ClGame.cl.bDidSecret)
-	{
-		DrawPic(YAHspot[(im_episode - 1) * 9 + 8].x * 2,
-			YAHspot[(im_episode - 1) * 9 + 8].y * 480 / 200,
-			patchBEENTHERE);
-	}
-	if (!(ftoi(32.0 * intertime) & 16) || interstate == IMS_Done)
-	{
-		// draw the destination 'X'
-		DrawPic(YAHspot[(im_nextepisode - 1) * 9 + im_nextmap - 1].x * 2,
-			YAHspot[(im_nextepisode - 1) * 9 + im_nextmap - 1].y * 480 / 200,
-			patchGOINGTHERE);
-	}
 }
 
 //==========================================================================
@@ -791,6 +727,7 @@ void IM_InitText()
 	if (ClGame.deathmatch)
 	{
 		interstate = IMS_Done;
+		Background.State = IntermissionBackground::STATE_Done;
 		cnt = 0.3;
 		return;
 	}
@@ -801,12 +738,14 @@ void IM_InitText()
 		{
 			CmdBuf_AddText("TeleportNewMap\n");
 			interstate = IMS_Done;
+			Background.State = IntermissionBackground::STATE_Done;
 			cnt = 0.0;
 			return;
 		}
 		else
 		{
 			interstate = IMS_Done;
+			Background.State = IntermissionBackground::STATE_Done;
 			cnt = 0.3;
 			return;
 		}
@@ -904,33 +843,4 @@ defaultproperties
 	Focusable = true;
 	Width = 640;
 	Height = 480;
-	YAHspot[0 * 9 + 0].x = 172;	YAHspot[0 * 9 + 0].y = 78;
-	YAHspot[0 * 9 + 1].x = 86;	YAHspot[0 * 9 + 1].y = 90;
-	YAHspot[0 * 9 + 2].x = 73;	YAHspot[0 * 9 + 2].y = 66;
-	YAHspot[0 * 9 + 3].x = 159;	YAHspot[0 * 9 + 3].y = 95;
-	YAHspot[0 * 9 + 4].x = 148;	YAHspot[0 * 9 + 4].y = 126;
-	YAHspot[0 * 9 + 5].x = 132;	YAHspot[0 * 9 + 5].y = 54;
-	YAHspot[0 * 9 + 6].x = 131;	YAHspot[0 * 9 + 6].y = 74;
-	YAHspot[0 * 9 + 7].x = 208;	YAHspot[0 * 9 + 7].y = 138;
-	YAHspot[0 * 9 + 8].x = 52;	YAHspot[0 * 9 + 8].y = 101;
-
-	YAHspot[1 * 9 + 0].x = 218;	YAHspot[1 * 9 + 0].y = 57;
-	YAHspot[1 * 9 + 1].x = 137;	YAHspot[1 * 9 + 1].y = 81;
-	YAHspot[1 * 9 + 2].x = 155;	YAHspot[1 * 9 + 2].y = 124;
-	YAHspot[1 * 9 + 3].x = 171;	YAHspot[1 * 9 + 3].y = 68;
-	YAHspot[1 * 9 + 4].x = 250;	YAHspot[1 * 9 + 4].y = 86;
-	YAHspot[1 * 9 + 5].x = 136;	YAHspot[1 * 9 + 5].y = 98;
-	YAHspot[1 * 9 + 6].x = 203;	YAHspot[1 * 9 + 6].y = 90;
-	YAHspot[1 * 9 + 7].x = 220;	YAHspot[1 * 9 + 7].y = 140;
-	YAHspot[1 * 9 + 8].x = 279;	YAHspot[1 * 9 + 8].y = 106;
-
-	YAHspot[2 * 9 + 0].x = 86;	YAHspot[2 * 9 + 0].y = 99;
-	YAHspot[2 * 9 + 1].x = 124;	YAHspot[2 * 9 + 1].y = 103;
-	YAHspot[2 * 9 + 2].x = 154;	YAHspot[2 * 9 + 2].y = 79;
-	YAHspot[2 * 9 + 3].x = 202;	YAHspot[2 * 9 + 3].y = 83;
-	YAHspot[2 * 9 + 4].x = 178;	YAHspot[2 * 9 + 4].y = 59;
-	YAHspot[2 * 9 + 5].x = 142;	YAHspot[2 * 9 + 5].y = 58;
-	YAHspot[2 * 9 + 6].x = 219;	YAHspot[2 * 9 + 6].y = 66;
-	YAHspot[2 * 9 + 7].x = 247;	YAHspot[2 * 9 + 7].y = 57;
-	YAHspot[2 * 9 + 8].x = 107;	YAHspot[2 * 9 + 8].y = 80;
 }

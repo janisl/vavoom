@@ -1,1 +1,17 @@
 Background mape3
+NoAutoStartMap
+Splat in_x
+Pointer in_yah
+
+Spots
+{
+	e3m1 86 99
+	e3m2 124 103
+	e3m3 154 79
+	e3m4 202 83
+	e3m5 178 59
+	e3m6 142 58
+	e3m7 219 66
+	e3m8 247 57
+	e3m9 107 80
+}

@@ -1,4 +1,6 @@
 Background wimap1
+Splat wisplat
+Pointer wiurh0 wiurh1
 
 IfLeaving e2m1 Pic 128 136 wia10000
 IfLeaving e2m2 Pic 128 136 wia10100
@@ -26,3 +28,16 @@ IfEntering e2m9 Animation 192 144 11 Once
 }
 
 IfVisited e2m9 Pic 192 144 wia10702
+
+Spots
+{
+	e2m1 254 25
+	e2m2 97 50
+	e2m3 188 64
+	e2m4 128 78
+	e2m5 214 92
+	e2m6 133 130
+	e2m7 208 136
+	e2m8 148 140
+	e2m9 235 158
+}

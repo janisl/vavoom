@@ -78,16 +78,6 @@ const int NUMMAPS			= 9;
 const float TEXTSPEED	= 0.1;
 const float TEXTWAIT	= 7.0;
 
-#ifndef DOOM2
-
-struct point_t
-{
-	int x;
-	int y;
-};
-
-#endif
-
 int LeaveTitlePic;
 int EnterTitlePic;
 
@@ -132,22 +122,6 @@ int im_map;
 int im_nextepisode;
 int im_nextmap;
 
-bool snl_pointeron;
-
-//
-// Data needed to add patches to full screen intermission pics.
-// Patches are statistics messages, and animations.
-// Loads of by-pixel layout and placement, offsets etc.
-//
-
-// You Are Here graphic
-int yah[2];
-
-// splat
-int splat;
-
-point_t lnodes[NUMEPISODES * NUMMAPS];
-
 #endif
 
 IntermissionBackground		Background;
@@ -160,41 +134,6 @@ IntermissionBackground		Background;
 
 void Start()
 {
-#ifndef DOOM2
-	// Episode 0 World Map
-	SetLN(0, 0, 185, 164);	// location of level 0 (CJ)
-	SetLN(0, 1, 148, 143);	// location of level 1 (CJ)
-	SetLN(0, 2, 69, 122);	// location of level 2 (CJ)
-	SetLN(0, 3, 209, 102);	// location of level 3 (CJ)
-	SetLN(0, 4, 116, 89);	// location of level 4 (CJ)
-	SetLN(0, 5, 166, 55);	// location of level 5 (CJ)
-	SetLN(0, 6, 71, 56);	// location of level 6 (CJ)
-	SetLN(0, 7, 135, 29);	// location of level 7 (CJ)
-	SetLN(0, 8, 71, 24);	// location of level 8 (CJ)
-
-	// Episode 1 World Map should go here
-	SetLN(1, 0, 254, 25);	// location of level 0 (CJ)
-	SetLN(1, 1, 97, 50);	// location of level 1 (CJ)
-	SetLN(1, 2, 188, 64);	// location of level 2 (CJ)
-	SetLN(1, 3, 128, 78);	// location of level 3 (CJ)
-	SetLN(1, 4, 214, 92);	// location of level 4 (CJ)
-	SetLN(1, 5, 133, 130);	// location of level 5 (CJ)
-	SetLN(1, 6, 208, 136);	// location of level 6 (CJ)
-	SetLN(1, 7, 148, 140);	// location of level 7 (CJ)
-	SetLN(1, 8, 235, 158);	// location of level 8 (CJ)
-
-	// Episode 2 World Map should go here
-	SetLN(2, 0, 156, 168);	// location of level 0 (CJ)
-	SetLN(2, 1, 48, 154);	// location of level 1 (CJ)
-	SetLN(2, 2, 174, 95);	// location of level 2 (CJ)
-	SetLN(2, 3, 265, 75);	// location of level 3 (CJ)
-	SetLN(2, 4, 130, 48);	// location of level 4 (CJ)
-	SetLN(2, 5, 279, 23);	// location of level 5 (CJ)
-	SetLN(2, 6, 198, 48);	// location of level 6 (CJ)
-	SetLN(2, 7, 140, 25);	// location of level 7 (CJ)
-	SetLN(2, 8, 281, 136);	// location of level 8 (CJ)
-#endif
-
 	ClGame.skipintermission = false;
 	cnt = 0.0;
 	btime = 0.0;
@@ -259,18 +198,6 @@ void Start()
 }
 
 #ifndef DOOM2
-//==========================================================================
-//
-//  SetLN
-//
-//==========================================================================
-
-void SetLN(int epi, int map, int x, int y)
-{
-	lnodes[epi * NUMMAPS + map].x = x * 2;
-	lnodes[epi * NUMMAPS + map].y = y * 480 / 200;
-}
-
 //==========================================================================
 //
 //  FindEpisodeAndMap
@@ -403,16 +330,17 @@ void OnPostDraw()
 void IM_InitAnimatedBack()
 {
 #ifdef DOOM2
-	Background.Init('interpic', false, ClientGameShared(ClGame));
+	Background.InitPic('interpic', ClientGameShared(ClGame));
 #else
 	if (im_episode > 3)
 	{
-		Background.Init('interpic', !!interstate, ClientGameShared(ClGame));
+		Background.InitPic('interpic', ClientGameShared(ClGame));
 	}
 	else
 	{
-		Background.Init(StrToName(va("$in_epi%d", im_episode)), !!interstate,
-			ClientGameShared(ClGame));
+		Background.Init(StrToName(va("$in_epi%d", im_episode)), interstate ?
+			IntermissionBackground::STATE_NextLoc :
+			IntermissionBackground::STATE_Default, ClientGameShared(ClGame));
 	}
 #endif
 }
@@ -427,17 +355,6 @@ void IM_LoadData()
 {
 	picinfo_t info;
 	int i;
-
-#ifndef DOOM2
-	// you are here
-	yah[0] = R_RegisterPic('wiurh0');
-
-	// you are here (alt.)
-	yah[1] = R_RegisterPic('wiurh1');
-
-	// splat
-	splat = R_RegisterPic('wisplat');
-#endif
 
 	if (ClGame.im->LeaveTitlePatch)
 	{
@@ -1148,81 +1065,12 @@ void IM_InitNextLoc()
 
 //==========================================================================
 //
-//  IM_DrawOnLnode
-//
-//==========================================================================
-
-void IM_DrawOnLnode(int n, int *c)
-{
-	int i;
-	int left;
-	int top;
-	int right;
-	int bottom;
-	bool fits;
-	picinfo_t info;
-
-	fits = false;
-	i = 0;
-	do
-	{
-		R_GetPicInfo(c[i], &info);
-		left = lnodes[(im_episode - 1) * NUMMAPS + n].x - info.xoffset;
-		top = lnodes[(im_episode - 1) * NUMMAPS + n].y - info.yoffset;
-		right = left + info.width;
-		bottom = top + info.height;
-
-		if (left >= 0 && right < 640 && top >= 0 && bottom < 480)
-		{
-			fits = true;
-		}
-		else
-		{
-			i++;
-		}
-	}
-	while (!fits && i != 2);
-
-	if (fits && i < 2)
-	{
-		DrawPic(lnodes[(im_episode - 1) * NUMMAPS + n].x, lnodes[(im_episode - 1) * NUMMAPS + n].y,
-			c[i]);
-	}
-	else
-	{
-		// DEBUG
-		dprint("Could not place patch on level %d", n + 1);
-	}
-}
-
-//==========================================================================
-//
 //  IM_DrawNextLoc
 //
 //==========================================================================
 
 void IM_DrawNextLoc()
 {
-	int i;
-	int last;
-
-	if (im_episode <= 3)
-	{
-		last = (im_map == 9) ? im_nextmap - 2 : im_map - 1;
-
-		// draw a splat on taken cities.
-		for (i = 0; i <= last; i++)
-			IM_DrawOnLnode(i, &splat);
-
-		// splat the secret level?
-		if (ClGame.cl.bDidSecret)
-			IM_DrawOnLnode(8, &splat);
-
-		// draw flashing ptr
-		if (snl_pointeron)
-			IM_DrawOnLnode(im_nextmap - 1, &yah[0]);
-	}
-
 	// draws which level you are entering..
 	IM_DrawEL();
 }
@@ -1238,8 +1086,6 @@ void IM_UpdateNextLoc(float DeltaTime)
 	cnt -= DeltaTime;
 	if (cnt <= 0.0 || ClGame.skipintermission)
 		IM_InitNoState();
-	else
-		snl_pointeron = (ftoi(32.0 * cnt) & 31) < 20;
 }
 
 #endif
@@ -1272,7 +1118,6 @@ void IM_DrawNoState()
 		IM_DrawEL();
 	}
 #else
-	snl_pointeron = true;
 	IM_DrawNextLoc();
 #endif
 }
@@ -1320,6 +1165,7 @@ void IM_InitText()
 	{
 		CmdBuf_AddText("TeleportNewMap\n");
 		interstate = IMS_Done;
+		Background.State = IntermissionBackground::STATE_Done;
 		return;
 	}
 
@@ -1419,6 +1265,7 @@ void IM_UpdateText(float DeltaTime)
 		ClGame.skipintermission = false;
 		CmdBuf_AddText("TeleportNewMap\n");
 		interstate = IMS_Done;
+		Background.State = IntermissionBackground::STATE_Done;
 	}
 }
 

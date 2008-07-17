@@ -27,6 +27,14 @@ class IntermissionBackground : Widget;
 
 enum
 {
+	STATE_Default,
+	STATE_PrevLoc,
+	STATE_NextLoc,
+	STATE_Done
+};
+
+enum
+{
 	COND_None,
 	COND_IfLeaving,
 	COND_IfNotLeaving,
@@ -64,19 +72,28 @@ struct AnimInfo
 	bool			bOnce;
 };
 
+struct SpotInfo
+{
+	name			Map;
+	int				X;
+	int				Y;
+};
+
 ClientGameShared	ClGame;
 
 int					BackgroundPic;
 name				BackgroundFlat;
+int					SplatPic;
+array<int>			PointerPics;
+bool				bNoAutoStartMap;
+
+array<AnimInfo>		Anims;
+array<SpotInfo>		Spots;
 
 //	Used for timing of background animation
 float				btime;
 
-array<AnimInfo>		Anims;
-
-bool				bIsEntering;
-name				LeaveMap;
-name				EnterMap;
+byte				State;
 
 //==========================================================================
 //
@@ -84,11 +101,11 @@ name				EnterMap;
 //
 //==========================================================================
 
-final void Init(name Name, bool AIsEntering, ClientGameShared AClGame)
+final void Init(name Name, byte AState, ClientGameShared AClGame)
 {
 	Clean();
 
-	bIsEntering = AIsEntering;
+	State = AState;
 	ClGame = AClGame;
 
 	string NameStr = va("%n", Name);
@@ -138,8 +155,13 @@ final void Clean()
 {
 	BackgroundPic = 0;
 	BackgroundFlat = '';
+	SplatPic = 0;
+	PointerPics.Num = 0;
+	bNoAutoStartMap = false;
 	btime = 0.0;
 	Anims.Num = 0;
+	Spots.Num = 0;
+	State = STATE_Default;
 }
 
 //==========================================================================
@@ -165,6 +187,52 @@ final void ParseScript(name ScriptName)
 		{
 			sc.ExpectString();
 			BackgroundPic = R_RegisterPic(StrToName(strlwr(sc.String)));
+			continue;
+		}
+		if (sc.Check("NoAutoStartMap"))
+		{
+			bNoAutoStartMap = true;
+			continue;
+		}
+		if (sc.Check("Splat"))
+		{
+			sc.ExpectString();
+			SplatPic = R_RegisterPic(StrToName(strlwr(sc.String)));
+			continue;
+		}
+		if (sc.Check("Pointer"))
+		{
+			while (sc.GetString())
+			{
+				if (!sc.Crossed)
+				{
+					int i = PointerPics.Num;
+					PointerPics.Num = i + 1;
+					PointerPics[i] = R_RegisterPic(StrToName(strlwr(
+						sc.String)));
+				}
+				else
+				{
+					sc.UnGet();
+					break;
+				}
+			}
+			continue;
+		}
+		if (sc.Check("Spots"))
+		{
+			sc.Expect("{");
+			while (!sc.Check("}"))
+			{
+				int i = Spots.Num;
+				Spots.Num = i + 1;
+				sc.ExpectString();
+				Spots[i].Map = StrToName(strlwr(sc.String));
+				sc.ExpectNumber();
+				Spots[i].X = sc.Number;
+				sc.ExpectNumber();
+				Spots[i].Y = sc.Number;
+			}
 			continue;
 		}
 
@@ -335,6 +403,76 @@ void OnDraw()
 			DrawPic(Anims[i].X, Anims[i].Y, Anims[i].Pics[Anims[i].Ctr]);
 		}
 	}
+
+	if (State > STATE_Default)
+	{
+		for (i = 0; i < Spots.Num; i++)
+		{
+			//	Flash level we are leaving now.
+			if (Spots[i].Map == ClGame.im->LeaveMap &&
+				State == STATE_PrevLoc && (ftoi(2.0 * btime) & 1))
+			{
+				continue;
+			}
+			if (IsVisited(Spots[i].Map))
+			{
+				DrawPic(Spots[i].X, Spots[i].Y, SplatPic);
+			}
+			if (Spots[i].Map == ClGame.im->EnterMap && (State == STATE_Done ||
+				(State == STATE_NextLoc && (ftoi(32.0 * btime) & 31) < 20)))
+			{
+				DrawPointer(i);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  DrawPointer
+//
+//==========================================================================
+
+final void DrawPointer(int n)
+{
+	int i;
+	int left;
+	int top;
+	int right;
+	int bottom;
+	bool fits;
+	picinfo_t info;
+
+	fits = false;
+	i = 0;
+	do
+	{
+		R_GetPicInfo(PointerPics[i], &info);
+		left = Spots[n].X - info.xoffset;
+		top = Spots[n].Y - info.yoffset;
+		right = left + info.width;
+		bottom = top + info.height;
+
+		if (left >= 0 && right < Width && top >= 0 && bottom < Height)
+		{
+			fits = true;
+		}
+		else
+		{
+			i++;
+		}
+	}
+	while (!fits && i != PointerPics.Num);
+
+	if (fits && i < PointerPics.Num)
+	{
+		DrawPic(Spots[n].X, Spots[n].Y, PointerPics[i]);
+	}
+	else
+	{
+		// DEBUG
+		dprint("Could not place patch on level %d", n + 1);
+	}
 }
 
 //==========================================================================
@@ -348,16 +486,16 @@ final bool CheckCond(byte Cond, name MapName1, name MapName2)
 	switch (Cond)
 	{
 	case COND_IfLeaving:
-		return !bIsEntering && MapName1 == ClGame.im->LeaveMap;
+		return State < STATE_NextLoc && MapName1 == ClGame.im->LeaveMap;
 
 	case COND_IfNotLeaving:
-		return bIsEntering || MapName1 != ClGame.im->LeaveMap;
+		return State >= STATE_NextLoc || MapName1 != ClGame.im->LeaveMap;
 
 	case COND_IfEntering:
-		return bIsEntering && MapName1 == ClGame.im->EnterMap;
+		return State >= STATE_NextLoc && MapName1 == ClGame.im->EnterMap;
 
 	case COND_IfNotEntering:
-		return !bIsEntering || MapName1 != ClGame.im->EnterMap;
+		return State < STATE_NextLoc || MapName1 != ClGame.im->EnterMap;
 
 	case COND_IfVisited:
 		return IsVisited(MapName1);
