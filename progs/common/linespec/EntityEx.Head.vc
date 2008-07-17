@@ -301,6 +301,8 @@ Entity			LastLookActor;
 //	TID of things to hate, 0 if none.
 int				TIDToHate;
 
+byte			FriendPlayer;
+
 int				MissileDamage;	// For missiles
 int				MissilePoisonDamage;
 

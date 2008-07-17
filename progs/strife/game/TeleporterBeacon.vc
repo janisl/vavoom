@@ -104,7 +104,7 @@ final void A_SummonRebel()
 	}
 
 	friendNum = Owner.Player ? i + 1 : 0;
-	Rebel1(A).FriendPlayer = friendNum;
+	A.FriendPlayer = friendNum;
 	A.Threshold = 100;
 	A.bFriendly = true;
 	A.bInCombat = true;
@@ -118,9 +118,7 @@ final void A_SummonRebel()
 		A.Translation = Owner.Translation;
 		// Set the rebel's target to whatever last hurt the player, so long as it's not
 		// one of the player's other rebels.
-		if (Owner.Target &&	!(Owner.Target.bFriendly)/* ||
-			Owner.Target.FriendPlayer == 0 ||
-			Owner.Target.FriendPlayer != friendNum)*/)
+		if (Owner.Target && !A.IsFriend(Owner.Target))
 		{
 			A.Target = Owner.Target;
 		}
