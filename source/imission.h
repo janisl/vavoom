@@ -35,11 +35,15 @@ struct im_t
 	vint32		LeaveCluster;
 	VStr		LeaveName;
 	VName		LeaveTitlePatch;
+	VName		ExitPic;
 
 	VName		EnterMap;
 	vint32		EnterCluster;
 	VStr		EnterName;
 	VName		EnterTitlePatch;
+	VName		EnterPic;
+
+	VName		InterMusic;
 
 	VStr		Text;
 	VName		TextFlat;

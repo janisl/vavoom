@@ -176,20 +176,27 @@ void Start()
 	{
 		IM_LoadData();
 
-	// intermission music
+		// intermission music
+		if (ClGame.im->InterMusic)
+		{
+			CmdBuf_AddText(va("music loop %n\n", ClGame.im->InterMusic));
+		}
+		else
+		{
 #ifdef FIXME
 #ifdef DOOM2
-		S_StartSong("D_DM2INT", P_GetCDIntermissionTrack(), true);
+			S_StartSong("D_DM2INT", P_GetCDIntermissionTrack(), true);
 #else
-		S_StartSong("D_INTER", P_GetCDIntermissionTrack(), true);
+			S_StartSong("D_INTER", P_GetCDIntermissionTrack(), true);
 #endif
 #else
 #ifdef DOOM2
-		CmdBuf_AddText("music loop D_DM2INT\n");
+			CmdBuf_AddText("music loop D_DM2INT\n");
 #else
-		CmdBuf_AddText("music loop D_INTER\n");
+			CmdBuf_AddText("music loop D_INTER\n");
 #endif
 #endif
+		}
 	}
 	else
 	{
@@ -329,20 +336,25 @@ void OnPostDraw()
 
 void IM_InitAnimatedBack()
 {
+	name BgPic = interstate ? ClGame.im->ExitPic : ClGame.im->EnterPic;
+	if (!BgPic)
+	{
 #ifdef DOOM2
-	Background.InitPic('interpic', ClientGameShared(ClGame));
+		BgPic = 'interpic';
 #else
-	if (im_episode > 3)
-	{
-		Background.InitPic('interpic', ClientGameShared(ClGame));
-	}
-	else
-	{
-		Background.Init(StrToName(va("$in_epi%d", im_episode)), interstate ?
-			IntermissionBackground::STATE_NextLoc :
-			IntermissionBackground::STATE_Default, ClientGameShared(ClGame));
-	}
+		if (im_episode > 3)
+		{
+			BgPic = 'interpic';
+		}
+		else
+		{
+			BgPic = StrToName(va("$in_epi%d", im_episode));
+		}
 #endif
+	}
+	Background.Init(BgPic, interstate ?
+		IntermissionBackground::STATE_NextLoc :
+		IntermissionBackground::STATE_Default, ClientGameShared(ClGame));
 }
 
 //==========================================================================

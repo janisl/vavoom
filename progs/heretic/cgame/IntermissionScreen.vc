@@ -263,11 +263,24 @@ void OnPostDraw()
 
 void IM_LoadPics()
 {
-	if (interstate == IMS_Stats)
+	name BgPic = interstate <= IMS_PrevLoc ? ClGame.im->ExitPic :
+		ClGame.im->EnterPic;
+	if (!BgPic && interstate != IMS_Stats)
 	{
-		Background.InitFlat('floor16', ClientGameShared(ClGame));
+		switch (im_episode)
+		{
+		case 1:
+			BgPic = '$in_htc1';
+			break;
+		case 2:
+			BgPic = '$in_htc2';
+			break;
+		case 3:
+			BgPic = '$in_htc3';
+			break;
+		}
 	}
-	else
+	if (BgPic)
 	{
 		byte BgState;
 		switch (interstate)
@@ -285,21 +298,11 @@ void IM_LoadPics()
 			BgState = IntermissionBackground::STATE_NextLoc;
 			break;
 		}
-		switch (im_episode)
-		{
-		case 1:
-			Background.Init('$in_htc1', BgState, ClientGameShared(ClGame));
-			break;
-		case 2:
-			Background.Init('$in_htc2', BgState, ClientGameShared(ClGame));
-			break;
-		case 3:
-			Background.Init('$in_htc3', BgState, ClientGameShared(ClGame));
-			break;
-		default:
-			Background.InitFlat('floor16', ClientGameShared(ClGame));
-			break;
-		}
+		Background.Init(BgPic, BgState, ClientGameShared(ClGame));
+	}
+	else
+	{
+		Background.InitFlat('floor16', ClientGameShared(ClGame));
 	}
 
 	patchFaceOkay[0] = R_RegisterPic('facea0');
@@ -431,11 +434,18 @@ void IM_InitStats()
 		oldintertime = 10.0;
 	}
 	im_sounds = 0;
+	if (ClGame.im->InterMusic)
+	{
+		CmdBuf_AddText(va("music loop %n\n", ClGame.im->InterMusic));
+	}
+	else
+	{
 #ifdef FIXME
-	S_StartSong("MUS_INTR", P_GetCDIntermissionTrack(), true);
+		S_StartSong("MUS_INTR", P_GetCDIntermissionTrack(), true);
 #else
-	CmdBuf_AddText("music loop MUS_INTR\n");
+		CmdBuf_AddText("music loop MUS_INTR\n");
 #endif
+	}
 }
 
 //========================================================================

@@ -1161,11 +1161,15 @@ struct im_t
 	int		LeaveCluster;
 	string	LeaveName;
 	name	LeaveTitlePatch;
+	name	ExitPic;
 
 	name	EnterMap;
 	int		EnterCluster;
 	string	EnterName;
 	name	EnterTitlePatch;
+	name	EnterPic;
+
+	name	InterMusic;
 
 	string	Text;
 	name	TextFlat;

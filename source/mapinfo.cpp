@@ -179,6 +179,9 @@ static void SetMapDefaults(mapInfo_t& Info)
 	Info.SpecialActions.Clear();
 	Info.RedirectType = NAME_None;
 	Info.RedirectMap = NAME_None;
+	Info.ExitPic = NAME_None;
+	Info.EnterPic = NAME_None;
+	Info.InterMusic = NAME_None;
 
 	if (GGameInfo->Flags & VGameInfo::GIF_DefaultLaxMonsterActivation)
 	{
@@ -726,6 +729,21 @@ static void ParseMapCommon(VScriptParser* sc, mapInfo_t* info, bool& HexenMode)
 			info->Flags2 |= MAPINFOF2_LaxMonsterActivation;
 			info->Flags2 |= MAPINFOF2_HaveMonsterActivation;
 		}
+		else if (sc->Check("interpic") || sc->Check("exitpic"))
+		{
+			sc->ExpectName8();
+			info->ExitPic = *sc->String.ToLower();
+		}
+		else if (sc->Check("enterpic"))
+		{
+			sc->ExpectName8();
+			info->EnterPic = *sc->String.ToLower();
+		}
+		else if (sc->Check("intermusic"))
+		{
+			sc->ExpectString();
+			info->InterMusic = *sc->String.ToLower();
+		}
 		else if (sc->Check("cd_start_track"))
 		{
 			sc->ExpectNumber();
@@ -765,26 +783,6 @@ static void ParseMapCommon(VScriptParser* sc, mapInfo_t* info, bool& HexenMode)
 		else if (sc->Check("noinventorybar"))
 		{
 			GCon->Logf("Unimplemented MAPINFO comand noinventorybar");
-		}
-		else if (sc->Check("interpic"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand interpic");
-			sc->ExpectName8();
-		}
-		else if (sc->Check("exitpic"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand exitpic");
-			sc->ExpectName8();
-		}
-		else if (sc->Check("enterpic"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand enterpic");
-			sc->ExpectName8();
-		}
-		else if (sc->Check("intermusic"))
-		{
-			GCon->Logf("Unimplemented MAPINFO comand intermusic");
-			sc->ExpectString();
 		}
 		else if (sc->Check("airsupply"))
 		{
@@ -968,6 +966,9 @@ static void ParseMap(VScriptParser* sc, bool& HexenMode, mapInfo_t& Default)
 	info->SpecialActions = Default.SpecialActions;
 	info->RedirectType = Default.RedirectType;
 	info->RedirectMap = Default.RedirectMap;
+	info->ExitPic = Default.ExitPic;
+	info->EnterPic = Default.EnterPic;
+	info->InterMusic = Default.InterMusic;
 
 	if (HexenMode)
 	{

@@ -170,12 +170,15 @@ IMPLEMENT_FUNCTION(VBasePlayer, ClientIntermission)
 	im.LeaveCluster = linfo.Cluster;
 	im.LeaveName = linfo.GetName();
 	im.LeaveTitlePatch = linfo.TitlePatch;
+	im.ExitPic = linfo.ExitPic;
+	im.InterMusic = linfo.InterMusic;
 
 	const mapInfo_t& einfo = P_GetMapInfo(NextMap);
 	im.EnterMap = NextMap;
 	im.EnterCluster = einfo.Cluster;
 	im.EnterName = einfo.GetName();
 	im.EnterTitlePatch = einfo.TitlePatch;
+	im.EnterPic = einfo.EnterPic;
 
 	if (linfo.Cluster != einfo.Cluster)
 	{

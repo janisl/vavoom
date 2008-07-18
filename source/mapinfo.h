@@ -115,6 +115,9 @@ struct mapInfo_t
 	TArray<VMapSpecialAction>	SpecialActions;
 	VName		RedirectType;
 	VName		RedirectMap;
+	VName		ExitPic;
+	VName		EnterPic;
+	VName		InterMusic;
 
 	VStr GetName() const
 	{
