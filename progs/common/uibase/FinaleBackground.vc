@@ -1,0 +1,279 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FinaleBackground : Widget;
+
+FinaleScreen		FScreen;
+
+int					fpage1;
+int					fpage2;
+int					fend[7];
+
+int					laststage;
+
+//==========================================================================
+//
+//  InitPic
+//
+//==========================================================================
+
+final void InitPic(name PicName)
+{
+	fpage1 = R_RegisterPic(PicName);
+}
+
+//==========================================================================
+//
+//  InitPicPal
+//
+//==========================================================================
+
+final void InitPicPal(name PicName, name PalName)
+{
+	fpage1 = R_RegisterPicPal(PicName, PalName);
+}
+
+//==========================================================================
+//
+//  InitBunnyScroll
+//
+//==========================================================================
+
+final void InitBunnyScroll()
+{
+	int i;
+
+	fpage1 = R_RegisterPic('pfub1');
+	fpage2 = R_RegisterPic('pfub2');
+	for (i = 0; i < 7; i++)
+	{
+		fend[i] = R_RegisterPic(StrToName(va("end%d", i)));
+	}
+}
+
+//==========================================================================
+//
+//  InitDemon
+//
+//==========================================================================
+
+final void InitDemon()
+{
+	fpage1 = R_RegisterPic('final1');
+	fpage2 = R_RegisterPic('final2');
+}
+
+//==========================================================================
+//
+//	InitChess
+//
+//==========================================================================
+
+final void InitChess()
+{
+	fpage1 = R_RegisterPic('finale1');
+	if (FScreen.ClGame.maxclients > 1)
+	{
+		fpage2 = R_RegisterPic('chessall');
+	}
+	else if (GetCvar('class') == 1)
+	{
+		fpage2 = R_RegisterPic('chessc');
+	}
+	else if (GetCvar('class') == 2)
+	{
+		fpage2 = R_RegisterPic('chessm');
+	}
+}
+
+//==========================================================================
+//
+//  OnDraw
+//
+//==========================================================================
+
+void OnDraw()
+{
+	if (FScreen.FinaleType == 'EndGameBunny')
+	{
+		DrawBunnyScroll();
+	}
+	else if (FScreen.FinaleType == 'EndGameDemon')
+	{
+		DrawDemonScroll();
+	}
+	else if (FScreen.FinaleType == 'EndGameChess')
+	{
+		DrawChess();
+	}
+	else
+	{
+		DrawPic(0, 0, fpage1);
+	}
+}
+
+//==========================================================================
+//
+//  DrawBunnyScroll
+//
+//==========================================================================
+
+final void DrawBunnyScroll()
+{
+	int scrolled;
+	int stage;
+
+	scrolled = ftoi((FScreen.FinaleTime - 6.5) * 16.0);
+	if (scrolled <= 0)
+	{
+		DrawPic(0, 0, fpage1);
+	}
+	else if (scrolled >= 320)
+	{
+		DrawPic(0, 0, fpage2);
+	}
+	else
+	{
+		DrawPic(scrolled, 0, fpage1);
+		DrawPic(scrolled - 320, 0, fpage2);
+	}
+
+	if (FScreen.FinaleTime < 32.0)
+	{
+		return;
+	}
+	if (FScreen.FinaleTime < 35.0)
+	{
+		DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[0]);
+		laststage = 0;
+		return;
+	}
+
+	stage = ftoi((FScreen.FinaleTime - 35.0) * 7.0);
+	if (stage > 6)
+	{
+		stage = 6;
+	}
+	if (stage > laststage)
+	{
+		LocalSound('weapons/pistol');
+		laststage = stage;
+	}
+	DrawPic((320 - 13 * 8) / 2, (200 - 8 * 8) / 2, fend[stage]);
+}
+
+//==========================================================================
+//
+//	DrawDemonScroll
+//
+//==========================================================================
+
+final void DrawDemonScroll()
+{
+	if (FScreen.FinaleTime < 2.0)
+	{
+		DrawPic(0, 0, fpage1);
+	}
+	else if (FScreen.FinaleTime < 22.0)
+	{
+		int yval = ftoi((FScreen.FinaleTime - 2.0) * 10.0);
+
+		DrawPic(0, yval, fpage1);
+		DrawPic(0, yval - 200, fpage2);
+	}
+	else
+	{
+		//else, we'll just sit here and wait, for now
+		DrawPic(0, 0, fpage2);
+	}
+}
+
+//===========================================================================
+//
+//  DrawChess
+//
+//===========================================================================
+
+final void DrawChess()
+{
+	DrawPic(0, 0, fpage1);
+	if (FScreen.FinaleStage == 4 || FScreen.FinaleStage == 5)
+	{
+		// Chess pic, draw the correct character graphic
+		if (FScreen.ClGame.maxclients > 1)
+		{
+			DrawPic(20, 0, fpage2);
+		}
+		else if (GetCvar('class'))
+		{
+			DrawPic(60, 0, fpage2);
+		}
+	}
+
+	switch (FScreen.FinaleStage)
+	{
+	case 0:	// Fade in initial finale screen
+		FadeIn();
+		break;
+	case 3:	// Fade screen out
+		FadeOut();
+		break;
+	case 4:	// Fade in chess screen
+		FadeIn();
+		break;
+	}
+}
+
+//==========================================================================
+//
+//	FadeOut
+//
+//==========================================================================
+
+final void FadeOut()
+{
+	float fade = FClamp(FScreen.FinaleTime / FScreen.FinaleEndTime,
+		0.0, 0.99);
+	ShadeRect(0, 0, Width, Height, fade);
+}
+
+//==========================================================================
+//
+//	FadeIn
+//
+//==========================================================================
+
+final void FadeIn()
+{
+	float fade = FClamp(1.0 - FScreen.FinaleTime / FScreen.FinaleEndTime,
+		0.0, 0.99);
+	ShadeRect(0, 0, Width, Height, fade);
+}
+
+defaultproperties
+{
+	Width = 320;
+	Height = 200;
+}

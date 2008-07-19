@@ -41,7 +41,6 @@ import uibase;
 #include "TitleScreen.vc"
 #include "StatusBarScreen.vc"
 #include "IntermissionScreen.vc"
-#include "FinaleScreen.vc"
 #include "ClientGame.vc"
 
 class BlueCard : Key decorate;
@@ -54,20 +53,3 @@ class Clip : Ammo decorate;
 class RocketAmmo : Ammo decorate;
 class Cell : Ammo decorate;
 class Shell : Ammo decorate;
-class ZombieMan : Actor decorate;
-class ShotgunGuy : Actor decorate;
-class ChaingunGuy : Actor decorate;
-class DoomImp : Actor decorate;
-class Demon : Actor decorate;
-class LostSoul : Actor decorate;
-class Cacodemon : Actor decorate;
-class BaronOfHell : Actor decorate;
-class HellKnight : Actor decorate;
-class Revenant : Actor decorate;
-class Arachnotron : Actor decorate;
-class Fatso : Actor decorate;
-class PainElemental : Actor decorate;
-class Cyberdemon : Actor decorate;
-class SpiderMastermind : Actor decorate;
-class Archvile : Actor decorate;
-class DoomPlayer : PlayerPawn decorate;

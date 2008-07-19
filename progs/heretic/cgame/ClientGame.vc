@@ -445,4 +445,6 @@ defaultproperties
 	BigSelectorAnimSpeed = 2;
 	BigSelectorAnimFrames[0] = 'm_slctr1';
 	BigSelectorAnimFrames[1] = 'm_slctr2';
+	DefaultFinaleMusic = 'mus_cptd';
+	DefaultFinaleType = 'EndGamePic1';
 }

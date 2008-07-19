@@ -59,6 +59,7 @@ void RootWindowCreated()
 	GSBar.Hide();
 	GImission.ClGame = self;
 	GImission.Hide();
+	GFinale.ClGame = self;
 	GFinale.Hide();
 }
 
@@ -471,7 +472,7 @@ void StartConSlideshow2()
 
 void SetFinaleType(int FinaleType)
 {
-	GFinale.FinaleType = FinaleType;
+	GFinale.StrifeFinaleType = FinaleType;
 }
 
 defaultproperties
@@ -489,4 +490,6 @@ defaultproperties
 	BigSelectorAnimFrames[5] = 'm_curs6';
 	BigSelectorAnimFrames[6] = 'm_curs7';
 	BigSelectorAnimFrames[7] = 'm_curs8';
+	DefaultFinaleMusic = 'd_intro';
+	DefaultFinaleType = 'EndGameStrife';
 }

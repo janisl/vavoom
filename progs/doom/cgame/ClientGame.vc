@@ -461,6 +461,8 @@ defaultproperties
 	BigSelectorAnimFrames[0] = 'm_skull1';
 	BigSelectorAnimFrames[1] = 'm_skull2';
 #ifndef DOOM2
+	DefaultFinaleMusic = 'd_victor';
+	DefaultFinaleType = 'EndGamePic1';
 	quitsounds[0] = '*death';
 	quitsounds[1] = 'demon/pain';
 	quitsounds[2] = 'grunt/pain';
@@ -470,6 +472,8 @@ defaultproperties
 	quitsounds[6] = 'grunt/sight3';
 	quitsounds[7] = 'demon/melee';
 #else
+	DefaultFinaleMusic = 'd_read_m';
+	DefaultFinaleType = 'EndGameCast';
 	quitsounds[0] = 'vile/active';
 	quitsounds[1] = 'misc/p_pkup';
 	quitsounds[2] = 'brain/cube';

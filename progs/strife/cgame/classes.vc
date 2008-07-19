@@ -46,7 +46,6 @@ import uibase;
 #include "TitleScreen.vc"
 #include "StatusBarScreen.vc"
 #include "IntermissionScreen.vc"
-#include "FinaleScreen.vc"
 #include "ClientGame.vc"
 
 class BaseKey : Key decorate;

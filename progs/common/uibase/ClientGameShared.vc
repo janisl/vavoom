@@ -74,6 +74,9 @@ int						BigSelectorYOffset;
 int						BigSelectorAnimSpeed;
 array<name>				BigSelectorAnimFrames;
 
+name					DefaultFinaleMusic;
+name					DefaultFinaleType;
+
 //==========================================================================
 //
 //  SpawnMenu

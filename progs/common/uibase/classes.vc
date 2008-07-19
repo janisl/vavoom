@@ -78,3 +78,24 @@ import linespec;
 #include "HUDMessageFadeInOut.vc"
 
 #include "IntermissionBackground.vc"
+
+#include "FinaleScreen.vc"
+#include "FinaleBackground.vc"
+
+class ZombieMan : Actor decorate;
+class ShotgunGuy : Actor decorate;
+class ChaingunGuy : Actor decorate;
+class DoomImp : Actor decorate;
+class Demon : Actor decorate;
+class LostSoul : Actor decorate;
+class Cacodemon : Actor decorate;
+class BaronOfHell : Actor decorate;
+class HellKnight : Actor decorate;
+class Revenant : Actor decorate;
+class Arachnotron : Actor decorate;
+class Fatso : Actor decorate;
+class PainElemental : Actor decorate;
+class Cyberdemon : Actor decorate;
+class SpiderMastermind : Actor decorate;
+class Archvile : Actor decorate;
+class DoomPlayer : PlayerPawn decorate;
