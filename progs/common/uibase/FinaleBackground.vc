@@ -63,14 +63,15 @@ final void InitPicPal(name PicName, name PalName)
 
 final void InitBunnyScroll()
 {
-	int i;
-
 	fpage1 = R_RegisterPic('pfub1');
 	fpage2 = R_RegisterPic('pfub2');
-	for (i = 0; i < 7; i++)
-	{
-		fend[i] = R_RegisterPic(StrToName(va("end%d", i)));
-	}
+	fend[0] = R_RegisterPic('end0');
+	fend[1] = R_RegisterPic('end1');
+	fend[2] = R_RegisterPic('end2');
+	fend[3] = R_RegisterPic('end3');
+	fend[4] = R_RegisterPic('end4');
+	fend[5] = R_RegisterPic('end5');
+	fend[6] = R_RegisterPic('end6');
 }
 
 //==========================================================================

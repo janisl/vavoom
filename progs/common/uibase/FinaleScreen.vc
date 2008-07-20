@@ -55,7 +55,7 @@ class<EntityEx>			castorder[CastCount];
 //
 // Character cast strings
 //
-string					caststrings[CastCount];
+name					caststrings[CastCount];
 
 //==========================================================================
 //
@@ -515,7 +515,7 @@ final void CastPostDraw()
 {
 	SetFont('smallfont');
 	SetTextAlign(hcentre, vtop);
-	DrawText(320, 440, caststrings[castnum]);
+	DrawText(320, 440, GetLangString(caststrings[castnum]));
 }
 
 //==========================================================================
@@ -778,21 +778,21 @@ defaultproperties
 	castorder[15] = Cyberdemon;
 	castorder[16] = DoomPlayer;
 
-	caststrings[0] = "ZOMBIEMAN";
-	caststrings[1] = "SHOTGUN GUY";
-	caststrings[2] = "HEAVY WEAPON DUDE";
-	caststrings[3] = "IMP";
-	caststrings[4] = "DEMON";
-	caststrings[5] = "LOST SOUL";
-	caststrings[6] = "CACODEMON";
-	caststrings[7] = "HELL KNIGHT";
-	caststrings[8] = "BARON OF HELL";
-	caststrings[9] = "ARACHNOTRON";
-	caststrings[10] = "PAIN ELEMENTAL";
-	caststrings[11] = "REVENANT";
-	caststrings[12] = "MANCUBUS";
-	caststrings[13] = "ARCH-VILE";
-	caststrings[14] = "THE SPIDER MASTERMIND";
-	caststrings[15] = "THE CYBERDEMON";
-	caststrings[16] = "OUR HERO";
+	caststrings[0] = 'cc_zombie';
+	caststrings[1] = 'cc_shotgun';
+	caststrings[2] = 'cc_heavy';
+	caststrings[3] = 'cc_imp';
+	caststrings[4] = 'cc_demon';
+	caststrings[5] = 'cc_lost';
+	caststrings[6] = 'cc_caco';
+	caststrings[7] = 'cc_hell';
+	caststrings[8] = 'cc_baron';
+	caststrings[9] = 'cc_arach';
+	caststrings[10] = 'cc_pain';
+	caststrings[11] = 'cc_reven';
+	caststrings[12] = 'cc_mancu';
+	caststrings[13] = 'cc_arch';
+	caststrings[14] = 'cc_spider';
+	caststrings[15] = 'cc_cyber';
+	caststrings[16] = 'cc_hero';
 }

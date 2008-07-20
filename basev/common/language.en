@@ -535,6 +535,25 @@ ob_stealthundead = "%o thought %g saw a revenant.";
 ob_stealthfatso = "%o thought %g saw a mancubus.";
 ob_stealthvile = "%o thought %g saw an archvile.";
 
+//	Character cast strings
+cc_zombie = "ZOMBIEMAN";
+cc_shotgun = "SHOTGUN GUY";
+cc_heavy = "HEAVY WEAPON DUDE";
+cc_imp = "IMP";
+cc_demon = "DEMON";
+cc_lost = "LOST SOUL";
+cc_caco = "CACODEMON";
+cc_hell = "HELL KNIGHT";
+cc_baron = "BARON OF HELL";
+cc_arach = "ARACHNOTRON";
+cc_pain = "PAIN ELEMENTAL";
+cc_reven = "REVENANT";
+cc_mancu = "MANCUBUS";
+cc_arch = "ARCH-VILE";
+cc_spider = "THE SPIDER MASTERMIND";
+cc_cyber = "THE CYBERDEMON";
+cc_hero = "OUR HERO";
+
 //
 //	Heretic strings.
 //
