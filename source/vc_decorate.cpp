@@ -244,6 +244,7 @@ static VFlagDef ActorFlags[] =
 	{ "ForceRadiusDmg", NULL, "bForceRadiusDmg" },
 	{ "SpawnSoundSource", NULL, "bSpawnSoundSource" },
 	{ "BloodSplatter", NULL, "bBloodSplatter" },
+	{ "DehExplosion", NULL, "bDehExplosion" },
 	//
 	//	Miscellaneous
 	//
@@ -1588,12 +1589,6 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 	if (!Flag.ICmp("IceDamage"))
 	{
 		SetClassFieldName(Class, "DamageType", Value ? VName("Ice") : NAME_None);
-		return true;
-	}
-	if (!Flag.ICmp("DehExplosion"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag DehExplosion in %s", Class->GetName());
 		return true;
 	}
 	//
@@ -4703,12 +4698,6 @@ void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 	if (!Flag.ICmp("IceDamage"))
 	{
 		SetFieldName(this, "DamageType", Value ? VName("Ice") : NAME_None);
-		return;
-	}
-	if (!Flag.ICmp("DehExplosion"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag DehExplosion in %s", GetClass()->GetName());
 		return;
 	}
 	//

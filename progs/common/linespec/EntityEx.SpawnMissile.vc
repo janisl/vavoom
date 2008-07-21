@@ -143,6 +143,29 @@ final bool ExplodeMissile(EntityEx Victim)
 		return false;
 	}
 
+	if (bDehExplosion)
+	{
+		if (LineSpecialGameInfo(Level.Game).DehExplosionStyle == 255)
+		{
+			//	Explosion style is controlled by a cvar.
+			if (GetCvar('addrocketexplosion'))
+			{
+				RenderStyle = STYLE_Add;
+				Alpha = 1.0;
+			}
+			else
+			{
+				RenderStyle = STYLE_Translucent;
+				Alpha = 0.666;
+			}
+		}
+		else
+		{
+			RenderStyle = LineSpecialGameInfo(Level.Game).DehExplosionStyle;
+			Alpha = LineSpecialGameInfo(Level.Game).DehExplosionAlpha;
+		}
+	}
+
 	if (bRandomise)
 	{
 		StateTime -= Random() * 0.1;

@@ -117,6 +117,9 @@ float			RespawnTime;
 
 int				GOD_HEALTH;
 
+int				DehExplosionStyle;
+float			DehExplosionAlpha;
+
 //==========================================================================
 //
 //	Init
@@ -126,6 +129,7 @@ int				GOD_HEALTH;
 void Init()
 {
 	CreateCvar('monster_backing', "0", CVAR_ARCHIVE);
+	CreateCvar('addrocketexplosion', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================
@@ -1394,4 +1398,6 @@ defaultproperties
 	InvDefaultMaxAmount = 25;
 	IceMoveFactor = 0.5;
 	GibsHealthFactor = 0.5;
+	DehExplosionStyle = 255;
+	DehExplosionAlpha = 0.666;
 }

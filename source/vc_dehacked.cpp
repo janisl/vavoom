@@ -426,6 +426,52 @@ static void ParseFlag(const VStr& FlagName, int* Values, bool* Changed)
 
 //==========================================================================
 //
+//	ParseRenderStyle
+//
+//==========================================================================
+
+static int ParseRenderStyle()
+{
+	guard(ParseRenderStyle);
+	int RenderStyle = STYLE_Normal;
+	if (!VStr::ICmp(ValueString, "STYLE_None"))
+	{
+		RenderStyle = STYLE_None;
+	}
+	else if (!VStr::ICmp(ValueString, "STYLE_Normal"))
+	{
+		RenderStyle = STYLE_Normal;
+	}
+	else if (!VStr::ICmp(ValueString, "STYLE_Fuzzy"))
+	{
+		RenderStyle = STYLE_Fuzzy;
+	}
+	else if (!VStr::ICmp(ValueString, "STYLE_SoulTrans"))
+	{
+		RenderStyle = STYLE_SoulTrans;
+	}
+	else if (!VStr::ICmp(ValueString, "STYLE_OptFuzzy"))
+	{
+		RenderStyle = STYLE_OptFuzzy;
+	}
+	else if (!VStr::ICmp(ValueString, "STYLE_Translucent"))
+	{
+		RenderStyle = STYLE_Translucent;
+	}
+	else if (!VStr::ICmp(ValueString, "STYLE_Add"))
+	{
+		RenderStyle = STYLE_Add;
+	}
+	else
+	{
+		GCon->Logf("Bad render style %s", ValueString);
+	}
+	return RenderStyle;
+	unguard;
+}
+
+//==========================================================================
+//
 //	DoThingState
 //
 //==========================================================================
@@ -563,40 +609,7 @@ static void ReadThing(int num)
 		}
 		else if (!VStr::ICmp(String, "Render Style"))
 		{
-			int RenderStyle = STYLE_Normal;
-			if (!VStr::ICmp(ValueString, "STYLE_None"))
-			{
-				RenderStyle = STYLE_None;
-			}
-			else if (!VStr::ICmp(ValueString, "STYLE_Normal"))
-			{
-				RenderStyle = STYLE_Normal;
-			}
-			else if (!VStr::ICmp(ValueString, "STYLE_Fuzzy"))
-			{
-				RenderStyle = STYLE_Fuzzy;
-			}
-			else if (!VStr::ICmp(ValueString, "STYLE_SoulTrans"))
-			{
-				RenderStyle = STYLE_SoulTrans;
-			}
-			else if (!VStr::ICmp(ValueString, "STYLE_OptFuzzy"))
-			{
-				RenderStyle = STYLE_OptFuzzy;
-			}
-			else if (!VStr::ICmp(ValueString, "STYLE_Translucent"))
-			{
-				RenderStyle = STYLE_Translucent;
-			}
-			else if (!VStr::ICmp(ValueString, "STYLE_Add"))
-			{
-				RenderStyle = STYLE_Add;
-			}
-			else
-			{
-				GCon->Logf("Bad render style %s", ValueString);
-			}
-			SetClassFieldByte(Ent, "RenderStyle", RenderStyle);
+			SetClassFieldByte(Ent, "RenderStyle", ParseRenderStyle());
 		}
 		else if (!VStr::ICmp(String, "Scale"))
 		{
@@ -1320,6 +1333,16 @@ static void ReadMisc(int)
 		else if (!VStr::ICmp(String, "Powerup Color Minotaur"))
 		{
 			DoPowerupColour("PowerMinotaur");
+		}
+		else if (!VStr::ICmp(String, "Rocket Explosion Style"))
+		{
+			SetClassFieldInt(GameInfoClass, "DehExplosionStyle",
+				ParseRenderStyle());
+		}
+		else if (!VStr::ICmp(String, "Rocket Explosion Alpha"))
+		{
+			SetClassFieldFloat(GameInfoClass, "DehExplosionAlpha",
+				atof(ValueString));
 		}
 		else GCon->Logf("WARNING! Invalid misc %s", String);
 	}

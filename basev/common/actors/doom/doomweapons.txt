@@ -304,6 +304,7 @@ actor Rocket
 	Projectile
 	+Randomize
 	+RocketTrail
+	+DehExplosion
 	states
 	{
 	Spawn:
@@ -315,13 +316,6 @@ actor Rocket
 		MISL D 4 Bright
 		Stop
 	}
-
-	//FIXME
-	//void PreExplode()
-	//{
-	//	RenderStyle = STYLE_Add;
-	//	Alpha = 0.5;
-	//}
 }
 
 //------------------------------------------------------------------------------
