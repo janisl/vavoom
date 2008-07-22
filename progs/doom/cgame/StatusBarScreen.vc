@@ -100,6 +100,40 @@ const int
 	ST_TDAMMOX		= 620,
 	ST_TDAMMOY		= 460;
 
+//
+//  FACE WIDGET MACROS
+//
+enum
+{
+// Number of status faces.
+	ST_NUMPAINFACES		= 5,
+	ST_NUMSTRAIGHTFACES	= 3,
+	ST_NUMTURNFACES		= 2,
+	ST_NUMSPECIALFACES	= 3,
+
+	ST_FACESTRIDE
+          = (ST_NUMSTRAIGHTFACES + ST_NUMTURNFACES + ST_NUMSPECIALFACES),
+
+	ST_NUMEXTRAFACES	= 2,
+
+	ST_NUMFACES
+          = (ST_FACESTRIDE*ST_NUMPAINFACES+ST_NUMEXTRAFACES),
+
+	ST_TURNOFFSET		= (ST_NUMSTRAIGHTFACES),
+	ST_OUCHOFFSET		= (ST_TURNOFFSET + ST_NUMTURNFACES),
+	ST_EVILGRINOFFSET	= (ST_OUCHOFFSET + 1),
+	ST_RAMPAGEOFFSET	= (ST_EVILGRINOFFSET + 1),
+	ST_GODFACE			= (ST_NUMPAINFACES * ST_FACESTRIDE),
+	ST_DEADFACE			= (ST_GODFACE + 1)
+};
+
+const float ST_STRAIGHTFACETIME		= 0.5;
+const float ST_TURNTIME				= 1.0;
+const float ST_EVILGRINTIME			= 2.0;
+const float ST_RAMPAGEDELAY			= 2.0;
+
+const int ST_MUCHPAIN				= 20;
+
 Player cl;
 
 //
@@ -114,12 +148,36 @@ int pic_graynum[10];
 int pic_minus;
 int pic_percent;
 int pic_faceback;
-int pic_faces[Player::ST_NUMFACES];
+int pic_faces[ST_NUMFACES];
 int pic_keys[6];
 int pic_pause;
 //For Icons in Fullscreen HUD
 int pic_health;
 int pic_armor[2];
+
+//
+//  FACE WIDGET DATA
+//
+
+// count until face changes
+float sb_facetime;
+
+// used for evil grin
+bool sb_GotWeapon;
+
+// used to use appopriately pained face
+int sb_oldhealth;
+
+// int sb_face_lastattackdown = -1;
+int sb_face_priority;
+
+int sb_cpo_lastcalc;
+int sb_cpo_oldhealth;
+
+float sb_face_lastattackdown;
+
+// current face index, used by w_faces
+int sb_faceindex;
 
 //==========================================================================
 //
@@ -152,27 +210,27 @@ void StartMap()
 		pic_keys[i] = R_RegisterPic(StrToName(va("stkeys%d", i)));
 	}
 
-	for (i = 0; i < Player::ST_NUMPAINFACES; i++)
+	for (i = 0; i < ST_NUMPAINFACES; i++)
 	{
-		pic_faces[i * Player::ST_FACESTRIDE] =
+		pic_faces[i * ST_FACESTRIDE] =
 			R_RegisterPic(StrToName(va("stfst%d0", i)));
-		pic_faces[i * Player::ST_FACESTRIDE + 1] =
+		pic_faces[i * ST_FACESTRIDE + 1] =
 			R_RegisterPic(StrToName(va("stfst%d1", i)));
-		pic_faces[i * Player::ST_FACESTRIDE + 2] =
+		pic_faces[i * ST_FACESTRIDE + 2] =
 			R_RegisterPic(StrToName(va("stfst%d2", i)));
-		pic_faces[i * Player::ST_FACESTRIDE + 3] =
+		pic_faces[i * ST_FACESTRIDE + 3] =
 			R_RegisterPic(StrToName(va("stftr%d0", i)));
-		pic_faces[i * Player::ST_FACESTRIDE + 4] =
+		pic_faces[i * ST_FACESTRIDE + 4] =
 			R_RegisterPic(StrToName(va("stftl%d0", i)));
-		pic_faces[i * Player::ST_FACESTRIDE + 5] =
+		pic_faces[i * ST_FACESTRIDE + 5] =
 			R_RegisterPic(StrToName(va("stfouch%d", i)));
-		pic_faces[i * Player::ST_FACESTRIDE + 6] =
+		pic_faces[i * ST_FACESTRIDE + 6] =
 			R_RegisterPic(StrToName(va("stfevl%d", i)));
-		pic_faces[i * Player::ST_FACESTRIDE + 7] =
+		pic_faces[i * ST_FACESTRIDE + 7] =
 			R_RegisterPic(StrToName(va("stfkill%d", i)));
 	}
-	pic_faces[Player::ST_GODFACE] = R_RegisterPic('stfgod0');
-	pic_faces[Player::ST_DEADFACE] = R_RegisterPic('stfdead0');
+	pic_faces[ST_GODFACE] = R_RegisterPic('stfgod0');
+	pic_faces[ST_DEADFACE] = R_RegisterPic('stfdead0');
 
 	pic_pause = R_RegisterPic('m_pause');
 
@@ -345,7 +403,7 @@ void SB_DrawMainBar()
 	{
 		DrawPic(ST_FACESX, ST_FACESY, pic_faceback,, cl.MO.Translation);
 	}
-	DrawPic(ST_FACESX, ST_FACESY, pic_faces[cl.sb_faceindex]);
+	DrawPic(ST_FACESX, ST_FACESY, pic_faces[sb_faceindex]);
 
 	// armor percentage
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
@@ -505,6 +563,221 @@ void SB_Drawer(int sb_view)
 		SB_DrawMainBar();
 	}
 	SB_DrawPause();
+}
+
+//==========================================================================
+//
+//  CalcPainOffset
+//
+//==========================================================================
+
+final int CalcPainOffset()
+{
+	int health;
+
+	health = cl.Health > 100 ? 100 : cl.Health;
+
+	if (health != sb_cpo_oldhealth)
+	{
+		sb_cpo_lastcalc =
+			ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
+		sb_cpo_oldhealth = health;
+	}
+	return sb_cpo_lastcalc;
+}
+
+//==========================================================================
+//
+//  UpdateFaceWidget
+//
+//  This is a not-very-pretty routine which handles the face states and
+// their timing.
+//  the precedence of expressions is:
+//  dead > evil grin > turned head > straight ahead
+//
+//==========================================================================
+
+final void UpdateFaceWidget(float FrameTime)
+{
+	int i;
+	float badguyangle;
+	float diffang;
+	bool doevilgrin;
+
+	// a random number per tick
+	int st_randomnumber;
+
+	st_randomnumber = P_Random();
+
+	if (sb_face_priority < 10)
+	{
+		// dead
+		if (!cl.Health)
+		{
+			sb_face_priority = 9;
+			sb_faceindex = ST_DEADFACE;
+			sb_facetime = 0.01;
+		}
+	}
+
+	if (sb_face_priority < 9)
+	{
+		if (cl.BonusFlash)
+		{
+			// picking up bonus
+			doevilgrin = false;
+
+			if (sb_GotWeapon)
+			{
+				doevilgrin = true;
+				sb_GotWeapon = false;
+			}
+			if (doevilgrin)
+			{
+				// evil grin if just picked up weapon
+				sb_face_priority = 8;
+				sb_facetime = ST_EVILGRINTIME;
+				sb_faceindex = CalcPainOffset() + ST_EVILGRINOFFSET;
+			}
+		}
+	}
+
+	if (sb_face_priority < 8)
+	{
+		if (cl.DamageFlash && cl.Attacker && cl.Attacker != cl.MO)
+		{
+			// being attacked
+			sb_face_priority = 7;
+
+			if (cl.Health - sb_oldhealth > ST_MUCHPAIN)
+			{
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
+			}
+			else
+			{
+				badguyangle = atan2(cl.Attacker.Origin.y - cl.MO.Origin.y,
+					cl.Attacker.Origin.x - cl.MO.Origin.x);
+
+				if (badguyangle > cl.MO.Angles.yaw)
+				{
+					// whether right or left
+					diffang = AngleMod360(badguyangle - cl.MO.Angles.yaw);
+					i = diffang > 180.0;
+				}
+				else
+				{
+					// whether left or right
+					diffang = AngleMod360(cl.MO.Angles.yaw - badguyangle);
+					i = diffang <= 180.0;
+				}	// confusing, aint it?
+
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset();
+
+				if (diffang < 45.0)
+				{
+					// head-on
+					sb_faceindex += ST_RAMPAGEOFFSET;
+				}
+				else if (i)
+				{
+					// turn face right
+					sb_faceindex += ST_TURNOFFSET;
+				}
+				else
+				{
+					// turn face left
+					sb_faceindex += ST_TURNOFFSET + 1;
+				}
+			}
+		}
+	}
+
+	if (sb_face_priority < 7)
+	{
+		// getting hurt because of your own damn stupidity
+		if (cl.DamageFlash)
+		{
+			if (cl.Health - sb_oldhealth > ST_MUCHPAIN)
+			{
+				sb_face_priority = 7;
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset() + ST_OUCHOFFSET;
+			}
+			else
+			{
+				sb_face_priority = 6;
+				sb_facetime = ST_TURNTIME;
+				sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
+			}
+		}
+	}
+
+	if (sb_face_priority < 6)
+	{
+		// rapid firing
+		if (cl.bAttackDown && !cl.bFrozen && !cl.bTotallyFrozen)
+		{
+			if (sb_face_lastattackdown == -1.0)
+			{
+				sb_face_lastattackdown = ST_RAMPAGEDELAY;
+			}
+			else
+			{
+				sb_face_lastattackdown -= FrameTime;
+				if (sb_face_lastattackdown <= 0.0)
+				{
+					sb_face_priority = 5;
+					sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
+					sb_facetime = 0.01;
+					sb_face_lastattackdown = 0.01;
+				}
+			}
+		}
+		else
+		{
+			sb_face_lastattackdown = -1.0;
+		}
+	}
+
+	if (sb_face_priority < 5)
+	{
+		// invulnerability
+		if ((cl.Cheats & Player::CF_GODMODE) || EntityEx(cl.MO).bInvulnerable)
+		{
+			sb_face_priority = 4;
+
+			sb_faceindex = ST_GODFACE;
+			sb_facetime = 0.01;
+		}
+	}
+
+	// look left or look right if the facecount has timed out
+	if (sb_facetime <= 0.0)
+	{
+		sb_faceindex = CalcPainOffset() + (st_randomnumber % 3);
+		sb_facetime = ST_STRAIGHTFACETIME;
+		sb_face_priority = 0;
+	}
+
+	sb_facetime -= FrameTime;
+	sb_oldhealth = cl.Health;
+}
+
+//==========================================================================
+//
+//  Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	::Tick(DeltaTime);
+	if (cl.MO)
+	{
+		UpdateFaceWidget(DeltaTime);
+	}
 }
 
 //==========================================================================

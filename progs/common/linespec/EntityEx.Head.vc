@@ -393,4 +393,7 @@ replication
 {
 	reliable if (Role == ROLE_Authority && bNetOwner)
 		Inventory;
+
+	reliable if (Role == ROLE_Authority && bNetLocalPlayer)
+		bInvulnerable;
 }

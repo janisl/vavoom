@@ -132,7 +132,8 @@ replication
 {
 	reliable if (!bIsClient)
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash,
-		Objectives, MorphTime, Accuracy, Stamina, MapsVisited;
+		Objectives, MorphTime, Accuracy, Stamina, MapsVisited, DamageFlash,
+		BonusFlash, Attacker, bFrozen, bTotallyFrozen;
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,
@@ -3145,8 +3146,6 @@ final void SetViewPos()
 
 	PaletteFlash();
 
-	UpdateFaceWidget(Level.Game.frametime);
-
 	ClientSetViewOrg(ViewOrg.x, ViewOrg.y, ViewOrg.z);
 
 	SoundEnvironment = Level.XLevel.Zones[Camera.Sector->Zone];
@@ -3553,10 +3552,6 @@ void SpawnSpeedEffect()
 }
 
 void PlayerImpulse()
-{
-}
-
-void UpdateFaceWidget(float DeltaTime)
 {
 }
 
