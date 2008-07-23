@@ -563,3 +563,193 @@ vuint32 M_ParseColour(VStr Name)
 	return 0xff000000 | (Col[0] << 16) | (Col[1] << 8) | Col[2];
 	unguard;
 }
+
+//==========================================================================
+//
+//	M_RgbToHsv
+//
+//==========================================================================
+
+void M_RgbToHsv(vuint8 r, vuint8 g, vuint8 b, vuint8& h, vuint8& s, vuint8& v)
+{
+	guardSlow(M_RgbToHsv);
+	vuint8 min = MIN(MIN(r, g), b);
+	vuint8 max = MAX(MAX(r, g), b);
+	v = max;
+	if (max == min)
+	{
+		//	Gray.
+		s = 0;
+		h = 0;
+		return;
+	}
+	s = 255 - 255 * min / max;
+	if (max == r)
+	{
+		h = 0 + 43 * (g - b) / (max - min);
+	}
+	else if (max == g)
+	{
+		h = 85 + 43 * (b - r) / (max - min);
+	}
+	else
+	{
+		h = 171 + 43 * (r - g) / (max - min);
+	}
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	M_RgbToHsv
+//
+//==========================================================================
+
+void M_RgbToHsv(float r, float g, float b, float& h, float& s, float& v)
+{
+	guardSlow(M_RgbToHsv);
+	float min = MIN(MIN(r, g), b);
+	float max = MAX(MAX(r, g), b);
+	v = max;
+	if (max == min)
+	{
+		//	Gray.
+		s = 0;
+		h = 0;
+		return;
+	}
+	s = 1.0 - min / max;
+	if (max == r)
+	{
+		h = 0.0 + 60.0 * (g - b) / (max - min);
+		if (h < 0)
+		{
+			h += 360.0;
+		}
+	}
+	else if (max == g)
+	{
+		h = 120.0 + 60.0 * (b - r) / (max - min);
+	}
+	else
+	{
+		h = 240.0 + 60.0 * (r - g) / (max - min);
+	}
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	M_HsvToRgb
+//
+//==========================================================================
+
+void M_HsvToRgb(vuint8 h, vuint8 s, vuint8 v, vuint8& r, vuint8& g, vuint8& b)
+{
+	guardSlow(M_HsvToRgb);
+	if (s == 0)
+	{
+		//	Gray.
+		r = v;
+		g = v;
+		b = v;
+		return;
+	}
+	int i = h / 43;
+	vuint8 f = (h - i * 43) * 255 / 43;
+	vuint8 p = v * (255 - s) / 255;
+	vuint8 q = v * (255 - f * s / 255) / 255;
+	vuint8 t = v * (255 - (255 - f) * s / 255) / 255;
+	switch (i)
+	{
+	case 0:
+		r = v;
+		g = t;
+		b = p;
+		break;
+	case 1:
+		r = q;
+		g = v;
+		b = p;
+		break;
+	case 2:
+		r = p;
+		g = v;
+		b = t;
+		break;
+	case 3:
+		r = p;
+		g = q;
+		b = v;
+		break;
+	case 4:
+		r = t;
+		g = p;
+		b = v;
+		break;
+	default:
+		r = v;
+		g = p;
+		b = q;
+		break;
+	}
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	M_HsvToRgb
+//
+//==========================================================================
+
+void M_HsvToRgb(float h, float s, float v, float& r, float& g, float& b)
+{
+	guardSlow(M_HsvToRgb);
+	if (s == 0)
+	{
+		//	Gray.
+		r = v;
+		g = v;
+		b = v;
+		return;
+	}
+	int i = (int)(h / 60.0);
+	float f = h / 60.0 - i;
+	float p = v * (1.0 - s);
+	float q = v * (1.0 - f * s);
+	float t = v * (1.0 - (1.0 - f) * s);
+	switch (i)
+	{
+	case 0:
+		r = v;
+		g = t;
+		b = p;
+		break;
+	case 1:
+		r = q;
+		b = v;
+		b = p;
+		break;
+	case 2:
+		r = p;
+		g = v;
+		b = t;
+		break;
+	case 3:
+		r = p;
+		g = q;
+		b = v;
+		break;
+	case 4:
+		r = t;
+		g = p;
+		b = v;
+		break;
+	default:
+		r = v;
+		g = p;
+		b = q;
+		break;
+	}
+	unguardSlow;
+}

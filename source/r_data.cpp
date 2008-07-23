@@ -680,20 +680,19 @@ void VTextureTranslation::Serialise(VStream& Strm)
 void VTextureTranslation::BuildPlayerTrans(int Start, int End, int Col)
 {
 	guard(VTextureTranslation::BuildPlayerTrans);
-	int Count;
-	Count = End - Start + 1;
-	int r = (Col >> 16) & 0xff;
-	int g = (Col >> 8) & 0xff;
-	int b = Col & 0xff;
-	bool Reverse = (r_palette[End].r + r_palette[End].g + r_palette[End].b) <
-		(r_palette[Start].r + r_palette[Start].g + r_palette[Start].b);
+	int Count = End - Start + 1;
+	vuint8 r = (Col >> 16) & 0xff;
+	vuint8 g = (Col >> 8) & 0xff;
+	vuint8 b = Col & 0xff;
+	vuint8 h, s, v;
+	M_RgbToHsv(r, g, b, h, s, v);
 	for (int i = 0; i < Count; i++)
 	{
 		int Idx = Start + i;
-		int Mul = Reverse ? Count - i : i + 1;
-		Palette[Idx].r = r * Mul / Count;
-		Palette[Idx].g = g * Mul / Count;
-		Palette[Idx].b = b * Mul / Count;
+		vuint8 TmpH, TmpS, TmpV;
+		M_RgbToHsv(Palette[Idx].r, Palette[Idx].g,Palette[Idx].b, TmpH, TmpS, TmpV);
+		M_HsvToRgb(h, s, v * TmpV / 255, Palette[Idx].r,
+			Palette[Idx].g, Palette[Idx].b);
 		Table[Idx] = R_LookupRGB(Palette[Idx].r, Palette[Idx].g,
 			Palette[Idx].b);
 	}

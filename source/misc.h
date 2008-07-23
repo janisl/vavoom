@@ -66,3 +66,8 @@ int PassFloat(float f);
 
 int ParseHex(const char* Str);
 vuint32 M_ParseColour(VStr Name);
+
+void M_RgbToHsv(vuint8, vuint8, vuint8, vuint8&, vuint8&, vuint8&);
+void M_RgbToHsv(float, float, float, float&, float&, float&);
+void M_HsvToRgb(vuint8, vuint8, vuint8, vuint8&, vuint8&, vuint8&);
+void M_HsvToRgb(float, float, float, float&, float&, float&);
