@@ -57,6 +57,30 @@ actor MapSpot 9001
 //------------------------------------------------------------------------------
 actor MapSpotGravity : MapSpot 9013
 {
+	-NoSector
 	-NoBlockmap
 	-NoGravity
+}
+
+//------------------------------------------------------------------------------
+actor RealGibs
+{
+	+DropOff
+	+Corpse
+	+NoTeleport
+	+DontGib
+	states
+	{
+	Spawn:
+		POL5 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Gibs : RealGibs 24
+{
+	Game Doom
+	SpawnID 146
+	ClearFlags
 }

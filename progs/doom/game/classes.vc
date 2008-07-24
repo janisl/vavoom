@@ -38,8 +38,6 @@ import linespec;
 #include "TeleportFog.vc"
 #include "Bridge.vc"
 
-#include "Gibs.vc"
-
 #include "ScriptedMarine.vc"
 #include "MarineFist.vc"
 #include "MarineBerserk.vc"

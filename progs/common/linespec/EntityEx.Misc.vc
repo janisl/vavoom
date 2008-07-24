@@ -1598,25 +1598,25 @@ final bool SectorChanged(int CrushChange)
 	//	Crunch bodies to giblets
 	if (bCorpse && !bDontGib && Health <= 0)
 	{
-		if (bNoBlood)
+		if (!bNoBlood)
 		{
-			Destroy();
+			Actor Gib = Spawn(RealGibs);
+			Gib.RenderStyle = RenderStyle;
+			Gib.Alpha = Alpha;
+			Gib.Height = 0.0;
+			Gib.Radius = 0.0;
+			Gib.PlaySound('misc/fallingsplat', CHAN_BODY);
+		}
+		if (bIsPlayer)
+		{
+			bColideWithWorld = false;
+			bColideWithThings = false;
+			bDontGib = true;
+			bInvisible = true;
 		}
 		else
 		{
-			state CrunchState = FindState('Crunch');
-			if (CrunchState && AreStateSpritesPresent(CrunchState))
-			{
-				SetState(CrunchState);
-			}
-			bCorpse = false;
-			bSolid = false;
-			Height = 0.0;
-			Radius = 0.0;
-			if (CrunchSound)
-			{
-				PlaySound(CrunchSound, CHAN_VOICE);
-			}
+			Destroy();
 		}
 		return true;
 	}

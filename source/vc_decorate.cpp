@@ -2804,7 +2804,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			SetClassFieldByte(Class, "BounceType", BOUNCE_None);
 			SetClassFieldBool(Class, "bColideWithThings", true);
 			SetClassFieldBool(Class, "bColideWithWorld", true);
-			SetClassFieldBool(Class, "bPickup", false);
+			SetClassFieldBool(Class, "bPickUp", false);
 			continue;
 		}
 		if (!Prop.ICmp("DropItem"))

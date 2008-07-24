@@ -117,7 +117,6 @@ name			AttackSound;
 name			PainSound;
 name			DeathSound;
 name			HowlSound;
-name			CrunchSound;
 
 //	Flags
 bool bSpecial;			// call P_SpecialThing when touched

@@ -288,6 +288,7 @@ class PlasmaBall : Actor decorate;
 class BFG9000 : Weapon decorate;
 class BFGBall : Actor decorate;
 class BFGExtra : Actor decorate;
+class RealGibs : Actor decorate;
 
 class ArtiHealth : HealthPickup decorate;
 class ArtiSuperHealth : HealthPickup decorate;

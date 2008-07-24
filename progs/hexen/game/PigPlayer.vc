@@ -94,7 +94,6 @@ defaultproperties
 	SideMove2 = 0.97;
 	JumpVelZ = 6.5 * 35.0;
 	RDFactor = 0.25;
-	CrunchSound = '*splat';
 	PainSound = 'PigPain';
 	DeathSound = 'PigDeath';
 	SoundClass = 'pig';
