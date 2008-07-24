@@ -244,6 +244,16 @@ bool Physics(float DeltaTime)
 	}
 	else if ((Origin.z != FloorZ) || Velocity.z)
 	{
+		//	Floating bobbing motion for monsters.
+		if (bFloatBob)
+		{
+			Origin.z -= Level.Game.FloatBobOffsets[
+				ftoi(FloatBobPhase * 35.0) & 63];
+			FloatBobPhase += DeltaTime;
+			Origin.z += Level.Game.FloatBobOffsets[
+				ftoi(FloatBobPhase * 35.0) & 63];
+		}
+
 		// Handle Z momentum and gravity
 		ZMovement(DeltaTime);
 		if (IsDestroyed())
@@ -251,6 +261,14 @@ bool Physics(float DeltaTime)
 			// entity was removed
 			return false;
 		}
+	}
+	else if (bFloatBob)
+	{
+		Origin.z -= Level.Game.FloatBobOffsets[
+			ftoi(FloatBobPhase * 35.0) & 63];
+		FloatBobPhase += DeltaTime;
+		Origin.z += Level.Game.FloatBobOffsets[
+			ftoi(FloatBobPhase * 35.0) & 63];
 	}
 	return true;
 }
