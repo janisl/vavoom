@@ -105,6 +105,8 @@ enum
 	TRANSL_BodyQueue,
 	//	Translations defined in DECORATE.
 	TRANSL_Decorate,
+	//	Blood translations, for blood colour
+	TRANSL_Blood,
 
 	TRANSL_Max
 };

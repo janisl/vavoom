@@ -78,6 +78,7 @@ VTextureTranslation**			TranslationTables;
 int								NumTranslationTables;
 VTextureTranslation				IceTranslation;
 TArray<VTextureTranslation*>	DecorateTranslations;
+TArray<VTextureTranslation*>	BloodTranslations;
 
 //	They basicly work the same as translations.
 VTextureTranslation				ColourMaps[CM_Max];
@@ -837,6 +838,32 @@ void VTextureTranslation::MapToColours(int AStart, int AEnd, int AR1, int AG1,
 
 //==========================================================================
 //
+//	VTextureTranslation::BuildBloodTrans
+//
+//==========================================================================
+
+void VTextureTranslation::BuildBloodTrans(int Col)
+{
+	guard(VTextureTranslation::BuildBloodTrans);
+	vuint8 r = (Col >> 16) & 0xff;
+	vuint8 g = (Col >> 8) & 0xff;
+	vuint8 b = Col & 0xff;
+	//	Don't remap colour 0.
+	for (int i = 1; i < 256; i++)
+	{
+		int Bright = MAX(MAX(r_palette[i].r, r_palette[i].g), r_palette[i].b);
+		Palette[i].r = r * Bright / 255;
+		Palette[i].g = g * Bright / 255;
+		Palette[i].b = b * Bright / 255;
+		Table[i] = R_LookupRGB(Palette[i].r, Palette[i].g, Palette[i].b);
+	}
+	CalcCrc();
+	Colour = Col;
+	unguard;
+}
+
+//==========================================================================
+//
 //	CheckChar
 //
 //==========================================================================
@@ -993,6 +1020,39 @@ int R_ParseDecorateTranslation(VScriptParser* sc, int GameMax)
 	DecorateTranslations.Append(Tr);
 	return (TRANSL_Decorate << TRANSL_TYPE_SHIFT) +
 		DecorateTranslations.Num() - 1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	R_GetBloodTranslation
+//
+//==========================================================================
+
+int R_GetBloodTranslation(int Col)
+{
+	guard(R_GetBloodTranslation);
+	//	Check for duplicate blood translation.
+	for (int i = 0; i < BloodTranslations.Num(); i++)
+	{
+		if (BloodTranslations[i]->Colour == Col)
+		{
+			return (TRANSL_Blood << TRANSL_TYPE_SHIFT) + i;
+		}
+	}
+
+	//	Create new translation.
+	VTextureTranslation* Tr = new VTextureTranslation;
+	Tr->BuildBloodTrans(Col);
+
+	//	Add it.
+	if (BloodTranslations.Num() >= MAX_BLOOD_TRANSLATIONS)
+	{
+		Sys_Error("Too many blood colours in DECORATE scripts");
+	}
+	BloodTranslations.Append(Tr);
+	return (TRANSL_Blood << TRANSL_TYPE_SHIFT) +
+		BloodTranslations.Num() - 1;
 	unguard;
 }
 

@@ -34,6 +34,7 @@ enum
 };
 
 enum { MAX_DECORATE_TRANSLATIONS = 0xffff };
+enum { MAX_BLOOD_TRANSLATIONS = 0xffff };
 
 struct VLineSpecInfo
 {

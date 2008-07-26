@@ -383,6 +383,8 @@ float			CameraHeight;
 class<Actor>	BloodType;
 class<Actor>	BloodSplatterType;
 class<Actor>	AxeBloodType;
+int				BloodColour;
+int				BloodTranslation;
 
 array<DropItemInfo>	DropItemList;
 

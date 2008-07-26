@@ -1023,6 +1023,14 @@ VTextureTranslation* R_GetCachedTranslation(int TransNum, VLevel* Level)
 		Tr = DecorateTranslations[Index];
 		break;
 
+	case TRANSL_Blood:
+		if (Index < 0 || Index >= BloodTranslations.Num())
+		{
+			return NULL;
+		}
+		Tr = BloodTranslations[Index];
+		break;
+
 	default:
 		return NULL;
 	}

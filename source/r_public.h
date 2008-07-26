@@ -158,6 +158,7 @@ public:
 	void BuildPlayerTrans(int, int, int);
 	void MapToRange(int, int, int, int);
 	void MapToColours(int, int, int, int, int, int, int, int);
+	void BuildBloodTrans(int);
 
 	const vuint8* GetTable() const
 	{
@@ -309,6 +310,7 @@ void R_ShutdownData();
 void R_InstallSprite(const char*, int);
 bool R_AreSpritesPresent(int);
 int R_ParseDecorateTranslation(VScriptParser*, int);
+int R_GetBloodTranslation(int);
 void R_ParseEffectDefs();
 
 // r_main

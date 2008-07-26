@@ -2622,17 +2622,26 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 		if (!Prop.ICmp("BloodColor"))
 		{
-			//FIXME
+			vuint32 Col;
 			if (sc->CheckNumber())
 			{
+				int r = MID(0, sc->Number, 255);
+				sc->Check(",");
 				sc->ExpectNumber();
+				int g = MID(0, sc->Number, 255);
+				sc->Check(",");
 				sc->ExpectNumber();
+				int b = MID(0, sc->Number, 255);
+				Col = 0xff000000 | (r << 16) | (g << 8) | b;
 			}
 			else
 			{
 				sc->ExpectString();
+				Col = M_ParseColour(sc->String);
 			}
-			GCon->Logf("Property BloodColor in %s is not yet supported", Class->GetName());
+			SetClassFieldInt(Class, "BloodColour", Col);
+			SetClassFieldInt(Class, "BloodTranslation",
+				R_GetBloodTranslation(Col));
 			continue;
 		}
 		if (!Prop.ICmp("BloodType"))

@@ -497,5 +497,6 @@ extern VTextureTranslation**		TranslationTables;
 extern int							NumTranslationTables;
 extern VTextureTranslation			IceTranslation;
 extern TArray<VTextureTranslation*>	DecorateTranslations;
+extern TArray<VTextureTranslation*>	BloodTranslations;
 
 #endif

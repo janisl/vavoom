@@ -1605,6 +1605,10 @@ final bool SectorChanged(int CrushChange)
 			Gib.Alpha = Alpha;
 			Gib.Height = 0.0;
 			Gib.Radius = 0.0;
+			if (BloodTranslation && !Gib.bDontTranslate)
+			{
+				Gib.Translation = BloodTranslation;
+			}
 			Gib.PlaySound('misc/fallingsplat', CHAN_BODY);
 		}
 		if (bIsPlayer)
@@ -1644,6 +1648,10 @@ final bool SectorChanged(int CrushChange)
 			A = Spawn(BloodType, Origin + vector(0.0, 0.0, Height / 2.0));
 			A.Velocity.x = (Random() - Random()) * 16.0 * 35.0;
 			A.Velocity.y = (Random() - Random()) * 16.0 * 35.0;
+			if (BloodTranslation && !A.bDontTranslate)
+			{
+				A.Translation = BloodTranslation;
+			}
 		}
 	}
 	return false;	//	Don't fit
@@ -1974,9 +1982,10 @@ final void SpawnBlood(TVec Org, int damage)
 		{
 			continue;
 		}
-		PlayerEx(Level.Game.Players[i]).ParticleEffect(damage, LineSpecialLevelInfo::pt_static,
-				0, Org,	0.0, vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0, RGB(32 + c, c >> 4, c >> 4),
-				0.6, 0.0);
+		PlayerEx(Level.Game.Players[i]).ParticleEffect(damage,
+			LineSpecialLevelInfo::pt_static, 0, Org, 0.0,
+			vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0,
+			BloodColour ? BloodColour : RGB(32 + c, c >> 4, c >> 4), 0.6, 0.0);
 	}
 
 	if (!BloodType)
@@ -1992,6 +2001,10 @@ final void SpawnBlood(TVec Org, int damage)
 		{
 			A.StateTime = 0.1;
 		}
+	}
+	if (BloodTranslation && !A.bDontTranslate)
+	{
+		A.Translation = BloodTranslation;
 	}
 
 	if (LineSpecialGameInfo(Level.Game).bBloodSpray)
@@ -2048,6 +2061,10 @@ final void SpawnBloodSplatter(TVec org, int damage)
 	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
 	mo.Velocity.z = 3.0 * 35.0;
+	if (BloodTranslation && !mo.bDontTranslate)
+	{
+		mo.Translation = BloodTranslation;
+	}
 }
 
 //===========================================================================
@@ -2068,6 +2085,10 @@ final void SpawnBloodSplatter2(TVec org)
 	org.y += (Random() - 0.5) * 8.0;
 	mo = Spawn(AxeBloodType, org);
 	mo.Target = self;
+	if (BloodTranslation && !mo.bDontTranslate)
+	{
+		mo.Translation = BloodTranslation;
+	}
 }
 
 //==========================================================================
@@ -2096,6 +2117,10 @@ final void SpawnRipperBlood()
 	th.Velocity.x = Velocity.x / 2.0;
 	th.Velocity.y = Velocity.y / 2.0;
 	th.StateTime += Random() * 0.1;
+	if (BloodTranslation && !th.bDontTranslate)
+	{
+		th.Translation = BloodTranslation;
+	}
 }
 
 //==========================================================================

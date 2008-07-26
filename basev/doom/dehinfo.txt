@@ -117,7 +117,7 @@ states
 	BloodyTwitch			First	4
 	DoomUnusedStates		Death	2
 	HeadsOnAStick			First	1
-	Actor					Crunch	1
+	RealGibs				First	1
 	HeadOnAStick			First	1
 	HeadCandles				First	2
 	DeadStick				First	1

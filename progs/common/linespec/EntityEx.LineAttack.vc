@@ -569,7 +569,7 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 		if (!UseBloodSplatter && !th.bNoBlood && !th.bInvulnerable &&
 			!th.bDormant)
 		{
-			SpawnBlood(hit_point, LADamage);
+			th.SpawnBlood(hit_point, LADamage);
 		}
 		if (LADamage && UseBloodSplatter)
 		{
@@ -909,7 +909,7 @@ final void RailAttack(TVec Dir, float Offset, int RailDamage,
 		}
 		else
 		{
-			SpawnBlood(hit_point, RailDamage);
+			th.SpawnBlood(hit_point, RailDamage);
 		}
 		th.Damage(self, self, RailDamage, DmgType);
 	}
