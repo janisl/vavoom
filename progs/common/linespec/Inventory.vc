@@ -223,6 +223,13 @@ final void TouchSpecial(EntityEx Toucher)
 		return;
 	}
 
+	//	Make sure that if it's a voodoo doll touching item it's given to the
+	// actual player actor.
+	if (Toucher.bIsPlayer)
+	{
+		Toucher = EntityEx(Toucher.Player.MO);
+	}
+
 	if (!TryPickup(Toucher))
 	{
 		return;

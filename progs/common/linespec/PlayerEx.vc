@@ -2032,10 +2032,43 @@ void SpawnClient()
 	{
 		DeathMatchSpawnPlayer();
 	}
-	else
+	else if (Level.Game.netgame || Level.bClusterHub)
 	{
 		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
-			Level.Game.RebornPosition));
+			Level.Game.RebornPosition), false);
+	}
+	else
+	{
+		mthing_t* Best = NULL;
+		bool Spawned = false;
+		int i;
+		for (i = 0; i < Level.PlayerStarts.Num; i++)
+		{
+			if (Level.PlayerStarts[i].type != GetPlayerNum() + 1)
+			{
+				continue;
+			}
+			if (Level.PlayerStarts[i].arg1 == Level.Game.RebornPosition)
+			{
+				SpawnPlayer(&Level.PlayerStarts[i], Spawned);
+				Spawned = true;
+				continue;
+			}
+			if (!Best)
+			{
+				Best = &Level.PlayerStarts[i];
+			}
+		}
+		if (!Spawned)
+		{
+			if (!Best)
+			{
+				Error("Player %d has no start spots", GetPlayerNum() + 1);
+			}
+			print("Player %d has no start spot for position %d",
+				GetPlayerNum() + 1, Level.Game.RebornPosition);
+			SpawnPlayer(Best, false);
+		}
 	}
 
 	if (Level.Game.netgame && !Level.Game.deathmatch && playerWasReborn)
@@ -2083,7 +2116,7 @@ void NetGameReborn()
 	{
 		// Appropriate player start spot is open
 		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
-			Level.Game.RebornPosition));
+			Level.Game.RebornPosition), false);
 		foundSpot = true;
 	}
 	else
@@ -2094,7 +2127,8 @@ void NetGameReborn()
 			if (CheckSpot(Level.GetPlayerStart(i, Level.Game.RebornPosition)))
 			{
 				// Found an open start spot
-				SpawnPlayer(Level.GetPlayerStart(i, Level.Game.RebornPosition));
+				SpawnPlayer(Level.GetPlayerStart(i, Level.Game.RebornPosition),
+					false);
 				foundSpot = true;
 				break;
 			}
@@ -2105,7 +2139,7 @@ void NetGameReborn()
 	{
 		// Player's going to be inside something. Too bad.
 		SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(),
-			Level.Game.RebornPosition));
+			Level.Game.RebornPosition), false);
 	}
 
 	OnNetReborn(OldMO);
@@ -2149,13 +2183,13 @@ void DeathMatchSpawnPlayer()
 		i = P_Random() % Level.DeathmatchStarts.Num;
 		if (CheckSpot(&Level.DeathmatchStarts[i]))
 		{
-			SpawnPlayer(&Level.DeathmatchStarts[i]);
+			SpawnPlayer(&Level.DeathmatchStarts[i], false);
 			return;
 		}
 	}
 
 	// no good spot, so the player will probably get stuck 
-	SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(), 0));
+	SpawnPlayer(Level.GetPlayerStart(GetPlayerNum(), 0), false);
 }
 
 //==========================================================================
@@ -2297,7 +2331,7 @@ void GiveDefaultDeathMatchInventory()
 //
 //==========================================================================
 
-void SpawnPlayer(mthing_t * mthing)
+void SpawnPlayer(mthing_t * mthing, bool Voodoo)
 {
 	float				x;
 	float				y;
@@ -2332,6 +2366,12 @@ void SpawnPlayer(mthing_t * mthing)
 	PP.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
 		GetPlayerNum();
 
+	//	If a voodoo doll has been spawned, take it's inventory.
+	if (Voodoo)
+	{
+		PP.ObtainInventory(EntityEx(MO));
+	}
+
 	PP.Angles.yaw = itof(45 * (mthing->angle / 45));
 	PP.Player = self;
 	PP.bIsPlayer = true;
@@ -2346,19 +2386,22 @@ void SpawnPlayer(mthing_t * mthing)
 
 	ResetPlayerOnSpawn();
 
-	PP.Inventory = SavedInventory;
-	for (Item = PP.Inventory; Item; Item = Item.Inventory)
+	if (!Voodoo)
 	{
-		Item.Owner = MO;
-	}
-
-	if (ResetInventory)
-	{
-		while (PP.Inventory)
+		PP.Inventory = SavedInventory;
+		for (Item = PP.Inventory; Item; Item = Item.Inventory)
 		{
-			PP.Inventory.Destroy();
+			Item.Owner = MO;
 		}
-		AddDefaultInventory();
+
+		if (ResetInventory)
+		{
+			while (PP.Inventory)
+			{
+				PP.Inventory.Destroy();
+			}
+			AddDefaultInventory();
+		}
 	}
 
 	//	Set up gun psprite.
