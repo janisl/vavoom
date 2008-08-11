@@ -1,0 +1,34 @@
+<FunctionList>
+    <Language name="VavoomC" imagelistpath="">
+        <CommList param1="//" param2="" />
+        <CommList param1="/\*" param2="\*/" />
+        <CommList param1='\&quot;' param2='\&quot;' />
+        <Group name="INCLUDE" subgroup="" icon="4" child="0" autoexp="0" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="#include[ \t]+" regexfunc='[a-zA-Z0-9_./&lt;&gt;\&quot;]+' regexend="" bodybegin="" bodyend="$" sep="" />
+        </Group>
+        <Group name="CLASS" subgroup="" icon="1" child="11" autoexp="0" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="^[ \t]*class[ \t]+" regexfunc="[a-zA-Z0-9_]+" regexend="" bodybegin="\{" bodyend="\}" sep="" />
+        </Group>
+        <Group name="METHOD" subgroup="" icon="9" child="16" autoexp="4" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="[ \t]*[a-zA-Z0-9_]+[ \t]+" regexfunc="[a-zA-Z0-9_]+[ \t]*::[ \t]*[a-zA-Z0-9_]+" regexend="[ \t]*\(.*\)" bodybegin="\{" bodyend="\}" sep=";" />
+        </Group>
+        <Group name="FUNCTION" subgroup="CLASS" icon="9" child="17" autoexp="4" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="[ \t]*[a-zA-Z0-9_]+[ \t]+" regexfunc="[a-zA-Z0-9_]+" regexend="[ \t]*\(.*\)" bodybegin="\{" bodyend="\}" sep=";" />
+        </Group>
+        <Group name="STRUCT" subgroup="" icon="6" child="13" autoexp="0" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="struct[ \t]+" regexfunc="[a-zA-Z0-9_]+" regexend="" bodybegin="{" bodyend="}.*;" sep=";" />
+        </Group>
+        <Group name="ENUM" subgroup="" icon="5" child="14" autoexp="0" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="enum[ \t]+" regexfunc="[a-zA-Z0-9_]+" regexend="" bodybegin="\{" bodyend="\}.*;" sep=";" />
+        </Group>
+        <Group name="UNION" subgroup="" icon="8" child="10" autoexp="0" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="union[ \t]+" regexfunc="[a-zA-Z0-9_]+" regexend="" bodybegin="\{" bodyend="\}.*;" sep=";" />
+        </Group>
+        <Group name="DEFINE" subgroup="" icon="3" child="3" autoexp="0" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="#define[ \t]+" regexfunc="[a-zA-Z0-9_]+" regexend="" bodybegin="" bodyend="$" sep="" />
+        </Group>
+        <Group name="IF" subgroup="" icon="3" child="3" autoexp="0" matchcase="0" fendtobbeg="" bbegtobend="">
+            <Rules regexbeg="#if[def]*[ \t]+" regexfunc="[a-zA-Z0-9_]+" regexend="" bodybegin="" bodyend="#endif" sep="" />
+        </Group>
+    </Language>
+</FunctionList>
