@@ -58,16 +58,15 @@ struct VClassFixup
 
 struct VFlagDef
 {
-	const char*		Name;
-	const char*		AltName;
-	const char*		PropName;
+	VStr		Name;
+	VStr		AltName;
+	VName		PropName;
 };
 
 struct VFlagList
 {
-	VFlagDef*		Flags;
-	int				NumFlags;
-	VClass*			Class;
+	TArray<VFlagDef>	Flags;
+	VClass*				Class;
 };
 
 //==========================================================================
@@ -130,209 +129,49 @@ static VMethod*			FuncA_ExplodeParms;
 static VMethod*			FuncA_FreezeDeath;
 static VMethod*			FuncA_FreezeDeathChunks;
 
-static VFlagDef ActorFlags[] =
-{
-	//
-	//	Physics
-	//
-	{ "Solid", NULL, "bSolid" },
-	{ "Shootable", NULL, "bShootable" },
-	{ "Float", NULL, "bFloat" },
-	{ "NoGravity", NULL, "bNoGravity" },
-	{ "WindThrust", NULL, "bWindThrust" },
-	{ "Pushable", NULL, "bPushable" },
-	{ "DontFall", NULL, "bNoGravKill" },
-	{ "CanPass", NULL, "bPassMobj" },
-	{ "ActLikeBridge", NULL, "bActLikeBridge" },
-	{ "NoBlockmap", NULL, "bNoBlockmap" },
-	{ "NoLiftDrop", NULL, "bNoLiftDrop" },
-	{ "SlidesOnWalls", NULL, "bSlide" },
-	{ "NoDropOff", NULL, "bNoDropOff" },
-	//
-	//	Behavior
-	//
-	{ "Ambush", NULL, "bAmbush" },
-	{ "Boss", NULL, "bBoss" },
-	{ "LookAllAround", NULL, "bLookAllAround" },
-	{ "StandStill", NULL, "bStanding" },
-	{ "QuickToRetaliate", NULL, "bNoGrudge" },
-	{ "Dormant", NULL, "bDormant" },
-	{ "Friendly", NULL, "bFriendly" },
-	{ "MissileMore", NULL, "bTriggerHappy" },
-	{ "MissileEvenMore", NULL, "bMissileEvenMore" },
-	{ "NoTargetSwitch", NULL, "bNoTargetSwitch" },
-	{ "NoInfighting", NULL, "bNoInfighting" },
-	//
-	//	Abilities
-	//
-	{ "CannotPush", NULL, "bCannotPush" },
-	{ "NoTeleport", NULL, "bNoTeleport" },
-	{ "ActivateImpact", NULL, "bActivateImpact" },
-	{ "CanPushWalls", NULL, "bActivatePushWall" },
-	{ "CanUseWalls", NULL, "bCanUseWalls" },
-	{ "ActivateMCross", NULL, "bActivateMCross" },
-	{ "ActivatePCross", NULL, "bActivatePCross" },
-	{ "CantLeaveFloorPic", NULL, "bCantLeaveFloorpic" },
-	{ "Telestomp", NULL, "bTelestomp" },
-	{ "StayMorphed", NULL, "bStayMorphed" },
-	{ "CanBlast", NULL, "bCanBlast" },
-	{ "NoBlockMonst", NULL, "bNoBlockMonst" },
-	{ "CanBounceWater", NULL, "bCanBounceWater" },
-	{ "ThruGhost", NULL, "bThruGhost" },
-	{ "Spectral", NULL, "bSpectral" },
-	//
-	//	Defenses
-	//
-	{ "Invulnerable", NULL, "bInvulnerable" },
-	{ "Reflective", NULL, "bReflective" },
-	{ "ShieldReflect", NULL, "bShieldReflect" },
-	{ "Deflect", NULL, "bDeflect" },
-	{ "FireResist", NULL, "bFireResist" },
-	{ "NoRadiusDmg", NULL, "bNoRadiusDamage" },
-	{ "DontBlast", NULL, "bDontBlast" },
-	{ "NoTarget", NULL, "bNeverTarget" },
-	{ "Ghost", NULL, "bGhost" },
-	{ "DontMorph", NULL, "bNoMorph" },
-	{ "DontSquash", NULL, "bDontSquash" },
-	{ "NoTeleOther", NULL, "bNoTeleOther" },
-	{ "DontHurtSpecies", NULL, "bDontHurtSpecies" },
-	{ "NoDamage", NULL, "bNoDamage" },
-	//
-	//	Appearance and sound
-	//
-	{ "Invisible", NULL, "bInvisible" },
-	{ "Shadow", NULL, "bShadow" },
-	{ "NoBlood", NULL, "bNoBlood" },
-	{ "Stealth", NULL, "bStealth" },
-	{ "FloorClip", NULL, "bFloorClip" },
-	{ "SpawnFloat", NULL, "bSpawnFloat" },
-	{ "SpawnCeiling", NULL, "bSpawnCeiling" },
-	{ "FloatBob", NULL, "bFloatBob" },
-	{ "NoIceDeath", NULL, "bNoIceDeath" },
-	{ "DontGib", NULL, "bDontGib" },
-	{ "DontSplash", NULL, "bNoSplash" },
-	{ "DontOverlap", NULL, "bDontOverlap" },
-	{ "Randomize", NULL, "bRandomise" },
-	{ "FullVolActive", NULL, "bFullVolActive" },
-	{ "FullVolDeath", NULL, "bFullVolDeath" },
-	{ "NoWallBounceSnd", NULL, "bNoWallBounceSnd" },
-	{ "VisibilityPulse", NULL, "bVisibilityPulse" },
-	{ "RocketTrail", NULL, "bLeaveTrail" },
-	{ "NoBounceSound", NULL, "bNoBounceSound" },
-	{ "DontTranslate", NULL, "bDontTranslate" },
-	{ "NoPain", NULL, "bNoPain" },
-	//
-	//	Projectile
-	//
-	{ "Missile", NULL, "bMissile" },
-	{ "Ripper", NULL, "bRip" },
-	{ "NoDamageThrust", NULL, "bNoDamageThrust" },
-	{ "DontReflect", NULL, "bDontReflect" },
-	{ "FloorHugger", NULL, "bIgnoreFloorStep" },
-	{ "CeilingHugger", NULL, "bIgnoreCeilingStep" },
-	{ "BloodlessImpact", NULL, "bBloodlessImpact" },
-	{ "FoilInvul", NULL, "bDamageInvulnerable" },
-	{ "SeekerMissile", NULL, "bSeekerMissile" },
-	{ "SkyExplode", NULL, "bExplodeOnSky" },
-	{ "NoExplodeFloor", NULL, "bNoExplodeFloor" },
-	{ "StrifeDamage", NULL, "bStrifeDamage" },
-	{ "ExtremeDeath", NULL, "bExtremeDeath" },
-	{ "NoExtremeDeath", NULL, "bNoExtremeDeath" },
-	{ "BounceOnActors", NULL, "bBounceOnActors" },
-	{ "ExplodeOnWater", NULL, "bExplodeOnWater" },
-	{ "PierceArmor", NULL, "bPierceArmor" },
-	{ "ForceRadiusDmg", NULL, "bForceRadiusDmg" },
-	{ "SpawnSoundSource", NULL, "bSpawnSoundSource" },
-	{ "BloodSplatter", NULL, "bBloodSplatter" },
-	{ "DehExplosion", NULL, "bDehExplosion" },
-	//
-	//	Miscellaneous
-	//
-	{ "Dropped", NULL, "bDropped" },
-	{ "IsMonster", NULL, "bMonster" },
-	{ "Corpse", NULL, "bCorpse" },
-	{ "CountKill", NULL, "bCountKill" },
-	{ "CountItem", NULL, "bCountItem" },
-	{ "NotDMatch", NULL, "bNoDeathmatch" },
-	{ "NonShootable", NULL, "bNonShootable" },
-	{ "DropOff", NULL, "bDropOff" },
-	{ "PuffOnActors", NULL, "bPuffOnActors" },
-	{ "AllowParticles", NULL, "bPuffParticles" },
-	{ "AlwaysPuff", NULL, "bAlwaysPuff" },
-	{ "Synchronized", NULL, "bSynchronised" },
-	{ "Faster", NULL, "bFaster" },
-	{ "AlwaysFast", NULL, "bAlwaysFast" },
-	{ "NeverFast", NULL, "bNeverFast" },
-	{ "FastMelee", NULL, "bFastMelee" },
-	{ "BossDeath", NULL, "bBossDeath" },
-	{ "UseSpecial", NULL, "bUseSpecial" },
-	//
-	//	Limited use
-	//
-	{ "InCombat", NULL, "bInCombat" },
-	{ "NoSector", NULL, "bNoSector" },
-	{ "IceCorpse", NULL, "bIceCorpse" },
-	{ "JustHit", NULL, "bJustHit" },
-	{ "JustAttacked", NULL, "bJustAttacked" },
-	{ "Teleport", NULL, "bTeleport" },
-	//
-	//	Not documented
-	//
-	{ "InFloat", NULL, "bInFloat" },
-	{ "SkullFly", NULL, "bSkullFly" },
-	{ "Blasted", NULL, "bBlasted" },
-	{ "AlwaysRespawn", NULL, "bAlwaysRespawn" },
-	{ "NeverRespawn", NULL, "bNeverRespawn" },
-	{ "DontRip", NULL, "bDontRip" },
-};
-static VFlagDef InventoryFlags[] =
-{
-	{ "Inventory.Quiet", "Quiet", "bQuiet" },
-	{ "Inventory.AutoActivate", "AutoActivate", "bAutoActivate" },
-	{ "Inventory.Undroppable", "Undroppable", "bUndroppable" },
-	{ "Inventory.InvBar", "InvBar", "bInvBar" },
-	{ "Inventory.HubPower", "HubPower", "bHubPower" },
-	{ "Inventory.InterHubStrip", "InterHubStrip", "bInterHubStrip" },
-	{ "Inventory.AlwaysPickup", "AlwaysPickup", "bAlwaysPickup" },
-	{ "Inventory.FancyPickupSound", "FancyPickupSound", "bFullVolPickupSound" },
-	{ "Inventory.BigPowerup", "BigPowerup", "bBigPowerup" },
-	{ "Inventory.KeepDepleted", "KeepDepleted", "bKeepDepleted" },
-	{ "Inventory.IgnoreSkill", "IgnoreSkill", "bIgnoreSkill" },
-	{ "Inventory.AdditiveTime", "AdditiveTime", "bAdditiveTime" },
-};
-static VFlagDef WeaponFlags[] =
-{
-	{ "Weapon.NoAutoFire", "NoAutoFire", "bNoAutoFire" },
-	{ "Weapon.ReadySndHalf", "ReadySndHalf", "bReadySndHalf" },
-	{ "Weapon.DontBob", "DontBob", "bDontBob" },
-	{ "Weapon.AxeBlood", "AxeBlood", "bAxeBlood" },
-	{ "Weapon.NoAlert", "NoAlert", "bNoAlert" },
-	{ "Weapon.Ammo_Optional", "Ammo_Optional", "bAmmoOptional" },
-	{ "Weapon.Alt_Ammo_Optional", "Alt_Ammo_Optional", "bAltAmmoOptional" },
-	{ "Weapon.Primary_Uses_Both", "Primary_Uses_Both", "bPrimaryUsesBoth" },
-	{ "Weapon.Wimpy_Weapon", "Wimpy_Weapon", "bWimpyWeapon" },
-	{ "Weapon.Powered_Up", "Powered_Up", "bPoweredUp" },
-	{ "Weapon.Staff2_Kickback", "Staff2_Kickback", "bStaff2Kickback" },
-	{ "Weapon.Explosive", "Explosive", "bBotProjectile" },
-	{ "Weapon.MeleeWeapon", "MeleeWeapon", "bBotMelee" },
-	{ "Weapon.BFG", "BFG", "bBotBfg" },
-	{ "Weapon.CheatNotWeapon", "CheatNotWeapon", "bCheatNotWeapon" },
-	{ "Weapon.No_Auto_Switch", "No_Auto_Switch", "bNoAutoSwitch" },
-};
-static VFlagDef PlayerFlags[] =
-{
-	{ "PickUp", NULL, "bPickUp" },
-};
-
-static VFlagList FlagList[] =
-{
-	{ ActorFlags, ARRAY_COUNT(ActorFlags) },
-	{ InventoryFlags, ARRAY_COUNT(InventoryFlags) },
-	{ WeaponFlags, ARRAY_COUNT(WeaponFlags) },
-	{ PlayerFlags, ARRAY_COUNT(PlayerFlags) },
-};
+static TArray<VFlagList>	FlagList;
 
 // CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	ParseDecorateDef
+//
+//==========================================================================
+
+static char* _(const VStr& S)
+{
+	char* Buf = new char[S.Length() + 1];
+	strcpy(Buf, *S);
+	return Buf;
+}
+
+static void ParseDecorateDef(VXmlDocument& Doc)
+{
+	guard(ParseDecorateDef);
+	GCon->Logf(NAME_Init, "Parsing DECORATE definition file");
+	for (VXmlNode* N = Doc.Root.FindChild("class"); N; N = N->FindNext())
+	{
+		VStr ClassName = N->GetAttribute("name");
+		VFlagList& Lst = FlagList.Alloc();
+		Lst.Class = VClass::FindClass(*ClassName);
+		for (VXmlNode* PN = N->FirstChild; PN; PN = PN->NextSibling)
+		{
+			if (PN->Name == "flag")
+			{
+				VFlagDef& F = Lst.Flags.Alloc();
+				F.Name = PN->GetAttribute("name");
+				F.AltName = ClassName + "." + F.Name;
+				F.PropName = *PN->GetAttribute("property");
+			}
+			else
+			{
+				Sys_Error("Unknown XML node %s", *PN->Name);
+			}
+		}
+	}
+	unguard;
+}
 
 //==========================================================================
 //
@@ -506,7 +345,7 @@ void VDecorateInvocation::Emit(VEmitContext&)
 //
 //==========================================================================
 
-static float GetClassFieldFloat(VClass* Class, const char* FieldName)
+static float GetClassFieldFloat(VClass* Class, VName FieldName)
 {
 	guard(GetClassFieldFloat);
 	VField* F = Class->FindFieldChecked(FieldName);
@@ -521,7 +360,7 @@ static float GetClassFieldFloat(VClass* Class, const char* FieldName)
 //
 //==========================================================================
 
-static TVec GetClassFieldVec(VClass* Class, const char* FieldName)
+static TVec GetClassFieldVec(VClass* Class, VName FieldName)
 {
 	guard(GetClassFieldVec);
 	VField* F = Class->FindFieldChecked(FieldName);
@@ -578,8 +417,8 @@ static TArray<VPainChanceInfo>& GetClassPainChances(VClass* Class)
 //
 //==========================================================================
 
-static void SetClassFieldInt(VClass* Class, const char* FieldName,
-	int Value, int Idx = 0)
+static void SetClassFieldInt(VClass* Class, VName FieldName, int Value,
+	int Idx = 0)
 {
 	guard(SetClassFieldInt);
 	VField* F = Class->FindFieldChecked(FieldName);
@@ -594,8 +433,7 @@ static void SetClassFieldInt(VClass* Class, const char* FieldName,
 //
 //==========================================================================
 
-static void SetClassFieldByte(VClass* Class, const char* FieldName,
-	vuint8 Value)
+static void SetClassFieldByte(VClass* Class, VName FieldName, vuint8 Value)
 {
 	guard(SetClassFieldByte);
 	VField* F = Class->FindFieldChecked(FieldName);
@@ -610,8 +448,8 @@ static void SetClassFieldByte(VClass* Class, const char* FieldName,
 //
 //==========================================================================
 
-static void SetClassFieldFloat(VClass* Class, const char* FieldName,
-	float Value, int Idx = 0)
+static void SetClassFieldFloat(VClass* Class, VName FieldName, float Value,
+	int Idx = 0)
 {
 	guard(SetClassFieldFloat);
 	VField* F = Class->FindFieldChecked(FieldName);
@@ -626,7 +464,7 @@ static void SetClassFieldFloat(VClass* Class, const char* FieldName,
 //
 //==========================================================================
 
-static void SetClassFieldBool(VClass* Class, const char* FieldName, int Value)
+static void SetClassFieldBool(VClass* Class, VName FieldName, int Value)
 {
 	guard(SetClassFieldBool);
 	VField* F = Class->FindFieldChecked(FieldName);
@@ -644,8 +482,7 @@ static void SetClassFieldBool(VClass* Class, const char* FieldName, int Value)
 //
 //==========================================================================
 
-static void SetClassFieldName(VClass* Class, const char* FieldName,
-	VName Value)
+static void SetClassFieldName(VClass* Class, VName FieldName, VName Value)
 {
 	guard(SetClassFieldName);
 	VField* F = Class->FindFieldChecked(FieldName);
@@ -660,7 +497,7 @@ static void SetClassFieldName(VClass* Class, const char* FieldName,
 //
 //==========================================================================
 
-static void SetClassFieldStr(VClass* Class, const char* FieldName,
+static void SetClassFieldStr(VClass* Class, VName FieldName,
 	const VStr& Value)
 {
 	guard(SetClassFieldStr);
@@ -676,7 +513,7 @@ static void SetClassFieldStr(VClass* Class, const char* FieldName,
 //
 //==========================================================================
 
-static void SetClassFieldVec(VClass* Class, const char* FieldName,
+static void SetClassFieldVec(VClass* Class, VName FieldName,
 	const TVec& Value)
 {
 	guard(SetClassFieldVec);
@@ -692,8 +529,7 @@ static void SetClassFieldVec(VClass* Class, const char* FieldName,
 //
 //==========================================================================
 
-static void SetFieldByte(VObject* Obj, const char* FieldName,
-	vuint8 Value)
+static void SetFieldByte(VObject* Obj, VName FieldName, vuint8 Value)
 {
 	guard(SetFieldByte);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
@@ -708,8 +544,8 @@ static void SetFieldByte(VObject* Obj, const char* FieldName,
 //
 //==========================================================================
 
-static void SetFieldFloat(VObject* Obj, const char* FieldName,
-	float Value, int Idx = 0)
+static void SetFieldFloat(VObject* Obj, VName FieldName, float Value,
+	int Idx = 0)
 {
 	guard(SetFieldFloat);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
@@ -724,7 +560,7 @@ static void SetFieldFloat(VObject* Obj, const char* FieldName,
 //
 //==========================================================================
 
-static void SetFieldBool(VObject* Obj, const char* FieldName, int Value)
+static void SetFieldBool(VObject* Obj, VName FieldName, int Value)
 {
 	guard(SetFieldBool);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
@@ -742,8 +578,7 @@ static void SetFieldBool(VObject* Obj, const char* FieldName, int Value)
 //
 //==========================================================================
 
-static void SetFieldName(VObject* Obj, const char* FieldName,
-	VName Value)
+static void SetFieldName(VObject* Obj, VName FieldName, VName Value)
 {
 	guard(SetFieldName);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
@@ -758,8 +593,7 @@ static void SetFieldName(VObject* Obj, const char* FieldName,
 //
 //==========================================================================
 
-static void SetFieldClass(VObject* Obj, const char* FieldName,
-	VClass* Value)
+static void SetFieldClass(VObject* Obj, VName FieldName, VClass* Value)
 {
 	guard(SetFieldClass);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
@@ -774,7 +608,7 @@ static void SetFieldClass(VObject* Obj, const char* FieldName,
 //
 //==========================================================================
 
-static void AddClassFixup(VClass* Class, const char* FieldName,
+static void AddClassFixup(VClass* Class, VName FieldName,
 	const VStr& ClassName, TArray<VClassFixup>& ClassFixups)
 {
 	guard(AddClassFixup);
@@ -1482,14 +1316,14 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		Flag += sc->String;
 	}
 
-	for (int j = 0; j < ARRAY_COUNT(FlagList); j++)
+	for (int j = 0; j < FlagList.Num(); j++)
 	{
 		if (!Class->IsChildOf(FlagList[j].Class))
 		{
 			continue;
 		}
-		VFlagDef* Lst = FlagList[j].Flags;
-		for (int i = 0; i < FlagList[j].NumFlags; i++)
+		const TArray<VFlagDef>& Lst = FlagList[j].Flags;
+		for (int i = 0; i < Lst.Num(); i++)
 		{
 			if (!Flag.ICmp(Lst[i].Name) ||
 				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))
@@ -2806,9 +2640,9 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		//
 		if (!Prop.ICmp("ClearFlags"))
 		{
-			for (int i = 0; i < ARRAY_COUNT(ActorFlags); i++)
+			for (int i = 0; i < FlagList[0].Flags.Num(); i++)
 			{
-				SetClassFieldBool(Class, ActorFlags[i].PropName, false);
+				SetClassFieldBool(Class, FlagList[0].Flags[i].PropName, false);
 			}
 			SetClassFieldByte(Class, "BounceType", BOUNCE_None);
 			SetClassFieldBool(Class, "bColideWithThings", true);
@@ -4468,6 +4302,18 @@ void ProcessDecorateScripts()
 
 	DecPkg = new VPackage(NAME_decorate);
 
+	for (int Lump = W_IterateFile(-1, "vavoom_decorate_defs.xml"); Lump != -1;
+		Lump = W_IterateFile(Lump, "vavoom_decorate_defs.xml"))
+	{
+		VStream* Strm = W_CreateLumpReaderNum(Lump);
+		check(Strm);
+		VXmlDocument* Doc = new VXmlDocument();
+		Doc->Parse(*Strm, "vavoom_decorate_defs.xml");
+		delete Strm;
+		ParseDecorateDef(*Doc);
+		delete Doc;
+	}
+
 	//	Find classes.
 	ActorClass = VClass::FindClass("Actor");
 	FakeInventoryClass = VClass::FindClass("FakeInventory");
@@ -4492,11 +4338,6 @@ void ProcessDecorateScripts()
 	FuncA_ExplodeParms = ActorClass->FindMethodChecked("A_ExplodeParms");
 	FuncA_FreezeDeath = ActorClass->FindMethodChecked("A_FreezeDeath");
 	FuncA_FreezeDeathChunks = ActorClass->FindMethodChecked("A_FreezeDeathChunks");
-
-	FlagList[0].Class = ActorClass;
-	FlagList[1].Class = InventoryClass;
-	FlagList[2].Class = WeaponClass;
-	FlagList[3].Class = PlayerPawnClass;
 
 	//	Parse scripts.
 	TArray<VClassFixup> ClassFixups;
@@ -4593,6 +4434,20 @@ void ProcessDecorateScripts()
 
 //==========================================================================
 //
+//	ShutdownDecorate
+//
+//==========================================================================
+
+void ShutdownDecorate()
+{
+	guard(ShutdownDecorate);
+	FlagList.Clear();
+	LineSpecialInfos.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
 //	VEntity::SetDecorateFlag
 //
 //==========================================================================
@@ -4600,14 +4455,14 @@ void ProcessDecorateScripts()
 void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 {
 	guard(VEntity::SetDecorateFlag);
-	for (int j = 0; j < ARRAY_COUNT(FlagList); j++)
+	for (int j = 0; j < FlagList.Num(); j++)
 	{
 		if (!IsA(FlagList[j].Class))
 		{
 			continue;
 		}
-		VFlagDef* Lst = FlagList[j].Flags;
-		for (int i = 0; i < FlagList[j].NumFlags; i++)
+		const TArray<VFlagDef>& Lst = FlagList[j].Flags;
+		for (int i = 0; i < Lst.Num(); i++)
 		{
 			if (!Flag.ICmp(Lst[i].Name) ||
 				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))

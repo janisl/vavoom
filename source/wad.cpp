@@ -480,7 +480,7 @@ int W_IterateNS(int Prev, EWadNamespace NS)
 int W_IterateFile(int Prev, const VStr& Name)
 {
 	guard(W_IterateFile);
-	for (int wi = FILE_INDEX((Prev + 1)) + 1; wi < SearchPaths.Num(); wi++)
+	for (int wi = FILE_INDEX(Prev) + 1; wi < SearchPaths.Num(); wi++)
 	{
 		int li = SearchPaths[wi]->CheckNumForFileName(Name);
 		if (li != -1)

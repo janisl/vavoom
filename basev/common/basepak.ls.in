@@ -56,6 +56,9 @@ in_htc3.txt				@CMAKE_CURRENT_SOURCE_DIR@/in_htc3.txt
 //	Line specials, useable in DECORATE
 line_specials.txt		@CMAKE_CURRENT_SOURCE_DIR@/line_specials.txt
 
+//	Decorate definition file
+vavoom_decorate_defs.xml				@CMAKE_CURRENT_SOURCE_DIR@/vavoom_decorate_defs.xml
+
 //	Decorate scripts
 decorate.txt							@CMAKE_CURRENT_SOURCE_DIR@/decorate.txt
 actors/constants.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/constants.txt

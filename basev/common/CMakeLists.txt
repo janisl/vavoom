@@ -14,11 +14,13 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		in_htc2.txt
 		in_htc3.txt
 		language.en
+		line_specials.txt
 		lockdefs.txt
 		reverbs.txt
 		startup.vs
 		terrain.txt
 		textcolo.txt
+		vavoom_decorate_defs.xml
 		vfxdefs.txt
 		x11r6rgb.txt
 		actors/constants.txt

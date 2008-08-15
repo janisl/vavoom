@@ -44,5 +44,6 @@ struct VLineSpecInfo
 
 void ReadLineSpecialInfos();
 void ProcessDecorateScripts();
+void ShutdownDecorate();
 
 extern TArray<VLineSpecInfo>	LineSpecialInfos;

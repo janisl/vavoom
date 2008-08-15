@@ -766,7 +766,7 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(FL_Shutdown, ())
 	SAFE_SHUTDOWN(W_Shutdown, ())
 	SAFE_SHUTDOWN(GLanguage.FreeData, ())
-	SAFE_SHUTDOWN(LineSpecialInfos.Clear, ())
+	SAFE_SHUTDOWN(ShutdownDecorate, ())
 
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())
