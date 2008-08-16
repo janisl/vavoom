@@ -15,6 +15,10 @@
 		<flag name="NoLiftDrop" property="bNoLiftDrop" />
 		<flag name="SlidesOnWalls" property="bSlide" />
 		<flag name="NoDropOff" property="bNoDropOff" />
+		<flag_byte name="DoomBounce" property="BounceType" true_value="1" false_value="0" />
+		<flag_byte name="HereticBounce" property="BounceType" true_value="2" false_value="0" />
+		<flag_byte name="HexenBounce" property="BounceType" true_value="3" false_value="0" />
+		<flag_float name="LowGravity" property="Gravity" true_value="0.125" false_value="1.0" />
 		<!-- Behavior -->
 		<flag name="Ambush" property="bAmbush" />
 		<flag name="Boss" property="bBoss" />
@@ -27,6 +31,9 @@
 		<flag name="MissileEvenMore" property="bMissileEvenMore" />
 		<flag name="NoTargetSwitch" property="bNoTargetSwitch" />
 		<flag name="NoInfighting" property="bNoInfighting" />
+		<flag_float name="LongMeleeRange" property="MissileMinRange" true_value="196.0" false_value="0.0" />
+		<flag_float name="ShortMissileRange" property="MissileMaxRange" true_value="896.0" false_value="0.0" />
+		<flag_unsupported name="NoSplashAlert" />
 		<!-- Abilities -->
 		<flag name="CannotPush" property="bCannotPush" />
 		<flag name="NoTeleport" property="bNoTeleport" />
@@ -43,6 +50,7 @@
 		<flag name="CanBounceWater" property="bCanBounceWater" />
 		<flag name="ThruGhost" property="bThruGhost" />
 		<flag name="Spectral" property="bSpectral" />
+		<flag_unsupported name="Frightened" />
 		<!-- Defenses -->
 		<flag name="Invulnerable" property="bInvulnerable" />
 		<flag name="Reflective" property="bReflective" />
@@ -80,6 +88,10 @@
 		<flag name="NoBounceSound" property="bNoBounceSound" />
 		<flag name="DontTranslate" property="bDontTranslate" />
 		<flag name="NoPain" property="bNoPain" />
+		<flag_unsupported name="NoBloodDecals" />
+		<flag_unsupported name="FixMapThingPos" />
+		<flag_unsupported name="GrenadeTrail" />
+		<flag_unsupported name="NoSkin" />
 		<!-- Projectile -->
 		<flag name="Missile" property="bMissile" />
 		<flag name="Ripper" property="bRip" />
@@ -102,6 +114,8 @@
 		<flag name="SpawnSoundSource" property="bSpawnSoundSource" />
 		<flag name="BloodSplatter" property="bBloodSplatter" />
 		<flag name="DehExplosion" property="bDehExplosion" />
+		<flag_name name="FireDamage" property="DamageType" true_value="Fire" false_value="None" />
+		<flag_name name="IceDamage" property="DamageType" true_value="Ice" false_value="None" />
 		<!-- Miscellaneous -->
 		<flag name="Dropped" property="bDropped" />
 		<flag name="IsMonster" property="bMonster" />
@@ -121,6 +135,7 @@
 		<flag name="FastMelee" property="bFastMelee" />
 		<flag name="BossDeath" property="bBossDeath" />
 		<flag name="UseSpecial" property="bUseSpecial" />
+		<flag_unsupported name="OldRadiusDmg" />
 		<!-- Limited use -->
 		<flag name="InCombat" property="bInCombat" />
 		<flag name="NoSector" property="bNoSector" />
@@ -128,6 +143,10 @@
 		<flag name="JustHit" property="bJustHit" />
 		<flag name="JustAttacked" property="bJustAttacked" />
 		<flag name="Teleport" property="bTeleport" />
+		<flag_noclip name="NoClip" />
+		<flag_unsupported name="SeesDaggers" />
+		<flag_unsupported name="ForceYBillboard" />
+		<flag_unsupported name="ForceXYBillboard" />
 		<!-- Not documented -->
 		<flag name="InFloat" property="bInFloat" />
 		<flag name="SkullFly" property="bSkullFly" />
@@ -137,7 +156,7 @@
 		<flag name="DontRip" property="bDontRip" />
 		<flag name="PickUp" property="bPickUp" />
 	</class>
-	<class name="Inventory" prefix="Inventory">
+	<class name="Inventory">
 		<flag name="Quiet" property="bQuiet" />
 		<flag name="AutoActivate" property="bAutoActivate" />
 		<flag name="Undroppable" property="bUndroppable" />
@@ -150,8 +169,9 @@
 		<flag name="KeepDepleted" property="bKeepDepleted" />
 		<flag name="IgnoreSkill" property="bIgnoreSkill" />
 		<flag name="AdditiveTime" property="bAdditiveTime" />
+		<flag_class name="PickupFlash" property="PickupFlashType" true_value="PickupFlash" false_value="None" />
 	</class>
-	<class name="Weapon" prefix="Weapon">
+	<class name="Weapon">
 		<flag name="NoAutoFire" property="bNoAutoFire" />
 		<flag name="ReadySndHalf" property="bReadySndHalf" />
 		<flag name="DontBob" property="bDontBob" />

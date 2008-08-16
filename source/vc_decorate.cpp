@@ -48,6 +48,17 @@ enum
 	BOUNCE_Hexen
 };
 
+enum
+{
+	FLAG_Bool,
+	FLAG_Unsupported,
+	FLAG_Byte,
+	FLAG_Float,
+	FLAG_Name,
+	FLAG_Class,
+	FLAG_NoClip,
+};
+
 struct VClassFixup
 {
 	int			Offset;
@@ -58,9 +69,22 @@ struct VClassFixup
 
 struct VFlagDef
 {
+	vuint8		Type;
 	VStr		Name;
 	VStr		AltName;
 	VName		PropName;
+	union
+	{
+		vuint8	BTrue;
+		float	FTrue;
+	};
+	VName		NTrue;
+	union
+	{
+		vuint8	BFalse;
+		float	FFalse;
+	};
+	VName		NFalse;
 };
 
 struct VFlagList
@@ -160,9 +184,64 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			if (PN->Name == "flag")
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
+				F.Type = FLAG_Bool;
 				F.Name = PN->GetAttribute("name");
 				F.AltName = ClassName + "." + F.Name;
 				F.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "flag_unsupported")
+			{
+				VFlagDef& F = Lst.Flags.Alloc();
+				F.Type = FLAG_Unsupported;
+				F.Name = PN->GetAttribute("name");
+				F.AltName = ClassName + "." + F.Name;
+			}
+			else if (PN->Name == "flag_byte")
+			{
+				VFlagDef& F = Lst.Flags.Alloc();
+				F.Type = FLAG_Byte;
+				F.Name = PN->GetAttribute("name");
+				F.AltName = ClassName + "." + F.Name;
+				F.PropName = *PN->GetAttribute("property");
+				F.BTrue = atoi(*PN->GetAttribute("true_value"));
+				F.BFalse = atoi(*PN->GetAttribute("false_value"));
+			}
+			else if (PN->Name == "flag_float")
+			{
+				VFlagDef& F = Lst.Flags.Alloc();
+				F.Type = FLAG_Float;
+				F.Name = PN->GetAttribute("name");
+				F.AltName = ClassName + "." + F.Name;
+				F.PropName = *PN->GetAttribute("property");
+				F.FTrue = atof(*PN->GetAttribute("true_value"));
+				F.FFalse = atof(*PN->GetAttribute("false_value"));
+			}
+			else if (PN->Name == "flag_name")
+			{
+				VFlagDef& F = Lst.Flags.Alloc();
+				F.Type = FLAG_Name;
+				F.Name = PN->GetAttribute("name");
+				F.AltName = ClassName + "." + F.Name;
+				F.PropName = *PN->GetAttribute("property");
+				F.NTrue = *PN->GetAttribute("true_value");
+				F.NFalse = *PN->GetAttribute("false_value");
+			}
+			else if (PN->Name == "flag_class")
+			{
+				VFlagDef& F = Lst.Flags.Alloc();
+				F.Type = FLAG_Class;
+				F.Name = PN->GetAttribute("name");
+				F.AltName = ClassName + "." + F.Name;
+				F.PropName = *PN->GetAttribute("property");
+				F.NTrue = *PN->GetAttribute("true_value");
+				F.NFalse = *PN->GetAttribute("false_value");
+			}
+			else if (PN->Name == "flag_noclip")
+			{
+				VFlagDef& F = Lst.Flags.Alloc();
+				F.Type = FLAG_NoClip;
+				F.Name = PN->GetAttribute("name");
+				F.AltName = ClassName + "." + F.Name;
 			}
 			else
 			{
@@ -1328,153 +1407,40 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 			if (!Flag.ICmp(Lst[i].Name) ||
 				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))
 			{
-				SetClassFieldBool(Class, Lst[i].PropName, Value);
+				switch (Lst[i].Type)
+				{
+				case FLAG_Bool:
+					SetClassFieldBool(Class, Lst[i].PropName, Value);
+					break;
+				case FLAG_Unsupported:
+					GCon->Logf("Unsupported flag %s in %s", *Flag,
+						Class->GetName());
+					break;
+				case FLAG_Byte:
+					SetClassFieldByte(Class, Lst[i].PropName, Value ?
+						Lst[i].BTrue : Lst[i].BFalse);
+					break;
+				case FLAG_Float:
+					SetClassFieldFloat(Class, Lst[i].PropName, Value ?
+						Lst[i].FTrue : Lst[i].FFalse);
+					break;
+				case FLAG_Name:
+					SetClassFieldName(Class, Lst[i].PropName, Value ?
+						Lst[i].NTrue : Lst[i].NFalse);
+					break;
+				case FLAG_Class:
+					AddClassFixup(Class, Lst[i].PropName, Value ?
+						*Lst[i].NTrue : *Lst[i].NFalse, ClassFixups);
+					break;
+				case FLAG_NoClip:
+					SetClassFieldBool(Class, "bColideWithThings", !Value);
+					SetClassFieldBool(Class, "bColideWithWorld", !Value);
+					break;
+				}
 				return true;
 			}
 		}
 	}
-
-	//
-	//	Physics
-	//
-	if (!Flag.ICmp("LowGravity"))
-	{
-		SetClassFieldFloat(Class, "Gravity", Value ? 0.125 : 1.0);
-		return true;
-	}
-	if (!Flag.ICmp("HereticBounce"))
-	{
-		SetClassFieldByte(Class, "BounceType", Value ? BOUNCE_Heretic : BOUNCE_None);
-		return true;
-	}
-	if (!Flag.ICmp("HexenBounce"))
-	{
-		SetClassFieldByte(Class, "BounceType", Value ? BOUNCE_Hexen : BOUNCE_None);
-		return true;
-	}
-	if (!Flag.ICmp("DoomBounce"))
-	{
-		SetClassFieldByte(Class, "BounceType", Value ? BOUNCE_Doom : BOUNCE_None);
-		return true;
-	}
-	//
-	//	Behavior
-	//
-	if (!Flag.ICmp("NoSplashAlert"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoSplashAlert in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("LongMeleeRange"))
-	{
-		SetClassFieldFloat(Class, "MissileMinRange", Value ? 196.0 : 0.0);
-		return true;
-	}
-	if (!Flag.ICmp("ShortMissileRange"))
-	{
-		SetClassFieldFloat(Class, "MissileMaxRange", Value ? 896.0 : 0.0);
-		return true;
-	}
-	//
-	//	Abilities
-	//
-	if (!Flag.ICmp("Frightened"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag Frightened in %s", Class->GetName());
-		return true;
-	}
-	//
-	//	Appearance and sound
-	//
-	if (!Flag.ICmp("NoBloodDecals"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoBloodDecals in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("FixMapThingPos"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag FixMapThingPos in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("GrenadeTrail"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag GrenadeTrail in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("NoSkin"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoSkin in %s", Class->GetName());
-		return true;
-	}
-	//
-	//	Projectile
-	//
-	if (!Flag.ICmp("FireDamage"))
-	{
-		SetClassFieldName(Class, "DamageType", Value ? VName("Fire") : NAME_None);
-		return true;
-	}
-	if (!Flag.ICmp("IceDamage"))
-	{
-		SetClassFieldName(Class, "DamageType", Value ? VName("Ice") : NAME_None);
-		return true;
-	}
-	//
-	//	Miscellaneous
-	//
-	if (!Flag.ICmp("OldRadiusDmg"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag OldRadiusDmg in %s", Class->GetName());
-		return true;
-	}
-	//
-	//	Limited use
-	//
-	if (!Flag.ICmp("SeesDaggers"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag SeesDaggers in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("NoClip"))
-	{
-		SetClassFieldBool(Class, "bColideWithThings", !Value);
-		SetClassFieldBool(Class, "bColideWithWorld", !Value);
-		return true;
-	}
-	if (!Flag.ICmp("ForceYBillboard"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag ForceYBillboard in %s", Class->GetName());
-		return true;
-	}
-	if (!Flag.ICmp("ForceXYBillboard"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag ForceXYBillboard in %s", Class->GetName());
-		return true;
-	}
-
-	//
-	//	Inventory class flags.
-	//
-	if (Class->IsChildOf(InventoryClass))
-	{
-		if (!Flag.ICmp("Inventory.PickupFlash") || !Flag.ICmp("PickupFlash"))
-		{
-			AddClassFixup(Class, "PickupFlashType", Value ? "PickupFlash" :
-				"None", ClassFixups);
-			return true;
-		}
-	}
-
 	sc->Error(va("Unknown flag %s", *Flag));
 	return false;
 	unguard;
@@ -2640,9 +2606,21 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		//
 		if (!Prop.ICmp("ClearFlags"))
 		{
-			for (int i = 0; i < FlagList[0].Flags.Num(); i++)
+			for (int j = 0; j < FlagList.Num(); j++)
 			{
-				SetClassFieldBool(Class, FlagList[0].Flags[i].PropName, false);
+				if (FlagList[j].Class != ActorClass)
+				{
+					continue;
+				}
+				for (int i = 0; i < FlagList[j].Flags.Num(); i++)
+				{
+					switch (FlagList[j].Flags[i].Type)
+					{
+					case FLAG_Bool:
+						SetClassFieldBool(Class, FlagList[j].Flags[i].PropName, false);
+						break;
+					}
+				}
 			}
 			SetClassFieldByte(Class, "BounceType", BOUNCE_None);
 			SetClassFieldBool(Class, "bColideWithThings", true);
@@ -4467,153 +4445,41 @@ void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 			if (!Flag.ICmp(Lst[i].Name) ||
 				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))
 			{
-				SetFieldBool(this, Lst[i].PropName, Value);
+				switch (Lst[i].Type)
+				{
+				case FLAG_Bool:
+					SetFieldBool(this, Lst[i].PropName, Value);
+					break;
+				case FLAG_Unsupported:
+					GCon->Logf("Unsupported flag %s in %s", *Flag,
+						GetClass()->GetName());
+					break;
+				case FLAG_Byte:
+					SetFieldByte(this, Lst[i].PropName, Value ?
+						Lst[i].BTrue : Lst[i].BFalse);
+					break;
+				case FLAG_Float:
+					SetFieldFloat(this, Lst[i].PropName, Value ?
+						Lst[i].FTrue : Lst[i].FFalse);
+					break;
+				case FLAG_Name:
+					SetFieldName(this, Lst[i].PropName, Value ?
+						Lst[i].NTrue : Lst[i].NFalse);
+					break;
+				case FLAG_Class:
+					SetFieldClass(this, Lst[i].PropName, Value ?
+						Lst[i].NTrue != NAME_None ? VClass::FindClass(*Lst[i].NTrue) : NULL :
+						Lst[i].NFalse != NAME_None ? VClass::FindClass(*Lst[i].NFalse) : NULL);
+					break;
+				case FLAG_NoClip:
+					SetFieldBool(this, "bColideWithThings", !Value);
+					SetFieldBool(this, "bColideWithWorld", !Value);
+					break;
+				}
 				return;
 			}
 		}
 	}
-
-	//
-	//	Physics
-	//
-	if (!Flag.ICmp("LowGravity"))
-	{
-		SetFieldFloat(this, "Gravity", Value ? 0.125 : 1.0);
-		return;
-	}
-	if (!Flag.ICmp("HereticBounce"))
-	{
-		SetFieldByte(this, "BounceType", Value ? BOUNCE_Heretic : BOUNCE_None);
-		return;
-	}
-	if (!Flag.ICmp("HexenBounce"))
-	{
-		SetFieldByte(this, "BounceType", Value ? BOUNCE_Hexen : BOUNCE_None);
-		return;
-	}
-	if (!Flag.ICmp("DoomBounce"))
-	{
-		SetFieldByte(this, "BounceType", Value ? BOUNCE_Doom : BOUNCE_None);
-		return;
-	}
-	//
-	//	Behavior
-	//
-	if (!Flag.ICmp("NoSplashAlert"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoSplashAlert in %s", GetClass()->GetName());
-		return;
-	}
-	if (!Flag.ICmp("LongMeleeRange"))
-	{
-		SetFieldFloat(this, "MissileMinRange", Value ? 196.0 : 0.0);
-		return;
-	}
-	if (!Flag.ICmp("ShortMissileRange"))
-	{
-		SetFieldFloat(this, "MissileMaxRange", Value ? 896.0 : 0.0);
-		return;
-	}
-	//
-	//	Abilities
-	//
-	if (!Flag.ICmp("Frightened"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag Frightened in %s", GetClass()->GetName());
-		return;
-	}
-	//
-	//	Appearance and sound
-	//
-	if (!Flag.ICmp("NoBloodDecals"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoBloodDecals in %s", GetClass()->GetName());
-		return;
-	}
-	if (!Flag.ICmp("FixMapThingPos"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag FixMapThingPos in %s", GetClass()->GetName());
-		return;
-	}
-	if (!Flag.ICmp("GrenadeTrail"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag GrenadeTrail in %s", GetClass()->GetName());
-		return;
-	}
-	if (!Flag.ICmp("NoSkin"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag NoSkin in %s", GetClass()->GetName());
-		return;
-	}
-	//
-	//	Projectile
-	//
-	if (!Flag.ICmp("FireDamage"))
-	{
-		SetFieldName(this, "DamageType", Value ? VName("Fire") : NAME_None);
-		return;
-	}
-	if (!Flag.ICmp("IceDamage"))
-	{
-		SetFieldName(this, "DamageType", Value ? VName("Ice") : NAME_None);
-		return;
-	}
-	//
-	//	Miscellaneous
-	//
-	if (!Flag.ICmp("OldRadiusDmg"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag OldRadiusDmg in %s", GetClass()->GetName());
-		return;
-	}
-	//
-	//	Limited use
-	//
-	if (!Flag.ICmp("SeesDaggers"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag SeesDaggers in %s", GetClass()->GetName());
-		return;
-	}
-	if (!Flag.ICmp("NoClip"))
-	{
-		SetFieldBool(this, "bColideWithThings", !Value);
-		SetFieldBool(this, "bColideWithWorld", !Value);
-		return;
-	}
-	if (!Flag.ICmp("ForceYBillboard"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag ForceYBillboard in %s", GetClass()->GetName());
-		return;
-	}
-	if (!Flag.ICmp("ForceXYBillboard"))
-	{
-		//FIXME
-		GCon->Logf("Unsupported flag ForceXYBillboard in %s", GetClass()->GetName());
-		return;
-	}
-
-	//
-	//	Inventory class flags.
-	//
-	if (IsA(InventoryClass))
-	{
-		if (!Flag.ICmp("Inventory.PickupFlash") || !Flag.ICmp("PickupFlash"))
-		{
-			SetFieldClass(this, "PickupFlashType", Value ?
-				VClass::FindClass("PickupFlash") : NULL);
-			return;
-		}
-	}
-
 	GCon->Logf("Unknown flag %s", *Flag);
 	unguard;
 }
