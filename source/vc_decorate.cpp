@@ -50,6 +50,54 @@ enum
 
 enum
 {
+	PROP_Int,
+	PROP_IntConst,
+	PROP_IntUnsupported,
+	PROP_BitIndex,
+	PROP_Float,
+	PROP_Speed,
+	PROP_Tics,
+	PROP_Percent,
+	PROP_FloatClamped,
+	PROP_FloatClamped2,
+	PROP_FloatOpt2,
+	PROP_Name,
+	PROP_NameLower,
+	PROP_Str,
+	PROP_StrUnsupported,
+	PROP_Class,
+	PROP_BoolConst,
+	PROP_State,
+	PROP_Game,
+	PROP_SpawnId,
+	PROP_ConversationId,
+	PROP_PainChance,
+	PROP_DamageFactor,
+	PROP_MissileDamage,
+	PROP_VSpeed,
+	PROP_RenderStyle,
+	PROP_Translation,
+	PROP_BloodColour,
+	PROP_BloodType,
+	PROP_StencilColour,
+	PROP_Monster,
+	PROP_Projectile,
+	PROP_ClearFlags,
+	PROP_DropItem,
+	PROP_States,
+	PROP_SkipSuper,
+	PROP_Args,
+	PROP_PickupMessage,
+	PROP_LowMessage,
+	PROP_PowerupColour,
+	PROP_ColourRange,
+	PROP_DamageScreenColour,
+	PROP_HexenArmor,
+	PROP_StartItem,
+};
+
+enum
+{
 	FLAG_Bool,
 	FLAG_Unsupported,
 	FLAG_Byte,
@@ -67,11 +115,26 @@ struct VClassFixup
 	VClass*		Class;
 };
 
+struct VPropDef
+{
+	vuint8		Type;
+	VName		Name;
+	VName		PropName;
+	VName		Prop2Name;
+	union
+	{
+		int		IConst;
+		float	FMin;
+	};
+	float		FMax;
+	VStr		CPrefix;
+};
+
 struct VFlagDef
 {
 	vuint8		Type;
-	VStr		Name;
-	VStr		AltName;
+	VName		Name;
+	VName		AltName;
 	VName		PropName;
 	union
 	{
@@ -89,6 +152,7 @@ struct VFlagDef
 
 struct VFlagList
 {
+	TArray<VPropDef>	Props;
 	TArray<VFlagDef>	Flags;
 	VClass*				Class;
 };
@@ -173,7 +237,6 @@ static char* _(const VStr& S)
 static void ParseDecorateDef(VXmlDocument& Doc)
 {
 	guard(ParseDecorateDef);
-	GCon->Logf(NAME_Init, "Parsing DECORATE definition file");
 	for (VXmlNode* N = Doc.Root.FindChild("class"); N; N = N->FindNext())
 	{
 		VStr ClassName = N->GetAttribute("name");
@@ -181,27 +244,321 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 		Lst.Class = VClass::FindClass(*ClassName);
 		for (VXmlNode* PN = N->FirstChild; PN; PN = PN->NextSibling)
 		{
-			if (PN->Name == "flag")
+			if (PN->Name == "prop_int")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Int;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_int_const")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_IntConst;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+				P.IConst = atoi(*PN->GetAttribute("value"));
+			}
+			else if (PN->Name == "prop_int_unsupported")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_IntUnsupported;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_bit_index")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_BitIndex;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_float")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Float;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_speed")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Speed;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_tics")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Tics;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_percent")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Percent;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_float_clamped")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_FloatClamped;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+				P.FMin = atof(*PN->GetAttribute("min"));
+				P.FMax = atof(*PN->GetAttribute("max"));
+			}
+			else if (PN->Name == "prop_float_clamped_2")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_FloatClamped2;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+				P.Prop2Name = *PN->GetAttribute("property2");
+				P.FMin = atof(*PN->GetAttribute("min"));
+				P.FMax = atof(*PN->GetAttribute("max"));
+			}
+			else if (PN->Name == "prop_float_optional_2")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_FloatOpt2;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+				P.Prop2Name = *PN->GetAttribute("property2");
+			}
+			else if (PN->Name == "prop_name")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Name;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_name_lower")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_NameLower;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_string")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Str;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_string_unsupported")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_StrUnsupported;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_class")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Class;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+				if (PN->HasAttribute("prefix"))
+				{
+					P.CPrefix = PN->GetAttribute("prefix");
+				}
+			}
+			else if (PN->Name == "prop_bool_const")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_BoolConst;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+				P.IConst = !PN->GetAttribute("value").ICmp("true");
+			}
+			else if (PN->Name == "prop_state")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_State;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_game")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Game;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_spawn_id")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_SpawnId;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_conversation_id")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_ConversationId;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_pain_chance")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_PainChance;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_damage_factor")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_DamageFactor;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_missile_damage")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_MissileDamage;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_vspeed")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_VSpeed;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_render_style")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_RenderStyle;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_translation")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Translation;
+				P.Name = *PN->GetAttribute("name").ToLower();
+				P.PropName = *PN->GetAttribute("property");
+			}
+			else if (PN->Name == "prop_blood_colour")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_BloodColour;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_blood_type")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_BloodType;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_stencil_colour")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_StencilColour;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_monster")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Monster;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_projectile")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Projectile;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_clear_flags")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_ClearFlags;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_drop_item")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_DropItem;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_states")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_States;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_skip_super")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_SkipSuper;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_args")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_Args;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_pickup_message")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_PickupMessage;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_low_message")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_LowMessage;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_powerup_colour")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_PowerupColour;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_colour_range")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_ColourRange;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_damage_screen_colour")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_DamageScreenColour;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_hexen_armor")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_HexenArmor;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "prop_start_item")
+			{
+				VPropDef& P = Lst.Props.Alloc();
+				P.Type = PROP_StartItem;
+				P.Name = *PN->GetAttribute("name").ToLower();
+			}
+			else if (PN->Name == "flag")
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
 				F.Type = FLAG_Bool;
-				F.Name = PN->GetAttribute("name");
-				F.AltName = ClassName + "." + F.Name;
+				F.Name = *PN->GetAttribute("name").ToLower();
+				F.AltName = *(ClassName.ToLower() + "." + F.Name);
 				F.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "flag_unsupported")
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
 				F.Type = FLAG_Unsupported;
-				F.Name = PN->GetAttribute("name");
-				F.AltName = ClassName + "." + F.Name;
+				F.Name = *PN->GetAttribute("name").ToLower();
+				F.AltName = *(ClassName.ToLower() + "." + F.Name);
 			}
 			else if (PN->Name == "flag_byte")
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
 				F.Type = FLAG_Byte;
-				F.Name = PN->GetAttribute("name");
-				F.AltName = ClassName + "." + F.Name;
+				F.Name = *PN->GetAttribute("name").ToLower();
+				F.AltName = *(ClassName.ToLower() + "." + F.Name);
 				F.PropName = *PN->GetAttribute("property");
 				F.BTrue = atoi(*PN->GetAttribute("true_value"));
 				F.BFalse = atoi(*PN->GetAttribute("false_value"));
@@ -210,8 +567,8 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
 				F.Type = FLAG_Float;
-				F.Name = PN->GetAttribute("name");
-				F.AltName = ClassName + "." + F.Name;
+				F.Name = *PN->GetAttribute("name").ToLower();
+				F.AltName = *(ClassName.ToLower() + "." + F.Name);
 				F.PropName = *PN->GetAttribute("property");
 				F.FTrue = atof(*PN->GetAttribute("true_value"));
 				F.FFalse = atof(*PN->GetAttribute("false_value"));
@@ -220,8 +577,8 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
 				F.Type = FLAG_Name;
-				F.Name = PN->GetAttribute("name");
-				F.AltName = ClassName + "." + F.Name;
+				F.Name = *PN->GetAttribute("name").ToLower();
+				F.AltName = *(ClassName.ToLower() + "." + F.Name);
 				F.PropName = *PN->GetAttribute("property");
 				F.NTrue = *PN->GetAttribute("true_value");
 				F.NFalse = *PN->GetAttribute("false_value");
@@ -230,8 +587,8 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
 				F.Type = FLAG_Class;
-				F.Name = PN->GetAttribute("name");
-				F.AltName = ClassName + "." + F.Name;
+				F.Name = *PN->GetAttribute("name").ToLower();
+				F.AltName = *(ClassName.ToLower() + "." + F.Name);
 				F.PropName = *PN->GetAttribute("property");
 				F.NTrue = *PN->GetAttribute("true_value");
 				F.NFalse = *PN->GetAttribute("false_value");
@@ -240,8 +597,8 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			{
 				VFlagDef& F = Lst.Flags.Alloc();
 				F.Type = FLAG_NoClip;
-				F.Name = PN->GetAttribute("name");
-				F.AltName = ClassName + "." + F.Name;
+				F.Name = *PN->GetAttribute("name").ToLower();
+				F.AltName = *(ClassName.ToLower() + "." + F.Name);
 			}
 			else
 			{
@@ -1394,6 +1751,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		Flag += ".";
 		Flag += sc->String;
 	}
+	VName FlagName(*Flag.ToLower());
 
 	for (int j = 0; j < FlagList.Num(); j++)
 	{
@@ -1404,8 +1762,7 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 		const TArray<VFlagDef>& Lst = FlagList[j].Flags;
 		for (int i = 0; i < Lst.Num(); i++)
 		{
-			if (!Flag.ICmp(Lst[i].Name) ||
-				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))
+			if (FlagName == Lst[i].Name || FlagName == Lst[i].AltName)
 			{
 				switch (Lst[i].Type)
 				{
@@ -2014,975 +2371,298 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			Prop += ".";
 			Prop += sc->String;
 		}
+		VName PropName = *Prop.ToLower();
 
-		//
-		//	Map editing control
-		//
-		if (!Prop.ICmp("Game"))
+		bool FoundProp = false;
+		for (int j = 0; j < FlagList.Num() && !FoundProp; j++)
 		{
-			if (sc->Check("Doom"))
+			if (!Class->IsChildOf(FlagList[j].Class))
 			{
-				GameFilter |= GAME_Doom;
+				continue;
 			}
-			else if (sc->Check("Heretic"))
+			for (int i = 0; i < FlagList[j].Props.Num(); i++)
 			{
-				GameFilter |= GAME_Heretic;
-			}
-			else if (sc->Check("Hexen"))
-			{
-				GameFilter |= GAME_Hexen;
-			}
-			else if (sc->Check("Strife"))
-			{
-				GameFilter |= GAME_Strife;
-			}
-			else if (sc->Check("Raven"))
-			{
-				GameFilter |= GAME_Raven;
-			}
-			else if (sc->Check("Any"))
-			{
-				GameFilter |= GAME_Any;
-			}
-			else if (GameFilter)
-			{
-				sc->Error("Unknown game filter");
-			}
-			continue;
-		}
-		if (!Prop.ICmp("SpawnID"))
-		{
-			sc->ExpectNumber();
-			SpawnNum = sc->Number;
-			continue;
-		}
-		if (!Prop.ICmp("ConversationID"))
-		{
-			sc->ExpectNumber();
-			SetClassFieldInt(Class, "ConversationID", sc->Number);
-			if (sc->Check(","))
-			{
-				sc->ExpectNumberWithSign();
-				sc->Expect(",");
-				sc->ExpectNumberWithSign();
-			}
-			continue;
-		}
-		if (!Prop.ICmp("Tag"))
-		{
-			sc->ExpectString();
-			SetClassFieldStr(Class, "StrifeName", sc->String);
-			continue;
-		}
-		//
-		//	Behaviour
-		//
-		if (!Prop.ICmp("Health"))
-		{
-			sc->ExpectNumberWithSign();
-			SetClassFieldInt(Class, "Health", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("GibHealth"))
-		{
-			sc->ExpectNumberWithSign();
-			SetClassFieldInt(Class, "GibsHealth", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("WoundHealth"))
-		{
-			sc->ExpectNumberWithSign();
-			SetClassFieldInt(Class, "WoundHealth", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("ReactionTime"))
-		{
-			sc->ExpectNumber();
-			SetClassFieldInt(Class, "ReactionCount", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("PainChance"))
-		{
-			if (sc->CheckNumber())
-			{
-				SetClassFieldFloat(Class, "PainChance", float(sc->Number) / 256.0);
-			}
-			else
-			{
-				sc->ExpectString();
-				VName DamageType = sc->String.ICmp("Normal") ? NAME_None :
-					VName(*sc->String);
-				sc->Expect(",");
-				sc->ExpectNumber();
-
-				//	Check pain chances array for replacements.
-				TArray<VPainChanceInfo> PainChances = GetClassPainChances(Class);
-				VPainChanceInfo* PC = NULL;
-				for (int i = 0; i < PainChances.Num(); i++)
-				{
-					if (PainChances[i].DamageType == DamageType)
-					{
-						PC = &PainChances[i];
-						break;
-					}
-				}
-				if (!PC)
-				{
-					PC = &PainChances.Alloc();
-					PC->DamageType = DamageType;
-				}
-				PC->Chance = float(sc->Number) / 256.0;
-			}
-			continue;
-		}
-		if (!Prop.ICmp("DamageFactor"))
-		{
-			sc->ExpectString();
-			VName DamageType = !sc->String.ICmp("Normal") ? NAME_None :
-				VName(*sc->String);
-			sc->Expect(",");
-			sc->ExpectFloat();
-
-			//	Check damage factors array for replacements.
-			TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);
-			VDamageFactor* DF = NULL;
-			for (int i = 0; i < DamageFactors.Num(); i++)
-			{
-				if (DamageFactors[i].DamageType == DamageType)
-				{
-					DF = &DamageFactors[i];
-					break;
-				}
-			}
-			if (!DF)
-			{
-				DF = &DamageFactors.Alloc();
-				DF->DamageType = DamageType;
-			}
-			DF->Factor = sc->Float;
-			continue;
-		}
-		if (!Prop.ICmp("Damage"))
-		{
-			if (sc->Check("("))
-			{
-				VExpression* Expr = ParseExpression(sc);
-				if (!Expr)
-				{
-					ParseError(sc->GetLoc(), "Damage expression expected");
-				}
-				else
-				{
-					VMethod* M = new VMethod("GetMissileDamage", Class, sc->GetLoc());
-					M->ReturnTypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
-					M->ReturnType = TYPE_Int;
-					M->NumParams = 2;
-					M->Params[0].Name = "Mask";
-					M->Params[0].Loc = sc->GetLoc();
-					M->Params[0].TypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
-					M->Params[1].Name = "Add";
-					M->Params[1].Loc = sc->GetLoc();
-					M->Params[1].TypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
-					M->Statement = new VReturn(Expr, sc->GetLoc());
-					Class->AddMethod(M);
-					M->Define();
-				}
-				sc->Expect(")");
-			}
-			else
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "MissileDamage", sc->Number);
-			}
-			continue;
-		}
-		if (!Prop.ICmp("PoisonDamage"))
-		{
-			sc->ExpectNumber();
-			SetClassFieldInt(Class, "MissilePoisonDamage", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("RadiusDamageFactor"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "RDFactor", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("Speed"))
-		{
-			sc->ExpectFloatWithSign();
-			SetClassFieldFloat(Class, "Speed", sc->Float * 35.0);
-			continue;
-		}
-		if (!Prop.ICmp("VSpeed"))
-		{
-			sc->ExpectFloatWithSign();
-			TVec Val = GetClassFieldVec(Class, "Velocity");
-			Val.z = sc->Float * 35.0;
-			SetClassFieldVec(Class, "Velocity", Val);
-			continue;
-		}
-		if (!Prop.ICmp("FastSpeed"))
-		{
-			sc->ExpectFloatWithSign();
-			SetClassFieldFloat(Class, "FastSpeed", sc->Float * 35.0);
-			continue;
-		}
-		if (!Prop.ICmp("FloatSpeed"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "FloatSpeed", sc->Float * 35.0);
-			continue;
-		}
-		//
-		//	Collision and physics
-		//
-		if (!Prop.ICmp("Radius"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "Radius", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("Height"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "Height", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("DeathHeight"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "DeathHeight", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("BurnHeight"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "BurnHeight", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("CameraHeight"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "CameraHeight", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("Gravity"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "Gravity", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("Mass"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "Mass", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("MaxStepHeight"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "MaxStepHeight", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("MaxDropOffHeight"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "MaxDropoffHeight", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("BounceFactor"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "BounceFactor", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("BounceCount"))
-		{
-			sc->ExpectNumber();
-			SetClassFieldInt(Class, "BounceCount", sc->Number);
-			continue;
-		}
-		//
-		//	Sound
-		//
-		if (!Prop.ICmp("SeeSound"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "SightSound", *sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("AttackSound"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "AttackSound", *sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("PainSound"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "PainSound", *sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("DeathSound"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "DeathSound", *sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("ActiveSound"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "ActiveSound", *sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("HowlSound"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "HowlSound", *sc->String);
-			continue;
-		}
-		//
-		//	Rendering
-		//
-		if (!Prop.ICmp("RenderStyle"))
-		{
-			int RenderStyle = 0;
-			if (sc->Check("None"))
-			{
-				RenderStyle = STYLE_None;
-			}
-			else if (sc->Check("Normal"))
-			{
-				RenderStyle = STYLE_Normal;
-			}
-			else if (sc->Check("Fuzzy"))
-			{
-				RenderStyle = STYLE_Fuzzy;
-			}
-			else if (sc->Check("SoulTrans"))
-			{
-				RenderStyle = STYLE_SoulTrans;
-			}
-			else if (sc->Check("OptFuzzy"))
-			{
-				RenderStyle = STYLE_OptFuzzy;
-			}
-			else if (sc->Check("Translucent"))
-			{
-				RenderStyle = STYLE_Translucent;
-			}
-			else if (sc->Check("Add"))
-			{
-				RenderStyle = STYLE_Add;
-			}
-			else if (sc->Check("Stencil"))
-			{
-				//FIXME
-				GCon->Logf("Render style Stencil in %s is not yet supported", Class->GetName());
-			}
-			else
-			{
-				sc->Error("Bad render style");
-			}
-			SetClassFieldByte(Class, "RenderStyle", RenderStyle);
-			continue;
-		}
-		if (!Prop.ICmp("Alpha"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "Alpha", MID(0.0, sc->Float, 1.0));
-			continue;
-		}
-		if (!Prop.ICmp("XScale"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "ScaleX", MID(0.0, sc->Float, 4.0));
-			continue;
-		}
-		if (!Prop.ICmp("YScale"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "ScaleY", MID(0.0, sc->Float, 4.0));
-			continue;
-		}
-		if (!Prop.ICmp("Scale"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "ScaleX", MID(0.0, sc->Float, 4.0));
-			SetClassFieldFloat(Class, "ScaleY", MID(0.0, sc->Float, 4.0));
-			continue;
-		}
-		if (!Prop.ICmp("Translation"))
-		{
-			SetClassFieldInt(Class, "Translation",
-				R_ParseDecorateTranslation(sc,
-				GameFilter & GAME_Strife ? 7 : 3));
-			continue;
-		}
-		if (!Prop.ICmp("BloodColor"))
-		{
-			vuint32 Col;
-			if (sc->CheckNumber())
-			{
-				int r = MID(0, sc->Number, 255);
-				sc->Check(",");
-				sc->ExpectNumber();
-				int g = MID(0, sc->Number, 255);
-				sc->Check(",");
-				sc->ExpectNumber();
-				int b = MID(0, sc->Number, 255);
-				Col = 0xff000000 | (r << 16) | (g << 8) | b;
-			}
-			else
-			{
-				sc->ExpectString();
-				Col = M_ParseColour(sc->String);
-			}
-			SetClassFieldInt(Class, "BloodColour", Col);
-			SetClassFieldInt(Class, "BloodTranslation",
-				R_GetBloodTranslation(Col));
-			continue;
-		}
-		if (!Prop.ICmp("BloodType"))
-		{
-			sc->ExpectString();
-			AddClassFixup(Class, "BloodType", sc->String, ClassFixups);
-			if (sc->Check(","))
-			{
-				sc->ExpectString();
-			}
-			AddClassFixup(Class, "BloodSplatterType", sc->String, ClassFixups);
-			if (sc->Check(","))
-			{
-				sc->ExpectString();
-			}
-			AddClassFixup(Class, "AxeBloodType", sc->String, ClassFixups);
-			continue;
-		}
-		if (!Prop.ICmp("Decal"))
-		{
-			//FIXME
-			sc->ExpectString();
-			GCon->Logf("Property Decal in %s is not yet supported", Class->GetName());
-			continue;
-		}
-		if (!Prop.ICmp("StencilColor"))
-		{
-			//FIXME
-			if (sc->CheckNumber())
-			{
-				sc->ExpectNumber();
-				sc->ExpectNumber();
-			}
-			else
-			{
-				sc->ExpectString();
-			}
-			GCon->Logf("Property StencilColor in %s is not yet supported", Class->GetName());
-			continue;
-		}
-		//
-		//	Obituaries
-		//
-		if (!Prop.ICmp("Obituary"))
-		{
-			sc->ExpectString();
-			SetClassFieldStr(Class, "Obituary", sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("HitObituary"))
-		{
-			sc->ExpectString();
-			SetClassFieldStr(Class, "HitObituary", sc->String);
-			continue;
-		}
-		//
-		//	Attacks
-		//
-		if (!Prop.ICmp("MinMissileChance"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "MissileChance", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("DamageType"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "DamageType", *sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("MeleeThreshold"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "MissileMinRange", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("MeleeRange"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "MeleeRange", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("MaxTargetRange"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "MissileMaxRange", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("MeleeDamage"))
-		{
-			sc->ExpectNumber();
-			SetClassFieldInt(Class, "MeleeDamage", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("MeleeSound"))
-		{
-			sc->ExpectString();
-			SetClassFieldName(Class, "MeleeSound", *sc->String);
-			continue;
-		}
-		if (!Prop.ICmp("MissileHeight"))
-		{
-			sc->ExpectFloat();
-			SetClassFieldFloat(Class, "MissileHeight", sc->Float);
-			continue;
-		}
-		if (!Prop.ICmp("MissileType"))
-		{
-			sc->ExpectString();
-			AddClassFixup(Class, "MissileType", sc->String, ClassFixups);
-			continue;
-		}
-		if (!Prop.ICmp("ExplosionRadius"))
-		{
-			sc->ExpectNumber();
-			SetClassFieldInt(Class, "ExplosionRadius", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("ExplosionDamage"))
-		{
-			sc->ExpectNumber();
-			SetClassFieldInt(Class, "ExplosionDamage", sc->Number);
-			continue;
-		}
-		if (!Prop.ICmp("DontHurtShooter"))
-		{
-			SetClassFieldBool(Class, "bExplosionDontHurtSelf", true);
-			continue;
-		}
-		//
-		//	Flag combos
-		//
-		if (!Prop.ICmp("Monster"))
-		{
-			SetClassFieldBool(Class, "bShootable", true);
-			SetClassFieldBool(Class, "bCountKill", true);
-			SetClassFieldBool(Class, "bSolid", true);
-			SetClassFieldBool(Class, "bActivatePushWall", true);
-			SetClassFieldBool(Class, "bActivateMCross", true);
-			SetClassFieldBool(Class, "bPassMobj", true);
-			SetClassFieldBool(Class, "bMonster", true);
-			SetClassFieldBool(Class, "bCanUseWalls", true);
-			continue;
-		}
-		if (!Prop.ICmp("Projectile"))
-		{
-			SetClassFieldBool(Class, "bNoBlockmap", true);
-			SetClassFieldBool(Class, "bNoGravity", true);
-			SetClassFieldBool(Class, "bDropOff", true);
-			SetClassFieldBool(Class, "bMissile", true);
-			SetClassFieldBool(Class, "bActivateImpact", true);
-			SetClassFieldBool(Class, "bActivatePCross", true);
-			SetClassFieldBool(Class, "bNoTeleport", true);
-			if (GGameInfo->Flags & VGameInfo::GIF_DefaultBloodSplatter)
-			{
-				SetClassFieldBool(Class, "bBloodSplatter", true);
-			}
-			continue;
-		}
-		//
-		//	Special
-		//
-		if (!Prop.ICmp("ClearFlags"))
-		{
-			for (int j = 0; j < FlagList.Num(); j++)
-			{
-				if (FlagList[j].Class != ActorClass)
+				VPropDef& P = FlagList[j].Props[i];
+				if (PropName != P.Name)
 				{
 					continue;
 				}
-				for (int i = 0; i < FlagList[j].Flags.Num(); i++)
+				switch (P.Type)
 				{
-					switch (FlagList[j].Flags[i].Type)
-					{
-					case FLAG_Bool:
-						SetClassFieldBool(Class, FlagList[j].Flags[i].PropName, false);
-						break;
-					}
-				}
-			}
-			SetClassFieldByte(Class, "BounceType", BOUNCE_None);
-			SetClassFieldBool(Class, "bColideWithThings", true);
-			SetClassFieldBool(Class, "bColideWithWorld", true);
-			SetClassFieldBool(Class, "bPickUp", false);
-			continue;
-		}
-		if (!Prop.ICmp("DropItem"))
-		{
-			if (!DropItemsDefined)
-			{
-				GetClassDropItems(Class).Clear();
-				DropItemsDefined = true;
-			}
-			sc->ExpectString();
-			VDropItemInfo DI;
-			DI.TypeName = *sc->String;
-			DI.Type = NULL;
-			DI.Amount = 0;
-			DI.Chance = 1.0;
-			bool HaveChance = false;
-			if (sc->Check(","))
-			{
-				sc->ExpectNumber();
-				HaveChance = true;
-			}
-			else
-			{
-				HaveChance = sc->CheckNumber();
-			}
-			if (HaveChance)
-			{
-				DI.Chance = float(sc->Number) / 255.0;
-				if (sc->Check(","))
-				{
-					sc->ExpectNumber();
-					DI.Amount = sc->Number;
-				}
-				else if (sc->CheckNumber())
-				{
-					DI.Amount = sc->Number;
-				}
-			}
-			GetClassDropItems(Class).Insert(0, DI);
-			continue;
-		}
-		if (!Prop.ICmp("States"))
-		{
-			if (!ParseStates(sc, Class, States))
-			{
-				return;
-			}
-			continue;
-		}
-		if (!Prop.ICmp("skip_super"))
-		{
-			//	Preserve items that should not be copied
-			TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);
-			TArray<VPainChanceInfo> PainChances = GetClassPainChances(Class);
-			//	Copy default properties.
-			ActorClass->CopyObject(ActorClass->Defaults, Class->Defaults);
-			//	Copy state labels
-			Class->StateLabels = ActorClass->StateLabels;
-			Class->ClassFlags |= CLASS_SkipSuperStateLabels;
-			//	Drop items are reset back to the list of the parent class
-			GetClassDropItems(Class) = GetClassDropItems(Class->ParentClass);
-			//	Restore items that should not be copied
-			GetClassDamageFactors(Class) = DamageFactors;
-			GetClassPainChances(Class) = PainChances;
-			continue;
-		}
-		if (!Prop.ICmp("Spawn"))
-		{
-			ParseParentState(sc, Class, "Spawn");
-			continue;
-		}
-		if (!Prop.ICmp("See"))
-		{
-			ParseParentState(sc, Class, "See");
-			continue;
-		}
-		if (!Prop.ICmp("Melee"))
-		{
-			ParseParentState(sc, Class, "Melee");
-			continue;
-		}
-		if (!Prop.ICmp("Missile"))
-		{
-			ParseParentState(sc, Class, "Missile");
-			continue;
-		}
-		if (!Prop.ICmp("Pain"))
-		{
-			ParseParentState(sc, Class, "Pain");
-			continue;
-		}
-		if (!Prop.ICmp("Death"))
-		{
-			ParseParentState(sc, Class, "Death");
-			continue;
-		}
-		if (!Prop.ICmp("XDeath"))
-		{
-			ParseParentState(sc, Class, "XDeath");
-			continue;
-		}
-		if (!Prop.ICmp("Burn"))
-		{
-			ParseParentState(sc, Class, "Burn");
-			continue;
-		}
-		if (!Prop.ICmp("Ice"))
-		{
-			ParseParentState(sc, Class, "Ice");
-			continue;
-		}
-		if (!Prop.ICmp("Disintegrate"))
-		{
-			ParseParentState(sc, Class, "Disintegrate");
-			continue;
-		}
-		if (!Prop.ICmp("Raise"))
-		{
-			ParseParentState(sc, Class, "Raise");
-			continue;
-		}
-		if (!Prop.ICmp("Crash"))
-		{
-			ParseParentState(sc, Class, "Crash");
-			continue;
-		}
-		if (!Prop.ICmp("Wound"))
-		{
-			ParseParentState(sc, Class, "Wound");
-			continue;
-		}
-		if (!Prop.ICmp("Crush"))
-		{
-			ParseParentState(sc, Class, "Crush");
-			continue;
-		}
-		if (!Prop.ICmp("Heal"))
-		{
-			ParseParentState(sc, Class, "Heal");
-			continue;
-		}
-		//
-		//	Not documented
-		//
-		if (!Prop.ICmp("Args"))
-		{
-			for (int i = 0; i < 5; i++)
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "Args", sc->Number, i);
-				if (i < 4 && !sc->Check(","))
-				{
+				case PROP_Int:
+					sc->ExpectNumberWithSign();
+					SetClassFieldInt(Class, P.PropName, sc->Number);
 					break;
-				}
-			}
-			SetClassFieldBool(Class, "bArgsDefined", true);
-			continue;
-		}
-
-		//
-		//	Inventory class properties.
-		//
-		if (Class->IsChildOf(InventoryClass))
-		{
-			if (!Prop.ICmp("Inventory.Amount"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "Amount", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.DefMaxAmount"))
-			{
-				SetClassFieldInt(Class, "MaxAmount", -2);
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.MaxAmount"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "MaxAmount", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.Icon"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "IconName", *sc->String.ToLower());
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.PickupMessage"))
-			{
-				sc->ExpectString();
-				VStr Msg = sc->String;
-				int Filter = 0;
-				if (!Msg.ICmp("Doom"))
-				{
-					Filter = GAME_Doom;
-				}
-				else if (!Msg.ICmp("Heretic"))
-				{
-					Filter = GAME_Heretic;
-				}
-				else if (!Msg.ICmp("Hexen"))
-				{
-					Filter = GAME_Hexen;
-				}
-				else if (!Msg.ICmp("Raven"))
-				{
-					Filter = GAME_Raven;
-				}
-				else if (!Msg.ICmp("Strife"))
-				{
-					Filter = GAME_Strife;
-				}
-				if (Filter && sc->Check(","))
+				case PROP_IntConst:
+					SetClassFieldInt(Class, P.PropName, P.IConst);
+					break;
+				case PROP_IntUnsupported:
+					//FIXME
+					sc->ExpectNumber();
+					GCon->Logf("Property %s in %s is not yet supported", *Prop, Class->GetName());
+					break;
+				case PROP_BitIndex:
+					sc->ExpectNumber();
+					SetClassFieldInt(Class, P.PropName, 1 << (sc->Number - 1));
+					break;
+				case PROP_Float:
+					sc->ExpectFloatWithSign();
+					SetClassFieldFloat(Class, P.PropName, sc->Float);
+					break;
+				case PROP_Speed:
+					sc->ExpectFloatWithSign();
+					SetClassFieldFloat(Class, P.PropName, sc->Float * 35.0);
+					break;
+				case PROP_Tics:
+					sc->ExpectNumberWithSign();
+					SetClassFieldFloat(Class, P.PropName, sc->Number / 35.0);
+					break;
+				case PROP_Percent:
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, P.PropName, MID(0, sc->Float, 100) / 100.0);
+					break;
+				case PROP_FloatClamped:
+					sc->ExpectFloatWithSign();
+					SetClassFieldFloat(Class, P.PropName, MID(P.FMin, sc->Float, P.FMax));
+					break;
+				case PROP_FloatClamped2:
+					sc->ExpectFloatWithSign();
+					SetClassFieldFloat(Class, P.PropName, MID(P.FMin, sc->Float, P.FMax));
+					SetClassFieldFloat(Class, P.Prop2Name, MID(P.FMin, sc->Float, P.FMax));
+					break;
+				case PROP_FloatOpt2:
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, P.PropName, sc->Float);
+					SetClassFieldFloat(Class, P.Prop2Name, sc->Float);
+					if (sc->Check(","))
+					{
+						sc->ExpectFloat();
+						SetClassFieldFloat(Class, P.Prop2Name, sc->Float);
+					}
+					else if (sc->CheckFloat())
+					{
+						SetClassFieldFloat(Class, P.Prop2Name, sc->Float);
+					}
+					break;
+				case PROP_Name:
+					sc->ExpectString();
+					SetClassFieldName(Class, P.PropName, *sc->String);
+					break;
+				case PROP_NameLower:
+					sc->ExpectString();
+					SetClassFieldName(Class, P.PropName, *sc->String.ToLower());
+					break;
+				case PROP_Str:
+					sc->ExpectString();
+					SetClassFieldStr(Class, P.PropName, sc->String);
+					break;
+				case PROP_StrUnsupported:
+					//FIXME
+					sc->ExpectString();
+					GCon->Logf("Property %s in %s is not yet supported", *Prop, Class->GetName());
+					break;
+				case PROP_Class:
+					sc->ExpectString();
+					AddClassFixup(Class, P.PropName, P.CPrefix + sc->String, ClassFixups);
+					break;
+				case PROP_BoolConst:
+					SetClassFieldBool(Class, P.PropName, P.IConst);
+					break;
+				case PROP_State:
+					ParseParentState(sc, Class, *P.PropName);
+					break;
+				case PROP_Game:
+					if (sc->Check("Doom"))
+					{
+						GameFilter |= GAME_Doom;
+					}
+					else if (sc->Check("Heretic"))
+					{
+						GameFilter |= GAME_Heretic;
+					}
+					else if (sc->Check("Hexen"))
+					{
+						GameFilter |= GAME_Hexen;
+					}
+					else if (sc->Check("Strife"))
+					{
+						GameFilter |= GAME_Strife;
+					}
+					else if (sc->Check("Raven"))
+					{
+						GameFilter |= GAME_Raven;
+					}
+					else if (sc->Check("Any"))
+					{
+						GameFilter |= GAME_Any;
+					}
+					else if (GameFilter)
+					{
+						sc->Error("Unknown game filter");
+					}
+					break;
+				case PROP_SpawnId:
+					sc->ExpectNumber();
+					SpawnNum = sc->Number;
+					break;
+				case PROP_ConversationId:
+					sc->ExpectNumber();
+					SetClassFieldInt(Class, "ConversationID", sc->Number);
+					if (sc->Check(","))
+					{
+						sc->ExpectNumberWithSign();
+						sc->Expect(",");
+						sc->ExpectNumberWithSign();
+					}
+					break;
+				case PROP_PainChance:
+					if (sc->CheckNumber())
+					{
+						SetClassFieldFloat(Class, "PainChance", float(sc->Number) / 256.0);
+					}
+					else
+					{
+						sc->ExpectString();
+						VName DamageType = sc->String.ICmp("Normal") ? NAME_None :
+							VName(*sc->String);
+						sc->Expect(",");
+						sc->ExpectNumber();
+		
+						//	Check pain chances array for replacements.
+						TArray<VPainChanceInfo> PainChances = GetClassPainChances(Class);
+						VPainChanceInfo* PC = NULL;
+						for (int i = 0; i < PainChances.Num(); i++)
+						{
+							if (PainChances[i].DamageType == DamageType)
+							{
+								PC = &PainChances[i];
+								break;
+							}
+						}
+						if (!PC)
+						{
+							PC = &PainChances.Alloc();
+							PC->DamageType = DamageType;
+						}
+						PC->Chance = float(sc->Number) / 256.0;
+					}
+					break;
+				case PROP_DamageFactor:
 				{
 					sc->ExpectString();
-					if (GGameInfo->GameFilterFlag & Filter)
+					VName DamageType = !sc->String.ICmp("Normal") ? NAME_None :
+						VName(*sc->String);
+					sc->Expect(",");
+					sc->ExpectFloat();
+		
+					//	Check damage factors array for replacements.
+					TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);
+					VDamageFactor* DF = NULL;
+					for (int i = 0; i < DamageFactors.Num(); i++)
 					{
-						SetClassFieldStr(Class, "PickupMessage", sc->String);
+						if (DamageFactors[i].DamageType == DamageType)
+						{
+							DF = &DamageFactors[i];
+							break;
+						}
 					}
+					if (!DF)
+					{
+						DF = &DamageFactors.Alloc();
+						DF->DamageType = DamageType;
+					}
+					DF->Factor = sc->Float;
+					break;
 				}
-				else
+				case PROP_MissileDamage:
+					if (sc->Check("("))
+					{
+						VExpression* Expr = ParseExpression(sc);
+						if (!Expr)
+						{
+							ParseError(sc->GetLoc(), "Damage expression expected");
+						}
+						else
+						{
+							VMethod* M = new VMethod("GetMissileDamage", Class, sc->GetLoc());
+							M->ReturnTypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
+							M->ReturnType = TYPE_Int;
+							M->NumParams = 2;
+							M->Params[0].Name = "Mask";
+							M->Params[0].Loc = sc->GetLoc();
+							M->Params[0].TypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
+							M->Params[1].Name = "Add";
+							M->Params[1].Loc = sc->GetLoc();
+							M->Params[1].TypeExpr = new VTypeExpr(TYPE_Int, sc->GetLoc());
+							M->Statement = new VReturn(Expr, sc->GetLoc());
+							Class->AddMethod(M);
+							M->Define();
+						}
+						sc->Expect(")");
+					}
+					else
+					{
+						sc->ExpectNumber();
+						SetClassFieldInt(Class, "MissileDamage", sc->Number);
+					}
+					break;
+				case PROP_VSpeed:
 				{
-					SetClassFieldStr(Class, "PickupMessage", Msg);
+					sc->ExpectFloatWithSign();
+					TVec Val = GetClassFieldVec(Class, "Velocity");
+					Val.z = sc->Float * 35.0;
+					SetClassFieldVec(Class, "Velocity", Val);
+					break;
 				}
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.PickupSound"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "PickupSound", *sc->String);
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.PickupFlash"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "PickupFlashType", *sc->String, ClassFixups);
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.UseSound"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "UseSound", *sc->String);
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.RespawnTics"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldFloat(Class, "RespawnTime", sc->Number / 35.0);
-				continue;
-			}
-			if (!Prop.ICmp("Inventory.GiveQuest"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "GiveQuestNum", sc->Number);
-				continue;
-			}
-		}
-
-		//
-		//	Ammo class properties.
-		//
-		if (Class->IsChildOf(AmmoClass))
-		{
-			if (!Prop.ICmp("Ammo.BackpackAmount"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "BackpackAmount", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Ammo.BackpackMaxAmount"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "BackpackMaxAmount", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Ammo.DropAmount"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "DropAmount", sc->Number);
-				continue;
-			}
-		}
-
-		//
-		//	Armor class properties.
-		//
-		if (Class->IsChildOf(BasicArmorPickupClass) || Class->IsChildOf(BasicArmorBonusClass))
-		{
-			if (!Prop.ICmp("Armor.SaveAmount"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "SaveAmount", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Armor.SavePercent"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "SavePercent", MID(0, sc->Float, 100) / 100.0);
-				continue;
-			}
-		}
-		if (Class->IsChildOf(BasicArmorBonusClass))
-		{
-			if (!Prop.ICmp("Armor.MaxSaveAmount"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "MaxSaveAmount", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Armor.MaxBonus"))
-			{
-				//FIXME
-				sc->ExpectNumber();
-				GCon->Logf("Property Armor.MaxBonus in %s is not yet supported", Class->GetName());
-				continue;
-			}
-			if (!Prop.ICmp("Armor.MaxBonusMax"))
-			{
-				//FIXME
-				sc->ExpectNumber();
-				GCon->Logf("Property Armor.MaxBonusMax in %s is not yet supported", Class->GetName());
-				continue;
-			}
-		}
-
-		//
-		//	Health class properties.
-		//
-		if (Class->IsChildOf(HealthClass))
-		{
-			if (!Prop.ICmp("Health.LowMessage"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "LowHealth", sc->Number);
-				sc->Expect(",");
-				sc->ExpectString();
-				SetClassFieldStr(Class, "LowHealthMessage", sc->String);
-				continue;
-			}
-		}
-
-		//
-		//	PowerupGiver class properties.
-		//
-		if (Class->IsChildOf(PowerupGiverClass))
-		{
-			if (!Prop.ICmp("Powerup.Color"))
-			{
-				if (sc->Check("InverseMap"))
+				case PROP_RenderStyle:
 				{
-					SetClassFieldInt(Class, "BlendColour", 0x00123456);
+					int RenderStyle = 0;
+					if (sc->Check("None"))
+					{
+						RenderStyle = STYLE_None;
+					}
+					else if (sc->Check("Normal"))
+					{
+						RenderStyle = STYLE_Normal;
+					}
+					else if (sc->Check("Fuzzy"))
+					{
+						RenderStyle = STYLE_Fuzzy;
+					}
+					else if (sc->Check("SoulTrans"))
+					{
+						RenderStyle = STYLE_SoulTrans;
+					}
+					else if (sc->Check("OptFuzzy"))
+					{
+						RenderStyle = STYLE_OptFuzzy;
+					}
+					else if (sc->Check("Translucent"))
+					{
+						RenderStyle = STYLE_Translucent;
+					}
+					else if (sc->Check("Add"))
+					{
+						RenderStyle = STYLE_Add;
+					}
+					else if (sc->Check("Stencil"))
+					{
+						//FIXME
+						GCon->Logf("Render style Stencil in %s is not yet supported", Class->GetName());
+					}
+					else
+					{
+						sc->Error("Bad render style");
+					}
+					SetClassFieldByte(Class, P.PropName, RenderStyle);
+					break;
 				}
-				else if (sc->Check("GoldMap"))
-				{
-					SetClassFieldInt(Class, "BlendColour", 0x00123457);
-				}
-				else
+				case PROP_Translation:
+					SetClassFieldInt(Class, P.PropName,
+						R_ParseDecorateTranslation(sc,
+						GameFilter & GAME_Strife ? 7 : 3));
+					break;
+				case PROP_BloodColour:
 				{
 					vuint32 Col;
 					if (sc->CheckNumber())
@@ -2994,386 +2674,333 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						sc->Check(",");
 						sc->ExpectNumber();
 						int b = MID(0, sc->Number, 255);
-						Col = (r << 16) | (g << 8) | b;
+						Col = 0xff000000 | (r << 16) | (g << 8) | b;
 					}
 					else
 					{
 						sc->ExpectString();
 						Col = M_ParseColour(sc->String);
 					}
-					sc->Check(",");
-					sc->ExpectFloat();
-					int a = MID(0, (int)(sc->Float * 255), 255);
-					Col |= a << 24;
-					SetClassFieldInt(Class, "BlendColour", Col);
+					SetClassFieldInt(Class, "BloodColour", Col);
+					SetClassFieldInt(Class, "BloodTranslation",
+						R_GetBloodTranslation(Col));
+					break;
 				}
-				continue;
-			}
-			if (!Prop.ICmp("Powerup.Duration"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldFloat(Class, "EffectTime",
-					(float)sc->Number / 35.0);
-				continue;
-			}
-			if (!Prop.ICmp("Powerup.Type"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "PowerupType", VStr("Power") + sc->String,
-					ClassFixups);
-				continue;
-			}
-			if (!Prop.ICmp("Powerup.Mode"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "Mode", *sc->String);
-				continue;
-			}
-		}
-
-		//
-		//	PuzzleItem class properties.
-		//
-		if (Class->IsChildOf(PuzzleItemClass))
-		{
-			if (!Prop.ICmp("PuzzleItem.Number"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "PuzzleItemNumber", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("PuzzleItem.FailMessage"))
-			{
-				sc->ExpectString();
-				SetClassFieldStr(Class, "FailMessage", sc->String);
-				continue;
-			}
-		}
-
-		//
-		//	Weapon class properties.
-		//
-		if (Class->IsChildOf(WeaponClass))
-		{
-			if (!Prop.ICmp("Weapon.AmmoGive") || !Prop.ICmp("Weapon.AmmoGive1"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "AmmoGive1", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.AmmoGive2"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "AmmoGive2", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.AmmoType") || !Prop.ICmp("Weapon.AmmoType1"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "AmmoType1", sc->String, ClassFixups);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.AmmoType2"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "AmmoType2", sc->String, ClassFixups);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.AmmoUse") || !Prop.ICmp("Weapon.AmmoUse1"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "AmmoUse1", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.AmmoUse2"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "AmmoUse2", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.Kickback"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "Kickback", sc->Float);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.ReadySound"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "ReadySound", *sc->String);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.SelectionOrder"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "SelectionOrder", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.SisterWeapon"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "SisterWeaponType", sc->String, ClassFixups);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.UpSound"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "UpSound", *sc->String);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.YAdjust"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "PSpriteSY", sc->Float);
-				continue;
-			}
-			//
-			//	Vavoom specific
-			//
-			if (!Prop.ICmp("Weapon.BotCombatDist"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "BotCombatDist", sc->Float);
-				continue;
-			}
-			if (!Prop.ICmp("Weapon.PlayerModelVersion"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "PlayerModelVersion", sc->Number);
-				continue;
-			}
-		}
-
-		//
-		//	WeaponPiece class properties.
-		//
-		if (Class->IsChildOf(WeaponPieceClass))
-		{
-			if (!Prop.ICmp("WeaponPiece.Number"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "PieceValue", 1 << (sc->Number - 1));
-				continue;
-			}
-			if (!Prop.ICmp("WeaponPiece.Weapon"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "WeaponType", sc->String, ClassFixups);
-				continue;
-			}
-		}
-
-		//
-		//	PlayerPawn class properties.
-		//
-		if (Class->IsChildOf(PlayerPawnClass))
-		{
-			if (!Prop.ICmp("Player.AttackZOffset"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "AttackZOffset", sc->Float);
-				continue;
-			}
-			if (!Prop.ICmp("Player.ColorRange"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "TranslStart", sc->Number);
-				sc->Check(",");
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "TranslEnd", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Player.CrouchSprite"))
-			{
-				//FIXME
-				sc->ExpectString();
-				GCon->Logf("Property Player.CrouchSprite in %s is not yet supported", Class->GetName());
-				continue;
-			}
-			if (!Prop.ICmp("Player.DamageScreenColor"))
-			{
-				//	First number is ignored. Is it a bug?
-				int Col;
-				if (sc->CheckNumber())
+				case PROP_BloodType:
+					sc->ExpectString();
+					AddClassFixup(Class, "BloodType", sc->String, ClassFixups);
+					if (sc->Check(","))
+					{
+						sc->ExpectString();
+					}
+					AddClassFixup(Class, "BloodSplatterType", sc->String, ClassFixups);
+					if (sc->Check(","))
+					{
+						sc->ExpectString();
+					}
+					AddClassFixup(Class, "AxeBloodType", sc->String, ClassFixups);
+					break;
+				case PROP_StencilColour:
+					//FIXME
+					if (sc->CheckNumber())
+					{
+						sc->ExpectNumber();
+						sc->ExpectNumber();
+					}
+					else
+					{
+						sc->ExpectString();
+					}
+					GCon->Logf("Property StencilColor in %s is not yet supported", Class->GetName());
+					break;
+				case PROP_Monster:
+					SetClassFieldBool(Class, "bShootable", true);
+					SetClassFieldBool(Class, "bCountKill", true);
+					SetClassFieldBool(Class, "bSolid", true);
+					SetClassFieldBool(Class, "bActivatePushWall", true);
+					SetClassFieldBool(Class, "bActivateMCross", true);
+					SetClassFieldBool(Class, "bPassMobj", true);
+					SetClassFieldBool(Class, "bMonster", true);
+					SetClassFieldBool(Class, "bCanUseWalls", true);
+					break;
+				case PROP_Projectile:
+					SetClassFieldBool(Class, "bNoBlockmap", true);
+					SetClassFieldBool(Class, "bNoGravity", true);
+					SetClassFieldBool(Class, "bDropOff", true);
+					SetClassFieldBool(Class, "bMissile", true);
+					SetClassFieldBool(Class, "bActivateImpact", true);
+					SetClassFieldBool(Class, "bActivatePCross", true);
+					SetClassFieldBool(Class, "bNoTeleport", true);
+					if (GGameInfo->Flags & VGameInfo::GIF_DefaultBloodSplatter)
+					{
+						SetClassFieldBool(Class, "bBloodSplatter", true);
+					}
+					break;
+				case PROP_ClearFlags:
+					for (int j = 0; j < FlagList.Num(); j++)
+					{
+						if (FlagList[j].Class != ActorClass)
+						{
+							continue;
+						}
+						for (int i = 0; i < FlagList[j].Flags.Num(); i++)
+						{
+							switch (FlagList[j].Flags[i].Type)
+							{
+							case FLAG_Bool:
+								SetClassFieldBool(Class, FlagList[j].Flags[i].PropName, false);
+								break;
+							}
+						}
+					}
+					SetClassFieldByte(Class, "BounceType", BOUNCE_None);
+					SetClassFieldBool(Class, "bColideWithThings", true);
+					SetClassFieldBool(Class, "bColideWithWorld", true);
+					SetClassFieldBool(Class, "bPickUp", false);
+					break;
+				case PROP_DropItem:
+				{
+					if (!DropItemsDefined)
+					{
+						GetClassDropItems(Class).Clear();
+						DropItemsDefined = true;
+					}
+					sc->ExpectString();
+					VDropItemInfo DI;
+					DI.TypeName = *sc->String;
+					DI.Type = NULL;
+					DI.Amount = 0;
+					DI.Chance = 1.0;
+					bool HaveChance = false;
+					if (sc->Check(","))
+					{
+						sc->ExpectNumber();
+						HaveChance = true;
+					}
+					else
+					{
+						HaveChance = sc->CheckNumber();
+					}
+					if (HaveChance)
+					{
+						DI.Chance = float(sc->Number) / 255.0;
+						if (sc->Check(","))
+						{
+							sc->ExpectNumber();
+							DI.Amount = sc->Number;
+						}
+						else if (sc->CheckNumber())
+						{
+							DI.Amount = sc->Number;
+						}
+					}
+					GetClassDropItems(Class).Insert(0, DI);
+					break;
+				}
+				case PROP_States:
+					if (!ParseStates(sc, Class, States))
+					{
+						return;
+					}
+					break;
+				case PROP_SkipSuper:
+				{
+					//	Preserve items that should not be copied
+					TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);
+					TArray<VPainChanceInfo> PainChances = GetClassPainChances(Class);
+					//	Copy default properties.
+					ActorClass->CopyObject(ActorClass->Defaults, Class->Defaults);
+					//	Copy state labels
+					Class->StateLabels = ActorClass->StateLabels;
+					Class->ClassFlags |= CLASS_SkipSuperStateLabels;
+					//	Drop items are reset back to the list of the parent class
+					GetClassDropItems(Class) = GetClassDropItems(Class->ParentClass);
+					//	Restore items that should not be copied
+					GetClassDamageFactors(Class) = DamageFactors;
+					GetClassPainChances(Class) = PainChances;
+					break;
+				}
+				case PROP_Args:
+					for (int i = 0; i < 5; i++)
+					{
+						sc->ExpectNumber();
+						SetClassFieldInt(Class, "Args", sc->Number, i);
+						if (i < 4 && !sc->Check(","))
+						{
+							break;
+						}
+					}
+					SetClassFieldBool(Class, "bArgsDefined", true);
+					break;
+				case PROP_PickupMessage:
 				{
 					sc->ExpectString();
-					int r = MID(sc->Number, 0, 255);
-					sc->Check(",");
-					sc->ExpectString();
-					int g = MID(sc->Number, 0, 255);
-					sc->Check(",");
-					sc->ExpectString();
-					int b = MID(sc->Number, 0, 255);
-					Col = 0xff000000 | (r << 16) | (g << 8) | b;
+					VStr Msg = sc->String;
+					int Filter = 0;
+					if (!Msg.ICmp("Doom"))
+					{
+						Filter = GAME_Doom;
+					}
+					else if (!Msg.ICmp("Heretic"))
+					{
+						Filter = GAME_Heretic;
+					}
+					else if (!Msg.ICmp("Hexen"))
+					{
+						Filter = GAME_Hexen;
+					}
+					else if (!Msg.ICmp("Raven"))
+					{
+						Filter = GAME_Raven;
+					}
+					else if (!Msg.ICmp("Strife"))
+					{
+						Filter = GAME_Strife;
+					}
+					if (Filter && sc->Check(","))
+					{
+						sc->ExpectString();
+						if (GGameInfo->GameFilterFlag & Filter)
+						{
+							SetClassFieldStr(Class, "PickupMessage", sc->String);
+						}
+					}
+					else
+					{
+						SetClassFieldStr(Class, "PickupMessage", Msg);
+					}
+					break;
 				}
-				else
-				{
-					sc->ExpectString();
-					Col = M_ParseColour(sc->String);
-				}
-				SetClassFieldInt(Class, "DamageScreenColour", Col);
-				continue;
-			}
-			if (!Prop.ICmp("Player.DisplayName"))
-			{
-				sc->ExpectString();
-				SetClassFieldStr(Class, "DisplayName", sc->String);
-				continue;
-			}
-			if (!Prop.ICmp("Player.ForwardMove"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "ForwardMove1", sc->Float);
-				SetClassFieldFloat(Class, "ForwardMove2", sc->Float);
-				if (sc->Check(","))
-				{
-					sc->ExpectFloat();
-					SetClassFieldFloat(Class, "ForwardMove2", sc->Float);
-				}
-				else if (sc->CheckFloat())
-				{
-					SetClassFieldFloat(Class, "ForwardMove2", sc->Float);
-				}
-				continue;
-			}
-			if (!Prop.ICmp("Player.HealRadiusType"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "HealRadiusType", *sc->String);
-				continue;
-			}
-			if (!Prop.ICmp("Player.HexenArmor"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 0);
-				sc->Expect(",");
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 1);
-				sc->Expect(",");
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 2);
-				sc->Expect(",");
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 3);
-				sc->Expect(",");
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "HexenArmor", sc->Float, 4);
-				continue;
-			}
-			if (!Prop.ICmp("Player.InvulnerabilityMode"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "InvulnerabilityMode", *sc->String);
-				continue;
-			}
-			if (!Prop.ICmp("Player.JumpZ"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "JumpVelZ", sc->Float * 35.0);
-				continue;
-			}
-			if (!Prop.ICmp("Player.MaxHealth"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "MaxHealth", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Player.RunHealth"))
-			{
-				sc->ExpectNumber();
-				SetClassFieldInt(Class, "RunHealth", sc->Number);
-				continue;
-			}
-			if (!Prop.ICmp("Player.ScoreIcon"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "ScoreIcon", *sc->String.ToLower());
-				continue;
-			}
-			if (!Prop.ICmp("Player.SideMove"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "SideMove1", sc->Float);
-				SetClassFieldFloat(Class, "SideMove2", sc->Float);
-				if (sc->Check(","))
-				{
-					sc->ExpectFloat();
-					SetClassFieldFloat(Class, "SideMove2", sc->Float);
-				}
-				else if (sc->CheckFloat())
-				{
-					SetClassFieldFloat(Class, "SideMove2", sc->Float);
-				}
-				continue;
-			}
-			if (!Prop.ICmp("Player.SoundClass"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "SoundClass", *sc->String.ToLower());
-				continue;
-			}
-			if (!Prop.ICmp("Player.SpawnClass"))
-			{
-				sc->ExpectString();
-				SetClassFieldName(Class, "SpawnClass", *sc->String.ToLower());
-				continue;
-			}
-			if (!Prop.ICmp("Player.StartItem"))
-			{
-				if (!DropItemsDefined)
-				{
-					GetClassDropItems(Class).Clear();
-					DropItemsDefined = true;
-				}
-				sc->ExpectString();
-				VDropItemInfo DI;
-				DI.TypeName = *sc->String;
-				DI.Type = NULL;
-				DI.Amount = 0;
-				DI.Chance = 1.0;
-				if (sc->Check(","))
-				{
+				case PROP_LowMessage:
 					sc->ExpectNumber();
-					DI.Amount = sc->Number;
-				}
-				else if (sc->CheckNumber())
+					SetClassFieldInt(Class, "LowHealth", sc->Number);
+					sc->Expect(",");
+					sc->ExpectString();
+					SetClassFieldStr(Class, "LowHealthMessage", sc->String);
+					break;
+				case PROP_PowerupColour:
+					if (sc->Check("InverseMap"))
+					{
+						SetClassFieldInt(Class, "BlendColour", 0x00123456);
+					}
+					else if (sc->Check("GoldMap"))
+					{
+						SetClassFieldInt(Class, "BlendColour", 0x00123457);
+					}
+					else if (sc->Check("RedMap"))
+					{
+						SetClassFieldInt(Class, "BlendColour", 0x00123458);
+					}
+					else if (sc->Check("GreenMap"))
+					{
+						SetClassFieldInt(Class, "BlendColour", 0x00123459);
+					}
+					else
+					{
+						vuint32 Col;
+						if (sc->CheckNumber())
+						{
+							int r = MID(0, sc->Number, 255);
+							sc->Check(",");
+							sc->ExpectNumber();
+							int g = MID(0, sc->Number, 255);
+							sc->Check(",");
+							sc->ExpectNumber();
+							int b = MID(0, sc->Number, 255);
+							Col = (r << 16) | (g << 8) | b;
+						}
+						else
+						{
+							sc->ExpectString();
+							Col = M_ParseColour(sc->String);
+						}
+						sc->Check(",");
+						sc->ExpectFloat();
+						int a = MID(0, (int)(sc->Float * 255), 255);
+						Col |= a << 24;
+						SetClassFieldInt(Class, "BlendColour", Col);
+					}
+					break;
+				case PROP_ColourRange:
+					sc->ExpectNumber();
+					SetClassFieldInt(Class, "TranslStart", sc->Number);
+					sc->Check(",");
+					sc->ExpectNumber();
+					SetClassFieldInt(Class, "TranslEnd", sc->Number);
+					break;
+				case PROP_DamageScreenColour:
 				{
-					DI.Amount = sc->Number;
+					//	First number is ignored. Is it a bug?
+					int Col;
+					if (sc->CheckNumber())
+					{
+						sc->ExpectNumber();
+						int r = MID(sc->Number, 0, 255);
+						sc->Check(",");
+						sc->ExpectNumber();
+						int g = MID(sc->Number, 0, 255);
+						sc->Check(",");
+						sc->ExpectNumber();
+						int b = MID(sc->Number, 0, 255);
+						Col = 0xff000000 | (r << 16) | (g << 8) | b;
+					}
+					else
+					{
+						sc->ExpectString();
+						Col = M_ParseColour(sc->String);
+					}
+					SetClassFieldInt(Class, "DamageScreenColour", Col);
+					break;
 				}
-				GetClassDropItems(Class).Insert(0, DI);
-				continue;
-			}
-			if (!Prop.ICmp("Player.ViewHeight"))
-			{
-				sc->ExpectFloat();
-				SetClassFieldFloat(Class, "ViewHeight", sc->Float);
-				continue;
-			}
-			if (!Prop.ICmp("Player.MorphWeapon"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "MorphWeapon", sc->String, ClassFixups);
-				continue;
+				case PROP_HexenArmor:
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 0);
+					sc->Expect(",");
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 1);
+					sc->Expect(",");
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 2);
+					sc->Expect(",");
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 3);
+					sc->Expect(",");
+					sc->ExpectFloat();
+					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 4);
+					break;
+				case PROP_StartItem:
+				{
+					if (!DropItemsDefined)
+					{
+						GetClassDropItems(Class).Clear();
+						DropItemsDefined = true;
+					}
+					sc->ExpectString();
+					VDropItemInfo DI;
+					DI.TypeName = *sc->String;
+					DI.Type = NULL;
+					DI.Amount = 0;
+					DI.Chance = 1.0;
+					if (sc->Check(","))
+					{
+						sc->ExpectNumber();
+						DI.Amount = sc->Number;
+					}
+					else if (sc->CheckNumber())
+					{
+						DI.Amount = sc->Number;
+					}
+					GetClassDropItems(Class).Insert(0, DI);
+					break;
+				}
+				}
+				FoundProp = true;
+				break;
 			}
 		}
-
-		//
-		//	MorphProjectile class properties.
-		//
-		if (Class->IsChildOf(MorphProjectileClass))
+		if (FoundProp)
 		{
-			if (!Prop.ICmp("MorphProjectile.MonsterClass"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "MonsterClass", sc->String, ClassFixups);
-				continue;
-			}
-			if (!Prop.ICmp("MorphProjectile.PlayerClass"))
-			{
-				sc->ExpectString();
-				AddClassFixup(Class, "PlayerClass", sc->String, ClassFixups);
-				continue;
-			}
+			continue;
 		}
 
 		sc->Error(va("Unknown property \"%s\"", *Prop));
@@ -4276,10 +3903,7 @@ void ReadLineSpecialInfos()
 void ProcessDecorateScripts()
 {
 	guard(ProcessDecorateScripts);
-	GCon->Logf(NAME_Init, "Processing DECORATE scripts");
-
-	DecPkg = new VPackage(NAME_decorate);
-
+	GCon->Logf(NAME_Init, "Parsing DECORATE definition files");
 	for (int Lump = W_IterateFile(-1, "vavoom_decorate_defs.xml"); Lump != -1;
 		Lump = W_IterateFile(Lump, "vavoom_decorate_defs.xml"))
 	{
@@ -4291,6 +3915,10 @@ void ProcessDecorateScripts()
 		ParseDecorateDef(*Doc);
 		delete Doc;
 	}
+
+	GCon->Logf(NAME_Init, "Processing DECORATE scripts");
+
+	DecPkg = new VPackage(NAME_decorate);
 
 	//	Find classes.
 	ActorClass = VClass::FindClass("Actor");
@@ -4334,6 +3962,8 @@ void ProcessDecorateScripts()
 	{
 		Sys_Error("Not all DECORATE class imports were defined");
 	}
+
+	GCon->Logf(NAME_Init, "Post-procesing");
 
 	//	Set class properties.
 	for (int i = 0; i < ClassFixups.Num(); i++)
@@ -4433,6 +4063,7 @@ void ShutdownDecorate()
 void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 {
 	guard(VEntity::SetDecorateFlag);
+	VName FlagName(*Flag.ToLower());
 	for (int j = 0; j < FlagList.Num(); j++)
 	{
 		if (!IsA(FlagList[j].Class))
@@ -4442,8 +4073,7 @@ void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 		const TArray<VFlagDef>& Lst = FlagList[j].Flags;
 		for (int i = 0; i < Lst.Num(); i++)
 		{
-			if (!Flag.ICmp(Lst[i].Name) ||
-				(Lst[i].AltName && !Flag.ICmp(Lst[i].AltName)))
+			if (FlagName == Lst[i].Name || FlagName == Lst[i].AltName)
 			{
 				switch (Lst[i].Type)
 				{

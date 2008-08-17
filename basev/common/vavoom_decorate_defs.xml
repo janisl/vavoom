@@ -1,6 +1,96 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <vavoom_decorate_defs>
 	<class name="Actor">
+		<!-- Map editing control -->
+		<prop_game name="Game" />
+		<prop_spawn_id name="SpawnID" />
+		<prop_conversation_id name="ConversationID" />
+		<prop_string name="Tag" property="StrifeName" />
+		<!-- Behaviour -->
+		<prop_int name="Health" property="Health" />
+		<prop_int name="GibHealth" property="GibsHealth" />
+		<prop_int name="WoundHealth" property="WoundHealth" />
+		<prop_int name="ReactionTime" property="ReactionCount" />
+		<prop_pain_chance name="PainChance" />
+		<prop_damage_factor name="DamageFactor" />
+		<prop_missile_damage name="Damage" />
+		<prop_int name="PoisonDamage" property="MissilePoisonDamage" />
+		<prop_float name="RadiusDamageFactor" property="RDFactor" />
+		<prop_speed name="Speed" property="Speed" />
+		<prop_vspeed name="VSpeed" />
+		<prop_speed name="FastSpeed" property="FastSpeed" />
+		<prop_speed name="FloatSpeed" property="FloatSpeed" />
+		<!-- Collision and physics -->
+		<prop_float name="Radius" property="Radius" />
+		<prop_float name="Height" property="Height" />
+		<prop_float name="DeathHeight" property="DeathHeight" />
+		<prop_float name="BurnHeight" property="BurnHeight" />
+		<prop_float name="CameraHeight" property="CameraHeight" />
+		<prop_float name="Gravity" property="Gravity" />
+		<prop_float name="Mass" property="Mass" />
+		<prop_float name="MaxStepHeight" property="MaxStepHeight" />
+		<prop_float name="MaxDropOffHeight" property="MaxDropoffHeight" />
+		<prop_float name="BounceFactor" property="BounceFactor" />
+		<prop_int name="BounceCount" property="BounceCount" />
+		<!-- Sound -->
+		<prop_name name="SeeSound" property="SightSound" />
+		<prop_name name="AttackSound" property="AttackSound" />
+		<prop_name name="PainSound" property="PainSound" />
+		<prop_name name="DeathSound" property="DeathSound" />
+		<prop_name name="ActiveSound" property="ActiveSound" />
+		<prop_name name="HowlSound" property="HowlSound" />
+		<!-- Rendering -->
+		<prop_render_style name="RenderStyle" property="RenderStyle" />
+		<prop_float_clamped name="Alpha" property="Alpha" min="0" max="1" />
+		<prop_float_clamped name="XScale" property="ScaleX" min="0" max="4" />
+		<prop_float_clamped name="YScale" property="ScaleY" min="0" max="4" />
+		<prop_float_clamped_2 name="Scale" property="ScaleX" property2="ScaleY" min="0" max="4" />
+		<prop_translation name="Translation" property="Translation" />
+		<prop_blood_colour name="BloodColor" />
+		<prop_blood_type name="BloodType" />
+		<prop_string_unsupported name="Decal" />
+		<prop_stencil_colour name="StencilColor" />
+		<!--  Obituaries -->
+		<prop_string name="Obituary" property="Obituary" />
+		<prop_string name="HitObituary" property="HitObituary" />
+		<!-- Attacks -->
+		<prop_float name="MinMissileChance" property="MissileChance" />
+		<prop_name name="DamageType" property="DamageType" />
+		<prop_float name="MeleeThreshold" property="MissileMinRange" />
+		<prop_float name="MeleeRange" property="MeleeRange" />
+		<prop_float name="MaxTargetRange" property="MissileMaxRange" />
+		<prop_int name="MeleeDamage" property="MeleeDamage" />
+		<prop_name name="MeleeSound" property="MeleeSound" />
+		<prop_float name="MissileHeight" property="MissileHeight" />
+		<prop_class name="MissileType" property="MissileType" />
+		<prop_int name="ExplosionRadius" property="ExplosionRadius" />
+		<prop_int name="ExplosionDamage" property="ExplosionDamage" />
+		<prop_bool_const name="DontHurtShooter" property="bExplosionDontHurtSelf" value="true" />
+		<!-- Flag combos -->
+		<prop_monster name="Monster" />
+		<prop_projectile name="Projectile" />
+		<!-- Special -->
+		<prop_clear_flags name="ClearFlags" />
+		<prop_drop_item name="DropItem" />
+		<prop_states name="States" />
+		<prop_skip_super name="skip_super" />
+		<prop_state name="Spawn" property="Spawn" />
+		<prop_state name="See" property="See" />
+		<prop_state name="Melee" property="Melee" />
+		<prop_state name="Missile" property="Missile" />
+		<prop_state name="Pain" property="Pain" />
+		<prop_state name="Death" property="Death" />
+		<prop_state name="XDeath" property="XDeath" />
+		<prop_state name="Burn" property="Burn" />
+		<prop_state name="Ice" property="Ice" />
+		<prop_state name="Disintegrate" property="Disintegrate" />
+		<prop_state name="Raise" property="Raise" />
+		<prop_state name="Crash" property="Crash" />
+		<prop_state name="Wound" property="Wound" />
+		<prop_state name="Crush" property="Crush" />
+		<prop_state name="Heal" property="Heal" />
+		<prop_args name="Args" />
+
 		<!-- Physics -->
 		<flag name="Solid" property="bSolid" />
 		<flag name="Shootable" property="bShootable" />
@@ -156,7 +246,19 @@
 		<flag name="DontRip" property="bDontRip" />
 		<flag name="PickUp" property="bPickUp" />
 	</class>
+
 	<class name="Inventory">
+		<prop_int name="Inventory.Amount" property="Amount" />
+		<prop_int_const name="Inventory.DefMaxAmount" property="MaxAmount" value="-2" />
+		<prop_int name="Inventory.MaxAmount" property="MaxAmount" />
+		<prop_name_lower name="Inventory.Icon" property="IconName" />
+		<prop_pickup_message name="Inventory.PickupMessage" />
+		<prop_name name="Inventory.PickupSound" property="PickupSound" />
+		<prop_class name="Inventory.PickupFlash" property="PickupFlashType" />
+		<prop_name name="Inventory.UseSound" property="UseSound" />
+		<prop_tics name="Inventory.RespawnTics" property="RespawnTime" />
+		<prop_int name="Inventory.GiveQuest" property="GiveQuestNum" />
+
 		<flag name="Quiet" property="bQuiet" />
 		<flag name="AutoActivate" property="bAutoActivate" />
 		<flag name="Undroppable" property="bUndroppable" />
@@ -171,7 +273,62 @@
 		<flag name="AdditiveTime" property="bAdditiveTime" />
 		<flag_class name="PickupFlash" property="PickupFlashType" true_value="PickupFlash" false_value="None" />
 	</class>
+
+	<class name="Ammo">
+		<prop_int name="Ammo.BackpackAmount" property="BackpackAmount" />
+		<prop_int name="Ammo.BackpackMaxAmount" property="BackpackMaxAmount" />
+		<prop_int name="Ammo.DropAmount" property="DropAmount" />
+	</class>
+
+	<class name="BasicArmorBonus">
+		<prop_int name="Armor.SaveAmount" property="SaveAmount" />
+		<prop_percent name="Armor.SavePercent" property="SavePercent" />
+		<prop_int name="Armor.MaxSaveAmount" property="MaxSaveAmount" />
+		<prop_int_unsupported name="Armor.MaxBonus" />
+		<prop_int_unsupported name="Armor.MaxBonusMax" />
+	</class>
+
+	<class name="BasicArmorPickup">
+		<prop_int name="Armor.SaveAmount" property="SaveAmount" />
+		<prop_percent name="Armor.SavePercent" property="SavePercent" />
+	</class>
+
+	<class name="Health">
+		<prop_low_message name="Health.LowMessage" />
+	</class>
+
+	<class name="PowerupGiver">
+		<prop_powerup_colour name="Powerup.Color" />
+		<prop_tics name="Powerup.Duration" property="EffectTime" />
+		<prop_class name="Powerup.Type" property="PowerupType" prefix="Power" />
+		<prop_name name="Powerup.Mode" property="Mode" />
+	</class>
+
+	<class name="PuzzleItem">
+		<prop_int name="PuzzleItem.Number" property="PuzzleItemNumber" />
+		<prop_string name="PuzzleItem.FailMessage" property="FailMessage" />
+	</class>
+
 	<class name="Weapon">
+		<prop_int name="Weapon.AmmoGive" property="AmmoGive1" />
+		<prop_int name="Weapon.AmmoGive1" property="AmmoGive1" />
+		<prop_int name="Weapon.AmmoGive2" property="AmmoGive2" />
+		<prop_class name="Weapon.AmmoType" property="AmmoType1" />
+		<prop_class name="Weapon.AmmoType1" property="AmmoType1" />
+		<prop_class name="Weapon.AmmoType2" property="AmmoType2" />
+		<prop_int name="Weapon.AmmoUse" property="AmmoUse1" />
+		<prop_int name="Weapon.AmmoUse1" property="AmmoUse1" />
+		<prop_int name="Weapon.AmmoUse2" property="AmmoUse2" />
+		<prop_float name="Weapon.Kickback" property="Kickback" />
+		<prop_name name="Weapon.ReadySound" property="ReadySound" />
+		<prop_int name="Weapon.SelectionOrder" property="SelectionOrder" />
+		<prop_class name="Weapon.SisterWeapon" property="SisterWeaponType" />
+		<prop_name name="Weapon.UpSound" property="UpSound" />
+		<prop_float name="Weapon.YAdjust" property="PSpriteSY" />
+		<!-- Vavoom specific -->
+		<prop_float name="Weapon.BotCombatDist" property="BotCombatDist" />
+		<prop_int name="Weapon.PlayerModelVersion" property="PlayerModelVersion" />
+
 		<flag name="NoAutoFire" property="bNoAutoFire" />
 		<flag name="ReadySndHalf" property="bReadySndHalf" />
 		<flag name="DontBob" property="bDontBob" />
@@ -188,5 +345,37 @@
 		<flag name="BFG" property="bBotBfg" />
 		<flag name="CheatNotWeapon" property="bCheatNotWeapon" />
 		<flag name="No_Auto_Switch" property="bNoAutoSwitch" />
+	</class>
+
+	<class name="WeaponPiece">
+		<prop_bit_index name="WeaponPiece.Number" property="PieceValue" />
+		<prop_class name="WeaponPiece.Weapon" property="WeaponType" />
+	</class>
+
+	<class name="PlayerPawn">
+		<prop_float name="Player.AttackZOffset" property="AttackZOffset" />
+		<prop_colour_range name="Player.ColorRange" />
+		<prop_string_unsupported name="Player.CrouchSprite" />
+		<prop_damage_screen_colour name="Player.DamageScreenColor" />
+		<prop_string name="Player.DisplayName" property="DisplayName" />
+		<prop_float_optional_2 name="Player.ForwardMove" property="ForwardMove1" property2="ForwardMove2" />
+		<prop_name name="Player.HealRadiusType" property="HealRadiusType" />
+		<prop_hexen_armor name="Player.HexenArmor" />
+		<prop_name name="Player.InvulnerabilityMode" property="InvulnerabilityMode" />
+		<prop_speed name="Player.JumpZ" property="JumpVelZ" />
+		<prop_int name="Player.MaxHealth" property="MaxHealth" />
+		<prop_int name="Player.RunHealth" property="RunHealth" />
+		<prop_name_lower name="Player.ScoreIcon" property="ScoreIcon" />
+		<prop_float_optional_2 name="Player.SideMove" property="SideMove1" property2="SideMove2" />
+		<prop_name_lower name="Player.SoundClass" property="SoundClass" />
+		<prop_name_lower name="Player.SpawnClass" property="SpawnClass" />
+		<prop_start_item name="Player.StartItem" />
+		<prop_float name="Player.ViewHeight" property="ViewHeight" />
+		<prop_class name="Player.MorphWeapon" property="MorphWeapon" />
+	</class>
+	
+	<class name="MorphProjectile">
+		<prop_class name="MorphProjectile.MonsterClass" property="MonsterClass" />
+		<prop_class name="MorphProjectile.PlayerClass" property="PlayerClass" />
 	</class>
 </vavoom_decorate_defs>
