@@ -83,8 +83,7 @@ bool Touch(Entity InOther)
 	}
 	if ((!Other.bIsPlayer && !Other.bBoss) || !(XLevel.TicTime & 1))
 	{
-		if (Other.Class == Centaur ||
-			Other.Class == CentaurLeader)
+		if (Other.IsA('Centaur'))
 		{
 			// Lightning does more damage to centaurs
 			Other.Damage(self, Target, 9);
@@ -93,21 +92,14 @@ bool Touch(Entity InOther)
 		{
 			Other.Damage(self, Target, 3);
 		}
-		if (!(GetSoundPlayingInfo(self,
-					GetSoundID('MageLightningZap'))))
+		if (!(GetSoundPlayingInfo(self, GetSoundID('MageLightningZap'))))
 		{
 			PlaySound('MageLightningZap', CHAN_VOICE);
 		}
-		if (Other.bMonster && P_Random() < 64
-			&& !GetSoundPlayingInfo(Other,
-				GetSoundID('PuppyBeat')))
+		if (Other.HowlSound && Other.bMonster && P_Random() < 64 &&
+			!GetSoundPlayingInfo(Other, GetSoundID(Other.HowlSound)))
 		{
-			if ((Other.Class == Centaur) ||
-				(Other.Class == CentaurLeader) ||
-				(Other.Class == Ettin))
-			{
-				Other.PlaySound('PuppyBeat', CHAN_VOICE);
-			}
+			Other.PlaySound(Other.HowlSound, CHAN_VOICE);
 		}
 	}
 	Health--;

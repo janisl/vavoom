@@ -77,16 +77,10 @@ bool Touch(Entity InOther)
 				{
 					Spawn(HolyPuff, Origin);
 					PlaySound('SpiritAttack', CHAN_VOICE);
-					if (Other.bMonster && P_Random() < 128
-						&& !GetSoundPlayingInfo(Other,
-							GetSoundID('PuppyBeat')))
+					if (Other.HowlSound && Other.bMonster && P_Random() < 128 &&
+						!GetSoundPlayingInfo(Other, GetSoundID(Other.HowlSound)))
 					{
-						if ((Other.Class == Centaur) ||
-							(Other.Class == CentaurLeader) ||
-							(Other.Class == Ettin))
-						{
-							Other.PlaySound('PuppyBeat', CHAN_VOICE);
-						}
+						Other.PlaySound(Other.HowlSound, CHAN_VOICE);
 					}
 				}
 			}
