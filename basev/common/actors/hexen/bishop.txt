@@ -1,0 +1,74 @@
+//------------------------------------------------------------------------------
+actor BishopFX
+{
+	Radius 10
+	Height 6
+	Speed 10
+	Damage 1
+	RenderStyle Add
+	Projectile
+	-ActivateImpact
+	-ActivatePCross
+	+SeekerMissile
+	+StrifeDamage
+	DeathSound "BishopMissileExplode"
+	states
+	{
+	Spawn:
+		BPFX ABAB 1 Bright A_BishopMissileWeave
+		BPFX B 0 Bright A_SeekerMissile(2, 3)
+		Loop
+	Death:
+		BPFX CDEF 4 Bright
+		BPFX GH 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BishopPuff
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		BISH QRST 5
+		BISH UV 6
+		BISH W 5
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BishopBlur
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		BISH A 16
+		BISH A 8 A_SetTranslucent(0.4)
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BishopPainBlur
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		BISH C 8
+		Stop
+	}
+}

@@ -1,0 +1,144 @@
+//------------------------------------------------------------------------------
+actor FireDemonMissile
+{
+	Radius 10
+	Height 6
+	Mass 15
+	Speed 10
+	Damage 1
+	DamageType "Fire"
+	RenderStyle Add
+	Projectile
+	DeathSound "FireDemonMissileHit"
+	states
+	{
+	Spawn:
+		FDMB A 5 Bright
+		Loop
+	Death:
+		FDMB BCDE 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDemonSplotch1
+{
+	Radius 3
+	Height 16
+	+Corpse
+	+DropOff
+	+NoTeleport
+	+FloorClip
+	states
+	{
+	Spawn:
+		FDMN P 3
+		FDMN P 6 A_QueueCorpse
+		FDMN Y -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDemonSplotch2 : FireDemonSplotch1
+{
+	states
+	{
+	Spawn:
+		FDMN Q 3
+		FDMN Q 6 A_QueueCorpse
+		FDMN Z -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDemonRock1
+{
+	Radius 3
+	Height 5
+	Mass 16
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+
+	action native A_SmBounce();
+
+	states
+	{
+	Spawn:
+		FDMN S 4
+		Loop
+	Death:
+		FDMN S 5 A_SmBounce
+	XDeath:
+		FDMN S 200
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDemonRock2 : FireDemonRock1
+{
+	states
+	{
+	Spawn:
+		FDMN T 4
+		Loop
+	Death:
+		FDMN T 5 A_SmBounce
+	XDeath:
+		FDMN T 200
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDemonRock3 : FireDemonRock1
+{
+	states
+	{
+	Spawn:
+		FDMN U 4
+		Loop
+	Death:
+		FDMN U 5 A_SmBounce
+	XDeath:
+		FDMN U 200
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDemonRock4 : FireDemonRock1
+{
+	states
+	{
+	Spawn:
+		FDMN V 4
+		Loop
+	Death:
+		FDMN V 5 A_SmBounce
+	XDeath:
+		FDMN V 200
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDemonRock5 : FireDemonRock1
+{
+	states
+	{
+	Spawn:
+		FDMN W 4
+		Loop
+	Death:
+		FDMN W 5 A_SmBounce
+	XDeath:
+		FDMN W 200
+		Stop
+	}
+}

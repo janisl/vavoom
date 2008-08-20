@@ -60,20 +60,24 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/heretic/hereticplayer.txt
 		actors/heretic/mummy.txt
 		actors/heretic/snake.txt
+		actors/hexen/bishop.txt
 		actors/hexen/centaur.txt
 		actors/hexen/clericplayer.txt
 		actors/hexen/demons.txt
 		actors/hexen/ettin.txt
 		actors/hexen/fighterplayer.txt
+		actors/hexen/firedemon.txt
 		actors/hexen/flame.txt
 		actors/hexen/hexenarmor.txt
 		actors/hexen/hexendecorations.txt
 		actors/hexen/hexenkeys.txt
 		actors/hexen/hexenspecialdecs.txt
+		actors/hexen/iceguy.txt
 		actors/hexen/mageplayer.txt
 		actors/hexen/mana.txt
 		actors/hexen/puzzleitems.txt
 		actors/hexen/scriptprojectiles.txt
+		actors/hexen/serpent.txt
 		actors/hexen/speedboots.txt
 		actors/raven/artiegg.txt
 		actors/raven/ravenambient.txt

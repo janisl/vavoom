@@ -146,33 +146,10 @@ import linespec;
 #include "PigPlayer.vc"
 
 #include "Pig.vc"
-#include "IceGuyBit.vc"
-#include "IceGuyWisp1.vc"
-#include "IceGuyWisp2.vc"
-#include "IceFXPuff.vc"
-#include "IceGuyFX2.vc"
-#include "IceGuyFX.vc"
 #include "IceGuy.vc"
-#include "FireDemonMissile.vc"
-#include "FireDemonRock1.vc"
-#include "FireDemonRock2.vc"
-#include "FireDemonRock3.vc"
-#include "FireDemonRock4.vc"
-#include "FireDemonRock5.vc"
-#include "FireDemonSplotch1.vc"
-#include "FireDemonSplotch2.vc"
 #include "FireDemon.vc"
-#include "BishopFX.vc"
-#include "BishopPuff.vc"
-#include "BishopBlur.vc"
-#include "BishopPainBlur.vc"
 #include "Bishop.vc"
-#include "SerpentHead.vc"
-#include "SerpentGib1.vc"
-#include "SerpentGib2.vc"
-#include "SerpentGib3.vc"
 #include "Serpent.vc"
-#include "SerpentFX.vc"
 #include "SerpentLeader.vc"
 #include "WraithFX2.vc"
 #include "WraithFX1.vc"
@@ -225,3 +202,24 @@ class Demon1FX1 : Actor decorate;
 class Demon2FX1 : Actor decorate;
 class ArtiPork : CustomInventory decorate;
 class PorkFX : MorphProjectile decorate;
+
+class FireDemonMissile : Actor decorate;
+class FireDemonSplotch1 : Actor decorate;
+class FireDemonSplotch2 : Actor decorate;
+class FireDemonRock1 : Actor decorate;
+class FireDemonRock2 : Actor decorate;
+class FireDemonRock3 : Actor decorate;
+class FireDemonRock4 : Actor decorate;
+class FireDemonRock5 : Actor decorate;
+class IceGuyFX : Actor decorate;
+class IceGuyWisp1 : Actor decorate;
+class IceGuyWisp2 : Actor decorate;
+class BishopFX : Actor decorate;
+class BishopPuff : Actor decorate;
+class BishopBlur : Actor decorate;
+class BishopPainBlur : Actor decorate;
+class SerpentFX : Actor decorate;
+class SerpentHead : Actor decorate;
+class SerpentGib1 : Actor decorate;
+class SerpentGib2 : Actor decorate;
+class SerpentGib3 : Actor decorate;

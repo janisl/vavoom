@@ -23,8 +23,6 @@
 //**
 //**************************************************************************
 
-class FireDemonRock1 : Actor;
-
 //==========================================================================
 //
 //  A_SmBounce
@@ -40,28 +38,78 @@ final void A_SmBounce()
 	Velocity.y = Random() * 3.0 * 35.0;
 }
 
-states
+//==========================================================================
+//
+//  A_IceGuyMissileExplode
+//
+//==========================================================================
+
+final void A_IceGuyMissileExplode()
 {
-Spawn:
-	FDMN S 4
-	Loop
-Death:
-	FDMN S 5 A_SmBounce
-	//Fall through
-XDeath:
-	FDMN S 200
-	Stop
+	EntityEx mo;
+	int i;
+
+	for (i = 0; i < 8; i++)
+	{
+		mo = SpawnMissileAngle(IceGuyFX2, itof(i) * 45.0, -0.3 * 35.0, 3.0);
+		if (mo)
+		{
+			mo.Target = Target;
+		}
+	}
 }
 
-defaultproperties
+//==========================================================================
+//
+//	A_SerpentHeadCheck
+//
+//==========================================================================
+
+final void A_SerpentHeadCheck()
 {
-	GibsHealth = -500;
-	Radius = 3.0;
-	Height = 5.0;
-	Mass = 16.0;
-	bMissile = true;
-	bNoBlockmap = true;
-	bDropOff = true;
-	bNoTeleport = true;
-	bBloodSplatter = true;
+	if (Origin.z <= FloorZ)
+	{
+		if (GetFloorType()->bLiquid)
+		{
+			HitFloorType();
+			SetState(none);
+		}
+		else
+		{
+			SetState(FindState('Death'));
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_FloatGib
+//
+//==========================================================================
+
+final void A_FloatGib()
+{
+	FloorClip -= 1.0;
+}
+
+//==========================================================================
+//
+//	A_SinkGib
+//
+//==========================================================================
+
+final void A_SinkGib()
+{
+	FloorClip += 1.0;
+}
+
+//==========================================================================
+//
+//	A_DelayGib
+//
+//==========================================================================
+
+final void A_DelayGib()
+{
+	StateTime -= Random() * 2.0;
 }
