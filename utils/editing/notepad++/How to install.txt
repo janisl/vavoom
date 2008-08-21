@@ -9,7 +9,7 @@ If you don't have any userDefineLang.xml file under the directory where you inst
 file, copy it's contents and paste them on the one in this directory, NP++ will read your VC files and highlight
 the syntax on them!!
 
-For the functions list rules, first make sure that you have the Function List plugin installed, if you don't
+For the functions list rules, first make sure that you have the Function List plugin installed, if you don't,
 check Notepad++ documentation on how to this, once it's installed, you'll need to open FunctionListRules.xml
 in your "plugin/config" directory where NotePad++ is installed, then paste the contents of the file between
 <FunctionList> and </FunctionList> on the lowest part of FunctionListRules.xml, NP++ will list your VC functions
