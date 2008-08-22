@@ -72,6 +72,7 @@ enum
 #include "Actor.Inventory.vc"
 #include "Actor.DoomAttack.vc"
 #include "Actor.DoomSpecific.vc"
+#include "Actor.Heretic.vc"
 #include "Actor.Hexen.vc"
 #include "Actor.States.vc"
 #include "PlayerPawn.vc"
@@ -301,7 +302,14 @@ class Dirt4 : Actor decorate;
 class Dirt5 : Actor decorate;
 class Dirt6 : Actor decorate;
 
+class MinotaurFX3 : Actor decorate;
+
 class IceGuyFX2 : Actor decorate;
+class WraithFX2 : Actor decorate;
+class DragonExplosion : Actor decorate;
+class SorcFX2 : Actor decorate;
+class SorcFX2T1 : Actor decorate;
+class KoraxBolt : Actor decorate;
 
 class MedicalKit : HealthPickup decorate;
 class MedPatch : HealthPickup decorate;

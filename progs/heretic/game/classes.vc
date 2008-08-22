@@ -120,9 +120,6 @@ import linespec;
 #include "HeadFX3.vc"
 #include "Whirlwind.vc"
 #include "Ironlich.vc"
-#include "MinotaurFX1.vc"
-#include "MinotaurFX3.vc"
-#include "MinotaurFX2.vc"
 #include "Minotaur.vc"
 #include "BossSpot.vc"
 #include "SorcererFX1.vc"
@@ -147,3 +144,5 @@ class HereticPlayer : PlayerPawn decorate;
 class Puffy : Actor decorate;
 class ArtiEgg : CustomInventory decorate;
 class EggFX : MorphProjectile decorate;
+class MinotaurFX1 : Actor decorate;
+class MinotaurFX2 : Actor decorate;

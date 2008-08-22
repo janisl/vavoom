@@ -151,42 +151,21 @@ import linespec;
 #include "Bishop.vc"
 #include "Serpent.vc"
 #include "SerpentLeader.vc"
-#include "WraithFX2.vc"
-#include "WraithFX1.vc"
-#include "WraithFX3.vc"
-#include "WraithFX4.vc"
-#include "WraithFX5.vc"
 #include "Wraith.vc"
 #include "WraithBuried.vc"
-#include "DragonExplosion.vc"
-#include "DragonFireball.vc"
 #include "Dragon.vc"
-#include "SorcSpark1.vc"
 #include "Heresiarch.vc"
-#include "SorcFX1.vc"
-#include "SorcFX3Explosion.vc"
 #include "SorcFX3.vc"
-#include "SorcFX4.vc"
 #include "SorcBall.vc"
 #include "SorcBall1.vc"
-#include "SorcFX2T1.vc"
-#include "SorcFX2.vc"
 #include "SorcBall2.vc"
 #include "SorcBall3.vc"
 #include "ClassBoss.vc"
 #include "FighterBoss.vc"
 #include "ClericBoss.vc"
 #include "MageBoss.vc"
-#include "KoraxSpirit.vc"
-#include "KoraxBolt.vc"
 #include "Korax.vc"
-#include "MinotaurFX1.vc"
-#include "MinotaurFloorFire.vc"
-#include "MinotaurFX3.vc"
-#include "MinotaurFX2.vc"
-#include "MinotaurSmokeExit.vc"
 #include "MinotaurFriend.vc"
-#include "MinotaurSmoke.vc"
 #include "SummoningDoll.vc"
 
 class ArtiHealth : HealthPickup decorate;
@@ -223,3 +202,19 @@ class SerpentHead : Actor decorate;
 class SerpentGib1 : Actor decorate;
 class SerpentGib2 : Actor decorate;
 class SerpentGib3 : Actor decorate;
+class WraithFX1 : Actor decorate;
+class WraithFX3 : Actor decorate;
+class WraithFX4 : Actor decorate;
+class WraithFX5 : Actor decorate;
+class DragonFireball : Actor decorate;
+class SorcFX1 : Actor decorate;
+class SorcFX2 : Actor decorate;
+class SorcFX3Explosion : Actor decorate;
+class SorcFX4 : Actor decorate;
+class SorcSpark1 : Actor decorate;
+class KoraxBolt : Actor decorate;
+class KoraxSpirit : Actor decorate;
+class MinotaurFX1 : Actor decorate;
+class MinotaurFX2 : Actor decorate;
+class MinotaurSmoke : Actor decorate;
+class MinotaurSmokeExit : Actor decorate;

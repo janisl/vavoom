@@ -1,0 +1,46 @@
+//------------------------------------------------------------------------------
+actor KoraxBolt
+{
+	RenderStyle Add
+	Radius 15
+	Height 35
+	Projectile
+	-ActivateImpact
+	-ActivatePCross
+
+	action native A_KBoltRaise();
+	action native A_KBolt();
+
+	states
+	{
+	Spawn:
+		MLFX I 2 Bright
+		MLFX J 2 Bright A_KBoltRaise
+		MLFX IJKLM 2 Bright A_KBolt
+		Goto Spawn+2
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KoraxSpirit
+{
+	Speed 8
+	RenderStyle Translucent
+	Alpha 0.4
+	Projectile
+	-ActivateImpact
+	-ActivatePCross
+	+NoClip
+
+	action native A_KSpiritRoam();
+
+	states
+	{
+	Spawn:
+		SPIR AB 5 A_KSpiritRoam
+		Loop
+	Death:
+		SPIR DEFGHI 5
+		Stop
+	}
+}

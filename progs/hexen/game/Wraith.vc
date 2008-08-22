@@ -189,13 +189,7 @@ final void A_WraithMelee()
 
 final void A_WraithMissile()
 {
-	EntityEx mo;
-
-	mo = SpawnMissile(Target, WraithFX1);
-	if (mo)
-	{
-		PlaySound('WraithMissileFire', CHAN_WEAPON);
-	}
+	SpawnMissile(Target, WraithFX1);
 }
 
 states

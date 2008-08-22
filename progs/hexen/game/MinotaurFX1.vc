@@ -40,6 +40,7 @@ defaultproperties
 	Radius = 10.0;
 	Height = 6.0;
 	Speed = 700.0;
+	FastSpeed = 910.0;
 	MissileDamage = 3;
 	RenderStyle = STYLE_Add;
 	DamageType = 'Fire';

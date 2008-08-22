@@ -1,0 +1,15 @@
+//------------------------------------------------------------------------------
+actor MinotaurSmoke
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	+NoTeleport
+	states
+	{
+	Spawn:
+		MNSM ABCDEFGHIJKLMNOPQ 3
+		Stop
+	}
+}

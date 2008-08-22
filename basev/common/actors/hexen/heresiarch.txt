@@ -1,0 +1,137 @@
+//------------------------------------------------------------------------------
+actor SorcFX1
+{
+	Radius 5
+	Height 5
+	Speed 7
+	BounceFactor 1
+	Projectile
+	-NoGravity
+	-ActivateImpact
+	-ActivatePCross
+	+HexenBounce
+	+CanBounceWater
+	+NoWallBounceSnd
+	+FullVolDeath
+	SeeSound "SorcererBallBounce"
+	DeathSound "SorcererHeadScream"
+
+	action native A_SorcFX1Seek();
+
+	states
+	{
+	Spawn:
+		SBS1 A 2 Bright
+		SBS1 BCD 3 Bright A_SorcFX1Seek
+		Loop
+	Death:
+		FHFX S 2 Bright A_Explode(30, 128)
+		FHFX SS 6 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SorcFX2
+{
+	Radius 5
+	Height 5
+	Speed 15
+	+NoBlockmap
+	+NoGravity
+	+NoTeleport
+
+	action native A_SorcFX2Split();
+	action native A_SorcFX2Orbit();
+
+	states
+	{
+	Spawn:
+		SBS2 A 3 Bright A_SorcFX2Split
+		Loop
+	Orbit:
+		SBS2 A 2 Bright
+		SBS2 BCDEFGHIJKLMNOPA 2 Bright A_SorcFX2Orbit
+		Goto Orbit+1
+	Death:
+		SBS2 A 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SorcFX2T1
+{
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlockmap
+	+NoGravity
+	+NoTeleport
+	states
+	{
+	Spawn:
+		SBS2 A 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SorcFX3Explosion
+{
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlockmap
+	+NoGravity
+	+NoTeleport
+	states
+	{
+	Spawn:
+		SBS3 DEFGH 3
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SorcFX4
+{
+	RenderStyle Add
+	Radius 10
+	Height 10
+	Speed 12
+	Projectile
+	-ActivateImpact
+	-ActivatePCross
+	DeathSound "SorcererBallExplode"
+
+	action native A_SorcFX4Check();
+
+	states
+	{
+	Spawn:
+		SBS4 ABC 2 Bright A_SorcFX4Check
+		Loop
+	Death:
+		SBS4 D 2 Bright
+		SBS4 E 2 Bright A_Explode(20, 128)
+		SBS4 FGH 2 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SorcSpark1
+{
+	RenderStyle Add
+	Radius 5
+	Height 5
+	Gravity 0.125
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		SBFX ABCDEFG 4 Bright
+		Stop
+	}
+}

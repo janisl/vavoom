@@ -23,28 +23,21 @@
 //**
 //**************************************************************************
 
-class WraithFX4 : Actor
-	__scriptid__(106);
+//==========================================================================
+//
+//  A_MntrFloorFire
+//
+//==========================================================================
 
-states
+final void A_MntrFloorFire()
 {
-Spawn:
-	WRBL TUVW 4
-	Loop
-Death:
-	WRBL W 10
-	Stop
-}
+	Actor A;
 
-defaultproperties
-{
-	Radius = 2.0;
-	Height = 5.0;
-	Mass = 5.0;
-	bMissile = true;
-	bNoBlockmap = true;
-	bDropOff = true;
-	bNoTeleport = true;
-	bBloodSplatter = true;
-	DeathSound = 'Drip';
+	Origin.z = FloorZ;
+	A = Spawn(MinotaurFX3, vector(
+		Origin.x + (Random() - Random()) * 4.0,
+		Origin.y + (Random() - Random()) * 4.0, ONFLOORZ));
+	A.Target = Target;
+	A.Velocity.x = 0.00001;	// Force block checking
+	A.CheckMissileSpawn();
 }

@@ -1,0 +1,115 @@
+//------------------------------------------------------------------------------
+actor WraithFX1
+{
+	Radius 10
+	Height 6
+	Mass 5
+	Speed 14
+	Damage 5
+	DamageType "Fire"
+	Projectile
+	+FloorClip
+	SeeSound "WraithMissileFire"
+	DeathSound "WraithMissileExplode"
+
+	action native A_WraithFX2();
+
+	states
+	{
+	Spawn:
+		WRBL A 3 Bright
+		WRBL B 3 Bright A_WraithFX2
+		WRBL C 3 Bright
+		Loop
+	Death:
+		WRBL D 4 Bright
+		WRBL E 4 Bright A_WraithFX2
+		WRBL F 4 Bright
+		WRBL GH 3 Bright A_WraithFX2
+		WRBL I 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WraithFX2
+{
+	game Hexen
+	SpawnID 108
+	Radius 2
+	Height 5
+	Mass 5
+	+NoBlockmap
+	+DropOff
+	+FloorClip
+	+NoTeleport
+	states
+	{
+	Spawn:
+		WRBL JKLMNOP 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WraithFX3
+{
+	Radius 2
+	Height 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	+FloorClip
+	DeathSound "Drip"
+	states
+	{
+	Spawn:
+		WRBL QRS 4 Bright
+		Loop
+	Death:
+		WRBL S 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WraithFX4
+{
+	game Hexen
+	SpawnID 106
+	Radius 2
+	Height 5
+	Mass 5
+	+Missile
+	+NoBlockmap
+	+DropOff
+	+NoTeleport
+	DeathSound "Drip"
+	states
+	{
+	Spawn:
+		WRBL TUVW 4
+		Loop
+	Death:
+		WRBL W 10
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WraithFX5 : WraithFX4
+{
+	game Hexen
+	SpawnID 107
+	states
+	{
+	Spawn:
+		WRBL XYZ 7
+		Loop
+	Death:
+		WRBL Z 35
+		Stop
+	}
+}

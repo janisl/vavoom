@@ -23,6 +23,12 @@
 //**
 //**************************************************************************
 
+const float SORC_DEFENSE_HEIGHT			= 45.0;
+const int BOUNCE_TIME_UNIT				= (35/2);
+
+const float KORAX_BOLT_HEIGHT = 48.0;
+const int KORAX_BOLT_LIFETIME = 3;
+
 //==========================================================================
 //
 //  A_SmBounce
@@ -112,4 +118,368 @@ final void A_SinkGib()
 final void A_DelayGib()
 {
 	StateTime -= Random() * 2.0;
+}
+
+//==========================================================================
+//
+//  A_WraithFX2
+//
+//  Spawns sparkle tail of missile.
+//
+//==========================================================================
+
+final void A_WraithFX2()
+{
+	Actor A;
+	float angle;
+	int i;
+
+	for (i = 0; i < 2; i++)
+	{
+		A = Spawn(WraithFX2, Origin);
+		if (A)
+		{
+			if (Random() < 0.5)
+			{
+				angle = AngleMod360(Angles.yaw + Random() * 90.0);
+			}
+			else
+			{
+				angle = AngleMod360(Angles.yaw - Random() * 90.0);
+			}
+			A.Velocity.z = 0.0;
+			A.Velocity.x = (Random() / 2.0 + 1.0) * cos(angle) * 35.0;
+			A.Velocity.y = (Random() / 2.0 + 1.0) * sin(angle) * 35.0;
+			A.Target = self;
+			A.FloorClip = 10.0;
+		}
+	}
+}
+
+//============================================================================
+//
+//	A_DragonFX2
+//
+//============================================================================
+
+final void A_DragonFX2()
+{
+	Actor A;
+	int i;
+	float delay;
+
+	delay = 0.5 + Random();
+	for (i = 1 + (P_Random() & 3); i; i--)
+	{
+		A = Spawn(DragonExplosion, Origin + vector((Random() - 0.5) * 64.0,
+			(Random() - 0.5) * 64.0, (Random() - 0.5) * 16.0));
+		if (A)
+		{
+			A.StateTime = delay + Random() * 0.2 * itof(i);
+			A.Target = Target;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_SorcFX1Seek
+//
+//  Yellow spell - offense
+//
+//==========================================================================
+
+final void A_SorcFX1Seek()
+{
+	if (Args[4]-- <= 0)
+	{
+		if (Args[3]-- <= 0)
+		{
+			SetState(FindState('Death'));
+			PlaySound('SorcererHeadScream', CHAN_VOICE, 1.0, ATTN_NONE);
+		}
+		else
+		{
+			Args[4] = BOUNCE_TIME_UNIT;
+		}
+	}
+
+	SeekerMissile(2.0, 6.0);
+}
+
+//==========================================================================
+// Blue spell - defense
+//==========================================================================
+//
+// FX2 Variables
+//      Special1f       current angle
+//      Args[0]     0 = CW,  1 = CCW
+//==========================================================================
+
+//==========================================================================
+//
+//  A_SorcFX2Split
+//
+//  Split ball in two
+//
+//==========================================================================
+
+final void A_SorcFX2Split()
+{
+	Actor A;
+
+	A = Spawn(SorcFX2, Origin,,, false);
+	if (A)
+	{
+		A.Target = Target;
+		A.Args[0] = 0;	// CW
+		A.Special1f = Angles.yaw;	// Set angle
+		A.SetState(A.FindState('Orbit'));
+	}
+	A = Spawn(SorcFX2, Origin,,, false);
+	if (A)
+	{
+		A.Target = Target;
+		A.Args[0] = 1;	// CCW
+		A.Special1f = Angles.yaw;	// Set angle
+		A.SetState(A.FindState('Orbit'));
+	}
+	SetState(none);
+}
+
+//==========================================================================
+//
+//  A_SorcFX2Orbit
+//
+//  Orbit FX2 about sorcerer
+//
+//==========================================================================
+
+final void A_SorcFX2Orbit()
+{
+	float angle;
+	float x, y, z;
+	float dist = Target.Radius;
+
+	if ((Target.Health <= 0) ||	// Sorcerer is dead
+		(!Target.Args[0]))	// Time expired
+	{
+		SetState(FindState('Death'));
+		Target.Args[0] = 0;
+		Actor(Target).bReflective = false;
+		Actor(Target).bInvulnerable = false;
+	}
+
+	if (Args[0] && (Target.Args[0]-- <= 0))	// Time expired
+	{
+		SetState(FindState('Death'));
+		Target.Args[0] = 0;
+		Actor(Target).bReflective = false;
+	}
+
+	// Move to new position based on angle
+	if (Args[0])	// Counter clock-wise
+	{
+		Special1f = AngleMod360(Special1f + 10.0);
+		angle = Special1f;
+		x = Target.Origin.x + dist * cos(angle);
+		y = Target.Origin.y + dist * sin(angle);
+		z = Target.Origin.z - Target.FloorClip + SORC_DEFENSE_HEIGHT;
+		z += 15.0 * cos(angle);
+		// Spawn trailer
+		Spawn(SorcFX2T1, vector(x, y, z));
+	}
+	else	// Clock wise
+	{
+		Special1f = AngleMod360(Special1f - 10.0);
+		angle = Special1f;
+		x = Target.Origin.x + dist * cos(angle);
+		y = Target.Origin.y + dist * sin(angle);
+		z = Target.Origin.z - Target.FloorClip + SORC_DEFENSE_HEIGHT;
+		z += 20.0 * sin(angle);
+		// Spawn trailer
+		Spawn(SorcFX2T1, vector(x, y, z));
+	}
+
+	Origin.x = x;
+	Origin.y = y;
+	Origin.z = z;
+}
+
+//==========================================================================
+//
+//  A_SorcFX4Check
+//
+//  FX4 - rapid fire balls
+//
+//==========================================================================
+
+final void A_SorcFX4Check()
+{
+	if (Special2-- <= 0)
+	{
+		SetState(FindState('Death'));
+	}
+}
+
+//==========================================================================
+//
+//  A_KBoltRaise
+//
+//==========================================================================
+
+final void A_KBoltRaise()
+{
+	float z;
+
+	// Spawn a child upward
+	z = Origin.z + KORAX_BOLT_HEIGHT;
+
+	if (z + KORAX_BOLT_HEIGHT < CeilingZ)
+	{
+		Actor A = Spawn(KoraxBolt, vector(Origin.x, Origin.y, z));
+		A.Special1 = KORAX_BOLT_LIFETIME;
+	}
+	else
+	{
+		// Maybe cap it off here
+	}
+}
+
+//==========================================================================
+//
+//  A_KBolt
+//
+//==========================================================================
+
+final void A_KBolt()
+{
+	// Countdown lifetime
+	if (Special1-- <= 0)
+	{
+		SetState(none);
+	}
+}
+
+//==========================================================================
+//
+//  A_KSpiritSeeker
+//
+//==========================================================================
+
+final void A_KSpiritSeeker(float thresh, float turnMax)
+{
+	int dir;
+	float dist;
+	float delta;
+	float angle;
+	float newZ;
+	float deltaZ;
+
+	if (Tracer == none)
+	{
+		return;
+	}
+	dir = FaceActor(Actor(Tracer), delta);
+	if (delta > thresh)
+	{
+		delta /= 2.0;
+		if (delta > turnMax)
+		{
+			delta = turnMax;
+		}
+	}
+	if (dir)
+	{
+		// Turn clockwise
+		Angles.yaw = AngleMod360(Angles.yaw + delta);
+	}
+	else
+	{
+		// Turn counter clockwise
+		Angles.yaw = AngleMod360(Angles.yaw - delta);
+	}
+	angle = Angles.yaw;
+	Velocity.x = Speed * cos(angle);
+	Velocity.y = Speed * sin(angle);
+
+	if (!(XLevel.TicTime & 15) ||
+		Origin.z > Tracer.Origin.z + Tracer.Height ||
+		Origin.z + Height < Tracer.Origin.z)
+	{
+		newZ = Tracer.Origin.z + Random() * Tracer.Height;
+		deltaZ = newZ - Origin.z;
+		if (fabs(deltaZ) > 15.0)
+		{
+			if (deltaZ > 0.0)
+			{
+				deltaZ = 15.0;
+			}
+			else
+			{
+				deltaZ = -15.0;
+			}
+		}
+		dist = DistTo2(Tracer);
+		dist = dist / Speed;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = deltaZ / dist;
+	}
+	return;
+}
+
+//==========================================================================
+//
+//  A_KSpiritWeave
+//
+//==========================================================================
+
+final void A_KSpiritWeave()
+{
+	float newX, newY;
+	float angle;
+
+	angle = AngleMod360(Angles.yaw + 90.0);
+	int WeaveXY = Special2 >> 16;
+	int WeaveZ = Special2 & 0xffff;
+	newX = Origin.x - cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	newY = Origin.y - sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	WeaveXY = (WeaveXY + (P_Random() % 5)) & 63;
+	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
+	TryMove(vector(newX, newY, Origin.z), false);
+	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
+	WeaveZ = (WeaveZ + (P_Random() % 5)) & 63;
+	Origin.z += Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
+	Special2 = (WeaveXY << 16) | (WeaveZ & 0xffff);
+}
+
+//==========================================================================
+//
+//  A_KSpiritRoam
+//
+//==========================================================================
+
+final void A_KSpiritRoam()
+{
+	if (Special1-- <= 0)
+	{
+		PlaySound('SpiritDie', CHAN_VOICE);
+		SetState(FindState('Death'));
+	}
+	else
+	{
+		if (Tracer)
+		{
+			A_KSpiritSeeker(10.0, 20.0);
+		}
+		A_KSpiritWeave();
+		if (Random() < 0.1953125)
+		{
+			PlaySound('SpiritActive', CHAN_VOICE, 1.0, ATTN_NONE);
+		}
+	}
 }

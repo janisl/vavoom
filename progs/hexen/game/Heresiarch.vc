@@ -32,8 +32,6 @@ const int SORCBALL_SPEED_ROTATIONS 		= 5;
 const int SORCFX4_RAPIDFIRE_TIME		= (6*3);	// 3 seconds
 const float SORCFX4_SPREAD_ANGLE		= 20.0;
 const int SORC_DEFENSE_TIME				= 255;
-const float SORC_DEFENSE_HEIGHT			= 45.0;
-const int BOUNCE_TIME_UNIT				= (35/2);
 
 enum
 {
