@@ -46,7 +46,7 @@ Death:
 	Loop
 Missile:
 	LEAD E 2 A_FaceTarget
-	LEAD F 2 Bright A_RiffleAttack
+	LEAD F 2 Bright A_ShootGun
 	LEAD E 1 A_SentinelRefire
 	Loop
 Pain:

@@ -113,6 +113,118 @@ actor Tank6 229
 }
 
 //------------------------------------------------------------------------------
+actor KneelingGyu 204
+{
+	Game Strife
+	ConversationID 37, -1, -1
+	Health 51
+	Radius 6
+	Height 17
+	Mass 50000
+	PainChance 255
+	+Solid
+	+Shootable
+	+IsMonster
+	+InCombat
+	+NoBlood
+	ActiveSound "misc/chant"
+	PainSound "misc/static"
+	DeathSound "misc/static"
+	states
+	{
+	Spawn:
+	See:
+		NEAL A 15 A_LoopActiveSound
+		NEAL B 40 A_LoopActiveSound
+		Loop
+	Pain:
+		NEAL C 5 A_SetShadow
+		NEAL B 4 A_Pain
+		NEAL C 5 A_ClearShadow
+		Goto Spawn
+	Wound:
+		NEAL B 6
+		NEAL C 13 A_GetHurt
+		Loop
+	Death:
+		NEAL D 5
+		NEAL E 5 A_Scream
+		NEAL F 6
+		NEAL G 5 A_NoBlocking
+		NEAL H 5
+		NEAL I 6
+		NEAL J -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KlaxonWarningLight 24
+{
+	Game Strife
+	ConversationID 121, -1, -1
+	ReactionTime 60
+	Radius 5
+	+NoBlockmap
+	+Ambush
+	+SpawnCeiling
+	+NoGravity
+	+FixMapThingPos
+	+NoSplashAlert
+	+Synchronized
+	states
+	{
+	Spawn:
+		KLAX A 5 A_TurretLook
+		Loop
+	See:
+		KLAX B 6 A_KlaxonBlare
+		KLAX C 60
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CeilingTurret 27
+{
+	Game Strife
+	ConversationID 122, -1, -1
+	Health 125
+	Mass 10000000
+	Monster
+	-Solid
+	-CanPass
+	+Ambush
+	+SpawnCeiling
+	+NoGravity
+	+NoBlood
+	+NoSplashAlert
+	+DontFall
+	DeathSound "turret/death"
+	Obituary "$ob_turret"
+	states
+	{
+	Spawn:
+		TURT A 5 A_TurretLook
+		Loop
+	See:
+		TURT A 2 A_Chase
+		Loop
+	Missile:
+	Pain:
+		TURT B 4 A_ShootGun
+		TURT D 3 A_SentinelRefire
+		TURT A 4 A_SentinelRefire
+		Loop
+	Death:
+		BALL A 6 Bright A_Scream
+		BALL BCDE 6 Bright
+		TURT C -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor WaterBottle 2014
 {
 	Game Strife
@@ -1585,5 +1697,54 @@ actor AlienSpiderLight 225
 	Spawn:
 		SPDL ABC 5 A_ActiveSound
 		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Junk : Meat;
+{
+	states
+	{
+	Spawn:
+		JUNK A 700
+		Stop
+		JUNK B 700
+		Stop
+		JUNK C 700
+		Stop
+		JUNK D 700
+		Stop
+		JUNK E 700
+		Stop
+		JUNK F 700
+		Stop
+		JUNK G 700
+		Stop
+		JUNK H 700
+		Stop
+		JUNK I 700
+		Stop
+		JUNK J 700
+		Stop
+		JUNK K 700
+		Stop
+		JUNK L 700
+		Stop
+		JUNK M 700
+		Stop
+		JUNK N 700
+		Stop
+		JUNK O 700
+		Stop
+		JUNK P 700
+		Stop
+		JUNK Q 700
+		Stop
+		JUNK R 700
+		Stop
+		JUNK S 700
+		Stop
+		JUNK T 700
+		Stop
 	}
 }

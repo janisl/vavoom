@@ -1,0 +1,34 @@
+//------------------------------------------------------------------------------
+actor SentinelFX1
+{
+	RenderStyle Add
+	Radius 10
+	Height 8
+	Speed 40
+	MaxStepHeight 4
+	Projectile
+	+StrifeDamage
+	DamageType "Disintegrate"
+	states
+	{
+	Spawn:
+		SHT1 AB 4
+		Loop
+	Death:
+		POW1 J 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SentinelFX2 : SentinelFX1
+{
+	Damage 1
+	SeeSound "sentinel/plasma"
+	states
+	{
+	Death:
+		POW1 FGHI 4
+		Goto Super::Death
+	}
+}

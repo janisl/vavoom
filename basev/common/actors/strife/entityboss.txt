@@ -1,0 +1,17 @@
+//------------------------------------------------------------------------------
+actor EntityNest 26
+{
+	Game Strife
+	ConversationID 76, -1, -1
+	Radius 84
+	Height 47
+	+Solid
+	+NotDmatch
+	+FloorClip
+	states
+	{
+	Spawn:
+		NEST A -1
+		Stop
+	}
+}

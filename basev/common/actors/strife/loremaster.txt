@@ -1,0 +1,13 @@
+//------------------------------------------------------------------------------
+actor LoreShot2
+{
+	ConversationID 98, -1, -1
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		TEND A 20
+		Stop
+	}
+}

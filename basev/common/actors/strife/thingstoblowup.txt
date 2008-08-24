@@ -1,0 +1,130 @@
+//------------------------------------------------------------------------------
+actor Bang4Cloud
+{
+	RenderStyle Add
+	VSpeed 1
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		BNG4 BCDEFGHIJKLMN 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Piston 45
+{
+	game Strife
+	ConversationID 123, -1, -1
+	Health 100
+	Radius 20
+	Height 76
+	Mass 10000000
+	+Solid
+	+Shootable
+	+InCombat
+	+NoBlood
+	+FloorClip
+	DeathSound "misc/explosion"
+	states
+	{
+	Spawn:
+		PSTN AB 8
+		Loop
+	Death:
+		PSTN A 4 Bright A_Scream
+		PSTN B 4 Bright A_NoBlocking
+		PSTN C 4 Bright A_GiveQuestItem(16)
+		PSTN D 4 Bright A_Bang4Cloud
+		PSTN E 4 Bright A_TossGib
+		PSTN F 4 Bright
+		PSTN G 4 Bright A_Bang4Cloud
+		PSTN H 4
+		PSTN I -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Computer 182
+{
+	game Strife
+	ConversationID 124, -1, -1
+	Health 80
+	Radius 26
+	Height 128
+	Mass 100000
+	+Solid
+	+Shootable
+	+InCombat
+	+NoBlood
+	+FloorClip
+	DeathSound "misc/explosion"
+	states
+	{
+	Spawn:
+		SECR ABCD 4 Bright
+		Loop
+	Death:
+		SECR E 5 Bright A_Bang4Cloud
+		SECR F 5 Bright A_NoBlocking
+		SECR G 5 Bright A_GiveQuestItem(27)
+		SECR H 5 Bright A_TossGib
+		SECR I 5 Bright A_Bang4Cloud
+		SECR J 5
+		SECR K 5 A_Bang4Cloud
+		SECR L 5
+		SECR M 5 A_Bang4Cloud
+		SECR N 5
+		SECR O 5 A_Bang4Cloud
+		SECR P -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PowerCrystal 92
+{
+	game Strife
+	ConversationID 201, -1, -1
+	Health 50
+	Mass 99999999
+	+Solid
+	+Shootable
+	+NoGravity
+	+NoBlood
+	+FloorClip
+	ActiveSound "misc/reactor"
+	DeathSound "misc/explosion"
+
+	action native A_Explose512();
+	action native A_LightGoesOut();
+	action native A_ExtraLightOff();
+
+	states
+	{
+	Spawn:
+		CRYS A 16 A_ActiveSound
+		CRYS B 5 A_ActiveSound
+		CRYS CDEF 4 A_ActiveSound
+		Loop
+	Death:
+		BOOM A 1 Bright A_Explose512
+		BOOM B 3 Bright A_GiveQuestItem(14)
+		BOOM C 2 Bright A_LightGoesOut
+		BOOM D 3 Bright A_Bang4Cloud
+		BOOM EF 3 Bright
+		BOOM G 3 Bright A_Bang4Cloud
+		BOOM H 1 Bright A_Explose512
+		BOOM I 3 Bright
+		BOOM JKL 3 Bright A_Bang4Cloud
+		BOOM MN 3 Bright
+		BOOM O 3 Bright A_Bang4Cloud
+		BOOM PQRST 3 Bright
+		BOOM U 3 Bright A_ExtraLightOff
+		BOOM VWXY 3 Bright
+		Stop
+	}
+}

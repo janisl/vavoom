@@ -109,7 +109,7 @@ Death:
 	PRGR L 7 Bright A_TossGib
 	PRGR M 7 Bright A_Scream
 	PRGR N 7 Bright A_TossGib
-	PRGR O 7 Bright A_Fall
+	PRGR O 7 Bright A_NoBlocking
 	PRGR P 7 Bright A_TossGib
 	PRGR Q 7 Bright A_SpawnProgrammerBase
 	PRGR R 7 Bright

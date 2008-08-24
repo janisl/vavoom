@@ -1,0 +1,49 @@
+//------------------------------------------------------------------------------
+actor InquisitorShot
+{
+	Radius 13
+	Height 13
+	Mass 15
+	Speed 25
+	MaxStepHeight 4
+	ReactionTime 15
+	Projectile
+	-NoGravity
+	SeeSound "inquisitor/attack"
+	DeathSound "inquisitor/atkexplode"
+	states
+	{
+	Spawn:
+		UBAM AB 3 A_Countdown
+		Loop
+	Death:
+		BNG2 A 0 Bright A_SetTranslucent(1, 1)
+		BNG2 A 4 Bright A_Explode(192, 192, 1, 1)
+		BNG2 B 4 Bright
+		BNG2 C 4 Bright
+		BNG2 D 4 Bright
+		BNG2 E 4 Bright
+		BNG2 F 4 Bright
+		BNG2 G 4 Bright
+		BNG2 H 4 Bright
+		BNG2 I 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor InquisitorArm
+{
+	ConversationID 94, -1, -1
+	Speed 25
+	+NoBlockmap
+	+NoClip
+	+NoBlood
+	states
+	{
+	Spawn:
+		RBB3 FG 5 Bright
+		RBB3 H -1
+		Stop
+	}
+}

@@ -76,7 +76,7 @@ Pain:
 	SEWR D 5 A_Pain
 	Goto Missile+2
 Death:
-	SEWR D 7 A_Fall
+	SEWR D 7 A_NoBlocking
 	SEWR E 8 Bright A_TossGib
 	SEWR F 5 Bright A_Scream
 	SEWR G 4 Bright A_TossGib

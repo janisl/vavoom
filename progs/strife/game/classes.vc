@@ -39,37 +39,18 @@ import uibase;
 
 #include "DummyStrifeItem.vc"
 
-#include "StrifeSpark.vc"
 #include "TeleportFog.vc"
 #include "ForceFieldGuard.vc"
 #include "BridgeBall.vc"
 #include "Bridge.vc"
 
 #include "PunchDagger.vc"
-#include "StrifeZap1.vc"
-#include "ElectricBolt.vc"
 #include "PoisonBolt.vc"
-#include "MiniMissile.vc"
-#include "HEGrenade.vc"
 #include "PhosphorousFire.vc"
-#include "PhosphorousGrenade.vc"
-#include "FlameMissile.vc"
-#include "MaulerPuff.vc"
-#include "MaulerTorpedoWave.vc"
-#include "MaulerTorpedo.vc"
-#include "SpectralLightningBase.vc"
-#include "SpectralLightningH1.vc"
-#include "SpectralLightningBall1.vc"
-#include "SpectralLightningBigBall1.vc"
-#include "SpectralLightningV1.vc"
-#include "SpectralLightningBigV1.vc"
-#include "SpectralLightningHTail.vc"
-#include "SpectralLightningSpot.vc"
 
 #include "DegninOre.vc"
 #include "Scanner.vc"
 #include "TeleporterBeacon.vc"
-#include "Gold300.vc"
 #include "AssaultGun.vc"
 #include "AssaultGunStanding.vc"
 #include "FlameThrower.vc"
@@ -99,60 +80,20 @@ import uibase;
 #include "UpgradeAccuracy.vc"
 #include "SlideshowStarter.vc"
 
-#include "KlaxonWarningLight.vc"
-#include "Piston.vc"
-#include "Computer.vc"
-#include "PowerCrystal.vc"
 #include "PowerCoupling.vc"
 
-#include "Rebel.vc"
-#include "Rebel1.vc"
-#include "Rebel2.vc"
-#include "Rebel3.vc"
-#include "Rebel4.vc"
-#include "Rebel5.vc"
-#include "Rebel6.vc"
-#include "Acolyte.vc"
-#include "AcolyteTan.vc"
-#include "AcolyteRed.vc"
-#include "AcolyteRust.vc"
-#include "AcolyteGray.vc"
-#include "AcolyteDGreen.vc"
-#include "AcolyteGold.vc"
-#include "AcolyteLGreen.vc"
-#include "AcolyteBlue.vc"
-#include "AcolyteShadow.vc"
-#include "AcolyteToBe.vc"
-#include "CeilingTurret.vc"
 #include "Stalker.vc"
-#include "SentinelFX1.vc"
-#include "SentinelFX2.vc"
 #include "Sentinel.vc"
 #include "Reaver.vc"
 #include "Templar.vc"
-#include "FastFlameMissile.vc"
-#include "CrusaderMissile.vc"
 #include "Crusader.vc"
-#include "DeadCrusader.vc"
-#include "InquisitorShot.vc"
-#include "InquisitorArm.vc"
 #include "Inquisitor.vc"
-#include "ProgrammerBase.vc"
 #include "Programmer.vc"
 #include "Oracle.vc"
 #include "Macil1.vc"
 #include "Macil2.vc"
-#include "LoreShot2.vc"
 #include "LoreShot.vc"
 #include "Loremaster.vc"
-#include "SpectralLightningH2.vc"
-#include "SpectralLightningH3.vc"
-#include "SpectralLightningBall2.vc"
-#include "SpectralLightningBigBall2.vc"
-#include "SpectralLightningV2.vc"
-#include "SpectralLightningBigV2.vc"
-#include "AlienChunkSmall.vc"
-#include "AlienChunkLarge.vc"
 #include "AlienSpectre1.vc"
 #include "AlienSpectre2.vc"
 #include "AlienSpectre3.vc"
@@ -160,15 +101,12 @@ import uibase;
 #include "AlienSpectre5.vc"
 #include "EntityBoss.vc"
 #include "EntityPod.vc"
-#include "EntityNest.vc"
 #include "EntitySecond.vc"
-#include "KneelingGyu.vc"
 
 #include "ClientGameBaseEx.vc"
 
 class Blood : Actor decorate;
 class QuestItem6 : Inventory decorate;
-class QuestItem7 : Inventory decorate;
 class QuestItem17 : Inventory decorate;
 class QuestItem21 : Inventory decorate;
 class QuestItem22 : Inventory decorate;
@@ -176,7 +114,6 @@ class QuestItem23 : Inventory decorate;
 class QuestItem24 : Inventory decorate;
 class QuestItem25 : Inventory decorate;
 class QuestItem26 : Inventory decorate;
-class Rubble1 : Actor decorate;
 class HEGrenadeRounds : Ammo decorate;
 class PhosphorusGrenadeRounds : Ammo decorate;
 class ClipOfBullets : Ammo decorate;
@@ -189,3 +126,33 @@ class AmmoSatchel : BackpackItem decorate;
 class Communicator : Inventory decorate;
 class BrokenPowerCoupling : Inventory decorate;
 class StrifePlayer : PlayerPawn decorate;
+class Rebel1 : Actor decorate;
+class SentinelFX1 : Actor decorate;
+class SentinelFX2 : Actor decorate;
+class FastFlameMissile : Actor decorate;
+class CrusaderMissile : Actor decorate;
+class InquisitorShot : Actor decorate;
+class InquisitorArm : Actor decorate;
+class ProgrammerBase : Actor decorate;
+class LoreShot2 : Actor decorate;
+class AlienChunkSmall : Actor decorate;
+class AlienChunkLarge : Actor decorate;
+class FlameMissile : Actor decorate;
+class SpectralLightningV1 : Actor decorate;
+class SpectralLightningSpot : Actor decorate;
+class SpectralLightningH1 : Actor decorate;
+class SpectralLightningH2 : Actor decorate;
+class SpectralLightningBall1 : Actor decorate;
+class SpectralLightningBall2 : Actor decorate;
+class SpectralLightningBigV1 : Actor decorate;
+class SpectralLightningBigV2 : Actor decorate;
+class SpectralLightningBigBall1 : Actor decorate;
+class SpectralLightningBigBall2 : Actor decorate;
+class StrifePuff : Actor decorate;
+class StrifeSpark : Actor decorate;
+class ElectricBolt : Actor decorate;
+class MiniMissile : Actor decorate;
+class HEGrenade : Actor decorate;
+class PhosphorousGrenade : Actor decorate;
+class MaulerPuff : Actor decorate;
+class MaulerTorpedo : Actor decorate;

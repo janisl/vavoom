@@ -1,0 +1,297 @@
+//------------------------------------------------------------------------------
+actor StrifePuff
+{
+	RenderStyle Translucent
+	Alpha 0.25
+	+NoBlockmap
+	+NoGravity
+	+AllowParticles
+	states
+	{
+	Spawn:
+		POW3 ABCDEFGH 3
+		Stop
+	Crash:
+		PUFY A 4 Bright
+		PUFY BCD 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor StrifeSpark : StrifePuff
+{
+	RenderStyle Add
+	states
+	{
+	Crash:
+		POW2 ABCD 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor StrifeZap1
+{
+	//	Just to be able to spawn it on its own.
+	+NoBlockmap
+	+NoGravity
+	+DropOff
+	states
+	{
+	Spawn:
+	Death:
+		ZAP1 A 3 A_AlertMonsters
+		ZAP1 BCDEFE 3
+		ZAP1 DCB 2
+		ZAP1 A 1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ElectricBolt : StrifeZap1
+{
+	ConversationID 102, -1, -1
+	Radius 10
+	Height 10
+	Speed 30
+	MaxStepHeight 4
+	Damage 10
+	Projectile
+	+StrifeDamage
+	SeeSound "misc/swish"
+	ActiveSound "misc/swish"
+	DeathSound "weapons/xbowhit"
+	states
+	{
+	Spawn:
+		AROW A 10 A_LoopActiveSound
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MiniMissile
+{
+	ConversationID 99, -1, -1
+	Radius 10
+	Height 14
+	Speed 20
+	MaxStepHeight 4
+	Damage 10
+	Projectile
+	+StrifeDamage
+	SeeSound "weapons/minimissile"
+	DeathSound "weapons/minimissilehit"
+	states
+	{
+	Spawn:
+		MICR A 6 Bright A_RocketInFlight
+		Loop
+	Death:
+		SMIS A 0 Bright A_SetTranslucent(1, 1)
+		SMIS A 0 Bright A_StopSoundEx("Voice")
+		SMIS A 5 Bright A_Explode(64, 64, 1, 1)
+		SMIS B 5 Bright
+		SMIS C 4 Bright
+		SMIS DEFG 2 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor RocketTrail
+{
+	ConversationID 51, -1, -1
+	RenderStyle Translucent
+	Alpha 0.25
+	+NoBlockmap
+	+NoGravity
+	SeeSound "misc/missileinflight"
+	states
+	{
+	Spawn:
+		PUFY BCBCD 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MiniMissilePuff : StrifePuff
+{
+	-AllowParticles
+	states
+	{
+	Spawn:
+		Goto Super::Crash
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HEGrenade
+{
+	ConversationID 106, -1, -1
+	Radius 13
+	Height 13
+	Mass 20
+	Speed 15
+	MaxStepHeight 4
+	ReactionTime 30
+	Damage 1
+	Projectile
+	-NoGravity
+	+BounceOnActors
+	+NoBounceSound
+	+ExplodeOnWater
+	+StrifeDamage
+	+DoomBounce
+	BounceCount 2
+	BounceFactor 0.5
+	SeeSound "weapons/hegrenadeshoot"
+	DeathSound "weapons/hegrenadebang"
+	states
+	{
+	Spawn:
+		GRAP AB 3 A_Countdown
+		Loop
+	Death:
+		BNG4 A 0 Bright A_SetTranslucent(1, 1)
+		BNG4 A 2 Bright A_Explode(192, 192, 1, 1)
+		BNG4 BCDEFGHIJKLMN 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PhosphorousGrenade
+{
+	ConversationID 107, -1, -1
+	Radius 13
+	Height 13
+	Mass 20
+	Speed 15
+	MaxStepHeight 4
+	ReactionTime 40
+	Damage 1
+	BounceCount 2
+	BounceFactor 0.5
+	Projectile
+	-NoGravity
+	+BounceOnActors
+	+NoBounceSound
+	+ExplodeOnWater
+	+StrifeDamage
+	+DoomBounce
+	SeeSound "weapons/phgrenadeshoot"
+	DeathSound "weapons/phgrenadebang"
+	states
+	{
+	Spawn:
+		GRIN AB 3 A_Countdown
+		Loop
+	Death:
+		BNG3 A 1 A_SpawnItemEx("PhosphorousFire")
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FlameMissile
+{
+	Radius 8
+	Height 11
+	Mass 10
+	Speed 15
+	MaxStepHeight 4
+	Damage 4
+	DamageType "Fire"
+	RenderStyle Add
+	Projectile
+	-NoGravity
+	+StrifeDamage
+	SeeSound "weapons/flamethrower"
+
+	action native A_FlameDie();
+
+	states
+	{
+	Spawn:
+		FRBL AB 3 Bright
+		FRBL C 3 Bright A_Countdown
+		Loop
+	Death:
+		FRBL D 5 Bright A_FlameDie
+		FRBL EFGHI 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaulerPuff
+{
+	RenderStyle Add
+	DamageType "Disintegrate"
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	states
+	{
+	Spawn:
+		MPUF AB 5
+		POW1 ABCDE 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaulerTorpedo
+{
+	Radius 13
+	Height 8
+	Speed 20
+	MaxStepHeight 4
+	Damage 1
+	DamageType "Disintegrate"
+	RenderStyle Add
+	Projectile
+	+StrifeDamage
+	SeeSound "weapons/mauler2fire"
+	DeathSound "weapons/mauler2hit"
+
+	action native A_MaulerTorpedoWave();
+
+	states
+	{
+	Spawn:
+		TORP ABCD 4 Bright
+		Loop
+	Death:
+		THIT AB 8 Bright
+		THIT C 8 Bright A_MaulerTorpedoWave
+		THIT DE 8 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaulerTorpedoWave
+{
+	Radius 13
+	Height 13
+	Speed 35
+	MaxStepHeight 4
+	Damage 10
+	DamageType "Disintegrate"
+	RenderStyle Add
+	Projectile
+	+StrifeDamage
+	states
+	{
+	Spawn:
+		TWAV AB 9 Bright
+	Death:
+		TWAV C 9 Bright
+		Stop
+	}
+}

@@ -63,7 +63,7 @@ actor StrifePlayer : PlayerPawn
 	Disintegrate:
 		DISR A 5 A_PlaySound("misc/disruptordeath")
 		DISR BC 5
-		DISR D 5 A_Fall
+		DISR D 5 A_NoBlocking
 		DISR EF 5
 		DISR GHIJ 4
 		MEAT D 700

@@ -31,23 +31,6 @@ float JumpSpeed;
 
 //==========================================================================
 //
-//  TakeSpecialDamage
-//
-//==========================================================================
-
-int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
-	name DmgType)
-{
-	if (InquisitorShot(inflictor))
-	{
-		// Inquisitor grenades don't damage inquisitors
-		return -1;
-	}
-	return ::TakeSpecialDamage(inflictor, source, damage, DmgType);
-}
-
-//==========================================================================
-//
 //	A_InquisitorChase
 //
 //==========================================================================
@@ -234,7 +217,7 @@ Death:
 	ROB3 N 4 A_TossGib
 	ROB3 O 4 Bright A_ExplodeAndAlert
 	ROB3 P 4 Bright A_TossGib
-	ROB3 Q 4 Bright A_Fall
+	ROB3 Q 4 Bright A_NoBlocking
 	ROB3 RSTUV 4 A_TossGib
 	ROB3 W 4 Bright A_ExplodeAndAlert
 	ROB3 XY 4 Bright A_TossGib

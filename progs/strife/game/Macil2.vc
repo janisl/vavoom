@@ -37,7 +37,7 @@ class Macil2 : Macil1
 int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
 	name DmgType)
 {
-	if (SpectralLightningV1(inflictor))
+	if (inflictor.IsA('SpectralLightningV1'))
 	{
 		return -1;
 	}
@@ -63,7 +63,7 @@ states
 {
 Missile:
 	LEAD E 4 A_FaceTarget
-	LEAD F 4 Bright A_RiffleAttack
+	LEAD F 4 Bright A_ShootGun
 	LEAD E 2 A_SentinelRefire
 	Loop
 Death:
@@ -72,7 +72,7 @@ XDeath:
 	LEAD H 5 A_Scream
 	LEAD IJ 4
 	LEAD K 3
-	LEAD L 3 A_Fall
+	LEAD L 3 A_NoBlocking
 	LEAD MNOPQRSTUV 3
 	LEAD W 3 A_MacilDeath
 	LEAD X -1

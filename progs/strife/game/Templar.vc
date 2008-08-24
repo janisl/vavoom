@@ -87,7 +87,7 @@ Death:
 	PGRD I 4 Bright A_TossGib
 	PGRD J 4 Bright A_Scream
 	PGRD K 4 Bright A_TossGib
-	PGRD L 4 Bright A_Fall
+	PGRD L 4 Bright A_NoBlocking
 	PGRD MN 4 Bright
 	PGRD O 4 A_TossGib
 	PGRD PQR 4

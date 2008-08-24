@@ -1,0 +1,50 @@
+//------------------------------------------------------------------------------
+actor StrifeHumanoid
+{
+	MaxDropoffHeight 32
+	MaxStepHeight 16
+	states
+	{
+	Burn:
+		BURN A 3 A_PlaySoundEx("human/imonfire", "Voice")
+		BURN B 3 A_DropFire
+		BURN C 3 A_Wander
+		BURN D 3 A_NoBlocking
+		BURN E 5 A_DropFire
+		BURN F 5 A_Wander
+		BURN G 5 A_Wander
+		BURN H 5 A_Wander
+		BURN I 5 A_DropFire
+		BURN J 5 A_Wander
+		BURN K 5 A_Wander
+		BURN L 5 A_Wander
+		BURN M 3 A_DropFire
+		BURN N 3
+		BURN OPQPQ 5
+		BURN RSTU 7
+		BURN V 700 //FIXME A_Dying();
+		Stop
+	Disintegrate:
+		DISR A 5 A_PlaySoundEx("misc/disruptordeath", "Voice")
+		DISR BC 5
+		DISR D 5 A_NoBlocking
+		DISR EF 5
+		DISR GHIJ 4
+		MEAT D 700
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FireDroplet
+{
+	ConversationID 297, -1, -1
+	+NoBlockmap
+	+NoClip
+	states
+	{
+	Spawn:
+		FFOT ABCD 9 Bright
+		Stop
+	}
+}

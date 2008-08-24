@@ -1,0 +1,17 @@
+//------------------------------------------------------------------------------
+actor ProgrammerBase
+{
+	ConversationID 96, -1, -1
+	+NoBlockmap
+	+NoClip
+	+NoBlood
+	states
+	{
+	Spawn:
+		BASE A 5 Bright A_Explode(32, 32, 1, 1)
+		BASE BCD 5 Bright
+		BASE EFG 5
+		BASE H -1
+		Stop
+	}
+}

@@ -53,7 +53,7 @@ Spawn:
 	Stop
 Death:
 	ORCL BCDEFGHIJK 5
-	ORCL L 5 A_Fall
+	ORCL L 5 A_NoBlocking
 	ORCL M 5
 	ORCL N 5 A_OracleDeath
 	ORCL OP 5

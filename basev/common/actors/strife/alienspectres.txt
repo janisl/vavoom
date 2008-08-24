@@ -1,0 +1,27 @@
+//------------------------------------------------------------------------------
+actor AlienChunkSmall
+{
+	ConversationID 68, -1, -1
+	+NoBlockmap
+	+NoClip
+	states
+	{
+	Spawn:
+		NODE ABCDEFG 6 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor AlienChunkLarge
+{
+	ConversationID 69, -1, -1
+	+NoBlockmap
+	+NoClip
+	states
+	{
+	Spawn:
+		MTHD ABCDEFGHIJK 5 Bright
+		Stop
+	}
+}

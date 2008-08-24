@@ -1,0 +1,234 @@
+//------------------------------------------------------------------------------
+actor SpectralLightningBase
+{
+	MaxStepHeight 4
+	RenderStyle Add
+	+NoTeleport
+	+ActivatePCross
+	+ActivateImpact
+	+StrifeDamage
+	SeeSound "weapons/sigil"
+	DeathSound "weapons/sigilhit"
+	states
+	{
+	Death:
+		ZAP1 B 3 A_Explode(32, 32)
+		ZAP1 A 3 A_AlertMonsters
+		ZAP1 BCDEFE 3
+		ZAP1 DCB 2
+		ZAP1 A 1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningDeath1 : SpectralLightningBase
+{
+	states
+	{
+	Death:
+		Goto Super::Death+1
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningDeath2 : SpectralLightningBase
+{
+	states
+	{
+	Death:
+		Goto Super::Death+2
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningDeathShort : SpectralLightningBase
+{
+	states
+	{
+	Death:
+		Goto Super::Death+6
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningV1 : SpectralLightningDeathShort
+{
+	ConversationID 86, -1, -1
+	Radius 8
+	Height 24
+	Speed 22
+	Damage 100
+	Projectile
+	+Spectral
+	states
+	{
+	Spawn:
+		ZOT1 AB 4 Bright
+		ZOT1 CDD 6 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningV2 : SpectralLightningV1
+{
+	ConversationID 87, -1, -1
+	Damage 50
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningSpot : SpectralLightningDeath1
+{
+	ConversationID 88, -1, -1
+	Speed 18
+	ReactionTime 70
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoBlockMonst
+	+NoDropOff
+
+	action native A_SpectralLightning();
+
+	states
+	{
+	Spawn:
+		ZAP5 A 4 Bright A_Countdown
+		ZAP5 B 4 Bright A_SpectralLightning
+		ZAP5 CD 4 Bright A_Countdown
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningH1 : SpectralLightningBase
+{
+	ConversationID 78, -1, -1
+	Radius 8
+	Height 16
+	Speed 30
+	Damage 70
+	Projectile
+	+Spectral
+
+	action native A_SpectralLightningTail();
+
+	states
+	{
+	Spawn:
+		ZAP6 A 4 Bright
+		ZAP6 BC 4 Bright A_SpectralLightningTail
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningH2 : SpectralLightningH1
+{
+	ConversationID 79, -1, -1
+	Damage 20
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningH3 : SpectralLightningH1
+{
+	ConversationID 82, -1, -1
+	Damage 10
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningHTail
+{
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	+DropOff
+	states
+	{
+	Spawn:
+		ZAP6 ABC 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningBall1 : SpectralLightningBase
+{
+	ConversationID 80, -1, -1
+	Radius 8
+	Height 16
+	Speed 30
+	Damage 70
+	Projectile
+	+Spectral
+	states
+	{
+	Spawn:
+		ZOT3 ABCDE 4 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningBall2 : SpectralLightningBall1
+{
+	ConversationID 81, -1, -1
+	Damage 20
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningBigV1 : SpectralLightningDeath1
+{
+	ConversationID 89, -1, -1
+	Radius 8
+	Height 16
+	Speed 28
+	Damage 120
+	Projectile
+	+Spectral
+	states
+	{
+	Spawn:
+		ZOT2 AB 4 Bright A_Tracer2
+		ZOT2 CD 6 Bright A_Tracer2
+		ZOT2 E 5 Bright A_Tracer2
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningBigV2 : SpectralLightningBigV1
+{
+	ConversationID 90, -1, -1
+	Damage 60
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningBigBall1 : SpectralLightningDeath2
+{
+	ConversationID 84, -1, -1
+	Radius 20
+	Height 40
+	Speed 18
+	Damage 130
+	Projectile
+	+Spectral
+
+	action native A_SpectralBigBallLightning();
+
+	states
+	{
+	Spawn:
+		ZAP7 AB 4 Bright A_SpectralBigBallLightning
+		ZAP7 CDE 6 Bright A_SpectralBigBallLightning
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpectralLightningBigBall2 : SpectralLightningBigBall1
+{
+	ConversationID 85, -1, -1
+	Damage 30
+}

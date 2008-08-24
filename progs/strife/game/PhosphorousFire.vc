@@ -27,6 +27,21 @@ class PhosphorousFire : Actor;
 
 //==========================================================================
 //
+//  TakeSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.bNoBlood)
+	{
+		return damage / 2;
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
+
+//==========================================================================
+//
 //	A_Burnination
 //
 //==========================================================================

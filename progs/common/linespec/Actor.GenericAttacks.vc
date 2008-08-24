@@ -564,7 +564,7 @@ final void A_ExplodeParms()
 //==========================================================================
 
 final void decorate_A_Explode(optional int damage, optional int distance,
-	optional bool damageSelf)
+	optional bool damageSelf, optional bool Alert)
 {
 	if (specified_damage)
 	{
@@ -597,6 +597,11 @@ final void decorate_A_Explode(optional int damage, optional int distance,
 	}
 
 	DoExplode(damage, itof(distance), damageSelf);
+
+	if (Alert && Target && Target.bIsPlayer)
+	{
+		LineSpecialLevelInfo(Level).NoiseAlert(Target, self);
+	}
 }
 
 //==========================================================================

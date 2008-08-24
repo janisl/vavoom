@@ -1,0 +1,201 @@
+//------------------------------------------------------------------------------
+actor Acolyte : StrifeHumanoid
+{
+	Tag "ACOLYTE"
+	Health 70
+	Radius 24
+	Height 64
+	Mass 400
+	Speed 7
+	PainChance 150
+	MinMissileChance 150
+	Monster
+	+SeesDaggers
+	+NoSplashAlert
+	+FloorClip
+	SeeSound "acolyte/sight"
+	ActiveSound "acolyte/active"
+	AttackSound "acolyte/rifle"
+	PainSound "acolyte/pain"
+	DeathSound "acolyte/death"
+	Obituary "$ob_acolyte"
+
+	action native A_AcolyteBits();
+	action native A_AcolyteDeath();
+	action native A_BeShadowyFoe();
+
+	states
+	{
+	Spawn:
+		AGRD A 5 A_Look2
+		Loop
+	LookRight:
+		AGRD B 8 A_ClearShadow
+		Goto Spawn
+	LookLeft:
+		AGRD D 8
+		Goto Spawn
+	Walk:
+		AGRD ABCDABCD 5 A_Wander
+		Loop
+	See:
+		AGRD A 6 A_AcolyteBits
+		AGRD BCD 6 A_Chase
+		Loop
+	Missile:
+		AGRD E 8 A_FaceTarget
+		AGRD FE 4 A_ShootGun
+		AGRD F 6 A_ShootGun
+		Goto See
+	Pain:
+		AGRD O 8 A_Pain
+		Goto See
+	Death:
+		AGRD G 4
+		AGRD H 4 A_Scream
+		AGRD I 4
+		AGRD J 3
+		AGRD K 3 A_NoBlocking
+		AGRD L 3
+		AGRD M 3 A_AcolyteDeath
+		AGRD N 1400
+		Goto XDeath+10
+	XDeath:
+		GIBS A 5 A_NoBlocking
+		GIBS BC 5 A_TossGib
+		GIBS D 4 A_TossGib
+		GIBS E 4 A_XScream
+		GIBS F 4 A_TossGib
+		GIBS GH 4
+		GIBS I 5
+		GIBS J 5 A_AcolyteDeath
+		GIBS K 5
+		GIBS L 1400
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteTan : Acolyte 3002
+{
+	game Strife
+	ConversationID 53, 52, 53
+	+MissileMore
+	+MissileEvenMore
+	DropItem "ClipOfBullets"
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteRed : Acolyte 142
+{
+	game Strife
+	ConversationID 54, 53, 54
+	+MissileMore
+	+MissileEvenMore
+	Translation 0
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteRust : Acolyte 143
+{
+	game Strife
+	ConversationID 55, 54, 55
+	+MissileMore
+	+MissileEvenMore
+	Translation 1
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteGray : Acolyte 146
+{
+	game Strife
+	ConversationID 56, 55, 56
+	+MissileMore
+	+MissileEvenMore
+	Translation 2
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteDGreen : Acolyte 147
+{
+	game Strife
+	ConversationID 57, 56, 57
+	+MissileMore
+	+MissileEvenMore
+	Translation 3
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteGold : Acolyte 148
+{
+	game Strife
+	ConversationID 58, 57, 58
+	+MissileMore
+	+MissileEvenMore
+	Translation 4
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteLGreen : Acolyte 232
+{
+	game Strife
+	ConversationID 59, -1, -1
+	Health 60
+	Translation 5
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteBlue : Acolyte 231
+{
+	game Strife
+	ConversationID 60, -1, -1
+	Health 60
+	Translation 6
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteShadow : Acolyte 58
+{
+	game Strife
+	ConversationID 61, 58, 59
+	+MissileMore
+	DropItem "ClipOfBullets"
+	states
+	{
+	See:
+		AGRD A 6 A_BeShadowyFoe
+		Goto Super::See+1
+	Pain:
+		AGRD O 0 A_SetShadow
+		AGRD O 8 A_Pain
+		Goto See
+	}
+}
+
+//------------------------------------------------------------------------------
+actor AcolyteToBe : Acolyte 201
+{
+	game Strife
+	ConversationID 29, -1, -1
+	Health 61
+	Radius 20
+	Height 56
+	PainChance 256
+	-CountKill
+	-IsMonster
+	DeathSound "becoming/death"
+
+	action native A_HideDecepticon();
+
+	states
+	{
+	Spawn:
+		ARMR A -1
+		Stop
+	Pain:
+		ARMR A -1 A_HideDecepticon
+		Stop
+	Death:
+		Goto Super::XDeath
+	}
+}

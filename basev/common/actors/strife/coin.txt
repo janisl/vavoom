@@ -1,0 +1,64 @@
+//------------------------------------------------------------------------------
+actor Gold10 : Coin 138
+{
+	game Strife
+	ConversationID 169, 162, 166
+	Tag "10_gold"
+	Inventory.Amount 10
+	Inventory.PickupMessage "$txt_10gold"
+	states
+	{
+	Spawn:
+		CRED A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Gold25 : Coin 139
+{
+	game Strife
+	ConversationID 170, 163, 167
+	Tag "25_gold"
+	Inventory.Amount 25
+	Inventory.PickupMessage "$txt_25gold"
+	states
+	{
+	Spawn:
+		SACK A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Gold50 : Coin 140
+{
+	game Strife
+	ConversationID 171, 164, 168
+	Tag "50_gold"
+	Inventory.Amount 50
+	Inventory.PickupMessage "$txt_50gold"
+	states
+	{
+	Spawn:
+		CHST A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Gold300 : Coin
+{
+	ConversationID 172, -1, -1
+	Tag "300_gold"
+	Inventory.Amount 300
+	Inventory.PickupMessage "$txt_300gold"
+	Inventory.GiveQuest 3
+	+Inventory.AlwaysPickup
+	states
+	{
+	Spawn:
+		TOKN A -1
+		Stop
+	}
+}

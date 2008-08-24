@@ -63,7 +63,7 @@ Death:
 	ROB1 J 6 Bright
 	ROB1 K 6 Bright A_Scream
 	ROB1 L 5 Bright
-	ROB1 M 5 Bright A_Fall
+	ROB1 M 5 Bright A_NoBlocking
 	ROB1 NOP 5 Bright
 	ROB1 Q 6 Bright A_ExplodeAndAlert
 	ROB1 R -1
@@ -72,7 +72,7 @@ XDeath:
 	ROB1 L 5 Bright A_TossGib
 	ROB1 M 5 Bright A_XXScream
 	ROB1 N 5 Bright A_TossGib
-	ROB1 O 5 Bright A_Fall
+	ROB1 O 5 Bright A_NoBlocking
 	ROB1 P 5 Bright A_TossGib
 	ROB1 Q 5 Bright A_ExplodeAndAlert
 	ROB1 R -1

@@ -25,18 +25,6 @@
 
 class FlameMissile : Actor;
 
-//==========================================================================
-//
-//	A_FlameFXExplode
-//
-//==========================================================================
-
-final void A_FlameFXExplode()
-{
-	bNoGravity = true;
-	Velocity.z = Random() * 4.0 * 35.0 / 10.0;
-}
-
 states
 {
 Spawn:
@@ -44,7 +32,7 @@ Spawn:
 	FRBL C 3 Bright A_Countdown
 	Loop
 Death:
-	FRBL D 5 Bright A_FlameFXExplode
+	FRBL D 5 Bright A_FlameDie
 	FRBL EFGHI 5 Bright
 	Stop
 }

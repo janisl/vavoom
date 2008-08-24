@@ -102,7 +102,7 @@ Death:
 	PDED A 6
 	PDED B 6 A_Scream
 	PDED C 6
-	PDED D 6 A_Fall
+	PDED D 6 A_NoBlocking
 	PDED E 6
 	PDED FGHIJIJIJKL 5
 	PDED MNOP 4

@@ -1,0 +1,106 @@
+//------------------------------------------------------------------------------
+actor Rebel : StrifeHumanoid
+{
+	Tag "Rebel"
+	Health 60
+	Radius 20
+	Height 56
+	Speed 8
+	PainChance 250
+	MinMissileChance 150
+	Monster
+	-CountKill
+	+FloorClip
+	+Friendly
+	SeeSound "rebel/sight"
+	ActiveSound "rebel/active"
+	PainSound "rebel/pain"
+	DeathSound "rebel/death"
+	Obituary "$ob_rebel"
+	states
+	{
+	Spawn:
+		HMN1 P 5 A_Look2
+		Loop
+	LookRight:
+		HMN1 Q 8
+		Goto Spawn
+	LookLeft:
+		HMN1 R 8
+		Goto Spawn
+	Walk:
+		HMN1 ABCDABCD 6 A_Wander
+		Goto Spawn
+	See:
+		HMN1 AABBCCDD 3 A_Chase
+		Loop
+	Missile:
+		HMN1 E 10 A_FaceTarget
+		HMN1 F 10 Bright A_ShootGun
+		HMN1 E 10 A_ShootGun
+		Goto See
+	Pain:
+		HMN1 O 3
+		HMN1 O 3 A_Pain
+		Goto See
+	Death:
+		HMN1 G 5
+		HMN1 H 5 A_Scream
+		HMN1 I 3 A_NoBlocking
+		HMN1 J 4
+		HMN1 KLM 3
+		HMN1 N -1
+		Stop
+	XDeath:
+		RGIB A 4 A_TossGib
+		RGIB B 4 A_XScream
+		RGIB C 3 A_NoBlocking
+		RGIB DEF 3 A_TossGib
+		RGIB G 3
+		RGIB H 1400
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Rebel1 : Rebel 9
+{
+	game Strife
+	ConversationID 43, 42, 43
+	DropItem "ClipOfBullets"
+}
+
+//------------------------------------------------------------------------------
+actor Rebel2 : Rebel 144
+{
+	game Strife
+	ConversationID 44, 43, 44
+}
+
+//------------------------------------------------------------------------------
+actor Rebel3 : Rebel 145
+{
+	game Strife
+	ConversationID 45, 44, 45
+}
+
+//------------------------------------------------------------------------------
+actor Rebel4 : Rebel 149
+{
+	game Strife
+	ConversationID 46, 45, 46
+}
+
+//------------------------------------------------------------------------------
+actor Rebel5 : Rebel 150
+{
+	game Strife
+	ConversationID 47, 46, 47
+}
+
+//------------------------------------------------------------------------------
+actor Rebel6 : Rebel 151
+{
+	game Strife
+	ConversationID 48, 47, 48
+}

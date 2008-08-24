@@ -52,7 +52,7 @@ Spawn:
 	Loop
 See:
 	PODD A 360
-	PODD B 9 A_Fall
+	PODD B 9 A_NoBlocking
 	PODD C 9
 	PODD D 9 A_EntityBossRaise
 	PODD E -1

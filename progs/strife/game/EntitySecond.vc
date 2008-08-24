@@ -81,7 +81,7 @@ Pain:
 Death:
 	MDTH A 3 Bright A_Scream
 	MDTH B 3 Bright A_TossGib
-	MDTH C 3 Bright A_Fall
+	MDTH C 3 Bright A_NoBlocking
 	MDTH DEFGHIJKLMN 3 Bright A_TossGib
 	MDTH O 3 Bright A_SubEntityDeath
 	Stop

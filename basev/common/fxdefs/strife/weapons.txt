@@ -188,7 +188,7 @@ pointlight HEGrenade_X10
 
 class HEGrenade
 {
-	frame BNG4A { light HEGrenade_X1 }
+	frame BNG4A { light HEGrenade_X1 particles Rocket }
 	frame BNG4B { light HEGrenade_X2 }
 	frame BNG4C { light HEGrenade_X3 }
 	frame BNG4D { light HEGrenade_X4 }

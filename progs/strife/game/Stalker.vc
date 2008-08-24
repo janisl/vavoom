@@ -191,7 +191,7 @@ Death:
 	STLK O 4
 	STLK P 4 A_Scream
 	STLK QRST 4
-	STLK U 4 A_Fall
+	STLK U 4 A_NoBlocking
 	STLK VW 4
 	STLK X 4 Bright
 	STLK Y 4 Bright
