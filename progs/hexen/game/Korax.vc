@@ -446,8 +446,8 @@ final void A_KoraxBonePop()
 final void KSpiritInit(EntityEx Spirit)
 {
 	int i;
-	HolyTail tail;
-	HolyTail next;
+	EntityEx tail;
+	EntityEx next;
 
 	Spirit.Tracer = self;	// Swarm around korax
 	Spirit.Special1 = 5 * 35 / 5;	// 5 seconds
@@ -455,12 +455,11 @@ final void KSpiritInit(EntityEx Spirit)
 
 	// Spawn a tail for spirit
 	tail = Spawn(HolyTail, Spirit.Origin);
-	tail.ParentSpirit = Actor(Spirit);	// parent
+	tail.Target = Spirit;	// parent
 	for (i = 1; i < 3; i++)
 	{
-		next = Spawn(HolyTail, Spirit.Origin);
-		next.SetState(GetStatePlus(next.IdleState, 1, true));
-		tail.NextTail = next;
+		next = Spawn(HolyTailTrail, Spirit.Origin);
+		tail.Tracer = next;
 		tail = next;
 	}
 }

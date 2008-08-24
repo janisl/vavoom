@@ -1,0 +1,31 @@
+//------------------------------------------------------------------------------
+actor AxePuff
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	SeeSound "FighterAxeHitThing"
+	AttackSound "FighterHammerHitWall"
+	ActiveSound "FighterHammerMiss"
+	states
+	{
+	Spawn:
+		FHFX STUVW 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor AxePuffGlow : AxePuff
+{
+	RenderStyle Add
+	Alpha 1
+	states
+	{
+	Spawn:
+		FAXE RSTUVWX 4 Bright
+		Stop
+	}
+}

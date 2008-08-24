@@ -483,3 +483,107 @@ final void A_KSpiritRoam()
 		}
 	}
 }
+
+//==========================================================================
+//
+//	A_CFlameRotate
+//
+//==========================================================================
+
+final void A_CFlameRotate()
+{
+	float an;
+
+	an = AngleMod360(Angles.yaw + 90.0);
+	Velocity.x = Special1f + 2.0 * 35.0 * cos(an);
+	Velocity.y = Special2f + 2.0 * 35.0 * sin(an);
+	Angles.yaw = AngleMod360(Angles.yaw + 90.0 / 15.0);
+}
+
+//============================================================================
+//
+//	CHolyTailFollow
+//
+//============================================================================
+
+final void CHolyTailFollow(float dist)
+{
+	EntityEx child;
+	float an;
+	float oldDistance, newDistance;
+
+	child = Tracer;
+	if (child)
+	{
+		an = atan2(child.Origin.y - Origin.y,
+			Origin.x - child.Origin.x);
+		oldDistance = DistTo(child);
+		if (child.TryMove(vector(Origin.x + dist * cos(an),
+				Origin.y + dist * sin(an), child.Origin.z), false))
+		{
+			newDistance = DistTo2(child) - 1.0;
+			if (oldDistance < 1.0)
+			{
+				if (child.Origin.z < Origin.z)
+				{
+					child.Origin.z = Origin.z - dist;
+				}
+				else
+				{
+					child.Origin.z = Origin.z + dist;
+				}
+			}
+			else
+			{
+				child.Origin.z = Origin.z + newDistance / oldDistance *
+					(child.Origin.z - Origin.z);
+			}
+		}
+		Actor(child).CHolyTailFollow(dist - 1.0);
+	}
+}
+
+//============================================================================
+//
+//	CHolyTailRemove
+//
+//============================================================================
+
+final void CHolyTailRemove()
+{
+	if (Tracer)
+	{
+		Actor(Tracer).CHolyTailRemove();
+	}
+	Destroy();
+}
+
+//============================================================================
+//
+//	A_CHolyTail
+//
+//============================================================================
+
+final void A_CHolyTail()
+{
+	EntityEx parent;
+
+	parent = Target;
+
+	if (parent)
+	{
+		if (!parent.bMissile)
+		{
+			// Ghost removed, so remove all tail parts
+			CHolyTailRemove();
+			return;
+		}
+		else if (TryMove(vector(
+				parent.Origin.x - 14.0 * cos(parent.Angles.yaw),
+				parent.Origin.y - 14.0 * sin(parent.Angles.yaw), Origin.z), false))
+		{
+			Origin.z = parent.Origin.z - 5.0;
+		}
+		CHolyTailFollow(10.0);
+	}
+}

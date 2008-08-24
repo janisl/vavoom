@@ -96,12 +96,11 @@ final void A_CHolyAttack2()
 			A.bMissile = false;
 		}
 		tail = Spawn(HolyTail, A.Origin);
-		HolyTail(tail).ParentSpirit = A;	// parent
+		tail.Target = A;	// parent
 		for (i = 1; i < 3; i++)
 		{
-			next = Spawn(HolyTail, A.Origin);
-			next.SetState(GetStatePlus(next.IdleState, 1));
-			HolyTail(tail).NextTail = HolyTail(next);
+			next = Spawn(HolyTailTrail, A.Origin);
+			tail.Tracer = next;
 			tail = next;
 		}
 	}

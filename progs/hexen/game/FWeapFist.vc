@@ -65,14 +65,7 @@ final void A_FPunchAttack() self(Actor)
 		}
 		if (LineAttack(vforward, 2.0 * MELEERANGE, damage, PuffType))
 		{
-			if (PuffType == HammerPuff)
-			{
-				PlaySound('FighterHammerMiss', CHAN_WEAPON);
-			}
-			else
-			{
-				PlaySound('FighterPunchMiss', CHAN_WEAPON);
-			}
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
 		}
 		if (AimTarget.bMonster || AimTarget.bIsPlayer)
 		{
@@ -87,7 +80,7 @@ final void A_FPunchAttack() self(Actor)
 
 		if (LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
 		{
-			PlaySound('FighterPunchMiss', CHAN_WEAPON);
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
 		}
 	}
 

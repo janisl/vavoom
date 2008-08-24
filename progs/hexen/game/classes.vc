@@ -68,30 +68,15 @@ import linespec;
 #include "PlayerSpeed.vc"
 #include "BlastEffect.vc"
 
-#include "PunchPuff.vc"
 #include "FWeapFist.vc"
-#include "AxePuff.vc"
-#include "AxePuffGlow.vc"
-#include "HammerMissile.vc"
-#include "HammerPuff.vc"
-#include "FSwordFlame.vc"
 #include "FSwordMissile.vc"
 #include "FWeapQuietus.vc"
 #include "CWeapMace.vc"
 #include "CStaffMissile.vc"
-#include "CStaffPuff.vc"
-#include "CircleFlame.vc"
-#include "CFlameFloor.vc"
-#include "FlamePuff.vc"
-#include "FlamePuff2.vc"
 #include "CFlameMissile.vc"
-#include "HolyPuff.vc"
 #include "HolySpirit.vc"
-#include "HolyTail.vc"
-#include "HolyMissilePuff.vc"
 #include "HolyMissile.vc"
 #include "CWeapWraithverge.vc"
-#include "MageWandSmoke.vc"
 #include "MageWandMissile.vc"
 #include "MWeapWand.vc"
 #include "FrostMissile.vc"
@@ -101,7 +86,6 @@ import linespec;
 #include "LightningCeiling.vc"
 #include "MageStaffFX2.vc"
 #include "MWeapBloodscourge.vc"
-#include "SnoutPuff.vc"
 #include "Snout.vc"
 
 #include "IceShard.vc"
@@ -218,3 +202,18 @@ class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
 class MinotaurSmoke : Actor decorate;
 class MinotaurSmokeExit : Actor decorate;
+class PunchPuff : Actor decorate;
+class AxePuff : Actor decorate;
+class AxePuffGlow : Actor decorate;
+class HammerPuff : Actor decorate;
+class HammerMissile : Actor decorate;
+class FSwordFlame : Actor decorate;
+class CStaffPuff : Actor decorate;
+class CFlameFloor : Actor decorate;
+class CircleFlame : Actor decorate;
+class HolyMissilePuff : Actor decorate;
+class HolyPuff : Actor decorate;
+class HolyTail : Actor decorate;
+class HolyTailTrail : Actor decorate;
+class MageWandSmoke : Actor decorate;
+class SnoutPuff : Actor decorate;

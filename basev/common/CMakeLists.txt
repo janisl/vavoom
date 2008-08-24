@@ -62,11 +62,18 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/heretic/snake.txt
 		actors/hexen/bishop.txt
 		actors/hexen/centaur.txt
+		actors/hexen/clericflame.txt
+		actors/hexen/clericholy.txt
+		actors/hexen/clericstaff.txt
 		actors/hexen/clericplayer.txt
 		actors/hexen/demons.txt
 		actors/hexen/dragon.txt
 		actors/hexen/ettin.txt
+		actors/hexen/fighteraxe.txt
+		actors/hexen/fighterfist.txt
+		actors/hexen/fighterhammer.txt
 		actors/hexen/fighterplayer.txt
+		actors/hexen/fighterquietus.txt
 		actors/hexen/firedemon.txt
 		actors/hexen/flame.txt
 		actors/hexen/heresiarch.txt
@@ -77,7 +84,9 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/hexen/iceguy.txt
 		actors/hexen/korax.txt
 		actors/hexen/mageplayer.txt
+		actors/hexen/magewand.txt
 		actors/hexen/mana.txt
+		actors/hexen/pig.txt
 		actors/hexen/puzzleitems.txt
 		actors/hexen/scriptprojectiles.txt
 		actors/hexen/serpent.txt

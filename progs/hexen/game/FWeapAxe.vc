@@ -212,7 +212,7 @@ final void A_FAxeAttack() self(Actor)
 		VectorAngles(&vforward, &angles);
 		if (LineAttack(vforward, FWeapAxe::AxeRange, damage, PuffType))
 		{
-			PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
 		}
 		if (AimTarget.bMonster || AimTarget.bIsPlayer)
 		{
@@ -226,7 +226,7 @@ final void A_FAxeAttack() self(Actor)
 		// didn't find any creatures, so try to strike any walls
 		if (LineAttack(vforward, MELEERANGE, damage, PuffType))
 		{
-			PlaySound('FighterHammerMiss', CHAN_WEAPON);
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
 		}
 	}
 

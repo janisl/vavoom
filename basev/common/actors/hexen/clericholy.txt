@@ -1,0 +1,69 @@
+//------------------------------------------------------------------------------
+actor HolyMissilePuff
+{
+	Radius 4
+	Height 8
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlockmap
+	+NoGravity
+	+DropOff
+	+NoTeleport
+	states
+	{
+	Spawn:
+		SPIR QRSTU 3
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HolyPuff
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		SPIR KLMNO 3
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HolyTail
+{
+	Radius 1
+	Height 1
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	+DropOff
+	+NoClip
+	+NoTeleport
+
+	action native A_CHolyTail();
+
+	states
+	{
+	Spawn:
+		SPIR C 1 A_CHolyTail
+		Loop
+	TailTrail:
+		SPIR D -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HolyTailTrail : HolyTail
+{
+	states
+	{
+	Spawn:
+		Goto TailTrail
+	}
+}

@@ -1,0 +1,114 @@
+//------------------------------------------------------------------------------
+actor CFlameFloor
+{
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		CFFX N 5 Bright
+		CFFX O 4 Bright
+		CFFX P 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CircleFlame
+{
+	Radius 6
+	Damage 2
+	RenderStyle Add
+	DamageType "Fire"
+	Projectile
+	-ActivateImpact
+	-ActivatePCross
+	DeathSound "ClericFlameCircle"
+
+	action native A_CFlameRotate();
+
+	states
+	{
+	Spawn:
+		CFCF A 4 Bright
+		CFCF B 2 Bright A_CFlameRotate
+		CFCF C 2 Bright
+		CFCF D 1 Bright
+		CFCF E 2 Bright
+		CFCF F 2 Bright A_CFlameRotate
+		CFCF G 1 Bright
+		CFCF H 2 Bright
+		CFCF I 2 Bright
+		CFCF J 1 Bright A_CFlameRotate
+		CFCF K 2 Bright
+		CFCF L 3 Bright
+		CFCF M 3 Bright
+		CFCF N 2 Bright A_CFlameRotate
+		CFCF O 3 Bright
+		CFCF P 2 Bright
+		Stop
+	Death:
+		CFCF QR 3 Bright
+		CFCF S 3 Bright A_Explode(20, 128, 0)
+		CFCF TUVWXYZ 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+//	UNUSED
+actor FlamePuff
+{
+	Radius 1
+	Height 1
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	SeeSound "ClericFlameExplode"
+	AttackSound "ClericFlameExplode"
+	states
+	{
+	Spawn:
+		CFFX ABC 3 Bright
+		CFFX D 4 Bright
+		CFFX E 3 Bright
+		CFFX F 4 Bright
+		CFFX G 3 Bright
+		CFFX H 4 Bright
+		CFFX I 3 Bright
+		CFFX J 4 Bright
+		CFFX K 3 Bright
+		CFFX L 4 Bright
+		CFFX M 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+//	UNUSED but checked in map.vc
+actor FlamePuff2 : FlamePuff
+{
+	states
+	{
+	Spawn:
+		CFFX ABC 3 Bright
+		CFFX D 4 Bright
+		CFFX E 3 Bright
+		CFFX F 4 Bright
+		CFFX G 3 Bright
+		CFFX H 4 Bright
+		CFFX IC 3 Bright
+		CFFX D 4 Bright
+		CFFX E 3 Bright
+		CFFX F 4 Bright
+		CFFX G 3 Bright
+		CFFX H 4 Bright
+		CFFX I 3 Bright
+		CFFX J 4 Bright
+		CFFX K 3 Bright
+		CFFX L 4 Bright
+		CFFX M 3 Bright
+		Stop
+	}
+}

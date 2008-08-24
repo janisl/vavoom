@@ -1,0 +1,47 @@
+//------------------------------------------------------------------------------
+actor HammerPuff
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	VSpeed 0.8
+	SeeSound "FighterHammerHitThing"
+	AttackSound "FighterHammerHitWall"
+	ActiveSound "FighterHammerMiss"
+	states
+	{
+	Spawn:
+		FHFX STUVW 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HammerMissile
+{
+	Radius 14
+	Height 20
+	Speed 25
+	Damage 10
+	DamageType "Fire"
+	Projectile
+	DeathSound "FighterHammerExplode"
+	states
+	{
+	Spawn:
+		FHFX A 2 Bright
+		FHFX B 2 Bright A_PlaySound("FighterHammerContinuous")
+		FHFX CDEFGH 2 Bright
+		Loop
+	Death:
+		FHFX I 3 Bright A_SetTranslucent(1, 1)
+		FHFX J 3 Bright
+		FHFX K 3 Bright A_Explode(128, 128, 0)
+		FHFX LM 3 Bright
+		FHFX N 3
+		FHFX OPQR 3 Bright
+		Stop
+	}
+}

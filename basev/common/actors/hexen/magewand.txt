@@ -1,0 +1,18 @@
+//------------------------------------------------------------------------------
+actor MageWandSmoke
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	+Shadow
+	+NoTeleport
+	+CannotPush
+	+NoDamageThrust
+	states
+	{
+	Spawn:
+		MWND CDCD 4
+		Stop
+	}
+}

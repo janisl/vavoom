@@ -1,0 +1,14 @@
+//------------------------------------------------------------------------------
+actor SnoutPuff
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		FHFX STUVW 4
+		Stop
+	}
+}

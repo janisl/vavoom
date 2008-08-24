@@ -1,0 +1,14 @@
+//------------------------------------------------------------------------------
+actor FSwordFlame
+{
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		FSFX NOPQRSTUVW 3 Bright
+		Stop
+	}
+}
