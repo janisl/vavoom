@@ -587,3 +587,430 @@ final void A_CHolyTail()
 		CHolyTailFollow(10.0);
 	}
 }
+
+//===========================================================================
+//
+// Bat Spawner Variables
+//	Special1    frequency counter
+//	Args[0]     frequency of spawn (1=fastest, 10=slowest)
+//	Args[1]     spread angle (0..255)
+//	Args[2]
+//	Args[3]     duration of bats (in octics)
+//	Args[4]     turn amount per move (in degrees)
+//
+// Bat Variables
+//	Special2  - lifetime counter
+//	Args[4]   - turn amount per move (in degrees)
+//
+//===========================================================================
+
+//===========================================================================
+//
+//  A_BatSpawnInit
+//
+//===========================================================================
+
+final void A_BatSpawnInit()
+{
+	Special1 = 0;	// Frequency count
+}
+
+//===========================================================================
+//
+//  A_BatSpawn
+//
+//===========================================================================
+
+final void A_BatSpawn()
+{
+	EntityEx mo;
+	float delta;
+	float angle;
+
+	// Countdown until next spawn
+	if (Special1-- > 0)
+	{
+		return;
+	}
+	Special1 = Args[0];	// Reset frequency count
+
+	delta = itof(Args[1]);
+	if (delta == 0.0)
+		delta = 1.0;
+	angle = AngleMod360(Angles.yaw +
+		delta * (Random() - 0.5) * 360.0 / 256.0);
+	mo = SpawnMissileAngle(Bat, angle, 0.0);
+	if (mo)
+	{
+		mo.Args[0] = P_Random() & 63;	// floatbob index
+		mo.Args[4] = Args[4];	// turn degrees
+		mo.Special2 = Args[3] << 3;	// Set lifetime
+		mo.Target = self;
+	}
+}
+
+//===========================================================================
+//
+//  A_BatMove
+//
+//===========================================================================
+
+final void A_BatMove()
+{
+	float newangle;
+	float newSpeed;
+
+	if (Special2 < 0)
+	{
+		SetState(FindState('Death'));
+	}
+	Special2 -= 2;	// Called every 2 tics
+
+	if (Random() < 0.5)
+	{
+		newangle = AngleMod360(Angles.yaw + itof(Args[4]));
+	}
+	else
+	{
+		newangle = AngleMod360(Angles.yaw - itof(Args[4]));
+	}
+
+	// Adjust momentum vector to new direction
+	newSpeed = Speed * Random() * 4.0;
+	Velocity.x = newSpeed * cos(newangle);
+	Velocity.y = newSpeed * sin(newangle);
+
+	if (Random() < 0.05859375)
+		PlaySound('BatScream', CHAN_VOICE);
+
+	// Handle Z movement
+	Origin.z = Target.Origin.z + 2.0 * Level.Game.FloatBobOffsets[Args[0]];
+	Args[0] = (Args[0] + 3) & 63;
+}
+
+//==========================================================================
+//
+//	A_TimeBomb
+//
+//==========================================================================
+
+final void A_TimeBomb()
+{
+	// Time Bombs
+	Origin.z += 32.0;
+	RenderStyle = STYLE_Normal;
+	Alpha = 1.0;
+	A_Explode();
+}
+
+//===========================================================================
+//
+//  A_CheckThrowBomb
+//
+//===========================================================================
+
+final void A_CheckThrowBomb()
+{
+	if (!--Health)
+	{
+		SetState(FindState('Death'));
+	}
+}
+
+//===========================================================================
+//
+//  A_CheckThrowBomb2
+//
+//===========================================================================
+
+final void A_CheckThrowBomb2()
+{
+	if (fabs(Velocity.x) < 1.5 * 35.0 &&
+		fabs(Velocity.y) < 1.5 * 35.0 &&
+		Velocity.z < 2.0 * 35.0)
+	{
+		SetState(GetStatePlus(IdleState, 6, true));
+		Origin.z = FloorZ;
+		Velocity.z = 0.0;
+		BounceType = BOUNCE_None;
+		bMissile = false;
+	}
+	A_CheckThrowBomb();
+}
+
+//==========================================================================
+//
+// Fog Variables:
+//
+//      Special1    Counter for spawn frequency
+//      Special2    Index into floatbob table
+//      args[0]     Speed (0..10) of fog
+//      args[1]     Angle of spread (0..128)
+//      args[2]     Frequency of spawn (1..10)
+//      args[3]     Lifetime countdown
+//      args[4]     Boolean: fog moving?
+//
+//==========================================================================
+
+//==========================================================================
+//
+//  A_FogSpawn
+//
+//==========================================================================
+
+final void A_FogSpawn()
+{
+	Actor A;
+	float delta;
+
+	if (Special1-- > 0)
+	{
+		return;
+	}
+
+	Special1 = Args[2];	// Reset frequency count
+
+	switch (P_Random() % 3)
+	{
+	case 0:
+		A = Spawn(FogPatchSmall, Origin);
+		break;
+	case 1:
+		A = Spawn(FogPatchMedium, Origin);
+		break;
+	case 2:
+		A = Spawn(FogPatchLarge, Origin);
+		break;
+	}
+
+	if (A)
+	{
+		delta = itof(Args[1]);
+		if (delta == 0.0)
+			delta = 1.0;
+		A.Angles.yaw = AngleMod360(Angles.yaw +
+			((Random() * delta) - (delta * 0.5)) * 360.0 / 256.0);
+		A.Target = self;
+		if (Args[0] < 1)
+			Args[0] = 1;
+		A.Args[0] = (P_Random() % (Args[0])) + 1;	// P_Random speed
+		A.Args[3] = Args[3];	// Set lifetime
+		A.Args[4] = 1;	// Set to moving
+		A.Special2 = P_Random() & 63;
+	}
+}
+
+//==========================================================================
+//
+//	A_FogMove
+//
+//==========================================================================
+
+final void A_FogMove()
+{
+	float speed;
+	float angle;
+	int weaveindex;
+
+	if (!Args[4])
+		return;
+
+	if (Args[3]-- <= 0)
+	{
+		SetState(FindState('Death'));
+		return;
+	}
+
+	if ((Args[3] % 4) == 0)
+	{
+		Origin.z += Level.Game.FloatBobOffsets[Special2] / 2.0;
+		Special2 = (Special2 + 1) & 63;
+	}
+
+	speed = itof(Args[0]);
+	angle = Angles.yaw;
+	Velocity.x = speed * cos(angle) * 35.0;
+	Velocity.y = speed * sin(angle) * 35.0;
+}
+
+//==========================================================================
+//
+//  A_PotteryChooseBit
+//
+//==========================================================================
+
+final void A_PotteryChooseBit()
+{
+	Special1 = 1 + 2 * (P_Random() % 5);
+	SetState(GetStatePlus(FindState('Death'), Special1, true));
+	StateTime = 8.0 + Random() * 16.0;
+}
+
+//==========================================================================
+//
+//  A_PotteryCheck
+//
+//==========================================================================
+
+final void A_PotteryCheck()
+{
+	int i;
+	Actor pmo;
+
+	for (i = 0; i < MAXPLAYERS; i++)
+	{
+		if (!Level.Game.Players[i] || !Level.Game.Players[i].bSpawned)
+		{
+			continue;
+		}
+		pmo = Actor(Level.Game.Players[i].MO);
+		if (CanSee(pmo) && (fabs(AngleMod180(atan2(Origin.y - pmo.Origin.y,
+			Origin.x - pmo.Origin.x) - pmo.Angles.yaw)) <= 45.0))
+		{
+			// Previous state (pottery bit waiting state)
+			SetState(GetStatePlus(FindState('Death'), Special1, true));
+			return;
+		}
+	}
+}
+
+//============================================================================
+//
+//  A_CorpseExplode
+//
+//============================================================================
+
+final void A_CorpseExplode()
+{
+	Actor A;
+	int i;
+
+	for (i = (P_Random() & 3) + 3; i; i--)
+	{
+		A = Spawn(CorpseBit, Origin);
+		A.SetState(GetStatePlus(A.IdleState, P_Random() % 3, true));
+		if (A)
+		{
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		}
+	}
+	// Spawn a skull
+	A = Spawn(CorpseBit, Origin);
+	A.SetState(GetStatePlus(A.IdleState, 3, true));
+	if (A)
+	{
+		A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+		A.Velocity.z = (Random() * 8.0 + 5.0) * (3.0 / 4.0) * 35.0;
+		A.PlaySound('FireDemonDeath', CHAN_VOICE);
+	}
+	Destroy();
+}
+
+//==========================================================================
+//
+//  A_LeafSpawn
+//
+//==========================================================================
+
+final void A_LeafSpawn()
+{
+	Actor A;
+	int i;
+
+	for (i = (P_Random() & 3) + 1; i; i--)
+	{
+		A = Spawn(P_Random() & 1 ? class<Actor>(Leaf2) : class<Actor>(Leaf1),
+			Origin + vector((Random() - Random()) * 64.0,
+			(Random() - Random()) * 64.0, Random() * 64.0));
+		if (A)
+		{
+			A.Thrust(Angles.yaw, Random() * 2.0 + 3.0);
+			A.Target = self;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_LeafThrust
+//
+//==========================================================================
+
+final void A_LeafThrust()
+{
+	if (Random() > 0.375)
+	{
+		return;
+	}
+	Velocity.z += (Random() * 2.0 + 1.0) * 35.0;
+}
+
+//==========================================================================
+//
+//  A_LeafCheck
+//
+//==========================================================================
+
+final void A_LeafCheck()
+{
+	Special1++;
+	if (Special1 >= 20)
+	{
+		SetState(none);
+		return;
+	}
+	if (Random() > 0.25)
+	{
+		if (!Velocity.x && !Velocity.y)
+		{
+			Thrust(Target.Angles.yaw, Random() * 2.0 + 1.0);
+		}
+		return;
+	}
+	SetState(GetStatePlus(IdleState, 7));
+	Velocity.z = (Random() * 2.0 + 1.0) * 35.0;
+	Thrust(Target.Angles.yaw, Random() * 2.0 + 2.0);
+	bMissile = true;
+}
+
+//===========================================================================
+//
+//  A_SoAExplode
+//
+//  Suit of Armor Explode
+//
+//===========================================================================
+
+final void A_SoAExplode()
+{
+	EntityEx A;
+	int i;
+
+	for (i = 0; i < 10; i++)
+	{
+		A = Spawn(ZArmorChunk, Origin + vector((Random() - 0.5) * 16.0,
+			(Random() - 0.5) * 16.0, Random() * Height));
+		A.SetState(GetStatePlus(A.IdleState, i, true));
+		if (A)
+		{
+			A.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+			A.Velocity.z = (Random() * 8.0 + 5.0) * 35.0;
+		}
+	}
+	if (Args[0])
+	{
+		// Spawn an item. Don't spawn monsters it they are disabled.
+		class<EntityEx> Cls = class<EntityEx>(FindClassFromScriptId(Args[0],
+			LineSpecialGameInfo(Level.Game).GameFilterFlag));
+		if (Cls && (!Level.Game.nomonsters || !Cls.default.bMonster))
+		{
+			Spawn(Cls, Origin, vector(0.0, 0.0, 0.0));
+		}
+	}
+	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
+	Destroy();
+}

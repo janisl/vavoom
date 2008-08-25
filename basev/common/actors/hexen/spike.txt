@@ -1,0 +1,12 @@
+//------------------------------------------------------------------------------
+actor DirtClump
+{
+	+NoBlockmap
+	+NoTeleport
+	states
+	{
+	Spawn:
+		TSPK C 20
+		Loop
+	}
+}

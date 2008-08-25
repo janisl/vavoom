@@ -245,6 +245,9 @@
 		<flag name="NeverRespawn" property="bNeverRespawn" />
 		<flag name="DontRip" property="bDontRip" />
 		<flag name="PickUp" property="bPickUp" />
+
+		<!-- Vavoom specific -->
+		<flag name="FallingFriction" property="bFallingFriction" />
 	</class>
 
 	<class name="Inventory">

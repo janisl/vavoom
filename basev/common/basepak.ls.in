@@ -98,7 +98,9 @@ actors/heretic/heretickeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/heret
 actors/heretic/hereticplayer.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/hereticplayer.txt
 actors/heretic/mummy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/mummy.txt
 actors/heretic/snake.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/heretic/snake.txt
+actors/hexen/bats.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/bats.txt
 actors/hexen/bishop.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/bishop.txt
+actors/hexen/blastradius.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/blastradius.txt
 actors/hexen/centaur.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/centaur.txt
 actors/hexen/clericflame.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericflame.txt
 actors/hexen/clericholy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericholy.txt
@@ -114,6 +116,8 @@ actors/hexen/fighterplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighter
 actors/hexen/fighterquietus.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterquietus.txt
 actors/hexen/firedemon.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/firedemon.txt
 actors/hexen/flame.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/flame.txt
+actors/hexen/flechette.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/flechette.txt
+actors/hexen/fog.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fog.txt
 actors/hexen/heresiarch.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/heresiarch.txt
 actors/hexen/hexenarmor.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenarmor.txt
 actors/hexen/hexendecorations.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexendecorations.txt
@@ -129,6 +133,7 @@ actors/hexen/puzzleitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/puzzleite
 actors/hexen/scriptprojectiles.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/scriptprojectiles.txt
 actors/hexen/serpent.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/serpent.txt
 actors/hexen/speedboots.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/speedboots.txt
+actors/hexen/spike.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/spike.txt
 actors/hexen/summon.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/summon.txt
 actors/hexen/wraith.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/wraith.txt
 actors/raven/artiegg.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/artiegg.txt

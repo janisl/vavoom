@@ -63,10 +63,8 @@ import linespec;
 #include "MWeaponPiece2.vc"
 #include "MWeaponPiece3.vc"
 
-#include "FireBomb.vc"
 #include "TeleportFog.vc"
 #include "PlayerSpeed.vc"
-#include "BlastEffect.vc"
 
 #include "FWeapFist.vc"
 #include "FSwordMissile.vc"
@@ -89,39 +87,20 @@ import linespec;
 #include "Snout.vc"
 
 #include "IceShard.vc"
-#include "ThrowingBomb.vc"
 #include "TelOtherFX1.vc"
 #include "TelOtherFX2.vc"
 #include "TelOtherFX3.vc"
 #include "TelOtherFX4.vc"
 #include "TelOtherFX5.vc"
-#include "FogPatch.vc"
-#include "FogPatchSmall.vc"
-#include "FogPatchMedium.vc"
-#include "FogPatchLarge.vc"
-#include "FogSpawner.vc"
 #include "BridgeBall.vc"
 #include "Bridge.vc"
-#include "Bat.vc"
-#include "BatSpawner.vc"
 
-#include "CorpseBloodDrip.vc"
 #include "ZCorpseLynchedNoHeart.vc"
-#include "CorpseBit.vc"
-#include "ZCorpseSitting.vc"
-#include "BloodPool.vc"
-#include "ZArmorChunk.vc"
-#include "ZSuitOfArmor.vc"
-#include "DirtClump.vc"
 #include "ThrustFloorDown.vc"
 #include "ThrustFloorUp.vc"
-#include "PotteryBit.vc"
 #include "Pottery1.vc"
 #include "Pottery2.vc"
 #include "Pottery3.vc"
-#include "Leaf1.vc"
-#include "Leaf2.vc"
-#include "LeafSpawner.vc"
 #include "ZBell.vc"
 #include "PoisonCloud.vc"
 #include "PoisonBag.vc"
@@ -217,3 +196,10 @@ class HolyTail : Actor decorate;
 class HolyTailTrail : Actor decorate;
 class MageWandSmoke : Actor decorate;
 class SnoutPuff : Actor decorate;
+class BlastEffect : Actor decorate;
+class FireBomb : Actor decorate;
+class ThrowingBomb : Actor decorate;
+class PotteryBit : Actor decorate;
+class BloodPool : Actor decorate;
+class CorpseBloodDrip : Actor decorate;
+class DirtClump : Actor decorate;

@@ -1,0 +1,73 @@
+//------------------------------------------------------------------------------
+actor FogSpawner 10000
+{
+	Game Hexen
+	+NoSector
+	+NoBlockmap
+	+FloatBob
+
+	action native A_FogSpawn();
+
+	states
+	{
+	Spawn:
+		TNT1 A 20 A_FogSpawn
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FogPatchSmall 10001
+{
+	Game Hexen
+	Speed 1
+	RenderStyle Translucent
+	Alpha 0.6
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+Float
+	+NoTeleport
+
+	action native A_FogMove();
+
+	states
+	{
+	Spawn:
+		FOGS ABCDE 7 A_FogMove
+		Loop
+	Death:
+		FOGS E 5
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FogPatchMedium : FogPatchSmall 10002
+{
+	Game Hexen
+	states
+	{
+	Spawn:
+		FOGM ABCDE 7 A_FogMove
+		Loop
+	Death:
+		FOGS ABCDE 5
+		Goto Super::Death
+	}
+}
+
+//------------------------------------------------------------------------------
+actor FogPatchLarge : FogPatchMedium 10003
+{
+	Game Hexen
+	states
+	{
+	Spawn:
+		FOGL ABCDE 7 A_FogMove
+		Loop
+	Death:
+		FOGM ABCDE 4
+		Goto Super::Death
+	}
+}

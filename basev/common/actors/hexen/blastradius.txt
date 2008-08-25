@@ -1,0 +1,17 @@
+//------------------------------------------------------------------------------
+actor BlastEffect
+{
+	RenderStyle Translucent
+	Alpha 0.666
+	+NoBlockmap
+	+NoGravity
+	+NoClip
+	+NoTeleport
+	+FallingFriction
+	states
+	{
+	Spawn:
+		RADE ABCDEFGHI 4
+		Stop
+	}
+}
