@@ -494,7 +494,7 @@ actor ZSuitOfArmor 8064
 	Health 60
 	Radius 16
 	Height 72
-	Mass 0x7fffffff
+	Mass 9999
 	+Solid
 	+Shootable
 	+NoBlood
