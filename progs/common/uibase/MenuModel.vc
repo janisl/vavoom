@@ -29,6 +29,7 @@ TVec	Origin;
 float	Angle;
 void*	Model;
 int		Frame;
+int		NextFrame;
 string	Skin;
 int		TranslStart;
 int		TranslEnd;
@@ -42,8 +43,8 @@ void OnCreate()
 
 void OnDraw()
 {
-	R_DrawModelFrame(Origin, Angle, Model, Frame, Skin, TranslStart,
-		TranslEnd, Colour);
+	R_DrawModelFrame(Origin, Angle, Model, Frame, NextFrame, Skin,
+		TranslStart, TranslEnd, Colour);
 }
 
 defaultproperties

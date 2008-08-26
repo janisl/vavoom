@@ -814,8 +814,19 @@ bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
+	bool Interpolate;
+	// Check if we want to interpolate model frames
+	if (!r_interpolate_frames)
+	{
+		Interpolate = false;
+	}
+	else
+	{
+		Interpolate = true;
+	}
 	return DrawAliasModel(origin, cl->ViewAngles, 1.0, 1.0, VSt->State,
-		NULL, 0, light, Fade, Alpha, Additive, true, TimeFrac);
+		VSt->State->NextState ? VSt->State->NextState : VSt->State, NULL,
+		0, light, Fade, Alpha, Additive, true, TimeFrac, Interpolate);
 	unguard;
 }
 

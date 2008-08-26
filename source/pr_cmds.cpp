@@ -530,11 +530,12 @@ IMPLEMENT_FUNCTION(VObject, R_DrawModelFrame)
 	P_GET_INT(TranslStart);
 	P_GET_STR(skin);
 	P_GET_INT(frame);
+	P_GET_INT(nextframe);
 	P_GET_PTR(VModel, model);
 	P_GET_FLOAT(angle);
 	P_GET_VEC(origin);
-	R_DrawModelFrame(origin, angle, model, frame, *skin, TranslStart,
-		TranslEnd, Colour, 0);
+	R_DrawModelFrame(origin, angle, model, frame, nextframe, *skin,
+		TranslStart, TranslEnd, Colour, 0);
 }
 
 //==========================================================================

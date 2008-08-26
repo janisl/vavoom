@@ -700,15 +700,18 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
-	vuint32 Fade, float Alpha, bool Additive, bool is_view_model)
+	vuint32 Fade, float Alpha, bool Additive, bool is_view_model, float Inter,
+	bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	mframe_t	*framedesc;
+	mframe_t	*nextframedesc;
 	float 		l;
 	int			index;
 	trivertx_t	*verts;
+	trivertx_t	*verts2;
 	int			*order;
 	int			count;
 	float		shadelightr;
@@ -750,9 +753,38 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	glTranslatef(Offset.x, Offset.y, Offset.z);
 
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
-	glTranslatef(framedesc->scale_origin[0], framedesc->scale_origin[1], framedesc->scale_origin[2]);
-	glScalef(framedesc->scale[0], framedesc->scale[1], framedesc->scale[2]);
+	// Interpolate Scales
+	TVec scale_origin;
+	if (Interpolate)
+	{
+		scale_origin[0] = ((1 - Inter) * framedesc->scale_origin[0] + Inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - Inter) * framedesc->scale_origin[1] + Inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - Inter) * framedesc->scale_origin[2] + Inter * nextframedesc->scale_origin[2]);
+	}
+	else
+	{
+		scale_origin[0] = framedesc->scale_origin[0];
+		scale_origin[1] = framedesc->scale_origin[1];
+		scale_origin[2] = framedesc->scale_origin[2];
+	}
+	glTranslatef(scale_origin[0], scale_origin[1], scale_origin[2]);
+
+	TVec scale;
+	if (Interpolate)
+	{
+		scale[0] = framedesc->scale[0] + Inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + Inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + Inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
+	}
+	else
+	{
+		scale[0] = framedesc->scale[0];
+		scale[1] = framedesc->scale[1];
+		scale[2] = framedesc->scale[2];
+	}
+	glScalef(scale[0], scale[1], scale[2]);
 
 	SetPic(Skin, Trans, CMap);
 
@@ -767,6 +799,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	verts = (trivertx_t *)(framedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
+	if (Interpolate)
+	{
+		verts2 = (trivertx_t *)(nextframedesc + 1);
+	}
 
 	while (*order)
 	{
@@ -795,7 +831,16 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 				l = shadedots[verts[index].lightnormalindex];
 				glColor4f(l * shadelightr, l * shadelightg, l * shadelightb, Alpha);
 			}
-			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
+			if (Interpolate)
+			{
+				glVertex3f(((1 - Inter) * verts[index].v[0] + (Inter) * verts2[index].v[0]),
+					((1 - Inter) * verts[index].v[1] + (Inter) * verts2[index].v[1]),
+					((1 - Inter) * verts[index].v[2] + (Inter) * verts2[index].v[2]));
+			}
+			else
+			{
+				glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
+			}
 		} while (--count);
 
 		glEnd();

@@ -52,8 +52,8 @@ class VActorDisplayWindow : public VWidget
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
-	float Angle);
+bool R_DrawStateModelFrame(VState* State, VState* NextState, float Inter,
+	const TVec& Origin, float Angle);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -110,7 +110,8 @@ void VActorDisplayWindow::OnDraw()
 		TimeFrac = 1.0 - CastTime / StateTime;
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
-	if (!R_DrawStateModelFrame(CastState, TimeFrac, TVec(-128.0, 0.0, -48.0), 0.0))
+	if (!R_DrawStateModelFrame(CastState, CastState->NextState ? CastState->NextState : CastState,
+		 TimeFrac, TVec(-128.0, 0.0, -48.0), 0.0))
 	{
 		SCR_SetVirtualScreen(320, 200);
 		R_DrawSpritePatch(160, 170, CastState->SpriteIndex, CastState->Frame, 0);

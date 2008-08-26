@@ -1702,8 +1702,8 @@ native static final void R_DrawSpritePatch(int x, int y, int sprite,
 native static final void* InstallModel(string Name);
 //  Draws a model
 native static final void R_DrawModelFrame(TVec origin, float angle,
-	void* model, int frame, string skin, int TranslStart, int TranslEnd,
-	int Colour);
+	void* model, int frame, int nextframe, string skin, int TranslStart,
+	int TranslEnd, int Colour);
 //  Draws a coloured rectangle
 native static final void R_FillRect(int x, int y, int w, int h, int colour);
 

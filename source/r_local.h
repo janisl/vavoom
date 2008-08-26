@@ -433,10 +433,10 @@ private:
 
 	//	Models
 	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VModel*,
-		int, VTextureTranslation*, int, vuint32, vuint32, float, bool, bool,
-		float);
-	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*,
-		VTextureTranslation*, int, vuint32, vuint32, float, bool, bool, float);
+		int, int, VTextureTranslation*, int, vuint32, vuint32, float, bool, bool,
+		float, bool);
+	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*, VState*,
+		VTextureTranslation*, int, vuint32, vuint32, float, bool, bool, float, bool);
 	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
@@ -492,6 +492,7 @@ extern VCvarI			r_darken;
 extern refdef_t			refdef;
 
 extern VCvarI			old_aspect;
+extern VCvarI			r_interpolate_frames;
 
 extern VTextureTranslation**		TranslationTables;
 extern int							NumTranslationTables;

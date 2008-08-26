@@ -735,12 +735,14 @@ static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 //==========================================================================
 
 static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx,
+	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
 	VTextureTranslation* Trans, int ColourMap, int Version, vuint32 Light,
-	vuint32 Fade, float Alpha, bool Additive, bool IsViewModel, float Inter)
+	vuint32 Fade, float Alpha, bool Additive, bool IsViewModel, float Inter,
+	bool Interpolate)
 {
 	guard(DrawModel);
 	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
+	VScriptedModelFrame& NFDef = Cls.Frames[NFIdx];
 	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
 	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
 	{
@@ -754,7 +756,23 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
 			continue;
 		}
+		if (Interpolate && NFDef.FrameIndex >= SubMdl.Frames.Num() &&
+			NFDef.ModelIndex != FDef.ModelIndex)
+		{
+			NFDef.FrameIndex = FDef.FrameIndex;
+			Interpolate = false;
+			continue;
+		}
+		if (Interpolate && FDef.ModelIndex != NFDef.ModelIndex)
+		{
+			Interpolate = false;
+		}
+		if (NFDef.FrameIndex >= SubMdl.Frames.Num())
+		{
+			continue;
+		}
 		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
+		VScriptSubModel::VFrame& NF = SubMdl.Frames[NFDef.FrameIndex];
 
 		//	Locate the proper data.
 		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
@@ -812,6 +830,17 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			F.Index = 0;
 		}
 
+		//  Get and verify next frame number.
+		int Md2NextFrame = NF.Index;
+		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
+		{
+			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
+				*SubMdl.Model->name);
+			Md2NextFrame = 0;
+			//	Stop further warnings.
+			NF.Index = 0;
+		}
+
 		//	Position
 		TVec Md2Org = Org;
 
@@ -833,20 +862,43 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		float Md2Alpha = Alpha;
 		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
 		{
-			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd -
-				FDef.AlphaStart) * Inter;
+			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd - FDef.AlphaStart) * Inter;
 		}
 		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
 		{
 			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
 		}
-
 		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
 		// scales z.
 		TVec Scale;
-		Scale.x = F.Scale.x * ScaleX;
-		Scale.y = F.Scale.y * ScaleX;
-		Scale.z = F.Scale.z * ScaleY;
+		if (Interpolate)
+		{
+			// Interpolate Scale
+			Scale.x = (F.Scale.x + Inter * (NF.Scale.x - F.Scale.x) * ScaleX);
+			Scale.y = (F.Scale.y + Inter * (NF.Scale.y - F.Scale.y) * ScaleX);
+			Scale.z = (F.Scale.z + Inter * (NF.Scale.z - F.Scale.z) * ScaleY);
+		}
+		else
+		{
+			Scale.x = F.Scale.x * ScaleX;
+			Scale.y = F.Scale.y * ScaleX;
+			Scale.z = F.Scale.z * ScaleY;
+		}
+
+		TVec Offset;
+		if (Interpolate)
+		{
+			// Interpolate Offsets too
+			Offset.x = ((1 - Inter) * F.Offset.x + (Inter) * NF.Offset.x);
+			Offset.y = ((1 - Inter) * F.Offset.y + (Inter) * NF.Offset.y);
+			Offset.z = ((1 - Inter) * F.Offset.z + (Inter) * NF.Offset.z);
+		}
+		else
+		{
+			Offset.x = F.Offset.x;
+			Offset.y = F.Offset.y;
+			Offset.z = F.Offset.z;
+		}
 
 		//	Light
 		vuint32 Md2Light = Light;
@@ -855,9 +907,9 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Md2Light = 0xffffffff;
 		}
 
-		Drawer->DrawAliasModel(Md2Org, Md2Angle, F.Offset, F.Scale, pmdl,
-			Md2Frame, GTextureManager(SkinID), Trans, ColourMap, Md2Light,
-			Fade, Md2Alpha, Additive, IsViewModel);
+		Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale, pmdl,
+			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap, Md2Light,
+			Fade, Md2Alpha, Additive, IsViewModel, Inter, Interpolate);
 	}
 	unguard;
 }
@@ -869,9 +921,9 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 //==========================================================================
 
 bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VModel* Mdl, int Frame,
+	float ScaleX, float ScaleY, VModel* Mdl, int Frame, int NextFrame,
 	VTextureTranslation* Trans, int Version, vuint32 Light, vuint32 Fade,
-	float Alpha, bool Additive, bool IsViewModel, float Inter)
+	float Alpha, bool Additive, bool IsViewModel, float Inter, bool Interpolate)
 {
 	guard(VRenderLevel::DrawAliasModel);
 	void* MData = Mod_Extradata(Mdl);
@@ -887,10 +939,16 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	{
 		return false;
 	}
+	int NFIdx = FindFrame(*SMdl->DefaultClass, NextFrame, Inter);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
+	}
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
-		Trans, ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel,
-		Inter);
+		NFIdx, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
+		IsViewModel, Inter, Interpolate);
 	return true;
 	unguard;
 }
@@ -902,9 +960,9 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 //==========================================================================
 
 bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VState* State, VTextureTranslation* Trans,
-	int Version, vuint32 Light, vuint32 Fade, float Alpha, bool Additive,
-	bool IsViewModel, float Inter)
+	float ScaleX, float ScaleY, VState* State, VState* NextState,
+	VTextureTranslation* Trans, int Version, vuint32 Light, vuint32 Fade,
+	float Alpha, bool Additive,	bool IsViewModel, float Inter, bool Interpolate)
 {
 	guard(VRenderLevel::DrawAliasModel);
 	VClassModelScript* Cls = NULL;
@@ -926,8 +984,16 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		return false;
 	}
 
-	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, Trans,
-		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel, Inter);
+	int NFIdx = FindFrame(*Cls, NextState->InClassIndex, Inter);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
+	}
+
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, Trans,
+		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel, Inter,
+		Interpolate);
 	return true;
 	unguard;
 }
@@ -944,6 +1010,16 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 	guard(VRenderLevel::DrawEntityModel);
 	VState* DispState = (Ent->EntityFlags & VEntity::EF_UseDispState) ?
 		Ent->DispState : Ent->State;
+	bool Interpolate;
+	// Check if we want to interpolate model frames
+	if (!r_interpolate_frames)
+	{
+		Interpolate = false;
+	}
+	else
+	{
+		Interpolate = true;
+	}
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
 		if (!FL_FileExists(VStr("models/") + Ent->FixedModelName))
@@ -958,15 +1034,19 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 		}
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, Mdl,
+			DispState->InClassIndex,
+			DispState->NextState ? DispState->NextState->InClassIndex :
 			DispState->InClassIndex, GetTranslation(Ent->Translation),
-			Ent->ModelVersion, Light, Fade, Alpha, Additive, false, Inter);
+			Ent->ModelVersion, Light, Fade, Alpha, Additive, false, Inter,
+			Interpolate);
 	}
 	else
 	{
 		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, DispState,
+			DispState->NextState ? DispState->NextState : DispState,
 			GetTranslation(Ent->Translation), Ent->ModelVersion, Light, Fade,
-			Alpha, Additive, false, Inter);
+			Alpha, Additive, false, Inter, Interpolate);
 	}
 	unguard;
 }
@@ -1025,10 +1105,11 @@ bool VRenderLevel::CheckAliasModelFrame(VEntity* Ent, float Inter)
 //==========================================================================
 
 void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
-	int Frame, const char* Skin, int TranslStart, int TranslEnd, int Colour,
-	float Inter)
+	int Frame, int NextFrame, const char* Skin, int TranslStart,
+	int TranslEnd, int Colour, float Inter)
 {
 	guard(R_DrawModelFrame);
+	bool Interpolate = true;
 	void* MData = Mod_Extradata(Model);
 	if (Model->type != MODEL_Script)
 	{
@@ -1040,6 +1121,13 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	if (FIdx == -1)
 	{
 		return;
+	}
+
+	int NFIdx = FindFrame(*SMdl->DefaultClass, NextFrame, Inter);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
 	}
 
 	viewangles.yaw = 180;
@@ -1068,8 +1156,9 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	Angles.roll = 0;
 
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *SMdl->DefaultClass, FIdx,
-		R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
-		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false, 0);
+		NFIdx, R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
+		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false, 0,
+		Interpolate);
 
 	Drawer->EndView();
 	unguard;
@@ -1081,10 +1170,11 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 //
 //==========================================================================
 
-bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
-	float Angle)
+bool R_DrawStateModelFrame(VState* State, VState* NextState, float Inter,
+	 const TVec& Origin, float Angle)
 {
 	VClassModelScript* Cls = NULL;
+	bool Interpolate = true;
 	for (int i = 0; i < ClassModels.Num(); i++)
 	{
 		if (ClassModels[i]->Name == State->Outer->Name)
@@ -1100,6 +1190,12 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	if (FIdx == -1)
 	{
 		return false;
+	}
+	int NFIdx = FindFrame(*Cls, NextState->InClassIndex, Inter);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
 	}
 
 	viewangles.yaw = 180;
@@ -1127,8 +1223,8 @@ bool R_DrawStateModelFrame(VState* State, float Inter, const TVec& Origin,
 	Angles.pitch = 0;
 	Angles.roll = 0;
 
-	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Cls, FIdx, NULL, 0, 0,
-		0xffffffff, 0, 1.0, false, false, 0);
+	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Cls, FIdx, NFIdx, NULL, 0, 0,
+		0xffffffff, 0, 1.0, false, false, 0, Interpolate);
 
 	Drawer->EndView();
 	return true;

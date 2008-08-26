@@ -108,8 +108,8 @@ public:
 		VTextureTranslation*, int, vuint32, vuint32, const TVec&, float,
 		const TVec&, const TVec&, const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, VTexture*, VTextureTranslation*, int,
-		vuint32, vuint32, float, bool, bool) = 0;
+		const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
+		vuint32, vuint32, float, bool, bool, float, bool) = 0;
 	virtual bool StartPortal(VPortal*, bool) = 0;
 	virtual void EndPortal(VPortal*, bool) = 0;
 

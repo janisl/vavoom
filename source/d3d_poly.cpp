@@ -720,15 +720,18 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 //==========================================================================
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame,
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
-	vuint32 Fade, float Alpha, bool Additive, bool is_view_model)
+	vuint32 Fade, float Alpha, bool Additive, bool is_view_model, float Inter,
+	bool Interpolate)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
+	mframe_t			*pnextframedesc;
 	float 				l;
 	int					index;
 	trivertx_t			*verts;
+	trivertx_t			*verts2;
 	int					*order;
 	int					count;
 	float				shadelightr;
@@ -767,6 +770,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 
 	pframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	pnextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
 	AngleVectors(angles, alias_forward, alias_right, alias_up);
 
@@ -790,13 +794,41 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matTmp(3, 2) = Offset.z * Scale.z;
 	matWorld = matTmp * matWorld;
 
+	TVec scale_origin;
+	if (Interpolate)
+	{
+		scale_origin[0] = ((1 - Inter) * pframedesc->scale_origin[0] + Inter * pnextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - Inter) * pframedesc->scale_origin[1] + Inter * pnextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - Inter) * pframedesc->scale_origin[2] + Inter * pnextframedesc->scale_origin[2]);
+	}
+	else
+	{
+		scale_origin[0] = pframedesc->scale_origin[0];
+		scale_origin[1] = pframedesc->scale_origin[1];
+		scale_origin[2] = pframedesc->scale_origin[2];
+	}
+
+	TVec scale;
+	if (Interpolate)
+	{
+		scale[0] = pframedesc->scale[0] + Inter * (pnextframedesc->scale[0] - pframedesc->scale[0]) * Scale.x;
+		scale[1] = pframedesc->scale[1] + Inter * (pnextframedesc->scale[1] - pframedesc->scale[1]) * Scale.y;
+		scale[2] = pframedesc->scale[2] + Inter * (pnextframedesc->scale[2] - pframedesc->scale[2]) * Scale.z;
+	}
+	else
+	{
+		scale[0] = pframedesc->scale[0];
+		scale[1] = pframedesc->scale[1];
+		scale[2] = pframedesc->scale[2];
+	}
+
 	matTmp = IdentityMatrix;
-	matTmp(0, 0) = pframedesc->scale[0];
-	matTmp(1, 1) = pframedesc->scale[1];
-	matTmp(2, 2) = pframedesc->scale[2];
-	matTmp(3, 0) = pframedesc->scale_origin[0] * Scale.x;
-	matTmp(3, 1) = pframedesc->scale_origin[1] * Scale.y;
-	matTmp(3, 2) = pframedesc->scale_origin[2] * Scale.z;
+	matTmp(0, 0) = scale[0];
+	matTmp(1, 1) = scale[1];
+	matTmp(2, 2) = scale[2];
+	matTmp(3, 0) = scale_origin[0] * Scale.x;
+	matTmp(3, 1) = scale_origin[1] * Scale.y;
+	matTmp(3, 2) = scale_origin[2] * Scale.z;
 	matWorld = matTmp * matWorld;
 
 	RenderDevice->SetTransform(D3DTS_WORLD, &matWorld);
@@ -816,6 +848,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	verts = (trivertx_t *)(pframedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
+	verts2 = (trivertx_t *)(pnextframedesc + 1);
 
 	while (*order)
 	{
@@ -857,10 +890,18 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			{
 				out[i].colour = alpha | light;
 			}
-
-			out[i].x = verts[index].v[0];
-			out[i].y = verts[index].v[1];
-			out[i].z = verts[index].v[2];
+			if (Interpolate)
+			{
+				out[i].x = ((1 - Inter) * verts[index].v[0] + (Inter) * verts2[index].v[0]);
+				out[i].y = ((1 - Inter) * verts[index].v[1] + (Inter) * verts2[index].v[1]);
+				out[i].z = ((1 - Inter) * verts[index].v[2] + (Inter) * verts2[index].v[2]);
+			}
+			else
+			{
+				out[i].x = verts[index].v[0];
+				out[i].y = verts[index].v[1];
+				out[i].z = verts[index].v[2];
+			}
 		}
 
 		RenderDevice->DrawPrimitiveUP(primtype, count - 2, out, sizeof(MyD3DVertex));
