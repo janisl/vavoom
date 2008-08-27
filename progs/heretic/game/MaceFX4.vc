@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MaceFX4 : MaceFX3
+class MaceFX4 : Actor
 	__scriptid__(153);
 
 //==========================================================================
@@ -162,12 +162,24 @@ Spawn:
 	Loop
 Death:
 	FX02 C 4 Bright A_DeathBallImpact
-	Goto Super::Death+1
+	FX02 GHIJ 4 Bright
+	Stop
 }
 
 defaultproperties
 {
+	Radius = 8.0;
+	Height = 6.0;
+	Speed = 7.0 * 35.0;
+	Gravity = 0.125;
 	MissileDamage = 18;
+	BounceType = BOUNCE_Heretic;
+	bMissile = true;
+	bDropOff = true;
+	bNoBlockmap = true;
+	bActivatePCross = true;
+	bActivateImpact = true;
+	bBloodSplatter = true;
+	bThruGhost = true;
 	bTelestomp = true;
-	bNoTeleport = false;
 }

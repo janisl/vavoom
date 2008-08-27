@@ -37,3 +37,24 @@ actor ArtiInvisibility : PowerupGiver 75
 		Loop
 	}
 }
+
+//------------------------------------------------------------------------------
+actor ActivatedTimeBomb
+{
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoGravity
+	DeathSound "misc/timebomb"
+
+	action native A_Timebomb();
+
+	states
+	{
+	Spawn:
+		FBMB ABCD 10
+		FBMB E 6 A_Scream
+		XPL1 A 4 Bright A_Timebomb
+		XPL1 BCDEF 4 Bright
+		Stop
+	}
+}

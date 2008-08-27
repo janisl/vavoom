@@ -1,0 +1,55 @@
+//------------------------------------------------------------------------------
+actor HereticImpChunk1
+{
+	Mass 5
+	Radius 4
+	states
+	{
+	Spawn:
+		IMPX M 5
+		IMPX NO 700
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HereticImpChunk2
+{
+	Mass 5
+	Radius 4
+	states
+	{
+	Spawn:
+		IMPX P 5
+		IMPX QR 700
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HereticImpBall
+{
+	Game Heretic
+	SpawnID 10
+	Radius 8
+	Height 8
+	Speed 10
+	FastSpeed 20
+	Damage 1
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+	+SpawnSoundSource
+	+WindThrust
+	SeeSound "himp/leaderattack"
+	states
+	{
+	Spawn:
+		FX10 ABC 6 Bright
+		Loop
+	Death:
+		FX10 DEFG 5 Bright
+		Stop
+	}
+}

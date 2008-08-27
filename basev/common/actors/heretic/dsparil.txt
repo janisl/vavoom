@@ -1,0 +1,83 @@
+//------------------------------------------------------------------------------
+actor SorcererFX1
+{
+	Game Heretic
+	SpawnID 144
+	Radius 10
+	Height 10
+	Speed 20
+	FastSpeed 28
+	Damage 10
+	RenderStyle Add
+	DamageType "Fire"
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+	states
+	{
+	Spawn:
+		FX14 ABC 6 Bright
+		Loop
+	Death:
+		FX14 DEFGH 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Sorcerer2FX1
+{
+	Game Heretic
+	SpawnID 145
+	Radius 10
+	Height 6
+	Speed 20
+	FastSpeed 28
+	Damage 1
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+
+	action native A_BlueSpark();
+
+	states
+	{
+	Spawn:
+		FX16 ABC 3 Bright A_BlueSpark
+		Loop
+	Death:
+		FX16 G 5 Bright A_Explode(Random(80, 111))
+		FX16 HIJKL 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Sorcerer2FXSpark
+{
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	+NoTeleport
+	+CannotPush
+	states
+	{
+	Spawn:
+		FX16 DEF 12 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Sorcerer2Telefade
+{
+	+NoBlockmap
+	states
+	{
+	Spawn:
+		SOR2 G 8
+		SOR2 HIJKL 6
+		Stop
+	}
+}

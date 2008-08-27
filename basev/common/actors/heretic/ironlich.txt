@@ -1,0 +1,81 @@
+//------------------------------------------------------------------------------
+actor HeadFX1
+{
+	Game Heretic
+	SpawnID 164
+	Radius 12
+	Height 6
+	Speed 13
+	FastSpeed 20
+	Damage 1
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+	+ThruGhost
+
+	action native A_LichIceImpact();
+
+	states
+	{
+	Spawn:
+		FX05 ABC 6
+		Loop
+	Death:
+		FX05 D 5 A_LichIceImpact
+		FX05 EFG 5
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HeadFX2
+{
+	Radius 12
+	Height 6
+	Speed 8
+	Damage 3
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+	states
+	{
+	Spawn:
+		FX05 HIJ 6
+		Loop
+	Death:
+		FX05 DEFG 5
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HeadFX3
+{
+	Radius 14
+	Height 12
+	Speed 10
+	FastSpeed 18
+	Damage 5
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+	+WindThrust
+
+	action native A_LichFireGrow();
+
+	states
+	{
+	Spawn:
+		FX06 ABC 4 A_LichFireGrow
+		Loop
+	NoGrow:
+		FX06 ABC 5
+		Loop
+	Death:
+		FX06 DEFG 5
+		Stop
+	}
+}

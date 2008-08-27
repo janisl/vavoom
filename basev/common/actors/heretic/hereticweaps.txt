@@ -1,0 +1,361 @@
+//------------------------------------------------------------------------------
+actor StaffPuff
+{
+	RenderStyle Translucent
+	Alpha 0.666
+	VSpeed 1
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	AttackSound "weapons/staffhit"
+	states
+	{
+	Spawn:
+		PUF3 A 4 Bright
+		PUF3 BCD 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor StaffPuff2
+{
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	AttackSound "weapons/staffpowerhit"
+	states
+	{
+	Spawn:
+		PUF4 ABCDEF 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GauntletPuff1
+{
+	RenderStyle Translucent
+	Alpha 0.666
+	VSpeed 0.8
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	states
+	{
+	Spawn:
+		PUF1 ABCD 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GauntletPuff2 : GauntletPuff1
+{
+	states
+	{
+	Spawn:
+		PUF1 EFGH 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldWandFX1
+{
+	Game Heretic
+	SpawnID 151
+	Radius 10
+	Height 6
+	Speed 22
+	Damage 2
+	RenderStyle Add
+	Projectile
+	DeathSound "weapons/wandhit"
+	states
+	{
+	Spawn:
+		FX01 AB 6 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldWandFX2 : GoldWandFX1
+{
+	Game Heretic
+	SpawnID 152
+	Speed 18
+	Damage 1
+	DeathSound ""
+	states
+	{
+	Spawn:
+		FX01 CD 6 Bright
+		Loop
+	Death:
+		FX01 EFGH 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldWandPuff1
+{
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	states
+	{
+	Spawn:
+		PUF2 ABCDE 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldWandPuff2 : GoldWandFX2
+{
+	Skip_Super
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	states
+	{
+	Spawn:
+		Goto Super::Death
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CrossbowFX1
+{
+	Game Heretic
+	SpawnID 147
+	Radius 11
+	Height 8
+	Speed 30
+	Damage 10
+	RenderStyle Add
+	Projectile
+	SeeSound "weapons/bowshoot"
+	DeathSound "weapons/bowhit"
+	states
+	{
+	Spawn:
+		FX03 B 1 Bright
+		Loop
+	Death:
+		FX03 HIJ 8 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CrossbowFX2 : CrossbowFX1
+{
+	Game Heretic
+	SpawnID 148
+	Speed 32
+	Damage 6
+	states
+	{
+	Spawn:
+		FX03 B 1 Bright A_SpawnItemEx("CrossbowFX4", Random2() * 0.015625,
+			Random2() * 0.015625, 0, 0, 0, 0, 0, SXF_ABSOLUTEPOSITION, 50)
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CrossbowFX3
+{
+	Game Heretic
+	SpawnID 149
+	Radius 11
+	Height 8
+	Speed 20
+	Damage 2
+	Projectile
+	+WindThrust
+	+ThruGhost
+	DeathSound "weapons/bowhit"
+	states
+	{
+	Spawn:
+		FX03 A 1 Bright
+		Loop
+	Death:
+		FX03 CDE 8 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CrossbowFX4
+{
+	Gravity 0.125
+	+NoBlockmap
+	states
+	{
+	Spawn:
+		FX03 FG 8 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlasterPuff
+{
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	+PuffOnActors
+	states
+	{
+	Crash:
+		FX17 ABCDE 4 Bright
+		Stop
+	
+	Spawn:
+		FX17 FG 3 Bright
+		FX17 HIJKL 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlasterSmoke
+{
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlockmap
+	+NoGravity
+	+NoTeleport
+	+CannotPush
+	states
+	{
+	Spawn:
+		FX18 HIJKL 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HornRodFX1
+{
+	Game Heretic
+	SpawnID 160
+	Radius 12
+	Height 8
+	Speed 22
+	Damage 3
+	RenderStyle Add
+	Projectile
+	-NoBlockmap
+	+WindThrust
+	SeeSound "weapons/hornrodshoot"
+	DeathSound "weapons/hornrodhit"
+	states
+	{
+	Spawn:
+		FX00 AB 6 Bright
+		Loop
+	Death:
+		FX00 HI 5 Bright
+		FX00 JK 4 Bright
+		FX00 LM 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor PhoenixPuff
+{
+	RenderStyle Translucent
+	Alpha 0.4
+	+NoBlockmap
+	+NoGravity
+	+NoTeleport
+	+CannotPush
+	states
+	{
+	Spawn:
+		FX04 BCDEF 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaceFX1
+{
+	Game Heretic
+	SpawnID 154
+	Radius 8
+	Height 6
+	Speed 20
+	Damage 2
+	Projectile
+	+HereticBounce
+	+ThruGhost
+	SeeSound "weapons/maceshoot"
+
+	action native A_MacePL1Check();
+	action native A_MaceBallImpact();
+
+	states
+	{
+	Spawn:
+		FX02 AB 4 A_MacePL1Check
+		Loop
+	Death:
+		FX02 F 4 Bright A_MaceBallImpact
+		FX02 GHIJ 4 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaceFX2 : MaceFX1
+{
+	Game Heretic
+	SpawnID 156
+	Speed 10
+	Damage 6
+	Gravity 0.125
+	-NoGravity
+	SeeSound ""
+
+	action native A_MaceBallImpact2();
+
+	states
+	{
+	Spawn:
+		FX02 CD 4
+		Loop
+	Death:
+		FX02 E 4 Bright A_MaceBallImpact2
+		Goto Super::Death+1
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaceFX3 : MaceFX1
+{
+	Game Heretic
+	SpawnID 155
+	Speed 7
+	Damage 4
+	Gravity 0.125
+	-NoGravity
+	SeeSound ""
+	states
+	{
+	Spawn:
+		FX02 AB 4
+		Loop
+	}
+}

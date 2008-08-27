@@ -1,0 +1,33 @@
+//------------------------------------------------------------------------------
+actor BeakPuff : StaffPuff
+{
+	Mass 5
+	Alpha 0.4
+	VSpeed 1
+	AttackSound "chicken/attack"
+}
+
+//------------------------------------------------------------------------------
+actor Feather
+{
+	Game Heretic
+	SpawnID 121
+	Radius 2
+	Height 4
+	Gravity 0.125
+	+Missile
+	+DropOff
+	+NoTeleport
+	+WindThrust
+	+CannotPush
+	+DontSplash
+	states
+	{
+	Spawn:
+		CHKN MNOPQPON 3
+		Loop
+	Death:
+		CHKN N 6
+		Stop
+	}
+}

@@ -1,0 +1,50 @@
+//------------------------------------------------------------------------------
+actor KnightAxe
+{
+	Game Heretic
+	SpawnID 127
+	Radius 10
+	Height 8
+	Speed 9
+	FastSpeed 18
+	Damage 2
+	Projectile
+	-NoBlockmap
+	-ActivatePCross
+	-ActivateImpact
+	+WindThrust
+	+ThruGhost
+	DeathSound "hknight/hit"
+	states
+	{
+	Spawn:
+		SPAX A 3 Bright A_PlaySound("hknight/axewhoosh")
+		SPAX BC 3 Bright
+		Loop
+	Death:
+		SPAX DEF 6 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor RedAxe : KnightAxe
+{
+	Game Heretic
+	SpawnID 128
+	Damage 7
+	+NoBlockmap
+	-WindThrust
+
+	action native A_DripBlood();
+
+	states
+	{
+	Spawn:
+		RAXE AB 5 Bright A_DripBlood
+		Loop
+	Death:
+		RAXE CDE 6 Bright
+		Stop
+	}
+}

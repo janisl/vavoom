@@ -248,6 +248,7 @@
 
 		<!-- Vavoom specific -->
 		<flag name="FallingFriction" property="bFallingFriction" />
+		<flag name="CantAutoAim" property="bCantAutoAim" />
 	</class>
 
 	<class name="Inventory">

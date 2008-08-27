@@ -1,0 +1,24 @@
+//------------------------------------------------------------------------------
+actor WizardFX1
+{
+	Game Heretic
+	SpawnID 140
+	Radius 10
+	Height 6
+	Speed 18
+	FastSpeed 24
+	Damage 3
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+	states
+	{
+	Spawn:
+		FX11 AB 6 Bright
+		Loop
+	Death:
+		FX11 CDEFG 5 Bright
+		Stop
+	}
+}
