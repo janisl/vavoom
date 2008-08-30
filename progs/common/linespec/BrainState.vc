@@ -37,7 +37,7 @@ bool				bEasy;
 
 void FindTargets()
 {
-	BossTarget		m;
+	Actor	m;
 
 	// find all the target spots
 	Targets.Num = 0;

@@ -1,0 +1,98 @@
+//------------------------------------------------------------------------------
+actor BossBrain 88
+{
+	Game Doom
+	Health 250
+	Radius 16
+	Mass 10000000
+	PainChance 255
+	+Solid
+	+Shootable
+	+NoIceDeath
+	+OldRadiusDmg
+	PainSound "brain/pain"
+	DeathSound "brain/death"
+	states
+	{
+	BrainExplode:
+		MISL BC 10 Bright
+		MISL D 10 Bright A_BrainExplode
+		Stop
+	Spawn:
+		BBRN A -1
+		Stop
+	Pain:
+		BBRN B 36 A_BrainPain
+		Goto Spawn
+	Death:
+		BBRN A 100 A_BrainScream
+		BBRN AA 10
+		BBRN A -1 A_BrainDie
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BossEye 89
+{
+	Game Doom
+	Height 32
+	+NoSector
+	+NoBlockmap
+	states
+	{
+	Spawn:
+		SSWV A 10 A_Look
+		Loop
+	See:
+		SSWV A 181 A_BrainAwake
+		SSWV A 150 A_BrainSpit
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BossTarget : SpecialSpot 87
+{
+	Game Doom
+	Height 32
+	+NoSector
+	+NoBlockmap
+}
+
+//------------------------------------------------------------------------------
+actor SpawnShot
+{
+	Radius 6
+	Height 32
+	Speed 10
+	Damage 3
+	Projectile
+	-ActivatePCross
+	+NoClip
+	+Randomize
+	SeeSound "brain/spit"
+	DeathSound "brain/cubeboom"
+	states
+	{
+	Spawn:
+		BOSF A 3 Bright A_SpawnSound
+		BOSF BCD 3 Bright A_SpawnFly
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SpawnFire
+{
+	Height 78
+	RenderStyle Add
+	+NoBlockmap
+	+NoGravity
+	states
+	{
+	Spawn:
+		FIRE ABCDEFGH 4 Bright A_Fire
+		Stop
+	}
+}

@@ -7239,6 +7239,68 @@ final int P_Massacre()
 
 //==========================================================================
 //
+//	SetMarineWeapon
+//
+//==========================================================================
+
+final void SetMarineWeapon(int Tid, int Weapon, Entity Activator)
+{
+	if (Tid)
+	{
+		Entity Ent;
+		for (Ent = Level.FindMobjFromTID(Tid, none); Ent;
+			Ent = Level.FindMobjFromTID(Tid, Ent))
+		{
+			if (ScriptedMarine(Ent))
+			{
+				ScriptedMarine(Ent).SetWeapon(Weapon);
+			}
+		}
+	}
+	else if (ScriptedMarine(Activator))
+	{
+		ScriptedMarine(Activator).SetWeapon(Weapon);
+	}
+}
+
+//==========================================================================
+//
+//	SetMarineSprite
+//
+//==========================================================================
+
+final void SetMarineSprite(int Tid, name SrcClassName, Entity Activator)
+{
+	//	If there's no such class, print message and do nothing.
+	class TmpClass = FindClass(SrcClassName);
+	if (!TmpClass)
+	{
+		print("Unknown class %n", SrcClassName);
+		return;
+	}
+	//	If it's not a valid actor class, it will set sprite back to default.
+	class<EntityEx> SrcClass = class<EntityEx>(TmpClass);
+
+	if (Tid)
+	{
+		Entity Ent;
+		for (Ent = Level.FindMobjFromTID(Tid, none); Ent;
+			Ent = Level.FindMobjFromTID(Tid, Ent))
+		{
+			if (ScriptedMarine(Ent))
+			{
+				ScriptedMarine(Ent).SetSprite(SrcClass);
+			}
+		}
+	}
+	else if (ScriptedMarine(Activator))
+	{
+		ScriptedMarine(Activator).SetSprite(SrcClass);
+	}
+}
+
+//==========================================================================
+//
 //  GetDefaultDoorSound
 //
 //==========================================================================

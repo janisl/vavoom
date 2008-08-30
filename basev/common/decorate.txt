@@ -25,6 +25,8 @@
 #include "actors/doom/spidermaster.txt"
 #include "actors/doom/stealthmonsters.txt"
 #include "actors/doom/keen.txt"
+#include "actors/doom/bossbrain.txt"
+#include "actors/doom/scriptedmarine.txt"
 #include "actors/doom/doomhealth.txt"
 #include "actors/doom/doomarmor.txt"
 #include "actors/doom/doomammo.txt"

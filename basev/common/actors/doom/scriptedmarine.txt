@@ -1,0 +1,142 @@
+//------------------------------------------------------------------------------
+actor MarineFist : ScriptedMarine 9101
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Goto Super::Melee.Fist
+	Missile:
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineBerserk : ScriptedMarine 9102
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Goto Super::Melee.Berserk
+	Missile:
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineChainsaw : ScriptedMarine 9103
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Goto Super::Melee.Chainsaw
+	Missile:
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarinePistol : ScriptedMarine 9104
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.Pistol
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineShotgun : ScriptedMarine 9105
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.Shotgun
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineSSG : ScriptedMarine 9106
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.SSG
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineChaingun : ScriptedMarine 9107
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.Chaingun
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineRocket : ScriptedMarine 9108
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.Rocket
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarinePlasma : ScriptedMarine 9109
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.Plasma
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineRailgun : ScriptedMarine 9110
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.Railgun
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MarineBFG : ScriptedMarine 9111
+{
+	Game Doom
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		Goto Super::Missile.Bfg
+	}
+}

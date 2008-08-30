@@ -192,6 +192,7 @@ enum
 #include "FlashFader.vc"
 
 #include "DoomBuilderCamera.vc"
+#include "SpecialSpot.vc"
 
 #include "ParticleFountain.vc"
 #include "Spark.vc"
@@ -224,13 +225,8 @@ enum
 
 #include "LineSpecialClientGame.vc"
 
-//	We need Doom classes because of the DECORATE.
-#include "BossTarget.vc"
-#include "SpawnFire.vc"
-#include "SpawnShot.vc"
-#include "BossBrain.vc"
-#include "BossEye.vc"
 #include "BrainState.vc"
+#include "ScriptedMarine.vc"
 
 #include "IceChunk.vc"
 #include "IceChunkHead.vc"
@@ -280,6 +276,11 @@ class BFG9000 : Weapon decorate;
 class BFGBall : Actor decorate;
 class BFGExtra : Actor decorate;
 class RealGibs : Actor decorate;
+class DoomPlayer : PlayerPawn decorate;
+class BossBrain : Actor decorate;
+class BossTarget : Actor decorate;
+class SpawnShot : Actor decorate;
+class SpawnFire : Actor decorate;
 
 class ArtiHealth : HealthPickup decorate;
 class ArtiSuperHealth : HealthPickup decorate;

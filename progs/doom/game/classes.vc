@@ -38,19 +38,6 @@ import linespec;
 #include "TeleportFog.vc"
 #include "Bridge.vc"
 
-#include "ScriptedMarine.vc"
-#include "MarineFist.vc"
-#include "MarineBerserk.vc"
-#include "MarineChainsaw.vc"
-#include "MarinePistol.vc"
-#include "MarineShotgun.vc"
-#include "MarineSSG.vc"
-#include "MarineChaingun.vc"
-#include "MarineRocket.vc"
-#include "MarinePlasma.vc"
-#include "MarineRailgun.vc"
-#include "MarineBFG.vc"
-
 class GreenArmor : BasicArmorPickup decorate;
 class BlueArmor : BasicArmorPickup decorate;
 class HealthBonus : Health decorate;
@@ -89,8 +76,4 @@ class Chaingun : Weapon decorate;
 class RocketLauncher : Weapon decorate;
 class PlasmaRifle : Weapon decorate;
 class BFG9000 : Weapon decorate;
-class BulletPuff : Actor decorate;
-class Rocket : Actor decorate;
-class PlasmaBall : Actor decorate;
-class BFGBall : Actor decorate;
 class DoomPlayer : PlayerPawn decorate;
