@@ -97,7 +97,7 @@ final void A_Srcr1Attack()
 			{
 				// Set state to attack again
 				Special1 = 1;
-				SetState(FindState('ReAttack'));
+				SetState(FindState('Missile2'));
 			}
 		}
 	}
@@ -156,7 +156,7 @@ Missile:
 	SRCR R 6 A_FaceTarget
 	SRCR S 10 A_Srcr1Attack
 	Goto See
-ReAttack:
+Missile2:
 	SRCR S 10 A_FaceTarget
 	SRCR Q 7 A_FaceTarget
 	SRCR R 6 A_FaceTarget

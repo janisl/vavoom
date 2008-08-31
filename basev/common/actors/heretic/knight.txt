@@ -1,4 +1,71 @@
 //------------------------------------------------------------------------------
+actor Knight 64
+{
+	Game Heretic
+	SpawnID 6
+	Health 200
+	Radius 24
+	Height 78
+	Mass 150
+	Speed 12
+	PainChance 100
+	SeeSound "hknight/sight"
+	ActiveSound "hknight/active"
+	AttackSound "hknight/attack"
+	PainSound "hknight/pain"
+	DeathSound "hknight/death"
+	Obituary "$ob_boneknight"
+	HitObituary "$ob_boneknighthit"
+	Monster
+	+FloorClip
+	DropItem CrossbowAmmo, 84, 5
+
+	action native A_KnightAttack();
+
+	states
+	{
+	Spawn:
+		KNIG AB 10 A_Look
+		Loop
+	See:
+		KNIG ABCD 4 A_Chase
+		Loop
+	Melee:
+	Missile:
+		KNIG E 10 A_FaceTarget
+		KNIG F 8 A_FaceTarget
+		KNIG G 8 A_KnightAttack
+		KNIG E 10 A_FaceTarget
+		KNIG F 8 A_FaceTarget
+		KNIG G 8 A_KnightAttack
+		Goto See
+	Pain:
+		KNIG H 3
+		KNIG H 3 A_Pain
+		Goto See
+	Death:
+		KNIG I 6
+		KNIG J 6 A_Scream
+		KNIG K 6
+		KNIG L 6 A_NoBlocking
+		KNIG MN 6
+		KNIG O -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor KnightGhost : Knight 65
+{
+	Game Heretic
+	SpawnID 129
+	RenderStyle Translucent
+	Alpha 0.4
+	+Shadow
+	+Ghost
+}
+
+//------------------------------------------------------------------------------
 actor KnightAxe
 {
 	Game Heretic

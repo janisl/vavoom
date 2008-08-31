@@ -208,7 +208,7 @@ class Actor extends Thinker
 	action native A_SargAttack();
 	action native A_HeadAttack();
 	action native A_BruisAttack();
-	action native A_SkullAttack();
+	action native A_SkullAttack(optional float speed);
 	action native A_BspiAttack();
 	action native A_CyberAttack();
 	action native A_PainAttack(optional class<Actor> spawntype);

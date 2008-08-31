@@ -1,4 +1,59 @@
 //------------------------------------------------------------------------------
+actor Ironlich 6
+{
+	Game Heretic
+	SpawnID 20
+	Health 700
+	Radius 40
+	Height 72
+	Mass 325
+	Speed 6
+	PainChance 32
+	Monster
+	+NoBlood
+	+DontMorph
+	+BossDeath
+	+DontSquash
+	SeeSound "ironlich/sight"
+	ActiveSound "ironlich/active"
+	AttackSound "ironlich/attack1"
+	PainSound "ironlich/pain"
+	DeathSound "ironlich/death"
+	Obituary "$ob_ironlich"
+	HitObituary "$ob_ironlichhit"
+	DropItem BlasterAmmo, 84, 10
+	DropItem ArtiEgg 51
+
+	action native A_LichAttack();
+
+	states
+	{
+	Spawn:
+		LICH A 10 A_Look
+		Loop
+	See:
+		LICH A 4 A_Chase
+		Loop
+	Missile:
+		LICH A 5 A_FaceTarget
+		LICH B 20 A_LichAttack
+		Goto See
+	Pain:
+		LICH A 4
+		LICH A 4 A_Pain
+		Goto See
+	Death:
+		LICH C 7
+		LICH D 7 A_Scream
+		LICH EF 7
+		LICH G 7 A_NoBlocking
+		LICH H 7
+		LICH I -1 A_BossDeath
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor HeadFX1
 {
 	Game Heretic

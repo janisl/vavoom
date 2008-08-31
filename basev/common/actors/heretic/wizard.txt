@@ -1,4 +1,74 @@
 //------------------------------------------------------------------------------
+actor Wizard 15
+{
+	Game Heretic
+	SpawnID 19
+	Health 180
+	Radius 16
+	Height 68
+	Speed 12
+	PainChance 64
+	Monster
+	+NoGravity
+	+Float
+	+DontOverlap
+	SeeSound "wizard/sight"
+	ActiveSound "wizard/active"
+	AttackSound "wizard/attack"
+	PainSound "wizard/pain"
+	DeathSound "wizard/death"
+	Obituary "$ob_wizard"
+	HitObituary "$ob_wizardhit"
+	DropItem BlasterAmmo, 84, 10
+	DropItem ArtiTomeOfPower, 4
+
+	action native A_WizAtk1();
+	action native A_WizAtk2();
+	action native A_WizAtk3();
+	action native A_GhostOff();
+
+	states
+	{
+	Spawn:
+		WZRD AB 10 A_Look
+		Loop
+	See:
+		WZRD A 3 A_Chase
+		WZRD A 4 A_Chase
+		WZRD A 3 A_Chase
+		WZRD A 4 A_Chase
+		WZRD B 3 A_Chase
+		WZRD B 4 A_Chase
+		WZRD B 3 A_Chase
+		WZRD B 4 A_Chase
+		Loop
+	Missile:
+		WZRD C 4 A_WizAtk1
+		WZRD C 4 A_WizAtk2
+		WZRD C 4 A_WizAtk1
+		WZRD C 4 A_WizAtk2
+		WZRD C 4 A_WizAtk1
+		WZRD C 4 A_WizAtk2
+		WZRD C 4 A_WizAtk1
+		WZRD C 4 A_WizAtk2
+		WZRD D 12 A_WizAtk3
+		Goto See
+	Pain:
+		WZRD E 3 A_GhostOff
+		WZRD E 3 A_Pain
+		Goto See
+	Death:
+		WZRD F 6 A_GhostOff
+		WZRD G 6 A_Scream
+		WZRD HI 6
+		WZRD J 6 A_NoBlocking
+		WZRD KL 6
+		WZRD M -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor WizardFX1
 {
 	Game Heretic

@@ -414,3 +414,268 @@ final void A_VolcBallImpact()
 		tiny.CheckMissileSpawn();
 	}
 }
+
+//==========================================================================
+//
+//  A_ImpDeath
+//
+//==========================================================================
+
+final void A_ImpDeath()
+{
+	bSolid = false;
+	bFloorClip = true;
+	if (Origin.z <= FloorZ)
+	{
+		SetState(FindState('Crash'));
+	}
+}
+
+//==========================================================================
+//
+//  A_ImpXDeath1
+//
+//==========================================================================
+
+final void A_ImpXDeath1()
+{
+	bSolid = false;
+	bNoGravity = true;
+	bFloorClip = true;
+	Special1 = 666;	// Flag the crash routine
+}
+
+//==========================================================================
+//
+//  A_ImpExplode
+//
+//==========================================================================
+
+final void A_ImpExplode()
+{
+	Actor mo;
+
+	bNoGravity = false;
+	mo = Spawn(HereticImpChunk1, Origin);
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 9.0 * 35.0;
+	mo = Spawn(HereticImpChunk2, Origin);
+	mo.Velocity.x = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.y = (Random() - Random()) * 4.0 * 35.0;
+	mo.Velocity.z = 9.0 * 35.0;
+	if (Special1 == 666)
+	{
+		// Extreme death crash
+		SetState(FindState('XCrash'));
+	}
+}
+
+//==========================================================================
+//
+//  A_KnightAttack
+//
+//==========================================================================
+
+final void A_KnightAttack()
+{
+	if (!Target)
+	{
+		return;
+	}
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, HITDICE(3));
+		PlaySound('hknight/melee', CHAN_WEAPON);
+		return;
+	}
+	// Throw axe
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (bShadow || Random() < 0.15625)
+	{
+		// Red axe
+		SpawnMissile(Target, RedAxe, 36.0);
+		return;
+	}
+	// Green axe
+	SpawnMissile(Target, KnightAxe, 36.0);
+}
+
+//==========================================================================
+//
+//  A_WizAtk1
+//
+//==========================================================================
+
+final void A_WizAtk1()
+{
+	A_FaceTarget();
+	RenderStyle = STYLE_Normal;
+	Alpha = 1.0;
+}
+
+//==========================================================================
+//
+//  A_WizAtk2
+//
+//==========================================================================
+
+final void A_WizAtk2()
+{
+	A_FaceTarget();
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.666;
+	bGhost = true;
+}
+
+//==========================================================================
+//
+//  A_WizAtk3
+//
+//==========================================================================
+
+final void A_WizAtk3()
+{
+	EntityEx A;
+	float angle;
+	TAVec ang;
+
+	RenderStyle = STYLE_Normal;
+	Alpha = 1.0;
+	if (!Target)
+	{
+		return;
+	}
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, HITDICE(4));
+		return;
+	}
+	A = SpawnMissile(Target, WizardFX1);
+	if (A)
+	{
+		VectorAngles(&A.Velocity, &ang);
+		angle = A.Angles.yaw;
+		SpawnMissileAngles(WizardFX1,
+			AngleMod360(angle - (45.0 / 8.0)), ang.pitch);
+		SpawnMissileAngles(WizardFX1,
+			AngleMod360(angle + (45.0 / 8.0)), ang.pitch);
+	}
+}
+
+//==========================================================================
+//
+//  A_GhostOff
+//
+//==========================================================================
+
+final void A_GhostOff()
+{
+	RenderStyle = STYLE_Normal;
+	Alpha = 1.0;
+	bGhost = false;
+}
+
+//==========================================================================
+//
+//  A_LichAttack
+//
+//==========================================================================
+
+final void A_LichAttack()
+{
+	int i;
+	Actor fire;
+	EntityEx baseFire;
+	EntityEx A;
+	int randAttack;
+	int dist;
+
+	// Ice ball     (close 20% : far 60%)
+	// Fire column  (close 40% : far 20%)
+	// Whirlwind    (close 40% : far 20%)
+	// Distance threshold = 8 cells
+
+	if (!Target)
+	{
+		return;
+	}
+	A_FaceTarget();
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, HITDICE(6));
+		return;
+	}
+	dist = DistTo2(Target) > 8.0 * 64.0;
+	randAttack = P_Random();
+	if (randAttack < (dist ? 150 : 50))
+	{
+		// Ice ball
+		SpawnMissile(Target, HeadFX1);
+		PlaySound('ironlich/attack2', CHAN_WEAPON);
+	}
+	else if (randAttack < (dist ? 200 : 150))
+	{
+		// Fire column
+		baseFire = SpawnMissile(Target, HeadFX3);
+		if (baseFire != none)
+		{
+			baseFire.SetState(baseFire.FindState('Grown'));	// Don't grow
+			for (i = 0; i < 5; i++)
+			{
+				fire = Spawn(HeadFX3, baseFire.Origin);
+				if (i == 0)
+				{
+					PlaySound('ironlich/attack1', CHAN_WEAPON);
+				}
+				fire.Target = baseFire.Target;
+				fire.Angles.yaw = baseFire.Angles.yaw;
+				fire.Velocity = baseFire.Velocity;
+				fire.MissileDamage = 0;
+				fire.Health = (i + 1) * 2;
+				fire.CheckMissileSpawn();
+			}
+		}
+	}
+	else
+	{
+		// Whirlwind
+		A = SpawnMissile(Target, Whirlwind);
+		if (A != none)
+		{
+			A.Origin.z -= 32.0;
+			A.Tracer = Target;
+			A.Health = 20 * TICRATE;	// Duration
+			A.bSeekerMissile = true;
+			PlaySound('ironlich/attack3', CHAN_WEAPON);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_GenWizard
+//
+//==========================================================================
+
+final void A_GenWizard()
+{
+	Actor A;
+	EntityEx fog;
+
+	A = Spawn(Wizard, Origin, vector(0.0, 0.0, 0.0));
+	A.Origin.z = Origin.z - A.Height / 2.0;
+	if (!A.TestLocation())
+	{
+		// Didn't fit
+		A.Destroy();
+		return;
+	}
+	A.Master = Target;
+	Velocity = vector(0.0, 0.0, 0.0);
+	SetState(FindState('Death'));
+	bMissile = false;
+	fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, Origin);
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
+}

@@ -54,6 +54,35 @@ actor Sorcerer2FX1
 }
 
 //------------------------------------------------------------------------------
+actor Sorcerer2FX2
+{
+	Game Heretic
+	SpawnID 146
+	Radius 10
+	Height 6
+	Speed 6
+	Damage 10
+	RenderStyle Add
+	Projectile
+	-ActivatePCross
+	-ActivateImpact
+
+	action native A_GenWizard();
+
+	states
+	{
+	Spawn:
+		FX11 A 35 Bright
+		FX11 A 5 Bright A_GenWizard
+		FX11 B 5 Bright
+		Goto Spawn+1
+	Death:
+		FX11 CDEFG 5 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor Sorcerer2FXSpark
 {
 	RenderStyle Add

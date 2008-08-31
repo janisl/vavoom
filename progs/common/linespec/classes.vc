@@ -228,6 +228,8 @@ enum
 #include "BrainState.vc"
 #include "ScriptedMarine.vc"
 
+#include "Whirlwind.vc"
+
 #include "IceChunk.vc"
 #include "IceChunkHead.vc"
 
@@ -301,6 +303,14 @@ class Pod : Actor decorate;
 class PodGoo : Actor decorate;
 class VolcanoBlast : Actor decorate;
 class VolcanoTBlast : Actor decorate;
+class HereticImpChunk1 : Actor decorate;
+class HereticImpChunk2 : Actor decorate;
+class KnightAxe : Actor decorate;
+class RedAxe : Actor decorate;
+class WizardFX1 : Actor decorate;
+class HeadFX1 : Actor decorate;
+class HeadFX3 : Actor decorate;
+class Wizard : Actor decorate;
 
 class IceGuyFX2 : Actor decorate;
 class WraithFX2 : Actor decorate;

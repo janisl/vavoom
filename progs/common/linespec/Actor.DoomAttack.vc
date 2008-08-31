@@ -337,6 +337,30 @@ final void A_SkullAttack()
 
 //==========================================================================
 //
+//  A_SkullAttack
+//
+//==========================================================================
+
+final void decorate_A_SkullAttack(optional float SkullSpeed)
+{
+	if (!specified_SkullSpeed)
+	{
+		SkullSpeed = 20.0;
+	}
+	if (!Target)
+	{
+		return;
+	}
+
+	bSkullFly = true;
+
+	PlaySound(AttackSound, CHAN_VOICE);
+	A_FaceTarget();
+	Velocity = Normalise(Target.GetCentre() - Origin) * SkullSpeed * 35.0;
+}
+
+//==========================================================================
+//
 //  A_BspiAttack
 //
 //  Arachnotron attack.

@@ -1,4 +1,98 @@
 //------------------------------------------------------------------------------
+actor HereticImp 66
+{
+	Game Heretic
+	SpawnID 5
+	Health 40
+	Radius 16
+	Height 36
+	Mass 50
+	Speed 10
+	PainChance 200
+	Monster
+	+NoGravity
+	+Float
+	+SpawnFloat
+	+MissileMore
+	+DontOverlap
+	SeeSound "himp/sight"
+	ActiveSound "himp/active"
+	AttackSound "himp/attack"
+	PainSound "himp/pain"
+	DeathSound "himp/death"
+	Obituary "$ob_hereticimp"
+	HitObituary "$ob_hereticimphit"
+
+	action native A_ImpDeath();
+	action native A_ImpXDeath1();
+	action native A_ImpExplode();
+
+	states
+	{
+	Spawn:
+		IMPX ABCB 10 A_Look
+		Loop
+	See:
+		IMPX AABBCCBB 3 A_Chase
+		Loop
+	Melee:
+		IMPX DE 6 A_FaceTarget
+		IMPX F 3 A_CustomMeleeAttack(Random(5, 12), "himp/attack", "himp/attack")
+		Goto See
+	Missile:
+		IMPX A 10 A_FaceTarget
+		// only if Random() > 0.25
+		IMPX B 6 A_SkullAttack(12)
+		IMPX CBAB 6
+		Goto Missile+2
+	Pain:
+		IMPX G 3
+		IMPX G 3 A_Pain
+		Goto See
+	Death:
+		IMPX G 4 A_ImpDeath
+		IMPX H 5
+		Wait
+	XDeath:
+		IMPX S 5 A_ImpXDeath1
+		IMPX TU 5
+		IMPX V 5 A_Gravity
+		IMPX W 5
+		Wait
+	Crash:
+		IMPX I 7 A_ImpExplode
+		IMPX J 7 A_Scream
+		IMPX K 7
+		IMPX L -1
+		Stop
+	XCrash:
+		IMPX X 7
+		IMPX Y 7
+		IMPX Z -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor HereticImpLeader : HereticImp 5
+{
+	Game Heretic
+	SpawnID 7
+	Health 80
+	-MissileMore
+	AttackSound "himp/leaderattack"
+	states
+	{
+	Melee:
+		Stop
+	Missile:
+		IMPX DE 6 A_FaceTarget
+		IMPX F 6 A_CustomComboAttack("HereticImpBall", 32, Random(5, 12), "himp/leaderattack")
+		Goto Super::See
+	}
+}
+
+//------------------------------------------------------------------------------
 actor HereticImpChunk1
 {
 	Mass 5

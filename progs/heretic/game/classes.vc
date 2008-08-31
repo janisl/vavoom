@@ -72,17 +72,9 @@ import linespec;
 
 #include "ChickenPlayer.vc"
 #include "Chicken.vc"
-#include "HereticImp.vc"
-#include "HereticImpLeader.vc"
-#include "Knight.vc"
-#include "KnightGhost.vc"
-#include "Wizard.vc"
-#include "Whirlwind.vc"
-#include "Ironlich.vc"
 #include "Minotaur.vc"
 #include "BossSpot.vc"
 #include "Sorcerer1.vc"
-#include "Sorcerer2FX2.vc"
 #include "Sorcerer2.vc"
 
 class Blood : Actor decorate;
@@ -101,16 +93,9 @@ class ArtiEgg : CustomInventory decorate;
 class EggFX : MorphProjectile decorate;
 class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
-class HereticImpChunk1 : Actor decorate;
-class HereticImpChunk2 : Actor decorate;
-class HereticImpBall : Actor decorate;
-class KnightAxe : Actor decorate;
-class RedAxe : Actor decorate;
-class WizardFX1 : Actor decorate;
-class HeadFX1 : Actor decorate;
-class HeadFX3 : Actor decorate;
 class SorcererFX1 : Actor decorate;
 class Sorcerer2FX1 : Actor decorate;
+class Sorcerer2FX2 : Actor decorate;
 class Sorcerer2Telefade : Actor decorate;
 class StaffPuff : Actor decorate;
 class StaffPuff2 : Actor decorate;
@@ -132,3 +117,5 @@ class MaceFX2 : Actor decorate;
 class MaceFX3 : Actor decorate;
 class BeakPuff : Actor decorate;
 class ActivatedTimeBomb : Actor decorate;
+class Wizard : Actor decorate;
+class Ironlich : Actor decorate;
