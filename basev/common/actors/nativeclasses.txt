@@ -257,6 +257,7 @@ class Actor extends Thinker
 	action native A_GiveQuestItem(int QuestType);
 	action native A_RemoveForceField();
 	action native A_PigPain();
+	action native A_ClassBossHealth();
 }
 
 //------------------------------------------------------------------------------

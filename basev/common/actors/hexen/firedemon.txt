@@ -1,4 +1,77 @@
 //------------------------------------------------------------------------------
+actor FireDemon 10060
+{
+	Game Hexen
+	SpawnID 5
+	Health 80
+	Radius 20
+	Height 68
+	Mass 75
+	Speed 13
+	PainChance 1
+	Damage 1
+	Monster
+	+FloorClip
+	+Telestomp
+	+NoGravity
+	+DropOff
+	+Float
+	+Invulnerable
+	SeeSound "FireDemonSpawn"
+	ActiveSound "FireDemonActive"
+	PainSound "FireDemonPain"
+	DeathSound "FireDemonDeath"
+	Obituary "$ob_firedemon"
+
+	action native A_FiredRocks();
+	action native A_FiredChase();
+	action native A_FiredAttack();
+	action native A_FiredSplotch();
+
+	states
+	{
+	Spawn:
+		FDMN X 5 Bright
+		FDMN EFG 10 Bright A_Look
+		Goto Spawn+1
+	See:
+		FDMN E 8 Bright
+		FDMN F 6 Bright
+		FDMN G 5 Bright
+		FDMN F 8 Bright
+		FDMN E 6 Bright
+		FDMN F 7 Bright A_FiredRocks
+		FDMN HI 5 Bright
+		FDMN J 5 Bright A_UnSetInvulnerable
+		FDMN ABC 5 Bright A_FiredChase
+		Goto See+9
+	Pain:
+		FDMN D 6 Bright A_Pain
+		Goto See+9
+	Missile:
+		FDMN K 3 Bright A_FaceTarget
+		FDMN KKK 5 Bright A_FiredAttack
+		Goto See+9
+	Death:
+		FDMN D 4 Bright A_FaceTarget
+		FDMN L 4 Bright A_Scream
+		FDMN L 4 Bright A_NoBlocking
+		FDMN L 200 Bright
+		Stop
+	XDeath:
+	Crash:
+		FDMN M 5 A_FaceTarget
+		FDMN N 5 A_NoBlocking
+		FDMN O 5 A_FiredSplotch
+		Stop
+	Ice:
+		FDMN R 5 A_FreezeDeath
+		FDMN R 1 A_FreezeDeathChunks
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
 actor FireDemonMissile
 {
 	Radius 10

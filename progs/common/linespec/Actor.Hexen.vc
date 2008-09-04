@@ -23,8 +23,27 @@
 //**
 //**************************************************************************
 
+const float FIREDEMON_ATTACK_RANGE = 512.0;
+
 const float SORC_DEFENSE_HEIGHT			= 45.0;
 const int BOUNCE_TIME_UNIT				= (35/2);
+
+const int KORAX_FIRST_TELEPORT_TID = 248;
+const int KORAX_TELEPORT_TID = 249;
+
+const float KORAX_MISSILE_DELTA_ANGLE = 85.0;
+const float KORAX_ARM_EXTENSION_SHORT = 40.0;
+const float KORAX_ARM_EXTENSION_LONG = 55.0;
+
+const float KORAX_ARM1_HEIGHT = 108.0;
+const float KORAX_ARM2_HEIGHT = 82.0;
+const float KORAX_ARM3_HEIGHT = 54.0;
+const float KORAX_ARM4_HEIGHT = 104.0;
+const float KORAX_ARM5_HEIGHT = 86.0;
+const float KORAX_ARM6_HEIGHT = 53.0;
+
+const float KORAX_COMMAND_HEIGHT = 120.0;
+const float KORAX_COMMAND_OFFSET = 27.0;
 
 const float KORAX_BOLT_HEIGHT = 48.0;
 const int KORAX_BOLT_LIFETIME = 3;
@@ -1013,4 +1032,1494 @@ final void A_SoAExplode()
 	}
 	A.PlaySound('SuitofArmorBreak', CHAN_VOICE);
 	Destroy();
+}
+
+//
+// Fire Demon AI
+//
+
+//	Special1	Index into floatbob
+//	Special2	Whether strafing or not
+
+//============================================================================
+//
+//  A_FiredSpawnRock
+//
+//============================================================================
+
+final void A_FiredSpawnRock()
+{
+	Actor mo;
+	TVec rockOrg;
+	class<Actor> rtype;
+
+	switch (P_Random() % 5)
+	{
+	case 0:
+		rtype = FireDemonRock1;
+		break;
+	case 1:
+		rtype = FireDemonRock2;
+		break;
+	case 2:
+		rtype = FireDemonRock3;
+		break;
+	case 3:
+		rtype = FireDemonRock4;
+		break;
+	case 4:
+		rtype = FireDemonRock5;
+		break;
+	}
+
+	rockOrg.x = Origin.x + (Random() - 0.5) * 16.0;
+	rockOrg.y = Origin.y + (Random() - 0.5) * 16.0;
+	rockOrg.z = Origin.z + Random() * 8.0;
+	mo = Spawn(rtype, rockOrg);
+	if (mo)
+	{
+		mo.Target = self;
+		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
+		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
+		mo.Velocity.z = Random() * 4.0 * 35.0;
+		mo.Special1 = 2;	// Number bounces
+	}
+
+	// Initialise fire demon
+	Special2 = 0;
+	bJustAttacked = false;
+}
+
+//============================================================================
+//
+//  A_FiredRocks
+//
+//============================================================================
+
+final void A_FiredRocks()
+{
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+	A_FiredSpawnRock();
+}
+
+//============================================================================
+//
+//  A_FiredChase
+//
+//============================================================================
+
+final void A_FiredChase()
+{
+	float ang;
+	float dist;
+
+	if (ReactionCount)
+		ReactionCount--;
+	if (Threshold)
+		Threshold--;
+
+	// Float up and down
+	Origin.z += Level.Game.FloatBobOffsets[Special1];
+	Special1 = (Special1 + 2) & 63;
+
+
+	// Insure it stays above certain height
+	if (Origin.z < FloorZ + 64.0)
+	{
+		Origin.z += 2.0;
+	}
+
+	if (!Target || !Target.bShootable)
+	{
+		// Invalid enemy
+		LookForPlayers(true);
+		return;
+	}
+
+	// Strafe
+	if (Special2 > 0)
+	{
+		Special2--;
+	}
+	else
+	{
+		Special2 = 0;
+		Velocity.x = 0.0;
+		Velocity.y = 0.0;
+		dist = DistTo(Target);
+		if (dist < FIREDEMON_ATTACK_RANGE)
+		{
+			if (P_Random() < 30)
+			{
+				ang = atan2(Target.Origin.y - Origin.y,
+					Target.Origin.x - Origin.x);
+				if (P_Random() < 128)
+					ang = AngleMod360(ang + 90.0);
+				else
+					ang = AngleMod360(ang - 90.0);
+				Velocity.x = 8.0 * cos(ang) * 35.0;
+				Velocity.y = 8.0 * sin(ang) * 35.0;
+				Special2 = 3;	// strafe time
+			}
+		}
+	}
+
+	FaceMovementDirection();
+
+	// Normal movement
+	if (!Special2)
+	{
+		if (--MoveCount < 0 || !StepMove())
+		{
+			NewChaseDir();
+		}
+	}
+
+	// Do missile attack
+	if (!bJustAttacked)
+	{
+		if (CheckMissileRange() && (P_Random() < 20))
+		{
+			SetState(MissileState);
+			bJustAttacked = true;
+			return;
+		}
+	}
+	else
+	{
+		bJustAttacked = false;
+	}
+
+	// make active sound
+	if (ActiveSound && P_Random() < 3)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//============================================================================
+//
+//  A_FiredAttack
+//
+//============================================================================
+
+final void A_FiredAttack()
+{
+	EntityEx mo;
+
+	mo = SpawnMissile(Target, FireDemonMissile);
+	if (mo)
+	{
+		PlaySound('FireDemonAttack', CHAN_WEAPON);
+	}
+}
+
+//============================================================================
+//
+//  A_FiredSplotch
+//
+//============================================================================
+
+final void A_FiredSplotch()
+{
+	Actor A;
+
+	A = Spawn(FireDemonSplotch1, Origin);
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
+	}
+	A = Spawn(FireDemonSplotch2, Origin);
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
+		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
+	}
+}
+
+//==========================================================================
+//
+//  A_IceGuyLook
+//
+//==========================================================================
+
+final void A_IceGuyLook()
+{
+	float dist;
+	float an;
+	class<Actor> tp;
+
+	A_Look();
+	if (Random() < 0.25)
+	{
+		dist = Radius * (Random() * 2.0 - 1.0);
+		an = AngleMod360(Angles.yaw + 90.0);
+
+		if (Random() < 0.5)
+			tp = IceGuyWisp2;
+		else
+			tp = IceGuyWisp1;
+		Spawn(tp, Origin + vector(dist * cos(an), dist * sin(an), 60.0));
+	}
+}
+
+//==========================================================================
+//
+//  A_IceGuyChase
+//
+//==========================================================================
+
+final void A_IceGuyChase()
+{
+	float dist;
+	float an;
+	Actor A;
+	class<Actor> tp;
+
+	A_Chase();
+	if (Random() < 0.5)
+	{
+		dist = Radius * (Random() * 2.0 - 1.0);
+		an = AngleMod360(Angles.yaw + 90.0);
+
+		if (Random() < 0.5)
+			tp = IceGuyWisp2;
+		else
+			tp = IceGuyWisp1;
+		A = Spawn(tp, Origin + vector(dist * cos(an), dist * sin(an), 60.0));
+		if (A)
+		{
+			A.Velocity = Velocity;
+			A.Target = self;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_IceGuyAttack
+//
+//==========================================================================
+
+final void A_IceGuyAttack()
+{
+	float an;
+
+	if (!Target)
+	{
+		return;
+	}
+	an = AngleMod360(Angles.yaw + 90.0);
+	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
+		Radius / 2.0 * sin(an), 40.0), Target, IceGuyFX);
+
+	an = AngleMod360(Angles.yaw - 90.0);
+	SpawnMissileXYZ(Origin + vector(Radius / 2.0 * cos(an),
+		Radius / 2.0 * sin(an), 40.0), Target, IceGuyFX);
+
+	PlaySound(AttackSound, CHAN_WEAPON);
+}
+
+//	Special1	Number of blurs/missiles to spawn
+//	Special2	Index into floatbob
+
+//==========================================================================
+//
+//	A_BishopChase
+//
+//==========================================================================
+
+final void A_BishopChase()
+{
+	Origin.z -= Level.Game.FloatBobOffsets[Special2] / 2.0;
+	Special2 = (Special2 + 4) & 63;
+	Origin.z += Level.Game.FloatBobOffsets[Special2] / 2.0;
+}
+
+//==========================================================================
+//
+//  A_BishopDecide
+//
+//==========================================================================
+
+final void A_BishopDecide()
+{
+	if (P_Random() < 220)
+	{
+		return;
+	}
+	else
+	{
+		SetState(FindState('Blur'));
+	}
+}
+
+//==========================================================================
+//
+//  A_BishopDoBlur
+//
+//==========================================================================
+
+final void A_BishopDoBlur()
+{
+	Special1 = (P_Random() & 3) + 3;	// P_Random number of blurs
+	if (P_Random() < 120)
+	{
+		Thrust(AngleMod360(Angles.yaw + 90.0), 11.0);
+	}
+	else if (P_Random() > 125)
+	{
+		Thrust(AngleMod360(Angles.yaw - 90.0), 11.0);
+	}
+	else
+	{
+		// Thrust forward
+		Thrust(Angles.yaw, 11.0);
+	}
+	PlaySound('BishopBlur', CHAN_VOICE);
+}
+
+//==========================================================================
+//
+//	A_BishopSpawnBlur
+//
+//==========================================================================
+
+final void A_BishopSpawnBlur()
+{
+	Actor blur;
+
+	if (!--Special1)
+	{
+		Velocity.x = 0.0;
+		Velocity.y = 0.0;
+		if (P_Random() > 96)
+		{
+			SetState(SeeState);
+		}
+		else
+		{
+			SetState(MissileState);
+		}
+	}
+	blur = Spawn(BishopBlur, Origin);
+	if (blur)
+	{
+		blur.Angles = Angles;
+	}
+}
+
+//==========================================================================
+//
+//	A_BishopAttack
+//
+//==========================================================================
+
+final void A_BishopAttack()
+{
+	if (!Target)
+	{
+		return;
+	}
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, HITDICE(4));
+		return;
+	}
+	Special1 = (P_Random() & 3) + 5;
+}
+
+//==========================================================================
+//
+//  A_BishopAttack2
+//
+//  Spawns one of a string of bishop missiles
+//
+//==========================================================================
+
+final void A_BishopAttack2()
+{
+	EntityEx mo;
+
+	if (!Target || !Special1)
+	{
+		Special1 = 0;
+		SetState(SeeState);
+		return;
+	}
+	mo = SpawnMissile(Target, BishopFX);
+	if (mo)
+	{
+		mo.Tracer = Target;
+		mo.Special2 = 16;
+	}
+	Special1--;
+}
+
+//==========================================================================
+//
+//  A_BishopPainBlur
+//
+//==========================================================================
+
+final void A_BishopPainBlur()
+{
+	Actor blur;
+
+	if (P_Random() < 64)
+	{
+		SetState(FindState('Blur'));
+		return;
+	}
+	blur = Spawn(BishopPainBlur,
+		Origin + vector((Random() - Random()) * 16.0,
+		(Random() - Random()) * 16.0, (Random() - Random()) * 8.0));
+	if (blur)
+	{
+		blur.Angles = Angles;
+	}
+}
+
+//==========================================================================
+//
+//  A_SerpentHumpDecide
+//
+//  Decided whether to hump up or to missile attack
+//
+//==========================================================================
+
+final void A_SerpentHumpDecide()
+{
+	if (MissileState)
+	{
+		if (P_Random() > 30)
+		{
+			return;
+		}
+		if (P_Random() < 40)
+		{
+			// Missile attack
+			SetState(MeleeState);
+			return;
+		}
+		if (!CheckMeleeRange())
+		{
+			// The hump shouldn't occur when within melee range
+			if (P_Random() < 128)
+			{
+				SetState(MeleeState);
+			}
+			else
+			{
+				SetState(FindState('Hump'));
+				PlaySound('SerpentActive', CHAN_VOICE);
+			}
+		}
+	}
+	else
+	{
+		if (P_Random() > 3)
+		{
+			return;
+		}
+		if (!CheckMeleeRange())
+		{
+			// The hump shouldn't occur when within melee range
+			SetState(FindState('Hump'));
+			PlaySound('SerpentActive', CHAN_VOICE);
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_SerpentUnHide
+//
+//==========================================================================
+
+final void A_SerpentUnHide()
+{
+	bInvisible = false;
+	FloorClip = 24.0;
+}
+
+//==========================================================================
+//
+//	A_SerpentRaiseHump
+// 
+//	Raises the hump above the surface by raising the FloorClip level
+//
+//==========================================================================
+
+final void A_SerpentRaiseHump()
+{
+	FloorClip -= 4.0;
+}
+
+//==========================================================================
+//
+//	A_SerpentLowerHump
+// 
+//==========================================================================
+
+final void A_SerpentLowerHump()
+{
+	FloorClip += 4.0;
+}
+
+//==========================================================================
+//
+//	A_SerpentHide
+//
+//==========================================================================
+
+final void A_SerpentHide()
+{
+	bInvisible = true;
+	FloorClip = 0.0;
+}
+
+//==========================================================================
+//
+//  A_SerpentCheckForAttack
+//
+//==========================================================================
+
+final void A_SerpentCheckForAttack()
+{
+	if (!Target)
+	{
+		return;
+	}
+	if (MissileState && !CheckMeleeRange())
+	{
+		SetState(FindState('Attack'));
+		return;
+	}
+	if (CheckMeleeRange2())
+	{
+		SetState(FindState('Walk'));
+	}
+	else if (CheckMeleeRange())
+	{
+		if (P_Random() < 32)
+		{
+			SetState(FindState('Walk'));
+		}
+		else
+		{
+			SetState(FindState('Attack'));
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_SerpentChooseAttack
+//
+//==========================================================================
+
+final void A_SerpentChooseAttack()
+{
+	if (MissileState)
+	{
+		if (!Target || CheckMeleeRange())
+		{
+			return;
+		}
+		SetState(MissileState);
+	}
+}
+
+//==========================================================================
+//
+//	A_SerpentMeleeAttack
+//
+//==========================================================================
+
+final void A_SerpentMeleeAttack()
+{
+	if (!Target)
+	{
+		return;
+	}
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, HITDICE(5));
+		PlaySound('SerpentMeleeHit', CHAN_WEAPON);
+	}
+	if (P_Random() < 96)
+	{
+		A_SerpentCheckForAttack();
+	}
+}
+
+//==========================================================================
+//
+//	A_SerpentSpawnGibs
+//
+//==========================================================================
+
+final void A_SerpentSpawnGibs()
+{
+	Actor A;
+
+	A = Spawn(SerpentGib1, vector(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		A.FloorClip = 6.0;
+		A.Translation = Translation;
+	}
+	A = Spawn(SerpentGib2, vector(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		A.FloorClip = 6.0;
+		A.Translation = Translation;
+	}
+	A = Spawn(SerpentGib3, vector(Origin.x + (Random() - 0.5) * 16.0,
+		Origin.y + (Random() - 0.5) * 16.0, FloorZ + 1.0));
+	if (A)
+	{
+		A.Velocity.x = (Random() - 0.5) / 4.0 * 35.0;
+		A.Velocity.y = (Random() - 0.5) / 4.0 * 35.0;
+		A.FloorClip = 6.0;
+		A.Translation = Translation;
+	}
+}
+
+//
+// Wraith Variables
+//
+
+//	Special1	Internal index into floatbob
+
+//==========================================================================
+//
+//  A_WraithInit
+//
+//==========================================================================
+
+final void A_WraithInit()
+{
+	Origin.z += 48.0;
+	Special1 = 0;	// index into floatbob
+}
+
+//==========================================================================
+//
+//  A_WraithFX3
+//
+//  Spawn an FX3 around the actor during attacks.
+//
+//==========================================================================
+
+final void A_WraithFX3()
+{
+	Actor A;
+	int numdropped = P_Random() % 15;
+	int i;
+
+	for (i = 0; i < numdropped; i++)
+	{
+		A = Spawn(WraithFX3, Origin);
+		if (A)
+		{
+			A.Origin.x += (Random() - 0.5) * 8.0;
+			A.Origin.y += (Random() - 0.5) * 8.0;
+			A.Origin.z += Random() * 4.0;
+			A.Target = self;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_WraithFX4
+//
+//  Spawn an FX4 during movement.
+//
+//==========================================================================
+
+final void A_WraithFX4()
+{
+	Actor mo;
+	int chance = P_Random();
+	int spawn4, spawn5;
+
+	if (chance < 10)
+	{
+		spawn4 = true;
+		spawn5 = false;
+	}
+	else if (chance < 20)
+	{
+		spawn4 = false;
+		spawn5 = true;
+	}
+	else if (chance < 25)
+	{
+		spawn4 = true;
+		spawn5 = true;
+	}
+	else
+	{
+		spawn4 = false;
+		spawn5 = false;
+	}
+
+	if (spawn4)
+	{
+		mo = Spawn(WraithFX4, Origin);
+		if (mo)
+		{
+			mo.Origin.x += (Random() - 0.5) * 16.0;
+			mo.Origin.y += (Random() - 0.5) * 16.0;
+			mo.Origin.z += Random() * 4.0;
+			mo.Target = self;
+		}
+	}
+	if (spawn5)
+	{
+		mo = Spawn(WraithFX5, Origin);
+		if (mo)
+		{
+			mo.Origin.x += (Random() - 0.5) * 8.0;
+			mo.Origin.y += (Random() - 0.5) * 8.0;
+			mo.Origin.z += Random() * 4.0;
+			mo.Target = self;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_WraithChase
+//
+//==========================================================================
+
+final void A_WraithChase()
+{
+	Origin.z += Level.Game.FloatBobOffsets[Special1];
+	Special1 = (Special1 + 2) & 63;
+//  if (actor->FloorClip > 0)
+//  {
+//      SetState(S_WRAITH_RAISE2);
+//      return;
+//  }
+	A_Chase();
+	A_WraithFX4();
+}
+
+//==========================================================================
+//
+//  A_WraithMelee
+//
+//==========================================================================
+
+final void A_WraithMelee()
+{
+	int amount;
+
+	// Steal health from enemy and give to player
+	if (CheckMeleeRange() && (P_Random() < 220))
+	{
+		amount = HITDICE(2);
+		Target.Damage(self, self, amount);
+		Health += amount;
+	}
+}
+
+//==========================================================================
+//
+//  A_WraithRaiseInit
+//
+//==========================================================================
+
+final void A_WraithRaiseInit()
+{
+	bInvisible = false;
+	bDontBlast = false;
+	bNonShootable = false;
+	bShootable = true;
+	bSolid = true;
+	FloorClip = Height;
+}
+
+//============================================================================
+//
+//  RaiseFromFloor
+//
+//  Raise incrementally from the floor
+// 
+//============================================================================
+
+bool RaiseFromFloor()
+{
+	bool done;
+
+	done = true;
+	// Raise a mobj from the ground
+	if (FloorClip > 0.0)
+	{
+		FloorClip -= 2.0;
+		if (FloorClip <= 0.0)
+		{
+			FloorClip = 0.0;
+			done = true;
+		}
+		else
+		{
+			done = false;
+		}
+	}
+	return done;	// Reached target height
+}
+
+//==========================================================================
+//
+//  A_WraithRaise
+//
+//==========================================================================
+
+final void A_WraithRaise()
+{
+	if (RaiseFromFloor())
+	{
+		// Reached it's target height
+		bNoMorph = false;
+		SetState(FindState('Chase'));
+		PainChance = Wraith.default.PainChance;
+	}
+
+	SpawnDirt(Radius);
+}
+
+//==========================================================================
+//
+//	A_DragonInitFlight
+//
+//==========================================================================
+
+final void A_DragonInitFlight()
+{
+	Tracer = none;
+	do
+	{
+		// find the first tid identical to the dragon's tid
+		Tracer = Actor(Level.FindMobjFromTID(TID, Tracer));
+		if (!Tracer)
+		{
+			SetState(IdleState);
+			return;
+		}
+	}
+	while (Tracer == self);
+	SetTID(0);
+}
+
+//==========================================================================
+//
+//	DragonSeek
+//
+//==========================================================================
+
+final void DragonSeek(float thresh, float turnMax)
+{
+	int dir;
+	float dist;
+	float delta;
+	EntityEx tempTarget;
+	int i;
+	int bestArg;
+	float bestAngle;
+	float angleToSpot, angleToTarget;
+	Actor A;
+	EntityEx oldTarget;
+
+	tempTarget = Tracer;
+	if (!tempTarget)
+	{
+		return;
+	}
+	dir = FaceActor(Actor(tempTarget), delta);
+	if (delta > thresh)
+	{
+		delta /= 2.0;
+		if (delta > turnMax)
+		{
+			delta = turnMax;
+		}
+	}
+	if (dir)
+	{
+		// Turn clockwise
+		Angles.yaw = AngleMod360(Angles.yaw + delta);
+	}
+	else
+	{
+		// Turn counter clockwise
+		Angles.yaw = AngleMod360(Angles.yaw - delta);
+	}
+	Velocity.x = Speed * cos(Angles.yaw);
+	Velocity.y = Speed * sin(Angles.yaw);
+	if (Origin.z + Height < tempTarget.Origin.z ||
+		tempTarget.Origin.z + tempTarget.Height < Origin.z)
+	{
+		dist = DistTo2(tempTarget);
+		dist = dist / Speed;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = (tempTarget.Origin.z - Origin.z) / dist;
+	}
+	else
+	{
+		dist = DistTo2(tempTarget);
+		dist = dist / Speed;
+	}
+	if (tempTarget.bShootable && P_Random() < 64)
+	{
+		// attack the destination mobj if it's attackable
+		if (fabs(AngleMod180(Angles.yaw -
+			atan2(tempTarget.Origin.y - Origin.y,
+			tempTarget.Origin.x - Origin.x))) < 45.0 / 2.0)
+		{
+			oldTarget = Target;
+			Target = tempTarget;
+			if (CheckMeleeRange())
+			{
+				Target.Damage(self, self, HITDICE(10));
+				PlaySound('DragonAttack', CHAN_WEAPON);
+			}
+			else if (P_Random() < 128 && CheckMissileRange())
+			{
+				SpawnMissile(tempTarget, DragonFireball);
+				PlaySound('DragonAttack', CHAN_WEAPON);
+			}
+			Target = oldTarget;
+		}
+	}
+	if (dist * 35.0 < 4.0)
+	{
+		// Hit the target thing
+		if (Target && P_Random() < 200)
+		{
+			bestArg = -1;
+			bestAngle = 360.0;
+			angleToTarget = atan2(Target.Origin.y - Origin.y,
+				Target.Origin.x - Origin.x);
+			for (i = 0; i < 5; i++)
+			{
+				if (!tempTarget.Args[i])
+				{
+					continue;
+				}
+				A = Actor(Level.FindMobjFromTID(tempTarget.Args[i], none));
+				angleToSpot = atan2(A.Origin.y - Origin.y,
+					A.Origin.x - Origin.x);
+				delta = fabs(AngleMod180(angleToSpot - angleToTarget));
+				if (delta < bestAngle)
+				{
+					bestAngle = delta;
+					bestArg = i;
+				}
+			}
+			if (bestArg != -1)
+			{
+				Tracer = Actor(Level.FindMobjFromTID(tempTarget.Args[bestArg],
+					none));
+			}
+		}
+		else
+		{
+			do
+			{
+				i = (P_Random() >> 2) % 5;
+			}
+			while (!tempTarget.Args[i]);
+			Tracer = Actor(Level.FindMobjFromTID(tempTarget.Args[i], none));
+		}
+	}
+}
+
+//==========================================================================
+//
+//	A_DragonFlight
+//
+//==========================================================================
+
+final void A_DragonFlight()
+{
+	float angle;
+
+	DragonSeek(4.0, 8.0);
+	if (Target)
+	{
+		if (!Target.bShootable)
+		{
+			// enemy died
+			Target = none;
+			return;
+		}
+		angle = atan2(Target.Origin.y - Origin.y, Target.Origin.x - Origin.x);
+		if (fabs(AngleMod180(Angles.yaw - angle)) < 45.0 / 2.0
+			&& CheckMeleeRange())
+		{
+			Target.Damage(self, self, HITDICE(8));
+			PlaySound('DragonAttack', CHAN_WEAPON);
+		}
+		else if (fabs(AngleMod180(Angles.yaw - angle)) <= 20.0)
+		{
+			SetState(MissileState);
+			PlaySound('DragonAttack', CHAN_WEAPON);
+		}
+	}
+	else
+	{
+		LookForPlayers(true);
+	}
+}
+
+//==========================================================================
+//
+//	A_DragonFlap
+//
+//==========================================================================
+
+final void A_DragonFlap()
+{
+	A_DragonFlight();
+	if (P_Random() < 240)
+	{
+		PlaySound('DragonWingflap', CHAN_BODY);
+	}
+	else
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//  A_DragonPain
+//
+//==========================================================================
+
+final void A_DragonPain()
+{
+	A_Pain();
+	if (!Tracer)
+	{
+		// no destination spot yet
+		SetState(SeeState);
+	}
+}
+
+//
+//	Korax
+//
+// Korax Scripts (reserved)
+//  249     Tell scripts that we are below half health
+//  250-254 Control scripts
+//  255     Death script
+//
+// Korax TIDs (reserved)
+//  245     Reserved for Korax himself
+//  248     Initial teleport destination
+//  249     Teleport destination
+//  250-254 For use in respective control scripts
+//  255     For use in death script (spawn spots)
+//
+// Arm projectiles
+//      arm positions numbered:
+//          1   top left
+//          2   middle left
+//          3   lower left
+//          4   top right
+//          5   middle right
+//          6   lower right
+//
+// Korax Variables
+//
+//  Special1    last teleport destination
+//  Special2    set if "below half" script not yet run
+//
+
+//==========================================================================
+//
+//  A_KoraxChase
+//
+//==========================================================================
+
+final void A_KoraxChase()
+{
+	Actor spot;
+
+	if (!Special2 && (Health <= (default.Health / 2)))
+	{
+		spot = Actor(Level.FindMobjFromTID(KORAX_FIRST_TELEPORT_TID, none));
+		if (spot)
+		{
+			Teleport(spot.Origin, spot.Angles.yaw, true, true, false);
+		}
+
+		XLevel.StartACS(249, 0, 0, 0, 0, self, NULL, 0, false, false);
+		Special2 = true;	// Don't run again
+
+		return;
+	}
+
+	if (!Target)
+		return;
+	if (Random() < 0.1171875)
+	{
+		SetState(MissileState);
+	}
+	else if (Random() < 0.1171875)
+	{
+		PlaySound('KoraxActive', CHAN_VOICE, 1.0, ATTN_NONE);
+	}
+
+	// Teleport away
+	if (Health < (default.Health >> 1))
+	{
+		if (Random() < 0.0390625)
+		{
+			spot = Actor(Level.FindMobjFromTID(KORAX_TELEPORT_TID, Tracer));
+			Tracer = spot;
+			if (spot)
+			{
+				Teleport(spot.Origin, spot.Angles.yaw, true, true, false);
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_KoraxDecide
+//
+//==========================================================================
+
+final void A_KoraxDecide()
+{
+	if (Random() < 0.859375)
+	{
+		SetState(FindState('Attack'));
+	}
+	else
+	{
+		SetState(FindState('Command'));
+	}
+}
+
+//==========================================================================
+//
+//  SpawnKoraxMissile
+//
+//==========================================================================
+
+final Actor SpawnKoraxMissile(TVec org, EntityEx dest, class<Actor> type)
+{
+	TVec dir;
+	Actor th;
+
+	org.z -= FloorClip;
+	th = Spawn(type, org);
+	if (th.SightSound)
+	{
+		th.PlaySound(th.SightSound, CHAN_VOICE);
+	}
+	th.Target = self;	// Originator
+	dir = dest.Origin - org;
+	if (dest.bShadow)
+	{
+		// Invisible target
+		VectorRotateAroundZ(&dir, (Random() - Random()) * 45.0);
+	}
+	dir = Normalise(dir);
+	th.Velocity = dir * th.Speed;
+	VectorAngles(&dir, &th.Angles);
+	return th.CheckMissileSpawn() ? th : none;
+}
+
+//==========================================================================
+// Arm 1 projectile
+//==========================================================================
+
+final void KoraxFire1(class<Actor> type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw - KORAX_MISSILE_DELTA_ANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM1_HEIGHT;
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
+}
+
+//============================================================================
+// Arm 2 projectile
+//============================================================================
+
+final void KoraxFire2(class<Actor> type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw - KORAX_MISSILE_DELTA_ANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM2_HEIGHT;
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
+}
+
+//============================================================================
+// Arm 3 projectile
+//============================================================================
+
+final void KoraxFire3(class<Actor> type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw - KORAX_MISSILE_DELTA_ANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM3_HEIGHT;
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
+}
+
+//============================================================================
+// Arm 4 projectile
+//============================================================================
+
+final void KoraxFire4(class<Actor> type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw + KORAX_MISSILE_DELTA_ANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_SHORT * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_SHORT * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM4_HEIGHT;
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
+}
+
+//============================================================================
+// Arm 5 projectile
+//============================================================================
+
+final void KoraxFire5(class<Actor> type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw + KORAX_MISSILE_DELTA_ANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM5_HEIGHT;
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
+}
+
+//============================================================================
+// Arm 6 projectile
+//============================================================================
+
+final void KoraxFire6(class<Actor> type)
+{
+	float ang;
+	float x, y, z;
+
+	ang = AngleMod360(Angles.yaw + KORAX_MISSILE_DELTA_ANGLE);
+	x = Origin.x + KORAX_ARM_EXTENSION_LONG * cos(ang);
+	y = Origin.y + KORAX_ARM_EXTENSION_LONG * sin(ang);
+	z = Origin.z - FloorClip + KORAX_ARM6_HEIGHT;
+	SpawnKoraxMissile(vector(x, y, z), Target, type);
+}
+
+//============================================================================
+//
+//  A_KoraxMissile
+//
+//============================================================================
+
+final void A_KoraxMissile()
+{
+	class<Actor> mtype;
+	name sound;
+
+	PlaySound('KoraxAttack', CHAN_VOICE);
+
+	switch (P_Random() % 6)
+	{
+	case 0:
+		mtype = WraithFX1;
+		sound = 'WraithMissileFire';
+		break;
+	case 1:
+		mtype = Demon1FX1;
+		sound = 'DemonMissileFire';
+		break;
+	case 2:
+		mtype = Demon2FX1;
+		sound = 'DemonMissileFire';
+		break;
+	case 3:
+		mtype = FireDemonMissile;
+		sound = 'FireDemonAttack';
+		break;
+	case 4:
+		mtype = CentaurFX;
+		sound = 'CentaurLeaderAttack';
+		break;
+	case 5:
+		mtype = SerpentFX;
+		sound = 'CentaurLeaderAttack';
+		break;
+	}
+
+	// Fire all 6 missiles at once
+	PlaySound(sound, CHAN_VOICE, 1.0, ATTN_NONE);
+	KoraxFire1(mtype);
+	KoraxFire2(mtype);
+	KoraxFire3(mtype);
+	KoraxFire4(mtype);
+	KoraxFire5(mtype);
+	KoraxFire6(mtype);
+}
+
+//============================================================================
+// Call action code scripts (250-254)
+//============================================================================
+
+final void A_KoraxCommand()
+{
+	float x, y, z;
+	float ang;
+	int numcommands;
+
+	PlaySound('KoraxCommand', CHAN_VOICE);
+
+	// Shoot stream of lightning to ceiling
+	ang = AngleMod360(Angles.yaw - 90.0);
+	x = Origin.x + KORAX_COMMAND_OFFSET * cos(ang);
+	y = Origin.y + KORAX_COMMAND_OFFSET * sin(ang);
+	z = Origin.z + KORAX_COMMAND_HEIGHT;
+	Spawn(KoraxBolt, vector(x, y, z));
+
+	if (Health <= (default.Health >> 1))
+	{
+		numcommands = 5;
+	}
+	else
+	{
+		numcommands = 4;
+	}
+
+	switch (P_Random() % numcommands)
+	{
+	case 0:
+		XLevel.StartACS(250, 0, 0, 0, 0, self, NULL, 0, false, false);
+		break;
+	case 1:
+		XLevel.StartACS(251, 0, 0, 0, 0, self, NULL, 0, false, false);
+		break;
+	case 2:
+		XLevel.StartACS(252, 0, 0, 0, 0, self, NULL, 0, false, false);
+		break;
+	case 3:
+		XLevel.StartACS(253, 0, 0, 0, 0, self, NULL, 0, false, false);
+		break;
+	case 4:
+		XLevel.StartACS(254, 0, 0, 0, 0, self, NULL, 0, false, false);
+		break;
+	}
+}
+
+//============================================================================
+//
+//  A_KoraxBonePop
+//
+//============================================================================
+
+final void A_KoraxBonePop()
+{
+	EntityEx mo;
+
+	// Spawn 6 spirits equalangularly
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 0.0, 5.0 * 35.0);
+	if (mo)
+	{
+		KSpiritInit(mo);
+	}
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 1.0, 5.0 * 35.0);
+	if (mo)
+	{
+		KSpiritInit(mo);
+	}
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 2.0, 5.0 * 35.0);
+	if (mo)
+	{
+		KSpiritInit(mo);
+	}
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 3.0, 5.0 * 35.0);
+	if (mo)
+	{
+		KSpiritInit(mo);
+	}
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 4.0, 5.0 * 35.0);
+	if (mo)
+	{
+		KSpiritInit(mo);
+	}
+	mo = SpawnMissileAngle(KoraxSpirit, 60.0 * 5.0, 5.0 * 35.0);
+	if (mo)
+	{
+		KSpiritInit(mo);
+	}
+
+	XLevel.StartACS(255, 0, 0, 0, 0, self, NULL, 0, false, false);	// Death script
+}
+
+//==========================================================================
+//
+//  KSpiritInit
+//
+//==========================================================================
+
+final void KSpiritInit(EntityEx Spirit)
+{
+	int i;
+	EntityEx tail;
+	EntityEx next;
+
+	Spirit.Tracer = self;	// Swarm around korax
+	Spirit.Special1 = 5 * 35 / 5;	// 5 seconds
+	Spirit.Special2 = 32 + (P_Random() & 7);	// Float bob index
+
+	// Spawn a tail for spirit
+	tail = Spawn(HolyTail, Spirit.Origin);
+	tail.Target = Spirit;	// parent
+	for (i = 1; i < 3; i++)
+	{
+		next = Spawn(HolyTailTrail, Spirit.Origin);
+		tail.Tracer = next;
+		tail = next;
+	}
 }

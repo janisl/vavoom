@@ -1083,7 +1083,15 @@ bool Deactivate(EntityEx Activator)
 		if (!bDormant)
 		{
 			bDormant = true;
-			StateTime = -1.0;
+			state S = FindState('Inactive');
+			if (S)
+			{
+				SetState(S);
+			}
+			else
+			{
+				StateTime = -1.0;
+			}
 			return true;
 		}
 	}

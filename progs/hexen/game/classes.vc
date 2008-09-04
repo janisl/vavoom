@@ -109,25 +109,15 @@ import linespec;
 #include "PigPlayer.vc"
 
 #include "Pig.vc"
-#include "IceGuy.vc"
-#include "FireDemon.vc"
-#include "Bishop.vc"
-#include "Serpent.vc"
-#include "SerpentLeader.vc"
-#include "Wraith.vc"
-#include "WraithBuried.vc"
-#include "Dragon.vc"
 #include "Heresiarch.vc"
 #include "SorcFX3.vc"
 #include "SorcBall.vc"
 #include "SorcBall1.vc"
 #include "SorcBall2.vc"
 #include "SorcBall3.vc"
-#include "ClassBoss.vc"
 #include "FighterBoss.vc"
 #include "ClericBoss.vc"
 #include "MageBoss.vc"
-#include "Korax.vc"
 #include "MinotaurFriend.vc"
 #include "SummoningDoll.vc"
 
@@ -139,44 +129,16 @@ class ArtiInvulnerability : PowerupGiver decorate;
 class FighterPlayer : PlayerPawn decorate;
 class ClericPlayer : PlayerPawn decorate;
 class MagePlayer : PlayerPawn decorate;
-class CentaurFX : Actor decorate;
-class Demon1FX1 : Actor decorate;
-class Demon2FX1 : Actor decorate;
 class ArtiPork : CustomInventory decorate;
 class PorkFX : MorphProjectile decorate;
 
 class FireDemonMissile : Actor decorate;
-class FireDemonSplotch1 : Actor decorate;
-class FireDemonSplotch2 : Actor decorate;
-class FireDemonRock1 : Actor decorate;
-class FireDemonRock2 : Actor decorate;
-class FireDemonRock3 : Actor decorate;
-class FireDemonRock4 : Actor decorate;
-class FireDemonRock5 : Actor decorate;
-class IceGuyFX : Actor decorate;
-class IceGuyWisp1 : Actor decorate;
-class IceGuyWisp2 : Actor decorate;
-class BishopFX : Actor decorate;
-class BishopPuff : Actor decorate;
-class BishopBlur : Actor decorate;
-class BishopPainBlur : Actor decorate;
-class SerpentFX : Actor decorate;
-class SerpentHead : Actor decorate;
-class SerpentGib1 : Actor decorate;
-class SerpentGib2 : Actor decorate;
-class SerpentGib3 : Actor decorate;
-class WraithFX1 : Actor decorate;
-class WraithFX3 : Actor decorate;
-class WraithFX4 : Actor decorate;
-class WraithFX5 : Actor decorate;
-class DragonFireball : Actor decorate;
+class Bishop : Actor decorate;
 class SorcFX1 : Actor decorate;
 class SorcFX2 : Actor decorate;
 class SorcFX3Explosion : Actor decorate;
 class SorcFX4 : Actor decorate;
 class SorcSpark1 : Actor decorate;
-class KoraxBolt : Actor decorate;
-class KoraxSpirit : Actor decorate;
 class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
 class MinotaurSmoke : Actor decorate;

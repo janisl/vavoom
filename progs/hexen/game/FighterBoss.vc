@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class FighterBoss : ClassBoss
+class FighterBoss : Actor
 	__mobjinfo__(10100);
 
 //==========================================================================
@@ -129,6 +129,17 @@ defaultproperties
 	Mass = 100.0;
 	Speed = 25.0 * 35.0;
 	PainChance = 0.1953125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
+	bNoMorph = true;
 	PainSound = 'PlayerFighterPain';
 	DeathSound = 'PlayerFighterCrazyDeath';
 	Obituary = "$ob_fboss";

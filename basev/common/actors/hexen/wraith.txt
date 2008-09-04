@@ -1,4 +1,118 @@
 //------------------------------------------------------------------------------
+actor Wraith 34
+{
+	Game Hexen
+	SpawnID 8
+	Health 150
+	Radius 20
+	Height 55
+	Mass 75
+	Speed 11
+	PainChance 25
+	Damage 10
+	Monster
+	+FloorClip
+	+Telestomp
+	+NoGravity
+	+DropOff
+	+Float
+	SeeSound "WraithSight"
+	ActiveSound "WraithActive"
+	AttackSound "WraithAttack"
+	PainSound "WraithPain"
+	DeathSound "WraithDeath"
+	Obituary "$ob_wraith"
+	HitObituary "$ob_wraithhit"
+
+	action native A_WraithInit();
+	action native A_WraithChase();
+	action native A_WraithFX3();
+	action native A_WraithMelee();
+
+	states
+	{
+	Spawn:
+		WRTH A 10
+		WRTH B 5 A_WraithInit
+	Look:
+		WRTH AB 15 A_Look
+		Loop
+	See:
+		WRTH ABCD 4 A_WraithChase
+		Loop
+	Melee:
+		WRTH E 6 A_FaceTarget
+		WRTH F 6 A_WraithFX3
+		WRTH G 6 A_WraithMelee
+		Goto See
+	Missile:
+		WRTH E 6 A_FaceTarget
+		WRTH F 6
+		WRTH G 6 A_CustomMissile("WraithFX1", 32, 0)
+		Goto See
+	Pain:
+		WRTH A 2
+		WRTH H 6 A_Pain
+		Goto See
+	Death:
+		WRTH I 4
+		WRTH J 4 A_Scream
+		WRTH KL 4
+		WRTH M 4 A_NoBlocking
+		WRTH N 4 A_QueueCorpse
+		WRTH O 4
+		WRTH PQ 5
+		WRTH R -1
+		Stop
+	XDeath:
+		WRT2 A 5
+		WRT2 B 5 A_Scream
+		WRT2 CD 5
+		WRT2 E 5 A_NoBlocking
+		WRT2 F 5 A_QueueCorpse
+		WRT2 G 5
+		WRT2 H -1
+		Stop
+	Ice:
+		WRT2 I 5 A_FreezeDeath
+		WRT2 I 1 A_FreezeDeathChunks
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
+actor WraithBuried : Wraith 10011
+{
+	Game Hexen
+	SpawnID 9
+	Height 68
+	PainChance 0
+	-Solid
+	-Shootable
+	+Invisible
+	+DontMorph
+	+DontBlast
+	+StayMorphed
+
+	action native A_WraithRaiseInit();
+	action native A_WraithRaise();
+
+	states
+	{
+	Spawn:
+		Goto Super::Look
+	See:
+		WRTH A 2 A_WraithRaiseInit
+		WRTH A 2 A_WraithRaise
+		WRTH A 2 A_FaceTarget
+		WRTH BB 2 A_WraithRaise
+		Goto See+1
+	Chase:
+		Goto Super::See
+	}
+}
+
+//------------------------------------------------------------------------------
 actor WraithFX1
 {
 	Radius 10

@@ -1,4 +1,64 @@
 //------------------------------------------------------------------------------
+actor Dragon 254
+{
+	Game Hexen
+	Health 640
+	Radius 20
+	Height 65
+	Mass 99999
+	Speed 10
+	PainChance 128
+	Monster
+	+NoGravity
+	+Float
+	+NoBlood
+	+Boss
+	+NoTarget
+	+FullVolActive
+	+NoIceDeath
+	SeeSound "DragonSight"
+	ActiveSound "DragonActive"
+	AttackSound "DragonAttack"
+	PainSound "DragonPain"
+	DeathSound "DragonDeath"
+	Obituary "$ob_dragon"
+
+	action native A_DragonInitFlight();
+	action native A_DragonFlap();
+	action native A_DragonFlight();
+	action native A_DragonPain();
+
+	states
+	{
+	Spawn:
+		DRAG D 10 A_Look
+		Loop
+	See:
+		DRAG CB 5
+		DRAG A 5 A_DragonInitFlight
+		DRAG B 3 A_DragonFlap
+		DRAG BCCDDCCBBAA 3 A_DragonFlight
+		Goto See+3
+	Missile:
+		DRAG E 8 A_CustomMissile("DragonFireball", 32, 0)
+		Goto See+3
+	Pain:
+		DRAG F 10 A_DragonPain
+		Goto See+3
+	Death:
+		DRAG G 5 A_Scream
+		DRAG H 4 A_NoBlocking
+		DRAG I 4
+		DRAG J 4 A_CheckFloor("Crash")
+		Wait
+	Crash:
+		DRAG KL 5
+		DRAG M -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor DragonFireball
 {
 	Radius 12

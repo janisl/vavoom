@@ -1,4 +1,121 @@
 //------------------------------------------------------------------------------
+actor Serpent 121
+{
+	Game Hexen
+	SpawnID 6
+	Health 90
+	Radius 32
+	Height 70
+	Mass 99999
+	Speed 12
+	PainChance 96
+	Monster
+	-Shootable
+	+Invisible
+	+NoBlood
+	+CantLeaveFloorpic
+	+NonShootable
+	+DontBlast
+	+StayMorphed
+	+NoTeleOther
+	SeeSound "SerpentSight"
+	AttackSound "SerpentAttack"
+	PainSound "SerpentPain"
+	DeathSound "SerpentDeath"
+	Obituary "$ob_serpent"
+	HitObituary "$ob_serpenthit"
+
+	action native A_SerpentHumpDecide();
+	action native A_SerpentUnHide();
+	action native A_SerpentRaiseHump();
+	action native A_SerpentLowerHump();
+	action native A_SerpentHide();
+	action native A_SerpentCheckForAttack();
+	action native A_SerpentChooseAttack();
+	action native A_SerpentMeleeAttack();
+	action native A_SerpentSpawnGibs();
+
+	states
+	{
+	Spawn:
+		SSPT H 10 A_Look
+		Loop
+	See:
+		SSPT HH 1 A_Chase("Melee", "None", CHF_NIGHTMAREFAST | CHF_NOPLAYACTIVE)
+		SSPT H 2 A_SerpentHumpDecide
+		Loop
+	Hump:
+		SSPT H 3 A_SerpentUnHide
+		SSPT EFGEF 3 A_SerpentRaiseHump
+		SSPT GEF 3
+		SSPT GEFGE 3 A_SerpentLowerHump
+		SSPT F 3 A_SerpentHide
+		Goto See
+	Melee:
+		SSPT A 1 A_UnHideThing
+		SSPT A 1 A_PlaySoundEx("SerpentBirth", "Voice")
+		SSPT B 3 A_SetShootable
+		SSPT C 3
+		SSPT D 4 A_SerpentCheckForAttack
+	Dive:
+		SSDV ABC 4
+		SSDV D 4 A_UnSetShootable
+		SSDV E 3 A_PlaySoundEx("SerpentActive", "Body")
+		SSDV F 3
+		SSDV GH 4
+		SSDV I 3
+		SSDV J 3 A_SerpentHide
+		Goto See
+	Walk:
+		SSPT IJI 5 A_Chase("Attack", "None", CHF_NIGHTMAREFAST)
+		SSPT J 5 A_SerpentCheckForAttack
+		Goto Dive
+	Pain:
+		SSPT L 5
+		SSPT L 5 A_Pain
+		Goto Dive
+	Attack:
+		SSPT K 6 A_FaceTarget
+		SSPT L 5 A_SerpentChooseAttack
+	MeleeAttack:
+		SSPT N 5 A_SerpentMeleeAttack
+		Goto Dive
+	Death:
+		SSPT O 4
+		SSPT P 4 A_Scream
+		SSPT Q 4 A_NoBlocking
+		SSPT RSTUVWXYZ 4
+		Stop
+	XDeath:
+		SSXD A 4
+		SSXD B 4 A_SpawnItemEx("SerpentHead", 0, 0, 45, 0, 0, 0, 0, SXF_TRANSFERTRANSLATION)
+		SSXD C 4 A_NoBlocking
+		SSXD DE 4
+		SSXD FG 3
+		SSXD H 3 A_SerpentSpawnGibs
+		Stop
+	Ice:
+		SSPT "[" 5 A_FreezeDeath
+		SSPT "[" 1 A_FreezeDeathChunks
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SerpentLeader : Serpent 120
+{
+	Game Hexen
+	SpawnID 7
+	Mass 200
+	states
+	{
+	Missile:
+		SSPT N 5 A_CustomMissile("SerpentFX", 32, 0)
+		Goto Super::Melee+5
+	}
+}
+
+//------------------------------------------------------------------------------
 actor SerpentFX
 {
 	Radius 8

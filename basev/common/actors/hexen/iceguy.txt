@@ -1,4 +1,56 @@
 //------------------------------------------------------------------------------
+actor IceGuy 8020
+{
+	Game Hexen
+	SpawnID 20
+	Health 120
+	Radius 22
+	Height 75
+	Mass 150
+	Speed 14
+	PainChance 144
+	DamageType "Ice"
+	Monster
+	+Telestomp
+	+NoBlood
+	+NoIceDeath
+	SeeSound "IceGuySight"
+	ActiveSound "IceGuyActive"
+	AttackSound "IceGuyAttack"
+	Obituary "$ob_iceguy"
+
+	action native A_IceGuyLook();
+	action native A_IceGuyChase();
+	action native A_IceGuyAttack();
+
+	states
+	{
+	Spawn:
+		ICEY A 10 A_IceGuyLook
+		Loop
+	Inactive:
+		ICEY A -1
+		Goto Spawn
+	See:
+		ICEY A 4 A_Chase
+		ICEY B 4 A_IceGuyChase
+		ICEY CD 4 A_Chase
+		Loop
+	Missile:
+		ICEY EF 3 A_FaceTarget
+		ICEY G 8 Bright A_IceGuyAttack
+		ICEY F 4 A_FaceTarget
+		Goto See
+	Pain:
+		ICEY A 1 A_Pain
+		Goto See
+	Death:
+		ICEY A 1 A_IceGuyDie
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor IceGuyFX
 {
 	Radius 8

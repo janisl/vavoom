@@ -1,4 +1,84 @@
 //------------------------------------------------------------------------------
+actor Bishop 114
+{
+	Game Hexen
+	SpawnID 19
+	Health 130
+	Radius 22
+	Height 65
+	Mass 100
+	Speed 10
+	PainChance 110
+	Monster
+	+Telestomp
+	+NoGravity
+	+Float
+	+NoBlood
+	+NoTargetSwitch
+	+DontOverlap
+	SeeSound "BishopSight"
+	ActiveSound "BishopActiveSounds"
+	AttackSound "BishopAttack"
+	PainSound "BishopPain"
+	DeathSound "BishopDeath"
+	Obituary "$ob_bishop"
+
+	action native A_BishopChase();
+	action native A_BishopDecide();
+	action native A_BishopDoBlur();
+	action native A_BishopSpawnBlur();
+	action native A_BishopAttack();
+	action native A_BishopAttack2();
+	action native A_BishopPainBlur();
+
+	states
+	{
+	Spawn:
+		BISH A 10 A_Look
+		Loop
+	See:
+		BISH A 2 A_Chase
+		BISH A 2 A_BishopChase
+		BISH A 2
+		BISH B 2 A_BishopChase
+		BISH B 2 A_Chase
+		BISH B 2 A_BishopChase
+		BISH A 1 A_BishopDecide
+		Loop
+	Blur:
+		BISH A 2 A_BishopDoBlur
+		BISH A 4 A_BishopSpawnBlur
+		Wait
+	Missile:
+		BISH A 3 A_FaceTarget
+		BISH DE 3 Bright A_FaceTarget
+		BISH F 3 Bright A_BishopAttack
+		BISH F 5 Bright A_BishopAttack2
+		Wait
+	Pain:
+		BISH C 6 A_Pain
+		BISH CCC 6 A_BishopPainBlur
+		BISH C 0
+		Goto See
+	Death:
+		BISH G 6
+		BISH H 6 Bright A_Scream
+		BISH I 5 Bright A_NoBlocking
+		BISH J 5 Bright A_Explode(Random(25, 40))
+		BISH K 5 Bright
+		BISH LM 4 Bright
+		BISH N 4 A_SpawnItemEx("BishopPuff", 0, 0, 40, 0, 0, 0.5)
+		BISH O 4 A_QueueCorpse
+		BISH P -1
+		Stop
+	Ice:
+		BISH X 5 A_FreezeDeath
+		BISH X 1 A_FreezeDeathChunks
+		Wait
+	}
+}
+
+//------------------------------------------------------------------------------
 actor BishopFX
 {
 	Radius 10

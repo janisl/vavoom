@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClericBoss : ClassBoss
+class ClericBoss : Actor
 	__mobjinfo__(10101);
 
 //==========================================================================
@@ -133,6 +133,17 @@ defaultproperties
 	Mass = 100.0;
 	Speed = 25.0 * 35.0;
 	PainChance = 0.1953125;
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bFloorClip = true;
+	bTelestomp = true;
+	bActivatePushWall = true;
+	bActivateMCross = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
+	bNoMorph = true;
 	PainSound = 'PlayerClericPain';
 	DeathSound = 'PlayerClericCrazyDeath';
 	Obituary = "$ob_cboss";
