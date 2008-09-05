@@ -3960,6 +3960,11 @@ void ProcessDecorateScripts()
 	//	Make sure all import classes were defined.
 	if (VMemberBase::GDecorateClassImports.Num())
 	{
+		for (int i = 0; i < VMemberBase::GDecorateClassImports.Num(); i++)
+		{
+			GCon->Logf("Undefined DECORATE class %s",
+				VMemberBase::GDecorateClassImports[i]->GetName());
+		}
 		Sys_Error("Not all DECORATE class imports were defined");
 	}
 
