@@ -39,6 +39,10 @@
 #define C(label)	label
 #endif
 
+#if defined(__linux__) && defined(__ELF__)
+.section .note.GNU-stack,"",%progbits
+#endif
+
 #if !defined GAS2TASM
 #define Align4		.p2align 2
 #define Align8		.p2align 3
