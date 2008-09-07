@@ -1,0 +1,81 @@
+//------------------------------------------------------------------------------
+actor Stalker 186
+{
+	Game Strife
+	ConversationID 92, -1, -1
+	Health 80
+	Radius 31
+	Height 25
+	Speed 16
+	PainChance 40
+	MaxDropOffHeight 32
+	MinMissileChance 150
+	Monster
+	+SpawnCeiling
+	+NoGravity
+	+DropOff
+	+InCombat
+	+NoBlood
+	+NoVerticalMeleeRange
+	SeeSound "stalker/sight"
+	ActiveSound "stalker/active"
+	AttackSound "stalker/attack"
+	PainSound "stalker/pain"
+	DeathSound "stalker/death"
+	Obituary "$ob_stalker"
+
+	action native A_StalkerLookInit();
+	action native A_StalkerChaseDecide();
+	action native A_StalkerAttack();
+	action native A_StalkerDrop();
+
+	states
+	{
+	Spawn:
+		STLK A 1 A_StalkerLookInit
+		Loop
+	LookCeiling:
+		STLK A 10 A_Look
+		Loop
+	LookFloor:
+		STLK J 10 A_Look
+		Loop
+	See:
+		STLK A 1 A_StalkerChaseDecide
+		STLK ABB 3 A_Chase
+		STLK C 0 A_PlaySound("stalker/walk")
+		STLK C 3 A_Chase
+		STLK C 3 A_Chase
+		Loop
+	Melee:
+		STLK J 3 A_FaceTarget
+		STLK K 3 A_StalkerAttack
+		Goto SeeFloor
+	Drop:
+		STLK C 2 A_StalkerDrop
+		STLK IHGFED 3
+		Goto Melee
+	SeeFloor:
+		STLK J 0 A_PlaySound("stalker/walk")
+		STLK J 3 A_Chase
+		STLK JKK 3 A_Chase
+		STLK L 0 A_PlaySound("stalker/walk")
+		STLK L 3 A_Chase
+		STLK L 3 A_Chase
+		Loop
+	Pain:
+		STLK L 1 A_Pain
+		Goto See
+	Death:
+		STLK O 4
+		STLK P 4 A_Scream
+		STLK QRST 4
+		STLK U 4 A_NoBlocking
+		STLK VW 4
+		STLK X 4 Bright
+		STLK Y 4 Bright
+		STLK Z 4 Bright
+		STLK "[" 4 Bright
+		Stop
+	}
+}

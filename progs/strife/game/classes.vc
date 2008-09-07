@@ -33,11 +33,8 @@ import uibase;
 #include "MainGameInfo.vc"
 #include "StrifeLevelInfo.vc"
 #include "StrifeWorldInfo.vc"
-#include "Pawn.vc"
 #include "StrifeWeapon.vc"
 #include "Player.vc"
-
-#include "DummyStrifeItem.vc"
 
 #include "TeleportFog.vc"
 #include "ForceFieldGuard.vc"
@@ -76,44 +73,15 @@ import uibase;
 #include "OpenDoor224.vc"
 #include "HealthTraining.vc"
 #include "GunTraining.vc"
-#include "UpgradeStamina.vc"
-#include "UpgradeAccuracy.vc"
 #include "SlideshowStarter.vc"
 
 #include "PowerCoupling.vc"
-
-#include "Stalker.vc"
-#include "Sentinel.vc"
-#include "Reaver.vc"
-#include "Templar.vc"
-#include "Crusader.vc"
-#include "Inquisitor.vc"
-#include "Programmer.vc"
-#include "Oracle.vc"
-#include "Macil1.vc"
-#include "Macil2.vc"
-#include "LoreShot.vc"
-#include "Loremaster.vc"
-#include "AlienSpectre1.vc"
-#include "AlienSpectre2.vc"
-#include "AlienSpectre3.vc"
-#include "AlienSpectre4.vc"
-#include "AlienSpectre5.vc"
-#include "EntityBoss.vc"
-#include "EntityPod.vc"
-#include "EntitySecond.vc"
 
 #include "ClientGameBaseEx.vc"
 
 class Blood : Actor decorate;
 class QuestItem6 : Inventory decorate;
 class QuestItem17 : Inventory decorate;
-class QuestItem21 : Inventory decorate;
-class QuestItem22 : Inventory decorate;
-class QuestItem23 : Inventory decorate;
-class QuestItem24 : Inventory decorate;
-class QuestItem25 : Inventory decorate;
-class QuestItem26 : Inventory decorate;
 class HEGrenadeRounds : Ammo decorate;
 class PhosphorusGrenadeRounds : Ammo decorate;
 class ClipOfBullets : Ammo decorate;
@@ -127,27 +95,13 @@ class Communicator : Inventory decorate;
 class BrokenPowerCoupling : Inventory decorate;
 class StrifePlayer : PlayerPawn decorate;
 class Rebel1 : Actor decorate;
-class SentinelFX1 : Actor decorate;
-class SentinelFX2 : Actor decorate;
-class FastFlameMissile : Actor decorate;
-class CrusaderMissile : Actor decorate;
-class InquisitorShot : Actor decorate;
-class InquisitorArm : Actor decorate;
-class ProgrammerBase : Actor decorate;
-class LoreShot2 : Actor decorate;
-class AlienChunkSmall : Actor decorate;
-class AlienChunkLarge : Actor decorate;
 class FlameMissile : Actor decorate;
 class SpectralLightningV1 : Actor decorate;
 class SpectralLightningSpot : Actor decorate;
 class SpectralLightningH1 : Actor decorate;
-class SpectralLightningH2 : Actor decorate;
 class SpectralLightningBall1 : Actor decorate;
-class SpectralLightningBall2 : Actor decorate;
 class SpectralLightningBigV1 : Actor decorate;
-class SpectralLightningBigV2 : Actor decorate;
 class SpectralLightningBigBall1 : Actor decorate;
-class SpectralLightningBigBall2 : Actor decorate;
 class StrifePuff : Actor decorate;
 class StrifeSpark : Actor decorate;
 class ElectricBolt : Actor decorate;
@@ -156,3 +110,5 @@ class HEGrenade : Actor decorate;
 class PhosphorousGrenade : Actor decorate;
 class MaulerPuff : Actor decorate;
 class MaulerTorpedo : Actor decorate;
+class AlienSpectre3 : Actor decorate;
+class AlienSpectre4 : Actor decorate;

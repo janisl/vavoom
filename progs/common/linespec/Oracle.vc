@@ -23,78 +23,53 @@
 //**
 //**************************************************************************
 
-class Sentinel : Actor
-	__mobjinfo__(3006);
+class Oracle : Actor
+	__mobjinfo__(199);
 
 //==========================================================================
 //
-//	A_SentinelAttack
+//	A_OracleDeath
 //
 //==========================================================================
 
-final void A_SentinelAttack()
+final void A_OracleDeath()
 {
-	int i;
-	EntityEx missile;
-	EntityEx trail;
+	Actor A;
 
-	missile = SpawnMissileZAimed(32.0, Target, SentinelFX2);
-	if (missile && (missile.Velocity.x || missile.Velocity.y))
+	foreach AllThinkers(AlienSpectre3, A)
 	{
-		for (i = 8; i > 1; i--)
+		if (A && A.bMonster && A.Health > 0)
 		{
-			trail = Spawn(SentinelFX1, vector(
-				Origin.x + missile.Radius * itof(i) * cos(missile.Angles.yaw),
-				Origin.y + missile.Radius * itof(i) * sin(missile.Angles.yaw),
-				missile.Origin.z + (missile.Velocity.z / 35.0 / 4.0 * itof(i))));
-			if (trail)
-			{
-				trail.Target = self;
-				trail.Velocity = missile.Velocity;
-				trail.CheckMissileSpawn();
-			}
+			A.Target = Target;
+			A.SetState(A.SeeState);
 		}
-		missile.Origin.z += missile.Velocity.z / 35.0 / 4.0;
 	}
 }
 
 states
 {
 Spawn:
-	SEWR A 10 A_Look
-	Loop
-See:
-	SEWR A 6 A_SentinelBob
-	SEWR A 6 A_Chase
-	Loop
-Missile:
-	SEWR B 4 A_FaceTarget
-	SEWR C 8 Bright A_SentinelAttack
-	SEWR C 4 Bright A_SentinelRefire
-	Goto Missile+1
-Pain:
-	SEWR D 5 A_Pain
-	Goto Missile+2
+	ORCL A -1
+	Stop
 Death:
-	SEWR D 7 A_NoBlocking
-	SEWR E 8 Bright A_TossGib
-	SEWR F 5 Bright A_Scream
-	SEWR G 4 Bright A_TossGib
-	SEWR H 4 Bright A_TossGib
-	SEWR I 4
-	SEWR J 5
+	ORCL BCDEFGHIJK 5
+	ORCL L 5 A_NoBlocking
+	ORCL M 5
+	ORCL N 5 A_OracleDeath
+	ORCL OP 5
+	ORCL Q -1
 	Stop
 }
 
 defaultproperties
 {
-	Health = 100;
-	Radius = 23.0;
-	Height = 53.0;
-	Mass = 300.0;
-	Speed = 7.0 * 35.0;
-	FloatSpeed = 175.0;
-	PainChance = 1.0;
+	ConversationID = 65;
+	StrifeName = "ORACLE";
+	Health = 1;
+	Radius = 15.0;
+	Height = 56.0;
+	Mass = 100.0;
+	MaxDropoffHeight = 32.0;
 	bSolid = true;
 	bShootable = true;
 	bCountKill = true;
@@ -104,15 +79,7 @@ defaultproperties
 	bFloorClip = true;
 	bPassMobj = true;
 	bCanUseWalls = true;
-	bSpawnCeiling = true;
-	bNoGravity = true;
-	bLookAllAround = true;
-	bFloat = true;
-	bInCombat = true;
 	bNoBlood = true;
-	bNoBlockMonst = true;
-	SightSound = 'sentinel/sight';
-	ActiveSound = 'sentinel/active';
-	DeathSound = 'sentinel/death';
-	Obituary = "$ob_sentinel";
+	bNoDeathmatch = true;
+	bFireResist = true;
 }

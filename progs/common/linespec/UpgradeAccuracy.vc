@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class UpgradeStamina : DummyStrifeItem;
+class UpgradeAccuracy : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -33,24 +33,18 @@ class UpgradeStamina : DummyStrifeItem;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (!Toucher.Player)
+	if (!Toucher.Player || PlayerEx(Toucher.Player).Accuracy >= MaxAmount)
 	{
 		return false;
 	}
-
-	Player(Toucher.Player).Stamina += Amount;
-	if (Player(Toucher.Player).Stamina >= MaxAmount)
-	{
-		Player(Toucher.Player).Stamina = MaxAmount;
-	}
-	Toucher.GiveBody(-100);
+	PlayerEx(Toucher.Player).Accuracy += Amount;
 	GoAwayAndDie();
 	return true;
 }
 
 defaultproperties
 {
-	ConversationID = 306;
+	ConversationID = 307;
 	Amount = 10;
 	MaxAmount = 100;
 }

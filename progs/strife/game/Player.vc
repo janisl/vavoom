@@ -36,7 +36,7 @@ const int
 replication
 {
 	reliable if (!bIsClient)
-		ClientSlideshow1, ClientSlideshow2, ClientFinaleType;
+		ClientSlideshow1, ClientSlideshow2;
 }
 
 //==========================================================================

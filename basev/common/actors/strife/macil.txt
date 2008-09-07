@@ -1,0 +1,29 @@
+//------------------------------------------------------------------------------
+actor Macil2 : Macil1 200
+{
+	Game Strife
+	ConversationID 50, 49, 50
+	PainChance 200
+	+CountKill
+	+Spectral
+	-NoDamage
+	DeathSound "macil/slop"
+	states
+	{
+	Missile:
+		LEAD E 4 A_FaceTarget
+		LEAD F 4 Bright A_ShootGun
+		LEAD E 2 A_SentinelRefire
+		Loop
+	Death:
+		LEAD G 5
+		LEAD H 5 A_Scream
+		LEAD IJ 4
+		LEAD K 3
+		LEAD L 3 A_NoBlocking
+		LEAD MNOPQRSTUV 3
+		LEAD W 3 A_SpawnItemEx("AlienSpectre4", 0, 0, 0, 0, 0, random(0, 255) * 0.0078125, 0, SXF_NOCHECKPOSITION)
+		LEAD X -1
+		Stop
+	}
+}

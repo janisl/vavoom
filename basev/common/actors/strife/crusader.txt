@@ -1,4 +1,74 @@
 //------------------------------------------------------------------------------
+actor Crusader 3005
+{
+	Game Strife
+	ConversationID 63, -1, -1
+	Health 400
+	Radius 40
+	Height 56
+	Mass 400
+	Speed 8
+	PainChance 128
+	MaxDropoffHeight 32
+	MinMissileChance 120
+	Monster
+	+FloorClip
+	+DontMorph
+	+MissileMore
+	+InCombat
+	+NoBlood
+	+NoIceDeath
+	SeeSound "crusader/sight"
+	ActiveSound "crusader/active"
+	PainSound "crusader/pain"
+	DeathSound "crusader/death"
+	Obituary "$ob_crusader"
+	DropItem "EnergyPod", 256, 20
+
+	action native A_CrusaderChoose();
+	action native A_CrusaderSweepLeft();
+	action native A_CrusaderSweepRight();
+	action native A_CrusaderRefire();
+	action native A_CrusaderDeath();
+
+	states
+	{
+	Spawn:
+		ROB2 Q 10 A_Look
+		Loop
+	See:
+		ROB2 AABBCCDD 3 A_Chase
+		Loop
+	Missile:
+		ROB2 E 3 A_FaceTarget
+		ROB2 F 2 Bright A_CrusaderChoose
+		ROB2 E 2 Bright A_CrusaderSweepLeft
+		ROB2 F 3 Bright A_CrusaderSweepLeft
+		ROB2 E 2 Bright A_CrusaderSweepLeft
+		ROB2 F 2 Bright A_CrusaderSweepLeft
+		ROB2 E 2 Bright A_CrusaderSweepRight
+		ROB2 F 2 Bright A_CrusaderSweepRight
+		ROB2 E 2 Bright A_CrusaderSweepRight
+		ROB2 F 2 A_CrusaderRefire
+		Loop
+	Pain:
+		ROB2 D 1 A_Pain
+		Goto See
+	Death:
+		ROB2 G 3 A_Scream
+		ROB2 H 5 A_TossGib
+		ROB2 I 4 Bright A_TossGib
+		ROB2 J 4 Bright A_Explode(64, 64, 1, 1)
+		ROB2 K 4 Bright A_NoBlocking
+		ROB2 L 4 A_Explode(64, 64, 1, 1)
+		ROB2 MN 4 A_TossGib
+		ROB2 O 4 A_Explode(64, 64, 1, 1)
+		ROB2 P -1 A_CrusaderDeath
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor FastFlameMissile : FlameMissile
 {
 	Mass 50

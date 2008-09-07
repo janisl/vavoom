@@ -245,6 +245,7 @@
 		<flag name="NeverRespawn" property="bNeverRespawn" />
 		<flag name="DontRip" property="bDontRip" />
 		<flag name="PickUp" property="bPickUp" />
+		<flag name="NoVerticalMeleeRange" property="bNoVerticalMeleeRange" />
 
 		<!-- Vavoom specific -->
 		<flag name="FallingFriction" property="bFallingFriction" />

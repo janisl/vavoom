@@ -235,6 +235,13 @@ enum
 
 #include "Coin.vc"
 #include "Meat.vc"
+#include "LoreShot.vc"
+#include "SpectralMonster.vc"
+#include "DummyStrifeItem.vc"
+#include "UpgradeStamina.vc"
+#include "UpgradeAccuracy.vc"
+#include "Oracle.vc"
+#include "Macil1.vc"
 
 class Blood : Actor decorate;
 class BloodSplatter : Actor decorate;
@@ -365,6 +372,12 @@ class Gold10 : Coin decorate;
 class Gold25 : Coin decorate;
 class Gold50 : Coin decorate;
 class QuestItem7 : Inventory decorate;
+class QuestItem21 : Inventory decorate;
+class QuestItem22 : Inventory decorate;
+class QuestItem23 : Inventory decorate;
+class QuestItem24 : Inventory decorate;
+class QuestItem25 : Inventory decorate;
+class QuestItem26 : Inventory decorate;
 class QuestItem29 : Inventory decorate;
 class Communicator : Inventory decorate;
 class FireDroplet : Actor decorate;
@@ -372,11 +385,34 @@ class Junk : Meat decorate;
 class StrifePuff : Actor decorate;
 class MiniMissilePuff : Actor decorate;
 class RocketTrail : Actor decorate;
+class MaulerPuff : Actor decorate;
 class MaulerTorpedoWave : Actor decorate;
+class SpectralLightningSpot : Actor decorate;
 class SpectralLightningV1 : Actor decorate;
 class SpectralLightningV2 : Actor decorate;
 class SpectralLightningHTail : Actor decorate;
+class SpectralLightningH2 : Actor decorate;
 class SpectralLightningH3 : Actor decorate;
+class SpectralLightningBall2 : Actor decorate;
+class SpectralLightningBigV2 : Actor decorate;
+class SpectralLightningBigBall2 : Actor decorate;
 class Bang4Cloud : Actor decorate;
 class Rubble1 : Actor decorate;
 class AcolyteBlue : Actor decorate;
+class SentinelFX1 : Actor decorate;
+class SentinelFX2 : Actor decorate;
+class FastFlameMissile : Actor decorate;
+class CrusaderMissile : Actor decorate;
+class InquisitorShot : Actor decorate;
+class InquisitorArm : Actor decorate;
+class ProgrammerBase : Actor decorate;
+class LoreShot2 : Actor decorate;
+class AlienSpectre1 : Actor decorate;
+class AlienSpectre2 : Actor decorate;
+class AlienSpectre3 : Actor decorate;
+class AlienSpectre4 : Actor decorate;
+class AlienSpectre5 : Actor decorate;
+class AlienChunkSmall : Actor decorate;
+class AlienChunkLarge : Actor decorate;
+class EntityBoss : Actor decorate;
+class EntitySecond : Actor decorate;

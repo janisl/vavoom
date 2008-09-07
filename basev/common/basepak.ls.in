@@ -166,14 +166,17 @@ actors/strife/crusader.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/crusader.
 actors/strife/entityboss.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/entityboss.txt
 actors/strife/inquisitor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/inquisitor.txt
 actors/strife/loremaster.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/loremaster.txt
+actors/strife/macil.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/macil.txt
 actors/strife/merchants.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/merchants.txt
 actors/strife/peasants.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/peasants.txt
 actors/strife/programmer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/programmer.txt
 actors/strife/questitems.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/questitems.txt
 actors/strife/ratbuddy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/ratbuddy.txt
+actors/strife/reaver.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/reaver.txt
 actors/strife/rebels.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/rebels.txt
 actors/strife/sentinel.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/sentinel.txt
 actors/strife/spectral.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/spectral.txt
+actors/strife/stalker.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/stalker.txt
 actors/strife/strifeammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeammo.txt
 actors/strife/strifearmor.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifearmor.txt
 actors/strife/strifebishop.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifebishop.txt
@@ -183,6 +186,7 @@ actors/strife/strifekeys.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeke
 actors/strife/strifeplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeplayer.txt
 actors/strife/strifestuff.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifestuff.txt
 actors/strife/strifeweapons.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeweapons.txt
+actors/strife/templar.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/templar.txt
 actors/strife/thingstoblowup.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/thingstoblowup.txt
 actors/strife/zombie.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/zombie.txt
 

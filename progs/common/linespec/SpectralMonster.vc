@@ -1,0 +1,353 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class SpectralMonster : Actor
+	abstract;
+
+//==========================================================================
+//
+//	Touch
+//
+//==========================================================================
+
+bool Touch(Entity InOther)
+{
+	EntityEx(InOther).Damage(self, self, 5, 'Melee');
+}
+
+//==========================================================================
+//
+//	A_Spectre2Attack
+//
+//==========================================================================
+
+final void A_Spectre2Attack()
+{
+	EntityEx A;
+
+	if (!Target)
+		return;
+
+	A_FaceTarget();
+
+	A = SpawnMissile(Target, SpectralLightningH2);
+}
+
+//==========================================================================
+//
+//	A_Spectre3Attack
+//
+//==========================================================================
+
+final void A_Spectre3Attack()
+{
+	EntityEx spread;
+	int i;
+
+	if (!Target)
+		return;
+
+	A_FaceTarget();
+
+	for (i = 0; i < 20; i++)
+	{
+		spread = SpawnMissile(Target, SpectralLightningBall2);
+		if (spread)
+		{
+			spread.bSpectral = false;
+			spread.Angles.yaw = AngleMod360(spread.Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
+			spread.Velocity.x = spread.Speed * cos(spread.Angles.yaw);
+			spread.Velocity.y = spread.Speed * sin(spread.Angles.yaw);
+		}
+	}
+
+	spread = Spawn(SpectralLightningV1, Origin + vector(0.0, 0.0, -Height));
+	spread.bNoGravity = false;
+	spread.bSpectral = false;
+	spread.Target = self;
+	spread.Velocity.x = 0.001;
+	spread.Velocity.y = 0.001;
+	spread.CheckMissileSpawn();
+}
+
+//==========================================================================
+//
+//	A_Spectre4Attack
+//
+//==========================================================================
+
+final void A_Spectre4Attack()
+{
+	EntityEx A;
+
+	if (!Target)
+		return;
+
+	A_FaceTarget();
+
+	A = SpawnMissile(Target, SpectralLightningBigV2);
+}
+
+//==========================================================================
+//
+//	A_Spectre5Attack
+//
+//==========================================================================
+
+final void A_Spectre5Attack()
+{
+	EntityEx A;
+
+	if (!Target)
+		return;
+
+	A_FaceTarget();
+
+	A = SpawnMissile(Target, SpectralLightningBigBall2);
+}
+
+//==========================================================================
+//
+//	A_SpectreChunkSmall
+//
+//==========================================================================
+
+final void A_SpectreChunkSmall()
+{
+	TossUpObject(AlienChunkSmall);
+}
+
+//==========================================================================
+//
+//	A_SpectreChunkLarge
+//
+//==========================================================================
+
+final void A_SpectreChunkLarge()
+{
+	TossUpObject(AlienChunkLarge);
+}
+
+//==========================================================================
+//
+//	A_AlienSpectreDeath
+//
+//==========================================================================
+
+final void A_AlienSpectreDeath()
+{
+	//	We need this so that Sigil is dropped.
+	A_NoBlocking();
+
+	if (!CheckBossDeath())
+	{
+		return;
+	}
+
+	// victory!
+	if (Class == AlienSpectre1)
+	{
+		//	Specter in ruined temple.
+		LineSpecialLevelInfo(Level).EV_DoFloor(999, 8, 0, 0, 0,
+			FloorMover::FLOOREV_LowerToLowest, NULL);
+		PlayerEx(Target.Player).SetObjectives(95);
+		PlayerEx(Target.Player).ClientVoice(95);
+	}
+	else if (Class == AlienSpectre2)
+	{
+		//	Bishop's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_bishop");
+		Target.GiveInventoryType(QuestItem21);
+		PlayerEx(Target.Player).SetObjectives(74);
+		PlayerEx(Target.Player).ClientVoice(74);
+	}
+	else if (Class == AlienSpectre3)
+	{
+		//	Oracle's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_oracle");
+		Target.GiveInventoryType(QuestItem23);
+		if (Target.FindInventory(QuestItem21))
+		{
+			//	If the Bishop is dead, set quest item 22
+			Target.GiveInventoryType(QuestItem22);
+		}
+		if (Target.FindInventory(QuestItem24))
+		{
+			PlayerEx(Target.Player).SetObjectives(85);
+			PlayerEx(Target.Player).ClientVoice(85);
+		}
+		else
+		{
+			PlayerEx(Target.Player).SetObjectives(87);
+			PlayerEx(Target.Player).ClientVoice(87);
+		}
+		Level.ExecuteActionSpecial(LNSPEC_DoorOpen, 222, 256, 0, 0, 0, NULL, 0, none);
+	}
+	else if (Class == AlienSpectre4)
+	{
+		//	Macil's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_macil");
+		Target.GiveInventoryType(QuestItem24);
+		if (Target.FindInventory(QuestItem25))
+		{
+			PlayerEx(Target.Player).SetObjectives(106);
+			PlayerEx(Target.Player).ClientVoice(106);
+		}
+		else
+		{
+			PlayerEx(Target.Player).SetObjectives(79);
+			PlayerEx(Target.Player).ClientVoice(79);
+		}
+	}
+	else if (Class == AlienSpectre5)
+	{
+		//	Loremaster's specter
+		if (!Target)
+			return;
+
+		Target.Player.cprint("$txt_killed_loremaster");
+		Target.GiveInventoryType(QuestItem26);
+		Target.GiveInventoryType(UpgradeAccuracy);
+		Target.GiveInventoryType(UpgradeStamina);
+		if (GetSigilPieces() == 5)
+		{
+			PlayerEx(Target.Player).SetObjectives(85);
+			PlayerEx(Target.Player).ClientVoice(85);
+		}
+		else
+		{
+			PlayerEx(Target.Player).SetObjectives(83);
+			PlayerEx(Target.Player).ClientVoice(83);
+		}
+		LineSpecialLevelInfo(Level).EV_DoFloor(666, 8, 0, 0, 0,
+			FloorMover::FLOOREV_LowerToLowest, NULL);
+	}
+}
+
+//==========================================================================
+//
+//	A_EntityAttack
+//
+//==========================================================================
+
+final void A_EntityAttack()
+{
+	float r;
+
+	if (!Target)
+		return;
+
+	A_FaceTarget();
+
+	r = Random();
+	if (r < 0.25)
+		A_Spectre3Attack();
+	else if (r < 0.375)
+		A_SpotLightning();
+	else if (r < 0.5)
+		A_Spectre4Attack();
+	else if (r < 0.625)
+		A_Spectre5Attack();
+	else
+		A_Spectre2Attack();
+}
+
+//==========================================================================
+//
+//	A_EntityDeath
+//
+//==========================================================================
+
+final void A_EntityDeath()
+{
+	EntityEx Spot = Tracer;
+	if (!Spot)
+	{
+		Spot = self;
+	}
+	TVec BossSpawnPos = Spot.Origin;
+	if (Tracer)
+	{
+		BossSpawnPos.z += 70.0;
+	}
+
+	//	Of course this isn't 100% accurate, but it does its job		-kaiser
+	Spawn(EntitySecond, BossSpawnPos + vector(-240.0, -itof(P_Random() & 192), 0.0));
+	Spawn(EntitySecond, BossSpawnPos + vector(-itof(P_Random() & 192), 240.0, 0.0));
+	Spawn(EntitySecond, BossSpawnPos + vector(itof(P_Random() & 192), -240.0, 0.0));
+}
+
+//==========================================================================
+//
+//	A_SubEntityDeath
+//
+//==========================================================================
+
+final void A_SubEntityDeath()
+{
+	if (!CheckBossDeath())
+	{
+		return;
+	}
+
+	// victory!
+	if (!Target)
+		return;
+
+	if (Target.FindInventory(QuestItem25))
+	{
+		PlayerEx(Target.Player).ClientFinaleType(0);
+	}
+	else
+	{
+		PlayerEx(Target.Player).ClientFinaleType(2);
+	}
+	Level.Completed(-1, -1, 0);
+}
+
+defaultproperties
+{
+	bSolid = true;
+	bShootable = true;
+	bCountKill = true;
+	bMonster = true;
+	bActivateMCross = true;
+	bActivatePushWall = true;
+	bPassMobj = true;
+	bCanUseWalls = true;
+
+	bSpecial = true;
+	bSpectral = true;
+	bNoIceDeath = true;
+}

@@ -140,7 +140,7 @@ replication
 		ClientSparkParticles, ClientRailTrail;
 
 	reliable if (!bIsClient)
-		ClientVoice, ClientSpeech;
+		ClientVoice, ClientSpeech, ClientFinaleType;
 }
 
 //==========================================================================
@@ -3599,6 +3599,10 @@ void PlayerImpulse()
 }
 
 void PlayerUnmorphed()
+{
+}
+
+void ClientFinaleType(int Type)
 {
 }
 

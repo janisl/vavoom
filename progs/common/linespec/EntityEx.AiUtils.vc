@@ -29,7 +29,7 @@
 //
 //==========================================================================
 
-bool CheckMeleeRange()
+final bool CheckMeleeRange()
 {
 	float dist;
 
@@ -38,7 +38,7 @@ bool CheckMeleeRange()
 		return false;
 	}
 
-	dist = DistTo(Target);
+	dist = DistTo2(Target);
 	if (dist >= MeleeRange + Target.Radius)
 	{
 		return false;
@@ -50,14 +50,17 @@ bool CheckMeleeRange()
 		return true;
 	}
 
-	// Don't melee things too far above or below actor.
-	if (Target.Origin.z > Origin.z + Height)
+	if (!bNoVerticalMeleeRange)
 	{
-		return false;
-	}
-	if (Target.Origin.z + Target.Height < Origin.z)
-	{
-		return false;
+		// Don't melee things too far above or below actor.
+		if (Target.Origin.z > Origin.z + Height)
+		{
+			return false;
+		}
+		if (Target.Origin.z + Target.Height < Origin.z)
+		{
+			return false;
+		}
 	}
 
 	if (!CanSee(Target))

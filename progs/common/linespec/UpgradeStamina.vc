@@ -23,47 +23,34 @@
 //**
 //**************************************************************************
 
-class EntityPod : Actor
-	__mobjinfo__(198);
+class UpgradeStamina : DummyStrifeItem;
 
 //==========================================================================
 //
-//	A_EntityBossRaise
+//	TryPickup
 //
 //==========================================================================
 
-final void A_EntityBossRaise()
+bool TryPickup(EntityEx Toucher)
 {
-	Actor entity;
-
-	entity = Spawn(EntityBoss, Origin + vector(0.0, 0.0, 70.0));
-	if (entity)
+	if (!Toucher.Player)
 	{
-		entity.Velocity.z = 5.0 * 35.0;
-		//	Save spawn position for subenties.
-		EntityBoss(entity).BossSpawnPos = entity.Origin;
+		return false;
 	}
-}
 
-states
-{
-Spawn:
-	PODD A 60 A_Look
-	Loop
-See:
-	PODD A 360
-	PODD B 9 A_NoBlocking
-	PODD C 9
-	PODD D 9 A_EntityBossRaise
-	PODD E -1
-	Stop
+	PlayerEx(Toucher.Player).Stamina += Amount;
+	if (PlayerEx(Toucher.Player).Stamina >= MaxAmount)
+	{
+		PlayerEx(Toucher.Player).Stamina = MaxAmount;
+	}
+	Toucher.GiveBody(-100);
+	GoAwayAndDie();
+	return true;
 }
 
 defaultproperties
 {
-	Radius = 25.0;
-	Height = 91.0;
-	bSolid = true;
-	bNoDeathmatch = true;
-	SightSound = 'misc/gibbed';
+	ConversationID = 306;
+	Amount = 10;
+	MaxAmount = 100;
 }

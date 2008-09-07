@@ -1,4 +1,174 @@
 //------------------------------------------------------------------------------
+actor EntityPod 198
+{
+	Game Strife
+	ConversationID 77, -1, -1
+	Radius 25
+	Height 91
+	+Solid
+	+NotDmatch
+	SeeSound "misc/gibbed"
+
+	action native A_SpawnEntity();
+
+	states
+	{
+	Spawn:
+		PODD A 60 A_Look
+		Loop
+	See:
+		PODD A 360
+		PODD B 9 A_NoBlocking
+		PODD C 9
+		PODD D 9 A_SpawnEntity
+		PODD E -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor EntityBoss : SpectralMonster 128
+{
+	Game Strife
+	ConversationID 74, -1, -1
+	Health 2500
+	Radius 130
+	Height 200
+	Mass 1000
+	Speed 13
+	FloatSpeed 5
+	PainChance 255
+	MinMissileChance 150
+	RenderStyle Translucent
+	Alpha 0.5
+	+Shadow
+	+NoGravity
+	+LookAllAround
+	+Float
+	+InCombat
+	+NotDmatch
+	+NoBlockMonst
+	+DontMorph
+	+NoTarget
+	SeeSound "entity/sight"
+	ActiveSound "entity/active"
+	AttackSound "entity/melee"
+	PainSound "entity/pain"
+	DeathSound "entity/death"
+	Obituary "$ob_entity"
+
+	action native A_EntityAttack();
+	action native A_SpectreChunkSmall();
+	action native A_SpectreChunkLarge();
+	action native A_EntityDeath();
+
+	states
+	{
+	Spawn:
+		MNAM A 100 A_SentinelBob
+		MNAM B 60 Bright A_SentinelBob
+		MNAM CDEFGHIJKL 4 Bright A_SentinelBob
+		MNAL A 4 Bright A_Look
+		MNAL B 4 Bright A_SentinelBob
+		Goto Spawn+12
+	See:
+		MNAL AB 4 Bright A_Chase
+		MNAL C 4 Bright A_SentinelBob
+		MNAL DEF 4 Bright A_Chase
+		MNAL G 4 Bright A_SentinelBob
+		MNAL HIJ 4 Bright A_Chase
+		MNAL K 4 Bright A_SentinelBob
+		Loop
+	Melee:
+		MNAL J 4 Bright A_FaceTarget
+		MNAL I 4 Bright A_CustomMeleeAttack((Random(0, 255) & 9) * 5)
+		MNAL C 4 Bright
+		Goto See+2
+	Missile:
+		MNAL F 4 Bright A_FaceTarget
+		MNAL I 4 Bright A_EntityAttack
+		MNAL E 4 Bright
+		Goto See+10
+	Pain:
+		MNAL J 2 Bright A_Pain
+		Goto See+6
+	Death:
+		MNAL L 7 Bright A_SpectreChunkSmall
+		MNAL M 7 Bright A_Scream
+		MNAL NO 7 Bright A_SpectreChunkSmall
+		MNAL P 7 Bright A_SpectreChunkLarge
+		MNAL Q 64 Bright A_SpectreChunkSmall
+		MNAL Q 6 Bright A_EntityDeath
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor EntitySecond : SpectralMonster
+{
+	ConversationID 75, -1, -1
+	Health 990
+	Radius 130
+	Height 200
+	Mass 1000
+	Speed 14
+	FloatSpeed 5
+	PainChance 255
+	MinMissileChance 150
+	RenderStyle Translucent
+	Alpha 0.25
+	+Shadow
+	+NoGravity
+	+LookAllAround
+	+Float
+	+InCombat
+	+NoBlockMonst
+	+NotDmatch
+	+DontMorph
+	SeeSound "alienspectre/sight"
+	ActiveSound "alienspectre/active"
+	AttackSound "alienspectre/blade"
+	PainSound "alienspectre/pain"
+	DeathSound "alienspectre/death"
+
+	action native A_SubEntityDeath();
+
+	states
+	{
+	Spawn:
+		MNAL R 10 Bright A_Look
+		Loop
+	See:
+		MNAL R 5 Bright A_SentinelBob
+		MNAL ST 5 Bright A_Chase
+		MNAL U 5 Bright A_SentinelBob
+		MNAL V 5 Bright A_Chase
+		MNAL W 5 Bright A_SentinelBob
+		Loop
+	Melee:
+		MNAL S 4 Bright A_FaceTarget
+		MNAL R 4 Bright A_CustomMeleeAttack((Random(0, 255) & 9) * 5)
+		MNAL T 4 Bright A_SentinelBob
+		Goto See+1
+	Missile:
+		MNAL W 4 Bright A_FaceTarget
+		MNAL U 4 Bright A_CustomMissile("SpectralLightningH3", 32, 0)
+		MNAL V 4 Bright A_SentinelBob
+		Goto See+4
+	Pain:
+		MNAL R 2 Bright A_Pain
+		Goto See
+	Death:
+		MDTH A 3 Bright A_Scream
+		MDTH B 3 Bright A_TossGib
+		MDTH C 3 Bright A_NoBlocking
+		MDTH DEFGHIJKLMN 3 Bright A_TossGib
+		MDTH O 3 Bright A_SubEntityDeath
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor EntityNest 26
 {
 	Game Strife

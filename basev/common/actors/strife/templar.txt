@@ -1,0 +1,69 @@
+//------------------------------------------------------------------------------
+actor Templar 3003
+{
+	Game Strife
+	ConversationID 62, 61, 62
+	Tag "TEMPLAR"
+	Health 300
+	Radius 20
+	Height 60
+	Mass 500
+	Speed 8
+	PainChance 100
+	MaxDropoffHeight 32
+	Monster
+	+NoBlood
+	+SeesDaggers
+	+NoSplashAlert
+	SeeSound "templar/sight"
+	ActiveSound "templar/active"
+	PainSound "templar/pain"
+	DeathSound "templar/death"
+	Obituary "$ob_templar"
+	HitObituary "$ob_templarhit"
+
+	action native A_TemplarAttack();
+
+	states
+	{
+	Spawn:
+		PGRD A 5 A_Look2
+		Loop
+	LookRight:
+		PGRD B 10
+		Goto Spawn
+	LookLeft:
+		PGRD C 10
+		Goto Spawn
+	Walk:
+		PGRD B 10 A_Wander
+		Goto Spawn
+	See:
+		PGRD AABBCCDD 3 A_Chase
+		Loop
+	Melee:
+		PGRD E 8 A_FaceTarget
+		PGRD F 8 A_CustomMeleeAttack(random(1, 8) * 3, "reaver/blade")
+		Goto See
+	Missile:
+		PGRD G 8 Bright A_FaceTarget
+		PGRD H 8 Bright A_TemplarAttack
+		Goto See
+	Pain:
+		PGRD A 2
+		PGRD A 2 A_Pain
+		Goto See
+	Death:
+		PGRD I 4 Bright A_TossGib
+		PGRD J 4 Bright A_Scream
+		PGRD K 4 Bright A_TossGib
+		PGRD L 4 Bright A_NoBlocking
+		PGRD MN 4 Bright
+		PGRD O 4 A_TossGib
+		PGRD PQR 4
+		PGRD STUVWXYZ 3
+		PGRD "[" 3
+		PGRD "\\" -1
+		Stop
+	}
+}
