@@ -418,7 +418,7 @@ void VEntity::GetStateEffects(TArray<VLightEffectDef*>& Lights,
 			continue;
 		}
 		if (SprFx.Frame != -1 &&
-			SprFx.Frame != (State->Frame & FF_FRAMEMASK))
+			SprFx.Frame != (State->Frame & VState::FF_FRAMEMASK))
 		{
 			continue;
 		}

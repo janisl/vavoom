@@ -37,6 +37,8 @@
 
 #include "../../source/common.h"
 
+#define OPCODE_STATS
+
 void* Malloc(size_t size);
 void Free(void* ptr);
 
@@ -81,59 +83,11 @@ typedef void (*builtin_t)();
 #include "../../source/vc_error.h"
 #include "../../source/vc_lexer.h"
 #include "../../source/vc_modifiers.h"
+#include "../../source/vc_parser.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define OPCODE_STATS
-
 // TYPES -------------------------------------------------------------------
-
-class VParser
-{
-private:
-	VLexer&			Lex;
-	VPackage*		Package;
-	bool			CheckForLocal;
-
-	VExpression* ParseDotMethodCall(VExpression*, VName, TLocation);
-	VExpression* ParseBaseMethodCall(VName, TLocation);
-	VExpression* ParseMethodCallOrCast(VName, TLocation);
-	VLocalDecl* ParseLocalVar(VExpression* TypeExpr);
-	VExpression* ParseExpressionPriority0();
-	VExpression* ParseExpressionPriority1();
-	VExpression* ParseExpressionPriority2();
-	VExpression* ParseExpressionPriority3();
-	VExpression* ParseExpressionPriority4();
-	VExpression* ParseExpressionPriority5();
-	VExpression* ParseExpressionPriority6();
-	VExpression* ParseExpressionPriority7();
-	VExpression* ParseExpressionPriority8();
-	VExpression* ParseExpressionPriority9();
-	VExpression* ParseExpressionPriority10();
-	VExpression* ParseExpressionPriority11();
-	VExpression* ParseExpressionPriority12();
-	VExpression* ParseExpressionPriority13();
-	VExpression* ParseExpressionPriority14();
-	VExpression* ParseExpression();
-	VStatement* ParseStatement();
-	VCompound* ParseCompoundStatement();
-	VExpression* ParseType();
-	void ParseMethodDef(VExpression*, VName, TLocation, VClass*, vint32, bool);
-	void ParseDelegate(VExpression*, VField*);
-	void ParseDefaultProperties(VClass*);
-	void ParseStruct(VClass*, bool);
-	VName ParseStateString();
-	void ParseStates(VClass*);
-	void ParseReplication(VClass*);
-	void ParseClass();
-
-public:
-	VParser(VLexer& ALex, VPackage* APackage)
-	: Lex(ALex)
-	, Package(APackage)
-	{}
-	void Parse();
-};
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 

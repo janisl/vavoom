@@ -200,10 +200,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\parse.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\str.cpp"
 				>
 			</File>
@@ -297,6 +293,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_package.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_parser.cpp"
 				>
 			</File>
 			<File
@@ -438,6 +438,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_package.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_parser.h"
 				>
 			</File>
 			<File

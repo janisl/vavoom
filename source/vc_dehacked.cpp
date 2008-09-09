@@ -867,7 +867,7 @@ static void ReadState(int num)
 			if (value & 0x8000)
 			{
 				value &= 0x7fff;
-				value |= FF_FULLBRIGHT;
+				value |= VState::FF_FULLBRIGHT;
 			}
 			States[num]->Frame = value;
 		}

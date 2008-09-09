@@ -1986,7 +1986,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			//	Check for bright parameter.
 			if (!sc->String.ICmp("Bright"))
 			{
-				State->Frame |= FF_FULLBRIGHT;
+				State->Frame |= VState::FF_FULLBRIGHT;
 				continue;
 			}
 
@@ -2132,7 +2132,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			States.Append(s2);
 			s2->InClassIndex = States.Num() - 1;
 			s2->SpriteName = State->SpriteName;
-			s2->Frame = (State->Frame & FF_FULLBRIGHT) | (FChar - 'A');
+			s2->Frame = (State->Frame & VState::FF_FULLBRIGHT) | (FChar - 'A');
 			s2->Time = State->Time;
 			s2->Misc1 = State->Misc1;
 			s2->Misc2 = State->Misc2;
@@ -3090,7 +3090,7 @@ static void ParseOldDecStates(VScriptParser* sc, TArray<VState*>& States,
 				{
 					sc->Error("* must come after a frame");
 				}
-				States[States.Num() - 1]->Frame |= FF_FULLBRIGHT;
+				States[States.Num() - 1]->Frame |= VState::FF_FULLBRIGHT;
 			}
 			else if (*pFrame < 'A' || *pFrame > ']')
 			{

@@ -331,7 +331,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 		return;
 	}
 	sprdef = &sprites[SpriteIndex];
-	if ((DispState->Frame & FF_FRAMEMASK) >= sprdef->numframes)
+	if ((DispState->Frame & VState::FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf(NAME_Dev, "Invalid sprite frame %d : %d",
@@ -339,7 +339,7 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[DispState->Frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[DispState->Frame & VState::FF_FRAMEMASK];
 
 	int			lump;
 	bool		flip;
@@ -599,7 +599,7 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 	{
 		light = 0;
 	}
-	else if ((mobj->State->Frame & FF_FULLBRIGHT) ||
+	else if ((mobj->State->Frame & VState::FF_FULLBRIGHT) ||
 		(mobj->EntityFlags & VEntity::EF_FullBright))
 	{
 		light = 0xffffffff;
@@ -718,7 +718,7 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 		return;
 	}
 	sprdef = &sprites[VSt->State->SpriteIndex];
-	if ((VSt->State->Frame & FF_FRAMEMASK) >= sprdef->numframes)
+	if ((VSt->State->Frame & VState::FF_FRAMEMASK) >= sprdef->numframes)
 	{
 #ifdef PARANOID
 		GCon->Logf("R_ProjectSprite: invalid sprite frame %d : %d",
@@ -726,7 +726,7 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 #endif
 		return;
 	}
-	sprframe = &sprdef->spriteframes[VSt->State->Frame & FF_FRAMEMASK];
+	sprframe = &sprdef->spriteframes[VSt->State->Frame & VState::FF_FRAMEMASK];
 
 	lump = sprframe->lump[0];
 	flip = sprframe->flip[0];
@@ -853,7 +853,7 @@ void VRenderLevel::DrawPlayerSprites()
 		}
 
 		vuint32 light;
-		if (cl->ViewStates[i].State->Frame & FF_FULLBRIGHT)
+		if (cl->ViewStates[i].State->Frame & VState::FF_FULLBRIGHT)
 		{
 			light = 0xffffffff;
 		}
@@ -914,7 +914,7 @@ void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
 	bool			flip;
 	int				lump;
 
-	spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & FF_FRAMEMASK];
+	spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & VState::FF_FRAMEMASK];
 	flip = sprframe->flip[rot];
 	lump = sprframe->lump[rot];
 	VTexture* Tex = GTextureManager[lump];

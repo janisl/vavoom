@@ -277,6 +277,8 @@ set(MAIN_COMMON_SOURCES
 	vc_object.h
 	vc_package.cpp
 	vc_package.h
+	vc_parser.cpp
+	vc_parser.h
 	vc_property.cpp
 	vc_property.h
 	vc_state.cpp

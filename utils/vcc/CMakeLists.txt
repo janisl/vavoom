@@ -4,7 +4,6 @@ add_executable(vcc
 	../../source/name.cpp
 	../../source/name.h
 	../../source/names.h
-	parse.cpp
 	../../source/str.cpp
 	../../source/str.h
 	../../source/stream.cpp
@@ -53,6 +52,8 @@ add_executable(vcc
 	../../source/vc_modifiers.h
 	../../source/vc_package.cpp
 	../../source/vc_package.h
+	../../source/vc_parser.cpp
+	../../source/vc_parser.h
 	../../source/vc_property.cpp
 	../../source/vc_property.h
 	../../source/vc_state.cpp

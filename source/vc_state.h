@@ -32,9 +32,12 @@
 class VState : public VMemberBase
 {
 public:
-#ifdef IN_VCC
+	//
+	// 	Frame flags:
+	// 	handles maximum brightness (torches, muzzle flare, light sources)
+	//
 	enum { FF_FULLBRIGHT	= 0x80 };	// flag in Frame
-#endif
+	enum { FF_FRAMEMASK		= 0x7f };
 
 	//	Persistent fields
 	//	State info

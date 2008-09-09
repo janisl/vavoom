@@ -49,6 +49,7 @@
 #include "vc_error.h"
 #include "vc_lexer.h"
 #include "vc_modifiers.h"
+#include "vc_parser.h"
 
 #endif
 

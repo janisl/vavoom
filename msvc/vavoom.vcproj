@@ -439,6 +439,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_parser.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_property.cpp"
 				>
 			</File>
@@ -709,6 +713,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_package.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_parser.h"
 				>
 			</File>
 			<File

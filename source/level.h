@@ -34,13 +34,6 @@
 
 #define MAXPLAYERS		8
 
-//
-// 	Frame flags:
-// 	handles maximum brightness (torches, muzzle flare, light sources)
-//
-#define FF_FULLBRIGHT	0x80	// flag in thing->frame
-#define FF_FRAMEMASK	0x7f
-
 // MAXRADIUS is for precalculated sector block boxes
 // the spider demon is larger, but we do not have any moving sectors nearby
 #define MAXRADIUS		32.0
