@@ -427,6 +427,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_modifiers.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_object.cpp"
 				>
 			</File>
@@ -693,6 +697,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_method.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_modifiers.h"
 				>
 			</File>
 			<File

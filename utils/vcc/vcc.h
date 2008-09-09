@@ -80,45 +80,13 @@ typedef void (*builtin_t)();
 #include "../../source/vc_statement.h"
 #include "../../source/vc_error.h"
 #include "../../source/vc_lexer.h"
+#include "../../source/vc_modifiers.h"
 
 // MACROS ------------------------------------------------------------------
 
 #define OPCODE_STATS
 
 // TYPES -------------------------------------------------------------------
-
-class TModifiers
-{
-public:
-	enum
-	{
-		Native			= 0x0001,
-		Static			= 0x0002,
-		Abstract		= 0x0004,
-		Private			= 0x0008,
-		ReadOnly		= 0x0010,
-		Transient		= 0x0020,
-		Final			= 0x0040,
-		Optional		= 0x0080,
-		Out				= 0x0100,
-		Spawner			= 0x0200,
-	};
-
-	static int Parse(VLexer&);
-	static const char* Name(int);
-	static int Check(int, int, TLocation);
-	static int MethodAttr(int);
-	static int ClassAttr(int);
-	static int FieldAttr(int);
-	static int PropAttr(int);
-	static int ParmAttr(int);
-};
-
-class VClass;
-class VStruct;
-class VMethod;
-class VEmitContext;
-class VPackage;
 
 class VParser
 {

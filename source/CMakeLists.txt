@@ -271,6 +271,8 @@ set(MAIN_COMMON_SOURCES
 	vc_member.h
 	vc_method.cpp
 	vc_method.h
+	vc_modifiers.cpp
+	vc_modifiers.h
 	vc_object.cpp
 	vc_object.h
 	vc_package.cpp
@@ -523,6 +525,7 @@ set(SERVER_COMMON_SOURCES
 	vc_location.cpp
 	vc_member.cpp
 	vc_method.cpp
+	vc_modifiers.cpp
 	vc_object.cpp
 	vc_package.cpp
 	vc_property.cpp

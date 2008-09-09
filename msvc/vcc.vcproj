@@ -196,10 +196,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\utils\vcc\modifiers.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\name.cpp"
 				>
 			</File>
@@ -293,6 +289,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_method.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_modifiers.cpp"
 				>
 			</File>
 			<File
@@ -430,6 +430,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_method.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_modifiers.h"
 				>
 			</File>
 			<File

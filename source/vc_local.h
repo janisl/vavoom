@@ -48,6 +48,7 @@
 #include "vc_statement.h"
 #include "vc_error.h"
 #include "vc_lexer.h"
+#include "vc_modifiers.h"
 
 #endif
 

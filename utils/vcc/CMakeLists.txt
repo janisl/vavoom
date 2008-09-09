@@ -1,7 +1,6 @@
 add_executable(vcc
 	../../source/array.h
 	../../source/common.h
-	modifiers.cpp
 	../../source/name.cpp
 	../../source/name.h
 	../../source/names.h
@@ -50,6 +49,8 @@ add_executable(vcc
 	../../source/vc_member.h
 	../../source/vc_method.cpp
 	../../source/vc_method.h
+	../../source/vc_modifiers.cpp
+	../../source/vc_modifiers.h
 	../../source/vc_package.cpp
 	../../source/vc_package.h
 	../../source/vc_property.cpp
