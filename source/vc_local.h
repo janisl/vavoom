@@ -26,6 +26,10 @@
 #ifndef __vc_local_h__
 #define __vc_local_h__
 
+#ifdef IN_VCC
+#include "../utils/vcc/vcc.h"
+#else
+
 #include "gamedefs.h"
 #include "progdefs.h"
 
@@ -50,5 +54,7 @@ void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(print
 void BailOut() __attribute__((noreturn));
 
 extern int				NumErrors;
+
+#endif
 
 #endif

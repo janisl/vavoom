@@ -25,10 +25,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#ifdef IN_VCC
-#include "../utils/vcc/vcc.h"
-#else
 #include "vc_local.h"
+#ifndef IN_VCC
 #include "network.h"
 #endif
 
