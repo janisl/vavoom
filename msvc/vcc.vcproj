@@ -196,14 +196,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\utils\vcc\error.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\utils\vcc\lexer.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\utils\vcc\modifiers.cpp"
 				>
 			</File>
@@ -233,6 +225,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_emit_context.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_error.cpp"
 				>
 			</File>
 			<File
@@ -281,6 +277,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_field.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_lexer.cpp"
 				>
 			</File>
 			<File
@@ -337,10 +337,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\utils\vcc\lexer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\name.h"
 				>
 			</File>
@@ -366,6 +362,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_emit_context.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_error.h"
 				>
 			</File>
 			<File
@@ -414,6 +414,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_field.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_lexer.h"
 				>
 			</File>
 			<File

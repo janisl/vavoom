@@ -237,6 +237,7 @@ set(MAIN_COMMON_SOURCES
 	vc_dehacked.h
 	vc_emit_context.cpp
 	vc_emit_context.h
+	vc_error.cpp
 	vc_error.h
 	vc_expr_array.cpp
 	vc_expr_array.h
@@ -505,6 +506,7 @@ set(SERVER_COMMON_SOURCES
 	vc_decorate.cpp
 	vc_dehacked.cpp
 	vc_emit_context.cpp
+	vc_error.cpp
 	vc_expr_array.cpp
 	vc_expr_assign.cpp
 	vc_expr_base.cpp

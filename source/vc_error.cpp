@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "vcc.h"
+#include "vc_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -79,6 +79,96 @@ static const char* ErrorNames[NUM_ERRORS] =
 
 //==========================================================================
 //
+//	ParseWarning
+//
+//==========================================================================
+
+void ParseWarning(TLocation l, const char *text, ...)
+{
+	char		Buffer[2048];
+	va_list		argPtr;
+
+	va_start(argPtr, text);
+	vsprintf(Buffer, text, argPtr);
+	va_end(argPtr);
+#ifdef IN_VCC
+	fprintf(stderr, "%s:%d: warning: %s\n", *l.GetSource(), l.GetLine(), Buffer);
+#else
+	GCon->Logf("%s:%d: warning: %s", *l.GetSource(), l.GetLine(), Buffer);
+#endif
+}
+
+//==========================================================================
+//
+//	ParseError
+//
+//==========================================================================
+
+void ParseError(TLocation l, const char *text, ...)
+{
+	char		Buffer[2048];
+	va_list		argPtr;
+
+	NumErrors++;
+
+	va_start(argPtr, text);
+	vsprintf(Buffer, text, argPtr);
+	va_end(argPtr);
+#ifdef IN_VCC
+	fprintf(stderr, "%s:%d: %s\n", *l.GetSource(), l.GetLine(), Buffer);
+#else
+	GCon->Logf("%s:%d: %s", *l.GetSource(), l.GetLine(), Buffer);
+#endif
+
+	if (NumErrors >= 64)
+	{
+		Sys_Error("Too many errors");
+	}
+}
+
+//==========================================================================
+//
+//	ParseError
+//
+//==========================================================================
+
+void ParseError(TLocation l, ECompileError error)
+{
+	ParseError(l, "Error #%d - %s", error, ErrorNames[error]);
+}
+
+//==========================================================================
+//
+//	ParseError
+//
+//==========================================================================
+
+void ParseError(TLocation l, ECompileError error, const char *text, ...)
+{
+	char		Buffer[2048];
+	va_list		argPtr;
+
+	va_start(argPtr, text);
+	vsprintf(Buffer, text, argPtr);
+	va_end(argPtr);
+	ParseError(l, "Error #%d - %s, %s", error, ErrorNames[error], Buffer);
+}
+
+//==========================================================================
+//
+//	BailOut
+//
+//==========================================================================
+
+void BailOut()
+{
+	Sys_Error("Confused by previous errors, bailing out\n");
+}
+
+#ifdef IN_VCC
+
+//==========================================================================
+//
 //	FatalError
 //
 //==========================================================================
@@ -96,106 +186,4 @@ void FatalError(const char *text, ...)
 	exit(1);
 }
 
-//==========================================================================
-//
-//	ParseError
-//
-//==========================================================================
-
-void ParseError(TLocation l, ECompileError error)
-{
-	NumErrors++;
-
-	fprintf(stderr, "%s:%d: ", *l.GetSource(), l.GetLine());
-	if (error != ERR_NONE)
-	{
-		fprintf(stderr, "Error #%d - %s", error, ErrorNames[error]);
-	}
-	fputc('\n', stderr);
-
-	if (NumErrors >= 64)
-	{
-		exit(1);
-	}
-}
-
-//==========================================================================
-//
-//	ParseError
-//
-//==========================================================================
-
-void ParseError(TLocation l, ECompileError error, const char *text, ...)
-{
-	va_list	argPtr;
-
-	NumErrors++;
-
-	fprintf(stderr, "%s:%d: ", *l.GetSource(), l.GetLine());
-	if (error != ERR_NONE)
-	{
-		fprintf(stderr, "Error #%d - %s", error, ErrorNames[error]);
-	}
-	va_start(argPtr, text);
-	vfprintf(stderr, text, argPtr);
-	va_end(argPtr);
-	fputc('\n', stderr);
-
-	if (NumErrors >= 64)
-	{
-		exit(1);
-	}
-}
-
-//==========================================================================
-//
-//	ParseError
-//
-//==========================================================================
-
-void ParseError(TLocation l, const char *text, ...)
-{
-	va_list	argPtr;
-
-	NumErrors++;
-
-	fprintf(stderr, "%s:%d: ", *l.GetSource(), l.GetLine());
-	va_start(argPtr, text);
-	vfprintf(stderr, text, argPtr);
-	va_end(argPtr);
-	fputc('\n', stderr);
-
-	if (NumErrors >= 64)
-	{
-		exit(1);
-	}
-}
-
-//==========================================================================
-//
-//	ParseWarning
-//
-//==========================================================================
-
-void ParseWarning(TLocation l, const char *text, ...)
-{
-	va_list	argPtr;
-
-	fprintf(stderr, "%s:%d: warning: ", *l.GetSource(), l.GetLine());
-	va_start(argPtr, text);
-	vfprintf(stderr, text, argPtr);
-	va_end(argPtr);
-	fputc('\n', stderr);
-}
-
-//==========================================================================
-//
-//	BailOut
-//
-//==========================================================================
-
-void BailOut()
-{
-	fprintf(stderr, "Confused by previous errors, bailing out\n");
-	exit(1);
-}
+#endif

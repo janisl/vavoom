@@ -1,7 +1,6 @@
 add_executable(vcc
 	../../source/array.h
 	../../source/common.h
-	error.cpp
 	modifiers.cpp
 	../../source/name.cpp
 	../../source/name.h
@@ -17,6 +16,7 @@ add_executable(vcc
 	../../source/vc_constant.h
 	../../source/vc_emit_context.cpp
 	../../source/vc_emit_context.h
+	../../source/vc_error.cpp
 	../../source/vc_error.h
 	../../source/vc_expr_array.cpp
 	../../source/vc_expr_array.h

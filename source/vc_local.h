@@ -49,16 +49,6 @@
 #include "vc_error.h"
 #include "vc_lexer.h"
 
-#define FatalError	Sys_Error
-
-void ParseError(TLocation, ECompileError error);
-void ParseError(TLocation, ECompileError error, const char *text, ...) __attribute__ ((format(printf, 3, 4)));
-void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void BailOut() __attribute__((noreturn));
-
-extern int				NumErrors;
-
 #endif
 
 #endif

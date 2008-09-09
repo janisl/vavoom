@@ -359,6 +359,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_error.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_expr_array.cpp"
 				>
 			</File>
@@ -404,6 +408,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_field.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_lexer.cpp"
 				>
 			</File>
 			<File
@@ -620,6 +628,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\vc_error.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\vc_expr_array.h"
 				>
 			</File>
@@ -665,6 +677,10 @@
 			</File>
 			<File
 				RelativePath="..\source\vc_field.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\vc_lexer.h"
 				>
 			</File>
 			<File

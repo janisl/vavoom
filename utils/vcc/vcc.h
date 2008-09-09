@@ -169,13 +169,6 @@ public:
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void FatalError(const char *text, ...) __attribute__((noreturn, format(printf, 1, 2)));
-void ParseError(TLocation, ECompileError error);
-void ParseError(TLocation, ECompileError error, const char *text, ...) __attribute__ ((format(printf, 3, 4)));
-void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void BailOut() __attribute__((noreturn));
-
 int dprintf(const char *text, ...);
 
 char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
@@ -185,7 +178,5 @@ VStream* OpenFile(const VStr& Name);
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 extern bool						GBigEndian;
-
-extern int						NumErrors;
 
 #endif
