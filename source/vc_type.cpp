@@ -751,6 +751,80 @@ void VScriptArray::Remove(int Index, int Count, VFieldType& Type)
 
 int				NumErrors;
 
+static const char* ErrorNames[NUM_ERRORS] =
+{
+	"No error.",
+	//  File errors
+	"Couldn't open file.",
+	"Couldn't open debug file.",
+	//  Tokenizer errors
+	"Radix out of range in integer constant.",
+	"String too long.",
+	"End of file inside quoted string.",
+	"New line inside quoted string.",
+	"Unknown escape char.",
+	"Identifier too long.",
+	"Bad character.",
+	//  Syntactic errors
+	"Missing '('.",
+	"Missing ')'.",
+	"Missing '{'.",
+	"Missing '}'.",
+	"Missing colon.",
+	"Missing semicolon.",
+	"Unexpected end of file.",
+	"Do statement not followed by 'while'.",
+	"Invalid identifier.",
+	"Function redeclared.",
+	"Missing ']'.",
+	"Invalid operation with array",
+	"Expression type mistmatch",
+};
+
+//==========================================================================
+//
+//	ParseError
+//
+//==========================================================================
+
+void ParseError(TLocation l, ECompileError error)
+{
+	NumErrors++;
+
+	GCon->Logf("%s:%d: Error #%d - %s", *l.GetSource(), l.GetLine(),
+		error, ErrorNames[error]);
+
+	if (NumErrors >= 64)
+	{
+		Sys_Error("Too many errors");
+	}
+}
+
+//==========================================================================
+//
+//	ParseError
+//
+//==========================================================================
+
+void ParseError(TLocation l, ECompileError error, const char *text, ...)
+{
+	char		Buffer[2048];
+	va_list		argPtr;
+
+	NumErrors++;
+
+	va_start(argPtr, text);
+	vsprintf(Buffer, text, argPtr);
+	va_end(argPtr);
+	GCon->Logf("%s:%d: Error #%d - %s, %s", *l.GetSource(), l.GetLine(),
+		stderr, "", error, ErrorNames[error], Buffer);
+
+	if (NumErrors >= 64)
+	{
+		Sys_Error("Too many errors");
+	}
+}
+
 //==========================================================================
 //
 //	ParseError

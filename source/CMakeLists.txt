@@ -237,6 +237,7 @@ set(MAIN_COMMON_SOURCES
 	vc_dehacked.h
 	vc_emit_context.cpp
 	vc_emit_context.h
+	vc_error.h
 	vc_expr_array.cpp
 	vc_expr_array.h
 	vc_expr_assign.cpp
@@ -261,6 +262,8 @@ set(MAIN_COMMON_SOURCES
 	vc_expr_unary_binary.h
 	vc_field.cpp
 	vc_field.h
+	vc_lexer.cpp
+	vc_lexer.h
 	vc_location.cpp
 	vc_location.h
 	vc_member.cpp
@@ -514,8 +517,8 @@ set(SERVER_COMMON_SOURCES
 	vc_expr_type.cpp
 	vc_expr_unary_binary.cpp
 	vc_field.cpp
+	vc_lexer.cpp
 	vc_location.cpp
-	vc_location.h
 	vc_member.cpp
 	vc_method.cpp
 	vc_object.cpp

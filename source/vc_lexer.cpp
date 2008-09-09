@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "vcc.h"
+#include "vc_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -251,8 +251,12 @@ VLexer::~VLexer()
 
 void VLexer::PushSource(TLocation& Loc, const VStr& FileName)
 {
-	FILE* F = fopen(*FileName, "rb");
-	if (!F)
+#ifdef IN_VCC
+	VStream* Strm = OpenFile(FileName);
+#else
+	VStream* Strm = FL_OpenFileRead(FileName);
+#endif
+	if (!Strm)
 	{
 		FatalError("Couldn't open %s", *FileName);
 		return;
@@ -277,12 +281,11 @@ void VLexer::PushSource(TLocation& Loc, const VStr& FileName)
 	}
 
 	//	Read the file
-	fseek(F, 0, SEEK_END);
-	int FileSize = ftell(F);
-	fseek(F, 0, SEEK_SET);
+	int FileSize = Strm->TotalSize();
 	NewSrc->FileStart = new char[FileSize + 1];
-	fread(NewSrc->FileStart, 1, FileSize, F);
-	fclose(F);
+	Strm->Serialise(NewSrc->FileStart, FileSize);
+	Strm->Close();
+	delete Strm;
 	NewSrc->FileStart[FileSize] = 0;
 	NewSrc->FileEnd = NewSrc->FileStart + FileSize;
 	NewSrc->FilePtr = NewSrc->FileStart;
@@ -792,10 +795,14 @@ void VLexer::ProcessInclude()
 		if (Src->Path)
 		{
 			VStr FileName = Src->Path + VStr(TokenStringBuffer);
-			FILE* F = fopen(*FileName, "r");
-			if (F)
+#ifdef IN_VCC
+			VStream* Strm = OpenFile(FileName);
+#else
+			VStream* Strm = FL_OpenFileRead(FileName);
+#endif
+			if (Strm)
 			{
-				fclose(F);
+				delete Strm;
 				PushSource(Loc, FileName);
 				return;
 			}
@@ -804,10 +811,14 @@ void VLexer::ProcessInclude()
 		for (int i = IncludePath.Num() - 1; i >= 0; i--)
 		{
 			VStr FileName = IncludePath[i] + VStr(TokenStringBuffer);
-			FILE* F = fopen(*FileName, "r");
-			if (F)
+#ifdef IN_VCC
+			VStream* Strm = OpenFile(FileName);
+#else
+			VStream* Strm = FL_OpenFileRead(FileName);
+#endif
+			if (Strm)
 			{
-				fclose(F);
+				delete Strm;
 				PushSource(Loc, FileName);
 				return;
 			}

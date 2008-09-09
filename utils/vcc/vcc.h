@@ -51,6 +51,7 @@ void Free(void* ptr);
 #include "../../source/name.h"
 #include "../../source/str.h"
 #include "../../source/vector.h"
+#include "../../source/text.h"
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"
 #include "../../source/vc_member.h"
@@ -77,52 +78,14 @@ typedef void (*builtin_t)();
 #include "../../source/vc_expr_local.h"
 #include "../../source/vc_expr_misc.h"
 #include "../../source/vc_statement.h"
+#include "../../source/vc_error.h"
+#include "../../source/vc_lexer.h"
 
 // MACROS ------------------------------------------------------------------
 
 #define OPCODE_STATS
 
-#define MAX_FILE_NAME_LENGTH	512
-#define MAX_QUOTED_LENGTH		256
-#define MAX_IDENTIFIER_LENGTH	64
-
-#define TEXT_COLOUR_ESCAPE		'\034'
-
 // TYPES -------------------------------------------------------------------
-
-enum ECompileError
-{
-	ERR_NONE,
-	//  File errors
-	ERR_CANT_OPEN_FILE,
-	ERR_CANT_OPEN_DBGFILE,
-	//  Tokeniser erros
-	ERR_BAD_RADIX_CONSTANT,
-	ERR_STRING_TOO_LONG,
-	ERR_EOF_IN_STRING,
-	ERR_NEW_LINE_INSIDE_QUOTE,
-	ERR_UNKNOWN_ESC_CHAR,
-	ERR_IDENTIFIER_TOO_LONG,
-	ERR_BAD_CHARACTER,
-	//  Syntax errors
-	ERR_MISSING_LPAREN,
-	ERR_MISSING_RPAREN,
-	ERR_MISSING_LBRACE,
-	ERR_MISSING_RBRACE,
-	ERR_MISSING_COLON,
-	ERR_MISSING_SEMICOLON,
-	ERR_UNEXPECTED_EOF,
-	ERR_BAD_DO_STATEMENT,
-	ERR_INVALID_IDENTIFIER,
-	ERR_FUNCTION_REDECLARED,
-	ERR_MISSING_RFIGURESCOPE,
-	ERR_BAD_ARRAY,
-	ERR_EXPR_TYPE_MISTMATCH,
-
-	NUM_ERRORS
-};
-
-#include "lexer.h"
 
 class TModifiers
 {

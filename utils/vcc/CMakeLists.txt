@@ -2,8 +2,6 @@ add_executable(vcc
 	../../source/array.h
 	../../source/common.h
 	error.cpp
-	lexer.cpp
-	lexer.h
 	modifiers.cpp
 	../../source/name.cpp
 	../../source/name.h
@@ -19,6 +17,7 @@ add_executable(vcc
 	../../source/vc_constant.h
 	../../source/vc_emit_context.cpp
 	../../source/vc_emit_context.h
+	../../source/vc_error.h
 	../../source/vc_expr_array.cpp
 	../../source/vc_expr_array.h
 	../../source/vc_expr_assign.cpp
@@ -43,6 +42,8 @@ add_executable(vcc
 	../../source/vc_expr_unary_binary.h
 	../../source/vc_field.cpp
 	../../source/vc_field.h
+	../../source/vc_lexer.cpp
+	../../source/vc_lexer.h
 	../../source/vc_location.cpp
 	../../source/vc_location.h
 	../../source/vc_member.cpp

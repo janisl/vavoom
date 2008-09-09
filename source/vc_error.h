@@ -23,42 +23,34 @@
 //**
 //**************************************************************************
 
-#ifndef __vc_local_h__
-#define __vc_local_h__
+enum ECompileError
+{
+	ERR_NONE,
+	//  File errors
+	ERR_CANT_OPEN_FILE,
+	ERR_CANT_OPEN_DBGFILE,
+	//  Tokeniser erros
+	ERR_BAD_RADIX_CONSTANT,
+	ERR_STRING_TOO_LONG,
+	ERR_EOF_IN_STRING,
+	ERR_NEW_LINE_INSIDE_QUOTE,
+	ERR_UNKNOWN_ESC_CHAR,
+	ERR_IDENTIFIER_TOO_LONG,
+	ERR_BAD_CHARACTER,
+	//  Syntax errors
+	ERR_MISSING_LPAREN,
+	ERR_MISSING_RPAREN,
+	ERR_MISSING_LBRACE,
+	ERR_MISSING_RBRACE,
+	ERR_MISSING_COLON,
+	ERR_MISSING_SEMICOLON,
+	ERR_UNEXPECTED_EOF,
+	ERR_BAD_DO_STATEMENT,
+	ERR_INVALID_IDENTIFIER,
+	ERR_FUNCTION_REDECLARED,
+	ERR_MISSING_RFIGURESCOPE,
+	ERR_BAD_ARRAY,
+	ERR_EXPR_TYPE_MISTMATCH,
 
-#ifdef IN_VCC
-#include "../utils/vcc/vcc.h"
-#else
-
-#include "gamedefs.h"
-#include "progdefs.h"
-
-#include "vc_emit_context.h"
-#include "vc_expr_base.h"
-#include "vc_expr_literal.h"
-#include "vc_expr_unary_binary.h"
-#include "vc_expr_cast.h"
-#include "vc_expr_type.h"
-#include "vc_expr_field.h"
-#include "vc_expr_array.h"
-#include "vc_expr_invoke.h"
-#include "vc_expr_assign.h"
-#include "vc_expr_local.h"
-#include "vc_expr_misc.h"
-#include "vc_statement.h"
-#include "vc_error.h"
-#include "vc_lexer.h"
-
-#define FatalError	Sys_Error
-
-void ParseError(TLocation, ECompileError error);
-void ParseError(TLocation, ECompileError error, const char *text, ...) __attribute__ ((format(printf, 3, 4)));
-void ParseError(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void ParseWarning(TLocation, const char *text, ...) __attribute__ ((format(printf, 2, 3)));
-void BailOut() __attribute__((noreturn));
-
-extern int				NumErrors;
-
-#endif
-
-#endif
+	NUM_ERRORS
+};

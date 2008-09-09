@@ -159,6 +159,8 @@ enum EToken
 class VLexer
 {
 private:
+	enum { MAX_QUOTED_LENGTH = 256 };
+	enum { MAX_IDENTIFIER_LENGTH = 64 };
 	enum { EOF_CHARACTER = 127 };
 	enum { NON_HEX_DIGIT = 255 };
 
