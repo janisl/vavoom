@@ -27,7 +27,7 @@
 //**
 //**************************************************************************
 
-import linespec;
+import 'linespec';
 
 #include "MainGameInfo.vc"
 #include "DoomLevelInfo.vc"

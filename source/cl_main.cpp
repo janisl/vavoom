@@ -88,7 +88,7 @@ static int					CurrentCDTrack;
 void CL_Init()
 {
 	guard(CL_Init);
-	VMemberBase::StaticLoadPackage(NAME_clprogs, TLocation());
+	VMemberBase::StaticLoadPackage(NAME_cgame, TLocation());
 
 	ClientNetContext = new VClientNetContext();
 	GClGame = (VClientGameBase*)VObject::StaticSpawnObject(

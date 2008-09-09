@@ -27,8 +27,8 @@
 //**
 //**************************************************************************
 
-import linespec;
-import uibase;
+import 'linespec';
+import 'uibase';
 
 #include "MainGameInfo.vc"
 #include "StrifeLevelInfo.vc"

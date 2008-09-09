@@ -107,7 +107,7 @@ void SV_Init()
 
 	svs.max_clients = 1;
 
-	VMemberBase::StaticLoadPackage(NAME_svprogs, TLocation());
+	VMemberBase::StaticLoadPackage(NAME_game, TLocation());
 
 	GGameInfo = (VGameInfo*)VObject::StaticSpawnObject(
 		VClass::FindClass("MainGameInfo"));

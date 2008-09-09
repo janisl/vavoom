@@ -23,8 +23,8 @@
 //**
 //**************************************************************************
 
-import svprogs;
-import uibase;
+import 'game';
+import 'uibase';
 
 #include "MenuScreenMain.vc"
 #include "MenuScreenMultiplayer.vc"

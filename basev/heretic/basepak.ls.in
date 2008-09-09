@@ -10,8 +10,8 @@ graphics/fonta30.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/fonta30.lmp
 graphics/fonta63.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/fonta63.lmp
 
 //	Progs
-progs/clprogs.dat		progs/clprogs.dat
-progs/svprogs.dat		progs/svprogs.dat
+progs/cgame.dat			progs/cgame.dat
+progs/game.dat			progs/game.dat
 
 //	Scripts
 animdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/animdefs.txt

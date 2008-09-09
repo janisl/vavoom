@@ -2366,7 +2366,7 @@ void VParser::Parse()
 		case TK_Import:
 		{
 			Lex.NextToken();
-			if (Lex.Token != TK_Identifier)
+			if (Lex.Token != TK_NameLiteral)
 			{
 				ParseError(Lex.Location, "Package name expected");
 			}

@@ -23,8 +23,8 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		sprite_rename.txt
 		terrain.txt
 		${CMAKE_CURRENT_BINARY_DIR}/strfhelp.o
-		${CMAKE_CURRENT_BINARY_DIR}/progs/clprogs.dat
-		${CMAKE_CURRENT_BINARY_DIR}/progs/svprogs.dat
+		${CMAKE_CURRENT_BINARY_DIR}/progs/cgame.dat
+		${CMAKE_CURRENT_BINARY_DIR}/progs/game.dat
 	)
 add_custom_target(strife_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/strfhelp.o
 	${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
