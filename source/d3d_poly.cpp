@@ -811,9 +811,9 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	TVec scale;
 	if (Interpolate)
 	{
-		scale[0] = pframedesc->scale[0] + Inter * (pnextframedesc->scale[0] - pframedesc->scale[0]) * Scale.x;
-		scale[1] = pframedesc->scale[1] + Inter * (pnextframedesc->scale[1] - pframedesc->scale[1]) * Scale.y;
-		scale[2] = pframedesc->scale[2] + Inter * (pnextframedesc->scale[2] - pframedesc->scale[2]) * Scale.z;
+		scale[0] = pframedesc->scale[0] + Inter * (pnextframedesc->scale[0] - pframedesc->scale[0]);
+		scale[1] = pframedesc->scale[1] + Inter * (pnextframedesc->scale[1] - pframedesc->scale[1]);
+		scale[2] = pframedesc->scale[2] + Inter * (pnextframedesc->scale[2] - pframedesc->scale[2]);
 	}
 	else
 	{
