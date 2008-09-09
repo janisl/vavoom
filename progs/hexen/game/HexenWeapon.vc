@@ -66,4 +66,5 @@ bool TryPickup(EntityEx Toucher)
 
 defaultproperties
 {
+	Kickback = 150.0;
 }
