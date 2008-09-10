@@ -25,6 +25,40 @@
 
 //==========================================================================
 //
+//	builtin_t
+//
+//==========================================================================
+
+typedef void (*builtin_t)();
+
+//==========================================================================
+//
+//	FBuiltinInfo
+//
+//==========================================================================
+
+class FBuiltinInfo
+{
+	const char		*Name;
+	VClass			*OuterClass;
+    builtin_t		Func;
+	FBuiltinInfo	*Next;
+
+	static FBuiltinInfo *Builtins;
+
+	friend class VMethod;
+
+public:
+	FBuiltinInfo(const char *InName, VClass *InClass, builtin_t InFunc)
+		: Name(InName), OuterClass(InClass), Func(InFunc)
+	{
+		Next = Builtins;
+		Builtins = this;
+	}
+};
+
+//==========================================================================
+//
 //	FInstruction
 //
 //==========================================================================

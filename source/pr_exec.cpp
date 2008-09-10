@@ -54,8 +54,6 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-FBuiltinInfo *FBuiltinInfo::Builtins;
-
 VStack*				pr_stackPtr;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------

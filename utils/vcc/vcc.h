@@ -60,7 +60,6 @@ void Free(void* ptr);
 #include "../../source/progdefs.h"
 #include "../../source/vc_field.h"
 #include "../../source/vc_property.h"
-typedef void (*builtin_t)();
 #include "../../source/vc_method.h"
 #include "../../source/vc_constant.h"
 #include "../../source/vc_struct.h"

@@ -31,28 +31,6 @@
 
 struct dprograms_t;
 
-typedef void (*builtin_t)();
-
-class FBuiltinInfo
-{
-	const char		*Name;
-	VClass			*OuterClass;
-    builtin_t		Func;
-	FBuiltinInfo	*Next;
-
-	static FBuiltinInfo *Builtins;
-
-	friend class VMethod;
-
-public:
-	FBuiltinInfo(const char *InName, VClass *InClass, builtin_t InFunc)
-		: Name(InName), OuterClass(InClass), Func(InFunc)
-	{
-		Next = Builtins;
-		Builtins = this;
-	}
-};
-
 union VStack
 {
 	vint32	i;
