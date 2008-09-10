@@ -386,10 +386,6 @@ void VClass::Serialise(VStream& Strm)
 			GetName(), PrevParent ? PrevParent->GetName() : "(none)",
 			ParentClass ? ParentClass->GetName() : "(none)");
 	}
-	if (Strm.IsLoading())
-	{
-		NetStates = States;
-	}
 #endif
 
 	int NumRepInfos = RepInfos.Num();
@@ -1363,6 +1359,8 @@ void VClass::PostLoad()
 		GetSuperClass()->PostLoad();
 	}
 
+	NetStates = States;
+
 	//	Calculate field offsets and class size.
 	CalcFieldOffsets();
 
@@ -1383,7 +1381,7 @@ void VClass::PostLoad()
 
 	//	Set state in-class indexes.
 	int CurrIndex = 0;
-	for (VState* S = NetStates; S; S = S->NetNext)
+	for (VState* S = States; S; S = S->Next)
 	{
 		S->InClassIndex = CurrIndex++;
 	}
@@ -1404,6 +1402,20 @@ void VClass::DecoratePostLoad()
 	for (int i = 0; i < Methods.Num(); i++)
 	{
 		Methods[i]->PostLoad();
+	}
+
+	for (VState* S = States; S; S = S->Next)
+	{
+		S->PostLoad();
+	}
+
+	NetStates = States;
+
+	//	Set state in-class indexes.
+	int CurrIndex = 0;
+	for (VState* S = States; S; S = S->Next)
+	{
+		S->InClassIndex = CurrIndex++;
 	}
 
 	//	Calculate indexes of virtual methods.

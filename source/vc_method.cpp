@@ -160,38 +160,6 @@ void VMethod::Serialise(VStream& Strm)
 	}
 	Strm << ReplCond;
 
-#ifndef IN_VCC
-	//	Set up builtins
-	if (NumParams > 16)
-		Sys_Error("Function has more than 16 params");
-	for (FBuiltinInfo* B = FBuiltinInfo::Builtins; B; B = B->Next)
-	{
-		if (Outer == B->OuterClass && !VStr::Cmp(*Name, B->Name))
-		{
-			if (Flags & FUNC_Native)
-			{
-				NativeFunc = B->Func;
-				break;
-			}
-			else
-			{
-				Sys_Error("PR_LoadProgs: Builtin %s redefined", B->Name);
-			}
-		}
-	}
-	if (!NativeFunc && Flags & FUNC_Native)
-	{
-		//	Default builtin
-		NativeFunc = PF_Fixme;
-#if defined CLIENT && defined SERVER
-		//	Don't abort with error, because it will be done, when this
-		// function will be called (if it will be called).
-		GCon->Logf(NAME_Dev, "WARNING: Builtin %s not found!",
-			*GetFullName());
-#endif
-	}
-#endif
-
 	//
 	//	Instructions
 	//
@@ -632,6 +600,38 @@ void VMethod::PostLoad()
 	//{
 	//	return;
 	//}
+
+#ifndef IN_VCC
+	//	Set up builtins
+	if (NumParams > 16)
+		Sys_Error("Function has more than 16 params");
+	for (FBuiltinInfo* B = FBuiltinInfo::Builtins; B; B = B->Next)
+	{
+		if (Outer == B->OuterClass && !VStr::Cmp(*Name, B->Name))
+		{
+			if (Flags & FUNC_Native)
+			{
+				NativeFunc = B->Func;
+				break;
+			}
+			else
+			{
+				Sys_Error("PR_LoadProgs: Builtin %s redefined", B->Name);
+			}
+		}
+	}
+	if (!NativeFunc && Flags & FUNC_Native)
+	{
+		//	Default builtin
+		NativeFunc = PF_Fixme;
+#if defined CLIENT && defined SERVER
+		//	Don't abort with error, because it will be done, when this
+		// function will be called (if it will be called).
+		GCon->Logf(NAME_Dev, "WARNING: Builtin %s not found!",
+			*GetFullName());
+#endif
+	}
+#endif
 
 	CompileCode();
 

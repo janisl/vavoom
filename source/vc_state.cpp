@@ -99,11 +99,20 @@ void VState::Serialise(VStream& Strm)
 		<< NextState
 		<< Function
 		<< Next;
-	if (Strm.IsLoading())
-	{
-		SpriteIndex = VClass::FindSprite(SpriteName);
-		NetNext = Next;
-	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VState::PostLoad
+//
+//==========================================================================
+
+void VState::PostLoad()
+{
+	guard(VState::PostLoad);
+	SpriteIndex = VClass::FindSprite(SpriteName);
+	NetNext = Next;
 	unguard;
 }
 

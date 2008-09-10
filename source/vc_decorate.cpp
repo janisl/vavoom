@@ -1950,7 +1950,6 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 
 		VState* State = new VState(va("S_%d", States.Num()), Class, TmpLoc);
 		States.Append(State);
-		State->InClassIndex = States.Num() - 1;
 
 		//	Sprite name
 		if (TmpName.Length() != 4)
@@ -2130,7 +2129,6 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 			VState* s2 = new VState(va("S_%d", States.Num()), Class,
 				sc->GetLoc());
 			States.Append(s2);
-			s2->InClassIndex = States.Num() - 1;
 			s2->SpriteName = State->SpriteName;
 			s2->Frame = (State->Frame & VState::FF_FULLBRIGHT) | (FChar - 'A');
 			s2->Time = State->Time;
@@ -3014,16 +3012,13 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	if (States.Num())
 	{
 		Class->States = States[0];
-		Class->NetStates = States[0];
 		for (int i = 0; i < States.Num() - 1; i++)
 		{
 			States[i]->Next = States[i + 1];
-			States[i]->NetNext = States[i + 1];
 		}
 
 		for (int i = 0; i < States.Num(); i++)
 		{
-			States[i]->SpriteIndex = VClass::FindSprite(States[i]->SpriteName);
 			if (States[i]->GotoLabel != NAME_None)
 			{
 				States[i]->NextState = Class->ResolveStateLabel(
@@ -3102,7 +3097,6 @@ static void ParseOldDecStates(VScriptParser* sc, TArray<VState*>& States,
 				VState* State = new VState(va("S_%d", States.Num()), Class,
 					sc->GetLoc());
 				States.Append(State);
-				State->InClassIndex = States.Num() - 1;
 				State->Frame = *pFrame - 'A';
 				State->Time = Duration >= 0 ? float(Duration) / 35.0 : -1.0;
 			}
@@ -3284,7 +3278,6 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 			VState* State = new VState(va("S_%d", States.Num()), Class,
 				sc->GetLoc());
 			States.Append(State);
-			State->InClassIndex = States.Num() - 1;
 			State->Frame = States[States.Num() - 2]->Frame;
 
 			IceEnd = States.Num();
@@ -3652,18 +3645,15 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 
 	//	Set up linked list of states.
 	Class->States = States[0];
-	Class->NetStates = States[0];
 	for (int i = 0; i < States.Num() - 1; i++)
 	{
 		States[i]->Next = States[i + 1];
-		States[i]->NetNext = States[i + 1];
 	}
 
 	//	Set up default sprite for all states.
 	for (int i = 0; i < States.Num(); i++)
 	{
 		States[i]->SpriteName = Sprite;
-		States[i]->SpriteIndex = VClass::FindSprite(Sprite);
 	}
 	//	Set death sprite if it's defined.
 	if (DeathSprite != NAME_None && DeathEnd != 0)
@@ -3671,7 +3661,6 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		for (int i = DeathStart; i < DeathEnd; i++)
 		{
 			States[i]->SpriteName = DeathSprite;
-			States[i]->SpriteIndex = VClass::FindSprite(DeathSprite);
 		}
 	}
 

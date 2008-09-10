@@ -66,6 +66,7 @@ public:
 	~VState();
 
 	void Serialise(VStream&);
+	void PostLoad();
 
 	bool Define();
 	void Emit();
