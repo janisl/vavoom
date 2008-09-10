@@ -51,21 +51,21 @@ static void PC_DumpAsm(char*);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-static VStr		SourceFileName;
-static VStr		ObjectFileName;
-
-VPackage*		CurrentPackage;
-
-bool			GBigEndian;
+bool				GBigEndian;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static int		num_dump_asm;
-static char*	dump_asm_names[1024];
-static bool		DebugMode;
-static FILE*	DebugFile;
+static VStr			SourceFileName;
+static VStr			ObjectFileName;
 
-static VLexer	Lex;
+static VPackage*	CurrentPackage;
+
+static int			num_dump_asm;
+static char*		dump_asm_names[1024];
+static bool			DebugMode;
+static FILE*		DebugFile;
+
+static VLexer		Lex;
 
 // CODE --------------------------------------------------------------------
 
