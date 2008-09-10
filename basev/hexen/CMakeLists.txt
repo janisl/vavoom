@@ -17,8 +17,8 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		sndinfo.txt
 		sprite_rename.txt
 		terrain.txt
-		${CMAKE_CURRENT_BINARY_DIR}/progs/cgame.dat
-		${CMAKE_CURRENT_BINARY_DIR}/progs/game.dat
+		${CMAKE_SOURCE_DIR}/progs/hexen/cgame/*.vc
+		${CMAKE_SOURCE_DIR}/progs/hexen/game/*.vc
 	)
 add_custom_target(hexen_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
 
