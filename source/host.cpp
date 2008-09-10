@@ -171,6 +171,8 @@ void Host_Init()
 #endif
 
 #ifdef CLIENT
+	CL_Init();
+
 	GInput = VInputPublic::Create();
 	GInput->Init();
 	GAudio = VAudioPublic::Create();
@@ -183,8 +185,6 @@ void Host_Init()
 	R_Init();
 
 	T_Init();
-
-	CL_Init();
 
 	MN_Init();
 	AM_Init();
