@@ -18,8 +18,8 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		sndseq.txt
 		sprite_rename.txt
 		terrain.txt
-		${CMAKE_CURRENT_BINARY_DIR}/progs/cgame.dat
-		${CMAKE_CURRENT_BINARY_DIR}/progs/game.dat
+		${CMAKE_SOURCE_DIR}/progs/heretic/cgame/*.vc
+		${CMAKE_SOURCE_DIR}/progs/heretic/game/*.vc
 	)
 add_custom_target(heretic_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
 
