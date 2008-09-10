@@ -246,7 +246,6 @@ VZipFile::VZipFile(const VStr& zipfile)
 			Files[i].Name.StartsWith("textures/") ? WADNS_NewTextures :
 			Files[i].Name.StartsWith("voices/") ? WADNS_Voices :
 			Files[i].Name.StartsWith("hires/") ? WADNS_HiResTextures :
-			Files[i].Name.StartsWith("progs/") ? WADNS_Progs :
 			Files[i].Name.StartsWith("patches/") ? WADNS_Patches :
 			Files[i].Name.StartsWith("graphics/") ? WADNS_Graphics :
 			Files[i].Name.StartsWith("sounds/") ? WADNS_Sounds :
