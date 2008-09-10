@@ -1903,19 +1903,23 @@ void VParser::ParseReplication(VClass* Class)
 
 void VParser::ParseClass()
 {
+	VName ClassName = Lex.Name;
+	TLocation ClassLoc = Lex.Location;
+	VClass* ExistingClass = NULL;
+
 	if (Lex.Token != TK_Identifier)
 	{
 		ParseError(Lex.Location, "Class name expected");
+		ClassName = NAME_None;
 	}
-	else if (VMemberBase::StaticFindClass(Lex.Name))
+	else
 	{
-		ParseError(Lex.Location, "Class %s already has been declared",
-			*Lex.Name);
+		ExistingClass = VMemberBase::StaticFindClass(Lex.Name);
 	}
-	//	New class.
-	VClass* Class = new VClass(Lex.Name, Package, Lex.Location);
-	Class->Defined = false;
 	Lex.NextToken();
+
+	VName ParentClassName = NAME_None;
+	TLocation ParentClassLoc;
 
 	if (Lex.Check(TK_Colon))
 	{
@@ -1925,12 +1929,12 @@ void VParser::ParseClass()
 		}
 		else
 		{
-			Class->ParentClassName = Lex.Name;
-			Class->ParentClassLoc = Lex.Location;
+			ParentClassName = Lex.Name;
+			ParentClassLoc = Lex.Location;
 			Lex.NextToken();
 		}
 	}
-	else if (Class->Name != NAME_Object)
+	else if (ClassName != NAME_Object)
 	{
 		ParseError(Lex.Location, "Parent class expected");
 	}
@@ -1938,11 +1942,69 @@ void VParser::ParseClass()
 	if (Lex.Check(TK_Decorate))
 	{
 		Lex.Expect(TK_Semicolon);
+
+		if (ExistingClass)
+		{
+#ifndef IN_VCC
+			//	For cases when DECORATE has already been parsed.
+			if (ExistingClass->Outer &&
+				ExistingClass->Outer->Name == NAME_decorate)
+			{
+				return;
+			}
+#endif
+			ParseError(ClassLoc, "Class %s already has been declared",
+				*ClassName);
+			return;
+		}
+
+#ifndef IN_VCC
+		//	Check if it already exists n DECORATE imports.
+		for (int i = 0; i < VMemberBase::GDecorateClassImports.Num(); i++)
+		{
+			if (VMemberBase::GDecorateClassImports[i]->Name == ClassName)
+			{
+				Package->ParsedDecorateImportClasses.Append(
+					VMemberBase::GDecorateClassImports[i]);
+				return;
+			}
+		}
+#endif
+
+		//	New class.
+		VClass* Class = new VClass(ClassName, Package, ClassLoc);
+		Class->Defined = false;
+
+		if (ParentClassName != NAME_None)
+		{
+			Class->ParentClassName = ParentClassName;
+			Class->ParentClassLoc = ParentClassLoc;
+		}
+
 		//	This class is not IN this package.
 		Class->MemberType = MEMBER_DecorateClass;
 		Class->Outer = NULL;
 		Package->ParsedDecorateImportClasses.Append(Class);
+#ifndef IN_VCC
+		VMemberBase::GDecorateClassImports.Append(Class);
+#endif
 		return;
+	}
+
+	if (ExistingClass)
+	{
+		ParseError(ClassLoc, "Class %s already has been declared",
+			*ClassName);
+	}
+
+	//	New class.
+	VClass* Class = new VClass(ClassName, Package, ClassLoc);
+	Class->Defined = false;
+
+	if (ParentClassName != NAME_None)
+	{
+		Class->ParentClassName = ParentClassName;
+		Class->ParentClassLoc = ParentClassLoc;
 	}
 
 	int ClassAttr = TModifiers::ClassAttr(TModifiers::Check(

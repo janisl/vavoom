@@ -454,6 +454,57 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 	VStream* Strm = FL_OpenFileRead(va("progs/%s.dat", *AName));
 	if (!Strm)
 	{
+		if (FL_FileExists(va("progs/%s/classes.vc", *AName)))
+		{
+			VPackage* Pkg = new VPackage(AName);
+			GLoadedPackages.Append(Pkg);
+
+			//	Compile package
+			VLexer Lex;
+			Lex.OpenSource(va("progs/%s/classes.vc", *AName));
+			VParser Parser(Lex, Pkg);
+			Parser.Parse();
+			Pkg->Emit();
+
+			//	Copy mobj infos and spawn IDs.
+			for (i = 0; i < Pkg->MobjInfo.Num(); i++)
+			{
+				VClass::GMobjInfos.Alloc() = Pkg->MobjInfo[i];
+			}
+			for (i = 0; i < Pkg->ScriptIds.Num(); i++)
+			{
+				VClass::GScriptIds.Alloc() = Pkg->ScriptIds[i];
+			}
+
+			for (i = 0; i < GMembers.Num(); i++)
+			{
+				if (GMembers[i]->IsIn(Pkg))
+				{
+					GMembers[i]->PostLoad();
+				}
+			}
+
+			//	Create default objects.
+			for (i = 0; i < Pkg->ParsedClasses.Num(); i++)
+			{
+				Pkg->ParsedClasses[i]->CreateDefaults();
+			}
+
+			if (AName == "engine")
+			{
+				for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
+				{
+					if (!Cls->Outer && Cls->MemberType == MEMBER_Class)
+					{
+						Cls->PostLoad();
+						Cls->CreateDefaults();
+						Cls->Outer = Pkg;
+					}
+				}
+			}
+
+			return Pkg;
+		}
 		Sys_Error("Progs package %s not found", *AName);
 	}
 	Reader = new VProgsReader(Strm);

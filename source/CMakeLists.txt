@@ -530,6 +530,7 @@ set(SERVER_COMMON_SOURCES
 	vc_modifiers.cpp
 	vc_object.cpp
 	vc_package.cpp
+	vc_parser.cpp
 	vc_property.cpp
 	vc_state.cpp
 	vc_statement.cpp
