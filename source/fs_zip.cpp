@@ -365,9 +365,10 @@ int VZipFile::FileCmpFunc(const void* v1, const void* v2)
 bool VZipFile::FileExists(const VStr& FName)
 {
 	guard(VZipFile::FileExists);
+	VStr CheckName = FName.ToLower();
 	for (int i = 0; i < NumFiles; i++)
 	{
-		if (Files[i].Name == FName)
+		if (Files[i].Name == CheckName)
 		{
 			return true;
 		}
@@ -385,9 +386,10 @@ bool VZipFile::FileExists(const VStr& FName)
 VStream* VZipFile::OpenFileRead(const VStr& FName)
 {
 	guard(VZipFile::OpenFileRead);
+	VStr CheckName = FName.ToLower();
 	for (int i = 0; i < NumFiles; i++)
 	{
-		if (Files[i].Name == FName)
+		if (Files[i].Name == CheckName)
 		{
 			return new VZipFileReader(FileStream, BytesBeforeZipFile,
 				Files[i], GCon);
