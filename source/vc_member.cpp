@@ -450,16 +450,13 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 	}
 	Reader = new VProgsReader(f);
 #else
-	if (fl_devmode && FL_FileExists(va("progs/%s.dat", *AName)))
+	//	Load PROGS from a specified file
+	VStream* Strm = FL_OpenFileRead(va("progs/%s.dat", *AName));
+	if (!Strm)
 	{
-		//	Load PROGS from a specified file
-		Reader = new VProgsReader(FL_OpenFileRead(va("progs/%s.dat", *AName)));
+		Sys_Error("Progs package %s not found", *AName);
 	}
-	else
-	{
-		//	Load PROGS from wad file
-		Reader = new VProgsReader(W_CreateLumpReaderName(AName, WADNS_Progs));
-	}
+	Reader = new VProgsReader(Strm);
 
 	//	Calcutate CRC
 	crc.Init();
