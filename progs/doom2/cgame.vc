@@ -25,4 +25,29 @@
 
 #define DOOM2
 
-#include "../doom/cgame/classes.vc"
+import 'game';
+import 'uibase';
+
+#include "MenuScreenMain.vc"
+#include "MenuScreenMultiplayer.vc"
+#include "MenuScreenNewNetGame.vc"
+#include "MenuScreenPlayerSetup.vc"
+#include "MenuScreenOptions.vc"
+#include "MenuScreenControls2.vc"
+#include "MenuScreenGameplayOptions.vc"
+#include "MenuScreenHelp.vc"
+#include "TitleScreen.vc"
+#include "StatusBarScreen.vc"
+#include "IntermissionScreen.vc"
+#include "ClientGame.vc"
+
+class BlueCard : Key decorate;
+class YellowCard : Key decorate;
+class RedCard : Key decorate;
+class BlueSkull : Key decorate;
+class YellowSkull : Key decorate;
+class RedSkull : Key decorate;
+class Clip : Ammo decorate;
+class RocketAmmo : Ammo decorate;
+class Cell : Ammo decorate;
+class Shell : Ammo decorate;

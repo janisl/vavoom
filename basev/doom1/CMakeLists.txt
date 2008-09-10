@@ -6,8 +6,6 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		basepak.ls.in
 		mapinfo.txt
 		sndinfo.txt
-		${CMAKE_CURRENT_BINARY_DIR}/progs/cgame.dat
-		${CMAKE_CURRENT_BINARY_DIR}/progs/game.dat
 	)
 add_custom_target(doom1_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
 

@@ -5,8 +5,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.ls vlumpy
 		basepak.ls.in
 		mapinfo.txt
-		${CMAKE_CURRENT_BINARY_DIR}/progs/cgame.dat
-		${CMAKE_CURRENT_BINARY_DIR}/progs/game.dat
+		${CMAKE_SOURCE_DIR}/progs/doom2/cgame.vc
 	)
 add_custom_target(doom2_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
 

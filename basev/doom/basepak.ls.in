@@ -20,6 +20,31 @@ sndinfo.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndinfo.txt
 sndseq.txt				@CMAKE_CURRENT_SOURCE_DIR@/sndseq.txt
 skyboxes.txt			@CMAKE_CURRENT_SOURCE_DIR@/skyboxes.txt
 
+//	Client progs
+progs/cgame/classes.vc						@CMAKE_SOURCE_DIR@/progs/doom/cgame/classes.vc
+progs/cgame/MenuScreenMain.vc				@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenMain.vc
+progs/cgame/MenuScreenMultiplayer.vc		@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenMultiplayer.vc
+progs/cgame/MenuScreenNewNetGame.vc			@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenNewNetGame.vc
+progs/cgame/MenuScreenPlayerSetup.vc		@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenPlayerSetup.vc
+progs/cgame/MenuScreenOptions.vc			@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenOptions.vc
+progs/cgame/MenuScreenControls2.vc			@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenControls2.vc
+progs/cgame/MenuScreenGameplayOptions.vc	@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenGameplayOptions.vc
+progs/cgame/MenuScreenHelp.vc				@CMAKE_SOURCE_DIR@/progs/doom/cgame/MenuScreenHelp.vc
+progs/cgame/TitleScreen.vc					@CMAKE_SOURCE_DIR@/progs/doom/cgame/TitleScreen.vc
+progs/cgame/StatusBarScreen.vc				@CMAKE_SOURCE_DIR@/progs/doom/cgame/StatusBarScreen.vc
+progs/cgame/IntermissionScreen.vc			@CMAKE_SOURCE_DIR@/progs/doom/cgame/IntermissionScreen.vc
+progs/cgame/ClientGame.vc					@CMAKE_SOURCE_DIR@/progs/doom/cgame/ClientGame.vc
+
+//	Server progs
+progs/game/classes.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/classes.vc
+progs/game/MainGameInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/MainGameInfo.vc
+progs/game/DoomLevelInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/DoomLevelInfo.vc
+progs/game/DoomWorldInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/DoomWorldInfo.vc
+progs/game/Player.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/Player.vc
+progs/game/BotPlayer.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/BotPlayer.vc
+progs/game/TeleportFog.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/TeleportFog.vc
+progs/game/Bridge.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/Bridge.vc
+
 //	Big font
 $load @CMAKE_CURRENT_SOURCE_DIR@/bigfont.pcx
 bigfont.lmp				fon2

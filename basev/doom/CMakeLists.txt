@@ -18,6 +18,8 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		skyboxes.txt
 		sndinfo.txt
 		sndseq.txt
+		${CMAKE_SOURCE_DIR}/progs/doom/cgame/*.vc
+		${CMAKE_SOURCE_DIR}/progs/doom/game/*.vc
 	)
 add_custom_target(doom_basepak ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3)
 
