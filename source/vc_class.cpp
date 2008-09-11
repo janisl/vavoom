@@ -916,6 +916,17 @@ VDecorateStateAction* VClass::FindDecorateStateAction(VName ActName)
 bool VClass::Define()
 {
 	guard(VClass::Define);
+	//	Check for duplicates.
+	int HashIndex = Name.GetIndex() & 4095;
+	for (VMemberBase* m = GMembersHash[HashIndex]; m; m = m->HashNext)
+	{
+		if (m->Name == Name && m->MemberType == MEMBER_Class &&
+			((VClass*)m)->Defined)
+		{
+			ParseError(Loc, "Class %s already has been declared", *Name);
+		}
+	}
+
 	if (ParentClassName != NAME_None)
 	{
 		ParentClass = StaticFindClass(ParentClassName);

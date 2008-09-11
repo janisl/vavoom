@@ -1945,16 +1945,6 @@ void VParser::ParseClass()
 
 		if (ExistingClass)
 		{
-#ifndef IN_VCC
-			//	For cases when DECORATE has already been parsed.
-			if (ExistingClass->Outer &&
-				ExistingClass->Outer->Name == NAME_decorate)
-			{
-				return;
-			}
-#endif
-			ParseError(ClassLoc, "Class %s already has been declared",
-				*ClassName);
 			return;
 		}
 
@@ -1989,12 +1979,6 @@ void VParser::ParseClass()
 		VMemberBase::GDecorateClassImports.Append(Class);
 #endif
 		return;
-	}
-
-	if (ExistingClass)
-	{
-		ParseError(ClassLoc, "Class %s already has been declared",
-			*ClassName);
 	}
 
 	//	New class.
