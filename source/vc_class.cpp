@@ -927,6 +927,9 @@ bool VClass::Define()
 		}
 	}
 
+#ifndef IN_VCC
+	VClass* PrevParent = ParentClass;
+#endif
 	if (ParentClassName != NAME_None)
 	{
 		ParentClass = StaticFindClass(ParentClassName);
@@ -939,6 +942,14 @@ bool VClass::Define()
 			ParseError(ParentClassLoc, "Parent class must be defined before");
 		}
 	}
+#ifndef IN_VCC
+	if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
+	{
+		Sys_Error("Bad parent class, class %s, C++ %s, VavoomC %s)",
+			GetName(), PrevParent ? PrevParent->GetName() : "(none)",
+			ParentClass ? ParentClass->GetName() : "(none)");
+	}
+#endif
 
 	for (int i = 0; i < Structs.Num(); i++)
 	{

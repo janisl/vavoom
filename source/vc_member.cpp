@@ -490,7 +490,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 				Pkg->ParsedClasses[i]->CreateDefaults();
 			}
 
-			if (AName == "engine")
+			if (AName == NAME_engine)
 			{
 				for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 				{
@@ -649,7 +649,7 @@ VPackage* VMemberBase::StaticLoadPackage(VName AName, TLocation l)
 		}
 	}
 
-	if (AName == "engine")
+	if (AName == NAME_engine)
 	{
 		for (VClass* Cls = GClasses; Cls; Cls = Cls->LinkNext)
 		{
