@@ -364,8 +364,8 @@ void Tick(float DeltaTime)
 			XLevel.Sectors[Control].soundorg);
 		Delta = Height - LastHeight;
 		LastHeight = Height;
-		XDelta = XDelta * Delta;
-		YDelta = YDelta * Delta;
+		XDelta = XSpeed / 35.0 * Delta;
+		YDelta = YSpeed / 35.0 * Delta;
 	}
 
 	//	Add acceleration
