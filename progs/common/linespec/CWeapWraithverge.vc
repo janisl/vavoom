@@ -40,33 +40,6 @@ int GetBlend()
 
 //============================================================================
 //
-//  A_CHolyAttack
-//
-//============================================================================
-
-final void A_CHolyAttack() self(Actor)
-{
-	EntityEx	A;
-	EntityEx	AimTarget;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	Wpn.DepleteAmmo(Wpn.FireMode);
-	A = SpawnPlayerMissileEx(HolyMissile, false, AimTarget);
-	if (A)
-	{
-		A.Tracer = AimTarget;
-	}
-	CWeapWraithverge(Wpn).CShift = RGBA(255, 255, 255, 66);
-	PlaySound('HolySymbolFire', CHAN_WEAPON);
-}
-
-//============================================================================
-//
 //  A_CHolyPalette1
 //
 //============================================================================
@@ -143,12 +116,13 @@ Fire:
 
 defaultproperties
 {
-	WeaponClass = HexenDefs::PCLASS_CLERIC;
 	SelectionOrder = 3000;
 	AmmoType1 = Mana1;
 	AmmoType2 = Mana2;
 	AmmoUse1 = 18;
 	AmmoUse2 = 18;
+	AmmoGive1 = 20;
+	AmmoGive2 = 20;
 	PSpriteSY = 0.0;
 	PickupMessage = "$txt_weapon_c4";
 	BotCombatDist = 384.0;

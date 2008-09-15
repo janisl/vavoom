@@ -61,7 +61,7 @@ final void FindEnemy()
 		{
 			continue;
 		}
-		if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
+		if (IsTeammate(link))
 		{
 			continue;
 		}
@@ -89,8 +89,8 @@ int SpecialMissileHit(EntityEx Other)
 	if (Other != Target)
 	{
 		// Class bosses not flagged boss so they can be blasted
-		if (!Other.bIsPlayer && !Other.bBoss &&
-			!FighterBoss(Other) && !ClericBoss(Other) && !MageBoss(Other))
+		if (!Other.bIsPlayer && !Other.bBoss /*&&
+			!FighterBoss(Other) && !ClericBoss(Other) && !MageBoss(Other)*/)
 		{
 			Other.Damage(self, Target, 10, DamageType);
 			return 1;
@@ -140,8 +140,8 @@ defaultproperties
 	bNoTeleport = true;
 	bActivateImpact = true;
 	bActivatePCross = true;
+	bBloodSplatter = true;
 	bSeekerMissile = true;
 	bExtremeDeath = true;
-	bBloodSplatter = true;
 	DeathSound = 'MageStaffExplode';
 }

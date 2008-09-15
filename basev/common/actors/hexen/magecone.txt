@@ -1,0 +1,59 @@
+//------------------------------------------------------------------------------
+actor MWeapFrost : MageWeapon 53
+{
+	Game Hexen
+	SpawnID 36
+	+BloodSplatter
+	Inventory.PickupMessage "$txt_weapon_m2"
+	Weapon.SelectionOrder 1700
+	Weapon.AmmoType1 "Mana1"
+	Weapon.AmmoUse1 3
+	Weapon.AmmoGive1 25
+	Weapon.YAdjust 20
+	Weapon.BotCombatDist 256
+	+Weapon.Explosive
+
+	action native A_FireConePL1();
+
+	states
+	{
+	Ready:
+		CONE A 1 A_WeaponReady
+		Loop
+	Deselect:
+		CONE A 1 A_Lower
+		Loop
+	Select:
+		CONE A 1 A_Raise
+		Loop
+	Fire:
+		CONE B 3
+		CONE C 4
+	Hold:
+		CONE D 3
+		CONE E 5
+		CONE F 3 A_FireConePL1
+		CONE G 3
+		CONE A 9
+		CONE A 10 A_ReFire
+		Goto Ready
+	Spawn:
+		WMCS ABC 8 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor IceShard : FrostMissile
+{
+	Game Hexen
+	SpawnID 65
+	-ActivateImpact
+	-ActivatePCross
+	states
+	{
+	Spawn:
+		SHRD ABC 3 Bright
+		Loop
+	}
+}

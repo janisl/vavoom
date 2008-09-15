@@ -1,4 +1,82 @@
 //------------------------------------------------------------------------------
+actor CWeapStaff : ClericWeapon 10
+{
+	Game Hexen
+	SpawnID 32
+	Inventory.PickupMessage "$txt_weapon_c2"
+	Weapon.SelectionOrder 1600
+	Weapon.AmmoType1 "Mana1"
+	Weapon.AmmoUse1 1
+	Weapon.AmmoGive1 25
+	Weapon.YAdjust 10
+	Weapon.BotCombatDist 192
+	+Weapon.Explosive
+
+	action native A_CStaffInitBlink();
+	action native A_CStaffCheckBlink();
+	action native A_CStaffCheck();
+	action native A_CStaffAttack();
+
+	states
+	{
+	Ready:
+		CSSF C 4
+		CSSF B 3 A_CStaffInitBlink
+		CSSF AAAAAAA 1 A_WeaponReady
+		CSSF A 1 A_CStaffCheckBlink
+		Goto Ready+2
+	Blink:
+		CSSF BBBCCCCCBBB 1 A_WeaponReady
+		Goto Ready+2
+	Deselect:
+		CSSF B 3
+		CSSF C 4
+		CSSF C 1 A_Lower
+		Wait
+	Select:
+		CSSF C 1 A_Raise
+		Wait
+	Fire:
+		CSSF A 1 Offset(0, 45) A_CStaffCheck
+		CSSF J 1 Offset(0, 50) A_CStaffAttack
+		CSSF J 2 Offset(0, 50)
+		CSSF J 2 Offset(0, 45)
+		CSSF A 2 Offset(0, 40)
+		CSSF A 2 Offset(0, 36)
+		Goto Ready+2
+	Fire2:
+		CSSF K 10 Offset(0, 36)
+		Goto Ready+2
+	Spawn:
+		WCSS A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CStaffMissile
+{
+	Radius 12
+	Height 10
+	Speed 22
+	Damage 5
+	PoisonDamage 20
+	RenderStyle Add
+	Projectile
+	DeathSound "ClericCStaffExplode"
+	states
+	{
+	Spawn:
+		CSSF DDEE 1 Bright A_CStaffMissileSlither
+		Loop
+	Death:
+		CSSF FG 4 Bright
+		CSSF HI 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor CStaffPuff
 {
 	RenderStyle Translucent

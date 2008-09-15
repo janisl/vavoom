@@ -1,4 +1,54 @@
 //------------------------------------------------------------------------------
+actor FWeapHammer : FighterWeapon 123
+{
+	Game Hexen
+	SpawnID 28
+	+BloodSplatter
+	Inventory.PickupMessage "$txt_weapon_f3"
+	Weapon.SelectionOrder 900
+	Weapon.AmmoType1 "Mana2"
+	Weapon.AmmoUse1 3
+	Weapon.AmmoGive1 25
+	Weapon.YAdjust -10
+	Weapon.BotCombatDist 192
+	+Weapon.Ammo_Optional
+	+Weapon.MeleeWeapon
+
+	action native A_FHammerAttack();
+	action native A_FHammerThrow();
+
+	states
+	{
+	Ready:
+		FHMR A 1 A_WeaponReady
+		Loop
+	Deselect:
+		FHMR A 1 A_Lower
+		Loop
+	Select:
+		FHMR A 1 A_Raise
+		Loop
+	Fire:
+		FHMR B 6 Offset(5, 0)
+		FHMR C 3 Offset(5, 0) A_FHammerAttack
+		FHMR D 3 Offset(5, 0)
+		FHMR E 2 Offset(5, 0)
+		FHMR E 10 Offset(5, 150) A_FHammerThrow
+		FHMR A 1 Offset(0, 60)
+		FHMR A 1 Offset(0, 55)
+		FHMR A 1 Offset(0, 50)
+		FHMR A 1 Offset(0, 45)
+		FHMR A 1 Offset(0, 40)
+		FHMR A 1 Offset(0, 35)
+		FHMR A 1
+		Goto Ready
+	Spawn:
+		WFHM A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor HammerPuff
 {
 	RenderStyle Translucent

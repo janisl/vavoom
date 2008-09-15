@@ -1,0 +1,44 @@
+//------------------------------------------------------------------------------
+actor MWeaponPiece1 : MageWeaponPiece 21
+{
+	Game Hexen
+	SpawnID 37
+	+FloatBob
+	Inventory.PickupMessage "$txt_bloodscourge_piece"
+	WeaponPiece.Number 1
+	WeaponPiece.Weapon "MWeapBloodscourge"
+	states
+	{
+	Spawn:
+		WMS1 A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MWeaponPiece2 : MWeaponPiece1 22
+{
+	Game Hexen
+	SpawnID 38
+	WeaponPiece.Number 2
+	states
+	{
+	Spawn:
+		WMS2 A -1 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MWeaponPiece3 : MWeaponPiece1 23
+{
+	Game Hexen
+	SpawnID 39
+	WeaponPiece.Number 3
+	states
+	{
+	Spawn:
+		WMS3 A -1 Bright
+		Stop
+	}
+}

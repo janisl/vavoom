@@ -317,6 +317,7 @@ defaultproperties
 	bNoTeleport = true;
 	bActivateImpact = true;
 	bActivatePCross = true;
+	bBloodSplatter = true;
 	bRip = true;
 	bSeekerMissile = true;
 	bDamageInvulnerable = true;
@@ -325,6 +326,5 @@ defaultproperties
 	bExtremeDeath = true;
 	bCanBlast = true;
 	bDontShieldReflect = true;
-	bBloodSplatter = true;
 	DeathSound = 'SpiritDie';
 }

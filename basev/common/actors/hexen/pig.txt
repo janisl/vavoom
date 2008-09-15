@@ -1,4 +1,34 @@
 //------------------------------------------------------------------------------
+actor Snout : Weapon
+{
+	Weapon.SelectionOrder 10000
+	Weapon.YAdjust 10
+	+Weapon.DontBob
+
+	action native A_SnoutAttack();
+
+	states
+	{
+	Ready:
+		WPIG A 1 A_WeaponReady
+		Loop
+	Deselect:
+		WPIG A 1 A_Lower
+		Loop
+	Select:
+		WPIG A 1 A_Raise
+		Loop
+	Fire:
+		WPIG A 4 A_SnoutAttack
+		WPIG B 8 A_SnoutAttack
+		Goto Ready
+	Flash:
+		WPIG B 8
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
 actor SnoutPuff
 {
 	RenderStyle Translucent

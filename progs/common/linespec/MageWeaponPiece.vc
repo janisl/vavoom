@@ -23,71 +23,10 @@
 //**
 //**************************************************************************
 
-class CWeapFlame : ClericWeapon
-	__mobjinfo__(8009);
-
-//============================================================================
-//
-//  A_CFlameAttack
-//
-//============================================================================
-
-final void A_CFlameAttack() self(Actor)
-{
-	EntityEx mo;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	mo = SpawnPlayerMissile(CFlameMissile);
-	if (mo)
-	{
-		Actor(mo).Special1 = 2;
-	}
-
-	Wpn.DepleteAmmo(Wpn.FireMode);
-	PlaySound('ClericFlameFire', CHAN_WEAPON);
-}
-
-states
-{
-Ready:
-	CFLM AAAABBBBCCCC 1 A_WeaponReady
-	Loop
-Deselect:
-	CFLM A 1 A_Lower
-	Loop
-Select:
-	CFLM A 1 A_Raise
-	Loop
-Fire:
-	CFLM A 2 Offset(0, 40)
-	CFLM D 2 Offset(0, 50)
-	CFLM D 2 Offset(0, 36)
-	CFLM E 4 Bright
-	CFLM F 4 Bright A_CFlameAttack
-	CFLM E 4 Bright
-	CFLM G 2 Offset(0, 40)
-	CFLM G 2
-	Goto Ready
-Spawn:
-	WCFM ABCDEFGH 4 Bright
-	Loop
-}
+class MageWeaponPiece : FourthWeaponPiece
+	abstract;
 
 defaultproperties
 {
-	WeaponClass = HexenDefs::PCLASS_CLERIC;
-	SelectionOrder = 1000;
-	AmmoType1 = Mana2;
-	AmmoUse1 = 4;
-	AmmoGive1 = 25;
-	PSpriteSY = 10.0;
-	bNoGravity = true;
-	PickupMessage = "$txt_weapon_c3";
-	BotCombatDist = 256.0;
-	bBotProjectile = true;
+	PieceClass = MagePlayer;
 }

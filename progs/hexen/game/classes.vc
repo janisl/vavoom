@@ -29,10 +29,6 @@ import 'linespec';
 #include "MainGameInfo.vc"
 #include "HexenLevelInfo.vc"
 #include "HexenWorldInfo.vc"
-#include "HexenWeapon.vc"
-#include "FighterWeapon.vc"
-#include "ClericWeapon.vc"
-#include "MageWeapon.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 
@@ -43,50 +39,10 @@ import 'linespec';
 #include "ArtiBoostArmor.vc"
 #include "ArtiBlastRadius.vc"
 #include "ArtiHealingRadius.vc"
-#include "FWeapAxe.vc"
-#include "FWeapHammer.vc"
-#include "CWeapStaff.vc"
-#include "CWeapFlame.vc"
-#include "MWeapFrost.vc"
-#include "MWeapLightning.vc"
-#include "FourthWeaponPiece.vc"
-#include "FighterWeaponPiece.vc"
-#include "FWeaponPiece1.vc"
-#include "FWeaponPiece2.vc"
-#include "FWeaponPiece3.vc"
-#include "ClericWeaponPiece.vc"
-#include "CWeaponPiece1.vc"
-#include "CWeaponPiece2.vc"
-#include "CWeaponPiece3.vc"
-#include "MageWeaponPiece.vc"
-#include "MWeaponPiece1.vc"
-#include "MWeaponPiece2.vc"
-#include "MWeaponPiece3.vc"
 
 #include "TeleportFog.vc"
 #include "PlayerSpeed.vc"
 
-#include "FWeapFist.vc"
-#include "FSwordMissile.vc"
-#include "FWeapQuietus.vc"
-#include "CWeapMace.vc"
-#include "CStaffMissile.vc"
-#include "CFlameMissile.vc"
-#include "HolySpirit.vc"
-#include "HolyMissile.vc"
-#include "CWeapWraithverge.vc"
-#include "MageWandMissile.vc"
-#include "MWeapWand.vc"
-#include "FrostMissile.vc"
-#include "Lightning.vc"
-#include "LightningZap.vc"
-#include "LightningFloor.vc"
-#include "LightningCeiling.vc"
-#include "MageStaffFX2.vc"
-#include "MWeapBloodscourge.vc"
-#include "Snout.vc"
-
-#include "IceShard.vc"
 #include "TelOtherFX1.vc"
 #include "TelOtherFX2.vc"
 #include "TelOtherFX3.vc"
@@ -144,20 +100,10 @@ class MinotaurFX2 : Actor decorate;
 class MinotaurSmoke : Actor decorate;
 class MinotaurSmokeExit : Actor decorate;
 class PunchPuff : Actor decorate;
-class AxePuff : Actor decorate;
-class AxePuffGlow : Actor decorate;
 class HammerPuff : Actor decorate;
-class HammerMissile : Actor decorate;
-class FSwordFlame : Actor decorate;
-class CStaffPuff : Actor decorate;
-class CFlameFloor : Actor decorate;
-class CircleFlame : Actor decorate;
-class HolyMissilePuff : Actor decorate;
-class HolyPuff : Actor decorate;
+class HolyMissile : Actor decorate;
 class HolyTail : Actor decorate;
 class HolyTailTrail : Actor decorate;
-class MageWandSmoke : Actor decorate;
-class SnoutPuff : Actor decorate;
 class BlastEffect : Actor decorate;
 class FireBomb : Actor decorate;
 class ThrowingBomb : Actor decorate;
@@ -165,3 +111,16 @@ class PotteryBit : Actor decorate;
 class BloodPool : Actor decorate;
 class CorpseBloodDrip : Actor decorate;
 class DirtClump : Actor decorate;
+class LightningCeiling : Lightning decorate;
+class LightningFloor : Lightning decorate;
+
+class FWeapFist : Weapon decorate;
+class FWeapHammer : Weapon decorate;
+class FWeapQuietus : Weapon decorate;
+class CWeapMace : Weapon decorate;
+class CWeapStaff : Weapon decorate;
+class CWeapFlame : Weapon decorate;
+class MWeapWand : Weapon decorate;
+class MWeapFrost : Weapon decorate;
+class MWeapLightning : Weapon decorate;
+class Snout : Weapon decorate;

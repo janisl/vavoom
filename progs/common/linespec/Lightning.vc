@@ -107,7 +107,7 @@ bool Touch(Entity InOther)
 	{
 		return false;
 	}
-	if (Class == LightningFloor)
+	if (Class == GetClassReplacement(LightningFloor))
 	{
 		if (LightningLink && !LightningLink.Tracer)
 		{
@@ -132,7 +132,7 @@ final void A_LightningClip()
 	EntityEx targ;
 	int zigZag;
 
-	if (Class == LightningFloor)
+	if (Class == GetClassReplacement(LightningFloor))
 	{
 		if (Sector->bHasExtrafloors && LightningLink && Target.Origin.z >= LightningLink.FloorZ)
 			Origin.z = LightningLink.FloorZ;
@@ -143,7 +143,7 @@ final void A_LightningClip()
 		else
 			targ = none;
 	}
-	else if (Class == LightningCeiling)
+	else if (Class == GetClassReplacement(LightningCeiling))
 	{
 		if (Sector->bHasExtrafloors && LightningLink && Target.Origin.z <= LightningLink.CeilingZ)
 			Origin.z = LightningLink.CeilingZ - Height;
@@ -151,7 +151,7 @@ final void A_LightningClip()
 			Origin.z = CeilingZ - Height;
 		targ = Tracer;
 	}
-	if (Class == LightningFloor)
+	if (Class == GetClassReplacement(LightningFloor))
 	{
 		// floor lightning zig-zags, and forces the ceiling lightning to mimic
 		zigZag = P_Random();
@@ -210,7 +210,7 @@ final void A_LightningZap()
 		SetState(FindState('Death'));
 		return;
 	}
-	if (Class == LightningFloor)
+	if (Class == GetClassReplacement(LightningFloor))
 	{
 		deltaZ = 10.0;
 	}
@@ -227,7 +227,7 @@ final void A_LightningZap()
 		Zap.Velocity.x = Velocity.x;
 		Zap.Velocity.y = Velocity.y;
 		Zap.Target = Target;
-		if (Class == LightningFloor)
+		if (Class == GetClassReplacement(LightningFloor))
 		{
 			Zap.Velocity.z = 20.0 * 35.0;
 		}
@@ -236,7 +236,7 @@ final void A_LightningZap()
 			Zap.Velocity.z = -20.0 * 35.0;
 		}
 	}
-	if (Class == LightningFloor && P_Random() < 160)
+	if (Class == GetClassReplacement(LightningFloor) && P_Random() < 160)
 	{
 		PlaySound('MageLightningContinuous', CHAN_VOICE);
 	}
@@ -257,22 +257,26 @@ final void A_LightningRemove()
 	}
 }
 
+//==========================================================================
+//
+//  A_LastZap
+//
+//==========================================================================
+
+final void A_LastZap()
+{
+	Actor A;
+
+	A = Spawn(LightningZap, Origin);
+	if (A)
+	{
+		A.SetState(A.FindState('LastZap'));
+		A.Velocity.z = 40.0 * 35.0;
+	}
+}
+
 defaultproperties
 {
-	Health = 144;
-	Radius = 16.0;
-	Height = 40.0;
-	Speed = 875.0;
-	MissileDamage = 8;
-	RenderStyle = STYLE_Add;
 	ZagSpeed = 1.0;
-	bMissile = true;
-	bNoBlockmap = true;
-	bDropOff = true;
-	bNoGravity = true;
-	bNoTeleport = true;
-	bActivateImpact = true;
-	bActivatePCross = true;
 	bLightning = true;
-	bBloodSplatter = true;
 }

@@ -23,12 +23,48 @@
 //**
 //**************************************************************************
 
-class ClericWeaponPiece : FourthWeaponPiece
+class HexenWeapon : Weapon
 	abstract;
+
+class<Actor> WeaponClass;
+
+//==========================================================================
+//
+//  TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
+{
+	if (!ClassIsChildOf(Toucher.Class, GetClassReplacement(WeaponClass)))
+	{
+		// Wrong class, but try to pick up for mana
+		if (ShouldStay() && !bDropped)
+		{
+			return false;
+		}
+		bool gaveMana = false;
+		if (PlayerEx(Toucher.Player).GiveAmmo(AmmoType1, AmmoGive1))
+		{
+			gaveMana = true;
+		}
+		if (PlayerEx(Toucher.Player).GiveAmmo(AmmoType2, AmmoGive2))
+		{
+			gaveMana = true;
+		}
+		if (gaveMana)
+		{
+			GoAwayAndDie();
+			GiveQuest(Toucher);
+			return true;
+		}
+		return false;
+	}
+
+	return ::TryPickup(Toucher);
+}
 
 defaultproperties
 {
-	PieceClass = HexenDefs::PCLASS_CLERIC;
-	PickupMessage = "$txt_wraithverge_piece";
-	WeaponType = CWeapWraithverge;
+	Kickback = 150.0;
 }

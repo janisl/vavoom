@@ -76,6 +76,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/hexen/centaur.txt
 		actors/hexen/clericflame.txt
 		actors/hexen/clericholy.txt
+		actors/hexen/clericmace.txt
 		actors/hexen/clericstaff.txt
 		actors/hexen/clericplayer.txt
 		actors/hexen/demons.txt
@@ -97,7 +98,10 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/hexen/hexenspecialdecs.txt
 		actors/hexen/iceguy.txt
 		actors/hexen/korax.txt
+		actors/hexen/magecone.txt
+		actors/hexen/magelightning.txt
 		actors/hexen/mageplayer.txt
+		actors/hexen/magestaff.txt
 		actors/hexen/magewand.txt
 		actors/hexen/mana.txt
 		actors/hexen/pig.txt

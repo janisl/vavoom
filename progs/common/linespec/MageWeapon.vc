@@ -23,18 +23,10 @@
 //**
 //**************************************************************************
 
-class CWeaponPiece3 : ClericWeaponPiece
-	__mobjinfo__(20)
-	__scriptid__(35);
-
-states
-{
-Spawn:
-	WCH3 A -1 Bright
-	Stop
-}
+class MageWeapon : HexenWeapon
+	abstract;
 
 defaultproperties
 {
-	PieceValue = WPIECE3;
+	WeaponClass = MagePlayer;
 }

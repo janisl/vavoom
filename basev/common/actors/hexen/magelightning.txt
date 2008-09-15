@@ -1,0 +1,116 @@
+//------------------------------------------------------------------------------
+actor MWeapLightning : MageWeapon 8040
+{
+	Game Hexen
+	+NoGravity
+	Inventory.PickupMessage "$txt_weapon_m3"
+	Weapon.SelectionOrder 1100
+	Weapon.AmmoType1 "Mana2"
+	Weapon.AmmoUse1 5
+	Weapon.AmmoGive1 25
+	Weapon.YAdjust 20
+	Weapon.BotCombatDist 384
+	+Weapon.Explosive
+
+	action native A_LightningReady();
+	action native A_MLightningAttack();
+
+	states
+	{
+	Ready:
+		MLNG AAAAA 1 Bright A_WeaponReady
+		MLNG A 1 Bright A_LightningReady
+		MLNG BBBBBBCCCCC 1 Bright A_WeaponReady
+		MLNG C 1 Bright A_LightningReady
+		MLNG BBBBBB 1 Bright A_WeaponReady
+		Loop
+	Deselect:
+		MLNG A 1 Bright A_Lower
+		Wait
+	Select:
+		MLNG A 1 Bright A_Raise
+		Wait
+	Fire:
+		MLNG DE 3 Bright
+		MLNG F 4 Bright A_MLightningAttack
+		MLNG G 4 Bright
+		MLNG H 3 Bright
+		MLNG I 3 Bright
+		MLNG I 6 Bright Offset(0, 199)
+		MLNG C 2 Bright Offset(0, 55)
+		MLNG B 2 Bright Offset(0, 50)
+		MLNG B 2 Bright Offset(0, 45)
+		MLNG B 2 Bright Offset(0, 40)
+		Goto Ready
+	Spawn:
+		WMLG ABCDEFGH 4 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor LightningCeiling : Lightning
+{
+	Health 144
+	Radius 16
+	Height 40
+	Speed 25
+	Damage 8
+	RenderStyle Add
+	Projectile
+	+CeilingHugger
+
+	action native A_LightningZap();
+	action native A_LightningClip();
+	action native A_LightningRemove();
+
+	states
+	{
+	Spawn:
+		MLFX A 2 Bright A_LightningZap
+		MLFX BCD 2 Bright A_LightningClip
+		Loop
+	Death:
+		MLF2 A 2 Bright A_LightningRemove
+		MLF2 BCDEKLM 3 Bright
+		ACLO E 35
+		MLF2 NO 3 Bright
+		MLF2 P 4 Bright
+		MLF2 QP 3 Bright
+		MLF2 Q 4 Bright
+		MLF2 POP 3 Bright
+		MLF2 P 1 Bright A_HideThing
+		Goto Actor::FreeTargMobj
+	}
+}
+
+//------------------------------------------------------------------------------
+actor LightningFloor : LightningCeiling
+{
+	-CeilingHugger
+	+FloorHugger
+
+	action native A_LightningZap();
+	action native A_LightningClip();
+	action native A_LightningRemove();
+	action native A_LastZap();
+
+	states
+	{
+	Spawn:
+		MLFX E 2 Bright A_LightningZap
+		MLFX FGH 2 Bright A_LightningClip
+		Loop
+	Death:
+		MLF2 F 2 Bright A_LightningRemove
+		MLF2 GHIJKLM 3 Bright
+		ACLO E 20
+		MLF2 NO 3 Bright
+		MLF2 P 4 Bright
+		MLF2 QP 3 Bright
+		MLF2 Q 4 Bright A_LastZap
+		MLF2 POP 3 Bright
+		MLF2 P 1 Bright A_HideThing
+		Goto Actor::FreeTargMobj
+	}
+}

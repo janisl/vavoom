@@ -27,8 +27,6 @@ class FWeapAxe : FighterWeapon
 	__mobjinfo__(8010)
 	__scriptid__(27);
 
-const float AxeRange = 9.0 * Actor::MELEERANGE / 4.0;
-
 //==========================================================================
 //
 //	GetUpState
@@ -170,76 +168,6 @@ final void A_FAxeCheckUpG()
 	}
 }
 
-//==========================================================================
-//
-//  A_FAxeAttack
-//
-//==========================================================================
-
-final void A_FAxeAttack() self(Actor)
-{
-	float			power;
-	int				damage;
-	int				useMana;
-	TAVec			angles;
-	TVec			vforward;
-	class<Actor>	PuffType;
-	EntityEx		AimTarget;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
-	power = 0.0;
-	if (FindInventory(Mana1).Amount > 0)
-	{
-		damage <<= 1;
-		power = 6.0;
-		PuffType = AxePuffGlow;
-		useMana = 1;
-	}
-	else
-	{
-		PuffType = AxePuff;
-		useMana = 0;
-	}
-	AimTarget = AimEx(vforward, FWeapAxe::AxeRange, 45.0 / 16.0, 16, MELEERANGE);
-	if (AimTarget)
-	{
-		VectorAngles(&vforward, &angles);
-		if (LineAttack(vforward, FWeapAxe::AxeRange, damage, PuffType))
-		{
-			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
-		}
-		if (AimTarget.bMonster || AimTarget.bIsPlayer)
-		{
-			AimTarget.Thrust(angles.yaw, power);
-		}
-		Player(Player).AdjustPlayerAngle(AimTarget);
-		useMana++;
-	}
-	else
-	{
-		// didn't find any creatures, so try to strike any walls
-		if (LineAttack(vforward, MELEERANGE, damage, PuffType))
-		{
-			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
-		}
-	}
-
-	if (useMana == 2)
-	{
-		Wpn.DepleteAmmo(Wpn.FireMode, false);
-		if (!Wpn.CheckAmmo(Wpn.FireMode, false, true))
-		{
-			Player.SetViewState(ps_weapon, Wpn.FindState('NoMoreMana'));
-		}
-	}
-}
-
 states
 {
 Ready:
@@ -299,7 +227,6 @@ Spawn:
 
 defaultproperties
 {
-	WeaponClass = HexenDefs::PCLASS_FIGHTER;
 	SelectionOrder = 1500;
 	AmmoType1 = Mana1;
 	AmmoUse1 = 2;

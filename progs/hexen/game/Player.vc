@@ -372,27 +372,16 @@ void Cheat_Gimme()
 				AmmoItem.Amount = AmmoItem.MaxAmount;
 			}
 		}
-		foreach AllClasses(FourthWeaponPiece, PieceCls)
+
+		FourthWeaponHolder Hold = FourthWeaponHolder(
+			EntityEx(MO).FindInventory(FourthWeaponHolder));
+		if (!Hold)
 		{
-			if (!FindClassState(PieceCls, 'Spawn'))
-			{
-				//	Abstract class.
-				continue;
-			}
-			if (PieceCls.default.PieceClass != PClass)
-			{
-				//	Wrong class.
-				continue;
-			}
-			FourthWeaponHolder Hold = FourthWeaponHolder(
-				EntityEx(MO).FindInventory(FourthWeaponHolder));
-			if (!Hold)
-			{
-				Hold = Level.Spawn(FourthWeaponHolder,,,, false);
-				Hold.AttachToOwner(EntityEx(MO));
-			}
-			Hold.PieceMask = 7;
+			Hold = Level.Spawn(FourthWeaponHolder,,,, false);
+			Hold.AttachToOwner(EntityEx(MO));
 		}
+		Hold.PieceMask = 7;
+
 		cprint("ALL WEAPONS");
 	}
 	if (Cmd_CheckParm("health"))

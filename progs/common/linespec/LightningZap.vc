@@ -54,7 +54,7 @@ bool Touch(Entity InOther)
 		{
 			if (LightningOwner)
 			{
-				if (LightningOwner.Class == LightningFloor)
+				if (LightningOwner.Class == GetClassReplacement(LightningFloor))
 				{
 					if (LightningOwner.LightningLink &&
 						!LightningOwner.LightningLink.Tracer)
@@ -153,6 +153,7 @@ defaultproperties
 	bNoBlockmap = true;
 	bDropOff = true;
 	bNoGravity = true;
-	bLightning = true;
+	bNoTeleport = true;
 	bBloodSplatter = true;
+	bLightning = true;
 }

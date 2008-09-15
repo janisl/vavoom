@@ -388,3 +388,85 @@ final void A_ItBurnsItBurns()
 		}
 	}
 }
+
+//==========================================================================
+//
+//  A_WeaponReady
+//
+//  The player can fire the weapon or change to another weapon at this time.
+// Follows after getting weapon up, or after previous attack/fire sequence.
+//
+//==========================================================================
+
+final void A_WeaponReady()
+{
+	float angle;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+	if (!Wpn)
+	{
+		return;
+	}
+
+	// get out of attack state
+	if (StateIsInSequence(State, MissileState) ||
+		StateIsInSequence(State, MeleeState))
+	{
+		SetState(IdleState);
+	}
+
+	if (Player.ViewStates[ps_weapon].State == Wpn.GetReadyState() &&
+		Wpn.ReadySound && (!Wpn.bReadySndHalf || Random() < 0.5))
+	{
+		PlaySound(Wpn.ReadySound, CHAN_WEAPON);
+	}
+
+	// Put the weapon away if the player has a pending weapon or has died.
+	if (PlayerEx(Player).PendingWeapon || Player.MO.Health <= 0)
+	{
+		Player.SetViewState(ps_weapon, Wpn.GetDownState());
+		return;
+	}
+
+	// Check for fire.
+	if (Player.Buttons & BT_ATTACK)
+	{
+		if (!Player.bAttackDown || !Wpn.bNoAutoFire)
+		{
+			Player.bAttackDown = true;
+			PlayerEx(Player).FireWeapon();
+			return;
+		}
+	}
+	else if (Player.Buttons & BT_ALT_ATTACK && Wpn.FindState('AltFire'))
+	{
+		if (!Player.bAttackDown || !Wpn.bNoAutoFire)
+		{
+			Player.bAttackDown = true;
+			PlayerEx(Player).AltFireWeapon();
+			return;
+		}
+	}
+	else
+	{
+		Player.bAttackDown = false;
+	}
+
+	if (!Wpn.bDontBob)
+	{
+		// bob the weapon based on movement speed
+		angle = AngleMod360(180.0 * XLevel.Time);
+		Player.ViewStates[ps_weapon].SX = 1.0 + PlayerEx(Player).Bob *
+			cos(angle);
+		if (angle >= 180.0)
+		{
+			angle -= 180.0;
+		}
+		Player.ViewStates[ps_weapon].SY = Weapon::WEAPONTOP +
+			PlayerEx(Player).Bob * sin(angle);
+	}
+}

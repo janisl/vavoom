@@ -281,7 +281,7 @@ bool CheckItem(Actor item)
 		bNewItemIsWeapon = true;
 
 		// If we don't have the weapon, pick it up
-		if (HexenWeapon(Wpn).WeaponClass == player.PClass &&
+		if (ClassIsChildOf(botmo.Class, GetClassReplacement(HexenWeapon(Wpn).WeaponClass)) &&
 			!botmo.FindInventory(class<Inventory>(Wpn.Class)))
 			return true;
 
@@ -533,7 +533,7 @@ float GetAngle()
 int WeapPieceFromItem(Actor item)
 {
 	if (FourthWeaponPiece(item) &&
-		FourthWeaponPiece(item).PieceClass == player.PClass)
+		ClassIsChildOf(botmo.Class, GetClassReplacement(FourthWeaponPiece(item).PieceClass)))
 	{
 		return FourthWeaponPiece(item).PieceValue;
 	}

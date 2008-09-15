@@ -1,4 +1,46 @@
 //------------------------------------------------------------------------------
+actor FWeapFist : FighterWeapon
+{
+	+BloodSplatter
+	Weapon.SelectionOrder 3400
+	Weapon.BotCombatDist 48
+	+Weapon.MeleeWeapon
+
+	action native A_FPunchAttack();
+
+	states
+	{
+	Ready:
+		FPCH A 1 A_WeaponReady
+		Loop
+	Deselect:
+		FPCH A 1 A_Lower
+		Loop
+	Select:
+		FPCH A 1 A_Raise
+		Loop
+	Fire:
+		FPCH B 5 Offset(5, 40)
+		FPCH C 4 Offset(5, 40)
+		FPCH D 4 Offset(5, 40) A_FPunchAttack
+		FPCH C 4 Offset(5, 40)
+		FPCH B 5 Offset(5, 40) A_ReFire
+		Goto Ready
+	Fire2:
+		FPCH D 4 Offset(5, 40)
+		FPCH E 4 Offset(5, 40)
+		FPCH E 1 Offset(15, 50)
+		FPCH E 1 Offset(25, 60)
+		FPCH E 1 Offset(35, 70)
+		FPCH E 1 Offset(45, 80)
+		FPCH E 1 Offset(55, 90)
+		FPCH E 1 Offset(65, 100)
+		FPCH E 10 Offset(0, 150)
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
 actor PunchPuff
 {
 	RenderStyle Translucent

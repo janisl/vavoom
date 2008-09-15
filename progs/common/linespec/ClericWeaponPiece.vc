@@ -23,9 +23,10 @@
 //**
 //**************************************************************************
 
-class ClericWeapon : HexenWeapon
+class ClericWeaponPiece : FourthWeaponPiece
 	abstract;
 
 defaultproperties
 {
+	PieceClass = ClericPlayer;
 }

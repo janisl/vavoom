@@ -1,0 +1,662 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//  A_FPunchAttack
+//
+//==========================================================================
+
+final void A_FPunchAttack() self(Actor)
+{
+	int				damage;
+	float			power;
+	TVec			vforward;
+	class<Actor>	PuffType;
+	EntityEx		AimTarget;
+	TAVec			angles;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	damage = 40 + (P_Random() & 15);
+	power = 2.0;
+	PuffType = PunchPuff;
+	AimTarget = AimEx(vforward, 2.0 * MELEERANGE, 45.0 / 16.0,
+		16, MELEERANGE);
+	if (AimTarget)
+	{
+		VectorAngles(&vforward, &angles);
+		Special1++;
+		if (Special1 == 3)
+		{
+			damage <<= 1;
+			power = 6.0;
+			PuffType = HammerPuff;
+		}
+		if (LineAttack(vforward, 2.0 * MELEERANGE, damage, PuffType))
+		{
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
+		}
+		if (AimTarget.bMonster || AimTarget.bIsPlayer)
+		{
+			AimTarget.Thrust(angles.yaw, power);
+		}
+		PlayerEx(Player).AdjustPlayerAngle(AimTarget);
+	}
+	else
+	{
+		// didn't find any creatures, so try to strike any walls
+		Special1 = 0;
+
+		if (LineAttack(vforward, Actor::MELEERANGE, damage, PuffType))
+		{
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
+		}
+	}
+
+	if (Special1 == 3)
+	{
+		Special1 = 0;
+		Player.SetViewState(ps_weapon, Wpn.FindState('Fire2'));
+		PlaySound('*fistgrunt', CHAN_VOICE);
+	}
+}
+
+const float AxeRange = 9.0 * MELEERANGE / 4.0;
+
+//==========================================================================
+//
+//  A_FAxeAttack
+//
+//==========================================================================
+
+final void A_FAxeAttack() self(Actor)
+{
+	float			power;
+	int				damage;
+	int				useMana;
+	TAVec			angles;
+	TVec			vforward;
+	class<Actor>	PuffType;
+	EntityEx		AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	damage = 40 + (P_Random() & 15) + (P_Random() & 7);
+	power = 0.0;
+	if (FindInventory(Mana1).Amount > 0)
+	{
+		damage <<= 1;
+		power = 6.0;
+		PuffType = AxePuffGlow;
+		useMana = 1;
+	}
+	else
+	{
+		PuffType = AxePuff;
+		useMana = 0;
+	}
+	AimTarget = AimEx(vforward, AxeRange, 45.0 / 16.0, 16, MELEERANGE);
+	if (AimTarget)
+	{
+		VectorAngles(&vforward, &angles);
+		if (LineAttack(vforward, AxeRange, damage, PuffType))
+		{
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
+		}
+		if (AimTarget.bMonster || AimTarget.bIsPlayer)
+		{
+			AimTarget.Thrust(angles.yaw, power);
+		}
+		PlayerEx(Player).AdjustPlayerAngle(AimTarget);
+		useMana++;
+	}
+	else
+	{
+		// didn't find any creatures, so try to strike any walls
+		if (LineAttack(vforward, MELEERANGE, damage, PuffType))
+		{
+			PlaySound(PuffType.default.ActiveSound, CHAN_WEAPON);
+		}
+	}
+
+	if (useMana == 2)
+	{
+		Wpn.DepleteAmmo(Wpn.FireMode, false);
+		if (!Wpn.CheckAmmo(Wpn.FireMode, false, true))
+		{
+			Player.SetViewState(ps_weapon, Wpn.FindState('NoMoreMana'));
+		}
+	}
+}
+
+const float HammerRange = MELEERANGE + MELEERANGE / 2.0;
+
+//============================================================================
+//
+//  A_FHammerAttack
+//
+//============================================================================
+
+final void A_FHammerAttack() self(Actor)
+{
+	int			damage;
+	float		power;
+	TAVec		angles;
+	TVec		vforward;
+	EntityEx	AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	damage = 60 + (P_Random() & 63);
+	power = 10.0;
+	AimTarget = AimEx(vforward, HammerRange, 45.0 / 32.0, 16, HammerRange);
+	if (AimTarget)
+	{
+		VectorAngles(&vforward, &angles);
+		if (LineAttack(vforward, HammerRange, damage, HammerPuff))
+		{
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
+		}
+		PlayerEx(Player).AdjustPlayerAngle(AimTarget);
+		if (AimTarget.bMonster || AimTarget.bIsPlayer)
+		{
+			AimTarget.Thrust(angles.yaw, power);
+		}
+		Special1 = false;	// Don't throw a hammer
+	}
+	else
+	{
+		// didn't find any targets in meleerange, so set to throw out a hammer
+		LineSpecialLevelInfo(Level).bPuffSpawned = false;
+		if (LineAttack(vforward, HammerRange, damage, HammerPuff))
+		{
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
+		}
+		if (LineSpecialLevelInfo(Level).bPuffSpawned)
+		{
+			Special1 = false;
+		}
+		else
+		{
+			Special1 = true;
+		}
+	}
+
+	if (!Wpn.CheckAmmo(Wpn.FireMode, false, true))
+	{
+		// Don't spawn a hammer if the player doesn't have enough mana
+		Special1 = false;
+	}
+	return;
+}
+
+//============================================================================
+//
+//  A_FHammerThrow
+//
+//============================================================================
+
+final void A_FHammerThrow() self(Actor)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (!Special1)
+	{
+		return;
+	}
+	Wpn.DepleteAmmo(Wpn.FireMode, false);
+	SpawnPlayerMissile(HammerMissile);
+}
+
+//============================================================================
+//
+//  A_FSwordAttack
+//
+//============================================================================
+
+final void A_FSwordAttack() self(Actor)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo(Wpn.FireMode);
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, -10.0),
+		FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 4.0));
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, -5.0),
+		FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 8.0));
+	SpawnPlayerMissileAngleXYZ(Origin, FSwordMissile,
+		Angles.yaw);
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, 5.0),
+		FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 8.0));
+	SpawnPlayerMissileAngleXYZ(Origin + vector(0.0, 0.0, 10.0),
+		FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 4.0));
+	PlaySound('FighterSwordFire', CHAN_WEAPON);
+}
+
+//===========================================================================
+//
+//  A_CMaceAttack
+//
+//===========================================================================
+
+final void A_CMaceAttack() self(Actor)
+{
+	int			damage;
+	TVec		vforward;
+	EntityEx	AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	damage = 25 + (P_Random() & 15);
+	AimTarget = AimEx(vforward, 2.0 * MELEERANGE, 45.0 / 16.0, 16, MELEERANGE);
+	if (AimTarget)
+	{
+		if (LineAttack(vforward, 2.0 * MELEERANGE, damage, HammerPuff))
+		{
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
+		}
+		PlayerEx(Player).AdjustPlayerAngle(AimTarget);
+	}
+	else
+	{
+		// didn't find any creatures, so try to strike any walls
+		if (LineAttack(vforward, MELEERANGE, damage, HammerPuff))
+		{
+			PlaySound('FighterHammerMiss', CHAN_WEAPON);
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_CStaffInitBlink
+//
+//==========================================================================
+
+final void A_CStaffInitBlink() self(Actor)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+
+	Special1 = (P_Random() >> 1) + 20;
+}
+
+//==========================================================================
+//
+//  A_CStaffCheckBlink
+//
+//==========================================================================
+
+final void A_CStaffCheckBlink() self(Actor)
+{
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	if (!--Special1)
+	{
+		Player.SetViewState(ps_weapon, Wpn.FindState('Blink'));
+		Special1 = (P_Random() + 50) >> 2;
+	}
+}
+
+//==========================================================================
+//
+//  A_CStaffCheck
+//
+//==========================================================================
+
+final void A_CStaffCheck() self(Actor)
+{
+	int			damage;
+	int			newLife;
+	int			i;
+	TAVec		angles;
+	TVec		vforward;
+	EntityEx	AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	damage = 20 + (P_Random() & 15);
+	AimTarget = AimEx(vforward, 3.0 * MELEERANGE / 2.0, 45.0 / 16.0, 3);
+	if (AimTarget)
+	{
+		VectorAngles(&vforward, &angles);
+		LineAttack(vforward, 1.5 * MELEERANGE, damage, CStaffPuff);
+		Angles.yaw = atan2(AimTarget.Origin.y - Origin.y,
+			AimTarget.Origin.x - Origin.x);
+		if ((AimTarget.bIsPlayer || AimTarget.bMonster) &&
+			!AimTarget.bDormant && !AimTarget.bInvulnerable)
+		{
+			newLife = Player.Health + (damage >> 3);
+			newLife = newLife > 100 ? 100 : newLife;
+			Health = newLife;
+			Player.Health = newLife;
+			Player.SetViewState(ps_weapon, Wpn.FindState('Fire2'));
+		}
+		Wpn.DepleteAmmo(Wpn.FireMode, false);
+	}
+}
+
+//==========================================================================
+//
+//  A_CStaffAttack
+//
+//==========================================================================
+
+final void A_CStaffAttack() self(Actor)
+{
+	EntityEx	mo;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo(Wpn.FireMode);
+	mo = SpawnPlayerMissileAngle(CStaffMissile, Angles.yaw - (45.0 / 15.0));
+	if (mo)
+	{
+		mo.Special2 = 32;
+	}
+	mo = SpawnPlayerMissileAngle(CStaffMissile, Angles.yaw + (45.0 / 15.0));
+	if (mo)
+	{
+		mo.Special2 = 0;
+	}
+	PlaySound('ClericCStaffFire', CHAN_WEAPON);
+}
+
+//============================================================================
+//
+//  A_CFlameAttack
+//
+//============================================================================
+
+final void A_CFlameAttack() self(Actor)
+{
+	EntityEx mo;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	mo = SpawnPlayerMissile(CFlameMissile);
+	if (mo)
+	{
+		Actor(mo).Special1 = 2;
+	}
+
+	Wpn.DepleteAmmo(Wpn.FireMode);
+	PlaySound('ClericFlameFire', CHAN_WEAPON);
+}
+
+//============================================================================
+//
+//  A_CHolyAttack
+//
+//============================================================================
+
+final void A_CHolyAttack() self(Actor)
+{
+	EntityEx	A;
+	EntityEx	AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo(Wpn.FireMode);
+	A = SpawnPlayerMissileEx(HolyMissile, false, AimTarget);
+	if (A)
+	{
+		A.Tracer = AimTarget;
+	}
+	CWeapWraithverge(Wpn).CShift = RGBA(255, 255, 255, 66);
+	PlaySound('HolySymbolFire', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_FireConePL1
+//
+//==========================================================================
+
+final void A_FireConePL1() self(Actor)
+{
+	TAVec			ang;
+	int				damage;
+	int				i;
+	FrostMissile	mo;
+	int				conedone = false;
+	TVec			Dir;
+	EntityEx		AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo(Wpn.FireMode);
+	PlaySound('MageShardsFire', CHAN_WEAPON);
+
+	damage = 90 + (P_Random() & 15);
+	for (i = 0; i < 16; i++)
+	{
+		ang = Angles;
+		ang.yaw = AngleMod360(ang.yaw + itof(i) * (45.0 / 16.0));
+		AimTarget = AimLineAttack(Dir, ang, MELEERANGE);
+		if (AimTarget)
+		{
+			AimTarget.Damage(self, self, damage, 'Ice');
+			conedone = true;
+			break;
+		}
+	}
+
+	// didn't find any creatures, so fire projectiles
+	if (!conedone)
+	{
+		mo = FrostMissile(SpawnPlayerMissile(FrostMissile));
+		if (mo)
+		{
+			mo.bShardSpawnLeft = true;
+			mo.bShardSpawnRight = true;
+			mo.bShardSpawnUp = true;
+			mo.bShardSpawnDown = true;
+			mo.Special2 = 3;	// Set sperm count (levels of reproductivity)
+			mo.Target = self;
+			mo.Args[0] = 3;	// Mark Initial shard as super damage
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_LightningReady
+//
+//==========================================================================
+
+final void A_LightningReady()
+{
+	A_WeaponReady();
+	if (P_Random() < 160)
+	{
+		PlaySound('MageLightningReady', CHAN_WEAPON);
+	}
+}
+
+//==========================================================================
+//
+//  A_MLightningAttack
+//
+//==========================================================================
+
+final void A_MLightningAttack() self(Actor)
+{
+	Lightning fmo;
+	Lightning cmo;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	fmo = Lightning(SpawnPlayerMissile(LightningFloor));
+	cmo = Lightning(SpawnPlayerMissile(LightningCeiling));
+	if (fmo)
+	{
+		fmo.ZigZagCount = 0;
+		fmo.LightningLink = cmo;
+		fmo.A_LightningZap();
+	}
+	if (cmo)
+	{
+		cmo.Tracer = none;	// mobj that it will track
+		cmo.LightningLink = fmo;
+		cmo.A_LightningZap();
+	}
+	PlaySound('MageLightningFire', CHAN_WEAPON);
+	Wpn.DepleteAmmo(Wpn.FireMode);
+}
+
+//==========================================================================
+//
+//	MStaffSpawn
+//
+//==========================================================================
+
+final void MStaffSpawn(float angle)
+{
+	EntityEx	mo;
+
+	mo = EntityEx(Owner).SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	if (mo)
+	{
+		mo.Target = EntityEx(Owner);
+		MageStaffFX2(mo).FindEnemy();
+	}
+}
+
+//==========================================================================
+//
+//  A_MStaffAttack
+//
+//==========================================================================
+
+final void A_MStaffAttack() self(Actor)
+{
+	float angle;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	Wpn.DepleteAmmo(Wpn.FireMode);
+	angle = Angles.yaw;
+
+	MStaffSpawn(angle);
+	MStaffSpawn(angle - 5.0);
+	MStaffSpawn(angle + 5.0);
+	PlaySound('MageStaffFire', CHAN_WEAPON);
+	MWeapBloodscourge(Wpn).CShift = RGBA(255, 187, 4, 76);
+}
+
+//==========================================================================
+//
+//  A_SnoutAttack
+//
+//==========================================================================
+
+final void A_SnoutAttack() self(Actor)
+{
+	int			damage;
+	TAVec		angles;
+	TVec		vforward;
+	EntityEx	AimTarget;
+
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	damage = 3 + (P_Random() & 3);
+	angles = Angles;
+	AimTarget = AimLineAttack(vforward, angles, MELEERANGE);
+	LineSpecialLevelInfo(Level).bPuffSpawned = false;
+	LineAttack(vforward, MELEERANGE, damage, SnoutPuff);
+	PlaySound((P_Random() & 1) ? 'PigActive2' : 'PigActive1', CHAN_VOICE);
+	if (AimTarget)
+	{
+		PlayerEx(Player).AdjustPlayerAngle(AimTarget);
+		if (LineSpecialLevelInfo(Level).bPuffSpawned)
+		{
+			// Bit something
+			PlaySound('PigAttack', CHAN_VOICE);
+		}
+	}
+}

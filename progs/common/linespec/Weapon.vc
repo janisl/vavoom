@@ -81,8 +81,6 @@ bool			bNoAutoFire;
 bool			bPoweredUp;
 //	Does Heretic staff level 2 style kickback.
 bool			bStaff2Kickback;
-//	Always use extreme death
-bool			bExtremeDeath;
 //	Ammo is optional
 bool			bAmmoOptional;
 //	Ammo is optional for alternate fire

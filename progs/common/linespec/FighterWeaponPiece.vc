@@ -23,9 +23,10 @@
 //**
 //**************************************************************************
 
-class FighterWeapon : HexenWeapon
+class FighterWeaponPiece : FourthWeaponPiece
 	abstract;
 
 defaultproperties
 {
+	PieceClass = FighterPlayer;
 }

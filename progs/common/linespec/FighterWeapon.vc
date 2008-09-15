@@ -23,34 +23,10 @@
 //**
 //**************************************************************************
 
-class CStaffMissile : Actor;
-
-states
-{
-Spawn:
-	CSSF DDEE 1 Bright A_CStaffMissileSlither
-	Loop
-Death:
-	CSSF FG 4 Bright
-	CSSF HI 3 Bright
-	Stop
-}
+class FighterWeapon : HexenWeapon
+	abstract;
 
 defaultproperties
 {
-	Radius = 12.0;
-	Height = 10.0;
-	Speed = 770.0;
-	MissileDamage = 5;
-	MissilePoisonDamage = 20;
-	RenderStyle = STYLE_Add;
-	DeathSound = 'ClericCStaffExplode';
-	bMissile = true;
-	bNoBlockmap = true;
-	bDropOff = true;
-	bNoGravity = true;
-	bNoTeleport = true;
-	bActivateImpact = true;
-	bActivatePCross = true;
-	bBloodSplatter = true;
+	WeaponClass = FighterPlayer;
 }

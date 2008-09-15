@@ -1,4 +1,31 @@
 //------------------------------------------------------------------------------
+actor MWeapWand : MageWeapon
+{
+	Weapon.SelectionOrder 3600
+	Weapon.YAdjust 9
+	Weapon.BotCombatDist 192
+	+Weapon.Explosive
+	states
+	{
+	Ready:
+		MWND A 1 A_WeaponReady
+		Loop
+	Deselect:
+		MWND A 1 A_Lower
+		Loop
+	Select:
+		MWND A 1 A_Raise
+		Loop
+	Fire:
+		MWND A 6
+		MWND B 6 Bright Offset(0, 48) A_FireCustomMissile("MageWandMissile")
+		MWND A 3 Offset(0, 40)
+		MWND A 3 Offset(0, 36) A_ReFire
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
 actor MageWandSmoke
 {
 	RenderStyle Translucent

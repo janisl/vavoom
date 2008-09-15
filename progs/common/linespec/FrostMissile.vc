@@ -155,7 +155,6 @@ defaultproperties
 	Speed = 875.0;
 	MissileDamage = 1;
 	DamageType = 'Ice';
-	DeathSound = 'MageShardsExplode';
 	bMissile = true;
 	bNoBlockmap = true;
 	bDropOff = true;
@@ -164,4 +163,5 @@ defaultproperties
 	bActivateImpact = true;
 	bActivatePCross = true;
 	bBloodSplatter = true;
+	DeathSound = 'MageShardsExplode';
 }

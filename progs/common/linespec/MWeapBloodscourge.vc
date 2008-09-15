@@ -40,50 +40,6 @@ int GetBlend()
 
 //==========================================================================
 //
-//	MStaffSpawn
-//
-//==========================================================================
-
-final void MStaffSpawn(float angle)
-{
-	EntityEx	mo;
-
-	mo = EntityEx(Owner).SpawnPlayerMissileAngle(MageStaffFX2, angle);
-	if (mo)
-	{
-		mo.Target = EntityEx(Owner);
-		MageStaffFX2(mo).FindEnemy();
-	}
-}
-
-//==========================================================================
-//
-//  A_MStaffAttack
-//
-//==========================================================================
-
-final void A_MStaffAttack() self(Actor)
-{
-	float angle;
-
-	if (!bIsPlayer)
-	{
-		return;
-	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	Wpn.DepleteAmmo(Wpn.FireMode);
-	angle = Angles.yaw;
-
-	MWeapBloodscourge(Wpn).MStaffSpawn(angle);
-	MWeapBloodscourge(Wpn).MStaffSpawn(angle - 5.0);
-	MWeapBloodscourge(Wpn).MStaffSpawn(angle + 5.0);
-	PlaySound('MageStaffFire', CHAN_WEAPON);
-	MWeapBloodscourge(Wpn).CShift = RGBA(255, 187, 4, 76);
-}
-
-//==========================================================================
-//
 //  A_MStaffPalette1
 //
 //==========================================================================
@@ -158,12 +114,13 @@ Fire:
 
 defaultproperties
 {
-	WeaponClass = HexenDefs::PCLASS_MAGE;
 	SelectionOrder = 3100;
 	AmmoType1 = Mana1;
 	AmmoType2 = Mana2;
 	AmmoUse1 = 15;
 	AmmoUse2 = 15;
+	AmmoGive1 = 20;
+	AmmoGive2 = 20;
 	PSpriteSY = 20.0;
 	PickupMessage = "$txt_weapon_m4";
 	BotCombatDist= 384.0;

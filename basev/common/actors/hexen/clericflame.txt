@@ -1,4 +1,47 @@
 //------------------------------------------------------------------------------
+actor CWeapFlame : ClericWeapon 8009
+{
+	Game Hexen
+	+NoGravity
+	Inventory.PickupMessage "$txt_weapon_c3"
+	Weapon.SelectionOrder 1000
+	Weapon.AmmoType1 "Mana2"
+	Weapon.AmmoUse1 4
+	Weapon.AmmoGive1 25
+	Weapon.YAdjust 10
+	Weapon.BotCombatDist 256
+	+Weapon.Explosive
+
+	action native A_CFlameAttack();
+
+	states
+	{
+	Ready:
+		CFLM AAAABBBBCCCC 1 A_WeaponReady
+		Loop
+	Deselect:
+		CFLM A 1 A_Lower
+		Loop
+	Select:
+		CFLM A 1 A_Raise
+		Loop
+	Fire:
+		CFLM A 2 Offset(0, 40)
+		CFLM D 2 Offset(0, 50)
+		CFLM D 2 Offset(0, 36)
+		CFLM E 4 Bright
+		CFLM F 4 Bright A_CFlameAttack
+		CFLM E 4 Bright
+		CFLM G 2 Offset(0, 40)
+		CFLM G 2
+		Goto Ready
+	Spawn:
+		WCFM ABCDEFGH 4 Bright
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor CFlameFloor
 {
 	RenderStyle Add
