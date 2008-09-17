@@ -233,7 +233,25 @@ enum
 #include "BrainState.vc"
 #include "ScriptedMarine.vc"
 
+#include "ArtiTeleport.vc"
+
 #include "Whirlwind.vc"
+#include "BossSpot.vc"
+#include "Sorcerer2.vc"
+#include "HereticWeapon.vc"
+#include "BlasterFX1.vc"
+#include "Ripper.vc"
+#include "HornRodFX2.vc"
+#include "RainPillar.vc"
+#include "RainPlayer2.vc"
+#include "RainPlayer3.vc"
+#include "RainPlayer4.vc"
+#include "PhoenixFX1.vc"
+#include "PhoenixFX2.vc"
+#include "PhoenixRod.vc"
+#include "PhoenixRodPowered.vc"
+#include "MaceFX4.vc"
+#include "Mace.vc"
 
 #include "HexenWeapon.vc"
 #include "FighterWeapon.vc"
@@ -336,9 +354,34 @@ class HereticImpChunk2 : Actor decorate;
 class KnightAxe : Actor decorate;
 class RedAxe : Actor decorate;
 class WizardFX1 : Actor decorate;
+class Ironlich : Actor decorate;
 class HeadFX1 : Actor decorate;
 class HeadFX3 : Actor decorate;
 class Wizard : Actor decorate;
+class Sorcerer2FX1 : Actor decorate;
+class Sorcerer2FX2 : Actor decorate;
+class Sorcerer2Telefade : Actor decorate;
+class StaffPuff : Actor decorate;
+class StaffPuff2 : Actor decorate;
+class GauntletPuff1 : Actor decorate;
+class GauntletPuff2 : Actor decorate;
+class GoldWandFX2 : Actor decorate;
+class GoldWandPuff1 : Actor decorate;
+class GoldWandPuff2 : Actor decorate;
+class CrossbowFX1 : Actor decorate;
+class CrossbowFX2 : Actor decorate;
+class CrossbowFX3 : Actor decorate;
+class BlasterPuff : Actor decorate;
+class BlasterSmoke : Actor decorate;
+class HornRodFX1 : Actor decorate;
+class PhoenixPuff : Actor decorate;
+class PhoenixRodAmmo : Ammo decorate;
+class MaceFX1 : Actor decorate;
+class MaceFX2 : Actor decorate;
+class MaceAmmo : Ammo decorate;
+class MacePowered : Weapon decorate;
+class MaceSpawner : Actor decorate;
+class BeakPuff : Actor decorate;
 
 class FireDemonRock1 : Actor decorate;
 class FireDemonRock2 : Actor decorate;

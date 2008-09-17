@@ -1,4 +1,62 @@
 //------------------------------------------------------------------------------
+actor Staff : HereticWeapon
+{
+	+ThruGhost
+	Weapon.SelectionOrder 3800
+	Weapon.SisterWeapon "StaffPowered"
+	Weapon.BotCombatDist 1
+	+Weapon.Wimpy_Weapon
+	+Weapon.MeleeWeapon
+
+	action native A_StaffAttack(int damage, class<Actor> PuffType);
+
+	states
+	{
+	Ready:
+		STFF A 1 A_WeaponReady
+		Loop
+	Deselect:
+		STFF A 1 A_Lower
+		Loop
+	Select:
+		STFF A 1 A_Raise
+		Loop
+	Fire:
+		STFF B 6
+		STFF C 8 A_StaffAttack(random(5, 20), "StaffPuff")
+		STFF B 8 A_ReFire
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
+actor StaffPowered : Staff
+{
+	Weapon.SisterWeapon "Staff"
+	+Weapon.Powered_Up
+	+Weapon.Staff2_Kickback
+	+Weapon.ReadySndHalf
+	Weapon.ReadySound "weapons/staffcrackle"
+	states
+	{
+	Ready:
+		STFF DEF 4 A_WeaponReady
+		Loop
+	Deselect:
+		STFF D 1 A_Lower
+		Loop
+	Select:
+		STFF D 1 A_Raise
+		Loop
+	Fire:
+		STFF G 6
+		STFF H 8 A_StaffAttack(random(18, 81), "StaffPuff2")
+		STFF G 8 A_ReFire
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
 actor StaffPuff
 {
 	RenderStyle Translucent
@@ -34,6 +92,76 @@ actor StaffPuff2
 }
 
 //------------------------------------------------------------------------------
+actor Gauntlets : HereticWeapon 2005
+{
+	Game Heretic
+	SpawnID 32
+	+BloodSplatter
+	Inventory.PickupMessage "$txt_wpngauntlets"
+	Weapon.SelectionOrder 2300
+	Weapon.YAdjust 15
+	Weapon.SisterWeapon "GauntletsPowered"
+	Weapon.Kickback 0
+	Weapon.BotCombatDist 1
+	+Weapon.Wimpy_Weapon
+	+Weapon.MeleeWeapon
+	Weapon.UpSound "weapons/gauntletsactivate"
+
+	action native A_GauntletAttack(int power);
+
+	states
+	{
+	Ready:
+		GAUN A 1 A_WeaponReady
+		Loop
+	Deselect:
+		GAUN A 1 A_Lower
+		Loop
+	Select:
+		GAUN A 1 A_Raise
+		Loop
+	Fire:
+		GAUN B 4 A_PlayWeaponSound("weapons/gauntletsuse")
+		GAUN C 4
+	Hold:
+		GAUN DEF 4 Bright A_GauntletAttack(0)
+		GAUN C 4 A_ReFire
+		GAUN B 4 A_Light0
+		Goto Ready
+	Spawn:
+		WGNT A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GauntletsPowered : Gauntlets
+{
+	Weapon.SisterWeapon "Gauntlets"
+	+Weapon.Powered_Up
+	states
+	{
+	Ready:
+		GAUN GHI 4 A_WeaponReady
+		Loop
+	Deselect:
+		GAUN G 1 A_Lower
+		Loop
+	Select:
+		GAUN G 1 A_Raise
+		Loop
+	Fire:
+		GAUN J 4 A_PlayWeaponSound("weapons/gauntletsuse")
+		GAUN K 4
+	Hold:
+		GAUN LMN 4 Bright A_GauntletAttack(1)
+		GAUN K 4 A_ReFire
+		GAUN J 4 A_Light0
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
 actor GauntletPuff1
 {
 	RenderStyle Translucent
@@ -58,6 +186,60 @@ actor GauntletPuff2 : GauntletPuff1
 	Spawn:
 		PUF1 EFGH 4 Bright
 		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldWand : HereticWeapon
+{
+	+BloodSplatter
+	Weapon.SelectionOrder 2000
+	Weapon.AmmoType1 "GoldWandAmmo"
+	Weapon.AmmoUse1 1
+	Weapon.AmmoGive1 25
+	Weapon.YAdjust 5
+	Weapon.SisterWeapon "GoldWandPowered"
+	Weapon.BotCombatDist 256
+
+	action native A_FireGoldWandPL1();
+
+	states
+	{
+	Ready:
+		GWND A 1 A_WeaponReady
+		Loop
+	Deselect:
+		GWND A 1 A_Lower
+		Loop
+	Select:
+		GWND A 1 A_Raise
+		Loop
+	Fire:
+		GWND B 3
+		GWND C 5 A_FireGoldWandPL1
+		GWND D 3
+		GWND D 0 A_ReFire
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
+actor GoldWandPowered : GoldWand
+{
+	Weapon.AmmoGive 0
+	Weapon.SisterWeapon "GoldWand"
+	+Weapon.Powered_Up
+
+	action native A_FireGoldWandPL2();
+
+	states
+	{
+	Fire:
+		GWND B 3
+		GWND C 4 A_FireGoldWandPL2
+		GWND D 3
+		GWND D 0 A_ReFire
+		Goto Super::Ready
 	}
 }
 
@@ -127,6 +309,68 @@ actor GoldWandPuff2 : GoldWandFX2
 	{
 	Spawn:
 		Goto Super::Death
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Crossbow : HereticWeapon 2001
+{
+	Game Heretic
+	SpawnID 27
+	Inventory.PickupMessage "$txt_wpncrossbow"
+	Weapon.SelectionOrder 800
+	Weapon.AmmoType1 "CrossbowAmmo"
+	Weapon.AmmoUse1 1
+	Weapon.AmmoGive1 10
+	Weapon.YAdjust 15
+	Weapon.SisterWeapon "CrossbowPowered"
+	Weapon.BotCombatDist 192
+
+	action native A_FireCrossbowPL1();
+
+	states
+	{
+	Ready:
+		CRBW AAAAAABBBBBBCCCCCC 1 A_WeaponReady
+		Loop
+	Deselect:
+		CRBW A 1 A_Lower
+		Loop
+	Select:
+		CRBW A 1 A_Raise
+		Loop
+	Fire:
+		CRBW D 6 A_FireCrossbowPL1
+		CRBW EFGH 3
+		CRBW AB 4
+		CRBW C 5 A_ReFire
+		Goto Ready
+	Spawn:
+		WBOW A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor CrossbowPowered : Crossbow
+{
+	Weapon.AmmoGive1 0
+	Weapon.SisterWeapon "Crossbow"
+	+Weapon.Powered_Up
+
+	action native A_FireCrossbowPL2();
+
+	states
+	{
+	Fire:
+		CRBW D 5 A_FireCrossbowPL2
+		CRBW E 3
+		CRBW F 2
+		CRBW G 3
+		CRBW H 2
+		CRBW AB 3
+		CRBW C 4 A_ReFire
+		Goto Super::Ready
 	}
 }
 
@@ -208,6 +452,66 @@ actor CrossbowFX4
 }
 
 //------------------------------------------------------------------------------
+actor Blaster : HereticWeapon 53
+{
+	Game Heretic
+	SpawnID 28
+	+BloodSplatter
+	Inventory.PickupMessage "$txt_wpnblaster"
+	Weapon.SelectionOrder 500
+	Weapon.AmmoType1 "BlasterAmmo"
+	Weapon.AmmoUse1 1
+	Weapon.AmmoGive1 30
+	Weapon.YAdjust 15
+	Weapon.SisterWeapon "BlasterPowered"
+	Weapon.BotCombatDist 256
+
+	action native A_FireBlasterPL1();
+
+	states
+	{
+	Ready:
+		BLSR A 1 A_WeaponReady
+		Loop
+	Deselect:
+		BLSR A 1 A_Lower
+		Loop
+	Select:
+		BLSR A 1 A_Raise
+		Loop
+	Fire:
+		BLSR BC 3
+	Hold:
+		BLSR D 2 A_FireBlasterPL1
+		BLSR CB 2
+		BLSR A 0 A_ReFire
+		Goto Ready
+	Spawn:
+		WBLS A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BlasterPowered : Blaster
+{
+	Weapon.AmmoUse1 5
+	Weapon.AmmoGive1 0
+	Weapon.SisterWeapon "Blaster"
+	+Weapon.Powered_Up
+	states
+	{
+	Fire:
+		BLSR BC 0
+	Hold:
+		BLSR D 3 A_FireCustomMissile("BlasterFX1")
+		BLSR CB 4
+		BLSR A 0 A_ReFire
+		Goto Super::Ready
+	}
+}
+
+//------------------------------------------------------------------------------
 actor BlasterPuff
 {
 	RenderStyle Add
@@ -241,6 +545,70 @@ actor BlasterSmoke
 	Spawn:
 		FX18 HIJKL 4
 		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SkullRod : HereticWeapon 2004
+{
+	Game Heretic
+	SpawnID 30
+	Inventory.PickupMessage "$txt_wpnskullrod"
+	Weapon.SelectionOrder 200
+	Weapon.AmmoType1 "SkullRodAmmo"
+	Weapon.AmmoUse1 1
+	Weapon.AmmoGive1 50
+	Weapon.YAdjust 15
+	Weapon.SisterWeapon "SkullRodPowered"
+	Weapon.BotCombatDist 384
+	+Weapon.Explosive
+
+	action native A_FireSkullRodPL1();
+
+	states
+	{
+	Ready:
+		HROD A 1 A_WeaponReady
+		Loop
+	Deselect:
+		HROD A 1 A_Lower
+		Loop
+	Select:
+		HROD A 1 A_Raise
+		Loop
+	Fire:
+		HROD AB 4 A_FireSkullRodPL1
+		HROD B 0 A_ReFire
+		Goto Ready
+	Spawn:
+		WSKL A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor SkullRodPowered : SkullRod
+{
+	Weapon.AmmoUse1 5
+	Weapon.AmmoGive1 0
+	Weapon.SisterWeapon "SkullRod"
+	+Weapon.Powered_Up
+
+	action native A_FireSkullRodPL2();
+
+	states
+	{
+	Fire:
+		HROD C 2
+		HROD D 3
+		HROD E 2
+		HROD F 3
+		HROD G 4 A_FireSkullRodPL2
+		HROD F 2
+		HROD E 3
+		HROD D 2
+		HROD C 2 A_ReFire
+		Goto Super::Ready
 	}
 }
 
@@ -285,6 +653,46 @@ actor PhoenixPuff
 	{
 	Spawn:
 		FX04 BCDEF 4
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MacePowered : Mace
+{
+	Weapon.AmmoUse1 5
+	Weapon.AmmoGive1 0
+	Weapon.SisterWeapon "Mace"
+	+Weapon.Powered_Up
+
+	action native A_FireMacePL2();
+
+	states
+	{
+	Fire:
+	Hold:
+		MACE B 4
+		MACE D 4 A_FireMacePL2
+		MACE B 4
+		MACE A 8 A_ReFire
+		Goto Super::Ready
+	}
+}
+
+//------------------------------------------------------------------------------
+actor MaceSpawner 2002
+{
+	Game Heretic
+	+NoSector
+	+NoBlockmap
+
+	action native A_SpawnMace();
+
+	states
+	{
+	Spawn:
+		TNT1 A 1
+		TNT1 A -1 A_SpawnMace
 		Stop
 	}
 }

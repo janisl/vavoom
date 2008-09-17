@@ -23,66 +23,62 @@
 //**
 //**************************************************************************
 
-class PhoenixRod : HereticWeapon
-	__mobjinfo__(2003)
-	__scriptid__(29);
+class ArtiTeleport : Inventory
+	game(GAME_Raven)
+	__mobjinfo__(36)
+	__scriptid__(18);
 
-int FlameCount;	// for flame thrower duration
-
-//===========================================================================
+//==========================================================================
 //
-//  A_FirePhoenixPL1
+//	Use
 //
-//===========================================================================
+//==========================================================================
 
-final void A_FirePhoenixPL1() self(Actor)
+bool Use(bool Pickup)
 {
-	TVec vforward;
+	int i;
+	float destX;
+	float destY;
+	float destAngle;
 
-	if (!bIsPlayer)
+	if (Level.Game.deathmatch)
 	{
-		return;
+		i = P_Random() % Level.DeathmatchStarts.Num;
+		destX = Level.DeathmatchStarts[i].x;
+		destY = Level.DeathmatchStarts[i].y;
+		destAngle = itof(45 * (Level.DeathmatchStarts[i].angle / 45));
 	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	Wpn.DepleteAmmo(Wpn.FireMode);
-	SpawnPlayerMissile(PhoenixFX1);
-	AngleVector(&Angles, &vforward);
-	Velocity -= vforward * 140.0;
+	else
+	{
+		destX = Level.GetPlayerStart(0, 0)->x;
+		destY = Level.GetPlayerStart(0, 0)->y;
+		destAngle = itof(45 * (Level.GetPlayerStart(0, 0)->angle / 45));
+	}
+	EntityEx(Owner).Teleport(vector(destX, destY, EntityEx::ONFLOORZ),
+		destAngle, true, true, false);
+	if (PlayerEx(Owner.Player).MorphTime)
+	{
+		// Teleporting away will undo any morph effects
+		PlayerEx(Owner.Player).UndoPlayerMorph();
+	}
+	return true;
 }
 
 states
 {
-Ready:
-	PHNX A 1 A_WeaponReady
-	Loop
-Deselect:
-	PHNX A 1 A_Lower
-	Loop
-Select:
-	PHNX A 1 A_Raise
-	Loop
-Fire:
-	PHNX B 5
-	PHNX C 7 A_FirePhoenixPL1
-	PHNX DB 4
-	PHNX B 0 A_ReFire
-	Goto Ready
 Spawn:
-	WPHX A -1
-	Stop
+	ATLP ABCB 4
+	Loop
 }
 
 defaultproperties
 {
-	SelectionOrder = 2600;
-	AmmoType1 = PhoenixRodAmmo;
-	AmmoUse1 = 1;
-	AmmoGive1 = 2;
-	PSpriteSY = 15.0;
-	PickupMessage = "$txt_wpnphoenixrod";
-	SisterWeaponType = PhoenixRodPowered;
-	BotCombatDist = 256.0;
-	bNoAutoFire = true;
-	bBotProjectile = true;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'misc/p_pkup';
+	PickupMessage = "$txt_artiteleport";
+	IconName = 'artiatlp';
+	bCountItem = true;
+	bFloatBob = true;
+	PickupFlashType = PickupFlash;
+	bInvBar = true;
 }

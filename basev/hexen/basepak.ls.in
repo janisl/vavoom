@@ -31,7 +31,6 @@ progs/game/ArtiBoostArmor.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiBoostArmor
 progs/game/ArtiDarkServant.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiDarkServant.vc
 progs/game/ArtiHealingRadius.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiHealingRadius.vc
 progs/game/ArtiPoisonBag.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiPoisonBag.vc
-progs/game/ArtiTeleport.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiTeleport.vc
 progs/game/ArtiTeleportOther.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiTeleportOther.vc
 progs/game/BotPlayer.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/BotPlayer.vc
 progs/game/Bridge.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/Bridge.vc

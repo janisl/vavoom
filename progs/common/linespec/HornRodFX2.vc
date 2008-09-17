@@ -63,9 +63,9 @@ final void A_SkullRodPL2Seek()
 
 final void A_AddPlayerRain()
 {
-	Player player;
+	PlayerEx player;
 
-	player = Player(Target.Player);
+	player = PlayerEx(Target.Player);
 	if (!player || !player.bActive)
 	{
 		// Player left the game
@@ -129,13 +129,13 @@ final void A_SkullRodStorm()
 	float x;
 	float y;
 	Actor A;
-	Player player;
+	PlayerEx player;
 	class<Actor> rain_type;
 
 	if (Health-- == 0)
 	{
 		SetState(none);
-		player = Player(Target.Player);
+		player = PlayerEx(Target.Player);
 		if (!player || !player.bActive)
 		{
 			// Player left the game

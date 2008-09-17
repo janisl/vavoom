@@ -23,19 +23,38 @@
 //**
 //**************************************************************************
 
-class SkullRod : HereticWeapon
-	__mobjinfo__(2004)
-	__scriptid__(30);
+class PhoenixRodPowered : PhoenixRod;
 
 //===========================================================================
 //
-//  A_FireSkullRodPL1
+//  A_InitPhoenixPL2
 //
 //===========================================================================
 
-final void A_FireSkullRodPL1() self(Actor)
+final void A_InitPhoenixPL2() self(Actor)
 {
-	EntityEx	A;
+	if (!bIsPlayer)
+	{
+		return;
+	}
+	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+	PhoenixRod(Wpn).FlameCount = 10 * 35;
+}
+
+//===========================================================================
+//
+//  A_FirePhoenixPL2
+//
+//  Flame thrower effect.
+//
+//===========================================================================
+
+final void A_FirePhoenixPL2() self(Actor)
+{
+	Actor A;
+	TVec dir;
+	TVec org;
 
 	if (!bIsPlayer)
 	{
@@ -43,33 +62,38 @@ final void A_FireSkullRodPL1() self(Actor)
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	if (!Wpn.DepleteAmmo(Wpn.FireMode))
+	if (--PhoenixRod(Wpn).FlameCount == 0)
 	{
+		// Out of flame
+		Player.SetViewState(ps_weapon, Wpn.FindState('Shutdown'));
+		PlayerEx(Player).Refire = 0;
 		return;
 	}
-	A = SpawnPlayerMissile(HornRodFX1);
-	// Randomize the first frame
-	if (A && P_Random() > 128)
+	org.x = Origin.x + (Random() - Random()) * 2.0;
+	org.y = Origin.y + (Random() - Random()) * 2.0;
+	org.z = Origin.z + 26.0 - sin(Angles.pitch);
+	org.z -= FloorClip;
+	A = Spawn(PhoenixFX2, org);
+	A.Target = self;
+	A.Angles.yaw = Angles.yaw;
+	A.Angles.pitch = Angles.pitch;
+	AngleVector(&A.Angles, &dir);
+	A.Velocity = Velocity + A.Speed * dir;
+	if (!PlayerEx(Player).Refire || !(XLevel.TicTime % 38))
 	{
-		A.SetState(GetStatePlus(A.IdleState, 1));
+		PlaySound('weapons/phoenixpowshoot', CHAN_WEAPON);
 	}
+	A.CheckMissileSpawn();
 }
 
 //===========================================================================
 //
-//  A_FireSkullRodPL2
-//
-//  The special2 field holds the player number that shot the rain missile.
-// The specialmobj1 field is used for the seeking routines, special1 as a
-// counter for the sound looping.
+//  A_ShutdownPhoenixPL2
 //
 //===========================================================================
 
-final void A_FireSkullRodPL2() self(Actor)
+final void A_ShutdownPhoenixPL2() self(Actor)
 {
-	HornRodFX2	A;
-	EntityEx	AimTarget;
-
 	if (!bIsPlayer)
 	{
 		return;
@@ -77,57 +101,24 @@ final void A_FireSkullRodPL2() self(Actor)
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
 	Wpn.DepleteAmmo(Wpn.FireMode);
-	A = HornRodFX2(SpawnPlayerMissileEx(HornRodFX2, true, AimTarget));
-	// Use MissileMobj instead of the return value from
-	// SpawnPlayerMissile because we need to give info to the mobj
-	// even if it exploded immediately.
-	if (Level.Game.netgame)
-	{
-		// Multi-player game
-		A.RainColour = Player.GetPlayerNum();
-	}
-	else
-	{
-		// Always use red missiles in single player games
-		A.RainColour = 2;
-	}
-	if (AimTarget)
-	{
-		A.Tracer = AimTarget;
-		A.bSeekerMissile = true;
-	}
-	A.PlaySound('weapons/hornrodpowshoot', CHAN_WEAPON);
 }
 
 states
 {
-Ready:
-	HROD A 1 A_WeaponReady
-	Loop
-Deselect:
-	HROD A 1 A_Lower
-	Loop
-Select:
-	HROD A 1 A_Raise
-	Loop
 Fire:
-	HROD AB 4 A_FireSkullRodPL1
-	HROD B 0 A_ReFire
-	Goto Ready
-Spawn:
-	WSKL A -1
-	Stop
+	PHNX B 3 A_InitPhoenixPL2
+Hold:
+	PHNX C 1 Bright A_FirePhoenixPL2
+	PHNX B 4 A_ReFire
+Shutdown:
+	PHNX B 4 A_ShutdownPhoenixPL2
+	Goto Super::Ready
 }
 
 defaultproperties
 {
-	SelectionOrder = 200;
-	AmmoType1 = SkullRodAmmo;
 	AmmoUse1 = 1;
-	AmmoGive1 = 50;
-	PSpriteSY = 15.0;
-	PickupMessage = "$txt_wpnskullrod";
-	SisterWeaponType = SkullRodPowered;
-	BotCombatDist = 384.0;
-	bBotProjectile = true;
+	AmmoGive1 = 0;
+	SisterWeaponType = PhoenixRod;
+	bPoweredUp = true;
 }

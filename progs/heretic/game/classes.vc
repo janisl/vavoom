@@ -28,43 +28,11 @@ import 'linespec';
 #include "MainGameInfo.vc"
 #include "HereticLevelInfo.vc"
 #include "HereticWorldInfo.vc"
-#include "HereticWeapon.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 
-#include "Staff.vc"
-#include "StaffPowered.vc"
-#include "Gauntlets.vc"
-#include "GauntletsPowered.vc"
-#include "GoldWand.vc"
-#include "GoldWandPowered.vc"
-#include "Crossbow.vc"
-#include "CrossbowPowered.vc"
-#include "Ripper.vc"
-#include "BlasterFX1.vc"
-#include "Blaster.vc"
-#include "BlasterPowered.vc"
-#include "RainPillar.vc"
-#include "RainPlayer2.vc"
-#include "RainPlayer3.vc"
-#include "RainPlayer4.vc"
-#include "HornRodFX2.vc"
-#include "SkullRod.vc"
-#include "SkullRodPowered.vc"
-#include "PhoenixFX1.vc"
-#include "PhoenixFX2.vc"
-#include "PhoenixRod.vc"
-#include "PhoenixRodPowered.vc"
-#include "MaceFX4.vc"
-#include "MaceSpawner.vc"
-#include "Mace.vc"
-#include "MacePowered.vc"
-#include "Beak.vc"
-#include "BeakPowered.vc"
-
 #include "ArtiTomeOfPower.vc"
 #include "ArtiTimeBomb.vc"
-#include "ArtiTeleport.vc"
 
 #include "TeleportFog.vc"
 #include "BridgeBall.vc"
@@ -73,9 +41,7 @@ import 'linespec';
 #include "ChickenPlayer.vc"
 #include "Chicken.vc"
 #include "Minotaur.vc"
-#include "BossSpot.vc"
 #include "Sorcerer1.vc"
-#include "Sorcerer2.vc"
 
 class Blood : Actor decorate;
 class ArtiSuperHealth : HealthPickup decorate;
@@ -94,28 +60,15 @@ class EggFX : MorphProjectile decorate;
 class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
 class SorcererFX1 : Actor decorate;
-class Sorcerer2FX1 : Actor decorate;
-class Sorcerer2FX2 : Actor decorate;
-class Sorcerer2Telefade : Actor decorate;
-class StaffPuff : Actor decorate;
-class StaffPuff2 : Actor decorate;
-class GauntletPuff1 : Actor decorate;
-class GauntletPuff2 : Actor decorate;
-class GoldWandFX2 : Actor decorate;
-class GoldWandPuff1 : Actor decorate;
-class GoldWandPuff2 : Actor decorate;
-class CrossbowFX1 : Actor decorate;
-class CrossbowFX2 : Actor decorate;
-class CrossbowFX3 : Actor decorate;
-class CrossbowFX4 : Actor decorate;
-class BlasterPuff : Actor decorate;
-class BlasterSmoke : Actor decorate;
-class HornRodFX1 : Actor decorate;
 class PhoenixPuff : Actor decorate;
-class MaceFX1 : Actor decorate;
-class MaceFX2 : Actor decorate;
 class MaceFX3 : Actor decorate;
-class BeakPuff : Actor decorate;
 class ActivatedTimeBomb : Actor decorate;
 class Wizard : Actor decorate;
 class Ironlich : Actor decorate;
+class Staff : Weapon decorate;
+class Gauntlets : Weapon decorate;
+class GoldWand : Weapon decorate;
+class Crossbow : Weapon decorate;
+class Blaster : Weapon decorate;
+class SkullRod : Weapon decorate;
+class Beak : Weapon decorate;

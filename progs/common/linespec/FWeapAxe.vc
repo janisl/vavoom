@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class FWeapAxe : FighterWeapon
+	game(GAME_Hexen)
 	__mobjinfo__(8010)
 	__scriptid__(27);
 

@@ -23,31 +23,55 @@
 //**
 //**************************************************************************
 
-class GauntletsPowered : Gauntlets;
+class Ripper : Actor
+	game(GAME_Heretic)
+	__scriptid__(157);
+
+//==========================================================================
+//
+//  DoSpecialDamage
+//
+//==========================================================================
+
+int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
+{
+	if (victim.Class == Ironlich)
+	{
+		// Less damage to Ironlich bosses
+		damage = P_Random() & 1;
+		if (!damage)
+		{
+			return -1;
+		}
+	}
+	return ::DoSpecialDamage(victim, source, damage);
+}
 
 states
 {
-Ready:
-	GAUN GHI 4 A_WeaponReady
+Spawn:
+	FX18 M 4
+	FX18 N 5
 	Loop
-Deselect:
-	GAUN G 1 A_Lower
-	Loop
-Select:
-	GAUN G 1 A_Raise
-	Loop
-Fire:
-	GAUN J 4 A_GauntletSound
-	GAUN K 4
-Hold:
-	GAUN LMN 4 Bright A_GauntletAttack
-	GAUN K 4 A_ReFire
-	GAUN J 4 A_Light0
-	Goto Ready
+Death:
+	FX18 OPQRS 4 Bright
+	Stop
 }
 
 defaultproperties
 {
-	SisterWeaponType = Gauntlets;
-	bPoweredUp = true;
+	Radius = 8.0;
+	Height = 6.0;
+	Speed = 490.0;
+	MissileDamage = 1;
+	bMissile = true;
+	bNoBlockmap = true;
+	bNoGravity = true;
+	bDropOff = true;
+	bNoTeleport = true;
+	bActivatePCross = true;
+	bRip = true;
+	bActivateImpact = true;
+	bBloodSplatter = true;
+	DeathSound = 'weapons/blasterpowhit';
 }

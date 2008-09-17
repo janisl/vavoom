@@ -46,10 +46,13 @@ progs/linespec/AimingCamera.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Aimin
 progs/linespec/AmbientSound.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/AmbientSound.vc
 progs/linespec/Ammo.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Ammo.vc
 progs/linespec/Armor.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Armor.vc
+progs/linespec/ArtiTeleport.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiTeleport.vc
 progs/linespec/BackpackItem.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BackpackItem.vc
 progs/linespec/BasicArmor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BasicArmor.vc
 progs/linespec/BasicArmorBonus.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/BasicArmorBonus.vc
 progs/linespec/BasicArmorPickup.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/BasicArmorPickup.vc
+progs/linespec/BlasterFX1.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BlasterFX1.vc
+progs/linespec/BossSpot.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/BossSpot.vc
 progs/linespec/BrainState.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BrainState.vc
 progs/linespec/CeilingMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CeilingMover.vc
 progs/linespec/CeilingWaggle.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CeilingWaggle.vc
@@ -89,9 +92,11 @@ progs/linespec/GlowingLight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Glowi
 progs/linespec/HateTarget.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HateTarget.vc
 progs/linespec/Health.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Health.vc
 progs/linespec/HealthPickup.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HealthPickup.vc
+progs/linespec/HereticWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HereticWeapon.vc
 progs/linespec/HexenArmor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HexenArmor.vc
 progs/linespec/HexenWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HexenWeapon.vc
 progs/linespec/HolySpirit.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HolySpirit.vc
+progs/linespec/HornRodFX2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HornRodFX2.vc
 progs/linespec/IceChunk.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/IceChunk.vc
 progs/linespec/IceChunkHead.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/IceChunkHead.vc
 progs/linespec/InterpolationPoint.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/InterpolationPoint.vc
@@ -114,6 +119,8 @@ progs/linespec/LineSpecialLevelInfo.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec
 progs/linespec/LookAtCamera.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/LookAtCamera.vc
 progs/linespec/LoreShot.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/LoreShot.vc
 progs/linespec/LowerStackLookOnly.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/LowerStackLookOnly.vc
+progs/linespec/Mace.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Mace.vc
+progs/linespec/MaceFX4.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/MaceFX4.vc
 progs/linespec/Macil1.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Macil1.vc
 progs/linespec/MageStaffFX2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/MageStaffFX2.vc
 progs/linespec/MageWandMissile.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MageWandMissile.vc
@@ -128,6 +135,10 @@ progs/linespec/ParticleFountain.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Pa
 progs/linespec/PathFollower.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PathFollower.vc
 progs/linespec/PhasedLight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PhasedLight.vc
 progs/linespec/PickupFlash.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PickupFlash.vc
+progs/linespec/PhoenixFX1.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixFX1.vc
+progs/linespec/PhoenixFX2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixFX2.vc
+progs/linespec/PhoenixRod.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixRod.vc
+progs/linespec/PhoenixRodPowered.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixRodPowered.vc
 progs/linespec/Pillar.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pillar.vc
 progs/linespec/PlaneWatcher.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PlaneWatcher.vc
 progs/linespec/Platform.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Platform.vc
@@ -164,6 +175,11 @@ progs/linespec/PowerWeaponLevel2.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/P
 progs/linespec/Pusher.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pusher.vc
 progs/linespec/PuzzleItem.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PuzzleItem.vc
 progs/linespec/QuakeFocus.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/QuakeFocus.vc
+progs/linespec/RainPillar.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPillar.vc
+progs/linespec/RainPlayer2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer2.vc
+progs/linespec/RainPlayer3.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer3.vc
+progs/linespec/RainPlayer4.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer4.vc
+progs/linespec/Ripper.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Ripper.vc
 progs/linespec/ScriptedMarine.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ScriptedMarine.vc
 progs/linespec/Scroller.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Scroller.vc
 progs/linespec/SecActEnter.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SecActEnter.vc
@@ -186,6 +202,7 @@ progs/linespec/SectorThinker.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Sect
 progs/linespec/SecurityCamera.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SecurityCamera.vc
 progs/linespec/SkyPicker.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyPicker.vc
 progs/linespec/SkyViewpoint.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyViewpoint.vc
+progs/linespec/Sorcerer2.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Sorcerer2.vc
 progs/linespec/SoundEnvironment.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SoundEnvironment.vc
 progs/linespec/SoundSequence.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SoundSequence.vc
 progs/linespec/SoundSequenceSlot.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SoundSequenceSlot.vc

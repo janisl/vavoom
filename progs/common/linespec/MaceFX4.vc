@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class MaceFX4 : Actor
+	game(GAME_Heretic)
 	__scriptid__(153);
 
 //==========================================================================
@@ -54,7 +55,9 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 			damage = 10000;	// Something's gonna die
 	}
 	else
+	{
 		damage = 10000;	// Something's gonna die
+	}
 	return ::DoSpecialDamage(victim, source, damage);
 }
 

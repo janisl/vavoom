@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class Sorcerer2 : Actor
+	game(GAME_Heretic)
 	__scriptid__(143);
 
 int			BossSpotCount;
@@ -235,7 +236,7 @@ final void A_Srcr2Attack()
 final void A_Sor2DthInit()
 {
 	Special1 = 7;	// Animation loop counter
-	HereticLevelInfo(Level).P_Massacre();	// Kill monsters early
+	LineSpecialLevelInfo(Level).P_Massacre();	// Kill monsters early
 }
 
 //==========================================================================

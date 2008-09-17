@@ -34,7 +34,6 @@ import 'linespec';
 
 #include "ArtiDarkServant.vc"
 #include "ArtiTeleportOther.vc"
-#include "ArtiTeleport.vc"
 #include "ArtiPoisonBag.vc"
 #include "ArtiBoostArmor.vc"
 #include "ArtiBlastRadius.vc"

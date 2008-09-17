@@ -23,29 +23,9 @@
 //**
 //**************************************************************************
 
-class BlasterFX1 : Actor;
-
-//===========================================================================
-//
-//	SpawnBlasterEffects
-//
-//===========================================================================
-
-void SpawnBlasterEffects()
-{
-	TVec org;
-
-	if (P_Random() < 64)
-	{
-		org = Origin;
-		org.z = Origin.z - 8.0;
-		if (org.z < FloorZ)
-		{
-			org.z = FloorZ;
-		}
-		Spawn(BlasterSmoke, org);
-	}
-}
+class PhoenixFX1 : Actor
+	game(GAME_Heretic)
+	__scriptid__(163);
 
 //==========================================================================
 //
@@ -55,67 +35,70 @@ void SpawnBlasterEffects()
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
-	if (victim.Class == Ironlich)
+	if (victim.Class == Sorcerer2 && P_Random() < 96)
 	{
-		// Less damage to Ironlich bosses
-		damage = P_Random() & 1;
-		if (!damage)
-		{
-			return -1;
-		}
+		// D'Sparil teleports away
+		Sorcerer2(victim).DSparilTeleport();
+		return -1;
 	}
 	return ::DoSpecialDamage(victim, source, damage);
 }
 
 //===========================================================================
 //
-//  A_SpawnRippers
+//  A_PhoenixPuff
 //
 //===========================================================================
 
-final void A_SpawnRippers()
+final void A_PhoenixPuff()
 {
-	int i;
+	Actor puff;
 	float angle;
-	Actor ripper;
 
-	for (i = 0; i < 8; i++)
-	{
-		ripper = Spawn(Ripper, Origin);
-		angle = itof(i) * 45.0;
-		ripper.Target = Target;
-		ripper.Angles.yaw = angle;
-		ripper.Velocity.x = ripper.Speed * cos(angle);
-		ripper.Velocity.y = ripper.Speed * sin(angle);
-		ripper.CheckMissileSpawn();
-	}
+	SeekerMissile(5.0, 10.0);
+	puff = Spawn(PhoenixPuff, Origin);
+	angle = AngleMod360(Angles.yaw + 90.0);
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
+	puff = Spawn(PhoenixPuff, Origin);
+	angle = AngleMod360(Angles.yaw - 90.0);
+	puff.Velocity.x = 1.3 * cos(angle) * 35.0;
+	puff.Velocity.y = 1.3 * sin(angle) * 35.0;
+	puff.Velocity.z = 0.0;
 }
 
 states
 {
 Spawn:
-	ACLO E 200
+	FX04 A 4 Bright A_PhoenixPuff
 	Loop
 Death:
-	FX18 A 3 Bright A_SpawnRippers
-	FX18 B 3 Bright
-	FX18 CDEFG 4 Bright
+	FX08 A 6 Bright A_Explode
+	FX08 BC 5 Bright
+	FX08 DEFGH 4 Bright
 	Stop
 }
 
 defaultproperties
 {
-	Radius = 12.0;
+	Radius = 11.0;
 	Height = 8.0;
-	Speed = 6440.0;
-	MissileDamage = 2;
+	Speed = 700.0;
+	MissileDamage = 20;
+	RenderStyle = STYLE_Add;
 	bMissile = true;
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bDropOff = true;
 	bNoTeleport = true;
 	bActivatePCross = true;
+	bThruGhost = true;
 	bActivateImpact = true;
 	bBloodSplatter = true;
-	DeathSound = 'weapons/blasterhit';
+	DamageType = 'Fire';
+	bConditionalFireDamage = true;
+	bExplodeParticles = true;
+	SightSound = 'weapons/phoenixshoot';
+	DeathSound = 'weapons/phoenixhit';
 }

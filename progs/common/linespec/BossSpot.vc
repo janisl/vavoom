@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class BossSpot : Actor
+	game(GAME_Heretic)
 	__mobjinfo__(56)
 	__scriptid__(141);
 

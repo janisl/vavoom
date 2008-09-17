@@ -1,4 +1,50 @@
 //------------------------------------------------------------------------------
+actor Beak : HereticWeapon
+{
+	Weapon.SelectionOrder 10000
+	Weapon.YAdjust 15
+	Weapon.SisterWeapon "BeakPowered"
+	Weapon.BotCombatDist 1
+	+Weapon.MeleeWeapon
+	+Weapon.DontBob
+
+	action native A_BeakRaise();
+	action native A_BeakAttackPL1();
+
+	states
+	{
+	Ready:
+		BEAK A 1 A_WeaponReady
+		Loop
+	Deselect:
+		BEAK A 1 A_Lower
+		Loop
+	Select:
+		BEAK A 1 A_BeakRaise
+		Loop
+	Fire:
+		BEAK A 18 A_BeakAttackPL1
+		Goto Ready
+	}
+}
+
+//------------------------------------------------------------------------------
+actor BeakPowered : Beak
+{
+	Weapon.SisterWeapon "Beak"
+	+Weapon.Powered_Up
+
+	action native A_BeakAttackPL2();
+
+	states
+	{
+	Fire:
+		BEAK A 12 A_BeakAttackPL2
+		Goto Super::Ready
+	}
+}
+
+//------------------------------------------------------------------------------
 actor BeakPuff : StaffPuff
 {
 	Mass 5
