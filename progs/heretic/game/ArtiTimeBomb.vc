@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class ArtiTimeBomb : Inventory
+	game(GAME_Heretic)
 	__mobjinfo__(34)
 	__scriptid__(72);
 

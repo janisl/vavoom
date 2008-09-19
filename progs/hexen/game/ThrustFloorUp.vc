@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class ThrustFloorUp : ThrustFloorDown
+	game(GAME_Hexen)
 	__mobjinfo__(10091)
 	__scriptid__(104);
 

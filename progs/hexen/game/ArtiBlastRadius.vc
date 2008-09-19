@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class ArtiBlastRadius : Inventory
+	game(GAME_Hexen)
 	__mobjinfo__(10110)
 	__scriptid__(74);
 

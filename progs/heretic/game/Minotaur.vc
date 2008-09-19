@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class Minotaur : Actor
+	game(GAME_Heretic)
 	__mobjinfo__(9);
 
 float ChargeSpeed;

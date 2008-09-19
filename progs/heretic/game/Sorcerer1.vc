@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class Sorcerer1 : Actor
+	game(GAME_Heretic)
 	__mobjinfo__(7)
 	__scriptid__(142);
 

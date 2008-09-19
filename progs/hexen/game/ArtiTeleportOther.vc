@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class ArtiTeleportOther : Inventory
+	game(GAME_Hexen)
 	__mobjinfo__(10040)
 	__scriptid__(17);
 

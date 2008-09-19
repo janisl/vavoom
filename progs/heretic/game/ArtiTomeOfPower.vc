@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class ArtiTomeOfPower : PowerupGiver
+	game(GAME_Heretic)
 	__mobjinfo__(86)
 	__scriptid__(134);
 

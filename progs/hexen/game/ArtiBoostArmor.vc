@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class ArtiBoostArmor : Inventory
+	game(GAME_Hexen)
 	__mobjinfo__(8041)
 	__scriptid__(22);
 

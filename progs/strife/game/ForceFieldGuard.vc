@@ -24,6 +24,7 @@
 //**************************************************************************
 
 class ForceFieldGuard : Actor
+	game(GAME_Strife)
 	__mobjinfo__(25);
 
 states
