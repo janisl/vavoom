@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class ClientGame : ClientGameBaseEx;
+class ClientGame : ClientGameShared;
 
 TitleScreen			GTitle;
 IntermissionScreen	GImission;

@@ -56,15 +56,15 @@ void Died(EntityEx source, EntityEx inflictor)
 
 	//	Temporarely link it to the world, since we need sector
 	LinkToWorld();
-	StrifeLevelInfo(Level).NoiseAlert(source, self);
+	LineSpecialLevelInfo(Level).NoiseAlert(source, self);
 	UnlinkFromWorld();
-	StrifeLevelInfo(Level).EV_DoDoor(225, 16, 0, 0, 0,
+	LineSpecialLevelInfo(Level).EV_DoDoor(225, 16, 0, 0, 0,
 		VerticalDoor::DOOREV_Close, NULL, Actor(Level.Game.Players[i].MO));
-	StrifeLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0,
+	LineSpecialLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0,
 		FloorMover::FLOOREV_LowerToHighest, NULL);
 	EntityEx(Level.Game.Players[i].MO).GiveInventoryType(QuestItem6);
-	Player(Level.Game.Players[i]).ClientVoice(13);
-	Player(Level.Game.Players[i]).SetObjectives(13);
+	PlayerEx(Level.Game.Players[i]).ClientVoice(13);
+	PlayerEx(Level.Game.Players[i]).SetObjectives(13);
 	Spawn(BrokenPowerCoupling, Origin);
 }
 

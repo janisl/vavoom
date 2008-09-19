@@ -10,3 +10,17 @@ actor DirtClump
 		Loop
 	}
 }
+
+//------------------------------------------------------------------------------
+actor ThrustFloorUp : ThrustFloorDown 10091
+{
+	Game Hexen
+	SpawnID 104
+	+Solid
+	-Invisible
+	states
+	{
+	Spawn:
+		Goto Super::Up
+	}
+}

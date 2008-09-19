@@ -27,6 +27,22 @@ class ForceFieldGuard : Actor
 	game(GAME_Strife)
 	__mobjinfo__(25);
 
+//==========================================================================
+//
+//  TakeSpecialDamage
+//
+//==========================================================================
+
+int TakeSpecialDamage(EntityEx inflictor, EntityEx source, int damage,
+	name DmgType)
+{
+	if (!DegninOre(inflictor))
+	{
+		return -1;
+	}
+	return Health;
+}
+
 states
 {
 Spawn:

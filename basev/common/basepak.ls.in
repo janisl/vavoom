@@ -94,6 +94,7 @@ progs/linespec/FireFlicker.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FireFl
 progs/linespec/FlashFader.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FlashFader.vc
 progs/linespec/FloorMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FloorMover.vc
 progs/linespec/FloorWaggle.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FloorWaggle.vc
+progs/linespec/ForceFieldGuard.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ForceFieldGuard.vc
 progs/linespec/FourthWeaponHolder.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/FourthWeaponHolder.vc
 progs/linespec/FourthWeaponPiece.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/FourthWeaponPiece.vc
 progs/linespec/FrostMissile.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FrostMissile.vc
@@ -174,6 +175,8 @@ progs/linespec/PolyobjDoor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Polyob
 progs/linespec/PolyobjMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjMover.vc
 progs/linespec/PolyobjRotator.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjRotator.vc
 progs/linespec/PolyobjThinker.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjThinker.vc
+progs/linespec/Pottery1.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pottery1.vc
+progs/linespec/PowerCoupling.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerCoupling.vc
 progs/linespec/PowerFlight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerFlight.vc
 progs/linespec/PowerGhost.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerGhost.vc
 progs/linespec/PowerInvisibility.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInvisibility.vc
@@ -246,6 +249,7 @@ progs/linespec/TeleportDest3.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Tele
 progs/linespec/TeleporterBeacon.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleporterBeacon.vc
 progs/linespec/TelOtherFX1.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TelOtherFX1.vc
 progs/linespec/TextureChangeDoor.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/TextureChangeDoor.vc
+progs/linespec/ThrustFloorDown.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ThrustFloorDown.vc
 progs/linespec/UpgradeAccuracy.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/UpgradeAccuracy.vc
 progs/linespec/UpgradeStamina.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/UpgradeStamina.vc
 progs/linespec/UpperStackLookOnly.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/UpperStackLookOnly.vc
@@ -258,7 +262,9 @@ progs/linespec/WeaponHolder.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Weapo
 progs/linespec/WeaponPiece.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/WeaponPiece.vc
 progs/linespec/Whirlwind.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Whirlwind.vc
 progs/linespec/WorldInfoEx.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/WorldInfoEx.vc
+progs/linespec/ZBell.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/ZBell.vc
 progs/linespec/ZBridge.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/ZBridge.vc
+progs/linespec/ZCorpseLynchedNoHeart.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/ZCorpseLynchedNoHeart.vc
 
 //	Common UI classes
 progs/uibase/classes.vc							@CMAKE_SOURCE_DIR@/progs/common/uibase/classes.vc

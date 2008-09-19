@@ -284,6 +284,10 @@ enum
 #include "ArtiBoostArmor.vc"
 #include "ArtiBlastRadius.vc"
 #include "ArtiHealingRadius.vc"
+#include "ZCorpseLynchedNoHeart.vc"
+#include "Pottery1.vc"
+#include "ZBell.vc"
+#include "ThrustFloorDown.vc"
 
 #include "Coin.vc"
 #include "Meat.vc"
@@ -309,6 +313,8 @@ enum
 #include "TeleporterBeacon.vc"
 #include "PrisonPass.vc"
 #include "HealthTraining.vc"
+#include "ForceFieldGuard.vc"
+#include "PowerCoupling.vc"
 
 class Blood : Actor decorate;
 class BloodSplatter : Actor decorate;
@@ -485,6 +491,10 @@ class PoisonBag : Actor decorate;
 class FireBomb : Actor decorate;
 class ThrowingBomb : Actor decorate;
 class BlastEffect : Actor decorate;
+class BloodPool : Actor decorate;
+class CorpseBloodDrip : Actor decorate;
+class PotteryBit : Actor decorate;
+class DirtClump : Actor decorate;
 
 class MedicalKit : HealthPickup decorate;
 class MedPatch : HealthPickup decorate;
@@ -493,6 +503,7 @@ class LeatherArmor : BasicArmorPickup decorate;
 class Gold10 : Coin decorate;
 class Gold25 : Coin decorate;
 class Gold50 : Coin decorate;
+class QuestItem6 : Inventory decorate;
 class QuestItem7 : Inventory decorate;
 class QuestItem17 : Inventory decorate;
 class QuestItem21 : Inventory decorate;
@@ -555,3 +566,4 @@ class Sigil5 : Sigil decorate;
 class ClipOfBullets : Ammo decorate;
 class Rebel1 : Actor decorate;
 class GunTraining : Inventory decorate;
+class BrokenPowerCoupling : Inventory decorate;

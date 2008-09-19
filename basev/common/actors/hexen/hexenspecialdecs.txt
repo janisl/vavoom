@@ -298,6 +298,33 @@ actor HWaterDrip
 }
 
 //------------------------------------------------------------------------------
+actor Pottery2 : Pottery1 105
+{
+	Game Hexen
+	Height 25
+	states
+	{
+	Spawn:
+		POT2 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor Pottery3 : Pottery1 106
+{
+	Game Hexen
+	Radius 15
+	Height 25
+	states
+	{
+	Spawn:
+		POT3 A -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor PotteryBit
 {
 	Radius 5

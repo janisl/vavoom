@@ -37,14 +37,6 @@ import 'linespec';
 #include "TeleportFog.vc"
 #include "PlayerSpeed.vc"
 
-#include "ZCorpseLynchedNoHeart.vc"
-#include "ThrustFloorDown.vc"
-#include "ThrustFloorUp.vc"
-#include "Pottery1.vc"
-#include "Pottery2.vc"
-#include "Pottery3.vc"
-#include "ZBell.vc"
-
 #include "PigPlayer.vc"
 
 #include "Pig.vc"
@@ -81,10 +73,6 @@ class MinotaurSmoke : Actor decorate;
 class MinotaurSmokeExit : Actor decorate;
 class PunchPuff : Actor decorate;
 class HolyMissile : Actor decorate;
-class PotteryBit : Actor decorate;
-class BloodPool : Actor decorate;
-class CorpseBloodDrip : Actor decorate;
-class DirtClump : Actor decorate;
 class FWeapFist : Weapon decorate;
 class FWeapHammer : Weapon decorate;
 class FWeapQuietus : Weapon decorate;
