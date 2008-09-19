@@ -55,7 +55,7 @@ bool Use(bool Pickup)
 {
 	//	Increase item count because ItemThrow also decreases it.
 	Amount++;
-	EntityEx A = Player(Owner.Player).InventoryThrow();
+	EntityEx A = PlayerEx(Owner.Player).InventoryThrow();
 	if (A)
 	{
 		A.SetState(A.SeeState);
@@ -127,7 +127,7 @@ final void A_SummonRebel()
 	A.SetState (A.SeeState);
 	A.Angles = Angles;
 
-	TFog = Spawn(TeleportFog, A.Origin);
+	TFog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, A.Origin);
 	TFog.PlaySound('misc/teleport', CHAN_BODY);
 
 	Health--;

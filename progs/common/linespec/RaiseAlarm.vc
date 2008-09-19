@@ -23,39 +23,37 @@
 //**
 //**************************************************************************
 
-class PoisonBag : Actor;
+class RaiseAlarm : DummyStrifeItem;
 
-//===========================================================================
+//==========================================================================
 //
-//  A_PoisonBagInit
+//	TryPickup
 //
-//===========================================================================
+//==========================================================================
 
-final void A_PoisonBagInit()
+bool TryPickup(EntityEx Toucher)
 {
-	Actor A;
-
-	A = Spawn(PoisonCloud, Origin + vector(0.0, 0.0, 28.0));
-	if (A)
-	{
-		PoisonCloud(A).InitCloud(Actor(Target));
-	}
+	LineSpecialLevelInfo(Level).NoiseAlert(Toucher, Toucher);
+	GoAwayAndDie();
+	return true;
 }
 
-states
+//==========================================================================
+//
+//	SpecialDropAction
+//
+//==========================================================================
+
+bool SpecialDropAction(EntityEx Dropper)
 {
-Spawn:
-	PSBG A 18 Bright
-	PSBG B 4 Bright
-	PSBG C 3
-	PSBG C 1 A_PoisonBagInit
-	Stop
+	LineSpecialLevelInfo(Level).NoiseAlert(Dropper.Target, Dropper.Target);
+	Dropper.Target.Player.cprint("You Fool!  You\'ve set off the alarm.");
+	Destroy();
+	return true;
 }
 
 defaultproperties
 {
-	Radius = 5.0;
-	Height = 5.0;
-	bNoBlockmap = true;
-	bNoGravity = true;
+	ConversationID = 301;
+	PickupMessage = "alarm";
 }

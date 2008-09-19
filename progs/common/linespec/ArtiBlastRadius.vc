@@ -46,7 +46,7 @@ bool Use(bool Pickup)
 	float dist;
 
 	Owner.PlaySound('BlastRadius', CHAN_ITEM);
-	HexenLevelInfo(Level).NoiseAlert(EntityEx(Owner), EntityEx(Owner));
+	LineSpecialLevelInfo(Level).NoiseAlert(EntityEx(Owner), EntityEx(Owner));
 
 	foreach AllThinkers(Actor, mo)
 	{
@@ -122,7 +122,7 @@ final void Blast(Actor victim, Actor source, float strength)
 	{
 		if (victim.bMissile)
 		{
-			if (SorcBall(victim))
+			if (victim.IsA('SorcBall'))
 			{
 				// don't blast sorcerer balls
 				return;

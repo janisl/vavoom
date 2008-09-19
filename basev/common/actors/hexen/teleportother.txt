@@ -1,0 +1,51 @@
+//------------------------------------------------------------------------------
+actor TelOtherFX2 : TelOtherFX1
+{
+	Speed 16
+
+	action native A_CheckTeleRing();
+
+	states
+	{
+	Spawn:
+		TRNG BCDCB 4 Bright
+		TRNG A 4 Bright A_CheckTeleRing
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor TelOtherFX3 : TelOtherFX2
+{
+	states
+	{
+	Spawn:
+		TRNG CDCBA 4 Bright
+		TRNG B 4 Bright A_CheckTeleRing
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor TelOtherFX4 : TelOtherFX2
+{
+	states
+	{
+	Spawn:
+		TRNG DCBAB 4 Bright
+		TRNG C 4 Bright A_CheckTeleRing
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor TelOtherFX5 : TelOtherFX2
+{
+	states
+	{
+	Spawn:
+		TRNG CBABC 4 Bright
+		TRNG D 4 Bright A_CheckTeleRing
+		Loop
+	}
+}

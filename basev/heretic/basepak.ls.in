@@ -26,8 +26,6 @@ progs/cgame/TitleScreen.vc					@CMAKE_SOURCE_DIR@/progs/heretic/cgame/TitleScree
 
 //	Server progs
 progs/game/classes.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/classes.vc
-progs/game/ArtiTimeBomb.vc		@CMAKE_SOURCE_DIR@/progs/heretic/game/ArtiTimeBomb.vc
-progs/game/ArtiTomeOfPower.vc	@CMAKE_SOURCE_DIR@/progs/heretic/game/ArtiTomeOfPower.vc
 progs/game/BotPlayer.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/BotPlayer.vc
 progs/game/Chicken.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/Chicken.vc
 progs/game/ChickenPlayer.vc		@CMAKE_SOURCE_DIR@/progs/heretic/game/ChickenPlayer.vc

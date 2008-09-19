@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class RaiseAlarm : DummyStrifeItem;
+class CloseDoor222 : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -33,7 +33,8 @@ class RaiseAlarm : DummyStrifeItem;
 
 bool TryPickup(EntityEx Toucher)
 {
-	StrifeLevelInfo(Level).NoiseAlert(Toucher, Toucher);
+	Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0, NULL, 0,
+		Toucher);
 	GoAwayAndDie();
 	return true;
 }
@@ -46,14 +47,15 @@ bool TryPickup(EntityEx Toucher)
 
 bool SpecialDropAction(EntityEx Dropper)
 {
-	StrifeLevelInfo(Level).NoiseAlert(Dropper.Target, Dropper.Target);
-	Dropper.Target.Player.cprint("You Fool!  You\'ve set off the alarm.");
+	Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0, NULL, 0,
+		Dropper.Target);
+	Dropper.Target.Player.cprint("You\'re dead!  You set off the alarm.");
+	LineSpecialLevelInfo(Level).NoiseAlert(Dropper.Target, Dropper.Target);
 	Destroy();
 	return true;
 }
 
 defaultproperties
 {
-	ConversationID = 301;
-	PickupMessage = "alarm";
+	ConversationID = 303;
 }

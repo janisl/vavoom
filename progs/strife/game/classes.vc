@@ -38,32 +38,15 @@ import 'uibase';
 #include "TeleportFog.vc"
 #include "ForceFieldGuard.vc"
 
-#include "DegninOre.vc"
-#include "Scanner.vc"
-#include "TeleporterBeacon.vc"
-#include "AmmoFillup.vc"
-#include "HealthFillup.vc"
-#include "RaiseAlarm.vc"
-#include "OpenDoor222.vc"
-#include "CloseDoor222.vc"
-#include "PrisonPass.vc"
-#include "OpenDoor224.vc"
-#include "HealthTraining.vc"
-#include "GunTraining.vc"
-#include "SlideshowStarter.vc"
-
 #include "PowerCoupling.vc"
 
 #include "ClientGameBaseEx.vc"
 
 class QuestItem6 : Inventory decorate;
-class QuestItem17 : Inventory decorate;
-class ClipOfBullets : Ammo decorate;
 class AmmoSatchel : BackpackItem decorate;
 class Communicator : Inventory decorate;
 class BrokenPowerCoupling : Inventory decorate;
 class StrifePlayer : PlayerPawn decorate;
-class Rebel1 : Actor decorate;
 class PunchDagger : Weapon decorate;
 class StrifeCrossbow : Weapon decorate;
 class StrifeCrossbow2 : Weapon decorate;

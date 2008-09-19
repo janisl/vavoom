@@ -23,64 +23,44 @@
 //**
 //**************************************************************************
 
-class ZPoisonShroom : Actor
-	game(GAME_Hexen)
-	__mobjinfo__(8104);
+class HealthTraining : Inventory;
 
-//===========================================================================
+//==========================================================================
 //
-//  A_PoisonShroom
+//	TryPickup
 //
-//===========================================================================
+//==========================================================================
 
-final void A_PoisonShroom()
+bool TryPickup(EntityEx Toucher)
 {
-	StateTime = 4.0 + Random() * 16.0;
-}
-
-//===========================================================================
-//
-//  A_PoisonBagInit
-//
-//===========================================================================
-
-final void A_PoisonBagInit()
-{
-	Actor A;
-
-	A = Spawn(PoisonCloud, Origin + vector(0.0, 0.0, 28.0));
-	if (A)
+	if (::TryPickup(Toucher))
 	{
-		PoisonCloud(A).InitCloud(Actor(Target));
+		Toucher.GiveInventoryType(GunTraining);
+		Inventory Item = Spawn(Coin,,,, false);
+		Item.Amount = PlayerEx(Toucher.Player).Accuracy * 5 + 300;
+		if (!Item.TryPickup(Toucher))
+		{
+			Item.Destroy();
+		}
+		return true;
 	}
+	return false;
 }
 
 states
 {
 Spawn:
-	SHRM A 5 A_PoisonShroom
-	Goto Pain+1
-Pain:
-	SHRM A 6
-	SHRM B 8 A_Pain
-	Goto Spawn
-Death:
-	SHRM CD 5
-	SHRM E 5 A_PoisonBagInit
-	SHRM F -1
+	HELT A -1
 	Stop
 }
 
 defaultproperties
 {
-	Health = 30;
-	Radius = 6.0;
-	Height = 20.0;
-	Mass = 99999.0;
-	PainChance = 1.0;
-	bSolid = true;
-	bShootable = true;
-	bNoBlood = true;
-	PainSound = 'PoisonShroomPain';
-	DeathSound = 'PoisonShroomDeath';
+	ConversationID = 309;
+	PickupMessage = "Toughness";
+	MaxAmount = 100;
+	IconName = 'i_helt';
+	bFloorClip = true;
+	bInvBar = true;
+	bUndroppable = true;
 }

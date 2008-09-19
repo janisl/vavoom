@@ -50,7 +50,7 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (victim.bIsPlayer)
 	{
-		if (Player(victim.Player).PoisonCount < 4)
+		if (PlayerEx(victim.Player).PoisonCount < 4)
 		{
 			Actor(victim).PoisonDamage(Actor(source), Actor(source),
 				15 + (P_Random() & 15), false);	// Don't play painsound

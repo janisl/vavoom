@@ -33,20 +33,9 @@ import 'linespec';
 #include "BotPlayer.vc"
 
 #include "ArtiDarkServant.vc"
-#include "ArtiTeleportOther.vc"
-#include "ArtiPoisonBag.vc"
-#include "ArtiBoostArmor.vc"
-#include "ArtiBlastRadius.vc"
-#include "ArtiHealingRadius.vc"
 
 #include "TeleportFog.vc"
 #include "PlayerSpeed.vc"
-
-#include "TelOtherFX1.vc"
-#include "TelOtherFX2.vc"
-#include "TelOtherFX3.vc"
-#include "TelOtherFX4.vc"
-#include "TelOtherFX5.vc"
 
 #include "ZCorpseLynchedNoHeart.vc"
 #include "ThrustFloorDown.vc"
@@ -55,9 +44,6 @@ import 'linespec';
 #include "Pottery2.vc"
 #include "Pottery3.vc"
 #include "ZBell.vc"
-#include "PoisonCloud.vc"
-#include "PoisonBag.vc"
-#include "ZPoisonShroom.vc"
 
 #include "PigPlayer.vc"
 
@@ -75,7 +61,6 @@ import 'linespec';
 #include "SummoningDoll.vc"
 
 class ArtiHealth : HealthPickup decorate;
-class ArtiSuperHealth : HealthPickup decorate;
 class Mana1 : Ammo decorate;
 class Mana2 : Ammo decorate;
 class ArtiInvulnerability : PowerupGiver decorate;
@@ -84,8 +69,6 @@ class ClericPlayer : PlayerPawn decorate;
 class MagePlayer : PlayerPawn decorate;
 class ArtiPork : CustomInventory decorate;
 class PorkFX : MorphProjectile decorate;
-
-class FireDemonMissile : Actor decorate;
 class Bishop : Actor decorate;
 class SorcFX1 : Actor decorate;
 class SorcFX2 : Actor decorate;
@@ -97,20 +80,11 @@ class MinotaurFX2 : Actor decorate;
 class MinotaurSmoke : Actor decorate;
 class MinotaurSmokeExit : Actor decorate;
 class PunchPuff : Actor decorate;
-class HammerPuff : Actor decorate;
 class HolyMissile : Actor decorate;
-class HolyTail : Actor decorate;
-class HolyTailTrail : Actor decorate;
-class BlastEffect : Actor decorate;
-class FireBomb : Actor decorate;
-class ThrowingBomb : Actor decorate;
 class PotteryBit : Actor decorate;
 class BloodPool : Actor decorate;
 class CorpseBloodDrip : Actor decorate;
 class DirtClump : Actor decorate;
-class LightningCeiling : Lightning decorate;
-class LightningFloor : Lightning decorate;
-
 class FWeapFist : Weapon decorate;
 class FWeapHammer : Weapon decorate;
 class FWeapQuietus : Weapon decorate;

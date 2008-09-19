@@ -45,8 +45,16 @@ progs/linespec/ActorMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ActorMo
 progs/linespec/AimingCamera.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/AimingCamera.vc
 progs/linespec/AmbientSound.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/AmbientSound.vc
 progs/linespec/Ammo.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Ammo.vc
+progs/linespec/AmmoFillup.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/AmmoFillup.vc
 progs/linespec/Armor.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Armor.vc
+progs/linespec/ArtiBlastRadius.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiBlastRadius.vc
+progs/linespec/ArtiBoostArmor.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiBoostArmor.vc
+progs/linespec/ArtiHealingRadius.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiHealingRadius.vc
+progs/linespec/ArtiPoisonBag.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiPoisonBag.vc
 progs/linespec/ArtiTeleport.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiTeleport.vc
+progs/linespec/ArtiTeleportOther.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiTeleportOther.vc
+progs/linespec/ArtiTimeBomb.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiTimeBomb.vc
+progs/linespec/ArtiTomeOfPower.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiTomeOfPower.vc
 progs/linespec/BackpackItem.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BackpackItem.vc
 progs/linespec/BasicArmor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BasicArmor.vc
 progs/linespec/BasicArmorBonus.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/BasicArmorBonus.vc
@@ -61,9 +69,11 @@ progs/linespec/CeilingWaggle.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Ceil
 progs/linespec/CFlameMissile.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CFlameMissile.vc
 progs/linespec/ClericWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ClericWeapon.vc
 progs/linespec/ClericWeaponPiece.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ClericWeaponPiece.vc
+progs/linespec/CloseDoor222.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CloseDoor222.vc
 progs/linespec/Coin.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Coin.vc
 progs/linespec/CustomInventory.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/CustomInventory.vc
 progs/linespec/CWeapWraithverge.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/CWeapWraithverge.vc
+progs/linespec/DegninOre.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/DegninOre.vc
 progs/linespec/DoomBuilderCamera.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/DoomBuilderCamera.vc
 progs/linespec/DummyStrifeItem.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/DummyStrifeItem.vc
 progs/linespec/DynamicLight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/DynamicLight.vc
@@ -93,7 +103,9 @@ progs/linespec/GlassShard.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/GlassSh
 progs/linespec/GlowingLight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/GlowingLight.vc
 progs/linespec/HateTarget.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HateTarget.vc
 progs/linespec/Health.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Health.vc
+progs/linespec/HealthFillup.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HealthFillup.vc
 progs/linespec/HealthPickup.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HealthPickup.vc
+progs/linespec/HealthTraining.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/HealthTraining.vc
 progs/linespec/HereticWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HereticWeapon.vc
 progs/linespec/HexenArmor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HexenArmor.vc
 progs/linespec/HexenWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HexenWeapon.vc
@@ -132,6 +144,8 @@ progs/linespec/MapRevealer.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/MapRev
 progs/linespec/Meat.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Meat.vc
 progs/linespec/MorphProjectile.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MorphProjectile.vc
 progs/linespec/MWeapBloodscourge.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MWeapBloodscourge.vc
+progs/linespec/OpenDoor222.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/OpenDoor222.vc
+progs/linespec/OpenDoor224.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/OpenDoor224.vc
 progs/linespec/Oracle.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Oracle.vc
 progs/linespec/ParticleFountain.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ParticleFountain.vc
 progs/linespec/PathFollower.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PathFollower.vc
@@ -155,6 +169,7 @@ progs/linespec/PointLightPulse.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Poi
 progs/linespec/PointPuller.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PointPuller.vc
 progs/linespec/PointPusher.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PointPusher.vc
 progs/linespec/PoisonBolt.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PoisonBolt.vc
+progs/linespec/PoisonCloud.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PoisonCloud.vc
 progs/linespec/PolyobjDoor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjDoor.vc
 progs/linespec/PolyobjMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjMover.vc
 progs/linespec/PolyobjRotator.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjRotator.vc
@@ -176,6 +191,7 @@ progs/linespec/PowerTorch.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerTo
 progs/linespec/Powerup.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Powerup.vc
 progs/linespec/PowerupGiver.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerupGiver.vc
 progs/linespec/PowerWeaponLevel2.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerWeaponLevel2.vc
+progs/linespec/PrisonPass.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PrisonPass.vc
 progs/linespec/Pusher.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pusher.vc
 progs/linespec/PuzzleItem.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PuzzleItem.vc
 progs/linespec/QuakeFocus.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/QuakeFocus.vc
@@ -183,7 +199,9 @@ progs/linespec/RainPillar.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPil
 progs/linespec/RainPlayer2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer2.vc
 progs/linespec/RainPlayer3.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer3.vc
 progs/linespec/RainPlayer4.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer4.vc
+progs/linespec/RaiseAlarm.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RaiseAlarm.vc
 progs/linespec/Ripper.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Ripper.vc
+progs/linespec/Scanner.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Scanner.vc
 progs/linespec/ScriptedMarine.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ScriptedMarine.vc
 progs/linespec/Scroller.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Scroller.vc
 progs/linespec/SecActEnter.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SecActEnter.vc
@@ -207,6 +225,7 @@ progs/linespec/SecurityCamera.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Secu
 progs/linespec/Sigil.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Sigil.vc
 progs/linespec/SkyPicker.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyPicker.vc
 progs/linespec/SkyViewpoint.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyViewpoint.vc
+progs/linespec/SlideshowStarter.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SlideshowStarter.vc
 progs/linespec/Sorcerer2.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Sorcerer2.vc
 progs/linespec/SoundEnvironment.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SoundEnvironment.vc
 progs/linespec/SoundSequence.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SoundSequence.vc
@@ -224,6 +243,8 @@ progs/linespec/SwitchingDecoration.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/
 progs/linespec/TeleportDest.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleportDest.vc
 progs/linespec/TeleportDest2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleportDest2.vc
 progs/linespec/TeleportDest3.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleportDest3.vc
+progs/linespec/TeleporterBeacon.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleporterBeacon.vc
+progs/linespec/TelOtherFX1.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TelOtherFX1.vc
 progs/linespec/TextureChangeDoor.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/TextureChangeDoor.vc
 progs/linespec/UpgradeAccuracy.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/UpgradeAccuracy.vc
 progs/linespec/UpgradeStamina.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/UpgradeStamina.vc
@@ -433,6 +454,7 @@ actors/hexen/serpent.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/serpent.txt
 actors/hexen/speedboots.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/speedboots.txt
 actors/hexen/spike.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/spike.txt
 actors/hexen/summon.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/summon.txt
+actors/hexen/teleportother.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/teleportother.txt
 actors/hexen/wraith.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/wraith.txt
 actors/raven/artiegg.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/artiegg.txt
 actors/raven/minotaur.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/raven/minotaur.txt

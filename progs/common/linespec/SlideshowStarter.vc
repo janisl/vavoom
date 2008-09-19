@@ -23,16 +23,32 @@
 //**
 //**************************************************************************
 
-class TelOtherFX3 : TelOtherFX2;
+class SlideshowStarter : DummyStrifeItem;
 
-states
+//==========================================================================
+//
+//	TryPickup
+//
+//==========================================================================
+
+bool TryPickup(EntityEx Toucher)
 {
-Spawn:
-	TRNG CDCBA 4 Bright
-	TRNG B 4 Bright A_CheckTeleRing
-	Loop
+	if (XLevel.MapName == 'map03')
+	{
+		LineSpecialLevelInfo(Level).ConversationSlideshow = true;
+		PlayerEx(Toucher.Player).ClientSlideshow1();
+	}
+	else if (XLevel.MapName == 'map10')
+	{
+		LineSpecialLevelInfo(Level).ConversationSlideshow = true;
+		PlayerEx(Toucher.Player).ClientSlideshow2();
+		Toucher.GiveInventoryType(QuestItem17);
+	}
+	GoAwayAndDie();
+	return true;
 }
 
 defaultproperties
 {
+	ConversationID = 343;
 }

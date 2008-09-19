@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class HealthTraining : Inventory;
+class AmmoFillup : DummyStrifeItem;
 
 //==========================================================================
 //
@@ -33,34 +33,22 @@ class HealthTraining : Inventory;
 
 bool TryPickup(EntityEx Toucher)
 {
-	if (::TryPickup(Toucher))
+	PlayerEx(Toucher.Player).GiveAmmo(ClipOfBullets, 0);
+	Inventory AmmoItem = Toucher.FindInventory(ClipOfBullets);
+	if (AmmoItem.Amount < 50)
 	{
-		Toucher.GiveInventoryType(GunTraining);
-		Inventory Item = Spawn(Coin,,,, false);
-		Item.Amount = Player(Toucher.Player).Accuracy * 5 + 300;
-		if (!Item.TryPickup(Toucher))
-		{
-			Item.Destroy();
-		}
+		AmmoItem.Amount = 50;
+		GoAwayAndDie();
 		return true;
 	}
-	return false;
-}
-
-states
-{
-Spawn:
-	HELT A -1
-	Stop
+	else
+	{
+		return false;
+	}
 }
 
 defaultproperties
 {
-	ConversationID = 309;
-	PickupMessage = "Toughness";
-	MaxAmount = 100;
-	IconName = 'i_helt';
-	bFloorClip = true;
-	bInvBar = true;
-	bUndroppable = true;
+	ConversationID = 298;
+	StrifeName = "Ammo";
 }

@@ -31,9 +31,6 @@ import 'linespec';
 #include "Player.vc"
 #include "BotPlayer.vc"
 
-#include "ArtiTomeOfPower.vc"
-#include "ArtiTimeBomb.vc"
-
 #include "TeleportFog.vc"
 
 #include "ChickenPlayer.vc"
@@ -41,28 +38,16 @@ import 'linespec';
 #include "Minotaur.vc"
 #include "Sorcerer1.vc"
 
-class Blood : Actor decorate;
 class ArtiSuperHealth : HealthPickup decorate;
 class EnchantedShield : BasicArmorPickup decorate;
-class GoldWandAmmo : Ammo decorate;
-class MaceAmmo : Ammo decorate;
-class CrossbowAmmo : Ammo decorate;
-class SkullRodAmmo : Ammo decorate;
 class PhoenixRodAmmo : Ammo decorate;
-class BlasterAmmo : Ammo decorate;
 class BagOfHolding : BackpackItem decorate;
 class HereticPlayer : PlayerPawn decorate;
-class Puffy : Actor decorate;
-class ArtiEgg : CustomInventory decorate;
 class EggFX : MorphProjectile decorate;
 class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
 class SorcererFX1 : Actor decorate;
 class PhoenixPuff : Actor decorate;
-class MaceFX3 : Actor decorate;
-class ActivatedTimeBomb : Actor decorate;
-class Wizard : Actor decorate;
-class Ironlich : Actor decorate;
 class Staff : Weapon decorate;
 class Gauntlets : Weapon decorate;
 class GoldWand : Weapon decorate;

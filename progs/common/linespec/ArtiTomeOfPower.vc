@@ -23,51 +23,54 @@
 //**
 //**************************************************************************
 
-class DegninOre : Inventory
-	game(GAME_Strife)
-	__mobjinfo__(59);
+class ArtiTomeOfPower : PowerupGiver
+	game(GAME_Heretic)
+	__mobjinfo__(86)
+	__scriptid__(134);
 
 //==========================================================================
 //
-//	GetExplodeParms
+//	Use
 //
 //==========================================================================
 
-void GetExplodeParms(out int damage, out float distance, out byte damageSelf)
+bool Use(bool Pickup)
 {
-	damage = 192;
-	distance = 192.0;
-
-	PlaySound(DeathSound, CHAN_VOICE);
+	if (PlayerEx(Owner.Player).MorphTime)
+	{
+		// Attempt to undo chicken
+		if (PlayerEx(Owner.Player).UndoPlayerMorph() == false)
+		{
+			// Failed
+			EntityEx(Owner).Damage(none, none, 10000);
+		}
+		else
+		{
+			// Succeeded
+			PlayerEx(Owner.Player).MorphTime = 0.0;
+			Owner.PlaySound('*evillaugh', CHAN_ITEM);
+		}
+		return true;
+	}
+	else
+	{
+		return ::Use(Pickup);
+	}
 }
 
 states
 {
 Spawn:
-	XPRK A -1
-	Stop
-Death:
-	XPRK A 1 A_RemoveForceField
-	BNG3 A 3 Bright A_ExplodeAndAlert
-	BNG3 BCDEFGH 3 Bright
-	Stop
+	PWBK A 350
+	Loop
 }
 
 defaultproperties
 {
-	ConversationID = 128;
-	PickupMessage = "$txt_degninore";
-	Health = 10;
-	Radius = 16.0;
-	Height = 8.0;
-	Mass = 10.0;
-	MaxAmount = 10;
-	IconName = 'i_xprk';
-	bSolid = true;
-	bShootable = true;
-	bInCombat = true;
-	bNoBlood = true;
-	bFloorClip = true;
-	bInvBar = true;
-	DeathSound = 'ore/explode';
+	PowerupType = PowerWeaponLevel2;
+	PickupMessage = "$txt_artitomeofpower";
+	IconName = 'artipwbk';
+	bCountItem = true;
+	bFloatBob = true;
+	PickupFlashType = PickupFlash;
 }

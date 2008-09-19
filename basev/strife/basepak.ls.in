@@ -28,26 +28,13 @@ progs/cgame/TitleScreen.vc					@CMAKE_SOURCE_DIR@/progs/strife/cgame/TitleScreen
 
 //	Server progs
 progs/game/classes.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/classes.vc
-progs/game/AmmoFillup.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/AmmoFillup.vc
 progs/game/ClientGameBaseEx.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/ClientGameBaseEx.vc
-progs/game/CloseDoor222.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/CloseDoor222.vc
-progs/game/DegninOre.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/DegninOre.vc
 progs/game/ForceFieldGuard.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/ForceFieldGuard.vc
-progs/game/GunTraining.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/GunTraining.vc
-progs/game/HealthFillup.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/HealthFillup.vc
-progs/game/HealthTraining.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/HealthTraining.vc
 progs/game/MainGameInfo.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/MainGameInfo.vc
-progs/game/OpenDoor222.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/OpenDoor222.vc
-progs/game/OpenDoor224.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/OpenDoor224.vc
 progs/game/Player.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/Player.vc
 progs/game/PowerCoupling.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/PowerCoupling.vc
-progs/game/PrisonPass.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/PrisonPass.vc
-progs/game/RaiseAlarm.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/RaiseAlarm.vc
-progs/game/Scanner.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/Scanner.vc
-progs/game/SlideshowStarter.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/SlideshowStarter.vc
 progs/game/StrifeLevelInfo.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/StrifeLevelInfo.vc
 progs/game/StrifeWorldInfo.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/StrifeWorldInfo.vc
-progs/game/TeleporterBeacon.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/TeleporterBeacon.vc
 progs/game/TeleportFog.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/TeleportFog.vc
 
 //	ACS helper

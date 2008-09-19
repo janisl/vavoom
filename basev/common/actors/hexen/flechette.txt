@@ -1,4 +1,25 @@
 //------------------------------------------------------------------------------
+actor PoisonBag
+{
+	Radius 5
+	Height 5
+	+NoBlockmap
+	+NoGravity
+
+	action native A_PoisonBagInit();
+
+	states
+	{
+	Spawn:
+		PSBG A 18 Bright
+		PSBG B 4 Bright
+		PSBG C 3
+		PSBG C 1 A_PoisonBagInit
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor FireBomb
 {
 	RenderStyle Translucent
@@ -65,6 +86,43 @@ actor ThrowingBomb
 		CFCF W 3 Bright
 		CFCF X 4 Bright
 		CFCF Z 3 Bright
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ZPoisonShroom : PoisonBag 8104
+{
+	Game Hexen
+	Health 30
+	Radius 6
+	Height 20
+	Mass 99999
+	PainChance 255
+	-NoBlockmap
+	-NoGravity
+	+Solid
+	+Shootable
+	+NoBlood
+	+NoIceDeath	
+	PainSound "PoisonShroomPain"
+	DeathSound "PoisonShroomDeath"
+
+	action native A_PoisonShroom();
+
+	states
+	{
+	Spawn:
+		SHRM A 5 A_PoisonShroom
+		Goto Pain+1
+	Pain:
+		SHRM A 6
+		SHRM B 8 A_Pain
+		Goto Spawn
+	Death:
+		SHRM CD 5
+		SHRM E 5 A_PoisonBagInit
+		SHRM F -1
 		Stop
 	}
 }

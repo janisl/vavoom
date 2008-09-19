@@ -33,12 +33,6 @@ const int
 	INITIAL_HEALTH	= 100,
 	INITIAL_AMMO	= 50;
 
-replication
-{
-	reliable if (!bIsClient)
-		ClientSlideshow1, ClientSlideshow2;
-}
-
 //==========================================================================
 //
 //  ResetPlayerOnSpawn

@@ -149,6 +149,7 @@ final void A_TeloSpawnA()
 		A.Angles.yaw = Angles.yaw;
 		A.Target = Target;
 		A.Velocity = Velocity / 2.0;
+		A.Special1 = 1;	// Lifetime countdown
 	}
 }
 
@@ -168,6 +169,7 @@ final void A_TeloSpawnB()
 		A.Angles.yaw = Angles.yaw;
 		A.Target = Target;
 		A.Velocity = Velocity / 2.0;
+		A.Special1 = 1;	// Lifetime countdown
 	}
 }
 
@@ -187,6 +189,7 @@ final void A_TeloSpawnC()
 		A.Angles.yaw = Angles.yaw;
 		A.Target = Target;
 		A.Velocity = Velocity / 2.0;
+		A.Special1 = 1;	// Lifetime countdown
 	}
 }
 
@@ -206,6 +209,21 @@ final void A_TeloSpawnD()
 		A.Angles.yaw = Angles.yaw;
 		A.Target = Target;
 		A.Velocity = Velocity / 2.0;
+		A.Special1 = 1;	// Lifetime countdown
+	}
+}
+
+//==========================================================================
+//
+//  A_CheckTeleRing
+//
+//==========================================================================
+
+final void A_CheckTeleRing()
+{
+	if (Special1-- <= 0)
+	{
+		SetState(FindState('Death'));
 	}
 }
 

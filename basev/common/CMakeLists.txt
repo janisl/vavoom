@@ -111,6 +111,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/hexen/speedboots.txt
 		actors/hexen/spike.txt
 		actors/hexen/summon.txt
+		actors/hexen/teleportother.txt
 		actors/hexen/wraith.txt
 		actors/raven/artiegg.txt
 		actors/raven/minotaur.txt

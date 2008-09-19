@@ -256,6 +256,8 @@ enum
 #include "PhoenixRodPowered.vc"
 #include "MaceFX4.vc"
 #include "Mace.vc"
+#include "ArtiTomeOfPower.vc"
+#include "ArtiTimeBomb.vc"
 
 #include "HexenWeapon.vc"
 #include "FighterWeapon.vc"
@@ -275,6 +277,13 @@ enum
 #include "LightningZap.vc"
 #include "MageStaffFX2.vc"
 #include "MWeapBloodscourge.vc"
+#include "TelOtherFX1.vc"
+#include "ArtiTeleportOther.vc"
+#include "ArtiPoisonBag.vc"
+#include "PoisonCloud.vc"
+#include "ArtiBoostArmor.vc"
+#include "ArtiBlastRadius.vc"
+#include "ArtiHealingRadius.vc"
 
 #include "Coin.vc"
 #include "Meat.vc"
@@ -283,11 +292,23 @@ enum
 #include "DummyStrifeItem.vc"
 #include "UpgradeStamina.vc"
 #include "UpgradeAccuracy.vc"
+#include "AmmoFillup.vc"
+#include "HealthFillup.vc"
+#include "RaiseAlarm.vc"
+#include "OpenDoor222.vc"
+#include "CloseDoor222.vc"
+#include "OpenDoor224.vc"
+#include "SlideshowStarter.vc"
 #include "Oracle.vc"
 #include "Macil1.vc"
 #include "PoisonBolt.vc"
 #include "PhosphorousFire.vc"
 #include "Sigil.vc"
+#include "DegninOre.vc"
+#include "Scanner.vc"
+#include "TeleporterBeacon.vc"
+#include "PrisonPass.vc"
+#include "HealthTraining.vc"
 
 class Blood : Actor decorate;
 class BloodSplatter : Actor decorate;
@@ -389,6 +410,7 @@ class MaceAmmo : Ammo decorate;
 class MacePowered : Weapon decorate;
 class MaceSpawner : Actor decorate;
 class BeakPuff : Actor decorate;
+class ActivatedTimeBomb : Actor decorate;
 
 class FireDemonRock1 : Actor decorate;
 class FireDemonRock2 : Actor decorate;
@@ -455,6 +477,14 @@ class Mana2 : Ammo decorate;
 class LightningFloor : Lightning decorate;
 class LightningCeiling : Lightning decorate;
 class SnoutPuff : Actor decorate;
+class TelOtherFX2 : Actor decorate;
+class TelOtherFX3 : Actor decorate;
+class TelOtherFX4 : Actor decorate;
+class TelOtherFX5 : Actor decorate;
+class PoisonBag : Actor decorate;
+class FireBomb : Actor decorate;
+class ThrowingBomb : Actor decorate;
+class BlastEffect : Actor decorate;
 
 class MedicalKit : HealthPickup decorate;
 class MedPatch : HealthPickup decorate;
@@ -464,6 +494,7 @@ class Gold10 : Coin decorate;
 class Gold25 : Coin decorate;
 class Gold50 : Coin decorate;
 class QuestItem7 : Inventory decorate;
+class QuestItem17 : Inventory decorate;
 class QuestItem21 : Inventory decorate;
 class QuestItem22 : Inventory decorate;
 class QuestItem23 : Inventory decorate;
@@ -521,3 +552,6 @@ class Sigil2 : Sigil decorate;
 class Sigil3 : Sigil decorate;
 class Sigil4 : Sigil decorate;
 class Sigil5 : Sigil decorate;
+class ClipOfBullets : Ammo decorate;
+class Rebel1 : Actor decorate;
+class GunTraining : Inventory decorate;

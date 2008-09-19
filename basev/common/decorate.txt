@@ -96,6 +96,7 @@
 #include "actors/hexen/summon.txt"
 #include "actors/hexen/blastradius.txt"
 #include "actors/hexen/flechette.txt"
+#include "actors/hexen/teleportother.txt"
 #include "actors/hexen/puzzleitems.txt"
 #include "actors/hexen/scriptprojectiles.txt"
 #include "actors/hexen/hexendecorations.txt"

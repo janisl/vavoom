@@ -332,3 +332,21 @@ actor InterrogatorReport : Inventory
 		Stop
 	}
 }
+
+//------------------------------------------------------------------------------
+actor GunTraining : Inventory
+{
+	ConversationID 310, -1, -1
+	Tag "Accuracy"
+	+FloorClip
+	Inventory.MaxAmount 100
+	Inventory.Icon "i_gunt"
+	+Inventory.InvBar
+	+Inventory.Undroppable
+	states
+	{
+	Spawn:
+		GUNT A -1
+		Stop
+	}
+}

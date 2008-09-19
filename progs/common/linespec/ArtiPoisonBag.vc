@@ -23,104 +23,77 @@
 //**
 //**************************************************************************
 
-class ArtiHealingRadius : Inventory
+class ArtiPoisonBag : Inventory
 	game(GAME_Hexen)
-	__mobjinfo__(10120);
-
-const float HEAL_RADIUS_DIST	= 255.0;
+	__mobjinfo__(8000)
+	__scriptid__(72);
 
 //==========================================================================
 //
 //	Use
 //
-//  Do class specific effect for everyone in radius
-//
 //==========================================================================
 
 bool Use(bool Pickup)
 {
-	PlayerPawn P;
-	float dist;
-	int effective = false;
-	int amount;
-	int i;
-	bool GaveArmor;
+	float angle;
+	Actor bomb;
 
-	foreach AllThinkers(PlayerPawn, P)
+	angle = Owner.Angles.yaw;
+	if (ClassIsChildOf(Owner.Class, GetClassReplacement(ClericPlayer)))
 	{
-		if (!P.bIsPlayer)
-			continue;
-		if (P.Health <= 0)
-			continue;
-		dist = Owner.DistTo(P);
-		if (dist > HEAL_RADIUS_DIST)
+		bomb = Spawn(PoisonBag, Owner.Origin + vector(16.0 * cos(angle),
+			24.0 * sin(angle), 8.0 - Owner.FloorClip));
+		if (bomb)
 		{
-			// Out of range
-			continue;
-		}
-
-		if (PlayerPawn(Owner).HealRadiusType == 'Armor')
-		{
-			// Radius armor boost
-			GaveArmor = false;
-			for (i = 0; i < 4; i++)
-			{
-				HexenArmor Armor = Spawn(HexenArmor,,,, false);
-				Armor.Health = i;
-				Armor.Amount = 1;
-				if (Armor.TryPickup(P))
-				{
-					GaveArmor = true;
-				}
-				else
-				{
-					Armor.Destroy();
-				}
-			}
-			if (GaveArmor)
-			{
-				effective = true;
-				P.PlaySound('MysticIncant', CHAN_ITEM);
-			}
-		}
-		else if (PlayerPawn(Owner).HealRadiusType == 'Mana')
-		{
-			// Radius mana boost
-			amount = 50 + (P_Random() % 50);
-			if ((Player(P.Player).GiveAmmo(Mana1, amount)) ||
-				(Player(P.Player).GiveAmmo(Mana2, amount)))
-			{
-				effective = true;
-				P.PlaySound('MysticIncant', CHAN_ITEM);
-			}
-		}
-		else
-		{
-			// Radius heal
-			amount = 50 + (P_Random() % 50);
-			if (P.GiveBody(amount))
-			{
-				effective = true;
-				P.PlaySound('MysticIncant', CHAN_ITEM);
-			}
+			bomb.Target = EntityEx(Owner);
 		}
 	}
-	return effective;
+	else if (ClassIsChildOf(Owner.Class, GetClassReplacement(MagePlayer)))
+	{
+		bomb = Spawn(FireBomb, Owner.Origin + vector(16.0 * cos(angle),
+			24.0 * sin(angle), 8.0 - Owner.FloorClip));
+		if (bomb)
+		{
+			bomb.Target = EntityEx(Owner);
+		}
+	}
+	else	// PCLASS_FIGHTER, obviously (also pig, not so obviously)
+	{
+		bomb = Spawn(ThrowingBomb, Owner.Origin +
+			vector(0.0, 0.0, 35.0 - Owner.FloorClip));
+		if (bomb)
+		{
+			bomb.Angles.yaw = AngleMod360(Owner.Angles.yaw +
+				(Random() * 2.0 - 1.0) * 45.0 / 8.0);
+			bomb.Velocity.z =
+				(4.0 + 173.0 * -tan(Owner.Angles.pitch) / 16.0) * 35.0;
+			bomb.Origin.z += 173.0 * -tan(Owner.Angles.pitch) / 16.0;
+			bomb.Velocity.x += bomb.Speed * cos(bomb.Angles.yaw);
+			bomb.Velocity.y += bomb.Speed * sin(bomb.Angles.yaw);
+			bomb.Velocity.x += Owner.Velocity.x / 2.0;
+			bomb.Velocity.y += Owner.Velocity.y / 2.0;
+			bomb.Target = EntityEx(Owner);
+			bomb.StateTime -= Random() * 0.1;
+			bomb.CheckMissileSpawn();
+		}
+	}
+	return true;
 }
 
 states
 {
 Spawn:
-	HRAD ABCDEFGHIJKLMNOP 4 Bright
-	Loop
+	PSBG A -1
+	Stop
 }
 
 defaultproperties
 {
 	MaxAmount = DefMaxAmount;
 	PickupSound = 'PickupArtifact';
-	PickupMessage = "$txt_artihealingradius";
-	IconName = 'artihrad';
+	PickupMessage = "$txt_artipoisonbag";
+	IconName = 'artipsbg';
 	bFloatBob = true;
 	PickupFlashType = PickupFlash;
 	bInvBar = true;
