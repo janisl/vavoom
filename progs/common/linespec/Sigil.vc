@@ -23,10 +23,22 @@
 //**
 //**************************************************************************
 
-class Sigil : StrifeWeapon;
+class Sigil : Weapon;
 
 int				NumPieces;
 int				DownPieces;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	NumPieces = Health;
+	::BeginPlay();
+}
 
 //==========================================================================
 //
@@ -145,6 +157,20 @@ void GiveSigilPiece(EntityEx Receiver)
 			Wpn.DownPieces = Wpn.NumPieces - 1;
 			PlayerEx(Receiver.Player).PendingWeapon = Wpn;
 		}
+	}
+}
+
+//==========================================================================
+//
+//	A_SelectPiece
+//
+//==========================================================================
+
+final void A_SelectPiece()
+{
+	if (NumPieces > 1)
+	{
+		SetState(GetStatePlus(IdleState, NumPieces, true));
 	}
 }
 
@@ -436,6 +462,19 @@ final void A_FireSigil5() self(Actor)
 
 states
 {
+Spawn:
+	SIGL A 1
+	SIGL A -1 A_SelectPiece
+	Stop
+	SIGL B -1
+	Stop
+	SIGL C -1
+	Stop
+	SIGL D -1
+	Stop
+	SIGL E -1
+	Stop
+
 Ready:
 	SIGH A 0 Bright A_SelectSigilReady
 	Loop
@@ -536,13 +575,19 @@ Flash:
 	SIGF A 4 Bright A_Light2
 	SIGF B 6 Bright A_LightInverse
 	SIGF C 4 Bright A_Light1
-	Goto Super::LightDone
+	SIGF C 0 Bright A_Light0
+	Stop
 }
 
 defaultproperties
 {
+	StrifeName = "SIGIL";
+	Health = 1;
+	Kickback = 100.0;
 	SelectionOrder = 4000;
-	NumPieces = 1;
 	IconName = 'i_sgl1';
+	bFloorClip = true;
 	bCheatNotWeapon = true;
+	PickupMessage = "$txt_sigil";
+	PickupSound = 'weapons/sigilcharge';
 }

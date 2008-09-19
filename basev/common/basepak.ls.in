@@ -139,6 +139,7 @@ progs/linespec/PhoenixFX1.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Phoenix
 progs/linespec/PhoenixFX2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixFX2.vc
 progs/linespec/PhoenixRod.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixRod.vc
 progs/linespec/PhoenixRodPowered.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixRodPowered.vc
+progs/linespec/PhosphorousFire.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PhosphorousFire.vc
 progs/linespec/Pillar.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pillar.vc
 progs/linespec/PlaneWatcher.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PlaneWatcher.vc
 progs/linespec/Platform.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Platform.vc
@@ -151,6 +152,7 @@ progs/linespec/PointLightFlickerRandom.vc	@CMAKE_SOURCE_DIR@/progs/common/linesp
 progs/linespec/PointLightPulse.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PointLightPulse.vc
 progs/linespec/PointPuller.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PointPuller.vc
 progs/linespec/PointPusher.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PointPusher.vc
+progs/linespec/PoisonBolt.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PoisonBolt.vc
 progs/linespec/PolyobjDoor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjDoor.vc
 progs/linespec/PolyobjMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjMover.vc
 progs/linespec/PolyobjRotator.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjRotator.vc
@@ -200,6 +202,7 @@ progs/linespec/SectorPointLight.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Se
 progs/linespec/SectorSilencer.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SectorSilencer.vc
 progs/linespec/SectorThinker.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SectorThinker.vc
 progs/linespec/SecurityCamera.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SecurityCamera.vc
+progs/linespec/Sigil.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Sigil.vc
 progs/linespec/SkyPicker.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyPicker.vc
 progs/linespec/SkyViewpoint.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyViewpoint.vc
 progs/linespec/Sorcerer2.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Sorcerer2.vc
@@ -227,6 +230,7 @@ progs/linespec/VerticalDoor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Verti
 progs/linespec/WallLightTransfer.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/WallLightTransfer.vc
 progs/linespec/WaterZone.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/WaterZone.vc
 progs/linespec/Weapon.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Weapon.vc
+progs/linespec/WeaponGiver.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/WeaponGiver.vc
 progs/linespec/WeaponHolder.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/WeaponHolder.vc
 progs/linespec/WeaponPiece.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/WeaponPiece.vc
 progs/linespec/Whirlwind.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Whirlwind.vc
@@ -456,6 +460,7 @@ actors/strife/ratbuddy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/ratbuddy.
 actors/strife/reaver.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/reaver.txt
 actors/strife/rebels.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/rebels.txt
 actors/strife/sentinel.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/sentinel.txt
+actors/strife/sigil.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/sigil.txt
 actors/strife/spectral.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/spectral.txt
 actors/strife/stalker.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/stalker.txt
 actors/strife/strifeammo.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/strife/strifeammo.txt

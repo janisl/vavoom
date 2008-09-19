@@ -108,6 +108,7 @@
 #include "actors/strife/strifeplayer.txt"
 #include "actors/strife/spectral.txt"
 #include "actors/strife/strifeweapons.txt"
+#include "actors/strife/sigil.txt"
 #include "actors/strife/strifehumanoid.txt"
 #include "actors/strife/peasants.txt"
 #include "actors/strife/beggars.txt"

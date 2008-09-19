@@ -23,7 +23,7 @@ sprites
 states
 {
 	//	S_NULL is implicit
-	DoomWeapon				First	1
+	Weapon					First	1
 	Fist					First	8
 	Pistol					First	8
 	Shotgun					First	14

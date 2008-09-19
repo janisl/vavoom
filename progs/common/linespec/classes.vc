@@ -86,6 +86,7 @@ enum
 #include "Ammo.vc"
 #include "BackpackItem.vc"
 #include "Weapon.vc"
+#include "WeaponGiver.vc"
 #include "PuzzleItem.vc"
 #include "Key.vc"
 #include "Powerup.vc"
@@ -281,6 +282,9 @@ enum
 #include "UpgradeAccuracy.vc"
 #include "Oracle.vc"
 #include "Macil1.vc"
+#include "PoisonBolt.vc"
+#include "PhosphorousFire.vc"
+#include "Sigil.vc"
 
 class Blood : Actor decorate;
 class BloodSplatter : Actor decorate;
@@ -501,3 +505,16 @@ class AlienChunkSmall : Actor decorate;
 class AlienChunkLarge : Actor decorate;
 class EntityBoss : Actor decorate;
 class EntitySecond : Actor decorate;
+class StrifeSpark : Actor decorate;
+class MiniMissile : Actor decorate;
+class FlameMissile : Actor decorate;
+class MaulerTorpedo : Actor decorate;
+class SpectralLightningH1 : Actor decorate;
+class SpectralLightningBall1 : Actor decorate;
+class SpectralLightningBigV1 : Actor decorate;
+class SpectralLightningBigBall1 : Actor decorate;
+class Sigil1 : Sigil decorate;
+class Sigil2 : Sigil decorate;
+class Sigil3 : Sigil decorate;
+class Sigil4 : Sigil decorate;
+class Sigil5 : Sigil decorate;

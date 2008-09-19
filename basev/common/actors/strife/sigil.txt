@@ -1,0 +1,44 @@
+//------------------------------------------------------------------------------
+actor Sigil1 : Sigil 77
+{
+	Game Strife
+	ConversationID 196, 190, 194
+	Health 1
+	Inventory.Icon "i_sgl1"
+}
+
+//------------------------------------------------------------------------------
+actor Sigil2 : Sigil 78
+{
+	Game Strife
+	ConversationID 197, 191, 195
+	Health 2
+	Inventory.Icon "i_sgl2"
+}
+
+//------------------------------------------------------------------------------
+actor Sigil3 : Sigil 79
+{
+	Game Strife
+	ConversationID 198, 192, 196
+	Health 3
+	Inventory.Icon "i_sgl3"
+}
+
+//------------------------------------------------------------------------------
+actor Sigil4 : Sigil 80
+{
+	Game Strife
+	ConversationID 199, 193, 197
+	Health 4
+	Inventory.Icon "i_sgl4"
+}
+
+//------------------------------------------------------------------------------
+actor Sigil5 : Sigil 81
+{
+	Game Strife
+	ConversationID 200, 194, 198
+	Health 5
+	Inventory.Icon "i_sgl5"
+}

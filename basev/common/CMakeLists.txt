@@ -141,6 +141,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/basepak.pk3
 		actors/strife/reaver.txt
 		actors/strife/rebels.txt
 		actors/strife/sentinel.txt
+		actors/strife/sigil.txt
 		actors/strife/spectral.txt
 		actors/strife/stalker.txt
 		actors/strife/strifeammo.txt

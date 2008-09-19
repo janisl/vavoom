@@ -23,63 +23,35 @@
 //**
 //**************************************************************************
 
-class FlameThrower : StrifeWeapon
-	__mobjinfo__(2005);
+class WeaponGiver : Weapon
+	abstract;
 
 //==========================================================================
 //
-//	A_FireFlamethrower
+//	TryPickup
 //
 //==========================================================================
 
-final void A_FireFlamethrower() self(Actor)
+bool TryPickup(EntityEx Toucher)
 {
-	EntityEx A;
-
-	if (!bIsPlayer)
+	if (DropItemList.Num && ClassIsChildOf(DropItemList[0].Type, Weapon))
 	{
-		return;
+		Weapon Wpn = Weapon(Spawn(DropItemList[0].Type,,,, false));
+		if (Wpn)
+		{
+			Wpn.bAlwaysPickup = false;
+			if (!Wpn.TryPickup(Toucher))
+			{
+				Wpn.Destroy();
+				return false;
+			}
+			GoAwayAndDie();
+			return true;
+		}
 	}
-	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-
-	SetState(MissileState);
-	Wpn.DepleteAmmo(Wpn.FireMode);
-	Angles.yaw = AngleMod360(Angles.yaw + (Random() - Random()) * 45.0 / 8.0);
-	Player.bFixAngle = true;
-	A = SpawnPlayerMissile(FlameMissile);
-	if (A)
-	{
-		A.Velocity.z += 20.0 * 35.0 / 5.0;
-	}
-}
-
-states
-{
-Ready:
-	FLMT AB 3 A_WeaponReady
-	Loop
-Deselect:
-	FLMT A 1 A_Lower
-	Loop
-Select:
-	FLMT A 1 A_Raise
-	Loop
-Fire:
-	FLMF A 2 A_FireFlamethrower
-	FLMF B 3 A_ReFire
-	Goto Ready
-Spawn:
-	FLAM A -1
-	Stop
+	return false;
 }
 
 defaultproperties
 {
-	SelectionOrder = 2100;
-	AmmoType1 = EnergyPod;
-	AmmoUse1 = 1;
-	AmmoGive1 = 100;
-	ConversationID = 190;
-	PickupMessage = "$txt_flamer";
-	ReadySound = 'weapons/flameidle';
 }
