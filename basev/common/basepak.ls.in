@@ -54,6 +54,8 @@ progs/linespec/BasicArmorPickup.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Ba
 progs/linespec/BlasterFX1.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BlasterFX1.vc
 progs/linespec/BossSpot.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/BossSpot.vc
 progs/linespec/BrainState.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BrainState.vc
+progs/linespec/Bridge.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Bridge.vc
+progs/linespec/BridgeBall.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BridgeBall.vc
 progs/linespec/CeilingMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CeilingMover.vc
 progs/linespec/CeilingWaggle.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CeilingWaggle.vc
 progs/linespec/CFlameMissile.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CFlameMissile.vc
@@ -235,6 +237,7 @@ progs/linespec/WeaponHolder.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Weapo
 progs/linespec/WeaponPiece.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/WeaponPiece.vc
 progs/linespec/Whirlwind.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Whirlwind.vc
 progs/linespec/WorldInfoEx.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/WorldInfoEx.vc
+progs/linespec/ZBridge.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/ZBridge.vc
 
 //	Common UI classes
 progs/uibase/classes.vc							@CMAKE_SOURCE_DIR@/progs/common/uibase/classes.vc

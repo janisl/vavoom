@@ -26,7 +26,6 @@ progs/cgame/TitleScreen.vc					@CMAKE_SOURCE_DIR@/progs/doom/cgame/TitleScreen.v
 //	Server progs
 progs/game/classes.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/classes.vc
 progs/game/BotPlayer.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/BotPlayer.vc
-progs/game/Bridge.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/Bridge.vc
 progs/game/DoomLevelInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/DoomLevelInfo.vc
 progs/game/DoomWorldInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/DoomWorldInfo.vc
 progs/game/MainGameInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/MainGameInfo.vc

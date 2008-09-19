@@ -33,8 +33,6 @@ progs/game/ArtiHealingRadius.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiHealing
 progs/game/ArtiPoisonBag.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiPoisonBag.vc
 progs/game/ArtiTeleportOther.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/ArtiTeleportOther.vc
 progs/game/BotPlayer.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/BotPlayer.vc
-progs/game/Bridge.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/Bridge.vc
-progs/game/BridgeBall.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/BridgeBall.vc
 progs/game/ClericBoss.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/ClericBoss.vc
 progs/game/FighterBoss.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/FighterBoss.vc
 progs/game/Heresiarch.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/Heresiarch.vc

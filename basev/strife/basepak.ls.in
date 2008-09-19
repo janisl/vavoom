@@ -29,8 +29,6 @@ progs/cgame/TitleScreen.vc					@CMAKE_SOURCE_DIR@/progs/strife/cgame/TitleScreen
 //	Server progs
 progs/game/classes.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/classes.vc
 progs/game/AmmoFillup.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/AmmoFillup.vc
-progs/game/Bridge.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/Bridge.vc
-progs/game/BridgeBall.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/BridgeBall.vc
 progs/game/ClientGameBaseEx.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/ClientGameBaseEx.vc
 progs/game/CloseDoor222.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/CloseDoor222.vc
 progs/game/DegninOre.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/DegninOre.vc

@@ -37,8 +37,6 @@ import 'uibase';
 
 #include "TeleportFog.vc"
 #include "ForceFieldGuard.vc"
-#include "BridgeBall.vc"
-#include "Bridge.vc"
 
 #include "DegninOre.vc"
 #include "Scanner.vc"

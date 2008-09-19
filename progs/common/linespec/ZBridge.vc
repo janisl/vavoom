@@ -22,54 +22,28 @@
 //**  GNU General Public License for more details.
 //**
 //**************************************************************************
-//
-//	BridgeBall
-//
-// New bridge stuff
-//
-//  Parent
-//      _Special1    true == removing from world
-//
-//  Child
-//      Instigator  pointer to centre mobj
-//
-//**************************************************************************
 
-class BridgeBall : Actor;
-
-float OrbitAngle;		// Angle of ball
-
-//==========================================================================
-//
-//  A_BridgeOrbit
-//
-//==========================================================================
-
-final void A_BridgeOrbit()
-{
-	if (Actor(Target).Special1)
-	{
-		SetState(none);
-	}
-	//	3.0 * 360.0 / 256.0 = 4.21875
-	OrbitAngle = AngleMod360(OrbitAngle + 4.21875);
-	Origin.x = Target.Origin.x + 15.0 * cos(OrbitAngle);
-	Origin.y = Target.Origin.y + 15.0 * sin(OrbitAngle);
-	Origin.z = Target.Origin.z;
-}
+class ZBridge : Actor
+	game(GAME_Doom)
+	__mobjinfo__(118)
+	__scriptid__(21);
 
 states
 {
 Spawn:
-	TLGL A 2
-	TLGL A 5 A_BridgeOrbit
-	Wait
+	TLGL A 4
+	TLGL B 4
+	TLGL C 4
+	TLGL D 4
+	TLGL E 4
+	Stop
 }
 
 defaultproperties
 {
-	RenderStyle = STYLE_Add;
-	bNoBlockmap = true;
+	Radius = 36.0;
+	Height = 4.0;
+	bSolid = true;
 	bNoGravity = true;
-	bNoTeleport = true;
+	bNoLiftDrop = true;
 }

@@ -35,8 +35,6 @@ import 'linespec';
 #include "ArtiTimeBomb.vc"
 
 #include "TeleportFog.vc"
-#include "BridgeBall.vc"
-#include "Bridge.vc"
 
 #include "ChickenPlayer.vc"
 #include "Chicken.vc"

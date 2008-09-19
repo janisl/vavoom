@@ -211,6 +211,9 @@ enum
 
 #include "GlassShard.vc"
 
+#include "BridgeBall.vc"
+#include "Bridge.vc"
+#include "ZBridge.vc"
 #include "InvisibleBridge.vc"
 #include "InvisibleBridge32.vc"
 #include "InvisibleBridge16.vc"

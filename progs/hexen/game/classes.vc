@@ -47,8 +47,6 @@ import 'linespec';
 #include "TelOtherFX3.vc"
 #include "TelOtherFX4.vc"
 #include "TelOtherFX5.vc"
-#include "BridgeBall.vc"
-#include "Bridge.vc"
 
 #include "ZCorpseLynchedNoHeart.vc"
 #include "ThrustFloorDown.vc"

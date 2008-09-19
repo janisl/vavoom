@@ -24,24 +24,75 @@
 //**************************************************************************
 
 class Bridge : Actor
+	game(GAME_Raven)
 	__mobjinfo__(118)
 	__scriptid__(21);
+
+//==========================================================================
+//
+//  A_BridgeInit
+//
+//==========================================================================
+
+final void A_BridgeInit()
+{
+	float StartAngle;
+	BridgeBall ball1;
+	BridgeBall ball2;
+	BridgeBall ball3;
+
+	StartAngle = Random() * 360.0;
+	Special1 = 0;
+
+	// Spawn triad into world
+	ball1 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball1.OrbitAngle = StartAngle;
+	ball1.Target = self;
+
+	ball2 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball2.OrbitAngle = AngleMod360(StartAngle + 120.0);
+	ball2.Target = self;
+
+	ball3 = BridgeBall(Spawn(BridgeBall, Origin));
+	ball3.OrbitAngle = AngleMod360(StartAngle + 240.0);
+	ball3.Target = self;
+
+	ball1.A_BridgeOrbit();
+	ball2.A_BridgeOrbit();
+	ball3.A_BridgeOrbit();
+}
 
 states
 {
 Spawn:
-	TLGL A 4
-	TLGL B 4
-	TLGL C 4
-	TLGL D 4
-	TLGL E 4
+	TLGL A 2
+	TLGL A 2 A_BridgeInit
+	TLGL A -1
 	Stop
+	TLGL A 2
+	TLGL A 300
+	Stop
+}
+
+//==========================================================================
+//
+//  RemoveThing
+//
+//==========================================================================
+
+void RemoveThing()
+{
+	Special1 = true;	// Removing the bridge
+	bSolid = false;
+	SetState(GetStatePlus(IdleState, 3, true));
 }
 
 defaultproperties
 {
-	Radius = 36.0;
-	Height = 4.0;
+	Radius = 32.0;
+	Height = 2.0;
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.0;
 	bSolid = true;
 	bNoGravity = true;
 	bNoLiftDrop = true;
