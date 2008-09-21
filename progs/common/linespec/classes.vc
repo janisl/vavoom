@@ -259,6 +259,7 @@ enum
 #include "Mace.vc"
 #include "ArtiTomeOfPower.vc"
 #include "ArtiTimeBomb.vc"
+#include "ChickenPlayer.vc"
 
 #include "HexenWeapon.vc"
 #include "FighterWeapon.vc"
@@ -294,6 +295,7 @@ enum
 #include "SorcBall1.vc"
 #include "SorcBall2.vc"
 #include "SorcBall3.vc"
+#include "PigPlayer.vc"
 
 #include "Coin.vc"
 #include "Meat.vc"
@@ -424,6 +426,7 @@ class MacePowered : Weapon decorate;
 class MaceSpawner : Actor decorate;
 class BeakPuff : Actor decorate;
 class ActivatedTimeBomb : Actor decorate;
+class Beak : Weapon decorate;
 
 class FireDemonRock1 : Actor decorate;
 class FireDemonRock2 : Actor decorate;
@@ -511,6 +514,7 @@ class DirtClump : Actor decorate;
 class FighterBoss : Actor decorate;
 class ClericBoss : Actor decorate;
 class MageBoss : Actor decorate;
+class Snout : Weapon decorate;
 
 class MedicalKit : HealthPickup decorate;
 class MedPatch : HealthPickup decorate;

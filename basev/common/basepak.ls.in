@@ -67,6 +67,7 @@ progs/linespec/BridgeBall.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/BridgeB
 progs/linespec/CeilingMover.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CeilingMover.vc
 progs/linespec/CeilingWaggle.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CeilingWaggle.vc
 progs/linespec/CFlameMissile.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CFlameMissile.vc
+progs/linespec/ChickenPlayer.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ChickenPlayer.vc
 progs/linespec/ClericWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ClericWeapon.vc
 progs/linespec/ClericWeaponPiece.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ClericWeaponPiece.vc
 progs/linespec/CloseDoor222.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/CloseDoor222.vc
@@ -159,6 +160,7 @@ progs/linespec/PhoenixFX2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Phoenix
 progs/linespec/PhoenixRod.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixRod.vc
 progs/linespec/PhoenixRodPowered.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PhoenixRodPowered.vc
 progs/linespec/PhosphorousFire.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PhosphorousFire.vc
+progs/linespec/PigPlayer.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/PigPlayer.vc
 progs/linespec/Pillar.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pillar.vc
 progs/linespec/PlaneWatcher.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PlaneWatcher.vc
 progs/linespec/Platform.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Platform.vc

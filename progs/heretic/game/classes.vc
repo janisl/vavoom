@@ -31,7 +31,6 @@ import 'linespec';
 #include "Player.vc"
 #include "BotPlayer.vc"
 #include "TeleportFog.vc"
-#include "ChickenPlayer.vc"
 #include "Minotaur.vc"
 
 class ArtiSuperHealth : HealthPickup decorate;
@@ -49,4 +48,3 @@ class GoldWand : Weapon decorate;
 class Crossbow : Weapon decorate;
 class Blaster : Weapon decorate;
 class SkullRod : Weapon decorate;
-class Beak : Weapon decorate;

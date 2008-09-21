@@ -34,7 +34,6 @@ import 'linespec';
 #include "ArtiDarkServant.vc"
 #include "TeleportFog.vc"
 #include "PlayerSpeed.vc"
-#include "PigPlayer.vc"
 #include "MinotaurFriend.vc"
 #include "SummoningDoll.vc"
 
@@ -62,4 +61,3 @@ class CWeapFlame : Weapon decorate;
 class MWeapWand : Weapon decorate;
 class MWeapFrost : Weapon decorate;
 class MWeapLightning : Weapon decorate;
-class Snout : Weapon decorate;
