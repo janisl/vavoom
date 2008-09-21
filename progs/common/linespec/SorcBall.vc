@@ -81,11 +81,11 @@ final void A_AccelBalls()
 	}
 	else
 	{
-		sorc.Args[3] = Heresiarch::SORC_NORMAL;
-		if (sorc.Args[4] >= Heresiarch::SORCBALL_TERMINAL_SPEED)
+		sorc.Args[3] = SORC_NORMAL;
+		if (sorc.Args[4] >= SORCBALL_TERMINAL_SPEED && !sorc.bIsPlayer)
 		{
 			// Reached terminal velocity - stop balls
-			Heresiarch(sorc).A_StopBalls();
+			Actor(sorc).A_StopBalls();
 		}
 	}
 }
@@ -108,7 +108,7 @@ final void A_DecelBalls()
 	}
 	else
 	{
-		sorc.Args[3] = Heresiarch::SORC_NORMAL;
+		sorc.Args[3] = SORC_NORMAL;
 	}
 }
 
@@ -145,7 +145,7 @@ final void A_SorcOffense2()
 
 	index = itof(Args[4]) * 360.0 / 256.0;
 	Args[4] = (Args[4] + 15) & 0xff;
-	delta = sin(index) * Heresiarch::SORCFX4_SPREAD_ANGLE;
+	delta = sin(index) * SORCFX4_SPREAD_ANGLE;
 	ang1 = AngleMod360(Angles.yaw + delta);
 	mo = Actor(Target).SpawnMissileAngle(SorcFX4, ang1, 0.0);
 	if (mo)
@@ -200,25 +200,25 @@ final void A_SorcBallOrbit()
 
 	switch (mode)
 	{
-	case Heresiarch::SORC_NORMAL:	// Balls rotating normally
+	case SORC_NORMAL:	// Balls rotating normally
 		A_SorcUpdateBallAngle();
 		break;
-	case Heresiarch::SORC_DECELERATE:	// Balls decelerating
+	case SORC_DECELERATE:	// Balls decelerating
 		A_DecelBalls();
 		A_SorcUpdateBallAngle();
 		break;
-	case Heresiarch::SORC_ACCELERATE:	// Balls accelerating
+	case SORC_ACCELERATE:	// Balls accelerating
 		A_AccelBalls();
 		A_SorcUpdateBallAngle();
 		break;
-	case Heresiarch::SORC_STOPPING:	// Balls stopping
+	case SORC_STOPPING:	// Balls stopping
 		if ((Actor(Target).SpecialCID == Class) &&
-			(Target.Args[1] > Heresiarch::SORCBALL_SPEED_ROTATIONS) &&
+			(Target.Args[1] > SORCBALL_SPEED_ROTATIONS) &&
 			(fabs(AngleMod180(angle - Target.Angles.yaw)) <
 			15.0 * 45.0 / 16.0))
 		{
 			// Can stop now
-			Target.Args[3] = Heresiarch::SORC_FIRESPELL;
+			Target.Args[3] = SORC_FIRESPELL;
 			Target.Args[4] = 0;
 			// Set angle so ball angle == sorcerer angle
 			Actor(Target).Special1f = AngleMod360(Target.Angles.yaw -
@@ -229,7 +229,7 @@ final void A_SorcBallOrbit()
 			A_SorcUpdateBallAngle();
 		}
 		break;
-	case Heresiarch::SORC_FIRESPELL:	// Casting spell
+	case SORC_FIRESPELL:	// Casting spell
 		if (Actor(Target).SpecialCID == Class)
 		{
 			// Put sorcerer into special throw spell anim
@@ -241,13 +241,13 @@ final void A_SorcBallOrbit()
 			A_CastSorcererSpell();
 		}
 		break;
-	case Heresiarch::SORC_FIRING_SPELL:
+	case SORC_FIRING_SPELL:
 		if (Actor(Target).SpecialCID == Class)
 		{
 			if (Special2-- <= 0)
 			{
 				// Done rapid firing 
-				Target.Args[3] = Heresiarch::SORC_STOPPED;
+				Target.Args[3] = SORC_STOPPED;
 				// Back to orbit balls
 				if (Target.Health > 0)
 					Target.SetState(Target.FindState('Attack2'));
@@ -259,12 +259,12 @@ final void A_SorcBallOrbit()
 			}
 		}
 		break;
-	case Heresiarch::SORC_STOPPED:	// Balls stopped
+	case SORC_STOPPED:	// Balls stopped
 	default:
 		break;
 	}
 
-	if ((angle < prevangle) && (Target.Args[4] == Heresiarch::SORCBALL_TERMINAL_SPEED))
+	if ((angle < prevangle) && (Target.Args[4] == SORCBALL_TERMINAL_SPEED))
 	{
 		Target.Args[1]++;	// Bump rotation counter
 		// Completed full rotation - make woosh sound
@@ -292,7 +292,7 @@ final void A_SorcBallPop()
 	Velocity.x = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.y = (Random() * 10.0 - 5.0) * 35.0;
 	Velocity.z = (2.0 + Random() * 3.0) * 35.0;
-	Args[4] = Heresiarch::BOUNCE_TIME_UNIT;	// Bounce time unit
+	Args[4] = BOUNCE_TIME_UNIT;	// Bounce time unit
 	Args[3] = 5;	// Bounce time in seconds
 }
 
@@ -313,7 +313,7 @@ final void A_BounceCheck()
 		}
 		else
 		{
-			Args[4] = Heresiarch::BOUNCE_TIME_UNIT;
+			Args[4] = BOUNCE_TIME_UNIT;
 		}
 	}
 }
@@ -326,11 +326,12 @@ defaultproperties
 	BounceType = BOUNCE_Hexen;
 	bMissile = true;
 	bNoBlockmap = true;
+	bDropOff = true;
 	bNoGravity = true;
 	bNoTeleport = true;
+	bBloodSplatter = true;
 	bNoWallBounceSnd = true;
 	bFullVolDeath = true;
-	bBloodSplatter = true;
 	SightSound = 'SorcererBallBounce';
 	DeathSound = 'SorcererBigBallExplode';
 }

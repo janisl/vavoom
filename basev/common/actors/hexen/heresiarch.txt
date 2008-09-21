@@ -76,6 +76,35 @@ actor SorcFX2T1
 }
 
 //------------------------------------------------------------------------------
+actor SorcFX3
+{
+	Radius 22
+	Height 65
+	Speed 15
+	+Missile
+	+NoBlockmap
+	+NoTeleport
+	SeeSound "SorcererBishopSpawn"
+
+	action native A_SorcererBishopEntry();
+	action native A_SpawnBishop();
+
+	states
+	{
+	Spawn:
+		SBS3 ABC 2 Bright
+		Loop
+	Death:
+		SBS3 A 4 Bright
+		BISH P 4 A_SorcererBishopEntry
+		BISH ON 4
+		BISH MLKJIH 3
+		BISH G 3 A_SpawnBishop
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor SorcFX3Explosion
 {
 	RenderStyle Translucent

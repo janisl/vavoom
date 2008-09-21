@@ -31,24 +31,10 @@ import 'linespec';
 #include "HexenWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
-
 #include "ArtiDarkServant.vc"
-
 #include "TeleportFog.vc"
 #include "PlayerSpeed.vc"
-
 #include "PigPlayer.vc"
-
-#include "Pig.vc"
-#include "Heresiarch.vc"
-#include "SorcFX3.vc"
-#include "SorcBall.vc"
-#include "SorcBall1.vc"
-#include "SorcBall2.vc"
-#include "SorcBall3.vc"
-#include "FighterBoss.vc"
-#include "ClericBoss.vc"
-#include "MageBoss.vc"
 #include "MinotaurFriend.vc"
 #include "SummoningDoll.vc"
 
@@ -61,12 +47,6 @@ class ClericPlayer : PlayerPawn decorate;
 class MagePlayer : PlayerPawn decorate;
 class ArtiPork : CustomInventory decorate;
 class PorkFX : MorphProjectile decorate;
-class Bishop : Actor decorate;
-class SorcFX1 : Actor decorate;
-class SorcFX2 : Actor decorate;
-class SorcFX3Explosion : Actor decorate;
-class SorcFX4 : Actor decorate;
-class SorcSpark1 : Actor decorate;
 class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
 class MinotaurSmoke : Actor decorate;

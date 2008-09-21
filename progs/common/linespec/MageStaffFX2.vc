@@ -89,8 +89,8 @@ int SpecialMissileHit(EntityEx Other)
 	if (Other != Target)
 	{
 		// Class bosses not flagged boss so they can be blasted
-		if (!Other.bIsPlayer && !Other.bBoss /*&&
-			!FighterBoss(Other) && !ClericBoss(Other) && !MageBoss(Other)*/)
+		if (!Other.bIsPlayer && !Other.bBoss && Other.Class != FighterBoss &&
+			Other.Class != ClericBoss && Other.Class != MageBoss)
 		{
 			Other.Damage(self, Target, 10, DamageType);
 			return 1;

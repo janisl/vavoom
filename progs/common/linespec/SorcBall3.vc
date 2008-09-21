@@ -23,86 +23,67 @@
 //**
 //**************************************************************************
 
-class SorcBall1 : SorcBall;
+class SorcBall3 : SorcBall;
 
-//==========================================================================
-//
-//  A_SorcOffense1
-//
-//  Actor is ball.
-//
-//==========================================================================
-
-final void A_SorcOffense1()
-{
-	EntityEx mo;
-	float ang1, ang2;
-
-	ang1 = AngleMod360(Angles.yaw + 70.0);
-	ang2 = AngleMod360(Angles.yaw - 70.0);
-	mo = Actor(Target).SpawnMissileAngle(SorcFX1, ang1, 0.0);
-	if (mo)
-	{
-		mo.Target = Target;
-		mo.Tracer = Target.Target;
-		mo.Args[4] = Heresiarch::BOUNCE_TIME_UNIT;
-		mo.Args[3] = 15;	// Bounce time in seconds
-	}
-	mo = Actor(Target).SpawnMissileAngle(SorcFX1, ang2, 0.0);
-	if (mo)
-	{
-		mo.Target = Target;
-		mo.Tracer = Target.Target;
-		mo.Args[4] = Heresiarch::BOUNCE_TIME_UNIT;
-		mo.Args[3] = 15;	// Bounce time in seconds
-	}
-}
-
-//==========================================================================
+//============================================================================
 //
 //  A_CastSorcererSpell
 //
-//  Actor is ball.
+//	Reinforcements
 //
-//==========================================================================
+//============================================================================
 
 void A_CastSorcererSpell()
 {
-	if (P_Random() < 200)
-	{
-		Special2 = Heresiarch::SORCFX4_RAPIDFIRE_TIME;
-		Args[4] = 128;
-		Target.Args[3] = Heresiarch::SORC_FIRING_SPELL;
-		return;
-	}
+	EntityEx mo;
+	float ang1, ang2;
 
 	// Put sorcerer into throw spell animation
 	if (Target.Health > 0)
 		Target.SetState(Target.FindState('Attack2'));
 
-	// Offensive
-	A_SorcOffense1();
+	ang1 = AngleMod360(Angles.yaw - 45.0);
+	ang2 = AngleMod360(Angles.yaw + 45.0);
+	if (Health < (default.Health / 3))
+	{
+		// Spawn 2 at a time
+		mo = Actor(Target).SpawnMissileAngle(SorcFX3, ang1, 4.0);
+		if (mo)
+			mo.Target = Target;
+		mo = Actor(Target).SpawnMissileAngle(SorcFX3, ang2, 4.0);
+		if (mo)
+			mo.Target = Target;
+	}
+	else
+	{
+		if (P_Random() < 128)
+			ang1 = ang2;
+		mo = Actor(Target).SpawnMissileAngle(SorcFX3, ang1, 4.0);
+		if (mo)
+			mo.Target = Target;
+	}
 
-	Target.Args[3] = Heresiarch::SORC_STOPPED;
+	Target.Args[3] = SORC_STOPPED;
 }
 
 states
 {
 Spawn:
-	SBMP ABCDEFGHIJKLMNOP 2 A_SorcBallOrbit
+	SBMG ABCDEFGHIJKLMNOP 2 A_SorcBallOrbit
 	Loop
 Pain:
-	SBMP A 5 A_SorcBallPop
-	SBMP B 2 A_BounceCheck
+	SBMG A 5 A_SorcBallPop
+	SBMG B 2 A_BounceCheck
 	Wait
 Death:
-	SBS4 D 5 A_Explode
-	SBS4 E 5
-	SBS4 FGH 6
+	SBS3 D 5 A_Explode
+	SBS3 E 5
+	SBS3 FGH 6
 	Stop
 }
 
 defaultproperties
 {
-	BallAngleOffset = 0.0;
+	Mass = 100.0;
+	BallAngleOffset = 240.0;
 }

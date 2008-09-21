@@ -1241,3 +1241,108 @@ final void A_BeakAttackPL2() self(Actor)
 	PlayerEx(Player).ChickenPeck = 12;
 	Player.ViewStates[ps_weapon].StateTime -= Random() * 0.125;
 }
+
+//==========================================================================
+//
+//  A_Sor1Chase
+//
+//==========================================================================
+
+final void A_Sor1Chase()
+{
+	if (Special1)
+	{
+		Special1--;
+		StateTime -= 0.1;
+	}
+	A_Chase();
+}
+
+//==========================================================================
+//
+//  A_Srcr1Attack
+//
+//  Sorcerer demon attack.
+//
+//==========================================================================
+
+final void A_Srcr1Attack()
+{
+	EntityEx A;
+	TAVec ang;
+	float angle;
+
+	if (!Target)
+	{
+		return;
+	}
+	PlaySound(AttackSound, CHAN_WEAPON);
+	if (CheckMeleeRange())
+	{
+		Target.Damage(self, self, HITDICE(8));
+		return;
+	}
+	if (Health > (default.Health / 3) * 2)
+	{
+		// Spit one fireball
+		SpawnMissile(Target, SorcererFX1, 48.0);
+	}
+	else
+	{
+		// Spit three fireballs
+		A = SpawnMissile(Target, SorcererFX1, 48.0);
+		if (A)
+		{
+			VectorAngles(&A.Velocity, &ang);
+			angle = A.Angles.yaw;
+			SpawnMissileAngles(SorcererFX1,
+				AngleMod360(angle - 3.0), ang.pitch, 48.0);
+			SpawnMissileAngles(SorcererFX1,
+				AngleMod360(angle + 3.0), ang.pitch, 48.0);
+		}
+		if (Health < default.Health / 3)
+		{
+			// Maybe attack again
+			if (Special1)
+			{
+				// Just attacked, so don't attack again
+				Special1 = 0;
+			}
+			else
+			{
+				// Set state to attack again
+				Special1 = 1;
+				SetState(FindState('Missile2'));
+			}
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_Sor1Pain
+//
+//==========================================================================
+
+final void A_Sor1Pain()
+{
+	Special1 = 20;	// Number of steps to walk fast
+	A_Pain();
+}
+
+//==========================================================================
+//
+//  A_SorcererRise
+//
+//==========================================================================
+
+final void A_SorcererRise()
+{
+	Sorcerer2 S2;
+
+	bSolid = false;
+	S2 = Spawn(Sorcerer2, Origin);
+	S2.SetState(S2.FindState('Rise'));
+	S2.Angles.yaw = Angles.yaw;
+	S2.Target = Target;
+}

@@ -23,65 +23,55 @@
 //**
 //**************************************************************************
 
-class SorcFX3 : Actor;
+class SorcBall2 : SorcBall;
 
 //============================================================================
 //
-//  A_SorcererBishopEntry
+//  A_CastSorcererSpell
+//
+//	Defensive
 //
 //============================================================================
 
-final void A_SorcererBishopEntry()
+void A_CastSorcererSpell()
 {
-	Spawn(SorcFX3Explosion, Origin);
-	PlaySound(SightSound, CHAN_VOICE);
-}
+	Actor mo;
+	float z;
 
-//============================================================================
-//
-//  A_SpawnBishop
-//
-//  Green spell - spawn bishops
-//
-//============================================================================
+	// Put sorcerer into throw spell animation
+	if (Target.Health > 0)
+		Target.SetState(Target.FindState('Attack2'));
 
-final void A_SpawnBishop()
-{
-	Actor A;
-
-	A = Spawn(Bishop, Origin);
-	if (A)
+	z = Target.Origin.z - Target.FloorClip + SORC_DEFENSE_HEIGHT;
+	mo = Spawn(SorcFX2, vector(Origin.x, Origin.y, z));
+	Actor(Target).bInvulnerable = true;
+	Actor(Target).bReflective = true;
+	Target.Args[0] = SORC_DEFENSE_TIME;
+	if (mo)
 	{
-		if (!A.TestLocation())
-		{
-			A.SetState(none);
-		}
+		mo.Target = Target;
 	}
-	SetState(none);
+
+	Target.Args[3] = SORC_STOPPED;
 }
 
 states
 {
 Spawn:
-	SBS3 ABC 2 Bright
+	SBMB ABCDEFGHIJKLMNOP 2 A_SorcBallOrbit
 	Loop
+Pain:
+	SBMB A 5 A_SorcBallPop
+	SBMB B 2 A_BounceCheck
+	Wait
 Death:
-	SBS3 A 4 Bright
-	BISH P 4 A_SorcererBishopEntry
-	BISH ON 4
-	BISH MLKJIH 3
-	BISH G 3 A_SpawnBishop
+	SBS3 D 5 A_Explode
+	SBS3 E 5
+	SBS3 FGH 6
 	Stop
 }
 
 defaultproperties
 {
-	Radius = 22.0;
-	Height = 65.0;
-	Speed = 525.0;
-	bMissile = true;
-	bNoBlockmap = true;
-	bNoTeleport = true;
-	bBloodSplatter = true;
-	SightSound = 'SorcererBishopSpawn';
+	BallAngleOffset = 120.0;
 }

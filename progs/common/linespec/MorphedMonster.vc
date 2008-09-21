@@ -23,7 +23,23 @@
 //**
 //**************************************************************************
 
-class Pig : Actor;
+class MorphedMonster : Actor;
+
+float			UnmorphTime;
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	if (!UpdateMorphedMonster())
+	{
+		::Tick(DeltaTime);
+	}
+}
 
 //==========================================================================
 //
@@ -33,9 +49,9 @@ class Pig : Actor;
 //
 //==========================================================================
 
-int UpdateMorphedMonster(int tics)
+final bool UpdateMorphedMonster()
 {
-	Actor fog;
+	EntityEx fog;
 	TVec oldOrigin;
 	class<EntityEx> originalClass;
 	float oldAngle;
@@ -45,8 +61,11 @@ int UpdateMorphedMonster(int tics)
 	int oldArgs[5];
 	EntityEx mo;
 
-	Special1 -= tics;
-	if (Special1 > 0)
+	if (Health <= 0)
+	{
+		return false;
+	}
+	if (UnmorphTime > XLevel.Time)
 	{
 		return false;
 	}
@@ -68,14 +87,14 @@ int UpdateMorphedMonster(int tics)
 	oldArgs[4] = Args[4];
 
 	UnlinkFromWorld();
-	mo = Spawn(originalClass, oldOrigin);
+	mo = Spawn(originalClass, Origin);
 
 	if (!mo.TestLocation())
 	{
 		// Didn't fit
 		mo.Destroy();
 		LinkToWorld();
-		mo.Special1 = 5 * 35;	// Next try in 5 seconds
+		Special1 = 5 * 35;	// Next try in 5 seconds
 		return false;
 	}
 	LinkToWorld();
@@ -95,115 +114,12 @@ int UpdateMorphedMonster(int tics)
 	mo.bNoHatePlayers = bNoHatePlayers;
 	mo.bShadow = bShadow;
 	mo.bGhost = bGhost;
-	fog = Spawn(TeleportFog, oldOrigin + vector(0.0, 0.0,
-		MainGameInfo::TELEFOGHEIGHT));
-	fog.PlaySound('Teleport', CHAN_VOICE);
+	fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, oldOrigin +
+		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
+	fog.PlaySound('misc/teleport', CHAN_VOICE);
 	return true;
-}
-
-//============================================================================
-//
-//  A_PigLook
-//
-//============================================================================
-
-final void A_PigLook()
-{
-	if (UpdateMorphedMonster(10))
-	{
-		return;
-	}
-	A_Look();
-}
-
-//============================================================================
-//
-//  A_PigChase
-//
-//============================================================================
-
-final void A_PigChase()
-{
-	if (UpdateMorphedMonster(3))
-	{
-		return;
-	}
-	A_Chase();
-}
-
-//============================================================================
-//
-//	A_PigAttack
-//
-//============================================================================
-
-final void A_PigAttack()
-{
-	if (UpdateMorphedMonster(18))
-	{
-		return;
-	}
-	if (!Target)
-	{
-		return;
-	}
-	if (CheckMeleeRange())
-	{
-		Target.Damage(self, self, 2 + (P_Random() & 1));
-		PlaySound('PigAttack', CHAN_VOICE);
-	}
-}
-
-states
-{
-Spawn:
-	PIGY B 10 A_PigLook
-	Loop
-See:
-	PIGY ABCD 3 A_PigChase
-	Loop
-Pain:
-	PIGY D 4 A_PigPain
-	Goto See
-Melee:
-	PIGY A 5 A_FaceTarget
-	PIGY A 10 A_PigAttack
-	Goto See
-Death:
-	PIGY E 4 A_Scream
-	PIGY F 3 A_NoBlocking
-	PIGY G 4 A_QueueCorpse
-	PIGY H 3
-	PIGY IJK 4
-	PIGY L -1
-	Stop
-Ice:
-	PIGY M 5 A_FreezeDeath
-	PIGY M 1 A_FreezeDeathChunks
-	Wait
 }
 
 defaultproperties
 {
-	Health = 25;
-	Radius = 12.0;
-	Height = 22.0;
-	Mass = 60.0;
-	Speed = 10.0 * 35.0;
-	PainChance = 0.5;
-	bSolid = true;
-	bShootable = true;
-	bCountKill = true;
-	bMonster = true;
-	bFloorClip = true;
-	bTelestomp = true;
-	bActivatePushWall = true;
-	bPassMobj = true;
-	bCanUseWalls = true;
-	bWindThrust = true;
-	bNoMorph = true;
-	SightSound = 'PigActive1';
-	ActiveSound = 'PigActive';
-	PainSound = 'PigPain';
-	DeathSound = 'PigDeath';
 }

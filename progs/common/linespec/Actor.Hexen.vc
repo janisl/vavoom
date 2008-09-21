@@ -25,8 +25,25 @@
 
 const float FIREDEMON_ATTACK_RANGE = 512.0;
 
+const int SORCBALL_INITIAL_SPEED 		= 7;
+const int SORCBALL_TERMINAL_SPEED		= 25;
+const int SORCBALL_SPEED_ROTATIONS 		= 5;
+const int SORCFX4_RAPIDFIRE_TIME		= (6*3);	// 3 seconds
+const float SORCFX4_SPREAD_ANGLE		= 20.0;
 const float SORC_DEFENSE_HEIGHT			= 45.0;
+const int SORC_DEFENSE_TIME				= 255;
 const int BOUNCE_TIME_UNIT				= (35/2);
+
+enum
+{
+	SORC_DECELERATE,
+	SORC_ACCELERATE,
+	SORC_STOPPING,
+	SORC_FIRESPELL,
+	SORC_STOPPED,
+	SORC_NORMAL,
+	SORC_FIRING_SPELL
+};
 
 const int KORAX_FIRST_TELEPORT_TID = 248;
 const int KORAX_TELEPORT_TID = 249;
@@ -198,6 +215,44 @@ final void A_DragonFX2()
 			A.Target = Target;
 		}
 	}
+}
+
+//============================================================================
+//
+//  A_SorcSpinBalls
+//
+//  Spawn spinning balls above head - actor is sorcerer.
+//
+//============================================================================
+
+final void A_SorcSpinBalls()
+{
+	Actor ball;
+	TVec org;
+
+	//	To prevent spawning balls more than once.
+	IdleState = GetStatePlus(IdleState, 2);
+
+	A_SlowBalls();
+	Args[0] = 0;	// Currently no defense
+	Args[3] = SORC_NORMAL;
+	Args[4] = SORCBALL_INITIAL_SPEED;	// Initial orbit speed
+	Special1f = 1.0;
+	org = Origin;
+	org.z = Origin.z - FloorClip + Height;
+
+	ball = Spawn(SorcBall1, org,,, false);
+	if (ball)
+	{
+		ball.Target = self;
+		ball.Special2 = SORCFX4_RAPIDFIRE_TIME;
+	}
+	ball = Spawn(SorcBall2, org,,, false);
+	if (ball)
+		ball.Target = self;
+	ball = Spawn(SorcBall3, org,,, false);
+	if (ball)
+		ball.Target = self;
 }
 
 //==========================================================================
@@ -2620,4 +2675,216 @@ final void A_PoisonBagInit()
 final void A_PoisonShroom()
 {
 	StateTime = 4.0 + Random() * 16.0;
+}
+
+//==========================================================================
+//
+//  A_FighterAttack
+//
+//==========================================================================
+
+final void A_FighterAttack()
+{
+	if (!Target)
+		return;
+
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 4.0), 0.0);
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw + 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(FSwordMissile, Angles.yaw, 0.0);
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 8.0), 0.0);
+	SpawnMissileAngle(FSwordMissile, AngleMod360(Angles.yaw - 45.0 / 4.0), 0.0);
+	PlaySound('FighterSwordFire', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  A_ClericAttack
+//
+//  Spawns the spirits
+//
+//==========================================================================
+
+final void A_ClericAttack()
+{
+	EntityEx	A;
+
+	if (!Target)
+		return;
+	A = SpawnMissile(Target, HolyMissile, 40.0);
+	if (A)
+	{
+		A.Tracer = Target;
+	}
+	PlaySound('HolySymbolFire', CHAN_WEAPON);
+}
+
+//==========================================================================
+//
+//  MStaffSpawn2
+//
+//==========================================================================
+
+void MStaffSpawn2(float angle)
+{
+	EntityEx mo;
+
+	mo = SpawnMissileAngle(MageStaffFX2, angle, 0.0, 40.0);
+	if (mo)
+	{
+		mo.Target = self;
+		MageStaffFX2(mo).FindEnemy();
+	}
+}
+
+//==========================================================================
+//
+//  A_MageAttack
+//
+//==========================================================================
+
+final void A_MageAttack()
+{
+	if (!Target)
+		return;
+
+	MStaffSpawn2(Angles.yaw);
+	MStaffSpawn2(AngleMod360(Angles.yaw - 5.0));
+	MStaffSpawn2(AngleMod360(Angles.yaw + 5.0));
+	PlaySound('MageStaffFire', CHAN_WEAPON);
+}
+
+//============================================================================
+//
+//  A_SorcererBishopEntry
+//
+//============================================================================
+
+final void A_SorcererBishopEntry()
+{
+	Spawn(SorcFX3Explosion, Origin);
+	PlaySound(SightSound, CHAN_VOICE);
+}
+
+//============================================================================
+//
+//  A_SpawnBishop
+//
+//  Green spell - spawn bishops
+//
+//============================================================================
+
+final void A_SpawnBishop()
+{
+	Actor A;
+
+	A = Spawn(Bishop, Origin);
+	if (A)
+	{
+		if (!A.TestLocation())
+		{
+			A.SetState(none);
+		}
+	}
+	SetState(none);
+}
+
+//============================================================================
+//
+// Set balls to slow mode - actor is sorcerer
+//
+//============================================================================
+
+final void A_SlowBalls()
+{
+	Args[3] = SORC_DECELERATE;	// slow mode
+	Args[2] = SORCBALL_INITIAL_SPEED;	// target speed
+}
+
+//============================================================================
+//
+//	Set balls to speed mode - actor is sorcerer
+//
+//============================================================================
+
+final void A_SpeedBalls()
+{
+	Args[3] = SORC_ACCELERATE;	// speed mode
+	Args[2] = SORCBALL_TERMINAL_SPEED;	// target speed
+}
+
+//============================================================================
+//
+//  A_SorcBossAttack
+//
+//  Resume ball spinning
+//
+//============================================================================
+
+final void A_SorcBossAttack()
+{
+	Args[3] = SORC_ACCELERATE;
+	Args[2] = SORCBALL_INITIAL_SPEED;
+}
+
+//============================================================================
+//
+//  A_StopBalls
+//
+//  Instant stop when rotation gets to ball in _Special2
+// actor is sorcerer
+//
+//============================================================================
+
+final void A_StopBalls()
+{
+	int chance = P_Random();
+
+	Args[3] = SORC_STOPPING;	// stopping mode
+	Args[1] = 0;	// Reset rotation counter
+
+	if ((Args[0] <= 0) && (chance < 200))
+	{
+		SpecialCID = SorcBall2;	// Blue
+	}
+	else if ((Health < (default.Health >> 1)) && (chance < 200))
+	{
+		SpecialCID = SorcBall3;	// Green
+	}
+	else
+	{
+		SpecialCID = SorcBall1;	// Yellow
+	}
+}
+
+//============================================================================
+//
+//  A_SpawnFizzle
+//
+//  Spell cast magic fizzle
+//
+//============================================================================
+
+final void A_SpawnFizzle()
+{
+	TVec org;
+	float dist = 5.0;
+	float angle = Angles.yaw;
+	float rangle;
+	Actor A;
+	int ix;
+
+	org.x = Origin.x + dist * cos(angle);
+	org.y = Origin.y + dist * sin(angle);
+	org.z = Origin.z - FloorClip + Height / 2.0;
+	for (ix = 0; ix < 5; ix++)
+	{
+		A = Spawn(SorcSpark1, org);
+		if (A)
+		{
+			rangle = angle + Random() * 5.0 * 90.0 / 1024.0;
+			A.Velocity.x = Random() * Speed * cos(rangle);
+			A.Velocity.y = Random() * Speed * sin(rangle);
+			A.Velocity.z = 2.0 * 35.0;
+		}
+	}
 }

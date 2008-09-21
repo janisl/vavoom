@@ -76,15 +76,20 @@ final bool MorphMonster(Actor victim)
 	{
 		return false;
 	}
+	if (!class<MorphedMonster>(MonsterClass))
+	{
+		return false;
+	}
 
 	EntityEx fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
 		victim.Origin + vector(0.0, 0.0,
 		LineSpecialGameInfo(Level.Game).TeleFogHeight));
 	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
-	Actor monster = Spawn(MonsterClass, victim.Origin,,, false);
+	MorphedMonster monster = MorphedMonster(Spawn(MonsterClass,
+		victim.Origin,,, false));
 	monster.SpecialCID = class<Actor>(victim.Class);
-	monster.Special1 = ftoi(MORPHTIME * 35.0) + P_Random();
+	monster.UnmorphTime = XLevel.Time + MORPHTIME + Random() * 256.0 / 35.0;
 	monster.RenderStyle = victim.RenderStyle;
 	monster.Alpha = victim.Alpha;
 	monster.bShadow = victim.bShadow;

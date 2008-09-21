@@ -1,4 +1,74 @@
 //------------------------------------------------------------------------------
+actor Sorcerer1 7
+{
+	Game Heretic
+	SpawnID 142
+	Health 2000
+	Radius 28
+	Height 100
+	Mass 800
+	Speed 16
+	PainChance 56
+	Monster
+	+FloorClip
+	+Boss
+	+DontMorph
+	+NoRadiusDmg
+	+NoTarget
+	+NoIceDeath
+	SeeSound "dsparilserpent/sight"
+	ActiveSound "dsparilserpent/active"
+	AttackSound "dsparilserpent/attack"
+	PainSound "dsparilserpent/pain"
+	DeathSound "dsparilserpent/death"
+	Obituary "$ob_dsparil1"
+	HitObituary "$ob_dsparil1hit"
+
+	action native A_Sor1Chase();
+	action native A_Srcr1Attack();
+	action native A_Sor1Pain();
+	action native A_SorcererRise();
+
+	states
+	{
+	Spawn:
+		SRCR AB 10 A_Look
+		Loop
+	See:
+		SRCR ABCD 5 A_Sor1Chase
+		Loop
+	Missile:
+		SRCR Q 7 A_FaceTarget
+		SRCR R 6 A_FaceTarget
+		SRCR S 10 A_Srcr1Attack
+		Goto See
+	Missile2:
+		SRCR S 10 A_FaceTarget
+		SRCR Q 7 A_FaceTarget
+		SRCR R 6 A_FaceTarget
+		SRCR S 10 A_Srcr1Attack
+		Goto See
+	Pain:
+		SRCR Q 6 A_Sor1Pain
+		Goto See
+	Death:
+		SRCR E 7
+		SRCR F 7 A_Scream
+		SRCR G 7
+		SRCR HIJK 6
+		SRCR L 25 A_PlaySoundEx("dsparil/zap", "Body", 0, 1)
+		SRCR MN 5
+		SRCR O 4
+		SRCR L 20 A_PlaySoundEx("dsparil/zap", "Body", 0, 1)
+		SRCR MN 5
+		SRCR O 4
+		SRCR L 12
+		SRCR P -1 A_SorcererRise
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor SorcererFX1
 {
 	Game Heretic

@@ -54,6 +54,55 @@ actor BeakPuff : StaffPuff
 }
 
 //------------------------------------------------------------------------------
+actor Chicken : MorphedMonster
+{
+	Game Heretic
+	SpawnID 122
+	Health 10
+	Radius 9
+	Height 22
+	Mass 40
+	Speed 4
+	PainChance 200
+	Monster
+	+FloorClip
+	+WindThrust
+	+DontMorph
+	SeeSound "chicken/sight"
+	ActiveSound "chicken/active"
+	AttackSound "chicken/attack"
+	PainSound "chicken/pain"
+	DeathSound "chicken/death"
+	Obituary "$ob_chicken"
+	states
+	{
+	Spawn:
+		CHKN AB 10 A_Look
+		Loop
+	See:
+		CHKN ABAB 3 A_Chase
+		Loop
+	Melee:
+		CHKN mo 8 A_FaceTarget
+		CHKN C 5 A_CustomMeleeAttack(random(1, 2))
+		CHKN C 5
+		Goto See
+	Pain:
+		CHKN D 5 A_Feathers
+		CHKN C 5 A_Pain
+		Goto See
+	Death:
+		CHKN E 6 A_Scream
+		CHKN F 6 A_Feathers
+		CHKN G 6
+		CHKN H 6 A_NoBlocking
+		CHKN IJK 6
+		CHKN L -1
+		Stop
+	}
+}
+
+//------------------------------------------------------------------------------
 actor Feather
 {
 	Game Heretic

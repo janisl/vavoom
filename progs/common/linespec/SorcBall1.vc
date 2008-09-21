@@ -23,53 +23,86 @@
 //**
 //**************************************************************************
 
-class SorcBall2 : SorcBall;
+class SorcBall1 : SorcBall;
 
-//============================================================================
+//==========================================================================
+//
+//  A_SorcOffense1
+//
+//  Actor is ball.
+//
+//==========================================================================
+
+final void A_SorcOffense1()
+{
+	EntityEx mo;
+	float ang1, ang2;
+
+	ang1 = AngleMod360(Angles.yaw + 70.0);
+	ang2 = AngleMod360(Angles.yaw - 70.0);
+	mo = Actor(Target).SpawnMissileAngle(SorcFX1, ang1, 0.0);
+	if (mo)
+	{
+		mo.Target = Target;
+		mo.Tracer = Target.Target;
+		mo.Args[4] = BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
+	}
+	mo = Actor(Target).SpawnMissileAngle(SorcFX1, ang2, 0.0);
+	if (mo)
+	{
+		mo.Target = Target;
+		mo.Tracer = Target.Target;
+		mo.Args[4] = BOUNCE_TIME_UNIT;
+		mo.Args[3] = 15;	// Bounce time in seconds
+	}
+}
+
+//==========================================================================
 //
 //  A_CastSorcererSpell
 //
-//	Defensive
+//  Actor is ball.
 //
-//============================================================================
+//==========================================================================
 
 void A_CastSorcererSpell()
 {
-	Actor mo;
-	float z;
+	if (P_Random() < 200)
+	{
+		Special2 = SORCFX4_RAPIDFIRE_TIME;
+		Args[4] = 128;
+		Target.Args[3] = SORC_FIRING_SPELL;
+		return;
+	}
 
 	// Put sorcerer into throw spell animation
 	if (Target.Health > 0)
 		Target.SetState(Target.FindState('Attack2'));
 
-	z = Target.Origin.z - Target.FloorClip + Heresiarch::SORC_DEFENSE_HEIGHT;
-	mo = Spawn(SorcFX2, vector(Origin.x, Origin.y, z));
-	Actor(Target).bInvulnerable = true;
-	Actor(Target).bReflective = true;
-	Target.Args[0] = Heresiarch::SORC_DEFENSE_TIME;
-	if (mo)
-		mo.Target = Target;
+	// Offensive
+	A_SorcOffense1();
 
-	Target.Args[3] = Heresiarch::SORC_STOPPED;
+	Target.Args[3] = SORC_STOPPED;
 }
 
 states
 {
 Spawn:
-	SBMB ABCDEFGHIJKLMNOP 2 A_SorcBallOrbit
+	SBMP ABCDEFGHIJKLMNOP 2 A_SorcBallOrbit
 	Loop
 Pain:
-	SBMB A 5 A_SorcBallPop
-	SBMB B 2 A_BounceCheck
+	SBMP A 5 A_SorcBallPop
+	SBMP B 2 A_BounceCheck
 	Wait
 Death:
-	SBS3 D 5 A_Explode
-	SBS3 E 5
-	SBS3 FGH 6
+	SBS4 D 5 A_Explode
+	SBS4 E 5
+	SBS4 FGH 6
 	Stop
 }
 
 defaultproperties
 {
-	BallAngleOffset = 120.0;
+	BallAngleOffset = 0.0;
 }

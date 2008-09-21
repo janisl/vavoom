@@ -131,6 +131,7 @@ enum
 #include "SwitchableDecoration.vc"
 #include "SwitchingDecoration.vc"
 #include "MorphProjectile.vc"
+#include "MorphedMonster.vc"
 
 #include "AmbientSound.vc"
 #include "SoundSequence.vc"
@@ -288,6 +289,11 @@ enum
 #include "Pottery1.vc"
 #include "ZBell.vc"
 #include "ThrustFloorDown.vc"
+#include "Heresiarch.vc"
+#include "SorcBall.vc"
+#include "SorcBall1.vc"
+#include "SorcBall2.vc"
+#include "SorcBall3.vc"
 
 #include "Coin.vc"
 #include "Meat.vc"
@@ -392,6 +398,7 @@ class Ironlich : Actor decorate;
 class HeadFX1 : Actor decorate;
 class HeadFX3 : Actor decorate;
 class Wizard : Actor decorate;
+class SorcererFX1 : Actor decorate;
 class Sorcerer2FX1 : Actor decorate;
 class Sorcerer2FX2 : Actor decorate;
 class Sorcerer2Telefade : Actor decorate;
@@ -430,6 +437,7 @@ class IceGuyWisp1 : Actor decorate;
 class IceGuyWisp2 : Actor decorate;
 class IceGuyFX : Actor decorate;
 class IceGuyFX2 : Actor decorate;
+class Bishop : Actor decorate;
 class BishopBlur : Actor decorate;
 class BishopFX : Actor decorate;
 class BishopPainBlur : Actor decorate;
@@ -443,8 +451,13 @@ class WraithFX4 : Actor decorate;
 class WraithFX5 : Actor decorate;
 class DragonFireball : Actor decorate;
 class DragonExplosion : Actor decorate;
+class SorcSpark1 : Actor decorate;
+class SorcFX1 : Actor decorate;
 class SorcFX2 : Actor decorate;
 class SorcFX2T1 : Actor decorate;
+class SorcFX3 : Actor decorate;
+class SorcFX3Explosion : Actor decorate;
+class SorcFX4 : Actor decorate;
 class CentaurFX : Actor decorate;
 class Demon1FX1 : Actor decorate;
 class Demon2FX1 : Actor decorate;
@@ -495,6 +508,9 @@ class BloodPool : Actor decorate;
 class CorpseBloodDrip : Actor decorate;
 class PotteryBit : Actor decorate;
 class DirtClump : Actor decorate;
+class FighterBoss : Actor decorate;
+class ClericBoss : Actor decorate;
+class MageBoss : Actor decorate;
 
 class MedicalKit : HealthPickup decorate;
 class MedPatch : HealthPickup decorate;

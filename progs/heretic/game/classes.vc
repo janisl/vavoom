@@ -30,13 +30,9 @@ import 'linespec';
 #include "HereticWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
-
 #include "TeleportFog.vc"
-
 #include "ChickenPlayer.vc"
-#include "Chicken.vc"
 #include "Minotaur.vc"
-#include "Sorcerer1.vc"
 
 class ArtiSuperHealth : HealthPickup decorate;
 class EnchantedShield : BasicArmorPickup decorate;
@@ -46,7 +42,6 @@ class HereticPlayer : PlayerPawn decorate;
 class EggFX : MorphProjectile decorate;
 class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
-class SorcererFX1 : Actor decorate;
 class PhoenixPuff : Actor decorate;
 class Staff : Weapon decorate;
 class Gauntlets : Weapon decorate;

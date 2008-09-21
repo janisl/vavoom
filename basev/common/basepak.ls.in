@@ -107,6 +107,7 @@ progs/linespec/Health.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Health.vc
 progs/linespec/HealthFillup.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HealthFillup.vc
 progs/linespec/HealthPickup.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HealthPickup.vc
 progs/linespec/HealthTraining.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/HealthTraining.vc
+progs/linespec/Heresiarch.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Heresiarch.vc
 progs/linespec/HereticWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HereticWeapon.vc
 progs/linespec/HexenArmor.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HexenArmor.vc
 progs/linespec/HexenWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/HexenWeapon.vc
@@ -143,6 +144,7 @@ progs/linespec/MageWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/MageWea
 progs/linespec/MageWeaponPiece.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MageWeaponPiece.vc
 progs/linespec/MapRevealer.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/MapRevealer.vc
 progs/linespec/Meat.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Meat.vc
+progs/linespec/MorphedMonster.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MorphedMonster.vc
 progs/linespec/MorphProjectile.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MorphProjectile.vc
 progs/linespec/MWeapBloodscourge.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MWeapBloodscourge.vc
 progs/linespec/OpenDoor222.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/OpenDoor222.vc
@@ -229,6 +231,10 @@ progs/linespec/Sigil.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Sigil.vc
 progs/linespec/SkyPicker.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyPicker.vc
 progs/linespec/SkyViewpoint.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SkyViewpoint.vc
 progs/linespec/SlideshowStarter.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SlideshowStarter.vc
+progs/linespec/SorcBall.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SorcBall.vc
+progs/linespec/SorcBall1.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SorcBall1.vc
+progs/linespec/SorcBall2.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SorcBall2.vc
+progs/linespec/SorcBall3.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/SorcBall3.vc
 progs/linespec/Sorcerer2.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Sorcerer2.vc
 progs/linespec/SoundEnvironment.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/SoundEnvironment.vc
 progs/linespec/SoundSequence.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/SoundSequence.vc
@@ -423,6 +429,7 @@ actors/hexen/bats.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/bats.txt
 actors/hexen/bishop.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/bishop.txt
 actors/hexen/blastradius.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/blastradius.txt
 actors/hexen/centaur.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/centaur.txt
+actors/hexen/clericboss.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericboss.txt
 actors/hexen/clericflame.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericflame.txt
 actors/hexen/clericholy.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericholy.txt
 actors/hexen/clericmace.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/clericmace.txt
@@ -432,6 +439,7 @@ actors/hexen/demons.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/demons.txt
 actors/hexen/dragon.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/dragon.txt
 actors/hexen/ettin.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/ettin.txt
 actors/hexen/fighteraxe.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighteraxe.txt
+actors/hexen/fighterboss.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterboss.txt
 actors/hexen/fighterfist.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterfist.txt
 actors/hexen/fighterhammer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterhammer.txt
 actors/hexen/fighterplayer.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/fighterplayer.txt
@@ -447,6 +455,7 @@ actors/hexen/hexenkeys.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenkeys.
 actors/hexen/hexenspecialdecs.txt		@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/hexenspecialdecs.txt
 actors/hexen/iceguy.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/iceguy.txt
 actors/hexen/korax.txt					@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/korax.txt
+actors/hexen/mageboss.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/mageboss.txt
 actors/hexen/magecone.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/magecone.txt
 actors/hexen/magelightning.txt			@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/magelightning.txt
 actors/hexen/mageplayer.txt				@CMAKE_CURRENT_SOURCE_DIR@/actors/hexen/mageplayer.txt
