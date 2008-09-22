@@ -261,6 +261,7 @@ enum
 #include "ArtiTomeOfPower.vc"
 #include "ArtiTimeBomb.vc"
 #include "ChickenPlayer.vc"
+#include "Minotaur.vc"
 
 #include "HexenWeapon.vc"
 #include "FighterWeapon.vc"
@@ -428,6 +429,8 @@ class MaceSpawner : Actor decorate;
 class BeakPuff : Actor decorate;
 class ActivatedTimeBomb : Actor decorate;
 class Beak : Weapon decorate;
+class MinotaurFX1 : Actor decorate;
+class MinotaurFX2 : Actor decorate;
 
 class FireDemonRock1 : Actor decorate;
 class FireDemonRock2 : Actor decorate;

@@ -145,6 +145,7 @@ progs/linespec/MageWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/MageWea
 progs/linespec/MageWeaponPiece.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MageWeaponPiece.vc
 progs/linespec/MapRevealer.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/MapRevealer.vc
 progs/linespec/Meat.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Meat.vc
+progs/linespec/Minotaur.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Minotaur.vc
 progs/linespec/MorphedMonster.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MorphedMonster.vc
 progs/linespec/MorphProjectile.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MorphProjectile.vc
 progs/linespec/MWeapBloodscourge.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MWeapBloodscourge.vc
