@@ -98,6 +98,9 @@ MDRIVER			VMikModAudioCodec::Driver =
 	255,
 #if (LIBMIKMOD_VERSION > 0x030106)
 	"vavoom",
+#  if (LIBMIKMOD_VERSION >= 0x030200)
+	"",
+#  endif	/* libmikmod-3.2.x */
 	NULL,
 #endif
 	VMikModAudioCodec::Drv_IsThere,
