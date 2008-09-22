@@ -537,7 +537,7 @@ defaultproperties
 	bNightmareFastChase = true;
 	bRavenStylePickupRespawn = true;
 	TeleFogHeight = TELEFOGHEIGHT;
-	TeleportFogClass = TeleportFog;
+	TeleportFogState = 'Raven';
 	DefaultKickBack = 150.0;
 	InvDefaultMaxAmount = 16;
 	DefaultInvulnBlendColour = Inventory::GOLDCOLOUR;

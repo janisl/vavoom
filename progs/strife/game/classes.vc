@@ -34,7 +34,6 @@ import 'uibase';
 #include "StrifeLevelInfo.vc"
 #include "StrifeWorldInfo.vc"
 #include "Player.vc"
-#include "TeleportFog.vc"
 
 class AmmoSatchel : BackpackItem decorate;
 class Communicator : Inventory decorate;

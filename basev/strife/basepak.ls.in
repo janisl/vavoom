@@ -32,7 +32,6 @@ progs/game/MainGameInfo.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/MainGameInfo.
 progs/game/Player.vc					@CMAKE_SOURCE_DIR@/progs/strife/game/Player.vc
 progs/game/StrifeLevelInfo.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/StrifeLevelInfo.vc
 progs/game/StrifeWorldInfo.vc			@CMAKE_SOURCE_DIR@/progs/strife/game/StrifeWorldInfo.vc
-progs/game/TeleportFog.vc				@CMAKE_SOURCE_DIR@/progs/strife/game/TeleportFog.vc
 
 //	ACS helper
 acs/strfhelp.o			strfhelp.o

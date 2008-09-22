@@ -36,7 +36,6 @@ progs/game/MinotaurFriend.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/MinotaurFriend
 progs/game/Player.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/Player.vc
 progs/game/PlayerSpeed.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/PlayerSpeed.vc
 progs/game/SummoningDoll.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/SummoningDoll.vc
-progs/game/TeleportFog.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/TeleportFog.vc
 
 //	Scripts
 animdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/animdefs.txt

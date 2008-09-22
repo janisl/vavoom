@@ -30,7 +30,6 @@ import 'linespec';
 #include "HereticWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
-#include "TeleportFog.vc"
 #include "Minotaur.vc"
 
 class ArtiSuperHealth : HealthPickup decorate;

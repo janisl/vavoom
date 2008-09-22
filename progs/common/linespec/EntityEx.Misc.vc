@@ -344,15 +344,12 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 	fogDelta = bMissile ? 0.0 : LineSpecialGameInfo(Level.Game).TeleFogHeight;
 	if (SrcFog)
 	{
-		fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-			oldOrg + vector(0.0, 0.0, fogDelta));
-		fog.PlaySound('misc/teleport', CHAN_VOICE);
+		Spawn(TeleportFog, oldOrg + vector(0.0, 0.0, fogDelta));
 	}
 	if (DstFog)
 	{
-		fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, Origin +
-			vector(20.0 * cos(angle), 20.0 * sin(angle), fogDelta));
-		fog.PlaySound('misc/teleport', CHAN_VOICE);
+		Spawn(TeleportFog, Origin + vector(20.0 * cos(angle),
+			20.0 * sin(angle), fogDelta));
 	}
 	if (!KeepDir)
 	{
@@ -389,7 +386,6 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 
 final bool MoveThing(TVec Pos, bool Fog)
 {
-	EntityEx fogAct;
 	TVec OldOrg = Origin;
 
 	UnlinkFromWorld();
@@ -399,15 +395,11 @@ final bool MoveThing(TVec Pos, bool Fog)
 	{
 		if (Fog)
 		{
-			fogAct = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-				Pos + vector(0.0, 0.0,
+			Spawn(TeleportFog, Pos + vector(0.0, 0.0,
 				LineSpecialGameInfo(Level.Game).TeleFogHeight));
-			fogAct.PlaySound('misc/teleport', CHAN_VOICE);
 
-			fogAct = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-				OldOrg + vector(0.0, 0.0,
+			Spawn(TeleportFog, OldOrg + vector(0.0, 0.0,
 				LineSpecialGameInfo(Level.Game).TeleFogHeight));
-			fogAct.PlaySound('misc/teleport', CHAN_VOICE);
 		}
 		return true;
 	}
@@ -602,16 +594,12 @@ final void NightmareRespawn()
 		return;	// no respwan
 
 	// spawn a teleport fog at old spot
-	A = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-		vector(Origin.x, Origin.y, ONFLOORZ));
+	A = Spawn(TeleportFog, vector(Origin.x, Origin.y, ONFLOORZ));
 	A.Origin.z += LineSpecialGameInfo(Level.Game).TeleFogHeight;
-	A.PlaySound('misc/teleport', CHAN_BODY);
 
 	// spawn a teleport fog at the new spot
-	A = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-		vector(x, y, ONFLOORZ));
+	A = Spawn(TeleportFog, vector(x, y, ONFLOORZ));
 	A.Origin.z += LineSpecialGameInfo(Level.Game).TeleFogHeight;
-	A.PlaySound('misc/teleport', CHAN_BODY);
 
 	// spawn the new monster
 

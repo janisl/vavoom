@@ -124,6 +124,7 @@ enum
 #include "TeleportDest.vc"
 #include "TeleportDest2.vc"
 #include "TeleportDest3.vc"
+#include "TeleportFog.vc"
 #include "PointPusher.vc"
 #include "PointPuller.vc"
 #include "WaterZone.vc"

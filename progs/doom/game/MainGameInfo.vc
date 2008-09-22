@@ -1125,7 +1125,6 @@ defaultproperties
 	bDefaultLaxMonsterActivation = true;
 	bNoClipIgnoreFloor = true;
 	bAlwaysSwitchNewWeapon = true;
-	TeleportFogClass = TeleportFog;
 	DefaultKickBack = 150.0;
 	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
 	bBloodRandomiseTime = true;

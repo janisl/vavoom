@@ -30,7 +30,6 @@ progs/game/DoomLevelInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/DoomLevelInfo
 progs/game/DoomWorldInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/DoomWorldInfo.vc
 progs/game/MainGameInfo.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/MainGameInfo.vc
 progs/game/Player.vc						@CMAKE_SOURCE_DIR@/progs/doom/game/Player.vc
-progs/game/TeleportFog.vc					@CMAKE_SOURCE_DIR@/progs/doom/game/TeleportFog.vc
 
 //	Binary data lumps
 animated.lmp			@CMAKE_CURRENT_SOURCE_DIR@/animated.lmp

@@ -100,9 +100,8 @@ final void A_Respawn(optional bool Fog)
 		bInvisible = false;
 		if (Fog)
 		{
-			EntityEx fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-				Origin + vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
-			fog.PlaySound('misc/teleport', CHAN_VOICE);
+			Spawn(TeleportFog, Origin + vector(0.0, 0.0,
+				LineSpecialGameInfo(Level.Game).TeleFogHeight));
 		}
 		if (bCountKill)
 		{

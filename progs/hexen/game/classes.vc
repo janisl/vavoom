@@ -32,7 +32,6 @@ import 'linespec';
 #include "Player.vc"
 #include "BotPlayer.vc"
 #include "ArtiDarkServant.vc"
-#include "TeleportFog.vc"
 #include "PlayerSpeed.vc"
 #include "MinotaurFriend.vc"
 #include "SummoningDoll.vc"

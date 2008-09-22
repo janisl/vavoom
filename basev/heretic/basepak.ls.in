@@ -32,7 +32,6 @@ progs/game/HereticWorldInfo.vc	@CMAKE_SOURCE_DIR@/progs/heretic/game/HereticWorl
 progs/game/MainGameInfo.vc		@CMAKE_SOURCE_DIR@/progs/heretic/game/MainGameInfo.vc
 progs/game/Minotaur.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/Minotaur.vc
 progs/game/Player.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/Player.vc
-progs/game/TeleportFog.vc		@CMAKE_SOURCE_DIR@/progs/heretic/game/TeleportFog.vc
 
 //	Scripts
 animdefs.txt			@CMAKE_CURRENT_SOURCE_DIR@/animdefs.txt

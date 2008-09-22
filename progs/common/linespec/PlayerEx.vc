@@ -2241,7 +2241,6 @@ bool CheckSpot(mthing_t * mthing)
 	float y;
 	sector_t *sec;
 	float an;
-	EntityEx A;
 	int i;
 
 	if (!MO)
@@ -2279,10 +2278,8 @@ bool CheckSpot(mthing_t * mthing)
 	sec = Level.XLevel.PointInSector(vector(x, y, 0.0));
 	an = itof(45 * (mthing->angle / 45));
 
-	A = Level.Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-		vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
+	Level.Spawn(TeleportFog, vector(x + 20.0 * cos(an), y + 20.0 * sin(an),
 		sec->floor.TexZ + LineSpecialGameInfo(Level.Game).TeleFogHeight));
-	A.PlaySound('misc/teleport', CHAN_VOICE);
 
 	return true;
 }
@@ -3274,7 +3271,6 @@ final void AdjustPlayerAngle(EntityEx AimTarget)
 
 final bool UndoPlayerMorph()
 {
-	EntityEx fog;
 	Actor A;
 
 	MO.UnlinkFromWorld();
@@ -3319,11 +3315,9 @@ final bool UndoPlayerMorph()
 	PClass = BaseClass;
 	PostMorphWeapon(Weapon(Actor(MO).Tracer));
 
-	fog = Level.Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-		MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
+	Level.Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
 		20.0 * sin(MO.Angles.yaw),
 		LineSpecialGameInfo(Level.Game).TeleFogHeight));
-	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	MO.SetState(MO.FindState('FreeTargMobj'));
 	MO = A;

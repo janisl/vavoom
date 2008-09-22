@@ -81,10 +81,8 @@ final bool MorphMonster(Actor victim)
 		return false;
 	}
 
-	EntityEx fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-		victim.Origin + vector(0.0, 0.0,
+	Spawn(TeleportFog, victim.Origin + vector(0.0, 0.0,
 		LineSpecialGameInfo(Level.Game).TeleFogHeight));
-	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	MorphedMonster monster = MorphedMonster(Spawn(MonsterClass,
 		victim.Origin,,, false));
@@ -145,10 +143,8 @@ final bool MorphPlayer(Actor victim)
 		return false;
 	}
 
-	EntityEx fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass,
-		victim.Origin + vector(0.0, 0.0,
+	Spawn(TeleportFog, victim.Origin + vector(0.0, 0.0,
 		LineSpecialGameInfo(Level.Game).TeleFogHeight));
-	fog.PlaySound('misc/teleport', CHAN_VOICE);
 
 	beastMo = Spawn(PlayerClass, victim.Origin,,, false);
 	beastMo.Tracer = PlayerEx(victim.Player).ReadyWeapon;

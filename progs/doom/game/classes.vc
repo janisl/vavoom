@@ -34,7 +34,6 @@ import 'linespec';
 #include "DoomWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
-#include "TeleportFog.vc"
 
 class GreenArmor : BasicArmorPickup decorate;
 class BlueArmor : BasicArmorPickup decorate;

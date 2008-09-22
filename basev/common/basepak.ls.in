@@ -255,6 +255,7 @@ progs/linespec/TeleportDest.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Telep
 progs/linespec/TeleportDest2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleportDest2.vc
 progs/linespec/TeleportDest3.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleportDest3.vc
 progs/linespec/TeleporterBeacon.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleporterBeacon.vc
+progs/linespec/TeleportFog.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TeleportFog.vc
 progs/linespec/TelOtherFX1.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/TelOtherFX1.vc
 progs/linespec/TextureChangeDoor.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/TextureChangeDoor.vc
 progs/linespec/ThrustFloorDown.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ThrustFloorDown.vc

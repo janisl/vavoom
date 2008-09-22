@@ -626,7 +626,7 @@ defaultproperties
 	GameFilterFlag = EntityEx::GAME_Strife;
 	AcsHelper = 'strfhelp';
 	GenericConScript = 'script00';
-	TeleportFogClass = TeleportFog;
+	TeleportFogState = 'Strife';
 	DefaultKickBack = 100.0;
 	bDefaultLaxMonsterActivation = true;
 	bAlwaysSwitchNewWeapon = true;

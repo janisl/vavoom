@@ -79,7 +79,6 @@ bool Use(bool Pickup)
 final void A_SummonRebel()
 {
 	EntityEx	A;
-	EntityEx	TFog;
 
 	A = Spawn(Rebel1, Origin + vector((Random() - 0.5) * 64.0,
 		(Random() - 0.5) * 64.0, 0.0));
@@ -127,8 +126,7 @@ final void A_SummonRebel()
 	A.SetState (A.SeeState);
 	A.Angles = Angles;
 
-	TFog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, A.Origin);
-	TFog.PlaySound('misc/teleport', CHAN_BODY);
+	Spawn(TeleportFog, A.Origin);
 
 	Health--;
 	if (Health < 0)

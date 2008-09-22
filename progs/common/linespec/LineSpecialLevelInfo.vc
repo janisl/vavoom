@@ -4169,7 +4169,6 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 	EntityEx		newAct;
 	class<EntityEx>	moType;
 	bool			success;
-	EntityEx		fogAct;
 
 	success = false;
 	tid = Arg1;
@@ -4205,10 +4204,8 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			newAct.SetTID(Arg4);
 			if (fog == true)
 			{
-				fogAct = Spawn(LineSpecialGameInfo(Game).TeleportFogClass,
-					A.Origin + vector(0.0, 0.0,
+				Spawn(TeleportFog, A.Origin + vector(0.0, 0.0,
 					LineSpecialGameInfo(Game).TeleFogHeight));
-				fogAct.PlaySound('misc/teleport', CHAN_VOICE);
 			}
 			newAct.bDropped = true;	// Don't respawn
 			if (newAct.bFloatBob)
@@ -4793,14 +4790,10 @@ final bool EV_ThingMove(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		{
 			if (Arg3)
 			{
-				Entity FogAct = Spawn(LineSpecialGameInfo(Game).TeleportFogClass,
-					OldOrg + vector(0.0, 0.0,
+				Spawn(TeleportFog, OldOrg + vector(0.0, 0.0,
 					LineSpecialGameInfo(Game).TeleFogHeight));
-				FogAct.PlaySound('misc/teleport', CHAN_VOICE);
-				FogAct = Spawn(LineSpecialGameInfo(Game).TeleportFogClass,
-					A.Origin + vector(0.0, 0.0,
+				Spawn(TeleportFog, A.Origin + vector(0.0, 0.0,
 					LineSpecialGameInfo(Game).TeleFogHeight));
-				FogAct.PlaySound('misc/teleport', CHAN_VOICE);
 			}
 			return true;
 		}

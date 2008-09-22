@@ -96,7 +96,7 @@ float			xspeed[8];
 float			yspeed[8];
 
 float			TeleFogHeight;
-class<EntityEx>	TeleportFogClass;
+name			TeleportFogState;
 
 float			DefaultKickBack;
 

@@ -51,7 +51,6 @@ void Tick(float DeltaTime)
 
 final bool UpdateMorphedMonster()
 {
-	EntityEx fog;
 	TVec oldOrigin;
 	class<EntityEx> originalClass;
 	float oldAngle;
@@ -114,9 +113,8 @@ final bool UpdateMorphedMonster()
 	mo.bNoHatePlayers = bNoHatePlayers;
 	mo.bShadow = bShadow;
 	mo.bGhost = bGhost;
-	fog = Spawn(LineSpecialGameInfo(Level.Game).TeleportFogClass, oldOrigin +
-		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
-	fog.PlaySound('misc/teleport', CHAN_VOICE);
+	Spawn(TeleportFog, oldOrigin + vector(0.0, 0.0,
+		LineSpecialGameInfo(Level.Game).TeleFogHeight));
 	return true;
 }
 
