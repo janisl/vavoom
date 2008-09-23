@@ -95,7 +95,6 @@ void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices,
 	int				length;
 	filelump_t*		fileinfo;
 	filelump_t*		fi_p;
-	char			tmp[8];
 
 	Name = FileName;
 	GwaDir = AGwaDir;
@@ -146,10 +145,9 @@ void VWadFile::Open(const VStr& FileName, const VStr& AGwaDir, bool FixVoices,
 		// set.  I don't know the reason for that..  We must
 		// clear the high bits for such Mac wad files to work
 		// in this engine. This shouldn't break other wads.
-		memcpy(tmp, fileinfo->name, 8);
 		for (j = 0; j < 8; j++)
-			tmp[j] &= 0x7f;
-		lump_p->Name = VName(tmp, VName::AddLower8);
+			fileinfo->name[j] &= 0x7f;
+		lump_p->Name = VName(fileinfo->name, VName::AddLower8);
 		lump_p->Position = LittleLong(fileinfo->filepos);
 		lump_p->Size = LittleLong(fileinfo->size);
 		lump_p->Namespace = WADNS_Global;
