@@ -31,10 +31,7 @@ import 'linespec';
 #include "HexenWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
-#include "ArtiDarkServant.vc"
 #include "PlayerSpeed.vc"
-#include "MinotaurFriend.vc"
-#include "SummoningDoll.vc"
 
 class ArtiHealth : HealthPickup decorate;
 class Mana1 : Ammo decorate;
@@ -45,10 +42,6 @@ class ClericPlayer : PlayerPawn decorate;
 class MagePlayer : PlayerPawn decorate;
 class ArtiPork : CustomInventory decorate;
 class PorkFX : MorphProjectile decorate;
-class MinotaurFX1 : Actor decorate;
-class MinotaurFX2 : Actor decorate;
-class MinotaurSmoke : Actor decorate;
-class MinotaurSmokeExit : Actor decorate;
 class PunchPuff : Actor decorate;
 class HolyMissile : Actor decorate;
 class FWeapFist : Weapon decorate;

@@ -173,6 +173,7 @@ $alias misc/fallingsplat		PlayerFallingSplat
 $alias minotaur/sight			MaulatorSight
 $alias minotaur/pain			MaulatorPain
 $alias minotaur/death			MaulatorDeath
+$alias minotaur/melee			MaulatorHamSwing
 $alias minotaur/active			MaulatorActive
 $alias minotaur/attack1			MaulatorHamHit
 $alias minotaur/attack2			MaulatorHamSwing

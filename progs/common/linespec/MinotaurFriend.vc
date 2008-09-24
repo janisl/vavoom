@@ -23,45 +23,66 @@
 //**
 //**************************************************************************
 
-class ArtiDarkServant : Inventory
-	game(GAME_Hexen)
-	__mobjinfo__(86)
-	__scriptid__(16);
-
-//==========================================================================
-//
-//	Use
-//
-//==========================================================================
-
-bool Use(bool Pickup)
-{
-	EntityEx mo;
-
-	mo = EntityEx(Owner).SpawnPlayerMissile(SummoningDoll);
-	if (mo)
-	{
-		mo.Target = EntityEx(Owner);
-		mo.Velocity.z = 5.0 * 35.0;
-	}
-	return true;
-}
+class MinotaurFriend : Minotaur;
 
 states
 {
 Spawn:
-	SUMN A 350
-	Loop
+	MNTR A 15
+	MNTR A 15 A_MinotaurFade1
+	MNTR A 3 A_MinotaurFade2
+	Goto Look
+Melee:
+	MNTR G 10 A_FaceTarget
+	MNTR H 7 A_FaceTarget
+	MNTR I 12 A_MinotaurAtk1
+	Goto See
+Missile:
+	MNTR G 10 A_MinotaurDecide
+	MNTR J 4 A_FaceTarget
+	MNTR K 9 A_MinotaurAtk2
+	Goto See
+Hammer:
+	MNTR G 10 A_FaceTarget
+	MNTR H 7 A_FaceTarget
+	MNTR I 12 A_MinotaurAtk3
+	Goto See
+HammerLoop:
+	MNTR I 12
+	Goto Hammer
+Charge:
+	MNTR F 2
+	MNTR F 2 A_MinotaurCharge
+	Wait
+Death:
+	MNTR E 6
+	MNTR E 2 A_Scream
+	MNTR E 5 A_SmokePuffExit
+	MNTR E 5
+	MNTR E 5 A_NoBlocking
+	MNTR E 5
+	MNTR E 5 A_MinotaurFade1
+	MNTR E 5 A_MinotaurFade0
+	MNTR E 10
+	Stop
 }
 
 defaultproperties
 {
-	MaxAmount = DefMaxAmount;
-	PickupSound = 'PickupArtifact';
-	PickupMessage = "$txt_artisummon";
-	RespawnTime = 120.0 + 30.0 / 35.0;
-	IconName = 'artisumn';
-	bFloatBob = true;
-	PickupFlashType = PickupFlash;
-	bInvBar = true;
+	Health = 2500;
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.333;
+	bCountKill = false;
+	bActivateMCross = false;
+	bDropOff = false;
+	bBoss = false;
+	bNoMorph = false;
+	bNoRadiusDamage = false;
+	bNeverTarget = false;
+	bSkullFlyInvulnerable = false;
+	bNoTargetSwitch = true;
+	bStayMorphed = true;
+	bTelestomp = true;
+	bSummonedMonster = true;
+	DropItemList.Num = 0;
 }

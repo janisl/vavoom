@@ -27,29 +27,65 @@ class Minotaur : Actor
 	game(GAME_Heretic)
 	__mobjinfo__(9);
 
-float ChargeSpeed;
-bool bFloorFireRefired;
+//
+// Minotaur variables
+//
+
+bool bFloorFireRefired;		//  internal to minotaur AI
+//  Special1				charge duration countdown
+
+const float ChargeSpeed = 455.0;
+const float MinotaurLookDist = 16.0 * 54.0;
+
+float StartTime;			//  minotaur start time
 
 //==========================================================================
 //
-//  MinotaurSlam
+//  IsServant
 //
 //==========================================================================
 
-void MinotaurSlam(Actor Other)
+bool IsServant()
 {
-	float angle;
-	float thrust;
+	return bSummonedMonster;
+}
 
-	angle = atan2(Other.Origin.y - Origin.y, Other.Origin.x - Origin.x);
-	thrust = 16.0 + Random() * 4.0;
-	Other.Velocity.x += thrust * cos(angle) * 35.0;
-	Other.Velocity.y += thrust * sin(angle) * 35.0;
-	Other.Damage(none, none, HITDICE(6));
-	if (Other.Player)
+//============================================================================
+//
+//  IsNotAttackingMaster
+//
+//============================================================================
+
+bool IsNotAttackingMaster(EntityEx Other)
+{
+	return bSummonedMonster && Other.bSummonedMonster && Other.Target != Tracer;
+}
+
+//==========================================================================
+//
+//	IsMaster
+//
+//==========================================================================
+
+bool IsMaster(EntityEx Other)
+{
+	return bSummonedMonster && Tracer == Other;
+}
+
+//==========================================================================
+//
+//	Slam
+//
+//==========================================================================
+
+bool Slam(EntityEx Other)
+{
+	// Slamming minotaurs shouldn't move non-creatures
+	if (!Other.bMonster && !Other.bIsPlayer)
 	{
-		Other.ReactionTime = 0.4 + Random() * 0.2;
+		return false;
 	}
+	return ::Slam(Other);
 }
 
 //==========================================================================
@@ -60,13 +96,387 @@ void MinotaurSlam(Actor Other)
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
-	if (bSkullFly)
+	damage = ::DoSpecialDamage(victim, source, damage);
+	if (damage != -1 && bSkullFly)
 	{
 		// Slam only when in charge mode
 		MinotaurSlam(Actor(victim));
 		return -1;
 	}
-	return ::DoSpecialDamage(victim, source, damage);
+	return damage;
+}
+
+//==========================================================================
+//
+//  MinotaurSlam
+//
+//==========================================================================
+
+final void MinotaurSlam(Actor Other)
+{
+	float angle;
+	float thrust;
+
+	angle = atan2(Other.Origin.y - Origin.y, Other.Origin.x - Origin.x);
+	thrust = 16.0 + Random() * 4.0;
+	Other.Velocity.x += thrust * cos(angle) * 35.0;
+	Other.Velocity.y += thrust * sin(angle) * 35.0;
+	Other.Damage(none, self, HITDICE(6));
+	if (Other.Player)
+	{
+		Other.ReactionTime = 0.4 + Random() * 0.2;
+	}
+	Special1 = 0;	// Stop charging
+}
+
+//==========================================================================
+//
+//  Died
+//
+//==========================================================================
+
+void Died(EntityEx source, EntityEx inflictor)
+{
+	::Died(source, inflictor);
+	if (bSummonedMonster && Tracer && Tracer.Health > 0)
+	{
+		Inventory Power = Tracer.FindInventory(PowerMinotaur);
+		if (!ActiveMinotaur() && Power)
+		{
+			Power.Destroy();
+		}
+	}
+}
+
+//==========================================================================
+//
+//  ActiveMinotaur
+//
+//  Search thinker list for minotaur
+//
+//==========================================================================
+
+final Actor ActiveMinotaur()
+{
+	Minotaur mo;
+
+	foreach AllThinkers(Minotaur, mo)
+	{
+		if (!mo.bSummonedMonster)
+			continue;
+		if (mo.Health <= 0)
+			continue;
+		if (!mo.bMonster)
+			continue;	// for morphed minotaurs
+		if (mo.bCorpse)
+			continue;
+		if ((XLevel.Time - mo.StartTime) >= PowerMinotaur.default.EffectTime)
+			continue;
+		if (mo.Tracer == Tracer)
+			return mo;
+	}
+	return none;
+}
+
+//==========================================================================
+//
+//	MonsterMorphed
+//
+//==========================================================================
+
+void MonsterMorphed()
+{
+	// check for turning off minotaur power for active icon
+	if (bSummonedMonster && Tracer && Tracer.Health > 0)
+	{
+		Inventory Power = Tracer.FindInventory(PowerMinotaur);
+		if (!ActiveMinotaur() && Power)
+		{
+			Power.Destroy();
+		}
+	}
+}
+
+//==========================================================================
+//
+//  FindEnemySelf
+//
+//==========================================================================
+
+final EntityEx FindEnemySelf()
+{
+	Entity Other;
+
+	foreach RoughBlockSearch(Other, 20)
+	{
+		EntityEx link = EntityEx(Other);
+
+		if (!link.bMonster && (!link.bIsPlayer || link == Tracer))
+		{
+			continue;
+		}
+		if (!link.bShootable)
+		{
+			continue;
+		}
+		if (link.bDormant)
+		{
+			continue;
+		}
+		if (link.bSummonedMonster && (link.Tracer == Tracer ||
+			link.Tracer.IsTeammate(Tracer)))
+		{
+			continue;
+		}
+		if (link.IsTeammate(Tracer))
+		{
+			continue;
+		}
+		if (!CanSee(link))
+		{
+			continue;
+		}
+		return link;
+	}
+	return none;
+}
+
+//===========================================================================
+//
+//  FindEnemyMaster
+//
+//	Minotaur looking around player
+//
+//===========================================================================
+
+final EntityEx FindEnemyMaster()
+{
+	Entity Other;
+
+	foreach Tracer.RoughBlockSearch(Other, 20)
+	{
+		EntityEx link = EntityEx(Other);
+
+		if (!Tracer.bIsPlayer)
+		{
+			continue;
+		}
+		if (!link.bMonster && (!link.bIsPlayer || link == Tracer))
+		{
+			continue;
+		}
+		if (!link.bShootable)
+		{
+			continue;
+		}
+		if (link.bDormant)
+		{
+			continue;
+		}
+		if (link.bSummonedMonster && link.Tracer == Tracer)
+		{
+			continue;
+		}
+		if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
+		{
+			continue;
+		}
+		if (Tracer.CanSee(link))
+		{
+			return link;
+		}
+	}
+	return none;
+}
+
+//==========================================================================
+//
+//  A_MinotaurLook
+//
+//  Look for enemy of player
+//
+//==========================================================================
+
+final void A_MinotaurLook()
+{
+	Actor mo;
+	float dist;
+	int i;
+
+	if (!bSummonedMonster)
+	{
+		A_Look();
+		return;
+	}
+
+	Target = none;
+
+	if (Level.Game.deathmatch)	// Quick search for players
+	{
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (!Level.Game.Players[i] || !Level.Game.Players[i].bSpawned)
+				continue;
+			mo = Actor(Level.Game.Players[i].MO);
+			if (mo == Tracer)
+				continue;
+			if (mo.Health <= 0)
+				continue;
+			if (mo.IsTeammate(Tracer))
+			{
+				continue;
+			}
+			dist = DistTo(mo);
+			if (dist > MinotaurLookDist)
+				continue;
+			Target = mo;
+			break;
+		}
+	}
+
+	if (!Target)	// Near player monster search
+	{
+		if (Tracer && (Tracer.Health > 0) && Tracer.bIsPlayer)
+			Target = FindEnemyMaster();
+		else
+			Target = FindEnemySelf();
+	}
+
+	if (!Target)	// Normal monster search
+	{
+		foreach AllThinkers(Actor, mo)
+		{
+			if (!mo.bMonster)
+				continue;
+			if (mo.Health <= 0)
+				continue;
+			if (!mo.bShootable)
+				continue;
+			dist = DistTo(mo);
+			if (dist > MinotaurLookDist)
+				continue;
+			if ((mo == Tracer) || (mo == self))
+				continue;
+			if (mo.bSummonedMonster && (mo.Tracer == Tracer || mo.IsTeammate(Tracer)))
+ 				continue;
+			Target = mo;
+			break;	// Found mobj to attack
+		}
+	}
+
+	if (Target)
+	{
+		SetState(FindState('SeeNF'));
+	}
+	else
+	{
+		SetState(FindState('RoamNF'));
+	}
+}
+
+//==========================================================================
+//
+//  A_MinotaurChase
+//
+//==========================================================================
+
+final void A_MinotaurChase()
+{
+	RenderStyle = STYLE_Normal;
+	Alpha = 1.0;	// In case pain caused him to skip his fade in.
+
+	if (!bSummonedMonster)
+	{
+		A_Chase();
+		return;
+	}
+
+	if (XLevel.Time - StartTime >= PowerMinotaur.default.EffectTime)
+	{
+		Damage(none, none, 10000);
+		return;
+	}
+
+	if (P_Random() < 30)
+		A_MinotaurLook();	// adjust to closest target
+
+	if (!Target || (Target.Health <= 0) || !Target.bShootable)
+	{
+		// look for a new enemy
+		SetState(FindState('Look'));
+		return;
+	}
+
+	FaceMovementDirection();
+	ReactionCount = 0;
+
+	// Melee attack
+	if (MeleeState && CheckMeleeRange())
+	{
+		if (AttackSound)
+		{
+			PlaySound(AttackSound, CHAN_WEAPON);
+		}
+		SetState(MeleeState);
+		return;
+	}
+
+	// Missile attack
+	if (MissileState && CheckMissileRange())
+	{
+		SetState(MissileState);
+		return;
+	}
+
+	// chase towards target
+	if (!StepMove())
+	{
+		NewChaseDir();
+	}
+
+	// Active sound
+	if (ActiveSound && P_Random() < 6)
+	{
+		PlaySound(ActiveSound, CHAN_VOICE);
+	}
+
+}
+
+//==========================================================================
+//
+//  A_MinotaurRoam
+//
+//==========================================================================
+
+final void A_MinotaurRoam()
+{
+	RenderStyle = STYLE_Normal;
+	Alpha = 1.0;	// In case pain caused him to skip his fade in.
+
+	if (XLevel.Time - StartTime >= PowerMinotaur.default.EffectTime)
+	{
+		Damage(none, none, 10000);
+		return;
+	}
+
+	if (P_Random() < 30)
+		A_MinotaurLook();	// adjust to closest target
+
+	if (P_Random() < 6)
+	{
+		//Choose new direction
+		MoveDir = P_Random() % 8;
+		FaceMovementDirection();
+	}
+	if (!StepMove())
+	{
+		// Turn
+		if (P_Random() & 1)
+			MoveDir = (++MoveDir) % 8;
+		else
+			MoveDir = (MoveDir + 7) % 8;
+		FaceMovementDirection();
+	}
 }
 
 //==========================================================================
@@ -83,6 +493,7 @@ final void A_MinotaurAtk1()
 	{
 		return;
 	}
+
 	PlaySound('minotaur/melee', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
@@ -111,25 +522,30 @@ final void A_MinotaurDecide()
 	{
 		return;
 	}
-	PlaySound('minotaur/sight', CHAN_VOICE);
+	if (!bSummonedMonster)
+	{
+		PlaySound('minotaur/sight', CHAN_VOICE);
+	}
 	dist = DistTo(Target);
+
 	if (Target.Origin.z + Target.Height > Origin.z &&
 		Target.Origin.z + Target.Height < Origin.z + Height &&
-		dist < 8.0 * 64.0 && dist > 1.0 * 64.0 && P_Random() < 150)
+		dist < (bSummonedMonster ? 16.0 : 8.0) * 64.0 && dist > 1.0 * 64.0 &&
+		P_Random() < (bSummonedMonster ? 230 : 150))
 	{
 		// Charge attack
 		// Don't call the state function right away
-		SetState(FindState('ChargeAttack'));
+		SetState(FindState('Charge'));
 		bSkullFly = true;
 		A_FaceTarget();
 		Velocity = Normalise(Target.Origin - Origin) * ChargeSpeed;
 		Special1 = 35 / 2;	// Charge duration
 	}
 	else if (Target.Origin.z == Target.FloorZ &&
-		dist < 9.0 * 64.0 && P_Random() < 220)
+		dist < 9.0 * 64.0 && P_Random() < (bSummonedMonster ? 100 : 220))
 	{
 		// Floor fire attack
-		SetState(FindState('FloorFireAttack'));
+		SetState(FindState('Hammer'));
 		bFloorFireRefired = false;
 	}
 	else
@@ -162,13 +578,12 @@ final void A_MinotaurAtk2()
 	PlaySound('minotaur/attack2', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(5));
+		Target.Damage(self, self, HITDICE((bSummonedMonster ? 3 : 5)));
 		return;
 	}
 	A = SpawnMissile(Target, MinotaurFX1, 40.0);
 	if (A)
 	{
-		A.PlaySound('minotaur/attack2', CHAN_WEAPON);
 		VectorAngles(&A.Velocity, &ang);
 		angle = A.Angles.yaw;
 		SpawnMissileAngles(MinotaurFX1,
@@ -201,8 +616,8 @@ final void A_MinotaurAtk3()
 	PlaySound('minotaur/attack3', CHAN_WEAPON);
 	if (CheckMeleeRange())
 	{
-		Target.Damage(self, self, HITDICE(5));
-		if (Target.Player)
+		Target.Damage(self, self, HITDICE((bSummonedMonster ? 3 : 5)));
+		if (Target.bIsPlayer)
 		{
 			// Squish the player
 			PlayerEx(Target.Player).DeltaViewHeight = -512.0;
@@ -211,14 +626,14 @@ final void A_MinotaurAtk3()
 	else
 	{
 		A = SpawnMissile(Target, MinotaurFX2);
-		if (A != none)
+		if (A)
 		{
 			A.PlaySound('minotaur/attack1', CHAN_VOICE);
 		}
 	}
 	if (Random() < 0.75 && !bFloorFireRefired)
 	{
-		SetState(FindState('FloorFireAttack2'));
+		SetState(FindState('HammerLoop'));
 		bFloorFireRefired = true;
 	}
 }
@@ -233,9 +648,19 @@ final void A_MinotaurCharge()
 {
 	Actor puff;
 
-	if (Special1)
+	if (!Target)
 	{
-		puff = Spawn(PhoenixPuff, Origin);
+		return;
+	}
+
+	if (Special1 > 0)
+	{
+		class<Actor> PuffType = PhoenixPuff;
+		if (bSummonedMonster)
+		{
+			PuffType = PunchPuff;
+		}
+		puff = Spawn(PuffType, Origin);
 		puff.Velocity.z = 2.0 * 35.0;
 		Special1--;
 	}
@@ -246,14 +671,73 @@ final void A_MinotaurCharge()
 	}
 }
 
+//==========================================================================
+//
+//  A_MinotaurFade0
+//
+//==========================================================================
+
+final void A_MinotaurFade0()
+{
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.333;
+}
+
+//==========================================================================
+//
+//  A_MinotaurFade1
+//
+//==========================================================================
+
+final void A_MinotaurFade1()
+{
+	// Second level of transparency
+	RenderStyle = STYLE_Translucent;
+	Alpha = 0.666;
+}
+
+//==========================================================================
+//
+//  A_MinotaurFade2
+//
+//==========================================================================
+
+final void A_MinotaurFade2()
+{
+	// Make fully visible
+	RenderStyle = STYLE_Normal;
+	Alpha = 1.0;
+}
+
+//==========================================================================
+//
+//  A_SmokePuffExit
+//
+//==========================================================================
+
+final void A_SmokePuffExit()
+{
+	Spawn(MinotaurSmokeExit, Origin);
+}
+
 states
 {
 Spawn:
-	MNTR AB 10 A_Look
+Look:
+	MNTR AB 10 A_MinotaurLook
 	Loop
 See:
-	MNTR ABCD 5 A_Chase
+	MNTR ABCD 5 A_MinotaurChase
 	Loop
+SeeNF:
+	MNTR A 5
+	Goto See+1
+Roam:
+	MNTR ABCD 5 A_MinotaurRoam
+	Loop
+RoamNF:
+	MNTR A 5
+	Goto Roam+1
 Melee:
 	MNTR V 10 A_FaceTarget
 	MNTR W 7 A_FaceTarget
@@ -264,15 +748,15 @@ Missile:
 	MNTR Y 4 A_FaceTarget
 	MNTR Z 9 A_MinotaurAtk2
 	Goto See
-FloorFireAttack:
+Hammer:
 	MNTR V 10 A_FaceTarget
 	MNTR W 7 A_FaceTarget
 	MNTR X 12 A_MinotaurAtk3
 	Goto See
-FloorFireAttack2:
+HammerLoop:
 	MNTR X 12
-	Goto FloorFireAttack
-ChargeAttack:
+	Goto Hammer
+Charge:
 	MNTR U 2
 	MNTR U 2 A_MinotaurCharge
 	Wait
@@ -308,21 +792,21 @@ defaultproperties
 	Speed = 16.0 * 35.0;
 	PainChance = 0.09765625;
 	MissileDamage = 7;
-	ChargeSpeed	= 455.0;
 	bSolid = true;
 	bShootable = true;
 	bCountKill = true;
 	bMonster = true;
-	bFloorClip = true;
 	bActivateMCross = true;
 	bActivatePushWall = true;
 	bPassMobj = true;
 	bCanUseWalls = true;
 	bDropOff = true;
+	bFloorClip = true;
 	bBoss = true;
-	bNoMorph = true;
 	bNoRadiusDamage = true;
+	bNoMorph = true;
 	bNeverTarget = true;
+	bBossDeath = true;
 	bSkullFlyInvulnerable = true;
 	SightSound = 'minotaur/sight';
 	ActiveSound = 'minotaur/active';

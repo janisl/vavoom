@@ -298,6 +298,8 @@ enum
 #include "SorcBall2.vc"
 #include "SorcBall3.vc"
 #include "PigPlayer.vc"
+#include "MinotaurFriend.vc"
+#include "ArtiDarkServant.vc"
 
 #include "Coin.vc"
 #include "Meat.vc"
@@ -431,6 +433,7 @@ class ActivatedTimeBomb : Actor decorate;
 class Beak : Weapon decorate;
 class MinotaurFX1 : Actor decorate;
 class MinotaurFX2 : Actor decorate;
+class MinotaurSmokeExit : Actor decorate;
 
 class FireDemonRock1 : Actor decorate;
 class FireDemonRock2 : Actor decorate;
@@ -519,6 +522,8 @@ class FighterBoss : Actor decorate;
 class ClericBoss : Actor decorate;
 class MageBoss : Actor decorate;
 class Snout : Weapon decorate;
+class SummoningDoll : Actor decorate;
+class MinotaurSmoke : Actor decorate;
 
 class MedicalKit : HealthPickup decorate;
 class MedPatch : HealthPickup decorate;

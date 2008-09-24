@@ -49,6 +49,7 @@ progs/linespec/AmmoFillup.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/AmmoFil
 progs/linespec/Armor.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Armor.vc
 progs/linespec/ArtiBlastRadius.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiBlastRadius.vc
 progs/linespec/ArtiBoostArmor.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiBoostArmor.vc
+progs/linespec/ArtiDarkServant.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiDarkServant.vc
 progs/linespec/ArtiHealingRadius.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiHealingRadius.vc
 progs/linespec/ArtiPoisonBag.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiPoisonBag.vc
 progs/linespec/ArtiTeleport.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/ArtiTeleport.vc
@@ -146,6 +147,7 @@ progs/linespec/MageWeaponPiece.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Mag
 progs/linespec/MapRevealer.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/MapRevealer.vc
 progs/linespec/Meat.vc						@CMAKE_SOURCE_DIR@/progs/common/linespec/Meat.vc
 progs/linespec/Minotaur.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Minotaur.vc
+progs/linespec/MinotaurFriend.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MinotaurFriend.vc
 progs/linespec/MorphedMonster.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MorphedMonster.vc
 progs/linespec/MorphProjectile.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MorphProjectile.vc
 progs/linespec/MWeapBloodscourge.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/MWeapBloodscourge.vc

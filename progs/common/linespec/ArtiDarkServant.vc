@@ -23,72 +23,45 @@
 //**
 //**************************************************************************
 
-class SummoningDoll : Actor;
-
-const float MAULATORTIME 	= 25.0;
+class ArtiDarkServant : Inventory
+	game(GAME_Hexen)
+	__mobjinfo__(86)
+	__scriptid__(16);
 
 //==========================================================================
 //
-//  A_Summon
-//
-//  Summon Minotaur
+//	Use
 //
 //==========================================================================
 
-final void A_Summon()
+bool Use(bool Pickup)
 {
-	EntityEx A;
+	EntityEx mo;
 
-	A = Spawn(MinotaurFriend, Origin);
-	if (A)
+	mo = EntityEx(Owner).SpawnPlayerMissile(SummoningDoll);
+	if (mo)
 	{
-		if (!A.TestLocation() || !Target)
-		{
-			// Didn't fit - change back to artifact
-			A.SetState(none);
-			A = Spawn(ArtiDarkServant, Origin);
-			if (A)
-				A.bDropped = true;
-			return;
-		}
-
-		MinotaurFriend(A).StartTime = XLevel.Time;
-		if (!Target.bCorpse)
-		{
-			//	Master isn't dead
-			A.Tracer = Target;	// Pointer to master
-			Powerup Power = Spawn(PowerMinotaur,,,, false);
-			Power.EffectTime = MAULATORTIME;
-			Power.bAlwaysPickup = true;
-			if (!Power.TryPickup(Target))
-			{
-				Power.Destroy();
-			}
-		}
-
-		// Make smoke puff
-		Spawn(MinotaurSmoke, Origin);
-		PlaySound('MaulatorActive', CHAN_VOICE);
+		mo.Target = EntityEx(Owner);
+		mo.Velocity.z = 5.0 * 35.0;
 	}
+	return true;
 }
 
 states
 {
 Spawn:
-	SUMN A 4
+	SUMN A 350
 	Loop
-Death:
-	SUMN AA 4
-	SUMN A 4 A_Summon
-	Stop
 }
 
 defaultproperties
 {
-	Speed = 700.0;
-	bMissile = true;
-	bNoBlockmap = true;
-	bDropOff = true;
-	bNoTeleport = true;
-	bBloodSplatter = true;
+	MaxAmount = DefMaxAmount;
+	PickupSound = 'misc/p_pkup';
+	PickupMessage = "$txt_artisummon";
+	RespawnTime = 120.0 + 30.0 / 35.0;
+	IconName = 'artisumn';
+	bFloatBob = true;
+	PickupFlashType = PickupFlash;
+	bInvBar = true;
 }

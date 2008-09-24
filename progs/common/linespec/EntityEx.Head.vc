@@ -261,6 +261,7 @@ bool bNoInfighting;		// Disable infighting for this actor.
 bool bBloodSplatter;	// Use blood splatter like in Raven games.
 bool bDehExplosion;		// Use explosion style specified using DeHackEd.
 bool bNoVerticalMeleeRange;	// Does not check vertical distance for melee range
+bool bSummonedMonster;
 
 //  Params
 float			Speed;

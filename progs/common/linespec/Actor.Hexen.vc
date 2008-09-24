@@ -2888,3 +2888,47 @@ final void A_SpawnFizzle()
 		}
 	}
 }
+
+//==========================================================================
+//
+//  A_Summon
+//
+//  Summon Minotaur
+//
+//==========================================================================
+
+final void A_Summon()
+{
+	EntityEx A;
+
+	A = Spawn(MinotaurFriend, Origin);
+	if (A)
+	{
+		if (!A.TestLocation() || !Target)
+		{
+			// Didn't fit - change back to artifact
+			A.SetState(none);
+			A = Spawn(ArtiDarkServant, Origin);
+			if (A)
+				A.bDropped = true;
+			return;
+		}
+
+		MinotaurFriend(A).StartTime = XLevel.Time;
+		if (!Target.bCorpse)
+		{
+			//	Master isn't dead
+			A.Tracer = Target;	// Pointer to master
+			Powerup Power = Spawn(PowerMinotaur,,,, false);
+			Power.bAlwaysPickup = true;
+			if (!Power.TryPickup(Target))
+			{
+				Power.Destroy();
+			}
+		}
+
+		// Make smoke puff
+		Spawn(MinotaurSmoke, Origin);
+		PlaySound(A.ActiveSound, CHAN_VOICE);
+	}
+}
