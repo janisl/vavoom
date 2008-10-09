@@ -29,7 +29,6 @@ progs/game/classes.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/classes.vc
 progs/game/BotPlayer.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/BotPlayer.vc
 progs/game/HexenDefs.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/HexenDefs.vc
 progs/game/HexenLevelInfo.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/HexenLevelInfo.vc
-progs/game/HexenWorldInfo.vc		@CMAKE_SOURCE_DIR@/progs/hexen/game/HexenWorldInfo.vc
 progs/game/MainGameInfo.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/MainGameInfo.vc
 progs/game/Player.vc				@CMAKE_SOURCE_DIR@/progs/hexen/game/Player.vc
 progs/game/PlayerSpeed.vc			@CMAKE_SOURCE_DIR@/progs/hexen/game/PlayerSpeed.vc

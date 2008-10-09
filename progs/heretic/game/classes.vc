@@ -27,7 +27,6 @@ import 'linespec';
 
 #include "MainGameInfo.vc"
 #include "HereticLevelInfo.vc"
-#include "HereticWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 

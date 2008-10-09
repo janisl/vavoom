@@ -28,7 +28,6 @@ import 'linespec';
 #include "HexenDefs.vc"
 #include "MainGameInfo.vc"
 #include "HexenLevelInfo.vc"
-#include "HexenWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 #include "PlayerSpeed.vc"

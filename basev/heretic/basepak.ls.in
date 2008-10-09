@@ -28,7 +28,6 @@ progs/cgame/TitleScreen.vc					@CMAKE_SOURCE_DIR@/progs/heretic/cgame/TitleScree
 progs/game/classes.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/classes.vc
 progs/game/BotPlayer.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/BotPlayer.vc
 progs/game/HereticLevelInfo.vc	@CMAKE_SOURCE_DIR@/progs/heretic/game/HereticLevelInfo.vc
-progs/game/HereticWorldInfo.vc	@CMAKE_SOURCE_DIR@/progs/heretic/game/HereticWorldInfo.vc
 progs/game/MainGameInfo.vc		@CMAKE_SOURCE_DIR@/progs/heretic/game/MainGameInfo.vc
 progs/game/Player.vc			@CMAKE_SOURCE_DIR@/progs/heretic/game/Player.vc
 

@@ -32,7 +32,6 @@ import 'uibase';
 
 #include "MainGameInfo.vc"
 #include "StrifeLevelInfo.vc"
-#include "StrifeWorldInfo.vc"
 #include "Player.vc"
 
 class AmmoSatchel : BackpackItem decorate;

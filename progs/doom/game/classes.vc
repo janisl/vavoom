@@ -31,7 +31,6 @@ import 'linespec';
 
 #include "MainGameInfo.vc"
 #include "DoomLevelInfo.vc"
-#include "DoomWorldInfo.vc"
 #include "Player.vc"
 #include "BotPlayer.vc"
 
