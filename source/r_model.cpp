@@ -730,6 +730,29 @@ static int FindFrame(const VClassModelScript& Cls, int Frame, float Inter)
 
 //==========================================================================
 //
+//	FindNextFrame
+//
+//==========================================================================
+
+static int FindNextFrame(const VClassModelScript& Cls, int FIdx, int Frame,
+	float Inter, float& InterpFrac)
+{
+	guard(FindNextFrame);
+	const VScriptedModelFrame& FDef = Cls.Frames[FIdx];
+	if (FIdx < Cls.Frames.Num() - 1 &&
+		Cls.Frames[FIdx + 1].Number == FDef.Number)
+	{
+		InterpFrac = (Inter - FDef.Inter) / (Cls.Frames[FIdx + 1].Inter -
+			FDef.Inter);
+		return FIdx + 1;
+	}
+	InterpFrac = (Inter - FDef.Inter) / (1.0 - FDef.Inter);
+	return FindFrame(Cls, Frame, 0);
+	unguard;
+}
+
+//==========================================================================
+//
 //	DrawModel
 //
 //==========================================================================
@@ -939,7 +962,9 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	{
 		return false;
 	}
-	int NFIdx = FindFrame(*SMdl->DefaultClass, NextFrame, Inter);
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+		InterpFrac);
 	if (NFIdx == -1)
 	{
 		NFIdx = 0;
@@ -948,7 +973,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
 		NFIdx, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
-		IsViewModel, Inter, Interpolate);
+		IsViewModel, InterpFrac, Interpolate);
 	return true;
 	unguard;
 }
@@ -984,7 +1009,9 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		return false;
 	}
 
-	int NFIdx = FindFrame(*Cls, NextState->InClassIndex, Inter);
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*Cls, FIdx, NextState->InClassIndex, Inter,
+		InterpFrac);
 	if (NFIdx == -1)
 	{
 		NFIdx = 0;
@@ -992,8 +1019,8 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	}
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, Trans,
-		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel, Inter,
-		Interpolate);
+		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel,
+		InterpFrac, Interpolate);
 	return true;
 	unguard;
 }
@@ -1123,7 +1150,9 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 		return;
 	}
 
-	int NFIdx = FindFrame(*SMdl->DefaultClass, NextFrame, Inter);
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+		InterpFrac);
 	if (NFIdx == -1)
 	{
 		NFIdx = 0;
@@ -1157,8 +1186,8 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *SMdl->DefaultClass, FIdx,
 		NFIdx, R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
-		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false, 0,
-		Interpolate);
+		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false,
+		InterpFrac, Interpolate);
 
 	Drawer->EndView();
 	unguard;
@@ -1191,7 +1220,9 @@ bool R_DrawStateModelFrame(VState* State, VState* NextState, float Inter,
 	{
 		return false;
 	}
-	int NFIdx = FindFrame(*Cls, NextState->InClassIndex, Inter);
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*Cls, FIdx, NextState->InClassIndex, Inter,
+		InterpFrac);
 	if (NFIdx == -1)
 	{
 		NFIdx = 0;
@@ -1224,7 +1255,7 @@ bool R_DrawStateModelFrame(VState* State, VState* NextState, float Inter,
 	Angles.roll = 0;
 
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Cls, FIdx, NFIdx, NULL, 0, 0,
-		0xffffffff, 0, 1.0, false, false, 0, Interpolate);
+		0xffffffff, 0, 1.0, false, false, InterpFrac, Interpolate);
 
 	Drawer->EndView();
 	return true;
