@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.28
+                                                    Version 1.29
 
 Contents:
     0. Disclaimer
@@ -124,8 +124,8 @@ Step by step:
 
   1. Unpack the Vavoom source package and change directory to it:
 
-    tar xvjf vavoom-1.27.tar.bz2
-    cd vavoom-1.27
+    tar xvjf vavoom-1.29.tar.bz2
+    cd vavoom-1.29
 
   2. Run the CMake:
 
@@ -1104,6 +1104,24 @@ Version 1.28
 * Added separate texture offsets for top, middle and bottom wall textures.
 * Implement support for custom skill definitions.
 * Implemented support for UDMF format maps.
+
+==============================================================================
+Version 1.29
+==============================================================================
+
+* Improvements to model skin support.
+* Fixed monster infighting.
+* Fixed net game getting stuck when a packet sent from client is lost.
+* Added support for intermission background scripts.
+* Added support for mouse controllable menu controls.
+* Added support for all finale types in all games.
+* Added support for DeHackEd exlosion style for rockets.
+* Added support for different blood colours.
+* Added support for voodoo dolls.
+* Most of the actor classes moved to DECORATE.
+* Added support for model frame interpolation.
+* Added support for compiling progs in the engine, progs now are in source
+ form in PK3 file.
 
 *****************************************************************************
 8. Licensing

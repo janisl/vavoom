@@ -2969,7 +2969,7 @@
   I Fixed some bugs in dynamic light actors, added method that returns best
  matching radius for intensity.
 13.02.2008
-  I started to add common functionaluty to the dynamic light base class. Since
+  I started to add common functionality to the dynamic light base class. Since
  all of it was my code, I decided to rewrite the rest of it from scratch.
 14.02.2008
   I updated acc to the version 1.46.
@@ -3461,3 +3461,157 @@
 ******************************************************************************
                             VERSION 1.28
 ******************************************************************************
+
+01.07.2008
+  I cleaned up unused skin code, added support for skin definitions in model
+ definition file and added support for fullbright models.
+  I added support for missiles to have different explode states depending on
+ wether an actor has been hit and wether it beeds or not.
+02.07.2008
+  I changed dynamic lights to be marked only once per frame since they are view
+ position independent. This fixes them when advanced skybox is visible.
+03.07.2008
+  I moved many methods from Player to PlayerEx class.
+05.07.2008
+  I disabled action specials that set line IDs in UDMF maps.
+  I fixed hostile monsters check.
+06.07.2008
+  I moved more methods from Player to PlayerEx class.
+07.07.2008
+  I changed lightning into a thinker and moved it to the server side.
+09.07.2008
+  I moved LightningThinker class to progs and changed it to be an actor class
+ because of the sound playback. I added execution of lightning scripts. It was
+ assuming that number of affected sectors won't change, which is not the case.
+ I added support for different force lightning modes. It also was still using
+ tics, so I changed it to use floating point time.
+11.07.2007
+  I changed Weapon class to also destroy it's sister weapon when it's being
+ destroyed.
+12.07.2007
+  I added console variable for testing network packet loss. I found that client
+ is not resending packets that were dropped and fixed that.
+  I added method that properly checks if a map is present, changed map list
+ console command to use it.
+  I externalised episode definitions and merged episode menu classes.
+13.07.2008
+  I made class menu available in all games, so that mods that provide multiple
+ player classes can use it. I also merged single player menus.
+14.07.2008
+  I started work on intermission scripts.
+15.07.2008
+  I finished implementing scriptable intermission background animations. Moved
+ Doom intermission background animations to script files.
+16.07.2008
+  I implemented support for scriptable intermission visited and next map
+ locations. This completes support for intermission scripts.
+17.07.2008
+  Firebrand implemented support for mouse controllable menu controls and did
+ some improvements to the Strife's teleporter beacon.
+  I implemented support for MAPINFO options that specify intermission music and
+ background picture or script.
+18.07.2008
+  I started work on merging finale screens.
+19.07.2008
+  I finished merging finale screens.
+21.07.2008
+  I added support for DeHackEd exlosion style for rockets.
+22.07.2008
+  I moved calculation of Doom status bar face widget to status bar.
+23.07.2008
+  I added methods for RGB to HSV and HSV to RGB calculation, changed player
+ translation calculation to use them.
+24.07.2008
+  I fixed use of floating bob flag on decorations.
+  I added RealGigs class.
+  I implemented support for blood colours.
+06.08.2008
+  I implemented support for voodoo dolls.
+12.08.2008
+  I moved decorate flag definitions to an external XML file.
+16.08.2008
+  I moved most of the DECORATE property definitions to the XML file.
+17.08.2008
+  I moved remaining DECORATE properties to the XML file.
+19.08.2008
+  I fixed light not being clamped against 0.
+  I changed some places to use howl sound instead of checking classes.
+20.08.2008
+  I moved some Hexen classes to DECORATE.
+  I added pinting list of missing DECORATE imports.
+21.08.2008
+  I moved a few more Hexen classes to DECORATE.
+22.08.2008
+  I moved more Hexen classes to DECORATE.
+24.08.2008
+  I moved even more Hexen classes to DECORATE.
+  I moved a many Strife classes to DECORATE.
+25.08.2008
+  I moved more Hexen classes to DECORATE.
+26.08.2008
+  I moved many Heretic classes to DECORATE.
+27.08.2008
+  I moved more Heretic classes to DECORATE.
+30.08.2008
+  I moved remaining Doom actor classes to DECORATE.
+  I started to move Heretic monster classes to DECORATE.
+  Firebrand did initial implementation of model frame interpolation and added
+ syntax highlihgt files for notepad++.
+31.08.2008
+  I started to move Hexen monster classes to DECORATE.
+02.09.2008
+  I moved some more Hexen monster classes to DECORATE.
+04.09.2008
+  I moved some Hexen boss monster classes to DECORATE.
+05.09.2008
+  Added GNU-stack section to the asm files.
+06.09.2008
+  I started to move Strife monster classes to DECORATE.
+08.09.2008
+  I moved remaining Strife monster classes to DECORATE.
+09.09.2008
+  I renamed progs packages clprogs and svprogs to cgame and game.
+  I changed compiler's lexer, error handling, modifiers, parser classes to be
+ shared with engine.
+10.09.2008
+  I changed progs to be always be loaded using full file name.
+  I removed WAD namespace for progs.
+  I implemented support for compiling progs in the engine. If binary object is
+ missing an source is present, it will be compiled. This will allow progs to be
+ distributed in source form.
+  I changed all game progs to be in source form in PK3 file.
+11.09.2008
+  I changed common progs to be in source form in PK3 file.
+12.09.2008
+  I started to move Hexen weapon classes to DECORATE.
+14.09.2008
+  I moved more Hexen weapon classes to DECORATE.
+  I fixed scrollers with control sector not working correctly.
+15.09.2008
+  I moved remaining Hexen weapon classes to DECORATE.
+16.09.2008
+  I started to move Heretic weapon classes to DECORATE.
+17.09.2008
+  I moved remaining Heretic weapon classes to DECORATE.
+  I started to move Strife weapon classes to DECORATE.
+18.09.2008
+  I moved more Strife weapon classes to DECORATE.
+19.09.2008
+  I moved remaining Strife weapon classes to DECORATE.
+  I moved most of the special inventory item classes to linespec.
+  I moved some special Hexen decoration classes to DECORATE.
+20.09.2008
+  I moved some of the remaining Heretic and Hexen monster classes to DECORATE.
+21.09.2008
+  I moved morphed monster classes to DECORATE and morphed player classes to
+ linespec.
+22.09.2008
+  I merged teleport fog classes.
+  I moved minotaur class to linespec.
+24.09.2008
+  I changed minotaur friend to inherit from minotaur, moved it to linespec.
+ I also moved dark servant class to linespec.
+03.10.2008
+  I removed empty game specific world info classes.
+09.10.2008
+  I fixed model frame interpolation for states that have inter model frames.
