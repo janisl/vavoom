@@ -287,7 +287,7 @@ Mix_Chunk* VSDLSoundDevice::LoadSound(int sound_id)
 
 	//	Set up audio converter.
 	if (SDL_BuildAudioCVT(&cvt, GSoundManager->S_sfx[sound_id].SampleBits == 8 ?
-		AUDIO_U8 : AUDIO_S16, 1, GSoundManager->S_sfx[sound_id].SampleRate,
+		AUDIO_U8 : AUDIO_S16SYS, 1, GSoundManager->S_sfx[sound_id].SampleRate,
 		CurFormat, CurChannels, CurFrequency) < 0)
 	{
 		GSoundManager->DoneWithLump(sound_id);
@@ -452,7 +452,7 @@ bool VSDLSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 {
 	guard(VSDLSoundDevice::OpenStream);
 	//	Build converter struct.
-	if (SDL_BuildAudioCVT(&StrmCvt, Bits == 8 ? AUDIO_U8 : AUDIO_S16,
+	if (SDL_BuildAudioCVT(&StrmCvt, Bits == 8 ? AUDIO_U8 : AUDIO_S16SYS,
 		Channels, Rate, CurFormat, CurChannels, CurFrequency) < 0)
 	{
 		return false;
