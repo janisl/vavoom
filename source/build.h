@@ -24,9 +24,9 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	27
+#define VERSION_MINOR	29
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.27"
+#define VERSION_TEXT	"1.29"
 
 #if !defined CLIENT && !defined SERVER
 #define CLIENT
