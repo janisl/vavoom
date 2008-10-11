@@ -309,7 +309,7 @@ final EntityEx AimEx(out TVec OutDir, float Range, float AngleInc,
 //==========================================================================
 
 final bool ShootHitPlane(sec_plane_t* plane, TVec linestart, TVec lineend,
-	float range, class<EntityEx> PuffType)
+	float range, class<EntityEx> PuffType, TVec* OutHitPoint)
 {
 	float	org_dist;
 	float	hit_dist;
@@ -336,6 +336,10 @@ final bool ShootHitPlane(sec_plane_t* plane, TVec linestart, TVec lineend,
 	if (plane->pic == Level.Game.skyflatnum)
 	{
 		// don't shoot the sky!
+		if (OutHitPoint)
+		{
+			*OutHitPoint = lineend;
+		}
 		return false;
 	}
 
@@ -349,6 +353,11 @@ final bool ShootHitPlane(sec_plane_t* plane, TVec linestart, TVec lineend,
 	// Spawn bullet puffs.
 	SpawnPuff(lineend, range, PuffType, false);
 
+	if (OutHitPoint)
+	{
+		*OutHitPoint = lineend;
+	}
+
 	// don't go any farther
 	return false;
 }
@@ -360,7 +369,7 @@ final bool ShootHitPlane(sec_plane_t* plane, TVec linestart, TVec lineend,
 //==========================================================================
 
 final bool ShootCheckPlanes(sector_t* sec, TVec linestart, TVec lineend,
-	float range, class<EntityEx> PuffType)
+	float range, class<EntityEx> PuffType, TVec* OutHitPoint)
 {
 	sec_region_t *reg;
 	sec_region_t *startreg;
@@ -368,12 +377,14 @@ final bool ShootCheckPlanes(sector_t* sec, TVec linestart, TVec lineend,
 	startreg = PointInRegion(sec, linestart);
 	for (reg = startreg; reg; reg = reg->next)
 	{
-		if (!ShootHitPlane(reg->floor, linestart, lineend, range, PuffType))
+		if (!ShootHitPlane(reg->floor, linestart, lineend, range, PuffType,
+			OutHitPoint))
 		{
 			//  Hit floor
 			return false;
 		}
-		if (!ShootHitPlane(reg->ceiling, linestart, lineend, range, PuffType))
+		if (!ShootHitPlane(reg->ceiling, linestart, lineend, range, PuffType,
+			OutHitPoint))
 		{
 			//  Hit ceiling
 			return false;
@@ -381,12 +392,14 @@ final bool ShootCheckPlanes(sector_t* sec, TVec linestart, TVec lineend,
 	}
 	for (reg = startreg->prev; reg; reg = reg->prev)
 	{
-		if (!ShootHitPlane(reg->floor, linestart, lineend, range, PuffType))
+		if (!ShootHitPlane(reg->floor, linestart, lineend, range, PuffType,
+			OutHitPoint))
 		{
 			//  Hit floor
 			return false;
 		}
-		if (!ShootHitPlane(reg->ceiling, linestart, lineend, range, PuffType))
+		if (!ShootHitPlane(reg->ceiling, linestart, lineend, range, PuffType,
+			OutHitPoint))
 		{
 			//  Hit ceiling
 			return false;
@@ -398,8 +411,6 @@ final bool ShootCheckPlanes(sector_t* sec, TVec linestart, TVec lineend,
 //==========================================================================
 //
 //  LineAttack
-//
-//  If damage == 0, it is just a test trace that will leave linetarget set.
 //
 //==========================================================================
 
@@ -451,7 +462,8 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 			LineEnd = hit_point;
 
 			//  Check for shooting floor or ceiling
-			if (!ShootCheckPlanes(sec, LineStart, LineEnd, Distance, PuffType))
+			if (!ShootCheckPlanes(sec, LineStart, LineEnd, Distance, PuffType,
+				OutHitPoint))
 			{
 				return false;
 			}
@@ -499,8 +511,17 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 					hit_point.z > opentop)
 				{
 					// it's a sky hack wall
+					if (OutHitPoint)
+					{
+						*OutHitPoint = hit_point;
+					}
 					return false;
 				}
+			}
+
+			if (OutHitPoint)
+			{
+				*OutHitPoint = hit_point;
 			}
 
 			if (li->special == LNSPEC_LineHorizon)
@@ -603,7 +624,7 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 	}
 	LineEnd = Dst;
 	if (!ShootCheckPlanes(XLevel.PointInSector(Dst), LineStart, LineEnd,
-		Distance, PuffType))
+		Distance, PuffType, OutHitPoint))
 	{
 		return false;
 	}
