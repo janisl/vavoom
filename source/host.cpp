@@ -250,7 +250,7 @@ static bool FilterTime()
 {
 	guard(FilterTime);
 	double curr_time = Sys_Time();
-	float time = curr_time - last_time;
+	double time = curr_time - last_time;
 	last_time = curr_time;
 
 	realtime += time;
