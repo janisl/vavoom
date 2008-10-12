@@ -137,6 +137,7 @@ public:
 	vint32			Index;
 
 	VSwitchCase(VSwitch*, VExpression*, const TLocation&);
+	~VSwitchCase();
 	bool Resolve(VEmitContext&);
 	void DoEmit(VEmitContext&);
 };

@@ -447,6 +447,14 @@ void VClass::Shutdown()
 	StatesLookup.Clear();
 	RepInfos.Clear();
 	SpriteEffects.Clear();
+	StateLabels.Clear();
+	Structs.Clear();
+	Constants.Clear();
+	Properties.Clear();
+	Methods.Clear();
+	StateLabelDefs.Clear();
+	DecorateStateActions.Clear();
+	SpriteEffects.Clear();
 	unguard;
 }
 
