@@ -524,6 +524,9 @@ void VAcsObject::LoadOldObject()
 	VAcsInfo *info;
 	VAcsHeader *header;
 
+	//	Add to loaded objects.
+	LibraryID = Level->LoadedObjects.Append(this) << 16;
+
 	header = (VAcsHeader*)Data;
 
 	//	Load script info.
@@ -563,9 +566,6 @@ void VAcsObject::LoadOldObject()
 	{
 		MapVars[i] = &MapVarStore[i];
 	}
-
-	//	Add to loaded objects.
-	LibraryID = Level->LoadedObjects.Append(this) << 16;
 	unguard;
 }
 
