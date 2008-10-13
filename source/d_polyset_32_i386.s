@@ -1511,12 +1511,12 @@ LRGBFuzzDrawLoop:
 // keep it from poking into tfrac and causing problems
 
 LRGBFuzzDraw1:
-	cmpw	14(%ecx),%bp
+	cmpw	(%ecx),%bp
 	jl		LRGBFuzzp1
 	xorl	%eax,%eax
 	movb	%dh,%ah
 	movb	(%esi),%al
-	movw	%bp,14(%ecx)
+	movw	%bp,(%ecx)
 	movb	C(d_fadetable32r)(%eax),%al
 	movb	%al,Ltemp
 	movb	gb+1,%ah
