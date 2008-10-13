@@ -2509,8 +2509,13 @@ extern "C" void D_PolysetDrawSpansRGBAdditive_32(spanpackage_t *pspanpackage)
 			lpdest = (vuint32*)pspanpackage->pdest;
 			lptex = pspanpackage->ptex;
 			lpz = pspanpackage->pz;
+#if USE_ASM_I386
+			lsfrac = (vuint32)pspanpackage->sfrac >> 16;
+			ltfrac = (vuint32)pspanpackage->tfrac >> 16;
+#else
 			lsfrac = pspanpackage->sfrac;
 			ltfrac = pspanpackage->tfrac;
+#endif
 			lr = pspanpackage->r;
 			lg = pspanpackage->g;
 			lb = pspanpackage->b;
@@ -2552,10 +2557,18 @@ extern "C" void D_PolysetDrawSpansRGBAdditive_32(spanpackage_t *pspanpackage)
 				lg += r_gstepx;
 				lb += r_bstepx;
 				lptex += a_ststepxwhole;
+#if USE_ASM_I386
+				lsfrac += (vuint32)a_sstepxfrac >> 16;
+#else
 				lsfrac += a_sstepxfrac;
+#endif
 				lptex += lsfrac >> 16;
 				lsfrac &= 0xFFFF;
+#if USE_ASM_I386
+				ltfrac += (vuint32)a_tstepxfrac >> 16;
+#else
 				ltfrac += a_tstepxfrac;
+#endif
 				if (ltfrac & 0x10000)
 				{
 					lptex += d_affinetridesc.skinwidth;
