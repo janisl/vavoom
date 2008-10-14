@@ -967,61 +967,6 @@ bool VClass::Define()
 		}
 	}
 
-	int GameFilter = 0;
-	if (GameExpr)
-	{
-		VEmitContext ec(this);
-		GameExpr = GameExpr->Resolve(ec);
-		if (!GameExpr)
-		{
-			return false;
-		}
-		if (!GameExpr->IsIntConst())
-		{
-			ParseError(GameExpr->Loc, "Integer constant expected");
-			return false;
-		}
-		GameFilter = GameExpr->GetIntConst();
-	}
-
-	if (MobjInfoExpr)
-	{
-		VEmitContext ec(this);
-		MobjInfoExpr = MobjInfoExpr->Resolve(ec);
-		if (!MobjInfoExpr)
-		{
-			return false;
-		}
-		if (!MobjInfoExpr->IsIntConst())
-		{
-			ParseError(MobjInfoExpr->Loc, "Integer constant expected");
-			return false;
-		}
-		mobjinfo_t& mi = ec.Package->MobjInfo.Alloc();
-		mi.DoomEdNum = MobjInfoExpr->GetIntConst();
-		mi.GameFilter = GameFilter;
-		mi.Class = this;
-	}
-
-	if (ScriptIdExpr)
-	{
-		VEmitContext ec(this);
-		ScriptIdExpr = ScriptIdExpr->Resolve(ec);
-		if (!ScriptIdExpr)
-		{
-			return false;
-		}
-		if (!ScriptIdExpr->IsIntConst())
-		{
-			ParseError(ScriptIdExpr->Loc, "Integer constant expected");
-			return false;
-		}
-		mobjinfo_t& mi = ec.Package->ScriptIds.Alloc();
-		mi.DoomEdNum = ScriptIdExpr->GetIntConst();
-		mi.GameFilter = GameFilter;
-		mi.Class = this;
-	}
-
 	Defined = true;
 	return true;
 	unguard;
@@ -1174,6 +1119,64 @@ bool VClass::DefineMembers()
 void VClass::Emit()
 {
 	guard(VClass::Emit);
+	int GameFilter = 0;
+	if (GameExpr)
+	{
+		VEmitContext ec(this);
+		GameExpr = GameExpr->Resolve(ec);
+		if (GameExpr)
+		{
+			if (!GameExpr->IsIntConst())
+			{
+				ParseError(GameExpr->Loc, "Integer constant expected");
+			}
+			else
+			{
+				GameFilter = GameExpr->GetIntConst();
+			}
+		}
+	}
+
+	if (MobjInfoExpr)
+	{
+		VEmitContext ec(this);
+		MobjInfoExpr = MobjInfoExpr->Resolve(ec);
+		if (MobjInfoExpr)
+		{
+			if (!MobjInfoExpr->IsIntConst())
+			{
+				ParseError(MobjInfoExpr->Loc, "Integer constant expected");
+			}
+			else
+			{
+				mobjinfo_t& mi = ec.Package->MobjInfo.Alloc();
+				mi.DoomEdNum = MobjInfoExpr->GetIntConst();
+				mi.GameFilter = GameFilter;
+				mi.Class = this;
+			}
+		}
+	}
+
+	if (ScriptIdExpr)
+	{
+		VEmitContext ec(this);
+		ScriptIdExpr = ScriptIdExpr->Resolve(ec);
+		if (ScriptIdExpr)
+		{
+			if (!ScriptIdExpr->IsIntConst())
+			{
+				ParseError(ScriptIdExpr->Loc, "Integer constant expected");
+			}
+			else
+			{
+				mobjinfo_t& mi = ec.Package->ScriptIds.Alloc();
+				mi.DoomEdNum = ScriptIdExpr->GetIntConst();
+				mi.GameFilter = GameFilter;
+				mi.Class = this;
+			}
+		}
+	}
+
 	//	Emit method code.
 	for (int i = 0; i < Methods.Num(); i++)
 	{
