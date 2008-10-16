@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="progs_common"
 	ProjectGUID="{EE79378F-9689-40B8-99F4-B0E5872A6337}"
 	RootNamespace="progs_common_engine"
@@ -232,6 +232,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\Actor.Heretic.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.Hexen.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Actor.HexenWeapons.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\Actor.Inventory.vc"
 				>
 			</File>
@@ -268,6 +280,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\Actor.Strife.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\ActorMover.vc"
 				>
 			</File>
@@ -284,15 +300,51 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\AmmoFillup.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\Armor.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\BackpackItem.vc"
+				RelativePath="..\progs\common\linespec\ArtiBlastRadius.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\Bang4Cloud.vc"
+				RelativePath="..\progs\common\linespec\ArtiBoostArmor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ArtiDarkServant.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ArtiHealingRadius.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ArtiPoisonBag.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ArtiTeleport.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ArtiTeleportOther.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ArtiTimeBomb.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ArtiTomeOfPower.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BackpackItem.vc"
 				>
 			</File>
 			<File
@@ -308,27 +360,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\BlackParticleFountain.vc"
+				RelativePath="..\progs\common\linespec\BlasterFX1.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\BlueParticleFountain.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\BossBrain.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\BossEye.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\BossTarget.vc"
+				RelativePath="..\progs\common\linespec\BossSpot.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\BrainState.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Bridge.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\BridgeBall.vc"
 				>
 			</File>
 			<File
@@ -340,7 +388,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\CFlameMissile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ChickenPlayer.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\classes.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ClericWeapon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ClericWeaponPiece.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\CloseDoor222.vc"
 				>
 			</File>
 			<File
@@ -352,7 +420,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\CWeapWraithverge.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\DegninOre.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\DoomBuilderCamera.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\DummyStrifeItem.vc"
 				>
 			</File>
 			<File
@@ -404,11 +484,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\Feather.vc"
+				RelativePath="..\progs\common\linespec\FighterWeapon.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\FireDroplet.vc"
+				RelativePath="..\progs\common\linespec\FighterWeaponPiece.vc"
 				>
 			</File>
 			<File
@@ -428,27 +508,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\ForceFieldGuard.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FourthWeaponHolder.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FourthWeaponPiece.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FrostMissile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FSwordMissile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FWeapAxe.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\GlassShard.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\GlowingLight.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\Gold10.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\Gold25.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\Gold50.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\GreenParticleFountain.vc"
 				>
 			</File>
 			<File
@@ -460,11 +548,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\HealthFillup.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\HealthPickup.vc"
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\HealthTraining.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Heresiarch.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\HereticWeapon.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\HexenArmor.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\HexenWeapon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\HolySpirit.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\HornRodFX2.vc"
 				>
 			</File>
 			<File
@@ -504,14 +620,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\ItemFog.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\Junk.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\common\linespec\Key.vc"
 				>
 			</File>
@@ -525,6 +633,18 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\Lighting.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Lightning.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\LightningThinker.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\LightningZap.vc"
 				>
 			</File>
 			<File
@@ -544,7 +664,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\LoreShot.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\LowerStackLookOnly.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Mace.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MaceFX4.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Macil1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MageStaffFX2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MageWandMissile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MageWeapon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MageWeaponPiece.vc"
 				>
 			</File>
 			<File
@@ -552,23 +704,39 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\MapSpot.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\MapSpotGravity.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\common\linespec\Meat.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\MiniMissilePuff.vc"
+				RelativePath="..\progs\common\linespec\Minotaur.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MinotaurFriend.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MorphedMonster.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\MorphProjectile.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\MWeapBloodscourge.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\OpenDoor222.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\OpenDoor224.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Oracle.vc"
 				>
 			</File>
 			<File
@@ -580,10 +748,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\PatrolPoint.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\common\linespec\PatrolSpecial.vc"
 				>
 			</File>
@@ -592,7 +756,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\PhoenixFX1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PhoenixFX2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PhoenixRod.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PhoenixRodPowered.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PhosphorousFire.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\PickupFlash.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PigPlayer.vc"
 				>
 			</File>
 			<File
@@ -644,6 +832,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\PoisonBolt.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PoisonCloud.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\PolyobjDoor.vc"
 				>
 			</File>
@@ -657,6 +853,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\PolyobjThinker.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Pottery1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerCoupling.vc"
 				>
 			</File>
 			<File
@@ -728,7 +932,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\PurpleParticleFountain.vc"
+				RelativePath="..\progs\common\linespec\PrisonPass.vc"
 				>
 			</File>
 			<File
@@ -744,11 +948,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\RedParticleFountain.vc"
+				RelativePath="..\progs\common\linespec\RainPillar.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\RocketTrail.vc"
+				RelativePath="..\progs\common\linespec\RainPlayer2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\RainPlayer3.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\RainPlayer4.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\RaiseAlarm.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Ripper.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Scanner.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ScriptedMarine.vc"
 				>
 			</File>
 			<File
@@ -828,11 +1056,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\Sigil.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\SkyPicker.vc"
 				>
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\SkyViewpoint.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SlideshowStarter.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SorcBall.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SorcBall1.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SorcBall2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SorcBall3.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\Sorcerer2.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\SoundEnvironment.vc"
 				>
 			</File>
 			<File
@@ -848,11 +1108,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\SpawnFire.vc"
+				RelativePath="..\progs\common\linespec\SpecialSpot.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\SpawnShot.vc"
+				RelativePath="..\progs\common\linespec\SpectralMonster.vc"
 				>
 			</File>
 			<File
@@ -869,14 +1129,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\StaticRGBLightSource.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\StrifeHumanoid.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\common\linespec\StrifePuff.vc"
 				>
 			</File>
 			<File
@@ -904,11 +1156,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\TeleporterBeacon.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\TeleportFog.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\TelOtherFX1.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\TextureChangeDoor.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\Unknown.vc"
+				RelativePath="..\progs\common\linespec\ThrustFloorDown.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\UpgradeAccuracy.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\UpgradeStamina.vc"
 				>
 			</File>
 			<File
@@ -932,6 +1204,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\WeaponGiver.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\WeaponHolder.vc"
 				>
 			</File>
@@ -940,7 +1216,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\WhiteParticleFountain.vc"
+				RelativePath="..\progs\common\linespec\Whirlwind.vc"
 				>
 			</File>
 			<File
@@ -948,7 +1224,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\common\linespec\YellowParticleFountain.vc"
+				RelativePath="..\progs\common\linespec\ZBell.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ZBridge.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\ZCorpseLynchedNoHeart.vc"
 				>
 			</File>
 		</Filter>
@@ -972,6 +1256,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\uibase\FinaleBackground.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\FinaleScreen.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\uibase\HUDMessage.vc"
 				>
 			</File>
@@ -985,6 +1277,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\uibase\HUDMessageTypeOnFadeOut.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\IntermissionBackground.vc"
 				>
 			</File>
 			<File
@@ -1009,6 +1305,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\uibase\MenuChoiceEnum.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoiceEpisode.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuChoicePClass.vc"
 				>
 			</File>
 			<File
@@ -1048,7 +1352,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\uibase\MenuScreenClass.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\uibase\MenuScreenControls.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenEpisode.vc"
 				>
 			</File>
 			<File
@@ -1069,6 +1381,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\uibase\MenuScreenScreenResolution.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenSinglePlayer.vc"
 				>
 			</File>
 			<File

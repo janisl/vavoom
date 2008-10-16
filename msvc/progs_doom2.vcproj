@@ -25,7 +25,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/svprogs.vc ../basev/doom2/progs/svprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/clprogs.vc ../basev/doom2/progs/clprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/game/classes.vc ../basev/doom2/progs/game.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/cgame.vc ../basev/doom2/progs/cgame.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/doom/cgame&#x0D;&#x0A;"
 				Outputs="../basev/doom2/progs/svprogs.dat;../basev/doom2/progs/clprogs.dat"
 			/>
 			<Tool
@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/svprogs.vc ../basev/doom2/progs/svprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/clprogs.vc ../basev/doom2/progs/clprogs.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/game/classes.vc ../basev/doom2/progs/game.dat -P../basev/common/progs -P../basev/doom2/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom2/cgame.vc ../basev/doom2/progs/cgame.dat -P../basev/common/progs -P../basev/doom2/progs -I../progs/doom/cgame&#x0D;&#x0A;"
 				Outputs="../basev/doom2/progs/svprogs.dat;../basev/doom2/progs/clprogs.dat"
 			/>
 			<Tool
@@ -145,11 +145,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\progs\doom2\clprogs.vc"
-			>
-		</File>
-		<File
-			RelativePath="..\progs\doom2\svprogs.vc"
+			RelativePath="..\progs\doom2\cgame.vc"
 			>
 		</File>
 	</Files>

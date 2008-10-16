@@ -25,7 +25,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/game/classes.vc ../basev/doom1/progs/svprogs.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/cgame/classes.vc ../basev/doom1/progs/clprogs.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/game/classes.vc ../basev/doom1/progs/game.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/cgame/classes.vc ../basev/doom1/progs/cgame.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;"
 				Outputs="../basev/doom1/progs/svprogs.dat;../basev/doom1/progs/clprogs.dat"
 			/>
 			<Tool
@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/game/classes.vc ../basev/doom1/progs/svprogs.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/cgame/classes.vc ../basev/doom1/progs/clprogs.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;"
+				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/game/classes.vc ../basev/doom1/progs/game.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/doom/cgame/classes.vc ../basev/doom1/progs/cgame.dat -P../basev/common/progs -P../basev/doom1/progs&#x0D;&#x0A;"
 				Outputs="../basev/doom1/progs/svprogs.dat;../basev/doom1/progs/clprogs.dat"
 			/>
 			<Tool
@@ -152,10 +152,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\Bridge.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\classes.vc"
 				>
 			</File>
@@ -164,71 +160,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\DoomWorldInfo.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\Gibs.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\MainGameInfo.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\game\MarineBerserk.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineBFG.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineChaingun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineChainsaw.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineFist.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarinePistol.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarinePlasma.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineRailgun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineRocket.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineShotgun.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\MarineSSG.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\game\Player.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\ScriptedMarine.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\game\TeleportFog.vc"
 				>
 			</File>
 		</Filter>
@@ -244,23 +180,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\cgame\FinaleScreen.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\cgame\IntermissionScreen.vc"
 				>
 			</File>
 			<File
-				RelativePath="..\progs\doom\cgame\MenuChoiceEpisode.vc"
-				>
-			</File>
-			<File
 				RelativePath="..\progs\doom\cgame\MenuScreenControls2.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenEpisode.vc"
 				>
 			</File>
 			<File
@@ -289,14 +213,6 @@
 			</File>
 			<File
 				RelativePath="..\progs\doom\cgame\MenuScreenPlayerSetup.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenSinglePlayer.vc"
-				>
-			</File>
-			<File
-				RelativePath="..\progs\doom\cgame\MenuScreenSkill.vc"
 				>
 			</File>
 			<File
