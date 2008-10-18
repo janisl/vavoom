@@ -276,9 +276,11 @@ void VThinkerChannel::Update()
 
 				Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
 				Msg.WriteInt(i, F->Type.ArrayDim);
-				VField::NetSerialiseValue(Msg, Connection->ObjMap, Val,
-					IntType);
-				VField::CopyFieldValue(Val, OldVal, IntType);
+				if (VField::NetSerialiseValue(Msg, Connection->ObjMap, Val,
+					IntType))
+				{
+					VField::CopyFieldValue(Val, OldVal, IntType);
+				}
 			}
 		}
 		else
@@ -297,9 +299,11 @@ void VThinkerChannel::Update()
 			}
 
 			Msg.WriteInt(F->NetIndex, Thinker->GetClass()->NumNetFields);
-			VField::NetSerialiseValue(Msg, Connection->ObjMap, FieldValue,
-				F->Type);
-			VField::CopyFieldValue(FieldValue, OldData + F->Ofs, F->Type);
+			if (VField::NetSerialiseValue(Msg, Connection->ObjMap, FieldValue,
+				F->Type))
+			{
+				VField::CopyFieldValue(FieldValue, OldData + F->Ofs, F->Type);
+			}
 		}
 	}
 

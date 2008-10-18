@@ -184,18 +184,23 @@ void VPlayerChannel::Update()
 				}
 				Msg.WriteInt(F->NetIndex, Plr->GetClass()->NumNetFields);
 				Msg.WriteInt(i, F->Type.ArrayDim);
-				VField::NetSerialiseValue(Msg, Connection->ObjMap,
-					Data + F->Ofs + i * InnerSize, IntType);
-				VField::CopyFieldValue(Data + F->Ofs + i * InnerSize,
-					OldData + F->Ofs + i * InnerSize, IntType);
+				if (VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					Data + F->Ofs + i * InnerSize, IntType))
+				{
+					VField::CopyFieldValue(Data + F->Ofs + i * InnerSize,
+						OldData + F->Ofs + i * InnerSize, IntType);
+				}
 			}
 		}
 		else
 		{
 			Msg.WriteInt(F->NetIndex, Plr->GetClass()->NumNetFields);
-			VField::NetSerialiseValue(Msg, Connection->ObjMap, Data + F->Ofs,
-				F->Type);
-			VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs, F->Type);
+			if (VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				Data + F->Ofs, F->Type))
+			{
+				VField::CopyFieldValue(Data + F->Ofs, OldData + F->Ofs,
+					F->Type);
+			}
 		}
 	}
 
