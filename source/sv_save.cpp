@@ -79,8 +79,6 @@ void CL_SetUpStandaloneClient();
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern int			sv_load_num_players;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------

@@ -249,7 +249,7 @@ void CL_SignonReply()
 	}
 	if (host_standalone)
 	{
-		VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, cl);
+		cl->SpawnClient();
 	}
 	else
 	{

@@ -190,6 +190,8 @@ class VBasePlayer : public VObject
 	//	VObject interface
 	bool ExecuteNetMethod(VMethod*);
 
+	void SpawnClient();
+
 	void Printf(const char*, ...);
 	void CentrePrintf(const char*, ...);
 

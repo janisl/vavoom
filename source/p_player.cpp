@@ -218,6 +218,81 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 
 //==========================================================================
 //
+//	VBasePlayer::SpawnClient
+//
+//==========================================================================
+
+void VBasePlayer::SpawnClient()
+{
+	guard(VBasePlayer::SpawnClient);
+	if (!sv_loading)
+	{
+		if (PlayerFlags & PF_Spawned)
+		{
+			GCon->Log(NAME_Dev, "Already spawned");
+		}
+		if (MO)
+		{
+			GCon->Log(NAME_Dev, "Mobj already spawned");
+		}
+		eventSpawnClient();
+		for (int i = 0; i < Level->XLevel->ActiveSequences.Num(); i++)
+		{
+			eventClientStartSequence(
+				Level->XLevel->ActiveSequences[i].Origin,
+				Level->XLevel->ActiveSequences[i].OriginId,
+				Level->XLevel->ActiveSequences[i].Name,
+				Level->XLevel->ActiveSequences[i].ModeNum);
+			for (int j = 0; j < Level->XLevel->ActiveSequences[i].Choices.Num(); j++)
+			{
+				eventClientAddSequenceChoice(
+					Level->XLevel->ActiveSequences[i].OriginId,
+					Level->XLevel->ActiveSequences[i].Choices[j]);
+			}
+		}
+	}
+	else
+	{
+		if (!MO)
+		{
+			Host_Error("Player without Mobj\n");
+		}
+	}
+
+	ViewAngles.roll = 0;
+	eventClientSetAngles(ViewAngles);
+	PlayerFlags &= ~PF_FixAngle;
+
+	PlayerFlags |= PF_Spawned;
+
+	if (host_standalone && run_open_scripts)
+	{
+		//	Start open scripts.
+		Level->XLevel->Acs->StartTypedACScripts(SCRIPT_Open, 0, 0, 0, NULL,
+			false, false);
+	}
+
+	if (!sv_loading)
+	{
+		Level->XLevel->Acs->StartTypedACScripts(SCRIPT_Enter, 0, 0, 0, MO,
+			true, false);
+	}
+
+	if (!netgame || svs.num_connected == sv_load_num_players)
+	{
+		sv_loading = false;
+	}
+
+	// For single play, save immediately into the reborn slot
+	if (!netgame)
+	{
+		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VBasePlayer::Printf
 //
 //==========================================================================

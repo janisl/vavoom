@@ -252,6 +252,8 @@ extern vuint8			deathmatch;   			// only if started as net death
 extern bool				paused;
 
 extern bool				sv_loading;
+extern int				sv_load_num_players;
+extern bool				run_open_scripts;
 
 //==========================================================================
 //

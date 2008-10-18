@@ -58,6 +58,7 @@ int				validcount = 1;
 
 bool			sv_loading = false;
 int				sv_load_num_players;
+bool			run_open_scripts;
 
 VBasePlayer*	GPlayersBase[MAXPLAYERS];
 
@@ -79,7 +80,6 @@ bool			completed;
 static int		RebornPosition;	// Position indicator for cooperative net-play reborn
 
 static bool		mapteleport_issued;
-static bool		run_open_scripts;
 
 static VCvarI	TimeLimit("TimeLimit", "0");
 static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
@@ -494,7 +494,7 @@ void SV_RunClients()
 		if ((Player->PlayerFlags & VBasePlayer::PF_IsBot) &&
 			!(Player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
-			VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, Player);
+			Player->SpawnClient();
 		}
 
 		// do player reborns if needed
@@ -1127,69 +1127,7 @@ COMMAND(Spawn)
 		return;
 	}
 
-	if (!sv_loading)
-	{
-		if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
-		{
-			GCon->Log(NAME_Dev, "Already spawned");
-		}
-		if (Player->MO)
-		{
-			GCon->Log(NAME_Dev, "Mobj already spawned");
-		}
-		Player->eventSpawnClient();
-		for (int i = 0; i < GLevel->ActiveSequences.Num(); i++)
-		{
-			Player->eventClientStartSequence(
-				GLevel->ActiveSequences[i].Origin,
-				GLevel->ActiveSequences[i].OriginId,
-				GLevel->ActiveSequences[i].Name,
-				GLevel->ActiveSequences[i].ModeNum);
-			for (int j = 0; j < GLevel->ActiveSequences[i].Choices.Num(); j++)
-			{
-				Player->eventClientAddSequenceChoice(
-					GLevel->ActiveSequences[i].OriginId,
-					GLevel->ActiveSequences[i].Choices[j]);
-			}
-		}
-	}
-	else
-	{
-		if (!Player->MO)
-		{
-			Host_Error("Player without Mobj\n");
-		}
-	}
-
-	Player->ViewAngles.roll = 0;
-	Player->eventClientSetAngles(Player->ViewAngles);
-	Player->PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-
-	Player->PlayerFlags |= VBasePlayer::PF_Spawned;
-
-	if (host_standalone && run_open_scripts)
-	{
-		//	Start open scripts.
-		GLevel->Acs->StartTypedACScripts(SCRIPT_Open, 0, 0, 0, NULL, false,
-			false);
-	}
-
-	if (!sv_loading)
-	{
-		GLevel->Acs->StartTypedACScripts(SCRIPT_Enter, 0, 0, 0, Player->MO,
-			true, false);
-	}
-
-	if (!netgame || svs.num_connected == sv_load_num_players)
-	{
-		sv_loading = false;
-	}
-
-	// For single play, save immediately into the reborn slot
-	if (!netgame)
-	{
-		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
-	}
+	Player->SpawnClient();
 	unguard;
 }
 
@@ -1493,7 +1431,7 @@ void SV_ConnectBot(const char *name)
 	SV_ConnectClient(Player);
 	svs.num_connected++;
 	SV_SetUserInfo(Player, Player->UserInfo);
-	VCommand::ExecuteString("Spawn\n", VCommand::SRC_Client, Player);
+	Player->SpawnClient();
 	unguard;
 }
 
