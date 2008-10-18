@@ -253,7 +253,7 @@ void CL_SignonReply()
 	}
 	else
 	{
-		cl->Net->SendCommand("Spawn\n");
+		cl->Net->SendCommand("PreSpawn\n");
 	}
 	GCmdBuf << "HideConsole\n";
 	unguard;

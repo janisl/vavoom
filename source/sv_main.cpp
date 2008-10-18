@@ -928,20 +928,6 @@ void SV_SendServerInfo(VBasePlayer* Player)
 	//	This will load level on client side.
 	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
 	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->SendNewLevel();
-
-	//	Make sure level info is spawned on client side, since there
-	// could be some RPCs that depend on it.
-	VThinkerChannel* Chan = Player->Net->ThinkerChannels.FindPtr(GLevelInfo);
-	if (!Chan)
-	{
-		Chan = (VThinkerChannel*)Player->Net->CreateChannel(CHANNEL_Thinker,
-			-1);
-		if (Chan)
-		{
-			Chan->SetThinker(GLevelInfo);
-			Chan->Update();
-		}
-	}
 	unguard;
 }
 
@@ -1109,6 +1095,37 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	}
 
 	GCon->Log(NAME_Dev, "Server spawned");
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND PreSpawn
+//
+//==========================================================================
+
+COMMAND(PreSpawn)
+{
+	guard(COMMAND PreSpawn);
+	if (Source == SRC_Command)
+	{
+		GCon->Log("PreSpawn is not valid from console");
+		return;
+	}
+
+	//	Make sure level info is spawned on client side, since there
+	// could be some RPCs that depend on it.
+	VThinkerChannel* Chan = Player->Net->ThinkerChannels.FindPtr(GLevelInfo);
+	if (!Chan)
+	{
+		Chan = (VThinkerChannel*)Player->Net->CreateChannel(CHANNEL_Thinker,
+			-1);
+		if (Chan)
+		{
+			Chan->SetThinker(GLevelInfo);
+			Chan->Update();
+		}
+	}
 	unguard;
 }
 
