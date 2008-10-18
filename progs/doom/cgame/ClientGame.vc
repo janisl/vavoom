@@ -75,7 +75,7 @@ void Connected()
 {
 	GTitle.Hide();
 	GTitle.StopDemoLoop();
-	GSBar.Show();
+	GSBar.Hide();
 	GImission.Hide();
 	GFinale.Hide();
 }
@@ -103,7 +103,7 @@ void Disconnected()
 void DemoPlaybackStarted()
 {
 	GTitle.Hide();
-	GSBar.Show();
+	GSBar.Hide();
 	GImission.Hide();
 	GFinale.Hide();
 }
