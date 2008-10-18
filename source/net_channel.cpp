@@ -58,6 +58,7 @@ VChannel::VChannel(VNetConnection* AConnection, EChannelType AType,
 , Index(AIndex)
 , Type(AType)
 , OpenedLocally(AOpenedLocally)
+, OpenAcked(AIndex < CHANIDX_ThinkersStart)
 , Closing(false)
 , InMsg(NULL)
 , OutMsg(NULL)

@@ -172,6 +172,7 @@ public:
 	vint32				Index;
 	vuint8				Type;
 	vuint8				OpenedLocally;
+	vuint8				OpenAcked;
 	vuint8				Closing;
 	VMessageIn*			InMsg;
 	VMessageOut*		OutMsg;

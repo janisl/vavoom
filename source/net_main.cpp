@@ -912,7 +912,7 @@ bool VNetObjectsMap::SerialiseObject(VStream& Strm, VObject*& Obj)
 			bool Ret = false;
 			vuint32 Index = 0;
 			VThinkerChannel* Chan = Connection->ThinkerChannels.FindPtr(Thinker);
-			if (Chan)
+			if (Chan && Chan->OpenAcked)
 			{
 				Index = Chan->Index;
 				Ret = true;

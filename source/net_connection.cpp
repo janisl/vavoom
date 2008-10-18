@@ -271,6 +271,10 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 					if (Msg->PacketId == AckSeq)
 					{
 						Msg->bReceivedAck = true;
+						if (Msg->bOpen)
+						{
+							OpenChannels[i]->OpenAcked = true;
+						}
 					}
 				}
 			}
@@ -322,6 +326,7 @@ void VNetConnection::ReceivedPacket(VBitStreamReader& Packet)
 				if (Msg.bOpen)
 				{
 					Chan = CreateChannel(Msg.ChanType, Msg.ChanIndex, false);
+					Chan->OpenAcked = true;
 				}
 				else
 				{
@@ -542,6 +547,7 @@ void VNetConnection::Tick()
 			{
 				Msg->bReceivedAck = true;
 			}
+			OpenChannels[i]->OpenAcked = true;
 			OpenChannels[i]->ReceivedAck();
 		}
 	}
