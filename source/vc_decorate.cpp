@@ -227,13 +227,6 @@ static TArray<VFlagList>	FlagList;
 //
 //==========================================================================
 
-static char* _(const VStr& S)
-{
-	char* Buf = new char[S.Length() + 1];
-	strcpy(Buf, *S);
-	return Buf;
-}
-
 static void ParseDecorateDef(VXmlDocument& Doc)
 {
 	guard(ParseDecorateDef);
