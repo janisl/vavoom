@@ -26,7 +26,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/game/classes.vc ../basev/heretic/progs/game.dat -P../basev/common/progs -P../basev/heretic/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/cgame/classes.vc ../basev/heretic/progs/cgame.dat -P../basev/common/progs -P../basev/heretic/progs&#x0D;&#x0A;"
-				Outputs="../basev/heretic/progs/svprogs.dat;../basev/heretic/progs/clprogs.dat"
+				Outputs="../basev/heretic/progs/game.dat;../basev/heretic/progs/cgame.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/game/classes.vc ../basev/heretic/progs/game.dat -P../basev/common/progs -P../basev/heretic/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/heretic/cgame/classes.vc ../basev/heretic/progs/cgame.dat -P../basev/common/progs -P../basev/heretic/progs&#x0D;&#x0A;"
-				Outputs="../basev/heretic/progs/svprogs.dat;../basev/heretic/progs/clprogs.dat"
+				Outputs="../basev/heretic/progs/game.dat;../basev/heretic/progs/cgame.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"

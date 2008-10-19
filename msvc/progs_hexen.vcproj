@@ -26,7 +26,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/game/classes.vc ../basev/hexen/progs/game.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/cgame/classes.vc ../basev/hexen/progs/cgame.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;"
-				Outputs="../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
+				Outputs="../basev/hexen/progs/game.dat;../basev/hexen/progs/cgame.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/game/classes.vc ../basev/hexen/progs/game.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/hexen/cgame/classes.vc ../basev/hexen/progs/cgame.dat -P../basev/common/progs -P../basev/hexen/progs&#x0D;&#x0A;"
-				Outputs="../basev/hexen/progs/svprogs.dat;../basev/hexen/progs/clprogs.dat"
+				Outputs="../basev/hexen/progs/game.dat;../basev/hexen/progs/cgame.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"

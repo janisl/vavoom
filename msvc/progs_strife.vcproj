@@ -26,7 +26,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/game/classes.vc ../basev/strife/progs/game.dat -P../basev/common/progs -P../basev/strife/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/cgame/classes.vc ../basev/strife/progs/cgame.dat -P../basev/common/progs -P../basev/strife/progs&#x0D;&#x0A;"
-				Outputs="../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
+				Outputs="../basev/strife/progs/game.dat;../basev/strife/progs/cgame.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -89,7 +89,7 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				CommandLine="$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/game/classes.vc ../basev/strife/progs/game.dat -P../basev/common/progs -P../basev/strife/progs&#x0D;&#x0A;$(SolutionDir)$(ConfigurationName)\vcc.exe ../progs/strife/cgame/classes.vc ../basev/strife/progs/cgame.dat -P../basev/common/progs -P../basev/strife/progs&#x0D;&#x0A;"
-				Outputs="../basev/strife/progs/svprogs.dat;../basev/strife/progs/clprogs.dat"
+				Outputs="../basev/strife/progs/game.dat;../basev/strife/progs/cgame.dat"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
