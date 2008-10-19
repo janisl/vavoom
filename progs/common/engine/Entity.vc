@@ -242,7 +242,6 @@ bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
 bool bCorpse;			// don't stop moving halfway off a step
 bool bFullBright;		// make current state full bright
-native readonly bool bNetLocalPlayer;	// Mobj of player currently being updated
 bool bInvisible;		// Don't draw this actor
 bool bMissile;			// don't hit same species, explode on block
 bool bDontOverlap;		// Prevent some things from overlapping.
@@ -292,7 +291,7 @@ replication
 		Origin, Angles, FloorClip, State, StateTime, SpriteType,
 		FixedSpriteName, ModelVersion, RenderStyle, Alpha, Translation,
 		ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright, bFixedModel,
-		bNetLocalPlayer, SoundOriginID, bUseDispState;
+		SoundOriginID, bUseDispState;
 
 	reliable if (Role == ROLE_Authority && bUseDispState)
 		DispState;

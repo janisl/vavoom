@@ -487,18 +487,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	volume *= MaxVolume;
 
 	//	Check if this sound is emited by the local player.
-	bool LocalPlayerSound = false;
-	if (GClLevel && GClLevel->LevelInfo)
-	{
-		for (TThinkerIterator<VEntity> Ent(GClLevel); Ent; ++Ent)
-		{
-			if (Ent->SoundOriginID == origin_id &&
-				(Ent->EntityFlags & VEntity::EF_NetLocalPlayer))
-			{
-				LocalPlayerSound = true;
-			}
-		}
-	}
+	bool LocalPlayerSound = cl && cl->MO && cl->MO->SoundOriginID == origin_id;
 
 	// calculate the distance before other stuff so that we can throw out
 	// sounds that are beyond the hearing range.

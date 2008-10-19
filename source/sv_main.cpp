@@ -367,25 +367,19 @@ void SV_SendClientMessages()
 		}
 
 		// Don't update level if the player isn't totally in the game yet
-		if (Player->Net && Player->Net->Channels[0] &&
+		if (Player->Net && Player->Net->Channels[CHANIDX_General] &&
 			(Player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
 			if (Player->Net->NeedsUpdate)
 			{
-				Player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
-
 				SV_WriteViewData(*Player);
-
 				SV_UpdateLevel(Player);
-
-				Player->MO->EntityFlags &= ~VEntity::EF_NetLocalPlayer;
 			}
 
 			((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->Update();
 		}
 		else if (host_standalone && (Player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
-			Player->MO->EntityFlags |= VEntity::EF_NetLocalPlayer;
 			SV_WriteViewData(*Player);
 		}
 

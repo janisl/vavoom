@@ -222,13 +222,12 @@ class VEntity : public VThinker
 		EF_OnMobj				= 0x00100000,	// mobj is resting on top of another mobj
 		EF_Corpse				= 0x00200000,	// don't stop moving halfway off a step
 		EF_FullBright			= 0x00400000,	// make current state full bright
-		EF_NetLocalPlayer		= 0x00800000,	// Mobj of player currently being updated
-		EF_Invisible			= 0x01000000,	// Don't draw this actor
-		EF_Missile				= 0x02000000,	// don't hit same species, explode on block
-		EF_DontOverlap			= 0x04000000,	// Prevent some things from overlapping.
-		EF_UseDispState			= 0x08000000,	// Use DispState for rendering
-		EF_ActLikeBridge		= 0x10000000,	// Always allow obkects to pass.
-		EF_NoDropOff			= 0x20000000,	// Can't drop off under any circumstances
+		EF_Invisible			= 0x00800000,	// Don't draw this actor
+		EF_Missile				= 0x01000000,	// don't hit same species, explode on block
+		EF_DontOverlap			= 0x02000000,	// Prevent some things from overlapping.
+		EF_UseDispState			= 0x04000000,	// Use DispState for rendering
+		EF_ActLikeBridge		= 0x08000000,	// Always allow obkects to pass.
+		EF_NoDropOff			= 0x10000000,	// Can't drop off under any circumstances
 	};
 	vuint32			EntityFlags;
 
