@@ -359,16 +359,25 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 			ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 4.0);
 		}
 		vuint32 rot = (vuint32)(ang * 16 / 360.0) & 15;
-		lump = sprframe->lump[rot];
+		// -1 is used to mark lump as not present
+		lump = sprframe->lump[rot] ? sprframe->lump[rot] : -1;
 		flip = sprframe->flip[rot];
 	}
 	else
 	{
 		// use single rotation for all views
-		lump = sprframe->lump[0];
+		lump = sprframe->lump[0] ? sprframe->lump[0] : -1;
 		flip = sprframe->flip[0];
 	}
-
+	if (lump == -1)
+	{
+#ifdef PARANOID
+		GCon->Logf(NAME_Dev, "Sprite frame %d : %d, not present",
+			SpriteIndex, DispState->Frame);
+#endif
+		// Sprite lump is not present
+		return;
+	}
 	VTexture* Tex = GTextureManager[lump];
 	int TexWidth = Tex->GetWidth();
 	int TexHeight = Tex->GetHeight();
