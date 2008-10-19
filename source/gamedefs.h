@@ -102,7 +102,7 @@
 #include "p_levelinfo.h"
 #include "p_entity.h"
 #include "p_playerreplicationinfo.h"
-#include "player.h"
+#include "p_player.h"
 #include "p_gameinfo.h"
 #include "p_world.h"
 #include "client.h"

@@ -140,6 +140,7 @@ set(MAIN_COMMON_SOURCES
 	p_levelinfo.h
 	p_nodebuild.cpp
 	p_player.cpp
+	p_player.h
 	p_playerreplicationinfo.cpp
 	p_playerreplicationinfo.h
 	p_polyobj.cpp
@@ -154,7 +155,6 @@ set(MAIN_COMMON_SOURCES
 	p_world.h
 	p_worldinfo.cpp
 	p_worldinfo.h
-	player.h
 	pr_cmds.cpp
 	pr_exec.cpp
 	progdefs.h
