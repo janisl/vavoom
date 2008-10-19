@@ -1801,15 +1801,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\net_dgrm.cpp"
+				RelativePath="..\source\net_datagram.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\net_loc.h"
+				RelativePath="..\source\net_local.h"
 				>
 			</File>
 			<File
-				RelativePath="..\source\net_loop.cpp"
+				RelativePath="..\source\net_loopback.cpp"
 				>
 			</File>
 			<File
@@ -1822,6 +1822,10 @@
 			</File>
 			<File
 				RelativePath="..\source\net_message.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\net_object_map.cpp"
 				>
 			</File>
 			<File
@@ -1845,7 +1849,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\source\net_wins.cpp"
+				RelativePath="..\source\net_winsock.cpp"
 				>
 			</File>
 			<File

@@ -72,7 +72,6 @@ public:
 	static TArray<VClass*>			GDecorateClassImports;
 
 	static VClass*					GClasses;	// Linked list of all classes.
-	static TArray<VClass*>			GNetClassLookup;
 
 	//	Srtuctors.
 	VMemberBase(vuint8, VName, VMemberBase*, TLocation);
@@ -104,8 +103,6 @@ public:
 	//FIXME This looks ugly.
 	static VFieldType StaticFindType(VClass*, VName);
 	static VClass* StaticFindClass(VName);
-
-	static void StaticSetUpNetClasses();
 
 	static void StaticSplitStateLabel(const VStr&, TArray<VName>&);
 };

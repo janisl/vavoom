@@ -1064,8 +1064,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 		GLevelInfo->eventSpawnSpecials();
 	}
 
-	VMemberBase::StaticSetUpNetClasses();
-
 	if (!spawn_thinkers)
 	{
 //		if (level.thinkerHead)

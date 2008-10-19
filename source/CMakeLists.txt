@@ -126,6 +126,7 @@ set(MAIN_COMMON_SOURCES
 	net_main.cpp
 	net_message.cpp
 	net_message.h
+	net_object_map.cpp
 	network.h
 	p_acs.cpp
 	p_acs.h
@@ -460,6 +461,7 @@ set(SERVER_COMMON_SOURCES
 	net_loopback.cpp
 	net_main.cpp
 	net_message.cpp
+	net_object_map.cpp
 	p_acs.cpp
 	p_clip.cpp
 	p_entity.cpp

@@ -202,7 +202,8 @@ void VThinkerChannel::Update()
 	if (NewObj)
 	{
 		Msg.bOpen = true;
-		Msg.WriteInt(Thinker->GetClass()->NetId, VMemberBase::GNetClassLookup.Num());
+		VClass* TmpClass = Thinker->GetClass();
+		Connection->ObjMap->SerialiseClass(Msg, TmpClass);
 		NewObj = false;
 	}
 
@@ -335,8 +336,8 @@ void VThinkerChannel::ParsePacket(VMessageIn& Msg)
 	guard(VThinkerChannel::ParsePacket);
 	if (Msg.bOpen)
 	{
-		int ci = Msg.ReadInt(VMemberBase::GNetClassLookup.Num());
-		VClass* C = VMemberBase::GNetClassLookup[ci];
+		VClass* C;
+		Connection->ObjMap->SerialiseClass(Msg, C);
 	
 		VThinker* Th = Connection->Context->GetLevel()->SpawnThinker(C,
 			TVec(0, 0, 0), TAVec(0, 0, 0), NULL, false);

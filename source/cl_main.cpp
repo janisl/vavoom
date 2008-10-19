@@ -376,8 +376,6 @@ void CL_EstablishConnection(const char* host)
 		SV_ConnectClient(Player);
 		svs.num_connected++;
 
-		VMemberBase::StaticSetUpNetClasses();
-
 		cl = Player;
 		cl->ClGame = GClGame;
 		GClGame->cl = cl;

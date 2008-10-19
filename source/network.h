@@ -392,11 +392,15 @@ public:
 
 class VNetObjectsMap
 {
+private:
+	TArray<VClass*>		ClassLookup;
+
 public:
 	VNetConnection*		Connection;
 
 	VNetObjectsMap();
 	VNetObjectsMap(VNetConnection*);
+	void SetUpClassLookup();
 	bool CanSerialiseObject(VObject*);
 	bool SerialiseName(VStream&, VName&);
 	bool SerialiseObject(VStream&, VObject*&);

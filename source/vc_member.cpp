@@ -190,7 +190,6 @@ TArray<VPackage*>		VMemberBase::GLoadedPackages;
 TArray<VClass*>			VMemberBase::GDecorateClassImports;
 
 VClass*					VMemberBase::GClasses;
-TArray<VClass*>			VMemberBase::GNetClassLookup;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -385,7 +384,6 @@ void VMemberBase::StaticExit()
 	GPackagePath.Clear();
 	GLoadedPackages.Clear();
 	GDecorateClassImports.Clear();
-	GNetClassLookup.Clear();
 	VClass::GMobjInfos.Clear();
 	VClass::GScriptIds.Clear();
 	VClass::GSpriteNames.Clear();
@@ -742,34 +740,6 @@ VClass* VMemberBase::StaticFindClass(VName Name)
 	}
 	return NULL;
 	unguard;
-}
-
-//==========================================================================
-//
-//	VMemberBase::StaticSetUpNetClasses
-//
-//==========================================================================
-
-void VMemberBase::StaticSetUpNetClasses()
-{
-#ifndef IN_VCC
-	guard(VMemberBase::StaticSetUpNetClasses);
-	GNetClassLookup.Clear();
-	GNetClassLookup.Append(NULL);
-	for (int i = 0; i < GMembers.Num(); i++)
-	{
-		if (GMembers[i]->MemberType == MEMBER_Class)
-		{
-			VClass* C = static_cast<VClass*>(GMembers[i]);
-			if (C->IsChildOf(VThinker::StaticClass()))
-			{
-				C->NetId = GNetClassLookup.Num();
-				GNetClassLookup.Append(C);
-			}
-		}
-	}
-	unguard;
-#endif
 }
 
 //==========================================================================
