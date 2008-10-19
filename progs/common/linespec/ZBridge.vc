@@ -31,12 +31,8 @@ class ZBridge : Actor
 states
 {
 Spawn:
-	TLGL A 4
-	TLGL B 4
-	TLGL C 4
-	TLGL D 4
-	TLGL E 4
-	Stop
+	TLGL ABCDE 4
+	Loop
 }
 
 defaultproperties
@@ -46,4 +42,5 @@ defaultproperties
 	bSolid = true;
 	bNoGravity = true;
 	bNoLiftDrop = true;
+	bActLikeBridge = true;
 }

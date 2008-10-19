@@ -316,7 +316,7 @@ bool TryPickup(EntityEx Toucher)
 //
 //	HandlePickup
 //
-//	Called for each item in touchers in ventory. Returns true if pickup
+//	Called for each item in touchers inventory. Returns true if pickup
 // should be interrupted. Sets bPickupGood to true if pickup should be
 // considered successful.
 //
