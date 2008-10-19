@@ -106,3 +106,8 @@ public:
 
 	static void StaticSplitStateLabel(const VStr&, TArray<VName>&);
 };
+
+inline vuint32 GetTypeHash(VMemberBase* M)
+{
+	return M ? M->MemberIndex : 0;
+}

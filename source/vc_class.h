@@ -227,7 +227,6 @@ public:
 	VField*					DestructorFields;
 	VField*					NetFields;
 	VMethod*				NetMethods;
-	vint32					NetId;
 	VState*					NetStates;
 	TArray<VState*>			StatesLookup;
 	vint32					NumNetFields;

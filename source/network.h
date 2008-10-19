@@ -393,10 +393,11 @@ public:
 class VNetObjectsMap
 {
 private:
-	TArray<VClass*>		ClassLookup;
+	TArray<VClass*>			ClassLookup;
+	TMap<VClass*, vuint32>	ClassMap;
 
 public:
-	VNetConnection*		Connection;
+	VNetConnection*			Connection;
 
 	VNetObjectsMap();
 	VNetObjectsMap(VNetConnection*);
