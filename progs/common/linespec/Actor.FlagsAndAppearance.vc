@@ -412,6 +412,10 @@ final void A_SetTranslucent(float AlphaVal, optional int Mode)
 
 final void A_FadeIn(optional float Val)
 {
+	if (RenderStyle == Entity::STYLE_Normal)
+	{
+		RenderStyle = Entity::STYLE_Translucent;
+	}
 	if (!Val)
 	{
 		Val = 0.1;
@@ -427,6 +431,10 @@ final void A_FadeIn(optional float Val)
 
 final void A_FadeOut(optional float Val)
 {
+	if (RenderStyle == Entity::STYLE_Normal)
+	{
+		RenderStyle = Entity::STYLE_Translucent;
+	}
 	if (!Val)
 	{
 		Val = 0.1;
