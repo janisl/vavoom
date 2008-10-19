@@ -61,7 +61,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "net_loc.h"
+#include "net_local.h"
 #include "zlib.h"
 
 // MACROS ------------------------------------------------------------------

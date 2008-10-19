@@ -47,7 +47,7 @@
 #endif
 
 #include "gamedefs.h"
-#include "net_loc.h"
+#include "net_local.h"
 
 // MACROS ------------------------------------------------------------------
 

@@ -28,7 +28,7 @@
 #include "winlocal.h"
 #include <errno.h>
 #include "gamedefs.h"
-#include "net_loc.h"
+#include "net_local.h"
 
 // MACROS ------------------------------------------------------------------
 

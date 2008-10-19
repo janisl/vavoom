@@ -120,9 +120,9 @@ set(MAIN_COMMON_SOURCES
 	net_channel_thinker.cpp
 	net_connection.cpp
 	net_context.cpp
-	net_dgrm.cpp
-	net_loc.h
-	net_loop.cpp
+	net_datagram.cpp
+	net_local.h
+	net_loopback.cpp
 	net_main.cpp
 	net_message.cpp
 	net_message.h
@@ -409,7 +409,7 @@ set(MAIN_WIN32_SOURCES
 	d3d_tex.cpp
 	eax.h
 	in_win32.cpp
-	net_wins.cpp
+	net_winsock.cpp
 	s_win32.cpp
 	s_win32m.cpp
 	sys_win.cpp
@@ -456,8 +456,8 @@ set(SERVER_COMMON_SOURCES
 	net_channel_thinker.cpp
 	net_connection.cpp
 	net_context.cpp
-	net_dgrm.cpp
-	net_loop.cpp
+	net_datagram.cpp
+	net_loopback.cpp
 	net_main.cpp
 	net_message.cpp
 	p_acs.cpp
@@ -548,7 +548,7 @@ set(SERVER_UNIX_SOURCES
 )
 
 set(SERVER_WIN32_SOURCES
-	net_wins.cpp
+	net_winsock.cpp
 	sys_wind.cpp
 	vavoom.rc
 )
