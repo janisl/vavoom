@@ -189,7 +189,8 @@ void CL_StopPlayback()
 void CL_WriteDemoMessage(TArray<vuint8>& msg)
 {
 	guard(CL_WriteDemoMessage);
-	*cls.demofile << GClLevel->Time;
+	float Time = GClLevel ? GClLevel->Time : 0.0;
+	*cls.demofile << Time;
 	vint32 MsgSize = msg.Num();
 	*cls.demofile << MsgSize;
 	*cls.demofile << cl->ViewAngles;
