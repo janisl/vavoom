@@ -683,6 +683,17 @@ if(WIN32)
 	set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_WIN32_SOURCES})
 	set(MAIN_LIBS gdi32 ole32 winmm ${MAIN_LIBS})
 
+	#  CMake doesn't support automatic building of resource files so
+	# we must add a custom command and add object files to the list
+	# of source files
+	set(RC_SRC ${CMAKE_CURRENT_SOURCE_DIR}/vavoom.rc)
+	set(RC_OBJ ${CMAKE_CURRENT_BINARY_DIR}/vavoom.o)
+	add_custom_command(OUTPUT ${RC_OBJ}
+		DEPENDS ${RC_SRC}
+		COMMAND windres --include-dir=${CMAKE_CURRENT_SOURCE_DIR} -o ${RC_OBJ} -i ${RC_SRC}
+	)
+	set(MAIN_SOURCES ${MAIN_SOURCES} ${RC_OBJ})
+
 	if(WITH_OPENGL)
 		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_OPENGL_SOURCES} ${MAIN_OPENGL_WIN32_SOURCES})
 		set(MAIN_LIBS opengl32 ${MAIN_LIBS})
@@ -949,6 +960,9 @@ add_dependencies(vavoom timidity glbsp libglvis)
 
 install(TARGETS vavoom DESTINATION ${BINDIR})
 
+#
+#	Icon
+#
 install(FILES vavoom.png DESTINATION ${DATADIR})
 
 if(ENABLE_WRAPPERS)
@@ -973,16 +987,27 @@ endif(ENABLE_CLIENT)
 if(ENABLE_SERVER)
 
 if(WIN32)
-set(SERVER_SOURCES ${SERVER_COMMON_SOURCES} ${SERVER_WIN32_SOURCES})
+	set(SERVER_SOURCES ${SERVER_COMMON_SOURCES} ${SERVER_WIN32_SOURCES})
+
+	#  CMake doesn't support automatic building of resource files so
+	# we must add a custom command and add object files to the list
+	# of source files
+	set(RC_SRC ${CMAKE_CURRENT_SOURCE_DIR}/vavoom.rc)
+	set(RC_OBJ ${CMAKE_CURRENT_BINARY_DIR}/vavoom_sv.o)
+	add_custom_command(OUTPUT ${RC_OBJ}
+		DEPENDS ${RC_SRC}
+		COMMAND windres --include-dir=${CMAKE_CURRENT_SOURCE_DIR} -o ${RC_OBJ} -i ${RC_SRC}
+	)
+	set(SERVER_SOURCES ${SERVER_SOURCES} ${RC_OBJ})
 else(WIN32)
-set(SERVER_SOURCES ${SERVER_COMMON_SOURCES} ${SERVER_UNIX_SOURCES})
+	set(SERVER_SOURCES ${SERVER_COMMON_SOURCES} ${SERVER_UNIX_SOURCES})
 endif(WIN32)
 
 add_executable(vavoom-dedicated ${SERVER_SOURCES})
 if(ENABLE_WRAPPERS)
-set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated.bin)
+	set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated.bin)
 else(ENABLE_WRAPPERS)
-set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated)
+	set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated)
 endif(ENABLE_WRAPPERS)
 set_target_properties(vavoom-dedicated PROPERTIES COMPILE_FLAGS -DSERVER)
 target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY} ${NET_LIBRARIES})
@@ -1002,30 +1027,3 @@ exit $?
 endif(ENABLE_WRAPPERS)
 
 endif(ENABLE_SERVER)
-
-# # ---------------------------------------
-# #
-# #	Compilation of Windows resources
-# #
-# # ---------------------------------------
-# 
-# .rc.o:
-# 	windres --include-dir=$(srcdir) -o $@ -i $<
-# 
-# # ---------------------------------------
-# #
-# #	Icon
-# #
-# # ---------------------------------------
-# 
-# basedir = $(datadir)/vavoom
-# dist_base_DATA = vavoom.png
-# 
-# # ---------------------------------------
-# 
-# EXTRA_DIST = \
-# 	gl_x.cpp \
-# 	template.cpp \
-# 	template.h
-# 
-# CLEANFILES = $(bin_SCRIPTS)
