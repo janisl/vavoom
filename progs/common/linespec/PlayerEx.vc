@@ -2349,6 +2349,11 @@ void GiveDefaultDeathMatchInventory()
 			//	Abstract class
 			continue;
 		}
+		if (!AreStateSpritesPresent(FindClassState(Cls, 'Spawn')))
+		{
+			//	From a different game
+			continue;
+		}
 		EntityEx(MO).GiveInventoryType(Cls);
 	}
 }
