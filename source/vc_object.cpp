@@ -1250,8 +1250,8 @@ IMPLEMENT_FUNCTION(VObject, StartTitleMap)
 IMPLEMENT_FUNCTION(VObject, LoadBinaryLump)
 {
 	P_GET_PTR(TArray<vuint8>, Array);
-	P_GET_INT(Lump);
-	W_LoadLumpIntoArray(Lump, *Array);
+	P_GET_NAME(LumpName);
+	W_LoadLumpIntoArray(LumpName, *Array);
 }
 
 IMPLEMENT_FUNCTION(VObject, IsMapPresent)

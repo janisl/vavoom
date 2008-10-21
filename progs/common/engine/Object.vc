@@ -1671,7 +1671,7 @@ native static final LockDef* GetLockDef(int Lock);
 native static final int ParseColour(string Name);
 native static final string TextColourString(int Colour);
 native static final bool StartTitleMap();
-native static final void LoadBinaryLump(int Lump, out array<byte> Array);
+native static final void LoadBinaryLump(name LumpName, out array<byte> Array);
 native static final bool IsMapPresent(name MapName);
 
 //==========================================================================
