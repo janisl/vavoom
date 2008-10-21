@@ -64,9 +64,13 @@ public:
 	VLoopbackDriver();
 	int Init();
 	void Listen(bool);
-	void SearchForHosts(bool);
+	void SearchForHosts(bool, bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
+	void UpdateMaster();
+	void QuitMaster();
+	bool QueryMaster(bool);
+	void EndQueryMaster();
 	void Shutdown();
 
 	static int IntAlign(int);
@@ -135,18 +139,24 @@ void VLoopbackDriver::Listen(bool)
 //
 //==========================================================================
 
-void VLoopbackDriver::SearchForHosts(bool)
+void VLoopbackDriver::SearchForHosts(bool, bool ForMaster)
 {
 	guard(VLoopbackDriver::SearchForHosts);
 #ifdef SERVER
-	if (!sv.active)
+	if (!sv.active || ForMaster)
+	{
 		return;
+	}
 
 	Net->HostCacheCount = 1;
 	if (VStr::Cmp(Net->HostName, "UNNAMED") == 0)
+	{
 		Net->HostCache[0].Name = "local";
+	}
 	else
+	{
 		Net->HostCache[0].Name = Net->HostName;
+	}
 	Net->HostCache[0].Map = VStr(GLevel->MapName);
 	Net->HostCache[0].Users = svs.num_connected;
 	Net->HostCache[0].MaxUsers = svs.max_clients;
@@ -214,6 +224,47 @@ VSocket* VLoopbackDriver::CheckNewConnections()
 int VLoopbackDriver::IntAlign(int value)
 {
 	return (value + (sizeof(int) - 1)) & (~(sizeof(int) - 1));
+}
+
+//==========================================================================
+//
+//	VLoopbackDriver::UpdateMaster
+//
+//==========================================================================
+
+void VLoopbackDriver::UpdateMaster()
+{
+}
+
+//==========================================================================
+//
+//	VLoopbackDriver::QuitMaster
+//
+//==========================================================================
+
+void VLoopbackDriver::QuitMaster()
+{
+}
+
+//==========================================================================
+//
+//	VLoopbackDriver::QueryMaster
+//
+//==========================================================================
+
+bool VLoopbackDriver::QueryMaster(bool)
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VLoopbackDriver::EndQueryMaster
+//
+//==========================================================================
+
+void VLoopbackDriver::EndQueryMaster()
+{
 }
 
 //==========================================================================

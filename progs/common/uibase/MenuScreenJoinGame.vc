@@ -42,7 +42,14 @@ void CreateChoices()
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
 	Btn.SetPos(ChoicesStartX, currentY);
-	Btn.Text = "Search for games...";
+	Btn.Text = "Search for internet games...";
+	Btn.TextHAlign = hleft;
+	Btn.Activated = ActivateMasterSearch;
+	currentY += Btn.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetPos(ChoicesStartX, currentY);
+	Btn.Text = "Search for LAN games...";
 	Btn.TextHAlign = hleft;
 	Btn.Activated = ActivateSearch;
 	currentY += Btn.Height;
@@ -52,6 +59,17 @@ void CreateChoices()
 	JoinAt.Text = "Join Game At";
 	JoinAt.ValueChanged = ChangedJoinAt;
 	currentY += JoinAt.Height;
+}
+
+//==========================================================================
+//
+//	ActivateMasterSearch
+//
+//==========================================================================
+
+void ActivateMasterSearch(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenMasterList));
 }
 
 //==========================================================================

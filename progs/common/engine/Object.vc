@@ -1728,7 +1728,7 @@ native static final EpisodeDef* P_GetEpisodeDef(int i);
 native static final int P_GetNumSkills();
 native static final SkillDef* P_GetSkillDef(int i);
 native static final bool SV_GetSaveString(int i, string* buf);
-native static final void StartSearch();
+native static final void StartSearch(bool Master);
 native static final slist_t * GetSlist();
 native static final string KeyNameForNum(int KeyNr);
 native static final void IN_GetBindingKeys(string cmd, int *key1, int *key2);

@@ -58,13 +58,6 @@ class VUdpDriver : public VNetLanDriver
 public:
 	enum { MAXHOSTNAMELEN = 256 };
 
-	int			net_acceptsocket;		// socket for fielding new connections
-	int			net_controlsocket;
-	int			net_broadcastsocket;
-	sockaddr_t	broadcastaddr;
-
-	vuint32		myAddr;
-
 	VUdpDriver();
 	int Init();
 	void Shutdown();
@@ -114,12 +107,7 @@ static VUdpDriver	Impl;
 
 VUdpDriver::VUdpDriver()
 : VNetLanDriver(0, "UDP")
-, net_acceptsocket(-1)
-, net_controlsocket(0)
-, net_broadcastsocket(0)
-, myAddr(0)
 {
-	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
 }
 
 //==========================================================================

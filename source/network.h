@@ -152,9 +152,11 @@ public:
 	virtual VSocketPublic* Connect(const char*) = 0;
 	virtual VSocketPublic* CheckNewConnections() = 0;
 	virtual void Poll() = 0;
-	virtual void StartSearch() = 0;
+	virtual void StartSearch(bool) = 0;
 	virtual slist_t* GetSlist() = 0;
 	virtual double SetNetTime() = 0;
+	virtual void UpdateMaster() = 0;
+	virtual void QuitMaster() = 0;
 
 	static VNetworkPublic* Create();
 };

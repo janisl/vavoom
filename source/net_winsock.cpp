@@ -39,13 +39,6 @@
 class VWinSockDriver : public VNetLanDriver
 {
 public:
-	int				net_acceptsocket;	// socket for fielding new connections
-	int				net_controlsocket;
-	int				net_broadcastsocket;
-	sockaddr_t		broadcastaddr;
-
-	vuint32			myAddr;
-
 	int				winsock_initialised;
 	WSADATA			winsockdata;
 
@@ -103,13 +96,8 @@ static VWinSockDriver	Impl;
 
 VWinSockDriver::VWinSockDriver()
 : VNetLanDriver(0, "Winsock TCPIP")
-, net_acceptsocket(-1)
-, net_controlsocket(0)
-, net_broadcastsocket(0)
-, myAddr(0)
 , winsock_initialised(0)
 {
-	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
 }
 
 //==========================================================================

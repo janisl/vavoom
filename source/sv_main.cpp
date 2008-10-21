@@ -89,8 +89,11 @@ static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
 static VCvarI	use_standalone("use_standalone", "1", CVAR_Archive);
+static VCvarF	master_heartbeat_time("master_heartbeat_time", "300", CVAR_Archive);
 
 static VServerNetContext*	ServerNetContext;
+
+static double	LastMasterUpdate;
 
 // CODE --------------------------------------------------------------------
 
@@ -564,6 +567,12 @@ void SV_Ticker()
 	guard(SV_Ticker);
 	float	saved_frametime;
 	int		exec_times;
+
+	if (netgame && (!LastMasterUpdate || host_time - LastMasterUpdate > master_heartbeat_time))
+	{
+		GNet->UpdateMaster();
+		LastMasterUpdate = host_time;
+	}
 
 	saved_frametime = host_frametime;
 	exec_times = 1;
@@ -1237,6 +1246,10 @@ void SV_ShutdownServer(bool crash)
 	}
 	memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
 	memset(&sv, 0, sizeof(sv));
+
+	//	Tell master server that this server is gone.
+	GNet->QuitMaster();
+	LastMasterUpdate = 0;
 	unguard;
 }
 

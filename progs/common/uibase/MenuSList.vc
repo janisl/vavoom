@@ -27,11 +27,11 @@ class MenuSList : MenuChoice;
 
 int			Cursor;
 slist_t*	slist;
+bool		Master;
 
-void OnCreate()
+void StartSearching()
 {
-	::OnCreate();
-	StartSearch();
+	StartSearch(Master);
 }
 
 void DrawTextBox(string text)
@@ -155,7 +155,7 @@ bool OnKeyDown(int key)
 
 	case K_SPACE:
 		Cursor = 0;
-		StartSearch();
+		StartSearch(Master);
 		return true;
 	}
 	return false;

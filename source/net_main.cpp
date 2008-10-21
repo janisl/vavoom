@@ -43,23 +43,29 @@ public:
 	VSocketPublic* Connect(const char*);
 	VSocketPublic* CheckNewConnections();
 	void Poll();
-	void StartSearch();
+	void StartSearch(bool);
 	slist_t* GetSlist();
+	void UpdateMaster();
+	void QuitMaster();
 
 	//	API only for network drivers!
 	double SetNetTime();
 	void SchedulePollProcedure(VNetPollProcedure*, double);
 
+	void MasterList();
 	void Slist();
 
 private:
 	VNetPollProcedure	SlistSendProcedure;
 	VNetPollProcedure	SlistPollProcedure;
+	VNetPollProcedure	MasterListSendProcedure;
+	VNetPollProcedure	MasterListPollProcedure;
 
 	bool				SlistInProgress;
 	bool				SlistSilent;
 	bool				SlistLocal;
 	bool				SlistSorted;
+	bool				SlistMaster;
 	double				SlistStartTime;
 	int					SlistLastShown;
 
@@ -71,6 +77,10 @@ private:
 	static void Slist_Poll(void*);
 	void Slist_Send();
 	void Slist_Poll();
+	static void MasterList_Send(void*);
+	static void MasterList_Poll(void*);
+	void MasterList_Send();
+	void MasterList_Poll();
 	void PrintSlistHeader();
 	void PrintSlist();
 	void PrintSlistTrailer();
@@ -162,10 +172,13 @@ VNetworkLocal::VNetworkLocal()
 VNetwork::VNetwork()
 : SlistSendProcedure(Slist_Send, this)
 , SlistPollProcedure(Slist_Poll, this)
+, MasterListSendProcedure(MasterList_Send, this)
+, MasterListPollProcedure(MasterList_Poll, this)
 , SlistInProgress(false)
 , SlistSilent(false)
 , SlistLocal(true)
 , SlistSorted(true)
+, SlistMaster(false)
 , SlistStartTime(0.0)
 , SlistLastShown(0)
 , PollProcedureList(NULL)
@@ -333,9 +346,11 @@ void VNetwork::SchedulePollProcedure(VNetPollProcedure* proc,
 
 void VNetwork::Slist()
 {
-	guard(NET_Slist);
+	guard(VNetwork::Slist);
 	if (SlistInProgress)
+	{
 		return;
+	}
 
 	if (!SlistSilent)
 	{
@@ -343,6 +358,7 @@ void VNetwork::Slist()
 		PrintSlistHeader();
 	}
 
+	SlistMaster = false;
 	SlistInProgress = true;
 	SlistStartTime = Sys_Time();
 
@@ -387,14 +403,20 @@ void VNetwork::Slist_Send()
 	for (int i = 0; i < NumDrivers; i++)
 	{
 		if (!SlistLocal && i == 0)
+		{
 			continue;
+		}
 		if (Drivers[i]->initialised == false)
+		{
 			continue;
-		Drivers[i]->SearchForHosts(true);
+		}
+		Drivers[i]->SearchForHosts(true, SlistMaster);
 	}
 
 	if ((Sys_Time() - SlistStartTime) < 0.5)
+	{
 		SchedulePollProcedure(&SlistSendProcedure, 0.75);
+	}
 	unguard;
 }
 
@@ -410,14 +432,20 @@ void VNetwork::Slist_Poll()
 	for (int i = 0; i < NumDrivers; i++)
 	{
 		if (!SlistLocal && i == 0)
+		{
 			continue;
+		}
 		if (Drivers[i]->initialised == false)
+		{
 			continue;
-		Drivers[i]->SearchForHosts(false);
+		}
+		Drivers[i]->SearchForHosts(false, SlistMaster);
 	}
 
 	if (!SlistSilent)
+	{
 		PrintSlist();
+	}
 
 	if ((Sys_Time() - SlistStartTime) < 1.5)
 	{
@@ -426,7 +454,148 @@ void VNetwork::Slist_Poll()
 	}
 
 	if (!SlistSilent)
+	{
 		PrintSlistTrailer();
+	}
+	SlistInProgress = false;
+	SlistSilent = false;
+	SlistLocal = true;
+	SlistSorted = false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetwork::MasterList
+//
+//==========================================================================
+
+void VNetwork::MasterList()
+{
+	guard(VNetwork::MasterList);
+	if (SlistInProgress)
+	{
+		return;
+	}
+
+	if (!SlistSilent)
+	{
+		GCon->Log("Looking for Vavoom servers...");
+		PrintSlistHeader();
+	}
+
+	SlistMaster = true;
+	SlistInProgress = true;
+	SlistStartTime = Sys_Time();
+
+	SchedulePollProcedure(&MasterListSendProcedure, 0.0);
+	SchedulePollProcedure(&MasterListPollProcedure, 0.1);
+
+	HostCacheCount = 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetwork::MasterList_Send
+//
+//==========================================================================
+
+void VNetwork::MasterList_Send(void* Arg)
+{
+	((VNetwork*)Arg)->MasterList_Send();
+}
+
+//==========================================================================
+//
+//	VNetwork::MasterList_Poll
+//
+//==========================================================================
+
+void VNetwork::MasterList_Poll(void* Arg)
+{
+	((VNetwork*)Arg)->MasterList_Poll();
+}
+
+//==========================================================================
+//
+//	VNetwork::MasterList_Send
+//
+//==========================================================================
+
+void VNetwork::MasterList_Send()
+{
+	guard(VNetwork::MasterList_Send);
+	for (int i = 0; i < NumDrivers; i++)
+	{
+		if (Drivers[i]->initialised == false)
+		{
+			continue;
+		}
+		Drivers[i]->QueryMaster(true);
+	}
+
+	if ((Sys_Time() - SlistStartTime) < 0.5)
+	{
+		SchedulePollProcedure(&MasterListSendProcedure, 0.75);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetwork::MasterList_Poll
+//
+//==========================================================================
+
+void VNetwork::MasterList_Poll()
+{
+	guard(VNetwork::MasterList_Poll);
+	//	Check for reply from master server.
+	bool GotList = false;
+	for (int i = 0; i < NumDrivers; i++)
+	{
+		if (Drivers[i]->initialised == false)
+		{
+			continue;
+		}
+		if (Drivers[i]->QueryMaster(false))
+		{
+			GotList = true;
+		}
+	}
+
+	//	If no reply, try again.
+	if (!GotList && (Sys_Time() - SlistStartTime) < 1.5)
+	{
+		SchedulePollProcedure(&MasterListPollProcedure, 0.1);
+		return;
+	}
+
+	//	Close socket for communicating with master server.
+	for (int i = 0; i < NumDrivers; i++)
+	{
+		if (Drivers[i]->initialised)
+		{
+			Drivers[i]->EndQueryMaster();
+		}
+	}
+
+	//	If we got list, server info command has been sent to all servers,
+	// so start listening for their replies.
+	if (GotList)
+	{
+		SlistStartTime = Sys_Time();
+		SchedulePollProcedure(&SlistPollProcedure, 0.1);
+		return;
+	}
+
+	//	Could not connect to the master server.
+	if (!SlistSilent)
+	{
+		GCon->Log("Could not connect to the master server.");
+		GCon->Log("");
+	}
 	SlistInProgress = false;
 	SlistSilent = false;
 	SlistLocal = true;
@@ -489,12 +658,19 @@ void VNetwork::PrintSlistTrailer()
 //
 //==========================================================================
 
-void VNetwork::StartSearch()
+void VNetwork::StartSearch(bool Master)
 {
 	guard(VNetwork::StartSearch);
 	SlistSilent = true;
 	SlistLocal = false;
-	Slist();
+	if (Master)
+	{
+		MasterList();
+	}
+	else
+	{
+		Slist();
+	}
 	unguard;
 }
 
@@ -656,6 +832,50 @@ VSocketPublic* VNetwork::CheckNewConnections()
 
 //==========================================================================
 //
+//	VNetwork::UpdateMaster
+//
+//==========================================================================
+
+void VNetwork::UpdateMaster()
+{
+	guard(VNetwork::UpdateMaster);
+	SetNetTime();
+
+	for (int i = 0; i < NumDrivers; i++)
+	{
+		if (!Drivers[i]->initialised)
+		{
+			continue;
+		}
+		Drivers[i]->UpdateMaster();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetwork::QuitMaster
+//
+//==========================================================================
+
+void VNetwork::QuitMaster()
+{
+	guard(VNetwork::QuitMaster);
+	SetNetTime();
+
+	for (int i = 0; i < NumDrivers; i++)
+	{
+		if (!Drivers[i]->initialised)
+		{
+			continue;
+		}
+		Drivers[i]->QuitMaster();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VSocket::VSocket
 //
 //==========================================================================
@@ -728,7 +948,13 @@ VNetLanDriver::VNetLanDriver(int Level, const char* AName)
 : name(AName)
 , initialised(false)
 , controlSock(0)
+, MasterQuerySocket(-1)
+, net_acceptsocket(-1)
+, net_controlsocket(0)
+, net_broadcastsocket(0)
+, myAddr(0)
 {
+	memset(&broadcastaddr, 0, sizeof(broadcastaddr));
 	VNetwork::LanDrivers[Level] = this;
 	if (VNetwork::NumLanDrivers <= Level)
 		VNetwork::NumLanDrivers = Level + 1;
@@ -812,5 +1038,18 @@ COMMAND(Slist)
 {
 	guard(COMMAND Slist);
 	((VNetwork*)GNet)->Slist();
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND MasterList
+//
+//==========================================================================
+
+COMMAND(MasterList)
+{
+	guard(COMMAND MasterList);
+	((VNetwork*)GNet)->MasterList();
 	unguard;
 }

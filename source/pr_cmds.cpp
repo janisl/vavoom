@@ -703,7 +703,8 @@ IMPLEMENT_FUNCTION(VObject, LoadTextLump)
 
 IMPLEMENT_FUNCTION(VObject, StartSearch)
 {
-	GNet->StartSearch();
+	P_GET_BOOL(Master);
+	GNet->StartSearch(Master);
 }
 
 #endif

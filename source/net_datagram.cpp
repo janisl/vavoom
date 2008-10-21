@@ -113,6 +113,20 @@ public:
 		CCREP_SERVER_INFO		= 13
 	};
 
+	//	Master server request
+	enum
+	{
+		MCREQ_JOIN				= 1,
+		MCREQ_QUIT				= 2,
+		MCREQ_LIST				= 3,
+	};
+
+	//	Master server reply
+	enum
+	{
+		MCREP_LIST				= 1,
+	};
+
 	struct
 	{
 		vuint8		data[MAX_MSGLEN];
@@ -121,14 +135,21 @@ public:
 	VDatagramDriver();
 	int Init();
 	void Listen(bool);
-	void SearchForHosts(bool);
+	void SearchForHosts(bool, bool);
 	VSocket* Connect(const char*);
 	VSocket* CheckNewConnections();
+	void UpdateMaster();
+	void QuitMaster();
+	bool QueryMaster(bool);
+	void EndQueryMaster();
 	void Shutdown();
 
-	void SearchForHosts(VNetLanDriver*, bool);
+	void SearchForHosts(VNetLanDriver*, bool, bool);
 	VSocket* Connect(VNetLanDriver*, const char*);
 	VSocket* CheckNewConnections(VNetLanDriver*);
+	void UpdateMaster(VNetLanDriver*);
+	void QuitMaster(VNetLanDriver*);
+	bool QueryMaster(VNetLanDriver*, bool);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -145,6 +166,9 @@ extern TArray<VStr>	wadfiles;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static VCvarI			UseMaster("use_master", "0", CVAR_Archive);
+static VCvarS			MasterSrv("master_srv", "127.0.0.1:26001", CVAR_Archive);
 
 static VDatagramDriver	Impl;
 
@@ -209,7 +233,8 @@ void VDatagramDriver::Listen(bool state)
 //
 //==========================================================================
 
-void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
+void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit,
+	bool ForMaster)
 {
 	guard(VDatagramDriver::SearchForHosts);
 	sockaddr_t	myaddr;
@@ -239,24 +264,34 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 	while ((len = Drv->Read(Drv->controlSock, packetBuffer.data, MAX_MSGLEN, &readaddr)) > 0)
 	{
 		if (len < (int)sizeof(int))
+		{
 			continue;
+		}
 
 		// don't answer our own query
-		if (Drv->AddrCompare(&readaddr, &myaddr) >= 0)
+		if (!ForMaster && Drv->AddrCompare(&readaddr, &myaddr) >= 0)
+		{
 			continue;
+		}
 
 		// is the cache full?
 		if (Net->HostCacheCount == HOSTCACHESIZE)
+		{
 			continue;
+		}
 
 		VBitStreamReader msg(packetBuffer.data, len << 3);
 		msg << control;
 		if (control != NETPACKET_CTL)
+		{
 			continue;
+		}
 
 		msg << msgtype;
 		if (msgtype != CCREP_SERVER_INFO)
+		{
 			continue;
+		}
 
 		char*			addr;
 		VStr			str;
@@ -265,12 +300,18 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 
 		// search the cache for this server
 		for (n = 0; n < Net->HostCacheCount; n++)
+		{
 			if (Net->HostCache[n].CName == addr)
+			{
 				break;
+			}
+		}
 
 		// is it already there?
 		if (n < Net->HostCacheCount)
+		{
 			continue;
+		}
 
 		// add it
 		Net->HostCacheCount++;
@@ -299,7 +340,9 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 		for (i = 0; i < Net->HostCacheCount; i++)
 		{
 			if (i == n)
+			{
 				continue;
+			}
 			if (Net->HostCache[n].Name.ICmp(Net->HostCache[i].Name) == 0)
 			{
 				i = Net->HostCache[n].Name.Length();
@@ -324,7 +367,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit)
 //
 //==========================================================================
 
-void VDatagramDriver::SearchForHosts(bool xmit)
+void VDatagramDriver::SearchForHosts(bool xmit, bool ForMaster)
 {
 	guard(Datagram_SearchForHosts);
 	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
@@ -332,7 +375,7 @@ void VDatagramDriver::SearchForHosts(bool xmit)
 		if (Net->HostCacheCount == HOSTCACHESIZE)
 			break;
 		if (VNetworkLocal::LanDrivers[i]->initialised)
-			SearchForHosts(VNetworkLocal::LanDrivers[i], xmit);
+			SearchForHosts(VNetworkLocal::LanDrivers[i], xmit, ForMaster);
 	}
 	unguard;
 }
@@ -723,6 +766,255 @@ VSocket* VDatagramDriver::CheckNewConnections()
 		}
 	}
 	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDatagramDriver::UpdateMaster
+//
+//==========================================================================
+
+void VDatagramDriver::UpdateMaster(VNetLanDriver* Drv)
+{
+	guard(VDatagramDriver::UpdateMaster);
+	sockaddr_t			sendaddr;
+
+	// see if we can resolve the host name
+	if (Drv->GetAddrFromName(MasterSrv, &sendaddr) == -1)
+	{
+		GCon->Logf("Could not resolve server name");
+		return;
+	}
+
+	if (Drv->net_acceptsocket == -1)
+	{
+		GCon->Logf("Listen socket not open");
+		return;
+	}
+
+	// send the connection request
+	VBitStreamWriter MsgOut(256 << 3);
+	vuint8 TmpByte = MCREQ_JOIN;
+	MsgOut << TmpByte;
+	Drv->Write(Drv->net_acceptsocket, MsgOut.GetData(), MsgOut.GetNumBytes(),
+		&sendaddr);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDatagramDriver::UpdateMaster
+//
+//==========================================================================
+
+void VDatagramDriver::UpdateMaster()
+{
+	guard(VDatagramDriver::UpdateMaster);
+	if (!UseMaster)
+	{
+		return;
+	}
+
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
+	{
+		if (VNetworkLocal::LanDrivers[i]->initialised)
+		{
+			UpdateMaster(VNetworkLocal::LanDrivers[i]);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDatagramDriver::QuitMaster
+//
+//==========================================================================
+
+void VDatagramDriver::QuitMaster(VNetLanDriver* Drv)
+{
+	guard(VDatagramDriver::QuitMaster);
+	sockaddr_t			sendaddr;
+
+	// see if we can resolve the host name
+	if (Drv->GetAddrFromName(MasterSrv, &sendaddr) == -1)
+	{
+		GCon->Logf("Could not resolve server name");
+		return;
+	}
+
+	if (Drv->net_acceptsocket == -1)
+	{
+		GCon->Logf("Listen socket not open");
+		return;
+	}
+
+	// send the quit request
+	VBitStreamWriter MsgOut(256 << 3);
+	vuint8 TmpByte = MCREQ_QUIT;
+	MsgOut << TmpByte;
+	Drv->Write(Drv->net_acceptsocket, MsgOut.GetData(), MsgOut.GetNumBytes(),
+		&sendaddr);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDatagramDriver::QuitMaster
+//
+//==========================================================================
+
+void VDatagramDriver::QuitMaster()
+{
+	guard(VDatagramDriver::QuitMaster);
+	if (!UseMaster)
+	{
+		return;
+	}
+
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
+	{
+		if (VNetworkLocal::LanDrivers[i]->initialised)
+		{
+			QuitMaster(VNetworkLocal::LanDrivers[i]);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDatagramDriver::QueryMaster
+//
+//==========================================================================
+
+bool VDatagramDriver::QueryMaster(VNetLanDriver* Drv, bool xmit)
+{
+	guard(VDatagramDriver::QueryMaster);
+	sockaddr_t	myaddr;
+	sockaddr_t	readaddr;
+	sockaddr_t	tmpaddr;
+	int			len;
+	vuint8		control;
+	vuint8		msgtype;
+	int			n;
+	int			i;
+	vuint8		TmpByte;
+
+	if (Drv->MasterQuerySocket < 0)
+	{
+		Drv->MasterQuerySocket = Drv->OpenSocket(0);
+	}
+	Drv->GetSocketAddr(Drv->MasterQuerySocket, &myaddr);
+	if (xmit)
+	{
+		sockaddr_t			sendaddr;
+		// see if we can resolve the host name
+		if (Drv->GetAddrFromName(MasterSrv, &sendaddr) == -1)
+		{
+			GCon->Logf("Could not resolve server name");
+			return false;
+		}
+		// send the query request
+		VBitStreamWriter MsgOut(256 << 3);
+		vuint8 TmpByte = MCREQ_LIST;
+		MsgOut << TmpByte;
+		Drv->Write(Drv->MasterQuerySocket, MsgOut.GetData(),
+			MsgOut.GetNumBytes(), &sendaddr);
+		return false;
+	}
+
+	while ((len = Drv->Read(Drv->MasterQuerySocket, packetBuffer.data,
+		MAX_MSGLEN, &readaddr)) > 0)
+	{
+		if (len < 1)
+		{
+			continue;
+		}
+
+		// is the cache full?
+		if (Net->HostCacheCount == HOSTCACHESIZE)
+		{
+			continue;
+		}
+
+		VBitStreamReader msg(packetBuffer.data, len << 3);
+		msg << control;
+		if (control != MCREP_LIST)
+		{
+			continue;
+		}
+
+		while (!msg.AtEnd())
+		{
+			tmpaddr = readaddr;
+			msg.Serialise(tmpaddr.sa_data, 6);
+
+			VBitStreamWriter Reply(256 << 3);
+			TmpByte = NETPACKET_CTL;
+			Reply << TmpByte;
+			TmpByte = CCREQ_SERVER_INFO;
+			Reply << TmpByte;
+			VStr GameName("VAVOOM");
+			Reply << GameName;
+			TmpByte = NET_PROTOCOL_VERSION;
+			Reply << TmpByte;
+			Drv->Write(Drv->controlSock, Reply.GetData(),
+				Reply.GetNumBytes(), &tmpaddr);
+		}
+		return true;
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDatagramDriver::QueryMaster
+//
+//==========================================================================
+
+bool VDatagramDriver::QueryMaster(bool xmit)
+{
+	guard(VDatagramDriver::QueryMaster);
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
+	{
+		if (Net->HostCacheCount == HOSTCACHESIZE)
+		{
+			break;
+		}
+		if (VNetworkLocal::LanDrivers[i]->initialised)
+		{
+			if (QueryMaster(VNetworkLocal::LanDrivers[i], xmit))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDatagramDriver::EndQueryMaster
+//
+//==========================================================================
+
+void VDatagramDriver::EndQueryMaster()
+{
+	guard(VDatagramDriver::EndQueryMaster);
+	for (int i = 0; i < VNetworkLocal::NumLanDrivers; i++)
+	{
+		if (VNetworkLocal::LanDrivers[i]->initialised &&
+			VNetworkLocal::LanDrivers[i]->MasterQuerySocket > 0)
+		{
+			VNetworkLocal::LanDrivers[i]->CloseSocket(
+				VNetworkLocal::LanDrivers[i]->MasterQuerySocket);
+			VNetworkLocal::LanDrivers[i]->MasterQuerySocket = -1;
+		}
+	}
 	unguard;
 }
 

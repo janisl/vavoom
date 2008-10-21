@@ -33,7 +33,8 @@ class MenuScreenSList : MenuScreen;
 
 void CreateChoices()
 {
-	NewChild(MenuSList);
+	MenuSList Lst = MenuSList(NewChild(MenuSList));
+	Lst.StartSearching();
 }
 
 defaultproperties

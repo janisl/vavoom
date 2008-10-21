@@ -122,9 +122,13 @@ public:
 	VNetDriver(int, const char*);
 	virtual int Init() = 0;
 	virtual void Listen(bool) = 0;
-	virtual void SearchForHosts(bool) = 0;
+	virtual void SearchForHosts(bool, bool) = 0;
 	virtual VSocket* Connect(const char*) = 0;
 	virtual VSocket* CheckNewConnections() = 0;
+	virtual void UpdateMaster() = 0;
+	virtual void QuitMaster() = 0;
+	virtual bool QueryMaster(bool) = 0;
+	virtual void EndQueryMaster() = 0;
 	virtual void Shutdown() = 0;
 };
 
@@ -134,7 +138,15 @@ public:
 	const char*		name;
 	bool			initialised;
 	int				controlSock;
+	int				MasterQuerySocket;
 	VNetworkLocal*	Net;
+
+	int				net_acceptsocket;	// socket for fielding new connections
+	int				net_controlsocket;
+	int				net_broadcastsocket;
+	sockaddr_t		broadcastaddr;
+
+	vuint32			myAddr;
 
 	VNetLanDriver(int, const char*);
 	virtual int Init() = 0;

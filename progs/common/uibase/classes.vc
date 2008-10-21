@@ -60,6 +60,7 @@ import 'linespec';
 #include "MenuScreenLoadGame.vc"
 #include "MenuScreenSaveGame.vc"
 #include "MenuScreenJoinGame.vc"
+#include "MenuScreenMasterList.vc"
 #include "MenuScreenSList.vc"
 #include "MenuScreenControls.vc"
 #include "MenuScreenMouseOptions.vc"
