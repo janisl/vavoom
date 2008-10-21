@@ -1,4 +1,5 @@
 option(ENABLE_LAUNCHER "Build launcher" ON)
+option(ENABLE_MASTER "Build master server" OFF)
 
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
@@ -6,6 +7,7 @@ add_subdirectory(acc)
 add_subdirectory(fixmd2)
 add_subdirectory(glbsp)
 add_subdirectory(glvis)
+add_subdirectory(master)
 add_subdirectory(vcc)
 add_subdirectory(vlaunch)
 add_subdirectory(vlumpy)
