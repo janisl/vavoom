@@ -949,7 +949,8 @@ bool VDatagramDriver::QueryMaster(VNetLanDriver* Drv, bool xmit)
 		while (!msg.AtEnd())
 		{
 			tmpaddr = readaddr;
-			msg.Serialise(tmpaddr.sa_data, 6);
+			msg.Serialise(tmpaddr.sa_data + 2, 4);
+			msg.Serialise(tmpaddr.sa_data, 2);
 
 			VBitStreamWriter Reply(256 << 3);
 			TmpByte = NETPACKET_CTL;

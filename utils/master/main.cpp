@@ -189,7 +189,8 @@ static void ReadNet()
 			int Len = 1;
 			for (int i = 0; i < SrvList.Num() && i < (MAX_MSGLEN - 1) / 6; i++)
 			{
-				memcpy(&Buffer[Len], SrvList[i].Addr.sa_data, 6);
+				memcpy(&Buffer[Len], SrvList[i].Addr.sa_data + 2, 4);
+				memcpy(&Buffer[Len + 4], SrvList[i].Addr.sa_data, 2);
 				Len += 6;
 			}
 			sendto(AcceptSocket, Buffer, Len, 0, &clientaddr, sizeof(sockaddr));
