@@ -31,21 +31,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-class VUdpDriver : public VNetLanDriver
-{
-public:
-	VUdpDriver();
-	int Init();
-	void Shutdown();
-	void Listen(bool);
-	int OpenSocket(int);
-	int CloseSocket(int);
-	int CheckNewConnections();
-	int Read(int, vuint8*, int, sockaddr_t*);
-	int Write(int, vuint8*, int, sockaddr_t*);
-	int AddrCompare(sockaddr_t*, sockaddr_t*);
-};
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 //int gethostname(char *, int);
@@ -60,55 +45,43 @@ public:
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VUdpDriver	Impl;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VUdpDriver::VUdpDriver
+//  VNetLanDriver::Init
 //
 //==========================================================================
 
-VUdpDriver::VUdpDriver()
+int VNetLanDriver::Init()
 {
-}
-
-//==========================================================================
-//
-//  VUdpDriver::Init
-//
-//==========================================================================
-
-int VUdpDriver::Init()
-{
-	guard(VUdpDriver::Init);
+	guard(VNetLanDriver::Init);
 	return 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VUdpDriver::Shutdown
+//  VNetLanDriver::Shutdown
 //
 //==========================================================================
 
-void VUdpDriver::Shutdown()
+void VNetLanDriver::Shutdown()
 {
-	guard(VUdpDriver::Shutdown);
+	guard(VNetLanDriver::Shutdown);
 	Listen(false);
 	unguard;
 }
 
 //==========================================================================
 //
-//  VUdpDriver::Listen
+//  VNetLanDriver::Listen
 //
 //==========================================================================
 
-void VUdpDriver::Listen(bool state)
+void VNetLanDriver::Listen(bool state)
 {
-	guard(VUdpDriver::Listen);
+	guard(VNetLanDriver::Listen);
 	if (state)
 	{
 		// enable listening
@@ -133,13 +106,13 @@ void VUdpDriver::Listen(bool state)
 
 //==========================================================================
 //
-//  VUdpDriver::OpenSocket
+//  VNetLanDriver::OpenSocket
 //
 //==========================================================================
 
-int VUdpDriver::OpenSocket(int port)
+int VNetLanDriver::OpenSocket(int port)
 {
-	guard(UDP_OpenSocket);
+	guard(VNetLanDriver::OpenSocket);
 	int			newsocket;
 	sockaddr_in	address;
 	int			trueval = true;
@@ -171,26 +144,26 @@ int VUdpDriver::OpenSocket(int port)
 
 //==========================================================================
 //
-//  VUdpDriver::CloseSocket
+//  VNetLanDriver::CloseSocket
 //
 //==========================================================================
 
-int VUdpDriver::CloseSocket(int socket)
+int VNetLanDriver::CloseSocket(int socket)
 {
-	guard(VUdpDriver::CloseSocket);
+	guard(VNetLanDriver::CloseSocket);
 	return close(socket);
 	unguard;
 }
 
 //==========================================================================
 //
-//  VUdpDriver::CheckNewConnections
+//  VNetLanDriver::CheckNewConnections
 //
 //==========================================================================
 
-int VUdpDriver::CheckNewConnections()
+int VNetLanDriver::CheckNewConnections()
 {
-	guard(VUdpDriver::CheckNewConnections);
+	guard(VNetLanDriver::CheckNewConnections);
 	char	buf[4096];
 
 	if (net_acceptsocket == -1)
@@ -206,13 +179,13 @@ int VUdpDriver::CheckNewConnections()
 
 //==========================================================================
 //
-//  VUdpDriver::Read
+//  VNetLanDriver::Read
 //
 //==========================================================================
 
-int VUdpDriver::Read(int socket, vuint8* buf, int len, sockaddr_t* addr)
+int VNetLanDriver::Read(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(VUdpDriver::Read);
+	guard(VNetLanDriver::Read);
 	socklen_t	addrlen = sizeof(sockaddr_t);
 	int		ret;
 
@@ -225,13 +198,13 @@ int VUdpDriver::Read(int socket, vuint8* buf, int len, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  VUdpDriver::Write
+//  VNetLanDriver::Write
 //
 //==========================================================================
 
-int VUdpDriver::Write(int socket, vuint8* buf, int len, sockaddr_t* addr)
+int VNetLanDriver::Write(int socket, vuint8* buf, int len, sockaddr_t* addr)
 {
-	guard(VUdpDriver::Write);
+	guard(VNetLanDriver::Write);
 	int ret;
 
 	ret = sendto(socket, buf, len, 0, (sockaddr *)addr, sizeof(sockaddr));
@@ -243,13 +216,13 @@ int VUdpDriver::Write(int socket, vuint8* buf, int len, sockaddr_t* addr)
 
 //==========================================================================
 //
-//  VUdpDriver::AddrCompare
+//  VNetLanDriver::AddrCompare
 //
 //==========================================================================
 
-int VUdpDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
+int VNetLanDriver::AddrCompare(sockaddr_t* addr1, sockaddr_t* addr2)
 {
-	guard(VUdpDriver::AddrCompare);
+	guard(VNetLanDriver::AddrCompare);
 	if (addr1->sa_family != addr2->sa_family)
 		return -1;
 

@@ -65,6 +65,7 @@ struct TSrvItem
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VNetLanDriver*		Drv;
+static VNetLanDriver		Impl;
 static int					CSock;
 
 static struct
@@ -85,6 +86,9 @@ TArray<TSrvItem>			SrvList;
 VNetLanDriver::VNetLanDriver()
 : initialised(false)
 , net_acceptsocket(-1)
+#ifdef _WIN32
+, winsock_initialised(0)
+#endif
 {
 	Drv = this;
 }

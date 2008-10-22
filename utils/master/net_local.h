@@ -65,17 +65,21 @@ class VNetLanDriver
 public:
 	bool			initialised;
 	int				net_acceptsocket;		// socket for fielding new connections
+#ifdef _WIN32
+	int				winsock_initialised;
+	WSADATA			winsockdata;
+#endif
 
 	VNetLanDriver();
-	virtual int Init() = 0;
-	virtual void Shutdown() = 0;
-	virtual void Listen(bool) = 0;
-	virtual int OpenSocket(int) = 0;
-	virtual int CloseSocket(int) = 0;
-	virtual int CheckNewConnections() = 0;
-	virtual int Read(int, vuint8*, int, sockaddr_t*) = 0;
-	virtual int Write(int, vuint8*, int, sockaddr_t*) = 0;
-	virtual int AddrCompare(sockaddr_t*, sockaddr_t*) = 0;
+	int Init();
+	void Shutdown();
+	void Listen(bool);
+	int OpenSocket(int);
+	int CloseSocket(int);
+	int CheckNewConnections();
+	int Read(int, vuint8*, int, sockaddr_t*);
+	int Write(int, vuint8*, int, sockaddr_t*);
+	int AddrCompare(sockaddr_t*, sockaddr_t*);
 };
 
 #endif
