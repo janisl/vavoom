@@ -30,7 +30,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "net_local.h"
-#include <unistd.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -83,10 +82,9 @@ TArray<TSrvItem>			SrvList;
 //
 //==========================================================================
 
-VNetLanDriver::VNetLanDriver(int Level, const char* AName)
-: name(AName)
-, initialised(false)
-, controlSock(0)
+VNetLanDriver::VNetLanDriver()
+: initialised(false)
+, net_acceptsocket(-1)
 {
 	Drv = this;
 }
