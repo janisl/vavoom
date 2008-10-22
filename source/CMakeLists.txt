@@ -562,19 +562,6 @@ set(SERVER_WIN32_SOURCES
 #---------------------------------------
 
 #
-#  **** Check for newtwork libraries ****
-#
-
-if(WIN32)
-	set(NET_LIBRARIES wsock32)
-else(WIN32)
-	set(NET_LIBRARIES "")
-#FIXME we need this on Solaris
-#	AC_SEARCH_LIBS([recvfrom], [socket], [], [AC_ERROR([Library containing recvfrom not found])])
-#	AC_SEARCH_LIBS([gethostbyname], [nsl], [], [AC_ERROR([Library containing gethostbyname not found])])
-endif(WIN32)
-
-#
 #  **** Add debug / development flags ****
 #
 

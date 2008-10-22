@@ -2,10 +2,8 @@ if(ENABLE_MASTER)
 	include_directories(../common)
 
 	add_executable(vavoom-master
-		../common/array.h
-		../common/cmdlib.cpp
-		../common/cmdlib.h
 		main.cpp
 	)
 	set_target_properties(vavoom-master PROPERTIES OUTPUT_NAME ../bin/vavoom-master)
+	target_link_libraries(vavoom-master ${NET_LIBRARIES})
 endif(ENABLE_MASTER)

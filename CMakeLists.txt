@@ -5,6 +5,13 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+if(NOT DEFINED DATADIR)
+	set(DATADIR share/vavoom)
+endif(NOT DEFINED DATADIR)
+if(NOT DEFINED BINDIR)
+	set(BINDIR bin)
+endif(NOT DEFINED BINDIR)
+
 #
 #  **** Check for zlib ****
 #
@@ -21,12 +28,18 @@ if(INTTYPES_INCLUDE_DIR)
 	add_definitions(-DHAVE_INTTYPES_H=1)
 endif(INTTYPES_INCLUDE_DIR)
 
-if(NOT DEFINED DATADIR)
-	set(DATADIR share/vavoom)
-endif(NOT DEFINED DATADIR)
-if(NOT DEFINED BINDIR)
-	set(BINDIR bin)
-endif(NOT DEFINED BINDIR)
+#
+#  **** Check for newtwork libraries ****
+#
+
+if(WIN32)
+	set(NET_LIBRARIES wsock32)
+else(WIN32)
+	set(NET_LIBRARIES "")
+#FIXME we need this on Solaris
+#	AC_SEARCH_LIBS([recvfrom], [socket], [], [AC_ERROR([Library containing recvfrom not found])])
+#	AC_SEARCH_LIBS([gethostbyname], [nsl], [], [AC_ERROR([Library containing gethostbyname not found])])
+endif(WIN32)
 
 add_subdirectory(utils)
 add_subdirectory(source)
