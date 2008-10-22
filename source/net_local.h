@@ -163,7 +163,7 @@ public:
 	virtual int StringToAddr(const char*, sockaddr_t*) = 0;
 	virtual int GetSocketAddr(int, sockaddr_t*) = 0;
 	virtual VStr GetNameFromAddr(sockaddr_t*) = 0;
-	virtual int GetAddrFromName(const char*, sockaddr_t*) = 0;
+	virtual int GetAddrFromName(const char*, sockaddr_t*, int) = 0;
 	virtual int AddrCompare(sockaddr_t*, sockaddr_t*) = 0;
 	virtual int GetSocketPort(sockaddr_t* addr) = 0;
 	virtual int SetSocketPort(sockaddr_t* addr, int port) = 0;

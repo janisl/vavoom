@@ -73,12 +73,12 @@ public:
 	int StringToAddr(const char*, sockaddr_t*);
 	int GetSocketAddr(int, sockaddr_t*);
 	VStr GetNameFromAddr(sockaddr_t*);
-	int GetAddrFromName(const char*, sockaddr_t*);
+	int GetAddrFromName(const char*, sockaddr_t*, int);
 	int AddrCompare(sockaddr_t*, sockaddr_t*);
 	int GetSocketPort(sockaddr_t*);
 	int SetSocketPort(sockaddr_t*, int);
 
-	int PartialIPAddress(const char*, sockaddr_t*);
+	int PartialIPAddress(const char*, sockaddr_t*, int);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -458,7 +458,8 @@ VStr VUdpDriver::GetNameFromAddr(sockaddr_t* addr)
 //
 //==========================================================================
 
-int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr)
+int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr,
+	int DefaultPort)
 {
 	guard(VUdpDriver::PartialIPAddress);
 	char buff[256];
@@ -499,7 +500,7 @@ int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 	if (*b++ == ':')
 		port = atoi(b);
 	else
-		port = Net->HostPort;
+		port = DefaultPort;
 
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in *)hostaddr)->sin_port = htons((short)port);	
@@ -515,20 +516,21 @@ int VUdpDriver::PartialIPAddress(const char* in, sockaddr_t* hostaddr)
 //
 //==========================================================================
 
-int VUdpDriver::GetAddrFromName(const char* name, sockaddr_t* addr)
+int VUdpDriver::GetAddrFromName(const char* name, sockaddr_t* addr,
+	int DefaultPort)
 {
 	guard(VUdpDriver::GetAddrFromName);
 	hostent*		hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
-		return PartialIPAddress(name, addr);
+		return PartialIPAddress(name, addr, DefaultPort);
 
 	hostentry = gethostbyname(name);
 	if (!hostentry)
 		return -1;
 
 	addr->sa_family = AF_INET;
-	((sockaddr_in*)addr)->sin_port = htons(Net->HostPort);
+	((sockaddr_in*)addr)->sin_port = htons(DefaultPort);
 	((sockaddr_in*)addr)->sin_addr.s_addr = *(int*)hostentry->h_addr_list[0];
 
 	return 0;

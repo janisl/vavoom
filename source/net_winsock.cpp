@@ -59,7 +59,7 @@ public:
 	int StringToAddr(const char*, sockaddr_t*);
 	int GetSocketAddr(int, sockaddr_t*);
 	VStr GetNameFromAddr(sockaddr_t*);
-	int GetAddrFromName(const char*, sockaddr_t*);
+	int GetAddrFromName(const char*, sockaddr_t*, int);
 	int AddrCompare(sockaddr_t*, sockaddr_t*);
 	int GetSocketPort(sockaddr_t*);
 	int SetSocketPort(sockaddr_t*, int);
@@ -67,7 +67,7 @@ public:
 	static BOOL PASCAL FAR BlockingHook();
 	void GetLocalAddress();
 
-	int PartialIPAddress(const char*, sockaddr_t*);
+	int PartialIPAddress(const char*, sockaddr_t*, int);
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -556,7 +556,8 @@ VStr VWinSockDriver::GetNameFromAddr(sockaddr_t* addr)
 //
 //==========================================================================
 
-int VWinSockDriver::PartialIPAddress(const char *in, sockaddr_t *hostaddr)
+int VWinSockDriver::PartialIPAddress(const char *in, sockaddr_t *hostaddr,
+	int DefaultPort)
 {
 	guard(PartialIPAddress);
 	char buff[256];
@@ -597,7 +598,7 @@ int VWinSockDriver::PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 	if (*b++ == ':')
 		port = atoi(b);
 	else
-		port = Net->HostPort;
+		port = DefaultPort;
 
 	hostaddr->sa_family = AF_INET;
 	((sockaddr_in *)hostaddr)->sin_port = htons((short)port);	
@@ -613,20 +614,21 @@ int VWinSockDriver::PartialIPAddress(const char *in, sockaddr_t *hostaddr)
 //
 //==========================================================================
 
-int VWinSockDriver::GetAddrFromName(const char *name, sockaddr_t *addr)
+int VWinSockDriver::GetAddrFromName(const char *name, sockaddr_t *addr,
+	int DefaultPort)
 {
 	guard(VWinSockDriver::GetAddrFromName);
 	hostent*	hostentry;
 
 	if (name[0] >= '0' && name[0] <= '9')
-		return PartialIPAddress(name, addr);
+		return PartialIPAddress(name, addr, DefaultPort);
 	
 	hostentry = gethostbyname(name);
 	if (!hostentry)
 		return -1;
 
 	addr->sa_family = AF_INET;
-	((sockaddr_in *)addr)->sin_port = htons((vuint16)Net->HostPort);
+	((sockaddr_in *)addr)->sin_port = htons((vuint16)DefaultPort);
 	((sockaddr_in *)addr)->sin_addr.s_addr = *(int *)hostentry->h_addr_list[0];
 
 	return 0;

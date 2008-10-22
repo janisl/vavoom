@@ -96,7 +96,7 @@ public:
 	// case
 	enum { NET_PROTOCOL_VERSION = 1 };
 
-	enum { IPPORT_USERRESERVED = 26000 };
+	enum { MASTER_SERVER_PORT = 26001 };
 
 	//	Client request
 	enum
@@ -168,7 +168,7 @@ extern TArray<VStr>	wadfiles;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VCvarI			UseMaster("use_master", "0", CVAR_Archive);
-static VCvarS			MasterSrv("master_srv", "127.0.0.1:26001", CVAR_Archive);
+static VCvarS			MasterSrv("master_srv", "127.0.0.1", CVAR_Archive);
 
 static VDatagramDriver	Impl;
 
@@ -405,7 +405,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	vuint8				TmpByte;
 
 	// see if we can resolve the host name
-	if (Drv->GetAddrFromName(host, &sendaddr) == -1)
+	if (Drv->GetAddrFromName(host, &sendaddr, Net->HostPort) == -1)
 		return NULL;
 
 	newsock = Drv->OpenSocket(0);
@@ -781,7 +781,7 @@ void VDatagramDriver::UpdateMaster(VNetLanDriver* Drv)
 	sockaddr_t			sendaddr;
 
 	// see if we can resolve the host name
-	if (Drv->GetAddrFromName(MasterSrv, &sendaddr) == -1)
+	if (Drv->GetAddrFromName(MasterSrv, &sendaddr, MASTER_SERVER_PORT) == -1)
 	{
 		GCon->Logf("Could not resolve server name");
 		return;
@@ -838,7 +838,7 @@ void VDatagramDriver::QuitMaster(VNetLanDriver* Drv)
 	sockaddr_t			sendaddr;
 
 	// see if we can resolve the host name
-	if (Drv->GetAddrFromName(MasterSrv, &sendaddr) == -1)
+	if (Drv->GetAddrFromName(MasterSrv, &sendaddr, MASTER_SERVER_PORT) == -1)
 	{
 		GCon->Logf("Could not resolve server name");
 		return;
@@ -911,7 +911,7 @@ bool VDatagramDriver::QueryMaster(VNetLanDriver* Drv, bool xmit)
 	{
 		sockaddr_t			sendaddr;
 		// see if we can resolve the host name
-		if (Drv->GetAddrFromName(MasterSrv, &sendaddr) == -1)
+		if (Drv->GetAddrFromName(MasterSrv, &sendaddr, MASTER_SERVER_PORT) == -1)
 		{
 			GCon->Logf("Could not resolve server name");
 			return false;
