@@ -395,6 +395,9 @@ public:
 class VNetObjectsMap
 {
 private:
+	TArray<VName>			NameLookup;
+	TArray<int>				NameMap;
+
 	TArray<VClass*>			ClassLookup;
 	TMap<VClass*, vuint32>	ClassMap;
 

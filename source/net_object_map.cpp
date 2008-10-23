@@ -77,6 +77,14 @@ VNetObjectsMap::VNetObjectsMap(VNetConnection* AConnection)
 void VNetObjectsMap::SetUpClassLookup()
 {
 	guard(VNetObjectsMap::SetUpClassLookup);
+	NameMap.SetNum(VName::GetNumNames());
+	NameLookup.SetNum(VName::GetNumNames());
+	for (int i = 0; i < VName::GetNumNames(); i++)
+	{
+		NameMap[i] = i;
+		NameLookup[i] = *(VName*)&i;
+	}
+
 	ClassLookup.Clear();
 	ClassLookup.Append(NULL);
 	for (int i = 0; i < VMemberBase::GMembers.Num(); i++)
@@ -124,9 +132,27 @@ bool VNetObjectsMap::CanSerialiseObject(VObject* Obj)
 bool VNetObjectsMap::SerialiseName(VStream& Strm, VName& Name)
 {
 	guard(VNetObjectsMap::SerialiseName);
-	//FIXME this will work only for the local connection.
-	Strm << *(vint32*)&Name;
-	return true;
+	if (Strm.IsLoading())
+	{
+		vuint32 NameIndex;
+		Strm.SerialiseInt(NameIndex, NameLookup.Num() + 1);
+		if (NameIndex == NameLookup.Num())
+		{
+			Name = NAME_None;
+		}
+		else
+		{
+			Name = NameLookup[NameIndex];
+		}
+		return true;
+	}
+	else
+	{
+		vuint32 NameIndex = Name.GetIndex() < NameMap.Num() ?
+			NameMap[Name.GetIndex()] : NameLookup.Num();
+		Strm.SerialiseInt(NameIndex, NameLookup.Num() + 1);
+		return NameIndex != NameLookup.Num();
+	}
 	unguard;
 }
 
