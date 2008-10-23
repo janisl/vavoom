@@ -58,6 +58,7 @@ enum EChannelType
 	CHANNEL_Level,
 	CHANNEL_Player,
 	CHANNEL_Thinker,
+	CHANNEL_ObjectMap,
 
 	CHANNEL_MAX			= 8
 };
@@ -278,6 +279,25 @@ public:
 	void ParsePacket(VMessageIn&);
 };
 
+//
+//	VObjectMapChannel
+//
+//	A channel for sending object map at startup.
+//
+class VObjectMapChannel : public VChannel
+{
+private:
+	int				CurrName;
+	int				CurrClass;
+
+public:
+	VObjectMapChannel(VNetConnection*, vint32, vuint8 = true);
+	~VObjectMapChannel();
+	void Tick();
+	void Update();
+	void ParsePacket(VMessageIn&);
+};
+
 enum ENetConState
 {
 	NETCON_Closed,
@@ -312,6 +332,8 @@ public:
 	vuint32								UnreliableSendSequence;
 	vuint32								UnreliableReceiveSequence;
 	VNetObjectsMap*						ObjMap;
+	bool								ObjMapSent;
+	bool								LevelInfoSent;
 
 private:
 	vuint8*								UpdatePvs;
@@ -412,6 +434,8 @@ public:
 	bool SerialiseObject(VStream&, VObject*&);
 	bool SerialiseClass(VStream&, VClass*&);
 	bool SerialiseState(VStream&, VState*&);
+
+	friend class VObjectMapChannel;
 };
 
 //	Global access to the low-level networking services.

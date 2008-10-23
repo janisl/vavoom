@@ -116,6 +116,7 @@ set(MAIN_COMMON_SOURCES
 	net_channel.cpp
 	net_channel_control.cpp
 	net_channel_level.cpp
+	net_channel_object_map.cpp
 	net_channel_player.cpp
 	net_channel_thinker.cpp
 	net_connection.cpp
@@ -453,6 +454,7 @@ set(SERVER_COMMON_SOURCES
 	net_channel.cpp
 	net_channel_control.cpp
 	net_channel_level.cpp
+	net_channel_object_map.cpp
 	net_channel_player.cpp
 	net_channel_thinker.cpp
 	net_connection.cpp

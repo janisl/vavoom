@@ -39,6 +39,8 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
+void SV_SendServerInfo(VBasePlayer* Player);
+
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void G_DoReborn(int playernum);
@@ -388,6 +390,10 @@ void SV_SendClientMessages()
 
 		if (Player->Net)
 		{
+			if (Player->Net->ObjMapSent && !Player->Net->LevelInfoSent)
+			{
+				SV_SendServerInfo(Player);
+			}
 			Player->Net->Tick();
 			if (Player->Net->State == NETCON_Closed)
 			{
@@ -923,7 +929,7 @@ int NET_SendToAll(int blocktime)
 void SV_SendServerInfo(VBasePlayer* Player)
 {
 	guard(SV_SendServerInfo);
-	if (!Player->Net)
+	if (!Player->Net || !Player->Net->ObjMapSent)
 	{
 		return;
 	}
@@ -931,6 +937,7 @@ void SV_SendServerInfo(VBasePlayer* Player)
 	//	This will load level on client side.
 	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
 	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->SendNewLevel();
+	Player->Net->LevelInfoSent = true;
 	unguard;
 }
 
@@ -1395,20 +1402,29 @@ void SV_CheckForNewClients()
 	{
 		sock = GNet->CheckNewConnections();
 		if (!sock)
+		{
 			break;
+		}
 
 		//
 		// init a new client structure
 		//
 		for (i = 0; i < svs.max_clients; i++)
+		{
 			if (!GGameInfo->Players[i])
+			{
 				break;
+			}
+		}
 		if (i == svs.max_clients)
+		{
 			Sys_Error("Host_CheckForNewClients: no free clients");
+		}
 
 		VBasePlayer* Player = GPlayersBase[i];
 		Player->Net = new VNetConnection(sock, ServerNetContext, Player);
 		((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->SetPlayer(Player);
+		Player->Net->CreateChannel(CHANNEL_ObjectMap, -1);
 		SV_ConnectClient(Player);
 		svs.num_connected++;
 	}

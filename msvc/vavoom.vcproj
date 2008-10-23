@@ -1785,6 +1785,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\net_channel_object_map.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\net_channel_player.cpp"
 				>
 			</File>

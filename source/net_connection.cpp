@@ -71,6 +71,8 @@ VNetConnection::VNetConnection(VSocketPublic* ANetCon, VNetContext* AContext,
 , UpdatePvs(NULL)
 , UpdatePvsSize(0)
 , LeafPvs(NULL)
+, ObjMapSent(false)
+, LevelInfoSent(false)
 {
 	memset(Channels, 0, sizeof(Channels));
 	memset(InSequence, 0, sizeof(InSequence));
@@ -381,6 +383,8 @@ VChannel* VNetConnection::CreateChannel(vuint8 Type, vint32 AIndex,
 		return new VPlayerChannel(this, Index, OpenedLocally);
 	case CHANNEL_Thinker:
 		return new VThinkerChannel(this, Index, OpenedLocally);
+	case CHANNEL_ObjectMap:
+		return new VObjectMapChannel(this, Index, OpenedLocally);
 	default:
 		GCon->Logf("Unknown channel type %d for channel %d", Type, Index);
 		return NULL;
