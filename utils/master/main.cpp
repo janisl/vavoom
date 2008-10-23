@@ -38,6 +38,7 @@ using namespace VavoomUtils;
 #include <time.h>
 #ifdef _WIN32
 #include <windows.h>
+typedef int socklen_t;
 #else
 #include <sys/ioctl.h>
 #include <sys/types.h>
@@ -80,6 +81,7 @@ struct TSrvItem
 #ifdef _WIN32
 class TWinSockHelper
 {
+public:
 	~TWinSockHelper()
 	{
 		WSACleanup();
@@ -137,7 +139,11 @@ static int AddrCompare(sockaddr* addr1, sockaddr* addr2)
 
 static void ReadNet()
 {
+#ifdef _WIN32
+	char		Buffer[MAX_MSGLEN];
+#else
 	vuint8		Buffer[MAX_MSGLEN];
+#endif
 
 	//	Check if there's any packet waiting.
 	if (recvfrom(AcceptSocket, Buffer, MAX_MSGLEN, MSG_PEEK, NULL, NULL) < 0)
@@ -232,7 +238,7 @@ int main(int argc, const char** argv)
 	//	Make socket non-blocking
 	int trueval = true;
 #ifdef _WIN32
-	if (ioctlsocket(AcceptSocket, FIONBIO, &trueval) == -1)
+	if (ioctlsocket(AcceptSocket, FIONBIO, (u_long*)&trueval) == -1)
 #else
 	if (ioctl(AcceptSocket, FIONBIO, (char*)&trueval) == -1)
 #endif
