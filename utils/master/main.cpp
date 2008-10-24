@@ -139,11 +139,7 @@ static int AddrCompare(sockaddr* addr1, sockaddr* addr2)
 
 static void ReadNet()
 {
-#ifdef _WIN32
 	char		Buffer[MAX_MSGLEN];
-#else
-	vuint8		Buffer[MAX_MSGLEN];
-#endif
 
 	//	Check if there's any packet waiting.
 	if (recvfrom(AcceptSocket, Buffer, MAX_MSGLEN, MSG_PEEK, NULL, NULL) < 0)
