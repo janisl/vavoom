@@ -72,5 +72,4 @@ defaultproperties
 	bNoBlockmap = true;
 	bNoGravity = true;
 	bNoTeleport = true;
-	bActLikeBridge = true;
 }
