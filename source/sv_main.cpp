@@ -1423,6 +1423,7 @@ void SV_CheckForNewClients()
 
 		VBasePlayer* Player = GPlayersBase[i];
 		Player->Net = new VNetConnection(sock, ServerNetContext, Player);
+		Player->Net->ObjMap->SetUpClassLookup();
 		((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->SetPlayer(Player);
 		Player->Net->CreateChannel(CHANNEL_ObjectMap, -1);
 		SV_ConnectClient(Player);
