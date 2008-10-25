@@ -97,6 +97,13 @@ void VObjectMapChannel::Tick()
 void VObjectMapChannel::Update()
 {
 	guard(VObjectMapChannel::Update);
+	if (CurrName == Connection->ObjMap->NameLookup.Num() &&
+		CurrClass == Connection->ObjMap->ClassLookup.Num())
+	{
+		//  Everything has been sent.
+		return;
+	}
+
 	int Cnt = 0;
 	for (VMessageOut* M = OutMsg; M; M = M->Next)
 	{
@@ -171,8 +178,8 @@ void VObjectMapChannel::Update()
 	}
 
 	//	This is the last message.
-	Msg.bClose = true;
 	SendMessage(&Msg);
+	Close();
 	unguard;
 }
 
