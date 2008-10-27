@@ -97,6 +97,10 @@ void VObjectMapChannel::Tick()
 void VObjectMapChannel::Update()
 {
 	guard(VObjectMapChannel::Update);
+	if (OutMsg && !OpenAcked)
+	{
+		return;
+	}
 	if (CurrName == Connection->ObjMap->NameLookup.Num() &&
 		CurrClass == Connection->ObjMap->ClassLookup.Num())
 	{
@@ -136,6 +140,10 @@ void VObjectMapChannel::Update()
 		if (Msg.GetNumBytes() + 1 + Len > OUT_MESSAGE_SIZE / 8)
 		{
 			SendMessage(&Msg);
+			if (!OpenAcked)
+			{
+				return;
+			}
 			int Cnt = 0;
 			for (VMessageOut* M = OutMsg; M; M = M->Next)
 			{
