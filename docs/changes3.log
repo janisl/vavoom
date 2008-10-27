@@ -3615,3 +3615,69 @@
   I removed empty game specific world info classes.
 09.10.2008
   I fixed model frame interpolation for states that have inter model frames.
+11.10.2008
+  I fixed SDL driver where sound data converter was set up using little
+ endian sound data, while data is in system byte order.
+  I fixed LineAttack not setting OutHitPoint when hitting a line.
+  I updated version numbers.
+12.10.2008
+  I fixed Direct3D renderer messing up FPU causing time calculations to be
+ wrong.
+  I fixed some memory leaks.
+13.10.2008
+  I fixed z-buffer check when drawing translucent models with coloured lighting
+ in 32 bit mode in software renderer.
+  I fixed drawing of additive translucent models with coloured lighting in 32
+ bit mode in software renderer.
+14.10.2008
+  I moved resolving of class game filter and editor/script ids from Define to
+ Emit because they can use constants that are not yet resolved in Define.
+16.10.2008
+  I fixed reading of list of wad files in the list of servers.
+18.10.2008
+  I changed status bar to be shown only when valid reference to client object
+ has been set.
+  I moved code from Spawn console command to a method in player class and
+ changed bots and single player to call it directly.
+  I added PreSpawn console command and moved opening of thinker channel for
+ level info to it. This solves crash when packet with level spawn command is
+ dropped and client tries to create thinker without a valid level object.
+  I change thinker and player channels to save previous value only when it was
+ successfully sent over the network.
+  I added flag in network channel which is set when message to open channel has
+ been acknoweleged. Changed network serialisation of thinker references to be
+ valid only when channel has been opened on the other end. This solves issue
+ when server thinks that player has pointer to the MO while actually it doesn't
+ have.
+19.10.2008
+  Firebrand fixed A_FadeIn and A_FadeOut to set actor to use translucent render
+ style.
+  I fixed Windows versions not having icons.
+  I fixed some CMake warnings.
+  I fixed crash in demo recording.
+  I split source of network object map into separate file.
+  I moved network class lookup table to network object map.
+  I added class map to the net object map and removed net id field from class.
+  I got rid of bNetLocalPlayer flag.
+20.10.2008
+  I changed default deathmatch inventory not to include keys from other games.
+  I started to implement a master server. I's going to be a very simple one for
+ now. I already implemented join and quit requests.
+21.20.2008
+  I changed Object.LoadBinaryLump to use name instead of lump number because
+ in progs there's no way of getting it.
+  I implemented querying master server for list of games. I also added menu for
+ this.
+22.10.2008
+  I cleaned up master server code and added timeout of the servers.
+23.10.2008
+  I added proper handling of names over the network. I added channel class that
+ sends object map data to clients.
+24.10.2008
+  I changed object map to be set up only on server, client must use whatever
+ server tells it to use.
+  I simplified check for missing sprite lump when rendering sprite.
+  I removed bActLikeBridge flag from BridgeBall where it was mistakenly added.
+25.10.2008
+  I changed object map channel to wait for open message to be acked before
+ sending any more.

@@ -1109,6 +1109,7 @@ Version 1.28
 Version 1.29
 ==============================================================================
 
+* Added support for Vavoom master server.
 * Improvements to model skin support.
 * Fixed monster infighting.
 * Fixed net game getting stuck when a packet sent from client is lost.
