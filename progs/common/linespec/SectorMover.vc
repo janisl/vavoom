@@ -119,7 +119,7 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 			sector->floor.TexZ += amount;
 			if (sector->floor.dist > dest)
 			{
-				sector->floor.TexZ -= (dest - sector->floor.dist) /
+				sector->floor.TexZ += (dest - sector->floor.dist) /
 					sector->floor.normal.z;
 				sector->floor.dist = dest;
 				flag = XLevel.ChangeSector(sector, crush);
@@ -208,7 +208,7 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 			sector->ceiling.TexZ += amount;
 			if (sector->ceiling.dist < dest)
 			{
-				sector->ceiling.TexZ -= (dest - sector->ceiling.dist) /
+				sector->ceiling.TexZ += (dest - sector->ceiling.dist) /
 					sector->ceiling.normal.z;
 				sector->ceiling.dist = dest;
 				flag = XLevel.ChangeSector(sector, crush);
