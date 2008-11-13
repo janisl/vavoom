@@ -43,11 +43,8 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "network.h"
 
 // MACROS ------------------------------------------------------------------
-
-#define TOCENTRE		-128
 
 #define BUTTON(name) \
 static TKButton		Key ## name; \
@@ -177,17 +174,27 @@ void TKButton::KeyDown(const char* c)
 	int		k;
 
 	if (c[0])
+	{
 		k = atoi(c);
+	}
 	else
+	{
 		k = -1;		// typed manually at the console for continuous down
+	}
 
 	if (k == down[0] || k == down[1])
+	{
 		return;		// repeating key
+	}
 	
 	if (!down[0])
+	{
 		down[0] = k;
+	}
 	else if (!down[1])
+	{
 		down[1] = k;
+	}
 	else
 	{
 		GCon->Log(NAME_Dev, "Three keys down for a button!");
@@ -195,7 +202,9 @@ void TKButton::KeyDown(const char* c)
 	}
 	
 	if (state & 1)
+	{
 		return;		// still down
+	}
 	state |= 1 + 2;	// down + impulse down
 	unguard;
 }
@@ -212,7 +221,9 @@ void TKButton::KeyUp(const char* c)
 	int		k;
 	
 	if (c[0])
+	{
 		k = atoi(c);
+	}
 	else
 	{ // typed manually at the console, assume for unsticking, so clear all
 		down[0] = down[1] = 0;
@@ -221,16 +232,26 @@ void TKButton::KeyUp(const char* c)
 	}
 
 	if (down[0] == k)
+	{
 		down[0] = 0;
+	}
 	else if (down[1] == k)
+	{
 		down[1] = 0;
+	}
 	else
+	{
 		return;		// key up without coresponding down (menu pass through)
+	}
 	if (down[0] || down[1])
+	{
 		return;		// some other key is still holding it down
+	}
 
 	if (!(state & 1))
+	{
 		return;		// still up (this should not happen)
+	}
 	state &= ~1;		// now up
 	state |= 4; 		// impulse up
 	unguard;
@@ -305,7 +326,9 @@ COMMAND(Impulse)
 {
 	guard(COMMAND Impulse);
 	if (Args.Num() < 2)
+	{
 		return;
+	}
 	impulse_cmd = atoi(*Args[1]);
 	unguard;
 }
@@ -325,163 +348,178 @@ COMMAND(ToggleAlwaysRun)
 
 //==========================================================================
 //
-//	COMMAND CentreTilt
+//	VBasePlayer::StartPitchDrift
 //
 //==========================================================================
 
-void V_StartPitchDrift()
+void VBasePlayer::StartPitchDrift()
 {
-	cl->PlayerFlags |= VBasePlayer::PF_Centreing;
-}
-void V_StopPitchDrift()
-{
-	cl->PlayerFlags &= ~VBasePlayer::PF_Centreing;
+	PlayerFlags |= PF_Centreing;
 }
 
 //==========================================================================
 //
-//	AdjustAngles
+//	VBasePlayer::StopPitchDrift
 //
 //==========================================================================
 
-static void AdjustAngles()
+void VBasePlayer::StopPitchDrift()
 {
-	guard(AdjustAngles);
+	PlayerFlags &= ~PF_Centreing;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::AdjustAngles
+//
+//==========================================================================
+
+void VBasePlayer::AdjustAngles()
+{
+	guard(VBasePlayer::AdjustAngles);
 	float speed;
 
 	if (KeySpeed.state & 1)
+	{
 		speed = host_frametime * cl_anglespeedkey;
+	}
 	else
+	{
 		speed = host_frametime;
-
+	}
 
 	if ((KeyMouseLook.state & 4) && lookspring)
 	{
-		V_StartPitchDrift();
+		StartPitchDrift();
 	}
 	KeyMouseLook.state &= 1;
 
 	//	YAW
 	if (!(KeyStrafe.state & 1))
-	{ 
-		cl->ViewAngles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
-		cl->ViewAngles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
+	{
+		ViewAngles.yaw -= KeyRight.KeyState() * cl_yawspeed * speed;
+		ViewAngles.yaw += KeyLeft.KeyState() * cl_yawspeed * speed;
 		if (joyxmove > 0)
-			cl->ViewAngles.yaw -= joy_yaw * speed;
+		{
+			ViewAngles.yaw -= joy_yaw * speed;
+		}
 		if (joyxmove < 0)
-			cl->ViewAngles.yaw += joy_yaw * speed;
+		{
+			ViewAngles.yaw += joy_yaw * speed;
+		}
 	}
 	if (!(KeyStrafe.state & 1) &&
 		(!lookstrafe || (!mouse_look && !(KeyMouseLook.state & 1))))
 	{
-		cl->ViewAngles.yaw -= mousex * m_yaw;
+		ViewAngles.yaw -= mousex * m_yaw;
 	}
-	cl->ViewAngles.yaw = AngleMod(cl->ViewAngles.yaw);
+	ViewAngles.yaw = AngleMod(ViewAngles.yaw);
 
 	//	PITCH
 	float up = KeyLookUp.KeyState();
 	float down = KeyLookDown.KeyState();
-	cl->ViewAngles.pitch -= cl_pitchspeed * up * speed;
-	cl->ViewAngles.pitch += cl_pitchspeed * down * speed;
+	ViewAngles.pitch -= cl_pitchspeed * up * speed;
+	ViewAngles.pitch += cl_pitchspeed * down * speed;
 	if (up || down || (KeyMouseLook.state & 1))
 	{
-		V_StopPitchDrift();
+		StopPitchDrift();
 	}
 	if ((mouse_look || (KeyMouseLook.state & 1)) && !(KeyStrafe.state & 1))
 	{
-		cl->ViewAngles.pitch -= mousey * m_pitch;
+		ViewAngles.pitch -= mousey * m_pitch;
 	}
 
 	//	Centre look
 	if ((KeyLookCentre.state & 1) || (KeyFlyCentre.state & 1))
 	{
-		V_StartPitchDrift();
+		StartPitchDrift();
 	}
-	if (cl->PlayerFlags & VBasePlayer::PF_Centreing)
+	if (PlayerFlags & PF_Centreing)
 	{
 		float adelta = cl_pitchdriftspeed * host_frametime;
-		if (fabs(cl->ViewAngles.pitch) < adelta)
+		if (fabs(ViewAngles.pitch) < adelta)
 		{
-			cl->ViewAngles.pitch = 0;
-			cl->PlayerFlags &= ~VBasePlayer::PF_Centreing;
+			ViewAngles.pitch = 0;
+			PlayerFlags &= ~PF_Centreing;
 		}
 		else
 		{
-			if (cl->ViewAngles.pitch > 0.0)
+			if (ViewAngles.pitch > 0.0)
 			{
-				cl->ViewAngles.pitch -= adelta;
+				ViewAngles.pitch -= adelta;
 			}
-			else if (cl->ViewAngles.pitch < 0.0)
+			else if (ViewAngles.pitch < 0.0)
 			{
-				cl->ViewAngles.pitch += adelta;
+				ViewAngles.pitch += adelta;
 			}
 		}
 	}
 
 	//	ROLL
-	if (cl->Health <= 0)
+	if (Health <= 0)
 	{
-		if (cl->ViewAngles.roll >= 0 && cl->ViewAngles.roll < cl_deathroll)
+		if (ViewAngles.roll >= 0 && ViewAngles.roll < cl_deathroll)
 		{
-			cl->ViewAngles.roll += cl_deathrollspeed * host_frametime;
+			ViewAngles.roll += cl_deathrollspeed * host_frametime;
 		}
-		if (cl->ViewAngles.roll < 0 && cl->ViewAngles.roll > -cl_deathroll)
+		if (ViewAngles.roll < 0 && ViewAngles.roll > -cl_deathroll)
 		{
-			cl->ViewAngles.roll -= cl_deathrollspeed * host_frametime;
+			ViewAngles.roll -= cl_deathrollspeed * host_frametime;
 		}
 	}
 	else
 	{
-		cl->ViewAngles.roll = 0.0;
+		ViewAngles.roll = 0.0;
 	}
 
 	//	Check angles
-	if (cl->ViewAngles.pitch > 80.0)
+	if (ViewAngles.pitch > 80.0)
 	{
-		cl->ViewAngles.pitch = 80.0;
+		ViewAngles.pitch = 80.0;
 	}
-	if (cl->ViewAngles.pitch < -70.0)
+	if (ViewAngles.pitch < -70.0)
 	{
-		cl->ViewAngles.pitch = -70.0;
-	}
-
-	if (cl->ViewAngles.roll > 80.0)
-	{
-		cl->ViewAngles.roll = 80.0;
-	}
-	if (cl->ViewAngles.roll < -80.0)
-	{
-		cl->ViewAngles.roll = -80.0;
+		ViewAngles.pitch = -70.0;
 	}
 
-	if (cl->Level->LevelInfoFlags & VLevelInfo::LIF_NoFreelook)
+	if (ViewAngles.roll > 80.0)
 	{
-		cl->ViewAngles.pitch = 0;
+		ViewAngles.roll = 80.0;
+	}
+	if (ViewAngles.roll < -80.0)
+	{
+		ViewAngles.roll = -80.0;
+	}
+
+	if (Level->LevelInfoFlags & VLevelInfo::LIF_NoFreelook)
+	{
+		ViewAngles.pitch = 0;
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//	BuildTiccmd
+//	VBasePlayer::HandleInput
 //
-//	Builds a ticcmd from all of the available inputs or reads it from the
-// demo buffer. If recording a demo, write it out
+//	Creates movement commands from all of the available inputs.
 //
 //==========================================================================
 
-static void BuildTiccmd()
+void VBasePlayer::HandleInput()
 {
-	guard(BuildTiccmd);
+	guard(VBasePlayer::HandleInput);
 	float		forward;
 	float		side;
 	float		flyheight;
+
+	AdjustAngles();
 
 	forward = side = flyheight = 0;
 
 	// let movement keys cancel each other out
 	if (KeyStrafe.state & 1)
-	{ 
+	{
 		side += KeyRight.KeyState() * cl_sidespeed;
 		side -= KeyLeft.KeyState() * cl_sidespeed;
 		if (joyxmove > 0)
@@ -544,49 +582,49 @@ static void BuildTiccmd()
 	//	BUTTONS
 	//
 
-	cl->Buttons = 0;
+	Buttons = 0;
 
 	// Fire buttons
 	if (KeyAttack.KeyState())
 	{
-		cl->Buttons |= BT_ATTACK;
+		Buttons |= BT_ATTACK;
 	}
 
 	// Use buttons
 	if (KeyUse.KeyState())
-	{ 
-		cl->Buttons |= BT_USE;
-	} 
+	{
+		Buttons |= BT_USE;
+	}
 
 	// Jumping
 	if (KeyJump.KeyState())
 	{
-		cl->Buttons |= BT_JUMP;
+		Buttons |= BT_JUMP;
 	}
 
 	if (KeyAltAttack.KeyState())
 	{
-		cl->Buttons |= BT_ALT_ATTACK;
+		Buttons |= BT_ALT_ATTACK;
 	}
 
 	if (KeyButton5.KeyState())
 	{
-		cl->Buttons |= 0x10;
+		Buttons |= 0x10;
 	}
 
 	if (KeyButton6.KeyState())
 	{
-		cl->Buttons |= 0x20;
+		Buttons |= 0x20;
 	}
 
 	if (KeyButton7.KeyState())
 	{
-		cl->Buttons |= 0x40;
+		Buttons |= 0x40;
 	}
 
 	if (KeyButton8.KeyState())
 	{
-		cl->Buttons |= 0x80;
+		Buttons |= 0x80;
 	}
 
 	//
@@ -594,76 +632,39 @@ static void BuildTiccmd()
 	//
 	if (impulse_cmd)
 	{
-		cl->eventServerImpulse(impulse_cmd);
+		eventServerImpulse(impulse_cmd);
 		impulse_cmd = 0;
 	}
 
-	cl->ClientForwardMove = forward;
-	cl->ClientSideMove = side;
-	cl->FlyMove = flyheight;
+	ClientForwardMove = forward;
+	ClientSideMove = side;
+	FlyMove = flyheight;
+
+	mousex = 0;
+	mousey = 0;
 	unguard;
 }
 
 //==========================================================================
 //
-//	CL_SendMove
+//	VBasePlayer::Responder
+//
+//	Get info needed to make movement commands for the players.
 //
 //==========================================================================
 
-void CL_SendMove()
+bool VBasePlayer::Responder(event_t* ev)
 {
-	guard(CL_SendMove);
-	if (cls.state != ca_connected)
-	{
-		return;
-	}
-
-	if (cls.demoplayback || host_titlemap)
-	{
-		return;
-	}
-	
-	if (cls.signon)
-	{
-		AdjustAngles();
-		BuildTiccmd();
-		mousex = mousey = 0;
-		if (cl->Net)
-		{
-			((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->Update();
-		}
-	}
-
-	if (cl->Net)
-	{
-		cl->Net->Tick();
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	CL_Responder
-//
-//	Get info needed to make ticcmd_ts for the players.
-// 
-//==========================================================================
-
-bool CL_Responder(event_t* ev)
-{
-	guard(CL_Responder);
-	if (host_titlemap)
-	{
-		return false;
-	}
-
+	guard(VBasePlayer::Responder);
 	switch (ev->type) 
 	{
 	case ev_mouse:
 		mousex = ev->data2 * mouse_x_sensitivity;
 		mousey = ev->data3 * mouse_y_sensitivity;
 		if (invert_mouse)
+		{
 			mousey = -mousey;
+		}
 		return true;    // eat events
 
 	case ev_joystick:
@@ -680,13 +681,13 @@ bool CL_Responder(event_t* ev)
 
 //==========================================================================
 //
-//	CL_ClearInput
+//	VBasePlayer::ClearInput
 //
 //==========================================================================
 
-void CL_ClearInput()
+void VBasePlayer::ClearInput()
 {
-	guard(CL_ClearInput);
+	guard(VBasePlayer::ClearInput);
 	// clear cmd building stuff
 	joyxmove = joyymove = 0; 
 	mousex = mousey = 0;

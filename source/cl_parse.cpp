@@ -35,7 +35,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_ClearInput();
 void CL_SetupLevel();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -63,7 +62,10 @@ void CL_Clear()
 	guard(CL_Clear);
 	GClGame->serverinfo.Clean();
 	GClGame->intermission = 0;
-	CL_ClearInput();
+	if (cl)
+	{
+		cl->ClearInput();
+	}
 #ifdef SERVER
 	if (!sv.active)
 #endif

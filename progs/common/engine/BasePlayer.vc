@@ -41,6 +41,8 @@ enum
 	GREENCOLOURMAP		= 35
 };
 
+const float TOCENTRE		= -128.0;
+
 struct VViewState
 {
 	state		State;	// a 0 state means not active

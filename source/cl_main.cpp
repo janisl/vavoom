@@ -454,6 +454,65 @@ void CL_SetUpStandaloneClient()
 
 //==========================================================================
 //
+//	CL_SendMove
+//
+//==========================================================================
+
+void CL_SendMove()
+{
+	guard(CL_SendMove);
+	if (cls.state != ca_connected)
+	{
+		return;
+	}
+
+	if (cls.demoplayback || host_titlemap)
+	{
+		return;
+	}
+	
+	if (cls.signon)
+	{
+		cl->HandleInput();
+		if (cl->Net)
+		{
+			((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->Update();
+		}
+	}
+
+	if (cl->Net)
+	{
+		cl->Net->Tick();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	CL_Responder
+//
+//	Get info needed to make ticcmd_ts for the players.
+// 
+//==========================================================================
+
+bool CL_Responder(event_t* ev)
+{
+	guard(CL_Responder);
+	if (host_titlemap)
+	{
+		return false;
+	}
+
+	if (cl)
+	{
+		return cl->Responder(ev);
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 //	COMMAND Connect
 //
 //==========================================================================

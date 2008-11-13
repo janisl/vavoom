@@ -117,8 +117,6 @@ enum
 	PST_REBORN
 };
 
-const float TOCENTRE		= -128.0;
-
 enum
 {
 	DI_EAST,

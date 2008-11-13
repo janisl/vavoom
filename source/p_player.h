@@ -95,6 +95,8 @@ class VBasePlayer : public VObject
 {
 	DECLARE_CLASS(VBasePlayer, VObject, 0)
 
+	enum { TOCENTRE = -128 };
+
 	VLevelInfo*		Level;
 
 	enum
@@ -197,6 +199,14 @@ class VBasePlayer : public VObject
 
 	void SetViewState(int, VState*);
 	void AdvanceViewStates(float);
+
+	//	Handling of player input.
+	void StartPitchDrift();
+	void StopPitchDrift();
+	void AdjustAngles();
+	void HandleInput();
+	bool Responder(event_t*);
+	void ClearInput();
 
 	DECLARE_FUNCTION(cprint)
 	DECLARE_FUNCTION(centreprint)
