@@ -49,6 +49,12 @@
 
 IMPLEMENT_CLASS(V, BasePlayer)
 
+static VCvarF			notify_time("notify_time", "5", CVAR_Archive);
+static VCvarF			centre_msg_time("centre_message_time", "7", CVAR_Archive);
+static VCvarI			msg_echo("msg_echo", "1", CVAR_Archive);
+static VCvarI			font_colour("font_colour", "11", CVAR_Archive);
+static VCvarI			font_colour2("font_colour2", "11", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -528,13 +534,28 @@ void VBasePlayer::DoClientStopSequence(int OriginId)
 //
 //==========================================================================
 
-void VBasePlayer::DoClientPrint(VStr Str)
+void VBasePlayer::DoClientPrint(VStr AStr)
 {
-#ifdef CLIENT
 	guard(VBasePlayer::DoClientPrint);
-	C_NotifyMessage(*Str);
+	VStr Str(AStr);
+
+	if (!Str)
+	{
+		return;
+	}
+
+	if (Str[0] == '$')
+	{
+		Str = GLanguage[*VStr(Str.ToLower(), 1, Str.Length() - 1)];
+	}
+
+	if (msg_echo)
+	{
+		GCon->Log(Str);
+	}
+
+	ClGame->eventAddNotifyMessage(Str);
 	unguard;
-#endif
 }
 
 //==========================================================================
@@ -545,11 +566,28 @@ void VBasePlayer::DoClientPrint(VStr Str)
 
 void VBasePlayer::DoClientCentrePrint(VStr Str)
 {
-#ifdef CLIENT
 	guard(VBasePlayer::DoClientCentrePrint);
-	C_CentreMessage(*Str);
+	VStr Msg(Str);
+
+	if (!Msg)
+	{
+		return;
+	}
+
+	if (Msg[0] == '$')
+	{
+		Msg = GLanguage[*VStr(Msg.ToLower(), 1, Msg.Length() - 1)];
+	}
+
+	if (msg_echo)
+	{
+		GCon->Log("<-------------------------------->");
+		GCon->Log(Msg);
+		GCon->Log("<-------------------------------->");
+	}
+
+	ClGame->eventAddCentreMessage(Msg);
 	unguard;
-#endif
 }
 
 //==========================================================================

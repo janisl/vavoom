@@ -726,16 +726,16 @@ bool AM_Responder(event_t* ev)
 			case AM_FOLLOWKEY:
 				followplayer = !followplayer;
 				f_oldloc.x = 99999.0;
-				C_NotifyMessage(followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF);
+				cl->Printf(followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF);
 				break;
 			case AM_GRIDKEY:
 				grid = !grid;
-				C_NotifyMessage(grid ? AMSTR_GRIDON : AMSTR_GRIDOFF);
+				cl->Printf(grid ? AMSTR_GRIDON : AMSTR_GRIDOFF);
 				break;
 			case AM_MARKKEY:
 				if (use_marks && AM_addMark())
-				{				
-					C_NotifyMessage(va("%s %d", AMSTR_MARKEDSPOT, markpointnum));
+				{
+					cl->Printf("%s %d", AMSTR_MARKEDSPOT, markpointnum);
 				}
 				else
 				{
@@ -744,8 +744,8 @@ bool AM_Responder(event_t* ev)
 				break;
 			case AM_CLEARMARKKEY:
 				if (use_marks && AM_clearMarks())
-				{				
-					C_NotifyMessage(AMSTR_MARKSCLEARED);
+				{
+					cl->Printf(AMSTR_MARKSCLEARED);
 				}
 				else
 				{

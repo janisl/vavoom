@@ -38,8 +38,6 @@ bool C_Active();
 void C_Start();
 void C_StartFull();
 void C_Stop();
-void C_NotifyMessage(const char *msg);
-void C_CentreMessage(const char *msg);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

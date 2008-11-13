@@ -91,12 +91,6 @@ static VCvarF			con_speed("con_speed", "480", CVAR_Archive);
 static int				c_autocompleteIndex = -1;
 static VStr				c_autocompleteString;
 
-static VCvarF			notify_time("notify_time", "5", CVAR_Archive);
-static VCvarF			centre_msg_time("centre_message_time", "7", CVAR_Archive);
-static VCvarI			msg_echo("msg_echo", "1", CVAR_Archive);
-static VCvarI			font_colour("font_colour", "11", CVAR_Archive);
-static VCvarI			font_colour2("font_colour2", "11", CVAR_Archive);
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -567,66 +561,4 @@ void FConsoleDevice::Serialise(const char* V, EName Event)
 	}
 	DoPrint(V);
 	DoPrint("\n");
-}
-
-//==========================================================================
-//
-//	C_NotifyMessage
-//
-//==========================================================================
-
-void C_NotifyMessage(const char* AStr)
-{
-	guard(C_NotifyMessage);
-	VStr Str(AStr);
-
-	if (!Str)
-	{
-		return;
-	}
-
-	if (Str[0] == '$')
-	{
-		Str = GLanguage[*VStr(Str.ToLower(), 1, Str.Length() - 1)];
-	}
-
-	if (msg_echo)
-	{
-		GCon->Log(Str);
-	}
-
-	GClGame->eventAddNotifyMessage(Str);
-	unguard;
-}
-
-//==========================================================================
-//
-//	C_CentreMessage
-//
-//==========================================================================
-
-void C_CentreMessage(const char* AMsg)
-{
-	guard(C_CentreMessage);
-	VStr Msg(AMsg);
-
-	if (!Msg)
-	{
-		return;
-	}
-
-	if (Msg[0] == '$')
-	{
-		Msg = GLanguage[*VStr(Msg.ToLower(), 1, Msg.Length() - 1)];
-	}
-
-	if (msg_echo)
-	{
-		GCon->Log("<-------------------------------->");
-		GCon->Log(Msg);
-		GCon->Log("<-------------------------------->");
-	}
-
-	GClGame->eventAddCentreMessage(Msg);
-	unguard;
 }

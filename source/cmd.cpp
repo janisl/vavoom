@@ -719,10 +719,15 @@ COMMAND(Echo)
 	}
 	Text = Text.EvalEscapeSequences();
 #ifdef CLIENT
-	C_NotifyMessage(*Text);
-#else
-	GCon->Log(Text);
+	if (cl)
+	{
+		cl->Printf("%s", *Text);
+	}
+	else
 #endif
+	{
+		GCon->Log(Text);
+	}
 	unguard;
 }
 
