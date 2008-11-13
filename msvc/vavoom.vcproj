@@ -2281,6 +2281,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_player_input.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_playerreplicationinfo.cpp"
 				>
 			</File>
@@ -2342,10 +2346,6 @@
 			>
 			<File
 				RelativePath="..\source\cl_demo.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\cl_input.cpp"
 				>
 			</File>
 			<File

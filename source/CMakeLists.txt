@@ -42,7 +42,6 @@ set(MAIN_COMMON_SOURCES
 	cheats.cpp
 	client.h
 	cl_demo.cpp
-	cl_input.cpp
 	cl_local.h
 	cl_main.cpp
 	cl_parse.cpp
@@ -143,6 +142,7 @@ set(MAIN_COMMON_SOURCES
 	p_nodebuild.cpp
 	p_player.cpp
 	p_player.h
+	p_player_input.cpp
 	p_playerreplicationinfo.cpp
 	p_playerreplicationinfo.h
 	p_polyobj.cpp
@@ -472,6 +472,7 @@ set(SERVER_COMMON_SOURCES
 	p_levelinfo.cpp
 	p_nodebuild.cpp
 	p_player.cpp
+	p_player_input.cpp
 	p_playerreplicationinfo.cpp
 	p_polyobj.cpp
 	p_setup.cpp
