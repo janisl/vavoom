@@ -192,13 +192,6 @@ void VLevel::Serialise(VStream& Strm)
 	guard(Lines);
 	for (i = 0, li = Lines; i < NumLines; i++, li++)
 	{
-		//	Temporary hack to save seen on automap flags.
-#ifdef CLIENT
-		if (Strm.IsSaving() && cls.state == ca_connected)
-		{
-			li->flags |= GClLevel->Lines[i].flags & ML_MAPPED;
-		}
-#endif
 		Strm << li->flags
 			<< li->SpacFlags
 			<< li->special

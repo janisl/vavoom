@@ -35,8 +35,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_SetupLevel();
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -351,17 +349,6 @@ void CL_ParseServerInfo(VMessageIn& msg)
 	GClLevel->NetContext = ClientNetContext;
 
 	((VLevelChannel*)cl->Net->Channels[CHANIDX_Level])->SetLevel(GClLevel);
-
-	//	Temporary hack to restore seen on automap flags.
-#ifdef SERVER
-	if (sv.active)
-	{
-		for (int i = 0; i < GClLevel->NumLines; i++)
-		{
-			GClLevel->Lines[i].flags |= GLevel->Lines[i].flags & ML_MAPPED;
-		}
-	}
-#endif
 
 	R_Start(GClLevel);
 	GAudio->Start();
