@@ -216,7 +216,6 @@ set(MAIN_COMMON_SOURCES
 	sv_main.cpp
 	sv_save.cpp
 	sv_tick.cpp
-	sv_user.cpp
 	sv_world.cpp
 	system.h
 	text.cpp
@@ -508,7 +507,6 @@ set(SERVER_COMMON_SOURCES
 	sv_main.cpp
 	sv_save.cpp
 	sv_tick.cpp
-	sv_user.cpp
 	sv_world.cpp
 	vc_class.cpp
 	vc_constant.cpp

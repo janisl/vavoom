@@ -2389,10 +2389,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\sv_user.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\sv_world.cpp"
 				>
 			</File>

@@ -217,7 +217,6 @@ void SV_ReadMove();
 
 void Draw_TeleportIcon();
 void CL_Disconnect();
-void SV_SetUserInfo(VBasePlayer* Player, const VStr& info);
 
 void SV_DropClient(VBasePlayer* Player, bool crash);
 void SV_ShutdownServer(bool);

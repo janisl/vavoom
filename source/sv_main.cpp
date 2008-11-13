@@ -1467,7 +1467,7 @@ void SV_ConnectBot(const char *name)
 	Player->PlayerName = name;
 	SV_ConnectClient(Player);
 	svs.num_connected++;
-	SV_SetUserInfo(Player, Player->UserInfo);
+	Player->SetUserInfo(Player->UserInfo);
 	Player->SpawnClient();
 	unguard;
 }
@@ -1720,6 +1720,17 @@ COMMAND(Say)
 	GLevelInfo->StartSound(TVec(0, 0, 0), 0,
 		GSoundManager->GetSoundID("misc/chat"), 0, 1.0, 0, false);
 	unguard;
+}
+
+//==========================================================================
+//
+//	VServerNetContext::GetLevel
+//
+//==========================================================================
+
+VLevel* VServerNetContext::GetLevel()
+{
+	return GLevel;
 }
 
 //**************************************************************************

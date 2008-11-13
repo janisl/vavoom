@@ -200,6 +200,9 @@ class VBasePlayer : public VObject
 	void SetViewState(int, VState*);
 	void AdvanceViewStates(float);
 
+	void SetUserInfo(const VStr&);
+	void ReadFromUserInfo();
+
 	//	Handling of player input.
 	void StartPitchDrift();
 	void StopPitchDrift();
@@ -207,6 +210,24 @@ class VBasePlayer : public VObject
 	void HandleInput();
 	bool Responder(event_t*);
 	void ClearInput();
+
+	//	Implementation of server to client events.
+	void DoClientStartSound(int, TVec, int, int, float, float, bool);
+	void DoClientStopSound(int, int);
+	void DoClientStartSequence(TVec, int, VName, int);
+	void DoClientAddSequenceChoice(int, VName);
+	void DoClientStopSequence(int);
+	void DoClientPrint(VStr);
+	void DoClientCentrePrint(VStr);
+	void DoClientSetAngles(TAVec);
+	void DoClientIntermission(VName);
+	void DoClientPause(bool);
+	void DoClientSkipIntermission();
+	void DoClientFinale(VStr);
+	void DoClientChangeMusic(VName, int);
+	void DoClientSetServerInfo(VStr, VStr);
+	void DoClientHudMessage(const VStr&, VName, int, int, int, const VStr&,
+		float, float, int, int, float, float, float);
 
 	DECLARE_FUNCTION(cprint)
 	DECLARE_FUNCTION(centreprint)
@@ -234,6 +255,7 @@ class VBasePlayer : public VObject
 
 	DECLARE_FUNCTION(ServerSetUserInfo)
 
+	//	Player events.
 	void eventPutClientIntoServer()
 	{
 		P_PASS_SELF;
@@ -282,6 +304,7 @@ class VBasePlayer : public VObject
 		EV_RET_VOID(NAME_PreTravel);
 	}
 
+	//	Cheats.
 	void eventCheat_God()
 	{
 		P_PASS_SELF;
@@ -327,6 +350,8 @@ class VBasePlayer : public VObject
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_Cheat_NoTarget);
 	}
+
+	//	Server to client events.
 	void eventClientStartSound(int SoundId, TVec Org, int OriginId,
 		int Channel, float Volume, float Attenuation, bool Loop)
 	{
@@ -446,6 +471,7 @@ class VBasePlayer : public VObject
 		EV_RET_VOID(NAME_ClientHudMessage);
 	}
 
+	//	Client to server events.
 	void eventServerImpulse(int AImpulse)
 	{
 		P_PASS_SELF;

@@ -29,6 +29,7 @@
 #include "progdefs.h"
 #include "network.h"
 #include "sv_local.h"
+#include "cl_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -409,6 +410,393 @@ void VBasePlayer::AdvanceViewStates(float deltaTime)
 
 //==========================================================================
 //
+//	VBasePlayer::SetUserInfo
+//
+//==========================================================================
+
+void VBasePlayer::SetUserInfo(const VStr& info)
+{
+	guard(VBasePlayer::SetUserInfo);
+	if (!sv_loading)
+	{
+		UserInfo = info;
+		ReadFromUserInfo();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::ReadFromUserInfo
+//
+//==========================================================================
+
+void VBasePlayer::ReadFromUserInfo()
+{
+	guard(VBasePlayer::ReadFromUserInfo);
+	if (!sv_loading)
+	{
+		BaseClass = atoi(*Info_ValueForKey(UserInfo, "class"));
+	}
+	PlayerName = Info_ValueForKey(UserInfo, "name");
+	Colour = M_ParseColour(Info_ValueForKey(UserInfo, "colour"));
+	eventUserinfoChanged();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientStartSound
+//
+//==========================================================================
+
+void VBasePlayer::DoClientStartSound(int SoundId, TVec Org, int OriginId,
+	int Channel, float Volume, float Attenuation, bool Loop)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientStartSound);
+	GAudio->PlaySound(SoundId, Org, TVec(0, 0, 0), OriginId, Channel, Volume,
+		Attenuation, Loop);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientStopSound
+//
+//==========================================================================
+
+void VBasePlayer::DoClientStopSound(int OriginId, int Channel)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientStopSound);
+	GAudio->StopSound(OriginId, Channel);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientStartSequence
+//
+//==========================================================================
+
+void VBasePlayer::DoClientStartSequence(TVec Origin, int OriginId, VName Name,
+	int ModeNum)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientStartSequence);
+	GAudio->StartSequence(OriginId, Origin, Name, ModeNum);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientAddSequenceChoice
+//
+//==========================================================================
+
+void VBasePlayer::DoClientAddSequenceChoice(int OriginId, VName Choice)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientAddSequenceChoice);
+	GAudio->AddSeqChoice(OriginId, Choice);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientStopSequence
+//
+//==========================================================================
+
+void VBasePlayer::DoClientStopSequence(int OriginId)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientStopSequence);
+	GAudio->StopSequence(OriginId);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientPrint
+//
+//==========================================================================
+
+void VBasePlayer::DoClientPrint(VStr Str)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientPrint);
+	C_NotifyMessage(*Str);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientCentrePrint
+//
+//==========================================================================
+
+void VBasePlayer::DoClientCentrePrint(VStr Str)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientCentrePrint);
+	C_CentreMessage(*Str);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientSetAngles
+//
+//==========================================================================
+
+void VBasePlayer::DoClientSetAngles(TAVec Angles)
+{
+	guard(VBasePlayer::DoClientSetAngles);
+	ViewAngles = Angles;
+	ViewAngles.pitch = AngleMod180(ViewAngles.pitch);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientIntermission
+//
+//==========================================================================
+
+void VBasePlayer::DoClientIntermission(VName NextMap)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientIntermission);
+	im.Text.Clean();
+	im.IMFlags = 0;
+
+	const mapInfo_t& linfo = P_GetMapInfo(Level->XLevel->MapName);
+	im.LeaveMap = Level->XLevel->MapName;
+	im.LeaveCluster = linfo.Cluster;
+	im.LeaveName = linfo.GetName();
+	im.LeaveTitlePatch = linfo.TitlePatch;
+	im.ExitPic = linfo.ExitPic;
+	im.InterMusic = linfo.InterMusic;
+
+	const mapInfo_t& einfo = P_GetMapInfo(NextMap);
+	im.EnterMap = NextMap;
+	im.EnterCluster = einfo.Cluster;
+	im.EnterName = einfo.GetName();
+	im.EnterTitlePatch = einfo.TitlePatch;
+	im.EnterPic = einfo.EnterPic;
+
+	if (linfo.Cluster != einfo.Cluster)
+	{
+		if (einfo.Cluster)
+		{
+			const VClusterDef* CDef = P_GetClusterDef(einfo.Cluster);
+			if (CDef->EnterText.Length())
+			{
+				if (CDef->Flags & CLUSTERF_LookupEnterText)
+				{
+					im.Text = GLanguage[*CDef->EnterText];
+				}
+				else
+				{
+					im.Text = CDef->EnterText;
+				}
+				if (CDef->Flags & CLUSTERF_EnterTextIsLump)
+				{
+					im.IMFlags |= im_t::IMF_TextIsLump;
+				}
+				if (CDef->Flags & CLUSTERF_FinalePic)
+				{
+					im.TextFlat = NAME_None;
+					im.TextPic = CDef->Flat;
+				}
+				else
+				{
+					im.TextFlat = CDef->Flat;
+					im.TextPic = NAME_None;
+				}
+				im.TextMusic = CDef->Music;
+				im.TextCDTrack = CDef->CDTrack;
+				im.TextCDId = CDef->CDId;
+			}
+		}
+		if (im.Text.Length() == 0 && linfo.Cluster)
+		{
+			const VClusterDef* CDef = P_GetClusterDef(linfo.Cluster);
+			if (CDef->ExitText.Length())
+			{
+				if (CDef->Flags & CLUSTERF_LookupExitText)
+				{
+					im.Text = GLanguage[*CDef->ExitText];
+				}
+				else
+				{
+					im.Text = CDef->ExitText;
+				}
+				if (CDef->Flags & CLUSTERF_ExitTextIsLump)
+				{
+					im.IMFlags |= im_t::IMF_TextIsLump;
+				}
+				if (CDef->Flags & CLUSTERF_FinalePic)
+				{
+					im.TextFlat = NAME_None;
+					im.TextPic = CDef->Flat;
+				}
+				else
+				{
+					im.TextFlat = CDef->Flat;
+					im.TextPic = NAME_None;
+				}
+				im.TextMusic = CDef->Music;
+				im.TextCDTrack = CDef->CDTrack;
+				im.TextCDId = CDef->CDId;
+			}
+		}
+	}
+
+	IM_Start();
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientPause
+//
+//==========================================================================
+
+void VBasePlayer::DoClientPause(bool Paused)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientPause);
+	if (Paused)
+	{
+		ClGame->ClientFlags |= VClientGameBase::CF_Paused;
+		GAudio->PauseSound();
+	}
+	else
+	{
+		ClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
+		GAudio->ResumeSound();
+	}
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientSkipIntermission
+//
+//==========================================================================
+
+void VBasePlayer::DoClientSkipIntermission()
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientSkipIntermission);
+	IM_SkipIntermission();
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientFinale
+//
+//==========================================================================
+
+void VBasePlayer::DoClientFinale(VStr Type)
+{
+#ifdef CLIENT
+	guard(VBasePlayer::DoClientFinale);
+	F_StartFinale(*Type);
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientChangeMusic
+//
+//==========================================================================
+
+void VBasePlayer::DoClientChangeMusic(VName Song, int CDTrack)
+{
+	guard(VBasePlayer::DoClientChangeMusic);
+	Level->SongLump = Song;
+	Level->CDTrack = CDTrack;
+#ifdef CLIENT
+	GAudio->MusicChanged();
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientSetServerInfo
+//
+//==========================================================================
+
+void VBasePlayer::DoClientSetServerInfo(VStr Key, VStr Value)
+{
+	guard(VBasePlayer::DoClientSetServerInfo);
+	Info_SetValueForKey(ClGame->serverinfo, Key, Value);
+#ifdef CLIENT
+	CL_ReadFromServerInfo();
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::DoClientHudMessage
+//
+//==========================================================================
+
+void VBasePlayer::DoClientHudMessage(const VStr& Message, VName Font, int Type,
+	int Id, int Colour, const VStr& ColourName, float x, float y,
+	int HudWidth, int HudHeight, float HoldTime, float Time1, float Time2)
+{
+	guard(VBasePlayer::DoClientHudMessage);
+	ClGame->eventAddHudMessage(Message, Font, Type, Id, Colour, ColourName,
+		x, y, HudWidth, HudHeight, HoldTime, Time1, Time2);
+	unguard;
+}
+
+//==========================================================================
+//
+//	COMMAND SetInfo
+//
+//==========================================================================
+
+COMMAND(SetInfo)
+{
+	guard(COMMAND SetInfo);
+	if (Source != SRC_Client)
+	{
+		GCon->Log("SetInfo is not valid from console");
+		return;
+	}
+
+	if (Args.Num() != 3)
+	{
+		return;
+	}
+
+	Info_SetValueForKey(Player->UserInfo, *Args[1], *Args[2]);
+	Player->ReadFromUserInfo();
+	unguard;
+}
+
+//==========================================================================
+//
 //	Natives
 //
 //==========================================================================
@@ -484,4 +872,142 @@ IMPLEMENT_FUNCTION(VBasePlayer, DisconnectBot)
 	P_GET_SELF;
 	check(Self->PlayerFlags & PF_IsBot);
 	SV_DropClient(Self, false);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSound)
+{
+	P_GET_BOOL(Loop);
+	P_GET_FLOAT(Attenuation);
+	P_GET_FLOAT(Volume);
+	P_GET_INT(Channel);
+	P_GET_INT(OriginId);
+	P_GET_VEC(Org);
+	P_GET_INT(SoundId);
+	P_GET_SELF;
+	Self->DoClientStartSound(SoundId, Org, OriginId, Channel, Volume,
+		Attenuation, Loop);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSound)
+{
+	P_GET_INT(Channel);
+	P_GET_INT(OriginId);
+	P_GET_SELF;
+	Self->DoClientStopSound(OriginId, Channel);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStartSequence)
+{
+	P_GET_INT(ModeNum);
+	P_GET_NAME(Name);
+	P_GET_INT(OriginId);
+	P_GET_VEC(Origin);
+	P_GET_SELF;
+	Self->DoClientStartSequence(Origin, OriginId, Name, ModeNum);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientAddSequenceChoice)
+{
+	P_GET_NAME(Choice);
+	P_GET_INT(OriginId);
+	P_GET_SELF;
+	Self->DoClientAddSequenceChoice(OriginId, Choice);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientStopSequence)
+{
+	P_GET_INT(OriginId);
+	P_GET_SELF;
+	Self->DoClientStopSequence(OriginId);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientPrint)
+{
+	P_GET_STR(Str);
+	P_GET_SELF;
+	Self->DoClientPrint(Str);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientCentrePrint)
+{
+	P_GET_STR(Str);
+	P_GET_SELF;
+	Self->DoClientCentrePrint(Str);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientSetAngles)
+{
+	P_GET_AVEC(Angles);
+	P_GET_SELF;
+	Self->DoClientSetAngles(Angles);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientIntermission)
+{
+	P_GET_NAME(NextMap);
+	P_GET_SELF;
+	Self->DoClientIntermission(NextMap);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientPause)
+{
+	P_GET_BOOL(Paused);
+	P_GET_SELF;
+	Self->DoClientPause(Paused);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientSkipIntermission)
+{
+	P_GET_SELF;
+	Self->DoClientSkipIntermission();
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientFinale)
+{
+	P_GET_STR(Type);
+	P_GET_SELF;
+	Self->DoClientFinale(Type);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientChangeMusic)
+{
+	P_GET_INT(CDTrack);
+	P_GET_NAME(Song);
+	P_GET_SELF;
+	Self->DoClientChangeMusic(Song, CDTrack);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientSetServerInfo)
+{
+	P_GET_STR(Value);
+	P_GET_STR(Key);
+	P_GET_SELF;
+	Self->DoClientSetServerInfo(Key, Value);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ClientHudMessage)
+{
+	P_GET_FLOAT(Time2);
+	P_GET_FLOAT(Time1);
+	P_GET_FLOAT(HoldTime);
+	P_GET_INT(HudHeight);
+	P_GET_INT(HudWidth);
+	P_GET_FLOAT(y);
+	P_GET_FLOAT(x);
+	P_GET_STR(ColourName);
+	P_GET_INT(Colour);
+	P_GET_INT(Id);
+	P_GET_INT(Type);
+	P_GET_NAME(Font);
+	P_GET_STR(Message);
+	P_GET_SELF;
+	Self->DoClientHudMessage(Message, Font, Type, Id, Colour, ColourName,
+		x, y, HudWidth, HudHeight, HoldTime, Time1, Time2);
+}
+
+IMPLEMENT_FUNCTION(VBasePlayer, ServerSetUserInfo)
+{
+	P_GET_STR(Info);
+	P_GET_SELF;
+	Self->SetUserInfo(Info);
 }
