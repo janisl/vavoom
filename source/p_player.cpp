@@ -612,8 +612,9 @@ void VBasePlayer::DoClientSetAngles(TAVec Angles)
 
 void VBasePlayer::DoClientIntermission(VName NextMap)
 {
-#ifdef CLIENT
 	guard(VBasePlayer::DoClientIntermission);
+	im_t& im = ClGame->im;
+
 	im.Text.Clean();
 	im.IMFlags = 0;
 
@@ -700,9 +701,14 @@ void VBasePlayer::DoClientIntermission(VName NextMap)
 		}
 	}
 
-	IM_Start();
-	unguard;
+	ClGame->intermission = 1;
+#ifdef CLIENT
+	AM_Stop();
+	GAudio->StopAllSequences();
 #endif
+
+	ClGame->eventIintermissionStart();
+	unguard;
 }
 
 //==========================================================================
@@ -737,11 +743,9 @@ void VBasePlayer::DoClientPause(bool Paused)
 
 void VBasePlayer::DoClientSkipIntermission()
 {
-#ifdef CLIENT
 	guard(VBasePlayer::DoClientSkipIntermission);
-	IM_SkipIntermission();
+	ClGame->ClientFlags |= VClientGameBase::CF_SkipIntermission;
 	unguard;
-#endif
 }
 
 //==========================================================================

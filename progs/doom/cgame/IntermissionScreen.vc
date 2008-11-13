@@ -146,8 +146,8 @@ void Start()
 	}
 
 #ifndef DOOM2
-	FindEpisodeAndMap(ClGame.im->LeaveMap, &im_episode, &im_map);
-	FindEpisodeAndMap(ClGame.im->EnterMap, &im_nextepisode, &im_nextmap);
+	FindEpisodeAndMap(ClGame.im.LeaveMap, &im_episode, &im_map);
+	FindEpisodeAndMap(ClGame.im.EnterMap, &im_nextepisode, &im_nextmap);
 #endif
 
 	IM_InitAnimatedBack();
@@ -177,9 +177,9 @@ void Start()
 		IM_LoadData();
 
 		// intermission music
-		if (ClGame.im->InterMusic)
+		if (ClGame.im.InterMusic)
 		{
-			CmdBuf_AddText(va("music loop %n\n", ClGame.im->InterMusic));
+			CmdBuf_AddText(va("music loop %n\n", ClGame.im.InterMusic));
 		}
 		else
 		{
@@ -336,7 +336,7 @@ void OnPostDraw()
 
 void IM_InitAnimatedBack()
 {
-	name BgPic = interstate ? ClGame.im->ExitPic : ClGame.im->EnterPic;
+	name BgPic = interstate ? ClGame.im.ExitPic : ClGame.im.EnterPic;
 	if (!BgPic)
 	{
 #ifdef DOOM2
@@ -368,13 +368,13 @@ void IM_LoadData()
 	picinfo_t info;
 	int i;
 
-	if (ClGame.im->LeaveTitlePatch)
+	if (ClGame.im.LeaveTitlePatch)
 	{
-		LeaveTitlePic = R_RegisterPic(ClGame.im->LeaveTitlePatch);
+		LeaveTitlePic = R_RegisterPic(ClGame.im.LeaveTitlePatch);
 	}
-	if (ClGame.im->EnterTitlePatch)
+	if (ClGame.im.EnterTitlePatch)
 	{
-		EnterTitlePic = R_RegisterPic(ClGame.im->EnterTitlePatch);
+		EnterTitlePic = R_RegisterPic(ClGame.im.EnterTitlePatch);
 	}
 
 	if (ClGame.maxclients > 1 || ClGame.deathmatch)
@@ -420,7 +420,7 @@ void IM_DrawLF()
 	int y = WI_TITLEY;
 
 	// draw <LevelName>
-	if (ClGame.im->LeaveTitlePatch)
+	if (ClGame.im.LeaveTitlePatch)
 	{
 		R_GetPicInfo(LeaveTitlePic, &info);
 		DrawPic(320 - info.width / 2, y, LeaveTitlePic);
@@ -429,7 +429,7 @@ void IM_DrawLF()
 	else
 	{
 		SetTextAlign(hcentre, vtop);
-		DrawText(320, y, ClGame.im->LeaveName);
+		DrawText(320, y, ClGame.im.LeaveName);
 		y += (5 * TextHeight("DUMMY")) / 4;
 	}
 
@@ -457,14 +457,14 @@ void IM_DrawEL()
 
 	// draw level
 	y += (5 * TextHeight("DUMMY")) / 4;
-	if (ClGame.im->EnterTitlePatch)
+	if (ClGame.im.EnterTitlePatch)
 	{
 		R_GetPicInfo(EnterTitlePic, &info);
 		DrawPic(320 - info.width / 2, y, EnterTitlePic);
 	}
 	else
 	{
-		DrawText(320, y, ClGame.im->EnterName);
+		DrawText(320, y, ClGame.im.EnterName);
 	}
 }
 
@@ -1125,7 +1125,7 @@ void IM_DrawNoState()
 {
 #ifdef DOOM2
 	// draws which level you are entering..
-	if (ClGame.im->LeaveMap != 'map30')
+	if (ClGame.im.LeaveMap != 'map30')
 	{
 		IM_DrawEL();
 	}
@@ -1173,7 +1173,7 @@ int TextPic;
 
 void IM_InitText()
 {
-	if (ClGame.deathmatch || !ClGame.im->Text)
+	if (ClGame.deathmatch || !ClGame.im.Text)
 	{
 		CmdBuf_AddText("TeleportNewMap\n");
 		interstate = IMS_Done;
@@ -1181,33 +1181,33 @@ void IM_InitText()
 		return;
 	}
 
-	if (ClGame.im->bTextIsLump)
+	if (ClGame.im.bTextIsLump)
 	{
-		HubText = LoadTextLump(StrToName(ClGame.im->Text));
+		HubText = LoadTextLump(StrToName(ClGame.im.Text));
 	}
 	else
 	{
-		HubText = ClGame.im->Text;
+		HubText = ClGame.im.Text;
 	}
 	HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
 
 	TextFlat = '';
 	TextPic = 0;
-	if (ClGame.im->TextPic)
+	if (ClGame.im.TextPic)
 	{
-		TextPic = R_RegisterPic(ClGame.im->TextPic);
+		TextPic = R_RegisterPic(ClGame.im.TextPic);
 	}
-	else if (ClGame.im->TextFlat)
+	else if (ClGame.im.TextFlat)
 	{
-		TextFlat = ClGame.im->TextFlat;
+		TextFlat = ClGame.im.TextFlat;
 	}
 
 	interstate = IMS_Text;
 	intertime = 0.0;
 
-	if (ClGame.im->TextMusic)
+	if (ClGame.im.TextMusic)
 	{
-		CmdBuf_AddText(va("music loop %n\n", ClGame.im->TextMusic));
+		CmdBuf_AddText(va("music loop %n\n", ClGame.im.TextMusic));
 	}
 	else
 	{

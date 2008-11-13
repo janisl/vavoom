@@ -524,6 +524,33 @@ int W_FindLumpByFileNameWithExts(VStr BaseName, const char** Exts)
 
 //==========================================================================
 //
+//	W_LoadTextLump
+//
+//==========================================================================
+
+VStr W_LoadTextLump(VName name)
+{
+	guard(W_LoadTextLump);
+	VStream* Strm = W_CreateLumpReaderName(name);
+	int msgSize = Strm->TotalSize();
+	char* buf = new char[msgSize + 1];
+	Strm->Serialise(buf, msgSize);
+	delete Strm;
+	buf[msgSize] = 0; // Append terminator
+	VStr Ret = buf;
+	delete[] buf;
+	if (!Ret.IsValidUtf8())
+	{
+		GCon->Logf("%s is not a valid UTF-8 text lump, assuming Latin 1",
+			*name);
+		Ret = Ret.Latin1ToUtf8();
+	}
+	return Ret;
+	unguard;
+}
+
+//==========================================================================
+//
 //  W_CreateLumpReaderNum
 //
 //==========================================================================

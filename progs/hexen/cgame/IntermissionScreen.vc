@@ -246,32 +246,32 @@ void IM_InitHubText()
 {
 	interstate = IMS_Text;
 	HubCount = 0.0;
-	if (ClGame.im->Text)
+	if (ClGame.im.Text)
 	{
-		if (ClGame.im->bTextIsLump)
+		if (ClGame.im.bTextIsLump)
 		{
-			HubText = LoadTextLump(StrToName(ClGame.im->Text));
+			HubText = LoadTextLump(StrToName(ClGame.im.Text));
 		}
 		else
 		{
-			HubText = ClGame.im->Text;
+			HubText = ClGame.im.Text;
 		}
 		HubCount = itof(strlen(HubText)) * TextSpeed + TextWait;
 
 		TextFlat = '';
 		TextPic = 0;
-		if (ClGame.im->TextPic)
+		if (ClGame.im.TextPic)
 		{
-			TextPic = R_RegisterPic(ClGame.im->TextPic);
+			TextPic = R_RegisterPic(ClGame.im.TextPic);
 		}
-		else if (ClGame.im->TextFlat)
+		else if (ClGame.im.TextFlat)
 		{
-			TextFlat = ClGame.im->TextFlat;
+			TextFlat = ClGame.im.TextFlat;
 		}
 
-		if (ClGame.im->TextMusic)
+		if (ClGame.im.TextMusic)
 		{
-			CmdBuf_AddText(va("music loop %n\n", ClGame.im->TextMusic));
+			CmdBuf_AddText(va("music loop %n\n", ClGame.im.TextMusic));
 		}
 		else
 		{

@@ -48,6 +48,36 @@ struct dlight_t
 	vuint32		colour;		// for coloured lights
 };
 
+struct im_t
+{
+	VName		LeaveMap;
+	vint32		LeaveCluster;
+	VStr		LeaveName;
+	VName		LeaveTitlePatch;
+	VName		ExitPic;
+
+	VName		EnterMap;
+	vint32		EnterCluster;
+	VStr		EnterName;
+	VName		EnterTitlePatch;
+	VName		EnterPic;
+
+	VName		InterMusic;
+
+	VStr		Text;
+	VName		TextFlat;
+	VName		TextPic;
+	VName		TextMusic;
+	vint32		TextCDTrack;
+	vint32		TextCDId;
+
+	enum
+	{
+		IMF_TextIsLump		= 0x01,
+	};
+	vint32		IMFlags;
+};
+
 class VClientGameBase : public VObject
 {
 	DECLARE_CLASS(VClientGameBase, VObject, 0)
@@ -65,7 +95,7 @@ class VClientGameBase : public VObject
 	VBasePlayer*		cl;
 	VLevel*				GLevel;
 
-	im_t*				im;
+	im_t				im;
 
 	VRootWidget*		GRoot;
 

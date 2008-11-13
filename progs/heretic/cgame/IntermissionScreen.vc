@@ -88,8 +88,8 @@ IntermissionBackground		Background;
 
 void Start()
 {
-	FindEpisodeAndMap(ClGame.im->LeaveMap, &im_episode, &im_map);
-	FindEpisodeAndMap(ClGame.im->EnterMap, &im_nextepisode, &im_nextmap);
+	FindEpisodeAndMap(ClGame.im.LeaveMap, &im_episode, &im_map);
+	FindEpisodeAndMap(ClGame.im.EnterMap, &im_nextepisode, &im_nextmap);
 
 	if (!Background)
 	{
@@ -263,8 +263,8 @@ void OnPostDraw()
 
 void IM_LoadPics()
 {
-	name BgPic = interstate <= IMS_PrevLoc ? ClGame.im->ExitPic :
-		ClGame.im->EnterPic;
+	name BgPic = interstate <= IMS_PrevLoc ? ClGame.im.ExitPic :
+		ClGame.im.EnterPic;
 	if (!BgPic && interstate != IMS_Stats)
 	{
 		switch (im_episode)
@@ -434,9 +434,9 @@ void IM_InitStats()
 		oldintertime = 10.0;
 	}
 	im_sounds = 0;
-	if (ClGame.im->InterMusic)
+	if (ClGame.im.InterMusic)
 	{
-		CmdBuf_AddText(va("music loop %n\n", ClGame.im->InterMusic));
+		CmdBuf_AddText(va("music loop %n\n", ClGame.im.InterMusic));
 	}
 	else
 	{
@@ -463,7 +463,7 @@ void IM_DrawSingleStats()
 	DrawText(210, 230, "ITEMS");
 	DrawText(210, 255, "SECRETS");
 	SetTextAlign(hcentre, vtop);
-	DrawText(320, 143, ClGame.im->LeaveName);
+	DrawText(320, 143, ClGame.im.LeaveName);
 	SetTextShadow(false);
 
 	SetFont('smallfont');
@@ -544,7 +544,7 @@ void IM_DrawSingleStats()
 		DrawText(320, 300, "NOW ENTERING:");
 		SetTextShadow(true);
 		SetFont('bigfont');
-		DrawText(320, 310, ClGame.im->EnterName);
+		DrawText(320, 310, ClGame.im.EnterName);
 		SetTextShadow(false);
 		ClGame.skipintermission = false;
 	}
@@ -570,7 +570,7 @@ void IM_DrawCoopStats()
 	DrawText(392, 175, "SECRET");
 
 	SetTextAlign(hcentre, vtop);
-	DrawText(320, 143, ClGame.im->LeaveName);
+	DrawText(320, 143, ClGame.im.LeaveName);
 	SetTextShadow(false);
 	SetFont('smallfont');
 	DrawText(320, 165, "FINISHED");
@@ -700,7 +700,7 @@ void IM_DrawOldLevel()
 
 	SetTextShadow(true);
 	SetFont('bigfont');
-	DrawText(320, 3, ClGame.im->LeaveName);
+	DrawText(320, 3, ClGame.im.LeaveName);
 	SetTextShadow(false);
 
 	SetFont('smallfont');
@@ -722,7 +722,7 @@ void IM_DrawYAH()
 
 	SetTextShadow(true);
 	SetFont('bigfont');
-	DrawText(320, 20, ClGame.im->EnterName);
+	DrawText(320, 20, ClGame.im.EnterName);
 	SetTextShadow(false);
 }
 
@@ -742,7 +742,7 @@ void IM_InitText()
 		return;
 	}
 
-	if (!ClGame.im->Text)
+	if (!ClGame.im.Text)
 	{
 		if (ClGame.cl.Level.bNoIntermission)
 		{
@@ -761,34 +761,34 @@ void IM_InitText()
 		}
 	}
 
-	if (ClGame.im->bTextIsLump)
+	if (ClGame.im.bTextIsLump)
 	{
-		HubText = LoadTextLump(StrToName(ClGame.im->Text));
+		HubText = LoadTextLump(StrToName(ClGame.im.Text));
 	}
 	else
 	{
-		HubText = ClGame.im->Text;
+		HubText = ClGame.im.Text;
 	}
 	HubCount = itof(strlen(HubText)) * TEXTSPEED + TEXTWAIT;
 
 	TextFlat = '';
 	TextPic = 0;
-	if (ClGame.im->TextPic)
+	if (ClGame.im.TextPic)
 	{
-		TextPic = R_RegisterPic(ClGame.im->TextPic);
+		TextPic = R_RegisterPic(ClGame.im.TextPic);
 	}
-	else if (ClGame.im->TextFlat)
+	else if (ClGame.im.TextFlat)
 	{
-		TextFlat = ClGame.im->TextFlat;
+		TextFlat = ClGame.im.TextFlat;
 	}
 
 	ClGame.skipintermission = false;
 	interstate = IMS_Text;
 	intertime = 0.0;
 	oldintertime = HubCount;
-	if (ClGame.im->TextMusic)
+	if (ClGame.im.TextMusic)
 	{
-		CmdBuf_AddText(va("music loop %n\n", ClGame.im->TextMusic));
+		CmdBuf_AddText(va("music loop %n\n", ClGame.im.TextMusic));
 	}
 	else
 	{

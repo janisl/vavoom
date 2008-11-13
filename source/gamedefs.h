@@ -95,7 +95,6 @@
 #include "finale.h"
 #include "save.h"
 #include "server.h"
-#include "imission.h"
 #include "p_clip.h"
 #include "p_worldinfo.h"
 #include "p_thinker.h"

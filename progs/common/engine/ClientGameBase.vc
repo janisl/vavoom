@@ -38,7 +38,7 @@ readonly GameInfo Game;
 readonly BasePlayer cl;
 readonly Level GLevel;
 
-readonly im_t *im;
+readonly im_t im;
 
 readonly RootWidget GRoot;
 

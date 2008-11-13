@@ -84,8 +84,6 @@ set(MAIN_COMMON_SOURCES
 	host.h
 	iline.cpp
 	iline.h
-	imission.cpp
-	imission.h
 	in_input.cpp
 	infostr.cpp
 	infostr.h

@@ -409,7 +409,7 @@ void OnDraw()
 		for (i = 0; i < Spots.Num; i++)
 		{
 			//	Flash level we are leaving now.
-			if (Spots[i].Map == ClGame.im->LeaveMap &&
+			if (Spots[i].Map == ClGame.im.LeaveMap &&
 				State == STATE_PrevLoc && (ftoi(2.0 * btime) & 1))
 			{
 				continue;
@@ -418,7 +418,7 @@ void OnDraw()
 			{
 				DrawPic(Spots[i].X, Spots[i].Y, SplatPic);
 			}
-			if (Spots[i].Map == ClGame.im->EnterMap && (State == STATE_Done ||
+			if (Spots[i].Map == ClGame.im.EnterMap && (State == STATE_Done ||
 				(State == STATE_NextLoc && (ftoi(32.0 * btime) & 31) < 20)))
 			{
 				DrawPointer(i);
@@ -486,16 +486,16 @@ final bool CheckCond(byte Cond, name MapName1, name MapName2)
 	switch (Cond)
 	{
 	case COND_IfLeaving:
-		return State < STATE_NextLoc && MapName1 == ClGame.im->LeaveMap;
+		return State < STATE_NextLoc && MapName1 == ClGame.im.LeaveMap;
 
 	case COND_IfNotLeaving:
-		return State >= STATE_NextLoc || MapName1 != ClGame.im->LeaveMap;
+		return State >= STATE_NextLoc || MapName1 != ClGame.im.LeaveMap;
 
 	case COND_IfEntering:
-		return State >= STATE_NextLoc && MapName1 == ClGame.im->EnterMap;
+		return State >= STATE_NextLoc && MapName1 == ClGame.im.EnterMap;
 
 	case COND_IfNotEntering:
-		return State < STATE_NextLoc || MapName1 != ClGame.im->EnterMap;
+		return State < STATE_NextLoc || MapName1 != ClGame.im.EnterMap;
 
 	case COND_IfVisited:
 		return IsVisited(MapName1);
@@ -504,12 +504,12 @@ final bool CheckCond(byte Cond, name MapName1, name MapName2)
 		return !IsVisited(MapName1);
 
 	case COND_IfTravelling:
-		return MapName1 == ClGame.im->LeaveMap &&
-			MapName2 == ClGame.im->EnterMap;
+		return MapName1 == ClGame.im.LeaveMap &&
+			MapName2 == ClGame.im.EnterMap;
 
 	case COND_IfNotTravelling:
-		return MapName1 != ClGame.im->LeaveMap ||
-			MapName2 != ClGame.im->EnterMap;
+		return MapName1 != ClGame.im.LeaveMap ||
+			MapName2 != ClGame.im.EnterMap;
 	}
 	return true;
 }

@@ -693,12 +693,10 @@ IMPLEMENT_FUNCTION(VObject, GetSlist)
 	RET_PTR(GNet->GetSlist());
 }
 
-VStr LoadTextLump(VName name);
-
 IMPLEMENT_FUNCTION(VObject, LoadTextLump)
 {
 	P_GET_NAME(name);
-	RET_STR(LoadTextLump(name));
+	RET_STR(W_LoadTextLump(name));
 }
 
 IMPLEMENT_FUNCTION(VObject, StartSearch)

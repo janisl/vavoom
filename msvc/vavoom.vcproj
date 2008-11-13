@@ -2081,14 +2081,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\imission.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\imission.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\l_glbsp.cpp"
 				>
 			</File>

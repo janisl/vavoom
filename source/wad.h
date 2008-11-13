@@ -70,6 +70,7 @@ VName W_LumpName(int lump);
 int W_LumpFile(int lump);
 
 void W_ReadFromLump(int lump, void *dest, int pos, int size);
+VStr W_LoadTextLump(VName name);
 void W_LoadLumpIntoArray(VName Lump, TArray<vuint8>& Array);
 VStream* W_CreateLumpReaderNum(int lump);
 VStream* W_CreateLumpReaderName(VName Name, EWadNamespace NS = WADNS_Global);

@@ -182,9 +182,6 @@ void CL_Shutdown()
 	if (GRoot)
 		GRoot->ConditionalDestroy();
 	cls.userinfo.Clean();
-	im.LeaveName.Clean();
-	im.EnterName.Clean();
-	im.Text.Clean();
 	delete ClientNetContext;
 	unguard;
 }
