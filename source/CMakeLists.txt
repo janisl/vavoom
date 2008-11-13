@@ -41,10 +41,8 @@ set(MAIN_COMMON_SOURCES
 	chat.h
 	cheats.cpp
 	client.h
-	cl_demo.cpp
 	cl_local.h
 	cl_main.cpp
-	cl_parse.cpp
 	cmd.cpp
 	cmd.h
 	common.h

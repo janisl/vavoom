@@ -2345,19 +2345,11 @@
 			Name="Client"
 			>
 			<File
-				RelativePath="..\source\cl_demo.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\cl_local.h"
 				>
 			</File>
 			<File
 				RelativePath="..\source\cl_main.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\cl_parse.cpp"
 				>
 			</File>
 			<File
