@@ -50,20 +50,6 @@
 
 // CODE --------------------------------------------------------------------
 
-//==========================================================================
-//
-//	F_StartFinale
-//
-//==========================================================================
-
-void F_StartFinale(const char* FinaleType)
-{
-	GClGame->intermission = 2;
-	automapactive = false;
-
-	GClGame->eventStartFinale(FinaleType);
-}
-
 //===========================================================================
 //
 //	F_Responder
@@ -72,7 +58,7 @@ void F_StartFinale(const char* FinaleType)
 
 bool F_Responder(event_t *event)
 {
-    if (cls.state != ca_connected || GClGame->intermission != 2)
-    	return false;
-    return GClGame->eventFinaleResponder(event);
+	if (cls.state != ca_connected || GClGame->intermission != 2)
+		return false;
+	return GClGame->eventFinaleResponder(event);
 }

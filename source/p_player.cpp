@@ -756,11 +756,14 @@ void VBasePlayer::DoClientSkipIntermission()
 
 void VBasePlayer::DoClientFinale(VStr Type)
 {
-#ifdef CLIENT
 	guard(VBasePlayer::DoClientFinale);
-	F_StartFinale(*Type);
-	unguard;
+	ClGame->intermission = 2;
+#ifdef CLIENT
+	AM_Stop();
 #endif
+
+	ClGame->eventStartFinale(*Type);
+	unguard;
 }
 
 //==========================================================================

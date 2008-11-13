@@ -32,6 +32,5 @@
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 bool F_Responder(event_t* ev);
-void F_StartFinale(const char*);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
