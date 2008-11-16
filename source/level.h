@@ -888,6 +888,7 @@ class VLevel : public VObject
 	void AddThinker(VThinker*);
 	void RemoveThinker(VThinker*);
 	void DestroyAllThinkers();
+	void TickWorld(float);
 
 	//	Poly-objects.
 	void SpawnPolyobj(float, float, int, bool, bool);

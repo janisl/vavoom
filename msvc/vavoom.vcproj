@@ -2253,6 +2253,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_level_think.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_levelinfo.cpp"
 				>
 			</File>
@@ -2366,10 +2370,6 @@
 			</File>
 			<File
 				RelativePath="..\source\sv_save.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\sv_tick.cpp"
 				>
 			</File>
 			<File

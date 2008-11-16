@@ -26,7 +26,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -45,71 +44,6 @@
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	P_InitThinkers
-//
-//==========================================================================
-
-void P_InitThinkers()
-{
-	VThinker::FIndex_Tick = VThinker::StaticClass()->GetMethodIndex(NAME_Tick);
-}
-
-//==========================================================================
-//
-// RunThinkers
-//
-//==========================================================================
-
-static void RunThinkers()
-{
-	guard(RunThinkers);
-	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
-	{
-		if (!(Th->GetFlags() & _OF_DelayedDestroy))
-		{
-			Th->Tick(host_frametime);
-		}
-		else
-		{
-			GLevel->RemoveThinker(Th);
-			Th->ConditionalDestroy();
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-// P_Ticker
-//
-//==========================================================================
-
-void P_Ticker()
-{
-	guard(P_Ticker);
-	int 	i;
-
-	RunThinkers();
-	GLevelInfo->eventUpdateSpecials();
-
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		if (GGameInfo->Players[i] &&
-			GGameInfo->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
-		{
-			GGameInfo->Players[i]->eventSetViewPos();
-		}
-	}
-
-	GLevel->ClampOffsets();
-
-	GLevel->Time += host_frametime;
-	GLevel->TicTime++;
-	unguard;
-}
 
 //==========================================================================
 //
@@ -182,5 +116,74 @@ void VLevel::DestroyAllThinkers()
 	}
 	ThinkerHead = NULL;
 	ThinkerTail = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::TickWorld
+//
+//==========================================================================
+
+void VLevel::TickWorld(float DeltaTime)
+{
+	guard(VLevel::TickWorld);
+	//	Run thinkers
+	for (VThinker* Th = ThinkerHead; Th; Th = Th->Next)
+	{
+		if (!(Th->GetFlags() & _OF_DelayedDestroy))
+		{
+			Th->Tick(DeltaTime);
+		}
+		else
+		{
+			RemoveThinker(Th);
+			Th->ConditionalDestroy();
+		}
+	}
+
+	LevelInfo->eventUpdateSpecials();
+
+	for (int i = 0; i < MAXPLAYERS; i++)
+	{
+		if (LevelInfo->Game->Players[i] &&
+			LevelInfo->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+		{
+			LevelInfo->Game->Players[i]->eventSetViewPos();
+		}
+	}
+
+	ClampOffsets();
+
+	Time += DeltaTime;
+	TicTime++;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VLevel::SpawnThinker
+//
+//==========================================================================
+
+VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
+	const TAVec& AAngles, mthing_t* mthing, bool AllowReplace)
+{
+	guard(VLevel::SpawnThinker);
+	VClass* Class = AllowReplace ? AClass->GetReplacement() : AClass;
+	VThinker* Ret = (VThinker*)StaticSpawnObject(Class);
+	AddThinker(Ret);
+
+	if (Class->IsChildOf(VEntity::StaticClass()))
+	{
+		((VEntity*)Ret)->Origin = AOrigin;
+		((VEntity*)Ret)->Angles = AAngles;
+		((VEntity*)Ret)->eventOnMapSpawn(mthing);
+		if (LevelInfo->LevelInfoFlags2 & VLevelInfo::LIF2_BegunPlay)
+		{
+			((VEntity*)Ret)->eventBeginPlay();
+		}
+	}
+	return Ret;
 	unguard;
 }

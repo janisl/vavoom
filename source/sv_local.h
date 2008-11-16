@@ -199,9 +199,6 @@ void P_FreeTerrainTypes();
 //
 //==========================================================================
 
-void P_InitThinkers();
-void P_Ticker();
-
 extern int 			TimerGame; // tic countdown for deathmatch
 
 //==========================================================================

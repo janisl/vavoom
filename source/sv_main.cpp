@@ -146,6 +146,17 @@ void SV_Init()
 
 //==========================================================================
 //
+//	P_InitThinkers
+//
+//==========================================================================
+
+void P_InitThinkers()
+{
+	VThinker::FIndex_Tick = VThinker::StaticClass()->GetMethodIndex(NAME_Tick);
+}
+
+//==========================================================================
+//
 //	SV_Shutdown
 //
 //==========================================================================
@@ -193,34 +204,6 @@ void SV_Clear()
 	// Make sure all sounds are stopped.
 	GAudio->StopAllSound();
 #endif
-	unguard;
-}
-
-//==========================================================================
-//
-//	VLevel::SpawnThinker
-//
-//==========================================================================
-
-VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
-	const TAVec& AAngles, mthing_t* mthing, bool AllowReplace)
-{
-	guard(VLevel::SpawnThinker);
-	VClass* Class = AllowReplace ? AClass->GetReplacement() : AClass;
-	VThinker* Ret = (VThinker*)StaticSpawnObject(Class);
-	AddThinker(Ret);
-
-	if (this == GLevel && Class->IsChildOf(VEntity::StaticClass()))
-	{
-		((VEntity*)Ret)->Origin = AOrigin;
-		((VEntity*)Ret)->Angles = AAngles;
-		((VEntity*)Ret)->eventOnMapSpawn(mthing);
-		if (GLevelInfo->LevelInfoFlags2 & VLevelInfo::LIF2_BegunPlay)
-		{
-			((VEntity*)Ret)->eventBeginPlay();
-		}
-	}
-	return Ret;
 	unguard;
 }
 
@@ -622,8 +605,10 @@ void SV_Ticker()
 					}
 				}
 				if (i)
+				{
 					VObject::CollectGarbage();
-				P_Ticker();
+				}
+				GLevel->TickWorld(host_frametime);
 			}
 		}
 	}
@@ -1092,8 +1077,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 
 	if (!host_standalone)
 	{
-		P_Ticker();
-		P_Ticker();
+		GLevel->TickWorld(host_frametime);
+		GLevel->TickWorld(host_frametime);
 
 		//	Start open scripts.
 		GLevel->Acs->StartTypedACScripts(SCRIPT_Open, 0, 0, 0, NULL, false,

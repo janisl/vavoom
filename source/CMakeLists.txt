@@ -133,6 +133,7 @@ set(MAIN_COMMON_SOURCES
 	p_entity_world.cpp
 	p_gameinfo.cpp
 	p_gameinfo.h
+	p_level_think.cpp
 	p_levelinfo.cpp
 	p_levelinfo.h
 	p_nodebuild.cpp
@@ -211,7 +212,6 @@ set(MAIN_COMMON_SOURCES
 	sv_local.h
 	sv_main.cpp
 	sv_save.cpp
-	sv_tick.cpp
 	sv_world.cpp
 	system.h
 	text.cpp
@@ -464,6 +464,7 @@ set(SERVER_COMMON_SOURCES
 	p_entity.cpp
 	p_entity_world.cpp
 	p_gameinfo.cpp
+	p_level_think.cpp
 	p_levelinfo.cpp
 	p_nodebuild.cpp
 	p_player.cpp
@@ -502,7 +503,6 @@ set(SERVER_COMMON_SOURCES
 	stream.cpp
 	sv_main.cpp
 	sv_save.cpp
-	sv_tick.cpp
 	sv_world.cpp
 	vc_class.cpp
 	vc_constant.cpp
