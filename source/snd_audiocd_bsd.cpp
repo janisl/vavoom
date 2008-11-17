@@ -25,6 +25,9 @@
 
 // HEADER FILES ------------------------------------------------------------
 
+//  This is not compatible with Solaris
+#ifndef __sun__
+
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/file.h>
@@ -32,16 +35,16 @@
 #include <fcntl.h>
 #include <time.h>
 #include <errno.h>
-#include <linux/cdrom.h>
+#include <sys/cdio.h>
 
 #include "gamedefs.h"
-#include "s_local.h"
+#include "snd_local.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
-class VLinuxCDAudioDevice : public VCDAudioDevice
+class VBsdCDAudioDevice : public VCDAudioDevice
 {
 public:
 	int			CDFile;
@@ -66,10 +69,10 @@ public:
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-IMPLEMENT_CD_AUDIO_DEVICE(VLinuxCDAudioDevice, CDDRV_Default, "Default",
-	"Linux CD audio device", NULL);
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+IMPLEMENT_CD_AUDIO_DEVICE(VBsdCDAudioDevice, CDDRV_Default, "Default",
+	"BSD CD audio device", NULL);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -77,13 +80,13 @@ IMPLEMENT_CD_AUDIO_DEVICE(VLinuxCDAudioDevice, CDDRV_Default, "Default",
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::Init
+//	VBsdCDAudioDevice::Init
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::Init()
+void VBsdCDAudioDevice::Init()
 {
-	guard(VLinuxCDAudioDevice::Init);
+	guard(VBsdCDAudioDevice::Init);
 	int i;
 
 	if (GArgs.CheckParm("-nosound") || GArgs.CheckParm("-nocdaudio"))
@@ -124,15 +127,16 @@ void VLinuxCDAudioDevice::Init()
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::Update
+//	VBsdCDAudioDevice::Update
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::Update()
+void VBsdCDAudioDevice::Update()
 {
-	guard(VLinuxCDAudioDevice::Update);
-	struct cdrom_subchnl	subchnl;
-	static time_t			lastchk;
+	guard(VBsdCDAudioDevice::Update);
+	struct ioc_read_subchannel	subchnl;
+	struct cd_sub_channel_info	data;	
+	static time_t				lastchk;
 
 	if (!Initialised)
 		return;
@@ -143,15 +147,18 @@ void VLinuxCDAudioDevice::Update()
 	if (Playing && lastchk < time(NULL))
 	{
 		lastchk = time(NULL) + 2; //two seconds between chks
-		subchnl.cdsc_format = CDROM_MSF;
-		if (ioctl(CDFile, CDROMSUBCHNL, &subchnl) == -1 )
+		subchnl.data = &data;
+		subchnl.data_len = sizeof(data);
+		subchnl.address_format = CD_MSF_FORMAT;
+		subchnl.data_format = CD_CURRENT_POSITION;
+		if (ioctl(CDFile, CDIOCREADSUBCHANNEL, (char*) &subchnl) == -1 )
 		{
-			GCon->Log(NAME_Dev, "ioctl cdromsubchnl failed");
+			GCon->Log(NAME_Dev, "ioctl CDIOCREADSUBCHANNEL failed");
 			Playing = false;
 			return;
 		}
-		if (subchnl.cdsc_audiostatus != CDROM_AUDIO_PLAY &&
-			subchnl.cdsc_audiostatus != CDROM_AUDIO_PAUSED)
+		if (subchnl.data->header.audio_status != CD_AS_PLAY_IN_PROGRESS &&
+			subchnl.data->header.audio_status != CD_AS_PLAY_PAUSED)
 		{
 			Playing = false;
 			if (PlayLooping)
@@ -163,13 +170,13 @@ void VLinuxCDAudioDevice::Update()
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::Shutdown
+//	VBsdCDAudioDevice::Shutdown
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::Shutdown()
+void VBsdCDAudioDevice::Shutdown()
 {
-	guard(VLinuxCDAudioDevice::Shutdown);
+	guard(VBsdCDAudioDevice::Shutdown);
 	if (!Initialised)
 		return;
 
@@ -182,45 +189,44 @@ void VLinuxCDAudioDevice::Shutdown()
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::GetInfo
+//	VBsdCDAudioDevice::GetInfo
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::GetInfo()
+void VBsdCDAudioDevice::GetInfo()
 {
-	guard(VLinuxCDAudioDevice::GetInfo);
-	struct cdrom_tochdr		tochdr;
+	guard(VBsdCDAudioDevice::GetInfo);
+	struct ioc_toc_header           tochdr;
 
 	CDValid = false;
 
-	if (ioctl(CDFile, CDROMREADTOCHDR, &tochdr) == -1)
+	if (ioctl(CDFile, CDIOREADTOCHEADER, &tochdr) == -1)
 	{
-		GCon->Log(NAME_Dev, "ioctl cdromreadtochdr failed");
+		GCon->Log(NAME_Dev, "ioctl CDIOREADTOCHEADER failed");
 		return;
 	}
 
-	if (tochdr.cdth_trk0 < 1)
+	if (tochdr.starting_track < 1)
 	{
 		GCon->Log(NAME_Dev, "CDAudio: no music tracks");
 		return;
 	}
 
 	CDValid = true;
-	MaxTrack = tochdr.cdth_trk1;
+	MaxTrack = tochdr.ending_track;
 	unguard;
 }
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::Play
+//	VBsdCDAudioDevice::Play
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::Play(int track, bool looping)
+void VBsdCDAudioDevice::Play(int track, bool looping)
 {
-	guard(VLinuxCDAudioDevice::Play);
-	struct cdrom_tocentry	entry;
-	struct cdrom_ti			ti;
+	guard(VBsdCDAudioDevice::Play);
+	struct ioc_play_track                   ti;
 
 	if (!CDValid)
 	{
@@ -237,7 +243,9 @@ void VLinuxCDAudioDevice::Play(int track, bool looping)
 		return;
 	}
 
+/*
 	// don't try to play a non-audio track
+	struct ioc_read_toc_single_entry        entry;
 	entry.cdte_track = track;
 	entry.cdte_format = CDROM_MSF;
 	if (ioctl(CDFile, CDROMREADTOCENTRY, &entry) == -1)
@@ -250,7 +258,7 @@ void VLinuxCDAudioDevice::Play(int track, bool looping)
 		GCon->Logf("CDAudio: track %d is not audio", track);
 		return;
 	}
-
+*/
 	if (Playing)
 	{
 		if (PlayTrack == track)
@@ -258,19 +266,19 @@ void VLinuxCDAudioDevice::Play(int track, bool looping)
 		Stop();
 	}
 
-	ti.cdti_trk0 = track;
-	ti.cdti_trk1 = track;
-	ti.cdti_ind0 = 1;
-	ti.cdti_ind1 = 99;
+	ti.start_track = track;
+	ti.end_track = track;
+	ti.start_index = 1;
+	ti.end_index = 99;
 
-	if (ioctl(CDFile, CDROMPLAYTRKIND, &ti) == -1)
+	if (ioctl(CDFile, CDIOCPLAYTRACKS, &ti) == -1)
 	{
-		GCon->Log(NAME_Dev, "ioctl cdromplaytrkind failed");
+		GCon->Log(NAME_Dev, "ioctl CDIOCPLAYTRACKS failed");
 		return;
 	}
 
-	if (ioctl(CDFile, CDROMRESUME) == -1)
-		GCon->Log(NAME_Dev, "ioctl cdromresume failed");
+	if (ioctl(CDFile, CDIOCRESUME) == -1)
+		GCon->Log(NAME_Dev, "ioctl CDIOCRESUME failed");
 
 	PlayLooping = looping;
 	PlayTrack = track;
@@ -280,18 +288,18 @@ void VLinuxCDAudioDevice::Play(int track, bool looping)
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::Pause
+//	VBsdCDAudioDevice::Pause
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::Pause()
+void VBsdCDAudioDevice::Pause()
 {
-	guard(VLinuxCDAudioDevice::Pause);
+	guard(VBsdCDAudioDevice::Pause);
 	if (!Playing)
 		return;
 
-	if (ioctl(CDFile, CDROMPAUSE) == -1)
-		GCon->Log(NAME_Dev, "ioctl cdrompause failed");
+	if (ioctl(CDFile, CDIOCPAUSE) == -1)
+		GCon->Log(NAME_Dev, "ioctl CDIOCPAUSE failed");
 
 	WasPlaying = Playing;
 	Playing = false;
@@ -300,18 +308,18 @@ void VLinuxCDAudioDevice::Pause()
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::Resume
+//	VBsdCDAudioDevice::Resume
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::Resume()
+void VBsdCDAudioDevice::Resume()
 {
-	guard(VLinuxCDAudioDevice::Resume);
+	guard(VBsdCDAudioDevice::Resume);
 	if (!WasPlaying)
 		return;
 
-	if (ioctl(CDFile, CDROMRESUME) == -1)
-		GCon->Log(NAME_Dev, "ioctl cdromresume failed");
+	if (ioctl(CDFile, CDIOCRESUME) == -1)
+		GCon->Log(NAME_Dev, "ioctl CDIOCRESUME failed");
 
 	Playing = true;
 	unguard;
@@ -319,18 +327,18 @@ void VLinuxCDAudioDevice::Resume()
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::Stop
+//	VBsdCDAudioDevice::Stop
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::Stop()
+void VBsdCDAudioDevice::Stop()
 {
-	guard(VLinuxCDAudioDevice::Stop);
+	guard(VBsdCDAudioDevice::Stop);
 	if (!Playing)
 		return;
 
-	if (ioctl(CDFile, CDROMSTOP) == -1)
-		GCon->Log(NAME_Dev, "ioctl cdromstop failed");
+	if (ioctl(CDFile, CDIOCSTOP) == -1)
+		GCon->Log(NAME_Dev, "ioctl CDIOCSTOP failed");
 
 	WasPlaying = false;
 	Playing = false;
@@ -339,28 +347,30 @@ void VLinuxCDAudioDevice::Stop()
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::OpenDoor
+//	VBsdCDAudioDevice::OpenDoor
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::OpenDoor()
+void VBsdCDAudioDevice::OpenDoor()
 {
-	guard(VLinuxCDAudioDevice::OpenDoor);
-	if (ioctl(CDFile, CDROMEJECT) == -1)
-		GCon->Log(NAME_Dev, "ioctl cdromeject failed");
+	guard(VBsdCDAudioDevice::OpenDoor);
+	if (ioctl(CDFile, CDIOCEJECT) == -1)
+		GCon->Log(NAME_Dev, "ioctl CDIOCEJECT failed");
 	unguard;
 }
 
 //==========================================================================
 //
-//	VLinuxCDAudioDevice::CloseDoor
+//	VBsdCDAudioDevice::CloseDoor
 //
 //==========================================================================
 
-void VLinuxCDAudioDevice::CloseDoor()
+void VBsdCDAudioDevice::CloseDoor()
 {
-	guard(VLinuxCDAudioDevice::CloseDoor);
-	if (ioctl(CDFile, CDROMCLOSETRAY) == -1)
-		GCon->Log(NAME_Dev, "ioctl cdromclosetray failed");
+	guard(VBsdCDAudioDevice::CloseDoor);
+	if (ioctl(CDFile, CDIOCCLOSE) == -1)
+		GCon->Log(NAME_Dev, "ioctl CDIOCCLOSE failed");
 	unguard;
 }
+
+#endif

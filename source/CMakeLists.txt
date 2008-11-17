@@ -188,14 +188,14 @@ set(MAIN_COMMON_SOURCES
 	r_tex_tga.cpp
 	r_tex_warp.cpp
 	r_things.cpp
-	s_data.cpp
-	s_local.h
-	s_qmus2mid.cpp
-	s_reverbs.cpp
-	s_sound.cpp
-	s_streamplayer.cpp
-	s_tmidty.cpp
-	s_wav.cpp
+	snd_data.cpp
+	snd_local.h
+	snd_main.cpp
+	snd_qmus2mid.cpp
+	snd_reverbs.cpp
+	snd_streamplayer.cpp
+	snd_timidity.cpp
+	snd_wav.cpp
 	save.h
 	sbar.cpp
 	sbar.h
@@ -338,27 +338,27 @@ set(MAIN_OPENGL_SOURCES
 
 #-- OpenAL files --
 set(MAIN_OPENAL_SOURCES
-	s_al.cpp
+	snd_al.cpp
 )
 
 #-- Vorbis files --
 set(MAIN_VORBIS_SOURCES
-	s_vorbis.cpp
+	snd_vorbis.cpp
 )
 
 #-- MP3 files --
 set(MAIN_MP3_SOURCES
-	s_mp3.cpp
+	snd_mp3.cpp
 )
 
 #-- MikMod files --
 set(MAIN_MIKMOD_SOURCES
-	s_mikmod.cpp
+	snd_mikmod.cpp
 )
 
 #-- FLAC files --
 set(MAIN_FLAC_SOURCES
-	s_flac.cpp
+	snd_flac.cpp
 )
 
 #-- Linux with Allegro --
@@ -366,8 +366,8 @@ set(MAIN_UNIX_ALLEGRO_SOURCES
 	d_alleg.cpp
 	in_alleg.cpp
 	net_udp.cpp
-	s_alleg.cpp
-	s_allegm.cpp
+	snd_allegro.cpp
+	snd_allegromusic.cpp
 	sys_lin.cpp
 )
 set(MAIN_OPENGL_UNIX_ALLEGRO_SOURCES
@@ -379,8 +379,8 @@ set(MAIN_UNIX_SDL_SOURCES
 	d_sdl.cpp
 	in_sdl.cpp
 	net_udp.cpp
-	s_sdl.cpp
-	s_sdlm.cpp
+	snd_sdl.cpp
+	snd_sdlmusic.cpp
 	sys_sdl.cpp
 )
 set(MAIN_OPENGL_UNIX_SDL_SOURCES
@@ -389,15 +389,14 @@ set(MAIN_OPENGL_UNIX_SDL_SOURCES
 
 #-- CD audio drivers for various UNIX platforms --
 set(MAIN_CDAUDIO_LINUX_SOURCES
-	cd_linux.cpp
+	snd_audiocd_linux.cpp
 )
 set(MAIN_CDAUDIO_BSD_SOURCES
-	cd_bsd.cpp
+	snd_audiocd_bsd.cpp
 )
 
 #-- Windows --
 set(MAIN_WIN32_SOURCES
-	cd_win32.cpp
 	d_win32.cpp
 	d3d_draw.cpp
 	d3d_local.h
@@ -407,8 +406,9 @@ set(MAIN_WIN32_SOURCES
 	eax.h
 	in_win32.cpp
 	net_winsock.cpp
-	s_win32.cpp
-	s_win32m.cpp
+	snd_audiocd_win32.cpp
+	snd_win32.cpp
+	snd_win32music.cpp
 	sys_win.cpp
 	vavoom.ico
 	vavoom_2.ico
@@ -496,8 +496,8 @@ set(SERVER_COMMON_SOURCES
 	r_tex_raw.cpp
 	r_tex_tga.cpp
 	r_tex_warp.cpp
-	s_data.cpp
-	s_reverbs.cpp
+	snd_data.cpp
+	snd_reverbs.cpp
 	sc_man.cpp
 	str.cpp
 	stream.cpp

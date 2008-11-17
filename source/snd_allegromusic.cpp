@@ -25,27 +25,26 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include <SDL.h>
-#include <SDL_mixer.h>
-
+#include <allegro.h>
 #include "gamedefs.h"
-#include "s_local.h"
+#include "snd_local.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
-class VSDLMidiDevice : public VMidiDevice
+class VAllegroMidiDevice : public VMidiDevice
 {
 public:
-	bool		DidInitMixer;
-	Mix_Music*	music;
+	bool		DidInitAllegro;
+	MIDI		mididata;
+	bool		midi_locked;
 
 	void*		Mus_SndPtr;
 	bool		MusicPaused;
 	float		MusVolume;
 
-	VSDLMidiDevice();
+	VAllegroMidiDevice();
 	void Init();
 	void Shutdown();
 	void SetVolume(float);
@@ -55,6 +54,8 @@ public:
 	void Resume();
 	void Stop();
 	bool IsPlaying();
+
+	bool LoadMIDI();
 };
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -65,12 +66,12 @@ public:
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern bool					sdl_mixer_initialised;
+extern bool				allegro_sound_initialised;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-IMPLEMENT_MIDI_DEVICE(VSDLMidiDevice, MIDIDRV_Default, "Default",
-	"SDL midi device", NULL);
+IMPLEMENT_MIDI_DEVICE(VAllegroMidiDevice, MIDIDRV_Default, "Default",
+	"Allegro midi device", NULL);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -78,42 +79,38 @@ IMPLEMENT_MIDI_DEVICE(VSDLMidiDevice, MIDIDRV_Default, "Default",
 
 //==========================================================================
 //
-//	VSDLMidiDevice::VSDLMidiDevice
+//	VAllegroMidiDevice::VAllegroMidiDevice
 //
 //==========================================================================
 
-VSDLMidiDevice::VSDLMidiDevice()
-: DidInitMixer(false)
-, music(NULL)
+VAllegroMidiDevice::VAllegroMidiDevice()
+: DidInitAllegro(false)
+, midi_locked(false)
 , Mus_SndPtr(NULL)
 , MusicPaused(false)
 , MusVolume(-1)
 {
+	memset(&mididata, 0, sizeof(mididata));
 }
 
 //==========================================================================
 //
-//	VSDLMidiDevice::Init
+//	VAllegroMidiDevice::Init
 //
 //==========================================================================
 
-void VSDLMidiDevice::Init()
+void VAllegroMidiDevice::Init()
 {
-	guard(VSDLMidiDevice::Init);
-	if (!sdl_mixer_initialised)
+	guard(VAllegroMidiDevice::Init);
+	if (!allegro_sound_initialised)
 	{
-		//	Currently I failed to make OpenAL work with SDL music.
-#if 1
-		return;
-#else
-		if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT,
-			MIX_DEFAULT_CHANNELS, 4096) < 0)
+		// Init sound device
+		if (install_sound(DIGI_NONE, MIDI_AUTODETECT, NULL) == -1)
 		{
-			GCon->Logf(NAME_Init, "Failed to intialise SDL mixer");
+			GCon->Logf(NAME_Init, "ALLEGRO SOUND INIT ERROR!!!!\n%s\n", allegro_error);
 			return;
 		}
-		DidInitMixer = true;
-#endif
+		DidInitAllegro = true;
 	}
 	Initialised = true;
 	unguard;
@@ -121,19 +118,19 @@ void VSDLMidiDevice::Init()
 
 //==========================================================================
 //
-//	VSDLMidiDevice::Shutdown
+//	VAllegroMidiDevice::Shutdown
 //
 //==========================================================================
 
-void VSDLMidiDevice::Shutdown()
+void VAllegroMidiDevice::Shutdown()
 {
-	guard(VSDLMidiDevice::Shutdown);
+	guard(VAllegroMidiDevice::Shutdown);
 	if (Initialised)
 	{
 		Stop();
-		if (DidInitMixer)
+		if (DidInitAllegro)
 		{
-			Mix_CloseAudio();
+			remove_sound();
 		}
 	}
 	unguard;
@@ -141,62 +138,55 @@ void VSDLMidiDevice::Shutdown()
 
 //==========================================================================
 //
-//	VSDLMidiDevice::SetVolume
+//	VAllegroMidiDevice::SetVolume
 //
 //==========================================================================
 
-void VSDLMidiDevice::SetVolume(float Volume)
+void VAllegroMidiDevice::SetVolume(float Volume)
 {
-	guard(VSDLMidiDevice::SetVolume);
+	guard(VAllegroMidiDevice::SetVolume);
 	if (Volume != MusVolume)
 	{
 		MusVolume = Volume;
-		Mix_VolumeMusic(int(MusVolume * 255));
+		set_volume(-1, int(MusVolume * 255));
 	}
 	unguard;
 }
 
 //==========================================================================
 //
-//  VSDLMidiDevice::Tick
+//	VAllegroMidiDevice::Tick
 //
 //==========================================================================
 
-void VSDLMidiDevice::Tick(float)
+void VAllegroMidiDevice::Tick(float)
 {
 }
 
 //==========================================================================
 //
-//	VSDLMidiDevice::Play
+//	VAllegroMidiDevice::Play
 //
 //==========================================================================
 
-void VSDLMidiDevice::Play(void* Data, int len, const char* song, bool loop)
+void VAllegroMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 {
-	guard(VSDLMidiDevice::Play);
-	int		handle;
+	guard(VAllegroMidiDevice::Play);
+	bool		res;
 
 	Mus_SndPtr = Data;
-	if ((handle = Sys_FileOpenWrite("vv_temp.mid")) < 0) return;
-	if (Sys_FileWrite(handle, Mus_SndPtr, len) != len) return;
-	if (Sys_FileClose(handle) < 0) return;
-
-	music = Mix_LoadMUS("vv_temp.mid");
-	remove("vv_temp.mid");
-
-	if (!music)
+	res = LoadMIDI();
+	if (!res)
 	{
 		Z_Free(Mus_SndPtr);
 		Mus_SndPtr = NULL;
 		return;
 	}
 
-	Mix_FadeInMusic(music, loop, 2000);
-
+	play_midi(&mididata, loop); // 'true' denotes endless looping.
 	if (!MusVolume || MusicPaused)
 	{
-		Mix_PauseMusic();
+		midi_pause();
 	}
 	CurrSong = VName(song, VName::AddLower8);
 	CurrLoop = loop;
@@ -205,47 +195,119 @@ void VSDLMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 
 //==========================================================================
 //
-//  VSDLMidiDevice::Pause
+//  VAllegroMidiDevice::LoadMIDI
+//
+//	Convert an in-memory copy of a MIDI format 0 or 1 file to
+// an Allegro MIDI structure
 //
 //==========================================================================
 
-void VSDLMidiDevice::Pause()
+bool VAllegroMidiDevice::LoadMIDI()
 {
-	guard(VSDLMidiDevice::Pause);
-	Mix_PauseMusic();
+	guard(VAllegroMidiDevice::LoadMIDI);
+	int 		i;
+	int 		num_tracks;
+	byte		*data;
+	MIDheader	*hdr;
+
+	memset(&mididata, 0, sizeof(mididata));
+
+	hdr = (MIDheader*)Mus_SndPtr;
+
+	// MIDI file type
+	i = BigShort(hdr->type);
+	if ((i != 0) && (i != 1))
+	{
+		// only type 0 and 1 are suported
+		GCon->Log(NAME_Dev, "Unsuported MIDI type");
+		return false;
+	}
+
+	// number of tracks
+	num_tracks = BigShort(hdr->num_tracks);
+	if ((num_tracks < 1) || (num_tracks > MIDI_TRACKS))
+	{
+		GCon->Log(NAME_Dev, "Invalid MIDI track count");
+		return false;
+	}
+
+	// beat divisions
+	mididata.divisions = BigShort(hdr->divisions);
+
+	// read each track
+	data = (byte*)hdr + sizeof(*hdr);
+	for (i = 0; i < num_tracks; i++)
+	{
+		if (memcmp(data, "MTrk", 4))
+		{
+			GCon->Logf(NAME_Dev, "Bad MIDI track %d header", i);
+			return false;
+		}
+		data += 4;
+
+		mididata.track[i].len = BigLong(*(int*)data);
+		data += 4;
+
+		mididata.track[i].data = data;
+		data += mididata.track[i].len;
+	}
+
+	lock_midi(&mididata);
+	midi_locked = true;
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAllegroMidiDevice::Pause
+//
+//==========================================================================
+
+void VAllegroMidiDevice::Pause()
+{
+	guard(VAllegroMidiDevice::Pause);
+	midi_pause();
 	MusicPaused = true;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VSDLMidiDevice::Resume
+//	VAllegroMidiDevice::Resume
 //
 //==========================================================================
 
-void VSDLMidiDevice::Resume()
+void VAllegroMidiDevice::Resume()
 {
-	guard(VSDLMidiDevice::Resume);
+	guard(VAllegroMidiDevice::Resume);
 	if (MusVolume)
-		Mix_ResumeMusic();
+		midi_resume();
 	MusicPaused = false;
 	unguard;
 }
 
 //==========================================================================
 //
-//  VSDLMidiDevice::Stop
+//  VAllegroMidiDevice::Stop
 //
 //==========================================================================
 
-void VSDLMidiDevice::Stop()
+void VAllegroMidiDevice::Stop()
 {
-	guard(VSDLMidiDevice::Stop);
-	if (music)
-	{
-		Mix_HaltMusic();
-		Mix_FreeMusic(music);
-		music = NULL;
+	guard(VAllegroMidiDevice::Stop);
+	stop_midi();
+	if (midi_locked)
+    {
+		for (int i = 0; i < MIDI_TRACKS; i++)
+		{
+			if (mididata.track[i].data)
+			{
+				UNLOCK_DATA(mididata.track[i].data, mididata.track[i].len);
+			}
+		}
+		UNLOCK_DATA(&mididata, sizeof(MIDI));
+		midi_locked = false;
 	}
 	if (Mus_SndPtr)
 	{
@@ -258,13 +320,13 @@ void VSDLMidiDevice::Stop()
 
 //==========================================================================
 //
-//  VSDLMidiDevice::IsPlaying
+//	VAllegroMidiDevice::IsPlaying
 //
 //==========================================================================
 
-bool VSDLMidiDevice::IsPlaying()
+bool VAllegroMidiDevice::IsPlaying()
 {
-	guard(VSDLMidiDevice::IsPlaying);
-	return !!music;
+	guard(VAllegroMidiDevice::IsPlaying);
+	return midi_pos >= 0;
 	unguard;
 }

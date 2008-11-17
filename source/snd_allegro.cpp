@@ -32,7 +32,7 @@
 #include <allegro.h>
 
 #include "gamedefs.h"
-#include "s_local.h"
+#include "snd_local.h"
 
 // MACROS ------------------------------------------------------------------
 

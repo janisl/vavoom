@@ -27,7 +27,7 @@
 
 #include "gamedefs.h"
 #include "cl_local.h"
-#include "s_local.h"
+#include "snd_local.h"
 
 // MACROS ------------------------------------------------------------------
 

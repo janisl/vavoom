@@ -26,7 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
-#include "s_local.h"
+#include "snd_local.h"
 
 #include "timidity/timidity.h"
 #include "timidity/config.h"

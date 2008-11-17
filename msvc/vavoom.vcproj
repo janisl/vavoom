@@ -1865,59 +1865,15 @@
 			Name="Sound"
 			>
 			<File
-				RelativePath="..\source\cd_linux.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\source\cd_win32.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\eax.h"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_al.cpp"
+				RelativePath="..\source\snd_al.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_alleg.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\source\s_allegm.cpp"
+				RelativePath="..\source\snd_allegro.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -1937,35 +1893,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\source\s_data.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\s_flac.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\s_local.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\s_mikmod.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\s_mp3.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\s_qmus2mid.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\s_reverbs.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\s_sdl.cpp"
+				RelativePath="..\source\snd_allegromusic.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -1985,7 +1913,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\source\s_sdlm.cpp"
+				RelativePath="..\source\snd_audiocd_bsd.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -2005,31 +1933,123 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\source\s_sound.cpp"
+				RelativePath="..\source\snd_audiocd_linux.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\source\snd_audiocd_win32.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_streamplayer.cpp"
+				RelativePath="..\source\snd_data.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_tmidty.cpp"
+				RelativePath="..\source\snd_flac.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_vorbis.cpp"
+				RelativePath="..\source\snd_local.h"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_wav.cpp"
+				RelativePath="..\source\snd_main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_win32.cpp"
+				RelativePath="..\source\snd_mikmod.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\s_win32m.cpp"
+				RelativePath="..\source\snd_mp3.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_qmus2mid.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_reverbs.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_sdl.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\source\snd_sdlmusic.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\source\snd_streamplayer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_timidity.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_vorbis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_wav.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_win32.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_win32music.cpp"
 				>
 			</File>
 			<File
