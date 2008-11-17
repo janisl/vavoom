@@ -229,6 +229,8 @@ class VBasePlayer : public VObject
 	void DoClientHudMessage(const VStr&, VName, int, int, int, const VStr&,
 		float, float, int, int, float, float, float);
 
+	void WriteViewData();
+
 	DECLARE_FUNCTION(cprint)
 	DECLARE_FUNCTION(centreprint)
 	DECLARE_FUNCTION(GetPlayerNum)

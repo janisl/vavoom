@@ -188,14 +188,6 @@ set(MAIN_COMMON_SOURCES
 	r_tex_tga.cpp
 	r_tex_warp.cpp
 	r_things.cpp
-	snd_data.cpp
-	snd_local.h
-	snd_main.cpp
-	snd_qmus2mid.cpp
-	snd_reverbs.cpp
-	snd_streamplayer.cpp
-	snd_timidity.cpp
-	snd_wav.cpp
 	save.h
 	sbar.cpp
 	sbar.h
@@ -204,6 +196,14 @@ set(MAIN_COMMON_SOURCES
 	screen.h
 	scripts.h
 	server.h
+	snd_data.cpp
+	snd_local.h
+	snd_main.cpp
+	snd_qmus2mid.cpp
+	snd_reverbs.cpp
+	snd_streamplayer.cpp
+	snd_timidity.cpp
+	snd_wav.cpp
 	sound.h
 	str.cpp
 	str.h

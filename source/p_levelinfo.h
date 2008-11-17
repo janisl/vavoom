@@ -154,6 +154,8 @@ class VLevelInfo : public VThinker
 
 	VEntity* FindMobjFromTID(int, VEntity*);
 
+	void ChangeMusic(VName);
+
 	VStr GetLevelName() const
 	{
 		return LevelInfoFlags & LIF_LookupName ? GLanguage[*LevelName] : LevelName;
@@ -178,6 +180,8 @@ class VLevelInfo : public VThinker
 	DECLARE_FUNCTION(ChangeSwitchTexture)
 	DECLARE_FUNCTION(FindMobjFromTID)
 	DECLARE_FUNCTION(AutoSave)
+
+	DECLARE_FUNCTION(ChangeMusic)
 
 	void eventSpawnSpecials()
 	{

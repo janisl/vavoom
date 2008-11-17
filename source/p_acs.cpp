@@ -2872,7 +2872,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_MusicChange)
-			SV_ChangeMusic(*GetStr(sp[-2]));
+			Level->ChangeMusic(GetName8(sp[-2]));
 			sp -= 2;
 			ACSVM_BREAK;
 
@@ -3070,19 +3070,20 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMusic)
-			SV_ChangeMusic(*GetStr(sp[-3]));
+			Level->ChangeMusic(GetName8(sp[-3]));
 			sp -= 3;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMusicDirect)
-			SV_ChangeMusic(*GetStr(READ_INT32(ip)));
+			Level->ChangeMusic(GetName8(READ_INT32(ip)));
 			ip += 12;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_LocalSetMusic)
 			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				SV_ChangeLocalMusic(Activator->Player, *GetStr(sp[-3]));
+				Activator->Player->eventClientChangeMusic(
+					GetNameLowerCase(sp[-3]), 0);
 			}
 			sp -= 3;
 			ACSVM_BREAK;
@@ -3090,7 +3091,8 @@ int VAcs::RunScript(float DeltaTime)
 		ACSVM_CASE(PCD_LocalSetMusicDirect)
 			if (Activator && Activator->EntityFlags & VEntity::EF_IsPlayer)
 			{
-				SV_ChangeLocalMusic(Activator->Player, *GetStr(READ_INT32(ip)));
+				Activator->Player->eventClientChangeMusic(
+					GetNameLowerCase(READ_INT32(ip)), 0);
 			}
 			ip += 12;
 			ACSVM_BREAK;
@@ -4081,7 +4083,10 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ChangeSky)
-			SV_ChangeSky(*GetStr(sp[-2]), *GetStr(sp[-1]));
+			Level->Sky1Texture = GTextureManager.NumForName(GetName8(sp[-2]),
+				TEXTYPE_Wall, true, false);
+			Level->Sky2Texture = GTextureManager.NumForName(GetName8(sp[-1]),
+				TEXTYPE_Wall, true, false);
 			sp -= 2;
 			ACSVM_BREAK;
 

@@ -36,11 +36,13 @@ bool TryPickup(EntityEx Toucher)
 	if (XLevel.MapName == 'map03')
 	{
 		LineSpecialLevelInfo(Level).ConversationSlideshow = true;
+		Level.ChangeMusic('d_dark');
 		PlayerEx(Toucher.Player).ClientSlideshow1();
 	}
 	else if (XLevel.MapName == 'map10')
 	{
 		LineSpecialLevelInfo(Level).ConversationSlideshow = true;
+		Level.ChangeMusic('d_dark');
 		PlayerEx(Toucher.Player).ClientSlideshow2();
 		Toucher.GiveInventoryType(QuestItem17);
 	}

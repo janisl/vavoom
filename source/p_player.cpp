@@ -817,6 +817,26 @@ void VBasePlayer::DoClientHudMessage(const VStr& Message, VName Font, int Type,
 
 //==========================================================================
 //
+//	VBasePlayer::WriteViewData
+//
+//==========================================================================
+
+void VBasePlayer::WriteViewData()
+{
+	guard(VBasePlayer::WriteViewData);
+	ViewEntAlpha = MO->Alpha;
+
+	//	Update bam_angles (after teleportation)
+	if (PlayerFlags & PF_FixAngle)
+	{
+		PlayerFlags &= ~PF_FixAngle;
+		eventClientSetAngles(ViewAngles);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	COMMAND SetInfo
 //
 //==========================================================================

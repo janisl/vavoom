@@ -209,26 +209,6 @@ void SV_Clear()
 
 //==========================================================================
 //
-//	SV_WriteViewData
-//
-//==========================================================================
-
-void SV_WriteViewData(VBasePlayer &player)
-{
-	guard(SV_WriteViewData);
-	player.ViewEntAlpha = player.MO->Alpha;
-
-	//	Update bam_angles (after teleportation)
-	if (player.PlayerFlags & VBasePlayer::PF_FixAngle)
-	{
-		player.PlayerFlags &= ~VBasePlayer::PF_FixAngle;
-		player.eventClientSetAngles(player.ViewAngles);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	IsRelevant
 //
 //==========================================================================
@@ -358,7 +338,7 @@ void SV_SendClientMessages()
 		{
 			if (Player->Net->NeedsUpdate)
 			{
-				SV_WriteViewData(*Player);
+				Player->WriteViewData();
 				SV_UpdateLevel(Player);
 			}
 
@@ -366,7 +346,7 @@ void SV_SendClientMessages()
 		}
 		else if (host_standalone && (Player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
-			SV_WriteViewData(*Player);
+			Player->WriteViewData();
 		}
 
 		if (Player->Net)
@@ -619,48 +599,6 @@ void SV_Ticker()
 	}
 
 	host_frametime = saved_frametime;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_ChangeSky
-//
-//==========================================================================
-
-void SV_ChangeSky(const char* Sky1, const char* Sky2)
-{
-	guard(SV_ChangeSky);
-	GLevelInfo->Sky1Texture = GTextureManager.NumForName(VName(Sky1,
-		VName::AddLower8), TEXTYPE_Wall, true, false);
-	GLevelInfo->Sky2Texture = GTextureManager.NumForName(VName(Sky2,
-		VName::AddLower8), TEXTYPE_Wall, true, false);
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_ChangeMusic
-//
-//==========================================================================
-
-void SV_ChangeMusic(const char* SongName)
-{
-	guard(SV_ChangeMusic);
-	GLevelInfo->SongLump = VName(SongName, VName::AddLower8);
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_ChangeLocalMusic
-//
-//==========================================================================
-
-void SV_ChangeLocalMusic(VBasePlayer *player, const char* SongName)
-{
-	guard(SV_ChangeLocalMusic);
-	player->eventClientChangeMusic(SongName, 0);
 	unguard;
 }
 

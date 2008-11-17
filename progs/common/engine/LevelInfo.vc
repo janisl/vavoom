@@ -276,6 +276,8 @@ native final bool ChangeSwitchTexture(int SideNum, int useAgain,
 native final Entity FindMobjFromTID(int tid, Entity Prev);
 native final void AutoSave();
 
+native final void ChangeMusic(name SongName);
+
 //==========================================================================
 //
 //  SpawnSpecials

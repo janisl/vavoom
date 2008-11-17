@@ -207,9 +207,6 @@ extern int 			TimerGame; // tic countdown for deathmatch
 //
 //==========================================================================
 
-void SV_ChangeSky(const char*, const char*);
-void SV_ChangeMusic(const char*);
-void SV_ChangeLocalMusic(VBasePlayer*, const char*);
 void SV_ReadMove();
 
 void Draw_TeleportIcon();

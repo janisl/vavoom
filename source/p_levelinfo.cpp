@@ -379,6 +379,19 @@ VEntity* VLevelInfo::FindMobjFromTID(int tid, VEntity* Prev)
 
 //==========================================================================
 //
+//	VLevelInfo::ChangeMusic
+//
+//==========================================================================
+
+void VLevelInfo::ChangeMusic(VName SongName)
+{
+	guard(SV_ChangeMusic);
+	SongLump = SongName;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VLevelInfo natives
 //
 //==========================================================================
@@ -508,4 +521,11 @@ IMPLEMENT_FUNCTION(VLevelInfo, AutoSave)
 	{
 		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
 	}
+}
+
+IMPLEMENT_FUNCTION(VLevelInfo, ChangeMusic)
+{
+	P_GET_NAME(SongName);
+	P_GET_SELF;
+	Self->ChangeMusic(SongName);
 }

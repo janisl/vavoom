@@ -379,18 +379,6 @@ IMPLEMENT_FUNCTION(VObject, FindClassFromScriptId)
 	RET_PTR(SV_FindClassFromScriptId(Id, GameFilter));
 }
 
-//==========================================================================
-//
-//	PF_ChangeMusic
-//
-//==========================================================================
-
-IMPLEMENT_FUNCTION(VObject, ChangeMusic)
-{
-	P_GET_STR(SongName);
-	SV_ChangeMusic(*SongName);
-}
-
 #endif
 #ifdef CLIENT
 

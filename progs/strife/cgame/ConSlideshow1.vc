@@ -53,7 +53,6 @@ void PlayPage()
 	{
 	case 0:
 		BackPic.SetPic('ss2f1');
-		ChangeMusic(va("%n", 'd_dark'));
 		LocalSound('svox/mac10');
 		PicTimer = 9.0;
 		PageNum = 1;
