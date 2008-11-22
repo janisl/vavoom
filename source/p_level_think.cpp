@@ -174,7 +174,7 @@ VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
 	VThinker* Ret = (VThinker*)StaticSpawnObject(Class);
 	AddThinker(Ret);
 
-	if (Class->IsChildOf(VEntity::StaticClass()))
+	if (IsForServer() && Class->IsChildOf(VEntity::StaticClass()))
 	{
 		((VEntity*)Ret)->Origin = AOrigin;
 		((VEntity*)Ret)->Angles = AAngles;
