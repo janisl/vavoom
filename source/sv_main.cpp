@@ -923,6 +923,22 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	else
 	{
 		//	New game
+		netgame = svs.max_clients > 1;
+		deathmatch = DeathMatch;
+
+		GGameInfo->netgame = netgame;
+		GGameInfo->deathmatch = deathmatch;
+
+		P_InitThinkers();
+
+#ifdef CLIENT
+		GGameInfo->NetMode = titlemap ? NM_TitleMap :
+			svs.max_clients == 1 ? use_standalone ? NM_Standalone : NM_LoopbackSinglePlayer :
+			NM_ServerLoopbackClient;
+#else
+		GGameInfo->NetMode = NM_DedicatedServer;
+#endif
+
 		GGameInfo->WorldInfo = GGameInfo->eventCreateWorldInfo();
 
 		GGameInfo->WorldInfo->SetSkill(Skill);
@@ -944,14 +960,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	GLevel->WorldInfo = GGameInfo->WorldInfo;
 
 	const mapInfo_t& info = P_GetMapInfo(GLevel->MapName);
-
-	netgame = svs.max_clients > 1;
-	deathmatch = DeathMatch;
-
-	GGameInfo->netgame = netgame;
-	GGameInfo->deathmatch = deathmatch;
-
-	P_InitThinkers();
 
 	if (spawn_thinkers)
 	{
@@ -1162,6 +1170,7 @@ void SV_ShutdownServer(bool crash)
 		delete GGameInfo->WorldInfo;
 		GGameInfo->WorldInfo = NULL;
 	}
+	GGameInfo->NetMode = NM_None;
 	for (i = 0; i < MAXPLAYERS; i++)
 	{
 		//	Save net pointer

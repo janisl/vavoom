@@ -376,6 +376,7 @@ void CL_Disconnect()
 		delete GClLevel;
 	}
 	GClLevel = NULL;
+	GGameInfo->NetMode = NM_None;
 
 	cls.demoplayback = false;
 	cls.timedemo = false;
@@ -428,6 +429,10 @@ void CL_EstablishConnection(const char* host)
 
 		CL_SetUpLocalPlayer(Sock);
 		GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
+		if (GGameInfo->NetMode == NM_None)
+		{
+			GGameInfo->NetMode = NM_Client;
+		}
 	}
 
 	UserInfoSent = false;

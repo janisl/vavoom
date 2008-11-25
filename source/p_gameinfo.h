@@ -23,6 +23,27 @@
 //**
 //**************************************************************************
 
+//
+//	Network mode.
+//
+enum
+{
+	//	Not running a game.
+	NM_None,
+	//	Playing a titlemap.
+	NM_TitleMap,
+	//	Standalone single player game.
+	NM_Standalone,
+	//	Single player game with loopback network connection.
+	NM_LoopbackSinglePlayer,
+	//	Dedicated server, no local client.
+	NM_DedicatedServer,
+	//	Server with local client connected using loopback driver.
+	NM_ServerLoopbackClient,
+	//	Client only, no local server.
+	NM_Client,
+};
+
 class VGameInfo : public VObject
 {
 	DECLARE_CLASS(VGameInfo, VObject, 0)
@@ -30,6 +51,7 @@ class VGameInfo : public VObject
 	VName			AcsHelper;
 	VName			GenericConScript;
 
+	vuint8			NetMode;
 	vuint8			netgame;
 	vuint8			deathmatch;
 	vuint8			respawn;

@@ -27,9 +27,31 @@ class GameInfo : Object
 	native
 	abstract;
 
+//
+//	Network mode.
+//
+enum
+{
+	//	Not running a game.
+	NM_None,
+	//	Playing a titlemap.
+	NM_TitleMap,
+	//	Standalone single player game.
+	NM_Standalone,
+	//	Single player game with loopback network connection.
+	NM_LoopbackSinglePlayer,
+	//	Dedicated server, no local client.
+	NM_DedicatedServer,
+	//	Server with local client connected using loopback driver.
+	NM_ServerLoopbackClient,
+	//	Client only, no local server.
+	NM_Client
+};
+
 name				AcsHelper;
 name				GenericConScript;
 
+readonly byte		NetMode;
 readonly byte		netgame;
 readonly byte		deathmatch;
 byte				respawn;
