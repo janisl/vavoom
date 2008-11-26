@@ -517,7 +517,8 @@ IMPLEMENT_FUNCTION(VLevelInfo, FindMobjFromTID)
 IMPLEMENT_FUNCTION(VLevelInfo, AutoSave)
 {
 	P_GET_SELF;
-	if (!netgame)
+	if (Self->Game->NetMode == NM_Standalone ||
+		Self->Game->NetMode == NM_LoopbackSinglePlayer)
 	{
 		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
 	}

@@ -52,7 +52,6 @@ class VGameInfo : public VObject
 	VName			GenericConScript;
 
 	vuint8			NetMode;
-	vuint8			netgame;
 	vuint8			deathmatch;
 	vuint8			respawn;
 	vuint8			nomonsters;

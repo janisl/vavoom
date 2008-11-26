@@ -58,13 +58,13 @@
 
 static bool CheatAllowed()
 {
-   	if (!sv.active || sv.intermission || !GGameInfo->Players[0])
-    {
+	if (!sv.active || sv.intermission || !GGameInfo->Players[0])
+	{
 		GCon->Log("You are not in game!");
-        return false;
+		return false;
 	}
-  	if (netgame)
-    {
+	if (GGameInfo->NetMode >= NM_DedicatedServer)
+	{
 		GCon->Log("You cannot cheat in a network game!");
 		return false;
 	}
@@ -76,7 +76,7 @@ static bool CheatAllowed()
 	if (GGameInfo->Players[0]->Health <= 0)
 	{
 		// Dead players can't cheat
-        GCon->Log("You must be alive to cheat");
+		GCon->Log("You must be alive to cheat");
 		return false;
 	}
 	return true;

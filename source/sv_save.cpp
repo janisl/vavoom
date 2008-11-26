@@ -1113,7 +1113,8 @@ COMMAND(Load)
 
 	Draw_LoadIcon();
 	SV_LoadGame(slot);
-	if (!netgame)
+	if (GGameInfo->NetMode == NM_Standalone ||
+		GGameInfo->NetMode == NM_LoopbackSinglePlayer)
 	{
 		// Copy the base slot to the reborn slot
 		SV_UpdateRebornSlot();

@@ -287,13 +287,14 @@ void VBasePlayer::SpawnClient()
 			true, false);
 	}
 
-	if (!netgame || svs.num_connected == sv_load_num_players)
+	if (GGameInfo->NetMode < NM_DedicatedServer ||
+		svs.num_connected == sv_load_num_players)
 	{
 		sv_loading = false;
 	}
 
 	// For single play, save immediately into the reborn slot
-	if (!netgame)
+	if (GGameInfo->NetMode < NM_DedicatedServer)
 	{
 		SV_SaveGame(SV_GetRebornSlot(), REBORN_DESCRIPTION);
 	}

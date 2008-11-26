@@ -65,7 +65,6 @@ VBasePlayer*	GPlayersBase[MAXPLAYERS];
 bool			paused;
 
 vuint8			deathmatch = false;   	// only if started as net death
-bool			netgame;                // only true if packets are broadcast
 
 int 			TimerGame;
 
@@ -479,7 +478,8 @@ void SV_RunClients()
 #ifdef CLIENT
 		if (Player->PlayerFlags & VBasePlayer::PF_Spawned &&
 			!sv.intermission && !paused &&
-			(netgame || !(MN_Active() || C_Active())))
+			(GGameInfo->NetMode >= NM_DedicatedServer ||
+			!(MN_Active() || C_Active())))
 #else
 		if (Player->PlayerFlags & VBasePlayer::PF_Spawned &&
 			!sv.intermission && !paused)
@@ -537,7 +537,8 @@ void SV_Ticker()
 	float	saved_frametime;
 	int		exec_times;
 
-	if (netgame && (!LastMasterUpdate || host_time - LastMasterUpdate > master_heartbeat_time))
+	if (GGameInfo->NetMode >= NM_DedicatedServer && (!LastMasterUpdate ||
+		host_time - LastMasterUpdate > master_heartbeat_time))
 	{
 		GNet->UpdateMaster();
 		LastMasterUpdate = host_time;
@@ -571,7 +572,8 @@ void SV_Ticker()
 		{
 			// pause if in menu or console
 #ifdef CLIENT
-			if (GGameInfo->NetMode == NM_TitleMap || (!paused && (netgame ||
+			if (GGameInfo->NetMode == NM_TitleMap || (!paused &&
+				(GGameInfo->NetMode >= NM_DedicatedServer ||
 				!(MN_Active() || C_Active()))))
 #else
 			if (GGameInfo->NetMode == NM_TitleMap || !paused)
@@ -654,7 +656,7 @@ static void G_DoCompleted()
 	{
 		return;
 	}
-	if (!netgame && (!GGameInfo->Players[0] ||
+	if ((GGameInfo->NetMode < NM_DedicatedServer) && (!GGameInfo->Players[0] ||
 		!(GGameInfo->Players[0]->PlayerFlags & VBasePlayer::PF_Spawned)))
 	{
 		//FIXME Some ACS left from previous visit of the level
@@ -758,7 +760,8 @@ static void G_DoReborn(int playernum)
 	if (!GGameInfo->Players[playernum] ||
 		!(GGameInfo->Players[playernum]->PlayerFlags & VBasePlayer::PF_Spawned))
 		return;
-	if (!netgame && !deathmatch)// For fun now
+	if ((GGameInfo->NetMode == NM_Standalone ||
+		GGameInfo->NetMode == NM_LoopbackSinglePlayer) && !deathmatch)// For fun now
 	{
 		GCmdBuf << "Restart\n";
 		GGameInfo->Players[playernum]->PlayerState = PST_LIVE;
@@ -925,10 +928,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	else
 	{
 		//	New game
-		netgame = svs.max_clients > 1;
 		deathmatch = DeathMatch;
-
-		GGameInfo->netgame = netgame;
 		GGameInfo->deathmatch = deathmatch;
 
 		P_InitThinkers();
@@ -1203,8 +1203,10 @@ void SV_ShutdownServer(bool crash)
 COMMAND(Restart)
 {
 	guard(COMMAND Restart);
-	if (netgame || !sv.active)
+	if (GGameInfo->NetMode >= NM_DedicatedServer || !sv.active)
+	{
 		return;
+	}
 
 	if (SV_RebornSlotAvailable())
 	{
@@ -1452,9 +1454,6 @@ COMMAND(Map)
 		Skill = P_GetNumSkills() - 1;
 	}
 
-	// Set up a bunch of globals
-	GGameInfo->netgame = svs.max_clients > 1;
-
 	SV_SpawnServer(*mapname, true, false);
 #ifdef CLIENT
 	if (cls.state != ca_dedicated)
@@ -1481,7 +1480,6 @@ bool Host_StartTitleMap()
 	// Default the player start spot group to 0
 	RebornPosition = 0;
 	GGameInfo->RebornPosition = RebornPosition;
-	GGameInfo->netgame = false;
 
 	SV_SpawnServer("titlemap", true, true);
 #ifdef CLIENT

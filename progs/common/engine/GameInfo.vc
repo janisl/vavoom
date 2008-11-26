@@ -52,7 +52,6 @@ name				AcsHelper;
 name				GenericConScript;
 
 readonly byte		NetMode;
-readonly byte		netgame;
 readonly byte		deathmatch;
 byte				respawn;
 byte				nomonsters;
@@ -81,6 +80,12 @@ array<class>		PlayerClasses;
 
 bool				bDefaultLaxMonsterActivation;
 bool				bDefaultBloodSplatter;
+
+bool netgame
+{
+	get { return NetMode == NM_DedicatedServer ||
+		NetMode == NM_ServerLoopbackClient; }
+}
 
 //==========================================================================
 //

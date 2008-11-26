@@ -1508,7 +1508,8 @@ bool VAcsLevel::Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
 		GCon->Logf(NAME_Dev, "Start ACS ERROR: Unknown script %d", Number);
 		return false;
 	}
-	if (Net && netgame && !Info->Flags & SCRIPTF_Net)
+	if (Net && (GGameInfo->NetMode >= NM_DedicatedServer) &&
+		!(Info->Flags & SCRIPTF_Net))
 	{
 		GCon->Logf("%s tried to puke script %d",
 			*Activator->Player->PlayerName, Number);
@@ -2625,7 +2626,12 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GameType)
-			if (netgame == false)
+			if (GGameInfo->NetMode == NM_TitleMap)
+			{
+				*sp = GAME_TITLE_MAP;
+			}
+			else if (GGameInfo->NetMode == NM_Standalone ||
+				GGameInfo->NetMode == NM_LoopbackSinglePlayer)
 			{
 				*sp = GAME_SINGLE_PLAYER;
 			}
@@ -2877,7 +2883,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SinglePlayer)
-			sp[-1] = !netgame;
+			sp[-1] = GGameInfo->NetMode < NM_DedicatedServer;
 			sp++;
 			ACSVM_BREAK;
 
