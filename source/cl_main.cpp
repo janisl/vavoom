@@ -243,7 +243,7 @@ void CL_ReadFromServer()
 
 	if (cls.signon)
 	{
-		if (!host_standalone)
+		if (GGameInfo->NetMode > NM_Standalone)
 		{
 			GClLevel->Time += host_frametime;
 			GClLevel->TicTime = (int)(GClLevel->Time * 35.0);
@@ -284,7 +284,8 @@ void CL_SignonReply()
 		cl->eventServerSetUserInfo(cls.userinfo);
 		UserInfoSent = true;
 	}
-	if (host_standalone)
+	if (GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Standalone)
 	{
 		cl->SpawnClient();
 	}
@@ -365,7 +366,7 @@ void CL_Disconnect()
 #endif
 	}
 
-	if (!host_standalone && cl)
+	if (GGameInfo->NetMode > NM_Standalone && cl)
 	{
 		delete cl->Net;
 		cl->ConditionalDestroy();
@@ -411,7 +412,8 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
-	if (host_standalone)
+	if (GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Standalone)
 	{
 		VBasePlayer* Player = GPlayersBase[0];
 		SV_ConnectClient(Player);
@@ -446,7 +448,8 @@ void CL_EstablishConnection(const char* host)
 
 	MN_DeactivateMenu();
 
-	if (host_standalone)
+	if (GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Standalone)
 	{
 		CL_SetUpStandaloneClient();
 	}

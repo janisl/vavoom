@@ -344,7 +344,9 @@ void SV_SendClientMessages()
 
 			((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->Update();
 		}
-		else if (host_standalone && (Player->PlayerFlags & VBasePlayer::PF_Spawned))
+		else if ((GGameInfo->NetMode == NM_TitleMap ||
+			GGameInfo->NetMode == NM_Standalone) &&
+			(Player->PlayerFlags & VBasePlayer::PF_Spawned))
 		{
 			Player->WriteViewData();
 		}
@@ -943,9 +945,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 
 		GGameInfo->WorldInfo->SetSkill(Skill);
 		GGameInfo->eventInitNewGame(GGameInfo->WorldInfo->GameSkill);
-
-		host_standalone = (svs.max_clients == 1 && use_standalone) ||
-			GGameInfo->NetMode == NM_TitleMap;
 	}
 
 	SV_Clear();
@@ -1020,7 +1019,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	}
 	GLevelInfo->LevelInfoFlags2 |= VLevelInfo::LIF2_BegunPlay;
 
-	if (!host_standalone)
+	if (GGameInfo->NetMode != NM_TitleMap &&
+		GGameInfo->NetMode != NM_Standalone)
 	{
 		GLevel->TickWorld(host_frametime);
 		GLevel->TickWorld(host_frametime);

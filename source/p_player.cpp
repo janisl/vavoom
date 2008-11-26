@@ -66,7 +66,8 @@ static VCvarI			font_colour2("font_colour2", "11", CVAR_Archive);
 bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 {
 	guard(VBasePlayer::ExecuteNetMethod);
-	if (host_standalone)
+	if (GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Standalone)
 	{
 		return false;
 	}
@@ -272,7 +273,8 @@ void VBasePlayer::SpawnClient()
 
 	PlayerFlags |= PF_Spawned;
 
-	if (host_standalone && run_open_scripts)
+	if ((GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Standalone) && run_open_scripts)
 	{
 		//	Start open scripts.
 		Level->XLevel->Acs->StartTypedACScripts(SCRIPT_Open, 0, 0, 0, NULL,

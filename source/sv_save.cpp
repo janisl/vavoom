@@ -1015,7 +1015,8 @@ void SV_MapTeleport(VName mapname)
 	}
 
 #ifdef CLIENT
-	if (host_standalone)
+	if (GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Standalone)
 	{
 		CL_SetUpStandaloneClient();
 	}

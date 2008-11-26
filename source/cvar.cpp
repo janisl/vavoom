@@ -218,7 +218,8 @@ void VCvar::DoSet(const VStr& AValue)
 		Info_SetValueForKey(cls.userinfo, Name, *StringValue);
 		if (cls.state >= ca_connected)
 		{
-			if (host_standalone)
+			if (GGameInfo->NetMode == NM_TitleMap ||
+				GGameInfo->NetMode == NM_Standalone)
 			{
 				VCommand::ExecuteString(VStr("setinfo \"") + Name + "\" \"" +
 					StringValue + "\"\n", VCommand::SRC_Client, cl);
