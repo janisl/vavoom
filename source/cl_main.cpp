@@ -310,7 +310,7 @@ void CL_KeepaliveMessage()
 {
 	guard(CL_KeepaliveMessage);
 #ifdef SERVER
-	if (sv.active)
+	if (GGameInfo->NetMode != NM_Client)
 		return;		// no need if server is local
 #endif
 	if (cls.demoplayback)
@@ -575,7 +575,7 @@ void CL_Clear()
 		cl->ClearInput();
 	}
 #ifdef SERVER
-	if (!sv.active)
+	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_Client)
 #endif
 	{
 		// Make sure all sounds are stopped.

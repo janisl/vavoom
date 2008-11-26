@@ -58,7 +58,8 @@
 
 static bool CheatAllowed()
 {
-	if (!sv.active || sv.intermission || !GGameInfo->Players[0])
+	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_Client ||
+		sv.intermission || !GGameInfo->Players[0])
 	{
 		GCon->Log("You are not in game!");
 		return false;

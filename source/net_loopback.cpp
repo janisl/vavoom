@@ -143,7 +143,8 @@ void VLoopbackDriver::SearchForHosts(bool, bool ForMaster)
 {
 	guard(VLoopbackDriver::SearchForHosts);
 #ifdef SERVER
-	if (!sv.active || ForMaster)
+	if (GGameInfo->NetMode == NM_None ||
+		GGameInfo->NetMode == NM_Client || ForMaster)
 	{
 		return;
 	}

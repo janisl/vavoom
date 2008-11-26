@@ -25,8 +25,6 @@
 
 struct server_t
 {
-	bool		active;
-
 	int			intermission;
 	int			intertime;
 };

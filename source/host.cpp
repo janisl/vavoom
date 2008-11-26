@@ -198,7 +198,7 @@ void Host_Init()
 	GCmdBuf.Exec();
 
 #ifndef CLIENT
-	if (!sv.active)
+	if (GGameInfo->NetMode == NM_None)
 	{
 		GCmdBuf << "MaxPlayers 4\n";
 		GCmdBuf << "Map " << *P_TranslateMap(1) << "\n";
@@ -382,7 +382,8 @@ void Host_Frame()
 #endif
 
 #ifdef SERVER
-		if (sv.active)
+		if (GGameInfo->NetMode != NM_None &&
+			GGameInfo->NetMode != NM_Client)
 		{
 clock(host_cycles[0]);
 			//	Server operations

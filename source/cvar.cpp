@@ -237,7 +237,8 @@ void VCvar::DoSet(const VStr& AValue)
 	if (Flags & CVAR_ServerInfo)
 	{
 		Info_SetValueForKey(svs.serverinfo, Name, *StringValue);
-		if (sv.active)
+		if (GGameInfo && GGameInfo->NetMode != NM_None &&
+			GGameInfo->NetMode != NM_Client)
 		{
 			for (int i = 0; i < MAXPLAYERS; i++)
 			{

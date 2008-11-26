@@ -713,7 +713,8 @@ COMMAND(TeleportNewMap)
 		return;
 	}
 
-	if (!sv.active)
+	if (GGameInfo->NetMode == NM_None ||
+		GGameInfo->NetMode == NM_Client)
 	{
 		return;
 	}
@@ -905,7 +906,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	mapteleport_issued = false;
 	run_open_scripts = spawn_thinkers;
 
-	if (sv.active)
+	if (GGameInfo->NetMode != NM_None)
 	{
 		//	Level change
 		for (i = 0; i < MAXPLAYERS; i++)
@@ -949,8 +950,6 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 
 	SV_Clear();
 	VCvar::Unlatch();
-
-	sv.active = true;
 
 	//	Load it
 	SV_LoadLevel(VName(mapname, VName::AddLower8));
@@ -1127,10 +1126,11 @@ void SV_ShutdownServer(bool crash)
 	int			i;
 	int			count;
 
-	if (!sv.active)
+	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_Client)
+	{
 		return;
+	}
 
-	sv.active = false;
 	sv_loading = false;
 
 #ifdef CLIENT
@@ -1203,7 +1203,8 @@ void SV_ShutdownServer(bool crash)
 COMMAND(Restart)
 {
 	guard(COMMAND Restart);
-	if (GGameInfo->NetMode >= NM_DedicatedServer || !sv.active)
+	if (GGameInfo->NetMode != NM_Standalone &&
+		GGameInfo->NetMode != NM_LoopbackSinglePlayer)
 	{
 		return;
 	}
@@ -1374,7 +1375,7 @@ void SV_ConnectBot(const char *name)
 	guard(SV_ConnectBot);
 	int				i;
 
-	if (!sv.active)
+	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_Client)
 	{
 		GCon->Log("Game is not running");
 		return;
@@ -1507,7 +1508,7 @@ COMMAND(MaxPlayers)
 		return;
 	}
 
-	if (sv.active)
+	if (GGameInfo->NetMode != NM_None && GGameInfo->NetMode != NM_Client)
 	{
 		GCon->Log("maxplayers can not be changed while a server is running.");
 		return;

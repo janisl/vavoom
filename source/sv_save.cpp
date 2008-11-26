@@ -1057,7 +1057,8 @@ COMMAND(Save)
 		return;
 	}
 
-	if (!sv.active)
+	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Client)
 	{
 		GCon->Log("you can't save if you aren't playing!");
 		return;
