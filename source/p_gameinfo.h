@@ -141,3 +141,5 @@ class VGameInfo : public VObject
 		EV_RET_VOID("CmdAddSlotDefault");
 	}
 };
+
+extern VGameInfo*		GGameInfo;

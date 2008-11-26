@@ -376,7 +376,10 @@ void CL_Disconnect()
 		delete GClLevel;
 	}
 	GClLevel = NULL;
-	GGameInfo->NetMode = NM_None;
+	if (GGameInfo->NetMode == NM_Client)
+	{
+		GGameInfo->NetMode = NM_None;
+	}
 
 	cls.demoplayback = false;
 	cls.timedemo = false;
@@ -508,7 +511,7 @@ void CL_SendMove()
 		return;
 	}
 
-	if (cls.demoplayback || host_titlemap)
+	if (cls.demoplayback || GGameInfo->NetMode == NM_TitleMap)
 	{
 		return;
 	}
@@ -540,7 +543,7 @@ void CL_SendMove()
 bool CL_Responder(event_t* ev)
 {
 	guard(CL_Responder);
-	if (host_titlemap)
+	if (GGameInfo->NetMode == NM_TitleMap)
 	{
 		return false;
 	}

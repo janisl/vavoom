@@ -503,7 +503,7 @@ void SCR_Update()
 			{
 				R_RenderPlayerView();
 			}
-			if (!host_titlemap)
+			if (GGameInfo->NetMode != NM_TitleMap)
 			{
 				CT_Drawer();
 				SB_Drawer();

@@ -569,10 +569,10 @@ void SV_Ticker()
 		{
 			// pause if in menu or console
 #ifdef CLIENT
-			if (host_titlemap || (!paused && (netgame || !(MN_Active() ||
-				C_Active()))))
+			if (GGameInfo->NetMode == NM_TitleMap || (!paused && (netgame ||
+				!(MN_Active() || C_Active()))))
 #else
-			if (host_titlemap || !paused)
+			if (GGameInfo->NetMode == NM_TitleMap || !paused)
 #endif
 			{
 				//	LEVEL TIMER
@@ -944,9 +944,8 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 		GGameInfo->WorldInfo->SetSkill(Skill);
 		GGameInfo->eventInitNewGame(GGameInfo->WorldInfo->GameSkill);
 
-		host_titlemap = titlemap;
 		host_standalone = (svs.max_clients == 1 && use_standalone) ||
-			host_titlemap;
+			GGameInfo->NetMode == NM_TitleMap;
 	}
 
 	SV_Clear();

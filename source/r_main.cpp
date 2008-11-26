@@ -711,7 +711,8 @@ void VRenderLevel::RenderPlayerView()
 	RenderScene(&refdef, NULL);
 
 	// draw the psprites on top of everything
-	if (fov <= 90.0 && cl->MO == cl->Camera && !host_titlemap)
+	if (fov <= 90.0 && cl->MO == cl->Camera &&
+		GGameInfo->NetMode != NM_TitleMap)
 	{
 		DrawPlayerSprites();
 	}
@@ -719,7 +720,7 @@ void VRenderLevel::RenderPlayerView()
 	Drawer->EndView();
 
 	// Draw croshair
-	if (cl->MO == cl->Camera && !host_titlemap)
+	if (cl->MO == cl->Camera && GGameInfo->NetMode != NM_TitleMap)
 	{
 		DrawCroshair();
 	}
