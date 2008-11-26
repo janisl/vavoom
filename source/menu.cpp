@@ -124,8 +124,7 @@ bool MN_Responder(event_t* event)
 
     // Pop-up menu?
     if (!MN_Active() && event->type == ev_keydown && !C_Active() &&
-		(cls.state != ca_connected || cls.demoplayback ||
-		GGameInfo->NetMode == NM_TitleMap) &&
+		(!cl || cls.demoplayback || GGameInfo->NetMode == NM_TitleMap) &&
 		event->data1 != '`' && (event->data1 < K_F1 || event->data1 > K_F12))
 	{
 		MN_ActivateMenu();

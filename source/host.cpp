@@ -137,10 +137,6 @@ void Host_Init()
 
 	M_InitByteOrder();
 
-#ifdef CLIENT
-	cls.state = ca_disconnected;
-#endif
-
 	VName::StaticInit();
 	VObject::StaticInit();
 
@@ -223,7 +219,7 @@ static void Host_GetConsoleCommands()
 	char	*cmd;
 
 #ifdef CLIENT
-	if (cls.state != ca_dedicated)
+	if (GGameInfo->NetMode != NM_DedicatedServer)
 		return;
 #endif
 
@@ -448,8 +444,10 @@ unclock(host_cycles[0]);
 #endif
 
 #ifdef CLIENT
-		if (cls.state == ca_dedicated)
+		if (GGameInfo->NetMode == NM_DedicatedServer)
+		{
 			Sys_Error("Host_Error: %s\n", e.message);	// dedicated servers exit
+		}
 
 		CL_Disconnect();
 		GClGame->eventOnHostError();
@@ -472,8 +470,10 @@ unclock(host_cycles[0]);
 #endif
 
 #ifdef CLIENT
-		if (cls.state == ca_dedicated)
+		if (GGameInfo->NetMode == NM_DedicatedServer)
+		{
 			Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
+		}
 	
 		CL_Disconnect();
 		GClGame->eventOnHostEndGame();

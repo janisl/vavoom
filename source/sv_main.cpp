@@ -1135,8 +1135,10 @@ void SV_ShutdownServer(bool crash)
 
 #ifdef CLIENT
 	// stop all client sounds immediately
-	if (cls.state == ca_connected)
+	if (cl)
+	{
 		CL_Disconnect();
+	}
 #endif
 
 	// make sure all the clients know we're disconnecting
@@ -1457,8 +1459,10 @@ COMMAND(Map)
 
 	SV_SpawnServer(*mapname, true, false);
 #ifdef CLIENT
-	if (cls.state != ca_dedicated)
+	if (GGameInfo->NetMode != NM_DedicatedServer)
+	{
 		GCmdBuf << "Connect local\n";
+	}
 #endif
 	unguard;
 }
@@ -1483,10 +1487,7 @@ bool Host_StartTitleMap()
 	GGameInfo->RebornPosition = RebornPosition;
 
 	SV_SpawnServer("titlemap", true, true);
-#ifdef CLIENT
-	if (cls.state != ca_dedicated)
-		GCmdBuf << "Connect local\n";
-#endif
+	GCmdBuf << "Connect local\n";
 	return true;
 	unguard;
 }

@@ -1569,7 +1569,7 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 float VAudio::EAX_CalcEnvSize()
 {
 	guard(VAudio::EAX_CalcEnvSize);
-	if (cls.state != ca_connected)
+	if (!cl)
 	{
 		return 7.5;
 	}

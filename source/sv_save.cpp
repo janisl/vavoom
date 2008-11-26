@@ -867,8 +867,10 @@ void SV_LoadGame(int slot)
 	SV_LoadMap(mapname, BASE_SLOT);
 
 #ifdef CLIENT
-	if (cls.state != ca_dedicated)
+	if (GGameInfo->NetMode != NM_DedicatedServer)
+	{
 		GCmdBuf << "Connect local\n";
+	}
 #endif
 	unguard;
 }

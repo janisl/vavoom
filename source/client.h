@@ -29,17 +29,8 @@
 
 // TYPES -------------------------------------------------------------------
 
-enum cactive_t
-{
-	ca_dedicated, 		// a dedicated server with no ability to start a client
-	ca_disconnected, 	// full screen console with no connection
-	ca_connected		// valid netcon, talking to a server
-};
-
 struct client_static_t
 {
-	cactive_t		state;
-
 	// personalization data sent to server
 	VStr			userinfo;
 

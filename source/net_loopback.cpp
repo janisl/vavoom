@@ -115,7 +115,7 @@ VLoopbackDriver::VLoopbackDriver()
 int VLoopbackDriver::Init()
 {
 #ifdef CLIENT
-	if (cls.state == ca_dedicated)
+	if (GGameInfo && GGameInfo->NetMode == NM_DedicatedServer)
 		return -1;
 	return 0;
 #else

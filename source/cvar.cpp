@@ -216,7 +216,7 @@ void VCvar::DoSet(const VStr& AValue)
 	if (Flags & CVAR_UserInfo)
 	{
 		Info_SetValueForKey(cls.userinfo, Name, *StringValue);
-		if (cls.state >= ca_connected)
+		if (cl)
 		{
 			if (GGameInfo->NetMode == NM_TitleMap ||
 				GGameInfo->NetMode == NM_Standalone)

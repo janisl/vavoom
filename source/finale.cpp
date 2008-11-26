@@ -58,7 +58,9 @@
 
 bool F_Responder(event_t *event)
 {
-	if (cls.state != ca_connected || GClGame->intermission != 2)
+	if (!cl || GClGame->intermission != 2)
+	{
 		return false;
+	}
 	return GClGame->eventFinaleResponder(event);
 }

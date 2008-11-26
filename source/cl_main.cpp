@@ -229,8 +229,10 @@ void CL_UpdateMobjs()
 void CL_ReadFromServer()
 {
 	guard(CL_ReadFromServer);
-	if (cls.state != ca_connected)
+	if (!cl)
+	{
 		return;
+	}
 
 	if (cl->Net)
 	{
@@ -345,8 +347,14 @@ void CL_Disconnect()
 	if (cls.demoplayback)
 	{
 		CL_StopPlayback();
+		if (cl)
+		{
+			delete cl->Net;
+			cl->ConditionalDestroy();
+		}
+		cl = NULL;
 	}
-	else if (cls.state == ca_connected)
+	else if (cl)
 	{
 		if (cls.demorecording)
 		{
@@ -360,18 +368,18 @@ void CL_Disconnect()
 			cl->Net->Flush();
 		}
 
-		cls.state = ca_disconnected;
+		if (GGameInfo->NetMode > NM_Standalone)
+		{
+			delete cl->Net;
+			cl->ConditionalDestroy();
+		}
+		cl = NULL;
+
 #ifdef SERVER
 		SV_ShutdownServer(false);
 #endif
 	}
 
-	if (GGameInfo->NetMode > NM_Standalone && cl)
-	{
-		delete cl->Net;
-		cl->ConditionalDestroy();
-		cl = NULL;
-	}
 	if (GClLevel && GClLevel != GLevel)
 	{
 		delete GClLevel;
@@ -400,7 +408,7 @@ void CL_Disconnect()
 void CL_EstablishConnection(const char* host)
 {
 	guard(CL_EstablishConnection);
-	if (cls.state == ca_dedicated)
+	if (GGameInfo->NetMode == NM_DedicatedServer)
 	{
 		return;
 	}
@@ -443,7 +451,6 @@ void CL_EstablishConnection(const char* host)
 	UserInfoSent = false;
 
 	GClGame->eventConnected();
-	cls.state = ca_connected;
 	cls.signon = 0;				// need all the signon messages before playing
 
 	MN_DeactivateMenu();
@@ -509,7 +516,7 @@ void CL_SetUpStandaloneClient()
 void CL_SendMove()
 {
 	guard(CL_SendMove);
-	if (cls.state != ca_connected)
+	if (!cl)
 	{
 		return;
 	}
@@ -724,7 +731,6 @@ void CL_StopPlayback()
 	delete cls.demofile;
 	cls.demoplayback = false;
 	cls.demofile = NULL;
-	cls.state = ca_disconnected;
 
 	if (cls.timedemo)
 	{
@@ -947,7 +953,7 @@ COMMAND(Record)
 		return;
 	}
 
-	if (c == 2 && cls.state == ca_connected)
+	if (c == 2 && cl)
 	{
 		GCon->Log("Can not record - already connected to server");
 		GCon->Log("Client demo recording must be started before connecting");
@@ -1035,7 +1041,6 @@ COMMAND(PlayDemo)
 	CL_Disconnect();
 
 	cls.demoplayback = true;
-	cls.state = ca_connected;
 	CL_SetUpLocalPlayer(NULL);
 	GClGame->eventDemoPlaybackStarted();
 	unguard;
