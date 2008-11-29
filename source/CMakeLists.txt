@@ -117,6 +117,7 @@ set(MAIN_COMMON_SOURCES
 	net_connection.cpp
 	net_context.cpp
 	net_datagram.cpp
+	net_demo.cpp
 	net_local.h
 	net_loopback.cpp
 	net_main.cpp
@@ -455,6 +456,7 @@ set(SERVER_COMMON_SOURCES
 	net_connection.cpp
 	net_context.cpp
 	net_datagram.cpp
+	net_demo.cpp
 	net_loopback.cpp
 	net_main.cpp
 	net_message.cpp

@@ -442,6 +442,28 @@ public:
 	friend class VObjectMapChannel;
 };
 
+class VDemoPlaybackNetConnection : public VNetConnection
+{
+public:
+
+	float			NextPacketTime;
+
+	VDemoPlaybackNetConnection(VNetContext*, VBasePlayer*);
+
+	//	VNetConnection interface
+	int GetRawPacket(TArray<vuint8>&);
+	void SendRawMessage(VMessageOut&);
+};
+
+class VDemoRecordingNetConnection : public VNetConnection
+{
+public:
+	VDemoRecordingNetConnection(VSocketPublic*, VNetContext*, VBasePlayer*);
+
+	//	VNetConnection interface
+	int GetRawPacket(TArray<vuint8>&);
+};
+
 //	Global access to the low-level networking services.
 extern VNetworkPublic*	GNet;
 

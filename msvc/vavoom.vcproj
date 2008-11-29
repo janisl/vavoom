@@ -1809,6 +1809,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\net_demo.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\net_local.h"
 				>
 			</File>
