@@ -364,6 +364,9 @@ public:
 	void SetUpFatPVS();
 	int CheckFatPVS(subsector_t*);
 	bool SecCheckFatPVS(sector_t*);
+	bool IsRelevant(VThinker* Th);
+	void UpdateLevel();
+	void SendServerInfo();
 
 private:
 	void SetUpPvsNode(int, float*);
@@ -388,6 +391,7 @@ public:
 	//	VNetContext interface
 	virtual VLevel* GetLevel() = 0;
 	void ThinkerDestroyed(VThinker*);
+	void Tick();
 };
 
 //

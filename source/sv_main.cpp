@@ -37,8 +37,6 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void SV_SendServerInfo(VBasePlayer* Player);
-
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void G_DoReborn(int playernum);
@@ -208,91 +206,6 @@ void SV_Clear()
 
 //==========================================================================
 //
-//	IsRelevant
-//
-//==========================================================================
-
-static bool IsRelevant(VThinker* Th, VNetConnection* Connection)
-{
-	guardSlow(IsRelevant);
-	if (Th->ThinkerFlags & VThinker::TF_AlwaysRelevant)
-		return true;
-	VEntity* Ent = Cast<VEntity>(Th);
-	if (!Ent)
-		return false;
-	if (Ent->GetTopOwner() == Connection->Owner->MO)
-		return true;
-	if (Ent->EntityFlags & VEntity::EF_NoSector)
-		return false;
-	if (Ent->EntityFlags & VEntity::EF_Invisible)
-		return false;
-	if (!Connection->CheckFatPVS(Ent->SubSector))
-		return false;
-	return true;
-	unguardSlow;
-}
-
-//==========================================================================
-//
-//	SV_UpdateLevel
-//
-//==========================================================================
-
-static void SV_UpdateLevel(VBasePlayer* Player)
-{
-	guard(SV_UpdateLevel);
-	int		i;
-
-	Player->Net->SetUpFatPVS();
-
-	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->Update();
-
-	//	Mark all entity channels as not updated in this frame.
-	for (i = Player->Net->OpenChannels.Num() - 1; i >= 0; i--)
-	{
-		VChannel* Chan = Player->Net->OpenChannels[i];
-		if (Chan->Type == CHANNEL_Thinker)
-		{
-			((VThinkerChannel*)Chan)->UpdatedThisFrame = false;
-		}
-	}
-
-	//	Update mobjs in sight
-	for (TThinkerIterator<VThinker> Th(GLevel); Th; ++Th)
-	{
-		if (!IsRelevant(*Th, Player->Net))
-		{
-			continue;
-		}
-		VThinkerChannel* Chan = Player->Net->ThinkerChannels.FindPtr(*Th);
-		if (!Chan)
-		{
-			Chan = (VThinkerChannel*)Player->Net->CreateChannel(
-				CHANNEL_Thinker, -1);
-			if (!Chan)
-			{
-				continue;
-			}
-			Chan->SetThinker(*Th);
-		}
-		Chan->Update();
-	}
-
-	//	Close entity channels that were not updated in this frame.
-	for (i = Player->Net->OpenChannels.Num() - 1; i >= 0; i--)
-	{
-		VChannel* Chan = Player->Net->OpenChannels[i];
-		if (Chan->Type == CHANNEL_Thinker &&
-			!((VThinkerChannel*)Chan)->UpdatedThisFrame)
-		{
-			Chan->Close();
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_SendClientMessages
 //
 //==========================================================================
@@ -321,48 +234,15 @@ void SV_SendClientMessages()
 		RepInfo->KillCount = Player->KillCount;
 		RepInfo->ItemCount = Player->ItemCount;
 		RepInfo->SecretCount = Player->SecretCount;
-	}
 
-	for (int i = 0; i < svs.max_clients; i++)
-	{
-		VBasePlayer* Player = GGameInfo->Players[i];
-		if (!Player)
-		{
-			continue;
-		}
-
-		// Don't update level if the player isn't totally in the game yet
-		if (Player->Net && Player->Net->Channels[CHANIDX_General] &&
-			(Player->PlayerFlags & VBasePlayer::PF_Spawned))
-		{
-			if (Player->Net->NeedsUpdate)
-			{
-				Player->WriteViewData();
-				SV_UpdateLevel(Player);
-			}
-
-			((VPlayerChannel*)Player->Net->Channels[CHANIDX_Player])->Update();
-		}
-		else if ((GGameInfo->NetMode == NM_TitleMap ||
-			GGameInfo->NetMode == NM_Standalone) &&
-			(Player->PlayerFlags & VBasePlayer::PF_Spawned))
+		//	Update view angle if needed.
+		if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
 		{
 			Player->WriteViewData();
 		}
-
-		if (Player->Net)
-		{
-			if (Player->Net->ObjMapSent && !Player->Net->LevelInfoSent)
-			{
-				SV_SendServerInfo(Player);
-			}
-			Player->Net->Tick();
-			if (Player->Net->State == NETCON_Closed)
-			{
-				SV_DropClient(Player, true);
-			}
-		}
 	}
+
+	ServerNetContext->Tick();
 	unguard;
 }
 
@@ -849,27 +729,6 @@ int NET_SendToAll(int blocktime)
 
 //==========================================================================
 //
-//	SV_SendServerInfo
-//
-//==========================================================================
-
-void SV_SendServerInfo(VBasePlayer* Player)
-{
-	guard(SV_SendServerInfo);
-	if (!Player->Net || !Player->Net->ObjMapSent)
-	{
-		return;
-	}
-
-	//	This will load level on client side.
-	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->SetLevel(GLevel);
-	((VLevelChannel*)Player->Net->Channels[CHANIDX_Level])->SendNewLevel();
-	Player->Net->LevelInfoSent = true;
-	unguard;
-}
-
-//==========================================================================
-//
 //	SV_SendServerInfoToClients
 //
 //==========================================================================
@@ -885,7 +744,10 @@ void SV_SendServerInfoToClients()
 			continue;
 		}
 		Player->Level = GLevelInfo;
-		SV_SendServerInfo(Player);
+		if (Player->Net)
+		{
+			Player->Net->SendServerInfo();
+		}
 	}
 	unguard;
 }
@@ -1312,8 +1174,6 @@ void SV_ConnectClient(VBasePlayer *player)
 		(VPlayerReplicationInfo*)GLevel->SpawnThinker(GGameInfo->PlayerReplicationInfoClass);
 	player->PlayerReplicationInfo->Player = player;
 	player->PlayerReplicationInfo->PlayerNum = SV_GetPlayerNum(player);
-
-	SV_SendServerInfo(player);
 	unguard;
 }
 

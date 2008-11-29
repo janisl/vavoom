@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "network.h"
+#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -97,6 +98,43 @@ void VNetContext::ThinkerDestroyed(VThinker* Th)
 			{
 				Chan->Close();
 			}
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetContext::Tick
+//
+//==========================================================================
+
+void VNetContext::Tick()
+{
+	guard(VNetContext::Tick);
+	for (int i = 0; i < ClientConnections.Num(); i++)
+	{
+		VNetConnection* Conn = ClientConnections[i];
+		// Don't update level if the player isn't totally in the game yet
+		if (Conn->Channels[CHANIDX_General] &&
+			(Conn->Owner->PlayerFlags & VBasePlayer::PF_Spawned))
+		{
+			if (Conn->NeedsUpdate)
+			{
+				Conn->UpdateLevel();
+			}
+
+			((VPlayerChannel*)Conn->Channels[CHANIDX_Player])->Update();
+		}
+
+		if (Conn->ObjMapSent && !Conn->LevelInfoSent)
+		{
+			Conn->SendServerInfo();
+		}
+		Conn->Tick();
+		if (Conn->State == NETCON_Closed)
+		{
+			SV_DropClient(Conn->Owner, true);
 		}
 	}
 	unguard;

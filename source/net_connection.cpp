@@ -722,3 +722,118 @@ bool VNetConnection::SecCheckFatPVS(sector_t* Sec)
 	return false;
 	unguardSlow;
 }
+
+//==========================================================================
+//
+//	VNetConnection::IsRelevant
+//
+//==========================================================================
+
+bool VNetConnection::IsRelevant(VThinker* Th)
+{
+	guardSlow(VNetConnection::IsRelevant);
+	if (Th->ThinkerFlags & VThinker::TF_AlwaysRelevant)
+	{
+		return true;
+	}
+	VEntity* Ent = Cast<VEntity>(Th);
+	if (!Ent)
+	{
+		return false;
+	}
+	if (Ent->GetTopOwner() == Owner->MO)
+	{
+		return true;
+	}
+	if (Ent->EntityFlags & VEntity::EF_NoSector)
+	{
+		return false;
+	}
+	if (Ent->EntityFlags & VEntity::EF_Invisible)
+	{
+		return false;
+	}
+	if (!CheckFatPVS(Ent->SubSector))
+	{
+		return false;
+	}
+	return true;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VNetConnection::UpdateLevel
+//
+//==========================================================================
+
+void VNetConnection::UpdateLevel()
+{
+	guard(VNetConnection::UpdateLevel);
+	SetUpFatPVS();
+
+	((VLevelChannel*)Channels[CHANIDX_Level])->Update();
+
+	//	Mark all entity channels as not updated in this frame.
+	for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+	{
+		VChannel* Chan = OpenChannels[i];
+		if (Chan->Type == CHANNEL_Thinker)
+		{
+			((VThinkerChannel*)Chan)->UpdatedThisFrame = false;
+		}
+	}
+
+	//	Update mobjs in sight
+	for (TThinkerIterator<VThinker> Th(Context->GetLevel()); Th; ++Th)
+	{
+		if (!IsRelevant(*Th))
+		{
+			continue;
+		}
+		VThinkerChannel* Chan = ThinkerChannels.FindPtr(*Th);
+		if (!Chan)
+		{
+			Chan = (VThinkerChannel*)CreateChannel(CHANNEL_Thinker, -1);
+			if (!Chan)
+			{
+				continue;
+			}
+			Chan->SetThinker(*Th);
+		}
+		Chan->Update();
+	}
+
+	//	Close entity channels that were not updated in this frame.
+	for (int i = OpenChannels.Num() - 1; i >= 0; i--)
+	{
+		VChannel* Chan = OpenChannels[i];
+		if (Chan->Type == CHANNEL_Thinker &&
+			!((VThinkerChannel*)Chan)->UpdatedThisFrame)
+		{
+			Chan->Close();
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VNetConnection::SendServerInfo
+//
+//==========================================================================
+
+void VNetConnection::SendServerInfo()
+{
+	guard(VNetConnection::SendServerInfo);
+	if (!ObjMapSent)
+	{
+		return;
+	}
+
+	//	This will load level on client side.
+	((VLevelChannel*)Channels[CHANIDX_Level])->SetLevel(GLevel);
+	((VLevelChannel*)Channels[CHANIDX_Level])->SendNewLevel();
+	LevelInfoSent = true;
+	unguard;
+}
