@@ -43,8 +43,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_StopPlayback();
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -110,7 +108,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 
 	if (cls.demofile->AtEnd())
 	{
-		CL_StopPlayback();
+		State = NETCON_Closed;
 		return 0;
 	}
 
@@ -125,7 +123,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 	cls.demofile->Serialise(Data.Ptr(), MsgSize);
 	if (cls.demofile->IsError())
 	{
-		CL_StopPlayback();
+		State = NETCON_Closed;
 		return 0;
 	}
 
@@ -188,6 +186,61 @@ int VDemoRecordingNetConnection::GetRawPacket(TArray<vuint8>& Data)
 	}
 	
 	return r;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VDemoRecordingSocket::IsLocalConnection
+//
+//==========================================================================
+
+bool VDemoRecordingSocket::IsLocalConnection()
+{
+	return false;
+}
+
+//==========================================================================
+//
+//	VDemoRecordingSocket::GetMessage
+//
+//==========================================================================
+
+int VDemoRecordingSocket::GetMessage(TArray<vuint8>&)
+{
+	return 0;
+}
+
+//==========================================================================
+//
+//	VDemoRecordingSocket::SendMessage
+//
+//==========================================================================
+
+int VDemoRecordingSocket::SendMessage(vuint8* Msg, vuint32 MsgSize)
+{
+	guard(VDemoRecordingSocket::SendMessage);
+	if (cls.demorecording)
+	{
+		//
+		//	Dumps the current net message, prefixed by the length and view angles
+		//
+		float Time = GClLevel ? GClLevel->Time : 0.0;
+		*cls.demofile << Time;
+		*cls.demofile << MsgSize;
+		if (cl)
+		{
+			*cls.demofile << cl->ViewAngles;
+		}
+		else
+		{
+			TAVec A(0, 0, 0);
+			*cls.demofile << A;
+		}
+		cls.demofile->Serialise(Msg, MsgSize);
+		cls.demofile->Flush();
+	}
+	return 1;
 	unguard;
 }
 

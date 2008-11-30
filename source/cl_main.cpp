@@ -390,6 +390,13 @@ void CL_EstablishConnection(const char* host)
 		cl = Player;
 		cl->ClGame = GClGame;
 		GClGame->cl = cl;
+
+		if (GDemoRecordingContext)
+		{
+			GDemoRecordingContext->ClientConnections[0]->Owner = cl;
+			((VPlayerChannel*)GDemoRecordingContext->ClientConnections[
+				0]->Channels[CHANIDX_Player])->SetPlayer(cl);
+		}
 	}
 	else
 	{
@@ -713,6 +720,11 @@ void CL_StopRecording()
 	delete cls.demofile;
 	cls.demofile = NULL;
 	cls.demorecording = false;
+	if (GDemoRecordingContext)
+	{
+		delete GDemoRecordingContext;
+		GDemoRecordingContext = NULL;
+	}
 	GCon->Log("Completed demo");
 	unguard;
 }
@@ -828,6 +840,24 @@ COMMAND(Record)
 	cls.demofile->Serialise(const_cast<char*>("VDEM"), 4);
 
 	cls.demorecording = true;
+
+	if (GGameInfo->NetMode == NM_Standalone)
+	{
+		GDemoRecordingContext = new VServerNetContext();
+		VSocketPublic* Sock = new VDemoRecordingSocket();
+		VNetConnection* Conn = new VNetConnection(Sock,
+			GDemoRecordingContext, NULL);
+		Conn->AutoAck = true;
+		GDemoRecordingContext->ClientConnections.Append(Conn);
+		Conn->ObjMap->SetUpClassLookup();
+		VObjectMapChannel* Chan = (VObjectMapChannel*)Conn->CreateChannel(
+			CHANNEL_ObjectMap, -1);
+		while (!Conn->ObjMapSent)
+		{
+			Conn->Tick();
+		}
+		Conn->SendServerInfo();
+	}
 	unguard;
 }
 
@@ -885,6 +915,7 @@ COMMAND(PlayDemo)
 
 	cls.demoplayback = true;
 	CL_SetUpLocalPlayer(NULL);
+	GGameInfo->NetMode = NM_Client;
 	GClGame->eventDemoPlaybackStarted();
 	unguard;
 }

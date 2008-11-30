@@ -464,7 +464,16 @@ public:
 	int GetRawPacket(TArray<vuint8>&);
 };
 
+class VDemoRecordingSocket : public VSocketPublic
+{
+public:
+	bool IsLocalConnection();
+	int GetMessage(TArray<vuint8>&);
+	int SendMessage(vuint8*, vuint32);
+};
+
 //	Global access to the low-level networking services.
 extern VNetworkPublic*	GNet;
+extern VNetContext*		GDemoRecordingContext;
 
 #endif

@@ -72,6 +72,8 @@ int 			LeavePosition;
 
 bool			completed;
 
+VNetContext*	GDemoRecordingContext;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int		RebornPosition;	// Position indicator for cooperative net-play reborn
@@ -243,6 +245,15 @@ void SV_SendClientMessages()
 	}
 
 	ServerNetContext->Tick();
+
+	if (GDemoRecordingContext)
+	{
+		for (int i = 0; i < GDemoRecordingContext->ClientConnections.Num(); i++)
+		{
+			GDemoRecordingContext->ClientConnections[i]->NeedsUpdate = true;
+		}
+		GDemoRecordingContext->Tick();
+	}
 	unguard;
 }
 
