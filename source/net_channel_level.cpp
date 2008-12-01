@@ -817,8 +817,18 @@ void VLevelChannel::ParsePacket(VMessageIn& Msg)
 		case CMD_PreRender:
 			Level->RenderData->PreRender();
 #ifdef CLIENT
-			CL_SignonReply();
+			if (cls.signon)
+			{
+				Host_Error("Spawn command already sent");
+			}
+			if (!UserInfoSent)
+			{
+				cl->eventServerSetUserInfo(cls.userinfo);
+				UserInfoSent = true;
+			}
 #endif
+			Connection->SendCommand("PreSpawn\n");
+			GCmdBuf << "HideConsole\n";
 			break;
 
 		case CMD_Line:

@@ -58,6 +58,8 @@ VClientNetContext*	ClientNetContext;
 
 VClientGameBase*	GClGame;
 
+bool				UserInfoSent;
+
 VCvarS			cl_name("name", "PLAYER", CVAR_Archive | CVAR_UserInfo);
 VCvarI			cl_colour("colour", "0", CVAR_Archive | CVAR_UserInfo);
 VCvarI			cl_class("class", "0", CVAR_Archive | CVAR_UserInfo);
@@ -66,8 +68,6 @@ VCvarS			cl_model("model", "", CVAR_Archive | CVAR_UserInfo);
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 IMPLEMENT_CLASS(V, ClientGameBase);
-
-static bool					UserInfoSent;
 
 static VName				CurrentSongLump;
 static int					CurrentCDTrack;
@@ -220,38 +220,6 @@ void CL_ReadFromServer()
 			GAudio->MusicChanged();
 		}
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	CL_SignonReply
-//
-//==========================================================================
-
-void CL_SignonReply()
-{
-	guard(CL_SignonReply);
-	if (cls.signon)
-	{
-		Host_Error("Spawn command already sent");
-	}
-	if (!UserInfoSent)
-	{
-		cl->eventServerSetUserInfo(cls.userinfo);
-		UserInfoSent = true;
-	}
-	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone ||
-		GGameInfo->NetMode == NM_ListenServer)
-	{
-		cl->SpawnClient();
-	}
-	else
-	{
-		cl->Net->SendCommand("PreSpawn\n");
-	}
-	GCmdBuf << "HideConsole\n";
 	unguard;
 }
 
@@ -427,14 +395,7 @@ void CL_SetUpLocalPlayer()
 	cl->ClGame = GClGame;
 	GClGame->cl = cl;
 
-	if (GDemoRecordingContext)
-	{
-		GDemoRecordingContext->ClientConnections[0]->Owner = cl;
-		((VPlayerChannel*)GDemoRecordingContext->ClientConnections[
-			0]->Channels[CHANIDX_Player])->SetPlayer(cl);
-	}
-
-	UserInfoSent = false;
+	cl->eventServerSetUserInfo(cls.userinfo);
 
 	GClGame->eventConnected();
 	cls.signon = 0;				// need all the signon messages before playing
@@ -482,10 +443,11 @@ void CL_SetUpStandaloneClient()
 	}
 	GClLevel->RenderData->PreRender();
 
-	CL_SignonReply();
-
+	cl->SpawnClient();
 	cls.signon = 1;
+
 	GCon->Log(NAME_Dev, "Client level loaded");
+	GCmdBuf << "HideConsole\n";
 	unguard;
 }
 
@@ -862,7 +824,7 @@ COMMAND(Record)
 		GDemoRecordingContext = new VServerNetContext();
 		VSocketPublic* Sock = new VDemoRecordingSocket();
 		VNetConnection* Conn = new VNetConnection(Sock,
-			GDemoRecordingContext, NULL);
+			GDemoRecordingContext, cl);
 		Conn->AutoAck = true;
 		GDemoRecordingContext->ClientConnections.Append(Conn);
 		Conn->ObjMap->SetUpClassLookup();
@@ -873,6 +835,7 @@ COMMAND(Record)
 			Conn->Tick();
 		}
 		Conn->SendServerInfo();
+		((VPlayerChannel*)Conn->Channels[CHANIDX_Player])->SetPlayer(cl);
 	}
 	unguard;
 }

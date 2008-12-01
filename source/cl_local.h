@@ -267,7 +267,6 @@ class VClientGameBase : public VObject
 void CL_DecayLights();
 
 void CL_KeepaliveMessage();
-void CL_SignonReply();
 void CL_ParseServerInfo(class VMessageIn& msg);
 void CL_ReadFromServerInfo();
 
@@ -289,5 +288,7 @@ extern float				fScaleX;
 extern float				fScaleY;
 extern float				fScaleXI;
 extern float				fScaleYI;
+
+extern bool					UserInfoSent;
 
 #endif
