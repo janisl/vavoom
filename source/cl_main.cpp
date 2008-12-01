@@ -37,7 +37,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_StopPlayback();
 void CL_StopRecording();
 void CL_SetUpNetClient(VSocketPublic*);
 void SV_ConnectClient(VBasePlayer*);
@@ -262,30 +261,25 @@ void CL_Disconnect()
 	{
 		GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
 		GAudio->ResumeSound();
-	} 
-	
+	}
+
 	// stop sounds (especially looping!)
 	GAudio->StopAllSound();
-	
-	// if running a local server, shut it down
+
 	if (cls.demoplayback)
 	{
-		CL_StopPlayback();
-		if (cl)
-		{
-			delete cl->Net;
-			cl->ConditionalDestroy();
-		}
-		cl = NULL;
+		GClGame->eventDemoPlaybackStopped();
 	}
-	else if (cl)
+
+	// if running a local server, shut it down
+	if (cl)
 	{
 		if (cls.demorecording)
 		{
 			CL_StopRecording();
 		}
 
-		if (cl->Net)
+		if (cl->Net && !cls.demoplayback)
 		{
 			GCon->Log(NAME_Dev, "Sending clc_disconnect");
 			cl->Net->Channels[0]->Close();
@@ -336,11 +330,6 @@ void CL_EstablishConnection(const char* host)
 		return;
 	}
 
-	if (cls.demoplayback)
-	{
-		return;
-	}
-
 	CL_Disconnect();
 
 	VSocketPublic* Sock = GNet->Connect(host);
@@ -360,13 +349,6 @@ void CL_EstablishConnection(const char* host)
 	cls.signon = 0;				// need all the signon messages before playing
 
 	MN_DeactivateMenu();
-
-	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone ||
-		GGameInfo->NetMode == NM_ListenServer)
-	{
-		CL_SetUpStandaloneClient();
-	}
 	unguard;
 }
 
@@ -682,26 +664,6 @@ void CL_PlayDemo(const VStr& DemoName, bool IsTimeDemo)
 
 	GGameInfo->NetMode = NM_Client;
 	GClGame->eventDemoPlaybackStarted();
-	unguard;
-}
-
-//==========================================================================
-//
-//	CL_StopPlayback
-//
-//	Called when a demo file runs out, or the user starts a game
-//
-//==========================================================================
-
-void CL_StopPlayback()
-{
-	guard(CL_StopPlayback);
-	if (!cls.demoplayback)
-	{
-		return;
-	}
-
-	GClGame->eventDemoPlaybackStopped();
 	unguard;
 }
 
