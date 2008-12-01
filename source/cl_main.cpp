@@ -645,19 +645,18 @@ void CL_PlayDemo(const VStr& DemoName, bool IsTimeDemo)
 	VStr name = VStr("demos/") + DemoName.DefaultExtension(".dem");
 
 	GCon->Logf("Playing demo from %s.", *name);
-	cls.demofile = FL_OpenFileRead(name);
-	if (!cls.demofile)
+	VStream* Strm = FL_OpenFileRead(name);
+	if (!Strm)
 	{
 		GCon->Log("ERROR: couldn't open.");
 		return;
 	}
 
-	cls.demofile->Serialise(magic, 4);
+	Strm->Serialise(magic, 4);
 	magic[4] = 0;
 	if (VStr::Cmp(magic, "VDEM"))
 	{
-		delete cls.demofile;
-		cls.demofile = NULL;
+		delete Strm;
 		GCon->Log("ERROR: not a Vavoom demo.");
 		return;
 	}
@@ -677,7 +676,7 @@ void CL_PlayDemo(const VStr& DemoName, bool IsTimeDemo)
 	GClGame->cl = cl;
 
 	cl->Net = new VDemoPlaybackNetConnection(ClientNetContext, cl,
-		IsTimeDemo);
+		Strm, IsTimeDemo);
 	ClientNetContext->ServerConnection = cl->Net;
 	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
 

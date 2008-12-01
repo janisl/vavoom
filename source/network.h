@@ -447,11 +447,12 @@ class VDemoPlaybackNetConnection : public VNetConnection
 public:
 	float			NextPacketTime;
 	bool			bTimeDemo;
+	VStream*		Strm;
 	int				td_lastframe;	// to meter out one message a frame
 	int				td_startframe;	// host_framecount at start
 	double			td_starttime;	// realtime at second frame of timedemo
 
-	VDemoPlaybackNetConnection(VNetContext*, VBasePlayer*, bool);
+	VDemoPlaybackNetConnection(VNetContext*, VBasePlayer*, VStream*, bool);
 	~VDemoPlaybackNetConnection();
 
 	//	VNetConnection interface

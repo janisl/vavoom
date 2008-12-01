@@ -55,8 +55,6 @@
 
 // CODE --------------------------------------------------------------------
 
-#ifdef CLIENT
-
 //==========================================================================
 //
 //	VDemoPlaybackNetConnection::VDemoPlaybackNetConnection
@@ -64,13 +62,14 @@
 //==========================================================================
 
 VDemoPlaybackNetConnection::VDemoPlaybackNetConnection(VNetContext* AContext,
-	VBasePlayer* AOwner, bool ATimeDemo)
+	VBasePlayer* AOwner, VStream* AStrm, bool ATimeDemo)
 : VNetConnection(NULL, AContext, AOwner)
 , NextPacketTime(0)
+, Strm(AStrm)
 , bTimeDemo(ATimeDemo)
 {
 	AutoAck = true;
-	*cls.demofile << NextPacketTime;
+	*Strm << NextPacketTime;
 
 	if (bTimeDemo)
 	{
@@ -89,9 +88,10 @@ VDemoPlaybackNetConnection::VDemoPlaybackNetConnection(VNetContext* AContext,
 
 VDemoPlaybackNetConnection::~VDemoPlaybackNetConnection()
 {
-	delete cls.demofile;
+	delete Strm;
+#ifdef CLIENT
 	cls.demoplayback = false;
-	cls.demofile = NULL;
+#endif
 
 	if (bTimeDemo)
 	{
@@ -118,7 +118,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 {
 	guard(VDemoPlaybackNetConnection::GetRawPacket);
 	// decide if it is time to grab the next message
-	if (cls.signon)	// allways grab until fully connected
+	if (Owner->MO)	// allways grab until fully connected
 	{
 		if (bTimeDemo)
 		{
@@ -140,7 +140,7 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 		}
 	}
 
-	if (cls.demofile->AtEnd())
+	if (Strm->AtEnd())
 	{
 		State = NETCON_Closed;
 		return 0;
@@ -148,22 +148,24 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 
 	// get the next message
 	vint32 MsgSize;
-	*cls.demofile << MsgSize;
-	*cls.demofile << cl->ViewAngles;
+	*Strm << MsgSize;
+	*Strm << Owner->ViewAngles;
 
 	if (MsgSize > OUT_MESSAGE_SIZE)
+	{
 		Sys_Error("Demo message > MAX_MSGLEN");
+	}
 	Data.SetNum(MsgSize);
-	cls.demofile->Serialise(Data.Ptr(), MsgSize);
-	if (cls.demofile->IsError())
+	Strm->Serialise(Data.Ptr(), MsgSize);
+	if (Strm->IsError())
 	{
 		State = NETCON_Closed;
 		return 0;
 	}
 
-	if (!cls.demofile->AtEnd())
+	if (!Strm->AtEnd())
 	{
-		*cls.demofile << NextPacketTime;
+		*Strm << NextPacketTime;
 	}
 
 	return 1;
@@ -179,6 +181,8 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 void VDemoPlaybackNetConnection::SendRawMessage(VMessageOut&)
 {
 }
+
+#ifdef CLIENT
 
 //==========================================================================
 //
