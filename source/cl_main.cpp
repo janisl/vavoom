@@ -37,19 +37,14 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void SV_ShutdownServer(bool crash);
-void CL_Disconnect();
-
 void CL_StopPlayback();
 void CL_StopRecording();
-void CL_SetUpLocalPlayer(VSocketPublic*);
+void CL_SetUpNetClient(VSocketPublic*);
 void SV_ConnectClient(VBasePlayer*);
 void CL_Clear();
 void CL_ReadFromServerInfo();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void CL_SetUpStandaloneClient();
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
@@ -362,7 +357,7 @@ void CL_Disconnect()
 //
 //	CL_EstablishConnection
 //
-//	Host should be either "local" or a net address to be passed on
+//	Host should be a net address to be passed on
 //
 //==========================================================================
 
@@ -381,41 +376,16 @@ void CL_EstablishConnection(const char* host)
 
 	CL_Disconnect();
 
-	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone ||
-		GGameInfo->NetMode == NM_ListenServer)
+	VSocketPublic* Sock = GNet->Connect(host);
+	if (!Sock)
 	{
-		VBasePlayer* Player = GPlayersBase[0];
-		SV_ConnectClient(Player);
-		svs.num_connected++;
-
-		cl = Player;
-		cl->ClGame = GClGame;
-		GClGame->cl = cl;
-
-		if (GDemoRecordingContext)
-		{
-			GDemoRecordingContext->ClientConnections[0]->Owner = cl;
-			((VPlayerChannel*)GDemoRecordingContext->ClientConnections[
-				0]->Channels[CHANIDX_Player])->SetPlayer(cl);
-		}
+		GCon->Log("Failed to connect to the server");
+		return;
 	}
-	else
-	{
-		VSocketPublic* Sock = GNet->Connect(host);
-		if (!Sock)
-		{
-			GCon->Log("Failed to connect to the server");
-			return;
-		}
 
-		CL_SetUpLocalPlayer(Sock);
-		GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
-		if (GGameInfo->NetMode == NM_None)
-		{
-			GGameInfo->NetMode = NM_Client;
-		}
-	}
+	CL_SetUpNetClient(Sock);
+	GCon->Logf(NAME_Dev, "CL_EstablishConnection: connected to %s", host);
+	GGameInfo->NetMode = NM_Client;
 
 	UserInfoSent = false;
 
@@ -430,6 +400,48 @@ void CL_EstablishConnection(const char* host)
 	{
 		CL_SetUpStandaloneClient();
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	CL_SetUpLocalPlayer
+//
+//	Host should be either "local" or a net address to be passed on
+//
+//==========================================================================
+
+void CL_SetUpLocalPlayer()
+{
+	guard(CL_SetUpLocalPlayer);
+	if (GGameInfo->NetMode == NM_DedicatedServer)
+	{
+		return;
+	}
+
+	VBasePlayer* Player = GPlayersBase[0];
+	SV_ConnectClient(Player);
+	svs.num_connected++;
+
+	cl = Player;
+	cl->ClGame = GClGame;
+	GClGame->cl = cl;
+
+	if (GDemoRecordingContext)
+	{
+		GDemoRecordingContext->ClientConnections[0]->Owner = cl;
+		((VPlayerChannel*)GDemoRecordingContext->ClientConnections[
+			0]->Channels[CHANIDX_Player])->SetPlayer(cl);
+	}
+
+	UserInfoSent = false;
+
+	GClGame->eventConnected();
+	cls.signon = 0;				// need all the signon messages before playing
+
+	MN_DeactivateMenu();
+
+	CL_SetUpStandaloneClient();
 	unguard;
 }
 
@@ -628,13 +640,13 @@ VLevel* VClientNetContext::GetLevel()
 
 //==========================================================================
 //
-//	CL_SetUpLocalPlayer
+//	CL_SetUpNetClient
 //
 //==========================================================================
 
-void CL_SetUpLocalPlayer(VSocketPublic* Sock)
+void CL_SetUpNetClient(VSocketPublic* Sock)
 {
-	guard(CL_SetUpLocalPlayer);
+	guard(CL_SetUpNetClient);
 	//	Create player structure.
 	cl = (VBasePlayer*)VObject::StaticSpawnObject(
 		VClass::FindClass("Player"));
@@ -918,7 +930,7 @@ COMMAND(PlayDemo)
 	CL_Disconnect();
 
 	cls.demoplayback = true;
-	CL_SetUpLocalPlayer(NULL);
+	CL_SetUpNetClient(NULL);
 	GGameInfo->NetMode = NM_Client;
 	GClGame->eventDemoPlaybackStarted();
 	unguard;

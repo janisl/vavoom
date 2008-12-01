@@ -37,5 +37,10 @@ struct server_static_t
 	VStr		serverinfo;
 };
 
+void SV_Init();
+void SV_Shutdown();
+void ServerFrame(int realtics);
+void SV_ShutdownServer(bool crash);
+
 extern server_t			sv;
 extern server_static_t	svs;

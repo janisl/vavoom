@@ -209,10 +209,8 @@ extern int 			TimerGame; // tic countdown for deathmatch
 void SV_ReadMove();
 
 void Draw_TeleportIcon();
-void CL_Disconnect();
 
 void SV_DropClient(VBasePlayer* Player, bool crash);
-void SV_ShutdownServer(bool);
 void SV_SpawnServer(const char*, bool, bool);
 void SV_SendServerInfoToClients();
 

@@ -38,6 +38,7 @@ bool C_Active();
 void C_Start();
 void C_StartFull();
 void C_Stop();
+void C_Shutdown();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

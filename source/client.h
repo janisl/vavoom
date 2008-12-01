@@ -50,7 +50,14 @@ struct client_static_t
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
+void CL_Init();
+void CL_Shutdown();
+void CL_SendMove();
 bool CL_Responder(event_t* ev);
+void CL_ReadFromServer();
+void CL_SetUpLocalPlayer();
+void CL_SetUpStandaloneClient();
+void CL_Disconnect();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

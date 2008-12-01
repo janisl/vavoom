@@ -35,8 +35,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_EstablishConnection(const char* host);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -1332,7 +1330,7 @@ COMMAND(Map)
 #ifdef CLIENT
 	if (GGameInfo->NetMode != NM_DedicatedServer)
 	{
-		CL_EstablishConnection("local");
+		CL_SetUpLocalPlayer();
 	}
 #endif
 	unguard;
@@ -1359,7 +1357,7 @@ bool Host_StartTitleMap()
 
 	SV_SpawnServer("titlemap", true, true);
 #ifdef CLIENT
-	CL_EstablishConnection("local");
+	CL_SetUpLocalPlayer();
 #endif
 	return true;
 	unguard;

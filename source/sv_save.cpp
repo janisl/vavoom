@@ -70,10 +70,6 @@ enum gameArchiveSegment_t
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_Disconnect();
-void CL_SetUpStandaloneClient();
-void CL_EstablishConnection(const char* host);
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -870,7 +866,7 @@ void SV_LoadGame(int slot)
 #ifdef CLIENT
 	if (GGameInfo->NetMode != NM_DedicatedServer)
 	{
-		CL_EstablishConnection("local");
+		CL_SetUpLocalPlayer();
 	}
 #endif
 	unguard;

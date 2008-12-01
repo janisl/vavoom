@@ -30,18 +30,6 @@
 #include "cl_local.h"
 #include "ui.h"
 
-void CL_Init();
-void CL_Shutdown();
-void SV_Init();
-void SV_Shutdown();
-void CL_SendMove();
-void ServerFrame(int realtics);
-void CL_ReadFromServer();
-void SV_ShutdownServer(bool crash);
-void CL_Disconnect();
-VName P_TranslateMap(int map);
-void C_Shutdown();
-
 // MACROS ------------------------------------------------------------------
 
 // State updates, number of tics / second.

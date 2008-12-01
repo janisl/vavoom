@@ -40,9 +40,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void SV_ShutdownServer(bool crash);
-void CL_Disconnect();
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
