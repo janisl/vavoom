@@ -38,11 +38,7 @@ struct client_static_t
 	// entering a map (and clearing client_state_t)
 	bool			demorecording;
 	bool			demoplayback;
-	bool			timedemo;
 	VStream*		demofile;
-	int				td_lastframe;	// to meter out one message a frame
-	int				td_startframe;	// host_framecount at start
-	double			td_starttime;	// realtime at second frame of timedemo
 
 	// connection information
 	int				signon;			// 0 to SIGNONS

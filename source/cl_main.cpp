@@ -315,7 +315,6 @@ void CL_Disconnect()
 	}
 
 	cls.demoplayback = false;
-	cls.timedemo = false;
 	cls.signon = 0;
 	GClGame->eventDisconnected();
 	unguard;
@@ -616,11 +615,7 @@ void CL_SetUpNetClient(VSocketPublic* Sock)
 	cl->ClGame = GClGame;
 	GClGame->cl = cl;
 
-	if (cls.demoplayback)
-	{
-		cl->Net = new VDemoPlaybackNetConnection(ClientNetContext, cl);
-	}
-	else if (cls.demorecording)
+	if (cls.demorecording)
 	{
 		cl->Net = new VDemoRecordingNetConnection(Sock, ClientNetContext, cl);
 	}
@@ -635,24 +630,59 @@ void CL_SetUpNetClient(VSocketPublic* Sock)
 
 //==========================================================================
 //
-//	CL_FinishTimeDemo
+//	CL_PlayDemo
 //
 //==========================================================================
 
-void CL_FinishTimeDemo()
+void CL_PlayDemo(const VStr& DemoName, bool IsTimeDemo)
 {
-	guard(CL_FinishTimeDemo);
-	int		frames;
-	float	time;
-	
-	cls.timedemo = false;
-	
-	// the first frame didn't count
-	frames = (host_framecount - cls.td_startframe) - 1;
-	time = realtime - cls.td_starttime;
-	if (!time)
-		time = 1;
-	GCon->Logf("%d frames %f seconds %f fps", frames, time, frames / time);
+	guard(CL_PlayDemo);
+	char	magic[8];
+
+	//
+	// open the demo file
+	//
+	VStr name = VStr("demos/") + DemoName.DefaultExtension(".dem");
+
+	GCon->Logf("Playing demo from %s.", *name);
+	cls.demofile = FL_OpenFileRead(name);
+	if (!cls.demofile)
+	{
+		GCon->Log("ERROR: couldn't open.");
+		return;
+	}
+
+	cls.demofile->Serialise(magic, 4);
+	magic[4] = 0;
+	if (VStr::Cmp(magic, "VDEM"))
+	{
+		delete cls.demofile;
+		cls.demofile = NULL;
+		GCon->Log("ERROR: not a Vavoom demo.");
+		return;
+	}
+
+	//
+	// disconnect from server
+	//
+	CL_Disconnect();
+
+	cls.demoplayback = true;
+
+	//	Create player structure.
+	cl = (VBasePlayer*)VObject::StaticSpawnObject(
+		VClass::FindClass("Player"));
+	cl->PlayerFlags |= VBasePlayer::PF_IsClient;
+	cl->ClGame = GClGame;
+	GClGame->cl = cl;
+
+	cl->Net = new VDemoPlaybackNetConnection(ClientNetContext, cl,
+		IsTimeDemo);
+	ClientNetContext->ServerConnection = cl->Net;
+	((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->SetPlayer(cl);
+
+	GGameInfo->NetMode = NM_Client;
+	GClGame->eventDemoPlaybackStarted();
 	unguard;
 }
 
@@ -672,14 +702,6 @@ void CL_StopPlayback()
 		return;
 	}
 
-	delete cls.demofile;
-	cls.demoplayback = false;
-	cls.demofile = NULL;
-
-	if (cls.timedemo)
-	{
-		CL_FinishTimeDemo();
-	}
 	GClGame->eventDemoPlaybackStopped();
 	unguard;
 }
@@ -851,8 +873,6 @@ COMMAND(Record)
 COMMAND(PlayDemo)
 {
 	guard(COMMAND PlayDemo);
-	char	magic[8];
-
 	if (Source != SRC_Command)
 	{
 		return;
@@ -864,38 +884,7 @@ COMMAND(PlayDemo)
 		return;
 	}
 
-	//
-	// open the demo file
-	//
-	VStr name = VStr("demos/") + Args[1].DefaultExtension(".dem");
-
-	GCon->Logf("Playing demo from %s.", *name);
-	cls.demofile = FL_OpenFileRead(name);
-	if (!cls.demofile)
-	{
-		GCon->Log("ERROR: couldn't open.");
-		return;
-	}
-
-	cls.demofile->Serialise(magic, 4);
-	magic[4] = 0;
-	if (VStr::Cmp(magic, "VDEM"))
-	{
-		delete cls.demofile;
-		cls.demofile = NULL;
-		GCon->Log("ERROR: not a Vavoom demo.");
-		return;
-	}
-
-	//
-	// disconnect from server
-	//
-	CL_Disconnect();
-
-	cls.demoplayback = true;
-	CL_SetUpNetClient(NULL);
-	GGameInfo->NetMode = NM_Client;
-	GClGame->eventDemoPlaybackStarted();
+	CL_PlayDemo(Args[1], false);
 	unguard;
 }
 
@@ -921,14 +910,7 @@ COMMAND(TimeDemo)
 		return;
 	}
 
-	PlayDemo_f.Run();
-
-	// cls.td_starttime will be grabbed at the second frame of the demo, so
-	// all the loading time doesn't get counted
-	
-	cls.timedemo = true;
-	cls.td_startframe = host_framecount;
-	cls.td_lastframe = -1;		// get a new message this frame
+	CL_PlayDemo(Args[1], true);
 	unguard;
 }
 

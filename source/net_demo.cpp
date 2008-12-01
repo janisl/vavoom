@@ -64,12 +64,46 @@
 //==========================================================================
 
 VDemoPlaybackNetConnection::VDemoPlaybackNetConnection(VNetContext* AContext,
-	VBasePlayer* AOwner)
+	VBasePlayer* AOwner, bool ATimeDemo)
 : VNetConnection(NULL, AContext, AOwner)
 , NextPacketTime(0)
+, bTimeDemo(ATimeDemo)
 {
 	AutoAck = true;
 	*cls.demofile << NextPacketTime;
+
+	if (bTimeDemo)
+	{
+		//	cls.td_starttime will be grabbed at the second frame of the demo,
+		// so all the loading time doesn't get counted
+		td_startframe = host_framecount;
+		td_lastframe = -1;		// get a new message this frame
+	}
+}
+
+//==========================================================================
+//
+//	VDemoPlaybackNetConnection::~VDemoPlaybackNetConnection
+//
+//==========================================================================
+
+VDemoPlaybackNetConnection::~VDemoPlaybackNetConnection()
+{
+	delete cls.demofile;
+	cls.demoplayback = false;
+	cls.demofile = NULL;
+
+	if (bTimeDemo)
+	{
+		// the first frame didn't count
+		int frames = (host_framecount - td_startframe) - 1;
+		float time = realtime - td_starttime;
+		if (!time)
+		{
+			time = 1;
+		}
+		GCon->Logf("%d frames %f seconds %f fps", frames, time, frames / time);
+	}
 }
 
 //==========================================================================
@@ -86,18 +120,18 @@ int VDemoPlaybackNetConnection::GetRawPacket(TArray<vuint8>& Data)
 	// decide if it is time to grab the next message
 	if (cls.signon)	// allways grab until fully connected
 	{
-		if (cls.timedemo)
+		if (bTimeDemo)
 		{
-			if (host_framecount == cls.td_lastframe)
+			if (host_framecount == td_lastframe)
 			{
 				return 0;		// allready read this frame's message
 			}
-			cls.td_lastframe = host_framecount;
+			td_lastframe = host_framecount;
 			// if this is the second frame, grab the real  cls.td_starttime
 			// so the bogus time on the first frame doesn't count
-			if (host_framecount == cls.td_startframe + 1)
+			if (host_framecount == td_startframe + 1)
 			{
-				cls.td_starttime = realtime;
+				td_starttime = realtime;
 			}
 		}
 		else if (GClLevel->Time < NextPacketTime)
