@@ -205,8 +205,7 @@ void CL_ReadFromServer()
 
 	if (cls.signon)
 	{
-		if (GGameInfo->NetMode == NM_LoopbackSinglePlayer ||
-			GGameInfo->NetMode == NM_ServerLoopbackClient ||
+		if (GGameInfo->NetMode == NM_ServerLoopbackClient ||
 			GGameInfo->NetMode == NM_Client)
 		{
 			GClLevel->Time += host_frametime;
@@ -331,8 +330,7 @@ void CL_Disconnect()
 			cl->Net->Flush();
 		}
 
-		if (GGameInfo->NetMode == NM_LoopbackSinglePlayer ||
-			GGameInfo->NetMode == NM_ServerLoopbackClient ||
+		if (GGameInfo->NetMode == NM_ServerLoopbackClient ||
 			GGameInfo->NetMode == NM_Client)
 		{
 			delete cl->Net;

@@ -2630,8 +2630,7 @@ int VAcs::RunScript(float DeltaTime)
 			{
 				*sp = GAME_TITLE_MAP;
 			}
-			else if (GGameInfo->NetMode == NM_Standalone ||
-				GGameInfo->NetMode == NM_LoopbackSinglePlayer)
+			else if (GGameInfo->NetMode == NM_Standalone)
 			{
 				*sp = GAME_SINGLE_PLAYER;
 			}

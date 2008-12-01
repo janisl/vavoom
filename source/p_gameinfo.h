@@ -34,8 +34,6 @@ enum
 	NM_TitleMap,
 	//	Standalone single player game.
 	NM_Standalone,
-	//	Single player game with loopback network connection.
-	NM_LoopbackSinglePlayer,
 	//	Dedicated server, no local client.
 	NM_DedicatedServer,
 	//	Server with local client.

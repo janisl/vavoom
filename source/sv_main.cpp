@@ -89,7 +89,6 @@ static VCvarI	Skill("Skill", "2");
 static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
-static VCvarI	use_standalone("use_standalone", "1", CVAR_Archive);
 static VCvarI	use_listen("use_listen", "1", CVAR_Archive);
 static VCvarF	master_heartbeat_time("master_heartbeat_time", "300", CVAR_Archive);
 
@@ -654,9 +653,10 @@ static void G_DoReborn(int playernum)
 {
 	if (!GGameInfo->Players[playernum] ||
 		!(GGameInfo->Players[playernum]->PlayerFlags & VBasePlayer::PF_Spawned))
+	{
 		return;
-	if ((GGameInfo->NetMode == NM_Standalone ||
-		GGameInfo->NetMode == NM_LoopbackSinglePlayer) && !deathmatch)// For fun now
+	}
+	if (GGameInfo->NetMode == NM_Standalone)
 	{
 		GCmdBuf << "Restart\n";
 		GGameInfo->Players[playernum]->PlayerState = PST_LIVE;
@@ -812,7 +812,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 
 #ifdef CLIENT
 		GGameInfo->NetMode = titlemap ? NM_TitleMap :
-			svs.max_clients == 1 ? use_standalone ? NM_Standalone : NM_LoopbackSinglePlayer :
+			svs.max_clients == 1 ? NM_Standalone :
 			use_listen ? NM_ListenServer : NM_ServerLoopbackClient;
 #else
 		GGameInfo->NetMode = NM_DedicatedServer;
@@ -1081,8 +1081,7 @@ void SV_ShutdownServer(bool crash)
 COMMAND(Restart)
 {
 	guard(COMMAND Restart);
-	if (GGameInfo->NetMode != NM_Standalone &&
-		GGameInfo->NetMode != NM_LoopbackSinglePlayer)
+	if (GGameInfo->NetMode != NM_Standalone)
 	{
 		return;
 	}
