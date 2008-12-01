@@ -72,6 +72,7 @@ enum gameArchiveSegment_t
 
 void CL_Disconnect();
 void CL_SetUpStandaloneClient();
+void CL_EstablishConnection(const char* host);
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -869,7 +870,7 @@ void SV_LoadGame(int slot)
 #ifdef CLIENT
 	if (GGameInfo->NetMode != NM_DedicatedServer)
 	{
-		GCmdBuf << "Connect local\n";
+		CL_EstablishConnection("local");
 	}
 #endif
 	unguard;

@@ -35,6 +35,8 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
+void CL_EstablishConnection(const char* host);
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -1333,7 +1335,7 @@ COMMAND(Map)
 #ifdef CLIENT
 	if (GGameInfo->NetMode != NM_DedicatedServer)
 	{
-		GCmdBuf << "Connect local\n";
+		CL_EstablishConnection("local");
 	}
 #endif
 	unguard;
@@ -1359,7 +1361,9 @@ bool Host_StartTitleMap()
 	GGameInfo->RebornPosition = RebornPosition;
 
 	SV_SpawnServer("titlemap", true, true);
-	GCmdBuf << "Connect local\n";
+#ifdef CLIENT
+	CL_EstablishConnection("local");
+#endif
 	return true;
 	unguard;
 }
