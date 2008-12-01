@@ -38,6 +38,8 @@ enum
 	NM_LoopbackSinglePlayer,
 	//	Dedicated server, no local client.
 	NM_DedicatedServer,
+	//	Server with local client.
+	NM_ListenServer,
 	//	Server with local client connected using loopback driver.
 	NM_ServerLoopbackClient,
 	//	Client only, no local server.

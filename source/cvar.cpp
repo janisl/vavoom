@@ -219,7 +219,8 @@ void VCvar::DoSet(const VStr& AValue)
 		if (cl)
 		{
 			if (GGameInfo->NetMode == NM_TitleMap ||
-				GGameInfo->NetMode == NM_Standalone)
+				GGameInfo->NetMode == NM_Standalone ||
+				GGameInfo->NetMode == NM_ListenServer)
 			{
 				VCommand::ExecuteString(VStr("setinfo \"") + Name + "\" \"" +
 					StringValue + "\"\n", VCommand::SRC_Client, cl);

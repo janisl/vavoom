@@ -148,7 +148,8 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 	}
 
 	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone)
+		GGameInfo->NetMode == NM_Standalone ||
+		(GGameInfo->NetMode == NM_ListenServer && (PlayerFlags & PF_IsClient)))
 	{
 		return false;
 	}

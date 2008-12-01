@@ -205,7 +205,9 @@ void CL_ReadFromServer()
 
 	if (cls.signon)
 	{
-		if (GGameInfo->NetMode > NM_Standalone)
+		if (GGameInfo->NetMode == NM_LoopbackSinglePlayer ||
+			GGameInfo->NetMode == NM_ServerLoopbackClient ||
+			GGameInfo->NetMode == NM_Client)
 		{
 			GClLevel->Time += host_frametime;
 			GClLevel->TicTime = (int)(GClLevel->Time * 35.0);
@@ -247,7 +249,8 @@ void CL_SignonReply()
 		UserInfoSent = true;
 	}
 	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone)
+		GGameInfo->NetMode == NM_Standalone ||
+		GGameInfo->NetMode == NM_ListenServer)
 	{
 		cl->SpawnClient();
 	}
@@ -328,7 +331,9 @@ void CL_Disconnect()
 			cl->Net->Flush();
 		}
 
-		if (GGameInfo->NetMode > NM_Standalone)
+		if (GGameInfo->NetMode == NM_LoopbackSinglePlayer ||
+			GGameInfo->NetMode == NM_ServerLoopbackClient ||
+			GGameInfo->NetMode == NM_Client)
 		{
 			delete cl->Net;
 			cl->ConditionalDestroy();
@@ -381,7 +386,8 @@ void CL_EstablishConnection(const char* host)
 	CL_Disconnect();
 
 	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone)
+		GGameInfo->NetMode == NM_Standalone ||
+		GGameInfo->NetMode == NM_ListenServer)
 	{
 		VBasePlayer* Player = GPlayersBase[0];
 		SV_ConnectClient(Player);
@@ -423,7 +429,8 @@ void CL_EstablishConnection(const char* host)
 	MN_DeactivateMenu();
 
 	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone)
+		GGameInfo->NetMode == NM_Standalone ||
+		GGameInfo->NetMode == NM_ListenServer)
 	{
 		CL_SetUpStandaloneClient();
 	}
@@ -841,7 +848,8 @@ COMMAND(Record)
 
 	cls.demorecording = true;
 
-	if (GGameInfo->NetMode == NM_Standalone)
+	if (GGameInfo->NetMode == NM_Standalone ||
+		GGameInfo->NetMode == NM_ListenServer)
 	{
 		GDemoRecordingContext = new VServerNetContext();
 		VSocketPublic* Sock = new VDemoRecordingSocket();
