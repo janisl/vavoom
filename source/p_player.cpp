@@ -147,12 +147,14 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 		}
 	}
 
+#ifdef CLIENT
 	if (GGameInfo->NetMode == NM_TitleMap ||
 		GGameInfo->NetMode == NM_Standalone ||
-		(GGameInfo->NetMode == NM_ListenServer && (PlayerFlags & PF_IsClient)))
+		(GGameInfo->NetMode == NM_ListenServer && this == cl))
 	{
 		return false;
 	}
+#endif
 
 	//	Find initial version of the method.
 	VMethod* Base = Func;
