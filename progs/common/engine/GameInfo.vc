@@ -42,8 +42,6 @@ enum
 	NM_DedicatedServer,
 	//	Server with local client.
 	NM_ListenServer,
-	//	Server with local client connected using loopback driver.
-	NM_ServerLoopbackClient,
 	//	Client only, no local server.
 	NM_Client
 };
@@ -83,9 +81,7 @@ bool				bDefaultBloodSplatter;
 
 bool netgame
 {
-	get { return NetMode == NM_DedicatedServer ||
-		NetMode == NM_ListenServer ||
-		NetMode == NM_ServerLoopbackClient; }
+	get { return NetMode > NM_Standalone; }
 }
 
 //==========================================================================

@@ -89,7 +89,6 @@ static VCvarI	Skill("Skill", "2");
 static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
 static VCvarI	sv_maxmove("sv_maxmove", "400", CVAR_Archive);
-static VCvarI	use_listen("use_listen", "1", CVAR_Archive);
 static VCvarF	master_heartbeat_time("master_heartbeat_time", "300", CVAR_Archive);
 
 static VServerNetContext*	ServerNetContext;
@@ -812,8 +811,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 
 #ifdef CLIENT
 		GGameInfo->NetMode = titlemap ? NM_TitleMap :
-			svs.max_clients == 1 ? NM_Standalone :
-			use_listen ? NM_ListenServer : NM_ServerLoopbackClient;
+			svs.max_clients == 1 ? NM_Standalone : NM_ListenServer;
 #else
 		GGameInfo->NetMode = NM_DedicatedServer;
 #endif
