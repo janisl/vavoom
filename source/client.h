@@ -53,7 +53,6 @@ bool CL_Responder(event_t* ev);
 void CL_ReadFromServer();
 void CL_SetUpLocalPlayer();
 void CL_SetUpStandaloneClient();
-void CL_Disconnect();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

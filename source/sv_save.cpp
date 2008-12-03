@@ -815,10 +815,7 @@ void SV_LoadGame(int slot)
 	guard(SV_LoadGame);
 	VName		mapname;
 
-	SV_ShutdownServer(false);
-#ifdef CLIENT
-	CL_Disconnect();
-#endif
+	SV_ShutdownGame();
 
 	// Copy all needed save files to the base slot
 	if (slot != BASE_SLOT)

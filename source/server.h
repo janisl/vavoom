@@ -40,7 +40,7 @@ struct server_static_t
 void SV_Init();
 void SV_Shutdown();
 void ServerFrame(int realtics);
-void SV_ShutdownServer(bool crash);
+void SV_ShutdownGame();
 
 extern server_t			sv;
 extern server_static_t	svs;

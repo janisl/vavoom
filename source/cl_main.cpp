@@ -125,12 +125,10 @@ void CL_Shutdown()
 	if (cl)
 	{
 		//	Disconnect.
-		CL_Disconnect();
+		SV_ShutdownGame();
 	}
 
 	//	Free up memory.
-	if (GClLevel)
-		GClLevel->ConditionalDestroy();
 	if (GClGame)
 		GClGame->ConditionalDestroy();
 	if (GRoot)
@@ -234,10 +232,8 @@ void CL_ReadFromServer()
 void CL_KeepaliveMessage()
 {
 	guard(CL_KeepaliveMessage);
-#ifdef SERVER
 	if (GGameInfo->NetMode != NM_Client)
 		return;		// no need if server is local
-#endif
 	if (cls.demoplayback)
 		return;
 	// write out a nop
@@ -257,60 +253,75 @@ void CL_KeepaliveMessage()
 void CL_Disconnect()
 {
 	guard(CL_Disconnect);
-	if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
+	if (GGameInfo->NetMode == NM_TitleMap ||
+		GGameInfo->NetMode == NM_Standalone ||
+		GGameInfo->NetMode == NM_ListenServer)
 	{
-		GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
-		GAudio->ResumeSound();
-	}
+		if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
+		{
+			GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
+			GAudio->ResumeSound();
+		}
 
-	// stop sounds (especially looping!)
-	GAudio->StopAllSound();
+		// stop sounds (especially looping!)
+		GAudio->StopAllSound();
 
-	if (cls.demoplayback)
-	{
-		GClGame->eventDemoPlaybackStopped();
-	}
-
-	// if running a local server, shut it down
-	if (cl)
-	{
+		// if running a local server, shut it down
 		if (cls.demorecording)
 		{
 			CL_StopRecording();
 		}
 
-		if (cl->Net && !cls.demoplayback)
+		cl = NULL;
+		GClLevel = NULL;
+
+		cls.demoplayback = false;
+		cls.signon = 0;
+		GClGame->eventDisconnected();
+	}
+	else if (GGameInfo->NetMode == NM_Client)
+	{
+		if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
+		{
+			GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
+			GAudio->ResumeSound();
+		}
+
+		// stop sounds (especially looping!)
+		GAudio->StopAllSound();
+
+		if (cls.demoplayback)
+		{
+			GClGame->eventDemoPlaybackStopped();
+		}
+
+		if (cls.demorecording)
+		{
+			CL_StopRecording();
+		}
+
+		if (!cls.demoplayback)
 		{
 			GCon->Log(NAME_Dev, "Sending clc_disconnect");
 			cl->Net->Channels[0]->Close();
 			cl->Net->Flush();
 		}
 
-		if (GGameInfo->NetMode == NM_Client)
-		{
-			delete cl->Net;
-			cl->ConditionalDestroy();
-		}
+		delete cl->Net;
+		cl->ConditionalDestroy();
 		cl = NULL;
 
-#ifdef SERVER
-		SV_ShutdownServer(false);
-#endif
-	}
-
-	if (GClLevel && GClLevel != GLevel)
-	{
-		delete GClLevel;
-	}
-	GClLevel = NULL;
-	if (GGameInfo->NetMode == NM_Client)
-	{
+		if (GClLevel)
+		{
+			delete GClLevel;
+		}
+		GClLevel = NULL;
 		GGameInfo->NetMode = NM_None;
-	}
 
-	cls.demoplayback = false;
-	cls.signon = 0;
-	GClGame->eventDisconnected();
+		cls.demoplayback = false;
+		cls.signon = 0;
+		GClGame->eventDisconnected();
+	}
 	unguard;
 }
 
@@ -330,7 +341,7 @@ void CL_EstablishConnection(const char* host)
 		return;
 	}
 
-	CL_Disconnect();
+	SV_ShutdownGame();
 
 	VSocketPublic* Sock = GNet->Connect(host);
 	if (!Sock)
@@ -506,9 +517,7 @@ void CL_Clear()
 	{
 		cl->ClearInput();
 	}
-#ifdef SERVER
 	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_Client)
-#endif
 	{
 		// Make sure all sounds are stopped.
 		GAudio->StopAllSound();
@@ -646,7 +655,7 @@ void CL_PlayDemo(const VStr& DemoName, bool IsTimeDemo)
 	//
 	// disconnect from server
 	//
-	CL_Disconnect();
+	SV_ShutdownGame();
 
 	cls.demoplayback = true;
 
@@ -708,10 +717,7 @@ COMMAND(Connect)
 
 COMMAND(Disconnect)
 {
-	CL_Disconnect();
-#ifdef SERVER
-	SV_ShutdownServer(false);
-#endif
+	SV_ShutdownGame();
 }
 
 //==========================================================================
@@ -874,51 +880,3 @@ COMMAND(TimeDemo)
 	CL_PlayDemo(Args[1], true);
 	unguard;
 }
-
-#ifndef SERVER
-
-//==========================================================================
-//
-//	COMMAND Pause
-//
-//==========================================================================
-
-COMMAND(Pause)
-{
-	ForwardToServer();
-}
-
-//==========================================================================
-//
-//  Stats_f
-//
-//==========================================================================
-
-COMMAND(Stats)
-{
-	ForwardToServer();
-}
-
-//==========================================================================
-//
-//	COMMAND TeleportNewMap
-//
-//==========================================================================
-
-COMMAND(TeleportNewMap)
-{
-	ForwardToServer();
-}
-
-//==========================================================================
-//
-//	COMMAND	Say
-//
-//==========================================================================
-
-COMMAND(Say)
-{
-	ForwardToServer();
-}
-
-#endif

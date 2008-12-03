@@ -35,6 +35,8 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
+void CL_Disconnect();
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -162,7 +164,7 @@ void P_InitThinkers()
 void SV_Shutdown()
 {
 	guard(SV_Shutdown);
-	SV_ShutdownServer(false);
+	SV_ShutdownGame();
 	if (GGameInfo)
 		GGameInfo->ConditionalDestroy();
 	for (int i = 0; i < MAXPLAYERS; i++)
@@ -1060,6 +1062,33 @@ void SV_ShutdownServer(bool crash)
 	unguard;
 }
 
+//==========================================================================
+//
+//	SV_ShutdownGame
+//
+//==========================================================================
+
+void SV_ShutdownGame()
+{
+	guard(SV_ShutdownGame);
+	if (GGameInfo->NetMode == NM_None)
+	{
+		return;
+	}
+
+	if (GGameInfo->NetMode == NM_Client)
+	{
+#ifdef CLIENT
+		CL_Disconnect();
+#endif
+	}
+	else
+	{
+		SV_ShutdownServer(false);
+	}
+	unguard;
+}
+
 #ifdef CLIENT
 
 //==========================================================================
@@ -1303,10 +1332,7 @@ COMMAND(Map)
 	}
 	mapname = Args[1];
 
-	SV_ShutdownServer(false);
-#ifdef CLIENT
-	CL_Disconnect();
-#endif
+	SV_ShutdownGame();
 
 	SV_InitBaseSlot();
 	SV_ClearRebornSlot();

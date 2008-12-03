@@ -427,20 +427,18 @@ unclock(host_cycles[0]);
 		//	Make sure, that we use primary wad files
 		W_CloseAuxiliary();
 
-#ifdef SERVER
-		SV_ShutdownServer(false);
-#endif
-
 #ifdef CLIENT
 		if (GGameInfo->NetMode == NM_DedicatedServer)
 		{
+			SV_ShutdownGame();
 			Sys_Error("Host_Error: %s\n", e.message);	// dedicated servers exit
 		}
 
-		CL_Disconnect();
+		SV_ShutdownGame();
 		GClGame->eventOnHostError();
 		C_StartFull();
 #else
+		SV_ShutdownGame();
 		Sys_Error("Host_Error: %s\n", e.message);	// dedicated servers exit
 #endif
 	}
@@ -453,19 +451,17 @@ unclock(host_cycles[0]);
 		//	Make sure, that we use primary wad files
 		W_CloseAuxiliary();
 
-#ifdef SERVER
-		SV_ShutdownServer(false);
-#endif
-
 #ifdef CLIENT
 		if (GGameInfo->NetMode == NM_DedicatedServer)
 		{
+			SV_ShutdownGame();
 			Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
 		}
-	
-		CL_Disconnect();
+
+		SV_ShutdownGame();
 		GClGame->eventOnHostEndGame();
 #else
+		SV_ShutdownGame();
 		Sys_Error("Host_EndGame: %s\n", e.message);	// dedicated servers exit
 #endif
 	}
@@ -577,12 +573,7 @@ void Host_SaveConfiguration()
 void Host_Quit()
 {
 	guard(Host_Quit);
-#ifdef CLIENT
-	CL_Disconnect();
-#endif
-#ifdef SERVER
-	SV_ShutdownServer(false);
-#endif
+	SV_ShutdownGame();
 #ifdef CLIENT
 	// Save game configyration
 	Host_SaveConfiguration();
