@@ -269,6 +269,7 @@ void CL_DecayLights();
 void CL_KeepaliveMessage();
 void CL_ParseServerInfo(class VMessageIn& msg);
 void CL_ReadFromServerInfo();
+void CL_StopRecording();
 
 void R_DrawModelFrame(const TVec&, float, VModel*, int, int, const char*, int,
 	int, int, float);

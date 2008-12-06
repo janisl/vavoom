@@ -28,14 +28,13 @@
 #include "gamedefs.h"
 #include "network.h"
 #include "sv_local.h"
+#include "cl_local.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-
-void CL_Disconnect();
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
@@ -988,83 +987,10 @@ void SV_DropClient(VBasePlayer* Player, bool)
 
 //==========================================================================
 //
-//	SV_ShutdownServer
+//	SV_ShutdownGame
 //
 //	This only happens at the end of a game, not between levels
-//
-//==========================================================================
-
-void SV_ShutdownServer(bool crash)
-{
-	guard(SV_ShutdownServer);
-	int			i;
-	int			count;
-
-	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_Client)
-	{
-		return;
-	}
-
-	sv_loading = false;
-
-#ifdef CLIENT
-	// stop all client sounds immediately
-	if (cl)
-	{
-		CL_Disconnect();
-	}
-#endif
-
-	// make sure all the clients know we're disconnecting
-	count = NET_SendToAll(5);
-	if (count)
-		GCon->Logf("Shutdown server failed for %d clients", count);
-
-	for (i = 0; i < svs.max_clients; i++)
-	{
-		if (GGameInfo->Players[i])
-			SV_DropClient(GGameInfo->Players[i], crash);
-	}
-
-	//
-	// clear structures
-	//
-#ifdef CLIENT
-	GClLevel = NULL;
-#endif
-	if (GLevel)
-	{
-		delete GLevel;
-		GLevel = NULL;
-	}
-	if (GGameInfo->WorldInfo)
-	{
-		delete GGameInfo->WorldInfo;
-		GGameInfo->WorldInfo = NULL;
-	}
-	GGameInfo->NetMode = NM_None;
-	for (i = 0; i < MAXPLAYERS; i++)
-	{
-		//	Save net pointer
-		VNetConnection* OldNet = GPlayersBase[i]->Net;
-		GPlayersBase[i]->GetClass()->DestructObject(GPlayersBase[i]);
-		memset((vuint8*)GPlayersBase[i] + sizeof(VObject), 0,
-			GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
-		//	Restore pointer
-		GPlayersBase[i]->Net = OldNet;
-	}
-	memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
-	memset(&sv, 0, sizeof(sv));
-
-	//	Tell master server that this server is gone.
-	GNet->QuitMaster();
-	LastMasterUpdate = 0;
-	unguard;
-}
-
-//==========================================================================
-//
-//	SV_ShutdownGame
+//	This is also called on Host_Error, so it shouldn't cause any errors
 //
 //==========================================================================
 
@@ -1076,16 +1002,113 @@ void SV_ShutdownGame()
 		return;
 	}
 
+#ifdef CLIENT
+	if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
+	{
+		GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
+		GAudio->ResumeSound();
+	}
+
+	// stop sounds (especially looping!)
+	GAudio->StopAllSound();
+
+	if (cls.demorecording)
+	{
+		CL_StopRecording();
+	}
+#endif
+
 	if (GGameInfo->NetMode == NM_Client)
 	{
 #ifdef CLIENT
-		CL_Disconnect();
+		if (cls.demoplayback)
+		{
+			GClGame->eventDemoPlaybackStopped();
+		}
+
+		//	Sends a disconnect message to the server
+		if (!cls.demoplayback)
+		{
+			GCon->Log(NAME_Dev, "Sending clc_disconnect");
+			cl->Net->Channels[0]->Close();
+			cl->Net->Flush();
+		}
+
+		delete cl->Net;
+		cl->ConditionalDestroy();
+
+		if (GClLevel)
+		{
+			delete GClLevel;
+		}
 #endif
 	}
 	else
 	{
-		SV_ShutdownServer(false);
+		sv_loading = false;
+
+		// make sure all the clients know we're disconnecting
+		int count = NET_SendToAll(5);
+		if (count)
+		{
+			GCon->Logf("Shutdown server failed for %d clients", count);
+		}
+
+		for (int i = 0; i < svs.max_clients; i++)
+		{
+			if (GGameInfo->Players[i])
+			{
+				SV_DropClient(GGameInfo->Players[i], false);
+			}
+		}
+
+		//
+		// clear structures
+		//
+		if (GLevel)
+		{
+			delete GLevel;
+			GLevel = NULL;
+		}
+		if (GGameInfo->WorldInfo)
+		{
+			delete GGameInfo->WorldInfo;
+			GGameInfo->WorldInfo = NULL;
+		}
+		for (int i = 0; i < MAXPLAYERS; i++)
+		{
+			//	Save net pointer
+			VNetConnection* OldNet = GPlayersBase[i]->Net;
+			GPlayersBase[i]->GetClass()->DestructObject(GPlayersBase[i]);
+			memset((vuint8*)GPlayersBase[i] + sizeof(VObject), 0,
+				GPlayersBase[i]->GetClass()->ClassSize - sizeof(VObject));
+			//	Restore pointer
+			GPlayersBase[i]->Net = OldNet;
+		}
+		memset(GGameInfo->Players, 0, sizeof(GGameInfo->Players));
+		memset(&sv, 0, sizeof(sv));
+
+		//	Tell master server that this server is gone.
+		if (GGameInfo->NetMode >= NM_DedicatedServer)
+		{
+			GNet->QuitMaster();
+			LastMasterUpdate = 0;
+		}
 	}
+
+#ifdef CLIENT
+	GClLevel = NULL;
+	cl = NULL;
+	cls.demoplayback = false;
+	cls.signon = 0;
+
+	if (GGameInfo->NetMode != NM_DedicatedServer)
+	{
+		GClGame->eventDisconnected();
+	}
+#endif
+
+	GGameInfo->NetMode = NM_None;
 	unguard;
 }
 

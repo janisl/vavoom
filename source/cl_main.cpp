@@ -37,7 +37,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void CL_StopRecording();
 void CL_SetUpNetClient(VSocketPublic*);
 void SV_ConnectClient(VBasePlayer*);
 void CL_Clear();
@@ -238,90 +237,6 @@ void CL_KeepaliveMessage()
 		return;
 	// write out a nop
 	cl->Net->Flush();
-	unguard;
-}
-
-//==========================================================================
-//
-//	CL_Disconnect
-//
-//	Sends a disconnect message to the server
-//	This is also called on Host_Error, so it shouldn't cause any errors
-//
-//==========================================================================
-
-void CL_Disconnect()
-{
-	guard(CL_Disconnect);
-	if (GGameInfo->NetMode == NM_TitleMap ||
-		GGameInfo->NetMode == NM_Standalone ||
-		GGameInfo->NetMode == NM_ListenServer)
-	{
-		if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
-		{
-			GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
-			GAudio->ResumeSound();
-		}
-
-		// stop sounds (especially looping!)
-		GAudio->StopAllSound();
-
-		// if running a local server, shut it down
-		if (cls.demorecording)
-		{
-			CL_StopRecording();
-		}
-
-		cl = NULL;
-		GClLevel = NULL;
-
-		cls.demoplayback = false;
-		cls.signon = 0;
-		GClGame->eventDisconnected();
-	}
-	else if (GGameInfo->NetMode == NM_Client)
-	{
-		if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
-		{
-			GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
-			GAudio->ResumeSound();
-		}
-
-		// stop sounds (especially looping!)
-		GAudio->StopAllSound();
-
-		if (cls.demoplayback)
-		{
-			GClGame->eventDemoPlaybackStopped();
-		}
-
-		if (cls.demorecording)
-		{
-			CL_StopRecording();
-		}
-
-		if (!cls.demoplayback)
-		{
-			GCon->Log(NAME_Dev, "Sending clc_disconnect");
-			cl->Net->Channels[0]->Close();
-			cl->Net->Flush();
-		}
-
-		delete cl->Net;
-		cl->ConditionalDestroy();
-		cl = NULL;
-
-		if (GClLevel)
-		{
-			delete GClLevel;
-		}
-		GClLevel = NULL;
-		GGameInfo->NetMode = NM_None;
-
-		cls.demoplayback = false;
-		cls.signon = 0;
-		GClGame->eventDisconnected();
-	}
 	unguard;
 }
 
@@ -774,10 +689,16 @@ COMMAND(Record)
 		return;
 	}
 
-	if (c == 2 && cl)
+	if (c == 2 && GGameInfo->NetMode == NM_Client)
 	{
 		GCon->Log("Can not record - already connected to server");
 		GCon->Log("Client demo recording must be started before connecting");
+		return;
+	}
+
+	if (cls.demorecording)
+	{
+		GCon->Log("Already recording a demo");
 		return;
 	}
 
