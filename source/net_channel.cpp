@@ -356,3 +356,90 @@ void VChannel::SendRpc(VMethod* Func, VObject* Owner)
 	SendMessage(&Msg);
 	unguard;
 }
+
+//==========================================================================
+//
+//	VChannel::ReadRpc
+//
+//==========================================================================
+
+bool VChannel::ReadRpc(VMessageIn& Msg, int FldIdx, VObject* Owner)
+{
+	guard(VChannel::ReadRpc);
+	VMethod* Func = NULL;
+	for (VMethod* CM = Owner->GetClass()->NetMethods; CM; CM = CM->NextNetMethod)
+	{
+		if (CM->NetIndex == FldIdx)
+		{
+			Func = CM;
+			break;
+		}
+	}
+	if (!Func)
+	{
+		return false;
+	}
+
+	memset(pr_stackPtr, 0, Func->ParamsSize * sizeof(VStack));
+	//	Push self pointer
+	PR_PushPtr(Owner);
+	//	Get arguments
+	for (int i = 0; i < Func->NumParams; i++)
+	{
+		switch (Func->ParamTypes[i].Type)
+		{
+		case TYPE_Int:
+		case TYPE_Byte:
+		case TYPE_Bool:
+		case TYPE_Name:
+			VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				(vuint8*)&pr_stackPtr->i, Func->ParamTypes[i]);
+			pr_stackPtr++;
+			break;
+		case TYPE_Float:
+			VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				(vuint8*)&pr_stackPtr->f, Func->ParamTypes[i]);
+			pr_stackPtr++;
+			break;
+		case TYPE_String:
+			pr_stackPtr->p = NULL;
+			VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				(vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
+			pr_stackPtr++;
+			break;
+		case TYPE_Pointer:
+		case TYPE_Reference:
+		case TYPE_Class:
+		case TYPE_State:
+			VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				(vuint8*)&pr_stackPtr->p, Func->ParamTypes[i]);
+			pr_stackPtr++;
+			break;
+		case TYPE_Vector:
+			{
+				TVec Vec;
+				VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					(vuint8*)&Vec, Func->ParamTypes[i]);
+				PR_Pushv(Vec);
+			}
+			break;
+		default:
+			Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
+		}
+		if (Func->ParamFlags[i] & FPARM_Optional)
+		{
+			pr_stackPtr->i = Msg.ReadBit();
+			pr_stackPtr++;
+		}
+	}
+	//	Execute it
+	VObject::ExecuteFunction(Func);
+	//	If it returns a vector, pop the rest of values
+	if (Func->ReturnType.Type == TYPE_Vector)
+	{
+		PR_Pop();
+		PR_Pop();
+	}
+	return true;
+	unguard;
+}

@@ -191,6 +191,7 @@ public:
 	virtual void Close();
 	virtual void Tick();
 	void SendRpc(VMethod*, VObject*);
+	bool ReadRpc(VMessageIn& Msg, int, VObject*);
 };
 
 class VControlChannel : public VChannel
