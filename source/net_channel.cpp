@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "progdefs.h"
 #include "network.h"
 
 // MACROS ------------------------------------------------------------------
@@ -283,5 +284,75 @@ void VChannel::Tick()
 			Connection->Driver->packetsReSent++;
 		}
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VChannel::SendRpc
+//
+//==========================================================================
+
+void VChannel::SendRpc(VMethod* Func, VObject* Owner)
+{
+	guard(VChannel::SendRpc);
+	VMessageOut Msg(this);
+	Msg.bReliable = !!(Func->Flags & FUNC_NetReliable);
+
+	Msg.WriteInt(Func->NetIndex, Owner->GetClass()->NumNetFields);
+
+	//	Serialise arguments
+	guard(SerialiseArguments);
+	VStack* Param = pr_stackPtr - Func->ParamsSize + 1;	//	Skip self
+	for (int i = 0; i < Func->NumParams; i++)
+	{
+		switch (Func->ParamTypes[i].Type)
+		{
+		case TYPE_Int:
+		case TYPE_Byte:
+		case TYPE_Bool:
+		case TYPE_Name:
+			VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				(vuint8*)&Param->i, Func->ParamTypes[i]);
+			Param++;
+			break;
+		case TYPE_Float:
+			VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				(vuint8*)&Param->f, Func->ParamTypes[i]);
+			Param++;
+			break;
+		case TYPE_String:
+		case TYPE_Pointer:
+		case TYPE_Reference:
+		case TYPE_Class:
+		case TYPE_State:
+			VField::NetSerialiseValue(Msg, Connection->ObjMap,
+				(vuint8*)&Param->p, Func->ParamTypes[i]);
+			Param++;
+			break;
+		case TYPE_Vector:
+			{
+				TVec Vec;
+				Vec.x = Param[0].f;
+				Vec.y = Param[1].f;
+				Vec.z = Param[2].f;
+				VField::NetSerialiseValue(Msg, Connection->ObjMap,
+					(vuint8*)&Vec, Func->ParamTypes[i]);
+				Param += 3;
+			}
+			break;
+		default:
+			Sys_Error("Bad method argument type %d", Func->ParamTypes[i].Type);
+		}
+		if (Func->ParamFlags[i] & FPARM_Optional)
+		{
+			Msg.WriteBit(!!Param->i);
+			Param++;
+		}
+	}
+	unguard;
+
+	//	Send it.
+	SendMessage(&Msg);
 	unguard;
 }

@@ -190,6 +190,7 @@ public:
 	virtual void ReceivedAck();
 	virtual void Close();
 	virtual void Tick();
+	void SendRpc(VMethod*, VObject*);
 };
 
 class VControlChannel : public VChannel

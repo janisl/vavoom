@@ -282,8 +282,6 @@ void CL_EstablishConnection(const char* host)
 //
 //	CL_SetUpLocalPlayer
 //
-//	Host should be either "local" or a net address to be passed on
-//
 //==========================================================================
 
 void CL_SetUpLocalPlayer()
