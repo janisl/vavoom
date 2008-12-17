@@ -345,5 +345,5 @@ public:
 	friend inline VStream& operator<<(VStream& Strm, VClass*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
 
-	friend class VMemberBase;
+	friend class VPackage;
 };

@@ -107,6 +107,7 @@ public:
 
 	void Emit();
 	void WriteObject(const VStr&);
+	void LoadObject(TLocation);
 
 	friend inline VStream& operator<<(VStream& Strm, VPackage*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
