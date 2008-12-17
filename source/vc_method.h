@@ -25,6 +25,38 @@
 
 //==========================================================================
 //
+//	Method flags
+//
+//==========================================================================
+
+enum
+{
+	FUNC_Native			= 0x0001,	// Native method
+	FUNC_Static			= 0x0002,	// Static method
+	FUNC_VarArgs		= 0x0004,	// Variable argument count
+	FUNC_Final			= 0x0008,	// Final version of a method
+	FUNC_Spawner		= 0x0010,	// Automatic cast of return value
+	FUNC_Net			= 0x0020,	// Method is network-replicated
+	FUNC_NetReliable	= 0x0040,	// Sent reliably over the network
+	FUNC_Iterator		= 0x0080,	// Can be used in foreach statements
+
+	FUNC_NetFlags = FUNC_Net | FUNC_NetReliable,
+};
+
+//==========================================================================
+//
+//	Parameter flags
+//
+//==========================================================================
+
+enum
+{
+	FPARM_Optional	= 0x01,
+	FPARM_Out		= 0x02,
+};
+
+//==========================================================================
+//
 //	builtin_t
 //
 //==========================================================================

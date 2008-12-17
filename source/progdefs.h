@@ -30,41 +30,6 @@
 
 enum
 {
-	FIELD_Native	= 0x0001,	//	Native serialisation
-	FIELD_Transient	= 0x0002,	//	Not to be saved
-	FIELD_Private	= 0x0004,	//	Private field
-	FIELD_ReadOnly	= 0x0008,	//	Read-only field
-	FIELD_Net		= 0x0010,	//	Network replicated field
-};
-
-enum
-{
-	PROP_Native		= 0x0001,	// Native get and set methods
-	PROP_Final		= 0x0002,	// Final version of a proeprty
-};
-
-enum
-{
-	FUNC_Native			= 0x0001,	// Native method
-	FUNC_Static			= 0x0002,	// Static method
-	FUNC_VarArgs		= 0x0004,	// Variable argument count
-	FUNC_Final			= 0x0008,	// Final version of a method
-	FUNC_Spawner		= 0x0010,	// Automatic cast of return value
-	FUNC_Net			= 0x0020,	// Method is network-replicated
-	FUNC_NetReliable	= 0x0040,	// Sent reliably over the network
-	FUNC_Iterator		= 0x0080,	// Can be used in foreach statements
-
-	FUNC_NetFlags = FUNC_Net | FUNC_NetReliable,
-};
-
-enum
-{
-	FPARM_Optional	= 0x01,
-	FPARM_Out		= 0x02,
-};
-
-enum
-{
 	OPCARGS_None,
 	OPCARGS_Member,
 	OPCARGS_BranchTargetB,
