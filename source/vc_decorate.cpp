@@ -34,6 +34,11 @@
 
 enum
 {
+	PROPS_HASH_SIZE		= 256,
+};
+
+enum
+{
 	OLDDEC_Decoration,
 	OLDDEC_Breakable,
 	OLDDEC_Projectile,
@@ -118,6 +123,7 @@ struct VClassFixup
 struct VPropDef
 {
 	vuint8		Type;
+	int			HashNext;
 	VName		Name;
 	VName		PropName;
 	VName		Prop2Name;
@@ -152,9 +158,14 @@ struct VFlagDef
 
 struct VFlagList
 {
-	TArray<VPropDef>	Props;
-	TArray<VFlagDef>	Flags;
 	VClass*				Class;
+
+	TArray<VPropDef>	Props;
+	int					PropsHash[PROPS_HASH_SIZE];
+
+	TArray<VFlagDef>	Flags;
+
+	VPropDef& NewProp(vuint8, VXmlNode*);
 };
 
 //==========================================================================
@@ -223,6 +234,25 @@ static TArray<VFlagList>	FlagList;
 
 //==========================================================================
 //
+//	VFlagList::NewProp
+//
+//==========================================================================
+
+VPropDef& VFlagList::NewProp(vuint8 Type, VXmlNode* PN)
+{
+	guard(VFlagList::NewProp);
+	VPropDef& P = Props.Alloc();
+	P.Type = Type;
+	P.Name = *PN->GetAttribute("name").ToLower();
+	int HashIndex = GetTypeHash(P.Name) & (PROPS_HASH_SIZE - 1);
+	P.HashNext = PropsHash[HashIndex];
+	PropsHash[HashIndex] = Props.Num() - 1;
+	return P;
+	unguard;
+}
+
+//==========================================================================
+//
 //	ParseDecorateDef
 //
 //==========================================================================
@@ -235,78 +265,62 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 		VStr ClassName = N->GetAttribute("name");
 		VFlagList& Lst = FlagList.Alloc();
 		Lst.Class = VClass::FindClass(*ClassName);
+		for (int i = 0; i < PROPS_HASH_SIZE; i++)
+		{
+			Lst.PropsHash[i] = -1;
+		}
 		for (VXmlNode* PN = N->FirstChild; PN; PN = PN->NextSibling)
 		{
 			if (PN->Name == "prop_int")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Int;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Int, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_int_const")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_IntConst;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_IntConst, PN);
 				P.PropName = *PN->GetAttribute("property");
 				P.IConst = atoi(*PN->GetAttribute("value"));
 			}
 			else if (PN->Name == "prop_int_unsupported")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_IntUnsupported;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_IntUnsupported, PN);
 			}
 			else if (PN->Name == "prop_bit_index")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_BitIndex;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_BitIndex, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_float")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Float;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Float, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_speed")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Speed;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Speed, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_tics")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Tics;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Tics, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_percent")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Percent;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Percent, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_float_clamped")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_FloatClamped;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_FloatClamped, PN);
 				P.PropName = *PN->GetAttribute("property");
 				P.FMin = atof(*PN->GetAttribute("min"));
 				P.FMax = atof(*PN->GetAttribute("max"));
 			}
 			else if (PN->Name == "prop_float_clamped_2")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_FloatClamped2;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_FloatClamped2, PN);
 				P.PropName = *PN->GetAttribute("property");
 				P.Prop2Name = *PN->GetAttribute("property2");
 				P.FMin = atof(*PN->GetAttribute("min"));
@@ -314,44 +328,32 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			}
 			else if (PN->Name == "prop_float_optional_2")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_FloatOpt2;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_FloatOpt2, PN);
 				P.PropName = *PN->GetAttribute("property");
 				P.Prop2Name = *PN->GetAttribute("property2");
 			}
 			else if (PN->Name == "prop_name")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Name;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Name, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_name_lower")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_NameLower;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_NameLower, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_string")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Str;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Str, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_string_unsupported")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_StrUnsupported;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_StrUnsupported, PN);
 			}
 			else if (PN->Name == "prop_class")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Class;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Class, PN);
 				P.PropName = *PN->GetAttribute("property");
 				if (PN->HasAttribute("prefix"))
 				{
@@ -360,176 +362,120 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			}
 			else if (PN->Name == "prop_bool_const")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_BoolConst;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_BoolConst, PN);
 				P.PropName = *PN->GetAttribute("property");
 				P.IConst = !PN->GetAttribute("value").ICmp("true");
 			}
 			else if (PN->Name == "prop_state")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_State;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_State, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_game")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Game;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Game, PN);
 			}
 			else if (PN->Name == "prop_spawn_id")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_SpawnId;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_SpawnId, PN);
 			}
 			else if (PN->Name == "prop_conversation_id")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_ConversationId;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_ConversationId, PN);
 			}
 			else if (PN->Name == "prop_pain_chance")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_PainChance;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_PainChance, PN);
 			}
 			else if (PN->Name == "prop_damage_factor")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_DamageFactor;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_DamageFactor, PN);
 			}
 			else if (PN->Name == "prop_missile_damage")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_MissileDamage;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_MissileDamage, PN);
 			}
 			else if (PN->Name == "prop_vspeed")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_VSpeed;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_VSpeed, PN);
 			}
 			else if (PN->Name == "prop_render_style")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_RenderStyle;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_RenderStyle, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_translation")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Translation;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Translation, PN);
 				P.PropName = *PN->GetAttribute("property");
 			}
 			else if (PN->Name == "prop_blood_colour")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_BloodColour;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_BloodColour, PN);
 			}
 			else if (PN->Name == "prop_blood_type")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_BloodType;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_BloodType, PN);
 			}
 			else if (PN->Name == "prop_stencil_colour")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_StencilColour;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_StencilColour, PN);
 			}
 			else if (PN->Name == "prop_monster")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Monster;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Monster, PN);
 			}
 			else if (PN->Name == "prop_projectile")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Projectile;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Projectile, PN);
 			}
 			else if (PN->Name == "prop_clear_flags")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_ClearFlags;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_ClearFlags, PN);
 			}
 			else if (PN->Name == "prop_drop_item")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_DropItem;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_DropItem, PN);
 			}
 			else if (PN->Name == "prop_states")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_States;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_States, PN);
 			}
 			else if (PN->Name == "prop_skip_super")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_SkipSuper;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_SkipSuper, PN);
 			}
 			else if (PN->Name == "prop_args")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_Args;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_Args, PN);
 			}
 			else if (PN->Name == "prop_pickup_message")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_PickupMessage;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_PickupMessage, PN);
 			}
 			else if (PN->Name == "prop_low_message")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_LowMessage;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_LowMessage, PN);
 			}
 			else if (PN->Name == "prop_powerup_colour")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_PowerupColour;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_PowerupColour, PN);
 			}
 			else if (PN->Name == "prop_colour_range")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_ColourRange;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_ColourRange, PN);
 			}
 			else if (PN->Name == "prop_damage_screen_colour")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_DamageScreenColour;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_DamageScreenColour, PN);
 			}
 			else if (PN->Name == "prop_hexen_armor")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_HexenArmor;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_HexenArmor, PN);
 			}
 			else if (PN->Name == "prop_start_item")
 			{
-				VPropDef& P = Lst.Props.Alloc();
-				P.Type = PROP_StartItem;
-				P.Name = *PN->GetAttribute("name").ToLower();
+				VPropDef& P = Lst.NewProp(PROP_StartItem, PN);
 			}
 			else if (PN->Name == "flag")
 			{
@@ -2371,7 +2317,9 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 			{
 				continue;
 			}
-			for (int i = 0; i < FlagList[j].Props.Num(); i++)
+			VFlagList& ClassDef = FlagList[j];
+			for (int i = ClassDef.PropsHash[GetTypeHash(PropName) &
+				(PROPS_HASH_SIZE - 1)]; i != -1; i = ClassDef.Props[i].HashNext)
 			{
 				VPropDef& P = FlagList[j].Props[i];
 				if (PropName != P.Name)
