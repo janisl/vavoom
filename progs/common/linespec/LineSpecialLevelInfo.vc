@@ -6956,7 +6956,10 @@ final void AddPlayerCorpse(EntityEx Corpse)
 	if (bodyqueslot >= BodyQueSize)
 	{
 		// Too many player corpses - remove an old one
-		bodyque[bodyqueslot % BodyQueSize].Destroy();
+		if (bodyque[bodyqueslot % BodyQueSize])
+		{
+			bodyque[bodyqueslot % BodyQueSize].Destroy();
+		}
 	}
 	bodyque[bodyqueslot % BodyQueSize] = Corpse;
 	Corpse.Translation = XLevel.SetBodyQueueTrans(

@@ -209,7 +209,7 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	org = Origin;
 	if (specified_SpawnHeight)
 	{
-		org.z = Origin.z + SpawnHeight;
+		org.z += SpawnHeight;
 	}
 	else if (type.default.bIgnoreFloorStep)
 	{
@@ -221,9 +221,12 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	}
 	else
 	{
-		org.z = Origin.z + 32.0;
+		org.z += 32.0;
 	}
-	org.z -= FloorClip;
+	if (org.z != ONFLOORZ)
+	{
+		org.z -= FloorClip;
+	}
 	A = Spawn(type, org);
 
 	A.PlayMissileSpawnSound(self);
@@ -245,7 +248,11 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	}
 	dir = Normalise(dir);
 	A.Velocity = dir * A.Speed;
-
+	// Floor and ceiling huggers should never have a vertical component to their velocity
+	if (A.bIgnoreCeilingStep || A.bIgnoreFloorStep)
+	{
+		A.Velocity.z = 0.0;
+	}
 	VectorAngles(&dir, &A.Angles);
 
 	return A.CheckMissileSpawn() ? A : none;
@@ -265,7 +272,10 @@ final EntityEx SpawnMissileXYZ(TVec org, EntityEx dest, class<EntityEx> type)
 	TVec		dir;
 	EntityEx	A;
 
-	org.z -= FloorClip;
+	if (org.z != ONFLOORZ)
+	{
+		org.z -= FloorClip;
+	}
 	A = Spawn(type, org);
 	A.PlayMissileSpawnSound(self);
 	A.Target = self;	// Originator
@@ -277,6 +287,11 @@ final EntityEx SpawnMissileXYZ(TVec org, EntityEx dest, class<EntityEx> type)
 	}
 	dir = Normalise(dir);
 	A.Velocity = dir * A.Speed;
+	// Floor and ceiling huggers should never have a vertical component to their velocity
+	if (A.bIgnoreCeilingStep || A.bIgnoreFloorStep)
+	{
+		A.Velocity.z = 0.0;
+	}
 	VectorAngles(&dir, &A.Angles);
 	return A.CheckMissileSpawn() ? A : none;
 }
@@ -293,7 +308,7 @@ final EntityEx SpawnMissileZAimed(float z, EntityEx dest, class<EntityEx> type)
 	TVec		dir;
 	float		dist;
 
-	A = Spawn(type, Origin + vector(0.0, 0.0, z - FloorClip));
+	A = Spawn(type, Origin + vector(0.0, 0.0, z != ONFLOORZ ? z - FloorClip : z));
 
 	A.PlayMissileSpawnSound(self);
 
@@ -310,7 +325,11 @@ final EntityEx SpawnMissileZAimed(float z, EntityEx dest, class<EntityEx> type)
 	}
 	dir = Normalise(dir);
 	A.Velocity = dir * A.Speed;
-
+	// Floor and ceiling huggers should never have a vertical component to their velocity
+	if (A.bIgnoreCeilingStep || A.bIgnoreFloorStep)
+	{
+		A.Velocity.z = 0.0;
+	}
 	VectorAngles(&dir, &A.Angles);
 
 	return A.CheckMissileSpawn() ? A : none;
@@ -335,7 +354,7 @@ final EntityEx SpawnMissileAngles(class<EntityEx> type, float yaw, float pitch,
 	org = Origin;
 	if (specified_SpawnHeight)
 	{
-		org.z = Origin.z + SpawnHeight;
+		org.z += SpawnHeight;
 	}
 	else if (type.default.bIgnoreFloorStep)
 	{
@@ -347,9 +366,12 @@ final EntityEx SpawnMissileAngles(class<EntityEx> type, float yaw, float pitch,
 	}
 	else
 	{
-		org.z = Origin.z + 32.0;
+		org.z += 32.0;
 	}
-	org.z -= FloorClip;
+	if (org.z != ONFLOORZ)
+	{
+		org.z -= FloorClip;
+	}
 	A = Spawn(type, org);
 	A.PlayMissileSpawnSound(self);
 	A.Target = self;	// Originator
@@ -357,6 +379,11 @@ final EntityEx SpawnMissileAngles(class<EntityEx> type, float yaw, float pitch,
 	A.Angles.pitch = pitch;
 	AngleVector(&A.Angles, &dir);
 	A.Velocity = A.Speed * dir;
+	// Floor and ceiling huggers should never have a vertical component to their velocity
+	if (A.bIgnoreCeilingStep || A.bIgnoreFloorStep)
+	{
+		A.Velocity.z = 0.0;
+	}
 	return A.CheckMissileSpawn() ? A : none;
 }
 
@@ -378,7 +405,7 @@ final EntityEx SpawnMissileAngle(class<EntityEx> type, float angle,
 	org = Origin;
 	if (specified_SpawnHeight)
 	{
-		org.z = Origin.z + SpawnHeight;
+		org.z += SpawnHeight;
 	}
 	else if (type.default.bIgnoreFloorStep)
 	{
@@ -391,9 +418,12 @@ final EntityEx SpawnMissileAngle(class<EntityEx> type, float angle,
 	}
 	else
 	{
-		org.z = Origin.z + 32.0;
+		org.z += 32.0;
 	}
-	org.z -= FloorClip;
+	if (org.z != ONFLOORZ)
+	{
+		org.z -= FloorClip;
+	}
 	mo = Spawn(type, org);
 	mo.PlayMissileSpawnSound(self);
 	mo.Target = self;	// Originator
@@ -420,7 +450,10 @@ final EntityEx SpawnMissileAngleSpeed(class<EntityEx> type, float angle,
 	EntityEx mo;
 
 	org = Origin;
-	org.z -= FloorClip;
+	if (org.z != ONFLOORZ)
+	{
+		org.z -= FloorClip;
+	}
 	mo = Spawn(type, org);
 	mo.Tracer = self;	// Originator
 	mo.Angles.yaw = angle;
