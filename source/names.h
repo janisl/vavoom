@@ -40,6 +40,7 @@
 
 // Special zero value, meaning no name.
 REGISTER_NAME(None)
+REGISTER_NAME(none)
 
 // Log messages.
 REGISTER_NAME(Log)

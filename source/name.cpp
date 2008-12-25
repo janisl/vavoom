@@ -163,6 +163,12 @@ VName::VName(const char* Name, ENameFindType FindType)
 		Names.Append(AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]));
 		HashTable[HashIndex] = Names[Index];
 	}
+
+	//	Map 'none' to 'None'.
+	if (Index == NAME_none)
+	{
+		Index = NAME_None;
+	}
 	unguard;
 }
 
