@@ -35,6 +35,7 @@
 enum
 {
 	PROPS_HASH_SIZE		= 256,
+	FLAGS_HASH_SIZE		= 256,
 };
 
 enum
@@ -125,8 +126,9 @@ struct VPropDef
 	vuint8		Type;
 	int			HashNext;
 	VName		Name;
+	VField*		Field;
+	VField*		Field2;
 	VName		PropName;
-	VName		Prop2Name;
 	union
 	{
 		int		IConst;
@@ -134,14 +136,18 @@ struct VPropDef
 	};
 	float		FMax;
 	VStr		CPrefix;
+
+	void SetField(VClass*, const char*);
+	void SetField2(VClass*, const char*);
 };
 
 struct VFlagDef
 {
 	vuint8		Type;
+	int			HashNext;
 	VName		Name;
-	VName		AltName;
-	VName		PropName;
+	VField*		Field;
+	VField*		Field2;
 	union
 	{
 		vuint8	BTrue;
@@ -154,6 +160,9 @@ struct VFlagDef
 		float	FFalse;
 	};
 	VName		NFalse;
+
+	void SetField(VClass*, const char*);
+	void SetField2(VClass*, const char*);
 };
 
 struct VFlagList
@@ -164,8 +173,10 @@ struct VFlagList
 	int					PropsHash[PROPS_HASH_SIZE];
 
 	TArray<VFlagDef>	Flags;
+	int					FlagsHash[FLAGS_HASH_SIZE];
 
 	VPropDef& NewProp(vuint8, VXmlNode*);
+	VFlagDef& NewFlag(vuint8, VXmlNode*);
 };
 
 //==========================================================================
@@ -234,25 +245,6 @@ static TArray<VFlagList>	FlagList;
 
 //==========================================================================
 //
-//	VFlagList::NewProp
-//
-//==========================================================================
-
-VPropDef& VFlagList::NewProp(vuint8 Type, VXmlNode* PN)
-{
-	guard(VFlagList::NewProp);
-	VPropDef& P = Props.Alloc();
-	P.Type = Type;
-	P.Name = *PN->GetAttribute("name").ToLower();
-	int HashIndex = GetTypeHash(P.Name) & (PROPS_HASH_SIZE - 1);
-	P.HashNext = PropsHash[HashIndex];
-	PropsHash[HashIndex] = Props.Num() - 1;
-	return P;
-	unguard;
-}
-
-//==========================================================================
-//
 //	ParseDecorateDef
 //
 //==========================================================================
@@ -274,12 +266,12 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			if (PN->Name == "prop_int")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Int, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_int_const")
 			{
 				VPropDef& P = Lst.NewProp(PROP_IntConst, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 				P.IConst = atoi(*PN->GetAttribute("value"));
 			}
 			else if (PN->Name == "prop_int_unsupported")
@@ -289,63 +281,63 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_bit_index")
 			{
 				VPropDef& P = Lst.NewProp(PROP_BitIndex, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_float")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Float, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_speed")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Speed, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_tics")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Tics, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_percent")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Percent, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_float_clamped")
 			{
 				VPropDef& P = Lst.NewProp(PROP_FloatClamped, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 				P.FMin = atof(*PN->GetAttribute("min"));
 				P.FMax = atof(*PN->GetAttribute("max"));
 			}
 			else if (PN->Name == "prop_float_clamped_2")
 			{
 				VPropDef& P = Lst.NewProp(PROP_FloatClamped2, PN);
-				P.PropName = *PN->GetAttribute("property");
-				P.Prop2Name = *PN->GetAttribute("property2");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
+				P.SetField2(Lst.Class, *PN->GetAttribute("property2"));
 				P.FMin = atof(*PN->GetAttribute("min"));
 				P.FMax = atof(*PN->GetAttribute("max"));
 			}
 			else if (PN->Name == "prop_float_optional_2")
 			{
 				VPropDef& P = Lst.NewProp(PROP_FloatOpt2, PN);
-				P.PropName = *PN->GetAttribute("property");
-				P.Prop2Name = *PN->GetAttribute("property2");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
+				P.SetField2(Lst.Class, *PN->GetAttribute("property2"));
 			}
 			else if (PN->Name == "prop_name")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Name, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_name_lower")
 			{
 				VPropDef& P = Lst.NewProp(PROP_NameLower, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_string")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Str, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_string_unsupported")
 			{
@@ -354,7 +346,7 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_class")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Class, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 				if (PN->HasAttribute("prefix"))
 				{
 					P.CPrefix = PN->GetAttribute("prefix");
@@ -363,7 +355,7 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_bool_const")
 			{
 				VPropDef& P = Lst.NewProp(PROP_BoolConst, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 				P.IConst = !PN->GetAttribute("value").ICmp("true");
 			}
 			else if (PN->Name == "prop_state")
@@ -382,10 +374,12 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_conversation_id")
 			{
 				VPropDef& P = Lst.NewProp(PROP_ConversationId, PN);
+				P.SetField(Lst.Class, "ConversationID");
 			}
 			else if (PN->Name == "prop_pain_chance")
 			{
 				VPropDef& P = Lst.NewProp(PROP_PainChance, PN);
+				P.SetField(Lst.Class, "PainChance");
 			}
 			else if (PN->Name == "prop_damage_factor")
 			{
@@ -394,28 +388,34 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_missile_damage")
 			{
 				VPropDef& P = Lst.NewProp(PROP_MissileDamage, PN);
+				P.SetField(Lst.Class, "MissileDamage");
 			}
 			else if (PN->Name == "prop_vspeed")
 			{
 				VPropDef& P = Lst.NewProp(PROP_VSpeed, PN);
+				P.SetField(Lst.Class, "Velocity");
 			}
 			else if (PN->Name == "prop_render_style")
 			{
 				VPropDef& P = Lst.NewProp(PROP_RenderStyle, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_translation")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Translation, PN);
-				P.PropName = *PN->GetAttribute("property");
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "prop_blood_colour")
 			{
 				VPropDef& P = Lst.NewProp(PROP_BloodColour, PN);
+				P.SetField(Lst.Class, "BloodColour");
+				P.SetField2(Lst.Class, "BloodTranslation");
 			}
 			else if (PN->Name == "prop_blood_type")
 			{
 				VPropDef& P = Lst.NewProp(PROP_BloodType, PN);
+				P.SetField(Lst.Class, "BloodType");
+				P.SetField2(Lst.Class, "BloodSplatterType");
 			}
 			else if (PN->Name == "prop_stencil_colour")
 			{
@@ -448,96 +448,88 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_args")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Args, PN);
+				P.SetField(Lst.Class, "Args");
+				P.SetField2(Lst.Class, "bArgsDefined");
 			}
 			else if (PN->Name == "prop_pickup_message")
 			{
 				VPropDef& P = Lst.NewProp(PROP_PickupMessage, PN);
+				P.SetField(Lst.Class, "PickupMessage");
 			}
 			else if (PN->Name == "prop_low_message")
 			{
 				VPropDef& P = Lst.NewProp(PROP_LowMessage, PN);
+				P.SetField(Lst.Class, "LowHealth");
+				P.SetField2(Lst.Class, "LowHealthMessage");
 			}
 			else if (PN->Name == "prop_powerup_colour")
 			{
 				VPropDef& P = Lst.NewProp(PROP_PowerupColour, PN);
+				P.SetField(Lst.Class, "BlendColour");
 			}
 			else if (PN->Name == "prop_colour_range")
 			{
 				VPropDef& P = Lst.NewProp(PROP_ColourRange, PN);
+				P.SetField(Lst.Class, "TranslStart");
+				P.SetField2(Lst.Class, "TranslEnd");
 			}
 			else if (PN->Name == "prop_damage_screen_colour")
 			{
 				VPropDef& P = Lst.NewProp(PROP_DamageScreenColour, PN);
+				P.SetField(Lst.Class, "DamageScreenColour");
 			}
 			else if (PN->Name == "prop_hexen_armor")
 			{
 				VPropDef& P = Lst.NewProp(PROP_HexenArmor, PN);
+				P.SetField(Lst.Class, "HexenArmor");
 			}
 			else if (PN->Name == "prop_start_item")
 			{
 				VPropDef& P = Lst.NewProp(PROP_StartItem, PN);
+				P.SetField(Lst.Class, "DropItemList");
 			}
 			else if (PN->Name == "flag")
 			{
-				VFlagDef& F = Lst.Flags.Alloc();
-				F.Type = FLAG_Bool;
-				F.Name = *PN->GetAttribute("name").ToLower();
-				F.AltName = *(ClassName.ToLower() + "." + F.Name);
-				F.PropName = *PN->GetAttribute("property");
+				VFlagDef& F = Lst.NewFlag(FLAG_Bool, PN);
+				F.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "flag_unsupported")
 			{
-				VFlagDef& F = Lst.Flags.Alloc();
-				F.Type = FLAG_Unsupported;
-				F.Name = *PN->GetAttribute("name").ToLower();
-				F.AltName = *(ClassName.ToLower() + "." + F.Name);
+				VFlagDef& F = Lst.NewFlag(FLAG_Unsupported, PN);
 			}
 			else if (PN->Name == "flag_byte")
 			{
-				VFlagDef& F = Lst.Flags.Alloc();
-				F.Type = FLAG_Byte;
-				F.Name = *PN->GetAttribute("name").ToLower();
-				F.AltName = *(ClassName.ToLower() + "." + F.Name);
-				F.PropName = *PN->GetAttribute("property");
+				VFlagDef& F = Lst.NewFlag(FLAG_Byte, PN);
+				F.SetField(Lst.Class, *PN->GetAttribute("property"));
 				F.BTrue = atoi(*PN->GetAttribute("true_value"));
 				F.BFalse = atoi(*PN->GetAttribute("false_value"));
 			}
 			else if (PN->Name == "flag_float")
 			{
-				VFlagDef& F = Lst.Flags.Alloc();
-				F.Type = FLAG_Float;
-				F.Name = *PN->GetAttribute("name").ToLower();
-				F.AltName = *(ClassName.ToLower() + "." + F.Name);
-				F.PropName = *PN->GetAttribute("property");
+				VFlagDef& F = Lst.NewFlag(FLAG_Float, PN);
+				F.SetField(Lst.Class, *PN->GetAttribute("property"));
 				F.FTrue = atof(*PN->GetAttribute("true_value"));
 				F.FFalse = atof(*PN->GetAttribute("false_value"));
 			}
 			else if (PN->Name == "flag_name")
 			{
-				VFlagDef& F = Lst.Flags.Alloc();
-				F.Type = FLAG_Name;
-				F.Name = *PN->GetAttribute("name").ToLower();
-				F.AltName = *(ClassName.ToLower() + "." + F.Name);
-				F.PropName = *PN->GetAttribute("property");
+				VFlagDef& F = Lst.NewFlag(FLAG_Name, PN);
+				F.SetField(Lst.Class, *PN->GetAttribute("property"));
 				F.NTrue = *PN->GetAttribute("true_value");
 				F.NFalse = *PN->GetAttribute("false_value");
 			}
 			else if (PN->Name == "flag_class")
 			{
-				VFlagDef& F = Lst.Flags.Alloc();
-				F.Type = FLAG_Class;
-				F.Name = *PN->GetAttribute("name").ToLower();
-				F.AltName = *(ClassName.ToLower() + "." + F.Name);
-				F.PropName = *PN->GetAttribute("property");
+				VFlagDef& F = Lst.NewFlag(FLAG_Class, PN);
+				F.SetField(Lst.Class, *PN->GetAttribute("property"));
 				F.NTrue = *PN->GetAttribute("true_value");
 				F.NFalse = *PN->GetAttribute("false_value");
 			}
 			else if (PN->Name == "flag_noclip")
 			{
-				VFlagDef& F = Lst.Flags.Alloc();
-				F.Type = FLAG_NoClip;
-				F.Name = *PN->GetAttribute("name").ToLower();
-				F.AltName = *(ClassName.ToLower() + "." + F.Name);
+				VFlagDef& F = Lst.NewFlag(FLAG_NoClip, PN);
+				F.SetField(Lst.Class, "bColideWithThings");
+				F.SetField2(Lst.Class, "bColideWithWorld");
 			}
 			else
 			{
@@ -545,6 +537,96 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			}
 		}
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPropDef::SetField
+//
+//==========================================================================
+
+void VPropDef::SetField(VClass* Class, const char* FieldName)
+{
+	guard(VPropDef::SetField);
+	Field = Class->FindFieldChecked(FieldName);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VPropDef::SetField2
+//
+//==========================================================================
+
+void VPropDef::SetField2(VClass* Class, const char* FieldName)
+{
+	guard(VPropDef::SetField2);
+	Field2 = Class->FindFieldChecked(FieldName);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlagDef::SetField
+//
+//==========================================================================
+
+void VFlagDef::SetField(VClass* Class, const char* FieldName)
+{
+	guard(VFlagDef::SetField);
+	Field = Class->FindFieldChecked(FieldName);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlagDef::SetField2
+//
+//==========================================================================
+
+void VFlagDef::SetField2(VClass* Class, const char* FieldName)
+{
+	guard(VFlagDef::SetField2);
+	Field2 = Class->FindFieldChecked(FieldName);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlagList::NewProp
+//
+//==========================================================================
+
+VPropDef& VFlagList::NewProp(vuint8 Type, VXmlNode* PN)
+{
+	guard(VFlagList::NewProp);
+	VPropDef& P = Props.Alloc();
+	P.Type = Type;
+	P.Name = *PN->GetAttribute("name").ToLower();
+	int HashIndex = GetTypeHash(P.Name) & (PROPS_HASH_SIZE - 1);
+	P.HashNext = PropsHash[HashIndex];
+	PropsHash[HashIndex] = Props.Num() - 1;
+	return P;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VFlagList::NewFlag
+//
+//==========================================================================
+
+VFlagDef& VFlagList::NewFlag(vuint8 Type, VXmlNode* PN)
+{
+	guard(VFlagList::NewFlag);
+	VFlagDef& F = Flags.Alloc();
+	F.Type = Type;
+	F.Name = *PN->GetAttribute("name").ToLower();
+	int HashIndex = GetTypeHash(F.Name) & (FLAGS_HASH_SIZE - 1);
+	F.HashNext = FlagsHash[HashIndex];
+	FlagsHash[HashIndex] = Flags.Num() - 1;
+	return F;
 	unguard;
 }
 
@@ -724,8 +806,7 @@ static float GetClassFieldFloat(VClass* Class, VName FieldName)
 {
 	guard(GetClassFieldFloat);
 	VField* F = Class->FindFieldChecked(FieldName);
-	float* Ptr = (float*)(Class->Defaults + F->Ofs);
-	return *Ptr;
+	return F->GetFloat((VObject*)Class->Defaults);
 	unguard;
 }
 
@@ -739,8 +820,7 @@ static TVec GetClassFieldVec(VClass* Class, VName FieldName)
 {
 	guard(GetClassFieldVec);
 	VField* F = Class->FindFieldChecked(FieldName);
-	TVec* Ptr = (TVec*)(Class->Defaults + F->Ofs);
-	return *Ptr;
+	return F->GetVec((VObject*)Class->Defaults);
 	unguard;
 }
 
@@ -754,7 +834,7 @@ static TArray<VDropItemInfo>& GetClassDropItems(VClass* Class)
 {
 	guard(GetClassDropItems);
 	VField* F = Class->FindFieldChecked("DropItemList");
-	return *(TArray<VDropItemInfo>*)(Class->Defaults + F->Ofs);
+	return *(TArray<VDropItemInfo>*)F->GetFieldPtr((VObject*)Class->Defaults);
 	unguard;
 }
 
@@ -768,7 +848,7 @@ static TArray<VDamageFactor>& GetClassDamageFactors(VClass* Class)
 {
 	guard(GetClassDamageFactors);
 	VField* F = Class->FindFieldChecked("DamageFactors");
-	return *(TArray<VDamageFactor>*)(Class->Defaults + F->Ofs);
+	return *(TArray<VDamageFactor>*)F->GetFieldPtr((VObject*)Class->Defaults);
 	unguard;
 }
 
@@ -782,7 +862,7 @@ static TArray<VPainChanceInfo>& GetClassPainChances(VClass* Class)
 {
 	guard(GetClassPainChances);
 	VField* F = Class->FindFieldChecked("PainChances");
-	return *(TArray<VPainChanceInfo>*)(Class->Defaults + F->Ofs);
+	return *(TArray<VPainChanceInfo>*)F->GetFieldPtr((VObject*)Class->Defaults);
 	unguard;
 }
 
@@ -797,8 +877,7 @@ static void SetClassFieldInt(VClass* Class, VName FieldName, int Value,
 {
 	guard(SetClassFieldInt);
 	VField* F = Class->FindFieldChecked(FieldName);
-	vint32* Ptr = (vint32*)(Class->Defaults + F->Ofs);
-	Ptr[Idx] = Value;
+	F->SetInt((VObject*)Class->Defaults, Value, Idx);
 	unguard;
 }
 
@@ -812,8 +891,7 @@ static void SetClassFieldByte(VClass* Class, VName FieldName, vuint8 Value)
 {
 	guard(SetClassFieldByte);
 	VField* F = Class->FindFieldChecked(FieldName);
-	vuint8* Ptr = Class->Defaults + F->Ofs;
-	*Ptr = Value;
+	F->SetByte((VObject*)Class->Defaults, Value);
 	unguard;
 }
 
@@ -828,8 +906,7 @@ static void SetClassFieldFloat(VClass* Class, VName FieldName, float Value,
 {
 	guard(SetClassFieldFloat);
 	VField* F = Class->FindFieldChecked(FieldName);
-	float* Ptr = (float*)(Class->Defaults + F->Ofs);
-	Ptr[Idx] = Value;
+	F->SetFloat((VObject*)Class->Defaults, Value, Idx);
 	unguard;
 }
 
@@ -843,11 +920,7 @@ static void SetClassFieldBool(VClass* Class, VName FieldName, int Value)
 {
 	guard(SetClassFieldBool);
 	VField* F = Class->FindFieldChecked(FieldName);
-	vuint32* Ptr = (vuint32*)(Class->Defaults + F->Ofs);
-	if (Value)
-		*Ptr |= F->Type.BitMask;
-	else
-		*Ptr &= ~F->Type.BitMask;
+	F->SetBool((VObject*)Class->Defaults, Value);
 	unguard;
 }
 
@@ -861,8 +934,7 @@ static void SetClassFieldName(VClass* Class, VName FieldName, VName Value)
 {
 	guard(SetClassFieldName);
 	VField* F = Class->FindFieldChecked(FieldName);
-	VName* Ptr = (VName*)(Class->Defaults + F->Ofs);
-	*Ptr = Value;
+	F->SetName((VObject*)Class->Defaults, Value);
 	unguard;
 }
 
@@ -877,8 +949,7 @@ static void SetClassFieldStr(VClass* Class, VName FieldName,
 {
 	guard(SetClassFieldStr);
 	VField* F = Class->FindFieldChecked(FieldName);
-	VStr* Ptr = (VStr*)(Class->Defaults + F->Ofs);
-	*Ptr = Value;
+	F->SetStr((VObject*)Class->Defaults, Value);
 	unguard;
 }
 
@@ -893,8 +964,7 @@ static void SetClassFieldVec(VClass* Class, VName FieldName,
 {
 	guard(SetClassFieldVec);
 	VField* F = Class->FindFieldChecked(FieldName);
-	TVec* Ptr = (TVec*)(Class->Defaults + F->Ofs);
-	*Ptr = Value;
+	F->SetVec((VObject*)Class->Defaults, Value);
 	unguard;
 }
 
@@ -908,8 +978,7 @@ static void SetFieldByte(VObject* Obj, VName FieldName, vuint8 Value)
 {
 	guard(SetFieldByte);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
-	vuint8* Ptr = (vuint8*)Obj + F->Ofs;
-	*Ptr = Value;
+	F->SetByte(Obj, Value);
 	unguard;
 }
 
@@ -924,8 +993,7 @@ static void SetFieldFloat(VObject* Obj, VName FieldName, float Value,
 {
 	guard(SetFieldFloat);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
-	float* Ptr = (float*)((vuint8*)Obj + F->Ofs);
-	Ptr[Idx] = Value;
+	F->SetFloat(Obj, Value, Idx);
 	unguard;
 }
 
@@ -939,11 +1007,7 @@ static void SetFieldBool(VObject* Obj, VName FieldName, int Value)
 {
 	guard(SetFieldBool);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
-	vuint32* Ptr = (vuint32*)((vuint8*)Obj + F->Ofs);
-	if (Value)
-		*Ptr |= F->Type.BitMask;
-	else
-		*Ptr &= ~F->Type.BitMask;
+	F->SetBool(Obj, Value);
 	unguard;
 }
 
@@ -957,8 +1021,7 @@ static void SetFieldName(VObject* Obj, VName FieldName, VName Value)
 {
 	guard(SetFieldName);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
-	VName* Ptr = (VName*)((vuint8*) + F->Ofs);
-	*Ptr = Value;
+	F->SetName(Obj, Value);
 	unguard;
 }
 
@@ -972,8 +1035,7 @@ static void SetFieldClass(VObject* Obj, VName FieldName, VClass* Value)
 {
 	guard(SetFieldClass);
 	VField* F = Obj->GetClass()->FindFieldChecked(FieldName);
-	VClass** Ptr = (VClass**)((vuint8*) + F->Ofs);
-	*Ptr = Value;
+	F->SetClass(Obj, Value);
 	unguard;
 }
 
@@ -992,6 +1054,24 @@ static void AddClassFixup(VClass* Class, VName FieldName,
 	CF.Offset = F->Ofs;
 	CF.Name = ClassName;
 	CF.ReqParent = F->Type.Class;
+	CF.Class = Class;
+	unguard;
+}
+
+//==========================================================================
+//
+//	AddClassFixup
+//
+//==========================================================================
+
+static void AddClassFixup(VClass* Class, VField* Field,
+	const VStr& ClassName, TArray<VClassFixup>& ClassFixups)
+{
+	guard(AddClassFixup);
+	VClassFixup& CF = ClassFixups.Alloc();
+	CF.Offset = Field->Ofs;
+	CF.Name = ClassName;
+	CF.ReqParent = Field->Type.Class;
 	CF.Class = Class;
 	unguard;
 }
@@ -1683,61 +1763,66 @@ static bool ParseFlag(VScriptParser* sc, VClass* Class, bool Value,
 	guard(ParseFlag);
 	//	Get full name of the flag.
 	sc->ExpectIdentifier();
-	VStr Flag = sc->String;
-	while (sc->Check("."))
+	VName FlagName(*sc->String.ToLower());
+	VName ClassFilter(NAME_None);
+	if (sc->Check("."))
 	{
 		sc->ExpectIdentifier();
-		Flag += ".";
-		Flag += sc->String;
+		ClassFilter = FlagName;
+		FlagName = *sc->String.ToLower();
 	}
-	VName FlagName(*Flag.ToLower());
+	VObject* DefObj = (VObject*)Class->Defaults;
 
 	for (int j = 0; j < FlagList.Num(); j++)
 	{
-		if (!Class->IsChildOf(FlagList[j].Class))
+		VFlagList& ClassDef = FlagList[j];
+		if (ClassFilter != NAME_None &&
+			ClassDef.Class->LowerCaseName != ClassFilter)
 		{
 			continue;
 		}
-		const TArray<VFlagDef>& Lst = FlagList[j].Flags;
-		for (int i = 0; i < Lst.Num(); i++)
+		if (!Class->IsChildOf(ClassDef.Class))
 		{
-			if (FlagName == Lst[i].Name || FlagName == Lst[i].AltName)
+			continue;
+		}
+		for (int i = ClassDef.FlagsHash[GetTypeHash(FlagName) &
+			(FLAGS_HASH_SIZE - 1)]; i != -1; i = ClassDef.Flags[i].HashNext)
+		{
+			const VFlagDef& F = ClassDef.Flags[i];
+			if (FlagName == F.Name)
 			{
-				switch (Lst[i].Type)
+				switch (F.Type)
 				{
 				case FLAG_Bool:
-					SetClassFieldBool(Class, Lst[i].PropName, Value);
+					F.Field->SetBool(DefObj, Value);
 					break;
 				case FLAG_Unsupported:
-					GCon->Logf("Unsupported flag %s in %s", *Flag,
+					GCon->Logf("Unsupported flag %s in %s", *FlagName,
 						Class->GetName());
 					break;
 				case FLAG_Byte:
-					SetClassFieldByte(Class, Lst[i].PropName, Value ?
-						Lst[i].BTrue : Lst[i].BFalse);
+					F.Field->SetByte(DefObj, Value ? F.BTrue : F.BFalse);
 					break;
 				case FLAG_Float:
-					SetClassFieldFloat(Class, Lst[i].PropName, Value ?
-						Lst[i].FTrue : Lst[i].FFalse);
+					F.Field->SetFloat(DefObj, Value ? F.FTrue : F.FFalse);
 					break;
 				case FLAG_Name:
-					SetClassFieldName(Class, Lst[i].PropName, Value ?
-						Lst[i].NTrue : Lst[i].NFalse);
+					F.Field->SetName(DefObj, Value ? F.NTrue : F.NFalse);
 					break;
 				case FLAG_Class:
-					AddClassFixup(Class, Lst[i].PropName, Value ?
-						*Lst[i].NTrue : *Lst[i].NFalse, ClassFixups);
+					AddClassFixup(Class, F.Field, Value ?
+						*F.NTrue : *F.NFalse, ClassFixups);
 					break;
 				case FLAG_NoClip:
-					SetClassFieldBool(Class, "bColideWithThings", !Value);
-					SetClassFieldBool(Class, "bColideWithWorld", !Value);
+					F.Field->SetBool(DefObj, !Value);
+					F.Field2->SetBool(DefObj, !Value);
 					break;
 				}
 				return true;
 			}
 		}
 	}
-	sc->Error(va("Unknown flag %s", *Flag));
+	sc->Error(va("Unknown flag %s", *FlagName));
 	return false;
 	unguard;
 }
@@ -2160,6 +2245,7 @@ static void ParseParentState(VScriptParser* sc, VClass* Class,
 static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 {
 	guard(ParseActor);
+
 	//	Parse actor name. In order to allow dots in actor names, this is done
 	// in non-C mode, so we have to do a little bit more complex parsing.
 	sc->ExpectString();
@@ -2263,6 +2349,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	int SpawnNum = -1;
 	TArray<VState*> States;
 	bool DropItemsDefined = false;
+	VObject* DefObj = (VObject*)Class->Defaults;
 
 	if (sc->CheckNumber())
 	{
@@ -2313,11 +2400,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		bool FoundProp = false;
 		for (int j = 0; j < FlagList.Num() && !FoundProp; j++)
 		{
-			if (!Class->IsChildOf(FlagList[j].Class))
+			VFlagList& ClassDef = FlagList[j];
+			if (!Class->IsChildOf(ClassDef.Class))
 			{
 				continue;
 			}
-			VFlagList& ClassDef = FlagList[j];
 			for (int i = ClassDef.PropsHash[GetTypeHash(PropName) &
 				(PROPS_HASH_SIZE - 1)]; i != -1; i = ClassDef.Props[i].HashNext)
 			{
@@ -2330,10 +2417,10 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 				{
 				case PROP_Int:
 					sc->ExpectNumberWithSign();
-					SetClassFieldInt(Class, P.PropName, sc->Number);
+					P.Field->SetInt(DefObj, sc->Number);
 					break;
 				case PROP_IntConst:
-					SetClassFieldInt(Class, P.PropName, P.IConst);
+					P.Field->SetInt(DefObj, P.IConst);
 					break;
 				case PROP_IntUnsupported:
 					//FIXME
@@ -2342,58 +2429,58 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					break;
 				case PROP_BitIndex:
 					sc->ExpectNumber();
-					SetClassFieldInt(Class, P.PropName, 1 << (sc->Number - 1));
+					P.Field->SetInt(DefObj, 1 << (sc->Number - 1));
 					break;
 				case PROP_Float:
 					sc->ExpectFloatWithSign();
-					SetClassFieldFloat(Class, P.PropName, sc->Float);
+					P.Field->SetFloat(DefObj, sc->Float);
 					break;
 				case PROP_Speed:
 					sc->ExpectFloatWithSign();
-					SetClassFieldFloat(Class, P.PropName, sc->Float * 35.0);
+					P.Field->SetFloat(DefObj, sc->Float * 35.0);
 					break;
 				case PROP_Tics:
 					sc->ExpectNumberWithSign();
-					SetClassFieldFloat(Class, P.PropName, sc->Number / 35.0);
+					P.Field->SetFloat(DefObj, sc->Number / 35.0);
 					break;
 				case PROP_Percent:
 					sc->ExpectFloat();
-					SetClassFieldFloat(Class, P.PropName, MID(0, sc->Float, 100) / 100.0);
+					P.Field->SetFloat(DefObj, MID(0, sc->Float, 100) / 100.0);
 					break;
 				case PROP_FloatClamped:
 					sc->ExpectFloatWithSign();
-					SetClassFieldFloat(Class, P.PropName, MID(P.FMin, sc->Float, P.FMax));
+					P.Field->SetFloat(DefObj, MID(P.FMin, sc->Float, P.FMax));
 					break;
 				case PROP_FloatClamped2:
 					sc->ExpectFloatWithSign();
-					SetClassFieldFloat(Class, P.PropName, MID(P.FMin, sc->Float, P.FMax));
-					SetClassFieldFloat(Class, P.Prop2Name, MID(P.FMin, sc->Float, P.FMax));
+					P.Field->SetFloat(DefObj, MID(P.FMin, sc->Float, P.FMax));
+					P.Field2->SetFloat(DefObj, MID(P.FMin, sc->Float, P.FMax));
 					break;
 				case PROP_FloatOpt2:
 					sc->ExpectFloat();
-					SetClassFieldFloat(Class, P.PropName, sc->Float);
-					SetClassFieldFloat(Class, P.Prop2Name, sc->Float);
+					P.Field->SetFloat(DefObj, sc->Float);
+					P.Field2->SetFloat(DefObj, sc->Float);
 					if (sc->Check(","))
 					{
 						sc->ExpectFloat();
-						SetClassFieldFloat(Class, P.Prop2Name, sc->Float);
+						P.Field2->SetFloat(DefObj, sc->Float);
 					}
 					else if (sc->CheckFloat())
 					{
-						SetClassFieldFloat(Class, P.Prop2Name, sc->Float);
+						P.Field2->SetFloat(DefObj, sc->Float);
 					}
 					break;
 				case PROP_Name:
 					sc->ExpectString();
-					SetClassFieldName(Class, P.PropName, *sc->String);
+					P.Field->SetName(DefObj, *sc->String);
 					break;
 				case PROP_NameLower:
 					sc->ExpectString();
-					SetClassFieldName(Class, P.PropName, *sc->String.ToLower());
+					P.Field->SetName(DefObj, *sc->String.ToLower());
 					break;
 				case PROP_Str:
 					sc->ExpectString();
-					SetClassFieldStr(Class, P.PropName, sc->String);
+					P.Field->SetStr(DefObj, sc->String);
 					break;
 				case PROP_StrUnsupported:
 					//FIXME
@@ -2402,10 +2489,10 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					break;
 				case PROP_Class:
 					sc->ExpectString();
-					AddClassFixup(Class, P.PropName, P.CPrefix + sc->String, ClassFixups);
+					AddClassFixup(Class, P.Field, P.CPrefix + sc->String, ClassFixups);
 					break;
 				case PROP_BoolConst:
-					SetClassFieldBool(Class, P.PropName, P.IConst);
+					P.Field->SetBool(DefObj, P.IConst);
 					break;
 				case PROP_State:
 					ParseParentState(sc, Class, *P.PropName);
@@ -2446,7 +2533,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					break;
 				case PROP_ConversationId:
 					sc->ExpectNumber();
-					SetClassFieldInt(Class, "ConversationID", sc->Number);
+					P.Field->SetInt(DefObj, sc->Number);
 					if (sc->Check(","))
 					{
 						sc->ExpectNumberWithSign();
@@ -2457,7 +2544,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 				case PROP_PainChance:
 					if (sc->CheckNumber())
 					{
-						SetClassFieldFloat(Class, "PainChance", float(sc->Number) / 256.0);
+						P.Field->SetFloat(DefObj, float(sc->Number) / 256.0);
 					}
 					else
 					{
@@ -2468,7 +2555,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						sc->ExpectNumber();
 		
 						//	Check pain chances array for replacements.
-						TArray<VPainChanceInfo> PainChances = GetClassPainChances(Class);
+						TArray<VPainChanceInfo>& PainChances = GetClassPainChances(Class);
 						VPainChanceInfo* PC = NULL;
 						for (int i = 0; i < PainChances.Num(); i++)
 						{
@@ -2542,15 +2629,15 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					else
 					{
 						sc->ExpectNumber();
-						SetClassFieldInt(Class, "MissileDamage", sc->Number);
+						P.Field->SetInt(DefObj, sc->Number);
 					}
 					break;
 				case PROP_VSpeed:
 				{
 					sc->ExpectFloatWithSign();
-					TVec Val = GetClassFieldVec(Class, "Velocity");
+					TVec Val = P.Field->GetVec(DefObj);
 					Val.z = sc->Float * 35.0;
-					SetClassFieldVec(Class, "Velocity", Val);
+					P.Field->SetVec(DefObj, Val);
 					break;
 				}
 				case PROP_RenderStyle:
@@ -2593,12 +2680,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					{
 						sc->Error("Bad render style");
 					}
-					SetClassFieldByte(Class, P.PropName, RenderStyle);
+					P.Field->SetByte(DefObj, RenderStyle);
 					break;
 				}
 				case PROP_Translation:
-					SetClassFieldInt(Class, P.PropName,
-						R_ParseDecorateTranslation(sc,
+					P.Field->SetInt(DefObj, R_ParseDecorateTranslation(sc,
 						GameFilter & GAME_Strife ? 7 : 3));
 					break;
 				case PROP_BloodColour:
@@ -2620,19 +2706,18 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						sc->ExpectString();
 						Col = M_ParseColour(sc->String);
 					}
-					SetClassFieldInt(Class, "BloodColour", Col);
-					SetClassFieldInt(Class, "BloodTranslation",
-						R_GetBloodTranslation(Col));
+					P.Field->SetInt(DefObj, Col);
+					P.Field2->SetInt(DefObj, R_GetBloodTranslation(Col));
 					break;
 				}
 				case PROP_BloodType:
 					sc->ExpectString();
-					AddClassFixup(Class, "BloodType", sc->String, ClassFixups);
+					AddClassFixup(Class, P.Field, sc->String, ClassFixups);
 					if (sc->Check(","))
 					{
 						sc->ExpectString();
 					}
-					AddClassFixup(Class, "BloodSplatterType", sc->String, ClassFixups);
+					AddClassFixup(Class, P.Field2, sc->String, ClassFixups);
 					if (sc->Check(","))
 					{
 						sc->ExpectString();
@@ -2684,10 +2769,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						}
 						for (int i = 0; i < FlagList[j].Flags.Num(); i++)
 						{
-							switch (FlagList[j].Flags[i].Type)
+							VFlagDef& F = FlagList[j].Flags[i];
+							switch (F.Type)
 							{
 							case FLAG_Bool:
-								SetClassFieldBool(Class, FlagList[j].Flags[i].PropName, false);
+								F.Field->SetBool(DefObj, false);
 								break;
 							}
 						}
@@ -2763,13 +2849,13 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					for (int i = 0; i < 5; i++)
 					{
 						sc->ExpectNumber();
-						SetClassFieldInt(Class, "Args", sc->Number, i);
+						P.Field->SetInt(DefObj, sc->Number, i);
 						if (i < 4 && !sc->Check(","))
 						{
 							break;
 						}
 					}
-					SetClassFieldBool(Class, "bArgsDefined", true);
+					P.Field2->SetBool(DefObj, true);
 					break;
 				case PROP_PickupMessage:
 				{
@@ -2801,38 +2887,38 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						sc->ExpectString();
 						if (GGameInfo->GameFilterFlag & Filter)
 						{
-							SetClassFieldStr(Class, "PickupMessage", sc->String);
+							P.Field->SetStr(DefObj, sc->String);
 						}
 					}
 					else
 					{
-						SetClassFieldStr(Class, "PickupMessage", Msg);
+						P.Field->SetStr(DefObj, Msg);
 					}
 					break;
 				}
 				case PROP_LowMessage:
 					sc->ExpectNumber();
-					SetClassFieldInt(Class, "LowHealth", sc->Number);
+					P.Field->SetInt(DefObj, sc->Number);
 					sc->Expect(",");
 					sc->ExpectString();
-					SetClassFieldStr(Class, "LowHealthMessage", sc->String);
+					P.Field2->SetStr(DefObj, sc->String);
 					break;
 				case PROP_PowerupColour:
 					if (sc->Check("InverseMap"))
 					{
-						SetClassFieldInt(Class, "BlendColour", 0x00123456);
+						P.Field->SetInt(DefObj, 0x00123456);
 					}
 					else if (sc->Check("GoldMap"))
 					{
-						SetClassFieldInt(Class, "BlendColour", 0x00123457);
+						P.Field->SetInt(DefObj, 0x00123457);
 					}
 					else if (sc->Check("RedMap"))
 					{
-						SetClassFieldInt(Class, "BlendColour", 0x00123458);
+						P.Field->SetInt(DefObj, 0x00123458);
 					}
 					else if (sc->Check("GreenMap"))
 					{
-						SetClassFieldInt(Class, "BlendColour", 0x00123459);
+						P.Field->SetInt(DefObj, 0x00123459);
 					}
 					else
 					{
@@ -2857,15 +2943,15 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						sc->ExpectFloat();
 						int a = MID(0, (int)(sc->Float * 255), 255);
 						Col |= a << 24;
-						SetClassFieldInt(Class, "BlendColour", Col);
+						P.Field->SetInt(DefObj, Col);
 					}
 					break;
 				case PROP_ColourRange:
 					sc->ExpectNumber();
-					SetClassFieldInt(Class, "TranslStart", sc->Number);
+					P.Field->SetInt(DefObj, sc->Number);
 					sc->Check(",");
 					sc->ExpectNumber();
-					SetClassFieldInt(Class, "TranslEnd", sc->Number);
+					P.Field2->SetInt(DefObj, sc->Number);
 					break;
 				case PROP_DamageScreenColour:
 				{
@@ -2888,30 +2974,32 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						sc->ExpectString();
 						Col = M_ParseColour(sc->String);
 					}
-					SetClassFieldInt(Class, "DamageScreenColour", Col);
+					P.Field->SetInt(DefObj, Col);
 					break;
 				}
 				case PROP_HexenArmor:
 					sc->ExpectFloat();
-					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 0);
+					P.Field->SetFloat(DefObj, sc->Float, 0);
 					sc->Expect(",");
 					sc->ExpectFloat();
-					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 1);
+					P.Field->SetFloat(DefObj, sc->Float, 1);
 					sc->Expect(",");
 					sc->ExpectFloat();
-					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 2);
+					P.Field->SetFloat(DefObj, sc->Float, 2);
 					sc->Expect(",");
 					sc->ExpectFloat();
-					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 3);
+					P.Field->SetFloat(DefObj, sc->Float, 3);
 					sc->Expect(",");
 					sc->ExpectFloat();
-					SetClassFieldFloat(Class, "HexenArmor", sc->Float, 4);
+					P.Field->SetFloat(DefObj, sc->Float, 4);
 					break;
 				case PROP_StartItem:
 				{
+					TArray<VDropItemInfo>& DropItems =
+						*(TArray<VDropItemInfo>*)P.Field->GetFieldPtr(DefObj);
 					if (!DropItemsDefined)
 					{
-						GetClassDropItems(Class).Clear();
+						DropItems.Clear();
 						DropItemsDefined = true;
 					}
 					sc->ExpectString();
@@ -2929,7 +3017,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					{
 						DI.Amount = sc->Number;
 					}
-					GetClassDropItems(Class).Insert(0, DI);
+					DropItems.Insert(0, DI);
 					break;
 				}
 				}
@@ -3998,47 +4086,62 @@ void ShutdownDecorate()
 void VEntity::SetDecorateFlag(const VStr& Flag, bool Value)
 {
 	guard(VEntity::SetDecorateFlag);
-	VName FlagName(*Flag.ToLower());
+	VName FlagName;
+	VName ClassFilter(NAME_None);
+	int DotPos = Flag.IndexOf('.');
+	if (DotPos >= 0)
+	{
+		ClassFilter = *VStr(Flag, 0, DotPos).ToLower();
+		FlagName = *VStr(Flag, DotPos + 1, Flag.Length() - DotPos - 1).ToLower();
+	}
+	else
+	{
+		FlagName = *Flag.ToLower();
+	}
 	for (int j = 0; j < FlagList.Num(); j++)
 	{
-		if (!IsA(FlagList[j].Class))
+		VFlagList& ClassDef = FlagList[j];
+		if (ClassFilter != NAME_None &&
+			ClassDef.Class->LowerCaseName != ClassFilter)
 		{
 			continue;
 		}
-		const TArray<VFlagDef>& Lst = FlagList[j].Flags;
-		for (int i = 0; i < Lst.Num(); i++)
+		if (!IsA(ClassDef.Class))
 		{
-			if (FlagName == Lst[i].Name || FlagName == Lst[i].AltName)
+			continue;
+		}
+		for (int i = ClassDef.FlagsHash[GetTypeHash(FlagName) &
+			(FLAGS_HASH_SIZE - 1)]; i != -1; i = ClassDef.Flags[i].HashNext)
+		{
+			const VFlagDef& F = ClassDef.Flags[i];
+			if (FlagName == F.Name)
 			{
-				switch (Lst[i].Type)
+				switch (F.Type)
 				{
 				case FLAG_Bool:
-					SetFieldBool(this, Lst[i].PropName, Value);
+					F.Field->SetBool(this, Value);
 					break;
 				case FLAG_Unsupported:
 					GCon->Logf("Unsupported flag %s in %s", *Flag,
 						GetClass()->GetName());
 					break;
 				case FLAG_Byte:
-					SetFieldByte(this, Lst[i].PropName, Value ?
-						Lst[i].BTrue : Lst[i].BFalse);
+					F.Field->SetByte(this, Value ? F.BTrue : F.BFalse);
 					break;
 				case FLAG_Float:
-					SetFieldFloat(this, Lst[i].PropName, Value ?
-						Lst[i].FTrue : Lst[i].FFalse);
+					F.Field->SetFloat(this, Value ? F.FTrue : F.FFalse);
 					break;
 				case FLAG_Name:
-					SetFieldName(this, Lst[i].PropName, Value ?
-						Lst[i].NTrue : Lst[i].NFalse);
+					F.Field->SetName(this, Value ? F.NTrue : F.NFalse);
 					break;
 				case FLAG_Class:
-					SetFieldClass(this, Lst[i].PropName, Value ?
-						Lst[i].NTrue != NAME_None ? VClass::FindClass(*Lst[i].NTrue) : NULL :
-						Lst[i].NFalse != NAME_None ? VClass::FindClass(*Lst[i].NFalse) : NULL);
+					F.Field->SetClass(this, Value ?
+						F.NTrue != NAME_None ? VClass::FindClass(*F.NTrue) : NULL :
+						F.NFalse != NAME_None ? VClass::FindClass(*F.NFalse) : NULL);
 					break;
 				case FLAG_NoClip:
-					SetFieldBool(this, "bColideWithThings", !Value);
-					SetFieldBool(this, "bColideWithWorld", !Value);
+					F.Field->SetBool(this, !Value);
+					F.Field2->SetBool(this, !Value);
 					break;
 				}
 				return;

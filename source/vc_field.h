@@ -82,4 +82,65 @@ public:
 
 	friend inline VStream& operator<<(VStream& Strm, VField*& Obj)
 	{ return Strm << *(VMemberBase**)&Obj; }
+
+	vuint8* GetFieldPtr(VObject* Obj) const
+	{
+		return (vuint8*)Obj + Ofs;
+	}
+	float GetFloat(const VObject* Obj) const
+	{
+		return *(float*)((vuint8*)Obj + Ofs);
+	}
+	TVec GetVec(const VObject* Obj) const
+	{
+		return *(TVec*)((vuint8*)Obj + Ofs);
+	}
+
+	void SetByte(VObject* Obj, vuint8 Value) const
+	{
+		*((vuint8*)Obj + Ofs) = Value;
+	}
+	void SetInt(VObject* Obj, int Value) const
+	{
+		*(vint32*)((vuint8*)Obj + Ofs) = Value;
+	}
+	void SetInt(VObject* Obj, int Value, int Idx) const
+	{
+		((vint32*)((vuint8*)Obj + Ofs))[Idx] = Value;
+	}
+	void SetFloat(VObject* Obj, float Value) const
+	{
+		*(float*)((vuint8*)Obj + Ofs) = Value;
+	}
+	void SetFloat(VObject* Obj, float Value, int Idx) const
+	{
+		((float*)((vuint8*)Obj + Ofs))[Idx] = Value;
+	}
+	void SetName(VObject* Obj, VName Value) const
+	{
+		*(VName*)((vuint8*)Obj + Ofs) = Value;
+	}
+	void SetStr(VObject* Obj, const VStr& Value) const
+	{
+		*(VStr*)((vuint8*)Obj + Ofs) = Value;
+	}
+	void SetBool(VObject* Obj, int Value) const
+	{
+		if (Value)
+		{
+			*(vuint32*)((vuint8*)Obj + Ofs) |= Type.BitMask;
+		}
+		else
+		{
+			*(vuint32*)((vuint8*)Obj + Ofs) &= ~Type.BitMask;
+		}
+	}
+	void SetVec(VObject* Obj, const TVec& Value) const
+	{
+		*(TVec*)((vuint8*)Obj + Ofs) = Value;
+	}
+	void SetClass(VObject* Obj, VClass* Value) const
+	{
+		*(VClass**)((vuint8*)Obj + Ofs) = Value;
+	}
 };
