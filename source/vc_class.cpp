@@ -375,8 +375,7 @@ void VClass::Serialise(VStream& Strm)
 #endif
 	Strm << ParentClass
 		<< Fields
-		<< States
-		<< DefaultProperties;
+		<< States;
 #ifndef IN_VCC
 	if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
 	{
@@ -385,6 +384,18 @@ void VClass::Serialise(VStream& Strm)
 			ParentClass ? ParentClass->GetName() : "(none)");
 	}
 #endif
+
+	int NumMethods = Methods.Num();
+	Strm << STRM_INDEX(NumMethods);
+	if (Strm.IsLoading())
+	{
+		Methods.SetNum(NumMethods);
+	}
+	for (int i = 0; i < NumMethods; i++)
+	{
+		Strm << Methods[i];
+	}
+	Strm << DefaultProperties;
 
 	int NumRepInfos = RepInfos.Num();
 	Strm << STRM_INDEX(NumRepInfos);
@@ -1473,20 +1484,11 @@ void VClass::CalcFieldOffsets()
 		return;
 	}
 
+	int PrevClassNumMethods = ClassNumMethods;
 	int numMethods = ParentClass ? ParentClass->ClassNumMethods : 0;
-	for (int i = 0; i < GMembers.Num(); i++)
+	for (int i = 0; i < Methods.Num(); i++)
 	{
-		if (GMembers[i]->MemberType != MEMBER_Method ||
-			GMembers[i]->Outer != this)
-		{
-			continue;
-		}
-		VMethod* M = (VMethod*)GMembers[i];
-		if (M == DefaultProperties)
-		{
-			M->VTableIndex = -1;
-			continue;
-		}
+		VMethod* M = (VMethod*)Methods[i];
 		int MOfs = -1;
 		if (ParentClass)
 		{
@@ -1497,6 +1499,11 @@ void VClass::CalcFieldOffsets()
 			MOfs = numMethods++;
 		}
 		M->VTableIndex = MOfs;
+	}
+	if (ClassVTable && PrevClassNumMethods != ClassNumMethods)
+	{
+		delete[] ClassVTable;
+		ClassVTable = NULL;
 	}
 
 	VField* PrevField = NULL;
@@ -1579,14 +1586,9 @@ void VClass::InitNetFields()
 		NetFields = fi;
 	}
 
-	for (int i = 0; i < GMembers.Num(); i++)
+	for (int i = 0; i < Methods.Num(); i++)
 	{
-		if (GMembers[i]->MemberType != MEMBER_Method ||
-			GMembers[i]->Outer != this)
-		{
-			continue;
-		}
-		VMethod* M = (VMethod*)GMembers[i];
+		VMethod* M = Methods[i];
 		if (!(M->Flags & FUNC_Net))
 		{
 			continue;
@@ -1734,25 +1736,18 @@ void VClass::InitDestructorFields()
 void VClass::CreateVTable()
 {
 	guard(VClass::CreateVTable);
-	if (ClassVTable)
+	if (!ClassVTable)
 	{
-		delete[] ClassVTable;
+		ClassVTable = new VMethod*[ClassNumMethods];
 	}
-	ClassVTable = new VMethod*[ClassNumMethods];
-	memset(ClassVTable, 0, ClassNumMethods * sizeof(VMethod*));
 	if (ParentClass)
 	{
 		memcpy(ClassVTable, ParentClass->ClassVTable,
 			ParentClass->ClassNumMethods * sizeof(VMethod*));
 	}
-	for (int i = 0; i < GMembers.Num(); i++)
+	for (int i = 0; i < Methods.Num(); i++)
 	{
-		if (GMembers[i]->MemberType != MEMBER_Method ||
-			GMembers[i]->Outer != this)
-		{
-			continue;
-		}
-		VMethod* M = (VMethod*)GMembers[i];
+		VMethod* M = Methods[i];
 		if (M->VTableIndex == -1)
 		{
 			continue;

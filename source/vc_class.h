@@ -194,6 +194,7 @@ public:
 	VClass*					ParentClass;
 	VField*					Fields;
 	VState*					States;
+	TArray<VMethod*>		Methods;
 	VMethod*				DefaultProperties;
 	TArray<VRepInfo>		RepInfos;
 	TArray<VStateLabel>		StateLabels;
@@ -207,7 +208,6 @@ public:
 	TArray<VStruct*>		Structs;
 	TArray<VConstant*>		Constants;
 	TArray<VProperty*>		Properties;
-	TArray<VMethod*>		Methods;
 	TArray<VStateLabelDef>	StateLabelDefs;
 	bool					Defined;
 
