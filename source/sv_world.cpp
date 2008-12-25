@@ -131,23 +131,29 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point, int NoBlock
 			op->bottom = frontfloorz;
 			op->lowfloor = backfloorz;
 			op->floor = frontfloor;
+			op->lowfloorplane = backfloor;
 		}
 		else
 		{
 			op->bottom = backfloorz;
 			op->lowfloor = frontfloorz;
 			op->floor = backfloor;
+			op->lowfloorplane = frontfloor;
 		}
 		if (frontceilz < backceilz)
 		{
 			op->top = frontceilz;
+			op->highceilig = backceilz;
 			op->ceiling = frontceil;
+			op->highceilingplane = backceil;
 			frontreg = frontreg->next;
 		}
 		else
 		{
 			op->top = backceilz;
+			op->highceilig = frontceilz;
 			op->ceiling = backceil;
+			op->highceilingplane = frontceil;
 			backreg = backreg->next;
 		}
 		op->range = op->top - op->bottom;

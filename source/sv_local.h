@@ -158,13 +158,16 @@ public:
 
 struct opening_t
 {
-	float		top;
-	float		bottom;
-	float		range;
-	float		lowfloor;
-	sec_plane_t	*floor;
-	sec_plane_t	*ceiling;
-	opening_t	*next;
+	float			top;
+	float			bottom;
+	float			range;
+	float			lowfloor;
+	float			highceilig;
+	sec_plane_t*	floor;
+	sec_plane_t*	ceiling;
+	sec_plane_t*	lowfloorplane;
+	sec_plane_t*	highceilingplane;
+	opening_t*		next;
 };
 
 opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point, int NoBlockFlags);
