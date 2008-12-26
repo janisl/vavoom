@@ -156,12 +156,14 @@ void VRenderLevel::SetupSky()
 	}
 	//	Make it a bit higher to avoid clipping of the sprites.
 	skyheight += 8 * 1024;
+	memset(&sky_plane, 0, sizeof(sky_plane));
 	sky_plane.Set(TVec(0, 0, -1), -skyheight);
 	sky_plane.pic = skyflatnum;
 	sky_plane.Alpha = 1.1;
 	sky_plane.LightSourceSector = -1;
-	sky_plane.SkyBox = NULL;
 	sky_plane.MirrorAlpha = 1.0;
+	sky_plane.XScale = 1.0;
+	sky_plane.YScale = 1.0;
 	unguard;
 }
 
