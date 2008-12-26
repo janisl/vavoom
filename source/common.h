@@ -224,7 +224,7 @@ public:
 //==========================================================================
 
 #define clock(var)		var -= Sys_Cycles()
-#define unclock(var)	var += Sys_Cycles()
+#define unclock(var)	var += Sys_Cycles() - 34
 
 //==========================================================================
 //
