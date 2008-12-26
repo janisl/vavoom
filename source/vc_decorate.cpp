@@ -2245,7 +2245,6 @@ static void ParseParentState(VScriptParser* sc, VClass* Class,
 static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 {
 	guard(ParseActor);
-
 	//	Parse actor name. In order to allow dots in actor names, this is done
 	// in non-C mode, so we have to do a little bit more complex parsing.
 	sc->ExpectString();
@@ -2264,9 +2263,10 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		NameStr = sc->String;
 	}
 
-	if (VClass::FindClassNoCase(*sc->String))
+	VClass* DupCheck = VClass::FindClassLowerCase(*NameStr.ToLower());
+	if (DupCheck && DupCheck->MemberType == MEMBER_Class)
 	{
-		sc->Error(va("Redeclared class %s", *sc->String));
+		sc->Error(va("Redeclared class %s", *NameStr));
 	}
 
 	if (ColonPos < 0)
@@ -2294,8 +2294,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	VClass* ParentClass = ActorClass;
 	if (ParentStr)
 	{
-		ParentClass = VClass::FindClassNoCase(*ParentStr);
-		if (!ParentClass)
+		ParentClass = VClass::FindClassLowerCase(*ParentStr.ToLower());
+		if (!ParentClass || ParentClass->MemberType != MEMBER_Class)
 		{
 			sc->Error(va("Parent class %s not found", *ParentStr));
 		}
@@ -2330,8 +2330,8 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	if (sc->Check("replaces"))
 	{
 		sc->ExpectString();
-		ReplaceeClass = VClass::FindClassNoCase(*sc->String);
-		if (!ReplaceeClass)
+		ReplaceeClass = VClass::FindClassLowerCase(*sc->String.ToLower());
+		if (!ReplaceeClass || ReplaceeClass->MemberType != MEMBER_Class)
 		{
 			sc->Error(va("Replaced class %s not found", *sc->String));
 		}
@@ -2792,7 +2792,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					}
 					sc->ExpectString();
 					VDropItemInfo DI;
-					DI.TypeName = *sc->String;
+					DI.TypeName = *sc->String.ToLower();
 					DI.Type = NULL;
 					DI.Amount = 0;
 					DI.Chance = 1.0;
@@ -3004,7 +3004,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					}
 					sc->ExpectString();
 					VDropItemInfo DI;
-					DI.TypeName = *sc->String;
+					DI.TypeName = *sc->String.ToLower();
 					DI.Type = NULL;
 					DI.Amount = 0;
 					DI.Chance = 1.0;
@@ -3999,7 +3999,7 @@ void ProcessDecorateScripts()
 		}
 		else
 		{
-			VClass* C = VClass::FindClassNoCase(*CF.Name);
+			VClass* C = VClass::FindClassLowerCase(*CF.Name.ToLower());
 			if (!C)
 			{
 				GCon->Logf("No such class %s", *CF.Name);
@@ -4015,9 +4015,12 @@ void ProcessDecorateScripts()
 			}
 		}
 	}
+	VField* DropItemListField = ActorClass->FindFieldChecked("DropItemList");
 	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
 	{
-		TArray<VDropItemInfo>& List = GetClassDropItems(DecPkg->ParsedClasses[i]);
+		TArray<VDropItemInfo>& List =
+			*(TArray<VDropItemInfo>*)DropItemListField->GetFieldPtr(
+			(VObject*)DecPkg->ParsedClasses[i]->Defaults);
 		for (int j = 0; j < List.Num(); j++)
 		{
 			VDropItemInfo& DI = List[j];
@@ -4025,7 +4028,7 @@ void ProcessDecorateScripts()
 			{
 				continue;
 			}
-			VClass* C = VClass::FindClassNoCase(*DI.TypeName);
+			VClass* C = VClass::FindClassLowerCase(DI.TypeName);
 			if (!C)
 			{
 				GCon->Logf("No such class %s", *DI.TypeName);
