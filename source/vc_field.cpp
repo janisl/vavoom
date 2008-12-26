@@ -167,9 +167,7 @@ bool VField::Define()
 void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 	const VFieldType& Type)
 {
-	guard(VField::CopyFieldValue);
-	VFieldType IntType;
-	int InnerSize;
+	guardSlow(VField::CopyFieldValue);
 	switch (Type.Type)
 	{
 	case TYPE_Int:
@@ -228,22 +226,24 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 		break;
 
 	case TYPE_Array:
-		IntType = Type;
+	{
+		VFieldType IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
-		InnerSize = IntType.GetSize();
+		int InnerSize = IntType.GetSize();
 		for (int i = 0; i < Type.ArrayDim; i++)
 		{
 			CopyFieldValue(Src + i * InnerSize, Dst + i * InnerSize, IntType);
 		}
+	}
 		break;
 
 	case TYPE_DynamicArray:
 	{
 		VScriptArray& ASrc = *(VScriptArray*)Src;
 		VScriptArray& ADst = *(VScriptArray*)Dst;
-		IntType = Type;
+		VFieldType IntType = Type;
 		IntType.Type = Type.ArrayInnerType;
-		InnerSize = IntType.GetSize();
+		int InnerSize = IntType.GetSize();
 		ADst.SetNum(ASrc.Num(), IntType);
 		for (int i = 0; i < ASrc.Num(); i++)
 		{
@@ -253,7 +253,7 @@ void VField::CopyFieldValue(const vuint8* Src, vuint8* Dst,
 	}
 		break;
 	}
-	unguard;
+	unguardSlow;
 }
 
 //==========================================================================
