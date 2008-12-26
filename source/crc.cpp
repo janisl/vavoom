@@ -29,12 +29,30 @@
 //**	
 //**************************************************************************
 
+// HEADER FILES ------------------------------------------------------------
+
 #include "gamedefs.h"
+
+// MACROS ------------------------------------------------------------------
 
 #define CRC_INIT_VALUE	0xffff
 #define CRC_XOR_VALUE	0x0000
 
-static word crctable[256] =
+// TYPES -------------------------------------------------------------------
+
+// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
+// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
+
+// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
+
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
+
+// PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+static vuint32 CrcTable[256] =
 {
 	0x0000,	0x1021,	0x2042,	0x3063,	0x4084,	0x50a5,	0x60c6,	0x70e7,
 	0x8108,	0x9129,	0xa14a,	0xb16b,	0xc18c,	0xd1ad,	0xe1ce,	0xf1ef,
@@ -70,18 +88,54 @@ static word crctable[256] =
 	0x6e17,	0x7e36,	0x4e55,	0x5e74,	0x2e93,	0x3eb2,	0x0ed1,	0x1ef0
 };
 
-void TCRC::Init(void)
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//	TCRC::Init
+//
+//==========================================================================
+
+void TCRC::Init()
 {
-	crcvalue = CRC_INIT_VALUE;
+	CrcValue = CRC_INIT_VALUE;
 }
 
-TCRC& TCRC::operator + (byte data)
+//==========================================================================
+//
+//	TCRC::operator +
+//
+//==========================================================================
+
+TCRC& TCRC::operator + (vuint8 Data)
 {
-	crcvalue = (crcvalue << 8) ^ crctable[(crcvalue >> 8) ^ data];
+	CrcValue = (CrcValue << 8) ^ CrcTable[(CrcValue >> 8) ^ Data];
 	return *this;
 }
 
-TCRC::operator word(void)
+//==========================================================================
+//
+//	TCRC::operator word
+//
+//==========================================================================
+
+TCRC::operator vuint16()
 {
-	return crcvalue ^ CRC_XOR_VALUE;
+	return CrcValue ^ CRC_XOR_VALUE;
+}
+
+//==========================================================================
+//
+//	GetTypeHash
+//
+//==========================================================================
+
+vuint32 GetTypeHash(const char *S)
+{
+	vuint16 Hash = CRC_INIT_VALUE;
+	for (const vuint8* p = (const vuint8*)S; *p; p++)
+	{
+		Hash = (Hash << 8) ^ CrcTable[(Hash >> 8) ^ *p];
+	}
+	return Hash;
 }

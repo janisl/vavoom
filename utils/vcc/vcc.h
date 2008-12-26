@@ -54,6 +54,7 @@ void Free(void* ptr);
 #include "../../source/str.h"
 #include "../../source/vector.h"
 #include "../../source/text.h"
+#include "../../source/crc.h"
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"
 #include "../../source/vc_member.h"

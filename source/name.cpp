@@ -46,7 +46,7 @@
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 TArray<VNameEntry*>	VName::Names;
-VNameEntry*			VName::HashTable[4096];
+VNameEntry*			VName::HashTable[VName::HASH_SIZE];
 bool				VName::Initialised;
 
 #define REGISTER_NAME(name)		{ NULL, NAME_##name, #name },
@@ -58,17 +58,6 @@ static VNameEntry AutoNames[] =
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	GetTypeHash
-//
-//==========================================================================
-
-inline vuint32 GetTypeHash(const char *S)
-{
-	return ((vuint8*)S)[0] | ((vuint8*)S)[1];
-}
 
 //==========================================================================
 //
@@ -144,7 +133,7 @@ VName::VName(const char* Name, ENameFindType FindType)
 	}
 
 	//	Search in cache.
-	int HashIndex = GetTypeHash(NameBuf) & 4095;
+	int HashIndex = GetTypeHash(NameBuf) & (HASH_SIZE - 1);
 	VNameEntry* TempHash = HashTable[HashIndex];
 	while (TempHash)
 	{
@@ -185,7 +174,7 @@ void VName::StaticInit()
 	for (int i = 0; i < (int)ARRAY_COUNT(AutoNames); i++)
 	{
 		Names.Append(&AutoNames[i]);
-		int HashIndex = GetTypeHash(AutoNames[i].Name) & 4095;
+		int HashIndex = GetTypeHash(AutoNames[i].Name) & (HASH_SIZE - 1);
 		AutoNames[i].HashNext = HashTable[HashIndex];
 		HashTable[HashIndex] = &AutoNames[i];
 	}

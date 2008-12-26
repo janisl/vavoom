@@ -1,6 +1,8 @@
 add_executable(vcc
 	../../source/array.h
 	../../source/common.h
+	../../source/crc.cpp
+	../../source/crc.h
 	../../source/name.cpp
 	../../source/name.h
 	../../source/names.h

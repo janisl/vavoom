@@ -25,11 +25,13 @@
 
 class TCRC
 {
- public:
-	void Init(void);
-	TCRC& operator + (byte data);
-	operator word(void);
+public:
+	void Init();
+	TCRC& operator + (vuint8);
+	operator vuint16();
 
- private:
-	word		crcvalue;
+private:
+	vuint16		CrcValue;
 };
+
+vuint32 GetTypeHash(const char*);

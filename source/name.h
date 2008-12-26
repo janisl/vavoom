@@ -54,11 +54,13 @@ struct VNameEntry
 //
 class VName
 {
-protected:
+private:
+	enum { HASH_SIZE = 4096 };
+
 	vint32						Index;
 
 	static TArray<VNameEntry*>	Names;
-	static VNameEntry*			HashTable[4096];
+	static VNameEntry*			HashTable[HASH_SIZE];
 	static bool					Initialised;
 
 public:
