@@ -331,7 +331,7 @@ final bool Teleport(TVec Dst, float angle, bool DstFog, bool SrcFog,
 	{
 		return false;
 	}
-	if (bIsPlayer)
+	if (bIsPlayer && Player.MO == self)
 	{
 		Player.ViewOrg = Origin + vector(0.0, 0.0,
 			PlayerEx(Player).ViewHeight);

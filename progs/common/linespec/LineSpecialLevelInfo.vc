@@ -5489,7 +5489,7 @@ final bool EV_SilentLineTeleport(line_t *line, int side, EntityEx thing,
 		thing.Velocity.y = TempX * DstXAxis.y + TempY * DstYAxis.y;
 
 		// Adjust a player's view, in case there has been a height change
-		if (thing.bIsPlayer)
+		if (thing.bIsPlayer && thing.Player.MO == thing)
 		{
 			thing.Player.ViewOrg.z += thing.Origin.z - oldZ;
 
