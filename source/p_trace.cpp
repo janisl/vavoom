@@ -361,3 +361,23 @@ bool VLevel::TraceLine(linetrace_t& Trace, const TVec& Start, const TVec& End,
 	return false;
 	unguard;
 }
+
+//==========================================================================
+//
+//	Script natives
+//
+//==========================================================================
+
+IMPLEMENT_FUNCTION(VLevel, TraceLine)
+{
+	P_GET_PTR(TVec, HitNormal);
+	P_GET_PTR(TVec, HitPoint);
+	P_GET_VEC(End);
+	P_GET_VEC(Start);
+	P_GET_SELF;
+	linetrace_t Trace;
+	bool Ret = Self->TraceLine(Trace, Start, End, SPF_NOBLOCKING);
+	*HitPoint = Trace.LineEnd;
+	*HitNormal = Trace.HitPlaneNormal;
+	RET_BOOL(Ret);
+}
