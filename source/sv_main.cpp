@@ -965,8 +965,11 @@ COMMAND(Spawn)
 void SV_DropClient(VBasePlayer* Player, bool)
 {
 	guard(SV_DropClient);
-	GLevel->Acs->StartTypedACScripts(SCRIPT_Disconnect,
-		SV_GetPlayerNum(Player), 0, 0, NULL, true, false);
+	if (GLevel && GLevel->Acs)
+	{
+		GLevel->Acs->StartTypedACScripts(SCRIPT_Disconnect,
+			SV_GetPlayerNum(Player), 0, 0, NULL, true, false);
+	}
 	if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
 	{
 		Player->eventDisconnectClient();
