@@ -2265,6 +2265,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_entity_sight.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_entity_world.cpp"
 				>
 			</File>
