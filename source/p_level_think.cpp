@@ -153,8 +153,6 @@ void VLevel::TickWorld(float DeltaTime)
 		}
 	}
 
-	ClampOffsets();
-
 	Time += DeltaTime;
 	TicTime++;
 	unguard;

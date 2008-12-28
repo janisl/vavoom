@@ -903,8 +903,6 @@ class VLevel : public VObject
 
 	bool TraceLine(linetrace_t&, const TVec&, const TVec&, int) const;
 
-	void ClampOffsets();
-
 	void SetCameraToTexture(VEntity*, VName, int);
 
 	msecnode_t* AddSecnode(sector_t*, VEntity*, msecnode_t*);
