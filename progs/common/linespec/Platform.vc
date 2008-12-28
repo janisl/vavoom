@@ -70,6 +70,7 @@ name	StartSound;
 void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	int Arg5, int InType)
 {
+print("Plat %d (%d %d %d %d %d)", InType, Arg1, Arg2, Arg3, Arg4, Arg5);
 	float		DestHeight;
 	TVec		Spot;
 
@@ -103,6 +104,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 			Arg4 = Arg5;
 			break;
 		}
+		Arg3 *= 4;
 	}
 
 	Tag = Arg1;
