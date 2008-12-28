@@ -3576,6 +3576,7 @@ final bool EV_SectorSetFloorPanning(int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 		XLevel.Sectors[s].floor.xoffs = XOffs;
 		XLevel.Sectors[s].floor.yoffs = YOffs;
+		ClampSecPlaneOffsets(&XLevel.Sectors[s].floor);
 	}
 	return true;
 }
@@ -3597,6 +3598,7 @@ final bool EV_SectorSetCeilingPanning(int Arg1, int Arg2, int Arg3, int Arg4,
 	{
 		XLevel.Sectors[s].ceiling.xoffs = XOffs;
 		XLevel.Sectors[s].ceiling.yoffs = YOffs;
+		ClampSecPlaneOffsets(&XLevel.Sectors[s].ceiling);
 	}
 	return true;
 }
@@ -3971,8 +3973,61 @@ final bool EV_LineSetTextureOffset(int Arg1, int Arg2, int Arg3, int Arg4,
 				}
 			}
 		}
+		ClampSideOffsets(Side);
 	}
 	return true;
+}
+
+//==========================================================================
+//
+//	ClampSideOffsets
+//
+//==========================================================================
+
+final void ClampSideOffsets(side_t* Side)
+{
+	if (Side->TopTextureOffset > 32767.0 || Side->TopTextureOffset < -32768.0)
+	{
+		Side->TopTextureOffset = 0.0;
+	}
+	if (Side->BotTextureOffset > 32767.0 || Side->BotTextureOffset < -32768.0)
+	{
+		Side->BotTextureOffset = 0.0;
+	}
+	if (Side->MidTextureOffset > 32767.0 || Side->MidTextureOffset < -32768.0)
+	{
+		Side->MidTextureOffset = 0.0;
+	}
+	if (Side->TopRowOffset > 32767.0 || Side->TopRowOffset < -32768.0)
+	{
+		Side->TopRowOffset = 0.0;
+	}
+	if (Side->BotRowOffset > 32767.0 || Side->BotRowOffset < -32768.0)
+	{
+		Side->BotRowOffset = 0.0;
+	}
+	if (Side->MidRowOffset > 32767.0 || Side->MidRowOffset < -32768.0)
+	{
+		Side->MidRowOffset = 0.0;
+	}
+}
+
+//==========================================================================
+//
+//	ClampSecPlaneOffsets
+//
+//==========================================================================
+
+final void ClampSecPlaneOffsets(sec_plane_t* Plane)
+{
+	if (Plane->xoffs > 32767.0 || Plane->xoffs < -32768.0)
+	{
+		Plane->xoffs = 0.0;
+	}
+	if (Plane->yoffs > 32767.0 || Plane->yoffs < -32768.0)
+	{
+		Plane->yoffs = 0.0;
+	}
 }
 
 //**************************************************************************

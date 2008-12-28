@@ -403,16 +403,21 @@ void Tick(float DeltaTime)
 			XLevel.Sides[Affectee].BotTextureOffset += XDelta;
 			XLevel.Sides[Affectee].BotRowOffset += YDelta;
 		}
+		LineSpecialLevelInfo(Level).ClampSideOffsets(&XLevel.Sides[Affectee]);
 		break;
 
 	case SCROLLEV_Floor:
 		XLevel.Sectors[Affectee].floor.xoffs += XDelta;
 		XLevel.Sectors[Affectee].floor.yoffs += YDelta;
+		LineSpecialLevelInfo(Level).ClampSecPlaneOffsets(
+			&XLevel.Sectors[Affectee].floor);
 		break;
 
 	case SCROLLEV_Ceiling:
 		XLevel.Sectors[Affectee].ceiling.xoffs += XDelta;
 		XLevel.Sectors[Affectee].ceiling.yoffs += YDelta;
+		LineSpecialLevelInfo(Level).ClampSecPlaneOffsets(
+			&XLevel.Sectors[Affectee].ceiling);
 		break;
 
 	case SCROLLEV_Carry:
