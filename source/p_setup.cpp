@@ -902,7 +902,8 @@ void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 	line_t* ld = Lines;
 	for (int i = 0; i < NumLines; i++, ld++)
 	{
-		vint16 v1, v2, flags, special, tag, side0, side1;
+		vint16 v1, v2, flags, special, tag;
+		vuint16 side0, side1;
 		*Strm << v1 << v2 << flags << special << tag << side0 << side1;
 
 		if (v1 < 0 || v1 >= NumBaseVerts)
@@ -919,8 +920,8 @@ void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 		ld->arg1 = tag;
 		ld->v1 = &Vertexes[v1];
 		ld->v2 = &Vertexes[v2];
-		ld->sidenum[0] = side0;
-		ld->sidenum[1] = side1;
+		ld->sidenum[0] = side0 == 0xffff ? -1 : side0;
+		ld->sidenum[1] = side1 == 0xffff ? -1 : side1;
 
 		ld->alpha = 1.0;
 		ld->LineTag = -1;
@@ -959,7 +960,7 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 	{
 		vint16 v1, v2, flags;
 		vuint8 special, arg1, arg2, arg3, arg4, arg5;
-		vint16 side0, side1;
+		vuint16 side0, side1;
 		*Strm << v1 << v2 << flags << special << arg1 << arg2 << arg3 << arg4
 			<< arg5 << side0 << side1;
 
@@ -993,8 +994,8 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 
 		ld->v1 = &Vertexes[v1];
 		ld->v2 = &Vertexes[v2];
-		ld->sidenum[0] = side0;
-		ld->sidenum[1] = side1;
+		ld->sidenum[0] = side0 == 0xffff ? -1 : side0;
+		ld->sidenum[1] = side1 == 0xffff ? -1 : side1;
 
 		ld->alpha = 1.0;
 		ld->LineTag = -1;
