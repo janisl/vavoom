@@ -365,6 +365,7 @@ struct msecnode_t
 	msecnode_t*		TNext;	// next msecnode_t for this thing
 	msecnode_t*		SPrev;	// prev msecnode_t for this sector
 	msecnode_t*		SNext;	// next msecnode_t for this sector
+	bool			Visited;// killough 4/4/98, 4/7/98: used in search algorithms
 };
 
 //

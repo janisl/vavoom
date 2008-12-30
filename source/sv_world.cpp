@@ -487,6 +487,10 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 //
 //	VLevel::ChangeSector
 //
+//	jff 3/19/98 added to just check monsters on the periphery of a moving
+// sector instead of all in bounding box of the sector. Both more accurate
+// and faster.
+//
 //==========================================================================
 
 bool VLevel::ChangeSector(sector_t* sector, int crunch)
@@ -497,27 +501,52 @@ bool VLevel::ChangeSector(sector_t* sector, int crunch)
 	int i;
 	sector_t* sec2;
 	sec_region_t* reg;
+	msecnode_t* n;
 
 	CalcSecMinMaxs(sector);
 
 	bool ret = false;
 
-	// re-check heights for all things near the moving sector
-	for (x = sector->blockbox[BOXLEFT]; x <= sector->blockbox[BOXRIGHT]; x++)
+	//	killough 4/4/98: scan list front-to-back until empty or exhausted,
+	// restarting from beginning after each thing is processed. Avoids
+	// crashes, and is sure to examine all things in the sector, and only
+	// the things which are in the sector, until a steady-state is reached.
+	// Things can arbitrarily be inserted and removed and it won't mess up.
+	//
+	// killough 4/7/98: simplified to avoid using complicated counter
+
+	//	Mark all things invalid.
+	for (n = sector->TouchingThingList; n; n = n->SNext)
 	{
-		for (y = sector->blockbox[BOXBOTTOM]; y <= sector->blockbox[BOXTOP]; y++)
+		n->Visited = false;
+	}
+
+	do
+	{
+		//	Go through list.
+		for (n = sector->TouchingThingList; n; n = n->SNext)
 		{
-			VEntity* Ent;
-			for (VBlockThingsIterator It(LevelInfo, x, y, &Ent); It.GetNext(); )
+			if (!n->Visited)
 			{
-				if (!Ent->eventSectorChanged(crunch))
+				//	Unprocessed thing found, mark thing as processed.
+				n->Visited = true;
+				//	jff 4/7/98 Don't do these.
+				if (!(n->Thing->EntityFlags & VEntity::EF_NoBlockmap))
 				{
-					// keep checking (crush other things)
-					ret = true;	//don't fit
+					//	Process it.
+					if (!n->Thing->eventSectorChanged(crunch))
+					{
+						//	Dn't fit, keep checking (crush other things)
+						ret = true;
+					}
 				}
+				//	Exit and start over
+				break;
 			}
 		}
 	}
+	//	Repeat from scratch until all things left are marked valid
+	while (n);
 
 	if (sector->SectorFlags & sector_t::SF_ExtrafloorSource)
 	{
