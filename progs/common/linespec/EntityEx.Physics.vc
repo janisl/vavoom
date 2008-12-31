@@ -186,60 +186,63 @@ bool Physics(float DeltaTime)
 				ftoi(FloatBobPhase * 35.0) & 63];
 		}
 
-		// Handle Z momentum and gravity
-		onmo = EntityEx(CheckOnmobj());
-		if (onmo)
+		if ((Origin.z != FloorZ) || Velocity.z)
 		{
-			if (bIsPlayer)
-			{
-				if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
-				{
-					PlayerLandedOnThing();
-				}
-			}
-			if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
+			// Handle Z momentum and gravity
+			onmo = EntityEx(CheckOnmobj());
+			if (onmo)
 			{
 				if (bIsPlayer)
 				{
-					PlayerEx(Player).ViewHeight -=
-						onmo.Origin.z + onmo.Height - Origin.z;
-					PlayerEx(Player).DeltaViewHeight =
-						(PlayerPawn(self).ViewHeight -
-						PlayerEx(Player).ViewHeight) * 4.0;
-				}
-				Origin.z = onmo.Origin.z + onmo.Height;
-			}
-			bOnMobj = true;
-			Velocity.z = 0.0;
-
-			if (onmo.bOnmobjCopyVel)
-			{
-				Velocity.x = onmo.Velocity.x;
-				Velocity.y = onmo.Velocity.y;
-				if (onmo.Origin.z < onmo.FloorZ)
-				{
-					Origin.z += onmo.FloorZ - onmo.Origin.z;
-					if (onmo.bIsPlayer)
+					if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
 					{
-						PlayerEx(onmo.Player).ViewHeight -=
-							onmo.FloorZ - onmo.Origin.z;
-						PlayerEx(onmo.Player).DeltaViewHeight =
-							(PlayerPawn(self).ViewHeight -
-							PlayerEx(onmo.Player).ViewHeight) * 4.0;
+						PlayerLandedOnThing();
 					}
-					onmo.Origin.z = onmo.FloorZ;
+				}
+				if (onmo.Origin.z + onmo.Height - Origin.z <= MaxStepHeight)
+				{
+					if (bIsPlayer)
+					{
+						PlayerEx(Player).ViewHeight -=
+							onmo.Origin.z + onmo.Height - Origin.z;
+						PlayerEx(Player).DeltaViewHeight =
+							(PlayerPawn(self).ViewHeight -
+							PlayerEx(Player).ViewHeight) * 4.0;
+					}
+					Origin.z = onmo.Origin.z + onmo.Height;
+				}
+				bOnMobj = true;
+				Velocity.z = 0.0;
+	
+				if (onmo.bOnmobjCopyVel)
+				{
+					Velocity.x = onmo.Velocity.x;
+					Velocity.y = onmo.Velocity.y;
+					if (onmo.Origin.z < onmo.FloorZ)
+					{
+						Origin.z += onmo.FloorZ - onmo.Origin.z;
+						if (onmo.bIsPlayer)
+						{
+							PlayerEx(onmo.Player).ViewHeight -=
+								onmo.FloorZ - onmo.Origin.z;
+							PlayerEx(onmo.Player).DeltaViewHeight =
+								(PlayerPawn(self).ViewHeight -
+								PlayerEx(onmo.Player).ViewHeight) * 4.0;
+						}
+						onmo.Origin.z = onmo.FloorZ;
+					}
 				}
 			}
-		}
-		else if ((Origin.z != FloorZ) || Velocity.z)
-		{
-			ZMovement(DeltaTime);
-			bOnMobj = false;
-		}
-		if (IsDestroyed())
-		{
-			// entity was removed
-			return false;
+			else
+			{
+				ZMovement(DeltaTime);
+				bOnMobj = false;
+			}
+			if (IsDestroyed())
+			{
+				// entity was removed
+				return false;
+			}
 		}
 	}
 	else if ((Origin.z != FloorZ) || Velocity.z)
