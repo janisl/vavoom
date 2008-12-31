@@ -128,7 +128,7 @@ bool Physics(float DeltaTime)
 	}
 
 	CheckWater();
-	if (!bFloatBob)
+	if (!bFloatBob || !bSpecial)
 	{
 		UpdateVelocity();
 	}
@@ -187,7 +187,8 @@ bool Physics(float DeltaTime)
 		}
 	}
 
-	if (((Origin.z != FloorZ) || Velocity.z) && (!bFloatBob || !bSpecial))
+	if (Velocity.z || (Origin.z != FloorZ && (!bFloatBob || (!bSpecial &&
+		Origin.z - Level.Game.FloatBobOffsets[ftoi(FloatBobPhase * 35.0) & 63] != FloorZ))))
 	{
 		if (bPassMobj && !bMissile && !Level.CompatNoPassOver)
 		{
