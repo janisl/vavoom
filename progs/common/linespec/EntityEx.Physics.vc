@@ -187,11 +187,9 @@ bool Physics(float DeltaTime)
 		}
 	}
 
-	if (!bFloatBob || !bSpecial)
+	if (((Origin.z != FloorZ) || Velocity.z) && (!bFloatBob || !bSpecial))
 	{
-	if (bPassMobj && !bMissile && !Level.CompatNoPassOver)
-	{
-		if ((Origin.z != FloorZ) || Velocity.z)
+		if (bPassMobj && !bMissile && !Level.CompatNoPassOver)
 		{
 			// Handle Z momentum and gravity
 			onmo = EntityEx(CheckOnmobj());
@@ -249,17 +247,16 @@ bool Physics(float DeltaTime)
 				return false;
 			}
 		}
-	}
-	else if ((Origin.z != FloorZ) || Velocity.z)
-	{
-		// Handle Z momentum and gravity
-		ZMovement(DeltaTime);
-		if (IsDestroyed())
+		else
 		{
-			// entity was removed
-			return false;
+			// Handle Z momentum and gravity
+			ZMovement(DeltaTime);
+			if (IsDestroyed())
+			{
+				// entity was removed
+				return false;
+			}
 		}
-	}
 	}
 	return true;
 }
