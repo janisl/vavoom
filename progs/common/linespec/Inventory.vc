@@ -158,6 +158,8 @@ final void BecomeItem()
 	bNoSector = true;
 	bNoBlockmap = true;
 	LinkToWorld();
+	SetTID(0);
+	bSpecial = false;
 	SetState(FindState('Held'));
 }
 
@@ -177,6 +179,7 @@ final void BecomePickup()
 	bNoSector = false;
 	bNoBlockmap = false;
 	LinkToWorld();
+	bSpecial = default.bSpecial;
 	SetState(IdleState);
 }
 
