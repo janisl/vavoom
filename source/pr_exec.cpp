@@ -29,7 +29,6 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define DO_GUARD_SLOW	1
 #include "gamedefs.h"
 #include "progdefs.h"
 
