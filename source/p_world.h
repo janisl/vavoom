@@ -63,15 +63,40 @@ public:
 //
 //==========================================================================
 
-class VBlockThingsIterator : public VScriptIterator
+class VBlockThingsIterator
 {
 private:
 	VEntity*	Ent;
-	VEntity**	EntPtr;
 
 public:
-	VBlockThingsIterator(VThinker*, int, int, VEntity**);
-	bool GetNext();
+	VBlockThingsIterator(VLevel* Level, int x, int y)
+	{
+		if (x < 0 || x >= Level->BlockMapWidth ||
+			y < 0 || y >= Level->BlockMapHeight)
+		{
+			Ent = NULL;
+		}
+		else
+		{
+			Ent = Level->BlockLinks[y * Level->BlockMapWidth + x];
+		}
+	}
+	operator bool() const
+	{
+		return !!Ent;
+	}
+	void operator ++()
+	{
+		Ent = Ent->BlockMapNext;
+	}
+	VEntity* operator *() const
+	{
+		return Ent;
+	}
+	VEntity* operator ->() const
+	{
+		return Ent;
+	}
 };
 
 //==========================================================================

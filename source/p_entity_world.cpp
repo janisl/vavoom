@@ -738,10 +738,9 @@ bool VEntity::CheckPosition(TVec Pos)
 		{
 			for (by = yl; by <= yh; by++)
 			{
-				VEntity* Ent;
-				for (VBlockThingsIterator It(this, bx, by, &Ent); It.GetNext();)
+				for (VBlockThingsIterator It(XLevel, bx, by); It; ++It)
 				{
-					if (!PIT_CheckThing(&cptrace, Ent))
+					if (!PIT_CheckThing(&cptrace, *It))
 					{
 						return false;
 					}
@@ -1095,10 +1094,9 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 		{
 			for (by = yl; by <= yh; by++)
 			{
-				VEntity* Ent;
-				for (VBlockThingsIterator It(this, bx, by, &Ent); It.GetNext();)
+				for (VBlockThingsIterator It(XLevel, bx, by); It; ++It)
 				{
-					if (!PIT_CheckRelThing(&tmtrace, Ent))
+					if (!PIT_CheckRelThing(&tmtrace, *It))
 					{
 						// continue checking for other things in to see if we hit something
 						if (!tmtrace.BlockingMobj || compat_nopassover ||
@@ -1809,15 +1807,14 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 	{
 		for (by = yl; by <= yh; by++)
 		{
-			VEntity* Other;
-			for (VBlockThingsIterator It(this, bx, by, &Other); It.GetNext(); )
+			for (VBlockThingsIterator Other(XLevel, bx, by); Other; ++Other)
 			{
 				if (!(Other->EntityFlags & EF_Solid))
 				{
 					// Can't hit thing
 					continue;
 				}
-				if (Other == this)
+				if (*Other == this)
 				{
 					// Don't clip against self
 					continue;
@@ -1838,7 +1835,7 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 					// Didn't hit thing
 					continue;
 				}
-				return Other;
+				return *Other;
 			}
 		}
 	}

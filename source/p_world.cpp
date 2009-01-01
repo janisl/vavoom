@@ -164,45 +164,6 @@ bool VBlockLinesIterator::GetNext()
 
 //==========================================================================
 //
-//	VBlockThingsIterator::VBlockThingsIterator
-//
-//==========================================================================
-
-VBlockThingsIterator::VBlockThingsIterator(VThinker* Self, int x, int y, VEntity** AEntPtr)
-: EntPtr(AEntPtr)
-{
-	guard(VBlockThingsIterator::VBlockThingsIterator);
-	if (x < 0 || x >= Self->XLevel->BlockMapWidth ||
-		y < 0 || y >= Self->XLevel->BlockMapHeight)
-	{
-		Ent = NULL;
-		return;
-	}
-	Ent = Self->XLevel->BlockLinks[y * Self->XLevel->BlockMapWidth + x];
-	unguard;
-}
-
-//==========================================================================
-//
-//	VBlockThingsIterator::GetNext
-//
-//==========================================================================
-
-bool VBlockThingsIterator::GetNext()
-{
-	guard(VBlockThingsIterator::GetNext);
-	if (!Ent)
-	{
-		return false;
-	}
-	*EntPtr = Ent;
-	Ent = Ent->BlockMapNext;
-	return true;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VRadiusThingsIterator::VRadiusThingsIterator
 //
 //==========================================================================
@@ -558,17 +519,17 @@ bool VPathTraverse::AddLineIntercepts(VThinker* Self, int mapx, int mapy,
 void VPathTraverse::AddThingIntercepts(VThinker* Self, int mapx, int mapy)
 {
 	guard(VPathTraverse::AddThingIntercepts);
-	VEntity* thing;
-	for (VBlockThingsIterator It(Self, mapx, mapy, &thing); It.GetNext();)
+	for (VBlockThingsIterator It(Self->XLevel, mapx, mapy); It; ++It)
 	{
-		float dot = DotProduct(thing->Origin, trace_plane.normal) - trace_plane.dist;
-		if (dot >= thing->Radius || dot <= -thing->Radius)
+		float dot = DotProduct(It->Origin, trace_plane.normal) -
+			trace_plane.dist;
+		if (dot >= It->Radius || dot <= -It->Radius)
 		{
 			continue;		// line isn't crossed
 		}
 
-		float dist = DotProduct((thing->Origin - trace_org), trace_dir);
-//		dist -= sqrt(thing->radius * thing->radius - dot * dot);
+		float dist = DotProduct((It->Origin - trace_org), trace_dir);
+//		dist -= sqrt(It->radius * It->radius - dot * dot);
 		if (dist < 0)
 		{
 			continue;		// behind source
@@ -579,7 +540,7 @@ void VPathTraverse::AddThingIntercepts(VThinker* Self, int mapx, int mapy)
 		In.frac = frac;
 		In.Flags = 0;
 		In.line = NULL;
-		In.thing = thing;
+		In.thing = *It;
 	}
 	unguard;
 }
