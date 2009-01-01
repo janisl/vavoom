@@ -43,17 +43,17 @@
 //
 //==========================================================================
 
-class VBlockLinesIterator : public VScriptIterator
+class VBlockLinesIterator
 {
 private:
-	VThinker*		Self;
+	VLevel*			Level;
 	line_t**		LinePtr;
 	polyblock_t*	PolyLink;
 	vint32			PolySegIdx;
 	vint32*			List;
 
 public:
-	VBlockLinesIterator(VThinker*, int, int, line_t**);
+	VBlockLinesIterator(VLevel*, int, int, line_t**);
 	bool GetNext();
 };
 

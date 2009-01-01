@@ -177,7 +177,7 @@ void VEntity::CreateSecNodeList()
 		for (by = yl; by <= yh; by++)
 		{
 			line_t* ld;
-			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 			{
 				//	Locates all the sectors the object is in by looking at
 				// the lines that cross through it. You have already decided
@@ -762,7 +762,7 @@ bool VEntity::CheckPosition(TVec Pos)
 			for (by = yl; by <= yh; by++)
 			{
 				line_t*		ld;
-				for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+				for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 				{
 					if (!PIT_CheckLine(&cptrace, ld))
 					{
@@ -1156,7 +1156,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 			for (by = yl; by <= yh; by++)
 			{
 				line_t*		ld;
-				for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+				for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 				{
 					if (!PIT_CheckRelLine(&tmtrace, ld))
 					{
@@ -1934,7 +1934,7 @@ bool VEntity::CheckSides(TVec lsPos)
 		for (by = yl; by <= yh; by++)
 		{
 			line_t* ld;
-			for (VBlockLinesIterator It(this, bx, by, &ld); It.GetNext(); )
+			for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 			{
 				// Checks to see if a PE->LS trajectory line crosses a blocking
 				// line. Returns false if it does.
@@ -2021,7 +2021,7 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 		for (by = yl; by <= yh; by++)
 		{
 			line_t* line;
-			for (VBlockLinesIterator It(this, bx, by, &line); It.GetNext(); )
+			for (VBlockLinesIterator It(XLevel, bx, by, &line); It.GetNext(); )
 			{
 				// Ignore one-sided linedefs
 				if (!line->backsector)

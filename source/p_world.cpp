@@ -71,26 +71,27 @@ typedef int fixed_t;
 //
 //==========================================================================
 
-VBlockLinesIterator::VBlockLinesIterator(VThinker* ASelf, int x, int y, line_t** ALinePtr)
-: Self(ASelf)
+VBlockLinesIterator::VBlockLinesIterator(VLevel* ALevel, int x, int y,
+	line_t** ALinePtr)
+: Level(ALevel)
 , LinePtr(ALinePtr)
 , PolyLink(NULL)
 , PolySegIdx(-1)
 , List(NULL)
 {
 	guard(VBlockLinesIterator::VBlockLinesIterator);
-	if (x < 0 || x >= Self->XLevel->BlockMapWidth ||
-		y < 0 || y >= Self->XLevel->BlockMapHeight)
+	if (x < 0 || x >= Level->BlockMapWidth ||
+		y < 0 || y >= Level->BlockMapHeight)
 	{
 		//	Off the map
 		return;
 	}
 
-	int offset = y * Self->XLevel->BlockMapWidth + x;
-	PolyLink = Self->XLevel->PolyBlockMap[offset];
+	int offset = y * Level->BlockMapWidth + x;
+	PolyLink = Level->PolyBlockMap[offset];
 
-	offset = *(Self->XLevel->BlockMap + offset);
-	List = Self->XLevel->BlockMapLump + offset + 1;
+	offset = *(Level->BlockMap + offset);
+	List = Level->BlockMapLump + offset + 1;
 	unguard;
 }
 
@@ -143,10 +144,12 @@ bool VBlockLinesIterator::GetNext()
 	while (*List != -1)
 	{
 #ifdef PARANOID
-		if (*List < 0 || *List >= Self->XLevel->NumLines)
+		if (*List < 0 || *List >= Level->NumLines)
+		{
 			Host_Error("Broken blockmap - line %d", *List);
+		}
 #endif
-		line_t* Line = &Self->XLevel->Lines[*List];
+		line_t* Line = &Level->Lines[*List];
 		List++;
 
 		if (Line->validcount == validcount)
@@ -463,7 +466,7 @@ bool VPathTraverse::AddLineIntercepts(VThinker* Self, int mapx, int mapy,
 	guard(VPathTraverse::AddLineIntercepts);
 	line_t*		ld;
 
-	for (VBlockLinesIterator It(Self, mapx, mapy, &ld); It.GetNext(); )
+	for (VBlockLinesIterator It(Self->XLevel, mapx, mapy, &ld); It.GetNext(); )
 	{
 		float dot1 = DotProduct(*ld->v1, trace_plane.normal) - trace_plane.dist;
 		float dot2 = DotProduct(*ld->v2, trace_plane.normal) - trace_plane.dist;
