@@ -651,7 +651,7 @@ msecnode_t* VLevel::AddSecnode(sector_t* Sec, VEntity* Thing,
 	}
 
 	// killough 4/4/98, 4/7/98: mark new nodes unvisited.
-	//node->visited = 0;
+	Node->Visited = false;
 
 	Node->Sector = Sec; 		// sector
 	Node->Thing = Thing; 		// mobj
