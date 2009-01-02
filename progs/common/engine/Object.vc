@@ -1052,35 +1052,6 @@ struct intercept_t
 	line_t *line;
 };
 
-struct tmtrace_t
-{
-	Entity Thing;
-	Entity StepThing;
-	TVec End;
-	float BBox[4];
-	float FloorZ;
-	float CeilingZ;
-	float DropOffZ;
-	sec_plane_t *Floor;
-	sec_plane_t *Ceiling;
-
-	bool bFloatOk;	// if true, move would be ok if
-					// within tmtrace.FloorZ - tmtrace.CeilingZ
-
-	// keep track of the line that lowers the ceiling,
-	// so missiles don't explode against sky hack walls
-	line_t *CeilingLine;
-	// also keep track of the blocking line, for checking
-	// against doortracks
-	line_t *BlockingLine;
-
-	// keep track of special lines as they are hit,
-	// but don't process them until the move is proven valid
-	array<line_t*> SpecHit;
-
-	Entity BlockingMobj;
-};
-
 struct VAnimDoorDef
 {
 	int			Texture;

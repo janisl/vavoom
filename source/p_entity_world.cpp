@@ -41,7 +41,6 @@
 
 struct cptrace_t
 {
-	VEntity *Thing;
 	TVec Pos;
 	float bbox[4];
 	float FloorZ;
@@ -53,7 +52,6 @@ struct cptrace_t
 
 struct tmtrace_t
 {
-	VEntity *Thing;
 	VEntity* StepThing;
 	TVec End;
 	float BBox[4];
@@ -492,178 +490,6 @@ bool VEntity::CheckWater()
 
 //==========================================================================
 //
-//	VEntity::PIT_CheckThing
-//
-//==========================================================================
-
-bool VEntity::PIT_CheckThing(void* arg, VEntity *Other)
-{
-	guardSlow(VEntity::PIT_CheckThing);
-	float blockdist;
-	cptrace_t cptrace = *(cptrace_t*)arg;
-
-	// can't hit thing
-	if (!(Other->EntityFlags & EF_Solid))
-	{
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == cptrace.Thing)
-	{
-		return true;
-	}
-
-	blockdist = Other->Radius + cptrace.Thing->Radius;
-
-	if (fabs(Other->Origin.x - cptrace.Pos.x) >= blockdist ||
-		fabs(Other->Origin.y - cptrace.Pos.y) >= blockdist)
-	{
-		// didn't hit it
-		return true;
-	}
-
-	if ((cptrace.Thing->EntityFlags & EF_PassMobj) ||
-		(cptrace.Thing->EntityFlags & EF_Missile) ||
-		(Other->EntityFlags & EF_ActLikeBridge))
-	{
-		//	Prevent some objects from overlapping
-		if (cptrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
-		{
-			return false;
-		}
-		// check if a mobj passed over/under another object
-		if (cptrace.Pos.z >= Other->Origin.z + Other->Height)
-		{
-			return true;
-		}
-		if (cptrace.Pos.z + cptrace.Thing->Height < Other->Origin.z)
-		{
-			// under thing
-			return true;
-		}
-	}
-
-	return false;
-	unguardSlow;
-}
-
-//==========================================================================
-//
-//	VEntity::PIT_CheckLine
-//
-//  Adjusts cptrace.FoorZ and cptrace.CeilingZ as lines are contacted
-//
-//==========================================================================
-
-bool VEntity::PIT_CheckLine(void* arg, line_t * ld)
-{
-	guardSlow(VEntity::PIT_CheckLine);
-	TVec hit_point;
-	opening_t *open;
-	cptrace_t& cptrace = *(cptrace_t*)arg;
-
-	if (cptrace.bbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-		cptrace.bbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-		cptrace.bbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-		cptrace.bbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-	{
-		return true;
-	}
-
-	if (P_BoxOnLineSide(&cptrace.bbox[0], ld) != -1)
-	{
-		return true;
-	}
-
-	// A line has been hit
-	if (!ld->backsector)
-	{
-		// One sided line
-		return false;
-	}
-
-	if (!(ld->flags & ML_RAILING))
-	{
-		if (ld->flags & ML_BLOCKEVERYTHING)
-		{
-			// Explicitly blocking everything
-			return false;
-		}
-
-		if (cptrace.Thing->EntityFlags & VEntity::EF_CheckLineBlocking &&
-			ld->flags & ML_BLOCKING)
-		{
-			// Explicitly blocking everything
-			return false;
-		}
-
-		if (cptrace.Thing->EntityFlags & VEntity::EF_CheckLineBlockMonsters &&
-			ld->flags & ML_BLOCKMONSTERS)
-		{
-			// Block monsters only
-			return false;
-		}
-
-		if (cptrace.Thing->EntityFlags & VEntity::EF_IsPlayer &&
-			ld->flags & ML_BLOCKPLAYERS)
-		{
-			// Block players only
-			return false;
-		}
-
-		if (cptrace.Thing->EntityFlags & VEntity::EF_Float &&
-			ld->flags & ML_BLOCK_FLOATERS)
-		{
-			// Block floaters only
-			return false;
-		}
-	}
-
-	// set openrange, opentop, openbottom
-	hit_point = cptrace.Pos - (DotProduct(cptrace.Pos, ld->normal) -
-		ld->dist) * ld->normal;
-	open = SV_LineOpenings(ld, hit_point, SPF_NOBLOCKING);
-	open = SV_FindOpening(open, cptrace.Pos.z, 
-		cptrace.Pos.z + cptrace.Thing->Height);
-
-	if (open)
-	{
-		// adjust floor / ceiling heights
-		if (!(open->ceiling->flags & SPF_NOBLOCKING)
-			&& open->top < cptrace.CeilingZ)
-		{
-			cptrace.Ceiling = open->ceiling;
-			cptrace.CeilingZ = open->top;
-		}
-
-		if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > cptrace.FloorZ)
-		{
-			cptrace.Floor = open->floor;
-			cptrace.FloorZ = open->bottom;
-		}
-
-		if (open->lowfloor < cptrace.DropOffZ)
-		{
-			cptrace.DropOffZ = open->lowfloor;
-		}
-
-		if (ld->flags & ML_RAILING)
-		{
-			cptrace.FloorZ += 32;
-		}
-	}
-	else
-	{
-		cptrace.CeilingZ = cptrace.FloorZ;
-	}
-
-	return true;
-	unguardSlow;
-}
-
-//==========================================================================
-//
 //  VEntity::CheckPosition
 //
 //  This is purely informative, nothing is modified
@@ -688,8 +514,6 @@ bool VEntity::CheckPosition(TVec Pos)
 	sec_region_t *gap;
 	sec_region_t *reg;
 	cptrace_t cptrace;
-
-	cptrace.Thing = this;
 
 	cptrace.Pos = Pos;
 
@@ -740,7 +564,7 @@ bool VEntity::CheckPosition(TVec Pos)
 			{
 				for (VBlockThingsIterator It(XLevel, bx, by); It; ++It)
 				{
-					if (!PIT_CheckThing(&cptrace, *It))
+					if (!CheckThing(cptrace, *It))
 					{
 						return false;
 					}
@@ -764,7 +588,7 @@ bool VEntity::CheckPosition(TVec Pos)
 				line_t*		ld;
 				for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 				{
-					if (!PIT_CheckLine(&cptrace, ld))
+					if (!CheckLine(cptrace, ld))
 					{
 						return false;
 					}
@@ -777,129 +601,88 @@ bool VEntity::CheckPosition(TVec Pos)
 	unguard;
 }
 
-//**************************************************************************
-//
-//  MOVEMENT CLIPPING
-//
-//**************************************************************************
-
 //==========================================================================
 //
-//	VEntity::PIT_CheckRelThing
+//	VEntity::CheckThing
 //
 //==========================================================================
 
-bool VEntity::PIT_CheckRelThing(void* arg, VEntity *Other)
+bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 {
-	guardSlow(VEntity::PIT_CheckRelThing);
-	float blockdist;
-	tmtrace_t& tmtrace = *(tmtrace_t*)arg;
-
-	// don't clip against self
-	if (Other == tmtrace.Thing)
+	guardSlow(VEntity::CheckThing);
+	// can't hit thing
+	if (!(Other->EntityFlags & EF_Solid))
 	{
 		return true;
 	}
 
-	blockdist = Other->Radius + tmtrace.Thing->Radius;
+	// don't clip against self
+	if (Other == this)
+	{
+		return true;
+	}
 
-	if (fabs(Other->Origin.x - tmtrace.End.x) >= blockdist ||
-		fabs(Other->Origin.y - tmtrace.End.y) >= blockdist)
+	float blockdist = Other->Radius + Radius;
+
+	if (fabs(Other->Origin.x - cptrace.Pos.x) >= blockdist ||
+		fabs(Other->Origin.y - cptrace.Pos.y) >= blockdist)
 	{
 		// didn't hit it
 		return true;
 	}
 
-	tmtrace.BlockingMobj = Other;
-	if (!(tmtrace.Thing->Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver) &&
-		!compat_nopassover &&
-		(!(tmtrace.Thing->EntityFlags & EF_Float) ||
-		!(tmtrace.Thing->EntityFlags & EF_Missile) ||
-		!(tmtrace.Thing->EntityFlags & EF_NoGravity)) &&
-		(Other->EntityFlags & EF_Solid) &&
+	if ((EntityFlags & EF_PassMobj) || (EntityFlags & EF_Missile) ||
 		(Other->EntityFlags & EF_ActLikeBridge))
 	{
-		// allow actors to walk on other actors as well as floors
-		if (Other->Origin.z + Other->Height >= tmtrace.FloorZ &&
-			Other->Origin.z + Other->Height <= tmtrace.Thing->Origin.z +
-			tmtrace.Thing->MaxStepHeight)
-		{
-			tmtrace.StepThing = Other;
-			tmtrace.FloorZ = Other->Origin.z + Other->Height;
-		}
-	}
-	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
-	if ((((tmtrace.Thing->EntityFlags & EF_PassMobj) ||
-		(Other->EntityFlags & EF_ActLikeBridge)) &&
-		!(tmtrace.Thing->Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver) &&
-		!compat_nopassover) ||
-		(tmtrace.Thing->EntityFlags & EF_Missile))
-	{
 		//	Prevent some objects from overlapping
-		if (tmtrace.Thing->EntityFlags & Other->EntityFlags & EF_DontOverlap)
+		if (EntityFlags & Other->EntityFlags & EF_DontOverlap)
 		{
 			return false;
 		}
 		// check if a mobj passed over/under another object
-		if (tmtrace.End.z + 0.00001 >= Other->Origin.z + Other->Height)
+		if (cptrace.Pos.z >= Other->Origin.z + Other->Height)
 		{
-			return true;	// overhead
+			return true;
 		}
-		if (tmtrace.End.z + tmtrace.Thing->Height <= Other->Origin.z + 0.00001)
+		if (cptrace.Pos.z + Height < Other->Origin.z)
 		{
-			return true;	// underneath
+			// under thing
+			return true;
 		}
 	}
 
-	return tmtrace.Thing->eventTouch(Other);
+	return false;
 	unguardSlow;
 }
 
 //==========================================================================
 //
-//	VEntity::PIT_CheckRelLine
+//	VEntity::CheckLine
 //
-//  Adjusts tmtrace.FloorZ and tmtrace.CeilingZ as lines are contacted
+//  Adjusts cptrace.FoorZ and cptrace.CeilingZ as lines are contacted
 //
 //==========================================================================
 
-bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
+bool VEntity::CheckLine(cptrace_t& cptrace, line_t* ld)
 {
-	guardSlow(VEntity::PIT_CheckRelLine);
-	TVec hit_point;
-	opening_t *open;
-	tmtrace_t& tmtrace = *(tmtrace_t*)arg;
-
-	if (tmtrace.BBox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-		tmtrace.BBox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-		tmtrace.BBox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-		tmtrace.BBox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+	guardSlow(VEntity::CheckLine);
+	if (cptrace.bbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+		cptrace.bbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+		cptrace.bbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+		cptrace.bbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
 	{
 		return true;
 	}
 
-	if (P_BoxOnLineSide(&tmtrace.BBox[0], ld) != -1)
+	if (P_BoxOnLineSide(&cptrace.bbox[0], ld) != -1)
 	{
 		return true;
 	}
 
 	// A line has been hit
-
-	// The moving thing's destination position will cross
-	// the given line.
-	// If this should not be allowed, return false.
-	// If the line is special, keep track of it
-	// to process later if the move is proven ok.
-	// NOTE: specials are NOT sorted by order,
-	// so two special lines that are only 8 pixels apart
-	// could be crossed in either order.
-
 	if (!ld->backsector)
 	{
 		// One sided line
-		tmtrace.Thing->BlockedByLine(ld);
-		// mark the line as blocking line
-		tmtrace.BlockingLine = ld;
 		return false;
 	}
 
@@ -908,108 +691,84 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 		if (ld->flags & ML_BLOCKEVERYTHING)
 		{
 			// Explicitly blocking everything
-			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 
-		if (tmtrace.Thing->EntityFlags & VEntity::EF_CheckLineBlocking && ld->flags & ML_BLOCKING)
+		if ((EntityFlags & VEntity::EF_CheckLineBlocking) &&
+			(ld->flags & ML_BLOCKING))
 		{
 			// Explicitly blocking everything
-			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
-	
-		if (tmtrace.Thing->EntityFlags & VEntity::EF_CheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
+
+		if ((EntityFlags & VEntity::EF_CheckLineBlockMonsters) &&
+			(ld->flags & ML_BLOCKMONSTERS))
 		{
 			// Block monsters only
-			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 
-		if (tmtrace.Thing->EntityFlags & VEntity::EF_IsPlayer && ld->flags & ML_BLOCKPLAYERS)
+		if ((EntityFlags & VEntity::EF_IsPlayer) &&
+			(ld->flags & ML_BLOCKPLAYERS))
 		{
 			// Block players only
-			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 
-		if (tmtrace.Thing->EntityFlags & VEntity::EF_Float && ld->flags & ML_BLOCK_FLOATERS)
+		if ((EntityFlags & VEntity::EF_Float) &&
+			(ld->flags & ML_BLOCK_FLOATERS))
 		{
 			// Block floaters only
-			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 	}
 
 	// set openrange, opentop, openbottom
-	hit_point = tmtrace.End - (DotProduct(tmtrace.End, ld->normal) -
+	TVec hit_point = cptrace.Pos - (DotProduct(cptrace.Pos, ld->normal) -
 		ld->dist) * ld->normal;
-	open = SV_LineOpenings(ld, hit_point, SPF_NOBLOCKING);
-	open = SV_FindOpening(open, tmtrace.End.z,
-		tmtrace.End.z + tmtrace.Thing->Height);
+	opening_t* open = SV_LineOpenings(ld, hit_point, SPF_NOBLOCKING);
+	open = SV_FindOpening(open, cptrace.Pos.z, cptrace.Pos.z + Height);
 
 	if (open)
 	{
 		// adjust floor / ceiling heights
-		if (!(open->ceiling->flags & SPF_NOBLOCKING) &&
-			open->top < tmtrace.CeilingZ)
+		if (!(open->ceiling->flags & SPF_NOBLOCKING)
+			&& open->top < cptrace.CeilingZ)
 		{
-			tmtrace.Ceiling = open->ceiling;
-			tmtrace.CeilingZ = open->top;
-			tmtrace.CeilingLine = ld;
+			cptrace.Ceiling = open->ceiling;
+			cptrace.CeilingZ = open->top;
 		}
 
-		if (!(open->floor->flags & SPF_NOBLOCKING) &&
-			open->bottom > tmtrace.FloorZ)
+		if (!(open->floor->flags & SPF_NOBLOCKING) && open->bottom > cptrace.FloorZ)
 		{
-			tmtrace.Floor = open->floor;
-			tmtrace.FloorZ = open->bottom;
+			cptrace.Floor = open->floor;
+			cptrace.FloorZ = open->bottom;
 		}
 
-		if (open->lowfloor < tmtrace.DropOffZ)
+		if (open->lowfloor < cptrace.DropOffZ)
 		{
-			tmtrace.DropOffZ = open->lowfloor;
+			cptrace.DropOffZ = open->lowfloor;
 		}
 
 		if (ld->flags & ML_RAILING)
 		{
-			tmtrace.FloorZ += 32;
+			cptrace.FloorZ += 32;
 		}
 	}
 	else
 	{
-		tmtrace.CeilingZ = tmtrace.FloorZ;
-	}
-
-	// if contacted a special line, add it to the list
-	if (ld->special)
-	{
-		tmtrace.SpecHit.Append(ld);
+		cptrace.CeilingZ = cptrace.FloorZ;
 	}
 
 	return true;
 	unguardSlow;
 }
 
-//==========================================================================
+//**************************************************************************
 //
-//	VEntity::BlockedByLine
+//  MOVEMENT CLIPPING
 //
-//==========================================================================
-
-void VEntity::BlockedByLine(line_t* ld)
-{
-	guardSlow(VEntity::BlockedByLine);
-	if (EntityFlags & EF_Blasted)
-	{
-		eventBlastedHitLine();
-	}
-	if (ld->special)
-	{
-		eventCheckForPushSpecial(ld, 0);
-	}
-	unguardSlow;
-}
+//**************************************************************************
 
 //==========================================================================
 //
@@ -1053,8 +812,6 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	subsector_t *newsubsec;
 	VEntity* thingblocker;
 	VEntity* fakedblocker;
-
-	tmtrace.Thing = this;
 
 	tmtrace.End = Pos;
 
@@ -1126,7 +883,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 			{
 				for (VBlockThingsIterator It(XLevel, bx, by); It; ++It)
 				{
-					if (!PIT_CheckRelThing(&tmtrace, *It))
+					if (!CheckRelThing(tmtrace, *It))
 					{
 						// continue checking for other things in to see if we hit something
 						if (!tmtrace.BlockingMobj || compat_nopassover ||
@@ -1188,7 +945,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 				line_t*		ld;
 				for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 				{
-					if (!PIT_CheckRelLine(&tmtrace, ld))
+					if (!CheckRelLine(tmtrace, ld))
 					{
 						return false;
 					}
@@ -1215,6 +972,228 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 
 	return true;
 	unguard;
+}
+
+//==========================================================================
+//
+//	VEntity::CheckRelThing
+//
+//==========================================================================
+
+bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
+{
+	guardSlow(VEntity::CheckRelThing);
+	// don't clip against self
+	if (Other == this)
+	{
+		return true;
+	}
+
+	float blockdist = Other->Radius + Radius;
+
+	if (fabs(Other->Origin.x - tmtrace.End.x) >= blockdist ||
+		fabs(Other->Origin.y - tmtrace.End.y) >= blockdist)
+	{
+		// didn't hit it
+		return true;
+	}
+
+	tmtrace.BlockingMobj = Other;
+	if (!(Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver) &&
+		!compat_nopassover &&
+		(!(EntityFlags & EF_Float) ||
+		!(EntityFlags & EF_Missile) ||
+		!(EntityFlags & EF_NoGravity)) &&
+		(Other->EntityFlags & EF_Solid) &&
+		(Other->EntityFlags & EF_ActLikeBridge))
+	{
+		// allow actors to walk on other actors as well as floors
+		if (Other->Origin.z + Other->Height >= tmtrace.FloorZ &&
+			Other->Origin.z + Other->Height <= Origin.z + MaxStepHeight)
+		{
+			tmtrace.StepThing = Other;
+			tmtrace.FloorZ = Other->Origin.z + Other->Height;
+		}
+	}
+	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
+	if ((((EntityFlags & EF_PassMobj) ||
+		(Other->EntityFlags & EF_ActLikeBridge)) &&
+		!(Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver) &&
+		!compat_nopassover) || (EntityFlags & EF_Missile))
+	{
+		//	Prevent some objects from overlapping
+		if (EntityFlags & Other->EntityFlags & EF_DontOverlap)
+		{
+			return false;
+		}
+		// check if a mobj passed over/under another object
+		if (tmtrace.End.z + 0.00001 >= Other->Origin.z + Other->Height)
+		{
+			return true;	// overhead
+		}
+		if (tmtrace.End.z + Height <= Other->Origin.z + 0.00001)
+		{
+			return true;	// underneath
+		}
+	}
+
+	return eventTouch(Other);
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VEntity::CheckRelLine
+//
+//  Adjusts tmtrace.FloorZ and tmtrace.CeilingZ as lines are contacted
+//
+//==========================================================================
+
+bool VEntity::CheckRelLine(tmtrace_t& tmtrace, line_t* ld)
+{
+	guardSlow(VEntity::CheckRelLine);
+	if (tmtrace.BBox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+		tmtrace.BBox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+		tmtrace.BBox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+		tmtrace.BBox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+	{
+		return true;
+	}
+
+	if (P_BoxOnLineSide(&tmtrace.BBox[0], ld) != -1)
+	{
+		return true;
+	}
+
+	// A line has been hit
+
+	// The moving thing's destination position will cross
+	// the given line.
+	// If this should not be allowed, return false.
+	// If the line is special, keep track of it
+	// to process later if the move is proven ok.
+	// NOTE: specials are NOT sorted by order,
+	// so two special lines that are only 8 pixels apart
+	// could be crossed in either order.
+
+	if (!ld->backsector)
+	{
+		// One sided line
+		BlockedByLine(ld);
+		// mark the line as blocking line
+		tmtrace.BlockingLine = ld;
+		return false;
+	}
+
+	if (!(ld->flags & ML_RAILING))
+	{
+		if (ld->flags & ML_BLOCKEVERYTHING)
+		{
+			// Explicitly blocking everything
+			BlockedByLine(ld);
+			return false;
+		}
+
+		if ((EntityFlags & VEntity::EF_CheckLineBlocking) &&
+			(ld->flags & ML_BLOCKING))
+		{
+			// Explicitly blocking everything
+			BlockedByLine(ld);
+			return false;
+		}
+	
+		if ((EntityFlags & VEntity::EF_CheckLineBlockMonsters) &&
+			(ld->flags & ML_BLOCKMONSTERS))
+		{
+			// Block monsters only
+			BlockedByLine(ld);
+			return false;
+		}
+
+		if ((EntityFlags & VEntity::EF_IsPlayer) &&
+			(ld->flags & ML_BLOCKPLAYERS))
+		{
+			// Block players only
+			BlockedByLine(ld);
+			return false;
+		}
+
+		if ((EntityFlags & VEntity::EF_Float) &&
+			(ld->flags & ML_BLOCK_FLOATERS))
+		{
+			// Block floaters only
+			BlockedByLine(ld);
+			return false;
+		}
+	}
+
+	// set openrange, opentop, openbottom
+	TVec hit_point = tmtrace.End - (DotProduct(tmtrace.End, ld->normal) -
+		ld->dist) * ld->normal;
+	opening_t* open = SV_LineOpenings(ld, hit_point, SPF_NOBLOCKING);
+	open = SV_FindOpening(open, tmtrace.End.z, tmtrace.End.z + Height);
+
+	if (open)
+	{
+		// adjust floor / ceiling heights
+		if (!(open->ceiling->flags & SPF_NOBLOCKING) &&
+			open->top < tmtrace.CeilingZ)
+		{
+			tmtrace.Ceiling = open->ceiling;
+			tmtrace.CeilingZ = open->top;
+			tmtrace.CeilingLine = ld;
+		}
+
+		if (!(open->floor->flags & SPF_NOBLOCKING) &&
+			open->bottom > tmtrace.FloorZ)
+		{
+			tmtrace.Floor = open->floor;
+			tmtrace.FloorZ = open->bottom;
+		}
+
+		if (open->lowfloor < tmtrace.DropOffZ)
+		{
+			tmtrace.DropOffZ = open->lowfloor;
+		}
+
+		if (ld->flags & ML_RAILING)
+		{
+			tmtrace.FloorZ += 32;
+		}
+	}
+	else
+	{
+		tmtrace.CeilingZ = tmtrace.FloorZ;
+	}
+
+	// if contacted a special line, add it to the list
+	if (ld->special)
+	{
+		tmtrace.SpecHit.Append(ld);
+	}
+
+	return true;
+	unguardSlow;
+}
+
+//==========================================================================
+//
+//	VEntity::BlockedByLine
+//
+//==========================================================================
+
+void VEntity::BlockedByLine(line_t* ld)
+{
+	guardSlow(VEntity::BlockedByLine);
+	if (EntityFlags & EF_Blasted)
+	{
+		eventBlastedHitLine();
+	}
+	if (ld->special)
+	{
+		eventCheckForPushSpecial(ld, 0);
+	}
+	unguardSlow;
 }
 
 //==========================================================================
