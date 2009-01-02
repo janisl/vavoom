@@ -141,9 +141,14 @@ void VLevel::LoadMap(VName AMapName)
 	}
 
 	int gl_lumpnum = -100;
-	int BehaviorLump = -1;
-	int BlockmapLump = -1;
+	int ThingsLump = -1;
+	int LinesLump = -1;
+	int SidesLump = -1;
+	int VertexesLump = -1;
+	int SectorsLump = -1;
 	int RejectLump = -1;
+	int BlockmapLump = -1;
+	int BehaviorLump = -1;
 	int DialogueLump = -1;
 	int CompressedGLNodesLump = -1;
 	bool UseComprGLNodes = false;
@@ -192,43 +197,78 @@ void VLevel::LoadMap(VName AMapName)
 	}
 	else
 	{
+		//	Find all lumps.
+		int LIdx = lumpnum + 1;
+		int SubsectorsLump = -1;
+		if (W_LumpName(LIdx) == NAME_things)
+		{
+			ThingsLump = LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_linedefs)
+		{
+			LinesLump = LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_sidedefs)
+		{
+			SidesLump = LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_vertexes)
+		{
+			VertexesLump = LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_segs)
+		{
+			LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_ssectors)
+		{
+			SubsectorsLump = LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_nodes)
+		{
+			LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_sectors)
+		{
+			SectorsLump = LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_reject)
+		{
+			RejectLump = LIdx++;
+		}
+		if (W_LumpName(LIdx) == NAME_blockmap)
+		{
+			BlockmapLump = LIdx++;
+		}
+		//	Determine level format.
+		if (W_LumpName(LIdx) == NAME_behavior)
+		{
+			LevelFlags |= LF_Extended;
+			BehaviorLump = LIdx++;
+		}
+
 		//	Verify that it's a valid map.
-		if (W_LumpName(lumpnum + ML_THINGS) != NAME_things ||
-			W_LumpName(lumpnum + ML_LINEDEFS) != NAME_linedefs ||
-			W_LumpName(lumpnum + ML_SIDEDEFS) != NAME_sidedefs ||
-			W_LumpName(lumpnum + ML_VERTEXES) != NAME_vertexes ||
-			W_LumpName(lumpnum + ML_SEGS) != NAME_segs ||
-			W_LumpName(lumpnum + ML_SSECTORS) != NAME_ssectors ||
-			W_LumpName(lumpnum + ML_NODES) != NAME_nodes ||
-			W_LumpName(lumpnum + ML_SECTORS) != NAME_sectors ||
-			W_LumpName(lumpnum + ML_REJECT) != NAME_reject ||
-			W_LumpName(lumpnum + ML_BLOCKMAP) != NAME_blockmap)
+		if (ThingsLump == -1 || LinesLump == -1 || SidesLump == -1 ||
+			VertexesLump == -1 || SectorsLump == -1)
 		{
 			Host_Error("Map %s is not a valid map", *MapName);
 		}
 
-		BlockmapLump = lumpnum + ML_BLOCKMAP;
-		RejectLump = lumpnum + ML_REJECT;
-
-		//	Determine level format.
-		if (W_LumpName(lumpnum + ML_BEHAVIOR) == NAME_behavior)
+		if (SubsectorsLump != -1)
 		{
-			LevelFlags |= LF_Extended;
-			BehaviorLump = lumpnum + ML_BEHAVIOR;
-		}
-
-		VStream* TmpStrm = W_CreateLumpReaderNum(lumpnum + ML_SSECTORS);
-		if (TmpStrm->TotalSize() > 4)
-		{
-			char Hdr[4];
-			TmpStrm->Serialise(Hdr, 4);
-			if (!VStr::NCmp(Hdr, ZGL_MAGIC, 4))
+			VStream* TmpStrm = W_CreateLumpReaderNum(SubsectorsLump);
+			if (TmpStrm->TotalSize() > 4)
 			{
-				UseComprGLNodes = true;
-				CompressedGLNodesLump = lumpnum + ML_SSECTORS;
+				char Hdr[4];
+				TmpStrm->Serialise(Hdr, 4);
+				if (!VStr::NCmp(Hdr, ZGL_MAGIC, 4))
+				{
+					UseComprGLNodes = true;
+					CompressedGLNodesLump = SubsectorsLump;
+				}
 			}
+			delete TmpStrm;
 		}
-		delete TmpStrm;
 	}
 	InitTime += Sys_Time();
 
@@ -287,25 +327,25 @@ void VLevel::LoadMap(VName AMapName)
 		// Note: most of this ordering is important
 		VertexTime = -Sys_Time();
 		LevelFlags &= ~LF_GLNodesV5;
-		LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT, NumBaseVerts);
+		LoadVertexes(VertexesLump, gl_lumpnum + ML_GL_VERT, NumBaseVerts);
 		VertexTime += Sys_Time();
 		SectorsTime = -Sys_Time();
-		LoadSectors(lumpnum + ML_SECTORS);
+		LoadSectors(SectorsLump);
 		SectorsTime += Sys_Time();
 		LinesTime = -Sys_Time();
 		if (!(LevelFlags & LF_Extended))
 		{
-			LoadLineDefs1(lumpnum + ML_LINEDEFS, NumBaseVerts, MInfo);
+			LoadLineDefs1(LinesLump, NumBaseVerts, MInfo);
 			LinesTime += Sys_Time();
 			ThingsTime = -Sys_Time();
-			LoadThings1(lumpnum + ML_THINGS);
+			LoadThings1(ThingsLump);
 		}
 		else
 		{
-			LoadLineDefs2(lumpnum + ML_LINEDEFS, NumBaseVerts, MInfo);
+			LoadLineDefs2(LinesLump, NumBaseVerts, MInfo);
 			LinesTime += Sys_Time();
 			ThingsTime = -Sys_Time();
-			LoadThings2(lumpnum + ML_THINGS);
+			LoadThings2(ThingsLump);
 		}
 		ThingsTime += Sys_Time();
 
@@ -319,7 +359,7 @@ void VLevel::LoadMap(VName AMapName)
 		//	Set up textures after loading lines because for some Boom line
 		// specials there can be special meaning of some texture names.
 		SidesTime = -Sys_Time();
-		LoadSideDefs(lumpnum + ML_SIDEDEFS);
+		LoadSideDefs(SidesLump);
 		SidesTime += Sys_Time();
 	}
 	double Lines2Time = -Sys_Time();
