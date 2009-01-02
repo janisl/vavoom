@@ -942,65 +942,28 @@ class<EntityEx> GetSpecies()
 
 final void CheckForPushSpecial(line_t* line, int side)
 {
-	if (line->special)
+	if (bActivatePushWall)
 	{
-		if (bActivatePushWall)
-		{
-			LineSpecialLevelInfo(Level).ActivateLine(line, self, side,
-				SPAC_Push);
-		}
-		else if (bActivateImpact)
-		{
-			LineSpecialLevelInfo(Level).ActivateLine(line,
-				Level.bMissilesActivateImpact || !bMissile || !Target ?
-				self : Target, side, SPAC_Impact);
-		}
+		LineSpecialLevelInfo(Level).ActivateLine(line, self, side,
+			SPAC_Push);
+	}
+	else if (bActivateImpact)
+	{
+		LineSpecialLevelInfo(Level).ActivateLine(line,
+			Level.bMissilesActivateImpact || !bMissile || !Target ?
+			self : Target, side, SPAC_Impact);
 	}
 }
 
 //==========================================================================
 //
-//	BlockedByLine
+//	BlastedHitLine
 //
 //==========================================================================
 
-final void BlockedByLine(line_t* ld)
+final void BlastedHitLine()
 {
-	if (bBlasted)
-	{
-		Damage(none, none, ftoi(Mass) >> 5);
-	}
-	CheckForPushSpecial(ld, 0);
-}
-
-//==========================================================================
-//
-//  PushLine
-//
-//==========================================================================
-
-final void PushLine(tmtrace_t* tmtrace)
-{
-	if (bColideWithWorld)
-	{
-		int numSpecHitTemp;
-		line_t *ld;
-		int side;
-
-		if (bBlasted)
-		{
-			Damage(none, none, ftoi(Mass) >> 5);
-		}
-		numSpecHitTemp = tmtrace->SpecHit.Num;
-		while (numSpecHitTemp > 0)
-		{
-			numSpecHitTemp--;
-			// see if the line was crossed
-			ld = tmtrace->SpecHit[numSpecHitTemp];
-			side = PointOnPlaneSide(Origin, ld);
-			CheckForPushSpecial(ld, side);
-		}
-	}
+	Damage(none, none, ftoi(Mass) >> 5);
 }
 
 //==========================================================================

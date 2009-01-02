@@ -897,7 +897,7 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 	if (!ld->backsector)
 	{
 		// One sided line
-		tmtrace.Thing->eventBlockedByLine(ld);
+		tmtrace.Thing->BlockedByLine(ld);
 		// mark the line as blocking line
 		tmtrace.BlockingLine = ld;
 		return false;
@@ -908,35 +908,35 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 		if (ld->flags & ML_BLOCKEVERYTHING)
 		{
 			// Explicitly blocking everything
-			tmtrace.Thing->eventBlockedByLine(ld);
+			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 
 		if (tmtrace.Thing->EntityFlags & VEntity::EF_CheckLineBlocking && ld->flags & ML_BLOCKING)
 		{
 			// Explicitly blocking everything
-			tmtrace.Thing->eventBlockedByLine(ld);
+			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 	
 		if (tmtrace.Thing->EntityFlags & VEntity::EF_CheckLineBlockMonsters && ld->flags & ML_BLOCKMONSTERS)
 		{
 			// Block monsters only
-			tmtrace.Thing->eventBlockedByLine(ld);
+			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 
 		if (tmtrace.Thing->EntityFlags & VEntity::EF_IsPlayer && ld->flags & ML_BLOCKPLAYERS)
 		{
 			// Block players only
-			tmtrace.Thing->eventBlockedByLine(ld);
+			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 
 		if (tmtrace.Thing->EntityFlags & VEntity::EF_Float && ld->flags & ML_BLOCK_FLOATERS)
 		{
 			// Block floaters only
-			tmtrace.Thing->eventBlockedByLine(ld);
+			tmtrace.Thing->BlockedByLine(ld);
 			return false;
 		}
 	}
@@ -993,6 +993,26 @@ bool VEntity::PIT_CheckRelLine(void* arg, line_t * ld)
 
 //==========================================================================
 //
+//	VEntity::BlockedByLine
+//
+//==========================================================================
+
+void VEntity::BlockedByLine(line_t* ld)
+{
+	guardSlow(VEntity::BlockedByLine);
+	if (EntityFlags & EF_Blasted)
+	{
+		eventBlastedHitLine();
+	}
+	if (ld->special)
+	{
+		eventCheckForPushSpecial(ld, 0);
+	}
+	unguardSlow;
+}
+
+//==========================================================================
+//
 //  VEntity::CheckRelPosition
 //
 //  This is purely informative, nothing is modified
@@ -1031,8 +1051,6 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	int bx;
 	int by;
 	subsector_t *newsubsec;
-	sec_region_t *gap;
-	sec_region_t *reg;
 	VEntity* thingblocker;
 	VEntity* fakedblocker;
 
@@ -1052,23 +1070,35 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	// that contains the point.
 	// Any contacted lines the step closer together
 	// will adjust them.
-	gap = SV_FindThingGap(newsubsec->sector->botregion, tmtrace.End,
-		tmtrace.End.z, tmtrace.End.z + Height);
-	reg = gap;
-	while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
+	if (newsubsec->sector->SectorFlags && sector_t::SF_HasExtrafloors)
 	{
-		reg = reg->prev;
+		sec_region_t* gap = SV_FindThingGap(newsubsec->sector->botregion,
+			tmtrace.End, tmtrace.End.z, tmtrace.End.z + Height);
+		sec_region_t* reg = gap;
+		while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
+		{
+			reg = reg->prev;
+		}
+		tmtrace.Floor = reg->floor;
+		tmtrace.FloorZ = reg->floor->GetPointZ(tmtrace.End);
+		tmtrace.DropOffZ = tmtrace.FloorZ;
+		reg = gap;
+		while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
+		{
+			reg = reg->next;
+		}
+		tmtrace.Ceiling = reg->ceiling;
+		tmtrace.CeilingZ = reg->ceiling->GetPointZ(tmtrace.End);
 	}
-	tmtrace.Floor = reg->floor;
-	tmtrace.FloorZ = reg->floor->GetPointZ(tmtrace.End);
-	tmtrace.DropOffZ = tmtrace.FloorZ;
-	reg = gap;
-	while (reg->next && reg->ceiling->flags & SPF_NOBLOCKING)
+	else
 	{
-		reg = reg->next;
+		sec_region_t* reg = newsubsec->sector->botregion;
+		tmtrace.Floor = reg->floor;
+		tmtrace.FloorZ = reg->floor->GetPointZ(tmtrace.End);
+		tmtrace.DropOffZ = tmtrace.FloorZ;
+		tmtrace.Ceiling = reg->ceiling;
+		tmtrace.CeilingZ = reg->ceiling->GetPointZ(tmtrace.End);
 	}
-	tmtrace.Ceiling = reg->ceiling;
-	tmtrace.CeilingZ = reg->ceiling->GetPointZ(tmtrace.End);
 
 	validcount++;
 	tmtrace.SpecHit.Clear();
@@ -1210,12 +1240,13 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 	if (!check)
 	{
 		VEntity *O = tmtrace.BlockingMobj;
-		if (!O || O->EntityFlags & EF_IsPlayer || !(EntityFlags & EF_IsPlayer) ||
+		if (!O || !(EntityFlags & EF_IsPlayer) ||
+			(O->EntityFlags & EF_IsPlayer) ||
 			O->Origin.z + O->Height - Origin.z > MaxStepHeight ||
 			O->CeilingZ - (O->Origin.z + O->Height) < Height ||
 			tmtrace.CeilingZ - (O->Origin.z + O->Height) < Height)
 		{
-			eventPushLine(&tmtrace);
+			PushLine(tmtrace);
 			return false;
 		}
 		if (!(EntityFlags & EF_PassMobj) || compat_nopassover ||
@@ -1230,7 +1261,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 		if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
 		{
 			// Doesn't fit
-			eventPushLine(&tmtrace);
+			PushLine(tmtrace);
 			return false;
 		}
 
@@ -1240,7 +1271,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			!(EntityFlags & EF_IgnoreCeilingStep))
 		{
 			// mobj must lower itself to fit
-			eventPushLine(&tmtrace);
+			PushLine(tmtrace);
 			return false;
 		}
 		if (EntityFlags & EF_Fly)
@@ -1250,14 +1281,14 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			if (Origin.z + Height > tmtrace.CeilingZ)
 			{
 				Velocity.z = -8.0 * 35.0;
-				eventPushLine(&tmtrace);
+				PushLine(tmtrace);
 				return false;
 			}
 			else if (Origin.z < tmtrace.FloorZ
 				&& tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
 			{
 				Velocity.z = 8.0 * 35.0;
-				eventPushLine(&tmtrace);
+				PushLine(tmtrace);
 				return false;
 			}
 		}
@@ -1266,7 +1297,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
 			{
 				// Too big a step up
-				eventPushLine(&tmtrace);
+				PushLine(tmtrace);
 				return false;
 			}
 			if (Origin.z < tmtrace.FloorZ)
@@ -1274,7 +1305,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 				// Check to make sure there's nothing in the way for the step up
 				if (TestMobjZ(TVec(newPos.x, newPos.y, tmtrace.FloorZ)))
 				{
-					eventPushLine(&tmtrace);
+					PushLine(tmtrace);
 					return false;
 				}
 			}
@@ -1385,6 +1416,34 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 
 	return true;
 	unguard;
+}
+
+//==========================================================================
+//
+//  VEntity::PushLine
+//
+//==========================================================================
+
+void VEntity::PushLine(const tmtrace_t& tmtrace)
+{
+	guardSlow(VEntity::PushLine);
+	if (EntityFlags & EF_ColideWithWorld)
+	{
+		if (EntityFlags & EF_Blasted)
+		{
+			eventBlastedHitLine();
+		}
+		int NumSpecHitTemp = tmtrace.SpecHit.Num();
+		while (NumSpecHitTemp > 0)
+		{
+			NumSpecHitTemp--;
+			// see if the line was crossed
+			line_t* ld = tmtrace.SpecHit[NumSpecHitTemp];
+			int side = ld->PointOnSide(Origin);
+			eventCheckForPushSpecial(ld, side);
+		}
+	}
+	unguardSlow;
 }
 
 //**************************************************************************

@@ -397,13 +397,23 @@ bool Touch(Entity Other)
 	return !Other.bSolid;
 }
 
+//===========================================================================
+//
+//	CheckForPushSpecial
+//
+//===========================================================================
+
+void CheckForPushSpecial(line_t* line, int side)
+{
+}
+
 //==========================================================================
 //
-//	BlockedByLine
+//	BlastedHitLine
 //
 //==========================================================================
 
-void BlockedByLine(line_t * ld)
+void BlastedHitLine()
 {
 }
 

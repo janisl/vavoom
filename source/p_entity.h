@@ -271,9 +271,9 @@ class VEntity : public VThinker
 	static int FIndex_BeginPlay;
 	static int FIndex_Destroyed;
 	static int FIndex_Touch;
-	static int FIndex_BlockedByLine;
+	static int FIndex_BlastedHitLine;
+	static int FIndex_CheckForPushSpecial;
 	static int FIndex_ApplyFriction;
-	static int FIndex_PushLine;
 	static int FIndex_HandleFloorclip;
 	static int FIndex_CrossSpecialLine;
 	static int FIndex_SectorChanged;
@@ -330,22 +330,22 @@ class VEntity : public VThinker
 		P_PASS_REF(Other);
 		EV_RET_BOOL_IDX(FIndex_Touch);
 	}
-	void eventBlockedByLine(line_t * ld)
+	void eventCheckForPushSpecial(line_t* line, int side)
 	{
 		P_PASS_SELF;
-		P_PASS_PTR(ld);
-		EV_RET_VOID_IDX(FIndex_BlockedByLine);
+		P_PASS_PTR(line);
+		P_PASS_INT(side);
+		EV_RET_VOID_IDX(FIndex_CheckForPushSpecial);
+	}
+	void eventBlastedHitLine()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID_IDX(FIndex_BlastedHitLine);
 	}
 	void eventApplyFriction()
 	{
 		P_PASS_SELF;
 		EV_RET_VOID_IDX(FIndex_ApplyFriction);
-	}
-	void eventPushLine(tmtrace_t* tmtrace)
-	{
-		P_PASS_SELF;
-		P_PASS_PTR(tmtrace);
-		EV_RET_VOID_IDX(FIndex_PushLine);
 	}
 	void eventHandleFloorclip()
 	{
@@ -514,6 +514,8 @@ private:
 	static bool PIT_CheckLine(void*, line_t*);
 	static bool PIT_CheckRelThing(void*, VEntity*);
 	static bool PIT_CheckRelLine(void*, line_t*);
+	void BlockedByLine(line_t*);
+	void PushLine(const tmtrace_t& tmtrace);
 	static TVec ClipVelocity(const TVec&, const TVec&, float);
 	void SlidePathTraverse(float&, line_t*&, float, float, float);
 
