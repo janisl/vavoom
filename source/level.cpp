@@ -63,22 +63,20 @@ VLevel*			GClLevel;
 subsector_t* VLevel::PointInSubsector(const TVec &point) const
 {
 	guard(VLevel::PointInSubsector);
-	node_t *node;
-	int side;
-	int nodenum;
-
 	// single subsector is a special case
 	if (!NumNodes)
-		return Subsectors;
-
-	nodenum = NumNodes - 1;
-
-	while (!(nodenum & NF_SUBSECTOR))
 	{
-		node = &Nodes[nodenum];
-		side = node->PointOnSide(point);
-		nodenum = node->children[side];
+		return Subsectors;
 	}
+
+	int nodenum = NumNodes - 1;
+	do
+	{
+		const node_t* node = Nodes + nodenum;
+		nodenum = node->children[point.x * node->normal.x +
+			point.y * node->normal.y < node->dist];
+	}
+	while (!(nodenum & NF_SUBSECTOR));
 	return &Subsectors[nodenum & ~NF_SUBSECTOR];
 	unguard;
 }
