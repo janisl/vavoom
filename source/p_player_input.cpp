@@ -343,6 +343,16 @@ COMMAND(ToggleAlwaysRun)
 {
 	guard(COMMAND ToggleAlwaysRun);
 	allways_run = !allways_run;
+#ifdef CLIENT
+	if (cl)
+	{
+		cl->Printf(allways_run ? "Always run on" : "Always run off");
+	}
+	else
+#endif
+	{
+		GCon->Log(allways_run ? "Always run on" : "Always run off");
+	}
 	unguard;
 }
 
