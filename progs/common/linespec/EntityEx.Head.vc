@@ -57,6 +57,10 @@ const float MISSILERANGE	= (32.0 * 64.0);
 const float MONS_LOOK_RANGE	= (20.0 * 64.0);
 const int MONS_LOOK_LIMIT	= 64;
 
+//	Factor to scale scrolling effect into mobj-carrying properties = 3/32.
+// (This is so scrolling floors and objects on them can move at same speed.)
+const float CARRYFACTOR		= 0.09375;
+
 enum
 {
 	BOUNCE_None,

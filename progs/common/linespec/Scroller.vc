@@ -421,8 +421,8 @@ void Tick(float DeltaTime)
 		break;
 
 	case SCROLLEV_Carry:
-		CarryScrollX = XDelta * 3.0;
-		CarryScrollY = YDelta * 3.0;
+		CarryScrollX = XDelta;
+		CarryScrollY = YDelta;
 		break;
 	}
 }

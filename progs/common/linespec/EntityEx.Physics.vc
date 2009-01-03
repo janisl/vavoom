@@ -37,18 +37,13 @@
 
 bool Physics(float DeltaTime)
 {
-	EntityEx		onmo;
-	SectorThinker	SecThink;
-	float			scrollx;
-	float			scrolly;
-	float			height;
-	float			waterheight;	// killough 4/4/98: add waterheight
-
 	if (bBlaster)
 	{
 		return BlasterPhysics(DeltaTime);
 	}
 
+	float CummX = 0.0;
+	float CummY = 0.0;
 	if (Sector->AffectorData && bColideWithWorld && !bNoSector)
 	{
 		// killough 3/7/98: Carry things on floor
@@ -59,10 +54,9 @@ bool Physics(float DeltaTime)
 		// Move objects only if on floor or underwater,
 		// non-floating, and clipped.
 
-		float CummX = 0.0;
-		float CummY = 0.0;
 		int CountX = 0;
 		int CountY = 0;
+		SectorThinker SecThink;
 		for (SecThink = SectorThinker(Sector->AffectorData); SecThink;
 			SecThink = SecThink.NextAffector)
 		{
@@ -70,8 +64,8 @@ bool Physics(float DeltaTime)
 			{
 				continue;
 			}
-			scrollx = Scroller(SecThink).CarryScrollX;
-			scrolly = Scroller(SecThink).CarryScrollY;
+			float scrollx = Scroller(SecThink).CarryScrollX;
+			float scrolly = Scroller(SecThink).CarryScrollY;
 			if (!scrollx && !scrolly)
 			{
 				continue;
@@ -81,7 +75,7 @@ bool Physics(float DeltaTime)
 			{
 				continue;
 			}
-			height = GetPlanePointZ(&Sector->floor, Origin);
+			float height = GetPlanePointZ(&Sector->floor, Origin);
 			if (Origin.z > height)
 			{
 				if (!Sector->heightsec || (Sector->heightsec->bIgnoreHeightSec))
@@ -89,7 +83,7 @@ bool Physics(float DeltaTime)
 					continue;
 				}
 
-				waterheight = GetPlanePointZ(&Sector->heightsec->floor, Origin);
+				float waterheight = GetPlanePointZ(&Sector->heightsec->floor, Origin);
 				if (waterheight > height && Origin.z >= waterheight)
 				{
 					continue;
@@ -122,9 +116,6 @@ bool Physics(float DeltaTime)
 				CummY /= itof(CountY);
 			}
 		}
-
-		Velocity.x += CummX;
-		Velocity.y += CummY;
 	}
 
 	CheckWater();
@@ -134,31 +125,12 @@ bool Physics(float DeltaTime)
 	}
 
 	// momentum movement
-	if (Velocity.x || Velocity.y)
+	// Handle X and Y momentums
+	XYMovement(DeltaTime, CummX, CummY);
+	if (IsDestroyed())
 	{
-		// Handle X and Y momentums
-		XYMovement(DeltaTime);
-		if (IsDestroyed())
-		{
-			// mobj was removed
-			return false;
-		}
-	}
-	else if (bSkullFly && Health > 0)
-	{
-		//	A flying mobj slammed into something
-		bSkullFly = false;
-		Velocity = vector(0.0, 0.0, 0.0);
-		if (!SetState(SeeState ? SeeState : IdleState))
-		{
-			// mobj was removed
-			return false;
-		}
-	}
-	else if (bBlasted)
-	{
-		// Reset to not blasted when momentums are gone
-		ResetBlasted();
+		// mobj was removed
+		return false;
 	}
 
 	if (bFloatBob)
@@ -193,7 +165,7 @@ bool Physics(float DeltaTime)
 		if (bPassMobj && !bMissile && !Level.CompatNoPassOver)
 		{
 			// Handle Z momentum and gravity
-			onmo = EntityEx(CheckOnmobj());
+			EntityEx onmo = EntityEx(CheckOnmobj());
 			if (onmo)
 			{
 				if (bIsPlayer)
@@ -268,7 +240,7 @@ bool Physics(float DeltaTime)
 //
 //==========================================================================
 
-final void XYMovement(float DeltaTime)
+final void XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 {
 	float	ptryx;
 	float	ptryy;
@@ -303,6 +275,7 @@ final void XYMovement(float DeltaTime)
 			break;
 		}
 	}
+
 	if (Velocity.x > MAXMOVE)
 	{
 		Velocity.x = MAXMOVE;
@@ -322,6 +295,41 @@ final void XYMovement(float DeltaTime)
 
 	xmove = Velocity.x * DeltaTime;
 	ymove = Velocity.y * DeltaTime;
+
+	//	Carrying sectors didn't work with low speeds in BOOM. This is because
+	// BOOM relied on the speed being fast enough to accumulate despite
+	// friction. If the speed is too low, then its movement will get
+	// cancelled, and it won't accumulate to the desired speed.
+	float CarryStopSpeed = (2.0 / 3.0) * DeltaTime;
+	if (fabs(ScrollX) > CarryStopSpeed)
+	{
+		ScrollX *= CARRYFACTOR;
+		Velocity.x += ScrollX / DeltaTime;
+	}
+	if (fabs(ScrollY) > CarryStopSpeed)
+	{
+		ScrollY *= CARRYFACTOR;
+		Velocity.y += ScrollY / DeltaTime;
+	}
+	xmove += ScrollX;
+	ymove += ScrollY;
+
+	if (!xmove && !ymove)
+	{
+		if (bSkullFly && Health > 0)
+		{
+			//	A flying mobj slammed into something
+			bSkullFly = false;
+			Velocity = vector(0.0, 0.0, 0.0);
+			SetState(SeeState ? SeeState : IdleState);
+		}
+		else if (bBlasted)
+		{
+			// Reset to not blasted when momentums are gone
+			ResetBlasted();
+		}
+		return;
+	}
 
 	//	Split move in multiple steps if moving too fast.
 	int Steps = 1;
