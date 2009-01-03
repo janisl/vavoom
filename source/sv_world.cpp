@@ -445,8 +445,7 @@ sec_region_t *SV_PointInRegion(sector_t *sector, const TVec &p)
 int SV_PointContents(const sector_t *sector, const TVec &p)
 {
 	guard(SV_PointContents);
-	sec_region_t	*reg;
-
+	check(sector);
 	if (sector->heightsec &&
 		(sector->heightsec->SectorFlags & sector_t::SF_UnderWater) &&
 		p.z < sector->heightsec->floor.GetPointZ(p))
@@ -458,15 +457,22 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 		return 9;
 	}
 
-	for (reg = sector->botregion; reg; reg = reg->next)
+	if (sector->SectorFlags & sector_t::SF_HasExtrafloors)
 	{
-		if (p.z <= reg->ceiling->GetPointZ(p) &&
-			p.z >= reg->floor->GetPointZ(p))
+		for (sec_region_t* reg = sector->botregion; reg; reg = reg->next)
 		{
-			return reg->params->contents;
+			if (p.z <= reg->ceiling->GetPointZ(p) &&
+				p.z >= reg->floor->GetPointZ(p))
+			{
+				return reg->params->contents;
+			}
 		}
+		return -1;
 	}
-	return -1;
+	else
+	{
+		return sector->botregion->params->contents;
+	}
 	unguard;
 }
 
