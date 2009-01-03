@@ -643,9 +643,13 @@ final bool StepMove()
 	int good;
 
 	if (bBlasted)
+	{
 		return true;
+	}
 	if (MoveDir == DI_NODIR)
+	{
 		return false;
+	}
 
 	// Instead of yanking non-floating monsters to the ground,
 	// let gravity drop them down, unless they're moving down a step.
@@ -663,7 +667,9 @@ final bool StepMove()
 
 #ifdef RANGECHECK
 	if (MoveDir >= 8 || MoveDir < 0)
+	{
 		Error("Weird MoveDir!");
+	}
 #endif
 
 	origx = Origin.x;
@@ -678,7 +684,7 @@ final bool StepMove()
 	steps = 1;
 
 	if (maxmove > 0.0)
-	{ 
+	{
 		xspeed = fabs(deltax);
 		yspeed = fabs(deltay);
 
@@ -705,7 +711,9 @@ final bool StepMove()
 		try_ok = TryMoveEx(&tmtrace, vector(origx + (deltax / itof(steps * i)), origy +
 					(deltay / itof(steps * i)), Origin.z), false);
 		if (!try_ok)
+		{
 			break;
+		}
 	}
 
 	// killough 3/15/98: don't jump over dropoffs:
@@ -721,15 +729,21 @@ final bool StepMove()
 		{
 			// must adjust height
 			if (Origin.z < tmtrace.FloorZ)
+			{
 				Origin.z += FloatSpeed * Level.Game.frametime;
+			}
 			else
+			{
 				Origin.z -= FloatSpeed * Level.Game.frametime;
+			}
 			bInFloat = true;
 			return true;
 		}
 
 		if (!tmtrace.SpecHit.Num)
+		{
 			return false;
+		}
 
 		MoveDir = DI_NODIR;
 
@@ -763,7 +777,7 @@ final bool StepMove()
 				good |= ld == tmtrace.BlockingLine ? 1 : 2;//true;
 			}
 		}
-		return good && ((Random() >= 203.0) ^ (good & 1));
+		return good && ((P_Random() >= 203) ^ (good & 1));
 	}
 	else
 	{
@@ -821,25 +835,39 @@ final void DO_NewChaseDir(float deltax, float deltay)
 	turnaround = LineSpecialGameInfo(Level.Game).opposite[olddir];
 
 	if (deltax > 10.0)
+	{
 		d[1] = DI_EAST;
+	}
 	else if (deltax < -10.0)
+	{
 		d[1] = DI_WEST;
+	}
 	else
+	{
 		d[1] = DI_NODIR;
+	}
 
 	if (deltay < -10.0)
+	{
 		d[2] = DI_SOUTH;
+	}
 	else if (deltay > 10.0)
+	{
 		d[2] = DI_NORTH;
+	}
 	else
+	{
 		d[2] = DI_NODIR;
+	}
 
 	// try direct route
 	if (d[1] != DI_NODIR && d[2] != DI_NODIR)
 	{
 		MoveDir = LineSpecialGameInfo(Level.Game).diags[((deltay < 0.0) << 1) + (deltax > 0.0)];
 		if (MoveDir != turnaround && TryWalk())
+		{
 			return;
+		}
 	}
 
 	// try other directions
@@ -851,9 +879,13 @@ final void DO_NewChaseDir(float deltax, float deltay)
 	}
 
 	if (d[1] == turnaround)
+	{
 		d[1] = DI_NODIR;
+	}
 	if (d[2] == turnaround)
+	{
 		d[2] = DI_NODIR;
+	}
 
 	if (d[1] != DI_NODIR)
 	{
@@ -868,9 +900,10 @@ final void DO_NewChaseDir(float deltax, float deltay)
 	if (d[2] != DI_NODIR)
 	{
 		MoveDir = d[2];
-
 		if (TryWalk())
+		{
 			return;
+		}
 	}
 
 	// there is no direct path to the player,
@@ -878,9 +911,10 @@ final void DO_NewChaseDir(float deltax, float deltay)
 	if (olddir != DI_NODIR)
 	{
 		MoveDir = olddir;
-
 		if (TryWalk())
+		{
 			return;
+		}
 	}
 
 	// randomly determine direction of search
@@ -891,9 +925,10 @@ final void DO_NewChaseDir(float deltax, float deltay)
 			if (tdir != turnaround)
 			{
 				MoveDir = tdir;
-
 				if (TryWalk())
+				{
 					return;
+				}
 			}
 		}
 	}
@@ -904,9 +939,10 @@ final void DO_NewChaseDir(float deltax, float deltay)
 			if (tdir != turnaround)
 			{
 				MoveDir = tdir;
-
 				if (TryWalk())
+				{
 					return;
+				}
 			}
 		}
 	}
@@ -915,7 +951,9 @@ final void DO_NewChaseDir(float deltax, float deltay)
 	{
 		MoveDir = turnaround;
 		if (TryWalk())
+		{
 			return;
+		}
 	}
 
 	MoveDir = DI_NODIR;	// can not move
