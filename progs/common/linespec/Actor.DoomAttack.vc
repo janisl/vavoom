@@ -913,20 +913,12 @@ final void A_SpawnSound()
 final void A_BrainScream()
 {
 	TVec org;
-	EntityEx A;
 
 	for (org.x = Origin.x - 196.0; org.x < Origin.x + 320.0; org.x += 8.0)
 	{
 		org.y = Origin.y - 320.0;
 		org.z = 1.0 / 512.0 + Random() * 512.0;
-		A = Spawn(Rocket, org);
-		A.Velocity.z = Random() * 2.0 * 35.0;
-
-		A.SetState(FindClassState(BossBrain, 'BrainExplode'));
-
-		A.StateTime -= Random() * 0.2;
-		if (A.StateTime < 0.1)
-			A.StateTime = 0.1;
+		BrainishExplosion(org);
 	}
 
 	PlaySound('brain/death', CHAN_VOICE, 1.0, ATTN_NONE);
@@ -943,19 +935,34 @@ final void A_BrainScream()
 final void A_BrainExplode()
 {
 	TVec org;
-	EntityEx A;
 
 	org.x = Origin.x + (Random() - Random()) * 8.0;
 	org.y = Origin.y;
 	org.z = 1.0 / 512.0 + Random() * 512.0;
-	A = Spawn(Rocket, org,,, false);
+	BrainishExplosion(org);
+}
+
+//==========================================================================
+//
+//	BrainishExplosion
+//
+//==========================================================================
+
+final void BrainishExplosion(TVec org)
+{
+	EntityEx A = Spawn(Rocket, org,,, false);
+	A.DeathSound = 'misc/brainexplode';
+	//	Disables collision detection which is not wanted here
+	A.MissileDamage = 0;
 	A.Velocity.z = Random() * 2.0 * 35.0;
 
 	A.SetState(FindClassState(BossBrain, 'BrainExplode'));
 
 	A.StateTime -= Random() * 0.2;
 	if (A.StateTime < 0.1)
+	{
 		A.StateTime = 0.1;
+	}
 }
 
 //==========================================================================
