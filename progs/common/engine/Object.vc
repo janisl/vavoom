@@ -214,7 +214,6 @@ const float ATTN_NONE		= 0.0;
 const float ATTN_NORMAL		= 1.0;
 const float ATTN_IDLE		= 2.0;
 const float ATTN_STATIC		= 3.0;
-const float ATTN_SURROUND	= -1.0;
 
 //**************************************************************************
 //**

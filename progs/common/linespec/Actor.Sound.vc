@@ -92,9 +92,6 @@ final void A_PlaySoundEx(string Sound, string Channel, optional bool Loop,
 	case 1:
 		Atten = ATTN_NONE;
 		break;
-	case 2:
-		Atten = ATTN_SURROUND;
-		break;
 	}
 
 	PlaySound(StrToName(Sound), Chan,, Atten, Loop);
