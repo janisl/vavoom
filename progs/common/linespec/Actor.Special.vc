@@ -213,7 +213,7 @@ final void A_CheckTerrain()
 	{
 		if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_DamageInstantDeath)
 		{
-			Damage(none, none, 999);
+			Damage(none, none, 999, 'InstantDeath');
 		}
 		else if ((Sector->special & SECSPEC_BASE_MASK) == SECSPEC_ScrollCurrent)
 		{

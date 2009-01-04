@@ -554,7 +554,7 @@ final void PlayerInSpecialSector(float deltaTime)
 				HazardTime += 2.0 * deltaTime;
 			break;
 		case SECSPEC_DamageInstantDeath:
-			EntityEx(MO).Damage(none, none, 999);
+			EntityEx(MO).Damage(none, none, 999, 'InstantDeath');
 			break;
 		case SECSPEC_DamageSuperHazard:
 			if (!IronFeet)
