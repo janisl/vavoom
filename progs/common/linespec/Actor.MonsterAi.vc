@@ -246,11 +246,13 @@ final void A_Wander()
 
 	bInCombat = false;
 	if (bStanding)
-		return;
-
-	if (Threshold != 0)
 	{
-		Threshold--;
+		return;
+	}
+
+	if (ReactionCount != 0)
+	{
+		ReactionCount--;
 		return;
 	}
 
