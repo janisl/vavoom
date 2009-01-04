@@ -671,14 +671,13 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 		VName LumpName(Buffer, VName::AddLower8);
 		int Lump = W_CheckNumForName(LumpName, WADNS_Graphics);
 
-		//	In Doom stcfn121 is actually an upper-case 'I' and not 'y' and
-		// may wad authors provide it as such, so load it only if wad also
-		// provides stcfn120 ('x') and stcfn122 ('z').
+		//	In Doom stcfn121 is actually a '|' and not 'y' and many wad
+		// authors provide it as such, so put it in correct location.
 		if (LumpName == "stcfn121" &&
 			(W_CheckNumForName("stcfn120", WADNS_Graphics) == -1 ||
 			W_CheckNumForName("stcfn122", WADNS_Graphics) == -1))
 		{
-			Lump = -1;
+			Char = '|';
 		}
 
 		if (Lump >= 0)
