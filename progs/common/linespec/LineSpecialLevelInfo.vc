@@ -6290,10 +6290,8 @@ final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 
 final bool PolyBusy(int polyobj)
 {
-	polyobj_t *poly;
-
-	poly = XLevel.GetPolyobj(polyobj);
-	if (!poly->SpecialData)
+	polyobj_t* poly = XLevel.GetPolyobj(polyobj);
+	if (!poly || !poly->SpecialData)
 	{
 		return false;
 	}
