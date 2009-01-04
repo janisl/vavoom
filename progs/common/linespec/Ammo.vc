@@ -130,6 +130,23 @@ Inventory CreateCopy(EntityEx Toucher)
 	return Copy;
 }
 
+//==========================================================================
+//
+//	CreateTossable
+//
+//==========================================================================
+
+Inventory CreateTossable()
+{
+	Inventory Copy = ::CreateTossable();
+	if (Copy)
+	{
+		//	Avoid cheating on certain skill levels.
+		Copy.bIgnoreSkill = true;
+	}
+	return Copy;
+}
+
 defaultproperties
 {
 	PickupSound = 'misc/ammo_pkup';
