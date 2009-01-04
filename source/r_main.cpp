@@ -369,6 +369,13 @@ void VRenderLevel::ExecuteSetViewSize()
 		refdef.height = ScreenHeight;
 		refdef.y = 0;
 	}
+	else if (GGameInfo->NetMode == NM_TitleMap)
+	{
+		//	No status bar for titlemap.
+		refdef.width = screenblocks * ScreenWidth / 10;
+		refdef.height = (screenblocks * ScreenHeight / 10);
+		refdef.y = (ScreenHeight - refdef.height) >> 1;
+	}
 	else
 	{
 		refdef.width = screenblocks * ScreenWidth / 10;
@@ -411,9 +418,18 @@ void VRenderLevel::ExecuteSetViewSize()
 void R_DrawViewBorder()
 {
 	guard(R_DrawViewBorder);
-	GClGame->eventDrawViewBorder(320 - screenblocks * 32,
-		(480 - sb_height - screenblocks * (480 - sb_height) / 10) / 2,
-		screenblocks * 64, screenblocks * (480 - sb_height) / 10);
+	if (GGameInfo->NetMode == NM_TitleMap)
+	{
+		GClGame->eventDrawViewBorder(320 - screenblocks * 32,
+			(480 - screenblocks * 480 / 10) / 2,
+			screenblocks * 64, screenblocks * 480 / 10);
+	}
+	else
+	{
+		GClGame->eventDrawViewBorder(320 - screenblocks * 32,
+			(480 - sb_height - screenblocks * (480 - sb_height) / 10) / 2,
+			screenblocks * 64, screenblocks * (480 - sb_height) / 10);
+	}
 	unguard;
 }
 
