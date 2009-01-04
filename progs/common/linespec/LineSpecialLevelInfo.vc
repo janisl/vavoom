@@ -885,7 +885,7 @@ int ExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
 		buttonSuccess = EV_ThingMove(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
 	case LNSPEC_ThingSetSpecial:
-		buttonSuccess = EV_ThingSetSpecial(Arg1, Arg2, Arg3, Arg4, Arg5);
+		buttonSuccess = EV_ThingSetSpecial(Arg1, Arg2, Arg3, Arg4, Arg5, A);
 		break;
 	case LNSPEC_ThrustThingZ:
 		buttonSuccess = EV_ThrustThingZ(Arg1, Arg2, Arg3, Arg4, Arg5, A);
@@ -4656,13 +4656,21 @@ final bool EV_ThingSetTranslation(int Arg1, int Arg2, int Arg3, int Arg4,
 		Trans = 0;
 	}
 
-	Entity Ent;
 	bool Ret = false;
-	for (Ent = FindMobjFromTID(Arg1, none); Ent;
-		Ent = FindMobjFromTID(Arg1, Ent))
+	if (Arg1)
+	{
+		Entity Ent;
+		for (Ent = FindMobjFromTID(Arg1, none); Ent;
+			Ent = FindMobjFromTID(Arg1, Ent))
+		{
+			Ret = true;
+			Ent.Translation = Trans ? Trans : Ent.default.Translation;
+		}
+	}
+	else if (A)
 	{
 		Ret = true;
-		Ent.Translation = Trans ? Trans : Ent.default.Translation;
+		A.Translation = Trans ? Trans : A.default.Translation;
 	}
 	return Ret;
 }
@@ -4871,16 +4879,26 @@ final bool EV_ThingMove(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 //===========================================================================
 
 final bool EV_ThingSetSpecial(int Arg1, int Arg2, int Arg3, int Arg4,
-	int Arg5)
+	int Arg5, EntityEx A)
 {
-	Entity Ent;
-	for (Ent = FindMobjFromTID(Arg1, none); Ent;
-		Ent = FindMobjFromTID(Arg1, Ent))
+	if (Arg1)
 	{
-		Ent.Special = Arg2;
-		Ent.Args[0] = Arg3;
-		Ent.Args[1] = Arg4;
-		Ent.Args[2] = Arg5;
+		Entity Ent;
+		for (Ent = FindMobjFromTID(Arg1, none); Ent;
+			Ent = FindMobjFromTID(Arg1, Ent))
+		{
+			Ent.Special = Arg2;
+			Ent.Args[0] = Arg3;
+			Ent.Args[1] = Arg4;
+			Ent.Args[2] = Arg5;
+		}
+	}
+	else if (A)
+	{
+		A.Special = Arg2;
+		A.Args[0] = Arg3;
+		A.Args[1] = Arg4;
+		A.Args[2] = Arg5;
 	}
 	return true;
 }
