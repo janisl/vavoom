@@ -546,6 +546,19 @@
 #define BT_USER3				8388608
 #define BT_USER4				16777216
 
+// Flags returned by ClassifyActor ------------------------------------------
+
+#define ACTOR_NONE				0
+#define ACTOR_WORLD				1
+#define ACTOR_PLAYER			2
+#define ACTOR_BOT				4
+#define ACTOR_VOODOODOLL		8
+#define ACTOR_MONSTER			16
+#define ACTOR_ALIVE				32
+#define ACTOR_DEAD				64
+#define ACTOR_MISSILE			128
+#define ACTOR_GENERIC			256
+
 #define NO_CHANGE					32767.0
 
 #define SECF_SILENT					1

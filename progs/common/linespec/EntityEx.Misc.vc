@@ -3555,6 +3555,58 @@ final bool IsHostile(EntityEx Other)
 	return true;
 }
 
+//==========================================================================
+//
+//	ClassifyActor
+//
+//==========================================================================
+
+final int ClassifyActor()
+{
+	int Ret = 0;
+	if (bIsPlayer)
+	{
+		Ret |= ACTOR_PLAYER;
+		if (Player.PlayerState == PST_DEAD)
+		{
+			Ret |= ACTOR_DEAD;
+		}
+		else
+		{
+			Ret |= ACTOR_ALIVE;
+		}
+		if (Player.MO != self)
+		{
+			Ret |= ACTOR_VOODOODOLL;
+		}
+		if (Player.bIsBot)
+		{
+			Ret |= ACTOR_BOT;
+		}
+	}
+	else if (bMonster)
+	{
+		Ret |= ACTOR_MONSTER;
+		if (Health <= 0)
+		{
+			Ret |= ACTOR_DEAD;
+		}
+		else
+		{
+			Ret |= ACTOR_ALIVE;
+		}
+	}
+	else if (bMissile)
+	{
+		Ret |= ACTOR_MISSILE;
+	}
+	else
+	{
+		Ret |= ACTOR_GENERIC;
+	}
+	return Ret;
+}
+
 bool IsTeammate(EntityEx Other)
 {
 	return bIsPlayer && Other.bIsPlayer && Level.Game.netgame &&

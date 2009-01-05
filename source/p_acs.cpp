@@ -4905,9 +4905,31 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ClassifyActor)
-			STUB(PCD_ClassifyActor)
-			//sp[-1] - TID
-			//Pushes result
+			if (sp[-1])
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], NULL);
+				if (Ent)
+				{
+					sp[-1] = Ent->eventClassifyActor();
+				}
+				else
+				{
+					//	None
+					sp[-1] = 0;
+				}
+			}
+			else
+			{
+				if (Activator)
+				{
+					sp[-1] = Activator->eventClassifyActor();
+				}
+				else
+				{
+					//	World
+					sp[-1] = 1;
+				}
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintBinary)

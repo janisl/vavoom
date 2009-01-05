@@ -109,6 +109,21 @@ enum
 	PROP_SPEED					= 15
 };
 
+//	Constants for ClassifyActor
+enum
+{
+	ACTOR_NONE				= 0x00000000,
+	ACTOR_WORLD				= 0x00000001,
+	ACTOR_PLAYER			= 0x00000002,
+	ACTOR_BOT				= 0x00000004,
+	ACTOR_VOODOODOLL		= 0x00000008,
+	ACTOR_MONSTER			= 0x00000010,
+	ACTOR_ALIVE				= 0x00000020,
+	ACTOR_DEAD				= 0x00000040,
+	ACTOR_MISSILE			= 0x00000080,
+	ACTOR_GENERIC			= 0x00000100
+};
+
 //  States
 state			IdleState;
 state			SeeState;

@@ -491,6 +491,11 @@ class VEntity : public VThinker
 		P_PASS_FLOAT(DeltaTime);
 		EV_RET_VOID(NAME_CalcFakeZMovement);
 	}
+	int eventClassifyActor()
+	{
+		P_PASS_SELF;
+		EV_RET_INT(NAME_ClassifyActor);
+	}
 
 	bool SetState(VState*);
 	void SetInitialState(VState*);
