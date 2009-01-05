@@ -3799,4 +3799,5 @@
   I updated acc to latest version.
   I implemented ACS commands UseInventory, UseActorInventory, ThingCountSector,
  ThingCountNameSector, CheckActorCeilingTexture, CheckActorFloorTexture,
- GetActorLightLevel, CheckPlayerCamera, GetPlayerInput, ClassifyActor.
+ GetActorLightLevel, CheckPlayerCamera, GetPlayerInput, ClassifyActor as well
+ as binary and hexadecimal print statements.

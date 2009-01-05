@@ -4933,14 +4933,12 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintBinary)
-			STUB(PCD_PrintBinary)
-			//sp[-1] - value
+			PrintStr += va("%B", sp[-1]);
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintHex)
-			STUB(PCD_PrintHex)
-			//sp[-1] - value
+			PrintStr += va("%X", sp[-1]);
 			sp--;
 			ACSVM_BREAK;
 
