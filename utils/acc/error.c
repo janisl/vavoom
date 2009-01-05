@@ -175,6 +175,7 @@ static struct
 	{ ERR_DISCONNECT_NEEDS_1_ARG, "Disconnect scripts must have 1 argument." },
 	{ ERR_UNCLOSED_WITH_ARGS, "Most special scripts must not have arguments." },
 	{ ERR_NOT_A_CHAR_ARRAY, "%s has %d dimensions. Use %d subscripts to get a char array." },
+	{ ERR_CANT_FIND_INCLUDE, "Couldn't find include file \"%s\"." },
 	{ ERR_NONE, NULL }
 };
 
@@ -363,7 +364,7 @@ static char *ErrorFileName(void)
 	}
 	else
 	{
-		strcat(errFileName, DIRECTORY_DELIMITER ERROR_FILE_NAME);
+		strcat(errFileName, ERROR_FILE_NAME);
 	}
 	return errFileName;
 }
@@ -410,9 +411,20 @@ static void eprintf(const char *fmt, ...)
 
 static void veprintf(const char *fmt, va_list args)
 {
+#ifdef va_copy
+	va_list copy;
+	va_copy(copy, args);
+#endif
 	vfprintf(stderr, fmt, args);
 	if(ErrorFile)
 	{
+#ifdef va_copy
+		vfprintf(ErrorFile, fmt, copy);
+#else
 		vfprintf(ErrorFile, fmt, args);
+#endif
 	}
+#ifdef va_copy
+	va_end(copy);
+#endif
 }

@@ -183,6 +183,17 @@ static internFuncDef_t InternalFunctions[] =
 	{ "thing_damage2", PCD_NOP, PCD_THINGDAMAGE2, 3, 0, 0, YES, NO },
 	{ "useinventory", PCD_NOP, PCD_USEINVENTORY, 1, 0, 0, YES, NO },
 	{ "useactorinventory", PCD_NOP, PCD_USEACTORINVENTORY, 2, 0, 0, YES, NO },
+	{ "checkactorceilingtexture", PCD_NOP, PCD_CHECKACTORCEILINGTEXTURE, 2, 0, 0, YES, NO },
+	{ "checkactorfloortexture", PCD_NOP, PCD_CHECKACTORFLOORTEXTURE, 2, 0, 0, YES, NO },
+	{ "getactorlightlevel", PCD_NOP, PCD_GETACTORLIGHTLEVEL, 1, 0, 0, YES, NO },
+	{ "setmugshotstate", PCD_NOP, PCD_SETMUGSHOTSTATE, 1, 0, 0, NO, NO },
+	{ "thingcountsector", PCD_NOP, PCD_THINGCOUNTSECTOR, 3, 0, 0, YES, NO },
+	{ "thingcountnamesector", PCD_NOP, PCD_THINGCOUNTNAMESECTOR, 3, 0, 0, YES, NO },
+	{ "checkplayercamera", PCD_NOP, PCD_CHECKPLAYERCAMERA, 1, 0, 0, YES, NO },
+	{ "morphactor", PCD_NOP, PCD_MORPHACTOR, 7, 2|4|8|16|32|64, 0, YES, NO },
+	{ "unmorphactor", PCD_NOP, PCD_UNMORPHACTOR, 2, 2, 0, YES, NO },
+	{ "getplayerinput", PCD_NOP, PCD_GETPLAYERINPUT, 2, 0, 0, YES, NO },
+	{ "classifyactor", PCD_NOP, PCD_CLASSIFYACTOR, 1, 0, 0, YES, NO },
 	
 	{ NULL, PCD_NOP, PCD_NOP, 0, 0, 0, NO, NO }
 };

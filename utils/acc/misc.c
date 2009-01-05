@@ -12,7 +12,7 @@
 #else
 #include <fcntl.h>
 #include <stdlib.h>
-#ifdef _WIN32
+#ifndef unix
 #include <io.h>
 #endif
 #endif
@@ -113,13 +113,13 @@ U_WORD MS_LittleUWORD(U_WORD val)
 
 //==========================================================================
 //
-// MS_LittleULONG
+// MS_LittleUINT
 //
-// Converts a host U_LONG (4 bytes) to little endian byte order.
+// Converts a host U_INT (4 bytes) to little endian byte order.
 //
 //==========================================================================
 
-U_LONG MS_LittleULONG(U_LONG val)
+U_INT MS_LittleUINT(U_INT val)
 {
 	if(acs_BigEndianHost == NO)
 	{
@@ -170,6 +170,22 @@ int MS_LoadFile(char *name, char **buffer)
 	*buffer = addr;
 	return size;
 }
+
+
+//==========================================================================
+//
+// MS_FileExists
+//
+// Pascal 21/11/08
+//
+//==========================================================================
+boolean MS_FileExists(char *name)
+{
+	struct stat info;
+	int ret = stat(name, &info);
+	return (ret == 0);
+}
+
 
 //==========================================================================
 //
@@ -263,8 +279,7 @@ void MS_SuggestFileExt(char *base, char *extension)
 	char *search;
 
 	search = base+strlen(base)-1;
-	while(*search != ASCII_SLASH && *search != ASCII_BACKSLASH
-		&& search != base)
+	while(!MS_IsDirectoryDelimiter(*search) && search != base)
 	{
 		if(*search-- == '.')
 		{
@@ -273,6 +288,22 @@ void MS_SuggestFileExt(char *base, char *extension)
 	}
 	strcat(base, extension);
 }
+
+//==========================================================================
+//
+// MS_IsDirectoryDelimiter
+//
+//==========================================================================
+
+boolean MS_IsDirectoryDelimiter(char foo)
+{
+#if defined(_WIN32) || defined(__MSDOS__)
+	return foo == '/' || foo == '\\' || foo == ':';
+#else
+	return foo == '/';
+#endif
+}
+
 
 //==========================================================================
 //
@@ -285,8 +316,7 @@ void MS_StripFileExt(char *name)
 	char *search;
 
 	search = name+strlen(name)-1;
-	while(*search != ASCII_SLASH && *search != ASCII_BACKSLASH
-		&& search != name)
+	while(!MS_IsDirectoryDelimiter(*search) && search != name)
 	{
 		if(*search == '.')
 		{
@@ -301,6 +331,8 @@ void MS_StripFileExt(char *name)
 //
 // MS_StripFilename
 //
+// [RH] This now leaves the directory delimiter in place.
+//
 //==========================================================================
 
 boolean MS_StripFilename(char *name)
@@ -314,8 +346,8 @@ boolean MS_StripFilename(char *name)
 		{ // No directory delimiter
 			return NO;
 		}
-	} while(*c != DIRECTORY_DELIMITER_CHAR && *c != '/');
-	*c = 0;
+	} while(!MS_IsDirectoryDelimiter(*c));
+	*(c+1) = 0;
 	return YES;
 }
 
@@ -352,4 +384,25 @@ void MS_Message(msg_t type, char *text, ...)
 		vfprintf(fp, text, argPtr);
 		va_end(argPtr);
 	}
+}
+
+//==========================================================================
+//
+// MS_IsPathAbsolute
+//
+// Pascal 30/11/08
+//
+//==========================================================================
+
+boolean MS_IsPathAbsolute(char *name)
+{
+#if defined(_WIN32) || defined(__MSDOS__)
+	// In Windows, the second character must be : if it is an
+	// absolute path (the first character indicates the drive)
+	// or the first character is either / or \ for absolute path
+	if((name[0] != '\0') && (name[1] == ':'))
+		return TRUE;
+#endif
+	// In Unix-land, the first character must be / for a root path
+	return MS_IsDirectoryDelimiter(name[0]);
 }

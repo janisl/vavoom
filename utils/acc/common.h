@@ -56,6 +56,10 @@
 
 #define MAX_IMPORTS 256
 
+// Max number of include paths the user can specify
+// This includes the "working directory"!
+#define MAX_INCLUDE_PATHS 16
+
 // Maximum number of translations that can be used
 #define MAX_TRANSLATIONS 32
 
@@ -73,12 +77,12 @@ enum
 #define ASCII_QUOTE 34
 #define ASCII_UNDERSCORE 95
 #define EOF_CHARACTER 127
-#if defined(DJGPP) || defined(_WIN32)
-#define DIRECTORY_DELIMITER "\\"
-#define DIRECTORY_DELIMITER_CHAR ('\\')
-#else
+#ifdef __NeXT__
 #define DIRECTORY_DELIMITER "/"
 #define DIRECTORY_DELIMITER_CHAR ('/')
+#else
+#define DIRECTORY_DELIMITER "\\"
+#define DIRECTORY_DELIMITER_CHAR ('\\')
 #endif
 
 
@@ -89,29 +93,14 @@ enum
 
 typedef unsigned int	boolean;
 typedef unsigned char	byte;
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-typedef int8_t				S_BYTE;
-typedef uint8_t				U_BYTE;
-typedef int16_t				S_WORD;
-typedef uint16_t			U_WORD;
-typedef int32_t				S_LONG;
-typedef uint32_t			U_LONG;
-#elif defined _WIN32
-typedef __int8				S_BYTE;
-typedef unsigned __int8		U_BYTE;
-typedef __int16				S_WORD;
-typedef unsigned __int16	U_WORD;
-typedef __int32				S_LONG;
-typedef unsigned __int32	U_LONG;
-#else
-typedef char				S_BYTE;
-typedef unsigned char		U_BYTE;
-typedef short				S_WORD;
-typedef unsigned short		U_WORD;
-typedef int					S_LONG;
-typedef unsigned int		U_LONG;
-#endif
+typedef signed char		S_BYTE;
+typedef unsigned char	U_BYTE;
+typedef signed short	S_WORD;
+typedef unsigned short	U_WORD;
+typedef int			S_INT;
+typedef unsigned int	U_INT;
+// typedef signed long		S_LONG;
+// typedef unsigned long	U_LONG;
 
 enum ImportModes
 {
