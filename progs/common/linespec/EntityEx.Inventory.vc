@@ -384,6 +384,27 @@ final int CheckInventory(name ItemName)
 
 //===========================================================================
 //
+//  UseInventoryName
+//
+//===========================================================================
+
+final int UseInventoryName(name ItemName)
+{
+	class<Inventory> ItemClass = class<Inventory>(FindClassLowerCase(
+		ItemName));
+	if (ItemClass)
+	{
+		Inventory Item = FindInventory(ItemClass);
+		if (Item)
+		{
+			return UseInventory(Item);
+		}
+	}
+	return 0;
+}
+
+//===========================================================================
+//
 //  GetArmorPoints
 //
 //===========================================================================

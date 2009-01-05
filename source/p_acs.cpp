@@ -4710,7 +4710,7 @@ int VAcs::RunScript(float DeltaTime)
 				{
 					int Count = 0;
 					for (VEntity* Ent = Level->FindMobjFromTID(sp[-3], NULL);
-						Ent; Ent = Level->FindMobjFromTID(sp[-2], Ent))
+						Ent; Ent = Level->FindMobjFromTID(sp[-3], Ent))
 					{
 						VStateLabel* Lbl = Ent->GetClass()->FindStateLabel(
 							Names, !!sp[-1]);
@@ -4734,15 +4734,51 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_UseInventory)
 			STUB(PCD_UseInventory)
-			//sp[-1] - item name (string)
-			//Pushes result
+			if (Activator)
+			{
+				sp[-1] = Activator->eventUseInventoryName(GetNameLowerCase(
+					sp[-1]));
+			}
+			else
+			{
+				sp[-1] = 0;
+				for (int i = 0; i < MAXPLAYERS; i++)
+				{
+					if (Level->Game->Players[i] &&
+						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+					{
+						sp[-1] += Level->Game->Players[i]->MO->eventUseInventoryName(
+							GetNameLowerCase(sp[-1]));
+					}
+				}
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_UseActorInventory)
 			STUB(PCD_UseActorInventory)
-			//sp[-2] - TID
-			//sp[-1] - item name (string)
-			//Pushes result
+			if (sp[-2])
+			{
+				int Ret = 0;
+				for (VEntity* Ent = Level->FindMobjFromTID(sp[-2], NULL);
+					Ent; Ent = Level->FindMobjFromTID(sp[-2], Ent))
+				{
+					Ret += Ent->eventUseInventoryName(GetNameLowerCase(sp[-1]));
+				}
+				sp[-2] = Ret;
+			}
+			else
+			{
+				sp[-1] = 0;
+				for (int i = 0; i < MAXPLAYERS; i++)
+				{
+					if (Level->Game->Players[i] &&
+						Level->Game->Players[i]->PlayerFlags & VBasePlayer::PF_Spawned)
+					{
+						sp[-1] += Level->Game->Players[i]->MO->eventUseInventoryName(
+							GetNameLowerCase(sp[-1]));
+					}
+				}
+			}
 			sp--;
 			ACSVM_BREAK;
 

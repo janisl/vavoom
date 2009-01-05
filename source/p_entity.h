@@ -391,6 +391,12 @@ class VEntity : public VThinker
 		P_PASS_NAME(ItemName);
 		EV_RET_INT_IDX(FIndex_CheckInventory);
 	}
+	int eventUseInventoryName(VName ItemName)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(ItemName);
+		EV_RET_INT(NAME_UseInventoryName);
+	}
 	int eventGetSigilPieces()
 	{
 		P_PASS_SELF;
