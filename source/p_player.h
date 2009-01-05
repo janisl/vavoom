@@ -126,7 +126,6 @@ class VBasePlayer : public VObject
 	vuint8			TranslEnd;
 	vint32			Colour;
 
-	// Copied from cmd, needed for PROGS, which supports only 4 byte ints
 	float			ClientForwardMove;	// *2048 for move
 	float			ClientSideMove;		// *2048 for move
 	float			ForwardMove;	// *2048 for move
@@ -134,6 +133,9 @@ class VBasePlayer : public VObject
 	float			FlyMove;		// fly up/down/centreing
 	vuint8			Buttons;		// fire, use
 	vuint8			Impulse;		// weapon changes, inventory, etc
+	//	For ACS
+	vuint8			OldButtons;
+	TAVec			OldViewAngles;
 
 	VEntity*		MO;
 	VEntity*		Camera;
@@ -210,6 +212,7 @@ class VBasePlayer : public VObject
 	void HandleInput();
 	bool Responder(event_t*);
 	void ClearInput();
+	int AcsGetInput(int);
 
 	//	Implementation of server to client events.
 	void DoClientStartSound(int, TVec, int, int, float, float, bool);

@@ -4881,10 +4881,26 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetPlayerInput)
-			STUB(PCD_GetPlayerInput)
-			//sp[-2] - player index
-			//sp[-1] - input type
-			//Pushes result
+			if (sp[-2] < 0)
+			{
+				if (Activator && Activator->Player)
+				{
+					sp[-2] = Activator->Player->AcsGetInput(sp[-1]);
+				}
+				else
+				{
+					sp[-2] = 0;
+				}
+			}
+			else if (sp[-2] < MAXPLAYERS && Level->Game->Players[sp[-2]] &&
+				(Level->Game->Players[sp[-2]]->PlayerFlags & VBasePlayer::PF_Spawned))
+			{
+				sp[-2] = Level->Game->Players[sp[-2]]->AcsGetInput(sp[-1]);
+			}
+			else
+			{
+				sp[-2] = 0;
+			}
 			sp--;
 			ACSVM_BREAK;
 

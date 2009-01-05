@@ -76,7 +76,6 @@ byte					TranslStart;
 byte					TranslEnd;
 int						Colour;
 
-// Copied from cmd, needed for PROGS, which supports only 4 byte ints
 float					ClientForwardMove;	// *2048 for move
 float					ClientSideMove;	// *2048 for move
 float					ForwardMove;	// *2048 for move
@@ -84,6 +83,9 @@ float					SideMove;	// *2048 for move
 float					FlyMove;	// fly up/down/centreing
 byte					Buttons;	// fire, use
 byte					Impulse;	// weapon changes, inventory, etc
+//	For ACS
+byte					OldButtons;
+TAVec					OldViewAngles;
 
 Entity					MO;
 Entity					Camera;

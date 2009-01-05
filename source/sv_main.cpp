@@ -404,7 +404,9 @@ void SV_RunClients()
 			{
 				Player->Buttons &= ~BT_JUMP;
 			}
+			Player->OldViewAngles = Player->ViewAngles;
 			Player->eventPlayerTick(host_frametime);
+			Player->OldButtons = Player->Buttons;
 		}
 	}
 

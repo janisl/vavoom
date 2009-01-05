@@ -82,6 +82,26 @@ public:
 	TKButton	&Key;
 };
 
+enum
+{
+	INPUT_OLDBUTTONS,
+	INPUT_BUTTONS,
+	INPUT_PITCH,
+	INPUT_YAW,
+	INPUT_ROLL,
+	INPUT_FORWARDMOVE,
+	INPUT_SIDEMOVE,
+	INPUT_UPMOVE,
+	MODINPUT_OLDBUTTONS,
+	MODINPUT_BUTTONS,
+	MODINPUT_PITCH,
+	MODINPUT_YAW,
+	MODINPUT_ROLL,
+	MODINPUT_FORWARDMOVE,
+	MODINPUT_SIDEMOVE,
+	MODINPUT_UPMOVE
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -702,5 +722,88 @@ void VBasePlayer::ClearInput()
 	joyxmove = joyymove = 0; 
 	mousex = mousey = 0;
 	impulse_cmd = 0;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VBasePlayer::AcsGetInput
+//
+//==========================================================================
+
+int VBasePlayer::AcsGetInput(int InputType)
+{
+	guard(VBasePlayer::AcsGetInput);
+	int Btn;
+	int Ret = 0;
+	switch (InputType)
+	{
+	case INPUT_OLDBUTTONS:
+	case MODINPUT_OLDBUTTONS:
+	case INPUT_BUTTONS:
+	case MODINPUT_BUTTONS:
+		if (InputType == INPUT_OLDBUTTONS ||
+			InputType == MODINPUT_OLDBUTTONS)
+		{
+			Btn = OldButtons;
+		}
+		else
+		{
+			Btn = Buttons;
+		}
+		//	Convert buttons to what ACS expects.
+		if (Btn & BT_ATTACK)
+		{
+			Ret |= 1;
+		}
+		if (Btn & BT_USE)
+		{
+			Ret |= 2;
+		}
+		if (Btn & BT_JUMP)
+		{
+			Ret |= 4;
+		}
+		if (Btn & BT_ALT_ATTACK)
+		{
+			Ret |= 32;
+		}
+		return Ret;
+
+	case INPUT_PITCH:
+		return (int)(AngleMod(OldViewAngles.pitch) * 0x10000 / 360);
+
+	case MODINPUT_PITCH:
+		return (int)(AngleMod(ViewAngles.pitch) * 0x10000 / 360);
+
+	case INPUT_YAW:
+		return (int)(AngleMod(OldViewAngles.yaw) * 0x10000 / 360);
+
+	case MODINPUT_YAW:
+		return (int)(AngleMod(ViewAngles.yaw) * 0x10000 / 360);
+
+	case INPUT_ROLL:
+		return (int)(AngleMod(OldViewAngles.roll) * 0x10000 / 360);
+
+	case MODINPUT_ROLL:
+		return (int)(AngleMod(ViewAngles.roll) * 0x10000 / 360);
+
+	case INPUT_FORWARDMOVE:
+		return (int)(ClientForwardMove * 0x32 / 400);
+
+	case MODINPUT_FORWARDMOVE:
+		return (int)(ForwardMove * 0x32 / 400);
+
+	case INPUT_SIDEMOVE:
+		return (int)(ClientSideMove * 0x32 / 400);
+
+	case MODINPUT_SIDEMOVE:
+		return (int)(SideMove * 0x32 / 400);
+
+	case INPUT_UPMOVE:
+	case MODINPUT_UPMOVE:
+		return (int)(FlyMove * 3 * 256 / 80);
+	}
+	return 0;
 	unguard;
 }
