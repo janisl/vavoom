@@ -988,6 +988,7 @@ void SV_MapTeleport(VName mapname)
 		}
 	}
 
+	sv_map_travel = true;
 	if (!deathmatch && Sys_FileExists(SAVE_MAP_NAME_ABS(BASE_SLOT, *mapname)))
 	{
 		// Unarchive map

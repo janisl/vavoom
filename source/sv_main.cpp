@@ -56,6 +56,7 @@ server_static_t	svs;
 int				validcount = 1;
 
 bool			sv_loading = false;
+bool			sv_map_travel = false;
 int				sv_load_num_players;
 bool			run_open_scripts;
 
@@ -1051,6 +1052,7 @@ void SV_ShutdownGame()
 	else
 	{
 		sv_loading = false;
+		sv_map_travel = false;
 
 		// make sure all the clients know we're disconnecting
 		int count = NET_SendToAll(5);

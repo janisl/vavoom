@@ -59,6 +59,7 @@ enum
 	SCRIPT_Lightning	= 12,
 	SCRIPT_Unloading	= 13,
 	SCRIPT_Disconnect	= 14,
+	SCRIPT_Return		= 15,
 };
 
 class VAcs;
@@ -244,6 +245,7 @@ extern vuint8			deathmatch;   			// only if started as net death
 extern bool				paused;
 
 extern bool				sv_loading;
+extern bool				sv_map_travel;
 extern int				sv_load_num_players;
 extern bool				run_open_scripts;
 

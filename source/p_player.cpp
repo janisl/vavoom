@@ -255,11 +255,17 @@ void VBasePlayer::SpawnClient()
 		Level->XLevel->Acs->StartTypedACScripts(SCRIPT_Enter, 0, 0, 0, MO,
 			true, false);
 	}
+	else if (sv_map_travel)
+	{
+		Level->XLevel->Acs->StartTypedACScripts(SCRIPT_Return, 0, 0, 0, MO,
+			true, false);
+	}
 
 	if (GGameInfo->NetMode < NM_DedicatedServer ||
 		svs.num_connected == sv_load_num_players)
 	{
 		sv_loading = false;
+		sv_map_travel = false;
 	}
 
 	// For single play, save immediately into the reborn slot

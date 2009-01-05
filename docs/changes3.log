@@ -3803,3 +3803,4 @@
  as binary and hexadecimal print statements.
   I increased save percentage of GreenArmor because roundoff errors made it
  less efficient.
+  I added support for "return" ACS script type.
