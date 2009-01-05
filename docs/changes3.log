@@ -3797,4 +3797,5 @@
   I added support for single texture fonts created by ACS command setfont to
  be able to use animated textures.
   I updated acc to latest version.
-  I implemented ACS commands UseInventory, UseActorInventory.
+  I implemented ACS commands UseInventory, UseActorInventory,
+ CheckActorCeilingTexture, CheckActorFloorTexture.

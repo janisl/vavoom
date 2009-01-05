@@ -4733,7 +4733,6 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_UseInventory)
-			STUB(PCD_UseInventory)
 			if (Activator)
 			{
 				sp[-1] = Activator->eventUseInventoryName(GetNameLowerCase(
@@ -4755,7 +4754,6 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_UseActorInventory)
-			STUB(PCD_UseActorInventory)
 			if (sp[-2])
 			{
 				int Ret = 0;
@@ -4783,18 +4781,36 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckActorCeilingTexture)
-			STUB(PCD_CheckActorCeilingTexture)
-			//sp[-2] - TID
-			//sp[-1] - texture name
-			//Pushes result
+			{
+				VEntity* Ent = EntityFromTID(sp[-2], Activator);
+				if (Ent)
+				{
+					int Tex = GTextureManager.CheckNumForName(GetName8(sp[-1]),
+						TEXTYPE_Wall, true);
+					sp[-2] = Ent->Sector->ceiling.pic == Tex;
+				}
+				else
+				{
+					sp[-2] = 0;
+				}
+			}
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckActorFloorTexture)
-			STUB(PCD_CheckActorFloorTexture)
-			//sp[-2] - TID
-			//sp[-1] - texture name
-			//Pushes result
+			{
+				VEntity* Ent = EntityFromTID(sp[-2], Activator);
+				if (Ent)
+				{
+					int Tex = GTextureManager.CheckNumForName(GetName8(sp[-1]),
+						TEXTYPE_Wall, true);
+					sp[-2] = Ent->Sector->floor.pic == Tex;
+				}
+				else
+				{
+					sp[-2] = 0;
+				}
+			}
 			sp--;
 			ACSVM_BREAK;
 
