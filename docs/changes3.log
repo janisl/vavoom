@@ -3681,3 +3681,116 @@
 25.10.2008
   I changed object map channel to wait for open message to be acked before
  sending any more.
+27.10.2008
+  More object map channel fixes.
+06.11.2008
+  I fixed texture coordinate correction when plane has reached destination.
+11.11.2008
+  I moved client input handling methods to the player class.
+13.11.2008
+  I changed client game to contain intermission info structure instead of a
+ pointer.
+  I moved some more methods to player class.
+  I removed automap savegame hack.
+  I renamed cl_input.cpp to p_player_input and moved demo playback code to
+ cl_main.cpp.
+16.11.2008
+  I moved level's thinker related methods to a separate file.
+17.11.2008
+  I moved ChangeMusic to LevelInfo.
+  I renamed sound system files to have prefix snd_.
+22.11.2008
+  I fixed spawning of thinkers in multiplayer games.
+25.11.2008
+  In game info class I added NetMode field. This should replace some other
+ variables. I changed use of host_titlemap with NetMode.
+26.11.2008
+  I replaced multiple variables with NetMode checks.
+29.11.2008
+  I moved demo playback and recording classes to a separate file.
+  I moved some methods to connection class.
+30.11.2008
+  I implemented demo recording in standalone mode.
+01.12.2008
+  I added listen server net mode, which is multiplayer server with a local
+ client being one of the players (like in standalone). After that I removed
+ net modes that use loopback.
+02.12.2008
+  I added a single method that shuts down the game.
+06.12.2008
+  I inlined CL_Disconnect and SV_ShutdownServer into SV_ShutdownGame.
+17.12.2008
+  In channel class I added helper methods for sending and reading RPCs and
+ changed relevant places to use them.
+  I moved field, property and function flag definitions to correspnding header
+ files.
+  I moved reading of progs package to package class.
+19.12.2008
+  In DECORATE parser I added property hashing, didn't give much.
+25.12.2008
+  I extended opening structure with additional fields.
+  I added precaching of field pointers during loading of DECORATE definitions.
+  I discovered that during class creation code that deals with methods iterates
+ through all members. Since class has list of methods for compiler, I changed
+ it to be saved and use it instead which is much faster.
+  I changed names to treat 'none' as 'None'.
+  I changed flags parser not to use alternative name and to precache pointers
+ to fields like properties, added hashing.
+  Firebrand added some fixes to missile spawning methods.
+26.12.2008
+  I discovered that string hashing used by names works very bad causing only
+ 1/32 of the hash table to be used. I changed it to use crc table that gives
+ good hash values significantly improving speed of names constructor.
+  I fixed sky plane not having all fields initialised.
+27.12.2008
+  I changed teleportation code not to adjust player's view z value if it's
+ voodoo doll that teleports.
+  I added back sight checking code that uses blockmap. For maps with large
+ number of monsters it works much faster.
+  I added suppport for maps with more than 32k sidedefs.
+28.12.2008
+  I changed clamping of sector and sidedef offsets to be done by scrollers
+ so it doesn't have to be done for entire level each frame.
+  I changed on-mobj check to be done only if actor has vertical velocity or is
+ not standing on the ground.
+  I fixed BOOM's generic platform special having wrong delay.
+30.12.2008
+  I changed ChangeSector method to use BOOM's method which is much faster and
+ more accurate.
+31.12.2008
+  I split separately floating bob handling, it it's not an item, it can have
+ gravity now.
+  I reorganised vertical movement handling to first check if actor is not on
+ ground or has vertical velocity and then branch depending on pass-mobj. For
+ some reason this works faster.
+01.01.2009
+  When item is picked up and added to inventory, set TID to 0 so it cannot be
+ manipulated by scripts anymore.
+  I changed block line and things iterators not to be inherited from script
+ iterator since they are not used as such, this eliminates virtual function
+ calls. I changed block things iterator to be fully inlined.
+  I tried to optimise PointInSubsector method, hopefully it's a little bit
+ faster now.
+02.01.2009
+  I added support for maps that don't have node lumps present at all.
+  I moved some entity methods to engine and made collision iterator callbacks
+ non-static.
+03.01.2009
+  I did some fixes to BOOM thing carrying scrollers.
+  I added message when toggling always run.
+04.01.2009
+  I fixed titlemap having room for status bar.
+  I changed boss brain explosions not to have damage set to avoid it doing any
+ damage.
+  I fixed dropping of ammo and picking it up in baby and nightmare skills
+ doubling the amount.
+  I fixed A_Wander using Threshold as a timer while it should be using
+ ReactionCount.
+  I changed Thing_SetSpecial and Thing_SetTranslation to use activator if tid
+ is 0.
+  I added NULL pointer check in PolyBusy.
+  I added damage type to instant death sector type.
+  I removed ATTN_SURROUND, it wasn't used anyway.
+  I changed STCFN121 font character handling to treat it as '|'.
+05.01.2009
+  I added APROP_SpawnHealth actor property.
