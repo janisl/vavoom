@@ -2303,7 +2303,10 @@ final void SetActorProperty(int Prop, int IntVal, string StrVal)
 		break;
 
 	case APROP_JumpZ:
-		PlayerPawn(self).JumpVelZ = itof(IntVal) / 65536.0 * 35.0;
+		if (PlayerPawn(self))
+		{
+			PlayerPawn(self).JumpVelZ = itof(IntVal) / 65536.0 * 35.0;
+		}
 		break;
 
 	case APROP_ChaseGoal:
@@ -2340,6 +2343,13 @@ final void SetActorProperty(int Prop, int IntVal, string StrVal)
 
 	case APROP_ActiveSound:
 		ActiveSound = StrToName(StrVal);
+		break;
+
+	case APROP_SpawnHealth:
+		if (PlayerPawn(self))
+		{
+			PlayerPawn(self).MaxHealth = IntVal;
+		}
 		break;
 	}
 }

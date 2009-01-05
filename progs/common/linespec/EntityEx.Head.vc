@@ -83,6 +83,7 @@ enum
 	APROP_Frightened	= 14,
 	APROP_Gravity		= 15,
 	APROP_Friendly		= 16,
+	APROP_SpawnHealth	= 17,
 	APROP_SeeSound		= 5,	// Sounds can only be set, not gotten
 	APROP_AttackSound	= 6,
 	APROP_PainSound		= 7,
