@@ -3794,3 +3794,5 @@
   I changed STCFN121 font character handling to treat it as '|'.
 05.01.2009
   I added APROP_SpawnHealth actor property.
+  I added support for single texture fonts created by ACS command setfont to
+ be able to use animated textures.

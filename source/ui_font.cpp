@@ -686,6 +686,7 @@ VFont::VFont(VName AName, const VStr& FormatStr, int First, int Count,
 				TEXTYPE_Pic)];
 			FFontChar& FChar = Chars.Alloc();
 			FChar.Char = Char;
+			FChar.TexNum = -1;
 			FChar.BaseTex = Tex;
 			if (Char < 128)
 			{
@@ -904,6 +905,7 @@ VTexture* VFont::GetChar(int Chr, int* pWidth, int Colour) const
 		Colour = CR_UNTRANSLATED;
 	}
 	VTexture* Tex = Chars[Idx].Textures ? Chars[Idx].Textures[Colour] :
+		Chars[Idx].TexNum > 0 ? GTextureManager(Chars[Idx].TexNum) :
 		Chars[Idx].BaseTex;
 	*pWidth = Tex->GetScaledWidth();
 	return Tex;
@@ -1252,6 +1254,7 @@ VSpecialFont::VSpecialFont(VName AName, const TArray<int>& CharIndexes,
 			TEXTYPE_Pic)];
 		FFontChar& FChar = Chars.Alloc();
 		FChar.Char = Char;
+		FChar.TexNum = -1;
 		FChar.BaseTex = Tex;
 		if (Char < 128)
 		{
@@ -1384,6 +1387,7 @@ VFon1Font::VFon1Font(VName AName, int LumpNum)
 	{
 		FFontChar& FChar = Chars.Alloc();
 		FChar.Char = i;
+		FChar.TexNum = -1;
 
 		//	Create texture objects for all different colours.
 		FChar.Textures = new VTexture*[TextColours.Num()];
@@ -1532,6 +1536,7 @@ VFon2Font::VFon2Font(VName AName, int LumpNum)
 		{
 			FFontChar& FChar = Chars.Alloc();
 			FChar.Char = Chr;
+			FChar.TexNum = -1;
 			if (Chr < 128)
 			{
 				AsciiChars[Chr] = Chars.Num() - 1;
@@ -1609,6 +1614,7 @@ VSingleTextureFont::VSingleTextureFont(VName AName, int TexNum)
 
 	FFontChar& FChar = Chars.Alloc();
 	FChar.Char = 'A';
+	FChar.TexNum = TexNum;
 	FChar.BaseTex = Tex;
 	FChar.Textures = NULL;
 	unguard;

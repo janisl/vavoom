@@ -43,6 +43,7 @@ protected:
 	struct FFontChar
 	{
 		int				Char;
+		int				TexNum;
 		VTexture*		BaseTex;
 		VTexture**		Textures;
 	};
