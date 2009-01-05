@@ -357,7 +357,7 @@ bool PolyBusy(int polyobj)
 //
 //==========================================================================
 
-int ThingCount(int type, name TypeName, int tid)
+int ThingCount(int type, name TypeName, int tid, int SectorTag)
 {
 	return 0;
 }

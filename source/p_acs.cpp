@@ -2378,13 +2378,13 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCount)
-			sp[-2] = Level->eventThingCount(sp[-2], NAME_None, sp[-1]);
+			sp[-2] = Level->eventThingCount(sp[-2], NAME_None, sp[-1], -1);
 			sp--;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCountDirect)
 			*sp = Level->eventThingCount(READ_INT32(ip), NAME_None,
-				READ_INT32(ip + 4));
+				READ_INT32(ip + 4), -1);
 			ip += 8;
 			sp++;
 			ACSVM_BREAK;
@@ -4284,7 +4284,7 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_ThingCountName)
 			sp[-2] = Level->eventThingCount(0, GetNameLowerCase(sp[-2]),
-				sp[-1]);
+				sp[-1], -1);
 			sp--;
 			ACSVM_BREAK;
 
@@ -4835,20 +4835,13 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCountSector)
-			STUB(PCD_ThingCountSector)
-			//sp[-3] - type
-			//sp[-2] - TID
-			//sp[-1] - sector tag
-			//Pushes result
+			sp[-3] = Level->eventThingCount(sp[-3], NAME_None, sp[-2], sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_ThingCountNameSector)
-			STUB(PCD_ThingCountNameSector)
-			//sp[-3] - type (string)
-			//sp[-2] - TID
-			//sp[-1] - sector tag
-			//Pushes result
+			sp[-3] = Level->eventThingCount(0, GetNameLowerCase(sp[-3]),
+				sp[-2], sp[-1]);
 			sp -= 2;
 			ACSVM_BREAK;
 

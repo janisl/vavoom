@@ -6307,7 +6307,7 @@ final bool PolyBusy(int polyobj)
 //
 //==========================================================================
 
-final int ThingCount(int type, name TypeName, int tid)
+final int ThingCount(int type, name TypeName, int tid, int SectorTag)
 {
 	class<EntityEx>		moType;
 
@@ -6331,7 +6331,7 @@ final int ThingCount(int type, name TypeName, int tid)
 	}
 
 	//	Count things.
-	int Count = DoThingCount(moType, tid);
+	int Count = DoThingCount(moType, tid, SectorTag);
 	if (moType)
 	{
 		//	If this class has a replacement, count number of instances of
@@ -6340,7 +6340,7 @@ final int ThingCount(int type, name TypeName, int tid)
 			moType));
 		if (RepType != moType)
 		{
-			Count += DoThingCount(RepType, tid);
+			Count += DoThingCount(RepType, tid, SectorTag);
 		}
 	}
 	return Count;
@@ -6352,7 +6352,7 @@ final int ThingCount(int type, name TypeName, int tid)
 //
 //==========================================================================
 
-final int DoThingCount(class<EntityEx> moType, int tid)
+final int DoThingCount(class<EntityEx> moType, int tid, int SectorTag)
 {
 	int					count;
 	EntityEx			Ent;
@@ -6372,6 +6372,11 @@ final int DoThingCount(class<EntityEx> moType, int tid)
 			if (Inventory(Ent) && Ent.Owner)
 			{
 				//	Don't count things in somebody's inventory
+				continue;
+			}
+			if (SectorTag != -1 && Ent.Sector->tag != SectorTag)
+			{
+				//	Wrong sector tag.
 				continue;
 			}
 			if (!moType || moType == Ent.Class)
@@ -6398,6 +6403,11 @@ final int DoThingCount(class<EntityEx> moType, int tid)
 			if (Inventory(Ent) && Ent.Owner)
 			{
 				//	Don't count things in somebody's inventory
+				continue;
+			}
+			if (SectorTag != -1 && Ent.Sector->tag != SectorTag)
+			{
+				//	Wrong sector tag.
 				continue;
 			}
 			count++;

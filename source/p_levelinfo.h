@@ -218,12 +218,13 @@ class VLevelInfo : public VThinker
 		P_PASS_INT(polyobj);
 		EV_RET_BOOL(NAME_PolyBusy);
 	}
-	int eventThingCount(int type, VName TypeName, int tid)
+	int eventThingCount(int type, VName TypeName, int tid, int SectorTag)
 	{
 		P_PASS_SELF;
 		P_PASS_INT(type);
 		P_PASS_NAME(TypeName);
 		P_PASS_INT(tid);
+		P_PASS_INT(SectorTag);
 		EV_RET_INT(NAME_ThingCount);
 	}
 	int eventExecuteActionSpecial(int Special, int Arg1, int Arg2, int Arg3,
