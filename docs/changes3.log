@@ -3798,4 +3798,4 @@
  be able to use animated textures.
   I updated acc to latest version.
   I implemented ACS commands UseInventory, UseActorInventory,
- CheckActorCeilingTexture, CheckActorFloorTexture.
+ CheckActorCeilingTexture, CheckActorFloorTexture, GetActorLightLevel.

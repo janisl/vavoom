@@ -4815,9 +4815,17 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_GetActorLightLevel)
-			STUB(PCD_GetActorLightLevel)
-			//sp[-1] - TID
-			//Pushes result
+			{
+				VEntity* Ent = EntityFromTID(sp[-1], Activator);
+				if (Ent)
+				{
+					sp[-1] = Ent->Sector->params.lightlevel;
+				}
+				else
+				{
+					sp[-1] = 0;
+				}
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_SetMugShotState)
