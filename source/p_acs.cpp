@@ -4732,6 +4732,120 @@ int VAcs::RunScript(float DeltaTime)
 			sp -= 2;
 			ACSVM_BREAK;
 
+		ACSVM_CASE(PCD_UseInventory)
+			STUB(PCD_UseInventory)
+			//sp[-1] - item name (string)
+			//Pushes result
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_UseActorInventory)
+			STUB(PCD_UseActorInventory)
+			//sp[-2] - TID
+			//sp[-1] - item name (string)
+			//Pushes result
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CheckActorCeilingTexture)
+			STUB(PCD_CheckActorCeilingTexture)
+			//sp[-2] - TID
+			//sp[-1] - texture name
+			//Pushes result
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CheckActorFloorTexture)
+			STUB(PCD_CheckActorFloorTexture)
+			//sp[-2] - TID
+			//sp[-1] - texture name
+			//Pushes result
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetActorLightLevel)
+			STUB(PCD_GetActorLightLevel)
+			//sp[-1] - TID
+			//Pushes result
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_SetMugShotState)
+			STUB(PCD_SetMugShotState)
+			//sp[-1] - state (string)
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingCountSector)
+			STUB(PCD_ThingCountSector)
+			//sp[-3] - type
+			//sp[-2] - TID
+			//sp[-1] - sector tag
+			//Pushes result
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ThingCountNameSector)
+			STUB(PCD_ThingCountNameSector)
+			//sp[-3] - type (string)
+			//sp[-2] - TID
+			//sp[-1] - sector tag
+			//Pushes result
+			sp -= 2;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_CheckPlayerCamera)
+			STUB(PCD_CheckPlayerCamera)
+			//sp[-1] - player index
+			//Pushes result
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_MorphActor)
+			STUB(PCD_MorphActor)
+			//sp[-7] - TID
+			//sp[-6] - player class (string)
+			//sp[-5] - monster class (string)
+			//sp[-4] - duation
+			//sp[-3] - style
+			//sp[-2] - morph flash (string)
+			//sp[-1] - unmorph flash (string)
+			//Pushes result
+			sp -= 6;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_UnmorphActor)
+			STUB(PCD_UnmorphActor)
+			//sp[-2] - TID
+			//sp[-1] - force
+			//Pushes result
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_GetPlayerInput)
+			STUB(PCD_GetPlayerInput)
+			//sp[-2] - player index
+			//sp[-1] - input type
+			//Pushes result
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_ClassifyActor)
+			STUB(PCD_ClassifyActor)
+			//sp[-1] - TID
+			//Pushes result
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintBinary)
+			STUB(PCD_PrintBinary)
+			//sp[-1] - value
+			sp--;
+			ACSVM_BREAK;
+
+		ACSVM_CASE(PCD_PrintHex)
+			STUB(PCD_PrintHex)
+			//sp[-1] - value
+			sp--;
+			ACSVM_BREAK;
+
+
 		//	These p-codes are not supported. They will terminate script.
 		ACSVM_CASE(PCD_PlayerBlueSkull)
 		ACSVM_CASE(PCD_PlayerRedSkull)

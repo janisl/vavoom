@@ -365,6 +365,21 @@ enum EPCD
 	DECLARE_PCD(PrintBind),
 	DECLARE_PCD(SetActorState),
 	DECLARE_PCD(ThingDamage2),
+	DECLARE_PCD(UseInventory),
+	DECLARE_PCD(UseActorInventory),
+	DECLARE_PCD(CheckActorCeilingTexture),
+	DECLARE_PCD(CheckActorFloorTexture),
+	DECLARE_PCD(GetActorLightLevel),//340
+	DECLARE_PCD(SetMugShotState),
+	DECLARE_PCD(ThingCountSector),
+	DECLARE_PCD(ThingCountNameSector),
+	DECLARE_PCD(CheckPlayerCamera),
+	DECLARE_PCD(MorphActor),
+	DECLARE_PCD(UnmorphActor),
+	DECLARE_PCD(GetPlayerInput),
+	DECLARE_PCD(ClassifyActor),
+	DECLARE_PCD(PrintBinary),
+	DECLARE_PCD(PrintHex),//350
 
 #ifdef DECLARING_PCD_ENUM
 	PCODE_COMMAND_COUNT
