@@ -4846,9 +4846,17 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_CheckPlayerCamera)
-			STUB(PCD_CheckPlayerCamera)
-			//sp[-1] - player index
-			//Pushes result
+			if (sp[-1] < 0 || sp[-1] >= MAXPLAYERS ||
+				!Level->Game->Players[sp[-1]] ||
+				!(Level->Game->Players[sp[-1]]->PlayerFlags & VBasePlayer::PF_Spawned) ||
+				!Level->Game->Players[sp[-1]]->Camera)
+			{
+				sp[-1] = -1;
+			}
+			else
+			{
+				sp[-1] = Level->Game->Players[sp[-1]]->Camera->TID;
+			}
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_MorphActor)
