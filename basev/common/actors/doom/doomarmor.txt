@@ -6,7 +6,7 @@ actor GreenArmor : BasicArmorPickup 2018
 	Inventory.PickupMessage "$gotarmor"
 	Inventory.Icon "ARM1A0"
 	Armor.SaveAmount 100
-	Armor.SavePercent 33.33333
+	Armor.SavePercent 33.335
 	states
 	{
 	Spawn:

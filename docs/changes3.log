@@ -3801,3 +3801,5 @@
  ThingCountNameSector, CheckActorCeilingTexture, CheckActorFloorTexture,
  GetActorLightLevel, CheckPlayerCamera, GetPlayerInput, ClassifyActor as well
  as binary and hexadecimal print statements.
+  I increased save percentage of GreenArmor because roundoff errors made it
+ less efficient.
