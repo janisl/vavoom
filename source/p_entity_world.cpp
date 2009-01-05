@@ -1390,8 +1390,13 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 		}
 	}
 
-	eventCheckForSectorActions(OldSec, OldAboveFakeFloor,
-		OldAboveFakeCeiling);
+	//	Do additional check here to avoid calling progs.
+	if ((OldSec->heightsec && Sector->heightsec && Sector->ActionList) ||
+		(OldSec != Sector && (OldSec->ActionList || Sector->ActionList)))
+	{
+		eventCheckForSectorActions(OldSec, OldAboveFakeFloor,
+			OldAboveFakeCeiling);
+	}
 
 	return true;
 	unguard;
