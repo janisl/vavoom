@@ -3807,3 +3807,4 @@
 07.01.2009
   I added "allowprotction" flag to terrain types that will make flat not damage
  player with a radiation suit.
+  I added SIXF_TRANSFERAMBUSHFLAG flag to A_SpawnItemEx.

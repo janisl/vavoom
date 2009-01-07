@@ -297,5 +297,9 @@ final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
 		{
 			A.TeleportMove(A.Origin, true);
 		}
+		if (Flags & 256)
+		{
+			A.bAmbush = bAmbush;
+		}
 	}
 }
