@@ -276,6 +276,7 @@ class Inventory extends Actor
 	action native A_Lower();
 	action native A_Raise();
 	action native A_ReFire();
+	action native A_ClearReFire();
 	action native A_GunFlash();
 	action native A_CheckReload();
 	action native A_Light(eval int value);

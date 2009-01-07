@@ -3812,3 +3812,4 @@
   I added spawn ID to Heretic's mace.
   I fixed powered up blaster playing weapon sound using missile as origin
  instead of player.
+  I added A_ClearReFire state action.
