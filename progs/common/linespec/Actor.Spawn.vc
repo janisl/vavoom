@@ -111,7 +111,7 @@ final void A_SpawnDebris(class<Actor> SpawnType, optional bool TransTransl,
 //==========================================================================
 
 final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
-	bool NoCheckPos)
+	bool NoCheckPos, bool Telestomp)
 {
 	if (!A)
 	{
@@ -128,6 +128,14 @@ final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
 	while (Instig && Instig.IsMissile(true))
 	{
 		Instig = Instig.Target;
+	}
+
+	if (Telestomp)
+	{
+		A.TeleportMove(A.Origin, true);
+		//	We need this, because otherwise nothing will be spawned if
+		// something was telestomped.
+		NoCheckPos = true;
 	}
 
 	if (A.bMonster)
@@ -230,7 +238,7 @@ final void A_SpawnItem(class<Actor> ItemType, optional float Distance,
 
 	EntityEx A = Spawn(ItemType, Origin + vector(Distance * cos(Angles.yaw),
 		Distance * sin(Angles.yaw), ZHeight - FloorClip));
-	InitSpawnedItem(A, TransTransl, UseAmmo, false);
+	InitSpawnedItem(A, TransTransl, UseAmmo, false, false);
 }
 
 //==========================================================================
@@ -280,7 +288,8 @@ final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
 	Org += Origin;
 
 	EntityEx A = Spawn(ItemType, Org);
-	InitSpawnedItem(A, !!(Flags & 1), !!(Flags & 16), !!(Flags & 32));
+	InitSpawnedItem(A, !!(Flags & 1), !!(Flags & 16), !!(Flags & 32),
+		!!(Flags & 64));
 	if (A)
 	{
 		A.Velocity.x = XVel * 35.0;
@@ -292,10 +301,6 @@ final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
 			//	The same issue as with offsets.
 			A.Velocity.y = -A.Velocity.y;
 			VectorRotateAroundZ(&A.Velocity, Angle);
-		}
-		if (Flags & 64)
-		{
-			A.TeleportMove(A.Origin, true);
 		}
 		if (Flags & 256)
 		{
