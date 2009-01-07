@@ -23,7 +23,9 @@
 //**
 //**************************************************************************
 
-class Mace : HereticWeapon;
+class Mace : HereticWeapon
+	game(GAME_Heretic)
+	__scriptid__(31);
 
 EntityEx		FirstSpot;
 int				SpotCount;
