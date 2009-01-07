@@ -3810,3 +3810,5 @@
   I added SIXF_TRANSFERAMBUSHFLAG flag to A_SpawnItemEx and changed the way
  telefrag flag is handled.
   I added spawn ID to Heretic's mace.
+  I fixed powered up blaster playing weapon sound using missile as origin
+ instead of player.

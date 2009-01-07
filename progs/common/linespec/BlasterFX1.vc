@@ -117,6 +117,7 @@ defaultproperties
 	bActivatePCross = true;
 	bActivateImpact = true;
 	bBloodSplatter = true;
+	bSpawnSoundSource = true;
 	SightSound = 'weapons/blastershoot';
 	DeathSound = 'weapons/blasterhit';
 	bBlaster = true;
