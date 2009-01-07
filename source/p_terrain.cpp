@@ -65,7 +65,8 @@ struct VTerrainInfo
 	VName		Splash;
 	enum
 	{
-		F_Liquid	= 0x00000001,
+		F_Liquid			= 0x00000001,
+		F_AllowProtection	= 0x00000002,
 	};
 	vuint32		Flags;
 	float		FootClip;
@@ -338,6 +339,10 @@ static void ParseTerrainScript(VScriptParser* sc)
 				{
 					sc->ExpectString();
 					TInfo->RightStepSounds = *sc->String;
+				}
+				else if (sc->Check("allowprotection"))
+				{
+					TInfo->Flags |= VTerrainInfo::F_AllowProtection;
 				}
 				else
 				{

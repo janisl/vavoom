@@ -3804,3 +3804,6 @@
   I increased save percentage of GreenArmor because roundoff errors made it
  less efficient.
   I added support for "return" ACS script type.
+07.01.2009
+  I added "allowprotction" flag to terrain types that will make flat not damage
+ player with a radiation suit.

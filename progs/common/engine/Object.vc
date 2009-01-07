@@ -1083,6 +1083,7 @@ struct VTerrainInfo
 	name		Name;
 	name		Splash;
 	bool		bLiquid;
+	bool		bAllowProtection;
 	float		FootClip;
 	int			DamageTimeMask;
 	int			DamageAmount;

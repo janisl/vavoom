@@ -726,6 +726,21 @@ final void PlayerOnSpecialFlat(VTerrainInfo* floorType)
 		// Player is not touching the floor
 		return;
 	}
+
+	if (floorType->bAllowProtection)
+	{
+		//	Search for iron feet power. Any subclass will do.
+		Inventory IronFeet = EntityEx(MO).Inventory;
+		while (IronFeet)
+		{
+			if (PowerIronFeet(IronFeet))
+			{
+				return;
+			}
+			IronFeet = IronFeet.Inventory;
+		}
+	}
+
 	if (floorType->DamageAmount && Level.XLevel.Time - LastSectorDamageTime >=
 		itof(floorType->DamageTimeMask + 1) / 35.0)
 	{
