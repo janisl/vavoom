@@ -3813,3 +3813,5 @@
   I fixed powered up blaster playing weapon sound using missile as origin
  instead of player.
   I added A_ClearReFire state action.
+08.01.2009
+  I changed all remaining texture coordinate calculations to ignore 3D floors.
