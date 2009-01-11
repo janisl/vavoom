@@ -3815,3 +3815,5 @@
   I added A_ClearReFire state action.
 08.01.2009
   I changed all remaining texture coordinate calculations to ignore 3D floors.
+11.01.2009
+  I added missing initialisation of DECORATE flags hash table.

@@ -261,6 +261,10 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 		{
 			Lst.PropsHash[i] = -1;
 		}
+		for (int i = 0; i < FLAGS_HASH_SIZE; i++)
+		{
+			Lst.FlagsHash[i] = -1;
+		}
 		for (VXmlNode* PN = N->FirstChild; PN; PN = PN->NextSibling)
 		{
 			if (PN->Name == "prop_int")
