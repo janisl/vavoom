@@ -34,11 +34,11 @@ final bool Morph(class<MorphedMonster> MonsterClass,
 {
 	if (bIsPlayer)
 	{
-		MorphPlayer(PlayerClass, Duration);
+		return MorphPlayer(PlayerClass, Duration);
 	}
 	else
 	{
-		MorphMonster(MonsterClass, Duration + Random() * 256.0 / 35.0);
+		return MorphMonster(MonsterClass, Duration + Random() * 256.0 / 35.0);
 	}
 }
 
@@ -73,12 +73,9 @@ final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration)
 		return false;
 	}
 
-print("Fog %p %v", TeleportFog, Origin + vector(0.0, 0.0,
-		LineSpecialGameInfo(Level.Game).TeleFogHeight));
 	Spawn(TeleportFog, Origin + vector(0.0, 0.0,
 		LineSpecialGameInfo(Level.Game).TeleFogHeight));
 
-print("Monster %p", MonsterClass);
 	MorphedMonster monster = Spawn(MonsterClass, Origin,,, false);
 	monster.SpecialCID = class<Actor>(Class);
 	monster.UnmorphTime = XLevel.Time + Duration;
@@ -132,6 +129,10 @@ final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration)
 		return false;
 	}
 	if (bNoMorph)
+	{
+		return false;
+	}
+	if (!PlayerClass)
 	{
 		return false;
 	}
