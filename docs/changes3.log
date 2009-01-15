@@ -3817,3 +3817,5 @@
   I changed all remaining texture coordinate calculations to ignore 3D floors.
 11.01.2009
   I added missing initialisation of DECORATE flags hash table.
+15.01.2009
+  I moved morphing methods to EntityEx class.

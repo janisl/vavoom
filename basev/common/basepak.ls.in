@@ -87,6 +87,7 @@ progs/linespec/EntityEx.Head.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Enti
 progs/linespec/EntityEx.Inventory.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.Inventory.vc
 progs/linespec/EntityEx.LineAttack.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.LineAttack.vc
 progs/linespec/EntityEx.Misc.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.Misc.vc
+progs/linespec/EntityEx.Morph.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.Morph.vc
 progs/linespec/EntityEx.Physics.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.Physics.vc
 progs/linespec/EntityEx.SpawnMissile.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.SpawnMissile.vc
 progs/linespec/FakeInventory.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FakeInventory.vc

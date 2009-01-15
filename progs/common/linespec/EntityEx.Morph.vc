@@ -1,0 +1,196 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+//==========================================================================
+//
+//	Morph
+//
+//==========================================================================
+
+final bool Morph(class<MorphedMonster> MonsterClass,
+	class<PlayerPawn> PlayerClass, float Duration)
+{
+	if (bIsPlayer)
+	{
+		MorphPlayer(PlayerClass, Duration);
+	}
+	else
+	{
+		MorphMonster(MonsterClass, Duration + Random() * 256.0 / 35.0);
+	}
+}
+
+//==========================================================================
+//
+//	MorphMonster
+//
+//==========================================================================
+
+final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration)
+{
+	int i;
+
+	if (bIsPlayer)
+	{
+		return false;
+	}
+	if (!bMonster)
+	{
+		return false;
+	}
+	if (bBoss)
+	{
+		return false;
+	}
+	if (bNoMorph)
+	{
+		return false;
+	}
+	if (!MonsterClass)
+	{
+		return false;
+	}
+
+print("Fog %p %v", TeleportFog, Origin + vector(0.0, 0.0,
+		LineSpecialGameInfo(Level.Game).TeleFogHeight));
+	Spawn(TeleportFog, Origin + vector(0.0, 0.0,
+		LineSpecialGameInfo(Level.Game).TeleFogHeight));
+
+print("Monster %p", MonsterClass);
+	MorphedMonster monster = Spawn(MonsterClass, Origin,,, false);
+	monster.SpecialCID = class<Actor>(Class);
+	monster.UnmorphTime = XLevel.Time + Duration;
+	monster.RenderStyle = RenderStyle;
+	monster.Alpha = Alpha;
+	monster.bShadow = bShadow;
+	monster.bGhost = bGhost;
+	monster.Target = Target;
+	monster.Angles.yaw = Angles.yaw;
+	monster.Special = Special;
+	monster.SetTID(TID);
+	for (i = 0; i < 5; i++)
+	{
+		monster.Args[i] = Args[i];
+	}
+
+	SetTID(0);
+
+	SetState(FindState('FreeTargMobj'));
+	MonsterMorphed();
+
+	return true;
+}
+
+//==========================================================================
+//
+//	MonsterMorphed
+//
+//==========================================================================
+
+void MonsterMorphed()
+{
+}
+
+//==========================================================================
+//
+//  MorphPlayer
+//
+//  Returns true if the player gets turned into a monster.
+//
+//==========================================================================
+
+final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration)
+{
+	Actor beastMo;
+	int i;
+
+	if (bInvulnerable)
+	{
+		// Immune when invulnerable
+		return false;
+	}
+	if (bNoMorph)
+	{
+		return false;
+	}
+	if (PlayerEx(Player).MorphTime)
+	{
+		// Player is already a beast
+		if ((PlayerEx(Player).MorphTime < Duration - 1.0) &&
+			!FindInventory(PowerWeaponLevel2))
+		{
+			//	Make a super monster
+			GiveInventoryType(PowerWeaponLevel2);
+		}
+		return false;
+	}
+
+	Spawn(TeleportFog, Origin + vector(0.0, 0.0,
+		LineSpecialGameInfo(Level.Game).TeleFogHeight));
+
+	beastMo = Spawn(PlayerClass, Origin,,, false);
+	beastMo.Tracer = PlayerEx(Player).ReadyWeapon;
+	beastMo.Angles = Angles;
+	beastMo.Player = Player;
+	beastMo.bIsPlayer = true;
+	Player.Health = beastMo.Health;
+	Player.MO = beastMo;
+	if (Player.Camera == self)
+	{
+		Player.Camera = beastMo;
+	}
+	BasicArmor Armor = BasicArmor(FindInventory(BasicArmor));
+	Armor.Amount = 0;
+	Armor.SavePercent = 0.0;
+	HexenArmor HArmor = HexenArmor(FindInventory(HexenArmor));
+	if (HArmor)
+	{
+		for (i = 0; i < 4; i++)
+		{
+			HArmor.Slots[i] = 0.0;
+		}
+	}
+	Inventory Pw = FindInventory(PowerGhost);
+	if (Pw)
+	{
+		Pw.Destroy();
+	}
+	Pw = FindInventory(PowerWeaponLevel2);
+	if (Pw)
+	{
+		Pw.Destroy();
+	}
+	beastMo.ObtainInventory(self);
+	beastMo.bShadow = bShadow;
+	beastMo.bGhost = bGhost;
+	beastMo.bFly = bFly;
+	PlayerEx(Player).MorphTime = Duration;
+	PlayerEx(Player).PlayerMorphed(self);
+	PlayerEx(Player).ActivateMorphWeapon();
+
+	SetState(FindState('FreeTargMobj'));
+
+	return true;
+}

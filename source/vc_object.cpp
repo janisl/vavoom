@@ -195,6 +195,8 @@ VObject* VObject::StaticSpawnObject(VClass* AClass)
 {
 	guard(VObject::StaticSpawnObject);
 	check(AClass);
+dprintf("Cls %p\n", AClass);
+dprintf("Name %s\n", AClass->GetName());
 	//	Allocate memory.
 	VObject* Obj = (VObject*)Z_Calloc(AClass->ClassSize);
 

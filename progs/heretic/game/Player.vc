@@ -396,12 +396,11 @@ void Cheat_Morph()
 	}
 	else
 	{
-		MorphProjectile Tmp = Level.Spawn(EggFX);
-		if (Tmp.MorphPlayer(Actor(MO)))
+		if (Actor(MO).MorphPlayer(EggFX.default.PlayerClass,
+			MorphProjectile::MORPHTIME))
 		{
 			cprint("CHICKEN ON");
 		}
-		Tmp.Destroy();
 	}
 }
 

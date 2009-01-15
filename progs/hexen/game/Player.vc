@@ -474,9 +474,8 @@ void Cheat_Morph()
 	}
 	else
 	{
-		MorphProjectile Tmp = Level.Spawn(PorkFX);
-		Tmp.MorphPlayer(Actor(MO));
-		Tmp.Destroy();
+		Actor(MO).MorphPlayer(PorkFX.default.PlayerClass,
+			MorphProjectile::MORPHTIME);
 	}
 	cprint("SQUEAL!!");
 }
@@ -572,7 +571,7 @@ void KilledActor(EntityEx Victim)
 //
 //==========================================================================
 
-void PlayerMorphed(Actor OldMO)
+void PlayerMorphed(EntityEx OldMO)
 {
 	PClass = HexenDefs::PCLASS_PIG;
 }

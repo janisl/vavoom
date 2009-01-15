@@ -57,6 +57,7 @@ enum
 #include "EntityEx.SpawnMissile.vc"
 #include "EntityEx.Damage.vc"
 #include "EntityEx.Inventory.vc"
+#include "EntityEx.Morph.vc"
 #include "EntityEx.Misc.vc"
 #include "EntityEx.Defaults.vc"
 #include "Actor.Misc.vc"
