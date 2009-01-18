@@ -396,8 +396,8 @@ void Cheat_Morph()
 	}
 	else
 	{
-		if (Actor(MO).MorphPlayer(EggFX.default.PlayerClass,
-			MorphProjectile::MORPHTIME))
+		if (Actor(MO).MorphPlayer(EggFX.default.PlayerClass, 0.0,
+			EggFX.default.MorphStyle, none, none))
 		{
 			cprint("CHICKEN ON");
 		}

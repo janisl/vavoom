@@ -26,6 +26,7 @@
 class MorphedMonster : Actor;
 
 float			UnmorphTime;
+class<Actor>	UnmorphFlash;
 
 //==========================================================================
 //
@@ -113,8 +114,8 @@ final bool UpdateMorphedMonster()
 	mo.bNoHatePlayers = bNoHatePlayers;
 	mo.bShadow = bShadow;
 	mo.bGhost = bGhost;
-	Spawn(TeleportFog, oldOrigin + vector(0.0, 0.0,
-		LineSpecialGameInfo(Level.Game).TeleFogHeight));
+	Spawn(UnmorphFlash ? UnmorphFlash : class<Actor>(TeleportFog), oldOrigin +
+		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
 	return true;
 }
 

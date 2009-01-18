@@ -63,6 +63,7 @@ enum
 	PROP_Float,
 	PROP_Speed,
 	PROP_Tics,
+	PROP_TicsSecs,
 	PROP_Percent,
 	PROP_FloatClamped,
 	PROP_FloatClamped2,
@@ -100,6 +101,7 @@ enum
 	PROP_DamageScreenColour,
 	PROP_HexenArmor,
 	PROP_StartItem,
+	PROP_MorphStyle,
 };
 
 enum
@@ -302,6 +304,11 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 				VPropDef& P = Lst.NewProp(PROP_Tics, PN);
 				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
+			else if (PN->Name == "prop_tics_secs")
+			{
+				VPropDef& P = Lst.NewProp(PROP_TicsSecs, PN);
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
+			}
 			else if (PN->Name == "prop_percent")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Percent, PN);
@@ -491,6 +498,11 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			{
 				VPropDef& P = Lst.NewProp(PROP_StartItem, PN);
 				P.SetField(Lst.Class, "DropItemList");
+			}
+			else if (PN->Name == "prop_morph_style")
+			{
+				VPropDef& P = Lst.NewProp(PROP_MorphStyle, PN);
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 			}
 			else if (PN->Name == "flag")
 			{
@@ -2447,6 +2459,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					sc->ExpectNumberWithSign();
 					P.Field->SetFloat(DefObj, sc->Number / 35.0);
 					break;
+				case PROP_TicsSecs:
+					sc->ExpectNumberWithSign();
+					P.Field->SetFloat(DefObj, sc->Number >= 0 ?
+						sc->Number / 35.0 : sc->Number);
+					break;
 				case PROP_Percent:
 					sc->ExpectFloat();
 					P.Field->SetFloat(DefObj, MID(0, sc->Float, 100) / 100.0);
@@ -3024,6 +3041,78 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					DropItems.Insert(0, DI);
 					break;
 				}
+				case PROP_MorphStyle:
+					if (sc->CheckNumber())
+					{
+						P.Field->SetInt(DefObj, sc->Number);
+					}
+					else
+					{
+						bool HaveParen = sc->Check("(");
+						int Val = 0;
+						do
+						{
+							if (sc->Check("MRF_ADDSTAMINA"))
+							{
+								Val |= 1;
+							}
+							else if (sc->Check("MRF_FULLHEALTH"))
+							{
+								Val |= 2;
+							}
+							else if (sc->Check("MRF_UNDOBYTOMEOFPOWER"))
+							{
+								Val |= 4;
+							}
+							else if (sc->Check("MRF_UNDOBYCHAOSDEVICE"))
+							{
+								Val |= 8;
+							}
+							else if (sc->Check("MRF_FAILNOTELEFRAG"))
+							{
+								Val |= 16;
+							}
+							else if (sc->Check("MRF_FAILNOLAUGH"))
+							{
+								Val |= 32;
+							}
+							else if (sc->Check("MRF_WHENINVULNERABLE"))
+							{
+								Val |= 64;
+							}
+							else if (sc->Check("MRF_LOSEACTUALWEAPON"))
+							{
+								Val |= 128;
+							}
+							else if (sc->Check("MRF_NEWTIDBEHAVIOUR"))
+							{
+								Val |= 256;
+							}
+							else if (sc->Check("MRF_UNDOBYDEATH"))
+							{
+								Val |= 512;
+							}
+							else if (sc->Check("MRF_UNDOBYDEATHFORCED"))
+							{
+								Val |= 1024;
+							}
+							else if (sc->Check("MRF_UNDOBYDEATHSAVES"))
+							{
+								Val |= 2048;
+							}
+							else
+							{
+								sc->Error("Bad morph style");
+							}
+						}
+						while (sc->Check("|"));
+						if (HaveParen)
+						{
+							sc->Expect(")");
+						}
+						P.Field->SetInt(DefObj, Val);
+					}
+					break;
 				}
 				FoundProp = true;
 				break;

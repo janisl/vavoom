@@ -382,5 +382,9 @@
 	<class name="MorphProjectile">
 		<prop_class name="MorphProjectile.MonsterClass" property="MonsterClass" />
 		<prop_class name="MorphProjectile.PlayerClass" property="PlayerClass" />
+		<prop_tics_secs name="MorphProjectile.Duration" property="Duration" />
+		<prop_morph_style name="MorphProjectile.MorphStyle" property="MorphStyle" />
+		<prop_class name="MorphProjectile.MorphFlash" property="MorphFlash" />
+		<prop_class name="MorphProjectile.UnmorphFlash" property="UnmorphFlash" />
 	</class>
 </vavoom_decorate_defs>

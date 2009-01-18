@@ -110,6 +110,8 @@ PlayerEx		PoisonerPlayer;	// for KArena
 int				Objectives;
 
 float			MorphTime;	// player is morphed into something if > 0
+int				MorphStyle;
+class<Actor>	UnmorphFlash;
 
 int				Accuracy;
 int				Stamina;
@@ -3335,7 +3337,8 @@ final bool UndoPlayerMorph()
 	PClass = BaseClass;
 	PostMorphWeapon(Weapon(Actor(MO).Tracer));
 
-	Level.Spawn(TeleportFog, MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
+	Level.Spawn(UnmorphFlash ? UnmorphFlash : class<Actor>(TeleportFog),
+		MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
 		20.0 * sin(MO.Angles.yaw),
 		LineSpecialGameInfo(Level.Game).TeleFogHeight));
 

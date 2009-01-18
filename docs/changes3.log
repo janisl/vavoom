@@ -3819,3 +3819,4 @@
   I added missing initialisation of DECORATE flags hash table.
 15.01.2009
   I moved morphing methods to EntityEx class.
+  I added new properties of the morph projectile class.

@@ -474,8 +474,8 @@ void Cheat_Morph()
 	}
 	else
 	{
-		Actor(MO).MorphPlayer(PorkFX.default.PlayerClass,
-			MorphProjectile::MORPHTIME);
+		Actor(MO).MorphPlayer(PorkFX.default.PlayerClass, 0.0,
+			PorkFX.default.MorphStyle, none, none);
 	}
 	cprint("SQUEAL!!");
 }

@@ -23,6 +23,24 @@
 //**
 //**************************************************************************
 
+const float MORPHTIME	= 40.0;
+
+// Morph style states how morphing affects health and other effects in the
+// game; only valid for players.
+const int
+	MORPH_ADDSTAMINA		= 0x00000001,	// Player has a "power" instead of a "curse" (add stamina instead of limiting to health)
+	MORPH_FULLHEALTH		= 0x00000002,	// Player uses new health semantics (!POWER => MaxHealth of animal, POWER => Normal health behaviour)
+	MORPH_UNDOBYTOMEOFPOWER	= 0x00000004,	// Player unmorphs upon activating a Tome of Power
+	MORPH_UNDOBYCHAOSDEVICE	= 0x00000008,	// Player unmorphs upon activating a Chaos Device
+	MORPH_FAILNOTELEFRAG	= 0x00000010,	// Player stays morphed if unmorph by Tome of Power fails
+	MORPH_FAILNOLAUGH		= 0x00000020,	// Player doesn't laugh if unmorph by Chaos Device fails
+	MORPH_WHENINVULNERABLE	= 0x00000040,	// Player can morph (or scripted unmorph) when invulnerable but ONLY if doing it to themselves
+	MORPH_LOSEACTUALWEAPON	= 0x00000080,	// Player loses specified morph weapon only (not "whichever they have when unmorphing")
+	MORPH_NEWTIDBEHAVIOUR	= 0x00000100,	// Actor TID is by default transferred from the old actor to the new actor
+	MORPH_UNDOBYDEATH		= 0x00000200,	// Actor unmorphs when killed and (unless MORPH_UNDOBYDEATHSAVES) stays dead
+	MORPH_UNDOBYDEATHFORCED	= 0x00000400,	// Actor (if unmorphed when killed) forces unmorph (not very useful with UNDOBYDEATHSAVES)
+	MORPH_UNDOBYDEATHSAVES	= 0x00000800;	// Actor (if unmorphed when killed) regains their health and doesn't die
+
 //==========================================================================
 //
 //	Morph
@@ -30,15 +48,18 @@
 //==========================================================================
 
 final bool Morph(class<MorphedMonster> MonsterClass,
-	class<PlayerPawn> PlayerClass, float Duration)
+	class<PlayerPawn> PlayerClass, float Duration, int MorphStyle,
+	class<Actor> MorphFlash, class<Actor> UnmorphFlash)
 {
 	if (bIsPlayer)
 	{
-		return MorphPlayer(PlayerClass, Duration);
+		return MorphPlayer(PlayerClass, Duration ? Duration : MORPHTIME,
+			MorphStyle, MorphFlash, UnmorphFlash);
 	}
 	else
 	{
-		return MorphMonster(MonsterClass, Duration + Random() * 256.0 / 35.0);
+		return MorphMonster(MonsterClass, (Duration ? Duration : MORPHTIME) +
+			Random() * 256.0 / 35.0, MorphStyle, MorphFlash, UnmorphFlash);
 	}
 }
 
@@ -48,7 +69,8 @@ final bool Morph(class<MorphedMonster> MonsterClass,
 //
 //==========================================================================
 
-final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration)
+final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration,
+	int MorphStyle, class<Actor> MorphFlash, class<Actor> UnmorphFlash)
 {
 	int i;
 
@@ -73,12 +95,13 @@ final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration)
 		return false;
 	}
 
-	Spawn(TeleportFog, Origin + vector(0.0, 0.0,
-		LineSpecialGameInfo(Level.Game).TeleFogHeight));
+	Spawn(MorphFlash ? MorphFlash : class<Actor>(TeleportFog), Origin +
+		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
 
 	MorphedMonster monster = Spawn(MonsterClass, Origin,,, false);
 	monster.SpecialCID = class<Actor>(Class);
 	monster.UnmorphTime = XLevel.Time + Duration;
+	monster.UnmorphFlash = UnmorphFlash;
 	monster.RenderStyle = RenderStyle;
 	monster.Alpha = Alpha;
 	monster.bShadow = bShadow;
@@ -118,7 +141,8 @@ void MonsterMorphed()
 //
 //==========================================================================
 
-final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration)
+final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration,
+	int MorphStyle, class<Actor> MorphFlash, class<Actor> UnmorphFlash)
 {
 	Actor beastMo;
 	int i;
@@ -148,8 +172,8 @@ final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration)
 		return false;
 	}
 
-	Spawn(TeleportFog, Origin + vector(0.0, 0.0,
-		LineSpecialGameInfo(Level.Game).TeleFogHeight));
+	Spawn(MorphFlash ? MorphFlash : class<Actor>(TeleportFog), Origin +
+		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
 
 	beastMo = Spawn(PlayerClass, Origin,,, false);
 	beastMo.Tracer = PlayerEx(Player).ReadyWeapon;
@@ -188,6 +212,8 @@ final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration)
 	beastMo.bGhost = bGhost;
 	beastMo.bFly = bFly;
 	PlayerEx(Player).MorphTime = Duration;
+	PlayerEx(Player).MorphStyle = MorphStyle;
+	PlayerEx(Player).UnmorphFlash = UnmorphFlash;
 	PlayerEx(Player).PlayerMorphed(self);
 	PlayerEx(Player).ActivateMorphWeapon();
 

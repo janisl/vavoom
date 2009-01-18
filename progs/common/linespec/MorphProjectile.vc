@@ -26,10 +26,12 @@
 class MorphProjectile : Actor
 	abstract;
 
-const float MORPHTIME	= 40.0;
-
 class<Actor>		MonsterClass;
 class<PlayerPawn>	PlayerClass;
+float				Duration;
+int					MorphStyle;
+class<Actor>		MorphFlash;
+class<Actor>		UnmorphFlash;
 
 //==========================================================================
 //
@@ -39,7 +41,8 @@ class<PlayerPawn>	PlayerClass;
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
-	victim.Morph(class<MorphedMonster>(MonsterClass), PlayerClass, MORPHTIME);
+	victim.Morph(class<MorphedMonster>(MonsterClass), PlayerClass, Duration,
+		MorphStyle, MorphFlash, UnmorphFlash);
 	return -1;	// Always return
 }
 
