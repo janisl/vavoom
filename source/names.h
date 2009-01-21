@@ -109,6 +109,8 @@ REGISTER_NAME(SkyBoxGetMate)
 REGISTER_NAME(SkyBoxGetPlaneAlpha)
 REGISTER_NAME(CalcFakeZMovement)
 REGISTER_NAME(ClassifyActor)
+REGISTER_NAME(MorphActor)
+REGISTER_NAME(UnmorphActor)
 
 //	LevelInfo events
 REGISTER_NAME(SpawnSpecials)

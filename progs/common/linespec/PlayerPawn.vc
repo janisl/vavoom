@@ -260,6 +260,21 @@ int GetSigilPieces()
 	return PlayerEx(Player).GetSigilPieces();
 }
 
+//==========================================================================
+//
+//	UnmorphActor
+//
+//==========================================================================
+
+int UnmorphActor(int Force)
+{
+	if (PlayerEx(Player).MorphTime)
+	{
+		return PlayerEx(Player).UndoPlayerMorph(Force);
+	}
+	return 0;
+}
+
 defaultproperties
 {
 	Health = 100;

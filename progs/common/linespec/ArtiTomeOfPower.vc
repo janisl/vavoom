@@ -39,7 +39,7 @@ bool Use(bool Pickup)
 	if (PlayerEx(Owner.Player).MorphTime)
 	{
 		// Attempt to undo chicken
-		if (PlayerEx(Owner.Player).UndoPlayerMorph() == false)
+		if (PlayerEx(Owner.Player).UndoPlayerMorph(false) == false)
 		{
 			// Failed
 			EntityEx(Owner).Damage(none, none, 10000);

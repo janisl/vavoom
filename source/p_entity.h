@@ -496,6 +496,24 @@ class VEntity : public VThinker
 		P_PASS_SELF;
 		EV_RET_INT(NAME_ClassifyActor);
 	}
+	int eventMorphActor(VName PlayerClass, VName MonsterClass, float Duration,
+		int Style, VName MorphFlash, VName UnmorphFlash)
+	{
+		P_PASS_SELF;
+		P_PASS_NAME(PlayerClass);
+		P_PASS_NAME(MonsterClass);
+		P_PASS_FLOAT(Duration);
+		P_PASS_INT(Style);
+		P_PASS_NAME(MorphFlash);
+		P_PASS_NAME(UnmorphFlash);
+		EV_RET_INT(NAME_MorphActor);
+	}
+	int eventUnmorphActor(int Force)
+	{
+		P_PASS_SELF;
+		P_PASS_INT(Force);
+		EV_RET_INT(NAME_UnmorphActor);
+	}
 
 	bool SetState(VState*);
 	void SetInitialState(VState*);

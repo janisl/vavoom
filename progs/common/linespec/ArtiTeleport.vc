@@ -59,7 +59,7 @@ bool Use(bool Pickup)
 	if (PlayerEx(Owner.Player).MorphTime)
 	{
 		// Teleporting away will undo any morph effects
-		PlayerEx(Owner.Player).UndoPlayerMorph();
+		PlayerEx(Owner.Player).UndoPlayerMorph(false);
 	}
 	return true;
 }

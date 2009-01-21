@@ -52,6 +52,29 @@ void Tick(float DeltaTime)
 
 final bool UpdateMorphedMonster()
 {
+	if (Health <= 0)
+	{
+		return false;
+	}
+	if (UnmorphTime > XLevel.Time)
+	{
+		return false;
+	}
+	if (!UnmorphActor(false))
+	{
+		return false;
+	}
+	return true;
+}
+
+//==========================================================================
+//
+//	UnmorphActor
+//
+//==========================================================================
+
+int UnmorphActor(int Force)
+{
 	TVec oldOrigin;
 	class<EntityEx> originalClass;
 	float oldAngle;
@@ -61,14 +84,6 @@ final bool UpdateMorphedMonster()
 	int oldArgs[5];
 	EntityEx mo;
 
-	if (Health <= 0)
-	{
-		return false;
-	}
-	if (UnmorphTime > XLevel.Time)
-	{
-		return false;
-	}
 	originalClass = SpecialCID;
 	if (originalClass.default.bStayMorphed)
 	{
@@ -89,12 +104,12 @@ final bool UpdateMorphedMonster()
 	UnlinkFromWorld();
 	mo = Spawn(originalClass, Origin);
 
-	if (!mo.TestLocation())
+	if (!mo.TestLocation() && !Force)
 	{
 		// Didn't fit
 		mo.Destroy();
 		LinkToWorld();
-		Special1 = 5 * 35;	// Next try in 5 seconds
+		UnmorphTime = XLevel.Time + 5.0;	// Next try in 5 seconds
 		return false;
 	}
 	LinkToWorld();

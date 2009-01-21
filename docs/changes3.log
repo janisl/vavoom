@@ -3820,3 +3820,5 @@
 15.01.2009
   I moved morphing methods to EntityEx class.
   I added new properties of the morph projectile class.
+21.01.2009
+  I implemented ACS commands MorphActor and UnmorphActor.

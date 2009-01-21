@@ -4860,23 +4860,32 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_MorphActor)
-			STUB(PCD_MorphActor)
-			//sp[-7] - TID
-			//sp[-6] - player class (string)
-			//sp[-5] - monster class (string)
-			//sp[-4] - duation
-			//sp[-3] - style
-			//sp[-2] - morph flash (string)
-			//sp[-1] - unmorph flash (string)
-			//Pushes result
+			{
+				int searcher = -1;
+				int Res = 0;
+				for (VEntity* Ent = Level->FindMobjFromTID(sp[-7], NULL);
+					Ent; Ent = Level->FindMobjFromTID(sp[-7], Ent))
+				{
+					Res += Ent->eventMorphActor(GetNameLowerCase(sp[-6]),
+						GetNameLowerCase(sp[-5]), sp[-4] / 35.0, sp[-3],
+						GetNameLowerCase(sp[-2]), GetNameLowerCase(sp[-1]));
+				}
+				sp[-7] = Res;
+			}
 			sp -= 6;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_UnmorphActor)
-			STUB(PCD_UnmorphActor)
-			//sp[-2] - TID
-			//sp[-1] - force
-			//Pushes result
+			{
+				int searcher = -1;
+				int Res = 0;
+				for (VEntity* Ent = Level->FindMobjFromTID(sp[-2], NULL);
+					Ent; Ent = Level->FindMobjFromTID(sp[-2], Ent))
+				{
+					Res += Ent->eventUnmorphActor(sp[-1]);
+				}
+				sp[-2] = Res;
+			}
 			sp--;
 			ACSVM_BREAK;
 

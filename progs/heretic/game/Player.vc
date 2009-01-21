@@ -389,7 +389,7 @@ void Cheat_Morph()
 {
 	if (MorphTime)
 	{
-		if (UndoPlayerMorph())
+		if (UndoPlayerMorph(false))
 		{
 			cprint("CHICKEN OFF");
 		}

@@ -470,7 +470,7 @@ void Cheat_Morph()
 {
 	if (MorphTime)
 	{
-		UndoPlayerMorph();
+		UndoPlayerMorph(false);
 	}
 	else
 	{

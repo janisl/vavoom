@@ -3140,7 +3140,7 @@ void PlayerTick(float deltaTime)
 		{
 			// Attempt to undo the chicken/pig
 			MorphTime = 0.0;
-			UndoPlayerMorph();
+			UndoPlayerMorph(false);
 		}
 	}
 
@@ -3291,7 +3291,7 @@ final void AdjustPlayerAngle(EntityEx AimTarget)
 //
 //==========================================================================
 
-final bool UndoPlayerMorph()
+final bool UndoPlayerMorph(bool Force)
 {
 	Actor A;
 
@@ -3302,7 +3302,7 @@ final bool UndoPlayerMorph()
 	}
 	A = Level.Spawn(class<PlayerPawn>(Level.Game.PlayerClasses[BaseClass]),
 		MO.Origin,,, false);
-	if (!A.TestLocation())
+	if (!Force && !A.TestLocation())
 	{
 		// Didn't fit
 		A.Destroy();
