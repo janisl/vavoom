@@ -25,10 +25,6 @@
 
 class Player : PlayerEx;
 
-const int MAXCHICKENHEALTH	= 30;
-
-const int MAXHEALTH	= 100;
-
 BotPlayer Bot;
 
 //==========================================================================
@@ -112,21 +108,6 @@ void GotAmmo(Ammo NewAmmo)
 			PendingWeapon = Best;
 		}
 	}
-}
-
-//==========================================================================
-//
-//	GetMaxHealth
-//
-//==========================================================================
-
-int GetMaxHealth()
-{
-	if (MorphTime)
-	{
-		return MAXCHICKENHEALTH;
-	}
-	return MAXHEALTH;
 }
 
 //==========================================================================
@@ -280,7 +261,7 @@ void Cheat_Gimme()
 	{
 		if (MorphTime)
 		{
-			MO.Health = MAXCHICKENHEALTH;
+			MO.Health = MAXMORPHHEALTH;
 			Health = MO.Health;
 		}
 		else
@@ -389,7 +370,7 @@ void Cheat_Morph()
 {
 	if (MorphTime)
 	{
-		if (UndoPlayerMorph(false))
+		if (UndoPlayerMorph(false, self))
 		{
 			cprint("CHICKEN OFF");
 		}
@@ -397,7 +378,7 @@ void Cheat_Morph()
 	else
 	{
 		if (Actor(MO).MorphPlayer(EggFX.default.PlayerClass, 0.0,
-			EggFX.default.MorphStyle, none, none))
+			EggFX.default.MorphStyle, none, none, Actor(MO)))
 		{
 			cprint("CHICKEN ON");
 		}

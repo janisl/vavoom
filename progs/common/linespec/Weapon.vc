@@ -101,6 +101,8 @@ bool			bNoAutoSwitch;
 bool			bPrimaryUsesBoth;
 //	Alternate fire uses both ammo types
 bool			bAltUsesBoth;
+//	This weapon was given when owner morphed into something.
+bool			bGivenAsMorphWeapon;
 
 //	It's a melee weapon
 bool			bBotMelee;

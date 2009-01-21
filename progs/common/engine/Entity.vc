@@ -729,7 +729,7 @@ int MorphActor(name PlayerClass, name MonsterClass, float Duration,
 //
 //==========================================================================
 
-int UnmorphActor(int Force)
+int UnmorphActor(Entity Activator, int Force)
 {
 	return 0;
 }

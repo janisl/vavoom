@@ -25,8 +25,6 @@
 
 class Player : PlayerEx;
 
-const int MAXHEALTH					= 100;
-
 BotPlayer Bot;
 
 //==========================================================================
@@ -150,18 +148,6 @@ void GotAmmo(Ammo NewAmmo)
 			PendingWeapon = Best;
 		}
 	}
-}
-
-//==========================================================================
-//
-//	GetMaxHealth
-//
-//==========================================================================
-
-int GetMaxHealth()
-{
-	return PlayerPawn(MO).MaxHealth > 0 ? PlayerPawn(MO).MaxHealth :
-		(Level.CompatDehHealth ? MAXHEALTH : HealthBonus.default.MaxAmount / 2);
 }
 
 //==========================================================================

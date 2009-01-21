@@ -40,6 +40,9 @@ const float BLINKTHRESHOLD	= 4.0;
 // 16 pixels of bob
 const float MAXBOB			= 16.0;
 
+const int MAXHEALTH			= 100;
+const int MAXMORPHHEALTH	= 30;
+
 // For screen flashing (red or bright).
 float			DamageFlash;
 float			BonusFlash;
@@ -3140,7 +3143,7 @@ void PlayerTick(float deltaTime)
 		{
 			// Attempt to undo the chicken/pig
 			MorphTime = 0.0;
-			UndoPlayerMorph(false);
+			UndoPlayerMorph(false, self);
 		}
 	}
 
@@ -3291,9 +3294,20 @@ final void AdjustPlayerAngle(EntityEx AimTarget)
 //
 //==========================================================================
 
-final bool UndoPlayerMorph(bool Force)
+final bool UndoPlayerMorph(bool Force, PlayerEx Activator)
 {
 	Actor A;
+
+	if (EntityEx(MO).bInvulnerable && (self != Activator ||
+		!(MorphStyle & EntityEx::MORPH_WHENINVULNERABLE)))
+	{
+		// Immune when invulnerable unless this is something we initiated.
+		// If the WORLD is the initiator, the same player should be given
+		// as the activator; WORLD initiated actions should always succeed.
+		return false;
+	}
+
+	int CorrectWeapon = MorphStyle & EntityEx::MORPH_LOSEACTUALWEAPON;
 
 	MO.UnlinkFromWorld();
 	if (BaseClass >= Level.Game.PlayerClasses.Num)
@@ -3326,7 +3340,12 @@ final bool UndoPlayerMorph(bool Force)
 	A.bShadow = EntityEx(MO).bShadow;
 	A.bGhost = EntityEx(MO).bGhost;
 	A.ObtainInventory(EntityEx(MO));
+	if (MO.TID && (MorphStyle & EntityEx::MORPH_NEWTIDBEHAVIOUR))
+	{
+		A.SetTID(MO.TID);
+	}
 	MorphTime = 0.0;
+	MorphStyle = 0;
 	Inventory Pw = EntityEx(MO).FindInventory(PowerWeaponLevel2);
 	if (Pw)
 	{
@@ -3335,7 +3354,29 @@ final bool UndoPlayerMorph(bool Force)
 	A.Health = GetRebornHealth();
 	Health = A.Health;
 	PClass = BaseClass;
+	Weapon OldWeapon = ReadyWeapon;
 	PostMorphWeapon(Weapon(Actor(MO).Tracer));
+	if (CorrectWeapon)
+	{
+		// Better "lose morphed weapon" semantics
+		class<Weapon> MorphWeapon = PlayerPawn(MO).MorphWeapon;
+		if (MorphWeapon)
+		{
+			Weapon OrigWpn = Weapon(EntityEx(MO).FindInventory(MorphWeapon));
+			if (OrigWpn && OrigWpn.bGivenAsMorphWeapon)
+			{
+				// You don't get to keep your morphed weapon.
+				OrigWpn.Destroy();
+			}
+		}
+	}
+	else
+	{
+		if (OldWeapon)
+		{
+			OldWeapon.Destroy();
+		}
+	}
 
 	Level.Spawn(UnmorphFlash ? UnmorphFlash : class<Actor>(TeleportFog),
 		MO.Origin + vector(20.0 * cos(MO.Angles.yaw),
@@ -3363,6 +3404,7 @@ final void ActivateMorphWeapon()
 	{
 		Wpn.Destroy();
 	}
+	Wpn.bGivenAsMorphWeapon = true;
 	SetWeapon(Weapon(EntityEx(MO).FindInventory(WpnClass)));
 	SetViewState(ps_weapon, ReadyWeapon.GetReadyState());
 	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;
@@ -3376,7 +3418,6 @@ final void ActivateMorphWeapon()
 
 final void PostMorphWeapon(Weapon weapon)
 {
-	ReadyWeapon.Destroy();
 	SetWeapon(weapon);
 	ViewStates[ps_weapon].SY = Weapon::WEAPONBOTTOM;
 	SetViewState(ps_weapon, ReadyWeapon.GetUpState());
@@ -3403,6 +3444,38 @@ final void AddVisitedMap(name Map)
 			return;
 		}
 	}
+}
+
+//==========================================================================
+//
+//	GetMaxHealth
+//
+//==========================================================================
+
+int GetMaxHealth()
+{
+	int Max = (PlayerPawn(MO).MaxHealth > 0 ? PlayerPawn(MO).MaxHealth :
+		Level.CompatDehHealth ? MAXHEALTH :
+		HealthBonus.default.MaxAmount / 2) + Stamina;
+	if (MorphTime)
+	{
+		if (MorphStyle & EntityEx::MORPH_FULLHEALTH)
+		{
+			if (!(MorphStyle & EntityEx::MORPH_ADDSTAMINA))
+			{
+				Max -= Stamina;
+			}
+		}
+		else
+		{
+			Max = MAXMORPHHEALTH;
+			if (MorphStyle & EntityEx::MORPH_ADDSTAMINA)
+			{
+				Max += Stamina;
+			}
+		}
+	}
+	return Max;
 }
 
 //==========================================================================
@@ -3584,11 +3657,6 @@ void StartDeathSlideShow()
 
 void GotAmmo(Ammo NewAmmo)
 {
-}
-
-int GetMaxHealth()
-{
-	return 0;
 }
 
 void Damaged(EntityEx inflictor)

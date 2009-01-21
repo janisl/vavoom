@@ -29,7 +29,6 @@ const float
 	INFRATIME		= 120.0;
 
 const int
-	MAXHEALTH		= 100,
 	INITIAL_HEALTH	= 100,
 	INITIAL_AMMO	= 50;
 
@@ -74,17 +73,6 @@ void GotAmmo(Ammo NewAmmo)
 			PendingWeapon = Best;
 		}
 	}
-}
-
-//==========================================================================
-//
-//	GetMaxHealth
-//
-//==========================================================================
-
-int GetMaxHealth()
-{
-	return MAXHEALTH + Stamina;
 }
 
 //==========================================================================

@@ -54,7 +54,7 @@ final bool Morph(class<MorphedMonster> MonsterClass,
 	if (bIsPlayer)
 	{
 		return MorphPlayer(PlayerClass, Duration ? Duration : MORPHTIME,
-			MorphStyle, MorphFlash, UnmorphFlash);
+			MorphStyle, MorphFlash, UnmorphFlash, none);
 	}
 	else
 	{
@@ -100,6 +100,7 @@ final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration,
 
 	MorphedMonster monster = Spawn(MonsterClass, Origin,,, false);
 	monster.SpecialCID = class<Actor>(Class);
+	monster.MorphStyle = MorphStyle;
 	monster.UnmorphTime = XLevel.Time + Duration;
 	monster.UnmorphFlash = UnmorphFlash;
 	monster.RenderStyle = RenderStyle;
@@ -142,12 +143,14 @@ void MonsterMorphed()
 //==========================================================================
 
 final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration,
-	int MorphStyle, class<Actor> MorphFlash, class<Actor> UnmorphFlash)
+	int MorphStyle, class<Actor> MorphFlash, class<Actor> UnmorphFlash,
+	EntityEx Activator)
 {
 	Actor beastMo;
 	int i;
 
-	if (bInvulnerable)
+	if (bInvulnerable && (self != Activator ||
+		!(MorphStyle & MORPH_WHENINVULNERABLE)))
 	{
 		// Immune when invulnerable
 		return false;
@@ -176,6 +179,11 @@ final bool MorphPlayer(class<PlayerPawn> PlayerClass, float Duration,
 		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
 
 	beastMo = Spawn(PlayerClass, Origin,,, false);
+	if (TID && (MorphStyle & MORPH_NEWTIDBEHAVIOUR))
+	{
+		beastMo.SetTID(TID);
+		SetTID(0);
+	}
 	beastMo.Tracer = PlayerEx(Player).ReadyWeapon;
 	beastMo.Angles = Angles;
 	beastMo.Player = Player;

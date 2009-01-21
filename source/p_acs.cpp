@@ -4860,6 +4860,7 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_MorphActor)
+			if (sp[-7])
 			{
 				int searcher = -1;
 				int Res = 0;
@@ -4872,19 +4873,38 @@ int VAcs::RunScript(float DeltaTime)
 				}
 				sp[-7] = Res;
 			}
+			else if (Activator)
+			{
+				sp[-7] = Activator->eventMorphActor(GetNameLowerCase(sp[-6]),
+						GetNameLowerCase(sp[-5]), sp[-4] / 35.0, sp[-3],
+						GetNameLowerCase(sp[-2]), GetNameLowerCase(sp[-1]));
+			}
+			else
+			{
+				sp[-7] = 0;
+			}
 			sp -= 6;
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_UnmorphActor)
+			if (sp[-2])
 			{
 				int searcher = -1;
 				int Res = 0;
 				for (VEntity* Ent = Level->FindMobjFromTID(sp[-2], NULL);
 					Ent; Ent = Level->FindMobjFromTID(sp[-2], Ent))
 				{
-					Res += Ent->eventUnmorphActor(sp[-1]);
+					Res += Ent->eventUnmorphActor(Activator, sp[-1]);
 				}
 				sp[-2] = Res;
+			}
+			else if (Activator)
+			{
+				sp[-2] = Activator->eventUnmorphActor(Activator, sp[-1]);
+			}
+			else
+			{
+				sp[-2] = 0;
 			}
 			sp--;
 			ACSVM_BREAK;

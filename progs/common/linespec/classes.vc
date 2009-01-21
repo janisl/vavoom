@@ -345,6 +345,7 @@ class BulletPuff : Actor decorate;
 class Clip : Ammo decorate;
 class Shell : Ammo decorate;
 class Cell : Ammo decorate;
+class HealthBonus : Health decorate;
 class DoomImpBall : Actor decorate;
 class LostSoul : Actor decorate;
 class CacodemonBall : Actor decorate;

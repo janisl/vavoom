@@ -56,11 +56,23 @@ bool Use(bool Pickup)
 	}
 	EntityEx(Owner).Teleport(vector(destX, destY, EntityEx::ONFLOORZ),
 		destAngle, true, true, false);
-	if (PlayerEx(Owner.Player).MorphTime)
+	bool CanLaugh = true;
+	if (PlayerEx(Owner.Player).MorphTime &&
+		(PlayerEx(Owner.Player).MorphStyle & MORPH_UNDOBYCHAOSDEVICE))
 	{
 		// Teleporting away will undo any morph effects
-		PlayerEx(Owner.Player).UndoPlayerMorph(false);
+		if (!PlayerEx(Owner.Player).UndoPlayerMorph(false,
+			PlayerEx(Owner.Player)) &&
+			(PlayerEx(Owner.Player).MorphStyle & MORPH_FAILNOLAUGH))
+		{
+			CanLaugh = false;
+		}
 	}
+	if (CanLaugh)
+ 	{
+ 		// Full volume laugh
+ 		Owner.PlaySound('*evillaugh', CHAN_VOICE, 1.0, ATTN_NONE);
+ 	}
 	return true;
 }
 

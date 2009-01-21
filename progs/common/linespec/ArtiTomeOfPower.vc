@@ -36,13 +36,18 @@ class ArtiTomeOfPower : PowerupGiver
 
 bool Use(bool Pickup)
 {
-	if (PlayerEx(Owner.Player).MorphTime)
+	if (PlayerEx(Owner.Player).MorphTime &&
+		(PlayerEx(Owner.Player).MorphStyle & MORPH_UNDOBYTOMEOFPOWER))
 	{
 		// Attempt to undo chicken
-		if (PlayerEx(Owner.Player).UndoPlayerMorph(false) == false)
+		if (PlayerEx(Owner.Player).UndoPlayerMorph(false,
+			PlayerEx(Owner.Player)) == false)
 		{
 			// Failed
-			EntityEx(Owner).Damage(none, none, 10000);
+			if (!(PlayerEx(Owner.Player).MorphStyle & MORPH_FAILNOTELEFRAG))
+			{
+				EntityEx(Owner).Damage(none, none, 10000);
+			}
 		}
 		else
 		{

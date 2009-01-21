@@ -508,9 +508,10 @@ class VEntity : public VThinker
 		P_PASS_NAME(UnmorphFlash);
 		EV_RET_INT(NAME_MorphActor);
 	}
-	int eventUnmorphActor(int Force)
+	int eventUnmorphActor(VEntity* Activator, int Force)
 	{
 		P_PASS_SELF;
+		P_PASS_REF(Activator);
 		P_PASS_INT(Force);
 		EV_RET_INT(NAME_UnmorphActor);
 	}

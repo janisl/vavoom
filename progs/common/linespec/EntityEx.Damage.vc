@@ -546,6 +546,42 @@ void Died(EntityEx source, EntityEx inflictor)
 {
 	Inventory	Item;
 
+	//	Calculate gibs health
+	int GHealth = GibsHealth;
+	if (!GHealth)
+	{
+		GHealth = ftoi(itof(-default.Health) *
+			LineSpecialGameInfo(Level.Game).GibsHealthFactor);
+	}
+
+	//	Handle possible unmorph on death
+	bool WasGibbed = Health < GHealth;
+	EntityEx RealSelf = none;
+	int RealStyle = 0;
+	int RealHealth = 0;
+	if (MorphedDeath(RealSelf, RealStyle, RealHealth))
+	{
+		if (!(RealStyle & MORPH_UNDOBYDEATHSAVES))
+		{
+			if (WasGibbed)
+			{
+				int RealGibHealth = RealSelf.GibsHealth;
+				if (!RealGibHealth)
+				{
+					RealGibHealth = ftoi(itof(-RealSelf.default.Health) *
+						LineSpecialGameInfo(Level.Game).GibsHealthFactor);
+				}
+				if (RealSelf.Health >= RealGibHealth)
+				{
+					//	If morphed was gibbed, so must original be (where allowed)
+					RealSelf.Health = RealGibHealth -1;
+				}
+			}
+			RealSelf.Died(source, inflictor);
+		}
+		return;
+	}
+
 	//	Notify actor's items.
 	for (Item = Inventory; Item;)
 	{
@@ -683,14 +719,6 @@ void Died(EntityEx source, EntityEx inflictor)
 	}
 	if (!DeathState)
 	{
-		//	Calculate gibs health
-		int GHealth = GibsHealth;
-		if (!GHealth)
-		{
-			GHealth = ftoi(itof(-default.Health) *
-				LineSpecialGameInfo(Level.Game).GibsHealthFactor);
-		}
-
 		//	Don't pass damage type unless it's a massacre damage.
 		if (DamageType != 'Massacre')
 		{
@@ -722,6 +750,37 @@ void Died(EntityEx source, EntityEx inflictor)
 	{
 		Destroy();
 	}
+}
+
+//==========================================================================
+//
+//	MorphedDeath
+//
+//==========================================================================
+
+bool MorphedDeath(out EntityEx Morphed, out int MorphedStyle,
+	out int MorphedHealth)
+{
+	// May be a morphed player
+	if (bIsPlayer && PlayerEx(Player).MorphTime &&
+		(PlayerEx(Player).MorphStyle & MORPH_UNDOBYDEATH) &&
+		PlayerEx(Player).MO)
+	{
+		int RealStyle = PlayerEx(Player).MorphStyle;
+		int RealHealth = Health;
+		if (PlayerEx(Player).UndoPlayerMorph(
+			PlayerEx(Player).MorphStyle & MORPH_UNDOBYDEATHFORCED,
+			PlayerEx(Player)))
+		{
+			Morphed = EntityEx(PlayerEx(Player).MO);
+			MorphedStyle = RealStyle;
+			MorphedHealth = RealHealth;
+			return true;
+		}
+		return false;
+	}
+
+	return false;
 }
 
 //==========================================================================

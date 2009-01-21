@@ -25,8 +25,10 @@
 
 class MorphedMonster : Actor;
 
+int				MorphStyle;
 float			UnmorphTime;
 class<Actor>	UnmorphFlash;
+EntityEx		UnmorphedMo;
 
 //==========================================================================
 //
@@ -60,7 +62,7 @@ final bool UpdateMorphedMonster()
 	{
 		return false;
 	}
-	if (!UnmorphActor(false))
+	if (!UnmorphActor(none, false))
 	{
 		return false;
 	}
@@ -73,7 +75,7 @@ final bool UpdateMorphedMonster()
 //
 //==========================================================================
 
-int UnmorphActor(int Force)
+int UnmorphActor(Entity Activator, int Force)
 {
 	TVec oldOrigin;
 	class<EntityEx> originalClass;
@@ -129,9 +131,35 @@ int UnmorphActor(int Force)
 	mo.bNoHatePlayers = bNoHatePlayers;
 	mo.bShadow = bShadow;
 	mo.bGhost = bGhost;
+	UnmorphedMo = mo;
 	Spawn(UnmorphFlash ? UnmorphFlash : class<Actor>(TeleportFog), oldOrigin +
 		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
 	return true;
+}
+
+//==========================================================================
+//
+//	MorphedDeath
+//
+//==========================================================================
+
+bool MorphedDeath(out EntityEx Morphed, out int MorphedStyle,
+	out int MorphedHealth)
+{
+	if (UnmorphTime && (MorphStyle & MORPH_UNDOBYDEATH))
+	{
+		int RealStyle = MorphStyle;
+		int RealHealth = Health;
+		if (UnmorphActor(none, MorphStyle & MORPH_UNDOBYDEATHFORCED))
+		{
+			Morphed = UnmorphedMo;
+			MorphedStyle = RealStyle;
+			MorphedHealth = RealHealth;
+			return true;
+		}
+	}
+	bStayMorphed = true;
+	return false;
 }
 
 defaultproperties
