@@ -133,7 +133,14 @@ Inventory CreateCopy(EntityEx Toucher)
 {
 	Owner = Toucher;
 	InitEffect();
-	Owner = none;
+	//	Clear the Owner field, unless it was changed by the activation, for
+	// example, if this instance is a morph powerup; the flag tells the
+	// caller that the ownership has changed so that they can properly handle
+	// the situation.
+	if (!bCreateCopyMoved)
+	{
+		Owner = none;
+	}
 	return self;
 }
 

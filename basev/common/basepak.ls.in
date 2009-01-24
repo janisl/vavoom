@@ -193,6 +193,7 @@ progs/linespec/PowerIronFeet.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Powe
 progs/linespec/PowerLightAmp.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerLightAmp.vc
 progs/linespec/PowerMask.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerMask.vc
 progs/linespec/PowerMinotaur.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerMinotaur.vc
+progs/linespec/PowerMorph.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerMorph.vc
 progs/linespec/PowerScanner.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerScanner.vc
 progs/linespec/PowerShadow.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerShadow.vc
 progs/linespec/PowerSpeed.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerSpeed.vc

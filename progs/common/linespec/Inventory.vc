@@ -79,6 +79,10 @@ bool				bInterHubStrip;
 bool				bQuiet;
 //	When picked up while it's still active, time is added
 bool				bAdditiveTime;
+//	CreateCopy changed the owner
+bool				bCreateCopyMoved;
+//	Powerup failed to activate.
+bool				bInitEffectFailed;
 
 replication
 {
@@ -261,6 +265,7 @@ final void TouchSpecial(EntityEx Toucher)
 
 bool TryPickup(EntityEx Toucher)
 {
+	EntityEx NewToucher = Toucher;
 	bPickupGood = false;
 	if (Toucher.Inventory && Toucher.Inventory.HandlePickup(self))
 	{
@@ -300,7 +305,28 @@ bool TryPickup(EntityEx Toucher)
 		{
 			return false;
 		}
-		Copy.AttachToOwner(Toucher);
+		//	Some powerups cannot activate absolutely, for example,
+		// PowerMorph; fail the pickup if so.
+		if (Copy.bInitEffectFailed)
+		{
+			if (Copy != self)
+			{
+				Copy.Destroy();
+			}
+			else
+			{
+				bInitEffectFailed = false;
+			}
+			return false;
+		}
+		//	Handle owner-changing powerups
+		if (Copy.bCreateCopyMoved)
+		{
+			NewToucher = EntityEx(Copy.Owner);
+			Copy.Owner = none;
+			Copy.bCreateCopyMoved = false;
+		}
+		Copy.AttachToOwner(NewToucher);
 		if (bAutoActivate && Copy.Use(true))
 		{
 			Copy.Amount--;

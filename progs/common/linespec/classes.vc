@@ -107,6 +107,7 @@ enum
 #include "PowerMinotaur.vc"
 #include "PowerScanner.vc"
 #include "PowerTargeter.vc"
+#include "PowerMorph.vc"
 #include "Health.vc"
 #include "HealthPickup.vc"
 #include "Armor.vc"

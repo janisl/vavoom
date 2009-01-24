@@ -1,0 +1,115 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PowerMorph : Powerup;
+
+class<PlayerPawn>	PlayerClass;
+int					MorphStyle;
+class<Actor>		MorphFlash;
+class<Actor>		UnmorphFlash;
+PlayerEx			OwnerPlayer;
+
+//===========================================================================
+//
+//	InitEffect
+//
+//===========================================================================
+
+void InitEffect()
+{
+	if (Owner && Owner.bIsPlayer && PlayerClass)
+	{
+		//	Remember the identity of the player
+		OwnerPlayer = PlayerEx(Owner.Player);
+		if (EntityEx(Owner).MorphPlayer(PlayerClass, -1.0/*INDEFINITELY*/,
+			MorphStyle, MorphFlash, UnmorphFlash, EntityEx(Owner)))
+		{
+			//	Replace the new owner in our owner; safe because we are not
+			// attached to anything yet
+			Owner = OwnerPlayer.MO;
+			//	Let the caller know the "real" owner has changed (to the
+			// morphed actor)
+			bCreateCopyMoved = true;
+		}
+		else
+		{
+			// Let the caller know that the activation failed (can fail the
+			// pickup if appropriate)
+			bInitEffectFailed = true;
+		}
+	}
+}
+
+//===========================================================================
+//
+//	EndEffect
+//
+//===========================================================================
+
+void EndEffect()
+{
+	//	Abort if owner already destroyed
+	if (!Owner)
+	{
+		return;
+	}
+
+	//	Abort if owner already unmorphed
+	if (!OwnerPlayer)
+	{
+		return;
+	}
+
+	//	Abort if owner is dead; their Die() method will
+	// take care of any required unmorphing on death.
+	if (OwnerPlayer.Health <= 0)
+	{
+		return;
+	}
+
+	//	Unmorph if possible
+	float SavedMorphTime = OwnerPlayer.MorphTime;
+	OwnerPlayer.UndoPlayerMorph(false, OwnerPlayer);
+
+	//	Abort if unmorph failed; in that case, set the usual retry timer and
+	// return.
+	if (OwnerPlayer.MorphTime)
+	{
+		//	Transfer retry timeout to the powerup's timer.
+		EffectTime = OwnerPlayer.MorphTime;
+		//	Reload negative morph tics. Use actual value; it may be in use
+		// for animation.
+		OwnerPlayer.MorphTime = SavedMorphTime;
+		//	Try again some time later
+		return;
+	}
+
+	//	Unmorph suceeded
+	OwnerPlayer = none;
+}
+
+defaultproperties
+{
+}

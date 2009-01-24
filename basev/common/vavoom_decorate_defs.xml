@@ -378,7 +378,7 @@
 		<prop_float name="Player.ViewHeight" property="ViewHeight" />
 		<prop_class name="Player.MorphWeapon" property="MorphWeapon" />
 	</class>
-	
+
 	<class name="MorphProjectile">
 		<prop_class name="MorphProjectile.MonsterClass" property="MonsterClass" />
 		<prop_class name="MorphProjectile.PlayerClass" property="PlayerClass" />
@@ -386,5 +386,12 @@
 		<prop_morph_style name="MorphProjectile.MorphStyle" property="MorphStyle" />
 		<prop_class name="MorphProjectile.MorphFlash" property="MorphFlash" />
 		<prop_class name="MorphProjectile.UnmorphFlash" property="UnmorphFlash" />
+	</class>
+
+	<class name="PowerMorph">
+		<prop_class name="PowerMorph.PlayerClass" property="PlayerClass" />
+		<prop_morph_style name="PowerMorph.MorphStyle" property="MorphStyle" />
+		<prop_class name="PowerMorph.MorphFlash" property="MorphFlash" />
+		<prop_class name="PowerMorph.UnmorphFlash" property="UnmorphFlash" />
 	</class>
 </vavoom_decorate_defs>

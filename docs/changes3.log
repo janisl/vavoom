@@ -3823,3 +3823,5 @@
 21.01.2009
   I implemented ACS commands MorphActor and UnmorphActor.
   I implemented morph styles.
+24.01.2009
+  I added morph powerup.
