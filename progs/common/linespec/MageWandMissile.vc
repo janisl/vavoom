@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class MageWandMissile : Actor;
+class MageWandMissile : FastProjectile;
 
 //===========================================================================
 //
@@ -66,17 +66,8 @@ defaultproperties
 	Height = 8.0;
 	Speed = 6440.0;
 	MissileDamage = 2;
-	bMissile = true;
-	bNoBlockmap = true;
-	bDropOff = true;
-	bNoGravity = true;
-	bNoTeleport = true;
-	bActivateImpact = true;
-	bActivatePCross = true;
-	bBloodSplatter = true;
 	bRip = true;
 	bCannotPush = true;
 	bNoDamageThrust = true;
-	bBlaster = true;
 	SightSound = 'MageWandFire';
 }

@@ -172,7 +172,6 @@ bool bStaticLightSpwned;
 bool bDynamicLight;		// Dynamic light source.
 bool bLeaveTrail;		// Leave particles trail.
 bool bTriggerHappy;
-bool bBlaster;
 bool bFloatBob;			// use float bobbing z movement
 bool bOnmobjCopyVel;
 bool bNoBounceSound;	//	Don't make sound when bouncing

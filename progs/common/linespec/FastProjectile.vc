@@ -1,0 +1,141 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id$
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class FastProjectile : Actor;
+
+//==========================================================================
+//
+//	Tick
+//
+//  Thinker for the ultra-fast blaster PL2 ripper-spawning missile.
+//
+//==========================================================================
+
+void Tick(float DeltaTime)
+{
+	int			i;
+	float		xfrac;
+	float		yfrac;
+	float		zfrac;
+	bool		changexy;
+	tmtrace_t	tmtrace;
+
+	float Count = 8.0;
+
+	if (Radius > 0.0)
+	{
+		while (Velocity.x * DeltaTime / Count > Radius ||
+			Velocity.y * DeltaTime / Count > Radius)
+		{
+			//	Must take smaller steps.
+			Count *= 2.0;
+		}
+	}
+
+	// Handle movement
+	if (Velocity.x || Velocity.y || (Origin.z != FloorZ) || Velocity.z)
+	{
+		xfrac = Velocity.x * DeltaTime / Count;
+		yfrac = Velocity.y * DeltaTime / Count;
+		zfrac = Velocity.z * DeltaTime / Count;
+		changexy = xfrac || yfrac;
+		for (i = 0; i < 8; i++)
+		{
+			if (changexy)
+			{
+				if (!TryMoveEx(&tmtrace, vector(Origin.x + xfrac,
+					Origin.y + yfrac, Origin.z), true))
+				{
+					// Blocked move
+					if (tmtrace.BlockingMobj)
+					{
+						BlasterHitMobj(tmtrace.BlockingMobj);
+					}
+					else
+					{
+						ExplodeMissile(none);
+					}
+					return;
+				}
+			}
+			Origin.z += zfrac;
+			if (Origin.z <= FloorZ)
+			{
+				// Hit the floor
+				Origin.z = FloorZ;
+				HitFloorType();
+				ExplodeMissile(none);
+				return;
+			}
+			if (Origin.z + Height > CeilingZ)
+			{
+				// Hit the ceiling
+				Origin.z = CeilingZ - Height;
+				ExplodeMissile(none);
+				return;
+			}
+			if (changexy)
+			{
+				SpawnBlasterEffects();
+			}
+		}
+	}
+
+	// Cycle through states, calling action functions at transitions
+	AdvanceState(DeltaTime);
+}
+
+//==========================================================================
+//
+//	BlasterHitMobj
+//
+//==========================================================================
+
+bool BlasterHitMobj(Entity Other)
+{
+	return ExplodeMissile(EntityEx(Other));
+}
+
+//==========================================================================
+//
+//  SpawnBlasterEffects
+//
+//==========================================================================
+
+void SpawnBlasterEffects()
+{
+}
+
+defaultproperties
+{
+	bMissile = true;
+	bNoBlockmap = true;
+	bDropOff = true;
+	bNoGravity = true;
+	bNoTeleport = true;
+	bActivateImpact = true;
+	bActivatePCross = true;
+	bBloodSplatter = true;
+}

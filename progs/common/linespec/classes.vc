@@ -214,6 +214,7 @@ enum
 #include "SectorPointLight.vc"
 
 #include "GlassShard.vc"
+#include "FastProjectile.vc"
 
 #include "BridgeBall.vc"
 #include "Bridge.vc"

@@ -3825,3 +3825,5 @@
   I implemented morph styles.
 24.01.2009
   I added morph powerup.
+25.01.2009
+  I added FastProjectile class.

@@ -91,6 +91,7 @@ progs/linespec/EntityEx.Morph.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Enti
 progs/linespec/EntityEx.Physics.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.Physics.vc
 progs/linespec/EntityEx.SpawnMissile.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/EntityEx.SpawnMissile.vc
 progs/linespec/FakeInventory.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FakeInventory.vc
+progs/linespec/FastProjectile.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/FastProjectile.vc
 progs/linespec/FighterWeapon.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FighterWeapon.vc
 progs/linespec/FighterWeaponPiece.vc		@CMAKE_SOURCE_DIR@/progs/common/linespec/FighterWeaponPiece.vc
 progs/linespec/FireFlicker.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/FireFlicker.vc
