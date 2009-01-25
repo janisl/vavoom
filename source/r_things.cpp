@@ -608,7 +608,7 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 		light = 0;
 	}
 	else if ((mobj->State->Frame & VState::FF_FULLBRIGHT) ||
-		(mobj->EntityFlags & VEntity::EF_FullBright))
+		(mobj->EntityFlags & (VEntity::EF_FullBright | VEntity::EF_Bright)))
 	{
 		light = 0xffffffff;
 	}

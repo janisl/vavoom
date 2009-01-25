@@ -3827,3 +3827,4 @@
   I added morph powerup.
 25.01.2009
   I added FastProjectile class.
+  I added bBright flag to always render actor full bright.

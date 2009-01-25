@@ -276,6 +276,7 @@ bool bDontOverlap;		// Prevent some things from overlapping.
 readonly bool bUseDispState;	// Use DispState for rendering
 bool bActLikeBridge;	// Always allow obkects to pass.
 bool bNoDropOff;		// Can't drop off under any circumstances
+bool bBright;			// Always render full bright
 
 int				Health;
 
@@ -319,7 +320,7 @@ replication
 		Origin, Angles, FloorClip, State, StateTime, SpriteType,
 		FixedSpriteName, ModelVersion, RenderStyle, Alpha, Translation,
 		ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright, bFixedModel,
-		SoundOriginID, bUseDispState;
+		SoundOriginID, bUseDispState, bBright;
 
 	reliable if (Role == ROLE_Authority && bUseDispState)
 		DispState;

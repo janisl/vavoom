@@ -178,6 +178,7 @@
 		<flag name="NoBounceSound" property="bNoBounceSound" />
 		<flag name="DontTranslate" property="bDontTranslate" />
 		<flag name="NoPain" property="bNoPain" />
+		<flag name="Bright" property="bBright" />
 		<flag_unsupported name="NoBloodDecals" />
 		<flag_unsupported name="FixMapThingPos" />
 		<flag_unsupported name="GrenadeTrail" />

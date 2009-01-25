@@ -229,6 +229,7 @@ class VEntity : public VThinker
 		EF_UseDispState			= 0x04000000,	// Use DispState for rendering
 		EF_ActLikeBridge		= 0x08000000,	// Always allow obkects to pass.
 		EF_NoDropOff			= 0x10000000,	// Can't drop off under any circumstances
+		EF_Bright				= 0x20000000,	// Always render full bright
 	};
 	vuint32			EntityFlags;
 
