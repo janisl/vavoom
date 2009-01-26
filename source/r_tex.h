@@ -83,6 +83,7 @@ private:
 
 public:
 	VMultiPatchTexture(VStream&, int, VTexture**, int, int, bool);
+	VMultiPatchTexture(VScriptParser*, int);
 	~VMultiPatchTexture();
 	void SetFrontSkyLayer();
 	vuint8* GetPixels();

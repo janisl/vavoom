@@ -846,6 +846,26 @@ void VTextureManager::AddHiResTextures()
 					AddTexture(NewTex);
 				}
 			}
+			else if (sc->Check("walltexture"))
+			{
+				AddTexture(new VMultiPatchTexture(sc, TEXTYPE_Wall));
+			}
+			else if (sc->Check("flat"))
+			{
+				AddTexture(new VMultiPatchTexture(sc, TEXTYPE_Flat));
+			}
+			else if (sc->Check("texture"))
+			{
+				AddTexture(new VMultiPatchTexture(sc, TEXTYPE_Overload));
+			}
+			else if (sc->Check("sprite"))
+			{
+				AddTexture(new VMultiPatchTexture(sc, TEXTYPE_Sprite));
+			}
+			else if (sc->Check("graphic"))
+			{
+				AddTexture(new VMultiPatchTexture(sc, TEXTYPE_Pic));
+			}
 			else
 			{
 				sc->Error("Bad command");

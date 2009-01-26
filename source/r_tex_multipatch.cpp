@@ -150,6 +150,199 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 
 //==========================================================================
 //
+//	VMultiPatchTexture::VMultiPatchTexture
+//
+//==========================================================================
+
+VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
+: PatchCount(0)
+, Patches(NULL)
+, Pixels(0)
+{
+	guard(VMultiPatchTexture::VMultiPatchTexture);
+	Type = AType;
+	Format = TEXFMT_8;
+
+	sc->SetCMode(true);
+	sc->ExpectString();
+	Name = VName(*sc->String, VName::AddLower8);
+	sc->Expect(",");
+	sc->ExpectNumber();
+	Width = sc->Number;
+	sc->Expect(",");
+	sc->ExpectNumber();
+	Height = sc->Number;
+
+	if (sc->Check("{"))
+	{
+		TArray<VTexPatch> Parts;
+		while (!sc->Check("}"))
+		{
+			if (sc->Check("offset"))
+			{
+				sc->ExpectNumber();
+				SOffset = sc->Number;
+				sc->Expect(",");
+				sc->ExpectNumber();
+				TOffset = sc->Number;
+			}
+			else if (sc->Check("xscale"))
+			{
+				sc->ExpectFloat();
+				SScale = sc->Float;
+			}
+			else if (sc->Check("yscale"))
+			{
+				sc->ExpectFloat();
+				TScale = sc->Float;
+			}
+			else if (sc->Check("worldpanning"))
+			{
+				bWorldPanning = true;
+			}
+			else if (sc->Check("nulltexture"))
+			{
+				Type = TEXTYPE_Null;
+			}
+			else if (sc->Check("nodecals"))
+			{
+			}
+			else if (sc->Check("patch"))
+			{
+				VTexPatch& P = Parts.Alloc();
+				sc->ExpectString();
+				VName PatchName = VName(*sc->String, VName::AddLower8);
+				int Tex = GTextureManager.CheckNumForName(PatchName,
+					TEXTYPE_WallPatch, false, false);
+				P.Tex = GTextureManager[Tex];
+
+				sc->Expect(",");
+				sc->ExpectNumber();
+				P.XOrigin = sc->Number;
+				sc->Expect(",");
+				sc->ExpectNumber();
+				P.YOrigin = sc->Number;
+
+				if (sc->Check("{"))
+				{
+					while (!sc->Check("}"))
+					{
+						if (sc->Check("flipx"))
+						{
+						}
+						else if (sc->Check("flipy"))
+						{
+						}
+						else if (sc->Check("rotate"))
+						{
+							sc->ExpectNumber();
+						}
+						else if (sc->Check("translation"))
+						{
+							if (sc->Check("inverse"))
+							{
+							}
+							else if (sc->Check("gold"))
+							{
+							}
+							else if (sc->Check("red"))
+							{
+							}
+							else if (sc->Check("green"))
+							{
+							}
+							else if (sc->Check("ice"))
+							{
+							}
+							else if (sc->Check("desaturate"))
+							{
+								sc->Expect(",");
+								sc->ExpectNumber();
+							}
+							else
+							{
+								do
+								{
+									sc->ExpectString();
+								}
+								while (sc->Check(","));
+							}
+						}
+						else if (sc->Check("blend"))
+						{
+							if (!sc->CheckNumber())
+							{
+								sc->ExpectString();
+							}
+							else
+							{
+								sc->Expect(",");
+								sc->ExpectNumber();
+								sc->Expect(",");
+								sc->ExpectNumber();
+								sc->Expect(",");
+							}
+							if (sc->Check(","))
+							{
+								sc->ExpectNumber();
+							}
+						}
+						else if (sc->Check("alpha"))
+						{
+							sc->ExpectFloat();
+						}
+						else if (sc->Check("style"))
+						{
+							if (sc->Check("copy"))
+							{
+							}
+							else if (sc->Check("translucent"))
+							{
+							}
+							else if (sc->Check("add"))
+							{
+							}
+							else if (sc->Check("subtract"))
+							{
+							}
+							else if (sc->Check("reversesubtract"))
+							{
+							}
+							else if (sc->Check("modulate"))
+							{
+							}
+							else if (sc->Check("copyalpha"))
+							{
+							}
+							else
+							{
+								sc->Error("Bad style");
+							}
+						}
+						else
+						{
+							sc->Error("Bad texture patch command");
+						}
+					}
+				}
+			}
+			else
+			{
+				sc->Error("Bad texture command");
+			}
+		}
+
+		PatchCount = Parts.Num();
+		Patches = new VTexPatch[PatchCount];
+		memcpy(Patches, Parts.Ptr(), sizeof(VTexPatch) * PatchCount);
+	}
+
+	sc->SetCMode(false);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VMultiPatchTexture::~VMultiPatchTexture
 //
 //==========================================================================

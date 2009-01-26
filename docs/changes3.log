@@ -3828,3 +3828,7 @@
 25.01.2009
   I added FastProjectile class.
   I added bBright flag to always render actor full bright.
+26.01.2009
+  I added initial version of additions to HIRESTEX scripts for complex texture
+ definitions. It works for simple textures and has skeleton parser for advanced
+ properties.
