@@ -113,7 +113,6 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 		//	Read origin.
 		patch->XOrigin = Streamer<vint16>(Strm);
 		patch->YOrigin = Streamer<vint16>(Strm);
-		patch->Flip = 0;
 		patch->Rot = 0;
 		patch->Trans = NULL;
 		patch->bOwnTrans = false;
@@ -236,7 +235,7 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 				P.YOrigin = sc->Number;
 
 				//	Initialise parameters.
-				P.Flip = 0;
+				int Flip = 0;
 				P.Rot = 0;
 				P.Trans = NULL;
 				P.bOwnTrans = false;
@@ -253,11 +252,11 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 					{
 						if (sc->Check("flipx"))
 						{
-							P.Flip |= 1;
+							Flip |= 1;
 						}
 						else if (sc->Check("flipy"))
 						{
-							P.Flip |= 2;
+							Flip |= 2;
 						}
 						else if (sc->Check("rotate"))
 						{
@@ -413,6 +412,16 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 						}
 					}
 				}
+
+				if (Flip & 2)
+				{
+					P.Rot = (P.Rot + 2) & 3;
+					Flip ^= 1;
+				}
+				if (Flip & 1)
+				{
+					P.Rot |= 4;
+				}
 			}
 			else
 			{
@@ -520,16 +529,16 @@ vuint8* VMultiPatchTexture::GetPixels()
 		VTexture* PatchTex = patch->Tex;
 		vuint8* PatchPixels = patch->Trans ? PatchTex->GetPixels8() :
 			PatchTex->GetPixels();
+		int PWidth = PatchTex->GetWidth();
+		int PHeight = PatchTex->GetHeight();
 		int x1 = patch->XOrigin;
-		int x2 = x1 + (patch->Rot & 1 ? PatchTex->GetHeight() :
-			PatchTex->GetWidth());
+		int x2 = x1 + (patch->Rot & 1 ? PHeight : PWidth);
 		if (x2 > Width)
 		{
 			x2 = Width;
 		}
 		int y1 = patch->YOrigin;
-		int y2 = y1 + (patch->Rot & 1 ? PatchTex->GetWidth() :
-			PatchTex->GetHeight());
+		int y2 = y1 + (patch->Rot & 1 ? PWidth : PHeight);
 		if (y2 > Height)
 		{
 			y2 = Height;
@@ -542,20 +551,20 @@ vuint8* VMultiPatchTexture::GetPixels()
 			switch (patch->Rot)
 			{
 			case 0:
-				PIdxY = (patch->Flip & 2 ? PatchTex->GetHeight() -
-					y + y1 - 1 : y - y1) * PatchTex->GetWidth();
+			case 4:
+				PIdxY = (y - y1) * PWidth;
 				break;
 			case 1:
-				PIdxY = (patch->Flip & 1 ? PatchTex->GetWidth() -
-					y + y1 - 1 : y - y1);
+			case 7:
+				PIdxY = y - y1;
 				break;
 			case 2:
-				PIdxY = (patch->Flip & 2 ? y - y1 : PatchTex->GetHeight() -
-					y + y1 - 1) * PatchTex->GetWidth();
+			case 6:
+				PIdxY = (PHeight - y + y1 - 1) * PWidth;
 				break;
 			case 3:
-				PIdxY = (patch->Flip & 1 ? y - y1 : PatchTex->GetWidth() -
-					y + y1 - 1);
+			case 5:
+				PIdxY = PWidth - y + y1 - 1;
 				break;
 			}
 
@@ -565,20 +574,20 @@ vuint8* VMultiPatchTexture::GetPixels()
 				switch (patch->Rot)
 				{
 				case 0:
-					PIdx = (patch->Flip & 1 ? PatchTex->GetWidth() -
-						x + x1 - 1 : x - x1) + PIdxY;
+				case 6:
+					PIdx = (x - x1) + PIdxY;
 					break;
 				case 1:
-					PIdx = (patch->Flip & 2 ? x - x1 : PatchTex->GetHeight() -
-						x + x1 - 1) * PatchTex->GetWidth() + PIdxY;
+				case 5:
+					PIdx = (PHeight - x + x1 - 1) * PWidth + PIdxY;
 					break;
 				case 2:
-					PIdx = (patch->Flip & 1 ? x - x1 : PatchTex->GetWidth() -
-						x + x1 - 1) + PIdxY;
+				case 4:
+					PIdx = (PWidth - x + x1 - 1) + PIdxY;
 					break;
 				case 3:
-					PIdx = (patch->Flip & 2 ? PatchTex->GetHeight() -
-						x + x1 - 1 : x - x1) * PatchTex->GetWidth() + PIdxY;
+				case 7:
+					PIdx = (x - x1) * PWidth + PIdxY;
 					break;
 				}
 
