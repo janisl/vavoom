@@ -112,6 +112,8 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 		//	Read origin.
 		patch->XOrigin = Streamer<vint16>(Strm);
 		patch->YOrigin = Streamer<vint16>(Strm);
+		patch->Flip = 0;
+		patch->Rot = 0;
 
 		//	Read patch index and find patch texture.
 		vint16 PatchIdx = Streamer<vint16>(Strm);
@@ -223,19 +225,30 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 				sc->ExpectNumber();
 				P.YOrigin = sc->Number;
 
+				P.Flip = 0;
+				P.Rot = 0;
+
 				if (sc->Check("{"))
 				{
 					while (!sc->Check("}"))
 					{
 						if (sc->Check("flipx"))
 						{
+							P.Flip |= 1;
 						}
 						else if (sc->Check("flipy"))
 						{
+							P.Flip |= 2;
 						}
 						else if (sc->Check("rotate"))
 						{
 							sc->ExpectNumber();
+							int Rot = ((sc->Number + 90) % 360) - 90;
+							if (Rot != 0 && Rot !=90 && Rot != 180 && Rot != -90)
+							{
+								sc->Error("Rotation must be a multiple of 90 degrees.");
+							}
+							P.Rot = (Rot / 90) & 3;
 						}
 						else if (sc->Check("translation"))
 						{
@@ -412,57 +425,90 @@ vuint8* VMultiPatchTexture::GetPixels()
 	{
 		Pixels = new vuint8[Width * Height];
 		memset(Pixels, 0, Width * Height);
-
-		// Composite the columns together.
-		VTexPatch* patch = Patches;
-		for (int i = 0; i < PatchCount; i++, patch++)
-		{
-			VTexture* PatchTex = patch->Tex;
-			vuint8* PatchPixels = PatchTex->GetPixels();
-			int x1 = patch->XOrigin;
-			int x2 = x1 + PatchTex->GetWidth();
-			if (x2 > Width)
-				x2 = Width;
-			int y1 = patch->YOrigin;
-			int y2 = y1 + PatchTex->GetHeight();
-			if (y2 > Height)
-				y2 = Height;
-			for (int y = y1 < 0 ? 0 : y1; y < y2; y++)
-			{
-				for (int x = x1 < 0 ? 0 : x1; x < x2; x++)
-				{
-					int PIdx = (x - x1) + (y - y1) * PatchTex->GetWidth();
-					if (PatchPixels[PIdx])
-						Pixels[x + y * Width] = PatchPixels[PIdx];
-				}
-			}
-		}
 	}
 	else
 	{
 		Pixels = new vuint8[Width * Height * 4];
 		memset(Pixels, 0, Width * Height * 4);
+	}
 
-		// Composite the columns together.
-		VTexPatch* patch = Patches;
-		for (int i = 0; i < PatchCount; i++, patch++)
+	// Composite the columns together.
+	VTexPatch* patch = Patches;
+	for (int i = 0; i < PatchCount; i++, patch++)
+	{
+		VTexture* PatchTex = patch->Tex;
+		vuint8* PatchPixels = PatchTex->GetPixels();
+		int x1 = patch->XOrigin;
+		int x2 = x1 + (patch->Rot & 1 ? PatchTex->GetHeight() :
+			PatchTex->GetWidth());
+		if (x2 > Width)
 		{
-			VTexture* PatchTex = patch->Tex;
-			vuint8* PatchPixels = PatchTex->GetPixels();
-			int x1 = patch->XOrigin;
-			int x2 = x1 + PatchTex->GetWidth();
-			if (x2 > Width)
-				x2 = Width;
-			int y1 = patch->YOrigin;
-			int y2 = y1 + PatchTex->GetHeight();
-			if (y2 > Height)
-				y2 = Height;
-			for (int y = y1 < 0 ? 0 : y1; y < y2; y++)
+			x2 = Width;
+		}
+		int y1 = patch->YOrigin;
+		int y2 = y1 + (patch->Rot & 1 ? PatchTex->GetWidth() :
+			PatchTex->GetHeight());
+		if (y2 > Height)
+		{
+			y2 = Height;
+		}
+
+		for (int y = y1 < 0 ? 0 : y1; y < y2; y++)
+		{
+			int PIdxY;
+			switch (patch->Rot)
 			{
-				for (int x = x1 < 0 ? 0 : x1; x < x2; x++)
+			case 0:
+				PIdxY = (patch->Flip & 2 ? PatchTex->GetHeight() -
+					y + y1 - 1 : y - y1) * PatchTex->GetWidth();
+				break;
+			case 1:
+				PIdxY = (patch->Flip & 1 ? PatchTex->GetWidth() -
+					y + y1 - 1 : y - y1);
+				break;
+			case 2:
+				PIdxY = (patch->Flip & 2 ? y - y1 : PatchTex->GetHeight() -
+					y + y1 - 1) * PatchTex->GetWidth();
+				break;
+			case 3:
+				PIdxY = (patch->Flip & 1 ? y - y1 : PatchTex->GetWidth() -
+					y + y1 - 1);
+				break;
+			}
+
+			for (int x = x1 < 0 ? 0 : x1; x < x2; x++)
+			{
+				int PIdx;
+				switch (patch->Rot)
+				{
+				case 0:
+					PIdx = (patch->Flip & 1 ? PatchTex->GetWidth() -
+						x + x1 - 1 : x - x1) + PIdxY;
+					break;
+				case 1:
+					PIdx = (patch->Flip & 2 ? x - x1 : PatchTex->GetHeight() -
+						x + x1 - 1) * PatchTex->GetWidth() + PIdxY;
+					break;
+				case 2:
+					PIdx = (patch->Flip & 1 ? x - x1 : PatchTex->GetWidth() -
+						x + x1 - 1) + PIdxY;
+					break;
+				case 3:
+					PIdx = (patch->Flip & 2 ? PatchTex->GetHeight() -
+						x + x1 - 1 : x - x1) * PatchTex->GetWidth() + PIdxY;
+					break;
+				}
+
+				if (Format == TEXFMT_8)
+				{
+					if (PatchPixels[PIdx])
+					{
+						Pixels[x + y * Width] = PatchPixels[PIdx];
+					}
+				}
+				else
 				{
 					//	Get pixel.
-					int PIdx = (x - x1) + (y - y1) * PatchTex->GetWidth();
 					rgba_t col;
 					switch (PatchTex->Format)
 					{

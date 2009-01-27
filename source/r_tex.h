@@ -72,6 +72,8 @@ private:
 		// internal origin of the patch.
 		short		XOrigin;
 		short		YOrigin;
+		vuint8		Flip;
+		vuint8		Rot;
 		VTexture*	Tex;
 	};
 

@@ -3832,3 +3832,5 @@
   I added initial version of additions to HIRESTEX scripts for complex texture
  definitions. It works for simple textures and has skeleton parser for advanced
  properties.
+27.01.2009
+  I implemented texture patch options for flipping and rotating.
