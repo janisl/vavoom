@@ -66,6 +66,17 @@ public:
 class VMultiPatchTexture : public VTexture
 {
 private:
+	enum
+	{
+		STYLE_Copy,
+		STYLE_Translucent,
+		STYLE_Add,
+		STYLE_Subtract,
+		STYLE_ReverseSubtract,
+		STYLE_Modulate,
+		STYLE_CopyAlpha
+	};
+
 	struct VTexPatch
 	{
 		//	Block origin (allways UL), which has allready accounted for the
@@ -74,10 +85,12 @@ private:
 		short					YOrigin;
 		vuint8					Flip;
 		vuint8					Rot;
+		vuint8					Style;
 		bool					bOwnTrans;
 		VTexture*				Tex;
 		VTextureTranslation*	Trans;
 		rgba_t					Blend;
+		float					Alpha;
 	};
 
 	//	All the Patches[PatchCount] are drawn back to front into the cached

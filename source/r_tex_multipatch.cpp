@@ -121,6 +121,8 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 		patch->Blend.g = 0;
 		patch->Blend.b = 0;
 		patch->Blend.a = 0;
+		patch->Style = STYLE_Copy;
+		patch->Alpha = 1.0;
 
 		//	Read patch index and find patch texture.
 		vint16 PatchIdx = Streamer<vint16>(Strm);
@@ -242,6 +244,8 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 				P.Blend.g = 0;
 				P.Blend.b = 0;
 				P.Blend.a = 0;
+				P.Style = STYLE_Copy;
+				P.Alpha = 1.0;
 
 				if (sc->Check("{"))
 				{
@@ -362,33 +366,45 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 						else if (sc->Check("alpha"))
 						{
 							sc->ExpectFloat();
+							P.Alpha = MID(0, sc->Float, 1);
 						}
 						else if (sc->Check("style"))
 						{
 							if (sc->Check("copy"))
 							{
+								P.Style = STYLE_Copy;
 							}
 							else if (sc->Check("translucent"))
 							{
+								P.Style = STYLE_Translucent;
 							}
 							else if (sc->Check("add"))
 							{
+								P.Style = STYLE_Add;
 							}
 							else if (sc->Check("subtract"))
 							{
+								P.Style = STYLE_Subtract;
 							}
 							else if (sc->Check("reversesubtract"))
 							{
+								P.Style = STYLE_ReverseSubtract;
 							}
 							else if (sc->Check("modulate"))
 							{
+								P.Style = STYLE_Modulate;
 							}
 							else if (sc->Check("copyalpha"))
 							{
+								P.Style = STYLE_CopyAlpha;
 							}
 							else
 							{
 								sc->Error("Bad style");
+							}
+							if (P.Style != STYLE_Copy)
+							{
+								Format = TEXFMT_RGBA;
 							}
 						}
 						else
@@ -518,6 +534,7 @@ vuint8* VMultiPatchTexture::GetPixels()
 		{
 			y2 = Height;
 		}
+		float IAlpha = 1.0 - patch->Alpha;
 
 		for (int y = y1 < 0 ? 0 : y1; y < y2; y++)
 		{
@@ -620,19 +637,60 @@ vuint8* VMultiPatchTexture::GetPixels()
 					}
 
 					//	Add to texture.
-					if (col.a == 255)
-					{
-						((rgba_t*)Pixels)[x + y * Width] = col;
-					}
-					else if (col.a)
+					if (col.a)
 					{
 						rgba_t& Dst = ((rgba_t*)Pixels)[x + y * Width];
-						float a = col.a / 255.0;
-						float ia = (Dst.a / 255.0) * (255.0 - col.a) / 255.0;
-						Dst.r = vuint8(Dst.r * ia + col.r * a);
-						Dst.g = vuint8(Dst.g * ia + col.g * a);
-						Dst.b = vuint8(Dst.b * ia + col.b * a);
-						Dst.a = Dst.a + col.a > 255 ? 255 : Dst.a + col.a;
+						switch (patch->Style)
+						{
+						case STYLE_Copy:
+							Dst = col;
+							break;
+						case STYLE_Translucent:
+							Dst.r = vuint8(Dst.r * IAlpha + col.r * patch->Alpha);
+							Dst.g = vuint8(Dst.g * IAlpha + col.g * patch->Alpha);
+							Dst.b = vuint8(Dst.b * IAlpha + col.b * patch->Alpha);
+							Dst.a = col.a;
+							break;
+						case STYLE_Add:
+							Dst.r = MIN(Dst.r + vuint8(col.r * patch->Alpha), 255);
+							Dst.g = MIN(Dst.g + vuint8(col.g * patch->Alpha), 255);
+							Dst.b = MIN(Dst.b + vuint8(col.b * patch->Alpha), 255);
+							Dst.a = col.a;
+							break;
+						case STYLE_Subtract:
+							Dst.r = MAX(Dst.r - vuint8(col.r * patch->Alpha), 0);
+							Dst.g = MAX(Dst.g - vuint8(col.g * patch->Alpha), 0);
+							Dst.b = MAX(Dst.b - vuint8(col.b * patch->Alpha), 0);
+							Dst.a = col.a;
+							break;
+						case STYLE_ReverseSubtract:
+							Dst.r = MAX(vuint8(col.r * patch->Alpha) - Dst.r, 0);
+							Dst.g = MAX(vuint8(col.g * patch->Alpha) - Dst.g, 0);
+							Dst.b = MAX(vuint8(col.b * patch->Alpha) - Dst.b, 0);
+							Dst.a = col.a;
+							break;
+						case STYLE_Modulate:
+							Dst.r = Dst.r * col.r / 255;
+							Dst.g = Dst.g * col.g / 255;
+							Dst.b = Dst.b * col.b / 255;
+							Dst.a = col.a;
+							break;
+						case STYLE_CopyAlpha:
+							if (col.a == 255)
+							{
+								Dst = col;
+							}
+							else
+							{
+								float a = col.a / 255.0;
+								float ia = (255.0 - col.a) / 255.0;
+								Dst.r = vuint8(Dst.r * ia + col.r * a);
+								Dst.g = vuint8(Dst.g * ia + col.g * a);
+								Dst.b = vuint8(Dst.b * ia + col.b * a);
+								Dst.a = col.a;
+							}
+							break;
+						}
 					}
 				}
 			}
