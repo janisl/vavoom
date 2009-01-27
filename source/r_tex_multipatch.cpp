@@ -27,6 +27,7 @@
 
 #include "gamedefs.h"
 #include "r_tex.h"
+#include "r_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -114,6 +115,12 @@ VMultiPatchTexture::VMultiPatchTexture(VStream& Strm, int DirectoryIndex,
 		patch->YOrigin = Streamer<vint16>(Strm);
 		patch->Flip = 0;
 		patch->Rot = 0;
+		patch->Trans = NULL;
+		patch->bOwnTrans = false;
+		patch->Blend.r = 0;
+		patch->Blend.g = 0;
+		patch->Blend.b = 0;
+		patch->Blend.a = 0;
 
 		//	Read patch index and find patch texture.
 		vint16 PatchIdx = Streamer<vint16>(Strm);
@@ -218,6 +225,7 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 					TEXTYPE_WallPatch, false, false);
 				P.Tex = GTextureManager[Tex];
 
+				//	Parse origin.
 				sc->Expect(",");
 				sc->ExpectNumber();
 				P.XOrigin = sc->Number;
@@ -225,8 +233,15 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 				sc->ExpectNumber();
 				P.YOrigin = sc->Number;
 
+				//	Initialise parameters.
 				P.Flip = 0;
 				P.Rot = 0;
+				P.Trans = NULL;
+				P.bOwnTrans = false;
+				P.Blend.r = 0;
+				P.Blend.g = 0;
+				P.Blend.b = 0;
+				P.Blend.a = 0;
 
 				if (sc->Check("{"))
 				{
@@ -252,20 +267,37 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 						}
 						else if (sc->Check("translation"))
 						{
+							Format = TEXFMT_RGBA;
+							if (P.bOwnTrans)
+							{
+								delete P.Trans;
+								P.bOwnTrans = false;
+							}
+							P.Trans = NULL;
+							P.Blend.r = 0;
+							P.Blend.g = 0;
+							P.Blend.b = 0;
+							P.Blend.a = 0;
+
 							if (sc->Check("inverse"))
 							{
+								P.Trans = &ColourMaps[CM_Inverse];
 							}
 							else if (sc->Check("gold"))
 							{
+								P.Trans = &ColourMaps[CM_Gold];
 							}
 							else if (sc->Check("red"))
 							{
+								P.Trans = &ColourMaps[CM_Red];
 							}
 							else if (sc->Check("green"))
 							{
+								P.Trans = &ColourMaps[CM_Green];
 							}
 							else if (sc->Check("ice"))
 							{
+								P.Trans = &IceTranslation;
 							}
 							else if (sc->Check("desaturate"))
 							{
@@ -274,30 +306,57 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 							}
 							else
 							{
+								P.Trans = new VTextureTranslation();
+								P.bOwnTrans = true;
 								do
 								{
 									sc->ExpectString();
+									P.Trans->AddTransString(sc->String);
 								}
 								while (sc->Check(","));
 							}
 						}
 						else if (sc->Check("blend"))
 						{
+							Format = TEXFMT_RGBA;
+							if (P.bOwnTrans)
+							{
+								delete P.Trans;
+								P.bOwnTrans = false;
+							}
+							P.Trans = NULL;
+							P.Blend.r = 0;
+							P.Blend.g = 0;
+							P.Blend.b = 0;
+							P.Blend.a = 0;
+
 							if (!sc->CheckNumber())
 							{
 								sc->ExpectString();
+								vuint32 Col = M_ParseColour(sc->String);
+								P.Blend.r = (Col >> 16) & 0xff;
+								P.Blend.g = (Col >> 8) & 0xff;
+								P.Blend.b = Col & 0xff;
 							}
 							else
 							{
+								P.Blend.r = MID(0, sc->Number, 255);
 								sc->Expect(",");
 								sc->ExpectNumber();
+								P.Blend.g = MID(0, sc->Number, 255);
 								sc->Expect(",");
 								sc->ExpectNumber();
+								P.Blend.b = MID(0, sc->Number, 255);
 								sc->Expect(",");
 							}
 							if (sc->Check(","))
 							{
-								sc->ExpectNumber();
+								sc->ExpectFloat();
+								P.Blend.a = MID(0, int(sc->Float * 255), 254);
+							}
+							else
+							{
+								P.Blend.a = 255;
 							}
 						}
 						else if (sc->Check("alpha"))
@@ -365,6 +424,13 @@ VMultiPatchTexture::~VMultiPatchTexture()
 	guard(VMultiPatchTexture::~VMultiPatchTexture);
 	if (Patches)
 	{
+		for (int i = 0; i < PatchCount; i++)
+		{
+			if (Patches[i].bOwnTrans)
+			{
+				delete Patches[i].Trans;
+			}
+		}
 		delete[] Patches;
 	}
 	if (Pixels)
@@ -411,7 +477,6 @@ vuint8* VMultiPatchTexture::GetPixels()
 
 	//	Load all patches, if any of them is not in standard palette, then
 	// switch to 32 bit mode.
-	Format = TEXFMT_8;
 	for (int i = 0; i < PatchCount; i++)
 	{
 		Patches[i].Tex->GetPixels();
@@ -437,7 +502,8 @@ vuint8* VMultiPatchTexture::GetPixels()
 	for (int i = 0; i < PatchCount; i++, patch++)
 	{
 		VTexture* PatchTex = patch->Tex;
-		vuint8* PatchPixels = PatchTex->GetPixels();
+		vuint8* PatchPixels = patch->Trans ? PatchTex->GetPixels8() :
+			PatchTex->GetPixels();
 		int x1 = patch->XOrigin;
 		int x2 = x1 + (patch->Rot & 1 ? PatchTex->GetHeight() :
 			PatchTex->GetWidth());
@@ -510,24 +576,47 @@ vuint8* VMultiPatchTexture::GetPixels()
 				{
 					//	Get pixel.
 					rgba_t col;
-					switch (PatchTex->Format)
+					if (patch->Trans)
 					{
-					case TEXFMT_8:
-						col = r_palette[PatchPixels[PIdx]];
-						break;
-					case TEXFMT_8Pal:
-						col = PatchTex->GetPalette()[PatchPixels[PIdx]];
-						break;
-					case TEXFMT_RGBA:
-						col = ((rgba_t*)PatchPixels)[PIdx];
-						break;
-					default:
-						//	Shut up compiler
-						col.r = 0;
-						col.g = 0;
-						col.b = 0;
-						col.a = 0;
-						break;
+						col = patch->Trans->GetPalette()[PatchPixels[PIdx]];
+					}
+					else
+					{
+						switch (PatchTex->Format)
+						{
+						case TEXFMT_8:
+							col = r_palette[PatchPixels[PIdx]];
+							break;
+						case TEXFMT_8Pal:
+							col = PatchTex->GetPalette()[PatchPixels[PIdx]];
+							break;
+						case TEXFMT_RGBA:
+							col = ((rgba_t*)PatchPixels)[PIdx];
+							break;
+						default:
+							//	Shut up compiler
+							col.r = 0;
+							col.g = 0;
+							col.b = 0;
+							col.a = 0;
+							break;
+						}
+					}
+
+					if (patch->Blend.a == 255)
+					{
+						col.r = col.r * patch->Blend.r / 255;
+						col.g = col.g * patch->Blend.g / 255;
+						col.b = col.b * patch->Blend.b / 255;
+					}
+					else if (patch->Blend.a)
+					{
+						col.r = col.r * (255 - patch->Blend.a) / 255 +
+							patch->Blend.r * patch->Blend.a / 255;
+						col.g = col.g * (255 - patch->Blend.a) / 255 +
+							patch->Blend.g * patch->Blend.a / 255;
+						col.b = col.b * (255 - patch->Blend.a) / 255 +
+							patch->Blend.b * patch->Blend.a / 255;
 					}
 
 					//	Add to texture.

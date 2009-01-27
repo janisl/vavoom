@@ -23,6 +23,9 @@
 //**
 //**************************************************************************
 
+#ifndef _DRAWER_H_
+#define _DRAWER_H_
+
 struct surface_t;
 struct surfcache_t;
 struct VModel;
@@ -168,3 +171,5 @@ static VDrawer* Create##TClass() \
 FDrawerDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
 extern VDrawer			*Drawer;
+
+#endif

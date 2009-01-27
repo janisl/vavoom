@@ -70,11 +70,14 @@ private:
 	{
 		//	Block origin (allways UL), which has allready accounted for the
 		// internal origin of the patch.
-		short		XOrigin;
-		short		YOrigin;
-		vuint8		Flip;
-		vuint8		Rot;
-		VTexture*	Tex;
+		short					XOrigin;
+		short					YOrigin;
+		vuint8					Flip;
+		vuint8					Rot;
+		bool					bOwnTrans;
+		VTexture*				Tex;
+		VTextureTranslation*	Trans;
+		rgba_t					Blend;
 	};
 
 	//	All the Patches[PatchCount] are drawn back to front into the cached

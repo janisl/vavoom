@@ -159,6 +159,7 @@ public:
 	void MapToRange(int, int, int, int);
 	void MapToColours(int, int, int, int, int, int, int, int);
 	void BuildBloodTrans(int);
+	void AddTransString(const VStr&);
 
 	const vuint8* GetTable() const
 	{

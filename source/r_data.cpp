@@ -885,13 +885,13 @@ static bool CheckChar(char*& pStr, char Chr)
 
 //==========================================================================
 //
-//	DoTransString
+//	VTextureTranslation::AddTransString
 //
 //==========================================================================
 
-static void DoTransString(VTextureTranslation* Tr, const VStr& Str)
+void VTextureTranslation::AddTransString(const VStr& Str)
 {
-	guard(DoTransString);
+	guard(VTextureTranslation::AddTransString);
 	char* pStr = const_cast<char*>(*Str);
 
 	//	Parse start and end of the range
@@ -913,7 +913,7 @@ static void DoTransString(VTextureTranslation* Tr, const VStr& Str)
 			return;
 		}
 		int SrcEnd = strtol(pStr, &pStr, 10);
-		Tr->MapToRange(Start, End, SrcStart, SrcEnd);
+		MapToRange(Start, End, SrcStart, SrcEnd);
 	}
 	else
 	{
@@ -955,7 +955,7 @@ static void DoTransString(VTextureTranslation* Tr, const VStr& Str)
 		{
 			return;
 		}
-		Tr->MapToColours(Start, End, R1, G1, B1, R2, G2, B2);
+		MapToColours(Start, End, R1, G1, B1, R2, G2, B2);
 	}
 	unguard;
 }
@@ -991,7 +991,7 @@ int R_ParseDecorateTranslation(VScriptParser* sc, int GameMax)
 	do
 	{
 		sc->ExpectString();
-		DoTransString(Tr, sc->String);
+		Tr->AddTransString(sc->String);
 	}
 	while (sc->Check(","));
 
