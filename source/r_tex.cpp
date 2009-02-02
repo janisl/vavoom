@@ -787,9 +787,25 @@ void VTextureManager::AddHiResTextures()
 		{
 			if (sc->Check("remap"))
 			{
+				int Type = TEXTYPE_Any;
+				bool Overload = false;
+				if (sc->Check("wall"))
+				{
+					Type = TEXTYPE_Wall;
+					Overload = true;
+				}
+				else if (sc->Check("flat"))
+				{
+					Type = TEXTYPE_Flat;
+					Overload = true;
+				}
+				else if (sc->Check("sprite"))
+				{
+					Type = TEXTYPE_Sprite;
+				}
+
 				sc->ExpectName8();
-				int OldIdx = CheckNumForName(sc->Name8, TEXTYPE_Any, false,
-					false);
+				int OldIdx = CheckNumForName(sc->Name8, Type, Overload, false);
 				if (OldIdx < 0)
 				{
 					OldIdx = AddPatch(sc->Name8, TEXTYPE_Pic, true);
@@ -827,6 +843,7 @@ void VTextureManager::AddHiResTextures()
 				sc->ExpectName8();
 				VName Name = sc->Name8;
 				int LumpIdx = W_CheckNumForName(sc->Name8, WADNS_Graphics);
+				sc->Check("force32bit");
 
 				//	Dimensions
 				sc->ExpectNumber();

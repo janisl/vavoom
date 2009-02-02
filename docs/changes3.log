@@ -3836,3 +3836,5 @@
   I implemented advanced texture patch options.
 02.02.2009
   I fixed Bloodscourge.
+  I added proper search of scripted texture patches and additions to the remap
+ command.
