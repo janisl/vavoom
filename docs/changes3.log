@@ -3838,3 +3838,5 @@
   I fixed Bloodscourge.
   I added proper search of scripted texture patches, additions to the remap
  command and TEXTURES as an alternative name for HIRESTEX.
+  I changed VTextureManager::CheckNumForName to return 0 for all NULL textures
+ and not actual texture number.

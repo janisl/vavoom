@@ -288,7 +288,7 @@ void VTextureManager::RemoveFromHash(int Index)
 //
 //==========================================================================
 
-int	VTextureManager::CheckNumForName(VName Name, int Type, bool bOverload,
+int VTextureManager::CheckNumForName(VName Name, int Type, bool bOverload,
 	bool bCheckAny)
 {
 	guard(VTextureManager::CheckNumForName);
@@ -309,6 +309,10 @@ int	VTextureManager::CheckNumForName(VName Name, int Type, bool bOverload,
 		if (Type == TEXTYPE_Any || Textures[i]->Type == Type ||
 			(bOverload && Textures[i]->Type == TEXTYPE_Overload))
 		{
+			if (Textures[i]->Type == TEXTYPE_Null)
+			{
+				return 0;
+			}
 			return i;
 		}
 	}
