@@ -132,11 +132,11 @@ VTexture* VPcxTexture::Create(VStream& Strm, int LumpNum)
 //==========================================================================
 
 VPcxTexture::VPcxTexture(int ALumpNum, pcx_t& Hdr)
-: LumpNum(ALumpNum)
-, Pixels(0)
+: Pixels(0)
 , Palette(0)
 {
-	Name = W_LumpName(LumpNum);
+	SourceLump = ALumpNum;
+	Name = W_LumpName(SourceLump);
 	Width = Hdr.xmax - Hdr.xmin + 1;
 	Height = Hdr.ymax - Hdr.ymin + 1;
 }
@@ -181,7 +181,7 @@ vuint8* VPcxTexture::GetPixels()
 	}
 
 	//	Open stream.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 
 	//	Read header.
 	pcx_t pcx;

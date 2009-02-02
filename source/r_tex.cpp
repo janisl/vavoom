@@ -346,6 +346,26 @@ int	VTextureManager::NumForName(VName Name, int Type, bool bOverload,
 
 //==========================================================================
 //
+//	VTextureManager::FindTextureByLumpNum
+//
+//==========================================================================
+
+int VTextureManager::FindTextureByLumpNum(int LumpNum)
+{
+	guard(VTextureManager::FindTextureByLumpNum);
+	for (int i = 0; i < Textures.Num(); i++)
+	{
+		if (Textures[i]->SourceLump == LumpNum)
+		{
+			return i;
+		}
+	}
+	return -1;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VTextureManager::TextureHeight
 //
 //==========================================================================

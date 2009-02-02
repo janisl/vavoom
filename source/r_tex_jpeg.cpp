@@ -151,10 +151,10 @@ VTexture* VJpegTexture::Create(VStream& Strm, int LumpNum)
 //==========================================================================
 
 VJpegTexture::VJpegTexture(int ALumpNum, int AWidth, int AHeight)
-: LumpNum(ALumpNum)
-, Pixels(0)
+: Pixels(0)
 {
-	Name = W_LumpName(LumpNum);
+	SourceLump = ALumpNum;
+	Name = W_LumpName(SourceLump);
 	Width = AWidth;
 	Height = AHeight;
 }
@@ -274,7 +274,7 @@ vuint8* VJpegTexture::GetPixels()
 	VJpegClientData			cdata;
 
 	//	Open stream.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 	check(Strm);
 
 	try

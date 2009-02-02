@@ -111,13 +111,13 @@ VTexture* VRawPicTexture::Create(VStream& Strm, int LumpNum)
 //==========================================================================
 
 VRawPicTexture::VRawPicTexture(int ALumpNum, int APalLumpNum)
-: LumpNum(ALumpNum)
-, PalLumpNum(APalLumpNum)
+: PalLumpNum(APalLumpNum)
 , Pixels(0)
 , Palette(0)
 {
+	SourceLump = ALumpNum;
 	Type = TEXTYPE_Pic;
-	Name = W_LumpName(LumpNum);
+	Name = W_LumpName(SourceLump);
 	Width = 320;
 	Height = 200;
 	Format = PalLumpNum >= 0 ? TEXFMT_8Pal : TEXFMT_8;
@@ -198,7 +198,7 @@ vuint8* VRawPicTexture::GetPixels()
 	}
 
 	//	Read data.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 	vuint8* dst = Pixels;
 	for (int i = 0; i < 64000; i++, dst++)
 	{

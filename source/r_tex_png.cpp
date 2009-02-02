@@ -149,10 +149,10 @@ VTexture* VPngTexture::Create(VStream& Strm, int LumpNum)
 
 VPngTexture::VPngTexture(int ALumpNum, int AWidth, int AHeight, int ASOffset,
 	int ATOffset)
-: LumpNum(ALumpNum)
-, Pixels(0)
+: Pixels(0)
 {
-	Name = W_LumpName(LumpNum);
+	SourceLump = ALumpNum;
+	Name = W_LumpName(SourceLump);
 	Width = AWidth;
 	Height = AHeight;
 	SOffset = ASOffset;
@@ -236,7 +236,7 @@ vuint8* VPngTexture::GetPixels()
 	}
 
 	//	Open stream.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 
 	//	Verify signature.
 	png_byte Signature[8];

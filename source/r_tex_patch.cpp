@@ -116,10 +116,10 @@ VTexture* VPatchTexture::Create(VStream& Strm, int LumpNum)
 
 VPatchTexture::VPatchTexture(int ALumpNum, int AWidth, int AHeight,
 	int ASOffset, int ATOffset)
-: LumpNum(ALumpNum)
-, Pixels(0)
+: Pixels(0)
 {
-	Name = W_LumpName(LumpNum);
+	SourceLump = ALumpNum;
+	Name = W_LumpName(SourceLump);
 	Format = TEXFMT_8;
 	Width = AWidth;
 	Height = AHeight;
@@ -159,7 +159,7 @@ vuint8* VPatchTexture::GetPixels()
 	}
 
 	//	Open stream.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 
 	//	Make sure header is present.
 	if (Strm->TotalSize() < 8)

@@ -66,16 +66,16 @@ VTexture* VFlatTexture::Create(VStream&, int LumpNum)
 //==========================================================================
 
 VFlatTexture::VFlatTexture(int InLumpNum)
-: LumpNum(InLumpNum)
-, Pixels(0)
+: Pixels(0)
 {
 	guard(VFlatTexture::VFlatTexture);
+	SourceLump = InLumpNum;
 	Type = TEXTYPE_Flat;
 	Format = TEXFMT_8;
-	Name = W_LumpName(LumpNum);
+	Name = W_LumpName(SourceLump);
 	Width = 64;
 	//	Check for larger flats.
-	while (W_LumpLength(LumpNum) >= Width * Width * 4)
+	while (W_LumpLength(SourceLump) >= Width * Width * 4)
 	{
 		Width *= 2;
 	}
@@ -124,14 +124,14 @@ vuint8* VFlatTexture::GetPixels()
 	Pixels = new vuint8[Width * Height];
 
 	//	A flat must be at least 64x64, if it's smaller, then ignore it.
-	if (W_LumpLength(LumpNum) < 64 * 64)
+	if (W_LumpLength(SourceLump) < 64 * 64)
 	{
 		memset(Pixels, 0, 64 * 64);
 		return Pixels;
 	}
 
 	//	Read data.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 	for (int i = 0; i < Width * Height; i++)
 	{
 		*Strm << Pixels[i];

@@ -124,6 +124,7 @@ VTexture::VTexture()
 , Pixels8Bit(0)
 , HiResTexture(0)
 , Pixels8BitValid(false)
+, SourceLump(-1)
 {
 }
 

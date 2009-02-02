@@ -189,6 +189,7 @@ public:
 	float		TScale;
 	int			TextureTranslation;	// Animation
 	int			HashNext;
+	int			SourceLump;
 
 	//	Driver data.
 	struct VTransData
@@ -257,6 +258,7 @@ public:
 		bool bCheckAny = false);
 	int	NumForName(VName Name, int Type, bool bOverload = false,
 		bool bCheckAny = false);
+	int FindTextureByLumpNum(int);
 	VName GetTextureName(int TexNum);
 	float TextureHeight(int TexNum);
 	int TextureAnimation(int InTex);

@@ -221,10 +221,46 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 			{
 				VTexPatch& P = Parts.Alloc();
 				sc->ExpectString();
-				VName PatchName = VName(*sc->String, VName::AddLower8);
+				VName PatchName = VName(*sc->String.ToLower());
 				int Tex = GTextureManager.CheckNumForName(PatchName,
 					TEXTYPE_WallPatch, false, false);
-				P.Tex = GTextureManager[Tex];
+				if (Tex < 0)
+				{
+					int LumpNum = W_CheckNumForFileName(sc->String);
+					if (LumpNum >= 0)
+					{
+						Tex = GTextureManager.FindTextureByLumpNum(LumpNum);
+						if (Tex < 0)
+						{
+							VTexture* T = CreateTexture(TEXTYPE_WallPatch,
+								LumpNum);
+							if (T)
+							{
+								Tex = GTextureManager.AddTexture(T);
+								T->Name = NAME_None;
+							}
+						}
+					}
+					else if (sc->String.Length() <= 8)
+					{
+						LumpNum = W_CheckNumForName(PatchName, WADNS_Patches);
+						if (LumpNum >= 0)
+						{
+							Tex = GTextureManager.AddTexture(CreateTexture(
+								TEXTYPE_WallPatch, LumpNum));
+						}
+					}
+				}
+				if (Tex < 0)
+				{
+					GCon->Logf("Unknown patch '%s' in texture '%s'",
+						*sc->String, *Name);
+					P.Tex = NULL;
+				}
+				else
+				{
+					P.Tex = GTextureManager[Tex];
+				}
 
 				//	Parse origin.
 				sc->Expect(",");
@@ -527,6 +563,10 @@ vuint8* VMultiPatchTexture::GetPixels()
 	for (int i = 0; i < PatchCount; i++, patch++)
 	{
 		VTexture* PatchTex = patch->Tex;
+		if (!PatchTex)
+		{
+			continue;
+		}
 		vuint8* PatchPixels = patch->Trans ? PatchTex->GetPixels8() :
 			PatchTex->GetPixels();
 		int PWidth = PatchTex->GetWidth();

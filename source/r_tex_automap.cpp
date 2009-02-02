@@ -71,12 +71,12 @@ VTexture* VAutopageTexture::Create(VStream& Strm, int LumpNum)
 //==========================================================================
 
 VAutopageTexture::VAutopageTexture(int ALumpNum)
-: LumpNum(ALumpNum)
-, Pixels(0)
+: Pixels(0)
 {
-	Name = W_LumpName(LumpNum);
+	SourceLump = ALumpNum;
+	Name = W_LumpName(SourceLump);
 	Width = 320;
-	Height = W_LumpLength(LumpNum) / 320;
+	Height = W_LumpLength(SourceLump) / 320;
 	Format = TEXFMT_8;
 }
 
@@ -112,7 +112,7 @@ vuint8* VAutopageTexture::GetPixels()
 	}
 
 	//	Read data.
-	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 	int len = Strm->TotalSize();
 	Pixels = new vuint8[len];
 	vuint8* dst = Pixels;

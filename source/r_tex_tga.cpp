@@ -113,11 +113,11 @@ VTexture* VTgaTexture::Create(VStream& Strm, int LumpNum)
 //==========================================================================
 
 VTgaTexture::VTgaTexture(int ALumpNum, tgaHeader_t& Hdr)
-: LumpNum(ALumpNum)
-, Pixels(0)
+: Pixels(0)
 , Palette(0)
 {
-	Name = W_LumpName(LumpNum);
+	SourceLump = ALumpNum;
+	Name = W_LumpName(SourceLump);
 	Width = Hdr.width;
 	Height = Hdr.height;
 }
@@ -161,8 +161,7 @@ vuint8* VTgaTexture::GetPixels()
 	int			count;
 	int			c;
 
-	VStream* Strm = LumpNum >= 0 ? W_CreateLumpReaderNum(LumpNum) :
-		FL_OpenFileRead(*Name);
+	VStream* Strm = W_CreateLumpReaderNum(SourceLump);
 	if (!Strm)
 	{
 		Sys_Error("Couldn't find file %s", *Name);

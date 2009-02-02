@@ -46,7 +46,6 @@ public:
 class VPatchTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	vuint8*		Pixels;
 
 public:
@@ -113,7 +112,6 @@ public:
 class VFlatTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	vuint8*		Pixels;
 
 public:
@@ -131,7 +129,6 @@ public:
 class VRawPicTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	int			PalLumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
@@ -152,7 +149,6 @@ public:
 class VAutopageTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	vuint8*		Pixels;
 
 public:
@@ -172,7 +168,6 @@ public:
 class VImgzTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	vuint8*		Pixels;
 
 public:
@@ -190,7 +185,6 @@ public:
 class VPcxTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
@@ -210,7 +204,6 @@ public:
 class VTgaTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	vuint8*		Pixels;
 	rgba_t*		Palette;
 
@@ -230,7 +223,6 @@ public:
 class VPngTexture : public VTexture
 {
 private:
-	int			LumpNum;
 	vuint8*		Pixels;
 
 public:
@@ -248,7 +240,6 @@ public:
 class VJpegTexture : public VTexture
 {
 public:
-	int			LumpNum;
 	vuint8*		Pixels;
 
 	static VTexture* Create(VStream&, int);
