@@ -313,6 +313,7 @@ REGISTER_NAME(language)
 REGISTER_NAME(titlemap)
 REGISTER_NAME(vfxdefs)
 REGISTER_NAME(keyconf)
+REGISTER_NAME(textures)
 
 //	Standard font names
 REGISTER_NAME(smallfont)
