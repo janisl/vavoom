@@ -591,10 +591,10 @@ final void MStaffSpawn(float angle)
 {
 	EntityEx	mo;
 
-	mo = EntityEx(Owner).SpawnPlayerMissileAngle(MageStaffFX2, angle);
+	mo = SpawnPlayerMissileAngle(MageStaffFX2, angle);
 	if (mo)
 	{
-		mo.Target = EntityEx(Owner);
+		mo.Target = EntityEx(self);
 		MageStaffFX2(mo).FindEnemy();
 	}
 }
