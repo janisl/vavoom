@@ -92,7 +92,7 @@ IMPLEMENT_AUDIO_CODEC(VTimidityAudioCodec, "Timidity");
 
 ControlMode		VTimidityAudioCodec::MyControlMode =
 {
-	"Vavoom interface", 's', 0, 0, 0,
+	(char*)"Vavoom interface", 's', 0, 0, 0,
 	VTimidityAudioCodec::ctl_open,
 	NULL,
 	VTimidityAudioCodec::ctl_close,
@@ -114,7 +114,7 @@ ControlMode		VTimidityAudioCodec::MyControlMode =
 };
 PlayMode		VTimidityAudioCodec::MyPlayMode =
 {
-	DEFAULT_RATE, PE_16BIT | PE_SIGNED, "Vavoom audio"
+	DEFAULT_RATE, PE_16BIT | PE_SIGNED, (char*)"Vavoom audio"
 };
 
 #if defined(DJGPP) || defined(_WIN32)

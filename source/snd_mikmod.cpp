@@ -92,14 +92,14 @@ bool			VMikModAudioCodec::MikModInitialised;
 MDRIVER			VMikModAudioCodec::Driver =
 {
 	NULL,
-	"vavoom",
-	"vavoom output driver",
+	(CHAR*)"vavoom",
+	(CHAR*)"vavoom output driver",
 	0,
 	255,
 #if (LIBMIKMOD_VERSION > 0x030106)
-	"vavoom",
+	(CHAR*)"vavoom",
 #  if (LIBMIKMOD_VERSION >= 0x030200)
-	"",
+	(CHAR*)"",
 #  endif	/* libmikmod-3.2.x */
 	NULL,
 #endif
@@ -359,7 +359,7 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 		md_mode |= DMODE_HQMIXER;
 
 	//	Initialise MikMod.
-	if (MikMod_Init(""))
+	if (MikMod_Init((CHAR*)""))
 	{
 		GCon->Logf("MikMod init failed");
 		return NULL;
