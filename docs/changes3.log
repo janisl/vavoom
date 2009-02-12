@@ -3840,3 +3840,5 @@
  command and TEXTURES as an alternative name for HIRESTEX.
   I changed VTextureManager::CheckNumForName to return 0 for all NULL textures
  and not actual texture number.
+12.02.2009
+  I fixed root window not checking for Y scale changes.
