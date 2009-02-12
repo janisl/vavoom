@@ -99,7 +99,7 @@ IMPLEMENT_AUDIO_CODEC(VWavAudioCodec, "Wav");
 //
 //==========================================================================
 
-static int FindRiffChunk(VStream& Strm, char* ID)
+static int FindRiffChunk(VStream& Strm, const char* ID)
 {
 	guard(VWavAudioCodec::FindChunk);
 	Strm.Seek(12);
