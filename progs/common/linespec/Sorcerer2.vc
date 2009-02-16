@@ -130,7 +130,6 @@ final void DSparilTeleport()
 	}
 
 	PrevOrg = Origin;
-	Prev_Org = Origin;
 	if (TeleportMove(Spot.Origin))
 	{
 		fog = Spawn(Sorcerer2Telefade, PrevOrg);
