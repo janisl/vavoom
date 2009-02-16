@@ -512,6 +512,7 @@ final void A_WizAtk1()
 	A_FaceTarget();
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
+	bGhost = false;
 }
 
 //==========================================================================
@@ -542,6 +543,7 @@ final void A_WizAtk3()
 
 	RenderStyle = STYLE_Normal;
 	Alpha = 1.0;
+	bGhost = false;
 	if (!Target)
 	{
 		return;

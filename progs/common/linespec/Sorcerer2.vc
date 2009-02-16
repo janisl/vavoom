@@ -51,10 +51,12 @@ void BeginPlay()
 		if (FirstBossSpot)
 		{
 			Prev.NextSpot = Spot;
+			BossSpotCount++;
 		}
 		else
 		{
 			FirstBossSpot = Spot;
+			BossSpotCount++;
 		}
 		Prev = Spot;
 	}
@@ -128,6 +130,7 @@ final void DSparilTeleport()
 	}
 
 	PrevOrg = Origin;
+	Prev_Org = Origin;
 	if (TeleportMove(Spot.Origin))
 	{
 		fog = Spawn(Sorcerer2Telefade, PrevOrg);
