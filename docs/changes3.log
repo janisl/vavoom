@@ -3842,3 +3842,6 @@
  and not actual texture number.
 12.02.2009
   I fixed root window not checking for Y scale changes.
+  I fixed some warnings that gcc 4.3.3 gives.
+16.02.2009
+  I fixed view height not being updated when unmorphing.

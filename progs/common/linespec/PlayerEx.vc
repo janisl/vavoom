@@ -3329,6 +3329,8 @@ final bool UndoPlayerMorph(bool Force, PlayerEx Activator)
 	A.Translation = (Entity::TRANSL_Player << Entity::TRANSL_TYPE_SHIFT) +
 		GetPlayerNum();
 	A.Angles = MO.Angles;
+	ViewHeight = PlayerPawn(A).ViewHeight;
+	DeltaViewHeight = 0.0;
 	A.Player = self;
 	A.bIsPlayer = true;
 	A.ReactionTime = 0.5;
