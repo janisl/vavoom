@@ -227,6 +227,10 @@
 		<flag name="BossDeath" property="bBossDeath" />
 		<flag name="UseSpecial" property="bUseSpecial" />
 		<flag_unsupported name="OldRadiusDmg" />
+		<flag_unsupported name="ClientSideOnly" />
+		<flag_unsupported name="NoInteraction" />
+		<flag_unsupported name="AllowClientSpawn" />
+		<flag_unsupported name="NoTimeFreeze" />
 		<!-- Limited use -->
 		<flag name="InCombat" property="bInCombat" />
 		<flag name="NoSector" property="bNoSector" />
