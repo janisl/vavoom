@@ -33,7 +33,7 @@ actor LeatherArmor : BasicArmorPickup 2018
 	Inventory.MaxAmount 5
 	Inventory.Icon "i_arm2"
 	Armor.SaveAmount 100
-	Armor.SavePercent 33.33333
+	Armor.SavePercent 33.335
 	+FloorClip
 	+Inventory.InvBar
 	states
