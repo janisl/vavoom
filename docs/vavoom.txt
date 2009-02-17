@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.29
+                                                    Version 1.30
 
 Contents:
     0. Disclaimer
@@ -1123,6 +1123,24 @@ Version 1.29
 * Added support for model frame interpolation.
 * Added support for compiling progs in the engine, progs now are in source
  form in PK3 file.
+
+==============================================================================
+Version 1.30
+==============================================================================
+
+* Improved speed of DECORATE parser.
+* Some gameplay speed optimisations.
+* Some improvements to networking.
+* Fixed demo recording in single player.
+* Added suppport for maps with more than 32k sidedefs.
+* Added support for maps that don't have node lumps present at all.
+* Added support for most of the new ACS commands, additions of new features
+ to the existing ones.
+* Added support for "return" ACS script type.
+* Added "allowprotction" flag to terrain types.
+* Morph system enhancements.
+* Added support for text format texture definition scripts.
+* Many bug fixes and improvements.
 
 *****************************************************************************
 8. Licensing

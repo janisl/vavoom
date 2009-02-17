@@ -3683,6 +3683,11 @@
  sending any more.
 27.10.2008
   More object map channel fixes.
+
+******************************************************************************
+                            VERSION 1.28
+******************************************************************************
+
 06.11.2008
   I fixed texture coordinate correction when plane has reached destination.
 11.11.2008
@@ -3845,3 +3850,4 @@
   I fixed some warnings that gcc 4.3.3 gives.
 16.02.2009
   I fixed view height not being updated when unmorphing.
+  Firebrand fixed some gameplay bugs.
