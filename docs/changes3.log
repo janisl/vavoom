@@ -3851,3 +3851,5 @@
 16.02.2009
   I fixed view height not being updated when unmorphing.
   Firebrand fixed some gameplay bugs.
+17.02.2009
+  I fixed PrintBinary ACS p-code.

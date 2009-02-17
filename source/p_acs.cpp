@@ -4962,7 +4962,15 @@ int VAcs::RunScript(float DeltaTime)
 			ACSVM_BREAK;
 
 		ACSVM_CASE(PCD_PrintBinary)
-			PrintStr += va("%B", sp[-1]);
+			{
+				vuint32 Val = sp[-1];
+				do
+				{
+					PrintStr += Val & 1 ? "1" : "0";
+					Val >>= 1;
+				}
+				while (Val);
+			}
 			sp--;
 			ACSVM_BREAK;
 
