@@ -35,8 +35,8 @@ extern int num_ochannels;
 
 struct PathList
 {
-  char *path;
-  PathList *next;
+	char*		path;
+	PathList*	next;
 };
 
 /* Noise modes for open_file */
@@ -44,7 +44,7 @@ struct PathList
 #define OF_NORMAL	1
 #define OF_VERBOSE	2
 
-extern FILE *open_file(char *name, int decompress, int noise_mode);
+extern FILE *open_file(const char *name, int decompress, int noise_mode);
 extern void add_to_pathlist(const char *s);
 extern void free_pathlist();
 extern void close_file(FILE *fp);

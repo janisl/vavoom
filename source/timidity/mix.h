@@ -25,7 +25,7 @@
 namespace LibTimidity
 {
 
-extern void mix_voice(int32 *buf, int v, int32 c);
+extern void mix_voice(int32* buf, int v, int32 c);
 extern int recompute_envelope(int v);
 extern void apply_envelope_to_amp(int v);
 

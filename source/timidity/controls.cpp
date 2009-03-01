@@ -27,11 +27,12 @@
 namespace LibTimidity
 {
 
-ControlMode *ctl_list[]={
-  0,
-  0
+ControlMode *ctl_list[] =
+{
+	0,
+	0
 };
 
-ControlMode *ctl;
+ControlMode*	ctl;
 
 };

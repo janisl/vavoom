@@ -26,10 +26,10 @@ namespace LibTimidity
 
 struct MidiEventList
 {
-  MidiEvent event;
-  MidiEventList* next;
+	MidiEvent		event;
+	MidiEventList*	next;
 };
 
-MidiEvent *read_midi_mem(void *mimage, int msize, int32 *count, int32 *sp);
+MidiEvent* read_midi_mem(void* mimage, int msize, int32* count, int32* sp);
 
 };

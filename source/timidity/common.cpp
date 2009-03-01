@@ -37,142 +37,151 @@ namespace LibTimidity
 /* I guess "rb" should be right for any libc */
 #define OPEN_MODE "rb"
 
-char current_filename[1024];
+char				current_filename[1024];
 
-static PathList *pathlist = NULL;
+static PathList*	pathlist = NULL;
 
 /* Try to open a file for reading. If the filename ends in one of the 
    defined compressor extensions, pipe the file through the decompressor */
-static FILE *try_to_open(char *name, int decompress, int noise_mode)
+static FILE* try_to_open(const char* name, int decompress, int noise_mode)
 {
-  return fopen(name, OPEN_MODE); /* First just check that the file exists */
+	return fopen(name, OPEN_MODE); /* First just check that the file exists */
 }
 
 /* This is meant to find and open files for reading, possibly piping
    them through a decompressor. */
-FILE *open_file(char *name, int decompress, int noise_mode)
+FILE* open_file(const char* name, int decompress, int noise_mode)
 {
-  FILE *fp;
-  int l;
-
-  if (!name || !(*name))
-    {
-      ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Attempted to open nameless file.");
-      return 0;
-    }
+	if (!name || !(*name))
+	{
+		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Attempted to open nameless file.");
+		return 0;
+	}
 
 #ifdef DEFAULT_PATH
-  if (pathlist==NULL)
-  {
-    /* Generate path list */
-    add_to_pathlist(DEFAULT_PATH);
-  }
+	if (pathlist == NULL)
+	{
+		/* Generate path list */
+		add_to_pathlist(DEFAULT_PATH);
+	}
 #endif
 
-  /* First try the given name */
+	/* First try the given name */
 
-  strncpy(current_filename, name, 1023);
-  current_filename[1023]='\0';
+	strncpy(current_filename, name, 1023);
+	current_filename[1023] = '\0';
 
-  ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s", current_filename);
-  if ((fp=try_to_open(current_filename, decompress, noise_mode)))
-    return fp;
-
-#ifdef ENOENT
-  if (noise_mode && (errno != ENOENT))
-    {
-      ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", 
-	   current_filename, strerror(errno));
-      return 0;
-    }
-#endif
-
-  PathList* plp=pathlist;
-  if (name[0] != PATH_SEP)
-    while (plp)  /* Try along the path then */
-      {
-	*current_filename=0;
-	l=strlen(plp->path);
-	if(l)
-	  {
-	    strcpy(current_filename, plp->path);
-	    if(current_filename[l-1]!=PATH_SEP)
-	      strcat(current_filename, PATH_STRING);
-	  }
-	strcat(current_filename, name);
 	ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s", current_filename);
-	if ((fp=try_to_open(current_filename, decompress, noise_mode)))
-	  return fp;
+	FILE* fp = try_to_open(current_filename, decompress, noise_mode);
+	if (fp)
+	{
+		return fp;
+	}
+
 #ifdef ENOENT
 	if (noise_mode && (errno != ENOENT))
-	  {
-	    ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", 
-		 current_filename, strerror(errno));
-	    return 0;
-	  }
+	{
+		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", current_filename, strerror(errno));
+		return 0;
+	}
 #endif
-	plp=plp->next;
-      }
-  
-  /* Nothing could be opened. */
 
-  *current_filename=0;
-  
-  if (noise_mode>=2)
-    ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", name, strerror(errno));
-  
-  return 0;
+	PathList* plp = pathlist;
+	if (name[0] != PATH_SEP)
+	{
+		while (plp)  /* Try along the path then */
+		{
+			*current_filename = 0;
+			int l = strlen(plp->path);
+			if (l)
+			{
+				strcpy(current_filename, plp->path);
+				if (current_filename[l - 1] != PATH_SEP)
+				{
+					strcat(current_filename, PATH_STRING);
+				}
+			}
+			strcat(current_filename, name);
+			ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s", current_filename);
+			fp = try_to_open(current_filename, decompress, noise_mode);
+			if (fp)
+			{
+				return fp;
+			}
+#ifdef ENOENT
+			if (noise_mode && (errno != ENOENT))
+			{
+				ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", current_filename, strerror(errno));
+				return 0;
+			}
+#endif
+			plp=plp->next;
+		}
+	}
+
+	/* Nothing could be opened. */
+	*current_filename = 0;
+
+	if (noise_mode >= 2)
+	{
+		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: %s", name, strerror(errno));
+	}
+
+	return 0;
 }
 
 /* This closes files opened with open_file */
-void close_file(FILE *fp)
+void close_file(FILE* fp)
 {
-    fclose(fp);
+	fclose(fp);
 }
 
 /* This is meant for skipping a few bytes in a file or fifo. */
-void skip(FILE *fp, size_t len)
+void skip(FILE* fp, size_t len)
 {
-  size_t c;
-  char tmp[1024];
-  while (len>0)
-    {
-      c=len;
-      if (c>1024) c=1024;
-      len-=c;
-      if (c!=fread(tmp, 1, c, fp))
-	ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: skip: %s",
-	     current_filename, strerror(errno));
-    }
+	char tmp[1024];
+	while (len > 0)
+	{
+		size_t c = len;
+		if (c > 1024)
+		{
+			c = 1024;
+		}
+		len -= c;
+		if (c != fread(tmp, 1, c, fp))
+		{
+			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: skip: %s", current_filename, strerror(errno));
+		}
+	}
 }
 
 /* This'll allocate memory or die. */
-void *safe_malloc(size_t count)
+void* safe_malloc(size_t count)
 {
-  void *p;
-  if (count > (1<<21))
-    {
-      ctl->cmsg(CMSG_FATAL, VERB_NORMAL, 
-	   "Strange, I feel like allocating %d bytes. This must be a bug.",
-	   count);
-    }
-  else if ((p=malloc(count)))
-    return p;
-  else
-    ctl->cmsg(CMSG_FATAL, VERB_NORMAL, "Sorry. Couldn't malloc %d bytes.", count);
+	void* p;
+	if (count > (1 << 21))
+	{
+		ctl->cmsg(CMSG_FATAL, VERB_NORMAL, 
+			"Strange, I feel like allocating %d bytes. This must be a bug.",
+		count);
+	}
+	else if ((p = malloc(count)))
+		return p;
+	else
+		ctl->cmsg(CMSG_FATAL, VERB_NORMAL, "Sorry. Couldn't malloc %d bytes.", count);
 
-  ctl->close();
-  exit(10);
-  return(NULL);
+	ctl->close();
+	exit(10);
+	return NULL;
 }
 
 /* This adds a directory to the path list */
-void add_to_pathlist(const char *s)
+void add_to_pathlist(const char* s)
 {
-  PathList *plp=(PathList*)safe_malloc(sizeof(PathList));
-  strcpy((plp->path=(char*)safe_malloc(strlen(s)+1)),s);
-  plp->next=pathlist;
-  pathlist=plp;
+	PathList* plp = (PathList*)safe_malloc(sizeof(PathList));
+	strcpy((plp->path = (char*)safe_malloc(strlen(s) + 1)), s);
+	plp->next = pathlist;
+	pathlist = plp;
 }
 
 /* Free memory associated to path list */

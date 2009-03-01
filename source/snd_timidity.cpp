@@ -58,7 +58,7 @@ public:
 	static void ctl_refresh();
 	static void ctl_total_time(int);
 	static void ctl_master_volume(int);
-	static void ctl_file_name(char*);
+	static void ctl_file_name(const char*);
 	static void ctl_current_time(int);
 	static void ctl_note(int);
 	static void ctl_program(int, int);
@@ -71,7 +71,7 @@ public:
 	static int ctl_open(int, int);
 	static void ctl_close();
 	static int ctl_read(int32*);
-	static int ctl_msg(int, int, char*, ...);
+	static int ctl_msg(int, int, const char*, ...);
 
 	static VAudioCodec* Create(VStream* InStrm);
 };
@@ -216,7 +216,7 @@ int VTimidityAudioCodec::ctl_read(int32*)
   return RC_NONE;
 }
 
-int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, char *fmt, ...)
+int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, const char *fmt, ...)
 {
 	va_list ap;
 	if ((type == CMSG_TEXT || type == CMSG_INFO || type == CMSG_WARNING) &&
@@ -235,7 +235,7 @@ void VTimidityAudioCodec::ctl_total_time(int) {}
 
 void VTimidityAudioCodec::ctl_master_volume(int) {}
 
-void VTimidityAudioCodec::ctl_file_name(char*) {}
+void VTimidityAudioCodec::ctl_file_name(const char*) {}
 
 void VTimidityAudioCodec::ctl_current_time(int) {}
 
