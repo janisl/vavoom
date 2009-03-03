@@ -794,41 +794,34 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matTmp(3, 2) = Offset.z * Scale.z;
 	matWorld = matTmp * matWorld;
 
+	TVec scale;
 	TVec scale_origin;
 	if (Interpolate)
 	{
+		scale[0] = pframedesc->scale[0] + Inter * (pnextframedesc->scale[0] - pframedesc->scale[0]);
+		scale[1] = pframedesc->scale[1] + Inter * (pnextframedesc->scale[1] - pframedesc->scale[1]);
+		scale[2] = pframedesc->scale[2] + Inter * (pnextframedesc->scale[2] - pframedesc->scale[2]);
 		scale_origin[0] = ((1 - Inter) * pframedesc->scale_origin[0] + Inter * pnextframedesc->scale_origin[0]);
 		scale_origin[1] = ((1 - Inter) * pframedesc->scale_origin[1] + Inter * pnextframedesc->scale_origin[1]);
 		scale_origin[2] = ((1 - Inter) * pframedesc->scale_origin[2] + Inter * pnextframedesc->scale_origin[2]);
 	}
 	else
 	{
-		scale_origin[0] = pframedesc->scale_origin[0];
-		scale_origin[1] = pframedesc->scale_origin[1];
-		scale_origin[2] = pframedesc->scale_origin[2];
-	}
-
-	TVec scale;
-	if (Interpolate)
-	{
-		scale[0] = pframedesc->scale[0] + Inter * (pnextframedesc->scale[0] - pframedesc->scale[0]);
-		scale[1] = pframedesc->scale[1] + Inter * (pnextframedesc->scale[1] - pframedesc->scale[1]);
-		scale[2] = pframedesc->scale[2] + Inter * (pnextframedesc->scale[2] - pframedesc->scale[2]);
-	}
-	else
-	{
 		scale[0] = pframedesc->scale[0];
 		scale[1] = pframedesc->scale[1];
 		scale[2] = pframedesc->scale[2];
+		scale_origin[0] = pframedesc->scale_origin[0];
+		scale_origin[1] = pframedesc->scale_origin[1];
+		scale_origin[2] = pframedesc->scale_origin[2];
 	}
 
 	matTmp = IdentityMatrix;
 	matTmp(0, 0) = scale[0];
 	matTmp(1, 1) = scale[1];
 	matTmp(2, 2) = scale[2];
-	matTmp(3, 0) = scale_origin[0] * Scale.x;
-	matTmp(3, 1) = scale_origin[1] * Scale.y;
-	matTmp(3, 2) = scale_origin[2] * Scale.z;
+	matTmp(3, 0) = scale_origin[0];
+	matTmp(3, 1) = scale_origin[1];
+	matTmp(3, 2) = scale_origin[2];
 	matWorld = matTmp * matWorld;
 
 	RenderDevice->SetTransform(D3DTS_WORLD, &matWorld);
