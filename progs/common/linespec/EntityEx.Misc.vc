@@ -1138,6 +1138,10 @@ void OnMapSpawn(mthing_t* mthing)
 	{
 		Level.TotalKills++;
 	}
+	if (bCountItem)
+	{
+		Level.TotalItems++;
+	}
 
 	//	Set the state, but do not use SetState, because action routines can't
 	// be called yet.  If the spawnstate has an action routine, it will not
@@ -1206,10 +1210,6 @@ void OnMapSpawn(mthing_t* mthing)
 		if (!bSynchronised && StateTime > 0.0)
 		{
 			StateTime = 0.1 + Random() * StateTime;
-		}
-		if (bCountItem)
-		{
-			Level.TotalItems++;
 		}
 
 		Angles.yaw = itof(AngleIncrements() * (mthing->angle /

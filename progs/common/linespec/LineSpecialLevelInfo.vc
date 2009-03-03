@@ -4211,6 +4211,11 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 			{
 				TotalKills--;
 			}
+			//	Same for items.
+			if (newA.bCountItem)
+			{
+				TotalItems--;
+			}
 			newA.Destroy();
 		}
 		else
@@ -4272,6 +4277,11 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			{
 				TotalKills--;
 			}
+			//	Same for items.
+			if (newAct.bCountItem)
+			{
+				TotalItems--;
+			}
 			newAct.Destroy();
 		}
 		else
@@ -4329,6 +4339,11 @@ final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 		if (NewAct.CountsAsKill())
 		{
 			Level.TotalKills--;
+		}
+		//	The same for items.
+		if (NewAct.bCountItem)
+		{
+			Level.TotalItems--;
 		}
 		NewAct.Destroy();
 		return false;
@@ -4439,6 +4454,10 @@ final bool EV_ThingRemove(int tid)
 		if (EntityEx(A).CountsAsKill() && A.Health > 0)
 		{
 			TotalKills--;
+		}
+		if (EntityEx(A).bCountItem)
+		{
+			TotalItems--;
 		}
 		A.RemoveThing();
 		success = true;
@@ -6986,6 +7005,12 @@ final void ConChoiceImpulse(int ChoiceNum)
 		if (ItemType)
 		{
 			Item = Inventory(Spawn(ItemType,,,, false));
+			//	This shouldn't count for the item statistics
+			if (Item.bCountItem)
+			{
+				Item.bCountItem = false;
+				Level.TotalItems--;
+			}
 			GaveItem = Item.TryPickup(CurrentSpeakingTo);
 			if (!GaveItem)
 			{

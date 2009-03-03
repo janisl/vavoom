@@ -58,6 +58,12 @@ final void DoGiveInventory(class<Inventory> ItemType, int Amount,
 			Item.Amount = Amount;
 		}
 		Item.bDropped = true;
+		//	This shouldn't count for the item statistics
+		if (Item.bCountItem)
+		{
+			Item.bCountItem = false;
+			Level.TotalItems--;
+		}
 		if (!Item.TryPickup(Receiver))
 		{
 			Item.Destroy();

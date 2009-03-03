@@ -507,6 +507,7 @@ final void A_DeQueueCorpse()
 final void A_ChangeFlag(string Name, bool Value)
 {
 	bool CountKillBefore = CountsAsKill();
+	bool CountItemBefore = bCountItem;
 	SetDecorateFlag(Name, Value);
 	//	Check if count as kill status changed.
 	if (CountsAsKill() != CountKillBefore)
@@ -520,6 +521,18 @@ final void A_ChangeFlag(string Name, bool Value)
 		{
 			//	It no longer counts as kill.
 			Level.TotalKills--;
+		}
+	}
+	//	The same for items.
+	if (CountItemBefore != bCountItem)
+	{
+		if (bCountItem)
+		{
+			Level.TotalItems++;
+		}
+		else
+		{
+			Level.TotalItems--;
 		}
 	}
 }

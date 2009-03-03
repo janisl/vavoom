@@ -286,6 +286,12 @@ final void GiveInventory(name ItemName, int Amount)
 	}
 
 	Inventory Item = Spawn(ItemClass,,,, false);
+	//	This shouldn't count for the item statistics
+	if (Item.bCountItem)
+	{
+		Item.bCountItem = false;
+		Level.TotalItems--;
+	}
 	if (BasicArmorPickup(Item))
 	{
 		BasicArmorPickup(Item).SaveAmount *= Amount;

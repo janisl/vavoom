@@ -244,15 +244,24 @@ final void TouchSpecial(EntityEx Toucher)
 
 	if (!bQuiet)
 	{
-		Toucher.Player.cprint(GetPickupMessage());
+		if (Toucher.bIsPlayer)
+		{
+			Toucher.Player.cprint(GetPickupMessage());
+		}
 		PlayPickupSound(Toucher);
-		PlayerEx(Toucher.Player).BonusFlash += BONUSADD;
+		if (Toucher.bIsPlayer)
+		{
+			PlayerEx(Toucher.Player).BonusFlash += BONUSADD;
+		}
 	}
 
 	DoPickupSpecial(Toucher);
 	if (bCountItem)
 	{
-		Toucher.Player.ItemCount++;
+		if (Toucher.bIsPlayer)
+		{
+			Toucher.Player.ItemCount++;
+		}
 		Level.CurrentItems++;
 	}
 }
