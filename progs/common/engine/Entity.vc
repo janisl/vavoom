@@ -383,7 +383,7 @@ native final bool CanSee(Entity Other);
 
 native final iterator RoughBlockSearch(out Entity EntPtr, int Distance);
 
-native final void A_ChangeFlag(string Name, bool Value);
+native final void SetDecorateFlag(string Name, bool Value);
 
 //===========================================================================
 //

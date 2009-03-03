@@ -196,7 +196,7 @@ final bool LookForMonsters()
 	count = 0;
 	foreach AllThinkers(EntityEx, mo)
 	{
-		if (!mo.bCountKill || (mo == self) || (mo.Health <= 0))
+		if (!mo.bMonster || (mo == self) || (mo.Health <= 0))
 		{
 			// Not a valid monster
 			continue;
@@ -252,7 +252,7 @@ final bool LookForMonsters2(bool allaround)
 		if (mo == self)
 			continue;	// self
 
-		if (!mo.bCountKill)
+		if (!mo.bMonster)
 			continue;	// not a monster
 
 		if (bFriendly == mo.bFriendly)

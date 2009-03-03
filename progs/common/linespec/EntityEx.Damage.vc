@@ -351,7 +351,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			{
 				// "electrocute" the target
 				bFullBright = true;
-				if (HowlSound && bCountKill && P_Random() < 128 &&
+				if (HowlSound && bMonster && P_Random() < 128 &&
 					!GetSoundPlayingInfo(self, GetSoundID(HowlSound)))
 				{
 					PlaySound(HowlSound, CHAN_VOICE);
@@ -364,7 +364,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			SetState(FindState('Pain', DmgType, false));
 			if (inflictor && inflictor.bHowlVictims)
 			{
-				if (HowlSound && bCountKill && P_Random() < 128 &&
+				if (HowlSound && bMonster && P_Random() < 128 &&
 					!GetSoundPlayingInfo(self, GetSoundID(HowlSound)))
 				{
 					PlaySound(HowlSound, CHAN_VOICE);
@@ -649,27 +649,27 @@ void Died(EntityEx source, EntityEx inflictor)
 		Height /= 4.0;
 	}
 
-	if (Special && (!bSpecial || bCountKill))
+	if (Special && (!bSpecial || bMonster))
 	{
 		// Initiate monster death actions
 		Level.ExecuteActionSpecial(Special, Args[0], Args[1], Args[2],
 			Args[3], Args[4], NULL, 0, Level.bActivateOwnSpecial ? self :
 			source);
 	}
-	if (bCountKill)
+	if (CountsAsKill())
 	{
 		Level.CurrentKills++;
 	}
 	if (source && source.bIsPlayer)
 	{
-		if (bCountKill)
+		if (CountsAsKill())
 		{
 			// count for intermission
 			source.Player.KillCount++;
 		}
 		PlayerEx(source.Player).KilledActor(self);
 	}
-	else if (!Level.Game.netgame && bCountKill)
+	else if (!Level.Game.netgame && CountsAsKill())
 	{
 		// Count all monster deaths,
 		// even those caused by other monsters

@@ -86,6 +86,11 @@ final bool CheckMissileSpawn()
 		if (!tmtrace.BlockingMobj || !bRip ||
 			EntityEx(tmtrace.BlockingMobj).bDontRip)
 		{
+			if (CountsAsKill())
+			{
+				bCountKill = false;
+				Level.TotalKills--;
+			}
 			//	Don't explode missiles on horizon lines.
 			if (tmtrace.BlockingLine && tmtrace.BlockingLine->special ==
 				LNSPEC_LineHorizon)

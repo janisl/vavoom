@@ -599,5 +599,5 @@ public:
 	DECLARE_FUNCTION(UnlinkFromWorld)
 	DECLARE_FUNCTION(CanSee)
 	DECLARE_FUNCTION(RoughBlockSearch)
-	DECLARE_FUNCTION(A_ChangeFlag)
+	DECLARE_FUNCTION(SetDecorateFlag)
 };

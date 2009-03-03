@@ -4197,7 +4197,23 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 			newA.Gravity = 0.125;
 		}
 		newA.SetTID(newtid);
-		if (newA.CheckMissileSpawn())
+		if (newA.bMissile)
+		{
+			if (newA.CheckMissileSpawn())
+			{
+				success = true;
+			}
+		}
+		else if (!newA.TestLocation())
+		{
+			//	If it counts as kill, adjust total kills count
+			if (newA.CountsAsKill())
+			{
+				TotalKills--;
+			}
+			newA.Destroy();
+		}
+		else
 		{
 			success = true;
 		}
@@ -4251,6 +4267,11 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 		if (newAct.TestLocation() == false)
 		{
 			// Didn't fit
+			//	If it counts as kill, adjust total kills count
+			if (newAct.CountsAsKill())
+			{
+				TotalKills--;
+			}
 			newAct.Destroy();
 		}
 		else
@@ -4304,6 +4325,11 @@ final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 	if (NewAct.TestLocation() == false)
 	{
 		// Didn't fit
+		//	If it counts as kill, subtract total.
+		if (NewAct.CountsAsKill())
+		{
+			Level.TotalKills--;
+		}
 		NewAct.Destroy();
 		return false;
 	}
@@ -4409,6 +4435,11 @@ final bool EV_ThingRemove(int tid)
 	success = false;
 	for (A = FindMobjFromTID(tid, none); A; A = FindMobjFromTID(tid, A))
 	{
+		//	Be friendly to level statistics.
+		if (EntityEx(A).CountsAsKill() && A.Health > 0)
+		{
+			TotalKills--;
+		}
 		A.RemoveThing();
 		success = true;
 	}

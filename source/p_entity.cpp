@@ -736,7 +736,7 @@ IMPLEMENT_FUNCTION(VEntity, StopSoundSequence)
 	Self->StopSoundSequence();
 }
 
-IMPLEMENT_FUNCTION(VEntity, A_ChangeFlag)
+IMPLEMENT_FUNCTION(VEntity, SetDecorateFlag)
 {
 	P_GET_BOOL(Value);
 	P_GET_STR(Name);

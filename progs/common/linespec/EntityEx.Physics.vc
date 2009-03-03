@@ -544,7 +544,7 @@ final void HitMobj(Entity Other, float ptryx, float ptryy)
 		{
 			//  Bounce against walls and non-killable ofjects
 			if (bBounceOnActors || EntityEx(Other).bReflective ||
-				(!Other.bIsPlayer && !EntityEx(Other).bCountKill))
+				(!Other.bIsPlayer && !EntityEx(Other).bMonster))
 			{
 				angle = AngleMod360(atan2(Origin.y - Other.Origin.y,
 					Origin.x - Other.Origin.x) + (Random() * 16.0 - 8.0));
@@ -655,7 +655,7 @@ final bool HitFloor(float DeltaTime)
 	}
 
 	vdot = DotProduct(Velocity, Floor->normal);
-	if (bCountKill)	// Blasted mobj falling
+	if (bMonster)	// Blasted mobj falling
 	{
 		if (vdot < -23.0 * 35.0)
 		{

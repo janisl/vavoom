@@ -103,7 +103,7 @@ final void A_Respawn(optional bool Fog)
 			Spawn(TeleportFog, Origin + vector(0.0, 0.0,
 				LineSpecialGameInfo(Level.Game).TeleFogHeight));
 		}
-		if (bCountKill)
+		if (CountsAsKill())
 		{
 			Level.TotalKills++;
 		}

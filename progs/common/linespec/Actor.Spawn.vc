@@ -143,6 +143,10 @@ final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
 		//	Check if thing fits in it's current location.
 		if (!NoCheckPos && !A.TestLocation())
 		{
+			if (A.CountsAsKill())
+			{
+				Level.TotalKills--;
+			}
 			A.Destroy();
 			//	Set result for state chain calls.
 			if (XLevel.StateCall)

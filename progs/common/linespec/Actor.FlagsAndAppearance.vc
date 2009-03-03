@@ -497,3 +497,29 @@ final void A_DeQueueCorpse()
 		}
 	}
 }
+
+//============================================================================
+//
+//  A_ChangeFlag
+//
+//============================================================================
+
+final void A_ChangeFlag(string Name, bool Value)
+{
+	bool CountKillBefore = CountsAsKill();
+	SetDecorateFlag(Name, Value);
+	//	Check if count as kill status changed.
+	if (CountsAsKill() != CountKillBefore)
+	{
+		if (CountsAsKill())
+		{
+			//	It now counts as kill.
+			Level.TotalKills++;
+		}
+		else
+		{
+			//	It no longer counts as kill.
+			Level.TotalKills--;
+		}
+	}
+}

@@ -664,7 +664,7 @@ bool Touch(Entity InOther)
 	// Check for blasted thing running into another
 	if (bBlasted && Other.bShootable)
 	{
-		if (!Other.bBoss && Other.bCountKill)
+		if (!Other.bBoss && Other.bMonster)
 		{
 			Other.Velocity.x += Velocity.x;
 			Other.Velocity.y += Velocity.y;
@@ -1134,6 +1134,11 @@ void OnMapSpawn(mthing_t* mthing)
 		Speed = FastSpeed;
 	}
 
+	if (CountsAsKill())
+	{
+		Level.TotalKills++;
+	}
+
 	//	Set the state, but do not use SetState, because action routines can't
 	// be called yet.  If the spawnstate has an action routine, it will not
 	// be called.
@@ -1201,10 +1206,6 @@ void OnMapSpawn(mthing_t* mthing)
 		if (!bSynchronised && StateTime > 0.0)
 		{
 			StateTime = 0.1 + Random() * StateTime;
-		}
-		if (bCountKill)
-		{
-			Level.TotalKills++;
 		}
 		if (bCountItem)
 		{
@@ -3485,6 +3486,12 @@ final bool DoThingRaise()
 	Health = default.Health;
 	Target = none;
 	LastEnemy = none;
+
+	//	If it counts as kill, count it as another one.
+	if (CountsAsKill())
+	{
+		Level.TotalKills++;
+	}
 	return true;
 }
 
@@ -3595,6 +3602,17 @@ final int ClassifyActor()
 		Ret |= ACTOR_GENERIC;
 	}
 	return Ret;
+}
+
+//==========================================================================
+//
+//	CountsAsKill
+//
+//==========================================================================
+
+final bool CountsAsKill()
+{
+	return bCountKill && !bFriendly;
 }
 
 bool IsTeammate(EntityEx Other)
