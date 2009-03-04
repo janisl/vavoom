@@ -54,10 +54,14 @@ void Died(EntityEx source, EntityEx inflictor)
 		return;
 	}
 
-	//	Temporarely link it to the world, since we need sector
-	LinkToWorld();
-	LineSpecialLevelInfo(Level).NoiseAlert(source, self);
-	UnlinkFromWorld();
+	//	If player destroyed it with dagger, alert guards now.
+	if (LastHeard != source)
+	{
+		//	Temporarely link it to the world, since we need sector
+		LinkToWorld();
+		LineSpecialLevelInfo(Level).NoiseAlert(source, self);
+		UnlinkFromWorld();
+	}
 	LineSpecialLevelInfo(Level).EV_DoDoor(225, 16, 0, 0, 0,
 		VerticalDoor::DOOREV_Close, NULL, Actor(Level.Game.Players[i].MO));
 	LineSpecialLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0,

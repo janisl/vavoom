@@ -5643,6 +5643,7 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 	int			i;
 	line_t*		check;
 	sector_t*	other;
+	Entity		Ent;
 
 	// wake up all monsters in this sector
 	if (sec->validcount == *Game.validcount &&
@@ -5654,6 +5655,14 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 	sec->validcount = *Game.validcount;
 	sec->soundtraversed = soundblocks + 1;
 	sec->SoundTarget = soundtarget;
+
+	for (Ent = sec->ThingList; Ent; Ent = Ent.SNext)
+	{
+		if (Ent != soundtarget)
+		{
+			EntityEx(Ent).LastHeard = EntityEx(soundtarget);
+		}
+	}
 
 	for (i = 0; i < sec->linecount; i++)
 	{

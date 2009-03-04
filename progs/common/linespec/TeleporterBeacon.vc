@@ -108,6 +108,7 @@ final void A_SummonRebel()
 	A.Threshold = 100;
 	A.bFriendly = true;
 	A.bInCombat = true;
+	A.LastHeard = Owner;	//	Make sure rebels look for targets.
 	if (Level.Game.deathmatch)
 	{
 		A.Health *= 2;

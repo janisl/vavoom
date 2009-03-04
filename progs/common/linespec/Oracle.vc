@@ -41,6 +41,8 @@ final void A_OracleDeath()
 	{
 		if (A && A.bMonster && A.Health > 0)
 		{
+			A.Sector->SoundTarget = LastHeard;
+			A.LastHeard = LastHeard;
 			A.Target = Target;
 			A.SetState(A.SeeState);
 		}

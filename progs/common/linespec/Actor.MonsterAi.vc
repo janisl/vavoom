@@ -66,7 +66,8 @@ final void A_Look()
 	}
 	else
 	{
-		targ = EntityEx(Sector->SoundTarget);
+		targ = Level.CompatSoundTarget || bNoSector ?
+			EntityEx(Sector->SoundTarget) : LastHeard;
 		//	If it's dead, don't chase it.
 		if (targ && targ.Health <= 0)
 		{
@@ -169,7 +170,7 @@ final void A_Look2()
 	EntityEx	targ;
 
 	Threshold = 0;	// any shot will wake up
-	targ = EntityEx(Sector->SoundTarget);
+	targ = LastHeard;
 
 	if (!bNeutral && targ && targ.bShootable)
 	{
@@ -220,15 +221,21 @@ final void A_TurretLook()
 	int sound;
 
 	Threshold = 0;
-	targ = EntityEx(Sector->SoundTarget);
-	if (targ && targ.bShootable)
+	targ = LastHeard;
+	if (targ && targ.Health > 0 && targ.bShootable &&
+		bFriendly != targ.bFriendly)
 	{
 		Target = targ;
+		if (bAmbush && !CanSee(Target))
+		{
+			return;
+		}
 		// go into chase state
 		if (SightSound)
 		{
 			PlaySound(SightSound, CHAN_VOICE);
 		}
+		LastHeard = none;
 		Threshold = 10;
 		SetState(SeeState);
 	}
@@ -835,6 +842,7 @@ final void A_ClearTarget()
 {
 	Target = none;
 	LastEnemy = none;
+	LastHeard = none;
 }
 
 //==========================================================================
@@ -845,7 +853,12 @@ final void A_ClearTarget()
 
 final void A_ClearSoundTarget()
 {
+	Entity Ent;
 	Sector->SoundTarget = none;
+	for (Ent = Sector->ThingList; Ent; Ent = Ent.SNext)
+	{
+		EntityEx(Ent).LastHeard = none;
+	}
 }
 
 //==========================================================================

@@ -313,6 +313,8 @@ EntityEx		Tracer;
 EntityEx		Goal;
 //	Master entity
 EntityEx		Master;
+//	Last actor this one heard
+EntityEx		LastHeard;
 
 // Player number last looked for.
 int				LastLook;
