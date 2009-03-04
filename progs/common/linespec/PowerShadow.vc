@@ -78,6 +78,26 @@ void InitEffect()
 	EntityEx(Owner).bShadow = true;
 }
 
+//==========================================================================
+//
+//	GetViewEntRenderParams
+//
+//==========================================================================
+
+void GetViewEntRenderParams(out float OutAlpha, out int OutRenderStyle)
+{
+	if (EffectTime > PlayerEx::BLINKTHRESHOLD ||
+		(ftoi(4.0 * EffectTime) & 1))
+	{
+		OutRenderStyle = STYLE_Translucent;
+		OutAlpha = 0.25;
+	}
+	if (Inventory)
+	{
+		Inventory.GetViewEntRenderParams(OutAlpha, OutRenderStyle);
+	}
+}
+
 defaultproperties
 {
 	EffectTime = 55.0;

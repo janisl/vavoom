@@ -3615,6 +3615,20 @@ final bool CountsAsKill()
 	return bCountKill && !bFriendly;
 }
 
+//==========================================================================
+//
+//	GetViewEntRenderParams
+//
+//==========================================================================
+
+void GetViewEntRenderParams(out float OutAlpha, out int OutRenderStyle)
+{
+	if (Inventory)
+	{
+		Inventory.GetViewEntRenderParams(OutAlpha, OutRenderStyle);
+	}
+}
+
 bool IsTeammate(EntityEx Other)
 {
 	return bIsPlayer && Other.bIsPlayer && Level.Game.netgame &&

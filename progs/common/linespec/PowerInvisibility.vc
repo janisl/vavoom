@@ -80,6 +80,26 @@ void EndEffect()
 	}
 }
 
+//==========================================================================
+//
+//	GetViewEntRenderParams
+//
+//==========================================================================
+
+void GetViewEntRenderParams(out float OutAlpha, out int OutRenderStyle)
+{
+	if (EffectTime > PlayerEx::BLINKTHRESHOLD ||
+		(ftoi(4.0 * EffectTime) & 1))
+	{
+		OutRenderStyle = STYLE_OptFuzzy;
+		OutAlpha = 0.2;
+	}
+	if (Inventory)
+	{
+		Inventory.GetViewEntRenderParams(OutAlpha, OutRenderStyle);
+	}
+}
+
 defaultproperties
 {
 	EffectTime = 60.0;

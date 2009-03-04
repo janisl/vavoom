@@ -802,8 +802,6 @@ void VBasePlayer::DoClientHudMessage(const VStr& Message, VName Font, int Type,
 void VBasePlayer::WriteViewData()
 {
 	guard(VBasePlayer::WriteViewData);
-	ViewEntAlpha = MO->Alpha;
-
 	//	Update bam_angles (after teleportation)
 	if (PlayerFlags & PF_FixAngle)
 	{

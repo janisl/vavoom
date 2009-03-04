@@ -128,8 +128,6 @@ float					WorldTimer;	// total time the player's been playing
 
 native readonly byte	ClientNum;
 
-native readonly float	ViewEntAlpha;
-
 int						SoundEnvironment;
 
 native readonly ClientGameBase	ClGame;	//	Valid only on client side
@@ -141,7 +139,7 @@ replication
 	reliable if (!bIsClient)
 		Health, Frags, Deaths, ExtraLight, FixedColourmap, CShift,
 		PSpriteSY, KillCount, ItemCount, SecretCount, ViewStates,
-		ViewEntAlpha, ClientNum, WorldTimer, MO, Camera, bAutomapRevealed,
+		ClientNum, WorldTimer, MO, Camera, bAutomapRevealed,
 		bAutomapShowThings, SoundEnvironment, bAttackDown;
 
 	unreliable if (!bIsClient)

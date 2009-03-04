@@ -516,6 +516,13 @@ class VEntity : public VThinker
 		P_PASS_INT(Force);
 		EV_RET_INT(NAME_UnmorphActor);
 	}
+	void eventGetViewEntRenderParams(float& OutAlpha, int& OutRenderStyle)
+	{
+		P_PASS_SELF;
+		P_PASS_PTR(&OutAlpha);
+		P_PASS_PTR(&OutRenderStyle);
+		EV_RET_VOID(NAME_GetViewEntRenderParams);
+	}
 
 	bool SetState(VState*);
 	void SetInitialState(VState*);

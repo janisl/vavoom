@@ -3862,3 +3862,6 @@
   I fixed scaled model rendering in D3D.
   I changed total kills and items count to be properly updated for monsters and
  items that are sawned by scripts and some other cases.
+04.03.2009
+  I implemented proper way of calculating alpha and render style for player
+ view weapon. Now it properly blinks when powerup wears off.

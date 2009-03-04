@@ -178,8 +178,6 @@ class VBasePlayer : public VObject
 
 	vuint8			ClientNum;
 
-	float			ViewEntAlpha;
-
 	vint32			SoundEnvironment;
 
 	VClientGameBase*	ClGame;

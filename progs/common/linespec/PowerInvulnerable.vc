@@ -271,6 +271,36 @@ void EndEffect()
 	}
 }
 
+//==========================================================================
+//
+//	GetViewEntRenderParams
+//
+//==========================================================================
+
+void GetViewEntRenderParams(out float OutAlpha, out int OutRenderStyle)
+{
+	if (Owner && (Mode == 'Ghost' || Mode == 'Initial') &&
+		(EffectTime > PlayerEx::BLINKTHRESHOLD ||
+		(ftoi(4.0 * EffectTime) & 1)))
+	{
+		if (Owner.RenderStyle == STYLE_Translucent)
+		{
+			OutRenderStyle = STYLE_Translucent;
+			OutAlpha = Owner.Alpha;
+		}
+		else if (Owner.RenderStyle == STYLE_None)
+		{
+			//	Don't fully hide weapon
+			OutRenderStyle = STYLE_Translucent;
+			OutAlpha = 0.25;
+		}
+	}
+	if (Inventory)
+	{
+		Inventory.GetViewEntRenderParams(OutAlpha, OutRenderStyle);
+	}
+}
+
 defaultproperties
 {
 	EffectTime = 30.0;

@@ -111,6 +111,7 @@ REGISTER_NAME(CalcFakeZMovement)
 REGISTER_NAME(ClassifyActor)
 REGISTER_NAME(MorphActor)
 REGISTER_NAME(UnmorphActor)
+REGISTER_NAME(GetViewEntRenderParams)
 
 //	LevelInfo events
 REGISTER_NAME(SpawnSpecials)

@@ -852,6 +852,41 @@ void VRenderLevel::DrawPlayerSprites()
 		return;
 	}
 
+	int RendStyle = STYLE_Normal;
+	float Alpha = 1.0;
+	bool Additive = false;
+
+	cl->MO->eventGetViewEntRenderParams(Alpha, RendStyle);
+
+	if (RendStyle == STYLE_SoulTrans)
+	{
+		RendStyle = STYLE_Translucent;
+		Alpha = transsouls;
+	}
+	else if (RendStyle == STYLE_OptFuzzy)
+	{
+		RendStyle = r_drawfuzz ? STYLE_Fuzzy : STYLE_Translucent;
+	}
+
+	switch (RendStyle)
+	{
+	case STYLE_None:
+		return;
+
+	case STYLE_Normal:
+		Alpha = 1.0;
+		break;
+
+	case STYLE_Fuzzy:
+		Alpha = 0.1;
+		break;
+
+	case STYLE_Add:
+		Additive = true;
+		break;
+	}
+	Alpha = MID(0.0, Alpha, 1.0);
+
 	// add all active psprites
 	for (int i = 0; i < NUMPSPRITES; i++)
 	{
@@ -861,7 +896,11 @@ void VRenderLevel::DrawPlayerSprites()
 		}
 
 		vuint32 light;
-		if (cl->ViewStates[i].State->Frame & VState::FF_FULLBRIGHT)
+		if (RendStyle == STYLE_Fuzzy)
+		{
+			light = 0;
+		}
+		else if (cl->ViewStates[i].State->Frame & VState::FF_FULLBRIGHT)
 		{
 			light = 0xffffffff;
 		}
@@ -870,8 +909,6 @@ void VRenderLevel::DrawPlayerSprites()
 			light = LightPoint(vieworg);
 		}
 		vuint32 Fade = GetFade(SV_PointInRegion(r_viewleaf->sector, cl->ViewOrg));
-		float Alpha = cl->ViewEntAlpha;
-		bool Additive = false;
 
 		if (!RenderViewModel(&cl->ViewStates[i], light, Fade, Alpha,
 			Additive))
