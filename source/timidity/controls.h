@@ -20,29 +20,8 @@
     controls.h
 */
 
-/* Return values for ControlMode.read */
-
 namespace LibTimidity
 {
-
-#define RC_ERROR			-1
-#define RC_NONE				0
-#define RC_QUIT				1
-#define RC_NEXT				2
-#define RC_PREVIOUS			3	// Restart this song at beginning, or the previous
-			 					// song if we're less than a second into this one.
-#define RC_FORWARD			4
-#define RC_BACK				5
-#define RC_JUMP				6
-#define RC_TOGGLE_PAUSE		7	// Pause/continue
-#define RC_RESTART			8	// Restart song at beginning
-
-#define RC_PAUSE			9	// Really pause playing
-#define RC_CONTINUE			10	// Continue if paused
-#define RC_REALLY_PREVIOUS	11	// Really go to the previous song
-#define RC_CHANGE_VOLUME	12
-#define RC_LOAD_FILE		13	// Load a new midifile
-#define RC_TUNE_END			14	// The tune is over, play it again sam?
 
 #define CMSG_INFO		0
 #define CMSG_WARNING	1
@@ -62,31 +41,9 @@ namespace LibTimidity
 
 struct ControlMode
 {
-	char *id_name, id_character;
-	int verbosity, trace_playing, opened;
-
-	int (*open)(int using_stdin, int using_stdout);
-	void (*pass_playing_list)(int number_of_files, char *list_of_files[]);
-	void (*close)(void);
-	int (*read)(int32 *valp);
 	int (*cmsg)(int type, int verbosity_level, const char *fmt, ...);
-
-	void (*refresh)(void);
-	void (*reset)(void);
-	void (*file_name)(const char *name);
-	void (*total_time)(int tt);
-	void (*current_time)(int ct);
-
-	void (*note)(int v);
-	void (*master_volume)(int mv);
-	void (*program)(int channel, int val); /* val<0 means drum set -val */
-	void (*volume)(int channel, int val);
-	void (*expression)(int channel, int val);
-	void (*panning)(int channel, int val);
-	void (*sustain)(int channel, int val);
-	void (*pitch_bend)(int channel, int val);
 };
 
-extern ControlMode*	ctl_list[], *ctl; 
+extern ControlMode*		ctl;
 
 };

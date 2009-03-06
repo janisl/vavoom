@@ -48,8 +48,6 @@ int recompute_envelope(int v)
 		/* Envelope ran out. */
 		int tmp = (voice[v].status == VOICE_DIE); /* Already displayed as dead */
 		voice[v].status = VOICE_FREE;
-		if(!tmp)
-			ctl->note(v);
 		return 1;
 	}
 

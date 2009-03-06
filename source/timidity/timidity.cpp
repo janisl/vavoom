@@ -45,6 +45,8 @@ resample_t *resample_buffer = NULL;
 int32 *common_buffer = NULL;
 int num_ochannels;
 
+ControlMode*	ctl;
+
 #define MAXWORDS 10
 
 static int read_config_file(const char* name)
@@ -331,12 +333,6 @@ int Timidity_Init(int rate, int format, int channels, int samples)
 	/* Allocate memory for mixing (WARNING:  Memory leak!) */
 	resample_buffer = (resample_t*)safe_malloc(AUDIO_BUFFER_SIZE * sizeof(resample_t) + 100);
 	common_buffer = (int32*)safe_malloc(AUDIO_BUFFER_SIZE * num_ochannels * sizeof(int32));
-
-	if (ctl->open(0, 0))
-	{
-		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't open %s\n", ctl->id_name);
-		return(-1);
-	}
 
 	if (!control_ratio)
 	{

@@ -92,7 +92,6 @@ static resample_t* rs_plain(int v, int32* countptr)
 	{
 		FINALINTERP;
 		vp->status = VOICE_FREE;
-		ctl->note(v);
 		*countptr -= count + 1;
 	}
 
@@ -391,7 +390,6 @@ static resample_t* rs_vib_plain(int v, int32* countptr)
 		{
 			FINALINTERP;
 			vp->status = VOICE_FREE;
-			ctl->note(v);
 			*countptr -= count + 1;
 			break;
 		}
@@ -627,7 +625,6 @@ resample_t* resample_voice(int v, int32* countptr)
 		{
 			/* Note finished. Free the voice. */
 			vp->status = VOICE_FREE;
-			ctl->note(v);
 
 			/* Let the caller know how much data we had left */
 			*countptr = (vp->sample->data_length >> FRACTION_BITS) - ofs;

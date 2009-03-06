@@ -129,14 +129,6 @@ static void reset_controllers(int c)
 	channel[c].chorusdepth = 0;
 }
 
-static void redraw_controllers(int c)
-{
-	ctl->volume(c, channel[c].volume);
-	ctl->expression(c, channel[c].expression);
-	ctl->sustain(c, channel[c].sustain);
-	ctl->pitch_bend(c, channel[c].pitchbend);
-}
-
 static void reset_midi()
 {
 	for (int i = 0; i < MAXCHAN; i++)
@@ -1094,8 +1086,6 @@ static void start_note(MidiEvent* e, int i)
 	clone_voice(ip, i, e, STEREO_CLONE, variationbank);
 	clone_voice(ip, i, e, CHORUS_CLONE, variationbank);
 	clone_voice(ip, i, e, REVERB_CLONE, variationbank);
-
-	ctl->note(i);
 }
 
 static void kill_note(int i)
@@ -1103,7 +1093,6 @@ static void kill_note(int i)
 	voice[i].status=VOICE_DIE;
 	if (voice[i].clone_voice >= 0)
 		voice[ voice[i].clone_voice ].status = VOICE_DIE;
-	ctl->note(i);
 }
 
 
@@ -1189,7 +1178,6 @@ static void note_on(MidiEvent* e)
 
 		cut_notes++;
 		voice[lowest].status = VOICE_FREE;
-		ctl->note(lowest);
 		start_note(e,lowest);
 	}
 	else
@@ -1205,7 +1193,6 @@ static void finish_note(int i)
 		voice[i].status = VOICE_OFF;
 		recompute_envelope(i);
 		apply_envelope_to_amp(i);
-		ctl->note(i);
 	}
 	else
 	{
@@ -1242,8 +1229,6 @@ static void note_off(MidiEvent* e)
 					if (voice[v].status == VOICE_ON)
 						voice[v].status = VOICE_SUSTAINED;
 				}
-
-				ctl->note(i);
 			}
 			else
 				finish_note(i);
@@ -1263,7 +1248,6 @@ static void all_notes_off(int c)
 			if (channel[c].sustain)
 			{
 				voice[i].status = VOICE_SUSTAINED;
-				ctl->note(i);
 			}
 			else
 				finish_note(i);
@@ -1462,78 +1446,6 @@ static void skip_to(int32 until_time)
 
 	if (until_time)
 		seek_forward(until_time);
-	ctl->reset();
-}
-
-static int apply_controls()
-{
-	int rc, i, did_skip=0;
-	int32 val;
-	/* ASCII renditions of CD player pictograms indicate approximate effect */
-	do
-		switch(rc=ctl->read(&val))
-		{
-		case RC_QUIT: /* [] */
-		case RC_LOAD_FILE:	  
-		case RC_NEXT: /* >>| */
-		case RC_REALLY_PREVIOUS: /* |<< */
-			return rc;
-
-		case RC_CHANGE_VOLUME:
-			if (val > 0 || amplification > -val)
-				amplification += val;
-			else
-				amplification=0;
-			if (amplification > MAX_AMPLIFICATION)
-				amplification = MAX_AMPLIFICATION;
-			adjust_amplification();
-			for (i = 0; i < voices; i++)
-				if (voice[i].status != VOICE_FREE)
-				{
-					recompute_amp(i);
-					apply_envelope_to_amp(i);
-				}
-			ctl->master_volume(amplification);
-			break;
-
-		case RC_PREVIOUS: /* |<< */
-			if (current_sample < 2 * play_mode->rate)
-				return RC_REALLY_PREVIOUS;
-			return RC_RESTART;
-
-		case RC_RESTART: /* |<< */
-			skip_to(0);
-			did_skip = 1;
-			break;
-
-		case RC_JUMP:
-			if (val >= sample_count)
-				return RC_NEXT;
-			skip_to(val);
-			return rc;
-
-		case RC_FORWARD: /* >> */
-			if (val+current_sample >= sample_count)
-				return RC_NEXT;
-			skip_to(val + current_sample);
-			did_skip = 1;
-			break;
-
-		case RC_BACK: /* << */
-			if (current_sample > val)
-				skip_to(current_sample - val);
-			else
-				skip_to(0); /* We can't seek to end of previous song. */
-			did_skip = 1;
-			break;
-		}
-	while (rc != RC_NONE);
-
-	/* Advertise the skip so that we stop computing the audio buffer */
-	if (did_skip)
-		return RC_JUMP; 
-	else
-		return rc;
 }
 
 static void do_compute_data(uint32 count)
@@ -1566,7 +1478,6 @@ static void do_compute_data(uint32 count)
 
 int Timidity_PlaySome(void *stream, int samples)
 {
-	int rc = RC_NONE;
 	int32 end_sample;
 	int conv_count;
 	int sample_size = (play_mode->encoding & PE_16BIT ? 2 : 1) * num_ochannels;
@@ -1617,14 +1528,11 @@ int Timidity_PlaySome(void *stream, int samples)
 				channel[current_event->channel].pitchfactor=0;
 				/* Adjust pitch for notes already playing */
 				adjust_pitchbend(current_event->channel);
-				ctl->pitch_bend(current_event->channel, 
-					channel[current_event->channel].pitchbend);
 				break;
 
 			case ME_MAINVOLUME:
 				channel[current_event->channel].volume=current_event->a;
 				adjust_volume(current_event->channel);
-				ctl->volume(current_event->channel, current_event->a);
 				break;
 
 			case ME_MASTERVOLUME:
@@ -1643,13 +1551,11 @@ int Timidity_PlaySome(void *stream, int samples)
 				channel[current_event->channel].panning=current_event->a;
 				if (adjust_panning_immediately)
 					adjust_panning(current_event->channel);
-				ctl->panning(current_event->channel, current_event->a);
 				break;
 
 			case ME_EXPRESSION:
 				channel[current_event->channel].expression=current_event->a;
 				adjust_volume(current_event->channel);
-				ctl->expression(current_event->channel, current_event->a);
 				break;
 
 			case ME_PROGRAM:
@@ -1663,19 +1569,16 @@ int Timidity_PlaySome(void *stream, int samples)
 				{
 					channel[current_event->channel].program=current_event->a;
 				}
-				ctl->program(current_event->channel, current_event->a);
 				break;
 
 			case ME_SUSTAIN:
 				channel[current_event->channel].sustain=current_event->a;
 				if (!current_event->a)
 					drop_sustain(current_event->channel);
-				ctl->sustain(current_event->channel, current_event->a);
 				break;
 
 			case ME_RESET_CONTROLLERS:
 				reset_controllers(current_event->channel);
-				redraw_controllers(current_event->channel);
 				break;
 
 			case ME_ALL_NOTES_OFF:
@@ -1748,14 +1651,7 @@ int Timidity_PlaySome(void *stream, int samples)
 				num_ochannels * comp_count);
 			conv_count -= comp_count;
 			stream_start += comp_count;
-			ctl->current_time(current_sample);
-			if ((rc = apply_controls()) != RC_NONE)
-				return rc;
 		}
-
-		ctl->refresh();
-		if ((rc != RC_NONE) && (rc != RC_JUMP))
-			break;
 	}
 	return stream_start;
 }
@@ -1777,7 +1673,6 @@ void Timidity_SetVolume(int volume)
 			recompute_amp(i);
 			apply_envelope_to_amp(i);
 		}
-	ctl->master_volume(amplification);
 }
 
 MidiSong *Timidity_LoadSongMem(void* data, int size)

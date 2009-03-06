@@ -170,7 +170,6 @@ void* safe_malloc(size_t count)
 	else
 		ctl->cmsg(CMSG_FATAL, VERB_NORMAL, "Sorry. Couldn't malloc %d bytes.", count);
 
-	ctl->close();
 	exit(10);
 	return NULL;
 }

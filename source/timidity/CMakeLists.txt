@@ -2,7 +2,6 @@ add_library(timidity STATIC
 	common.cpp
 	common.h
 	config.h
-	controls.cpp
 	controls.h
 	instrum.cpp
 	instrum.h

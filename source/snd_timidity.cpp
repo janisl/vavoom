@@ -55,22 +55,6 @@ public:
 	void Restart();
 
 	//	Control mode functions.
-	static void ctl_refresh();
-	static void ctl_total_time(int);
-	static void ctl_master_volume(int);
-	static void ctl_file_name(const char*);
-	static void ctl_current_time(int);
-	static void ctl_note(int);
-	static void ctl_program(int, int);
-	static void ctl_volume(int, int);
-	static void ctl_expression(int, int);
-	static void ctl_panning(int, int);
-	static void ctl_sustain(int, int);
-	static void ctl_pitch_bend(int, int);
-	static void ctl_reset();
-	static int ctl_open(int, int);
-	static void ctl_close();
-	static int ctl_read(int32*);
 	static int ctl_msg(int, int, const char*, ...);
 
 	static VAudioCodec* Create(VStream* InStrm);
@@ -92,25 +76,7 @@ IMPLEMENT_AUDIO_CODEC(VTimidityAudioCodec, "Timidity");
 
 ControlMode		VTimidityAudioCodec::MyControlMode =
 {
-	(char*)"Vavoom interface", 's', 0, 0, 0,
-	VTimidityAudioCodec::ctl_open,
-	NULL,
-	VTimidityAudioCodec::ctl_close,
-	VTimidityAudioCodec::ctl_read,
 	VTimidityAudioCodec::ctl_msg,
-	VTimidityAudioCodec::ctl_refresh,
-	VTimidityAudioCodec::ctl_reset,
-	VTimidityAudioCodec::ctl_file_name,
-	VTimidityAudioCodec::ctl_total_time,
-	VTimidityAudioCodec::ctl_current_time,
-	VTimidityAudioCodec::ctl_note,
-	VTimidityAudioCodec::ctl_master_volume,
-	VTimidityAudioCodec::ctl_program,
-	VTimidityAudioCodec::ctl_volume,
-	VTimidityAudioCodec::ctl_expression,
-	VTimidityAudioCodec::ctl_panning,
-	VTimidityAudioCodec::ctl_sustain,
-	VTimidityAudioCodec::ctl_pitch_bend
 };
 PlayMode		VTimidityAudioCodec::MyPlayMode =
 {
@@ -200,27 +166,12 @@ void VTimidityAudioCodec::Restart()
 //
 //==========================================================================
 
-int VTimidityAudioCodec::ctl_open(int, int)
-{
-  MyControlMode.opened = 1;
-  return 0;
-}
-
-void VTimidityAudioCodec::ctl_close()
-{ 
-  MyControlMode.opened = 0;
-}
-
-int VTimidityAudioCodec::ctl_read(int32*)
-{
-  return RC_NONE;
-}
-
 int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, const char *fmt, ...)
 {
 	va_list ap;
 	if ((type == CMSG_TEXT || type == CMSG_INFO || type == CMSG_WARNING) &&
-		MyControlMode.verbosity < verbosity_level)
+//		MyControlMode.verbosity < verbosity_level)
+		0 < verbosity_level)
 		return 0;
 	va_start(ap, fmt);
 	vsprintf(timidity_error, fmt, ap);
@@ -228,32 +179,6 @@ int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, const char *fmt,
 	va_end(ap);
 	return 0;
 }
-
-void VTimidityAudioCodec::ctl_refresh() {}
-
-void VTimidityAudioCodec::ctl_total_time(int) {}
-
-void VTimidityAudioCodec::ctl_master_volume(int) {}
-
-void VTimidityAudioCodec::ctl_file_name(const char*) {}
-
-void VTimidityAudioCodec::ctl_current_time(int) {}
-
-void VTimidityAudioCodec::ctl_note(int) {}
-
-void VTimidityAudioCodec::ctl_program(int, int) {}
-
-void VTimidityAudioCodec::ctl_volume(int, int) {}
-
-void VTimidityAudioCodec::ctl_expression(int, int) {}
-
-void VTimidityAudioCodec::ctl_panning(int, int) {}
-
-void VTimidityAudioCodec::ctl_sustain(int, int) {}
-
-void VTimidityAudioCodec::ctl_pitch_bend(int, int) {}
-
-void VTimidityAudioCodec::ctl_reset() {}
 
 //==========================================================================
 //
@@ -280,7 +205,6 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 	//	Register our play and control modes.
 	play_mode_list[0] = &MyPlayMode;
 	play_mode = &MyPlayMode;
-	ctl_list[0] = &MyControlMode;
 	ctl = &MyControlMode;
 
 	//	Initialise Timidity.
