@@ -47,7 +47,6 @@ namespace LibTimidity
 
 /* Default sampling rate, default polyphony, and maximum polyphony.
    All but the last can be overridden from the command line. */
-#define DEFAULT_RATE	32000
 /* #define DEFAULT_VOICES	32 */
 /* #define MAX_VOICES	48 */
 #define DEFAULT_VOICES	256

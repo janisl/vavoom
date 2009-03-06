@@ -7,7 +7,6 @@ add_library(timidity STATIC
 	instrum.h
 	mix.cpp
 	mix.h
-	output.cpp
 	output.h
 	playmidi.cpp
 	playmidi.h

@@ -46,7 +46,6 @@ public:
 	MidiSong*			Song;
 
 	static ControlMode	MyControlMode;
-	static PlayMode		MyPlayMode;
 
 	VTimidityAudioCodec(MidiSong* InSong);
 	~VTimidityAudioCodec();
@@ -77,10 +76,6 @@ IMPLEMENT_AUDIO_CODEC(VTimidityAudioCodec, "Timidity");
 ControlMode		VTimidityAudioCodec::MyControlMode =
 {
 	VTimidityAudioCodec::ctl_msg,
-};
-PlayMode		VTimidityAudioCodec::MyPlayMode =
-{
-	DEFAULT_RATE, PE_16BIT | PE_SIGNED, (char*)"Vavoom audio"
 };
 
 #if defined(DJGPP) || defined(_WIN32)
@@ -202,14 +197,12 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 		return NULL;
 	}
 
-	//	Register our play and control modes.
-	play_mode_list[0] = &MyPlayMode;
-	play_mode = &MyPlayMode;
+	//	Register our control mode.
 	ctl = &MyControlMode;
 
 	//	Initialise Timidity.
 	add_to_pathlist(s_timidity_patches);
-	if (Timidity_Init(44100, 16, 2, 2 * 1024))
+	if (Timidity_Init())
 	{
 		GCon->Logf("Timidity init failed");
 		return NULL;

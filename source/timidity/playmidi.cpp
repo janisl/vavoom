@@ -285,7 +285,7 @@ static void recompute_freq(int v)
 	a = FSCALE(((double)(voice[v].sample->sample_rate) *
 			(double)(voice[v].frequency)) /
 			((double)(voice[v].sample->root_freq) *
-			(double)(play_mode->rate)),
+			(double)(OUTPUT_RATE)),
 			FRACTION_BITS);
 
 	if (sign) 
@@ -566,7 +566,7 @@ static void clone_voice(Instrument* ip, int v, MidiEvent* e, int clone_type, int
 	voice[w].sample = voice[v].right_sample;
 	voice[w].velocity= e->b;
 
-	milli = play_mode->rate/1000;
+	milli = OUTPUT_RATE/1000;
 
 	if (clone_type == STEREO_CLONE)
 	{
@@ -1476,11 +1476,26 @@ static void do_compute_data(uint32 count)
 }
 
 
+static void s32tos16(void* dp, int32* lp, int32 c)
+{
+	int16* sp = (int16*)(dp);
+	int32 l;
+	while (c--)
+	{
+		l = (*lp++) >> (32 - 16 - GUARD_BITS);
+		if (l > 32767)
+			l = 32767;
+		else if (l < -32768)
+			l = -32768;
+		*sp++ = (int16)(l);
+	}
+}
+
 int Timidity_PlaySome(void *stream, int samples)
 {
 	int32 end_sample;
 	int conv_count;
-	int sample_size = (play_mode->encoding & PE_16BIT ? 2 : 1) * num_ochannels;
+	int sample_size = 2 * num_ochannels;
 	int stream_start = 0;
 
 	if (!midi_playing)
@@ -1626,7 +1641,7 @@ int Timidity_PlaySome(void *stream, int samples)
 			case ME_EOT:
 				/* Give the last notes a couple of seconds to decay  */
 				ctl->cmsg(CMSG_INFO, VERB_VERBOSE,
-					"Playing time: ~%d seconds", current_sample/play_mode->rate+2);
+					"Playing time: ~%d seconds", current_sample/OUTPUT_RATE+2);
 				ctl->cmsg(CMSG_INFO, VERB_VERBOSE,
 					"Notes cut: %d", cut_notes);
 				ctl->cmsg(CMSG_INFO, VERB_VERBOSE,
@@ -1647,7 +1662,7 @@ int Timidity_PlaySome(void *stream, int samples)
 			if (comp_count > AUDIO_BUFFER_SIZE)
 				comp_count = AUDIO_BUFFER_SIZE;
 			do_compute_data(comp_count);
-			s32tobuf((char*)stream + stream_start * sample_size, common_buffer,
+			s32tos16((char*)stream + stream_start * sample_size, common_buffer,
 				num_ochannels * comp_count);
 			conv_count -= comp_count;
 			stream_start += comp_count;

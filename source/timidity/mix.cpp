@@ -705,138 +705,94 @@ static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
 
 	/* Fix by James Caldwell */
 	if (c == 0)
+	{
 		c = 1;
+	}
 
 	left = voice[v].left_mix;
 	li = -(left/c);
 	if (!li)
-		li = -1;
-
-	if (!(play_mode->encoding & PE_MONO))
 	{
-		if (voice[v].panned == PANNED_MYSTERY)
-		{
-			left_rear = voice[v].lr_mix;
-			centre=voice[v].ce_mix;
-			right=voice[v].right_mix;
-			right_rear = voice[v].rr_mix;
-			lfe = voice[v].lfe_mix;
+		li = -1;
+	}
 
-			ri = -(right / c);
-			while (c--)
-			{
-				left_rear += li;
-				if (left_rear < 0)
-					left_rear=0;
-				left += li;
-				if (left < 0)
-					left = 0;
-				centre += li;
-				if (centre < 0)
-					centre = 0;
-				right += ri;
-				if (right < 0)
-					right = 0;
-				right_rear += ri;
-				if (right_rear < 0)
-					right_rear = 0;
-				lfe += li;
-				if (lfe < 0)
-					lfe = 0;
-				s = *sp++;
-				MIXATION(left);
-				MIXATION(right);
-				if (num_ochannels >= 4)
-				{
-					MIXATION(left_rear);
-					MIXATION(right_rear);
-				}
-				if (num_ochannels == 6)
-				{
-					MIXATION(centre);
-					MIXATION(lfe);
-				}
-			}
-		}
-		else if (voice[v].panned == PANNED_CENTRE)
+	if (voice[v].panned == PANNED_MYSTERY)
+	{
+		left_rear = voice[v].lr_mix;
+		centre=voice[v].ce_mix;
+		right=voice[v].right_mix;
+		right_rear = voice[v].rr_mix;
+		lfe = voice[v].lfe_mix;
+
+		ri = -(right / c);
+		while (c--)
 		{
-			while (c--)
+			left_rear += li;
+			if (left_rear < 0)
+				left_rear=0;
+			left += li;
+			if (left < 0)
+				left = 0;
+			centre += li;
+			if (centre < 0)
+				centre = 0;
+			right += ri;
+			if (right < 0)
+				right = 0;
+			right_rear += ri;
+			if (right_rear < 0)
+				right_rear = 0;
+			lfe += li;
+			if (lfe < 0)
+				lfe = 0;
+			s = *sp++;
+			MIXATION(left);
+			MIXATION(right);
+			if (num_ochannels >= 4)
 			{
-				left += li;
-				if (left < 0)
-					return;
-				s = *sp++;	
-				if (num_ochannels == 2)
-				{
-					MIXATION(left);
-					MIXATION(left);
-				}
-				else if (num_ochannels == 4)
-				{
-					MIXATION(left);
-					MIXATION(left);
-					MIXSKIP;
-					MIXSKIP;
-				}
-				else if (num_ochannels == 6)
-				{
-					MIXSKIP;
-					MIXSKIP;
-					MIXSKIP;
-					MIXSKIP;
-					MIXATION(left);
-					MIXATION(left);
-				}
+				MIXATION(left_rear);
+				MIXATION(right_rear);
 			}
-		}
-		else if (voice[v].panned == PANNED_LEFT)
-		{
-			while (c--)
+			if (num_ochannels == 6)
 			{
-				left += li;
-				if (left < 0)
-					return;
-				s = *sp++;
-				MIXATION(left);
-				MIXSKIP;
-				if (num_ochannels >= 4)
-				{
-					MIXATION(left);
-					MIXSKIP;
-				}
-				if (num_ochannels == 6)
-				{
-					MIXATION(left);
-					MIXATION(left);
-				}
-			}
-		}
-		else if (voice[v].panned == PANNED_RIGHT)
-		{
-			while (c--)
-			{
-				left += li;
-				if (left < 0)
-					return;
-				s = *sp++;
-				MIXSKIP;
-				MIXATION(left);
-				if (num_ochannels >= 4)
-				{
-					MIXSKIP;
-					MIXATION(left);
-				}
-				if (num_ochannels == 6)
-				{
-					MIXATION(left);
-					MIXATION(left);
-				}
+				MIXATION(centre);
+				MIXATION(lfe);
 			}
 		}
 	}
-	else
+	else if (voice[v].panned == PANNED_CENTRE)
 	{
-		/* Mono output.  */
+		while (c--)
+		{
+			left += li;
+			if (left < 0)
+				return;
+			s = *sp++;	
+			if (num_ochannels == 2)
+			{
+				MIXATION(left);
+				MIXATION(left);
+			}
+			else if (num_ochannels == 4)
+			{
+				MIXATION(left);
+				MIXATION(left);
+				MIXSKIP;
+				MIXSKIP;
+			}
+			else if (num_ochannels == 6)
+			{
+				MIXSKIP;
+				MIXSKIP;
+				MIXSKIP;
+				MIXSKIP;
+				MIXATION(left);
+				MIXATION(left);
+			}
+		}
+	}
+	else if (voice[v].panned == PANNED_LEFT)
+	{
 		while (c--)
 		{
 			left += li;
@@ -844,8 +800,41 @@ static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
 				return;
 			s = *sp++;
 			MIXATION(left);
+			MIXSKIP;
+			if (num_ochannels >= 4)
+			{
+				MIXATION(left);
+				MIXSKIP;
+			}
+			if (num_ochannels == 6)
+			{
+				MIXATION(left);
+				MIXATION(left);
+			}
 		}
-    }
+	}
+	else if (voice[v].panned == PANNED_RIGHT)
+	{
+		while (c--)
+		{
+			left += li;
+			if (left < 0)
+				return;
+			s = *sp++;
+			MIXSKIP;
+			MIXATION(left);
+			if (num_ochannels >= 4)
+			{
+				MIXSKIP;
+				MIXATION(left);
+			}
+			if (num_ochannels == 6)
+			{
+				MIXATION(left);
+				MIXATION(left);
+			}
+		}
+	}
 }
 
 
@@ -857,7 +846,9 @@ void mix_voice(int32* buf, int v, int32 c)
 	int32 count = c;
 	resample_t* sp;
 	if (c < 0)
+	{
 		return;
+	}
 	if (vp->status == VOICE_DIE)
 	{
 		if (count >= MAX_DIE_TIME)
@@ -871,49 +862,38 @@ void mix_voice(int32* buf, int v, int32 c)
 		sp = resample_voice(v, &count);
 		if (count < 0)
 			return;
-		if (play_mode->encoding & PE_MONO)
+		if (vp->panned == PANNED_MYSTERY)
 		{
-			/* Mono output. */
 			if (vp->envelope_increment || vp->tremolo_phase_increment)
-				mix_mono_signal(sp, buf, v, count);
+				mix_mystery_signal(sp, buf, v, count);
 			else
-				mix_mono(sp, buf, v, count);
+				mix_mystery(sp, buf, v, count);
+		}
+		else if (vp->panned == PANNED_CENTRE)
+		{
+			if (vp->envelope_increment || vp->tremolo_phase_increment)
+				mix_centre_signal(sp, buf, v, count);
+			else
+				mix_centre(sp, buf, v, count);
 		}
 		else
 		{
-			if (vp->panned == PANNED_MYSTERY)
+			/* It's either full left or full right. In either case,
+			every other sample is 0. Just get the offset right: */
+
+			if (vp->envelope_increment || vp->tremolo_phase_increment)
 			{
-				if (vp->envelope_increment || vp->tremolo_phase_increment)
-					mix_mystery_signal(sp, buf, v, count);
+				if (vp->panned == PANNED_RIGHT)
+					mix_single_right_signal(sp, buf, v, count);
 				else
-					mix_mystery(sp, buf, v, count);
-			}
-			else if (vp->panned == PANNED_CENTRE)
-			{
-				if (vp->envelope_increment || vp->tremolo_phase_increment)
-					mix_centre_signal(sp, buf, v, count);
-				else
-					mix_centre(sp, buf, v, count);
+					mix_single_left_signal(sp, buf, v, count);
 			}
 			else
 			{
-				/* It's either full left or full right. In either case,
-				every other sample is 0. Just get the offset right: */
-
-				if (vp->envelope_increment || vp->tremolo_phase_increment)
-				{
-					if (vp->panned == PANNED_RIGHT)
-						mix_single_right_signal(sp, buf, v, count);
-					else
-						mix_single_left_signal(sp, buf, v, count);
-				}
+				if (vp->panned == PANNED_RIGHT)
+					mix_single_right(sp, buf, v, count);
 				else
-				{
-					if (vp->panned == PANNED_RIGHT)
-						mix_single_right(sp, buf, v, count);
-					else
-						mix_single_left(sp, buf, v, count);
-				}
+					mix_single_left(sp, buf, v, count);
 			}
 		}
 	}

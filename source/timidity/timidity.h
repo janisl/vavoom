@@ -24,7 +24,7 @@ namespace LibTimidity
 
 typedef struct _MidiSong MidiSong;
 
-extern int Timidity_Init(int rate, int format, int channels, int samples);
+extern int Timidity_Init();
 extern char *Timidity_Error();
 extern void Timidity_SetVolume(int volume);
 extern int Timidity_PlaySome(void* stream, int samples);

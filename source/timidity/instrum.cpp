@@ -160,7 +160,7 @@ int32 convert_envelope_rate_attack(uint8 rate, uint8 fastness)
 	r = (int32)(rate & 0x3f) << r; /* 6.9 fixed point */
 
 	/* 15.15 fixed point. */
-	return (((r * 44100) / play_mode->rate) * control_ratio) << 10;
+	return (((r * 44100) / OUTPUT_RATE) * control_ratio) << 10;
 }
 
 int32 convert_envelope_rate(uint8 rate)
@@ -170,7 +170,7 @@ int32 convert_envelope_rate(uint8 rate)
 	r = (int32)(rate & 0x3f) << r; /* 6.9 fixed point */
 
 	/* 15.15 fixed point. */
-	return (((r * 44100) / play_mode->rate) * control_ratio) << ((fast_decay) ? 10 : 9);
+	return (((r * 44100) / OUTPUT_RATE) * control_ratio) << ((fast_decay) ? 10 : 9);
 }
 
 int32 convert_envelope_offset(uint8 offset)
@@ -188,7 +188,7 @@ int32 convert_tremolo_sweep(uint8 sweep)
 		return 0;
 
 	return ((control_ratio * SWEEP_TUNING) << SWEEP_SHIFT) /
-		(play_mode->rate * sweep);
+		(OUTPUT_RATE * sweep);
 }
 
 int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
@@ -197,7 +197,7 @@ int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
 		return 0;
 
 	return (int32) (FSCALE((double) (vib_control_ratio) * SWEEP_TUNING, SWEEP_SHIFT) /
-		(double)(play_mode->rate * sweep));
+		(double)(OUTPUT_RATE * sweep));
 
 	/* this was overflowing with seashore.pat
 
@@ -208,13 +208,13 @@ int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
 int32 convert_tremolo_rate(uint8 rate)
 {
 	return ((SINE_CYCLE_LENGTH * control_ratio * rate) << RATE_SHIFT) /
-		(TREMOLO_RATE_TUNING * play_mode->rate);
+		(TREMOLO_RATE_TUNING * OUTPUT_RATE);
 }
 
 int32 convert_vibrato_rate(uint8 rate)
 {
 	/* Return a suitable vibrato_control_ratio value */
-	return (VIBRATO_RATE_TUNING * play_mode->rate) /
+	return (VIBRATO_RATE_TUNING * OUTPUT_RATE) /
 		(rate * 2 * VIBRATO_SAMPLE_INCREMENTS);
 }
 
@@ -662,7 +662,7 @@ fail:
 				{
 					if (sf2delay > 5)
 						sf2delay = 5;
-					sp->envelope_rate[DELAY] = (int32)((sf2delay * play_mode->rate) / 1000);
+					sp->envelope_rate[DELAY] = (int32)((sf2delay * OUTPUT_RATE) / 1000);
 				}
 				else
 				{
