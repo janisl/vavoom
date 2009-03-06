@@ -163,14 +163,15 @@ void VTimidityAudioCodec::Restart()
 
 int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, const char *fmt, ...)
 {
+	char Buf[1024];
 	va_list ap;
 	if ((type == CMSG_TEXT || type == CMSG_INFO || type == CMSG_WARNING) &&
 //		MyControlMode.verbosity < verbosity_level)
 		0 < verbosity_level)
 		return 0;
 	va_start(ap, fmt);
-	vsprintf(timidity_error, fmt, ap);
-	GCon->Log(timidity_error);
+	vsprintf(Buf, fmt, ap);
+	GCon->Log(Buf);
 	va_end(ap);
 	return 0;
 }

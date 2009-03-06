@@ -374,81 +374,41 @@ static void recompute_amp(int v)
 
 	/* TODO: use fscale */
 
-	if (num_ochannels > 1)
+	if (panning > 60 && panning < 68)
 	{
-		if (panning > 60 && panning < 68)
-		{
-			voice[v].panned=PANNED_CENTRE;
+		voice[v].panned=PANNED_CENTRE;
 
-			if (num_ochannels == 6)
-				voice[v].left_amp =
-					FSCALENEG((double) (tempamp) * voice[v].sample->volume *
-					master_volume, 20);
-			else
-				voice[v].left_amp=
-					FSCALENEG((double)(tempamp) * voice[v].sample->volume *
-					master_volume, 21);
-		}
-		else if (panning < 5)
-		{
-			voice[v].panned = PANNED_LEFT;
-
-			voice[v].left_amp =
-				FSCALENEG((double)(tempamp) * voice[v].sample->volume * master_volume,
-				20);
-		}
-		else if (panning > 123)
-		{
-			voice[v].panned = PANNED_RIGHT;
-
-			voice[v].left_amp = /* left_amp will be used */
-				FSCALENEG((double)(tempamp) * voice[v].sample->volume * master_volume,
-				20);
-		}
-		else
-		{
-			FLOAT_T refv = (double)(tempamp) * voice[v].sample->volume * master_volume;
-			int wide_panning = 64;
-
-			if (num_ochannels == 4)
-				wide_panning = 95;
-
-			voice[v].panned = PANNED_MYSTERY;
-			voice[v].lfe_amp = FSCALENEG(refv * 64, 27);
-
-			switch (num_ochannels)
-			{
-			case 2:
-				voice[v].lr_amp = 0;
-				voice[v].left_amp = FSCALENEG(refv * (128-panning), 27);
-				voice[v].ce_amp = 0;
-				voice[v].right_amp = FSCALENEG(refv * panning, 27);
-				voice[v].rr_amp = 0;
-				break;
-			case 4:
-				voice[v].lr_amp = FSCALENEG(refv * panf(panning, 0, wide_panning), 27);
-				voice[v].left_amp = FSCALENEG(refv * panf(panning, 32, wide_panning), 27);
-				voice[v].ce_amp = 0;
-				voice[v].right_amp = FSCALENEG(refv * panf(panning, 95, wide_panning), 27);
-				voice[v].rr_amp = FSCALENEG(refv * panf(panning, 128, wide_panning), 27);
-				break;
-			case 6:
-				voice[v].lr_amp = FSCALENEG(refv * panf(panning, 0, wide_panning), 27);
-				voice[v].left_amp = FSCALENEG(refv * panf(panning, 32, wide_panning), 27);
-				voice[v].ce_amp = FSCALENEG(refv * panf(panning, 64, wide_panning), 27);
-				voice[v].right_amp = FSCALENEG(refv * panf(panning, 95, wide_panning), 27);
-				voice[v].rr_amp = FSCALENEG(refv * panf(panning, 128, wide_panning), 27);
-				break;
-			}
-		}
+		voice[v].left_amp=
+			FSCALENEG((double)(tempamp) * voice[v].sample->volume *
+			master_volume, 21);
 	}
-	else
+	else if (panning < 5)
 	{
-		voice[v].panned = PANNED_CENTRE;
+		voice[v].panned = PANNED_LEFT;
 
 		voice[v].left_amp =
 			FSCALENEG((double)(tempamp) * voice[v].sample->volume * master_volume,
-			21);
+			20);
+	}
+	else if (panning > 123)
+	{
+		voice[v].panned = PANNED_RIGHT;
+
+		voice[v].left_amp = /* left_amp will be used */
+			FSCALENEG((double)(tempamp) * voice[v].sample->volume * master_volume,
+			20);
+	}
+	else
+	{
+		FLOAT_T refv = (double)(tempamp) * voice[v].sample->volume * master_volume;
+
+		voice[v].panned = PANNED_MYSTERY;
+		voice[v].lfe_amp = FSCALENEG(refv * 64, 27);
+		voice[v].lr_amp = 0;
+		voice[v].left_amp = FSCALENEG(refv * (128-panning), 27);
+		voice[v].ce_amp = 0;
+		voice[v].right_amp = FSCALENEG(refv * panning, 27);
+		voice[v].rr_amp = 0;
 	}
 }
 
@@ -1453,7 +1413,7 @@ static void do_compute_data(uint32 count)
 	int i;
 	if (!count)
 		return; /* (gl) */
-	memset(common_buffer, 0, count * num_ochannels * 4);
+	memset(common_buffer, 0, count * 2 * 4);
 	for (i = 0; i < voices; i++)
 	{
 		if (voice[i].status != VOICE_FREE)
@@ -1495,7 +1455,7 @@ int Timidity_PlaySome(void *stream, int samples)
 {
 	int32 end_sample;
 	int conv_count;
-	int sample_size = 2 * num_ochannels;
+	int sample_size = 2 * 2;
 	int stream_start = 0;
 
 	if (!midi_playing)
@@ -1663,7 +1623,7 @@ int Timidity_PlaySome(void *stream, int samples)
 				comp_count = AUDIO_BUFFER_SIZE;
 			do_compute_data(comp_count);
 			s32tos16((char*)stream + stream_start * sample_size, common_buffer,
-				num_ochannels * comp_count);
+				2 * comp_count);
 			conv_count -= comp_count;
 			stream_start += comp_count;
 		}

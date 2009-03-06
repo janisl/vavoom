@@ -42,7 +42,6 @@ static char def_instr_name[256]="";
 int AUDIO_BUFFER_SIZE;
 resample_t *resample_buffer = NULL;
 int32 *common_buffer = NULL;
-int num_ochannels;
 
 ControlMode*	ctl;
 
@@ -59,7 +58,7 @@ static int read_config_file(const char* name)
 	if (rcf_count > 50)
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
-		"Probable source loop in configuration files");
+			"Probable source loop in configuration files");
 		return (-1);
 	}
 
@@ -306,13 +305,11 @@ int Timidity_Init()
 		return(-1);
 	}
 
-	num_ochannels = 2;
-
 	AUDIO_BUFFER_SIZE = 2 * 1024;
 
 	/* Allocate memory for mixing (WARNING:  Memory leak!) */
 	resample_buffer = (resample_t*)safe_malloc(AUDIO_BUFFER_SIZE * sizeof(resample_t) + 100);
-	common_buffer = (int32*)safe_malloc(AUDIO_BUFFER_SIZE * num_ochannels * sizeof(int32));
+	common_buffer = (int32*)safe_malloc(AUDIO_BUFFER_SIZE * 2 * sizeof(int32));
 
 	if (!control_ratio)
 	{
@@ -325,12 +322,6 @@ int Timidity_Init()
 	if (*def_instr_name)
 		set_default_instrument(def_instr_name);
 	return(0);
-}
-
-char timidity_error[1024] = "";
-char *Timidity_Error()
-{
-	return(timidity_error);
 }
 
 };

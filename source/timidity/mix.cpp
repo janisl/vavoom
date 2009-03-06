@@ -208,12 +208,8 @@ static int update_signal(int v)
 	return 0;
 }
 
-#define MIXATION(a)	*lp++ += (a)*s;
-
-#define MIXSKIP lp++
-#define MIXMAX(a,b) *lp++ += ((a>b)?a:b) * s
-#define MIXCENT(a,b) *lp++ += (a/2+b/2) * s
-#define MIXHALF(a)	*lp++ += (a>>1)*s;
+#define MIXATION(a)		*lp++ += (a)*s;
+#define MIXSKIP			lp++
 
 static void mix_mystery_signal(resample_t* sp, int32* lp, int v, int count)
 {
@@ -251,16 +247,6 @@ static void mix_mystery_signal(resample_t* sp, int32* lp, int v, int count)
 				s = *sp++;
 				MIXATION(left);
 				MIXATION(right);
-				if (num_ochannels >= 4)
-				{
-					MIXATION(left_rear);
-					MIXATION(right_rear);
-				}
-				if (num_ochannels == 6)
-				{
-					MIXATION(centre);
-					MIXATION(lfe);
-				}
 			}
 			cc = control_ratio;
 			if (update_signal(v))
@@ -280,16 +266,6 @@ static void mix_mystery_signal(resample_t* sp, int32* lp, int v, int count)
 				s = *sp++;
 				MIXATION(left);
 				MIXATION(right);
-				if (num_ochannels >= 4)
-				{
-					MIXATION(left_rear);
-					MIXATION(right_rear);
-				}
-				if (num_ochannels == 6)
-				{
-					MIXATION(centre);
-					MIXATION(lfe);
-				}
 			}
 			return;
 		}
@@ -318,27 +294,8 @@ static void mix_centre_signal(resample_t* sp, int32* lp, int v, int count)
 			while (cc--)
 			{
 				s = *sp++;
-				if (num_ochannels == 2)
-				{
-					MIXATION(left);
-					MIXATION(left);
-				}
-				else if (num_ochannels == 4)
-				{
-					MIXATION(left);
-					MIXSKIP;
-					MIXATION(left);
-					MIXSKIP;
-				}
-				else if (num_ochannels == 6)
-				{
-					MIXSKIP;
-					MIXSKIP;
-					MIXSKIP;
-					MIXSKIP;
-					MIXATION(left);
-					MIXATION(left);
-				}
+				MIXATION(left);
+				MIXATION(left);
 			}
 			cc = control_ratio;
 			if (update_signal(v))
@@ -351,27 +308,8 @@ static void mix_centre_signal(resample_t* sp, int32* lp, int v, int count)
 			while (count--)
 			{
 				s = *sp++;
-				if (num_ochannels == 2)
-				{
-					MIXATION(left);
-					MIXATION(left);
-				}
-				else if (num_ochannels == 4)
-				{
-					MIXATION(left);
-					MIXSKIP;
-					MIXATION(left);
-					MIXSKIP;
-				}
-				else if (num_ochannels == 6)
-				{
-					MIXSKIP;
-					MIXSKIP;
-					MIXSKIP;
-					MIXSKIP;
-					MIXATION(left);
-					MIXATION(left);
-				}
+				MIXATION(left);
+				MIXATION(left);
 			}
 			return;
 		}
@@ -400,23 +338,8 @@ static void mix_single_left_signal(resample_t* sp, int32* lp, int v, int count)
 			while (cc--)
 			{
 				s = *sp++;
-				if (num_ochannels == 2)
-				{
-					MIXATION(left);
-					MIXSKIP;
-				}
-				if (num_ochannels >= 4)
-				{
-					MIXHALF(left);
-					MIXSKIP;
-					MIXATION(left);
-					MIXSKIP;
-				}
-				if (num_ochannels == 6)
-				{
-					MIXSKIP;
-					MIXATION(left);
-				}
+				MIXATION(left);
+				MIXSKIP;
 			}
 			cc = control_ratio;
 			if (update_signal(v))
@@ -429,23 +352,8 @@ static void mix_single_left_signal(resample_t* sp, int32* lp, int v, int count)
 			while (count--)
 			{
 				s = *sp++;
-				if (num_ochannels == 2)
-				{
-					MIXATION(left);
-					MIXSKIP;
-				}
-				if (num_ochannels >= 4)
-				{
-					MIXHALF(left);
-					MIXSKIP;
-					MIXATION(left);
-					MIXSKIP;
-				}
-				if (num_ochannels == 6)
-				{
-					MIXSKIP;
-					MIXATION(left);
-				}
+				MIXATION(left);
+				MIXSKIP;
 			}
 			return;
 		}
@@ -473,79 +381,7 @@ static void mix_single_right_signal(resample_t* sp, int32* lp, int v, int count)
 			while (cc--)
 			{
 				s = *sp++;
-				if (num_ochannels == 2)
-				{
-					MIXSKIP;
-					MIXATION(left);
-				}
-				if (num_ochannels >= 4)
-				{
-					MIXSKIP;
-					MIXHALF(left);
-					MIXSKIP;
-					MIXATION(left);
-				}
-				if (num_ochannels == 6)
-				{
-					MIXSKIP;
-					MIXATION(left);
-				}
-			}
-			cc = control_ratio;
-			if (update_signal(v))
-				return;	/* Envelope ran out */
-			left = vp->left_mix;
-		}
-		else
-		{
-			vp->control_counter = cc - count;
-			while (count--)
-			{
-				s = *sp++;
-				if (num_ochannels == 2)
-				{
-					MIXSKIP;
-					MIXATION(left);
-				}
-				if (num_ochannels >= 4)
-				{
-					MIXSKIP;
-					MIXHALF(left);
-					MIXSKIP;
-					MIXATION(left);
-				}
-				if (num_ochannels == 6)
-				{
-					MIXSKIP;
-					MIXATION(left);
-				}
-			}
-			return;
-		}
-}
-
-static void mix_mono_signal(resample_t* sp, int32* lp, int v, int count)
-{
-	Voice *vp = voice + v;
-	final_volume_t left = vp->left_mix;
-	int cc;
-	resample_t s;
-
-	if (!(cc = vp->control_counter))
-	{
-		cc = control_ratio;
-		if (update_signal(v))
-			return;	/* Envelope ran out */
-		left = vp->left_mix;
-	}
-
-	while (count)
-		if (cc < count)
-		{
-			count -= cc;
-			while (cc--)
-			{
-				s = *sp++;
+				MIXSKIP;
 				MIXATION(left);
 			}
 			cc = control_ratio;
@@ -559,6 +395,7 @@ static void mix_mono_signal(resample_t* sp, int32* lp, int v, int count)
 			while (count--)
 			{
 				s = *sp++;
+				MIXSKIP;
 				MIXATION(left);
 			}
 			return;
@@ -581,16 +418,6 @@ static void mix_mystery(resample_t* sp, int32* lp, int v, int count)
 		s = *sp++;
 		MIXATION(left);
 		MIXATION(right);
-		if (num_ochannels >= 4)
-		{
-			MIXATION(left_rear);
-			MIXATION(right_rear);
-		}
-		if (num_ochannels == 6)
-		{
-			MIXATION(centre);
-			MIXATION(lfe);
-		}
 	}
 }
 
@@ -603,27 +430,8 @@ static void mix_centre(resample_t* sp, int32* lp, int v, int count)
 	while (count--)
 	{
 		s = *sp++;
-		if (num_ochannels == 2)
-		{
-			MIXATION(left);
-			MIXATION(left);
-		}
-		else if (num_ochannels == 4)
-		{
-			MIXATION(left);
-			MIXATION(left);
-			MIXSKIP;
-			MIXSKIP;
-		}
-		else if (num_ochannels == 6)
-		{
-			MIXSKIP;
-			MIXSKIP;
-			MIXSKIP;
-			MIXSKIP;
-			MIXATION(left);
-			MIXATION(left);
-		}
+		MIXATION(left);
+		MIXATION(left);
 	}
 }
 
@@ -635,23 +443,8 @@ static void mix_single_left(resample_t* sp, int32* lp, int v, int count)
 	while (count--)
 	{
 		s = *sp++;
-		if (num_ochannels == 2)
-		{
-			MIXATION(left);
-			MIXSKIP;
-		}
-		if (num_ochannels >= 4)
-		{
-			MIXHALF(left);
-			MIXSKIP;
-			MIXATION(left);
-			MIXSKIP;
-		}
-		if (num_ochannels == 6)
-		{
-			MIXSKIP;
-			MIXATION(left);
-		}
+		MIXATION(left);
+		MIXSKIP;
 	}
 }
 
@@ -663,34 +456,7 @@ static void mix_single_right(resample_t* sp, int32* lp, int v, int count)
 	while (count--)
 	{
 		s = *sp++;
-		if (num_ochannels == 2)
-		{
-			MIXSKIP;
-			MIXATION(left);
-		}
-		if (num_ochannels >= 4)
-		{
-			MIXSKIP;
-			MIXHALF(left);
-			MIXSKIP;
-			MIXATION(left);
-		}
-		if (num_ochannels == 6)
-		{
-			MIXSKIP;
-			MIXATION(left);
-		}
-	}
-}
-
-static void mix_mono(resample_t* sp, int32* lp, int v, int count)
-{
-	final_volume_t left = voice[v].left_mix;
-	resample_t s;
-
-	while (count--)
-	{
-		s = *sp++;
+		MIXSKIP;
 		MIXATION(left);
 	}
 }
@@ -748,16 +514,6 @@ static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
 			s = *sp++;
 			MIXATION(left);
 			MIXATION(right);
-			if (num_ochannels >= 4)
-			{
-				MIXATION(left_rear);
-				MIXATION(right_rear);
-			}
-			if (num_ochannels == 6)
-			{
-				MIXATION(centre);
-				MIXATION(lfe);
-			}
 		}
 	}
 	else if (voice[v].panned == PANNED_CENTRE)
@@ -768,27 +524,8 @@ static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
 			if (left < 0)
 				return;
 			s = *sp++;	
-			if (num_ochannels == 2)
-			{
-				MIXATION(left);
-				MIXATION(left);
-			}
-			else if (num_ochannels == 4)
-			{
-				MIXATION(left);
-				MIXATION(left);
-				MIXSKIP;
-				MIXSKIP;
-			}
-			else if (num_ochannels == 6)
-			{
-				MIXSKIP;
-				MIXSKIP;
-				MIXSKIP;
-				MIXSKIP;
-				MIXATION(left);
-				MIXATION(left);
-			}
+			MIXATION(left);
+			MIXATION(left);
 		}
 	}
 	else if (voice[v].panned == PANNED_LEFT)
@@ -801,16 +538,6 @@ static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
 			s = *sp++;
 			MIXATION(left);
 			MIXSKIP;
-			if (num_ochannels >= 4)
-			{
-				MIXATION(left);
-				MIXSKIP;
-			}
-			if (num_ochannels == 6)
-			{
-				MIXATION(left);
-				MIXATION(left);
-			}
 		}
 	}
 	else if (voice[v].panned == PANNED_RIGHT)
@@ -823,16 +550,6 @@ static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
 			s = *sp++;
 			MIXSKIP;
 			MIXATION(left);
-			if (num_ochannels >= 4)
-			{
-				MIXSKIP;
-				MIXATION(left);
-			}
-			if (num_ochannels == 6)
-			{
-				MIXATION(left);
-				MIXATION(left);
-			}
 		}
 	}
 }
