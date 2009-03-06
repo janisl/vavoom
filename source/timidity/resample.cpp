@@ -36,25 +36,11 @@
 namespace LibTimidity
 {
 
-#ifdef LINEAR_INTERPOLATION
-# if defined(LOOKUP_HACK) && defined(LOOKUP_INTERPOLATION)
-#   define RESAMPLATION \
-       v1=src[ofs>>FRACTION_BITS];\
-       v2=src[(ofs>>FRACTION_BITS)+1];\
-       *dest++ = (resample_t)(v1 + (iplookup[(((v2-v1)<<5) & 0x03FE0) | \
-           ((ofs & FRACTION_MASK) >> (FRACTION_BITS-5))]));
-# else
-#   define RESAMPLATION \
+#define RESAMPLATION \
       v1=src[ofs>>FRACTION_BITS];\
       v2=src[(ofs>>FRACTION_BITS)+1];\
       *dest++ = (resample_t)(v1 + (((v2-v1) * (ofs & FRACTION_MASK)) >> FRACTION_BITS));
-# endif
-#  define INTERPVARS sample_t v1, v2
-#else
-/* Earplugs recommended for maximum listening enjoyment */
-#  define RESAMPLATION *dest++ = src[ofs>>FRACTION_BITS];
-#  define INTERPVARS
-#endif
+#define INTERPVARS sample_t v1, v2
 
 #define FINALINTERP if (ofs == le) *dest++=src[ofs>>FRACTION_BITS];
 /* So it isn't interpolation. At least it's final. */

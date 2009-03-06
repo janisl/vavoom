@@ -130,7 +130,6 @@ extern ToneBank *tonebank[], *drumset[];
 
 extern InstrumentLayer *default_instrument;
 extern int default_program;
-extern int antialiasing_allowed;
 extern int fast_decay;
 extern int free_instruments_afterwards;
 

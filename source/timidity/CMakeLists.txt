@@ -4,8 +4,6 @@ add_library(timidity STATIC
 	config.h
 	controls.cpp
 	controls.h
-	filter.cpp
-	filter.h
 	instrum.cpp
 	instrum.h
 	mix.cpp

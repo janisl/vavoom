@@ -35,7 +35,6 @@
 #include "controls.h"
 #include "resample.h"
 #include "tables.h"
-#include "filter.h"
 
 namespace LibTimidity
 {
@@ -53,7 +52,6 @@ InstrumentLayer *default_instrument=0;
 /* This is only used for tracks that don't specify a program */
 int default_program=DEFAULT_PROGRAM;
 
-int antialiasing_allowed=0;
 #ifdef FAST_DECAY
 int fast_decay=1;
 #else
@@ -751,11 +749,6 @@ fail:
 					sp->modes |= MODES_LOOPING; /* just in case */
 				}
 
-				/* If necessary do some anti-aliasing filtering  */
-
-				if (antialiasing_allowed)
-					antialiasing(sp, play_mode->rate);
-
 #ifdef ADJUST_SAMPLE_VOLUMES
 				if (amp != -1)
 					sp->volume = (FLOAT_T)((amp) / 100.0);
@@ -843,21 +836,6 @@ fail:
 				and it's not looped, we can resample it now. */
 				if (sp->note_to_use && !(sp->modes & MODES_LOOPING))
 					pre_resample(sp);
-
-#ifdef LOOKUP_HACK
-				/* Squash the 16-bit data into 8 bits. */
-				{
-					uint8 *gulp,*ulp;
-					int16 *swp;
-					int l = sp->data_length >> FRACTION_BITS;
-					gulp = ulp = safe_malloc(l + 1);
-					swp = (int16*)sp->data;
-					while (l--)
-						*ulp++ = (*swp++ >> 8) & 0xFF;
-					free(sp->data);
-					sp->data = (sample_t*)gulp;
-				}
-#endif
 
 				if (strip_tail == 1)
 				{

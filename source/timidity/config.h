@@ -20,8 +20,6 @@
 namespace LibTimidity
 {
 
-/* This is for use with the SDL library */
-#define SDL
 #if (defined(WIN32) || defined(_WIN32)) && !defined(__WIN32__)
 #define __WIN32__
 #endif
@@ -39,13 +37,8 @@ namespace LibTimidity
    On the other hand, some files know that 16 is not a drum channel and
    try to play music on it. This is now a runtime option, so this isn't
    a critical choice anymore. */
-#define DEFAULT_DRUMCHANNELS ((1<<9) | (1<<15))
-
-/* A somewhat arbitrary frequency range. The low end of this will
-   sound terrible as no lowpass filtering is performed on most
-   instruments before resampling. */
-#define MIN_OUTPUT_RATE 	4000
-#define MAX_OUTPUT_RATE 	65000
+#define DEFAULT_DRUMCHANNELS (1<<9)
+//#define DEFAULT_DRUMCHANNELS ((1<<9) | (1<<15))
 
 /* In percent. */
 /* #define DEFAULT_AMPLIFICATION 	70 */
@@ -60,31 +53,12 @@ namespace LibTimidity
 #define DEFAULT_VOICES	256
 #define MAX_VOICES	256
 #define MAXCHAN		16
-/* #define MAXCHAN		64 */
 #define MAXNOTE		128
 
 /* 1000 here will give a control ratio of 22:1 with 22 kHz output.
    Higher CONTROLS_PER_SECOND values allow more accurate rendering
    of envelopes and tremolo. The cost is CPU time. */
 #define CONTROLS_PER_SECOND 1000
-
-/* Strongly recommended. This option increases CPU usage by half, but
-   without it sound quality is very poor. */
-#define LINEAR_INTERPOLATION
-
-/* This is an experimental kludge that needs to be done right, but if
-   you've got an 8-bit sound card, or cheap multimedia speakers hooked
-   to your 16-bit output device, you should definitely give it a try.
-
-   Defining LOOKUP_HACK causes table lookups to be used in mixing
-   instead of multiplication. We convert the sample data to 8 bits at
-   load time and volumes to logarithmic 7-bit values before looking up
-   the product, which degrades sound quality noticeably.
-
-   Defining LOOKUP_HACK should save ~20% of CPU on an Intel machine.
-   LOOKUP_INTERPOLATION might give another ~5% */
-/* #define LOOKUP_HACK
-   #define LOOKUP_INTERPOLATION */
 
 /* Make envelopes twice as fast. Saves ~20% CPU time (notes decay
    faster) and sounds more like a GUS. There is now a command line
@@ -112,21 +86,10 @@ typedef double FLOAT_T;
    click removal. */
 #define MAX_DIE_TIME 20
 
-/* On some machines (especially PCs without math coprocessors),
-   looking up sine values in a table will be significantly faster than
-   computing them on the fly. Uncomment this to use lookups. */
-/* #define LOOKUP_SINE */
-
 /* Shawn McHorse's resampling optimizations. These may not in fact be
    faster on your particular machine and compiler. You'll have to run
    a benchmark to find out. */
 #define PRECALC_LOOPS
-
-/* If calling ldexp() is faster than a floating point multiplication
-   on your machine/compiler/libm, uncomment this. It doesn't make much
-   difference either way, but hey -- it was on the TODO list, so it
-   got done. */
-/* #define USE_LDEXP */
 
 /**************************************************************************/
 /* Anything below this shouldn't need to be changed unless you're porting
@@ -236,28 +199,15 @@ typedef char int8;
 #define GUARD_BITS 3
 #define AMP_BITS (15-GUARD_BITS)
 
-#ifdef LOOKUP_HACK
-   typedef int8 sample_t;
-   typedef uint8 final_volume_t;
-#  define FINAL_VOLUME(v) (~_l2u[v])
-#  define MIXUP_SHIFT 5
-#  define MAX_AMP_VALUE 4095
-#else
-   typedef int16 sample_t;
-   typedef int32 final_volume_t;
-#  define FINAL_VOLUME(v) (v)
-#  define MAX_AMP_VALUE ((1<<(AMP_BITS+1))-1)
-#endif
+typedef int16 sample_t;
+typedef int32 final_volume_t;
+#define FINAL_VOLUME(v) (v)
+#define MAX_AMP_VALUE ((1<<(AMP_BITS+1))-1)
 
 typedef int16 resample_t;
 
-#ifdef USE_LDEXP
-#  define FSCALE(a,b) ldexp((a),(b))
-#  define FSCALENEG(a,b) ldexp((a),-(b))
-#else
-#  define FSCALE(a,b) (float)((a) * (double)(1<<(b)))
-#  define FSCALENEG(a,b) (float)((a) * (1.0L / (double)(1<<(b))))
-#endif
+#define FSCALE(a,b) (float)((a) * (double)(1<<(b)))
+#define FSCALENEG(a,b) (float)((a) * (1.0L / (double)(1<<(b))))
 
 /* Vibrato and tremolo Choices of the Day */
 #define SWEEP_TUNING 38
