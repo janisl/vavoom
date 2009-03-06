@@ -1,25 +1,11 @@
 add_library(timidity STATIC
 	common.cpp
-	common.h
-	config.h
-	controls.h
 	instrum.cpp
-	instrum.h
 	mix.cpp
-	mix.h
-	output.h
 	playmidi.cpp
-	playmidi.h
 	readmidi.cpp
-	readmidi.h
 	resample.cpp
-	resample.h
 	tables.cpp
-	tables.h
 	timidity.cpp
 	timidity.h
 )
-
-# EXTRA_DIST = \
-# 	FAQ \
-# 	README

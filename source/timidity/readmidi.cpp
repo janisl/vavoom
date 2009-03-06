@@ -24,16 +24,16 @@
 #include <errno.h>
 #include <string.h>
 
-#include "config.h"
-#include "common.h"
-#include "instrum.h"
-#include "playmidi.h"
-#include "readmidi.h"
-#include "output.h"
-#include "controls.h"
+#include "timidity.h"
 
 namespace LibTimidity
 {
+
+struct MidiEventList
+{
+	MidiEvent		event;
+	MidiEventList*	next;
+};
 
 static int32 quietchannels = 0;
 

@@ -26,10 +26,7 @@
 #include <string.h>
 
 #include <errno.h>
-#include "config.h"
-#include "common.h"
-#include "output.h"
-#include "controls.h"
+#include "timidity.h"
 
 namespace LibTimidity
 {

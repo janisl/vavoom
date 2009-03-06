@@ -28,12 +28,6 @@
 #include "gamedefs.h"
 #include "snd_local.h"
 
-#include "timidity/config.h"
-#include "timidity/output.h"
-#include "timidity/controls.h"
-#include "timidity/common.h"
-#include "timidity/instrum.h"
-#include "timidity/playmidi.h"
 #include "timidity/timidity.h"
 
 using namespace LibTimidity;

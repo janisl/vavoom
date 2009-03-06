@@ -31,10 +31,7 @@
 */
 
 #include <stdio.h>
-#include "config.h"
-#include "common.h"
-#include "tables.h"
-#include "instrum.h"
+#include "timidity.h"
 
 namespace LibTimidity
 {

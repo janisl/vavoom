@@ -25,15 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "config.h"
-#include "common.h"
-#include "instrum.h"
-#include "playmidi.h"
-#include "output.h"
-#include "controls.h"
-#include "tables.h"
-#include "resample.h"
-#include "mix.h"
+#include "timidity.h"
 
 namespace LibTimidity
 {
