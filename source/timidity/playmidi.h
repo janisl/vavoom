@@ -24,10 +24,11 @@
 namespace LibTimidity
 {
 
-typedef struct {
-  int32 time;
-  uint8 channel, type, a, b;
-} MidiEvent;
+struct MidiEvent
+{
+	int32		time;
+	uint8		channel, type, a, b;
+};
 
 /* Midi events */
 #define ME_NONE 	0
@@ -66,67 +67,69 @@ typedef struct {
 
 #define SFX_BANKTYPE	64
 
-typedef struct {
-  int
-    bank, program, volume, sustain, panning, pitchbend, expression, 
-    mono, /* one note only on this channel -- not implemented yet */
-    /* new stuff */
-    variationbank, reverberation, chorusdepth, harmoniccontent,
-    releasetime, attacktime, brightness, kit, sfx,
-    /* end new */
-    pitchsens;
-  FLOAT_T
-    pitchfactor; /* precomputed pitch bend factor to save some fdiv's */
-  char transpose;
-  char *name;
-} Channel;
+struct Channel
+{
+	int
+		bank, program, volume, sustain, panning, pitchbend, expression, 
+		mono, /* one note only on this channel -- not implemented yet */
+		/* new stuff */
+		variationbank, reverberation, chorusdepth, harmoniccontent,
+		releasetime, attacktime, brightness, kit, sfx,
+		/* end new */
+		pitchsens;
+	FLOAT_T
+		pitchfactor; /* precomputed pitch bend factor to save some fdiv's */
+	char transpose;
+	char *name;
+};
 
 /* Causes the instrument's default panning to be used. */
 #define NO_PANNING -1
 /* envelope points */
 #define MAXPOINT 7
 
-typedef struct {
-  uint8
-    status, channel, note, velocity, clone_type;
-  Sample *sample;
-  Sample *left_sample;
-  Sample *right_sample;
-  int32 clone_voice;
-  int32
-    orig_frequency, frequency,
-    sample_offset, loop_start, loop_end;
-  int32
-    envelope_volume, modulation_volume;
-  int32
-    envelope_target, modulation_target;
-  int32
-    tremolo_sweep, tremolo_sweep_position, tremolo_phase,
-    lfo_sweep, lfo_sweep_position, lfo_phase,
-    vibrato_sweep, vibrato_sweep_position, vibrato_depth, vibrato_delay,
-    starttime, echo_delay_count;
-  int32
-    echo_delay,
-    sample_increment,
-    envelope_increment,
-    modulation_increment,
-    tremolo_phase_increment,
-    lfo_phase_increment;
-  
-  final_volume_t left_mix, right_mix, lr_mix, rr_mix, ce_mix, lfe_mix;
+struct Voice
+{
+	uint8
+		status, channel, note, velocity, clone_type;
+	Sample* sample;
+	Sample* left_sample;
+	Sample* right_sample;
+	int32 clone_voice;
+	int32
+		orig_frequency, frequency,
+		sample_offset, loop_start, loop_end;
+	int32
+		envelope_volume, modulation_volume;
+	int32
+		envelope_target, modulation_target;
+	int32
+		tremolo_sweep, tremolo_sweep_position, tremolo_phase,
+		lfo_sweep, lfo_sweep_position, lfo_phase,
+		vibrato_sweep, vibrato_sweep_position, vibrato_depth, vibrato_delay,
+		starttime, echo_delay_count;
+	int32
+		echo_delay,
+		sample_increment,
+		envelope_increment,
+		modulation_increment,
+		tremolo_phase_increment,
+		lfo_phase_increment;
 
-  FLOAT_T
-    left_amp, right_amp, lr_amp, rr_amp, ce_amp, lfe_amp,
-    volume, tremolo_volume, lfo_volume;
-  int32
-    vibrato_sample_increment[VIBRATO_SAMPLE_INCREMENTS];
-  int32
-    envelope_rate[MAXPOINT], envelope_offset[MAXPOINT];
-  int32
-    vibrato_phase, vibrato_control_ratio, vibrato_control_counter,
-    envelope_stage, modulation_stage, control_counter,
-    modulation_delay, modulation_counter, panning, panned;
-} Voice;
+	final_volume_t left_mix, right_mix, lr_mix, rr_mix, ce_mix, lfe_mix;
+
+	FLOAT_T
+		left_amp, right_amp, lr_amp, rr_amp, ce_amp, lfe_amp,
+		volume, tremolo_volume, lfo_volume;
+	int32
+		vibrato_sample_increment[VIBRATO_SAMPLE_INCREMENTS];
+	int32
+		envelope_rate[MAXPOINT], envelope_offset[MAXPOINT];
+	int32
+		vibrato_phase, vibrato_control_ratio, vibrato_control_counter,
+		envelope_stage, modulation_stage, control_counter,
+		modulation_delay, modulation_counter, panning, panned;
+};
 
 /* Voice status options: */
 #define VOICE_FREE 0

@@ -75,11 +75,6 @@ FLOAT_T
 int32 drumchannels=DEFAULT_DRUMCHANNELS;
 int adjust_panning_immediately=0;
 
-struct _MidiSong
-{
-	int32 samples;
-	MidiEvent *events;
-};
 static int midi_playing = 0;
 static int32 lost_notes, cut_notes;
 extern int32 *common_buffer;

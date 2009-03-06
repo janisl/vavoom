@@ -22,7 +22,11 @@
 namespace LibTimidity
 {
 
-typedef struct _MidiSong MidiSong;
+struct MidiSong
+{
+	int32		samples;
+	MidiEvent*	events;
+};
 
 extern int Timidity_Init();
 extern void Timidity_SetVolume(int volume);
