@@ -807,6 +807,7 @@ final void A_BrainSpit()
 	if (A)
 	{
 		A.Target = targ;
+		A.Master = self;
 		//	Prevent division by 0
 		if (!A.Velocity.x && !A.Velocity.y)
 		{
@@ -828,13 +829,13 @@ final void A_BrainSpit()
 
 //==========================================================================
 //
-//  A_SpawnFly
+//	SpawnFly
 //
-//  Cube flying, spawn monster, when finished.
+//	Cube flying, spawn monster, when finished.
 //
 //==========================================================================
 
-final void A_SpawnFly()
+final void SpawnFly(class<EntityEx> SpawnType, name SpawnSound)
 {
 	EntityEx newmobj;
 	EntityEx fog;
@@ -845,8 +846,8 @@ final void A_SpawnFly()
 		return;	// still flying
 
 	// First spawn teleport fog.
-	fog = Spawn(SpawnFire, Target.Origin, vector(0.0, 0.0, 0.0));
-	fog.PlaySound('brain/spawn', CHAN_VOICE);
+	fog = Spawn(SpawnType, Target.Origin, vector(0.0, 0.0, 0.0));
+	fog.PlaySound(SpawnSound, CHAN_VOICE);
 
 	// Randomly select monster to spawn.
 	r = P_Random();
@@ -877,15 +878,58 @@ final void A_SpawnFly()
 		type = BaronOfHell;
 
 	newmobj = Spawn(type, Target.Origin, vector(0.0, 0.0, 0.0));
-	if (newmobj.LookForPlayers(true))
+	//	Make new monster hate the same thing eye hates. Note that this
+	// differs from ZDoom which copies friendliness from target spot.
+	if (Master)
+	{
+		newmobj.CopyFriendliness(Master, false);
+	}
+	if (newmobj.SeeState && newmobj.LookForPlayers(true))
+	{
 		newmobj.SetState(newmobj.SeeState);
+	}
 
 	// telefrag anything in this spot
-	newmobj.bTelestomp = true;
-	newmobj.TeleportMove(newmobj.Origin);
+	if (!newmobj.IsDestroyed())
+	{
+		newmobj.bTelestomp = true;
+		newmobj.TeleportMove(newmobj.Origin);
+	}
 
 	// remove self (i.e., cube).
 	Destroy();
+}
+
+//==========================================================================
+//
+//  A_SpawnFly
+//
+//==========================================================================
+
+final void A_SpawnFly()
+{
+	SpawnFly(SpawnFire, 'brain/spawn');
+}
+
+//==========================================================================
+//
+//  decorate_A_SpawnFly
+//
+//==========================================================================
+
+final void decorate_A_SpawnFly(optional class<EntityEx> SpawnType)
+{
+	name SpawnSound;
+	if (SpawnType)
+	{
+		SpawnSound = SpawnType.default.SightSound;
+	}
+	else
+	{
+		SpawnType = SpawnFire;
+		SpawnSound = 'brain/spawn';
+	}
+	SpawnFly(SpawnType, SpawnSound);
 }
 
 //==========================================================================
@@ -899,7 +943,7 @@ final void A_SpawnFly()
 final void A_SpawnSound()
 {
 	PlaySound('brain/cube', CHAN_VOICE);
-	A_SpawnFly();
+	SpawnFly(SpawnFire, 'brain/spawn');
 }
 
 //==========================================================================
@@ -971,7 +1015,7 @@ final void BrainishExplosion(TVec org)
 //
 //==========================================================================
 
-final void A_Mushroom(class<Actor> SpawnType, optional int Amount)
+final void A_Mushroom()
 {
 	decorate_A_Mushroom();
 }

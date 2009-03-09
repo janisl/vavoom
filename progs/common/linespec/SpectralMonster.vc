@@ -303,9 +303,12 @@ final void A_EntityDeath()
 	}
 
 	//	Of course this isn't 100% accurate, but it does its job		-kaiser
-	Spawn(EntitySecond, BossSpawnPos + vector(-240.0, -itof(P_Random() & 192), 0.0));
-	Spawn(EntitySecond, BossSpawnPos + vector(-itof(P_Random() & 192), 240.0, 0.0));
-	Spawn(EntitySecond, BossSpawnPos + vector(itof(P_Random() & 192), -240.0, 0.0));
+	EntityEx Sub = Spawn(EntitySecond, BossSpawnPos + vector(-240.0, -itof(P_Random() & 192), 0.0));
+	Sub.CopyFriendliness(self, true);
+	Sub = Spawn(EntitySecond, BossSpawnPos + vector(-itof(P_Random() & 192), 240.0, 0.0));
+	Sub.CopyFriendliness(self, true);
+	Sub = Spawn(EntitySecond, BossSpawnPos + vector(itof(P_Random() & 192), -240.0, 0.0));
+	Sub.CopyFriendliness(self, true);
 }
 
 //==========================================================================

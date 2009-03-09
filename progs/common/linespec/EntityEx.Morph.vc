@@ -107,7 +107,7 @@ final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration,
 	monster.Alpha = Alpha;
 	monster.bShadow = bShadow;
 	monster.bGhost = bGhost;
-	monster.Target = Target;
+	monster.CopyFriendliness(self, true);
 	monster.Angles.yaw = Angles.yaw;
 	monster.Special = Special;
 	monster.SetTID(TID);

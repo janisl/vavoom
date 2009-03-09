@@ -673,6 +673,7 @@ final void A_GenWizard()
 		A.Destroy();
 		return;
 	}
+	A.CopyFriendliness(Target, true);
 	A.Master = Target;
 	Velocity = vector(0.0, 0.0, 0.0);
 	SetState(FindState('Death'));
@@ -1344,5 +1345,5 @@ final void A_SorcererRise()
 	S2 = Spawn(Sorcerer2, Origin);
 	S2.SetState(S2.FindState('Rise'));
 	S2.Angles.yaw = Angles.yaw;
-	S2.Target = Target;
+	S2.CopyFriendliness(self, true);
 }

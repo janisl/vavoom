@@ -2783,6 +2783,12 @@ final void A_SpawnBishop()
 		if (!A.TestLocation())
 		{
 			A.SetState(none);
+			Level.TotalKills--;
+		}
+		else if (Target)
+		{
+			A.CopyFriendliness(Target, true);
+			A.Master = Target;
 		}
 	}
 	SetState(none);

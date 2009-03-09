@@ -160,7 +160,7 @@ final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
 		{
 			if (Instig.bMonster)
 			{
-				A.bFriendly = bFriendly;
+				A.CopyFriendliness(self, true);
 				if (SetMaster)
 				{
 					A.Master = self;

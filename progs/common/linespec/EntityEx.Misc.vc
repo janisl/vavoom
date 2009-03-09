@@ -2641,7 +2641,9 @@ final void PainShootSkull(class<Actor> SpawnType, float angle)
 		return;
 	}
 
-	newSkull.Target = Target;
+	//	Spawned skulls hate same things as master.
+	newSkull.CopyFriendliness(self, true);
+
 	newSkull.A_SkullAttack();
 }
 
@@ -3626,6 +3628,31 @@ void GetViewEntRenderParams(out float OutAlpha, out int OutRenderStyle)
 	if (Inventory)
 	{
 		Inventory.GetViewEntRenderParams(OutAlpha, OutRenderStyle);
+	}
+}
+
+//==========================================================================
+//
+//	CopyFriendliness
+//
+//==========================================================================
+
+void CopyFriendliness(EntityEx Src, bool ChangeTarget)
+{
+	Level.TotalKills -= CountsAsKill();
+	TIDToHate = Src.TIDToHate;
+	LastLook = Src.LastLook;
+	LastLookActor = Src.LastLookActor;
+	bFriendly = Src.bFriendly;
+	bNoSightCheck = Src.bNoSightCheck;
+	bHuntPlayers = Src.bHuntPlayers;
+	bNoHatePlayers = Src.bNoHatePlayers;
+	FriendPlayer = Src.FriendPlayer;
+	Level.TotalKills += CountsAsKill();
+	if (ChangeTarget && Src.Target && !Src.Target.bNeverTarget)
+	{
+		Target = Src.Target;
+		LastHeard = Src.Target;
 	}
 }
 

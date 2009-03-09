@@ -646,6 +646,8 @@ final bool CheckForResurrect(bool UseVileStates)
 			{
 				continue;
 			}
+			//	This is now a archvile minion, so hate what he hates.
+			EntityEx(Other).CopyFriendliness(self, false);
 
 			// got one!
 			EntityEx temp = Target;
@@ -971,7 +973,7 @@ final void A_Burst(class<Actor> ChunkType)
 			A.Velocity.y = (Random() - Random()) * 2.0 * 35.0;
 			A.RenderStyle = RenderStyle;
 			A.Alpha = Alpha;
-			A.bFriendly = bFriendly;
+			A.CopyFriendliness(self, true);
 		}
 	}
 
