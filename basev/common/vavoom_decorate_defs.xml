@@ -262,7 +262,7 @@
 		<prop_int_const name="Inventory.DefMaxAmount" property="MaxAmount" value="-2" />
 		<prop_int name="Inventory.MaxAmount" property="MaxAmount" />
 		<prop_name_lower name="Inventory.Icon" property="IconName" />
-		<prop_pickup_message name="Inventory.PickupMessage" />
+		<prop_string name="Inventory.PickupMessage" property="PickupMessage" />
 		<prop_name name="Inventory.PickupSound" property="PickupSound" />
 		<prop_class name="Inventory.PickupFlash" property="PickupFlashType" />
 		<prop_name name="Inventory.UseSound" property="UseSound" />

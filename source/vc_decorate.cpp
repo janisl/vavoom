@@ -94,7 +94,6 @@ enum
 	PROP_States,
 	PROP_SkipSuper,
 	PROP_Args,
-	PROP_PickupMessage,
 	PROP_LowMessage,
 	PROP_PowerupColour,
 	PROP_ColourRange,
@@ -461,11 +460,6 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 				VPropDef& P = Lst.NewProp(PROP_Args, PN);
 				P.SetField(Lst.Class, "Args");
 				P.SetField2(Lst.Class, "bArgsDefined");
-			}
-			else if (PN->Name == "prop_pickup_message")
-			{
-				VPropDef& P = Lst.NewProp(PROP_PickupMessage, PN);
-				P.SetField(Lst.Class, "PickupMessage");
 			}
 			else if (PN->Name == "prop_low_message")
 			{
@@ -2878,45 +2872,6 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					}
 					P.Field2->SetBool(DefObj, true);
 					break;
-				case PROP_PickupMessage:
-				{
-					sc->ExpectString();
-					VStr Msg = sc->String;
-					int Filter = 0;
-					if (!Msg.ICmp("Doom"))
-					{
-						Filter = GAME_Doom;
-					}
-					else if (!Msg.ICmp("Heretic"))
-					{
-						Filter = GAME_Heretic;
-					}
-					else if (!Msg.ICmp("Hexen"))
-					{
-						Filter = GAME_Hexen;
-					}
-					else if (!Msg.ICmp("Raven"))
-					{
-						Filter = GAME_Raven;
-					}
-					else if (!Msg.ICmp("Strife"))
-					{
-						Filter = GAME_Strife;
-					}
-					if (Filter && sc->Check(","))
-					{
-						sc->ExpectString();
-						if (GGameInfo->GameFilterFlag & Filter)
-						{
-							P.Field->SetStr(DefObj, sc->String);
-						}
-					}
-					else
-					{
-						P.Field->SetStr(DefObj, Msg);
-					}
-					break;
-				}
 				case PROP_LowMessage:
 					sc->ExpectNumber();
 					P.Field->SetInt(DefObj, sc->Number);

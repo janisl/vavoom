@@ -3875,3 +3875,4 @@
   I added proper use of FriendPlayer field.
 17.03.2009
   I split invulnerability class into separate classes for Heretic and Hexen.
+  I removed support for game specific pickup messages.
