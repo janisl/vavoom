@@ -64,10 +64,11 @@ actor ArtiInvulnerability : PowerupGiver 84
 {
 	Game Heretic
 	SpawnID 133
-	Powerup.Type Invulnerable
 	Inventory.PickupMessage "$txt_artiinvulnerability"
 	Inventory.RespawnTics 4230
 	Inventory.Icon "artiinvu"
+	Powerup.Type Invulnerable
+	Powerup.Color GoldMap
 	+CountItem
 	+FloatBob
 	+Inventory.PickupFlash
@@ -84,10 +85,10 @@ actor ArtiInvulnerability2 : PowerupGiver 84
 {
 	Game Hexen
 	SpawnID 133
-	Powerup.Type Invulnerable
 	Inventory.PickupMessage "$txt_artiinvulnerability2"
 	Inventory.RespawnTics 4230
 	Inventory.Icon "artidefn"
+	Powerup.Type Invulnerable
 	+CountItem
 	+FloatBob
 	+Inventory.PickupFlash

@@ -103,7 +103,6 @@ float			DefaultKickBack;
 int				NonMonsterAngleIncrements;
 
 int				InvDefaultMaxAmount;
-int				DefaultInvulnBlendColour;
 
 float			IceMoveFactor;
 float			GibsHealthFactor;

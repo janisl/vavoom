@@ -3876,3 +3876,4 @@
 17.03.2009
   I split invulnerability class into separate classes for Heretic and Hexen.
   I removed support for game specific pickup messages.
+  I removed default invulnerability blend colour, it must be set by the pickup.

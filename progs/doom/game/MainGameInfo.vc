@@ -1115,7 +1115,6 @@ defaultproperties
 	bNoClipIgnoreFloor = true;
 	bAlwaysSwitchNewWeapon = true;
 	DefaultKickBack = 150.0;
-	DefaultInvulnBlendColour = Inventory::INVERSECOLOUR;
 	bBloodRandomiseTime = true;
 	GibsHealthFactor = 1.0;
 

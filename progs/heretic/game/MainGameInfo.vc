@@ -529,7 +529,6 @@ defaultproperties
 	TeleportFogState = 'Raven';
 	DefaultKickBack = 150.0;
 	InvDefaultMaxAmount = 16;
-	DefaultInvulnBlendColour = Inventory::GOLDCOLOUR;
 	IceMoveFactor = 0.25;
 	bRipperBloodNoGravity = true;
 
