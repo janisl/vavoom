@@ -62,11 +62,10 @@ actor ArtiFly : PowerupGiver 83
 //------------------------------------------------------------------------------
 actor ArtiInvulnerability : PowerupGiver 84
 {
-	Game Raven
+	Game Heretic
 	SpawnID 133
 	Powerup.Type Invulnerable
 	Inventory.PickupMessage "$txt_artiinvulnerability"
-	Inventory.PickupMessage Hexen, "$txt_artiinvulnerability2"
 	Inventory.RespawnTics 4230
 	Inventory.Icon "artiinvu"
 	+CountItem
@@ -76,6 +75,26 @@ actor ArtiInvulnerability : PowerupGiver 84
 	{
 	Spawn:
 		INVU ABCD 3
+		Loop
+	}
+}
+
+//------------------------------------------------------------------------------
+actor ArtiInvulnerability2 : PowerupGiver 84
+{
+	Game Hexen
+	SpawnID 133
+	Powerup.Type Invulnerable
+	Inventory.PickupMessage "$txt_artiinvulnerability2"
+	Inventory.RespawnTics 4230
+	Inventory.Icon "artidefn"
+	+CountItem
+	+FloatBob
+	+Inventory.PickupFlash
+	states
+	{
+	Spawn:
+		DEFN ABCD 3
 		Loop
 	}
 }

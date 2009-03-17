@@ -556,7 +556,8 @@ VStream* VZipFile::CreateLumpReaderNum(int Lump)
 //
 //==========================================================================
 
-void VZipFile::RenameSprites(const TArray<VSpriteRename>& A)
+void VZipFile::RenameSprites(const TArray<VSpriteRename>& A,
+	const TArray<VLumpRename>& LA)
 {
 	guard(VZipFile::RenameSprites);
 	for (int i = 0; i < NumFiles; i++)
@@ -582,6 +583,13 @@ void VZipFile::RenameSprites(const TArray<VSpriteRename>& A)
 			NewName[2] = A[j].New[2];
 			NewName[3] = A[j].New[3];
 			L.LumpName = NewName;
+		}
+		for (int j = 0; j < LA.Num(); j++)
+		{
+			if (L.LumpName == LA[j].Old)
+			{
+				L.LumpName = LA[j].New;
+			}
 		}
 	}
 	unguard;

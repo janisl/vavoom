@@ -11,5 +11,8 @@ ROCK ROKK	// rocks and dirt
 WATR HWAT	// Strife also has WATR
 GIBS POL5	// RealGibs
 EGGM PRKM	// PorkFX
+INVU DEFN	// Icon of the Defender
+
+lump ARTIINVU ARTIDEFN
 
 always BLOD BLUD

@@ -378,9 +378,24 @@ static void RenameSprites()
 	VScriptParser* sc = new VScriptParser("sprite_rename.txt", Strm);
 	TArray<VSpriteRename> Renames;
 	TArray<VSpriteRename> AlwaysRenames;
+	TArray<VLumpRename> LumpRenames;
+	TArray<VLumpRename> AlwaysLumpRenames;
 	while (!sc->AtEnd())
 	{
 		bool Always = sc->Check("always");
+
+		if (sc->Check("lump"))
+		{
+			sc->ExpectString();
+			VStr Old = sc->String.ToLower();
+			sc->ExpectString();
+			VStr New = sc->String.ToLower();
+			VLumpRename& R = Always ? AlwaysLumpRenames.Alloc() :
+				LumpRenames.Alloc();
+			R.Old = *Old;
+			R.New = *New;
+			continue;
+		}
 
 		sc->ExpectString();
 		if (sc->String.Length() != 4)
@@ -413,9 +428,9 @@ static void RenameSprites()
 	{
 		if (RenameAll || i == IWadIndex)
 		{
-			SearchPaths[i]->RenameSprites(Renames);
+			SearchPaths[i]->RenameSprites(Renames, LumpRenames);
 		}
-		SearchPaths[i]->RenameSprites(AlwaysRenames);
+		SearchPaths[i]->RenameSprites(AlwaysRenames, AlwaysLumpRenames);
 	}
 	unguard;
 }

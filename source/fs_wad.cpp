@@ -521,7 +521,8 @@ VStream* VWadFile::CreateLumpReaderNum(int lump)
 //
 //==========================================================================
 
-void VWadFile::RenameSprites(const TArray<VSpriteRename>& A)
+void VWadFile::RenameSprites(const TArray<VSpriteRename>& A,
+	const TArray<VLumpRename>& LA)
 {
 	guard(VWadFile::RenameSprites);
 	for (int i = 0; i < NumLumps; i++)
@@ -545,6 +546,13 @@ void VWadFile::RenameSprites(const TArray<VSpriteRename>& A)
 			NewName[2] = A[j].New[2];
 			NewName[3] = A[j].New[3];
 			L.Name = NewName;
+		}
+		for (int j = 0; j < LA.Num(); j++)
+		{
+			if (L.Name == LA[j].Old)
+			{
+				L.Name = LA[j].New;
+			}
 		}
 	}
 	unguard;

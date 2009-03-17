@@ -36,6 +36,12 @@ struct VSpriteRename
 	char	New[4];
 };
 
+struct VLumpRename
+{
+	VName	Old;
+	VName	New;
+};
+
 //==========================================================================
 //	VSearchPath
 //==========================================================================
@@ -56,7 +62,8 @@ public:
 	virtual void BuildGLNodes(VSearchPath*) = 0;
 	virtual void BuildPVS(VSearchPath*) = 0;
 	virtual VStream* CreateLumpReaderNum(int) = 0;
-	virtual void RenameSprites(const TArray<VSpriteRename>&) = 0;
+	virtual void RenameSprites(const TArray<VSpriteRename>&,
+		const TArray<VLumpRename>&) = 0;
 };
 
 //==========================================================================
@@ -85,7 +92,8 @@ public:
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);
 	VStream* CreateLumpReaderNum(int);
-	void RenameSprites(const TArray<VSpriteRename>&);
+	void RenameSprites(const TArray<VSpriteRename>&,
+		const TArray<VLumpRename>&);
 };
 
 //==========================================================================
@@ -125,7 +133,8 @@ public:
 	bool FileExists(const VStr&);
 	VStream* OpenFileRead(const VStr&);
 	VStream* CreateLumpReaderNum(int);
-	void RenameSprites(const TArray<VSpriteRename>&);
+	void RenameSprites(const TArray<VSpriteRename>&,
+		const TArray<VLumpRename>&);
 };
 
 //==========================================================================
@@ -160,7 +169,8 @@ public:
 	VName LumpName(int);
 	int IterateNS(int, EWadNamespace);
 	VStream* CreateLumpReaderNum(int);
-	void RenameSprites(const TArray<VSpriteRename>&);
+	void RenameSprites(const TArray<VSpriteRename>&,
+		const TArray<VLumpRename>&);
 
 	void BuildGLNodes(VSearchPath*);
 	void BuildPVS(VSearchPath*);

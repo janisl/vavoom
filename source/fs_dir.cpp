@@ -187,6 +187,7 @@ void VFilesDir::BuildPVS(VSearchPath*)
 {
 	Sys_Error("BuildPVS on directory");
 }
-void VFilesDir::RenameSprites(const TArray<VSpriteRename>&)
+void VFilesDir::RenameSprites(const TArray<VSpriteRename>&,
+	const TArray<VLumpRename>&)
 {
 }
