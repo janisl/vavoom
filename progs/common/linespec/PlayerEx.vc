@@ -2415,6 +2415,7 @@ void SpawnPlayer(mthing_t * mthing, bool Voodoo)
 		vector(x, y, z),,, false);
 	PP.Origin.z += mthing->height;
 	PP.LinkToWorld();
+	PP.FriendPlayer = GetPlayerNum() + 1;	//	Players are their own friends.
 
 	//	Set colour translations for player sprites.
 	TranslStart = PP.TranslStart;

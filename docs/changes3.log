@@ -3869,5 +3869,9 @@
  sound target unless compatibility option is turned on.
 06.03.2009
   I did some Timidity code cleanup.
-10.03.2009
+09.03.2009
   I added utility method that copies actor's friendliness and hate parameters.
+11.03.2009
+  I added proper use of FriendPlayer field.
+17.03.2009
+  I split invulnerability class into separate classes for Heretic and Hexen.

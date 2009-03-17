@@ -131,25 +131,6 @@ final void MinotaurSlam(Actor Other)
 
 //==========================================================================
 //
-//  Died
-//
-//==========================================================================
-
-void Died(EntityEx source, EntityEx inflictor)
-{
-	::Died(source, inflictor);
-	if (bSummonedMonster && Tracer && Tracer.Health > 0)
-	{
-		Inventory Power = Tracer.FindInventory(PowerMinotaur);
-		if (!ActiveMinotaur() && Power)
-		{
-			Power.Destroy();
-		}
-	}
-}
-
-//==========================================================================
-//
 //  ActiveMinotaur
 //
 //  Search thinker list for minotaur

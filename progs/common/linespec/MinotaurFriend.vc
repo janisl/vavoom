@@ -25,6 +25,25 @@
 
 class MinotaurFriend : Minotaur;
 
+//==========================================================================
+//
+//  Died
+//
+//==========================================================================
+
+void Died(EntityEx source, EntityEx inflictor)
+{
+	::Died(source, inflictor);
+	if (Tracer && Tracer.Health > 0)
+	{
+		Inventory Power = Tracer.FindInventory(PowerMinotaur);
+		if (!ActiveMinotaur() && Power)
+		{
+			Power.Destroy();
+		}
+	}
+}
+
 states
 {
 Spawn:

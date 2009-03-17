@@ -2910,7 +2910,7 @@ final void A_Summon()
 	A = Spawn(MinotaurFriend, Origin);
 	if (A)
 	{
-		if (!A.TestLocation() || !Target)
+		if (!A.TestLocation() || !Tracer)
 		{
 			// Didn't fit - change back to artifact
 			A.SetState(none);
@@ -2921,15 +2921,19 @@ final void A_Summon()
 		}
 
 		MinotaurFriend(A).StartTime = XLevel.Time;
-		if (!Target.bCorpse)
+		if (!Tracer.bCorpse)
 		{
 			//	Master isn't dead
-			A.Tracer = Target;	// Pointer to master
+			A.Tracer = Tracer;	// Pointer to master
 			Powerup Power = Spawn(PowerMinotaur,,,, false);
 			Power.bAlwaysPickup = true;
 			if (!Power.TryPickup(Target))
 			{
 				Power.Destroy();
+			}
+			if (Tracer.bIsPlayer)
+			{
+				A.FriendPlayer = Tracer.Player.GetPlayerNum() + 1;
 			}
 		}
 

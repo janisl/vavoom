@@ -91,20 +91,13 @@ final void A_SummonRebel()
 	// anymore.
 	bRebelSpawned = true;
 	EntityEx Owner = self.Target;
-	int friendNum;
-	int i;
 
 	// Set up the new rebel.
-	for (i = 0; i < MAXPLAYERS; i++)
+	if (Owner)
 	{
-		if (!Level.Game.Players[i] || !Level.Game.Players[i].bSpawned)
-			continue;
-		if (Owner.Player && Level.Game.Players[i] == Owner.Player)
-			break;
+		A.Translation = Owner.Translation;
+		A.FriendPlayer = Owner.bIsPlayer ? Owner.Player.GetPlayerNum() + 1 : 0;
 	}
-
-	friendNum = Owner.Player ? i + 1 : 0;
-	A.FriendPlayer = friendNum;
 	A.Threshold = 100;
 	A.bFriendly = true;
 	A.bInCombat = true;

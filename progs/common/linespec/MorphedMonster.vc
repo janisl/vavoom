@@ -80,7 +80,6 @@ int UnmorphActor(Entity Activator, int Force)
 	TVec oldOrigin;
 	class<EntityEx> originalClass;
 	float oldAngle;
-	EntityEx oldTarget;
 	int oldSpecial;
 	int oldTID;
 	int oldArgs[5];
@@ -94,7 +93,6 @@ int UnmorphActor(Entity Activator, int Force)
 	}
 	oldOrigin = Origin;
 	oldAngle = Angles.yaw;
-	oldTarget = Target;
 	oldSpecial = Special;
 	oldTID = TID;
 	oldArgs[0] = Args[0];
@@ -116,9 +114,7 @@ int UnmorphActor(Entity Activator, int Force)
 	}
 	LinkToWorld();
 	SetTID(0);
-	SetState(FindState('FreeTargMobj'));
 	mo.Angles.yaw = oldAngle;
-	mo.Target = oldTarget;
 	mo.Special = oldSpecial;
 	mo.Args[0] = oldArgs[0];
 	mo.Args[1] = oldArgs[1];
@@ -126,11 +122,10 @@ int UnmorphActor(Entity Activator, int Force)
 	mo.Args[3] = oldArgs[3];
 	mo.Args[4] = oldArgs[4];
 	mo.SetTID(oldTID);
-	mo.bNoSightCheck = bNoSightCheck;
-	mo.bHuntPlayers = bHuntPlayers;
-	mo.bNoHatePlayers = bNoHatePlayers;
+	mo.CopyFriendliness(self, true);
 	mo.bShadow = bShadow;
 	mo.bGhost = bGhost;
+	SetState(FindState('FreeTargMobj'));
 	UnmorphedMo = mo;
 	Spawn(UnmorphFlash ? UnmorphFlash : class<Actor>(TeleportFog), oldOrigin +
 		vector(0.0, 0.0, LineSpecialGameInfo(Level.Game).TeleFogHeight));
