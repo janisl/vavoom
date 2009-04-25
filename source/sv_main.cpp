@@ -164,9 +164,11 @@ void P_InitThinkers()
 void SV_Shutdown()
 {
 	guard(SV_Shutdown);
-	SV_ShutdownGame();
 	if (GGameInfo)
+	{
+		SV_ShutdownGame();
 		GGameInfo->ConditionalDestroy();
+	}
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{
 		if (GPlayersBase[i])

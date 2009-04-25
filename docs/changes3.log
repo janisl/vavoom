@@ -3858,6 +3858,8 @@
                             VERSION 1.30
 ******************************************************************************
 
+23.02.2009
+  I reformated Timidity source code to be more readable.
 03.03.2009
   I fixed scaled model rendering in D3D.
   I changed total kills and items count to be properly updated for monsters and
@@ -3877,3 +3879,5 @@
   I split invulnerability class into separate classes for Heretic and Hexen.
   I removed support for game specific pickup messages.
   I removed default invulnerability blend colour, it must be set by the pickup.
+25.04.2009
+  I fixed crash if no main wad file has been found.
