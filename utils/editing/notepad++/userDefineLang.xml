@@ -7,8 +7,8 @@
         </Settings>
         <KeywordLists>
             <Keywords name="Delimiters">000000</Keywords>
-            <Keywords name="Folder+">{ switch</Keywords>
-            <Keywords name="Folder-">} }</Keywords>
+            <Keywords name="Folder+">{ #ifdef #ifndef enum</Keywords>
+            <Keywords name="Folder-">} #endif #endif };</Keywords>
             <Keywords name="Operators">- ! % &amp; ( ) . : ? [ ] ^ | ~ + &lt; = &gt;</Keywords>
             <Keywords name="Comment">1/* 2*/ 0//</Keywords>
             <Keywords name="Words1">__mobjinfo__ __scriptid__ break case continue default do else for foreach if replication return switch while</Keywords>
