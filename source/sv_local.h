@@ -163,7 +163,7 @@ struct opening_t
 	float			bottom;
 	float			range;
 	float			lowfloor;
-	float			highceilig;
+	float			highceiling;
 	sec_plane_t*	floor;
 	sec_plane_t*	ceiling;
 	sec_plane_t*	lowfloorplane;

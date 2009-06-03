@@ -143,7 +143,7 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point, int NoBlock
 		if (frontceilz < backceilz)
 		{
 			op->top = frontceilz;
-			op->highceilig = backceilz;
+			op->highceiling = backceilz;
 			op->ceiling = frontceil;
 			op->highceilingplane = backceil;
 			frontreg = frontreg->next;
@@ -151,7 +151,7 @@ opening_t *SV_LineOpenings(const line_t* linedef, const TVec& point, int NoBlock
 		else
 		{
 			op->top = backceilz;
-			op->highceilig = frontceilz;
+			op->highceiling = frontceilz;
 			op->ceiling = backceil;
 			op->highceilingplane = frontceil;
 			backreg = backreg->next;

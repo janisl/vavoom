@@ -3881,3 +3881,5 @@
   I removed default invulnerability blend colour, it must be set by the pickup.
 25.04.2009
   I fixed crash if no main wad file has been found.
+03.06.2009
+  I fixed a typo in opening_t structure.
