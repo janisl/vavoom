@@ -29,6 +29,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define SMOOTHSTEP(x) ((x) * (x) * (3.0 - 2.0 * (x)))
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -738,6 +740,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	}
 	SetFade(Fade);
 
+	float smooth_inter;
+	smooth_inter = SMOOTHSTEP(Inter);
+
 	//
 	// draw all the triangles
 	//
@@ -755,13 +760,14 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
+
 	// Interpolate Scales
 	TVec scale_origin;
 	if (Interpolate)
 	{
-		scale_origin[0] = ((1 - Inter) * framedesc->scale_origin[0] + Inter * nextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - Inter) * framedesc->scale_origin[1] + Inter * nextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - Inter) * framedesc->scale_origin[2] + Inter * nextframedesc->scale_origin[2]);
+		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
 	}
 	else
 	{
@@ -774,9 +780,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	TVec scale;
 	if (Interpolate)
 	{
-		scale[0] = framedesc->scale[0] + Inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
-		scale[1] = framedesc->scale[1] + Inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
-		scale[2] = framedesc->scale[2] + Inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
+		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
 	}
 	else
 	{
@@ -833,9 +839,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			}
 			if (Interpolate)
 			{
-				glVertex3f(((1 - Inter) * verts[index].v[0] + (Inter) * verts2[index].v[0]),
-					((1 - Inter) * verts[index].v[1] + (Inter) * verts2[index].v[1]),
-					((1 - Inter) * verts[index].v[2] + (Inter) * verts2[index].v[2]));
+				glVertex3f(((1 - smooth_inter) * verts[index].v[0] + (smooth_inter) * verts2[index].v[0]),
+					((1 - smooth_inter) * verts[index].v[1] + (smooth_inter) * verts2[index].v[1]),
+					((1 - smooth_inter) * verts[index].v[2] + (smooth_inter) * verts2[index].v[2]));
 			}
 			else
 			{
