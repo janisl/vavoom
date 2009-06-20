@@ -158,8 +158,11 @@ void VDirect3DDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VDirect3DDrawer::SetTexture);
 	SetSpriteLump(Tex, NULL, CMap);
-	RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-	RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	if (RenderDevice)
+	{
+		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+		RenderDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+	}
 	unguard;
 }
 
