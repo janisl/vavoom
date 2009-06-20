@@ -16,6 +16,7 @@ actor Sorcerer1 7
 	+NoRadiusDmg
 	+NoTarget
 	+NoIceDeath
+	+DontGib
 	SeeSound "dsparilserpent/sight"
 	ActiveSound "dsparilserpent/active"
 	AttackSound "dsparilserpent/attack"
