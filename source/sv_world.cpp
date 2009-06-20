@@ -502,8 +502,6 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 bool VLevel::ChangeSector(sector_t* sector, int crunch)
 {
 	guard(VLevel::ChangeSector);
-	int x;
-	int y;
 	int i;
 	sector_t* sec2;
 	sec_region_t* reg;
