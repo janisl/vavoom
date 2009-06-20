@@ -1265,7 +1265,7 @@ actor HugeTorch 50
 	states
 	{
 	Spawn:
-		LOGS ABCD 4 Bright
+		LOGS ABCDE 4 Bright
 		Loop
 		// NOTE Wad has 5 frames of animation
 	}

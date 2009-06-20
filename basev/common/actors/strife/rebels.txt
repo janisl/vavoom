@@ -57,7 +57,7 @@ actor Rebel : StrifeHumanoid
 		RGIB C 3 A_NoBlocking
 		RGIB DEF 3 A_TossGib
 		RGIB G 3
-		RGIB H 1400
+		RGIB H -1
 		Stop
 	}
 }

@@ -48,7 +48,7 @@ actor Beggar : StrifeHumanoid
 		GIBS PQRS 4 A_TossGib
 		GIBS T 4
 		GIBS U 5
-		GIBS V 1400
+		GIBS V -1
 		Stop
 	}
 }

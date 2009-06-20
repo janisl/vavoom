@@ -45,9 +45,7 @@ actor Peasant : StrifeHumanoid
 		PEAS K 5
 		PEAS L 6
 		PEAS M 8
-		PEAS N 1400
-		GIBS U 5
-		GIBS V 1400
+		PEAS N -1
 		Stop
 	XDeath:
 		GIBS M 5 A_TossGib
@@ -55,7 +53,9 @@ actor Peasant : StrifeHumanoid
 		GIBS O 5 A_NoBlocking
 		GIBS PQRS 4 A_TossGib
 		GIBS T 4
-		Goto Death+8
+		GIBS U 5
+		GIBS V -1
+		Stop
 	}
 }
 

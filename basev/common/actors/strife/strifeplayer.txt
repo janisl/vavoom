@@ -66,7 +66,7 @@ actor StrifePlayer : PlayerPawn
 		DISR D 5 A_NoBlocking
 		DISR EF 5
 		DISR GHIJ 4
-		MEAT D 700
+		MEAT D -1
 		Stop
 	}
 }

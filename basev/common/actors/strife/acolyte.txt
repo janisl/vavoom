@@ -58,8 +58,8 @@ actor Acolyte : StrifeHumanoid
 		AGRD K 3 A_NoBlocking
 		AGRD L 3
 		AGRD M 3 A_AcolyteDeath
-		AGRD N 1400
-		Goto XDeath+10
+		AGRD N -1
+		Stop
 	XDeath:
 		GIBS A 5 A_NoBlocking
 		GIBS BC 5 A_TossGib
@@ -70,7 +70,7 @@ actor Acolyte : StrifeHumanoid
 		GIBS I 5
 		GIBS J 5 A_AcolyteDeath
 		GIBS K 5
-		GIBS L 1400
+		GIBS L -1
 		Stop
 	}
 }

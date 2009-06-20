@@ -31,7 +31,7 @@ actor RatBuddy 85
 		RATT B 4 A_Wander
 		Goto See
 	Death:
-		MEAT Q 700
+		MEAT Q -1
 		Stop
 	}
 }

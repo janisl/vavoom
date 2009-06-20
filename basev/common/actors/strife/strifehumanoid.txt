@@ -22,7 +22,7 @@ actor StrifeHumanoid
 		BURN N 3
 		BURN OPQPQ 5
 		BURN RSTU 7
-		BURN V 700 //FIXME A_Dying();
+		BURN V -1 //FIXME A_Dying();
 		Stop
 	Disintegrate:
 		DISR A 5 A_PlaySoundEx("misc/disruptordeath", "Voice")
@@ -30,7 +30,7 @@ actor StrifeHumanoid
 		DISR D 5 A_NoBlocking
 		DISR EF 5
 		DISR GHIJ 4
-		MEAT D 700
+		MEAT D -1
 		Stop
 	}
 }
