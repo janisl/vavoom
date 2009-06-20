@@ -169,7 +169,11 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		!inflictor.bNoDamageThrust)
 	{
 		float kickback;
-		if (!source || !source.bIsPlayer)
+		if (bIsPlayer && !GetCvar('damage_thrust'))
+		{
+			kickback = 0.0;
+		}
+		else if (!source || !source.bIsPlayer)
 		{
 			kickback = LineSpecialGameInfo(Level.Game).DefaultKickBack;
 		}
