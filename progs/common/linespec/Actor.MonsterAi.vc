@@ -180,7 +180,18 @@ final void A_Look2()
 			if (!bStandMustSeeTarget || CanSee(targ))
 			{
 				Threshold = 10;
-				SetState(SeeState);
+				// Let the actor wander around aimlessly looking for a fight
+				if (SeeState)
+				{
+					if (!bInChase)
+					{
+						SetState(SeeState);
+					}
+				}
+				else
+				{
+					A_Wander();
+				}
 				return;
 			}
 		}
@@ -188,7 +199,18 @@ final void A_Look2()
 		{
 			if (LookForPlayers(bLookAllAround))
 			{
-				SetState(SeeState);
+				// Let the actor wander around aimlessly looking for a fight
+				if (SeeState)
+				{
+					if (!bInChase)
+					{
+						SetState(SeeState);
+					}
+				}
+				else
+				{
+					A_Wander();
+				}
 				bInCombat = true;
 				return;
 			}
