@@ -1010,6 +1010,58 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 			inregion->prev = region;
 			return region;
 		}
+		// Check for sloped floor
+		else if (inregion->floor->normal.z != 1.0)
+		{
+			if (inregion->floor->maxz <= src->ceiling.minz && inregion->ceiling->maxz >= src->floor.minz)
+			{
+				region = new sec_region_t;
+				memset(region, 0, sizeof(*region));
+				region->floor = inregion->floor;
+				region->ceiling = &src->ceiling;
+				region->params = &src->params;
+				region->extraline = line;
+				inregion->floor = &src->floor;
+				if (inregion->prev)
+				{
+					inregion->prev->next = region;
+				}
+				else
+				{
+					dst->botregion = region;
+				}
+				region->prev = inregion->prev;
+				region->next = inregion;
+				inregion->prev = region;
+				return region;
+			}
+		}
+		// Check for sloped ceiling
+		else if (inregion->ceiling->normal.z != -1.0)
+		{
+			if (inregion->floor->minz <= src->ceiling.maxz && inregion->ceiling->minz >= src->floor.maxz)
+			{
+				region = new sec_region_t;
+				memset(region, 0, sizeof(*region));
+				region->floor = inregion->floor;
+				region->ceiling = &src->ceiling;
+				region->params = &src->params;
+				region->extraline = line;
+				inregion->floor = &src->floor;
+				if (inregion->prev)
+				{
+					inregion->prev->next = region;
+				}
+				else
+				{
+					dst->botregion = region;
+				}
+				region->prev = inregion->prev;
+				region->next = inregion;
+				inregion->prev = region;
+				return region;
+			}
+		}
 	}
 	GCon->Logf("Invalid extra floor, tag %d", dst->tag);
 	return NULL;
