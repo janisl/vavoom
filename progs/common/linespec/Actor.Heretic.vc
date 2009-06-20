@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -324,7 +324,7 @@ final void A_MakePod()
 		return;
 	}
 	A.SetState(A.FindState('Grow'));
-	A.Thrust(Random() * 360.0, 4.5);
+	A.Thrust(Random() * 360.0, 9.0);
 	A.PlaySound('world/podgrow', CHAN_VOICE);
 	Special1++;	// Increment generated pod count
 	A.Master = self;	// Link the generator to the pod
