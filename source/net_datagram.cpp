@@ -897,9 +897,6 @@ bool VDatagramDriver::QueryMaster(VNetLanDriver* Drv, bool xmit)
 	sockaddr_t	tmpaddr;
 	int			len;
 	vuint8		control;
-	vuint8		msgtype;
-	int			n;
-	int			i;
 	vuint8		TmpByte;
 
 	if (Drv->MasterQuerySocket < 0)
