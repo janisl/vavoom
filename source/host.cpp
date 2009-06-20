@@ -237,14 +237,9 @@ static bool FilterTime()
 
 	realtime += time;
 
-	if (real_time)
+	if (!real_time)
 	{
-		if (realtime - oldrealtime < 1.0 / 72.0)
-			return false;		// framerate is too high
-	}
-	else
-	{
-		if (realtime - oldrealtime < 1.0 / 35.0)
+		if (realtime - oldrealtime < 1.0 / 36.0)
 			return false;		// framerate is too high
 	}
 
@@ -412,7 +407,7 @@ unclock(host_cycles[0]);
 			time3 = Sys_Time();
 			pass2 = (int)((time2 - time1) * 1000);
 			pass3 = (int)((time3 - time2) * 1000);
-			GCon->Logf("%d tot %d server %d gfx %d snd",
+			GCon->Logf("%d tot | %d server | %d gfx | %d snd",
 				pass1 + pass2 + pass3, pass1, pass2, pass3);
 		}
 
