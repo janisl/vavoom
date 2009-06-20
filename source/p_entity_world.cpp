@@ -1767,7 +1767,7 @@ void VEntity::UpdateVelocity()
 	//  Don't add gravity if standing on slope with normal.z > 0.7 (aprox
 	// 45 degrees)
 	if (!(EntityFlags & EF_NoGravity) && (Origin.z > FloorZ ||
-		Floor->normal.z < 0.7))
+		Floor->normal.z <= 0.7))
 	{
 		//	Add gravity
 		if (WaterLevel < 2)
