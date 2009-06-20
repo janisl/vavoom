@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -518,6 +518,10 @@ final void A_MinotaurDecide()
 		// Don't call the state function right away
 		SetState(FindState('Charge'));
 		bSkullFly = true;
+		if (!bSummonedMonster)
+		{
+			bInvulnerable = true;
+		}
 		A_FaceTarget();
 		Velocity = Normalise(Target.Origin - Origin) * ChargeSpeed;
 		Special1 = 35 / 2;	// Charge duration
