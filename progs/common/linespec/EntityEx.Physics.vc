@@ -37,6 +37,8 @@
 
 bool Physics(float DeltaTime)
 {
+	Prev_Org = Origin;
+
 	float CummX = 0.0;
 	float CummY = 0.0;
 	if (Sector->AffectorData && bColideWithWorld && !bNoSector)
@@ -424,7 +426,7 @@ final void ZMovement(float DeltaTime)
 	if (Origin.z <= FloorZ + 0.1)
 	{
 		// hit the floor
-		if (!HitFloor(DeltaTime))
+		if (!HitFloor())
 		{
 			return;
 		}
@@ -617,7 +619,7 @@ final void HitMobj(Entity Other, float ptryx, float ptryy)
 //
 //==========================================================================
 
-final bool HitFloor(float DeltaTime)
+final bool HitFloor()
 {
 	float	vdot;
 
@@ -663,11 +665,12 @@ final bool HitFloor(float DeltaTime)
 		}
 	}
 	Origin.z = FloorZ;
-	if (vdot < -0.1)
+	if (vdot < -0.1 && !bSpecial)
 	{
 		// Spawn splashes, etc.
 		HitFloorType();
-		if (DamageType == 'Ice' && vdot < -DEFAULT_GRAVITY * 0.25)
+		if (!ClassIsChildOf(Class, FindClass('Inventory')) && DamageType == 'Ice' &&
+			vdot < -DEFAULT_GRAVITY * 0.25)
 		{
 			StateTime = 0.1;
 			Velocity = vector(0.0, 0.0, 0.0);
@@ -1267,7 +1270,8 @@ final void ApplyFriction()
 		if (Velocity.x > 0.25 * 35.0 || Velocity.x < -0.25 * 35.0 ||
 			Velocity.y > 0.25 * 35.0 || Velocity.y < -0.25 * 35.0)
 		{
-			if (FloorZ != GetPlanePointZ(&Sector->floor, Origin))
+			if (FloorZ > GetPlanePointZ(&Sector->floor, Origin) ||
+				DropOffZ != FloorZ)
 			{
 				return;
 			}

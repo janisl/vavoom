@@ -130,6 +130,7 @@ final void DSparilTeleport()
 	}
 
 	PrevOrg = Origin;
+	Prev_Org = Origin;
 	if (TeleportMove(Spot.Origin))
 	{
 		fog = Spawn(Sorcerer2Telefade, PrevOrg);
@@ -359,6 +360,7 @@ defaultproperties
 	bNeverTarget = true;
 	bFullVolActive = true;
 	bNoIceDeath = true;
+	bBossDeath = true;
 	SightSound = 'dsparil/sight';
 	ActiveSound = 'dsparil/active';
 	AttackSound = 'dsparil/attack';

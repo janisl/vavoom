@@ -30,6 +30,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define SMOOTHSTEP(x) ((x) * (x) * (3.0 - 2.0 * (x)))
+
 // TYPES -------------------------------------------------------------------
 
 struct VModel
@@ -1038,6 +1040,7 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 	VState* DispState = (Ent->EntityFlags & VEntity::EF_UseDispState) ?
 		Ent->DispState : Ent->State;
 	bool Interpolate;
+	TVec Org;
 	// Check if we want to interpolate model frames
 	if (!r_interpolate_frames)
 	{
@@ -1046,6 +1049,20 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 	else
 	{
 		Interpolate = true;
+	}
+	if (Interpolate)
+	{
+		float smooth_inter = SMOOTHSTEP(Inter);
+
+		Org.x = (((1 - smooth_inter) * Ent->Origin.x) + (smooth_inter * Ent->Prev_Org.x));
+		Org.y = (((1 - smooth_inter) * Ent->Origin.y) + (smooth_inter * Ent->Prev_Org.y));
+		Org.z = (((1 - smooth_inter) * Ent->Origin.z) + (smooth_inter * Ent->Prev_Org.z));
+	}
+	else
+	{
+		Org.x = Ent->Origin.x;
+		Org.y = Ent->Origin.y;
+		Org.z = Ent->Origin.z;
 	}
 	if (Ent->EntityFlags & VEntity::EF_FixedModel)
 	{
@@ -1059,7 +1076,7 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 		{
 			return false;
 		}
-		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+		return DrawAliasModel(Org - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, Mdl,
 			DispState->InClassIndex,
 			DispState->NextState ? DispState->NextState->InClassIndex :
@@ -1069,7 +1086,7 @@ bool VRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
 	}
 	else
 	{
-		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+		return DrawAliasModel(Org - TVec(0, 0, Ent->FloorClip),
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, DispState,
 			DispState->NextState ? DispState->NextState : DispState,
 			GetTranslation(Ent->Translation), Ent->ModelVersion, Light, Fade,

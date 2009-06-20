@@ -262,6 +262,7 @@ final bool TeleportMove(TVec org, optional bool ForceTelestomp)
 
 	// the move is ok,
 	// so link the thing into its new position
+	Prev_Org = Origin;
 	UnlinkFromWorld();
 	Origin = org;
 	LinkToWorld();
@@ -269,6 +270,7 @@ final bool TeleportMove(TVec org, optional bool ForceTelestomp)
 	{
 		Origin.z = FloorZ;
 	}
+	Prev_Org = Origin;
 
 	return true;
 }
@@ -388,6 +390,7 @@ final bool MoveThing(TVec Pos, bool Fog)
 {
 	TVec OldOrg = Origin;
 
+	Prev_Org = Origin;
 	UnlinkFromWorld();
 	Origin = Pos;
 	LinkToWorld();
@@ -405,9 +408,11 @@ final bool MoveThing(TVec Pos, bool Fog)
 	}
 	else
 	{
+		Prev_Org = Origin;
 		UnlinkFromWorld();
 		Origin = OldOrg;
 		LinkToWorld();
+		Prev_Org = Origin;
 		return false;
 	}
 }
@@ -1558,18 +1563,38 @@ final bool SectorChanged(int CrushChange)
 	//	Crunch bodies to giblets
 	if (bCorpse && !bDontGib && Health <= 0)
 	{
+		bool CanDestroy = false;
 		if (!bNoBlood)
 		{
-			Actor Gib = Spawn(RealGibs);
-			Gib.RenderStyle = RenderStyle;
-			Gib.Alpha = Alpha;
-			Gib.Height = 0.0;
-			Gib.Radius = 0.0;
-			if (BloodTranslation && !Gib.bDontTranslate)
+			class c = FindClass('RealGibs');
+			
+			if (c)
 			{
-				Gib.Translation = BloodTranslation;
+				if (!FindClassState(GetClassReplacement(c), 'Spawn') ||
+					!AreStateSpritesPresent(FindClassState(GetClassReplacement(c), 'Spawn')))
+				{
+					c = none;
+				}
 			}
-			Gib.PlaySound('misc/fallingsplat', CHAN_BODY);
+			
+			if (c)
+			{
+				Actor Gib = Spawn(RealGibs);
+				Gib.RenderStyle = RenderStyle;
+				Gib.Alpha = Alpha;
+				Gib.Height = 0.0;
+				Gib.Radius = 0.0;
+				if (BloodTranslation && !Gib.bDontTranslate)
+				{
+					Gib.Translation = BloodTranslation;
+				}
+				Gib.PlaySound('misc/fallingsplat', CHAN_BODY);
+				CanDestroy = true;
+			}
+			else
+			{
+				bDontGib = true;
+			}
 		}
 		if (bIsPlayer)
 		{
@@ -1580,7 +1605,8 @@ final bool SectorChanged(int CrushChange)
 		}
 		else
 		{
-			Destroy();
+			if (CanDestroy)
+				Destroy();
 		}
 		return true;
 	}
@@ -1689,15 +1715,24 @@ final void DoStateEffects(float DeltaTime)
 			switch (L->Type)
 			{
 			case 0:
-				dl->radius = L->Radius;
+				dl->radius = L->Radius + (XLevel.Time * 0.01);
 				break;
 			case 1:
-				dl->radius = L->Radius + Random() * (L->Radius2 - L->Radius);
+				dl->radius = (L->Radius + Random() * (L->Radius2 - L->Radius)) + (XLevel.Time * 0.01);
 				break;
 			}
 			dl->colour = L->Colour;
 			dl->minlight = L->MinLight;
-			dl->die = XLevel.Time + 0.01;
+			dl->die = XLevel.Time + StateTime + 0.5;
+			switch (L->Type)
+			{
+			case 0:
+				dl->decay = XLevel.Time + StateTime + 300.0;
+				break;
+			case 1:
+				dl->decay = XLevel.Time + StateTime + 80.0;
+				break;
+			}
 		}
 	}
 
