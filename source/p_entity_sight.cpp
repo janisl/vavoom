@@ -214,6 +214,7 @@ static bool SightTraverse(sight_trace_t& Trace, intercept_t* in)
 		}
 		open = open->next;
 	}
+
 	return false;	// stop
 	unguard;
 }
@@ -280,6 +281,50 @@ static bool SightTraverseIntercepts(sight_trace_t& Trace, VThinker* Self,
 
 //==========================================================================
 //
+//	SightCheckLine
+//
+//==========================================================================
+
+static bool SightCheckLine(sight_trace_t& Trace, line_t *ld)
+{
+	if (ld->validcount == validcount)
+	{
+		return true;
+	}
+
+	ld->validcount = validcount;
+
+	float dot1 = DotProduct(*ld->v1, Trace.Plane.normal) - Trace.Plane.dist;
+	float dot2 = DotProduct(*ld->v2, Trace.Plane.normal) - Trace.Plane.dist;
+
+	if (dot1 * dot2 >= 0)
+	{
+		return true;		// line isn't crossed
+	}
+
+	dot1 = DotProduct(Trace.Start, ld->normal) - ld->dist;
+	dot2 = DotProduct(Trace.End, ld->normal) - ld->dist;
+
+	if (dot1 * dot2 >= 0)
+	{
+		return true;		// line isn't crossed
+	}
+
+	// try to early out the check
+	if (!ld->backsector || !(ld->flags & ML_TWOSIDED))
+	{
+		return false;	// stop checking
+	}
+
+	// store the line for later intersection testing
+	intercept_t& In = Trace.Intercepts.Alloc();
+	In.line = ld;
+
+	return true;
+}
+
+//==========================================================================
+//
 //	SightBlockLinesIterator
 //
 //==========================================================================
@@ -290,8 +335,6 @@ static bool SightBlockLinesIterator(sight_trace_t& Trace, VThinker* Self,
 	guard(SightBlockLinesIterator);
 	int				offset;
 	vint32*			list;
-	line_t*			ld;
-	int				s1, s2;
 	polyblock_t*	polyLink;
 	seg_t**			segList;
 	int 			i;
@@ -309,34 +352,8 @@ static bool SightBlockLinesIterator(sight_trace_t& Trace, VThinker* Self,
 				segList = polyLink->polyobj->segs;
 				for (i = 0; i < polyLink->polyobj->numsegs; i++, segList++)
 				{
-					ld = (*segList)->linedef;
-					if (ld->validcount == validcount)
-					{
-						continue;
-					}
-					ld->validcount = validcount;
-					float dot1 = DotProduct(*ld->v1, Trace.Plane.normal) - Trace.Plane.dist;
-					float dot2 = DotProduct(*ld->v2, Trace.Plane.normal) - Trace.Plane.dist;
-					if (dot1 * dot2 >= 0)
-					{
-						continue;		// line isn't crossed
-					}
-					dot1 = DotProduct(Trace.Start, ld->normal) - ld->dist;
-					dot2 = DotProduct(Trace.End, ld->normal) - ld->dist;
-					if (dot1 * dot2 >= 0)
-					{
-						continue;		// line isn't crossed
-					}
-
-					// try to early out the check
-					if (!ld->backsector)
-					{
-						return false;	// stop checking
-					}
-
-					// store the line for later intersection testing
-					intercept_t& In = Trace.Intercepts.Alloc();
-					In.line = ld;
+					if (!SightCheckLine(Trace, (*segList)->linedef))
+						return false;
 				}
 				polyLink->polyobj->validcount = validcount;
 			}
@@ -348,35 +365,8 @@ static bool SightBlockLinesIterator(sight_trace_t& Trace, VThinker* Self,
 
 	for (list = Self->XLevel->BlockMapLump + offset + 1; *list != -1; list++)
 	{
-		ld = &Self->XLevel->Lines[*list];
-		if (ld->validcount == validcount)
-		{
-			continue;		// line has already been checked
-		}
-		ld->validcount = validcount;
-
-		float dot1 = DotProduct(*ld->v1, Trace.Plane.normal) - Trace.Plane.dist;
-		float dot2 = DotProduct(*ld->v2, Trace.Plane.normal) - Trace.Plane.dist;
-		if (dot1 * dot2 >= 0)
-		{
-			continue;		// line isn't crossed
-		}
-		dot1 = DotProduct(Trace.Start, ld->normal) - ld->dist;
-		dot2 = DotProduct(Trace.End, ld->normal) - ld->dist;
-		if (dot1 * dot2 >= 0)
-		{
-			continue;		// line isn't crossed
-		}
-
-		// try to early out the check
-		if (!ld->backsector)
-		{
-			return false;	// stop checking
-		}
-
-		// store the line for later intersection testing
-		intercept_t& In = Trace.Intercepts.Alloc();
-		In.line = ld;
+		if (!SightCheckLine(Trace, &Self->XLevel->Lines[*list]))
+			return false;
 	}
 
 	return true;			// everything was checked
@@ -401,7 +391,7 @@ static bool SightPathTraverse(sight_trace_t& Trace, VThinker* Self,
 	float		x2 = Trace.End.x;
 	float		y2 = Trace.End.y;
 	float		xstep, ystep;
-	float		partial;
+	float		partialx, partialy;
 	float		xintercept, yintercept;
 	int			mapx, mapy, mapxstep, mapystep;
 	int			count;
@@ -444,50 +434,68 @@ static bool SightPathTraverse(sight_trace_t& Trace, VThinker* Self,
 	if (xt2 > xt1)
 	{
 		mapxstep = 1;
-		partial = 1.0 - FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partialx = 1.0 - FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
 		ystep = (y2 - y1) / fabs(x2 - x1);
 	}
 	else if (xt2 < xt1)
 	{
 		mapxstep = -1;
-		partial = FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partialx = FL((FX(x1) >> MAPBTOFRAC) & (FRACUNIT - 1));
 		ystep = (y2 - y1) / fabs(x2 - x1);
 	}
 	else
 	{
 		mapxstep = 0;
-		partial = 1.0;
+		partialx = 1.0;
 		ystep = 256.0;
 	}	
-	yintercept = FL(FX(y1) >> MAPBTOFRAC) + partial * ystep;
-
+	yintercept = FL(FX(y1) >> MAPBTOFRAC) + partialx * ystep;
 	
 	if (yt2 > yt1)
 	{
 		mapystep = 1;
-		partial = 1.0 - FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partialy = 1.0 - FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
 		xstep = (x2 - x1) / fabs(y2 - y1);
 	}
 	else if (yt2 < yt1)
 	{
 		mapystep = -1;
-		partial = FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
+		partialy = FL((FX(y1) >> MAPBTOFRAC) & (FRACUNIT - 1));
 		xstep = (x2 - x1) / fabs(y2 - y1);
 	}
 	else
 	{
 		mapystep = 0;
-		partial = 1.0;
+		partialy = 1.0;
 		xstep = 256.0;
 	}	
-	xintercept = FL(FX(x1) >> MAPBTOFRAC) + partial * xstep;
+	xintercept = FL(FX(x1) >> MAPBTOFRAC) + partialy * xstep;
 
-	//
-	// step through map blocks
-	// Count is present to prevent a round off error from skipping the break
+	// [RH] Fix for traces that pass only through blockmap corners. In that case,
+	// xintercept and yintercept can both be set ahead of mapx and mapy, so the
+	// for loop would never advance anywhere.
+	if (fabs(xstep) == 1.0 && fabs(ystep) == 1.0)
+	{
+		if (ystep < 0.0)
+		{
+			partialx = 1.0 - partialx;
+		}
+		if (xstep < 0.0)
+		{
+			partialy = 1.0 - partialy;
+		}
+		if (partialx == partialy)
+		{
+			xintercept = xt1;
+			yintercept = yt1;
+		}
+	}
+
+	// Step through map blocks.
+	// Count is present to prevent a round off error
+	// from skipping the break
 	mapx = xt1;
 	mapy = yt1;
-
 	
 	for (count = 0; count < 64; count++)
 	{
@@ -500,15 +508,41 @@ static bool SightPathTraverse(sight_trace_t& Trace, VThinker* Self,
 		{
 			break;
 		}
+
+		// [RH] Handle corner cases properly instead of pretending they don't exist.
 		if ((int)yintercept == mapy)
 		{
 			yintercept += ystep;
 			mapx += mapxstep;
+			if (mapx == xt2)
+				mapxstep = 0;
 		}
 		else if ((int)xintercept == mapx)
 		{
 			xintercept += xstep;
 			mapy += mapystep;
+			if (mapy == yt2)
+				mapystep = 0;
+		}
+		else if ((int)yintercept == mapy && (int)xintercept == mapx)
+		{
+			// The trace is exiting a block through its corner. Not only does the block
+			// being entered need to be checked (which will happen when this loop
+			// continues), but the other two blocks adjacent to the corner also need to
+			// be checked.
+			if (!SightBlockLinesIterator(Trace, Self, mapx + mapxstep, mapy) ||
+				!SightBlockLinesIterator(Trace, Self, mapx, mapy + mapystep))
+			{
+				return false;
+			}
+			xintercept += xstep;
+			yintercept += ystep;
+			mapx += mapxstep;
+			mapy += mapystep;
+			if (mapx == xt2)
+				mapxstep = 0;
+			if (mapy == yt2)
+				mapystep = 0;
 		}
 		else
 		{
@@ -599,6 +633,22 @@ bool VEntity::CanSee(VEntity* Other)
 			// can't possibly be connected
 			return false;
 		}
+	}
+
+	// killough 4/19/98: make fake floors and ceilings block monster view
+	if ((Sector->heightsec &&
+		((Origin.z + Height <= Sector->heightsec->floor.GetPointZ(Origin.x, Origin.y) &&
+		  Other->Origin.z >= Sector->heightsec->floor.GetPointZ(Other->Origin.x, Other->Origin.y)) ||
+		  (Origin.z >= Sector->heightsec->ceiling.GetPointZ (Origin.x, Origin.y) &&
+		  Other->Origin.z + Height <= Sector->heightsec->ceiling.GetPointZ (Other->Origin.x, Other->Origin.y))))
+		||
+		(Other->Sector->heightsec &&
+		((Other->Origin.z + Other->Height <= Other->Sector->heightsec->floor.GetPointZ (Other->Origin.x, Other->Origin.y) &&
+		Origin.z >= Other->Sector->heightsec->floor.GetPointZ (Origin.x, Origin.y)) ||
+		  (Other->Origin.z >= Other->Sector->heightsec->ceiling.GetPointZ (Other->Origin.x, Other->Origin.y) &&
+		  Origin.z + Other->Height <= Other->Sector->heightsec->ceiling.GetPointZ (Origin.x, Origin.y)))))
+	{
+		return false;
 	}
 
 	// An unobstructed LOS is possible.
