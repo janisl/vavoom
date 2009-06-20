@@ -100,6 +100,12 @@ final Inventory FindInventory(class<Inventory> ItemClass)
 final Inventory GiveInventoryType(class<Inventory> Type)
 {
 	Inventory Item = Spawn(Type,,,, false);
+	//	This shouldn't count for the item statistics
+	if (Item.bCountItem)
+	{
+		Item.bCountItem = false;
+		Level.TotalItems--;
+	}
 	Item.bDropped = true;
 	if (!Item.TryPickup(self))
 	{
