@@ -1667,7 +1667,11 @@ void ClientTick(float DeltaTime)
 		// Update dynamic lights
 		dl = AllocDlight(self);
 		dl->origin = Origin;
-		dl->radius = DLightRadius;
+		dl->radius = prev_rad <= DLightRadius ? prev_rad : (prev_rad - DLightRadius) * XLevel.Time;
+		dl->radius += XLevel.Time * dl->decay;
+		if (dl->radius > DLightRadius)
+			dl->radius = DLightRadius;
+		prev_rad = dl->radius;
 		dl->colour = DLightColour;
 		dl->die = XLevel.Time + 0.1;
 	}
@@ -1715,24 +1719,25 @@ final void DoStateEffects(float DeltaTime)
 			switch (L->Type)
 			{
 			case 0:
-				dl->radius = L->Radius + (XLevel.Time * 0.01);
+				dl->decay = (XLevel.Time + 300.0) * StateTime;
+				dl->radius = prev_rad <= L->Radius ? prev_rad : (prev_rad - L->Radius) * XLevel.Time;
+				dl->radius += XLevel.Time * dl->decay;
+				if (dl->radius > L->Radius)
+					dl->radius = L->Radius;
 				break;
 			case 1:
-				dl->radius = (L->Radius + Random() * (L->Radius2 - L->Radius)) + (XLevel.Time * 0.01);
+				float max = (L->Radius + Random() * (L->Radius2 - L->Radius));
+				dl->decay = (XLevel.Time + 80.0) * StateTime;
+				dl->radius = prev_rad <= L->Radius ? prev_rad : (prev_rad - L->Radius) * XLevel.Time;
+				dl->radius += XLevel.Time * dl->decay;
+				if (dl->radius > max)
+					dl->radius = max;
 				break;
 			}
 			dl->colour = L->Colour;
 			dl->minlight = L->MinLight;
-			dl->die = XLevel.Time + StateTime + 0.5;
-			switch (L->Type)
-			{
-			case 0:
-				dl->decay = XLevel.Time + StateTime + 300.0;
-				break;
-			case 1:
-				dl->decay = XLevel.Time + StateTime + 80.0;
-				break;
-			}
+			dl->die = XLevel.Time + 0.1;
+			prev_rad = dl->radius;
 		}
 	}
 

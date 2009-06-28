@@ -360,6 +360,7 @@ float			LightRadius;
 int				DLightColour;
 float			DLightRadius;
 int				ExplodeEffect;
+float			prev_rad;
 
 float			MeleeRange;
 
