@@ -173,6 +173,7 @@ actor CentaurMash : Centaur
 	Death:
 	XDeath:
 	Ice:
+		CENT K 0
 		Stop
 	}
 }

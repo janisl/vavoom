@@ -368,6 +368,7 @@ actor Demon1Mash : Demon1
 	Death:
 	XDeath:
 	Ice:
+		DEMN H 0
 		Stop
 	}
 }
@@ -388,6 +389,7 @@ actor Demon2Mash : Demon2
 	Death:
 	XDeath:
 	Ice:
+		DEM2 H 0
 		Stop
 	}
 }

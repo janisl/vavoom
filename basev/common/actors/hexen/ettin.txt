@@ -99,6 +99,7 @@ actor EttinMash : Ettin
 	Death:
 	XDeath:
 	Ice:
+		ETTN I 0
 		Stop
 	}
 }
