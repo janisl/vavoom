@@ -254,9 +254,14 @@ final EntityEx FindEnemyMaster()
 		{
 			continue;
 		}
-		if (link.bSummonedMonster && link.Tracer == Tracer)
+		if (link.bSummonedMonster && (link.Tracer == Tracer ||
+				 link.Tracer.IsTeammate(Tracer)))
 		{
-			continue;
+		   continue;
+		}
+		if (link.IsTeammate(Tracer))
+		{
+		   continue;
 		}
 		if (Level.Game.netgame && !Level.Game.deathmatch && link.bIsPlayer)
 		{
