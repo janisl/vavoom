@@ -33,6 +33,7 @@ class PoisonBolt : Actor;
 
 int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
+	A_AttackAlert(source, victim);
 	if (victim.bNoBlood)
 	{
 		// Don't damage actors that don't take poison damage

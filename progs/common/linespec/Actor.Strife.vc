@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -808,6 +808,53 @@ const float PUNCH_DAGGER_RANGE		= 80.0;
 
 //==========================================================================
 //
+//	A_AttackAlert
+//
+//==========================================================================
+
+final void A_AttackAlert(EntityEx target, EntityEx emitter) self(Actor)
+{
+	Entity looker;
+
+	if (emitter.LastHeard)
+		return;
+	if (emitter.Health <= 0)
+		return;
+	if (!emitter.bMonster)
+		return;
+	if (emitter.bInCombat)
+		return;
+	emitter.bInCombat = true;
+
+	emitter.Target = target;
+	emitter.SetState(emitter.FindState('Pain'));
+
+	for (looker = Sector->ThingList; looker; looker = looker.SNext)
+	{
+		if (looker == emitter || looker == target)
+			continue;
+
+		if (looker.Health <= 0)
+			continue;
+
+		if (!EntityEx(looker).bSeesDaggers)
+			continue;
+
+		if (!EntityEx(looker).bInCombat)
+		{
+			if (!looker.CanSee(target) && !looker.CanSee(emitter))
+				continue;
+
+			EntityEx(looker).Target = target;
+			looker.PlaySound(SightSound, CHAN_VOICE);
+			looker.SetState(EntityEx(looker).SeeState);
+			EntityEx(looker).bInCombat = true;
+		}
+	}
+}
+
+//==========================================================================
+//
 //	A_JabDagger
 //
 //==========================================================================
@@ -850,7 +897,7 @@ final void A_JabDagger() self(Actor)
 			AimTarget.Origin.x - Origin.x);
 		Player.bFixAngle = true;
 		bJustAttacked = true;
-		// Sys1eae0 (actor->player, linetarget);
+		A_AttackAlert(self, AimTarget);
 	}
 	else
 	{

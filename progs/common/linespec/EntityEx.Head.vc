@@ -235,7 +235,7 @@ bool bPuffParticles;	// Puff spawns particles
 bool bExplodeParticles;	// Use particle explosion
 bool bStealth;			// Andy Baker's Stealth monsters
 bool bChaseGoal;		// Walks to goal instead of target if a valid goal is set.
-bool bExplosionDontHurtSelf;// For A_Explodearms
+bool bExplosionDontHurtSelf; // For A_Explodearms
 bool bNoSightCheck;		// Go after target without checking sight.
 bool bHuntPlayers;		// With TIDToHate, hate players too.
 bool bNoHatePlayers;	// Ignore player attacks.
@@ -274,13 +274,14 @@ bool bAlwaysRespawn;	// Always respawns, regardless of skill.
 bool bNeverRespawn;		// Never respawns, regardless of skill.
 bool bDontRip;			// Ripping projectiles explode when hitting this actor.
 bool bCanUseWalls;		// Can activate "use" specials.
-transient bool bInChase;// Used to prevent recursion in A_Chase.
+transient bool bInChase; // Used to prevent recursion in A_Chase.
 bool bUseSpecial;		// Execute special when this thing is being used.
 bool bNoInfighting;		// Disable infighting for this actor.
 bool bBloodSplatter;	// Use blood splatter like in Raven games.
 bool bDehExplosion;		// Use explosion style specified using DeHackEd.
 bool bNoVerticalMeleeRange;	// Does not check vertical distance for melee range
 bool bSummonedMonster;
+bool bSeesDaggers;		// Actor is able to hear dagger attacks
 
 //  Params
 float			Speed;

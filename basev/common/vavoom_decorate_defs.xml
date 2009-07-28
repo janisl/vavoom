@@ -238,8 +238,8 @@
 		<flag name="JustHit" property="bJustHit" />
 		<flag name="JustAttacked" property="bJustAttacked" />
 		<flag name="Teleport" property="bTeleport" />
+		<flag name="SeesDaggers" property="bSeesDaggers" />
 		<flag_noclip name="NoClip" />
-		<flag_unsupported name="SeesDaggers" />
 		<flag_unsupported name="ForceYBillboard" />
 		<flag_unsupported name="ForceXYBillboard" />
 		<!-- Not documented -->
@@ -251,7 +251,6 @@
 		<flag name="DontRip" property="bDontRip" />
 		<flag name="PickUp" property="bPickUp" />
 		<flag name="NoVerticalMeleeRange" property="bNoVerticalMeleeRange" />
-
 		<!-- Vavoom specific -->
 		<flag name="FallingFriction" property="bFallingFriction" />
 		<flag name="CantAutoAim" property="bCantAutoAim" />

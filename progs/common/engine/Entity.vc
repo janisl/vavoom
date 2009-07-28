@@ -265,9 +265,9 @@ bool bDropOff;			// allow jumps from high places
 bool bFloat;			// allow moves to any height, no gravity
 bool bFly;				// fly mode is active
 bool bBlasted;			// missile will pass through ghosts
-bool bCantLeaveFloorpic;// stay within a certain floor type
+bool bCantLeaveFloorpic; // stay within a certain floor type
 bool bFloorClip;		// if feet are allowed to be clipped
-bool bIgnoreCeilingStep;// continue walk without lowering itself
+bool bIgnoreCeilingStep; // continue walk without lowering itself
 bool bIgnoreFloorStep;	// continue walk ignoring floor height changes
 bool bAvoidingDropoff;	// used to move monsters away from dropoffs
 bool bOnMobj;			// mobj is resting on top of another mobj
