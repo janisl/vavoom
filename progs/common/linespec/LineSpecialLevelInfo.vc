@@ -6895,17 +6895,18 @@ final void StartSpeech(int SpeechNum)
 final class<EntityEx> GetClassFromID(int ID)
 {
 	class Cls;
-	foreach (AllClasses(EntityEx, Cls))
-	{
-		if (class<EntityEx>(Cls).default.ConversationID == ID)
-		{
-			return class<EntityEx>(Cls);
-		}
-	}
 	if (ID)
 	{
+		foreach (AllClasses(EntityEx, Cls))
+		{
+			if (class<EntityEx>(Cls).default.ConversationID == ID)
+			{
+				return class<EntityEx>(Cls);
+			}
+		}
 		print("Unknown item %d", ID);
 	}
+
 	return none;
 }
 
