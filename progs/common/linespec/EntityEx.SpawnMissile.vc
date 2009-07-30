@@ -240,11 +240,6 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	if (dest)
 	{
 		dir = dest.Origin - Origin;
-		if (org.z - Origin.z >= dest.Height)
-		{
-			// Change trajectory if passing above target's height
-			dir.z -= dest.Height * 0.65;
-		}
 		if (dest.bShadow)
 		{
 			// Invisible target
@@ -289,11 +284,6 @@ final EntityEx SpawnMissileXYZ(TVec org, EntityEx dest, class<EntityEx> type)
 	A.PlayMissileSpawnSound(self);
 	A.Target = self;	// Originator
 	dir = dest.Origin - Origin;
-	if (org.z - Origin.z >= dest.Height)
-	{
-		// Change trajectory if passing above target's height
-		dir.z -= dest.Height * 0.65;
-	}
 	if (dest.bShadow)
 	{
 		// Invisible target
