@@ -204,8 +204,8 @@ final EntityEx FindEnemySelf()
 		{
 			continue;
 		}
-		if (link.bSummonedMonster && (link.Tracer == Tracer ||
-			link.Tracer.IsTeammate(Tracer)))
+		if (link.bSummonedMonster && (link.Tracer && (link.Tracer == Tracer ||
+				link.Tracer.IsTeammate(Tracer))))
 		{
 			continue;
 		}
@@ -254,8 +254,8 @@ final EntityEx FindEnemyMaster()
 		{
 			continue;
 		}
-		if (link.bSummonedMonster && (link.Tracer == Tracer ||
-				 link.Tracer.IsTeammate(Tracer)))
+		if (link.bSummonedMonster && (link.Tracer && (link.Tracer == Tracer ||
+				link.Tracer.IsTeammate(Tracer))))
 		{
 		   continue;
 		}
