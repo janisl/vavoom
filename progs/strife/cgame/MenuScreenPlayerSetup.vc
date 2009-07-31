@@ -78,7 +78,7 @@ void CreateChoices()
 	Anim = MenuSpriteAnim(NewChild(MenuSpriteAnim));
 	Anim.SetPos(250, 140);
 	Anim.SprDef = 500;
-	Anim.Speed = 8;
+	Anim.Speed = 4;
 	Anim.NumFrames = 4;
 	Anim.TranslStart = 128;
 	Anim.TranslEnd = 143;

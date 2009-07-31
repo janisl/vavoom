@@ -141,7 +141,7 @@ void AddNotifyMessage(string Str)
 		notify_lines[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
 			Lines[i].Text;
 		notify_times[(num_notify + first_notify) % NUM_NOTIFY_LINES] =
-			GetCvarF('notify_time');
+			GetCvarF('notify_time') * 35.0;
 		num_notify++;
 	}
 }
@@ -220,7 +220,7 @@ void AddCentreMessage(string Msg)
 {
 	SetFont('smallfont');
 	CentreMessageHeight = SplitText(Msg, CentreMessageLines, 600);
-	CentreTime = GetCvarF('centre_message_time');
+	CentreTime = GetCvarF('centre_message_time') * 35.0;
 }
 
 //==========================================================================

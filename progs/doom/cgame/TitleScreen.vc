@@ -61,11 +61,11 @@ void AdvanceDemo()
 	case 0:
 		page_pic = R_RegisterPic('titlepic');
 #ifndef DOOM2
-		pagetime = 170.0 / 35.0;
+		pagetime = 170.0 / 35.0 * 35.0;
 //      S_StartSong("D_INTRO", P_GetCDTitleTrack(), false);
 		CmdBuf_AddText("music play d_intro\n");
 #else
-		pagetime = 11.0;
+		pagetime = 11.0 * 35.0;
 //      S_StartSong("D_DM2TTL", P_GetCDTitleTrack(), false);
 		CmdBuf_AddText("music play d_dm2ttl\n");
 #endif
@@ -76,7 +76,7 @@ void AdvanceDemo()
 		break;
 
 	case 2:
-		pagetime = 200.0 / 35.0;
+		pagetime = 200.0 / 35.0 * 35.0;
 		page_pic = R_RegisterPic('credit');
 		break;
 
@@ -86,7 +86,7 @@ void AdvanceDemo()
 
 	case 4:
 #ifndef DOOM2
-		pagetime = 200.0 / 35.0;
+		pagetime = 200.0 / 35.0 * 35.0;
 		if (WadLumpPresent('e4m1'))
 		{
 			page_pic = R_RegisterPic('credit');
@@ -96,7 +96,7 @@ void AdvanceDemo()
 			page_pic = R_RegisterPic('help2');
 		}
 #else
-		pagetime = 11.0;
+		pagetime = 11.0 * 35.0;
 		page_pic = R_RegisterPic('titlepic');
 		CmdBuf_AddText("music play d_dm2ttl\n");
 #endif
@@ -124,9 +124,9 @@ void AdvanceDemo()
 void ForceTitle()
 {
 #ifndef DOOM2
-	pagetime = 5.0;
+	pagetime = 5.0 * 35.0;
 #else
-	pagetime = 11.0;
+	pagetime = 11.0 * 35.0;
 #endif
 	page_pic = R_RegisterPic('titlepic');
 }

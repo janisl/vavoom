@@ -41,6 +41,7 @@ void CreateChoices()
 		QuitSound = TeaserQuitSounds[P_Random() % 5];
 	else
 		QuitSound = QuitSounds[P_Random() % 8];
+	StopLocalSounds();
 	LocalSound(QuitSound);
 	CmdBuf_AddText("music play d_fast\n");
 }

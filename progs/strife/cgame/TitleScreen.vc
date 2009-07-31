@@ -54,50 +54,50 @@ void AdvanceDemo()
 	switch (demosequence)
 	{
 	case 0:
-		pagetime = 12.0;
-		page_pic = R_RegisterPic('titlepic');
 		CmdBuf_AddText("music play d_logo");
+		pagetime = 12.0 * 35.0;
+		page_pic = R_RegisterPic('titlepic');
 		break;
 
 	case 1:
-		pagetime = 5.0;
+		pagetime = 5.0 * 35.0;
 		page_pic = R_RegisterPic('rgelogo');
 		LocalSound('crusader/active');
 		break;
 
 	case 2:
-		pagetime = 7.0;
-		page_pic = R_RegisterPic('panel1');
 		CmdBuf_AddText("music play d_intro");
+		pagetime = 7.0 * 35.0;
+		page_pic = R_RegisterPic('panel1');
 		LocalSound('svox/pro1');
 		break;
 
 	case 3:
-		pagetime = 9.0;
+		pagetime = 9.0 * 35.0;
 		page_pic = R_RegisterPic('panel2');
 		LocalSound('svox/pro2');
 		break;
 
 	case 4:
-		pagetime = 12.0;
+		pagetime = 12.0 * 35.0;
 		page_pic = R_RegisterPic('panel3');
 		LocalSound('svox/pro3');
 		break;
 
 	case 5:
-		pagetime = 11.0;
+		pagetime = 11.0 * 35.0;
 		page_pic = R_RegisterPic('panel4');
 		LocalSound('svox/pro4');
 		break;
 
 	case 6:
-		pagetime = 10.0;
+		pagetime = 10.0 * 35.0;
 		page_pic = R_RegisterPic('panel5');
 		LocalSound('svox/pro5');
 		break;
 
 	case 7:
-		pagetime = 16.0;
+		pagetime = 16.0 * 35.0;
 		page_pic = R_RegisterPic('panel6');
 		LocalSound('svox/pro6');
 		break;
@@ -107,7 +107,7 @@ void AdvanceDemo()
 		break;
 
 	case 9:
-		pagetime = 6.0;
+		pagetime = 6.0 * 35.0;
 		page_pic = R_RegisterPic('credit');
 		break;
 	}
@@ -121,7 +121,7 @@ void AdvanceDemo()
 
 void ForceTitle()
 {
-	pagetime = 11.0;
+	pagetime = 11.0 * 35.0;
 	page_pic = R_RegisterPic('titlepic');
 }
 

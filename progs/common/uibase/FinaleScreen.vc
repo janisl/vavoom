@@ -203,7 +203,7 @@ bool Responder(event_t * event)
 
 void Tick(float DeltaTime)
 {
-	FinaleTime += DeltaTime;
+	FinaleTime += DeltaTime / 35.0;
 	if (FinaleType == 'EndGameCast')
 	{
 		CastTicker(DeltaTime);

@@ -378,7 +378,7 @@ unclock(host_cycles[0]);
 		CL_ReadFromServer();
 
 		//	Update user interface.
-		GRoot->TickWidgets(host_frametime);
+		GRoot->TickWidgets(host_frametics);
 
 		//	Collect all garbage
 		VObject::CollectGarbage();

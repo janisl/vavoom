@@ -144,7 +144,7 @@ void StartMap()
 //
 //==========================================================================
 
-void SB_DrawSmallNum(int x, int y, int num)
+void SB_DrawSmallNum(int x, int y, int num, optional float alpha)
 {
 	int w;
 	picinfo_t info;
@@ -160,14 +160,20 @@ void SB_DrawSmallNum(int x, int y, int num)
 	// in the special case of 0, you draw 0
 	if (!num)
 	{
-		DrawPic(x - w, y, pic_yellownum[0]);
+		if (specified_alpha)
+			DrawPic(x - w, y, pic_yellownum[0], alpha);
+		else
+			DrawPic(x - w, y, pic_yellownum[0]);
 	}
 
 	// draw the new number
 	while (num)
 	{
 		x -= w;
-		DrawPic(x, y, pic_yellownum[num % 10]);
+		if (specified_alpha)
+			DrawPic(x, y, pic_yellownum[num % 10], alpha);
+		else
+			DrawPic(x, y, pic_yellownum[num % 10]);
 		num /= 10;
 	}
 }
@@ -383,12 +389,21 @@ void SB_DrawMainBar()
 //
 //==========================================================================
 
-void DrawAmmo(class<Inventory> Type, int Y)
+void DrawAmmo(class<Inventory> Type, int Y, optional float alpha)
 {
 	Inventory AmmoItem = EntityEx(cl.MO).FindInventory(Type);
-	SB_DrawSmallNum(BAR_X + 205, BAR_Y + Y, AmmoItem ? AmmoItem.Amount : 0);
-	SB_DrawSmallNum(BAR_X + 238, BAR_Y + Y,
-		AmmoItem ? AmmoItem.MaxAmount : Type.default.MaxAmount);
+	if (specified_alpha)
+	{
+		SB_DrawSmallNum(BAR_X + 205, BAR_Y + Y, AmmoItem ? AmmoItem.Amount : 0, alpha);
+		SB_DrawSmallNum(BAR_X + 238, BAR_Y + Y,
+			AmmoItem ? AmmoItem.MaxAmount : Type.default.MaxAmount, alpha);
+	}
+	else
+	{
+		SB_DrawSmallNum(BAR_X + 205, BAR_Y + Y, AmmoItem ? AmmoItem.Amount : 0);
+		SB_DrawSmallNum(BAR_X + 238, BAR_Y + Y,
+			AmmoItem ? AmmoItem.MaxAmount : Type.default.MaxAmount);
+	}
 }
 
 //==========================================================================
@@ -430,16 +445,34 @@ void SB_DrawFullscreenStats()
 		DrawPic(575, 418, R_RegisterPic(cl.ReadyWeapon.Ammo2.IconName), 0.7);
 	}
 
-	Item = cl.InvFirst;
-	for (i = 0; i < 6 && Item; i++)
+	if (!bShowWeapons && !bShowKeys && !bShowObjectives)
 	{
-		if (cl.InvPtr == Item)
+		Item = cl.InvFirst;
+		for (i = 0; i < 6 && Item; i++)
 		{
-			DrawPic(225 + 35 * i, 450, pic_invcurs, 0.6);
+			if (cl.InvPtr == Item)
+			{
+				DrawPic(225 + 35 * i, 450, pic_invcurs, 0.3);
+			}
+			DrawPic(231 + i * 35, 452, R_RegisterPic(Item.IconName), 0.9);
+			SB_DrawSmallNum(259 + i * 35, 462, Item.Amount, 0.9);
+			Item = Item.NextInv();
 		}
-		DrawPic(231 + i * 35, 452, R_RegisterPic(Item.IconName));
-		SB_DrawSmallNum(259 + i * 35, 462, Item.Amount);
-		Item = Item.NextInv();
+	}
+	else
+	{
+		// Increase alpha if we are showing extra information
+		Item = cl.InvFirst;
+		for (i = 0; i < 6 && Item; i++)
+		{
+			if (cl.InvPtr == Item)
+			{
+				DrawPic(225 + 35 * i, 450, pic_invcurs, 0.1);
+			}
+			DrawPic(231 + i * 35, 452, R_RegisterPic(Item.IconName), 0.1);
+			SB_DrawSmallNum(259 + i * 35, 462, Item.Amount, 0.1);
+			Item = Item.NextInv();
+		}
 	}
 
 	Sigil S = Sigil(EntityEx(cl.MO).FindInventory(Sigil));
@@ -454,37 +487,37 @@ void SB_DrawFullscreenStats()
 		DrawPic(BAR_X + 0, BAR_Y + 96, pic_invpop);
 		if (EntityEx(cl.MO).FindInventory(StrifeCrossbow))
 		{
-			DrawPic(BAR_X + 38, BAR_Y + 126, pic_crossbow);
+			DrawPic(BAR_X + 38, BAR_Y + 126, pic_crossbow, 0.9);
 		}
 		if (EntityEx(cl.MO).FindInventory(AssaultGun))
 		{
-			DrawPic(BAR_X + 40, BAR_Y + 147, pic_riffle);
+			DrawPic(BAR_X + 40, BAR_Y + 147, pic_riffle, 0.9);
 		}
 		if (EntityEx(cl.MO).FindInventory(MiniMissileLauncher))
 		{
-			DrawPic(BAR_X + 39, BAR_Y + 171, pic_missile);
+			DrawPic(BAR_X + 39, BAR_Y + 171, pic_missile, 0.9);
 		}
 		if (EntityEx(cl.MO).FindInventory(StrifeGrenadeLauncher))
 		{
-			DrawPic(BAR_X + 78, BAR_Y + 127, pic_grenade);
+			DrawPic(BAR_X + 78, BAR_Y + 127, pic_grenade, 0.9);
 		}
 		if (EntityEx(cl.MO).FindInventory(FlameThrower))
 		{
-			DrawPic(BAR_X + 80, BAR_Y + 157, pic_flame);
+			DrawPic(BAR_X + 80, BAR_Y + 157, pic_flame, 0.9);
 		}
 		if (EntityEx(cl.MO).FindInventory(Mauler))
 		{
-			DrawPic(BAR_X + 75, BAR_Y + 182, pic_blaster);
+			DrawPic(BAR_X + 75, BAR_Y + 182, pic_blaster, 0.9);
 		}
-		DrawAmmo(ClipOfBullets, 115);
-		DrawAmmo(ElectricBolts, 139);
-		DrawAmmo(PoisonBolts, 131);
-		DrawAmmo(EnergyPod, 179);
-		DrawAmmo(MiniMissiles, 171);
-		DrawAmmo(HEGrenadeRounds, 155);
-		DrawAmmo(PhosphorusGrenadeRounds, 163);
-		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy);
-		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 148, cl.Stamina);
+		DrawAmmo(ClipOfBullets, 115, 0.9);
+		DrawAmmo(ElectricBolts, 139, 0.9);
+		DrawAmmo(PoisonBolts, 131, 0.9);
+		DrawAmmo(EnergyPod, 179, 0.9);
+		DrawAmmo(MiniMissiles, 171, 0.9);
+		DrawAmmo(HEGrenadeRounds, 155, 0.9);
+		DrawAmmo(PhosphorusGrenadeRounds, 163, 0.9);
+		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 124, cl.Accuracy, 0.9);
+		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 148, cl.Stamina, 0.9);
 		NumKeys = 0;
 		for (Item = EntityEx(cl.MO).Inventory; Item; Item = Item.Inventory)
 		{
@@ -493,10 +526,10 @@ void SB_DrawFullscreenStats()
 				NumKeys++;
 			}
 		}
-		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 172, NumKeys);
+		SB_DrawSmallNum(BAR_X + 267, BAR_Y + 172, NumKeys, 0.9);
 		if (EntityEx(cl.MO).FindInventory(Communicator))
 		{
-			DrawPic(BAR_X + 280, BAR_Y + 170, pic_i_comm);
+			DrawPic(BAR_X + 280, BAR_Y + 170, pic_i_comm, 0.9);
 		}
 	}
 	else if (bShowKeys)
@@ -509,11 +542,11 @@ void SB_DrawFullscreenStats()
 			if (Item)
 			{
 				DrawPic(BAR_X + 20 + (i / 5) * 140,
-					BAR_Y + 100 + (i % 5) * 18, R_RegisterPic(Item.IconName));
+					BAR_Y + 100 + (i % 5) * 18, R_RegisterPic(Item.IconName), 0.9);
 				SetFont('smallfont2');
 				SetTextAlign(hleft, vtop);
 				DrawText(BAR_X + 40 + (i / 5) * 140,
-					BAR_Y + 104 + (i % 5) * 18, Item.StrifeName);
+					BAR_Y + 104 + (i % 5) * 18, Item.StrifeName,,, 0.9);
 			}
 		}
 	}
@@ -529,7 +562,7 @@ void SB_DrawFullscreenStats()
 			LoadedLog = cl.Objectives;
 		}
 		SetTextAlign(hleft, vtop);
-		DrawText(BAR_X + 20, BAR_Y + 100, LogText);
+		DrawText(BAR_X + 20, BAR_Y + 100, LogText,,, 0.9);
 	}
 }
 

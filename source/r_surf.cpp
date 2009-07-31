@@ -1061,7 +1061,7 @@ void VRenderLevel::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 		sp->TextureOffset = sidedef->TopTextureOffset;
 		sp->RowOffset = sidedef->TopRowOffset;
 
-		//	Sky abowe top
+		//	Sky above top
 		dseg->topsky = pspart++;
 		if (IsSky(r_ceiling) && !IsSky(back_ceiling))
 		{
@@ -1529,7 +1529,7 @@ void VRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 			UpdateTextureOffset(sp, sidedef->TopTextureOffset);
 		}
 
-		//	Sky abowe top
+		//	Sky above top
 		sp = dseg->topsky;
 		sp->texinfo.ColourMap = ColourMap;
 		if (IsSky(r_ceiling) && !IsSky(back_ceiling) &&

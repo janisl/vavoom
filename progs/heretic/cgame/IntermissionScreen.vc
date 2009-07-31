@@ -35,8 +35,8 @@ enum
 	IMS_Done
 };
 
-const float TEXTSPEED	= 0.1;
-const float TEXTWAIT	= 7.0;
+const float TEXTSPEED	= 0.1 * 35.0;
+const float TEXTWAIT	= 7.0 * 35.0;
 
 ClientGameBase ClGame;
 
@@ -163,7 +163,7 @@ void Tick(float DeltaTime)
 		{
 		case IMS_PrevLoc:
 			IM_LoadPics();
-			oldintertime = intertime + 6.0;
+			oldintertime = intertime + 6.0 * 35.0;
 			break;
 		case IMS_NextLoc:
 			IM_LoadPics();
@@ -174,7 +174,7 @@ void Tick(float DeltaTime)
 			break;
 		case IMS_Done:
 			Background.State = IntermissionBackground::STATE_Done;
-			cnt = 0.3;
+			cnt = 0.3 * 35.0;
 			break;
 		default:
 			break;
@@ -182,9 +182,9 @@ void Tick(float DeltaTime)
 	}
 	if (ClGame.skipintermission)
 	{
-		if (interstate == IMS_Stats && intertime < 5.0)
+		if (interstate == IMS_Stats && intertime < 5.0 * 35.0)
 		{
-			intertime = 5.0;
+			intertime = 5.0 * 35.0;
 			ClGame.skipintermission = false;
 			return;
 		}
@@ -206,7 +206,7 @@ void Tick(float DeltaTime)
 			ClGame.skipintermission = false;
 			interstate = IMS_Done;
 			Background.State = IntermissionBackground::STATE_Done;
-			cnt = 0.3;
+			cnt = 0.3 * 35.0;
 		}
 	}
 }
@@ -427,11 +427,11 @@ void IM_InitStats()
 	intertime = 0.0;
 	if (im_episode > 3)
 	{
-		oldintertime = 35.0;
+		oldintertime = 35.0 * 35.0;
 	}
 	else
 	{
-		oldintertime = 10.0;
+		oldintertime = 10.0 * 35.0;
 	}
 	im_sounds = 0;
 	if (ClGame.im.InterMusic)
@@ -469,11 +469,11 @@ void IM_DrawSingleStats()
 	SetFont('smallfont');
 	DrawText(320, 165, "FINISHED");
 
-	if (intertime < 1.0)
+	if (intertime < 1.0 * 35.0)
 	{
 		return;
 	}
-	if (im_sounds < 1 && intertime >= 1.0)
+	if (im_sounds < 1 && intertime >= 1.0 * 35.0)
 	{
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
@@ -485,11 +485,11 @@ void IM_DrawSingleStats()
 	DrawText(397, 205, "/");
 	DrawText(410, 205, va("%d", ClGame.cl.Level.TotalKills));
 	SetTextShadow(false);
-	if (intertime < 2.0)
+	if (intertime < 2.0 * 35.0)
 	{
 		return;
 	}
-	if (im_sounds < 2 && intertime >= 2.0)
+	if (im_sounds < 2 && intertime >= 2.0 * 35.0)
 	{
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
@@ -501,11 +501,11 @@ void IM_DrawSingleStats()
 	DrawText(397, 230, "/");
 	DrawText(410, 230, va("%d", ClGame.cl.Level.TotalItems));
 	SetTextShadow(false);
-	if (intertime < 3.0)
+	if (intertime < 3.0 * 35.0)
 	{
 		return;
 	}
-	if (im_sounds < 3 && intertime >= 3.0)
+	if (im_sounds < 3 && intertime >= 3.0 * 35.0)
 	{
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
@@ -517,11 +517,11 @@ void IM_DrawSingleStats()
 	DrawText(397, 255, "/");
 	DrawText(410, 255, va("%d", ClGame.cl.Level.TotalSecret));
 	SetTextShadow(false);
-	if (intertime < 5.0)
+	if (intertime < 5.0 * 35.0)
 	{
 		return;
 	}
-	if (im_sounds < 4 && intertime >= 5.0)
+	if (im_sounds < 4 && intertime >= 5.0 * 35.0)
 	{
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
@@ -583,7 +583,7 @@ void IM_DrawCoopStats()
 	{
 		i = RepInfo.PlayerNum;
 		DrawShadowedPic(185, ypos, patchFaceOkay[i]);
-		if (intertime < 1.25)
+		if (intertime < 1.25 * 35.0)
 		{
 			ypos += 37;
 			continue;
@@ -628,7 +628,7 @@ void IM_DrawDMStats()
 	DrawText(525, 170, "DEATHS");
 	SetTextShadow(false);
 
-	if (intertime < 0.625)
+	if (intertime < 0.625 * 35.0)
 	{
 		foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 		{
@@ -642,12 +642,12 @@ void IM_DrawDMStats()
 		}
 		return;
 	}
-	if (intertime >= 0.625 && im_sounds < 1)
+	if (intertime >= 0.625 * 35.0 && im_sounds < 1)
 	{
 		LocalSound('doors/dr1_clos');
 		im_sounds++;
 	}
-	if (intertime >= 3.0 && slaughterboy && im_sounds < 2)
+	if (intertime >= 3.0 * 35.0 && slaughterboy && im_sounds < 2)
 	{
 		LocalSound('*evillaugh');
 		im_sounds++;
@@ -658,7 +658,7 @@ void IM_DrawDMStats()
 	foreach ClGame.GLevel.LevelInfo.AllThinkers(PlayerReplicationInfo, RepInfo)
 	{
 		i = RepInfo.PlayerNum;
-		if (intertime < 3.0 || i == ClGame.cl.ClientNum)
+		if (intertime < 3.0 * 35.0 || i == ClGame.cl.ClientNum)
 		{
 			DrawShadowedPic(200, ypos, patchFaceOkay[i]);
 		}
@@ -671,7 +671,7 @@ void IM_DrawDMStats()
 		DrawText(240, ypos + 10, RepInfo.PlayerName);
 		if (slaughterboy & (1 << i))
 		{
-			if (!(ftoi(32.0 * intertime) & 16))
+			if (!(ftoi(32.0 * intertime * 35.0) & 16))
 			{
 				DrawText(423, ypos + 10, va("%d", RepInfo.Frags));
 				DrawText(523, ypos + 10, va("%d", RepInfo.Deaths));
@@ -738,7 +738,7 @@ void IM_InitText()
 	{
 		interstate = IMS_Done;
 		Background.State = IntermissionBackground::STATE_Done;
-		cnt = 0.3;
+		cnt = 0.3 * 35.0;
 		return;
 	}
 
@@ -756,7 +756,7 @@ void IM_InitText()
 		{
 			interstate = IMS_Done;
 			Background.State = IntermissionBackground::STATE_Done;
-			cnt = 0.3;
+			cnt = 0.3 * 35.0;
 			return;
 		}
 	}
@@ -825,7 +825,7 @@ void IM_DrawText()
 	}
 
 	// draw some of the text onto the screen
-	count = ftoi((intertime - 0.3) / TEXTSPEED);
+	count = ftoi((intertime - 0.3 * 35.0) / TEXTSPEED);
 	if (count < 0)
 		count = 0;
 	if (count > strlen(HubText))

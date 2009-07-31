@@ -55,7 +55,7 @@ void AdvanceDemo()
 	switch (demosequence)
 	{
 	case 0:
-		pagetime = 10.0;
+		pagetime = 10.0 * 35.0;
 		page_pic = R_RegisterPic('title');
 //      S_StartSong("MUS_TITL", P_GetCDTitleTrack(), false);
 		CmdBuf_AddText("music play MUS_TITL\n");
@@ -67,7 +67,7 @@ void AdvanceDemo()
 		break;
 
 	case 2:
-		pagetime = 200.0 / 35.0;
+		pagetime = 200.0 / 35.0 * 35.0;
 		page_pic = R_RegisterPic('credit');
 		break;
 
@@ -76,7 +76,7 @@ void AdvanceDemo()
 		break;
 
 	case 4:
-		pagetime = 200.0 / 35.0;
+		pagetime = 200.0 / 35.0 * 35.0;
 		if (!WadLumpPresent('e2m1'))
 		{
 			page_pic = R_RegisterPic('order');
@@ -101,7 +101,7 @@ void AdvanceDemo()
 
 void ForceTitle()
 {
-	pagetime = 10.0;
+	pagetime = 10.0 * 35.0;
 	page_pic = R_RegisterPic('title');
 }
 

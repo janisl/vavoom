@@ -174,7 +174,7 @@ void IM_DrawHubText()
 	{
 		R_FillRect(0, 0, 640, 480, 0);
 	}
-	int count = ftoi((intertime - 0.3) / TextSpeed);
+	int count = ftoi((intertime - 0.3 * 35.0) / TextSpeed);
 	if (count < 0)
 	{
 		count = 0;
