@@ -133,6 +133,11 @@ void VRenderLevel::UpdateParticles(float frametime)
 	guard(VRenderLevel::UpdateParticles);
 	particle_t		*p, *kill;
 
+	if (cl->ClGame->ClientFlags & VClientGameBase::CF_Paused)
+	{
+		return;
+	}
+
 	kill = ActiveParticles;
 	while (kill && kill->die < Level->Time)
 	{

@@ -742,6 +742,10 @@ void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 void VRenderLevel::PushDlights()
 {
 	guard(VRenderLevel::PushDlights);
+	if (cl->ClGame->ClientFlags & VClientGameBase::CF_Paused)
+	{
+		return;
+	}
 	r_dlightframecount++;
 
 	if (!r_dynamic)

@@ -370,7 +370,8 @@ void CL_SendMove()
 		return;
 	}
 
-	if (cls.demoplayback || GGameInfo->NetMode == NM_TitleMap)
+	if (cls.demoplayback || GGameInfo->NetMode == NM_TitleMap ||
+		GClGame->ClientFlags & VClientGameBase::CF_Paused)
 	{
 		return;
 	}
