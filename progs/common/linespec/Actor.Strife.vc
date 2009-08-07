@@ -691,7 +691,6 @@ final void A_InquisitorJump()
 	Velocity.z = (Target.Origin.z - Origin.z) / dist;
 	ReactionCount = 60;
 	bNoGravity = true;
-	bFloat = false;
 }
 
 //==========================================================================
@@ -704,7 +703,7 @@ final void A_InquisitorCheckLand()
 {
 	ReactionCount--;
 	if (ReactionCount < 0 || Velocity.x == 0.0 || Velocity.y == 0.0 ||
-		Origin.z <= FloorZ/* || fabs(Velocity.x) > 6.0 * 35.0 ||
+		Origin.z <= FloorZ /*|| fabs(Velocity.x) > 6.0 * 35.0 ||
 		fabs(Velocity.y) > 6.0 * 35.0*/)
 	{
 		SetState(GetStatePlus(SeeState, 1));
