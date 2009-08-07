@@ -742,7 +742,6 @@ final void A_VileAttack()
 
 	PlaySound('vile/stop', CHAN_WEAPON);
 	Target.Damage(self, self, 20);
-	Target.Velocity.z = 1000.0 / Target.Mass * 35.0;
 
 	fire = Tracer;
 
@@ -757,6 +756,8 @@ final void A_VileAttack()
 	fire.Origin.y = Target.Origin.y - 24.0 * sin(Angles.yaw);
 	fire.LinkToWorld();
 	fire.RadiusAttack(self, 70, 70.0, true);
+	// change velocity Z component before doing RadiusAttack
+	Target.Velocity.z = (1000.0 / Target.Mass) * 35.0;
 }
 
 //==========================================================================
