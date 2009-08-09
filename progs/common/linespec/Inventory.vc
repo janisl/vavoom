@@ -443,6 +443,7 @@ Inventory CreateTossable()
 	Copy.DropTime = 1.0;
 	Copy.bSpecial = false;
 	Copy.bSolid = false;
+	Amount--;
 	return Copy;
 }
 
