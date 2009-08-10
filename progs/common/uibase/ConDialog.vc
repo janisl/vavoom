@@ -252,7 +252,7 @@ defaultproperties
 	RandomConversations[3].Texts[0] = "ALMS FOR THE POOR?";
 	RandomConversations[3].Texts[1] = "WHAT ARE YOU LOOKING AT, SURFACER?";
 	RandomConversations[3].Texts[2] = "YOU WOULDN\'T HAVE ANY EXTRA FOOD, WOULD YOU?";
-	RandomConversations[3].Texts[3] = "YOU  SURFACE PEOPLE WILL NEVER \n                                                                                                       UNDERSTAND US.";
+	RandomConversations[3].Texts[3] = "YOU  SURFACE PEOPLE WILL NEVER \nUNDERSTAND US.";
 	RandomConversations[3].Texts[4] = "HA, THE GUARDS CAN\'T FIND US.  THOSE \nIDIOTS DON\'T EVEN KNOW WE EXIST. ";
 	RandomConversations[3].Texts[5] = "ONE DAY EVERYONE BUT THOSE WHO SERVE THE ORDER WILL BE FORCED TO   JOIN US.";
 	RandomConversations[3].Texts[6] = "STARE NOW,  BUT YOU KNOW THAT THIS WILL BE YOUR OWN FACE ONE DAY.";
