@@ -259,22 +259,22 @@ final void XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 		case SECSPEC_WindEastSlow:
 		case SECSPEC_WindEastMedium:
 		case SECSPEC_WindEastFast:
-			Thrust(0.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindEastSlow]);
+			Thrust(0.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindEastSlow] * DeltaTime * 35.0);
 			break;
 		case SECSPEC_WindNorthSlow:
 		case SECSPEC_WindNorthMedium:
 		case SECSPEC_WindNorthFast:
-			Thrust(90.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindNorthSlow]);
+			Thrust(90.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindNorthSlow] * DeltaTime * 35.0);
 			break;
 		case SECSPEC_WindSouthSlow:
 		case SECSPEC_WindSouthMedium:
 		case SECSPEC_WindSouthFast:
-			Thrust(270.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindSouthSlow]);
+			Thrust(270.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindSouthSlow] * DeltaTime * 35.0);
 			break;
 		case SECSPEC_WindWestSlow:
 		case SECSPEC_WindWestMedium:
 		case SECSPEC_WindWestFast:
-			Thrust(180.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindWestSlow]);
+			Thrust(180.0, LineSpecialGameInfo(Level.Game).windTab[special - SECSPEC_WindWestSlow] * DeltaTime * 35.0);
 			break;
 		}
 	}
@@ -1046,7 +1046,6 @@ final void FallingDamage()
 		return;
 	}
 
-	PlaySound('*land', CHAN_BODY);
 	Damage(none, none, damage, 'Falling');
 	LineSpecialLevelInfo(Level).NoiseAlert(self, self);
 }
