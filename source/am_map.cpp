@@ -91,6 +91,14 @@
 
 #define NUMALIAS			3 // Number of antialiased lines.
 
+#define FRACBITS		16
+#define FRACUNIT		(1<<FRACBITS)
+
+#define FL(x)	((float)(x) / (float)FRACUNIT)
+#define FX(x)	(fixed_t)((x) * FRACUNIT)
+
+typedef int fixed_t;
+
 // TYPES -------------------------------------------------------------------
 
 struct fpoint_t
@@ -407,8 +415,8 @@ static void AM_findMinMaxBoundaries()
 
 static void AM_ScrollParchment (float dmapx, float dmapy)
 {
-	mapxstart -= (short)(dmapx * scale_mtof) >> 12;
-	mapystart -= (short)(dmapy * scale_mtof) >> 12;
+	mapxstart -= (short)(dmapx * scale_mtof / 12) >> 12;
+	mapystart -= (short)(dmapy * scale_mtof / 12) >> 12;
 
 	if (mappic > 0)
 	{
@@ -679,25 +687,25 @@ bool AM_Responder(event_t* ev)
 		{
 			case AM_PANRIGHTKEY: // pan right
 				if (!followplayer)
-					m_paninc.x = FTOM(F_PANINC);
+					m_paninc.x = FTOM(F_PANINC / 2.0);
 				else
 					rc = false;
 				break;
 			case AM_PANLEFTKEY: // pan left
 				if (!followplayer)
-					m_paninc.x = -FTOM(F_PANINC);
+					m_paninc.x = -FTOM(F_PANINC / 2.0);
 				else
 					rc = false;
 				break;
 			case AM_PANUPKEY: // pan up
 				if (!followplayer)
-					m_paninc.y = FTOM(F_PANINC);
+					m_paninc.y = FTOM(F_PANINC / 2.0);
 				else
 					rc = false;
 				break;
 			case AM_PANDOWNKEY: // pan down
 				if (!followplayer)
-					m_paninc.y = -FTOM(F_PANINC);
+					m_paninc.y = -FTOM(F_PANINC / 2.0);
 				else
 					rc = false;
 				break;
@@ -1129,21 +1137,32 @@ static void AM_drawGrid(vuint32 colour)
 	float	x, y;
 	float	start, end;
 	mline_t ml;
+	float minlen, extx, exty;
+	float minx, miny;
 
-	// Figure out start of vertical gridlines
-	start = m_x;
-//	if ((FX(start - GClLevel->bmaporgx))%(MAPBLOCKUNITS<<FRACBITS))
-//		start += FL((MAPBLOCKUNITS<<FRACBITS)
-//			- ((FX(start - GClLevel->bmaporgx))%(MAPBLOCKUNITS<<FRACBITS)));
-	end = m_x + m_w;
+	// calculate a minimum for how long the grid lines should be, so they
+	// cover the screen at any rotation
+	minlen = sqrtf (m_w*m_w + m_h*m_h);
+	extx = (minlen - m_w) / 2;
+	exty = (minlen - m_h) / 2;
+
+	minx = m_x;
+	miny = m_y;
+
+	// figure out start of vertical gridlines
+	start = m_x - extx;
+	if ((FX(start - GClLevel->BlockMapOrgX)) % (MAPBLOCKUNITS << FRACBITS))
+		start += FL((MAPBLOCKUNITS << FRACBITS)
+			- ((FX(start - GClLevel->BlockMapOrgX)) % (MAPBLOCKUNITS << FRACBITS)));
+	end = minx + minlen - extx;
 
 	// draw vertical gridlines
-	ml.a.y = m_y;
-	ml.b.y = m_y + m_h;
 	for (x = start; x < end; x += (float)MAPBLOCKUNITS)
 	{
 		ml.a.x = x;
 		ml.b.x = x;
+		ml.a.y = miny - exty;
+		ml.b.y = ml.a.y + minlen;
 		if (am_rotate)
 		{
 			AM_rotatePoint(&ml.a.x, &ml.a.y);
@@ -1152,18 +1171,18 @@ static void AM_drawGrid(vuint32 colour)
 		AM_drawMline(&ml, colour);
 	}
 
-	// Figure out start of horizontal gridlines
-	start = m_y;
-//	if ((FX(start - GClLevel->bmaporgy))%(MAPBLOCKUNITS<<FRACBITS))
-//		start += FL((MAPBLOCKUNITS<<FRACBITS)
-//			- ((FX(start - GClLevel->bmaporgy))%(MAPBLOCKUNITS<<FRACBITS)));
-	end = m_y + m_h;
+	// figure out start of horizontal gridlines
+	start = m_y - exty;
+	if ((FX(start - GClLevel->BlockMapOrgY)) % (MAPBLOCKUNITS << FRACBITS))
+		start += FL((MAPBLOCKUNITS << FRACBITS)
+			- ((FX(start - GClLevel->BlockMapOrgY)) % (MAPBLOCKUNITS << FRACBITS)));
+	end = miny + minlen - exty;
 
 	// draw horizontal gridlines
-	ml.a.x = m_x;
-	ml.b.x = m_x + m_w;
 	for (y = start; y < end; y += (float)MAPBLOCKUNITS)
 	{
+		ml.a.x = minx - extx;
+		ml.b.x = ml.a.x + minlen;
 		ml.a.y = y;
 		ml.b.y = y;
 		if (am_rotate)
