@@ -490,7 +490,7 @@ actor PillarAlienPower 227
 	states
 	{
 	Spawn:
-		APOW A 4 A_ActiveSound
+		APOW A 4 A_FLoopActiveSound
 		Loop
 	}
 }
@@ -636,11 +636,11 @@ actor WaterDropOnFloor 103
 	states
 	{
 	Spawn:
-		DRIP A 6 A_ActiveSound
+		DRIP A 6 A_FLoopActiveSound
 		DRIP BC 4
-		DRIP D 4 A_ActiveSound
+		DRIP D 4 A_FLoopActiveSound
 		DRIP EF 4
-		DRIP G 4 A_ActiveSound
+		DRIP G 4 A_FLoopActiveSound
 		DRIP H 4
 		Loop
 	}
@@ -694,7 +694,7 @@ actor WaterFountain 112
 	{
 	Spawn:
 		WTFT ABC 4
-		WTFT D 4 A_ActiveSound
+		WTFT D 4 A_FLoopActiveSound
 		Loop
 	}
 }
@@ -1089,7 +1089,7 @@ actor StickInWater 215
 	states
 	{
 	Spawn:
-		LOGW ABCD 5 A_ActiveSound
+		LOGW ABCD 5 A_FLoopActiveSound
 		Loop
 	}
 }
@@ -1620,7 +1620,7 @@ actor AlienBubbleColumn 221
 	states
 	{
 	Spawn:
-		BUBB A 4 A_ActiveSound
+		BUBB A 4 A_FLoopActiveSound
 		Loop
 	}
 }
@@ -1637,7 +1637,7 @@ actor AlienFloorBubble 222
 	states
 	{
 	Spawn:
-		BUBF A 4 A_ActiveSound
+		BUBF A 4 A_FLoopActiveSound
 		Loop
 	}
 }
@@ -1656,7 +1656,7 @@ actor AlienCeilingBubble 223
 	states
 	{
 	Spawn:
-		BUBC A 4 A_ActiveSound
+		BUBC A 4 A_FLoopActiveSound
 		Loop
 	}
 }
@@ -1673,7 +1673,7 @@ actor AlienAspClimber 224
 	states
 	{
 	Spawn:
-		ASPR A 4 A_ActiveSound
+		ASPR A 4 A_FLoopActiveSound
 		Loop
 	}
 }
@@ -1690,7 +1690,7 @@ actor AlienSpiderLight 225
 	states
 	{
 	Spawn:
-		SPDL ABC 5 A_ActiveSound
+		SPDL ABC 5 A_FLoopActiveSound
 		Loop
 	}
 }
