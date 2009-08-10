@@ -240,7 +240,6 @@ final void A_Look2()
 final void A_TurretLook()
 {
 	EntityEx targ;
-	int sound;
 
 	Threshold = 0;
 	targ = LastHeard;
