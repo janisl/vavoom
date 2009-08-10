@@ -229,8 +229,8 @@ final void A_ExtraLightOff()
 // A_HideDecepticon
 //
 // Hide the Acolyte-to-be							->
-// Hide the guy transforming into an Acolyte		->
-// Hide the transformer								->
+// Hide the guy transforming into an Acolyte			->
+// Hide the transformer							->
 // Transformers are Autobots and Decepticons, and
 // Decepticons are the bad guys, so...				->
 //

@@ -49,7 +49,9 @@ bool SpecialDropAction(EntityEx Dropper)
 {
 	Level.ExecuteActionSpecial(LNSPEC_DoorClose, 222, 16, 0, 0, 0, NULL, 0,
 		Dropper.Target);
-	Dropper.Target.Player.cprint("You\'re dead!  You set off the alarm.");
+	if (Dropper.Target.bIsPlayer)
+		Dropper.Target.Player.cprint("You\'re dead!  You set off the alarm.");
+
 	LineSpecialLevelInfo(Level).NoiseAlert(Dropper.Target, Dropper.Target);
 	Destroy();
 	return true;

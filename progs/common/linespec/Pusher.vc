@@ -230,8 +230,8 @@ void Tick(float DeltaTime)
 					pushangle = atan2(sy - thing.Origin.y, sx - thing.Origin.x);
 					if (PointPusher(Source))
 						pushangle += 180.0;    // away
-					thing.Velocity.x += speed * cos(pushangle) * 35.0 * Level.Game.frametime;
-					thing.Velocity.y += speed * sin(pushangle) * 35.0 * Level.Game.frametime;
+					thing.Velocity.x += speed * cos(pushangle) * 35.0 * DeltaTime;
+					thing.Velocity.y += speed * sin(pushangle) * 35.0 * DeltaTime;
 				}
 			}
 		}
@@ -319,8 +319,8 @@ void Tick(float DeltaTime)
 				yspeed = Ymag;
 			}
 		}
-		thing.Velocity.x += itof(xspeed) / PUSH_FACTOR * 35.0 * DeltaTime;
-		thing.Velocity.y += itof(yspeed) / PUSH_FACTOR * 35.0 * DeltaTime;
+		thing.Velocity.x += (itof(xspeed) / PUSH_FACTOR) * 35.0 * DeltaTime;
+		thing.Velocity.y += (itof(yspeed) / PUSH_FACTOR) * 35.0 * DeltaTime;
 	}
 }
 
