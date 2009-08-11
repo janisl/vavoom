@@ -31,7 +31,7 @@
 // The version as seen in the Windows resource
 #define RC_FILEVERSION 1,3,0,SVN_REVISION_NUMBER
 #define RC_PRODUCTVERSION 1,3,0
-#define RC_FILEVERSION2 VERSION_TEXT" (r" SVN_REVISION_STRING ")"
+#define RC_FILEVERSION2 VERSION_TEXT " (r" SVN_REVISION_STRING ")"
 #define RC_PRODUCTVERSION2 "1.30"
 
 #if !defined CLIENT && !defined SERVER
