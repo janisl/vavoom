@@ -509,7 +509,7 @@ void Host_Error(const char *error, ...)
 
 COMMAND(Version)
 {
-	GCon->Log("VAVOOM version " VERSION_TEXT ".");
+	GCon->Log("VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
 	GCon->Log("Compiled "__DATE__" "__TIME__".");
 }
 

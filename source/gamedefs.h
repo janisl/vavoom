@@ -37,6 +37,7 @@
 #include <cstdarg>
 #include <cmath>
 
+#include "svnrev.h"		//  Checks revision number
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types
 #include "args.h"		//	Command line arguments.

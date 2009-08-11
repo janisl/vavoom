@@ -447,7 +447,7 @@ int main(int argc, char** argv)
 {
 	try
 	{
-		printf("Vavoom dedicated server "VERSION_TEXT"\n");
+		printf("Vavoom dedicated server "VERSION_TEXT" (r" SVN_REVISION_STRING ")\n");
 
 		GArgs.Init(argc, argv);
 
