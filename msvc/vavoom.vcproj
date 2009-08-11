@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9.00"
 	Name="vavoom"
 	ProjectGUID="{D4D2D73F-1D39-4832-8FBC-FE49CF3F0833}"
 	RootNamespace="vavoom"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -26,6 +27,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Checking svnrevision.h..."
+				CommandLine="&quot;$(OutDir)\updaterevision.exe&quot; ../../source ../source/svnrev.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -62,7 +65,7 @@
 				SuppressStartupBanner="true"
 				DebugInformationFormat="1"
 				CallingConvention="0"
-				CompileAs="0"
+				CompileAs="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -78,11 +81,11 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/LTCG"
-				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib libjpeg.lib zlib.lib libmad.lib vorbis_static.lib ogg_static.lib mikmod.lib libFLAC_static.lib libFLAC++_static.lib"
+				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib libjpeg.lib zlib.lib libmad.lib libvorbis_static.lib libogg_static.lib libmikmod.lib libFLAC_static.lib libFLAC++_static.lib"
 				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="LIBCMTD.LIB"
+				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				GenerateMapFile="true"
 				MapFileName="$(TargetDir)$(TargetName).map"
@@ -92,6 +95,8 @@
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				SetChecksum="true"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="0"
 			/>
 			<Tool
@@ -112,9 +117,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -182,6 +184,8 @@
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -202,9 +206,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

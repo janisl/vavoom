@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="vlumpy"
 	ProjectGUID="{F65AC2B2-1632-4584-BDA1-DAC149FC9BDD}"
 	RootNamespace="vlumpy"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -55,7 +56,8 @@
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="1"
-				CompileAs="0"
+				CallingConvention="0"
+				CompileAs="2"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -74,7 +76,11 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				SubSystem="1"
-				TargetMachine="1"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -94,9 +100,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -159,6 +162,8 @@
 				SuppressStartupBanner="true"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -179,9 +184,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="timidity"
 	ProjectGUID="{A5E43684-5BC7-4DEE-965B-F2E20C360793}"
 	RootNamespace="timidity"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -41,19 +42,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
-				InlineFunctionExpansion="2"
+				Optimization="4"
+				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
-				StringPooling="true"
+				StringPooling="false"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
+				EnableFunctionLevelLinking="false"
 				RuntimeTypeInfo="false"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="1"
+				DebugInformationFormat="3"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
@@ -169,23 +171,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\timidity\controls.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\filter.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\timidity\instrum.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\source\timidity\mix.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\output.cpp"
 				>
 			</File>
 			<File

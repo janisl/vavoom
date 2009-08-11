@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="libglbsp"
 	ProjectGUID="{3DC4FB0F-24B7-4051-9FAA-B2215CF73554}"
 	RootNamespace="libglbsp"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -109,15 +110,20 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
-				InlineFunctionExpansion="2"
+				Optimization="4"
+				InlineFunctionExpansion="0"
+				EnableIntrinsicFunctions="true"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
 				PreprocessorDefinitions="GLBSP_PLUGIN;WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_DEPRECATE"
 				StringPooling="true"
+				ExceptionHandling="0"
 				RuntimeLibrary="0"
-				EnableFunctionLevelLinking="true"
+				EnableFunctionLevelLinking="false"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="1"
+				DebugInformationFormat="3"
+				CallingConvention="0"
 				CompileAs="0"
 			/>
 			<Tool
