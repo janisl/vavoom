@@ -144,7 +144,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -152,7 +152,7 @@
 				SetChecksum="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				TargetMachine="0"
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"

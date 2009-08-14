@@ -57,6 +57,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "progs_doom2", "progs_doom2.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vavoom-master", "vavoom-master.vcproj", "{6CE404BD-51D1-4DA4-BE5F-827226C6A1CD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glvis", "glvis.vcproj", "{F424FB4F-2341-4CA6-A13F-71E4A8C696DC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fixmd2", "fixmd2.vcproj", "{EF16EEF7-10E7-4A02-866F-1F2F21237DA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -113,6 +117,14 @@ Global
 		{6CE404BD-51D1-4DA4-BE5F-827226C6A1CD}.Debug|Win32.Build.0 = Debug|Win32
 		{6CE404BD-51D1-4DA4-BE5F-827226C6A1CD}.Release|Win32.ActiveCfg = Release|Win32
 		{6CE404BD-51D1-4DA4-BE5F-827226C6A1CD}.Release|Win32.Build.0 = Release|Win32
+		{F424FB4F-2341-4CA6-A13F-71E4A8C696DC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F424FB4F-2341-4CA6-A13F-71E4A8C696DC}.Debug|Win32.Build.0 = Debug|Win32
+		{F424FB4F-2341-4CA6-A13F-71E4A8C696DC}.Release|Win32.ActiveCfg = Release|Win32
+		{F424FB4F-2341-4CA6-A13F-71E4A8C696DC}.Release|Win32.Build.0 = Release|Win32
+		{EF16EEF7-10E7-4A02-866F-1F2F21237DA7}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EF16EEF7-10E7-4A02-866F-1F2F21237DA7}.Debug|Win32.Build.0 = Debug|Win32
+		{EF16EEF7-10E7-4A02-866F-1F2F21237DA7}.Release|Win32.ActiveCfg = Release|Win32
+		{EF16EEF7-10E7-4A02-866F-1F2F21237DA7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

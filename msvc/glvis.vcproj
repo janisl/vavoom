@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="windows-1253"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="vavoom-master"
-	ProjectGUID="{6CE404BD-51D1-4DA4-BE5F-827226C6A1CD}"
-	RootNamespace="vavoommaster"
-	Keyword="Win32Proj"
-	TargetFrameworkVersion="131072"
+	Name="glvis"
+	ProjectGUID="{F424FB4F-2341-4CA6-A13F-71E4A8C696DC}"
+	RootNamespace="glvis"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -21,7 +20,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -42,13 +41,11 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../utils/common"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
-				UsePrecompiledHeader="0"
+				RuntimeLibrary="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -62,12 +59,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="1"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -97,8 +91,8 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
-			WholeProgramOptimization="1"
+			CharacterSet="2"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -123,14 +117,12 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				AdditionalIncludeDirectories="../utils/common"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				StringPooling="true"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="3"
+				DebugInformationFormat="1"
 				CallingConvention="1"
 			/>
 			<Tool
@@ -144,14 +136,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="wsock32.lib"
-				LinkIncremental="1"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				LinkTimeCodeGeneration="0"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -186,7 +176,23 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\utils\master\main.cpp"
+				RelativePath="..\utils\common\cmdlib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\glvis\flow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\glvis\glvis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\glvis\level.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\common\wadlib.cpp"
 				>
 			</File>
 		</Filter>
@@ -195,6 +201,30 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath="..\utils\common\cmdlib.h"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\common\fmapdefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\common\fwaddefs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\glvis\glvis.h"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\glvis\vector.h"
+				>
+			</File>
+			<File
+				RelativePath="..\utils\common\wadlib.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
