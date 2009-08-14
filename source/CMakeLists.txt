@@ -17,6 +17,13 @@ if(UNIX)
 option(ENABLE_WRAPPERS "Enable creation of wrapper scripts" ON)
 endif(UNIX)
 
+# Update svnrev.h
+
+add_custom_target( revision_check ALL
+	COMMAND updaterevision ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/svnrev.h
+	WORKING_DIRECTORY ${UPDATEREVISION_EXE}
+	DEPENDS updaterevision )
+
 #---------------------------------------
 #
 #	Main executable sources

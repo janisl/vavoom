@@ -25,3 +25,4 @@ if( MT_MERGE )
 		COMMAND mt -inputresource:${UPDATEREVISION_EXE} -manifest ${CMAKE_CURRENT_SOURCE_DIR}/trustinfo.txt -outputresource:${UPDATEREVISION_EXE} -nologo
 		COMMENT "Embedding trustinfo into updaterevision" )
 endif( MT_MERGE )
+
