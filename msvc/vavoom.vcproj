@@ -81,7 +81,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/LTCG"
-				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib libjpeg.lib zlib.lib libmad.lib libvorbis_static.lib libogg_static.lib libmikmod.lib libFLAC_static.lib libFLAC++_static.lib"
+				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib jpeg.lib zlib.lib libmad.lib libvorbis_static.lib libogg_static.lib libmikmod.lib libFLAC_static.lib libFLAC++_static.lib"
 				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
