@@ -64,7 +64,7 @@ void Died(EntityEx source, EntityEx inflictor)
 	}
 	LineSpecialLevelInfo(Level).EV_DoDoor(225, 16, 0, 0, 0,
 		VerticalDoor::DOOREV_Close, NULL, Actor(Level.Game.Players[i].MO));
-	LineSpecialLevelInfo(Level).EV_DoFloor(44, 8, 0, 0, 0,
+	LineSpecialLevelInfo(Level).EV_DoFloor(44, 8, 128, 0, 0,
 		FloorMover::FLOOREV_LowerToHighest, NULL);
 	EntityEx(Level.Game.Players[i].MO).GiveInventoryType(QuestItem6);
 	PlayerEx(Level.Game.Players[i]).ClientVoice(13);

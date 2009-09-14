@@ -109,7 +109,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		if (FloorDestDist != Sector->floor.dist)
 		{
-			Spot.z = DestHeight + itof(Arg3);
+			Spot.z = DestHeight + itof(Arg3) - 128.0;
 			FloorDestDist = DotProduct(Sector->floor.normal, Spot);
 		}
 		break;
