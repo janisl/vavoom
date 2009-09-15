@@ -178,6 +178,15 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+	if (r_vsync)
+	{
+		// Wait for vertical sync
+		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
+	}
+	else
+	{
+		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	}
 
 	if (Direct3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hwnd,
 		D3DCREATE_FPU_PRESERVE | D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_PUREDEVICE,

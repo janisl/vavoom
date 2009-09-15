@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
+//#include "resource.h"
 #include "svnrev.h"
 #include "build.h"
 

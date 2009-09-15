@@ -37,6 +37,7 @@ int					depths[4];
 MenuChoiceEnum		Mode;
 MenuChoiceEnum		Depth;
 MenuChoiceEnum		Windowed;
+MenuChoiceEnum		VSync;
 
 //==========================================================================
 //
@@ -75,6 +76,12 @@ void CreateChoices()
 	Windowed.Text = "Windowed";
 	Windowed.SetInitialValue(GetCvar('screen_windowed'));
 	ChoicesStartY += Windowed.Height;
+
+	VSync = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	VSync.SetOrigin(ChoicesStartX, ChoicesStartY);
+	VSync.Text = "VSync";
+	VSync.SetInitialValue(GetCvar('r_vsync'));
+	ChoicesStartY += VSync.Height;
 
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
 	Btn.SetOrigin(ChoicesStartX, ChoicesStartY);
@@ -147,6 +154,7 @@ final int GetDepthValue()
 void ActivateSetMode(Object Sender)
 {
 	SetCvar('screen_windowed', Windowed.Value);
+	SetCvar('r_vsync', VSync.Value);
 	CmdBuf_AddText("SetResolution %d %d %d\n", modes[Mode.Value].width,
 		modes[Mode.Value].height, depths[Depth.Value]);
 }

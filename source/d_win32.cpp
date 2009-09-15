@@ -183,6 +183,7 @@ bool VWin32SoftwareDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	ddsd.dwSize = sizeof(ddsd);
 	ddsd.dwFlags = DDSD_CAPS;
 	ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+
 	if (DDraw->CreateSurface(&ddsd, &PrimarySurface, NULL) != DD_OK)
 		Sys_Error("I_SetResolution: Failed to create primary surface");
 
@@ -325,7 +326,7 @@ void VWin32SoftwareDrawer::Update()
 	if (new_palette)
 	{
 		if (Palette->SetEntries(0, 0, 256, PaletteEntries) != DD_OK)
-			Sys_Error("I_SetPalette: Failed to det palette entries");
+			Sys_Error("I_SetPalette: Failed to set palette entries");
 		new_palette = false;
 	}
 

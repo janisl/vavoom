@@ -72,6 +72,7 @@ VCvarF					r_fog_density("r_fog_density", "0.5");
 
 VCvarI					old_aspect("r_old_aspect_ratio", "1", CVAR_Archive);
 VCvarI					r_interpolate_frames("r_interpolate_frames", "1", CVAR_Archive);
+VCvarI					r_vsync("r_vsync", "1", CVAR_Archive);
 
 VDrawer					*Drawer;
 

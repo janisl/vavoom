@@ -164,6 +164,20 @@ void VOpenGLDrawer::InitResolution()
 		ClampToEdge = GL_CLAMP;
 	}
 
+	//  Swap control extension (VSync)
+	if (CheckExtension("WGL_EXT_swap_control"))
+	{
+		GCon->Log(NAME_Init, "Swap control extension found.");
+		typedef bool (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
+
+		PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+		if( wglSwapIntervalEXT )
+			wglSwapIntervalEXT(r_vsync);
+	}
+
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup
 	if (HasStencil)

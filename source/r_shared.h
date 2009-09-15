@@ -165,6 +165,7 @@ extern VCvarF			r_fog_b;
 extern VCvarF			r_fog_start;
 extern VCvarF			r_fog_end;
 extern VCvarF			r_fog_density;
+extern VCvarI			r_vsync;
 
 extern "C" {
 extern TClipPlane		view_clipplanes[5];
