@@ -264,6 +264,20 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		return false;
 	}
 
+	//  Swap control extension (VSync)
+	if (CheckExtension("WGL_EXT_swap_control"))
+	{
+		GCon->Log(NAME_Init, "Swap control extension found.");
+		typedef bool (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
+
+		PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)GetExtFuncPtr("wglSwapIntervalEXT");
+
+		if( wglSwapIntervalEXT )
+			wglSwapIntervalEXT(r_vsync);
+	}
+
 	//	Everything is fine, set some globals and finish
 	ScreenWidth = Width;
 	ScreenHeight = Height;
