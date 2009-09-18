@@ -2,15 +2,25 @@ This will make it easier to work with VavoomC using Notepad++.
 
 If you don't have NotePad++, you can find it here: http://notepad-plus.sourceforge.net/
 
-Once you download and install it, follow these instructions to make it work:
+Once you downloaded and installed it, follow these instructions to make it work:
 
-If you don't have any userDefineLang.xml file under the directory where you installed Notepadd++
+For syntax highlight:
+
+Create an empty file called doLocalConf.xml inside the directory where Notepad++ is installed (where the
+.exe file is located).
+
+If you don't have any userDefineLang.xml file under the directory where you installed Notepad++
 (where the .exe file is located), then simply paste this file there, if you have this file then open this XML
 file, copy it's contents and paste them on the one in this directory, NP++ will read your VC files and highlight
-the syntax on them!!
+the syntax in them.
 
-For the functions list rules, first make sure that you have the Function List plugin installed, if you don't,
-check Notepad++ documentation on how to this, once it's installed, you'll need to open FunctionListRules.xml
+For the functions list rules:
+
+First make sure that you have the Function List plugin installed, if you don't, you can download it from here:
+http://sourceforge.net/projects/npp-plugins/files/
+
+Look for the function list files, download the latest UNICODE version, then unzip the contents of the downloaded
+ZIP file to the 'plugin' directory inside your Notepad++ installation, you'll need to open FunctionListRules.xml
 in your "plugin/config" directory where NotePad++ is installed, then paste the contents of the file between
-<FunctionList> and </FunctionList> on the lowest part of FunctionListRules.xml, NP++ will list your VC functions
-the next time you open the program!!
+<FunctionList> and </FunctionList> labels, on the lowest part of FunctionListRules.xml, NP++ will list your
+VC functions the next time you open the program.
