@@ -449,7 +449,7 @@ void SV_Ticker()
 	}
 	else if (split_frame)
 	{
-		while (host_frametime / exec_times > 1.0 / 35.0)
+		while (host_frametime / exec_times > 0.028572f/*1.0 / 35.0*/)
 			exec_times++;
 	}
 
