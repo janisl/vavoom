@@ -51,6 +51,7 @@
 				StringPooling="false"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
+				FloatingPointModel="1"
 				RuntimeTypeInfo="false"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
