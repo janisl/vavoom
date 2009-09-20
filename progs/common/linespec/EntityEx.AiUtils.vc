@@ -653,7 +653,7 @@ final bool StepMove()
 
 	// Instead of yanking non-floating monsters to the ground,
 	// let gravity drop them down, unless they're moving down a step.
-	if (!bNoGravity && Origin.z > FloorZ && !bOnMobj)
+	if (!bNoGravity && Origin.z > FloorZ /*&& !bOnMobj*/)
 	{
 		if (Origin.z > FloorZ + MaxStepHeight)
 		{

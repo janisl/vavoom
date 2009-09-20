@@ -22,6 +22,7 @@ actor Inquisitor 16
 	DeathSound "inquisitor/death"
 	Obituary "$ob_inquisitor"
 
+	action native A_InquisitorCheckJump();
 	action native A_InquisitorDecide();
 	action native A_InquisitorAttack();
 	action native A_InquisitorJump();
@@ -36,11 +37,11 @@ actor Inquisitor 16
 		Loop
 	See:
 		ROB3 B 0 A_PlaySound("inquisitor/walk")
-		ROB3 B 3 A_Chase
+		ROB3 B 3 A_InquisitorCheckJump
 		ROB3 B 3 A_Chase
 		ROB3 CCDD 4 A_Chase
 		ROB3 E 0 A_PlaySound("inquisitor/walk")
-		ROB3 E 3 A_Chase
+		ROB3 E 3 A_InquisitorCheckJump
 		ROB3 E 3 A_InquisitorDecide
 		Loop
 	Missile:

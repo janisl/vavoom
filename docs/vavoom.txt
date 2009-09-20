@@ -22,7 +22,8 @@ Contents:
     6. Differences from original game
     7. Version history
     8. Licensing
-    9. Links
+    9. Special Thanks
+   10. Links
 
 *****************************************************************************
 0. Disclaimer
@@ -103,15 +104,15 @@ Libraries:
     * Allegro 4.0 (http://alleg.sourceforge.net)
   or
     * SDL 1.2 (http://www.libsdl.org) and SDL_mixer 1.2
-  (http://www.libsdl.org/projects/SDL_mixer/).
+      (http://www.libsdl.org/projects/SDL_mixer/).
     * OpenGL: OpenGL implementation from your video card's manufacturer
-  or MESA (http://www.mesa3d.org) and X-Windows development libraries.
+      or MESA (http://www.mesa3d.org) and X-Windows development libraries.
     * AllegroGL (http://allegrogl.sourceforge.net) if you want to use OpenGL
-  with Allegro driver.
+      with Allegro driver.
 Optional:
     * OpenAL (http://www.openal.org), the source must be checked out from the
-  CVS repository. You will find info on this on OpenAL website or at Creative
-  developer centre (http://developer.creative.com).
+      CVS repository. You will find info on this on OpenAL website or at Creative
+      developer centre (http://developer.creative.com).
     * libvorbis (http://www.vorbis.com)
     * libmad (http://www.underbit.com/products/mad/)
     * mikmod (http://mikmod.raphnet.net/)
@@ -186,13 +187,13 @@ For Windows you need:
       * DirectX 9 SDK (http://www.microsoft.com/directx)
       * EAX 2.0 SDK (http://developer.creative.com/).
       * OpenAL SDK (http://developer.creative.com), you must create directory
-    AL in your compilers include directory and copy OpenAL include files here.
+        AL in your compilers include directory and copy OpenAL include files here.
       * libvorbis (http://www.vorbis.com)
       * libmad (http://www.underbit.com/products/mad/)
       * mikmod (http://mikmod.raphnet.net/)
       * FLAC (http://flac.sourceforge.net/)
 
-  You can also compile with MSVC 2005, you will find the workspace and project
+  You can also compile with MSVC 2008, you will find the workspace and project
  files in the 'msvc' subdirectory. You will still need MinGW to compile asm
  files.
 
@@ -214,19 +215,19 @@ for dedicated server operators.
 Server console variables:
 -------------------------
 
-    DeathMatch          - 0 - cooperative, other - deathmatch, in Doom
-                            1 - like was param -deathmatch
-                            2 - like was -altdeath - items and weapons are
-                          respawning
+    DeathMatch          -   0 - cooperative, other - deathmatch, in Doom
+                            1 - like -deathmatch param was
+                            2 - -altdeath param was like - items and weapons are
+                                respawning
                             3 - like 2, but monsters are respawning very fast
-                          and they are attacking each other - total nightmare
-    NoMonsters          - 0 - enable, 1 - disable monsters;
-    TimeLimit           - Replaces command line param -time, sets time (in
-                     minutes), after which the level will automatically end,
-                     0 for no limit, works only in deathmatch.
-    HostName            - Name, listed in server list and that can be used to
-                     connect to this server.
-    Skill               - Game skill, 0 - very easy, 4 - nightmare
+                                and they are attacking each other - total nightmare
+    NoMonsters          -   0 - enable, 1 - disable monsters;
+    TimeLimit           -   Replaces command line param -time, sets time (in
+                            minutes), after which the level will automatically end,
+                            0 for no limit, works only in deathmatch.
+    HostName            -   Name, listed in server list and that can be used to
+                            connect to this server.
+    Skill               -   Game skill, 0 - very easy / 4 - nightmare
 
 Server console commands:
 ------------------------
@@ -358,12 +359,12 @@ Custom games and development
 Debugging
 ---------
 
--DEBUG creates a debug file basev/debug.txt on DOS and Windows,
-~/.vavoom/debug.txt on Unix-like systems with all the console messages.
+-DEBUG creates a debug file basev/debug.txt on Windows,
+       ~/.vavoom/debug.txt on Unix-like systems with all the console messages.
 -debug
 
 -STARTTIME sets start time, it doesn't works in the LINUX version or
-dedicated servers
+           dedicated servers
 -starttime <time>
 
 -RHIDE prints debug file to stderr
@@ -408,7 +409,9 @@ dedicated servers
     - Support for tall patches and scaled textures.
     - glBSP plugin.
     - glVIS plugin.
+    - Support for Skyboxes
     - WAV and FLAC sounds, MP3, OGG and mod-style music.
+    - High Resolution textures
     - Custom object and weapon definitions using DECORATE script.
     - A lots more.
 
@@ -1149,7 +1152,50 @@ Version 1.30
     Vavoom is distributed under terms of GNU General Public Licence.
 
 *****************************************************************************
-9. Links
+9. Special Thanks
+*****************************************************************************
+
+id Software /   These are the people who developed Doom and Quake, they later
+John            released source code for Both.
+Carmack
+
+Raven           Developers of Heretic and Hexen. They also realeased source
+Software        code for both.
+
+Rogue           Developers of Strife.
+Entertainment
+
+Francisco       Second developer of the Vavoom engine, provides mainly bugfixing
+Ortega          and enhancements to the current code.
+(Firebrand)
+
+Jim Flynn
+Stan Gula
+Ty Halderman    Main authors of the BOOM sourceport, which Vavoom utilizes some
+Lee Killough    features from.
+Rand Phares
+Team TNT
+
+James Haley
+(Quasar)
+Christoph
+Oelckers
+(Graf Zahl)     Main developers of the UDMF map format.
+Pascal
+vd Heiden
+(CodeImp)
+
+Randy Heit      Developer of the ZDoom sourceport, which Vavoom uses features
+                from.
+
+Rachael
+Alexanderson
+(SoulPriestess) Webmaster and administrator of the DRD Team SVN Builds, which host
+Nigel Rowand    Vavoom SVN builds.
+(Enjay)
+
+*****************************************************************************
+10. Links
 *****************************************************************************
 
   The Vavoom homepage:
@@ -1164,11 +1210,20 @@ Version 1.30
   The Vavoom SourceForge project page:
     http://sourceforge.net/projects/vavoom/
 
+  The Vavoom SVN Builds:
+    http://svn.drdteam.org/
+
   The homepage for glBSP:
     http://glbsp.sourceforge.net/
 
   The homepage for glVIS:
     http://vavoom-engine.com/glvis.php
+
+  The BOOM homepage:
+    http://www.teamtnt.com/boompubl/boom2.htm
+
+  The ZDoom homepage:
+    http://zdoom.org/
 
   The home of ID-Software:
     http://www.idsoftware.com/
@@ -1182,7 +1237,9 @@ Version 1.30
   Doom related pages:
     http://www.doomworld.com/
     http://www.new-doom.com/
-    http://www.doomcenter.com/
+    http://www.classicdoom.com/
+    http://www.drdteam.org/
+    http://doom.wikia.com/
 
   Raven games related page:
     http://www.ravengames.com/

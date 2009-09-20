@@ -612,7 +612,11 @@ final bool InquisitorCheckDistance()
 
 final void A_InquisitorDecide()
 {
-	if (!Target)
+	if (Origin.z != FloorZ)
+		return;
+
+	PlaySound('inquisitor/active', CHAN_VOICE);
+	if (!Target || !CanSee(Target))
 	{
 		return;
 	}
@@ -622,10 +626,41 @@ final void A_InquisitorDecide()
 	{
 		SetState(FindState('Grenade'));
 	}
-	if (Target.Origin.z != Origin.z &&
-		Origin.z + Height + 54.0 < CeilingZ)
+}
+
+//==========================================================================
+//
+//	A_InquisitorCheckJump
+//
+//==========================================================================
+
+final void A_InquisitorCheckJump()
+{
+	if (Origin.z != Target.Origin.z)
 	{
-		SetState(FindState('Jump'));
+		if (Origin.z < Target.Origin.z)
+		{
+			A_FaceTarget();
+			if (Origin.z + Height + 64.0 < CeilingZ)
+			{
+				SetState(FindState('Jump'));
+			}
+			else
+			{
+				//don't let him jump while under a low ceiling
+				Origin.z = FloorZ;
+			}
+		}
+		else if(Origin.z != FloorZ && fabs(Velocity.z) < -21.0)
+		{
+			//fly when he is falling
+			A_FaceTarget();
+			SetState(FindState('Jump'));
+		}
+	}
+	else
+	{
+		A_Chase();
 	}
 }
 
@@ -640,7 +675,7 @@ final void A_InquisitorAttack()
 	EntityEx A;
 	float an;
 
-	if (!Target || Origin.z != FloorZ)
+	if (!Target)
 		return;
 
 	A_FaceTarget();
@@ -680,6 +715,7 @@ final void A_InquisitorJump()
 
 	PlaySound('inquisitor/jump', CHAN_BODY);
 	A_FaceTarget();
+	Origin.z += 64.0;
 	Velocity.x += 6.0 * 35.0 * cos(Angles.yaw);
 	Velocity.y += 6.0 * 35.0 * sin(Angles.yaw);
 	dist = DistTo2(Target);
@@ -702,9 +738,9 @@ final void A_InquisitorJump()
 final void A_InquisitorCheckLand()
 {
 	ReactionCount--;
-	if (ReactionCount < 0 || Velocity.x == 0.0 || Velocity.y == 0.0 ||
-		Origin.z <= FloorZ /*|| fabs(Velocity.x) > 6.0 * 35.0 ||
-		fabs(Velocity.y) > 6.0 * 35.0*/)
+	if (Velocity.x == 0.0 && Velocity.y == 0.0 || Origin.z <= FloorZ ||
+		fabs(Velocity.x) > 6.0 * 35.0 && fabs(Velocity.y) > 6.0 * 35.0 ||
+		ReactionCount < 0 || Origin.z >= Target.Origin.z + Height / 6.0)
 	{
 		SetState(GetStatePlus(SeeState, 1));
 		ReactionCount = 0;
