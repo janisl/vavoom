@@ -230,6 +230,7 @@ private:
 	LPDIRECT3D9					Direct3D;
 	LPDIRECT3DDEVICE9			RenderDevice;
 
+
 	D3DVIEWPORT9				viewData;
 	MyD3DMatrix					IdentityMatrix;
 	MyD3DMatrix					matProj;
@@ -261,6 +262,8 @@ private:
 	//	Specular lightmaps.
 	LPDIRECT3DTEXTURE9			add_surf[NUM_BLOCK_SURFS];
 
+	IDirect3DSurface9			*DXBlockSurface[2];
+
 	static VCvarI device;
 	static VCvarI clear;
 	static VCvarI tex_linear;
@@ -269,6 +272,7 @@ private:
 	static VCvarF maxdist;
 	static VCvarI model_lighting;
 	static VCvarI specular_highlights;
+	static VCvarI avoid_input_lag;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

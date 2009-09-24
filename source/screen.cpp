@@ -168,6 +168,7 @@ static VCvarI	brightness("brightness", "0", CVAR_Archive);
 
 static VCvarI	draw_fps("draw_fps", "0", CVAR_Archive);
 static double	fps_start = 0.0;
+static double	ms = 0.0;
 static int		fps_frames = 0;
 static int		show_fps = 0;
 
@@ -273,6 +274,10 @@ static void DrawFPS()
 		if (time - fps_start > 1.0)
 		{
 			show_fps = (int)(fps_frames / (time - fps_start));
+			if (draw_fps == 2)
+			{
+				ms = 1000.0 / fps_frames / (time - fps_start);
+			}
 			fps_start = time;
 			fps_frames = 0;
 		}
@@ -280,6 +285,10 @@ static void DrawFPS()
 		T_SetFont(SmallFont);
 		T_SetAlign(hright, vtop);
 		T_DrawText(VirtualWidth - 2, 0, va("%d fps", show_fps), CR_UNTRANSLATED);
+		if (draw_fps == 2)
+		{
+			T_DrawText(VirtualWidth - 2, 12, va("%.2f ms ", ms), CR_UNTRANSLATED);
+		}
 	}
 	unguard;
 }

@@ -540,7 +540,7 @@ bool VLevel::ChangeSector(sector_t* sector, int crunch)
 					//	Process it.
 					if (!n->Thing->eventSectorChanged(crunch))
 					{
-						//	Dn't fit, keep checking (crush other things)
+						//	Doesn't fit, keep checking (crush other things)
 						ret = true;
 					}
 				}

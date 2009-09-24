@@ -28,7 +28,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Checking svnrevision.h..."
-				CommandLine="&quot;$(OutDir)\updaterevision.exe&quot; ../../source ../source/svnrev.h"
+				CommandLine="&quot;$(OutDir)\updaterevision.exe&quot; ../ ../source/svnrev.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -135,6 +135,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Checking svnrevision.h..."
+				CommandLine="&quot;$(OutDir)\updaterevision.exe&quot; ../ ../source/svnrev.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

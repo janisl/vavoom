@@ -52,6 +52,7 @@ VCvarI VDirect3DDrawer::blend_sprites("d3d_blend_sprites", "0", CVAR_Archive);
 VCvarF VDirect3DDrawer::maxdist("d3d_maxdist", "8192.0", CVAR_Archive);
 VCvarI VDirect3DDrawer::model_lighting("d3d_model_lighting", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::specular_highlights("d3d_specular_highlights", "1", CVAR_Archive);
+VCvarI VDirect3DDrawer::avoid_input_lag("d3d_avoid_input_lag", "1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -150,6 +151,8 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 
 	//	Shut down current mode
 	ReleaseTextures();
+	SAFE_RELEASE(DXBlockSurface[0]);
+	SAFE_RELEASE(DXBlockSurface[1]);
 	SAFE_RELEASE(RenderDevice)
 
 	D3DPRESENT_PARAMETERS d3dpp;
@@ -203,7 +206,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	maxTexSize = MAX(DeviceCaps.MaxTextureWidth, DeviceCaps.MaxTextureHeight);
 	if (square_textures)
 	{
-		//	Limit texture size when square textures are requred
+		//	Limit texture size when square textures are required
 		maxTexSize = 256;
 	}
 	maxMultiTex = DeviceCaps.MaxSimultaneousTextures;
@@ -218,6 +221,20 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	ScreenWidth = Width;
 	ScreenHeight = Height;
 	ScreenBPP = BPP;
+
+	if (avoid_input_lag)
+	{
+		if (SUCCEEDED(RenderDevice->CreateOffscreenPlainSurface(16, 16, D3DFMT_A8R8G8B8,
+			D3DPOOL_DEFAULT, &DXBlockSurface[0], 0)))
+		{
+			if (!SUCCEEDED(RenderDevice->CreateOffscreenPlainSurface(16, 16, D3DFMT_A8R8G8B8,
+				D3DPOOL_DEFAULT, &DXBlockSurface[1], 0)))
+			{
+				DXBlockSurface[0]->Release();
+				DXBlockSurface[0] = NULL;
+			}
+		}
+	}
 
 	return true;
 	unguard;
@@ -523,8 +540,20 @@ void VDirect3DDrawer::EndView()
 void VDirect3DDrawer::Update()
 {
 	guard(VDirect3DDrawer::Update);
+	static int dblock;
+	D3DLOCKED_RECT lr;
+	volatile int dummy;
+
 	// End the scene.
 	RenderDevice->EndScene();
+	RenderDevice->ColorFill(DXBlockSurface[dblock], 0, 0xff002050);
+
+	dblock = 1-dblock;
+	if(!FAILED((DXBlockSurface[dblock]->LockRect(&lr, 0, D3DLOCK_READONLY))))
+	{
+		dummy = *(int*)lr.pBits;
+		DXBlockSurface[dblock]->UnlockRect();
+	}
 
 	RenderDevice->Present(NULL, NULL, NULL, NULL);
 	unguard;
@@ -567,6 +596,8 @@ void VDirect3DDrawer::Shutdown()
 {
 	guard(VDirect3DDrawer::Shutdown);
 	ReleaseTextures();
+	SAFE_RELEASE(DXBlockSurface[0]);
+	SAFE_RELEASE(DXBlockSurface[1]);
 	SAFE_RELEASE(RenderDevice)
 	SAFE_RELEASE(Direct3D)
 	if (DLLHandle)

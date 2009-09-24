@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="windows-1253"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="basepak_doom2"
+	ProjectGUID="{DC9BBFA1-6B89-44AA-ADDE-DBBBF3B2E533}"
+	RootNamespace="progs_doom2"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform
+			Name="Win32"
+		/>
+	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="$(ProjectDir)$(InputName)_$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				ReBuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				CleanCommandLine=""
+				Output="basepak.pk3"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(ProjectDir)$(InputName)_$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="0"
+			>
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				ReBuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				CleanCommandLine=""
+				Output="basepak.pk3"
+				PreprocessorDefinitions=""
+				IncludeSearchPath=""
+				ForcedIncludes=""
+				AssemblySearchPath=""
+				ForcedUsingAssemblies=""
+				CompileAsManaged=""
+			/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath="..\progs\doom2\cgame.vc"
+			>
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

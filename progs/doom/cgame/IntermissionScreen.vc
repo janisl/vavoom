@@ -68,7 +68,7 @@ const int DM_DEATHSX		= 429;
 const int DM_SPACINGX		= 40;
 
 // in seconds
-const float SHOWNEXTLOCDELAY	= 4.0;
+const float SHOWNEXTLOCDELAY	= 4.0 * 35.0;
 
 //  Different between registered DOOM (1994) and Ultimate DOOM - Final
 // edition (retail, 1995?).

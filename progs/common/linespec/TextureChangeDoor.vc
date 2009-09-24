@@ -108,11 +108,14 @@ bool StartClosing()
 	// inside the door.
 	Sector->ceiling.dist = BotDist;
 	bool Blocked = XLevel.ChangeSector(Sector, false);
-	Sector->ceiling.dist = TopDist;
-	XLevel.ChangeSector(Sector, false);
-	if (Blocked)
+	if (!Blocked)
 	{
-		return false;
+		Sector->ceiling.dist = TopDist;
+		Blocked = XLevel.ChangeSector(Sector, false);
+		if (Blocked)
+		{
+			return false;
+		}
 	}
 
 	int texTop = XLevel.Sides[Line1->sidenum[0]].TopTexture;
@@ -151,7 +154,7 @@ void Tick(float deltaTime)
 		if (Timer <= 0.0)
 		{
 			CurrentFrame++;
-			if (CurrentFrame >= Def->NumFrames )
+			if (CurrentFrame >= Def->NumFrames)
 			{
 				Line1->flags &= ~ML_BLOCKING;
 				Line2->flags &= ~ML_BLOCKING;
