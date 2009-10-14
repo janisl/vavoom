@@ -263,6 +263,7 @@ private:
 	LPDIRECT3DTEXTURE9			add_surf[NUM_BLOCK_SURFS];
 
 	IDirect3DSurface9			*DXBlockSurface[2];
+	BYTE dblock;
 
 	static VCvarI device;
 	static VCvarI clear;

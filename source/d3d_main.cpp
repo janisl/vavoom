@@ -78,6 +78,7 @@ VDirect3DDrawer::VDirect3DDrawer()
 , CurrentFade(0)
 , particle_texture(0)
 , tscount(0)
+, dblock(0)
 {
 	memset(light_surf, 0, sizeof(light_surf));
 	memset(add_surf, 0, sizeof(add_surf));
@@ -180,7 +181,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	d3dpp.Windowed = Windowed;
 	d3dpp.EnableAutoDepthStencil = TRUE;
 	d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
-	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
+//	d3dpp.Flags = D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
 	if (r_vsync)
 	{
 		// Wait for vertical sync
@@ -540,19 +541,21 @@ void VDirect3DDrawer::EndView()
 void VDirect3DDrawer::Update()
 {
 	guard(VDirect3DDrawer::Update);
-	static int dblock;
 	D3DLOCKED_RECT lr;
 	volatile int dummy;
 
 	// End the scene.
 	RenderDevice->EndScene();
-	RenderDevice->ColorFill(DXBlockSurface[dblock], 0, 0xff002050);
-
-	dblock = 1-dblock;
-	if(!FAILED((DXBlockSurface[dblock]->LockRect(&lr, 0, D3DLOCK_READONLY))))
+	if (avoid_input_lag && DXBlockSurface[0])
 	{
-		dummy = *(int*)lr.pBits;
-		DXBlockSurface[dblock]->UnlockRect();
+		RenderDevice->ColorFill(DXBlockSurface[dblock], 0, 0xff002050);
+
+		dblock ^= 1;
+		if(!FAILED((DXBlockSurface[dblock]->LockRect(&lr, 0, D3DLOCK_READONLY))))
+		{
+			dummy = *(int*)lr.pBits;
+			DXBlockSurface[dblock]->UnlockRect();
+		}
 	}
 
 	RenderDevice->Present(NULL, NULL, NULL, NULL);
