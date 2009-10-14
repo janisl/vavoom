@@ -133,7 +133,8 @@ void VRenderLevel::UpdateParticles(float frametime)
 	guard(VRenderLevel::UpdateParticles);
 	particle_t		*p, *kill;
 
-	if (cl->ClGame->ClientFlags & VClientGameBase::CF_Paused)
+	if (cl->ClGame->ClientFlags & VClientGameBase::CF_Paused ||
+		(MN_Active() || C_Active()))
 	{
 		return;
 	}

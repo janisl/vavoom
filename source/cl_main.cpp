@@ -371,7 +371,8 @@ void CL_SendMove()
 	}
 
 	if (cls.demoplayback || GGameInfo->NetMode == NM_TitleMap ||
-		GClGame->ClientFlags & VClientGameBase::CF_Paused)
+		GClGame->ClientFlags & VClientGameBase::CF_Paused ||
+		(MN_Active() || C_Active()))
 	{
 		return;
 	}

@@ -805,7 +805,8 @@ void VAudio::StopSequence(int origin_id)
 void VAudio::UpdateActiveSequences(float DeltaTime)
 {
 	guard(VAudio::UpdateActiveSequences);
-	if (!ActiveSequences || GClGame->ClientFlags & VClientGameBase::CF_Paused)
+	if (!ActiveSequences || GClGame->ClientFlags & VClientGameBase::CF_Paused ||
+		!(MN_Active() || C_Active()))
 	{
 		// No sequences currently playing/game is paused
 		return;
