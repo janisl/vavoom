@@ -133,7 +133,9 @@ bool VSdlOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	{
 		GCon->Logf(NAME_Init, "Stencil buffer available");
 	}
+#if SDL_MINOR_VERSION > 2 || (SDL_MINOR_VERSION == 2 && SDL_PATCHLEVEL >= 10)
 	SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, r_vsync);
+#endif
 
 	// Everything is fine, set some globals and finish
 	ScreenWidth = Width;
