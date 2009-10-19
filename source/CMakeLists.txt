@@ -17,13 +17,6 @@ if(UNIX)
 option(ENABLE_WRAPPERS "Enable creation of wrapper scripts" ON)
 endif(UNIX)
 
-# Update svnrev.h
-
-add_custom_target( revision_check ALL
-	COMMAND updaterevision ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/svnrev.h
-	WORKING_DIRECTORY ${UPDATEREVISION_EXE}
-	DEPENDS updaterevision )
-
 #---------------------------------------
 #
 #	Main executable sources
@@ -222,7 +215,6 @@ set(MAIN_COMMON_SOURCES
 	sv_main.cpp
 	sv_save.cpp
 	sv_world.cpp
-	svnrev.h
 	system.h
 	text.cpp
 	text.h
@@ -566,6 +558,19 @@ set(SERVER_WIN32_SOURCES
 
 #---------------------------------------
 #
+#	svnrev.h stuff
+#
+#---------------------------------------
+
+add_custom_target( revision_check ALL
+	COMMAND updaterevision ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h
+	WORKING_DIRECTORY ${UPDATEREVISION_EXE}
+	DEPENDS updaterevision )
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+#---------------------------------------
+#
 #	Common checks
 #
 #---------------------------------------
@@ -825,7 +830,7 @@ endif(WIN32)
 #
 
 find_package(PNG REQUIRED)
-include_directories(${SDL_INCLUDE_DIR})
+include_directories(${PNG_INCLUDE_DIR})
 set(MAIN_LIBS ${PNG_LIBRARY} ${MAIN_LIBS})
 
 #
