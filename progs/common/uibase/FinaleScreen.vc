@@ -203,7 +203,7 @@ bool Responder(event_t * event)
 
 void Tick(float DeltaTime)
 {
-	FinaleTime += DeltaTime / 35.0;
+	FinaleTime += DeltaTime;
 	if (FinaleType == 'EndGameCast')
 	{
 		CastTicker(DeltaTime);
@@ -658,27 +658,27 @@ final void PlayStrifeFinalePage()
 		CmdBuf_AddText("music loop d_happy\n");
 		Background.InitPic('ss4f1');
 		LocalSound('svox/rie01');
-		FinaleTimer = 13.0 * 35.0;
+		FinaleTimer = 13.0;
 		FinalePage = 1;
 		break;
 
 	case 1:
 		Background.InitPic('ss4f2');
 		LocalSound('svox/bbx01');
-		FinaleTimer = 11.0 * 35.0;
+		FinaleTimer = 11.0;
 		FinalePage = 2;
 		break;
 
 	case 2:
 		Background.InitPic('ss4f3');
 		LocalSound('svox/bbx02');
-		FinaleTimer = 14.0 * 35.0;
+		FinaleTimer = 14.0;
 		FinalePage = 3;
 		break;
 
 	case 3:
 		Background.InitPic('ss4f4');
-		FinaleTimer = 28.0 * 35.0;
+		FinaleTimer = 28.0;
 		FinalePage = -1;
 		break;
 
@@ -688,21 +688,21 @@ final void PlayStrifeFinalePage()
 		CmdBuf_AddText("music loop d_sad\n");
 		Background.InitPic('ss5f1');
 		LocalSound('svox/ss501b');
-		FinaleTimer = 11.0 * 35.0;
+		FinaleTimer = 11.0;
 		FinalePage = 11;
 		break;
 
 	case 11:
 		Background.InitPic('ss5f2');
 		LocalSound('svox/ss502b');
-		FinaleTimer = 10.0 * 35.0;
+		FinaleTimer = 10.0;
 		FinalePage = 12;
 		break;
 
 	case 12:
 		Background.InitPic('ss5f3');
 		LocalSound('svox/ss503b');
-		FinaleTimer = 11.0 * 35.0;
+		FinaleTimer = 11.0;
 		FinalePage = -1;
 		break;
 
@@ -712,21 +712,21 @@ final void PlayStrifeFinalePage()
 		CmdBuf_AddText("music loop d_end\n");
 		Background.InitPic('ss6f1');
 		LocalSound('svox/ss601a');
-		FinaleTimer = 8.0 * 35.0;
+		FinaleTimer = 8.0;
 		FinalePage = 21;
 		break;
 
 	case 21:
 		Background.InitPic('ss6f2');
 		LocalSound('svox/ss602a');
-		FinaleTimer = 8.0 * 35.0;
+		FinaleTimer = 8.0;
 		FinalePage = 22;
 		break;
 
 	case 22:
 		Background.InitPic('ss6f3');
 		LocalSound('svox/ss603a');
-		FinaleTimer = 9.0 * 35.0;
+		FinaleTimer = 9.0;
 		FinalePage = -1;
 		break;
 

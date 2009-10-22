@@ -127,10 +127,10 @@ enum
 	ST_DEADFACE			= (ST_GODFACE + 1)
 };
 
-const float ST_STRAIGHTFACETIME		= 0.5 * 35.0;
-const float ST_TURNTIME				= 1.0 * 35.0;
-const float ST_EVILGRINTIME			= 2.0 * 35.0;
-const float ST_RAMPAGEDELAY			= 2.0 * 35.0;
+const float ST_STRAIGHTFACETIME		= 0.5;
+const float ST_TURNTIME				= 1.0;
+const float ST_EVILGRINTIME			= 2.0;
+const float ST_RAMPAGEDELAY			= 2.0;
 
 const int ST_MUCHPAIN				= 20;
 
@@ -730,8 +730,8 @@ final void UpdateFaceWidget(float FrameTime)
 				{
 					sb_face_priority = 5;
 					sb_faceindex = CalcPainOffset() + ST_RAMPAGEOFFSET;
-					sb_facetime = 0.15 * 35.0;
-					sb_face_lastattackdown = 0.1 * 35.0;
+					sb_facetime = 0.01;
+					sb_face_lastattackdown = 0.01;
 				}
 			}
 		}

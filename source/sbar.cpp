@@ -82,7 +82,7 @@ void SB_Ticker()
 {
 	if (cls.signon)
 	{
-	    GClGame->eventStatusBarUpdateWidgets(host_frametics);
+	    GClGame->eventStatusBarUpdateWidgets(host_frametime);
 	}
 }
 

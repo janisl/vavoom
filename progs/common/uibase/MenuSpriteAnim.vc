@@ -47,7 +47,7 @@ void Tick(float DeltaTime)
 
 void OnDraw()
 {
-	int frame = ftoi(Time / 18.0 * itof(Speed)) % NumFrames;
+	int frame = ftoi(Time * itof(Speed)) % NumFrames;
 
 	R_DrawSpritePatch(OldOriginX, OldOriginY, SprDef, frame, 0, TranslStart,
 		TranslEnd, Colour);

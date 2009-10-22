@@ -55,28 +55,28 @@ void PlayPage()
 		StopLocalSounds();
 		BackPic.SetPic('ss2f1');
 		LocalSound('svox/mac10');
-		PicTimer = 9.0 * 35.0;
+		PicTimer = 9.0;
 		PageNum = 1;
 		break;
 
 	case 1:
 		BackPic.SetPic('ss2f2');
 		LocalSound('svox/mac11');
-		PicTimer = 10.0 * 35.0;
+		PicTimer = 10.0;
 		PageNum = 2;
 		break;
 
 	case 2:
 		BackPic.SetPic('ss2f3');
 		LocalSound('svox/mac12');
-		PicTimer = 12.0 * 35.0;
+		PicTimer = 12.0;
 		PageNum = 3;
 		break;
 
 	case 3:
 		BackPic.SetPic('ss2f4');
 		LocalSound('svox/mac13');
-		PicTimer = 17.0 * 35.0;
+		PicTimer = 17.0;
 		PageNum = -1;
 		break;
 

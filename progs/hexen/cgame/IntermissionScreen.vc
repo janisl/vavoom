@@ -34,7 +34,7 @@ enum
 
 ClientGameBase ClGame;
 
-const float TALLY_EFFECT_TIME	= 0.625 * 35.0;
+const float TALLY_EFFECT_TIME	= 0.625;
 const float TALLY_FINAL_X_DELTA	= 23.0;
 const float TALLY_FINAL_Y_DELTA	= 13.0;
 const float TALLY_START_XPOS	= 338.0;
@@ -115,7 +115,7 @@ void Tick(float DeltaTime)
 	if (ClGame.skipintermission || (!ClGame.deathmatch && !HubCount))
 	{
 		interstate = IMS_Done;
-		cnt = 0.3 * 35.0;
+		cnt = 0.3;
 		ClGame.skipintermission = false;
 	}
 }
@@ -304,7 +304,7 @@ void IM_DrawHubText()
 	{
 		R_FillRect(0, 0, 640, 480, 0);
 	}
-	int count = ftoi((intertime - 0.3) * 35.0 / TextSpeed);
+	int count = ftoi((intertime - 0.3) / TextSpeed);
 	if (count < 0)
 	{
 		count = 0;
@@ -410,7 +410,7 @@ void IM_DrawDeathTally()
 		DrawText(ftoi(xPos), y, RepInfo.PlayerName,
 			i == ClGame.cl.ClientNum ? CR_YELLOW : CR_WHITE);
 		if (showTotals && !((slaughterboy & (1 << i)) &&
-			!(ftoi(32.0 * intertime * 35.0) & 16)))
+			!(ftoi(32.0 * intertime) & 16)))
 		{
 			if (i == ClGame.cl.ClientNum)
 			{
@@ -443,6 +443,6 @@ defaultproperties
 	Focusable = true;
 	Width = 640;
 	Height = 480;
-	TextSpeed = 0.1 * 35.0;
-	TextWait = 4.0 * 35.0;
+	TextSpeed = 0.1;
+	TextWait = 4.0;
 }

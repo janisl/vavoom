@@ -351,7 +351,7 @@ final void ParseScript(name ScriptName)
 void Tick(float DeltaTime)
 {
 	//	Counter for general background animation
-	btime += DeltaTime / 35.0;
+	btime += DeltaTime;
 
 	int i;
 	for (i = 0; i < Anims.Num; i++)

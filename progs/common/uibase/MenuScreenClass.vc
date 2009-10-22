@@ -49,7 +49,7 @@ void CreateChoices()
 
 		FighterWalk = NewChild(MenuStaticAnim);
 		FighterWalk.SetOrigin(174 + 24, 28 + 12);
-		FighterWalk.Speed = 4;
+		FighterWalk.Speed = 8;
 		FighterWalk.AddFrame('m_fwalk1');
 		FighterWalk.AddFrame('m_fwalk2');
 		FighterWalk.AddFrame('m_fwalk3');
@@ -63,7 +63,7 @@ void CreateChoices()
 
 		ClericWalk = NewChild(MenuStaticAnim);
 		ClericWalk.SetOrigin(174 + 24, 28 + 12);
-		ClericWalk.Speed = 4;
+		ClericWalk.Speed = 8;
 		ClericWalk.AddFrame('m_cwalk1');
 		ClericWalk.AddFrame('m_cwalk2');
 		ClericWalk.AddFrame('m_cwalk3');
@@ -77,7 +77,7 @@ void CreateChoices()
 
 		MageWalk = NewChild(MenuStaticAnim);
 		MageWalk.SetOrigin(174 + 24, 28 + 12);
-		MageWalk.Speed = 4;
+		MageWalk.Speed = 8;
 		MageWalk.AddFrame('m_mwalk1');
 		MageWalk.AddFrame('m_mwalk2');
 		MageWalk.AddFrame('m_mwalk3');

@@ -55,7 +55,7 @@ void AdvanceDemo()
 	switch (demosequence)
 	{
 	case 0:
-		pagetime = 490.0 / 35.0 * 35.0;
+		pagetime = 490.0 / 35.0;
 		page_pic = R_RegisterPic('title');
 //      S_StartSong("hexen", P_GetCDTitleTrack(), true);
 		CmdBuf_AddText("music play hexen\n");
@@ -67,7 +67,7 @@ void AdvanceDemo()
 		break;
 
 	case 2:
-		pagetime = 200.0 / 35.0 * 35.0;
+		pagetime = 200.0 / 35.0;
 		page_pic = R_RegisterPic('credit');
 		break;
 
@@ -76,7 +76,7 @@ void AdvanceDemo()
 		break;
 
 	case 4:
-		pagetime = 200.0 / 35.0 * 35.0;
+		pagetime = 200.0 / 35.0;
 		page_pic = R_RegisterPic('credit');
 		break;
 
@@ -94,7 +94,7 @@ void AdvanceDemo()
 
 void ForceTitle()
 {
-	pagetime = 14.0 * 35.0;
+	pagetime = 14.0;
 	page_pic = R_RegisterPic('title');
 }
 

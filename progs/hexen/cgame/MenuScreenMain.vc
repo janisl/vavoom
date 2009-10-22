@@ -43,7 +43,7 @@ void CreateTitle()
 	//	Left one starts at frame 2
 	Anim = NewChild(MenuStaticAnim);
 	Anim.SetOrigin(37, 80);
-	Anim.Speed = 3;
+	Anim.Speed = 7;
 	Anim.AddFrame('fbulc0');
 	Anim.AddFrame('fbuld0');
 	Anim.AddFrame('fbule0');
@@ -54,7 +54,7 @@ void CreateTitle()
 
 	Anim = NewChild(MenuStaticAnim);
 	Anim.SetOrigin(278, 80);
-	Anim.Speed = 3;
+	Anim.Speed = 7;
 	Anim.AddFrame('fbula0');
 	Anim.AddFrame('fbulb0');
 	Anim.AddFrame('fbulc0');

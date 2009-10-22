@@ -502,7 +502,7 @@ void SB_DrawIcons()
 	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
-		frame = (ClGame.GLevel.TicTime / 18) & 15;
+		frame = (ClGame.GLevel.TicTime / 3) & 15;
 		if (cl.MO.bFly)
 		{
 			if (hitCentreFrame && frame != 15 && frame != 0)
@@ -529,7 +529,7 @@ void SB_DrawIcons()
 	if (Pw && !cl.MorphTime && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
-		DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 18) & 15]);
+		DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 3) & 15]);
 	}
 }
 
@@ -579,7 +579,7 @@ void SB_UpdateWidgets()
 	int delta;
 	int curHealth;
 
-	if (ClGame.GLevel.TicTime / 35 & 1)
+	if (ClGame.GLevel.TicTime & 1)
 	{
 		ChainWiggle = P_Random() & 1;
 	}

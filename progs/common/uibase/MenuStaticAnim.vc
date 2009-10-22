@@ -118,7 +118,7 @@ void Tick(float DeltaTime)
 
 void OnDraw()
 {
-	int frame = ftoi(Time / 18.0 * itof(Speed)) % Frames.Num;
+	int frame = ftoi(Time * itof(Speed)) % Frames.Num;
 	if (bBackwards)
 	{
 		frame = Frames.Num - frame - 1;
