@@ -2008,7 +2008,7 @@ void D_DrawSkySurf_8()
 	int		s, t, texs;
 
 	texwidth = dsky_mt1->width;
-	texheight = dsky_mt1->width;
+	texheight = dsky_mt1->height;
 	smask = texwidth - 1;
 
 	basesrc = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
@@ -2043,7 +2043,7 @@ void D_DrawSkySurf_16()
 	int		s, t, texs;
 
 	texwidth = dsky_mt1->width;
-	texheight = dsky_mt1->width;
+	texheight = dsky_mt1->height;
 	smask = texwidth - 1;
 
 	basesrc = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
@@ -2078,7 +2078,7 @@ void D_DrawSkySurf_32()
 	int		s, t, texs;
 
 	texwidth = dsky_mt1->width;
-	texheight = dsky_mt1->width;
+	texheight = dsky_mt1->height;
 	smask = texwidth - 1;
 
 	basesrc = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
@@ -2113,10 +2113,10 @@ void D_DrawDoubleSkySurf_8()
 	int		s, t, texs1, texs2;
 
 	texwidth1 = dsky_mt1->width;
-	texheight1 = dsky_mt1->width;
+	texheight1 = dsky_mt1->height;
 
 	texwidth2 = dsky_mt2->width;
-	texheight2 = dsky_mt2->width;
+	texheight2 = dsky_mt2->height;
 
 	basesrc1 = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
 	basesrc2 = (byte *)dsky_mt2 + dsky_mt2->offsets[0];
@@ -2165,10 +2165,10 @@ void D_DrawDoubleSkySurf_16()
 	int		s, t, texs1, texs2;
 
 	texwidth1 = dsky_mt1->width;
-	texheight1 = dsky_mt1->width;
+	texheight1 = dsky_mt1->height;
 
 	texwidth2 = dsky_mt2->width;
-	texheight2 = dsky_mt2->width;
+	texheight2 = dsky_mt2->height;
 
 	basesrc1 = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
 	basesrc2 = (byte *)dsky_mt2 + dsky_mt2->offsets[0];
@@ -2217,10 +2217,10 @@ void D_DrawDoubleSkySurf_32()
 	int		s, t, texs1, texs2;
 
 	texwidth1 = dsky_mt1->width;
-	texheight1 = dsky_mt1->width;
+	texheight1 = dsky_mt1->height;
 
 	texwidth2 = dsky_mt2->width;
-	texheight2 = dsky_mt2->width;
+	texheight2 = dsky_mt2->height;
 
 	basesrc1 = (byte *)dsky_mt1 + dsky_mt1->offsets[0];
 	basesrc2 = (byte *)dsky_mt2 + dsky_mt2->offsets[0];
