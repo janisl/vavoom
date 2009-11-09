@@ -54,6 +54,7 @@ enum EBWhere
 class VButton : public VThinker
 {
 	DECLARE_CLASS(VButton, VThinker, 0)
+	NO_DEFAULT_CONSTRUCTOR(VButton)
 
 	vint32		Side;
 	vuint8		Where;

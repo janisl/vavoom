@@ -45,6 +45,7 @@ struct VClipRect
 class VWidget : public VObject
 {
 	DECLARE_CLASS(VWidget, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VWidget)
 
 private:
 	//	Parent container widget.
