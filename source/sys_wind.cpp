@@ -36,6 +36,7 @@
 #include <sys/stat.h>
 #include "winlocal.h"	
 #include "gamedefs.h"
+#include "svnrev.h"
 
 // MACROS ------------------------------------------------------------------
 

@@ -36,6 +36,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include "gamedefs.h"
+#include "svnrev.h"
 
 #ifdef DJGPP
 #include <dpmi.h>

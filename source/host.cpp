@@ -29,6 +29,7 @@
 #include "network.h"
 #include "cl_local.h"
 #include "ui.h"
+#include "svnrev.h"
 
 // MACROS ------------------------------------------------------------------
 

@@ -37,9 +37,6 @@
 #include <cstdarg>
 #include <cmath>
 
-#ifndef IN_VCC
-#include "svnrev.h"		//  Checks revision number
-#endif
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types
 #include "args.h"		//	Command line arguments.
