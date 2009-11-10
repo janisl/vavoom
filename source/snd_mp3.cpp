@@ -389,7 +389,7 @@ void VMp3SampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 		if (SamplesDecoded > 0)
 		{
 			int OldPos = Data.Num();
-			Data.SetNum(Data.Num() + SamplesDecoded);
+			Data.SetNumWithReserve(Data.Num() + SamplesDecoded);
 			for (int i = 0; i < SamplesDecoded; i++)
 			{
 				Data[OldPos + i] = Buf[i * 2];
@@ -410,7 +410,7 @@ void VMp3SampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	//	Copy data.
 	Sfx.DataSize = Data.Num() * 2;
 	Sfx.Data = Z_Malloc(Data.Num() * 2);
-	memcpy(Sfx.Data, &Data[0], Data.Num() * 2);
+	memcpy(Sfx.Data, Data.Ptr(), Data.Num() * 2);
 
 	delete Codec;
 	unguard;

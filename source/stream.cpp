@@ -416,7 +416,7 @@ void VMemoryStream::Serialise(void* Data, int Len)
 	else
 	{
 		if (Pos + Len > Array.Num())
-			Array.SetNum(Pos + Len);
+			Array.SetNumWithReserve(Pos + Len);
 		memcpy(&Array[Pos], Data, Len);
 		Pos += Len;
 	}
