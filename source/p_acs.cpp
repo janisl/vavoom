@@ -5176,9 +5176,7 @@ COMMAND(Puke)
 	guard(COMMAND Puke);
 	if (Source == SRC_Command)
 	{
-#ifdef CLIENT
 		ForwardToServer();
-#endif
 		return;
 	}
 

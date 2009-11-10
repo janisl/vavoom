@@ -56,28 +56,27 @@
 //
 //==========================================================================
 
-static bool CheatAllowed()
+static bool CheatAllowed(VBasePlayer* Player)
 {
-	if (GGameInfo->NetMode == NM_None || GGameInfo->NetMode == NM_Client ||
-		sv.intermission || !GGameInfo->Players[0])
+	if (sv.intermission)
 	{
-		GCon->Log("You are not in game!");
+		Player->Printf("You are not in game!");
 		return false;
 	}
 	if (GGameInfo->NetMode >= NM_DedicatedServer)
 	{
-		GCon->Log("You cannot cheat in a network game!");
+		Player->Printf("You cannot cheat in a network game!");
 		return false;
 	}
 	if (GGameInfo->WorldInfo->Flags & VWorldInfo::WIF_SkillDisableCheats)
 	{
-		GCon->Log("You are too good to cheat!");
+		Player->Printf("You are too good to cheat!");
 		return false;
 	}
-	if (GGameInfo->Players[0]->Health <= 0)
+	if (Player->Health <= 0)
 	{
 		// Dead players can't cheat
-		GCon->Log("You must be alive to cheat");
+		Player->Printf("You must be alive to cheat");
 		return false;
 	}
 	return true;
@@ -93,10 +92,16 @@ static bool CheatAllowed()
 
 COMMAND(God)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_God();
-    }
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_God();
+	}
 }
 
 //==========================================================================
@@ -107,10 +112,16 @@ COMMAND(God)
 
 COMMAND(NoClip)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_NoClip();
-    }
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_NoClip();
+	}
 }
 
 //==========================================================================
@@ -121,10 +132,16 @@ COMMAND(NoClip)
 
 COMMAND(Gimme)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_Gimme();
-    }
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_Gimme();
+	}
 }
 
 //==========================================================================
@@ -135,10 +152,16 @@ COMMAND(Gimme)
 
 COMMAND(KillAll)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_KillAll();
-    }
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_KillAll();
+	}
 }
 
 //==========================================================================
@@ -149,10 +172,16 @@ COMMAND(KillAll)
 
 COMMAND(Morph)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_Morph();
-    }
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_Morph();
+	}
 }
 
 //==========================================================================
@@ -163,10 +192,16 @@ COMMAND(Morph)
 
 COMMAND(NoWeapons)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_NoWeapons();
-    }
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_NoWeapons();
+	}
 }
 
 //==========================================================================
@@ -177,10 +212,16 @@ COMMAND(NoWeapons)
 
 COMMAND(ChangeClass)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_Class();
-    }
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_Class();
+	}
 }
 
 //==========================================================================
@@ -191,11 +232,17 @@ COMMAND(ChangeClass)
 
 COMMAND(Script)
 {
-	if (CheatAllowed())
-    {
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
 		int 	script;
 
-        if (Args.Num() != 2)
+		if (Args.Num() != 2)
 			return;
 		script = atoi(*Args[1]);
 		if (script < 1)
@@ -203,12 +250,12 @@ COMMAND(Script)
 		if (script > 9999)
 			return;
 
-		if (GLevel->Acs->Start(script, 0, 0, 0, 0, GGameInfo->Players[0]->MO,
+		if (Player->Level->XLevel->Acs->Start(script, 0, 0, 0, 0, Player->MO,
 			NULL, 0, false, false))
 		{
 			GCon->Logf("Running script %d", script);
 		}
-    }
+	}
 }
 
 //==========================================================================
@@ -219,12 +266,18 @@ COMMAND(Script)
 
 COMMAND(MyPos)
 {
-	if (CheatAllowed())
-    {
-		GCon->Logf("MAP %s  X:%f  Y:%f  Z:%f  Yaw:%f Pitch:%f",
-			*GLevel->MapName, GGameInfo->Players[0]->MO->Origin.x,
-			GGameInfo->Players[0]->MO->Origin.y, GGameInfo->Players[0]->MO->Origin.z,
-			GGameInfo->Players[0]->MO->Angles.yaw, GGameInfo->Players[0]->MO->Angles.pitch);
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->Printf("MAP %s  X:%f  Y:%f  Z:%f  Yaw:%f Pitch:%f",
+			*GLevel->MapName, Player->MO->Origin.x,
+			Player->MO->Origin.y, Player->MO->Origin.z,
+			Player->MO->Angles.yaw, Player->MO->Angles.pitch);
 	}
 }
 
@@ -236,9 +289,15 @@ COMMAND(MyPos)
 
 COMMAND(Fly)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_Fly();
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_Fly();
 	}
 }
 
@@ -250,8 +309,14 @@ COMMAND(Fly)
 
 COMMAND(NoTarget)
 {
-	if (CheatAllowed())
-    {
-		GGameInfo->Players[0]->eventCheat_NoTarget();
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_NoTarget();
 	}
 }

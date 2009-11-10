@@ -603,9 +603,7 @@ COMMAND(TeleportNewMap)
 	guard(COMMAND TeleportNewMap);
 	if (Source == SRC_Command)
 	{
-#ifdef CLIENT
 		ForwardToServer();
-#endif
 		return;
 	}
 
@@ -1166,9 +1164,7 @@ COMMAND(Pause)
 	guard(COMMAND Pause);
 	if (Source == SRC_Command)
 	{
-#ifdef CLIENT
 		ForwardToServer();
-#endif
 		return;
 	}
 
@@ -1190,9 +1186,7 @@ COMMAND(Stats)
 	guard(COMMAND Stats);
 	if (Source == SRC_Command)
 	{
-#ifdef CLIENT
 		ForwardToServer();
-#endif
 		return;
 	}
 
@@ -1558,9 +1552,7 @@ COMMAND(Say)
 	guard(COMMAND Say);
 	if (Source == SRC_Command)
 	{
-#ifdef CLIENT
 		ForwardToServer();
-#endif
 		return;
 	}
 	if (Args.Num() < 2)

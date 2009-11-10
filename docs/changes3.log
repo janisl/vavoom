@@ -3883,3 +3883,6 @@
   I fixed crash if no main wad file has been found.
 03.06.2009
   I fixed a typo in opening_t structure.
+
+10.09.2009
+  I changed cheat commands to be forwarded to server.

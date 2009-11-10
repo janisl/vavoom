@@ -431,6 +431,7 @@ set(MAIN_OPENGL_WIN32_SOURCES
 set(SERVER_COMMON_SOURCES
 	args.cpp
 	bitstream.cpp
+	cheats.cpp
 	cmd.cpp
 	crc.cpp
 	cvar.cpp
