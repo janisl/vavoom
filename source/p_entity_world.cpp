@@ -1377,7 +1377,7 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 		{
 			// see if the line was crossed
 			ld = tmtrace.SpecHit[tmtrace.SpecHit.Num() - 1];
-			tmtrace.SpecHit.SetNum(tmtrace.SpecHit.Num() - 1);
+			tmtrace.SpecHit.SetNum(tmtrace.SpecHit.Num() - 1, false);
 			side = ld->PointOnSide(Origin);
 			oldside = ld->PointOnSide(oldorg);
 			if (side != oldside)
