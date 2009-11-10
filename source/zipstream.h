@@ -50,4 +50,23 @@ public:
 	bool Close();
 };
 
+class VZipStreamWriter : public VStream
+{
+private:
+	enum { BUFFER_SIZE = 16384 };
+
+	VStream*		DstStream;
+	Bytef			Buffer[BUFFER_SIZE];
+	z_stream		ZStream;
+	bool			Initialised;
+
+public:
+	VZipStreamWriter(VStream*);
+	~VZipStreamWriter();
+	void Serialise(void*, int);
+	void Seek(int);
+	void Flush();
+	bool Close();
+};
+
 #endif
