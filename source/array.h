@@ -139,6 +139,15 @@ public:
 		}
 		ArrNum = NewNum;
 	}
+	void SetNumWithReserve(int NewNum)
+	{
+		check(NewNum >= 0);
+		if (NewNum > ArrSize)
+		{
+			Resize(NewNum + NewNum * 3 / 8 + 32);
+		}
+		ArrNum = NewNum;
+	}
 	void Condense()
 	{
 		Resize(ArrNum);
