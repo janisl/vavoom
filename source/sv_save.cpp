@@ -288,9 +288,6 @@ public:
 	}
 };
 
-static VSaveWriterStream*	Saver;
-static VSaveLoaderStream*	Loader;
-
 //==========================================================================
 //
 //	SV_GetSavesDir
@@ -413,10 +410,10 @@ static void CopySaveSlot(int sourceSlot, int destSlot)
 //
 //==========================================================================
 
-static void AssertSegment(gameArchiveSegment_t segType)
+static void AssertSegment(VStream& Strm, gameArchiveSegment_t segType)
 {
 	guard(AssertSegment);
-	if (Streamer<int>(*Loader) != (int)segType)
+	if (Streamer<int>(Strm) != (int)segType)
 	{
 		Host_Error("Corrupt save game: Segment [%d] failed alignment check",
 			segType);
@@ -430,20 +427,20 @@ static void AssertSegment(gameArchiveSegment_t segType)
 //
 //==========================================================================
 
-static void ArchiveNames(VStream &Strm)
+static void ArchiveNames(VSaveWriterStream* Saver)
 {
 	//	Write offset to the names in the beginning of the file.
-	vint32 NamesOffset = Strm.Tell();
-	Strm.Seek(0);
-	Strm << NamesOffset;
-	Strm.Seek(NamesOffset);
+	vint32 NamesOffset = Saver->Tell();
+	Saver->Seek(0);
+	*Saver << NamesOffset;
+	Saver->Seek(NamesOffset);
 
 	//	Serialise names.
 	vint32 Count = Saver->Names.Num();
-	Strm << STRM_INDEX(Count);
+	*Saver << STRM_INDEX(Count);
 	for (int i = 0; i < Count; i++)
 	{
-		Strm << *VName::GetEntry(Saver->Names[i].GetIndex());
+		*Saver << *VName::GetEntry(Saver->Names[i].GetIndex());
 	}
 }
 
@@ -453,23 +450,23 @@ static void ArchiveNames(VStream &Strm)
 //
 //==========================================================================
 
-static void UnarchiveNames(VStream &Strm)
+static void UnarchiveNames(VSaveLoaderStream* Loader)
 {
 	vint32 NamesOffset;
 	*Loader << NamesOffset;
 
-	vint32 TmpOffset = Strm.Tell();
-	Strm.Seek(NamesOffset);
+	vint32 TmpOffset = Loader->Tell();
+	Loader->Seek(NamesOffset);
 	vint32 Count;
-	Strm << STRM_INDEX(Count);
+	*Loader << STRM_INDEX(Count);
 	Loader->NameRemap.SetNum(Count);
 	for (int i = 0; i < Count; i++)
 	{
 		VNameEntry E;
-		Strm << E;
+		*Loader << E;
 		Loader->NameRemap[i] = VName(E.Name);
 	}
-	Strm.Seek(TmpOffset);
+	Loader->Seek(TmpOffset);
 }
 
 //==========================================================================
@@ -478,7 +475,7 @@ static void UnarchiveNames(VStream &Strm)
 //
 //==========================================================================
 
-static void ArchiveThinkers()
+static void ArchiveThinkers(VSaveWriterStream* Saver)
 {
 	guard(ArchiveThinkers);
 	vint32 Seg = ASEG_WORLD;
@@ -554,12 +551,12 @@ static void ArchiveThinkers()
 //
 //==========================================================================
 
-static void UnarchiveThinkers()
+static void UnarchiveThinkers(VSaveLoaderStream* Loader)
 {
 	guard(UnarchiveThinkers);
 	VObject*			Obj;
 
-	AssertSegment(ASEG_WORLD);
+	AssertSegment(*Loader, ASEG_WORLD);
 
 	//	Add level.
 	Loader->Exports.Append(GLevel);
@@ -631,15 +628,15 @@ static void UnarchiveThinkers()
 //
 //==========================================================================
 
-static void ArchiveSounds()
+static void ArchiveSounds(VStream& Strm)
 {
 	vint32 Seg = ASEG_SOUNDS;
-	*Saver << Seg;
+	Strm << Seg;
 #ifdef CLIENT
-	GAudio->SerialiseSounds(*Saver);
+	GAudio->SerialiseSounds(Strm);
 #else
 	vint32 Dummy = 0;
-	*Saver << Dummy;
+	Strm << Dummy;
 #endif
 }
 
@@ -649,15 +646,15 @@ static void ArchiveSounds()
 //
 //==========================================================================
 
-static void UnarchiveSounds()
+static void UnarchiveSounds(VStream& Strm)
 {
-	AssertSegment(ASEG_SOUNDS);
+	AssertSegment(Strm, ASEG_SOUNDS);
 #ifdef CLIENT
-	GAudio->SerialiseSounds(*Loader);
+	GAudio->SerialiseSounds(Strm);
 #else
 	vint32 Dummy = 0;
-	*Loader << Dummy;
-	Loader->Seek(Loader->Tell() + Dummy * 36);
+	Strm << Dummy;
+	Strm.Seek(Strm.Tell() + Dummy * 36);
 #endif
 }
 
@@ -676,8 +673,8 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	SavingPlayers = savePlayers;
 
 	// Open the output file
-	Saver = new VSaveWriterStream(FL_OpenFileWrite(*SAVE_MAP_NAME(slot,
-		*GLevel->MapName)));
+	VSaveWriterStream* Saver = new VSaveWriterStream(FL_OpenFileWrite(
+		*SAVE_MAP_NAME(slot, *GLevel->MapName)));
 
 	int NamesOffset = 0;
 	*Saver << NamesOffset;
@@ -690,14 +687,14 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	*Saver << GLevel->Time
 		<< GLevel->TicTime;
 
-	ArchiveThinkers();
-	ArchiveSounds();
+	ArchiveThinkers(Saver);
+	ArchiveSounds(*Saver);
 
 	// Place a termination marker
 	Seg = ASEG_END;
 	*Saver << Seg;
 
-	ArchiveNames(*Saver);
+	ArchiveNames(Saver);
 
 	// Close the output file
 	Saver->Close();
@@ -718,22 +715,22 @@ static void SV_LoadMap(VName MapName, int slot)
 	SV_SpawnServer(*MapName, false, false);
 
 	// Load the file
-	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_MAP_NAME(slot,
-		*MapName)));
+	VSaveLoaderStream* Loader = new VSaveLoaderStream(FL_OpenFileRead(
+		SAVE_MAP_NAME(slot, *MapName)));
 
 	// Load names
-	UnarchiveNames(*Loader);
+	UnarchiveNames(Loader);
 
-	AssertSegment(ASEG_MAP_HEADER);
+	AssertSegment(*Loader, ASEG_MAP_HEADER);
 
 	// Read the level timer
 	*Loader << GLevel->Time
 		<< GLevel->TicTime;
 
-	UnarchiveThinkers();
-	UnarchiveSounds();
+	UnarchiveThinkers(Loader);
+	UnarchiveSounds(*Loader);
 
-	AssertSegment(ASEG_END);
+	AssertSegment(*Loader, ASEG_END);
 
 	// Free save buffer
 	Loader->Close();
@@ -756,7 +753,8 @@ void SV_SaveGame(int slot, const char* description)
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
 
 	// Open the output file
-	Saver = new VSaveWriterStream(FL_OpenFileWrite(*SAVE_NAME(BASE_SLOT)));
+	VSaveWriterStream* Saver = new VSaveWriterStream(
+		FL_OpenFileWrite(*SAVE_NAME(BASE_SLOT)));
 
 	int NamesOffset = 0;
 	*Saver << NamesOffset;
@@ -784,7 +782,7 @@ void SV_SaveGame(int slot, const char* description)
 	*Saver << Seg;
 
 	// Write names
-	ArchiveNames(*Saver);
+	ArchiveNames(Saver);
 
 	// Close the output file
 	Saver->Close();
@@ -825,10 +823,11 @@ void SV_LoadGame(int slot)
 	}
 
 	// Load the file
-	Loader = new VSaveLoaderStream(FL_OpenFileRead(SAVE_NAME(BASE_SLOT)));
+	VSaveLoaderStream*Loader = new VSaveLoaderStream(FL_OpenFileRead(
+		SAVE_NAME(BASE_SLOT)));
 
 	// Load names
-	UnarchiveNames(*Loader);
+	UnarchiveNames(Loader);
 
 	// Set the save pointer and skip the description field
 	char desc[SAVE_DESCRIPTION_LENGTH];
@@ -846,11 +845,11 @@ void SV_LoadGame(int slot)
 		return;
 	}
 
-	AssertSegment(ASEG_GAME_HEADER);
+	AssertSegment(*Loader, ASEG_GAME_HEADER);
 
 	*Loader << mapname;
 
-	AssertSegment(ASEG_END);
+	AssertSegment(*Loader, ASEG_END);
 
 	Loader->Close();
 	delete Loader;
