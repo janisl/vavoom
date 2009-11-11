@@ -36,7 +36,6 @@ void SV_MapTeleport(VName mapname);
 void SV_LoadGame(int slot);
 void SV_InitBaseSlot();
 void SV_UpdateRebornSlot();
-void SV_ClearRebornSlot();
 bool SV_RebornSlotAvailable();
 int SV_GetRebornSlot();
 bool SV_GetSaveString(int slot, VStr* buf);

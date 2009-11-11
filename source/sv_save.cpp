@@ -36,20 +36,14 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAX_TARGET_PLAYERS 512
-#define MAX_MAPS	99
-#define REBORN_SLOT	9
+#define REBORN_SLOT				9
 
 #define EMPTYSTRING				"empty slot"
 #define MOBJ_NULL 				-1
 #define SAVE_NAME(_slot) \
-	(VStr("saves/savegame.vs") + _slot)
-#define SAVE_MAP_NAME(_slot, _map) \
-	(VStr("saves/") + _map + ".vs" + _slot)
+	(VStr("saves/save") + _slot + ".vsg")
 #define SAVE_NAME_ABS(_slot) \
-	(SV_GetSavesDir() + "/savegame.vs" + _slot)
-#define SAVE_MAP_NAME_ABS(_slot, _map) \
-	(SV_GetSavesDir() + "/" + _map + ".vs" + _slot)
+	(SV_GetSavesDir() + "/save" + _slot + ".vsg")
 
 #define SAVE_DESCRIPTION_LENGTH		24
 #define SAVE_VERSION_TEXT			"Version 1.30"
@@ -350,38 +344,31 @@ void VSaveSlot::LoadSlot(int Slot)
 {
 	guard(VSaveSlot::LoadSlot);
 	Clear();
-	char slotExt[4];
-	VStr curName;
-
-	sprintf(slotExt, "vs%d", Slot);
-	if (!Sys_OpenDir(SV_GetSavesDir()))
+	VStream* Strm = FL_OpenFileRead(SAVE_NAME(Slot));
+	if (!Strm)
 	{
-		//  Directory doesn't exist ... yet
 		return;
 	}
-	while ((curName = Sys_ReadDir()))
-	{
-		VStr ext = curName.ExtractFileExtension();
-		if (ext == slotExt && curName != VStr("savegame.") + VStr(slotExt))
-		{
-			VSavedMap* Map = new VSavedMap();
-			Map->Name = *curName.ExtractFileBase();
-			VStream* Strm = FL_OpenFileRead(SAVE_MAP_NAME(Slot, *Map->Name));
-			Map->Data.SetNum(Strm->TotalSize());
-			Strm->Serialise(Map->Data.Ptr(), Map->Data.Num());
-			delete Strm;
-			Maps.Append(Map);
-		}
-	}
-	Sys_CloseDir();
 
-	VStream* Strm = FL_OpenFileRead(SAVE_NAME(Slot));
-	if (Strm)
+	vint32 DataLen;
+	*Strm << STRM_INDEX(DataLen);
+	GeneralData.SetNum(DataLen);
+	Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
+
+	int NumMaps;
+	*Strm << STRM_INDEX(NumMaps);
+	for (int i = 0; i < NumMaps; i++)
 	{
-		GeneralData.SetNum(Strm->TotalSize());
-		Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
-		delete Strm;
+		VStr TmpName;
+		*Strm << TmpName << STRM_INDEX(DataLen);
+		VSavedMap* Map = new VSavedMap();
+		Maps.Append(Map);
+		Map->Name = *TmpName;
+		Map->Data.SetNum(DataLen);
+		Strm->Serialise(Map->Data.Ptr(), Map->Data.Num());
 	}
+
+	delete Strm;
 	unguard;
 }
 
@@ -394,16 +381,22 @@ void VSaveSlot::LoadSlot(int Slot)
 void VSaveSlot::SaveToSlot(int Slot)
 {
 	guard(VSaveSlot::SaveToSlot);
+	VStream* Strm = FL_OpenFileWrite(*SAVE_NAME(Slot));
+
+	vint32 DataLen = GeneralData.Num();
+	*Strm << STRM_INDEX(DataLen);
+	Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
+
+	int NumMaps = Maps.Num();
+	*Strm << STRM_INDEX(NumMaps);
 	for (int i = 0; i < Maps.Num(); i++)
 	{
-		VStream* Strm = FL_OpenFileWrite(SAVE_MAP_NAME(Slot, *Maps[i]->Name));
+		VStr TmpName(Maps[i]->Name);
+		vint32 DataLen = Maps[i]->Data.Num();
+		*Strm << TmpName << STRM_INDEX(DataLen);
 		Strm->Serialise(Maps[i]->Data.Ptr(), Maps[i]->Data.Num());
-		Strm->Close();
-		delete Strm;
 	}
 
-	VStream* Strm = FL_OpenFileWrite(*SAVE_NAME(Slot));
-	Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
 	Strm->Close();
 	delete Strm;
 	unguard;
@@ -444,7 +437,7 @@ bool SV_GetSaveString(int slot, VStr* buf)
 	f = fopen(*SAVE_NAME_ABS(slot), "rb");
 	if (f)
 	{
-		fseek(f, 4, SEEK_SET);
+		fseek(f, 5, SEEK_SET);
 		fread(Desc, 1, SAVE_DESCRIPTION_LENGTH, f);
 		Desc[SAVE_DESCRIPTION_LENGTH] = 0;
 		*buf = Desc;
@@ -456,78 +449,6 @@ bool SV_GetSaveString(int slot, VStr* buf)
 		*buf = EMPTYSTRING;
 		return false;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	ClearSaveSlot
-//
-//	Deletes all save game files associated with a slot number.
-//
-//==========================================================================
-
-static void ClearSaveSlot(int slot)
-{
-	guard(ClearSaveSlot);
-	char slotExt[4];
-	VStr curName;
-
-	sprintf(slotExt, "vs%d", slot);
-	if (!Sys_OpenDir(SV_GetSavesDir()))
-	{
-		//  Directory doesn't exist ... yet
-		return;
-	}
-	while ((curName = Sys_ReadDir()))
-	{
-		VStr ext = curName.ExtractFileExtension();
-		if (ext == slotExt)
-		{
-			remove(*(SV_GetSavesDir() + "/" + curName));
-		}
-	}
-	Sys_CloseDir();
-	unguard;
-}
-
-//==========================================================================
-//
-// CopySaveSlot
-//
-// Copies all the save game files from one slot to another.
-//
-//==========================================================================
-
-static void CopySaveSlot(int sourceSlot, int destSlot)
-{
-	guard(CopySaveSlot);
-	VStr curName;
-
-	VStr srcExt = VStr("vs") + sourceSlot;
-	VStr dstExt = VStr("vs") + destSlot;
-	if (!Sys_OpenDir(SV_GetSavesDir()))
-	{
-		//  Directory doesn't exist ... yet
-		return;
-	}
-	while ((curName = Sys_ReadDir()))
-	{
-		VStr ext = VStr(curName).ExtractFileExtension();
-		if (ext == srcExt)
-		{
-			VStr sourceName = SV_GetSavesDir() + "/" + curName;
-			VStr destName = sourceName.StripExtension() + "." + dstExt;
-
-			int length;
-			byte *buffer;
-
-			length = M_ReadFile(*sourceName, &buffer);
-			M_WriteFile(*destName, buffer, length);
-			Z_Free(buffer);
-		}
-	}
-	Sys_CloseDir();
 	unguard;
 }
 
@@ -932,10 +853,7 @@ void SV_SaveGame(int slot, const char* description)
 	// Save out the current map
 	SV_SaveMap(true); // true = save player info
 
-	// Clear all save files at destination slot
-	ClearSaveSlot(slot);
-
-	// Copy base slot to destination slot
+	// Write data to destination slot
 	BaseSlot.SaveToSlot(slot);
 	unguard;
 }
@@ -1046,19 +964,7 @@ bool SV_RebornSlotAvailable()
 
 void SV_UpdateRebornSlot()
 {
-	ClearSaveSlot(REBORN_SLOT);
 	BaseSlot.SaveToSlot(REBORN_SLOT);
-}
-
-//==========================================================================
-//
-// SV_ClearRebornSlot
-//
-//==========================================================================
-
-void SV_ClearRebornSlot()
-{
-	ClearSaveSlot(REBORN_SLOT);
 }
 
 //==========================================================================

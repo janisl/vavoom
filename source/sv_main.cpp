@@ -1362,7 +1362,6 @@ COMMAND(Map)
 
 	SV_ShutdownGame();
 
-	SV_ClearRebornSlot();
 	// Default the player start spot group to 0
 	RebornPosition = 0;
 	GGameInfo->RebornPosition = RebornPosition;
