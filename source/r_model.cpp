@@ -893,15 +893,22 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		{
 			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
 		}
+
+		float smooth_inter;
+		if (Interpolate)
+		{
+			smooth_inter = SMOOTHSTEP(Inter);
+		}
+
 		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
 		// scales z.
 		TVec Scale;
 		if (Interpolate)
 		{
 			// Interpolate Scale
-			Scale.x = (F.Scale.x + Inter * (NF.Scale.x - F.Scale.x) * ScaleX);
-			Scale.y = (F.Scale.y + Inter * (NF.Scale.y - F.Scale.y) * ScaleX);
-			Scale.z = (F.Scale.z + Inter * (NF.Scale.z - F.Scale.z) * ScaleY);
+			Scale.x = (F.Scale.x + smooth_inter * (NF.Scale.x - F.Scale.x) * ScaleX);
+			Scale.y = (F.Scale.y + smooth_inter * (NF.Scale.y - F.Scale.y) * ScaleX);
+			Scale.z = (F.Scale.z + smooth_inter * (NF.Scale.z - F.Scale.z) * ScaleY);
 		}
 		else
 		{
@@ -914,9 +921,9 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Interpolate)
 		{
 			// Interpolate Offsets too
-			Offset.x = ((1 - Inter) * F.Offset.x + (Inter) * NF.Offset.x);
-			Offset.y = ((1 - Inter) * F.Offset.y + (Inter) * NF.Offset.y);
-			Offset.z = ((1 - Inter) * F.Offset.z + (Inter) * NF.Offset.z);
+			Offset.x = ((1 - smooth_inter) * F.Offset.x + (smooth_inter) * NF.Offset.x);
+			Offset.y = ((1 - smooth_inter) * F.Offset.y + (smooth_inter) * NF.Offset.y);
+			Offset.z = ((1 - smooth_inter) * F.Offset.z + (smooth_inter) * NF.Offset.z);
 		}
 		else
 		{

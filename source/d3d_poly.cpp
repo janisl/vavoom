@@ -181,9 +181,12 @@ void VDirect3DDrawer::WorldDrawing()
 	vuint32			light;
 
 	//	First draw horizons.
-	for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+	if (HorizonPortalsHead)
 	{
-		DoHorizonPolygon(surf);
+		for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		{
+			DoHorizonPolygon(surf);
+		}
 	}
 
 	//	For sky areas we just write to the depth buffer to prevent drawing
@@ -205,34 +208,37 @@ void VDirect3DDrawer::WorldDrawing()
 	}
 
 	//	Draw surfaces.
-	for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	if (SimpleSurfsHead)
 	{
-		texinfo_t *tex = surf->texinfo;
-		if (surf->lightmap != NULL ||
-			surf->dlightframe == r_dlightframecount)
+		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
-			light = 0xffffffff;
-		}
-		else
-		{
-			int lev = surf->Light >> 24;
-			int lR = ((surf->Light >> 16) & 255) * lev / 255;
-			int lG = ((surf->Light >> 8) & 255) * lev / 255;
-			int lB = (surf->Light & 255) * lev / 255;
-			light = 0xff000000 | (lR << 16) | (lG << 8) | lB;
-		}
+			texinfo_t *tex = surf->texinfo;
+			SetTexture(tex->Tex, tex->ColourMap);
 
-		SetTexture(tex->Tex, tex->ColourMap);
-		SetFade(surf->Fade);
+			if (surf->lightmap != NULL ||
+				surf->dlightframe == r_dlightframecount)
+			{
+				light = 0xffffffff;
+			}
+			else
+			{
+				int lev = surf->Light >> 24;
+				int lR = ((surf->Light >> 16) & 255) * lev / 255;
+				int lG = ((surf->Light >> 8) & 255) * lev / 255;
+				int lB = (surf->Light & 255) * lev / 255;
+				light = 0xff000000 | (lR << 16) | (lG << 8) | lB;
+			}
+			SetFade(surf->Fade);
 
-		for (i = 0; i < surf->count; i++)
-		{
-			out[i] = MyD3DVertex(surf->verts[i], light,
-				(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
-				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+			for (i = 0; i < surf->count; i++)
+			{
+				out[i] = MyD3DVertex(surf->verts[i], light,
+					(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+			}
+
+			RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
 		}
-
-		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
 	}
 
 	if (maxMultiTex >= 2)
@@ -767,13 +773,9 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	light &= 0x00ffffff;
 	alpha = int(Alpha * 255) << 24;
 
-	float smooth_inter;
-	smooth_inter = SMOOTHSTEP(Inter);
-
 	//
 	// draw all the triangles
 	//
-
 	pframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	pnextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
@@ -798,6 +800,12 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matTmp(3, 1) = Offset.y * Scale.y;
 	matTmp(3, 2) = Offset.z * Scale.z;
 	matWorld = matTmp * matWorld;
+
+	float smooth_inter;
+	if (Interpolate)
+	{
+		smooth_inter = SMOOTHSTEP(Inter);
+	}
 
 	TVec scale;
 	TVec scale_origin;
@@ -833,6 +841,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	SetPic(Skin, Trans, CMap);
 
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	RenderDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	if (Additive)
@@ -840,13 +849,15 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	}
 	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 0);
-	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 
 	SetFade(Fade);
 
 	verts = (trivertx_t *)(pframedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
-	verts2 = (trivertx_t *)(pnextframedesc + 1);
+	if (Interpolate)
+	{
+		verts2 = (trivertx_t *)(pnextframedesc + 1);
+	}
 
 	while (*order)
 	{

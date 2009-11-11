@@ -68,14 +68,28 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::CreateSurface(int w, int h, int bpp, bool mi
 		D3DPOOL_MANAGED, &surf, NULL);
 	if (res != D3D_OK)
 	{
-		if (res == D3DERR_INVALIDCALL)
-			GCon->Log("Invalid call");
-		else if (res == D3DERR_OUTOFVIDEOMEMORY)
-			GCon->Log("Out of vid mem");
-		else if (res == E_OUTOFMEMORY)
-			GCon->Log("Out of mem");
-		else
-			GCon->Logf("Unknown error %d", res);
+		switch(res)
+		{
+			case D3DERR_INVALIDCALL:
+			{
+				GCon->Log("Invalid call");
+				break;
+			}
+			case D3DERR_OUTOFVIDEOMEMORY:
+			{
+				GCon->Log("Out of vid mem");
+				break;
+			}
+			case E_OUTOFMEMORY:
+			{
+				GCon->Log("Out of mem");
+				break;
+			}
+			default:
+			{
+				GCon->Logf("Unknown error %d", res);
+			}
+		}
 		Sys_Error("Create texture failed\n");
 	}
 	return surf;

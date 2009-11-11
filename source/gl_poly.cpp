@@ -156,9 +156,12 @@ void VOpenGLDrawer::WorldDrawing()
 	texinfo_t	*tex;
 
 	//	First draw horizons.
-	for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+	if (HorizonPortalsHead)
 	{
-		DoHorizonPolygon(surf);
+		for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		{
+			DoHorizonPolygon(surf);
+		}
 	}
 
 	//	For sky areas we just write to the depth buffer to prevent drawing
@@ -181,33 +184,36 @@ void VOpenGLDrawer::WorldDrawing()
 	}
 
 	//	Draw surfaces.
-	for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	if (SimpleSurfsHead)
 	{
-		texinfo_t* tex = surf->texinfo;
-		SetTexture(tex->Tex, tex->ColourMap);
+		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		{
+			texinfo_t* tex = surf->texinfo;
+			SetTexture(tex->Tex, tex->ColourMap);
 
-		if (surf->lightmap != NULL ||
-			surf->dlightframe == r_dlightframecount)
-		{
-			glColor4f(1, 1, 1, 1);
-		}
-		else
-		{
-			float lev = float(surf->Light >> 24) / 255.0;
-			glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
-				((surf->Light >> 8) & 255) * lev / 255.0,
-				(surf->Light & 255) * lev / 255.0, 1.0);
-		}
-		SetFade(surf->Fade);
+			if (surf->lightmap != NULL ||
+				surf->dlightframe == r_dlightframecount)
+			{
+				glColor4f(1, 1, 1, 1);
+			}
+			else
+			{
+				float lev = float(surf->Light >> 24) / 255.0;
+				glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
+					((surf->Light >> 8) & 255) * lev / 255.0,
+					(surf->Light & 255) * lev / 255.0, 1.0);
+			}
+			SetFade(surf->Fade);
 
-		glBegin(GL_POLYGON);
-		for (i = 0; i < surf->count; i++)
-		{
-			glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
-				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
-			glVertex(surf->verts[i]);
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
 		}
-		glEnd();
 	}
 
 	if (mtexable)
@@ -746,7 +752,6 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 	// draw all the triangles
 	//
-
 	glPushMatrix();
 	glTranslatef(origin.x, origin.y, origin.z);
 
@@ -759,7 +764,6 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
-
 
 	// Interpolate Scales
 	TVec scale_origin;
@@ -794,6 +798,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	SetPic(Skin, Trans, CMap);
 
+	glEnable(GL_ALPHA_TEST);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_BLEND);
 	if (Additive)
@@ -801,7 +806,6 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	}
 	glAlphaFunc(GL_GREATER, 0.0);
-	glEnable(GL_ALPHA_TEST);
 
 	verts = (trivertx_t *)(framedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);

@@ -257,29 +257,35 @@ void VOpenGLDrawer::StartUpdate()
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
-	if (tex_linear == 3)
+	switch (tex_linear)
 	{
-		maxfilter = GL_LINEAR;
-		minfilter = GL_LINEAR;
-		mipfilter = GL_LINEAR_MIPMAP_LINEAR;
-	}
-	else if (tex_linear == 2)
-	{
-		maxfilter = GL_LINEAR;
-		minfilter = GL_LINEAR;
-		mipfilter = GL_LINEAR_MIPMAP_NEAREST;
-	}
-	else if (tex_linear)
-	{
-		maxfilter = GL_LINEAR;
-		minfilter = GL_LINEAR;
-		mipfilter = GL_LINEAR;
-	}
-	else
-	{
-		maxfilter = GL_NEAREST;
-		minfilter = GL_NEAREST;
-		mipfilter = GL_NEAREST;
+		case 1:
+		{
+			maxfilter = GL_LINEAR;
+			minfilter = GL_LINEAR;
+			mipfilter = GL_LINEAR;
+			break;
+		}
+		case 2:
+		{
+			maxfilter = GL_LINEAR;
+			minfilter = GL_LINEAR;
+			mipfilter = GL_LINEAR_MIPMAP_NEAREST;
+			break;
+		}
+		case 3:
+		{
+			maxfilter = GL_LINEAR;
+			minfilter = GL_LINEAR;
+			mipfilter = GL_LINEAR_MIPMAP_LINEAR;
+			break;
+		}
+		default:
+		{
+			maxfilter = GL_NEAREST;
+			minfilter = GL_NEAREST;
+			mipfilter = GL_NEAREST;
+		}
 	}
 
 	if (usegamma != lastgamma)
@@ -522,6 +528,7 @@ void VOpenGLDrawer::SetFade(vuint32 NewFade)
 	{
 		return;
 	}
+
 	if (NewFade)
 	{
 		static GLenum fogMode[4] = { GL_LINEAR, GL_LINEAR, GL_EXP, GL_EXP2 };

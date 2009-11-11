@@ -204,17 +204,23 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	RenderDevice->GetDeviceCaps(&DeviceCaps);
 //	VCvar::Set("r_sort_sprites", int((DeviceCaps.DevCaps & D3DDEVCAPS_SORTINCREASINGZ) != 0));
 	square_textures = (DeviceCaps.TextureCaps & D3DPTEXTURECAPS_SQUAREONLY) != 0;
-	maxTexSize = MAX(DeviceCaps.MaxTextureWidth, DeviceCaps.MaxTextureHeight);
 	if (square_textures)
 	{
 		//	Limit texture size when square textures are required
 		maxTexSize = 256;
 	}
-	maxMultiTex = DeviceCaps.MaxSimultaneousTextures;
+	else
+	{
+		maxTexSize = MAX(DeviceCaps.MaxTextureWidth, DeviceCaps.MaxTextureHeight);
+	}
 	if (device == 1)
 	{
-		//	In software actually can be only one texture
+		//	There can actually be only one texture in software
 		maxMultiTex = 1;
+	}
+	else
+	{
+		maxMultiTex = DeviceCaps.MaxSimultaneousTextures;
 	}
 	RenderDevice->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, DeviceCaps.MaxAnisotropy);
 
@@ -285,35 +291,42 @@ void VDirect3DDrawer::StartUpdate()
 	}
 
 	//	Setup texture filtering
-	if (tex_linear == 4)
+	switch (tex_linear)
 	{
-		magfilter = D3DTEXF_ANISOTROPIC;
-		minfilter = D3DTEXF_ANISOTROPIC;
-		mipfilter = D3DTEXF_LINEAR;
-	}
-	else if (tex_linear == 3)
-	{
-		magfilter = D3DTEXF_LINEAR;
-		minfilter = D3DTEXF_LINEAR;
-		mipfilter = D3DTEXF_LINEAR;
-	}
-	else if (tex_linear == 2)
-	{
-		magfilter = D3DTEXF_LINEAR;
-		minfilter = D3DTEXF_LINEAR;
-		mipfilter = D3DTEXF_POINT;
-	}
-	else if (tex_linear)
-	{
-		magfilter = D3DTEXF_LINEAR;
-		minfilter = D3DTEXF_LINEAR;
-		mipfilter = D3DTEXF_NONE;
-	}
-	else
-	{
-		magfilter = D3DTEXF_POINT;
-		minfilter = D3DTEXF_POINT;
-		mipfilter = D3DTEXF_NONE;
+		case 1:
+		{
+			magfilter = D3DTEXF_LINEAR;
+			minfilter = D3DTEXF_LINEAR;
+			mipfilter = D3DTEXF_NONE;
+			break;
+		}
+		case 2:
+		{
+			magfilter = D3DTEXF_LINEAR;
+			minfilter = D3DTEXF_LINEAR;
+			mipfilter = D3DTEXF_POINT;
+			break;
+		}
+		case 3:
+		{
+			magfilter = D3DTEXF_LINEAR;
+			minfilter = D3DTEXF_LINEAR;
+			mipfilter = D3DTEXF_LINEAR;
+			break;
+		}
+		case 4:
+		{
+			magfilter = D3DTEXF_ANISOTROPIC;
+			minfilter = D3DTEXF_ANISOTROPIC;
+			mipfilter = D3DTEXF_LINEAR;
+			break;
+		}
+		default:
+		{
+			magfilter = D3DTEXF_POINT;
+			minfilter = D3DTEXF_POINT;
+			mipfilter = D3DTEXF_NONE;
+		}
 	}
 
 	if (lastgamma != usegamma)
@@ -638,41 +651,48 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	int scr_bbits;
 	int scr_bshift;
 	int scr_pixbytes;
-	if (desc.Format == D3DFMT_X1R5G5B5)
+	switch (desc.Format)
 	{
-		scr_rbits = 5;
-		scr_rshift = 10;
-		scr_gbits = 5;
-		scr_gshift = 5;
-		scr_bbits = 5;
-		scr_bshift = 0;
-		scr_pixbytes = 2;
-	}
-	else if (desc.Format == D3DFMT_R5G6B5)
-	{
-		scr_rbits = 5;
-		scr_rshift = 11;
-		scr_gbits = 6;
-		scr_gshift = 5;
-		scr_bbits = 5;
-		scr_bshift = 0;
-		scr_pixbytes = 2;
-	}
-	else if (desc.Format == D3DFMT_X8R8G8B8 || desc.Format == D3DFMT_A8R8G8B8)
-	{
-		scr_rbits = 8;
-		scr_rshift = 16;
-		scr_gbits = 8;
-		scr_gshift = 8;
-		scr_bbits = 8;
-		scr_bshift = 0;
-		scr_pixbytes = 4;
-	}
-	else
-	{
-		GCon->Log(NAME_Init, "Invalid pixel format");
-		Z_Free(dst);
-		return NULL;
+		case D3DFMT_A8R8G8B8:
+		case D3DFMT_X8R8G8B8:
+		{
+			scr_rbits = 8;
+			scr_rshift = 16;
+			scr_gbits = 8;
+			scr_gshift = 8;
+			scr_bbits = 8;
+			scr_bshift = 0;
+			scr_pixbytes = 4;
+			break;
+		}
+		case D3DFMT_R5G6B5:
+		{
+			scr_rbits = 5;
+			scr_rshift = 11;
+			scr_gbits = 6;
+			scr_gshift = 5;
+			scr_bbits = 5;
+			scr_bshift = 0;
+			scr_pixbytes = 2;
+			break;
+		}
+		case D3DFMT_X1R5G5B5:
+		{
+			scr_rbits = 5;
+			scr_rshift = 10;
+			scr_gbits = 5;
+			scr_gshift = 5;
+			scr_bbits = 5;
+			scr_bshift = 0;
+			scr_pixbytes = 2;
+			break;
+		}
+		default:
+		{
+			GCon->Log(NAME_Init, "Invalid pixel format");
+			Z_Free(dst);
+			return NULL;
+		}
 	}
 
 	D3DLOCKED_RECT lrect;
@@ -727,40 +747,47 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 	int scr_bbits;
 	int scr_bshift;
 	int scr_pixbytes;
-	if (desc.Format == D3DFMT_X1R5G5B5)
+	switch (desc.Format)
 	{
-		scr_rbits = 5;
-		scr_rshift = 10;
-		scr_gbits = 5;
-		scr_gshift = 5;
-		scr_bbits = 5;
-		scr_bshift = 0;
-		scr_pixbytes = 2;
-	}
-	else if (desc.Format == D3DFMT_R5G6B5)
-	{
-		scr_rbits = 5;
-		scr_rshift = 11;
-		scr_gbits = 6;
-		scr_gshift = 5;
-		scr_bbits = 5;
-		scr_bshift = 0;
-		scr_pixbytes = 2;
-	}
-	else if (desc.Format == D3DFMT_X8R8G8B8 || desc.Format == D3DFMT_A8R8G8B8)
-	{
-		scr_rbits = 8;
-		scr_rshift = 16;
-		scr_gbits = 8;
-		scr_gshift = 8;
-		scr_bbits = 8;
-		scr_bshift = 0;
-		scr_pixbytes = 4;
-	}
-	else
-	{
-		GCon->Log(NAME_Init, "Invalid pixel format");
-		return;
+		case D3DFMT_A8R8G8B8:
+		case D3DFMT_X8R8G8B8:
+		{
+			scr_rbits = 8;
+			scr_rshift = 16;
+			scr_gbits = 8;
+			scr_gshift = 8;
+			scr_bbits = 8;
+			scr_bshift = 0;
+			scr_pixbytes = 4;
+			break;
+		}
+		case D3DFMT_R5G6B5:
+		{
+			scr_rbits = 5;
+			scr_rshift = 11;
+			scr_gbits = 6;
+			scr_gshift = 5;
+			scr_bbits = 5;
+			scr_bshift = 0;
+			scr_pixbytes = 2;
+			break;
+		}
+		case D3DFMT_X1R5G5B5:
+		{
+			scr_rbits = 5;
+			scr_rshift = 10;
+			scr_gbits = 5;
+			scr_gshift = 5;
+			scr_bbits = 5;
+			scr_bshift = 0;
+			scr_pixbytes = 2;
+			break;
+		}
+		default:
+		{
+			GCon->Log(NAME_Init, "Invalid pixel format");
+			return;
+		}
 	}
 
 	D3DLOCKED_RECT lrect;
@@ -802,6 +829,7 @@ void VDirect3DDrawer::SetFade(vuint32 NewFade)
 	{
 		return;
 	}
+
 	if (NewFade)
 	{
 		static const D3DFOGMODE fog_mode[4] = {

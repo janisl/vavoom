@@ -752,7 +752,7 @@ void VSoftwareDrawer::GenerateSprite(VTexture* Tex, int slot, vuint32 light,
 void VSoftwareDrawer::GeneratePic(VTexture* Tex, void** pData,
 	VTextureTranslation* Trans, int CMap)
 {
-	guard(GeneratePic);
+	guard(VSoftwareDrawer::GeneratePic);
 	vuint8* Pixels = Tex->GetPixels8();
 	int NumPixels = Tex->GetWidth() * Tex->GetHeight();
 	if (!*pData)
