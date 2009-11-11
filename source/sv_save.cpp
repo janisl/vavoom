@@ -70,8 +70,9 @@ public:
 class VSaveSlot
 {
 public:
+	VStr				Description;
+	VName				CurrentMap;
 	TArray<VSavedMap*>	Maps;
-	TArray<vuint8>		GeneralData;
 
 	~VSaveSlot()
 	{
@@ -326,10 +327,11 @@ static VStr SV_GetSavesDir()
 void VSaveSlot::Clear()
 {
 	guard(VSaveSlot::Clear);
+	Description.Clean();
+	CurrentMap = NAME_None;
 	for (int i = 0; i < Maps.Num(); i++)
 		delete Maps[i];
 	Maps.Clear();
-	GeneralData.Clear();
 	unguard;
 }
 
@@ -362,16 +364,17 @@ bool VSaveSlot::LoadSlot(int Slot)
 		return false;
 	}
 
-	vint32 DataLen;
-	*Strm << STRM_INDEX(DataLen);
-	GeneralData.SetNum(DataLen);
-	Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
+	*Strm << Description;
+
+	VStr TmpName;
+	*Strm << TmpName;
+	CurrentMap = *TmpName;
 
 	int NumMaps;
 	*Strm << STRM_INDEX(NumMaps);
 	for (int i = 0; i < NumMaps; i++)
 	{
-		VStr TmpName;
+		vint32 DataLen;
 		*Strm << TmpName << STRM_INDEX(DataLen);
 		VSavedMap* Map = new VSavedMap();
 		Maps.Append(Map);
@@ -403,9 +406,12 @@ void VSaveSlot::SaveToSlot(int Slot)
 	VStr::Cpy(VersionText, SAVE_VERSION_TEXT);
 	Strm->Serialise(VersionText, SAVE_VERSION_TEXT_LENGTH);
 
-	vint32 DataLen = GeneralData.Num();
-	*Strm << STRM_INDEX(DataLen);
-	Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
+	// Write game save description
+	*Strm << Description;
+
+	// Write current map
+	VStr TmpName(CurrentMap);
+	*Strm << TmpName;
 
 	int NumMaps = Maps.Num();
 	*Strm << STRM_INDEX(NumMaps);
@@ -456,12 +462,7 @@ bool SV_GetSaveString(int Slot, VStr& Desc)
 	{
 		char VersionText[SAVE_VERSION_TEXT_LENGTH];
 		Strm->Serialise(VersionText, SAVE_VERSION_TEXT_LENGTH);
-		vint32 Dummy;
-		*Strm << STRM_INDEX(Dummy);
-		char TmpDesc[SAVE_DESCRIPTION_LENGTH + 1];
-		Strm->Serialise(TmpDesc, SAVE_DESCRIPTION_LENGTH);
-		TmpDesc[SAVE_DESCRIPTION_LENGTH] = 0;
-		Desc = TmpDesc;
+		*Strm << Desc;
 		if (VStr::Cmp(VersionText, SAVE_VERSION_TEXT))
 		{
 			//	Bad version, put an asterisk in front of the description.
@@ -833,27 +834,11 @@ static void SV_LoadMap(VName MapName)
 //
 //==========================================================================
 
-void SV_SaveGame(int slot, const char* description)
+void SV_SaveGame(int slot, const VStr& Description)
 {
 	guard(SV_SaveGame);
-	// Open the output file
-	VMemoryStream* InStrm = new VMemoryStream();
-	VSaveWriterStream* Saver = new VSaveWriterStream(InStrm);
-
-	// Write game save description
-	char desc[SAVE_DESCRIPTION_LENGTH];
-	memset(desc, 0, sizeof(desc));
-	VStr::NCpy(desc, description, SAVE_DESCRIPTION_LENGTH - 1);
-	Saver->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
-
-	// Write current map
-	VStr TmpName(GLevel->MapName);
-	*Saver << TmpName;
-
-	BaseSlot.GeneralData = InStrm->GetArray();
-
-	// Close the output file
-	delete Saver;
+	BaseSlot.Description = Description;
+	BaseSlot.CurrentMap = GLevel->MapName;
 
 	// Save out the current map
 	SV_SaveMap(true); // true = save player info
@@ -879,25 +864,10 @@ void SV_LoadGame(int slot)
 		return;
 	}
 
-	// Load the file
-	VSaveLoaderStream* Loader = new VSaveLoaderStream(
-		new VArrayStream(BaseSlot.GeneralData));
-
-	// Set the save pointer and skip the description field
-	char desc[SAVE_DESCRIPTION_LENGTH];
-	Loader->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
-
-	VStr TmpName;
-	*Loader << TmpName;
-	VName mapname = *TmpName;
-
-	Loader->Close();
-	delete Loader;
-
 	sv_loading = true;
 
 	// Load the current map
-	SV_LoadMap(mapname);
+	SV_LoadMap(BaseSlot.CurrentMap);
 
 #ifdef CLIENT
 	if (GGameInfo->NetMode != NM_DedicatedServer)
@@ -1103,7 +1073,7 @@ COMMAND(Save)
 
 	Draw_SaveIcon();
 
-	SV_SaveGame(atoi(*Args[1]), *Args[2]);
+	SV_SaveGame(atoi(*Args[1]), Args[2]);
 
 	GCon->Log("Game saved");
 	unguard;

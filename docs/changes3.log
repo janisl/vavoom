@@ -3889,4 +3889,5 @@
   I improved performance in cases where array is resized very often.
   I added compression stream for compression data with zlib.
 11.09.2009
-  I implemented saving of the game into a single file.
+  I implemented saving of the game into a single file, description can be of
+ any length.

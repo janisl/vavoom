@@ -31,9 +31,9 @@
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void SV_SaveGame(int slot, const char *description);
-void SV_MapTeleport(VName mapname);
-void SV_LoadGame(int slot);
+void SV_SaveGame(int Slot, const VStr& Description);
+void SV_MapTeleport(VName MapName);
+void SV_LoadGame(int Slot);
 void SV_InitBaseSlot();
 void SV_UpdateRebornSlot();
 bool SV_RebornSlotAvailable();
