@@ -364,7 +364,6 @@ void VSaveSlot::LoadSlot(int Slot)
 		VStr ext = curName.ExtractFileExtension();
 		if (ext == slotExt && curName != VStr("savegame.") + VStr(slotExt))
 		{
-			GCon->Logf("Loading %s", *curName);
 			VSavedMap* Map = new VSavedMap();
 			Map->Name = *curName.ExtractFileBase();
 			VStream* Strm = FL_OpenFileRead(SAVE_MAP_NAME(Slot, *Map->Name));

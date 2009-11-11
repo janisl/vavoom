@@ -1115,6 +1115,8 @@ void SV_ShutdownGame()
 	}
 #endif
 
+	SV_InitBaseSlot();
+
 	GGameInfo->NetMode = NM_None;
 	unguard;
 }
@@ -1360,7 +1362,6 @@ COMMAND(Map)
 
 	SV_ShutdownGame();
 
-	SV_InitBaseSlot();
 	SV_ClearRebornSlot();
 	// Default the player start spot group to 0
 	RebornPosition = 0;
