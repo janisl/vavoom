@@ -670,7 +670,7 @@ IMPLEMENT_FUNCTION(VObject, SV_GetSaveString)
 	P_GET_PTR(VStr, buf);
 	P_GET_INT(i);
 #ifdef SERVER
-	RET_INT(SV_GetSaveString(i, buf));
+	RET_INT(SV_GetSaveString(i, *buf));
 #else
 	RET_INT(0);
 #endif

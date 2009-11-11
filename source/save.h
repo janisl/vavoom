@@ -38,6 +38,6 @@ void SV_InitBaseSlot();
 void SV_UpdateRebornSlot();
 bool SV_RebornSlotAvailable();
 int SV_GetRebornSlot();
-bool SV_GetSaveString(int slot, VStr* buf);
+bool SV_GetSaveString(int Slot, VStr& Desc);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------

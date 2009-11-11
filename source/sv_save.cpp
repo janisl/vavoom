@@ -53,8 +53,7 @@
 
 enum gameArchiveSegment_t
 {
-	ASEG_GAME_HEADER = 101,
-	ASEG_MAP_HEADER,
+	ASEG_MAP_HEADER = 101,
 	ASEG_WORLD,
 	ASEG_SCRIPTS,
 	ASEG_SOUNDS,
@@ -428,25 +427,25 @@ VSavedMap* VSaveSlot::FindMap(VName Name)
 //
 //==========================================================================
 
-bool SV_GetSaveString(int slot, VStr* buf)
+bool SV_GetSaveString(int Slot, VStr& buf)
 {
 	guard(SV_GetSaveString);
-	FILE*		f;
 	char		Desc[SAVE_DESCRIPTION_LENGTH + 1];
 
-	f = fopen(*SAVE_NAME_ABS(slot), "rb");
-	if (f)
+	VStream* Strm = FL_OpenFileRead(SAVE_NAME(Slot));
+	if (Strm)
 	{
-		fseek(f, 5, SEEK_SET);
-		fread(Desc, 1, SAVE_DESCRIPTION_LENGTH, f);
+		vint32 Dummy;
+		*Strm << STRM_INDEX(Dummy);
+		Strm->Serialise(Desc, SAVE_DESCRIPTION_LENGTH);
 		Desc[SAVE_DESCRIPTION_LENGTH] = 0;
-		*buf = Desc;
-		fclose(f);
+		buf = Desc;
+		delete Strm;
 		return true;
 	}
 	else
 	{
-		*buf = EMPTYSTRING;
+		buf = EMPTYSTRING;
 		return false;
 	}
 	unguard;
@@ -816,9 +815,6 @@ void SV_SaveGame(int slot, const char* description)
 	VMemoryStream* InStrm = new VMemoryStream();
 	VSaveWriterStream* Saver = new VSaveWriterStream(InStrm);
 
-	int NamesOffset = 0;
-	*Saver << NamesOffset;
-
 	// Write game save description
 	char desc[SAVE_DESCRIPTION_LENGTH];
 	memset(desc, 0, sizeof(desc));
@@ -830,24 +826,13 @@ void SV_SaveGame(int slot, const char* description)
 	VStr::Cpy(versionText, SAVE_VERSION_TEXT);
 	Saver->Serialise(versionText, SAVE_VERSION_TEXT_LENGTH);
 
-	// Place a header marker
-	vint32 Seg = ASEG_GAME_HEADER;
-	*Saver << Seg;
-
 	// Write current map
-	*Saver << GLevel->MapName;
-
-	// Place a termination marker
-	Seg = ASEG_END;
-	*Saver << Seg;
-
-	// Write names
-	ArchiveNames(Saver);
+	VStr TmpName(GLevel->MapName);
+	*Saver << TmpName;
 
 	BaseSlot.GeneralData = InStrm->GetArray();
 
 	// Close the output file
-	Saver->Close();
 	delete Saver;
 
 	// Save out the current map
@@ -867,8 +852,6 @@ void SV_SaveGame(int slot, const char* description)
 void SV_LoadGame(int slot)
 {
 	guard(SV_LoadGame);
-	VName		mapname;
-
 	SV_ShutdownGame();
 
 	BaseSlot.LoadSlot(slot);
@@ -876,9 +859,6 @@ void SV_LoadGame(int slot)
 	// Load the file
 	VSaveLoaderStream* Loader = new VSaveLoaderStream(
 		new VArrayStream(BaseSlot.GeneralData));
-
-	// Load names
-	UnarchiveNames(Loader);
 
 	// Set the save pointer and skip the description field
 	char desc[SAVE_DESCRIPTION_LENGTH];
@@ -896,11 +876,9 @@ void SV_LoadGame(int slot)
 		return;
 	}
 
-	AssertSegment(*Loader, ASEG_GAME_HEADER);
-
-	*Loader << mapname;
-
-	AssertSegment(*Loader, ASEG_END);
+	VStr TmpName;
+	*Loader << TmpName;
+	VName mapname = *TmpName;
 
 	Loader->Close();
 	delete Loader;
@@ -1141,7 +1119,7 @@ COMMAND(Load)
 
 	int slot = atoi(*Args[1]);
 	VStr desc;
-	if (!SV_GetSaveString(slot, &desc))
+	if (!SV_GetSaveString(slot, desc))
 	{
 		GCon->Log("Empty slot");
 		return;
