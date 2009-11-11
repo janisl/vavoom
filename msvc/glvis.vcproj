@@ -92,7 +92,7 @@
 			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
-			WholeProgramOptimization="0"
+			WholeProgramOptimization="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -141,7 +141,7 @@
 				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				LinkTimeCodeGeneration="0"
+				LinkTimeCodeGeneration="1"
 				RandomizedBaseAddress="1"
 				TargetMachine="1"
 			/>
