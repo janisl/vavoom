@@ -38,7 +38,6 @@
 
 #define MAX_TARGET_PLAYERS 512
 #define MAX_MAPS	99
-#define BASE_SLOT	8
 #define REBORN_SLOT	9
 
 #define EMPTYSTRING				"empty slot"
@@ -893,8 +892,6 @@ void SV_SaveGame(int slot, const char* description)
 	guard(SV_SaveGame);
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
 
-	BaseSlot.LoadSlot(BASE_SLOT);
-
 	// Open the output file
 	VMemoryStream* InStrm = new VMemoryStream();
 	VSaveWriterStream* Saver = new VSaveWriterStream(InStrm);
@@ -936,16 +933,11 @@ void SV_SaveGame(int slot, const char* description)
 	// Save out the current map
 	SV_SaveMap(true); // true = save player info
 
-	BaseSlot.SaveToSlot(BASE_SLOT);
+	// Clear all save files at destination slot
+	ClearSaveSlot(slot);
 
-	if (slot != BASE_SLOT)
-	{
-		// Clear all save files at destination slot
-		ClearSaveSlot(slot);
-
-		// Copy base slot to destination slot
-		CopySaveSlot(BASE_SLOT, slot);
-	}
+	// Copy base slot to destination slot
+	BaseSlot.SaveToSlot(slot);
 	unguard;
 }
 
@@ -962,13 +954,7 @@ void SV_LoadGame(int slot)
 
 	SV_ShutdownGame();
 
-	// Copy all needed save files to the base slot
-	if (slot != BASE_SLOT)
-	{
-		ClearSaveSlot(BASE_SLOT);
-		CopySaveSlot(slot, BASE_SLOT);
-	}
-	BaseSlot.LoadSlot(BASE_SLOT);
+	BaseSlot.LoadSlot(slot);
 
 	// Load the file
 	VSaveLoaderStream* Loader = new VSaveLoaderStream(
@@ -1024,7 +1010,7 @@ void SV_LoadGame(int slot)
 
 void SV_InitBaseSlot()
 {
-	ClearSaveSlot(BASE_SLOT);
+	BaseSlot.Clear();
 }
 
 //==========================================================================
@@ -1062,7 +1048,7 @@ bool SV_RebornSlotAvailable()
 void SV_UpdateRebornSlot()
 {
 	ClearSaveSlot(REBORN_SLOT);
-	CopySaveSlot(BASE_SLOT, REBORN_SLOT);
+	BaseSlot.SaveToSlot(REBORN_SLOT);
 }
 
 //==========================================================================
@@ -1117,7 +1103,6 @@ void SV_MapTeleport(VName mapname)
 		}
 	}
 
-	BaseSlot.LoadSlot(BASE_SLOT);
 	if (!deathmatch)
 	{
 		const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
@@ -1128,18 +1113,16 @@ void SV_MapTeleport(VName mapname)
 		{
 			// Same cluster - save map without saving player mobjs
 			SV_SaveMap(false);
-			BaseSlot.SaveToSlot(BASE_SLOT);
 		}
 		else
 		{
 			// Entering new cluster - clear base slot
-			ClearSaveSlot(BASE_SLOT);
 			BaseSlot.Clear();
 		}
 	}
 
 	sv_map_travel = true;
-	if (!deathmatch && Sys_FileExists(SAVE_MAP_NAME_ABS(BASE_SLOT, *mapname)))
+	if (!deathmatch && BaseSlot.FindMap(mapname))
 	{
 		// Unarchive map
 		SV_LoadMap(mapname);
