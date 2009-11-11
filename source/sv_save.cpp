@@ -32,6 +32,7 @@
 #include "gamedefs.h"
 #include "network.h"
 #include "sv_local.h"
+#include "zipstream.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -40,7 +41,6 @@
 #define BASE_SLOT	8
 #define REBORN_SLOT	9
 
-#define SAVEGAMENAME			"vavm"
 #define EMPTYSTRING				"empty slot"
 #define MOBJ_NULL 				-1
 #define SAVE_NAME(_slot) \
@@ -68,6 +68,29 @@ enum gameArchiveSegment_t
 	ASEG_END
 };
 
+class VSavedMap
+{
+public:
+	TArray<vuint8>		Data;
+	VName				Name;
+};
+
+class VSaveSlot
+{
+public:
+	TArray<VSavedMap*>	Maps;
+	TArray<vuint8>		GeneralData;
+
+	~VSaveSlot()
+	{
+		Clear();
+	}
+	void Clear();
+	void LoadSlot(int Slot);
+	void SaveToSlot(int Slot);
+	VSavedMap* FindMap(VName Name);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -80,7 +103,7 @@ enum gameArchiveSegment_t
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static bool 		SavingPlayers;
+static VSaveSlot		BaseSlot;
 
 // CODE --------------------------------------------------------------------
 
@@ -304,6 +327,112 @@ static VStr SV_GetSavesDir()
 
 //==========================================================================
 //
+//	VSaveSlot::Clear
+//
+//==========================================================================
+
+void VSaveSlot::Clear()
+{
+	guard(VSaveSlot::Clear);
+	for (int i = 0; i < Maps.Num(); i++)
+		delete Maps[i];
+	Maps.Clear();
+	GeneralData.Clear();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSaveSlot::LoadSlot
+//
+//==========================================================================
+
+void VSaveSlot::LoadSlot(int Slot)
+{
+	guard(VSaveSlot::LoadSlot);
+	Clear();
+	char slotExt[4];
+	VStr curName;
+
+	sprintf(slotExt, "vs%d", Slot);
+	if (!Sys_OpenDir(SV_GetSavesDir()))
+	{
+		//  Directory doesn't exist ... yet
+		return;
+	}
+	while ((curName = Sys_ReadDir()))
+	{
+		VStr ext = curName.ExtractFileExtension();
+		if (ext == slotExt && curName != VStr("savegame.") + VStr(slotExt))
+		{
+			GCon->Logf("Loading %s", *curName);
+			VSavedMap* Map = new VSavedMap();
+			Map->Name = *curName.ExtractFileBase();
+			VStream* Strm = FL_OpenFileRead(SAVE_MAP_NAME(Slot, *Map->Name));
+			Map->Data.SetNum(Strm->TotalSize());
+			Strm->Serialise(Map->Data.Ptr(), Map->Data.Num());
+			delete Strm;
+			Maps.Append(Map);
+		}
+	}
+	Sys_CloseDir();
+
+	VStream* Strm = FL_OpenFileRead(SAVE_NAME(Slot));
+	if (Strm)
+	{
+		GeneralData.SetNum(Strm->TotalSize());
+		Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
+		delete Strm;
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSaveSlot::SaveToSlot
+//
+//==========================================================================
+
+void VSaveSlot::SaveToSlot(int Slot)
+{
+	guard(VSaveSlot::SaveToSlot);
+	for (int i = 0; i < Maps.Num(); i++)
+	{
+		VStream* Strm = FL_OpenFileWrite(SAVE_MAP_NAME(Slot, *Maps[i]->Name));
+		Strm->Serialise(Maps[i]->Data.Ptr(), Maps[i]->Data.Num());
+		Strm->Close();
+		delete Strm;
+	}
+
+	VStream* Strm = FL_OpenFileWrite(*SAVE_NAME(Slot));
+	Strm->Serialise(GeneralData.Ptr(), GeneralData.Num());
+	Strm->Close();
+	delete Strm;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VSaveSlot::FindMap
+//
+//==========================================================================
+
+VSavedMap* VSaveSlot::FindMap(VName Name)
+{
+	guard(VSaveSlot::FindMap);
+	for (int i = 0; i < Maps.Num(); i++)
+	{
+		if (Maps[i]->Name == Name)
+		{
+			return Maps[i];
+		}
+	}
+	return NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SV_GetSaveString
 //
 //==========================================================================
@@ -475,7 +604,7 @@ static void UnarchiveNames(VSaveLoaderStream* Loader)
 //
 //==========================================================================
 
-static void ArchiveThinkers(VSaveWriterStream* Saver)
+static void ArchiveThinkers(VSaveWriterStream* Saver, bool SavingPlayers)
 {
 	guard(ArchiveThinkers);
 	vint32 Seg = ASEG_WORLD;
@@ -664,17 +793,15 @@ static void UnarchiveSounds(VStream& Strm)
 //
 //==========================================================================
 
-static void SV_SaveMap(int slot, bool savePlayers)
+static void SV_SaveMap(bool savePlayers)
 {
 	guard(SV_SaveMap);
 	// Make sure we don't have any garbage
 	VObject::CollectGarbage();
 
-	SavingPlayers = savePlayers;
-
 	// Open the output file
-	VSaveWriterStream* Saver = new VSaveWriterStream(FL_OpenFileWrite(
-		*SAVE_MAP_NAME(slot, *GLevel->MapName)));
+	VMemoryStream* InStrm = new VMemoryStream();
+	VSaveWriterStream* Saver = new VSaveWriterStream(InStrm);
 
 	int NamesOffset = 0;
 	*Saver << NamesOffset;
@@ -687,7 +814,7 @@ static void SV_SaveMap(int slot, bool savePlayers)
 	*Saver << GLevel->Time
 		<< GLevel->TicTime;
 
-	ArchiveThinkers(Saver);
+	ArchiveThinkers(Saver, savePlayers);
 	ArchiveSounds(*Saver);
 
 	// Place a termination marker
@@ -698,6 +825,18 @@ static void SV_SaveMap(int slot, bool savePlayers)
 
 	// Close the output file
 	Saver->Close();
+
+	TArray<vuint8>& Buf = InStrm->GetArray();
+
+	VSavedMap* Map = BaseSlot.FindMap(GLevel->MapName);
+	if (!Map)
+	{
+		Map = new VSavedMap();
+		BaseSlot.Maps.Append(Map);
+		Map->Name = GLevel->MapName;
+	}
+	Map->Data = InStrm->GetArray();
+
 	delete Saver;
 	unguard;
 }
@@ -708,15 +847,17 @@ static void SV_SaveMap(int slot, bool savePlayers)
 //
 //==========================================================================
 
-static void SV_LoadMap(VName MapName, int slot)
+static void SV_LoadMap(VName MapName)
 {
 	guard(SV_LoadMap);
 	// Load a base level
 	SV_SpawnServer(*MapName, false, false);
 
 	// Load the file
-	VSaveLoaderStream* Loader = new VSaveLoaderStream(FL_OpenFileRead(
-		SAVE_MAP_NAME(slot, *MapName)));
+	VSavedMap* Map = BaseSlot.FindMap(MapName);
+	check(Map);
+	VSaveLoaderStream* Loader = new VSaveLoaderStream(
+		new VArrayStream(Map->Data));
 
 	// Load names
 	UnarchiveNames(Loader);
@@ -752,9 +893,11 @@ void SV_SaveGame(int slot, const char* description)
 	guard(SV_SaveGame);
 	char versionText[SAVE_VERSION_TEXT_LENGTH];
 
+	BaseSlot.LoadSlot(BASE_SLOT);
+
 	// Open the output file
-	VSaveWriterStream* Saver = new VSaveWriterStream(
-		FL_OpenFileWrite(*SAVE_NAME(BASE_SLOT)));
+	VMemoryStream* InStrm = new VMemoryStream();
+	VSaveWriterStream* Saver = new VSaveWriterStream(InStrm);
 
 	int NamesOffset = 0;
 	*Saver << NamesOffset;
@@ -784,12 +927,16 @@ void SV_SaveGame(int slot, const char* description)
 	// Write names
 	ArchiveNames(Saver);
 
+	BaseSlot.GeneralData = InStrm->GetArray();
+
 	// Close the output file
 	Saver->Close();
 	delete Saver;
 
 	// Save out the current map
-	SV_SaveMap(BASE_SLOT, true); // true = save player info
+	SV_SaveMap(true); // true = save player info
+
+	BaseSlot.SaveToSlot(BASE_SLOT);
 
 	if (slot != BASE_SLOT)
 	{
@@ -821,10 +968,11 @@ void SV_LoadGame(int slot)
 		ClearSaveSlot(BASE_SLOT);
 		CopySaveSlot(slot, BASE_SLOT);
 	}
+	BaseSlot.LoadSlot(BASE_SLOT);
 
 	// Load the file
-	VSaveLoaderStream*Loader = new VSaveLoaderStream(FL_OpenFileRead(
-		SAVE_NAME(BASE_SLOT)));
+	VSaveLoaderStream* Loader = new VSaveLoaderStream(
+		new VArrayStream(BaseSlot.GeneralData));
 
 	// Load names
 	UnarchiveNames(Loader);
@@ -857,7 +1005,7 @@ void SV_LoadGame(int slot)
 	sv_loading = true;
 
 	// Load the current map
-	SV_LoadMap(mapname, BASE_SLOT);
+	SV_LoadMap(mapname);
 
 #ifdef CLIENT
 	if (GGameInfo->NetMode != NM_DedicatedServer)
@@ -969,6 +1117,7 @@ void SV_MapTeleport(VName mapname)
 		}
 	}
 
+	BaseSlot.LoadSlot(BASE_SLOT);
 	if (!deathmatch)
 	{
 		const mapInfo_t& old_info = P_GetMapInfo(GLevel->MapName);
@@ -978,12 +1127,14 @@ void SV_MapTeleport(VName mapname)
 			(P_GetClusterDef(old_info.Cluster)->Flags & CLUSTERF_Hub))
 		{
 			// Same cluster - save map without saving player mobjs
-			SV_SaveMap(BASE_SLOT, false);
+			SV_SaveMap(false);
+			BaseSlot.SaveToSlot(BASE_SLOT);
 		}
 		else
 		{
 			// Entering new cluster - clear base slot
 			ClearSaveSlot(BASE_SLOT);
+			BaseSlot.Clear();
 		}
 	}
 
@@ -991,7 +1142,7 @@ void SV_MapTeleport(VName mapname)
 	if (!deathmatch && Sys_FileExists(SAVE_MAP_NAME_ABS(BASE_SLOT, *mapname)))
 	{
 		// Unarchive map
-		SV_LoadMap(mapname, BASE_SLOT);
+		SV_LoadMap(mapname);
 	}
 	else
 	{

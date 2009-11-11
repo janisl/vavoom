@@ -184,3 +184,36 @@ public:
 		return Array;
 	}
 };
+
+//
+//	VArrayStream
+//
+//	Similar to VMemoryStream, but uses reference to an external array.
+//
+class VArrayStream : public VStream
+{
+protected:
+	TArray<vuint8>&	Array;
+	int				Pos;
+
+public:
+	VArrayStream(TArray<vuint8>&);
+
+	void Serialise(void*, int);
+	void Seek(int);
+	int Tell();
+	int TotalSize();
+
+	void BeginRead()
+	{
+		bLoading = true;
+	}
+	void BeginWrite()
+	{
+		bLoading = false;
+	}
+	TArray<vuint8>& GetArray()
+	{
+		return Array;
+	}
+};
