@@ -350,31 +350,30 @@ void VZipStreamWriter::Serialise(void* V, int Length)
 	ZStream.next_in = (Bytef*)V;
 	ZStream.avail_in = Length;
 
-	while (ZStream.avail_in > 0)
+	do
 	{
-		if (ZStream.avail_out == 0)
+		ZStream.next_out = Buffer;
+		ZStream.avail_out = BUFFER_SIZE;
+
+		int err = deflate(&ZStream, Z_NO_FLUSH);
+		if (err == Z_STREAM_ERROR)
 		{
-			DstStream->Serialise(Buffer, BUFFER_SIZE);
+			bError = true;
+			return;
+		}
+
+		if (ZStream.avail_out != BUFFER_SIZE)
+		{
+			DstStream->Serialise(Buffer, BUFFER_SIZE - ZStream.avail_out);
 			if (DstStream->IsError())
 			{
 				bError = true;
 				return;
 			}
-			ZStream.next_out = Buffer;
-			ZStream.avail_out = BUFFER_SIZE;
 		}
-
-		int err = deflate(&ZStream, Z_SYNC_FLUSH);
-		if (err >= 0 && ZStream.msg != NULL)
-		{
-			bError = true;
-			GCon->Logf("Compression failed: %s", ZStream.msg);
-			return;
-		}
-
-		if (err != Z_OK)
-			break;
 	}
+	while (ZStream.avail_out == 0);
+	check(ZStream.avail_in == 0);
 	unguard;
 }
 
@@ -413,6 +412,16 @@ void VZipStreamWriter::Flush()
 	ZStream.avail_in = 0;
 	do
 	{
+		ZStream.next_out = Buffer;
+		ZStream.avail_out = BUFFER_SIZE;
+
+		int err = deflate(&ZStream, Z_FULL_FLUSH);
+		if (err == Z_STREAM_ERROR)
+		{
+			bError = true;
+			return;
+		}
+
 		if (ZStream.avail_out != BUFFER_SIZE)
 		{
 			DstStream->Serialise(Buffer, BUFFER_SIZE - ZStream.avail_out);
@@ -421,22 +430,9 @@ void VZipStreamWriter::Flush()
 				bError = true;
 				return;
 			}
-			ZStream.next_out = Buffer;
-			ZStream.avail_out = BUFFER_SIZE;
 		}
-
-		int err = deflate(&ZStream, Z_FULL_FLUSH);
-		if (err >= 0 && ZStream.msg != NULL)
-		{
-			bError = true;
-			GCon->Logf("Compression failed: %s", ZStream.msg);
-			return;
-		}
-
-		if (err != Z_OK)
-			break;
 	}
-	while (ZStream.avail_out != BUFFER_SIZE);
+	while (ZStream.avail_out == 0);
 	DstStream->Flush();
 	unguard;
 }
@@ -455,11 +451,13 @@ bool VZipStreamWriter::Close()
 		ZStream.avail_in = 0;
 		do
 		{
+			ZStream.next_out = Buffer;
+			ZStream.avail_out = BUFFER_SIZE;
+
 			int err = deflate(&ZStream, Z_FINISH);
-			if (err < 0 && ZStream.msg != NULL)
+			if (err == Z_STREAM_ERROR)
 			{
 				bError = true;
-				GCon->Logf("Compression failed: %s", ZStream.msg);
 				break;
 			}
 
@@ -471,14 +469,9 @@ bool VZipStreamWriter::Close()
 					bError = true;
 					break;
 				}
-				ZStream.next_out = Buffer;
-				ZStream.avail_out = BUFFER_SIZE;
 			}
-
-			if (err != Z_OK)
-				break;
 		}
-		while (ZStream.avail_out != BUFFER_SIZE);
+		while (ZStream.avail_out == 0);
 		deflateEnd(&ZStream);
 	}
 	Initialised = false;

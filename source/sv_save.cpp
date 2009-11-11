@@ -65,6 +65,7 @@ class VSavedMap
 public:
 	TArray<vuint8>		Data;
 	VName				Name;
+	vint32				DecompressedSize;
 };
 
 class VSaveSlot
@@ -374,10 +375,12 @@ bool VSaveSlot::LoadSlot(int Slot)
 	*Strm << STRM_INDEX(NumMaps);
 	for (int i = 0; i < NumMaps; i++)
 	{
-		vint32 DataLen;
-		*Strm << TmpName << STRM_INDEX(DataLen);
 		VSavedMap* Map = new VSavedMap();
 		Maps.Append(Map);
+		vint32 DataLen;
+		*Strm << TmpName
+			<< Map->DecompressedSize
+			<< STRM_INDEX(DataLen);
 		Map->Name = *TmpName;
 		Map->Data.SetNum(DataLen);
 		Strm->Serialise(Map->Data.Ptr(), Map->Data.Num());
@@ -419,7 +422,9 @@ void VSaveSlot::SaveToSlot(int Slot)
 	{
 		VStr TmpName(Maps[i]->Name);
 		vint32 DataLen = Maps[i]->Data.Num();
-		*Strm << TmpName << STRM_INDEX(DataLen);
+		*Strm << TmpName
+			<< Maps[i]->DecompressedSize
+			<< STRM_INDEX(DataLen);
 		Strm->Serialise(Maps[i]->Data.Ptr(), Maps[i]->Data.Num());
 	}
 
@@ -781,7 +786,16 @@ static void SV_SaveMap(bool savePlayers)
 		BaseSlot.Maps.Append(Map);
 		Map->Name = GLevel->MapName;
 	}
-	Map->Data = InStrm->GetArray();
+
+	//	Compress map data.
+	Map->DecompressedSize = Buf.Num();
+	Map->Data.Clear();
+	VArrayStream* ArrStrm = new VArrayStream(Map->Data);
+	ArrStrm->BeginWrite();
+	VZipStreamWriter* ZipStrm = new VZipStreamWriter(ArrStrm);
+	ZipStrm->Serialise(Buf.Ptr(), Buf.Num());
+	delete ZipStrm;
+	delete ArrStrm;
 
 	delete Saver;
 	unguard;
@@ -799,11 +813,20 @@ static void SV_LoadMap(VName MapName)
 	// Load a base level
 	SV_SpawnServer(*MapName, false, false);
 
-	// Load the file
 	VSavedMap* Map = BaseSlot.FindMap(MapName);
 	check(Map);
+
+	//	Decompress map data
+	VArrayStream* ArrStrm = new VArrayStream(Map->Data);
+	VZipStreamReader* ZipStrm = new VZipStreamReader(ArrStrm);
+	TArray<vuint8> DecompressedData;
+	DecompressedData.SetNum(Map->DecompressedSize);
+	ZipStrm->Serialise(DecompressedData.Ptr(), DecompressedData.Num());
+	delete ZipStrm;
+	delete ArrStrm;
+
 	VSaveLoaderStream* Loader = new VSaveLoaderStream(
-		new VArrayStream(Map->Data));
+		new VArrayStream(DecompressedData));
 
 	// Load names
 	UnarchiveNames(Loader);

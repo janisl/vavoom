@@ -3890,4 +3890,4 @@
   I added compression stream for compression data with zlib.
 11.09.2009
   I implemented saving of the game into a single file, description can be of
- any length.
+ any length and map data is compressed.
