@@ -334,7 +334,7 @@ void VDatagramDriver::SearchForHosts(VNetLanDriver* Drv, bool xmit,
 		{
 			msg << str;
 			Net->HostCache[n].WadFiles[i++] = str;
-		}  while (str);
+		}  while (str.IsNotEmpty());
 
 		// check for a name conflict
 		for (i = 0; i < Net->HostCacheCount; i++)

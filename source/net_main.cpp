@@ -728,7 +728,7 @@ VSocketPublic* VNetwork::Connect(const char* InHost)
 
 	SetNetTime();
 
-	if (host)
+	if (host.IsNotEmpty())
 	{
 		if (host == "local")
 		{
@@ -751,13 +751,13 @@ VSocketPublic* VNetwork::Connect(const char* InHost)
 		}
 	}
 
-	SlistSilent = host ? true : false;
+	SlistSilent = host.IsNotEmpty();
 	Slist();
 
 	while (SlistInProgress)
 		Poll();
 
-	if (!host)
+	if (host.IsEmpty())
 	{
 		if (HostCacheCount != 1)
 			return NULL;
@@ -791,7 +791,7 @@ JustDoIt:
 		}
 	}
 
-	if (host)
+	if (host.IsNotEmpty())
 	{
 		PrintSlistHeader();
 		PrintSlist();

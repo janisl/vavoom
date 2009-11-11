@@ -529,7 +529,7 @@ void Host_SaveConfiguration()
 		return;
 
 	FILE *f;
-	if (fl_savedir)
+	if (fl_savedir.IsNotEmpty())
 	{
 		FL_CreatePath(fl_savedir + "/" + fl_gamedir);
 		f = fopen(*(fl_savedir + "/" + fl_gamedir + "/" +

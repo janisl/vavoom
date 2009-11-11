@@ -1019,7 +1019,7 @@ void VWidget::DrawString(int x, int y, const VStr& String, int NormalColour,
 	int BoldColour, float Alpha)
 {
 	guard(VWidget::DrawNString);
-	if (!String)
+	if (String.IsEmpty())
 		return;
 
 	int cx = x;

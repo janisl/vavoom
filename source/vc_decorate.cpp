@@ -2295,14 +2295,14 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	}
 
 	//	If we got colon but no parent class name, then get it.
-	if (ColonPos >= 0 && !ParentStr)
+	if (ColonPos >= 0 && ParentStr.IsEmpty())
 	{
 		sc->ExpectString();
 		ParentStr = sc->String;
 	}
 
 	VClass* ParentClass = ActorClass;
-	if (ParentStr)
+	if (ParentStr.IsNotEmpty())
 	{
 		ParentClass = VClass::FindClassLowerCase(*ParentStr.ToLower());
 		if (!ParentClass || ParentClass->MemberType != MEMBER_Class)

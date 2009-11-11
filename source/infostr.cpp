@@ -64,7 +64,7 @@
 VStr Info_ValueForKey(const VStr& s, const VStr& key)
 {
 	guard(Info_ValueForKey);
-	if (!s || !key)
+	if (s.IsEmpty() || key.IsEmpty())
 	{
 		return VStr();
 	}
@@ -114,7 +114,7 @@ VStr Info_ValueForKey(const VStr& s, const VStr& key)
 void Info_RemoveKey(VStr& s, const VStr& key)
 {
 	guard(Info_RemoveKey);
-	if (!s)
+	if (s.IsEmpty())
 	{
 		return;
 	}
@@ -194,7 +194,7 @@ void Info_SetValueForKey(VStr& s, const VStr& key, const VStr& value)
 
 	// this next line is kinda trippy
 	VStr v = Info_ValueForKey(s, key);
-	if (v)
+	if (v.IsNotEmpty())
 	{
 		//	Key exists, make sure we have enough room for new value, if we
 		// don't, don't change it!
@@ -206,7 +206,7 @@ void Info_SetValueForKey(VStr& s, const VStr& key, const VStr& value)
 	}
 
 	Info_RemoveKey(s, key);
-	if (!value)
+	if (value.IsEmpty())
 		return;
 
 	VStr newi = VStr("\\") + key + "\\" +  value;

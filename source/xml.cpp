@@ -491,7 +491,7 @@ bool VXmlDocument::ParseAttribute(VStr& AttrName, VStr& AttrValue)
 {
 	guard(VXmlDocument::ParseAttribute);
 	AttrName = ParseName();
-	if (!AttrName)
+	if (AttrName.IsEmpty())
 	{
 		return false;
 	}
@@ -534,7 +534,7 @@ void VXmlDocument::ParseNode(VXmlNode* Node)
 	}
 	CurPos++;
 	Node->Name = ParseName();
-	if (!Node->Name)
+	if (Node->Name.IsEmpty())
 	{
 		Error("Bad or missing tag name");
 	}

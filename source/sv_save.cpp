@@ -78,7 +78,7 @@ public:
 		Clear();
 	}
 	void Clear();
-	void LoadSlot(int Slot);
+	bool LoadSlot(int Slot);
 	void SaveToSlot(int Slot);
 	VSavedMap* FindMap(VName Name);
 };
@@ -311,7 +311,7 @@ public:
 
 static VStr SV_GetSavesDir()
 {
-	if (fl_savedir)
+	if (fl_savedir.IsNotEmpty())
 		return fl_savedir + "/" + fl_gamedir + "/saves";
 	else
 		return fl_basedir + "/" + fl_gamedir + "/saves";
@@ -339,14 +339,27 @@ void VSaveSlot::Clear()
 //
 //==========================================================================
 
-void VSaveSlot::LoadSlot(int Slot)
+bool VSaveSlot::LoadSlot(int Slot)
 {
 	guard(VSaveSlot::LoadSlot);
 	Clear();
 	VStream* Strm = FL_OpenFileRead(SAVE_NAME(Slot));
 	if (!Strm)
 	{
-		return;
+		GCon->Log("Savegame file doesn't exist");
+		return false;
+	}
+
+	// Check the version text
+	char VersionText[SAVE_VERSION_TEXT_LENGTH];
+	Strm->Serialise(VersionText, SAVE_VERSION_TEXT_LENGTH);
+	if (VStr::Cmp(VersionText, SAVE_VERSION_TEXT))
+	{
+		// Bad version
+		Strm->Close();
+		delete Strm;
+		GCon->Log("Savegame is from incompatible version");
+		return false;
 	}
 
 	vint32 DataLen;
@@ -367,7 +380,9 @@ void VSaveSlot::LoadSlot(int Slot)
 		Strm->Serialise(Map->Data.Ptr(), Map->Data.Num());
 	}
 
+	Strm->Close();
 	delete Strm;
+	return true;
 	unguard;
 }
 
@@ -381,6 +396,12 @@ void VSaveSlot::SaveToSlot(int Slot)
 {
 	guard(VSaveSlot::SaveToSlot);
 	VStream* Strm = FL_OpenFileWrite(*SAVE_NAME(Slot));
+
+	// Write version info
+	char VersionText[SAVE_VERSION_TEXT_LENGTH];
+	memset(VersionText, 0, SAVE_VERSION_TEXT_LENGTH);
+	VStr::Cpy(VersionText, SAVE_VERSION_TEXT);
+	Strm->Serialise(VersionText, SAVE_VERSION_TEXT_LENGTH);
 
 	vint32 DataLen = GeneralData.Num();
 	*Strm << STRM_INDEX(DataLen);
@@ -427,25 +448,31 @@ VSavedMap* VSaveSlot::FindMap(VName Name)
 //
 //==========================================================================
 
-bool SV_GetSaveString(int Slot, VStr& buf)
+bool SV_GetSaveString(int Slot, VStr& Desc)
 {
 	guard(SV_GetSaveString);
-	char		Desc[SAVE_DESCRIPTION_LENGTH + 1];
-
 	VStream* Strm = FL_OpenFileRead(SAVE_NAME(Slot));
 	if (Strm)
 	{
+		char VersionText[SAVE_VERSION_TEXT_LENGTH];
+		Strm->Serialise(VersionText, SAVE_VERSION_TEXT_LENGTH);
 		vint32 Dummy;
 		*Strm << STRM_INDEX(Dummy);
-		Strm->Serialise(Desc, SAVE_DESCRIPTION_LENGTH);
-		Desc[SAVE_DESCRIPTION_LENGTH] = 0;
-		buf = Desc;
+		char TmpDesc[SAVE_DESCRIPTION_LENGTH + 1];
+		Strm->Serialise(TmpDesc, SAVE_DESCRIPTION_LENGTH);
+		TmpDesc[SAVE_DESCRIPTION_LENGTH] = 0;
+		Desc = TmpDesc;
+		if (VStr::Cmp(VersionText, SAVE_VERSION_TEXT))
+		{
+			//	Bad version, put an asterisk in front of the description.
+			Desc = "*" + Desc;
+		}
 		delete Strm;
 		return true;
 	}
 	else
 	{
-		buf = EMPTYSTRING;
+		Desc = EMPTYSTRING;
 		return false;
 	}
 	unguard;
@@ -809,8 +836,6 @@ static void SV_LoadMap(VName MapName)
 void SV_SaveGame(int slot, const char* description)
 {
 	guard(SV_SaveGame);
-	char versionText[SAVE_VERSION_TEXT_LENGTH];
-
 	// Open the output file
 	VMemoryStream* InStrm = new VMemoryStream();
 	VSaveWriterStream* Saver = new VSaveWriterStream(InStrm);
@@ -820,11 +845,6 @@ void SV_SaveGame(int slot, const char* description)
 	memset(desc, 0, sizeof(desc));
 	VStr::NCpy(desc, description, SAVE_DESCRIPTION_LENGTH - 1);
 	Saver->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
-
-	// Write version info
-	memset(versionText, 0, SAVE_VERSION_TEXT_LENGTH);
-	VStr::Cpy(versionText, SAVE_VERSION_TEXT);
-	Saver->Serialise(versionText, SAVE_VERSION_TEXT_LENGTH);
 
 	// Write current map
 	VStr TmpName(GLevel->MapName);
@@ -854,7 +874,10 @@ void SV_LoadGame(int slot)
 	guard(SV_LoadGame);
 	SV_ShutdownGame();
 
-	BaseSlot.LoadSlot(slot);
+	if (!BaseSlot.LoadSlot(slot))
+	{
+		return;
+	}
 
 	// Load the file
 	VSaveLoaderStream* Loader = new VSaveLoaderStream(
@@ -863,18 +886,6 @@ void SV_LoadGame(int slot)
 	// Set the save pointer and skip the description field
 	char desc[SAVE_DESCRIPTION_LENGTH];
 	Loader->Serialise(desc, SAVE_DESCRIPTION_LENGTH);
-
-	// Check the version text
-	char versionText[SAVE_VERSION_TEXT_LENGTH];
-	Loader->Serialise(versionText, SAVE_VERSION_TEXT_LENGTH);
-	if (VStr::Cmp(versionText, SAVE_VERSION_TEXT))
-	{
-		// Bad version
-		Loader->Close();
-		delete Loader;
-		GCon->Log("Savegame is from incompatible version");
-		return;
-	}
 
 	VStr TmpName;
 	*Loader << TmpName;

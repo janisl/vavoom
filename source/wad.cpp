@@ -104,7 +104,7 @@ void W_AddFile(const VStr& FileName, const VStr& GwaDir, bool FixVoices)
 		VStr gl_name;
 
 		bool FoundGwa = false;
-		if (GwaDir)
+		if (GwaDir.IsNotEmpty())
 		{
 			gl_name = GwaDir + "/" +
 				FileName.ExtractFileName().StripExtension() + ".gwa";

@@ -443,7 +443,7 @@ void VInput::ProcessEvents()
 		if (ev->type == ev_keydown)
 		{
 			VStr kb = KeyBindingsDown[ev->data1];
-			if (kb)
+			if (kb.IsNotEmpty())
 			{
 				if (kb[0] == '+' || kb[0] == '-')
 				{
@@ -460,7 +460,7 @@ void VInput::ProcessEvents()
 		if (ev->type == ev_keyup)
 		{
 			VStr kb = KeyBindingsUp[ev->data1];
-			if (kb)
+			if (kb.IsNotEmpty())
 			{
 				if (kb[0] == '+' || kb[0] == '-')
 				{
@@ -562,7 +562,7 @@ void VInput::SetBinding(int KeyNum, const VStr& Down, const VStr& Up,
 	{
 		return;
 	}
-	if (!Down && !Up && !KeyBindingsSave[KeyNum])
+	if (Down.IsEmpty() && Up.IsEmpty() && !KeyBindingsSave[KeyNum])
 	{
 		return;
 	}
@@ -587,7 +587,8 @@ void VInput::WriteBindings(FILE* f)
 	fprintf(f, "UnbindAll\n");
 	for (int i = 0; i < 256; i++)
 	{
-		if ((KeyBindingsDown[i] || KeyBindingsUp[i]) && KeyBindingsSave[i])
+		if ((KeyBindingsDown[i].IsNotEmpty() ||
+			KeyBindingsUp[i].IsNotEmpty()) && KeyBindingsSave[i])
 		{
 			fprintf(f, "bind \"%s\" \"%s\" \"%s\"\n", *KeyNameForNum(i),
 				*KeyBindingsDown[i], *KeyBindingsUp[i]);
@@ -622,7 +623,7 @@ int VInput::TranslateKey(int ch)
 int VInput::KeyNumForName(const VStr& Name)
 {
 	guard(VInput::KeyNumForName);
-	if (!Name)
+	if (Name.IsEmpty())
 		return -1;
 
 	//	Single character.
@@ -737,7 +738,7 @@ COMMAND(Bind)
 	{
 		VStr Down, Up;
 		GInput->GetBinding(b, Down, Up);
-		if (Down || Up)
+		if (Down.IsNotEmpty() || Up.IsNotEmpty())
 			GCon->Log(Args[1] + " = \"" + Down + "\" / \"" + Up + "\"");
 		else
 			GCon->Logf("%s is not bound", *Args[1]);
@@ -774,7 +775,7 @@ COMMAND(DefaultBind)
 	{
 		VStr Down, Up;
 		GInput->GetBinding(b, Down, Up);
-		if (Down || Up)
+		if (Down.IsNotEmpty() || Up.IsNotEmpty())
 			GCon->Log(Args[1] + " = \"" + Down + "\" / \"" + Up + "\"");
 		else
 			GCon->Logf("%s is not bound", *Args[1]);

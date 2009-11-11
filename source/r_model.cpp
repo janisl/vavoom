@@ -228,7 +228,7 @@ void *Mod_Extradata(VModel* mod)
 VModel* Mod_FindName(const VStr& name)
 {
 	guard(Mod_FindName);
-	if (!name)
+	if (name.IsEmpty())
 	{
 		Sys_Error("Mod_ForName: NULL name");
 	}

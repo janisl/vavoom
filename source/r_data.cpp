@@ -1548,7 +1548,7 @@ void R_ParseEffectDefs()
 			continue;
 		}
 
-		if (CD.StaticLight)
+		if (CD.StaticLight.IsNotEmpty())
 		{
 			VLightEffectDef* SLight = FindLightEffect(CD.StaticLight);
 			if (SLight)
@@ -1593,7 +1593,7 @@ void R_ParseEffectDefs()
 			SprFx.Frame = SprDef.Sprite.Length() == 4 ? -1 :
 				(VStr::ToUpper(SprDef.Sprite[4]) - 'A');
 			SprFx.LightDef = NULL;
-			if (SprDef.Light)
+			if (SprDef.Light.IsNotEmpty())
 			{
 				SprFx.LightDef = FindLightEffect(SprDef.Light);
 				if (!SprFx.LightDef)
@@ -1602,7 +1602,7 @@ void R_ParseEffectDefs()
 				}
 			}
 			SprFx.PartDef = NULL;
-			if (SprDef.Part)
+			if (SprDef.Part.IsNotEmpty())
 			{
 				SprFx.PartDef = FindParticleEffect(SprDef.Part);
 				if (!SprFx.PartDef)

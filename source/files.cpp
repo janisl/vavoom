@@ -133,7 +133,7 @@ static void AddGameDir(const VStr& basedir, const VStr& dir)
 	if (Sys_OpenDir(basedir + "/" + dir))
 	{
 		TArray<VStr> ZipFiles;
-		for (VStr test = Sys_ReadDir(); test; test = Sys_ReadDir())
+		for (VStr test = Sys_ReadDir(); test.IsNotEmpty(); test = Sys_ReadDir())
 		{
 			VStr ext = test.ExtractFileExtension().ToLower();
 			if (ext == "pk3")
@@ -149,7 +149,7 @@ static void AddGameDir(const VStr& basedir, const VStr& dir)
 
 	//	Then add wad##.wad files.
 	VStr gwadir;
-	if (fl_savedir && basedir != fl_savedir)
+	if (fl_savedir.IsNotEmpty() && basedir != fl_savedir)
 	{
 		gwadir = fl_savedir + "/" + dir;
 	}
@@ -178,7 +178,7 @@ static void AddGameDir(const VStr& dir)
 {
 	guard(AddGameDir);
 	AddGameDir(fl_basedir, dir);
-	if (fl_savedir)
+	if (fl_savedir.IsNotEmpty())
 	{
 		AddGameDir(fl_savedir, dir);
 	}
@@ -204,7 +204,7 @@ static VStr FindMainWad(VStr MainWad)
 	}
 
 	//	Then look in the save directory.
-	if (fl_savedir && Sys_FileExists(fl_savedir + "/" + MainWad))
+	if (fl_savedir.IsNotEmpty() && Sys_FileExists(fl_savedir + "/" + MainWad))
 	{
 		return fl_savedir + "/" + MainWad;
 	}
@@ -231,7 +231,7 @@ static void ParseBase(const VStr& name)
 	bool				select_game;
 	VStr				UseName;
 
-	if (fl_savedir && Sys_FileExists(fl_savedir + "/" + name))
+	if (fl_savedir.IsNotEmpty() && Sys_FileExists(fl_savedir + "/" + name))
 	{
 		UseName = fl_savedir + "/" + name;
 	}
@@ -288,9 +288,9 @@ static void ParseBase(const VStr& name)
 		{
 			continue;
 		}
-		if (fl_mainwad)
+		if (fl_mainwad.IsNotEmpty())
 		{
-			if (!G.MainWad || G.MainWad == fl_mainwad || select_game)
+			if (G.MainWad.IsEmpty() || G.MainWad == fl_mainwad || select_game)
 			{
 				if (!bIwadAdded)
 				{
@@ -309,14 +309,14 @@ static void ParseBase(const VStr& name)
 			}
 			continue;
 		}
-		if (!G.MainWad)
+		if (G.MainWad.IsEmpty())
 		{
 			continue;
 		}
 
 		//	Look for the main wad file.
 		VStr MainWadPath = FindMainWad(G.MainWad);
-		if (MainWadPath)
+		if (MainWadPath.IsNotEmpty())
 		{
 			fl_mainwad = G.MainWad;
 			if (!bIwadAdded)
@@ -328,7 +328,7 @@ static void ParseBase(const VStr& name)
 			for (int j = 0; j < G.AddFiles.Num(); j++)
 			{
 				VStr FName = FindMainWad(G.AddFiles[j]);
-				if (!FName)
+				if (FName.IsEmpty())
 				{
 					Sys_Error("Required file %s not found", *G.AddFiles[j]);
 				}
@@ -730,7 +730,7 @@ VStream* FL_OpenFileWrite(const VStr& Name)
 	guard(FL_OpenFileWrite);
 	VStr TmpName;
 
-	if (fl_savedir)
+	if (fl_savedir.IsNotEmpty())
 		TmpName = fl_savedir + "/" + fl_gamedir + "/" + Name;
 	else
 		TmpName = fl_basedir + "/" + fl_gamedir + "/" + Name;

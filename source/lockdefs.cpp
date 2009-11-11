@@ -152,11 +152,11 @@ static void ParseLockDefs(VScriptParser* sc)
 				}
 			}
 			//	Copy message if other one is not defined
-			if (!LDef->Message)
+			if (LDef->Message.IsEmpty())
 			{
 				LDef->Message = LDef->RemoteMessage;
 			}
-			if (!LDef->RemoteMessage)
+			if (LDef->RemoteMessage.IsEmpty())
 			{
 				LDef->RemoteMessage = LDef->Message;
 			}

@@ -324,7 +324,7 @@ void VCvar::Unlatch()
 	guard(VCvar::Unlatch);
 	for (VCvar* cvar = Variables; cvar; cvar = cvar->Next)
 	{
-		if (cvar->LatchedString)
+		if (cvar->LatchedString.IsNotEmpty())
 		{
 			cvar->DoSet(cvar->LatchedString);
 			cvar->LatchedString.Clean();
@@ -517,7 +517,7 @@ bool VCvar::Command(const TArray<VStr>& Args)
 	if (Args.Num() == 1)
 	{
 		GCon->Log(VStr(cvar->Name) + " is \"" + cvar->StringValue + "\"");
-		if (cvar->Flags & CVAR_Latch && cvar->LatchedString)
+		if (cvar->Flags & CVAR_Latch && cvar->LatchedString.IsNotEmpty())
 			GCon->Log(VStr("Latched \"") + cvar->LatchedString + "\"");
 	}
 	else

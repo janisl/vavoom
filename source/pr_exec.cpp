@@ -1611,7 +1611,7 @@ func_loop:
 		PR_VM_CASE(OPC_StrToBool)
 			{
 				ip++;
-				bool Val = *(VStr*)&sp[-1].p;
+				bool Val = ((VStr*)&sp[-1].p)->IsNotEmpty();
 				((VStr*)&sp[-1].p)->Clean();
 				sp[-1].i = Val;
 			}

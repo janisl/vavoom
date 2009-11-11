@@ -141,7 +141,11 @@ public:
 		return Str ? Str : "";
 	}
 	//	Check if string is empty.
-	operator bool() const
+	bool IsEmpty() const
+	{
+		return !Str;
+	}
+	bool IsNotEmpty() const
 	{
 		return !!Str;
 	}

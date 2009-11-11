@@ -792,7 +792,7 @@ void VLexer::ProcessInclude()
 	if (TokenStringBuffer[0] != '/' && TokenStringBuffer[0] != '\\')
 	{
 		//	First try relative to the current source file.
-		if (Src->Path)
+		if (Src->Path.IsNotEmpty())
 		{
 			VStr FileName = Src->Path + VStr(TokenStringBuffer);
 #ifdef IN_VCC

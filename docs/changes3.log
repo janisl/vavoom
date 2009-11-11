@@ -3888,3 +3888,5 @@
   I changed cheat commands to be forwarded to server.
   I improved performance in cases where array is resized very often.
   I added compression stream for compression data with zlib.
+11.09.2009
+  I implemented saving of the game into a single file.

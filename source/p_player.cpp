@@ -517,7 +517,7 @@ void VBasePlayer::DoClientPrint(VStr AStr)
 	guard(VBasePlayer::DoClientPrint);
 	VStr Str(AStr);
 
-	if (!Str)
+	if (Str.IsEmpty())
 	{
 		return;
 	}
@@ -547,7 +547,7 @@ void VBasePlayer::DoClientCentrePrint(VStr Str)
 	guard(VBasePlayer::DoClientCentrePrint);
 	VStr Msg(Str);
 
-	if (!Msg)
+	if (Msg.IsEmpty())
 	{
 		return;
 	}
