@@ -37,8 +37,6 @@
 
 bool Physics(float DeltaTime)
 {
-	Prev_Org = Origin;
-
 	float CummX = 0.0;
 	float CummY = 0.0;
 	if (Sector->AffectorData && bColideWithWorld && !bNoSector)
@@ -671,11 +669,11 @@ final bool HitFloor()
 		}
 	}
 	Origin.z = FloorZ;
-	if (vdot < -0.1 && !bSpecial)
+	if (vdot < -0.1)
 	{
 		// Spawn splashes, etc.
 		HitFloorType();
-		if (!ClassIsChildOf(Class, FindClass('Inventory')) && DamageType == 'Ice' &&
+		if (!Inventory(self) && DamageType == 'Ice' &&
 			vdot < -DEFAULT_GRAVITY * 0.25)
 		{
 			StateTime = 0.1;

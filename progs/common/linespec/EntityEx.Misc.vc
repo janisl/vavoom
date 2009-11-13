@@ -262,7 +262,6 @@ final bool TeleportMove(TVec org, optional bool ForceTelestomp)
 
 	// the move is ok,
 	// so link the thing into its new position
-	Prev_Org = Origin;
 	UnlinkFromWorld();
 	Origin = org;
 	LinkToWorld();
@@ -270,7 +269,6 @@ final bool TeleportMove(TVec org, optional bool ForceTelestomp)
 	{
 		Origin.z = FloorZ;
 	}
-	Prev_Org = Origin;
 
 	return true;
 }
@@ -390,7 +388,6 @@ final bool MoveThing(TVec Pos, bool Fog)
 {
 	TVec OldOrg = Origin;
 
-	Prev_Org = Origin;
 	UnlinkFromWorld();
 	Origin = Pos;
 	LinkToWorld();
@@ -408,11 +405,9 @@ final bool MoveThing(TVec Pos, bool Fog)
 	}
 	else
 	{
-		Prev_Org = Origin;
 		UnlinkFromWorld();
 		Origin = OldOrg;
 		LinkToWorld();
-		Prev_Org = Origin;
 		return false;
 	}
 }

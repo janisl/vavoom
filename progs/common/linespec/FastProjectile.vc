@@ -42,8 +42,6 @@ void Tick(float DeltaTime)
 	bool		changexy;
 	tmtrace_t	tmtrace;
 
-	Prev_Org = Origin;
-
 	float Count = 8.0;
 
 	if (Radius > 0.0)

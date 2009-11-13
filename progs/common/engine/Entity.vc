@@ -189,9 +189,6 @@ struct tmtrace_t
 	Entity			BlockingMobj;
 };
 
-// Info for drawing: previous position (for interpolation of movement).
-TVec			Prev_Org;
-
 // Info for drawing: position.
 TVec			Origin;
 
@@ -320,7 +317,7 @@ Entity			Owner;
 replication
 {
 	reliable if (Role == ROLE_Authority)
-		Prev_Org, Origin, Angles, FloorClip, State, StateTime, SpriteType,
+		Origin, Angles, FloorClip, State, StateTime, SpriteType,
 		FixedSpriteName, ModelVersion, RenderStyle, Alpha, Translation,
 		ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright, bFixedModel,
 		SoundOriginID, bUseDispState, bBright;

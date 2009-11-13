@@ -139,9 +139,6 @@ class VEntity : public VThinker
 	DECLARE_CLASS(VEntity, VThinker, 0)
 	NO_DEFAULT_CONSTRUCTOR(VEntity)
 
-	// Info for drawing: previous position (for interpolation of movement).
-	TVec			Prev_Org;
-
 	// Info for drawing: position.
 	TVec			Origin;
 
