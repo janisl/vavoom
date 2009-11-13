@@ -146,12 +146,6 @@ bool Physics(float DeltaTime)
 		else
 		{
 			//	Floating bobbing motion for monsters.
-			if (Sector->bHasExtrafloors)
-			{
-				//	Make sure FloorZ is from bottom region.
-				Origin.z = ONFLOORZ;
-				LinkToWorld();
-			}
 			Origin.z -= Level.Game.FloatBobOffsets[
 				ftoi(FloatBobPhase * 35.0) & 63];
 			FloatBobPhase += DeltaTime;
@@ -1274,7 +1268,7 @@ final void ApplyFriction()
 			Velocity.y > 0.25 * 35.0 || Velocity.y < -0.25 * 35.0)
 		{
 			if (FloorZ > GetPlanePointZ(&Sector->floor, Origin) ||
-				(Sector->bHasExtrafloors && GetPlanePointZ(&Sector->floor, Origin) == FloorZ))
+				DropOffZ != FloorZ)
 			{
 				return;
 			}
