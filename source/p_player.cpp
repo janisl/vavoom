@@ -701,12 +701,12 @@ void VBasePlayer::DoClientPause(bool Paused)
 	guard(VBasePlayer::DoClientPause);
 	if (Paused)
 	{
-		ClGame->ClientFlags |= VClientGameBase::CF_Paused;
+		GGameInfo->Flags |= VGameInfo::GIF_Paused;
 		GAudio->PauseSound();
 	}
 	else
 	{
-		ClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
+		GGameInfo->Flags &= ~VGameInfo::GIF_Paused;
 		GAudio->ResumeSound();
 	}
 	unguard;

@@ -62,8 +62,6 @@ bool			run_open_scripts;
 
 VBasePlayer*	GPlayersBase[MAXPLAYERS];
 
-bool			paused;
-
 vuint8			deathmatch = false;   	// only if started as net death
 
 int 			TimerGame;
@@ -369,15 +367,8 @@ void SV_RunClients()
 		}
 
 		// pause if in menu or console and at least one tic has been run
-#ifdef CLIENT
 		if (Player->PlayerFlags & VBasePlayer::PF_Spawned &&
-			!sv.intermission && !paused &&
-			(GGameInfo->NetMode >= NM_DedicatedServer ||
-			!(MN_Active() || C_Active())))
-#else
-		if (Player->PlayerFlags & VBasePlayer::PF_Spawned &&
-			!sv.intermission && !paused)
-#endif
+			!sv.intermission && !GGameInfo->IsPaused())
 		{
 			Player->ForwardMove = Player->ClientForwardMove;
 			Player->SideMove = Player->ClientSideMove;
@@ -466,14 +457,7 @@ void SV_Ticker()
 		GGameInfo->frametime = host_frametime;
 		for (int i = 0; i < exec_times && !completed; i++)
 		{
-			// pause if in menu or console
-#ifdef CLIENT
-			if (GGameInfo->NetMode == NM_TitleMap || (!paused &&
-				(GGameInfo->NetMode >= NM_DedicatedServer ||
-				!(MN_Active() || C_Active()))))
-#else
-			if (GGameInfo->NetMode == NM_TitleMap || !paused)
-#endif
+			if (!GGameInfo->IsPaused())
 			{
 				//	LEVEL TIMER
 				if (TimerGame)
@@ -779,7 +763,7 @@ void SV_SpawnServer(const char *mapname, bool spawn_thinkers, bool titlemap)
 	int			i;
 
 	GCon->Logf(NAME_Dev, "Spawning server %s", mapname);
-	paused = false;
+	GGameInfo->Flags &= ~VGameInfo::GIF_Paused;
 	mapteleport_issued = false;
 	run_open_scripts = spawn_thinkers;
 
@@ -1009,9 +993,9 @@ void SV_ShutdownGame()
 	}
 
 #ifdef CLIENT
-	if (GClGame->ClientFlags & VClientGameBase::CF_Paused)
+	if (GGameInfo->Flags & VGameInfo::GIF_Paused)
 	{
-		GClGame->ClientFlags &= ~VClientGameBase::CF_Paused;
+		GGameInfo->Flags &= ~VGameInfo::GIF_Paused;
 		GAudio->ResumeSound();
 	}
 
@@ -1170,10 +1154,15 @@ COMMAND(Pause)
 		return;
 	}
 
-	paused ^= 1;
+	GGameInfo->Flags ^= VGameInfo::GIF_Paused;
 	for (int i = 0; i < svs.max_clients; i++)
+	{
 		if (GGameInfo->Players[i])
-			GGameInfo->Players[i]->eventClientPause(paused);
+		{
+			GGameInfo->Players[i]->eventClientPause(
+				!!(GGameInfo->Flags & VGameInfo::GIF_Paused));
+		}
+	}
 	unguard;
 }
 

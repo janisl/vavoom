@@ -742,8 +742,7 @@ void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 void VRenderLevel::PushDlights()
 {
 	guard(VRenderLevel::PushDlights);
-	if (cl->ClGame->ClientFlags & VClientGameBase::CF_Paused ||
-		(GGameInfo->NetMode == NM_Standalone && (MN_Active() || C_Active())))
+	if (GGameInfo->IsPaused())
 	{
 		return;
 	}

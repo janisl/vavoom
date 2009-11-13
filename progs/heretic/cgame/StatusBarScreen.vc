@@ -541,7 +541,7 @@ void SB_DrawIcons()
 
 void SB_DrawPause()
 {
-	if (ClGame.bPaused && GetCvar('draw_pause'))
+	if (ClGame.Game.bPaused && GetCvar('draw_pause'))
 	{
 		DrawPic(320, ClGame.maxclients > 1 ? 140 : 40, pic_paused);
 	}

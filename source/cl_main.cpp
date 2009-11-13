@@ -370,16 +370,17 @@ void CL_SendMove()
 		return;
 	}
 
-	if (cls.demoplayback || GGameInfo->NetMode == NM_TitleMap ||
-		GClGame->ClientFlags & VClientGameBase::CF_Paused ||
-		(GGameInfo->NetMode == NM_Standalone && (MN_Active() || C_Active())))
+	if (cls.demoplayback || GGameInfo->NetMode == NM_TitleMap)
 	{
 		return;
 	}
 	
 	if (cls.signon)
 	{
-		cl->HandleInput();
+		if (!GGameInfo->IsPaused())
+		{
+			cl->HandleInput();
+		}
 		if (cl->Net)
 		{
 			((VPlayerChannel*)cl->Net->Channels[CHANIDX_Player])->Update();

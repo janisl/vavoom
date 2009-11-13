@@ -78,6 +78,7 @@ array<class>		PlayerClasses;
 
 bool				bDefaultLaxMonsterActivation;
 bool				bDefaultBloodSplatter;
+readonly bool		bPaused;
 
 bool netgame
 {

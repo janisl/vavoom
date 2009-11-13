@@ -80,10 +80,13 @@ class VGameInfo : public VObject
 	{
 		GIF_DefaultLaxMonsterActivation	= 0x00000001,
 		GIF_DefaultBloodSplatter		= 0x00000002,
+		GIF_Paused						= 0x00000004,
 	};
 	vuint32			Flags;
 
 	VGameInfo();
+
+	bool IsPaused();
 
 	void eventInit()
 	{

@@ -26,6 +26,8 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "cl_local.h"
+#include "sv_local.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -58,6 +60,28 @@ VGameInfo*		GGameInfo;
 VGameInfo::VGameInfo()
 : PlayerClasses(E_NoInit)
 {
+}
+
+//==========================================================================
+//
+//	VGameInfo::IsPaused
+//
+//==========================================================================
+
+bool VGameInfo::IsPaused()
+{
+	guard(VGameInfo::IsPaused);
+	if (NetMode <= NM_TitleMap)
+	{
+		return false;
+	}
+#ifdef CLIENT
+	//	In single player pause game if in menu or console.
+	return (Flags & GIF_Paused) || (NetMode == NM_Standalone &&
+		(MN_Active() || C_Active()));
+#endif
+	return !!(Flags & GIF_Paused);
+	unguard;
 }
 
 //==========================================================================

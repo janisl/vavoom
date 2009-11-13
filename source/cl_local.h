@@ -87,7 +87,6 @@ class VClientGameBase : public VObject
 		CF_LocalServer		= 0x01,
 		// used to accelerate or skip a stage
 		CF_SkipIntermission	= 0x02,
-		CF_Paused			= 0x04,
 	};
 	vuint32				ClientFlags;
 

@@ -540,7 +540,7 @@ void SB_DrawFullscreenStats()
 
 void SB_DrawPause()
 {
-	if (ClGame.bPaused && GetCvar('draw_pause'))
+	if (ClGame.Game.bPaused && GetCvar('draw_pause'))
 	{
 		DrawPic(286, 4, pic_pause);
 	}

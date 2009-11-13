@@ -32,8 +32,6 @@ bool local_server;
 // used to accelerate or skip a stage
 bool skipintermission;
 
-bool bPaused;
-
 readonly GameInfo Game;
 readonly BasePlayer cl;
 readonly Level GLevel;
