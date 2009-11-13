@@ -437,7 +437,7 @@ void VWadFile::BuildGLNodes(VSearchPath* GlWad)
 	guard(VWadFile::BuildGLNodes);
 #ifdef CLIENT
 	VStr gwaname;
-	if (GwaDir)
+	if (GwaDir.IsNotEmpty())
 	{
 		FL_CreatePath(GwaDir);
 		gwaname = GwaDir + "/" + Name.ExtractFileName();

@@ -407,7 +407,7 @@ bool C_Responder(event_t* ev)
 		}
 		str = VCommand::GetAutoComplete(c_autocompleteString,
 			c_autocompleteIndex, GInput->ShiftDown);
-		if (str)
+		if (str.IsNotEmpty())
 		{
 			c_iline.Init();
 			for (i = 0; i < (int)str.Length(); i++)

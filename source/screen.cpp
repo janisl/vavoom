@@ -211,7 +211,7 @@ COMMAND(ScreenShot)
 	}
 
 	//	Find a file name to save it to
-	VStr BaseDir = (fl_savedir ? fl_savedir : fl_basedir) + "/" + fl_gamedir;
+	VStr BaseDir = (fl_savedir.IsNotEmpty() ? fl_savedir : fl_basedir) + "/" + fl_gamedir;
 	for (i = 0; i <= 9999; i++)
 	{
 		sprintf(filename, "shot%04d.%s", i, (const char*)screenshot_type);
