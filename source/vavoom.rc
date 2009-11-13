@@ -40,10 +40,10 @@ BEGIN
             VALUE "FileDescription", "Vavoom: The most Advanced Doom source port."
             VALUE "FileVersion", RC_FILEVERSION2
             VALUE "InternalName", "Vavoom"
-            VALUE "LegalCopyright", "Copyright ¬© 1993-1996 id Software, 1999-2009 JƒÅnis Legzdi≈Ü≈°."
-            VALUE "LegalTrademarks", "Doom¬Æ is a Registered Trademark of id Software, Inc."
+            VALUE "LegalCopyright", "Copyright © 1993-1996 id Software, 1999-2009 Janis Legzdinö."
+            VALUE "LegalTrademarks", "DoomÆ is a Registered Trademark of id Software, Inc."
             VALUE "OriginalFilename", "vavoom.exe"
-            VALUE "ProductName", "Vavoom: The most Advanced Doom source port."
+            VALUE "ProductName", "Vavoom Engine"
             VALUE "ProductVersion", RC_PRODUCTVERSION2
         END
     END
