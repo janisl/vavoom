@@ -739,8 +739,8 @@ actor DeadStrifePlayer 15
 	states
 	{
 	Spawn:
-		// FIXME should it really remove self?
-		PLAY P -1
+		PLAY P 700
+		RGIB H -1
 		Stop
 	}
 }
@@ -1701,45 +1701,45 @@ actor Junk : Meat;
 	states
 	{
 	Spawn:
-		JUNK A 1400
+		JUNK A 700
 		Stop
-		JUNK B 1400
+		JUNK B 700
 		Stop
-		JUNK C 1400
+		JUNK C 700
 		Stop
-		JUNK D 1400
+		JUNK D 700
 		Stop
-		JUNK E 1400
+		JUNK E 700
 		Stop
-		JUNK F 1400
+		JUNK F 700
 		Stop
-		JUNK G 1400
+		JUNK G 700
 		Stop
-		JUNK H 1400
+		JUNK H 700
 		Stop
-		JUNK I 1400
+		JUNK I 700
 		Stop
-		JUNK J 1400
+		JUNK J 700
 		Stop
-		JUNK K 1400
+		JUNK K 700
 		Stop
-		JUNK L 1400
+		JUNK L 700
 		Stop
-		JUNK M 1400
+		JUNK M 700
 		Stop
-		JUNK N 1400
+		JUNK N 700
 		Stop
-		JUNK O 1400
+		JUNK O 700
 		Stop
-		JUNK P 1400
+		JUNK P 700
 		Stop
-		JUNK Q 1400
+		JUNK Q 700
 		Stop
-		JUNK R 1400
+		JUNK R 700
 		Stop
-		JUNK S 1400
+		JUNK S 700
 		Stop
-		JUNK T 1400
+		JUNK T 700
 		Stop
 	}
 }
