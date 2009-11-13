@@ -50,6 +50,7 @@ REGISTER_NAME(DevNet)
 
 //	Native class names.
 REGISTER_NAME(Object)
+REGISTER_NAME(GameObject)
 REGISTER_NAME(Thinker)
 REGISTER_NAME(LevelInfo)
 REGISTER_NAME(WorldInfo)

@@ -80,6 +80,7 @@
 #include "video.h"		//	Graphics
 #include "screen.h"
 #include "automap.h"
+#include "p_gameobject.h"
 #include "level.h"		//	Level data
 #include "mapinfo.h"
 #include "lockdefs.h"

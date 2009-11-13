@@ -2286,6 +2286,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\p_gameobject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\p_gameobject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\p_level_think.cpp"
 				>
 			</File>

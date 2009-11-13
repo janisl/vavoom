@@ -91,9 +91,9 @@ struct VViewState
 //
 // Extended player object info: player_t
 //
-class VBasePlayer : public VObject
+class VBasePlayer : public VGameObject
 {
-	DECLARE_CLASS(VBasePlayer, VObject, 0)
+	DECLARE_CLASS(VBasePlayer, VGameObject, 0)
 
 	enum { TOCENTRE = -128 };
 

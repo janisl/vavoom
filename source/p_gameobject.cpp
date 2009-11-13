@@ -23,39 +23,32 @@
 //**
 //**************************************************************************
 
-class VAcsGlobal;
+// HEADER FILES ------------------------------------------------------------
 
-class VWorldInfo : public VGameObject
-{
-	DECLARE_CLASS(VWorldInfo, VGameObject, 0)
+#include "gamedefs.h"
 
-	VAcsGlobal*		Acs;
+// MACROS ------------------------------------------------------------------
 
-	vuint8			GameSkill;
-	float			SkillAmmoFactor;
-	float			SkillDoubleAmmoFactor;
-	float			SkillDamageFactor;
-	float			SkillRespawnTime;
-	int				SkillRespawnLimit;
-	float			SkillAggressiveness;
-	int				SkillSpawnFilter;
-	int				SkillAcsReturn;
+// TYPES -------------------------------------------------------------------
 
-	enum
-	{
-		WIF_SkillFastMonsters		= 0x00000001,
-		WIF_SkillDisableCheats		= 0x00000002,
-		WIF_SkillEasyBossBrain		= 0x00000004,
-		WIF_SkillAutoUseHealth		= 0x00000008,
-	};
-	vuint32			Flags;
+// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-	VWorldInfo();
+// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-	void Serialise(VStream& Strm);
-	void Destroy();
+// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-	void SetSkill(int);
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-	DECLARE_FUNCTION(SetSkill)
-};
+// PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
+
+IMPLEMENT_CLASS(V, GameObject)
+
+// CODE --------------------------------------------------------------------
+
+//==========================================================================
+//
+//
+//
+//==========================================================================

@@ -738,9 +738,9 @@ enum
 	MAX_BODY_QUEUE_TRANSLATIONS = 0xff,
 };
 
-class VLevel : public VObject
+class VLevel : public VGameObject
 {
-	DECLARE_CLASS(VLevel, VObject, 0)
+	DECLARE_CLASS(VLevel, VGameObject, 0)
 	NO_DEFAULT_CONSTRUCTOR(VLevel)
 
 	friend class VUdmfParser;

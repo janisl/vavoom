@@ -23,39 +23,11 @@
 //**
 //**************************************************************************
 
-class VAcsGlobal;
-
-class VWorldInfo : public VGameObject
+//
+//	VLevelObject
+//
+class VGameObject : public VObject
 {
-	DECLARE_CLASS(VWorldInfo, VGameObject, 0)
-
-	VAcsGlobal*		Acs;
-
-	vuint8			GameSkill;
-	float			SkillAmmoFactor;
-	float			SkillDoubleAmmoFactor;
-	float			SkillDamageFactor;
-	float			SkillRespawnTime;
-	int				SkillRespawnLimit;
-	float			SkillAggressiveness;
-	int				SkillSpawnFilter;
-	int				SkillAcsReturn;
-
-	enum
-	{
-		WIF_SkillFastMonsters		= 0x00000001,
-		WIF_SkillDisableCheats		= 0x00000002,
-		WIF_SkillEasyBossBrain		= 0x00000004,
-		WIF_SkillAutoUseHealth		= 0x00000008,
-	};
-	vuint32			Flags;
-
-	VWorldInfo();
-
-	void Serialise(VStream& Strm);
-	void Destroy();
-
-	void SetSkill(int);
-
-	DECLARE_FUNCTION(SetSkill)
+	DECLARE_CLASS(VGameObject, VObject, 0)
+	NO_DEFAULT_CONSTRUCTOR(VGameObject)
 };

@@ -42,9 +42,9 @@ enum
 	NM_Client,
 };
 
-class VGameInfo : public VObject
+class VGameInfo : public VGameObject
 {
-	DECLARE_CLASS(VGameInfo, VObject, 0)
+	DECLARE_CLASS(VGameInfo, VGameObject, 0)
 
 	VName			AcsHelper;
 	VName			GenericConScript;

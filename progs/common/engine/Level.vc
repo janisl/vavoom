@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Level : Object
+class Level : GameObject
 	native;
 
 const int MAX_LEVEL_TRANSLATIONS = 0xffff;

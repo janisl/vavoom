@@ -11,6 +11,7 @@ progs/engine/BasePlayer.vc				@CMAKE_SOURCE_DIR@/progs/common/engine/BasePlayer.
 progs/engine/ClientGameBase.vc			@CMAKE_SOURCE_DIR@/progs/common/engine/ClientGameBase.vc
 progs/engine/Entity.vc					@CMAKE_SOURCE_DIR@/progs/common/engine/Entity.vc
 progs/engine/GameInfo.vc				@CMAKE_SOURCE_DIR@/progs/common/engine/GameInfo.vc
+progs/engine/GameObject.vc				@CMAKE_SOURCE_DIR@/progs/common/engine/GameObject.vc
 progs/engine/Level.vc					@CMAKE_SOURCE_DIR@/progs/common/engine/Level.vc
 progs/engine/LevelInfo.vc				@CMAKE_SOURCE_DIR@/progs/common/engine/LevelInfo.vc
 progs/engine/Object.vc					@CMAKE_SOURCE_DIR@/progs/common/engine/Object.vc

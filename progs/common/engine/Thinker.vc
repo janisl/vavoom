@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class Thinker : Object
+class Thinker : GameObject
 	native
 	abstract;
 

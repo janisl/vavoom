@@ -43,9 +43,9 @@ enum
 //
 //	Doubly linked list of actors and other special elements of a level.
 //
-class VThinker : public VObject
+class VThinker : public VGameObject
 {
-	DECLARE_CLASS(VThinker, VObject, 0)
+	DECLARE_CLASS(VThinker, VGameObject, 0)
 
 	VLevel*			XLevel;		//	Level object.
 	VLevelInfo*		Level;		//	Level info object.

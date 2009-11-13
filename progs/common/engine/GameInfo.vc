@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class GameInfo : Object
+class GameInfo : GameObject
 	native
 	abstract;
 

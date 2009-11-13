@@ -135,6 +135,8 @@ set(MAIN_COMMON_SOURCES
 	p_entity_world.cpp
 	p_gameinfo.cpp
 	p_gameinfo.h
+	p_gameobject.cpp
+	p_gameobject.h
 	p_level_think.cpp
 	p_levelinfo.cpp
 	p_levelinfo.h
@@ -469,6 +471,7 @@ set(SERVER_COMMON_SOURCES
 	p_entity_sight.cpp
 	p_entity_world.cpp
 	p_gameinfo.cpp
+	p_gameobject.cpp
 	p_level_think.cpp
 	p_levelinfo.cpp
 	p_nodebuild.cpp

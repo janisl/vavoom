@@ -24,6 +24,7 @@
 //**************************************************************************
 
 #include "Object.vc"
+#include "GameObject.vc"
 #include "Level.vc"
 #include "Thinker.vc"
 #include "LevelInfo.vc"
