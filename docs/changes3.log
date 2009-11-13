@@ -3891,3 +3891,5 @@
 11.09.2009
   I implemented saving of the game into a single file, description can be of
  any length and map data is compressed.
+13.09.2009
+  I fixed pausing of effects.
