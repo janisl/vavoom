@@ -3895,4 +3895,5 @@
   I fixed pausing of effects.
   I added GameObject class as base class for gameplay classes.
 14.09.2009
-  I moved level data and other game structure definitions to GameObject.
+  I moved level data and other game constant and structure definitions to
+ GameObject.
