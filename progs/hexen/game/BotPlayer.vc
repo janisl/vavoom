@@ -31,7 +31,7 @@
 //**************************************************************************
 
 // Main bot class
-class BotPlayer : Object;
+class BotPlayer : GameObject;
 
 const float FORWARDWALK		= 200.0;
 const float FORWARDRUN		= 400.0;

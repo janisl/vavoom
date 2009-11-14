@@ -57,7 +57,7 @@ string				CancelTexts[3];
 void SetSpeech(EntityEx Speaker, int SpeechNum)
 {
 	int i;
-	RogueConSpeech *Speech;
+	GameObject::RogueConSpeech *Speech;
 
 	if (!SpeechNum)
 		return;

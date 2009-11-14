@@ -3893,3 +3893,6 @@
  any length and map data is compressed.
 13.09.2009
   I fixed pausing of effects.
+  I added GameObject class as base class for gameplay classes.
+14.09.2009
+  I moved level data and other game structure definitions to GameObject.

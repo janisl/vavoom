@@ -27,6 +27,467 @@ class GameObject : Object
 	native
 	abstract;
 
+//==========================================================================
+//
+//  Level
+//
+//==========================================================================
+
+//
+// LineDef
+//
+struct line_t : TPlane
+{
+	// Vertices, from v1 to v2.
+	TVec *v1;
+	TVec *v2;
+
+	// Precalculated v2 - v1 for side checking.
+	TVec __dir;
+
+	// Animation related.
+	int			flags;
+	int			SpacFlags;
+
+	// Visual appearance: SideDefs.
+	//  sidenum[1] will be -1 if one sided
+	int sidenum[2];
+
+	// Neat. Another bounding box, for the extent
+	//  of the LineDef.
+	float bbox[4];
+
+	// To aid move clipping.
+	int __slopetype;
+
+	// Front and back sector.
+	// Note: redundant? Can be retrieved from SideDefs.
+	sector_t *frontsector;
+	sector_t *backsector;
+
+	// if == validcount, already checked
+	int validcount;
+
+	float alpha;
+
+	int special;
+	int arg1;
+	int arg2;
+	int arg3;
+	int arg4;
+	int arg5;
+
+	int			LineTag;
+	int			HashFirst;
+	int			HashNext;
+};
+
+//
+// The SideDef.
+//
+struct side_t
+{
+	//	Add this to the calculated texture column
+	float		TopTextureOffset;
+	float		BotTextureOffset;
+	float		MidTextureOffset;
+
+	//	Add this to the calculated texture top
+	float		TopRowOffset;
+	float		BotRowOffset;
+	float		MidRowOffset;
+
+	//	Texture indices. We do not maintain names here.
+	int			TopTexture;
+	int			BottomTexture;
+	int			MidTexture;
+
+	//	Sector the SideDef is facing.
+	sector_t*	Sector;
+
+	int			LineNum;
+
+	int			Flags;
+
+	int			Light;
+};
+
+struct sec_plane_t : TPlane
+{
+	float		minz;
+	float		maxz;
+
+	//	Use for wall texture mapping.
+	float		TexZ;
+
+	int			pic;
+
+	float		xoffs;
+	float		yoffs;
+
+	float		XScale;
+	float		YScale;
+
+	float		Angle;
+
+	float		BaseAngle;
+	float		BaseYOffs;
+
+	int			flags;
+	float		Alpha;
+	float		MirrorAlpha;
+
+	int			LightSourceSector;
+
+	Entity		SkyBox;
+};
+
+struct sec_params_t
+{
+	int			lightlevel;
+	int			LightColour;
+	int			Fade;
+	int			contents;
+};
+
+struct sec_region_t
+{
+	//  Linked list of regions in bottom to top order
+	sec_region_t*	prev;
+	sec_region_t*	next;
+
+	//  Planes
+	sec_plane_t*	floor;
+	sec_plane_t*	ceiling;
+
+	sec_params_t*	params;
+	line_t*			extraline;
+};
+
+//
+// phares 3/14/98
+//
+// Sector list node showing all sectors an object appears in.
+//
+// There are two threads that flow through these nodes. The first thread
+// starts at TouchingThingList in a sector_t and flows through the SNext
+// links to find all mobjs that are entirely or partially in the sector.
+// The second thread starts at TouchingSectorList in a VEntity and flows
+// through the TNext links to find all sectors a thing touches. This is
+// useful when applying friction or push effects to sectors. These effects
+// can be done as thinkers that act upon all objects touching their sectors.
+// As an mobj moves through the world, these nodes are created and
+// destroyed, with the links changed appropriately.
+//
+// For the links, NULL means top or end of list.
+//
+struct msecnode_t
+{
+	sector_t*		Sector;	// a sector containing this object
+	Entity			Thing;	// this object
+	msecnode_t*		TPrev;	// prev msecnode_t for this thing
+	msecnode_t*		TNext;	// next msecnode_t for this thing
+	msecnode_t*		SPrev;	// prev msecnode_t for this sector
+	msecnode_t*		SNext;	// next msecnode_t for this sector
+};
+
+//
+//  The SECTORS record, at runtime.
+//  Stores things/mobjs.
+//
+struct sector_t
+{
+	sec_plane_t		floor;
+	sec_plane_t		ceiling;
+	sec_params_t	params;
+
+	sec_region_t*	topregion;	//  Highest region
+	sec_region_t*	botregion;	//  Lowest region
+
+	int				special;
+	int				tag;
+	int				HashFirst;
+	int 			HashNext;
+
+	float			skyheight;
+
+	// stone, metal, heavy, etc...
+	int				seqType;
+
+	// mapblock bounding box for height changes
+	int				blockbox[4];
+
+	// origin for any sounds played by the sector
+	TVec			soundorg;
+
+	// if == validcount, already checked
+	int				validcount;
+
+	// list of subsectors in sector
+	// used to check if client can see this sector (it needs to be updated)
+	void*			__subsectors;
+
+	//	List of things in sector.
+	Entity			ThingList;
+	msecnode_t*		TouchingThingList;
+
+	int				linecount;
+	line_t**		lines;	// [linecount] size
+
+	//	Boom's fake floors.
+	sector_t*		heightsec;
+	void*			fakefloorinfo;		//	Info for rendering.
+
+	//	Flags.
+	bool			bHasExtrafloors;	//	This sector has extrafloors.
+	bool			bExtrafloorSource;	//	This sector is a source of an extrafloor.
+	bool			bTransferSource;	//	Source of an heightsec or transfer light.
+	bool			bFakeFloorOnly;		//	When used as heightsec in R_FakeFlat, only copies floor
+	bool			bClipFakePlanes;	//	As a heightsec, clip planes to target sector's planes
+	bool			bNoFakeLight;		//	heightsec does not change lighting
+	bool			bIgnoreHeightSec;	//	heightsec is only for triggering sector actions
+	bool			bUnderWater;		//	Sector is underwater
+	bool			bSilent;			//	Actors don't make noise in this sector.
+	bool			bNoFallingDamage;	//	No falling damage in this sector.
+
+	// 0 = untraversed, 1,2 = sndlines -1
+	int				soundtraversed;
+
+	// thing that made a sound (or null)
+	Entity			SoundTarget;
+
+	// Thinker for reversable actions
+	Thinker			FloorData;
+	Thinker			CeilingData;
+	Thinker			LightingData;
+	Thinker			AffectorData;
+
+	//	Sector action triggers.
+	Entity			ActionList;
+
+	int				Damage;
+
+	float			Friction;
+	float			MoveFactor;
+	float			Gravity;
+
+	int				Sky;
+
+	int				Zone;
+};
+
+//
+//  Polyobj data
+//
+struct polyobj_t
+{
+	int				__numsegs;
+	void*			__segs;
+	TVec			startSpot;
+	void*			__originalPts;	// used as the base for the rotations
+	void*			__prevPts;		// use to restore the old point values
+	float			angle;
+	int				tag;			// reference tag assigned in HereticEd
+	int				__bbox[4];
+	int				validcount;
+	bool			bCrush;			// should the polyobj attempt to crush mobjs?
+	bool			bHurtOnTouch;
+	int				seqType;
+	subsector_t*	__subsector;
+	Thinker			SpecialData;	// pointer a thinker, if the poly is moving
+};
+
+//
+//  A SubSector.
+//  References a Sector. Basically, this is a list of LineSegs, indicating
+// the visible walls that define (all or some) sides of a convex BSP leaf.
+//
+struct subsector_t
+{
+	sector_t*	sector;
+	void*		__seclink;
+	int			__numlines;
+	int			__firstline;
+	polyobj_t*	__poly;
+
+	void*		__parent;
+	int			__VisFrame;
+	int			__SkyVisFrame;
+	void*		__regions;
+};
+
+//
+// Map thing definition with initialised fields for global use.
+//
+struct mthing_t
+{
+	int			tid;
+	float		x;
+	float		y;
+	float		height;
+	int			angle;
+	int			type;
+	int			options;
+	int			SkillClassFilter;
+	int			special;
+	int			arg1;
+	int			arg2;
+	int			arg3;
+	int			arg4;
+	int			arg5;
+};
+
+//
+//	Strife conversation scripts
+//
+
+struct RogueConChoice
+{
+	int		GiveItem;	//	Item given on success
+	int		NeedItem1;	//	Required item 1
+	int		NeedItem2;	//	Required item 2
+	int		NeedItem3;	//	Required item 3
+	int		NeedAmount1;//	Amount of item 1
+	int		NeedAmount2;//	Amount of item 2
+	int		NeedAmount3;//	Amount of item 3
+	string	Text;		//	Text of the answer
+	string	TextOK;		//	Message displayed on success
+	int		Next;		//	Dialog to go on success, negative values to go
+						// here immediately
+	int		Objectives;	//	Mission objectives, LOGxxxx lump
+	string	TextNo;		//	Message displayed on failure (player doesn't
+						// have needed thing, it haves enough health/ammo,
+						// item is not ready, quest is not completed)
+};
+
+struct RogueConSpeech
+{
+	int		SpeakerID;	//	Type of the object (MT_xxx)
+	int		DropItem;	//	Item dropped when killed
+	int		CheckItem1;	//	Item 1 to check for jump
+	int		CheckItem2;	//	Item 2 to check for jump
+	int		CheckItem3;	//	Item 3 to check for jump
+	int		JumpToConv;	//	Jump to conversation if have certain item(s)
+	string	Name;		//	Name of the character
+	name	Voice;		//	Voice to play
+	name	BackPic;	//	Picture of the speaker
+	string	Text;		//	Message
+	RogueConChoice Choices[5];	//	Choices
+};
+
+//==========================================================================
+//
+//  Other stuff
+//
+//==========================================================================
+
+struct opening_t
+{
+	float			top;
+	float			bottom;
+	float			range;
+	float			lowfloor;
+	float			highceiling;
+	sec_plane_t*	floor;
+	sec_plane_t*	ceiling;
+	sec_plane_t*	lowfloorplane;
+	sec_plane_t*	highceilingplane;
+	opening_t*		next;
+};
+
+struct intercept_t
+{
+	float			frac;	// along trace line
+	bool			bIsALine;
+	Entity			Thing;
+	line_t*			line;
+};
+
+struct VAnimDoorDef
+{
+	int			Texture;
+	name		OpenSound;
+	name		CloseSound;
+	int			NumFrames;
+	int*		Frames;
+};
+
+struct VSplashInfo
+{
+	name		Name;
+
+	class		SmallClass;
+	float		SmallClip;
+	name		SmallSound;
+
+	class		BaseClass;
+	class		ChunkClass;
+	float		ChunkXVelMul;
+	float		ChunkYVelMul;
+	float		ChunkZVelMul;
+	float		ChunkBaseZVel;
+	name		Sound;
+	bool		bNoAlert;
+};
+
+struct VTerrainInfo
+{
+	name		Name;
+	name		Splash;
+	bool		bLiquid;
+	bool		bAllowProtection;
+	float		FootClip;
+	int			DamageTimeMask;
+	int			DamageAmount;
+	name		DamageType;
+	float		Friction;
+	float		MoveFactor;
+	float		StepVolume;
+	float		WalkingStepTime;
+	float		RunningStepTime;
+	name		LeftStepSounds;
+	name		RightStepSounds;
+};
+
+struct LockGroup
+{
+	array<class>		AnyKeyList;
+};
+
+struct LockDef
+{
+	array<LockGroup>	Locks;
+	string				Message;
+	string				RemoteMessage;
+	int					MapColour;
+	name				LockedSound;
+};
+
+struct dlight_t
+{
+	TVec		origin;
+	float		radius;
+	float		die;		// stop lighting after this time
+	float		decay;		// drop this each second
+	float		minlight;	// don't add when contributing less
+	int			key;
+	int			colour;
+};
+
+struct particle_t
+{
+	TVec		org;
+	int			colour;
+	float		Size;
+	particle_t*	next;
+	TVec		vel;
+	TVec		accel;
+	float		die;
+	int			type;
+	float		ramp;
+	float		gravity;
+};
+
 defaultproperties
 {
 }
