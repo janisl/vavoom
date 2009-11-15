@@ -37,13 +37,13 @@ BEGIN
         BLOCK "040004b0"
         BEGIN
             VALUE "Comments", "Thanks to id Software for creating DOOM and releasing it's source. Uses parts of code from BOOM by TeamTNT. Uses parts of code from ZDoom by Randy Heit. Uses parts of code from Quake by id Software."
-            VALUE "FileDescription", "Vavoom: The most Advanced Doom source port."
+            VALUE "FileDescription", "Vavoom Engine"
             VALUE "FileVersion", RC_FILEVERSION2
             VALUE "InternalName", "Vavoom"
             VALUE "LegalCopyright", "Copyright © 1993-1996 id Software, 1999-2009 Janis Legzdinš."
             VALUE "LegalTrademarks", "Doom® is a Registered Trademark of id Software, Inc."
             VALUE "OriginalFilename", "vavoom.exe"
-            VALUE "ProductName", "Vavoom Engine"
+            VALUE "ProductName", "Vavoom: The most Advanced Doom source port."
             VALUE "ProductVersion", RC_PRODUCTVERSION2
         END
     END
