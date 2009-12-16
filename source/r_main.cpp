@@ -73,6 +73,8 @@ VCvarF					r_fog_density("r_fog_density", "0.5");
 VCvarI					old_aspect("r_old_aspect_ratio", "1", CVAR_Archive);
 VCvarI					r_interpolate_frames("r_interpolate_frames", "1", CVAR_Archive);
 VCvarI					r_vsync("r_vsync", "1", CVAR_Archive);
+VCvarI					r_fade_light("r_fade_light", "0", CVAR_Archive);
+VCvarF					r_fade_factor("r_fade_factor", "4.0", CVAR_Archive);
 
 VDrawer					*Drawer;
 
@@ -811,7 +813,15 @@ vuint32 VRenderLevel::GetFade(sec_region_t* Reg)
 	{
 		return 0xff7f7f7f;
 	}
-	return 0;
+	if (r_fade_light)
+	{
+		// Simulate light fading using dark fog
+		return fade_light;
+	}
+	else
+	{
+		return 0;
+	}
 	unguard;
 }
 

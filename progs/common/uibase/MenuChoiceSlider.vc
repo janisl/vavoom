@@ -98,13 +98,15 @@ void OnCreate()
 void OnDraw()
 {
 	int i;
-	int xx;
+	int xx, xt;
 
 	SetTextAlign(hright, vtop);
-	DrawText(CursorXOffs, 0, Text, IsFocus() ? CR_YELLOW : CR_WHITE);
+	DrawText(CursorXOffs, 2, Text, IsFocus() ? CR_YELLOW : CR_WHITE);
 
 	if (pic_M_SLDLT != -1)
 	{
+		// Increase width because of font size
+		Width = 382;
 		xx = CursorXOffs;
 		DrawPic(xx, 0, pic_M_SLDLT);
 		xx += 32;
@@ -114,8 +116,10 @@ void OnDraw()
 			xx += 8;
 		}
 		DrawPic(xx, 0, pic_M_SLDRT);
+		xt = xx + 8;
 		xx = CursorXOffs + 30 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
 		DrawPic(xx, 7, pic_M_SLDKB);
+		DrawText(CursorXOffs + 218, 2, va("%f", Value), IsFocus() ? CR_YELLOW : CR_BROWN);
 	}
 	else
 	{
@@ -130,6 +134,7 @@ void OnDraw()
 		DrawPic(xx, 0, pic_M_THERMR);
 		xx = CursorXOffs + 8 + 6 + ftoi((Value - MinValue) * 100.0 / (MaxValue - MinValue));
 		DrawPic(xx, 0, pic_M_THERMO);
+		DrawText(CursorXOffs + 191, 2, va("%f", Value), IsFocus() ? CR_YELLOW : CR_BROWN);
 	}
 }
 

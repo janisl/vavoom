@@ -1,4 +1,4 @@
-
+﻿
 15.06.2002
   Atklājās, ka Hexen-ā monstri neredz spēlētāju. Dīvaini, jo man šķita, ke es
  to jau izlaboju.
@@ -3883,7 +3883,63 @@
   I fixed crash if no main wad file has been found.
 03.06.2009
   I fixed a typo in opening_t structure.
-
+20.06.2009
+  Firebrand fixed Sorcerer2 class wouldn't spawn properly if Sorcerer1 was crushed.
+  Firebrand made Strife death things don't dissapear, since this was added for performance in the original game.
+  Firebrand increased thrust velocity for Heretic's explosive pods to simulate the original game.
+  Firebrand made friendly actors to wander if they don't have a target.
+  Firebrand made GiveInventoryType method to not count for item counts.
+  Firebrand fixed a typo in ExplodeMissile method for making projectiles with counters to explode correctly.
+  Firebrand added an option to deactivate damage thrusting.
+  Firebrand changed model frames to be interpolated more smoothly.
+  Firebrand removed capping of framerate.
+  Firebrand fixed a crash when warping to a map when starting the game in Direct3D.
+  Firebrand added code checks so that 3d floors can be spawned on sloped floors and ceilings.
+  Firebrand fixed crashes when sight checks go through the corners of blockmaps.
+  Firebrand added code to interpolate movement of models.
+28.06.2009
+  Firebrand made dynamic lights to animate more smoothly.
+10.07.2009
+  Firebrand fixed Hexen's mash monsters couldn't be killed.
+  Firebrand fixed that under certain circumstances, Floatbob items could be spawned inside 3d floors.
+13.07.2009
+  Firebrand added more checks for team mates to the friendly minotaur.
+17.07.2009
+  Firebrand reverted the previous additions to the friendly minotaur.
+28.07.2009
+  Firebrand fixed crashed in SpectralMonster::Touch method.
+  Firebrand added functionality of bSeesDaggers flag.
+  Firebrand made projectiles shot above target's height to adjust trajectory if needed.
+  Firebrand corrected the logic of the GetClassFromID method, this fixed a number of problems when using it.
+29.07.2009
+  Firebrand reverted the previous fix for projectiles adjusting trajectory.
+  Firebrand lowered the spawn height of the Strife's Bishop projectiles to match that of original Strife.
+31.07.2009
+  Firebrand adjusted the frame tics for widgets to avoid very fast animations with uncapped framerate.
+  Firebrand added more strict Tracer checks for the friendly Minotaur.
+06.08.2009
+  Firebrand made the input, particles and dynamic lights to wait if the client pauses the game.
+  Firebrand fixed Strife's finale screens to avoid voice overlapping when running with uncapped framerate.
+  Firebrand modified the duration of Strife's gibs to make them last longer.
+07.08.009
+  Firebrand made Arch-Vile's attack to apply the Z component of velocity to be applied after RadiusAttack.
+09.08.2009
+  Firebrand fixed translation of Strife's special key linetypes in LOCKDEFS.
+  Firebrand fixed CreateTossable method to decrease items properly.
+10.08.2009
+  Firebrand fixed the wind sector specials to use the correct velocities.
+  Firebrand removed an extra call to make death player's don't 'oof' if they fall from tall height when death.
+  Firebrand fixed the automap to work as expected with high framerates.
+  Firebrand fixed that some Strife decoration sounds couldn't be heard completely because of fast animations.
+11.08.2009
+  Firebrand updated the M$VC project files to use M$VC 2008.
+  Firebrand added SVN revisions to the engine version, in preparations for releasing SVN versions online.
+14.08.2009
+  Firebrand added SVN revision tool to check the current revision of the code and paste it to the version numbers.
+  Firebrand added a few more optimization parameters to the project files.
+  Firebrand added SVN tool to CMakeLists.txt.
+20.08.2009
+  Firebrand fixed FloorMover::FLOOREV_LowerToHighest method had an unneeded rest operation.  
 10.09.2009
   I changed cheat commands to be forwarded to server.
   I improved performance in cases where array is resized very often.
@@ -3897,3 +3953,37 @@
 14.09.2009
   I moved level data and other game constant and structure definitions to
  GameObject.
+  Firebrand reverted the previous fix for the PowerCouplin and fixed it properly.
+  Firebrand added the SVN tool files to the main solution.
+  Firebrand renamed libjpeg to match the name of the newest version object files.
+15.09.2009
+  Firebrand added VSync CVar for Direct3D and OpenGL.
+18.09.2009
+  Firebrand updated the highlighting code rules for NP++ and the installation documents to fit the latest version of NP++.
+  Firebrand moved specific OS related code for VSync to the proper files to fix compilation problems reported on forums.
+  Firebrand made small fixes to the code to make the game less jerky on high framerates.
+20.09.2009
+  Firebrand made Strife's Inquisitor to check for falling down when flying.
+  Firebrand fixed the Inquisitor's flying logic to match the original Strife one.
+  Firebrand added some more information to the TXT document.
+24.09.2009
+  Firebrand added basepak MSVC project files to build PK3 files for default games using MSVC.
+  Firebrand reduced input lag in Direct3D with high framerates.
+14.10.2009
+  Firebrand fixed some problems with CMakeLists.txt reported in forums.
+  Firebrand made svnrev.h to be built only when building main executables and not utils.
+  Firebrand fixed crashes in slight cases when enabling D3D anti input lag CVars.
+  Firebrand made game events to stop also when the menu is opened and in single player games only.
+25.10.2009
+  Firebrand fixed a typo in the methods for drawing sky in software renderer.
+11.11.2009
+  Firebrand added interpolation for missing model parameters.
+  Firebrand added some more optimizations to the code.
+12.11.2009
+  Firebrand fixed some compilation errors.
+25.11.2009
+  Firebrand added some checks in Lightning projectile's to avoid crashes.
+16.12.2009
+  Firebrand made slider choices to show their value in text.
+  Firebrand added CVars for simulation of original Doom's faded lights using fog.
+  Firebrand made notification messages fade out.

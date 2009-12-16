@@ -837,9 +837,18 @@ void VDirect3DDrawer::SetFade(vuint32 NewFade)
 
 		RenderDevice->SetRenderState(D3DRS_FOGVERTEXMODE, fog_mode[r_fog & 3]);
 		RenderDevice->SetRenderState(D3DRS_FOGCOLOR, NewFade);
-		RenderDevice->SetRenderState(D3DRS_FOGDENSITY, PassFloat(r_fog_density));
-		RenderDevice->SetRenderState(D3DRS_FOGSTART, PassFloat(r_fog_start));
-		RenderDevice->SetRenderState(D3DRS_FOGEND, PassFloat(r_fog_end));
+		if (NewFade == fade_light)
+		{
+			RenderDevice->SetRenderState(D3DRS_FOGDENSITY, PassFloat(0.3));
+			RenderDevice->SetRenderState(D3DRS_FOGSTART, PassFloat(1.0));
+			RenderDevice->SetRenderState(D3DRS_FOGEND, PassFloat(1024.0 * r_fade_factor));
+		}
+		else
+		{
+			RenderDevice->SetRenderState(D3DRS_FOGDENSITY, PassFloat(r_fog_density));
+			RenderDevice->SetRenderState(D3DRS_FOGSTART, PassFloat(r_fog_start));
+			RenderDevice->SetRenderState(D3DRS_FOGEND, PassFloat(r_fog_end));
+		}
 		RenderDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
 	}
 	else

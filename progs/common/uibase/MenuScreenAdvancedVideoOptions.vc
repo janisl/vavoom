@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -52,6 +52,23 @@ void CreateChoices()
 	Enum.SetInitialValue(GetCvar('r_darken'));
 	Enum.ValueChanging = ChangeDarken;
 	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "Simulate Faded lights";
+	Enum.SetInitialValue(GetCvar('r_fade_light'));
+	Enum.ValueChanging = ChangeFade;
+	currentY += Enum.Height;
+
+	Slider = NewChild(MenuChoiceSlider);
+	Slider.SetOrigin(ChoicesStartX, currentY);
+	Slider.Text = "Light Fade Factor";
+	Slider.ValueDelta = 1.0;
+	Slider.MaxValue = 10.0;
+	Slider.MinValue = 1.0;
+	Slider.SetInitialValue(GetCvarF('r_fade_factor'));
+	Slider.ValueChanging = ChangeFactor;
+	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
@@ -207,6 +224,30 @@ void CreateChoices()
 bool ChangeDarken(Object Sender, int newValue)
 {
 	SetCvar('r_darken', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeFade
+//
+//==========================================================================
+
+bool ChangeFade(Object Sender, int newValue)
+{
+	SetCvar('r_fade_light', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeFactor
+//
+//==========================================================================
+
+bool ChangeFactor(Object Sender, float newValue)
+{
+	SetCvarF('r_fade_factor', newValue);
 	return true;
 }
 
@@ -416,7 +457,7 @@ bool ChangeD3dSpecularHighlights(Object Sender, int newValue)
 
 defaultproperties
 {
-	Width = 360;
+	Width = 385;
 	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	TitleX = 180;

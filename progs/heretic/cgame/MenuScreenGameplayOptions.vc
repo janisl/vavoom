@@ -201,7 +201,6 @@ defaultproperties
 {
 	ChoicesStartX = 180;
 	ChoicesStartY = 26;
-	Width = 340;
 	SelectorType = MenuSelector_SmallRight;
 	Title = "GAMEPLAY OPTIONS";
 }

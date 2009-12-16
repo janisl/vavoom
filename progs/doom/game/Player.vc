@@ -331,7 +331,7 @@ void Cheat_Gimme()
 
 	// Powers
 	if (i1 & GIMME_INVULNERABILITY)
-		EntityEx(MO).GiveInventoryType(PowerInvulnerable);
+		EntityEx(MO).GiveInventoryType(InvulnerabilitySphere);
 	if (i1 & GIMME_STRENGTH)
 		EntityEx(MO).GiveInventoryType(PowerStrength);
 	if (i1 & GIMME_INVISIBILITY)

@@ -245,7 +245,7 @@ bool OnKeyDown(int key)
 //	OnDraw
 //
 //  Fade all the screen buffer, so that the menu is more readable,
-// especially now that we use the small hufont in the menus...
+// especially now that we use the small hudfont in the menus...
 //
 //==========================================================================
 
@@ -256,11 +256,11 @@ void OnDraw()
 
 defaultproperties
 {
-	X = 160;
+	X = 180;
 	Y = 140;
-	Width = 320;
+	Width = 360;
 	Height = 200;
-	TitleX = 160;
+	TitleX = 180;
 	TitleY = 24;
 	Focusable = true;
 }

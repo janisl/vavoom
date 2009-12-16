@@ -487,7 +487,6 @@ extern int				r_visframecount;
 extern subsector_t*		r_viewleaf;
 
 extern byte				light_remap[256];
-extern VCvarI			r_darken;
 
 extern refdef_t			refdef;
 
