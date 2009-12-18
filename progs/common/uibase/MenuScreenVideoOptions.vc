@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -280,7 +280,7 @@ void ActivateAdvanced(Object Sender)
 
 defaultproperties
 {
-	Width = 385;
+	Width = 360;
 	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;

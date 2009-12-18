@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**	##   ##    ##    ##   ##   ####     ####   ###     ###
 //**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -49,7 +49,10 @@ enum
 };
 
 //  Simulate light fading using dark fog
-const vuint32 fade_light = 0xff010101;
+enum
+{
+	FADE_LIGHT = 0xff010101
+};
 
 // TYPES -------------------------------------------------------------------
 
@@ -168,8 +171,9 @@ extern VCvarF			r_fog_b;
 extern VCvarF			r_fog_start;
 extern VCvarF			r_fog_end;
 extern VCvarF			r_fog_density;
-extern VCvarI			r_darken;
+
 extern VCvarI			r_vsync;
+
 extern VCvarI			r_fade_light;
 extern VCvarF			r_fade_factor;
 

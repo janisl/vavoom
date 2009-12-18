@@ -540,7 +540,7 @@ void VOpenGLDrawer::SetFade(vuint32 NewFade)
 		fogColour[3] = float((NewFade >> 24) & 0xff) / 255.0;
 		glFogi(GL_FOG_MODE, fogMode[r_fog & 3]);
 		glFogfv(GL_FOG_COLOR, fogColour);
-		if (NewFade == fade_light)
+		if (NewFade == FADE_LIGHT)
 		{
 			glFogf(GL_FOG_DENSITY, 0.3);
 			glFogf(GL_FOG_START, 1.0);
