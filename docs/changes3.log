@@ -3987,3 +3987,6 @@
   Firebrand made slider choices to show their value in text.
   Firebrand added CVars for simulation of original Doom's faded lights using fog.
   Firebrand made notification messages fade out.
+19.12.2009
+  Firebrand removed value text from slider choices, since it was a debugging measure.
+  Firebrand added support for the launcher to specify directories where to look for IWADS.

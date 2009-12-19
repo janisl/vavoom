@@ -62,6 +62,7 @@ public:
 	wxCheckBox*		CheckBoxNoMouse;
 	wxCheckBox*		CheckBoxNoJoy;
 	wxCheckBox*		CheckBoxDebug;
+	wxTextCtrl*		EditIWadDir;
 	wxTextCtrl*		EditGame;
 	wxCheckBox*		CheckBoxDevGame;
 	wxTextCtrl*		EditFiles;
@@ -164,11 +165,14 @@ VMain::VMain()
 	gsizer->Add(new wxStaticText(page, -1, wxT("Custom game:")), 0, wxALL, 4);
 	EditGame = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
 	gsizer->Add(EditGame, 0, wxALL, 4);
+	gsizer->Add(new wxStaticText(page, -1, wxT("Main WAD directory:")), 0, wxALL, 4);
+	EditIWadDir = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(209, -1));
+	gsizer->Add(EditIWadDir, 0, wxALL, 4);
 	CheckBoxDevGame = new wxCheckBox(page, -1, wxT("Development mode"));
 	gsizer->AddSpacer(1);
 	gsizer->Add(CheckBoxDevGame, 0, wxALL, 4);
 	gsizer->Add(new wxStaticText(page, -1, wxT("Files:")), 0, wxALL, 4);
-	EditFiles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(200, -1));
+	EditFiles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(209, -1));
 	gsizer->Add(EditFiles, 0, wxALL, 4);
 	CheckBoxDebug = new wxCheckBox(page, -1, wxT("Create debug file"));
 	gsizer->AddSpacer(1);
@@ -248,6 +252,7 @@ VMain::VMain()
 	CheckBoxNoMouse->SetValue(!!Conf->Read(wxT("NoMouse"), 0l));
 	CheckBoxNoJoy->SetValue(!!Conf->Read(wxT("NoJoy"), 0l));
 	CheckBoxDebug->SetValue(!!Conf->Read(wxT("Debug"), 0l));
+	EditIWadDir->SetValue(Conf->Read(wxT("IWadDir"), wxT("")));
 	EditGame->SetValue(Conf->Read(wxT("CustomGame"), wxT("")));
 	CheckBoxDevGame->SetValue(!!Conf->Read(wxT("DevGame"), 0l));
 	EditFiles->SetValue(Conf->Read(wxT("Files"), wxT("")));
@@ -278,6 +283,7 @@ VMain::~VMain()
 	Conf->Write(wxT("NoMouse"), CheckBoxNoMouse->IsChecked());
 	Conf->Write(wxT("NoJoy"), CheckBoxNoJoy->IsChecked());
 	Conf->Write(wxT("Debug"), CheckBoxDebug->IsChecked());
+	Conf->Write(wxT("IWadDir"), EditIWadDir->GetValue());
 	Conf->Write(wxT("CustomGame"), EditGame->GetValue());
 	Conf->Write(wxT("DevGame"), CheckBoxDevGame->IsChecked());
 	Conf->Write(wxT("Files"), EditFiles->GetValue());
@@ -369,6 +375,8 @@ void VMain::OnRun(wxCommandEvent&)
 			CmdLine += wxT(" -game ");
 		CmdLine += EditGame->GetValue();
 	}
+	if (EditIWadDir->GetValue().Length())
+		CmdLine += wxT(" -iwaddir ") + EditIWadDir->GetValue();
 	if (EditFiles->GetValue().Length())
 		CmdLine += wxT(" -file ") + EditFiles->GetValue();
 	if (EditMisc->GetValue().Length())
