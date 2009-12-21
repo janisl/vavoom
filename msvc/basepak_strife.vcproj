@@ -37,14 +37,14 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ProjectDir)$(ProjectName)_$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\strife\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
-				ReBuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\strife\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				BuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\strife\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(OutDir)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				ReBuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\strife\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(OutDir)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
 				CleanCommandLine=""
 				Output="basepak.pk3"
 				PreprocessorDefinitions=""
@@ -65,130 +65,66 @@
 			<File
 				RelativePath="..\progs\strife\cgame\classes.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\ClientGame.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\ConSlideshow1.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\ConSlideshow2.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\IntermissionScreen.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenControls2.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenGameplayOptions.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenHelp.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenMain.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenMultiplayer.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenNewNetGame.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenOptions.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenPlayerSetup.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\MenuScreenQuit.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\StatusBarScreen.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\cgame\TitleScreen.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -197,34 +133,18 @@
 			<File
 				RelativePath="..\progs\strife\game\classes.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\MainGameInfo.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\Player.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\progs\strife\game\StrifeLevelInfo.vc"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>

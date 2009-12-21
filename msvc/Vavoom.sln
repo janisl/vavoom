@@ -69,6 +69,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basepak_tnt", "basepak_tnt.
 		{F65AC2B2-1632-4584-BDA1-DAC149FC9BDD} = {F65AC2B2-1632-4584-BDA1-DAC149FC9BDD}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basepak_doom1", "basepak_doom1.vcproj", "{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -193,6 +195,12 @@ Global
 		{9DE9595D-4094-49EF-BC0B-851CE1ECCA5C}.Release|Win32.ActiveCfg = Release|Win32
 		{9DE9595D-4094-49EF-BC0B-851CE1ECCA5C}.Release|Win32.Build.0 = Release|Win32
 		{9DE9595D-4094-49EF-BC0B-851CE1ECCA5C}.Release|x64.ActiveCfg = Release|Win32
+		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Debug|Win32.Build.0 = Debug|Win32
+		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Debug|x64.ActiveCfg = Debug|Win32
+		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Release|Win32.ActiveCfg = Release|Win32
+		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Release|Win32.Build.0 = Release|Win32
+		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

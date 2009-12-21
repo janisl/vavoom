@@ -37,14 +37,14 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ProjectDir)$(InputName)_$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
-				ReBuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(ProjectDir)$(InputName)_$(ConfigurationName)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				BuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(OutDir)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
+				ReBuildCommandLine="$(SolutionDir)$(ConfigurationName)\vlumpy.exe ..\basev\doom2\basepak.ls&#x0D;&#x0A;if exist $(OutDir) goto end&#x0D;&#x0A;goto no &#x0D;&#x0A;:no &#x0D;&#x0A;md $(OutDir)&#x0D;&#x0A;goto end &#x0D;&#x0A;:end &#x0D;&#x0A;move basepak.pk3 $(OutDir)&#x0D;&#x0A;"
 				CleanCommandLine=""
 				Output="basepak.pk3"
 				PreprocessorDefinitions=""

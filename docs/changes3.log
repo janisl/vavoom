@@ -3990,3 +3990,6 @@
 19.12.2009
   Firebrand removed value text from slider choices, since it was a debugging measure.
   Firebrand added support for the launcher to specify directories where to look for IWADS.
+21.12.2009
+  Firebrand made basepak MSVC projects create a single directory where all object files will be placed.
+  Firebrand added missing doom1 basepak MSVC project.

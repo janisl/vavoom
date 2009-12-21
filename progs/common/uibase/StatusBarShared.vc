@@ -172,10 +172,7 @@ void DrawNotify()
 		else
 		{
 			DrawText(4, y, notify_lines[(i + first_notify) %
-				NUM_NOTIFY_LINES], col, , notify_times[(i + first_notify) %
-				NUM_NOTIFY_LINES] < (GetCvarF('notify_time') * 0.95) ?
-				((0.9 * notify_times[(i + first_notify) % NUM_NOTIFY_LINES]) /
-				(GetCvarF('notify_time') * 0.95) - 1.0) : 1.0);
+				NUM_NOTIFY_LINES], col);
 			y += 9;
 			i++;
 		}
@@ -245,8 +242,7 @@ void DrawCentreMessage()
 		{
 			DrawText(320 - CentreMessageLines[i].Width / 2, 360 + i * LineH,
 				CentreMessageLines[i].Text, GetCvar('font_colour2'),
-				CR_YELLOW, (CentreTime < (GetCvarF('centre_message_time') * 0.95) ?
-				(0.9 * CentreTime) / (GetCvarF('centre_message_time') * 0.95) - 1.0 : 1.0));
+				CR_YELLOW);
 		}
 	}
 }
