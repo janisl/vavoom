@@ -1014,7 +1014,7 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 		}
 
 		ld->flags = flags & ~ML_SPAC_MASK;
-		int Spac = GET_SPAC(flags);
+		int Spac = (flags & ML_SPAC_MASK) >> ML_SPAC_SHIFT;
 		if (Spac == 7)
 		{
 			ld->SpacFlags = SPAC_Impact | SPAC_PCross;

@@ -30,6 +30,17 @@
 #define MAX(x, y)		((x) > (y) ? (x) : (y))
 #define MID(min, val, max)	MAX(min, MIN(val, max))
 
+//
+//  Bounding box
+//
+enum
+{
+	BOXTOP,
+	BOXBOTTOM,
+	BOXLEFT,
+	BOXRIGHT
+};
+
 //==========================================================================
 //
 //	Angles
