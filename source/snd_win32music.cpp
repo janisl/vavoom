@@ -417,41 +417,41 @@ void VMMSystemMidiDevice::Stop()
 	guard(VMMSystemMidiDevice::Stop);
 	if (MidiImage)
 	{
-		if (MusicPaused)
-		{
-			Resume();
-		}
-		if (State != STATE_Playing && State != STATE_Paused)
-		{
-			SeqFlags &= ~SEQF_Waiting;
-		}
-		else
-		{
-			State = STATE_Stopping;
-			SeqFlags |= SEQF_Waiting;
-
-			if (MMSYSERR_NOERROR != midiStreamStop((HMIDISTRM)hMidi))
-			{
-				SeqFlags &= ~SEQF_Waiting;
-				return;
-			}
-
-			while (BuffersInMMSYSTEM)
-				Sleep(0);
-		}
-
-		//	Close file.
-		if (State == STATE_Opened)
-		{
-			//	If we were prerolled, need to clean up -- have an open MIDI
-			// handle and buffers in the ready queue
-			for (LPMIDIHDR lpmh = FreeBuffers; lpmh; lpmh = lpmh->lpNext)
-				midiOutUnprepareHeader(hMidi, lpmh, sizeof(*lpmh));
-		}
-
-		//	Close midi stream.	
 		if (hMidi)
 		{
+			if (MusicPaused)
+			{
+				Resume();
+			}
+			if (State != STATE_Playing && State != STATE_Paused)
+			{
+				SeqFlags &= ~SEQF_Waiting;
+			}
+			else
+			{
+				State = STATE_Stopping;
+				SeqFlags |= SEQF_Waiting;
+
+				if (MMSYSERR_NOERROR != midiStreamStop((HMIDISTRM)hMidi))
+				{
+					SeqFlags &= ~SEQF_Waiting;
+					return;
+				}
+
+				while (BuffersInMMSYSTEM)
+					Sleep(0);
+			}
+
+			//	Close file.
+			if (State == STATE_Opened)
+			{
+				//	If we were prerolled, need to clean up -- have an open MIDI
+				// handle and buffers in the ready queue
+				for (LPMIDIHDR lpmh = FreeBuffers; lpmh; lpmh = lpmh->lpNext)
+					midiOutUnprepareHeader(hMidi, lpmh, sizeof(*lpmh));
+			}
+
+			//	Close midi stream.	
 			midiStreamClose((HMIDISTRM)hMidi);
 			hMidi = NULL;
 		}

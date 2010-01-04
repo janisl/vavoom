@@ -3993,3 +3993,5 @@
 21.12.2009
   Firebrand made basepak MSVC projects create a single directory where all object files will be placed.
   Firebrand added missing doom1 basepak MSVC project.
+04.01.2010
+  Firebrand fixed a crash in Stop() method for Win32 Midi music device.
