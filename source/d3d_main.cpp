@@ -152,9 +152,12 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 
 	//	Shut down current mode
 	ReleaseTextures();
-	SAFE_RELEASE(DXBlockSurface[0]);
-	SAFE_RELEASE(DXBlockSurface[1]);
-	SAFE_RELEASE(RenderDevice)
+	if (RenderDevice)
+	{
+		SAFE_RELEASE(DXBlockSurface[0]);
+		SAFE_RELEASE(DXBlockSurface[1]);
+		SAFE_RELEASE(RenderDevice)
+	}
 
 	D3DPRESENT_PARAMETERS d3dpp;
 
@@ -642,7 +645,6 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	D3DSURFACE_DESC desc;
 	surf->GetDesc(&desc);
 
-
 	//	Decode pixel format
 	int scr_rbits;
 	int scr_rshift;
@@ -689,7 +691,7 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 		}
 		default:
 		{
-			GCon->Log(NAME_Init, "Invalid pixel format");
+			GCon->Log(NAME_Init, "ReadScreen: Invalid pixel format");
 			Z_Free(dst);
 			return NULL;
 		}
@@ -785,7 +787,7 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 		}
 		default:
 		{
-			GCon->Log(NAME_Init, "Invalid pixel format");
+			GCon->Log(NAME_Init, "ReadBackScreen: Invalid pixel format");
 			return;
 		}
 	}
@@ -793,7 +795,7 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 	D3DLOCKED_RECT lrect;
 	if (FAILED(surf->LockRect(&lrect, NULL, D3DLOCK_READONLY)))
 	{
-		Sys_Error("ReadScreen: Failed to lock screen");
+		Sys_Error("ReadBackScreen: Failed to lock screen");
 	}
 
 	rgba_t *pdst = Dest;

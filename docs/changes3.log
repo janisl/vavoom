@@ -3995,3 +3995,8 @@
   Firebrand added missing doom1 basepak MSVC project.
 04.01.2010
   Firebrand fixed a crash in Stop() method for Win32 Midi music device.
+05.01.2010
+  Firebrand fixed for good the crash in Stop() method for Win32 Midi device.
+  Firebrand fixed the Debug configuration for the Vavoom project files.
+  Firebrand fixed the progs Debug configuration for the project.
+  Firebrand fixed crashes that were presenting when building Vavoom using Debug configuration.

@@ -1176,9 +1176,13 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	}
 
 	if (StreamPlaying)
+	{
 		StreamMusicPlayer->Stop();
+	}
 	else if (MidiDevice)
+	{
 		MidiDevice->Stop();
+	}
 	StreamPlaying = false;
 
 	//	Get music volume for this song.
@@ -1206,12 +1210,18 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 			for (VXmlNode* N = Doc->Root.FirstChild; N; N = N->NextSibling)
 			{
 				if (N->Name != "song")
+				{
 					continue;
+				}
 				if (N->GetAttribute("name") != Song)
+				{
 					continue;
+				}
 				Lump = W_CheckNumForFileName(N->GetAttribute("file"));
 				if (Lump >= 0)
+				{
 					break;
+				}
 			}
 			delete Doc;
 		}
@@ -1332,9 +1342,13 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 	if (command == "off")
 	{
 		if (MidiDevice)
+		{
 			MidiDevice->Stop();
+		}
 		if (StreamMusicPlayer)
+		{
 			StreamMusicPlayer->Stop();
+		}
 		MusicEnabled = false;
 		return;
 	}
@@ -1369,27 +1383,39 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 	if (command == "pause")
 	{
 		if (StreamPlaying)
+		{
 			StreamMusicPlayer->Pause();
+		}
 		else if (MidiDevice)
+		{
 			MidiDevice->Pause();
+		}
 		return;
 	}
 
 	if (command == "resume")
 	{
 		if (StreamPlaying)
+		{
 			StreamMusicPlayer->Resume();
+		}
 		else if (MidiDevice)
+		{
 			MidiDevice->Resume();
+		}
 		return;
 	}
 
 	if (command == "stop")
 	{
 		if (StreamPlaying)
+		{
 			StreamMusicPlayer->Stop();
+		}
 		else if (MidiDevice)
+		{
 			MidiDevice->Stop();
+		}
 		return;
 	}
 
@@ -1440,7 +1466,9 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 	if (command == "off")
 	{
 		if (CDAudioDevice->Playing)
+		{
 			CDAudioDevice->Stop();
+		}
 		CDAudioDevice->Enabled = false;
 		return;
 	}
@@ -1451,9 +1479,13 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 
 		CDAudioDevice->Enabled = true;
 		if (CDAudioDevice->Playing)
+		{
 			CDAudioDevice->Stop();
+		}
 		for (n = 0; n < 100; n++)
+		{
 			CDAudioDevice->Remap[n] = n;
+		}
 		CDAudioDevice->GetInfo();
 		return;
 	}
@@ -1467,12 +1499,18 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 		if (ret <= 0)
 		{
 			for (n = 1; n < 100; n++)
+			{
 				if (CDAudioDevice->Remap[n] != n)
+				{
 					GCon->Logf("%d -> %d", n, CDAudioDevice->Remap[n]);
+				}
+			}
 			return;
 		}
 		for (n = 1; n <= ret; n++)
+		{
 			CDAudioDevice->Remap[n] = atoi(*Args[n + 1]);
+		}
 		return;
 	}
 
@@ -1484,7 +1522,9 @@ void VAudio::CmdCD(const TArray<VStr>& Args)
 	if (command == "eject")
 	{
 		if (CDAudioDevice->Playing)
+		{
 			CDAudioDevice->Stop();
+		}
 		CDAudioDevice->OpenDoor();
 		CDAudioDevice->CDValid = false;
 		return;

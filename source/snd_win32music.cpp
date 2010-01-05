@@ -342,16 +342,19 @@ void VMMSystemMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 	}
 
 	//	Play
-	State = STATE_Playing;
-	midiStreamRestart((HMIDISTRM)hMidi);
-
-	//	Pause if needed.
-	if (!MusVolume || MusicPaused)
+	if (hMidi)
 	{
-		Pause();
+		State = STATE_Playing;
+		midiStreamRestart((HMIDISTRM)hMidi);
+
+		//	Pause if needed.
+		if (!MusVolume || MusicPaused)
+		{
+			Pause();
+		}
+		CurrSong = VName(song, VName::AddLower8);
+		CurrLoop = loop;
 	}
-	CurrSong = VName(song, VName::AddLower8);
-	CurrLoop = loop;
 	unguard;
 }
 
@@ -367,9 +370,12 @@ void VMMSystemMidiDevice::Pause()
 	if (State != STATE_Playing)
 		return;
 
-	State = STATE_Paused;
-	midiStreamPause((HMIDISTRM)hMidi);
-	MusicPaused = true;
+	if (hMidi)
+	{
+		State = STATE_Paused;
+		midiStreamPause((HMIDISTRM)hMidi);
+		MusicPaused = true;
+	}
 	unguard;
 }
 
@@ -385,9 +391,12 @@ void VMMSystemMidiDevice::Resume()
 	if (State != STATE_Paused)
 		return;
 
-	State = STATE_Playing;
-	midiStreamRestart((HMIDISTRM)hMidi);
-	MusicPaused = false;
+	if (hMidi)
+	{
+		State = STATE_Playing;
+		midiStreamRestart((HMIDISTRM)hMidi);
+		MusicPaused = false;
+	}
 	unguard;
 }
 
@@ -417,7 +426,7 @@ void VMMSystemMidiDevice::Stop()
 	guard(VMMSystemMidiDevice::Stop);
 	if (MidiImage)
 	{
-		if (hMidi)
+		if (hMidi != NULL)
 		{
 			if (MusicPaused)
 			{
@@ -432,7 +441,7 @@ void VMMSystemMidiDevice::Stop()
 				State = STATE_Stopping;
 				SeqFlags |= SEQF_Waiting;
 
-				if (MMSYSERR_NOERROR != midiStreamStop((HMIDISTRM)hMidi))
+				if (!hMidi || MMSYSERR_NOERROR != midiStreamStop((HMIDISTRM)hMidi))
 				{
 					SeqFlags &= ~SEQF_Waiting;
 					return;
@@ -451,9 +460,12 @@ void VMMSystemMidiDevice::Stop()
 					midiOutUnprepareHeader(hMidi, lpmh, sizeof(*lpmh));
 			}
 
-			//	Close midi stream.	
-			midiStreamClose((HMIDISTRM)hMidi);
-			hMidi = NULL;
+			//	Close midi stream.
+			if (hMidi)
+			{
+				midiStreamClose((HMIDISTRM)hMidi);
+				hMidi = NULL;
+			}
 		}
 		State = STATE_NoFile;
 		Z_Free((void*)MidiImage);

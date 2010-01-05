@@ -160,14 +160,17 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1"
+				PreprocessorDefinitions="_DEBUG;WIN32;_WINDOWS;_WIN32;_CRTDBG_MAP_ALLOC;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1"
 				MinimalRebuild="true"
-				BasicRuntimeChecks="3"
+				BasicRuntimeChecks="0"
 				RuntimeLibrary="1"
-				BrowseInformation="1"
-				WarningLevel="4"
+				EnableFunctionLevelLinking="true"
+				BrowseInformation="0"
+				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="4"
+				Detect64BitPortabilityProblems="true"
+				DebugInformationFormat="3"
+				CompileAs="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -175,14 +178,14 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="1062"
+				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="user32.lib ole32.lib gdi32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpngd.lib libjpeg_d.lib zlibd.lib libmad_d.lib vorbis_static_d.lib ogg_static_d.lib mikmod_d.lib libFLAC_static_d.lib libFLAC++_static_d.lib"
+				AdditionalDependencies="user32.lib ole32.lib gdi32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpngd.lib libjpeg_d.lib zlibd.lib libmad_d.lib libvorbis_static_d.lib libogg_static_d.lib libmikmod_d.lib libFLAC_static_d.lib libFLAC++_static_d.lib"
 				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -190,7 +193,7 @@
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				TargetMachine="1"
+				TargetMachine="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
