@@ -87,6 +87,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\engine\GameObject.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\engine\Level.vc"
 				>
 			</File>
