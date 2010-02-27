@@ -4000,3 +4000,5 @@
   Firebrand fixed the Debug configuration for the Vavoom project files.
   Firebrand fixed the progs Debug configuration for the project.
   Firebrand fixed crashes that were presenting when building Vavoom using Debug configuration.
+27.02.2010
+  I added printing of supported screenshot formats.

@@ -220,7 +220,7 @@ COMMAND(ScreenShot)
 	}
 	if (i == 10000)
 	{
-		GCon->Log("Couldn't create a PCX");
+		GCon->Log("Couldn't create a screenshot file");
 		return;
 	}
 
@@ -228,17 +228,18 @@ COMMAND(ScreenShot)
 	data = Drawer->ReadScreen(&bpp, &bot2top);
 	if (data)
 	{
-		if (!VStr::Cmp(screenshot_type, "pcx"))
+		if (!VStr::ICmp(screenshot_type, "pcx"))
 		{
 			WritePCX(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
 		}
-		else if (!VStr::Cmp(screenshot_type, "tga"))
+		else if (!VStr::ICmp(screenshot_type, "tga"))
 		{
 			WriteTGA(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
 		}
 		else
 		{
 			GCon->Log("Bad screenshot type");
+			GCon->Log("Supported formats are pcx and tga");
 		}
 		Z_Free(data);
 	}
