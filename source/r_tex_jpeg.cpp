@@ -59,6 +59,8 @@ struct VJpegClientData
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static VCvarI			jpeg_quality("jpeg_quality", "80", CVAR_Archive);
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -175,21 +177,31 @@ VJpegTexture::~VJpegTexture()
 	unguard;
 }
 
+#ifdef CLIENT
+
 //==========================================================================
 //
-//	VJpegTexture::GetPixels
+//	my_init_source
 //
 //==========================================================================
 
-#ifdef CLIENT
 static void my_init_source(j_decompress_ptr cinfo)
 {
+	guard(my_init_source);
 	cinfo->src->next_input_byte = NULL;
 	cinfo->src->bytes_in_buffer = 0;
+	unguard;
 }
+
+//==========================================================================
+//
+//	my_fill_input_buffer
+//
+//==========================================================================
 
 static boolean my_fill_input_buffer(j_decompress_ptr cinfo)
 {
+	guard(my_fill_input_buffer);
 	VJpegClientData* cdata = (VJpegClientData*)cinfo->client_data;
 	if (cdata->Strm->AtEnd())
 	{
@@ -210,10 +222,18 @@ static boolean my_fill_input_buffer(j_decompress_ptr cinfo)
 	cinfo->src->next_input_byte = cdata->Buffer;
 	cinfo->src->bytes_in_buffer = Count;
 	return TRUE;
+	unguard;
 }
+
+//==========================================================================
+//
+//	my_skip_input_data
+//
+//==========================================================================
 
 static void my_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 {
+	guard(my_skip_input_data);
 	if (num_bytes <= 0)
 	{
 		return;
@@ -234,25 +254,55 @@ static void my_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 		cdata->Strm->Seek(Pos);
 		cinfo->src->bytes_in_buffer = 0;
 	}
+	unguard;
 }
+
+//==========================================================================
+//
+//	my_term_source
+//
+//==========================================================================
 
 static void my_term_source(j_decompress_ptr)
 {
 }
 
+//==========================================================================
+//
+//	my_error_exit
+//
+//==========================================================================
+
 static void my_error_exit(j_common_ptr cinfo)
 {
+	guard(my_error_exit);
 	(*cinfo->err->output_message)(cinfo);
 	throw -1;
+	unguard;
 }
+
+//==========================================================================
+//
+//	my_output_message
+//
+//==========================================================================
 
 static void my_output_message(j_common_ptr cinfo)
 {
+	guard(my_output_message);
 	char Msg[JMSG_LENGTH_MAX];
 	cinfo->err->format_message(cinfo, Msg);
 	GCon->Log(Msg);
+	unguard;
 }
+
 #endif
+
+//==========================================================================
+//
+//	VJpegTexture::GetPixels
+//
+//==========================================================================
 
 vuint8* VJpegTexture::GetPixels()
 {
@@ -404,3 +454,149 @@ void VJpegTexture::Unload()
 	}
 	unguard;
 }
+
+#ifdef CLIENT
+
+//==========================================================================
+//
+//	my_init_destination
+//
+//==========================================================================
+
+static void my_init_destination(j_compress_ptr cinfo)
+{
+	guard(my_init_destination);
+	VJpegClientData* cdata = (VJpegClientData*)cinfo->client_data;
+	cinfo->dest->next_output_byte = cdata->Buffer;
+	cinfo->dest->free_in_buffer = 4096;
+	unguard;
+}
+
+//==========================================================================
+//
+//	my_empty_output_buffer
+//
+//==========================================================================
+
+static boolean my_empty_output_buffer(j_compress_ptr cinfo)
+{
+	guard(my_empty_output_buffer);
+	VJpegClientData* cdata = (VJpegClientData*)cinfo->client_data;
+	cdata->Strm->Serialise(cdata->Buffer, 4096);
+	cinfo->dest->next_output_byte = cdata->Buffer;
+	cinfo->dest->free_in_buffer = 4096;
+	return TRUE;
+	unguard;
+}
+
+//==========================================================================
+//
+//	my_term_destination
+//
+//==========================================================================
+
+static void my_term_destination(j_compress_ptr cinfo)
+{
+	guard(my_term_destination);
+	VJpegClientData* cdata = (VJpegClientData*)cinfo->client_data;
+	cdata->Strm->Serialise(cdata->Buffer, 4096 - cinfo->dest->free_in_buffer);
+	unguard;
+}
+
+//==========================================================================
+//
+//	WriteJPG
+//
+//==========================================================================
+
+void WriteJPG(const VStr& FileName, const void* Data, int Width, int Height,
+	int Bpp, bool Bot2top)
+{
+	guard(WriteJPG);
+	VStream* Strm = FL_OpenFileWrite(FileName);
+	if (!Strm)
+	{
+		GCon->Log("Couldn't write jpg");
+		return;
+	}
+
+	jpeg_compress_struct	cinfo;
+	jpeg_destination_mgr	dmgr;
+	jpeg_error_mgr			jerr;
+	VJpegClientData			cdata;
+
+	//	Set up the JPEG error routines.
+	cinfo.err = jpeg_std_error(&jerr);
+	jerr.error_exit = my_error_exit;
+	jerr.output_message = my_output_message;
+
+	//	Set client data pointer
+	cinfo.client_data = &cdata;
+	cdata.Strm = Strm;
+
+	try
+	{
+		//	Initialise the JPEG decompression object.
+		jpeg_create_compress(&cinfo);
+
+		//	Specify data source
+		dmgr.init_destination = my_init_destination;
+		dmgr.empty_output_buffer = my_empty_output_buffer;
+		dmgr.term_destination = my_term_destination;
+		cinfo.dest = &dmgr;
+
+		//	Specify image data
+		cinfo.image_width = Width;
+		cinfo.image_height = Height;
+		cinfo.input_components = 3;
+		cinfo.in_color_space = JCS_RGB;
+
+		//	Set up compression.
+		jpeg_set_defaults(&cinfo);
+		jpeg_set_quality(&cinfo, jpeg_quality, TRUE);
+
+		//	Perform compression.
+		jpeg_start_compress(&cinfo, TRUE);
+		TArray<JSAMPROW> RowPointers;
+		TArray<vuint8> TmpData;
+		RowPointers.SetNum(Height);
+		if (Bpp == 8)
+		{
+			//	Convert image to 24 bit.
+			TmpData.SetNum(Width * Height * 3);
+			for (int i = 0; i < Width * Height; i++)
+			{
+				int Col = ((byte*)Data)[i];
+				TmpData[i * 3] = r_palette[Col].r;
+				TmpData[i * 3 + 1] = r_palette[Col].g;
+				TmpData[i * 3 + 2] = r_palette[Col].b;
+			}
+			for (int i = 0; i < Height; i++)
+			{
+				RowPointers[i] = &TmpData[(Bot2top ? Height - i - 1 : i) *
+					Width * 3];
+			}
+		}
+		else
+		{
+			for (int i = 0; i < Height; i++)
+			{
+				RowPointers[i] = ((byte*)Data) +
+					(Bot2top ? Height - i - 1 : i) * Width * 3;
+			}
+		}
+		jpeg_write_scanlines(&cinfo, RowPointers.Ptr(), Height);
+		jpeg_finish_compress(&cinfo);
+	}
+	catch (int)
+	{
+	}
+
+	//	Finish with the image.
+	jpeg_destroy_compress(&cinfo);
+	Strm->Close();
+	delete Strm;
+	unguard;
+}
+
+#endif

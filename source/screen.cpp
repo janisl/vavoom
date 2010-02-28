@@ -190,6 +190,8 @@ void WritePCX(char* filename, void* data, int width, int height, int bpp,
 	bool bot2top);
 void WritePNG(const VStr& FileName, const void* Data, int Width, int Height,
 	int Bpp, bool Bot2top);
+void WriteJPG(const VStr& FileName, const void* Data, int Width, int Height,
+	int Bpp, bool Bot2top);
 
 //==========================================================================
 //
@@ -242,10 +244,14 @@ COMMAND(ScreenShot)
 		{
 			WritePNG(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
 		}
+		else if (!VStr::ICmp(screenshot_type, "jpg"))
+		{
+			WriteJPG(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
+		}
 		else
 		{
 			GCon->Log("Bad screenshot type");
-			GCon->Log("Supported formats are pcx, tga and png");
+			GCon->Log("Supported formats are pcx, tga, png and jpg");
 		}
 		Z_Free(data);
 	}
