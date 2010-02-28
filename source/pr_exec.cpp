@@ -168,7 +168,7 @@ static void RunFunction(VMethod *func)
 	VStack*		local_vars;
 	VScriptIterator*	ActiveIterators = NULL;
 
-	guardSlow(RunFunction);
+	guard(RunFunction);
 	current_func = func;
 
 	if (func->Flags & FUNC_Net)
@@ -1868,7 +1868,7 @@ func_loop:
 	}
 
 	goto func_loop;
-	unguardfSlow(("(%s %d)", *func->GetFullName(),
+	unguardf(("(%s %d)", *func->GetFullName(),
 		ip - func->Statements.Ptr()));
 }
 
