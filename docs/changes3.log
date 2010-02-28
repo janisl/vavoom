@@ -4002,3 +4002,5 @@
   Firebrand fixed crashes that were presenting when building Vavoom using Debug configuration.
 27.02.2010
   I added printing of supported screenshot formats.
+28.02.2010
+  I added support for writing screenshots in PNG format.

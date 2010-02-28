@@ -329,3 +329,71 @@ void VPngTexture::Unload()
 	}
 	unguard;
 }
+
+//==========================================================================
+//
+//	WritePNG
+//
+//==========================================================================
+
+#ifdef CLIENT
+void WritePNG(const VStr& FileName, const void* Data, int Width, int Height,
+	int Bpp, bool Bot2top)
+{
+	guard(WritePNG);
+	VStream* Strm = FL_OpenFileWrite(FileName);
+	if (!Strm)
+	{
+		GCon->Log("Couldn't write png");
+		return;
+	}
+
+	//	Create writing structure.
+	png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING,
+		NULL, NULL, NULL);
+	if (!png_ptr)
+	{
+		Sys_Error("Couldn't create png_ptr");
+	}
+
+	//	Create info structure.
+	png_infop info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr)
+	{
+		Sys_Error("Couldn't create info_ptr");
+	}
+
+	//	Set up error handling.
+	if (setjmp(png_jmpbuf(png_ptr)))
+	{
+		Sys_Error("Error writing PNG file");
+	}
+
+	//	Set my read function.
+	png_set_write_fn(png_ptr, Strm, ReadFunc, NULL);
+
+	png_set_IHDR(png_ptr, info_ptr, Width, Height, 8,
+		Bpp == 8 ? PNG_COLOR_TYPE_PALETTE : PNG_COLOR_TYPE_RGB,
+		PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+	if (Bpp == 8)
+	{
+		png_set_PLTE(png_ptr, info_ptr, (png_colorp)r_palette, 256);
+	}
+	png_write_info(png_ptr, info_ptr);
+
+	png_bytep* RowPointers = new png_bytep[Height];
+	for (int i = 0; i < Height; i++)
+	{
+		RowPointers[i] = ((byte*)Data) + (Bot2top ? Height - i - 1 : i) *
+			Width * (Bpp / 8);
+	}
+	png_write_image(png_ptr, RowPointers);
+	delete[] RowPointers;
+
+	png_write_end(png_ptr, NULL);
+
+	Strm->Close();
+	delete Strm;
+	unguard;
+}
+#endif

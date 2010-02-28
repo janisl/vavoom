@@ -182,12 +182,14 @@ static VCvarI	draw_cycles("draw_cycles", "0", CVAR_Archive);
 //
 //**************************************************************************
 
-static VCvarS screenshot_type("screenshot_type", "pcx", CVAR_Archive);
+static VCvarS screenshot_type("screenshot_type", "png", CVAR_Archive);
 
 void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	bool bot2top);
 void WritePCX(char* filename, void* data, int width, int height, int bpp,
 	bool bot2top);
+void WritePNG(const VStr& FileName, const void* Data, int Width, int Height,
+	int Bpp, bool Bot2top);
 
 //==========================================================================
 //
@@ -236,10 +238,14 @@ COMMAND(ScreenShot)
 		{
 			WriteTGA(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
 		}
+		else if (!VStr::ICmp(screenshot_type, "png"))
+		{
+			WritePNG(filename, data, ScreenWidth, ScreenHeight, bpp, bot2top);
+		}
 		else
 		{
 			GCon->Log("Bad screenshot type");
-			GCon->Log("Supported formats are pcx and tga");
+			GCon->Log("Supported formats are pcx, tga and png");
 		}
 		Z_Free(data);
 	}
