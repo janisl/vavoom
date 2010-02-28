@@ -381,16 +381,17 @@ void WritePNG(const VStr& FileName, const void* Data, int Width, int Height,
 	}
 	png_write_info(png_ptr, info_ptr);
 
-	png_bytep* RowPointers = new png_bytep[Height];
+	TArray<png_bytep> RowPointers;
+	RowPointers.SetNum(Height);
 	for (int i = 0; i < Height; i++)
 	{
 		RowPointers[i] = ((byte*)Data) + (Bot2top ? Height - i - 1 : i) *
 			Width * (Bpp / 8);
 	}
-	png_write_image(png_ptr, RowPointers);
-	delete[] RowPointers;
+	png_write_image(png_ptr, RowPointers.Ptr());
 
 	png_write_end(png_ptr, NULL);
+	png_destroy_write_struct(&png_ptr, &info_ptr);
 
 	Strm->Close();
 	delete Strm;
