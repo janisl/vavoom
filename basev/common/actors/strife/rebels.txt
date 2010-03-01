@@ -12,10 +12,12 @@ actor Rebel : StrifeHumanoid
 	-CountKill
 	+FloorClip
 	+Friendly
+	+NeverRespawn
 	SeeSound "rebel/sight"
 	ActiveSound "rebel/active"
 	PainSound "rebel/pain"
 	DeathSound "rebel/death"
+	CrushPainSound "misc/pcrush"
 	Obituary "$ob_rebel"
 	states
 	{
@@ -68,6 +70,7 @@ actor Rebel1 : Rebel 9
 	game Strife
 	ConversationID 43, 42, 43
 	DropItem "ClipOfBullets"
+	-NeverRespawn
 }
 
 //------------------------------------------------------------------------------

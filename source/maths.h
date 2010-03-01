@@ -26,8 +26,8 @@
 #undef MIN
 #undef MAX
 #undef MID
-#define MIN(x, y)		((x) < (y) ? (x) : (y))
-#define MAX(x, y)		((x) > (y) ? (x) : (y))
+#define MIN(x, y)		((x) <= (y) ? (x) : (y))
+#define MAX(x, y)		((x) >= (y) ? (x) : (y))
 #define MID(min, val, max)	MAX(min, MIN(val, max))
 
 //

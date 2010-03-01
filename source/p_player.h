@@ -353,6 +353,11 @@ class VBasePlayer : public VGameObject
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_Cheat_NoTarget);
 	}
+	void eventCheat_Anubis()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_Cheat_Anubis);
+	}
 
 	//	Server to client events.
 	void eventClientStartSound(int SoundId, TVec Org, int OriginId,

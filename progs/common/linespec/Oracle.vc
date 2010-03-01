@@ -82,7 +82,8 @@ defaultproperties
 	bFloorClip = true;
 	bPassMobj = true;
 	bCanUseWalls = true;
-	bNoBlood = true;
 	bNoDeathmatch = true;
+	bNoBlood = true;
 	bFireResist = true;
+	bLowSpectralResist = true;
 }

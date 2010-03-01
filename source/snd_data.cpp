@@ -214,10 +214,10 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 		{
 			// $map <map number> <song name>
 			sc->ExpectNumber();
-			sc->ExpectName8();
+			sc->ExpectName();
 			if (sc->Number)
 			{
-				P_PutMapSongLump(sc->Number, sc->Name8);
+				P_PutMapSongLump(sc->Number, sc->Name);
 			}
 		}
 		else if (sc->Check("$registered"))
@@ -302,7 +302,7 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 			VStr::Cpy(&FakeName[len + 2], *S_sfx[RefId].TagName);
 
 			id = AddSoundLump(FakeName, W_CheckNumForName(
-				VName(*sc->String, VName::AddLower8), WADNS_Sounds));
+				VName(*sc->String, VName::AddLower), WADNS_Sounds));
 			FPlayerSound& PlrSnd = PlayerSounds.Alloc();
 			PlrSnd.ClassId = PClass;
 			PlrSnd.GenderId = Gender;
@@ -443,8 +443,8 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 		}
 		else if (sc->Check("$musicvolume"))
 		{
-			sc->ExpectName8();
-			VName SongName = sc->Name8;
+			sc->ExpectName();
+			VName SongName = sc->Name;
 			sc->ExpectFloat();
 			int i;
 			for (i = 0; i < MusicVolumes.Num(); i++)
@@ -476,8 +476,8 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 				sc->Error("Unknown command");
 			}
 			VName TagName = *sc->String;
-			sc->ExpectName8();
-			AddSound(TagName, W_CheckNumForName(sc->Name8, WADNS_Sounds));
+			sc->ExpectName();
+			AddSound(TagName, W_CheckNumForName(sc->Name, WADNS_Sounds));
 		}
 	}
 	delete sc;
@@ -1373,7 +1373,7 @@ void VSoundManager::ReplaceSoundLumpNames(TArray<FReplacedString>& List)
 			continue;
 		}
 		S_sfx[List[i].Index].LumpNum = W_CheckNumForName(VName(
-			*(VStr("ds") + List[i].New), VName::AddLower8));
+			*(VStr("ds") + List[i].New), VName::AddLower));
 	}
 	unguard;
 }

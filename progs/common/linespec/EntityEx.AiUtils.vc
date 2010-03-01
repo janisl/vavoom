@@ -638,6 +638,7 @@ final bool StepMove()
 	float yspeed;
 	int i;
 	bool try_ok;
+	bool dropoff = false;
 
 	line_t *ld;
 	int good;
@@ -653,15 +654,15 @@ final bool StepMove()
 
 	// Instead of yanking non-floating monsters to the ground,
 	// let gravity drop them down, unless they're moving down a step.
-	if (!bNoGravity && Origin.z > FloorZ /*&& !bOnMobj*/)
+	if (!bNoGravity && Origin.z > FloorZ && !bOnMobj)
 	{
-		if (Origin.z > FloorZ + MaxStepHeight)
+		if (Origin.z <= FloorZ + MaxStepHeight)
 		{
-			return false;
+			Origin.z = FloorZ;
 		}
 		else
 		{
-			Origin.z = FloorZ;
+			return false;
 		}
 	}
 
@@ -708,8 +709,18 @@ final bool StepMove()
 	tmtrace_t tmtrace;
 	for (i = 1; i < steps; i++)
 	{
+		// killough 10/98: allow actors to drop off of taller ledges sometimes.
+		// dropoff==1 means only up to 128 high, and only if the target is
+		// immediately on the other side of the line.
+		if (bJumpDown && Target && !Target.IsFriend(self) &&
+			DistTo(Target) < 144.0 && P_Random() < 235 &&
+			!(tmtrace.FloorZ - tmtrace.DropOffZ > 128.0 ||
+			  !Target || Target.Origin.z > tmtrace.DropOffZ))
+		{
+			dropoff = true;
+		}
 		try_ok = TryMoveEx(&tmtrace, vector(origx + (deltax / itof(steps * i)), origy +
-					(deltay / itof(steps * i)), Origin.z), false);
+					(deltay / itof(steps * i)), Origin.z), dropoff);
 		if (!try_ok)
 		{
 			break;
@@ -719,7 +730,17 @@ final bool StepMove()
 	// killough 3/15/98: don't jump over dropoffs:
 	if (try_ok)
 	{
-		try_ok = TryMoveEx(&tmtrace, vector(tryx, tryy, Origin.z), false);
+		// killough 10/98: allow actors to drop off of taller ledges sometimes.
+		// dropoff==1 means only up to 128 high, and only if the target is
+		// immediately on the other side of the line.
+		if (bJumpDown && Target && !Target.IsFriend(self) &&
+			DistTo(Target) < 144.0 && P_Random() < 235 &&
+			!(tmtrace.FloorZ - tmtrace.DropOffZ > 128.0 ||
+			  !Target || Target.Origin.z > tmtrace.DropOffZ))
+		{
+			dropoff = true;
+		}
+		try_ok = TryMoveEx(&tmtrace, vector(tryx, tryy, Origin.z), dropoff);
 	}
 
 	if (!try_ok)
@@ -738,6 +759,44 @@ final bool StepMove()
 			}
 			bInFloat = true;
 			return true;
+		}
+		if (bCanJump && !bFloat && tmtrace.bFloatOk && 
+			(Origin.z <= FloorZ || bOnMobj) && !JumpTime)
+		{
+			if (tmtrace.FloorZ - Origin.z <= 48.0 && Target &&
+				tmtrace.FloorZ - Target.Origin.z <= 48.0)
+			{
+				float DeltaX;
+				float DeltaY;
+				TVec dir;
+				TAVec ang;
+
+				CheckDropOff(DeltaX, DeltaY);
+				dir = Target.Origin - Origin;
+				VectorAngles(&dir, &ang);
+
+				if (DeltaX > 0.0)
+				{
+					Velocity.x += 0.6 * 35.0 * cos(ang.yaw);
+				}
+				else
+				{
+					Velocity.x += 0.6 * 35.0 * cos(-ang.yaw);
+				}
+				
+				if (DeltaY > 0.0)
+				{
+					Velocity.y += 0.6 * 35.0 * sin(ang.yaw);
+				}
+				else
+				{
+					Velocity.y += 0.6 * 35.0 * sin(-ang.yaw);
+				}
+				Velocity.z = (JumpVelZ * 1.1) * 35.0;
+				bOnMobj = false;
+				JumpTime = 0.5;
+				return true;
+			}
 		}
 
 		if (!tmtrace.SpecHit.Num)
@@ -768,13 +827,12 @@ final bool StepMove()
 		{
 			ld = tmtrace.SpecHit[tmtrace.SpecHit.Num - 1];
 			tmtrace.SpecHit.Num = tmtrace.SpecHit.Num - 1;
-			// if the special is not a door
-			// that can be opened,
-			// return false
+			// if the special is not a door that can be opened
+			// then return false
 			if ((bCanUseWalls && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Use)) ||
 			    (bActivatePushWall && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Push)))
 			{
-				good |= ld == tmtrace.BlockingLine ? 1 : 2;//true;
+				good |= ld == tmtrace.BlockingLine ? 1 : 2; //true;
 			}
 		}
 		return good && ((P_Random() >= 203) ^ (good & 1));
@@ -985,6 +1043,16 @@ final void NewChaseDir()
 		}
 		deltax = Target.Origin.x - Origin.x;
 		deltay = Target.Origin.y - Origin.y;
+		
+		if (!bNoFear)
+		{
+			if (Target.bIsPlayer && (PlayerEx(Target.Player).Cheats & PlayerEx::CF_FRIGHTENING) ||
+				bFrightened)
+			{
+				deltax = -deltax;
+				deltay = -deltay;
+			}
+		}
 	}
 
 	// killough 8/8/98: sometimes move away from target, keeping distance
@@ -1028,16 +1096,18 @@ final void NewChaseDir()
 		dist = DistTo(Target);
 
 		if (Target.Health > 0)
-	    {   // Live enemy target
+	    {
+			// Enemy target is alive
 			if (GetCvar('monster_backing') && MissileState &&
 				/*actor->type != MT_SKULL &&*/
 				((!Target.MissileState && dist < MELEERANGE * 2.0) ||
 				(Target.Player && PlayerEx(Target.Player).ReadyWeapon.bBotMelee &&
 				dist < MELEERANGE * 3.0)))
-			{       // Back away from melee attacker
-					strafecount = P_Random() & 15;
-					deltax = -deltax;
-					deltay = -deltay;
+			{
+				// Back away from melee attacker
+				strafecount = P_Random() & 15;
+				deltax = -deltax;
+				deltay = -deltay;
 			}
 		}
 	}
@@ -1096,7 +1166,6 @@ final void RandomChaseDir()
 
 	// If the actor elects to continue in its current direction, let it do
 	// so unless the way is blocked. Then it must turn.
-
 	turndir = (P_Random() & 1) ? -1 : 1;
 
 	if (olddir == DI_NODIR)

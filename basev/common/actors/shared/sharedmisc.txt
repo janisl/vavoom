@@ -84,3 +84,22 @@ actor Gibs : RealGibs 24
 	SpawnID 146
 	ClearFlags
 }
+
+//------------------------------------------------------------------------------
+actor RocketSmokeTrail
+{
+	RenderStyle Translucent
+	Alpha 0.4
+	VSpeed 1
+	+NOBLOCKMAP 
+	+NOCLIP 
+	+NOGRAVITY 
+	+DONTSPLASH
+	+NOTELEPORT
+	States
+	{
+	Spawn:
+		RSMK ABCDE 5
+		Stop
+	}
+}

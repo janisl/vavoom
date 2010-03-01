@@ -30,6 +30,8 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define DEBUG_PARSING
+
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -1217,7 +1219,28 @@ static VExpression* ParseExpressionPriority0(VScriptParser* sc)
 static VExpression* ParseExpressionPriority1(VScriptParser* sc)
 {
 	guard(ParseExpressionPriority1);
-	return ParseExpressionPriority0(sc);
+	VExpression* op = ParseExpressionPriority0(sc);
+
+	TLocation l = sc->GetLoc();
+
+	if (!op)
+		return NULL;
+	bool done = false;
+	do
+	{
+		if (sc->Check("["))
+		{
+			VExpression* ind = ParseExpressionPriority13(sc);
+			sc->Expect("]");
+			op = new VArrayElement(op, ind, l);
+		}
+		else
+		{
+			done = true;
+		}
+	} while (!done);
+
+	return op;
 	unguard;
 }
 
@@ -2273,6 +2296,10 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		NameStr = sc->String;
 	}
 
+#ifdef DEBUG_PARSING
+	sc->Message(va("Parsing class %s", *NameStr));
+#endif
+
 	VClass* DupCheck = VClass::FindClassLowerCase(*NameStr.ToLower());
 	if (DupCheck && DupCheck->MemberType == MEMBER_Class)
 	{
@@ -2434,7 +2461,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					break;
 				case PROP_IntUnsupported:
 					//FIXME
-					sc->ExpectNumber();
+					sc->CheckNumberWithSign();
 					GCon->Logf("Property %s in %s is not yet supported", *Prop, Class->GetName());
 					break;
 				case PROP_BitIndex:
@@ -2898,28 +2925,34 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					}
 					else
 					{
-						vuint32 Col;
+						int a, r, g, b;
 						if (sc->CheckNumber())
 						{
-							int r = MID(0, sc->Number, 255);
+							r = MID(0, sc->Number, 255);
 							sc->Check(",");
 							sc->ExpectNumber();
-							int g = MID(0, sc->Number, 255);
+							g = MID(0, sc->Number, 255);
 							sc->Check(",");
 							sc->ExpectNumber();
-							int b = MID(0, sc->Number, 255);
-							Col = (r << 16) | (g << 8) | b;
+							b = MID(0, sc->Number, 255);
 						}
 						else
 						{
+							vuint32 Col;
 							sc->ExpectString();
 							Col = M_ParseColour(sc->String);
+							r = (Col >> 16) & 0xff;
+							g = (Col >> 8) & 0xff;
+							b = Col & 0xff;
 						}
 						sc->Check(",");
 						sc->ExpectFloat();
-						int a = MID(0, (int)(sc->Float * 255), 255);
-						Col |= a << 24;
-						P.Field->SetInt(DefObj, Col);
+						a = MID(0, int(sc->Float * 255), 254);
+						if (a > 250)
+						{
+							a = 250;
+						}
+						P.Field->SetInt(DefObj, (r << 16) | (g << 8) | b | (a << 24));
 					}
 					break;
 				case PROP_ColourRange:
@@ -4095,11 +4128,17 @@ void ProcessDecorateScripts()
 	//	Emit code.
 	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
 	{
+#ifdef DEBUG_PARSING
+		GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+#endif
 		DecPkg->ParsedClasses[i]->DecorateEmit();
 	}
 	//	Compile and set up for execution.
 	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
 	{
+#ifdef DEBUG_PARSING
+		GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+#endif
 		DecPkg->ParsedClasses[i]->DecoratePostLoad();
 	}
 

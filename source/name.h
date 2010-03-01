@@ -70,6 +70,7 @@ public:
 		Find,		// Find a name, return 0 if it doesn't exist.
 		Add,		// Find a name, add it if it doesn't exist.
 		AddLower8,	// Find or add lowercased, max length 8 name.
+		AddLower,	// Find or add lowercased.
 	};
 
 	//	Constructors.

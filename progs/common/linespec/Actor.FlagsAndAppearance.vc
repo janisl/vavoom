@@ -399,7 +399,7 @@ final void A_SetTranslucent(float AlphaVal, optional int Mode)
 		AlphaVal = 1.0;
 	}
 
-	Alpha = 1.0;
+	Alpha = AlphaVal;
 	RenderStyle = Mode == 0 ? STYLE_Translucent : Mode == 2 ?
 		STYLE_Fuzzy : STYLE_Add;
 }

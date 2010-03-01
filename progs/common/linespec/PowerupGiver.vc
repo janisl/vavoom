@@ -45,9 +45,10 @@ name			Mode;
 bool Use(bool Pickup)
 {
 	Powerup Pw = Spawn(PowerupType,,,, false);
+
 	if (EffectTime)
 	{
-		Pw.EffectTime = EffectTime;
+		Pw.EffectTime = EffectTime > 0.0 ? EffectTime : -EffectTime * 35.0;
 	}
 	if (BlendColour)
 	{

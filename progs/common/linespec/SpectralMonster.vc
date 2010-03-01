@@ -194,6 +194,17 @@ final void A_AlienSpectreDeath()
 		if (!Target)
 			return;
 
+		Actor A;
+
+		foreach AllThinkers(Oracle, A)
+		{
+			if (A && A.bMonster && A.Health > 0)
+			{
+				// Kill the oracle if his specter dies...
+				EntityEx(A).Damage(none, none, 10000);
+			}
+		}
+
 		Target.Player.cprint("$txt_killed_oracle");
 		Target.GiveInventoryType(QuestItem23);
 		if (Target.FindInventory(QuestItem21))

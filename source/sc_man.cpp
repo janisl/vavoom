@@ -407,6 +407,20 @@ void VScriptParser::ExpectName8()
 
 //==========================================================================
 //
+//	VScriptParser::ExpectName
+//
+//==========================================================================
+
+void VScriptParser::ExpectName()
+{
+	guard(VScriptParser::ExpectName);
+	ExpectString();
+	Name = VName(*String, VName::AddLower);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VScriptParser::Check
 //
 //==========================================================================
@@ -491,9 +505,10 @@ bool VScriptParser::CheckIdentifier()
 		return false;
 	}
 
-	//	Identifier must start with a letter or underscore.
+	//	Identifier must start with a letter, a number or an underscore.
 	char c = String[0];
-	if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_'))
+	if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+		(c >= '0' && c <= '9') || c == '_'))
 	{
 		UnGet();
 		return false;

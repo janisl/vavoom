@@ -19,6 +19,7 @@ actor Templar 3003
 	ActiveSound "templar/active"
 	PainSound "templar/pain"
 	DeathSound "templar/death"
+	CrushPainSound "misc/pcrush"
 	Obituary "$ob_templar"
 	HitObituary "$ob_templarhit"
 

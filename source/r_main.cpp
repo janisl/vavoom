@@ -470,7 +470,7 @@ void VRenderLevel::TransformFrustum()
 
 VCvarI			r_chasecam("r_chasecam", "0", CVAR_Archive);
 VCvarF			r_chase_dist("r_chase_dist", "32.0", CVAR_Archive);
-VCvarF			r_chase_up("r_chase_up", "32.0", CVAR_Archive);
+VCvarF			r_chase_up("r_chase_up", "128.0", CVAR_Archive);
 VCvarF			r_chase_right("r_chase_right", "0", CVAR_Archive);
 VCvarI			r_chase_front("r_chase_front", "0", CVAR_Archive);
 

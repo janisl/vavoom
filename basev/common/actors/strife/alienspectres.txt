@@ -13,6 +13,7 @@ actor AlienSpectre1 : SpectralMonster 129
 	MinMissileChance 150
 	RenderStyle Translucent
 	Alpha 0.666
+	+NeverRespawn
 	+Shadow
 	+NoGravity
 	+LookAllAround
@@ -105,6 +106,7 @@ actor AlienSpectre3 : AlienSpectre1 76
 	Radius 24
 	PainChance 50
 	+SpawnCeiling
+	+LowSpectralResist
 	DropItem "Sigil3"
 
 	action native A_Spectre3Attack();

@@ -35,6 +35,7 @@ public:
 	bool		QuotedString;
 	VStr		String;
 	VName		Name8;
+	VName		Name;
 	int 		Number;
 	double 		Float;
 
@@ -44,6 +45,7 @@ public:
 	bool GetString();
 	void ExpectString();
 	void ExpectName8();
+	void ExpectName();
 	void ExpectIdentifier();
 	bool Check(const char*);
 	void Expect(const char*);

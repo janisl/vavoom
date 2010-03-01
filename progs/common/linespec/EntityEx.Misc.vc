@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -57,40 +57,43 @@ final void SetOrigin2(TVec origin)
 	// Set subsector and/or block links.
 	LinkToWorld();
 
-	if (origin.z == ONFLOORZ)
+	if (!bNoInteraction)
 	{
-		Origin.z = FloorZ;
-	}
-	else if (origin.z == ONCEILINGZ)
-	{
-		Origin.z = CeilingZ - Height;
-	}
-	else if (origin.z == FLOATRANDZ)
-	{
-		float space = CeilingZ - Height - FloorZ;
-		if (space > 48.0)
-		{
-			space -= 40.0;
-			Origin.z = space * Random() + FloorZ + 40.0;
-		}
-		else
+		if (origin.z == ONFLOORZ)
 		{
 			Origin.z = FloorZ;
 		}
-	}
-	else if (bFloatBob)
-	{
-		Origin.z = FloorZ + Origin.z;	// artifact z passed in as height
-	}
+		else if (origin.z == ONCEILINGZ)
+		{
+			Origin.z = CeilingZ - Height;
+		}
+		else if (origin.z == FLOATRANDZ)
+		{
+			float space = CeilingZ - Height - FloorZ;
+			if (space > 48.0)
+			{
+				space -= 40.0;
+				Origin.z = space * Random() + FloorZ + 40.0;
+			}
+			else
+			{
+				Origin.z = FloorZ;
+			}
+		}
+		else if (bFloatBob)
+		{
+			Origin.z = FloorZ + Origin.z;	// artifact z passed in as height
+		}
 
-	VTerrainInfo* TInfo = GetFloorType();
-	if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
-	{
-		FloorClip = TInfo->FootClip;
-	}
-	else
-	{
-		FloorClip = 0.0;
+		VTerrainInfo* TInfo = GetFloorType();
+		if (bFloorClip && TInfo->bLiquid && Origin.z == FloorZ)
+		{
+			FloorClip = TInfo->FootClip;
+		}
+		else
+		{
+			FloorClip = 0.0;
+		}
 	}
 }
 
@@ -647,11 +650,31 @@ bool Touch(Entity InOther)
 	//	For Korax Arena
 	if (Other.IsTouched(self))
 	{
-		return !Other.bSolid && !Other.bSpecial && !Other.bShootable;
+		return !Other.bSolid && !Other.bSpecial && (!Other.bShootable || !Other.bTouchy);
 	}
-	
-	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+		
+	if (!Other.bSolid && !Other.bSpecial && (!Other.bShootable || !Other.bTouchy))
 	{
+		return true;
+	}
+
+	// touchy object is alive, toucher is solid
+	if (Other.bTouchy && bSolid && Other.Health > 0 &&
+		// Thing is an armed mine or a sentient thing
+		(Other.bArmed || Other.IsSentient()) &&
+		// either different classes or players
+		(Other.bIsPlayer || Other.Class != Class) &&
+		// or different species if DONTHARMSPECIES
+	   (!(Other.bDontHurtSpecies) || Other.GetSpecies() != GetSpecies()) &&
+	   // touches vertically
+	   Other.Origin.z + Other.Height >= Origin.z && Origin.z + Height >= Other.Origin.z &&
+	   // prevents lost souls from exploding when fired by pain elementals
+	   (Other.Master != self && Master != Other))
+	// Difference with MBF: MBF hardcodes the LS/PE check and lets actors of the same species
+	// but different classes trigger the touchiness, but that seems less straightforwards.
+	{
+		bArmed = false; // Disarm
+		Other.Damage(none, none, Other.Health);  // kill object
 		return true;
 	}
 
@@ -701,10 +724,10 @@ bool Touch(Entity InOther)
 
 		switch (SpecialMissileHit(Other))
 		{
-		case 0:
-			return false;
-		case 1:
-			return true;
+			case 0:
+				return false;
+			case 1:
+				return true;
 		}
 
 		if (Target)
@@ -780,7 +803,6 @@ bool Touch(Entity InOther)
 		{
 			return true;
 		}
-
 		if (bRip && !Other.bDontRip)
 		{
 			if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
@@ -797,7 +819,7 @@ bool Touch(Entity InOther)
 				Other.Velocity.x += Velocity.x / 4.0;
 				Other.Velocity.y += Velocity.y / 4.0;
 			}
-//WHAT A FUCK IS THIS???????			numspechit = 0;
+			//WHAT A FUCK IS THIS???????			numspechit = 0;
 			return true;
 		}
 
@@ -829,7 +851,7 @@ bool Touch(Entity InOther)
 			bSolid;
 
 	// check for special pickup
-	if (Other.bSpecial/* &&
+	if (Other.bSpecial /*&&
 		Other.Origin.z < Origin.z + Height - MaxStepHeight*/)
 	{
 		if (Other.bDehackedSpecial)
@@ -1103,7 +1125,7 @@ void OnMapSpawn(mthing_t* mthing)
 
 	bCheckLineBlocking = false;
 	bCheckLineBlockMonsters = false;
-	if (!bMissile)
+	if (!bNoInteraction && !bMissile)
 	{
 		bCheckLineBlocking = true;
 		if (!bNoBlockMonst)
@@ -1489,6 +1511,15 @@ void Tick(float deltaTime)
 		}
 	}
 
+	if (JumpTime)
+	{
+		JumpTime -= deltaTime;
+		if (JumpTime <= 0.0)
+		{
+			JumpTime = 0.0;
+		}
+	}
+
 	if (!Physics(deltaTime))
 	{
 		return;
@@ -1613,6 +1644,14 @@ final bool SectorChanged(int CrushChange)
 		return true;
 	}
 
+	// killough 11/98: kill touchy things immediately
+	if (bTouchy && (bArmed || IsSentient()))
+   	{
+		bArmed = false;; // Disarm
+		Damage(none, none, default.Health);  // kill object
+		return true;
+   	}
+
 	if (!bShootable)
 	{
 		//	Assume it is bloody gibs or something
@@ -1633,6 +1672,10 @@ final bool SectorChanged(int CrushChange)
 			{
 				A.Translation = BloodTranslation;
 			}
+		}
+		if (!bInvulnerable && CrushPainSound && !GetSoundPlayingInfo(self, GetSoundID(CrushPainSound)))
+		{
+			PlaySound(CrushPainSound, CHAN_VOICE);
 		}
 	}
 	return false;	//	Don't fit
@@ -1927,6 +1970,12 @@ final void SpawnPuff(TVec Org, float Range, class<EntityEx> PuffType,
 	Org.z += (Random() - Random()) * 4.0;
 
 	puff = Spawn(PuffType, Org);
+	
+	// [BB] Set the target of the puff to this actor.
+	if (puff && puff.bPuffGetsOwner)
+	{
+		puff.Target = Target;
+	}
 	if (!HitThing && puff.FindState('Crash'))
 	{
 		puff.SetState(puff.FindState('Crash'));
@@ -3282,6 +3331,21 @@ bool UseThing(EntityEx Other)
 		return true;
 	}
 	return LineSpecialLevelInfo(Level).StartConversation(self, Other);
+}
+
+//==========================================================================
+//
+//	IsSentient
+//
+//  killough 11/98:
+//  Whether an object is "sentient" or not.
+//  Used for environmental influences.
+//
+//==========================================================================
+
+final bool IsSentient()
+{
+	return Health > 0 && SeeState;
 }
 
 //==========================================================================

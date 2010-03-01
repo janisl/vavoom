@@ -37,6 +37,7 @@
 
 bool Physics(float DeltaTime)
 {
+	float oldfloorz;
 	float CummX = 0.0;
 	float CummY = 0.0;
 	if (Sector->AffectorData && bColideWithWorld && !bNoSector)
@@ -121,7 +122,7 @@ bool Physics(float DeltaTime)
 
 	// momentum movement
 	// Handle X and Y momentums
-	XYMovement(DeltaTime, CummX, CummY);
+	oldfloorz = XYMovement(DeltaTime, CummX, CummY);
 	if (IsDestroyed())
 	{
 		// mobj was removed
@@ -165,7 +166,7 @@ bool Physics(float DeltaTime)
 			{
 				if (bIsPlayer)
 				{
-					if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly)
+					if (Velocity.z < -DEFAULT_GRAVITY * 0.25 && !bFly && !bNoGravity)
 					{
 						PlayerLandedOnThing();
 					}
@@ -184,6 +185,7 @@ bool Physics(float DeltaTime)
 				}
 				bOnMobj = true;
 				Velocity.z = 0.0;
+				Crash();
 
 				if (onmo.bOnmobjCopyVel)
 				{
@@ -206,7 +208,7 @@ bool Physics(float DeltaTime)
 			}
 			else
 			{
-				ZMovement(DeltaTime);
+				ZMovement(DeltaTime, oldfloorz);
 				bOnMobj = false;
 			}
 			if (IsDestroyed())
@@ -218,7 +220,7 @@ bool Physics(float DeltaTime)
 		else
 		{
 			// Handle Z momentum and gravity
-			ZMovement(DeltaTime);
+			ZMovement(DeltaTime, oldfloorz);
 			if (IsDestroyed())
 			{
 				// entity was removed
@@ -235,13 +237,14 @@ bool Physics(float DeltaTime)
 //
 //==========================================================================
 
-final void XYMovement(float DeltaTime, float ScrollX, float ScrollY)
+final float XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 {
 	float	ptryx;
 	float	ptryy;
 	float	xmove;
 	float	ymove;
 	int		special;
+	float   oldfloorz = FloorZ;
 
 	if (bWindThrust)
 	{
@@ -323,7 +326,12 @@ final void XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 			// Reset to not blasted when momentums are gone
 			ResetBlasted();
 		}
-		return;
+		if (bTouchy && !IsSentient())
+		{
+			// Arm a mine which has come to rest
+			bArmed = true;
+		}
+		return oldfloorz;
 	}
 
 	//	Split move in multiple steps if moving too fast.
@@ -356,7 +364,7 @@ final void XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 		ptryy = Origin.y + StepYMove;
 
 		tmtrace_t tmtrace;
-		if (!TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z), true))
+		if (!bNoInteraction && !TryMoveEx(&tmtrace, vector(ptryx, ptryy, Origin.z), true))
 		{
 			// blocked move
 			if (tmtrace.BlockingMobj)
@@ -367,10 +375,12 @@ final void XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 			{
 				HitLine(&tmtrace, DeltaTime / itof(Steps));
 			}
-			return;
+			return oldfloorz;
 		}
 	}
 	while (Step++ < Steps);
+	
+	return oldfloorz;
 }
 
 //==========================================================================
@@ -379,11 +389,27 @@ final void XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 //
 //==========================================================================
 
-final void ZMovement(float DeltaTime)
+final void ZMovement(float DeltaTime, float OldFloorZ)
 {
 	float	dist;
 	float	delta;
 	float	OldZ = Origin.z;
+
+	// [RH] Double gravity only if running off a ledge. Coming down from
+	// an upward thrust (e.g. a jump) should not double it.
+	if (Origin.z > FloorZ && !bNoGravity)
+	{
+		float grav = (Gravity * Level.Gravity * Sector->Gravity) / 14.95361328125; // 81.92
+
+		if (Velocity.z == 0.0 && OldFloorZ > FloorZ && Origin.z == OldFloorZ)
+		{
+			Velocity.z -= (grav + grav) * DeltaTime;
+		}
+		else
+		{
+			Velocity.z -= grav * DeltaTime;
+		}
+	}
 
 	// check for smooth step up
 	if (bIsPlayer && Origin.z < FloorZ)
@@ -394,7 +420,10 @@ final void ZMovement(float DeltaTime)
 	}
 
 	// adjust height
-	Origin.z += Velocity.z * DeltaTime;
+	if (!bFloatBob)
+	{
+		Origin.z += Velocity.z * DeltaTime;
+	}
 
 	if (bFloat && !bDormant && Target)
 	{
@@ -421,25 +450,28 @@ final void ZMovement(float DeltaTime)
 	}
 
 	// clip movement
-	if (Origin.z <= FloorZ + 0.1)
+	if (!bNoInteraction)
 	{
-		// hit the floor
-		if (!HitFloor())
+		if (Origin.z <= FloorZ + 0.1)
 		{
-			return;
+			// hit the floor
+			if (!HitFloor())
+			{
+				return;
+			}
 		}
-	}
 
-	if (Origin.z + Height > CeilingZ)
-	{
-		// hit the ceiling
-		if (!HitCeiling())
+		if (Origin.z + Height > CeilingZ)
 		{
-			return;
+			// hit the ceiling
+			if (!HitCeiling())
+			{
+				return;
+			}
 		}
-	}
 
 	CheckFakeFloorTriggers(OldZ);
+	}
 }
 
 //==========================================================================
@@ -628,6 +660,15 @@ final bool HitFloor()
 			SectorAction::SECSPAC_HitFloor);
 	}
 
+	// killough 11/98: touchy objects explode on impact
+	// Allow very short drops to be safe, so that a touchy can be summoned without exploding.
+	if (bTouchy && (bArmed || IsSentient()) && (Velocity.z < -5.0))
+	{
+		bArmed = false; // Disarm
+		Damage(none, none, Health);  // kill object
+		return true;
+	}
+
 	if (bMissile && (bColideWithWorld ||
 		!LineSpecialGameInfo(Level.Game).bNoClipIgnoreFloor))
 	{
@@ -663,6 +704,10 @@ final bool HitFloor()
 		}
 	}
 	Origin.z = FloorZ;
+	if (bCanJump)
+	{
+		JumpTime = 0.2;	// delay any jumping for a short time
+	}
 	if (vdot < -0.1)
 	{
 		// Spawn splashes, etc.
@@ -1103,6 +1148,25 @@ void OnHitFloor()
 
 //==========================================================================
 //
+// CheckSplash
+//
+// Checks for splashes caused by explosions
+//
+//==========================================================================
+
+void CheckSplash(float distance)
+{
+	if (Origin.z <= FloorZ + distance)
+	{
+		// Explosion splashes never alert monsters. This is because A_Explode has
+		// a separate parameter for that so this would get in the way of proper 
+		// behavior.
+		HitFloorType();
+	}
+}
+
+//==========================================================================
+//
 //  HitFloorType
 //
 //==========================================================================
@@ -1189,7 +1253,7 @@ final bool HitFloorType()
 		}
 		if (!SInfo->bNoAlert && bIsPlayer)
 		{
-			LineSpecialLevelInfo(Level).NoiseAlert(self, self);
+			LineSpecialLevelInfo(Level).NoiseAlert(self, self, true);
 		}
 	}
 	return TInfo->bLiquid;

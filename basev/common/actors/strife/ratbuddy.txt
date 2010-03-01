@@ -13,6 +13,7 @@ actor RatBuddy 85
 	SeeSound "rat/sight"
 	ActiveSound "rat/active"
 	DeathSound "rat/death"
+	CrushPainSound "misc/pcrush"
 	+IsMonster
 	+FloorClip
 	+CanPass

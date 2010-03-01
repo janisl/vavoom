@@ -37,7 +37,7 @@
 
 final void A_BossDeath()
 {
-	name Cls = GetClassName(Class);
+	name Cls = GetClassName(GetClassReplacee(Class));
 
 	if (!CheckBossDeath())
 	{
@@ -80,13 +80,13 @@ final void A_BossDeath()
 
 	if (Level.bMap07Special)
 	{
-		if (GetClassName(Class) == 'Fatso')
+		if (GetClassName(GetClassReplacee(Class)) == 'Fatso')
 		{
 			Level.ExecuteActionSpecial(LNSPEC_FloorLowerToLowest, 666, 8,
 				0, 0, 0, NULL, 0, none);
 			return;
 		}
-		if (GetClassName(Class) == 'Arachnotron')
+		if (GetClassName(GetClassReplacee(Class)) == 'Arachnotron')
 		{
 			Level.ExecuteActionSpecial(LNSPEC_FloorRaiseByTexture, 667, 8,
 				0, 0, 0, NULL, 0, none);

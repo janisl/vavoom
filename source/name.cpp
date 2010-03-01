@@ -126,6 +126,14 @@ VName::VName(const char* Name, ENameFindType FindType)
 		}
 		NameBuf[8] = 0;
 	}
+	else if (FindType == AddLower)
+	{
+		for (int i = 0; i < NAME_SIZE; i++)
+		{
+			NameBuf[i] = VStr::ToLower(Name[i]);
+		}
+		NameBuf[NAME_SIZE - 1] = 0;
+	}
 	else
 	{
 		VStr::NCpy(NameBuf, Name, NAME_SIZE);

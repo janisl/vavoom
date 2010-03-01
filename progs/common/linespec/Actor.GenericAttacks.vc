@@ -33,8 +33,8 @@
 //
 //==========================================================================
 
-final void A_CustomMissile(class<Actor> MissileType, float SpawnHeight,
-	int SpawnXYOffset, optional float Angle, optional int AimMode,
+final void A_CustomMissile(class<Actor> MissileType, optional float SpawnHeight,
+	optional int SpawnXYOffset, optional float Angle, optional int AimMode,
 	optional float Pitch)
 {
 	int Flags = AimMode & ~3;
@@ -44,6 +44,14 @@ final void A_CustomMissile(class<Actor> MissileType, float SpawnHeight,
 	{
 		if (MissileType)
 		{
+			if (!specified_SpawnHeight)
+			{
+				SpawnHeight = 32.0;
+			}
+			if (!specified_SpawnXYOffset)
+			{
+				SpawnXYOffset = 1;
+			}
 			TVec Offs = itof(SpawnXYOffset) * vector(cos(Angles.yaw - 90.0),
 				sin(Angles.yaw - 90.0), 0.0);
 			EntityEx A;
@@ -511,6 +519,7 @@ final void A_Explode()
 	PreExplode();
 	GetExplodeParms(damage, distance, damageSelf);
 
+	CheckSplash(distance);
 	DoExplode(damage, distance, damageSelf);
 }
 
@@ -597,7 +606,7 @@ final void decorate_A_Explode(optional int damage, optional int distance,
 	}
 
 	DoExplode(damage, itof(distance), damageSelf);
-
+	CheckSplash(itof(distance));
 	if (Alert && Target && Target.bIsPlayer)
 	{
 		LineSpecialLevelInfo(Level).NoiseAlert(Target, self);
@@ -706,5 +715,72 @@ final void A_ThrowGrenade(class<Actor> ItemType, optional float SpawnHeight,
 	else if (XLevel.StateCall)
 	{
 		XLevel.StateCall->Result = false;
+	}
+}
+
+//==========================================================================
+//
+//  A_CheckForReload
+//
+//==========================================================================
+
+void A_CheckForReload(int Count, state Jump, optional bool DoIncrement)
+{
+	if (Count <= 0)
+	{
+		return;
+	}
+
+
+	if (bIsPlayer)
+	{
+		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+
+		int ReloadCounter = Wpn.ReloadCounter;
+		if (!specified_DoIncrement)
+		{
+			DoIncrement = false;
+		}
+		if(!DoIncrement || ReloadCounter != 0)
+		{
+			ReloadCounter = (Wpn.ReloadCounter + 1) % Count;
+		}
+		else
+		{
+			// 0 % 1 = 1?  So how do we check if the weapon was never fired?  We should only do this when we're not incrementing the counter though.
+			ReloadCounter = 1;
+		}
+
+		// If we have not made our last shot...
+		if (ReloadCounter != 0)
+		{
+			// Go back to the refire frames, instead of continuing on to the reload frames.
+			DoJump(Jump);
+		}
+		else
+		{
+			// We need to reload. However, don't reload if we're out of ammo.
+			Wpn.CheckAmmo(Weapon::FIRE_Either, false, false);
+		}
+
+		if(!DoIncrement)
+		{
+			Wpn.ReloadCounter = ReloadCounter;
+		}
+	}
+}
+
+//==========================================================================
+//
+//  A_ResetReloadCounter
+//
+//==========================================================================
+
+void A_ResetReloadCounter()
+{
+	if (bIsPlayer)
+	{
+		Weapon Wpn = PlayerEx(Player).ReadyWeapon;
+		Wpn.ReloadCounter = 0;
 	}
 }

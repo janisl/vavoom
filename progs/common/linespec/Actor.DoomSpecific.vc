@@ -157,7 +157,7 @@ final void decorate_A_BFGSpray(optional class<EntityEx> FlashType,
 	int			j;
 	int			damage;
 	TAVec		aimAng;
-	EntityEx	emo;
+	EntityEx	spray;
 	TVec		Dir;
 	EntityEx	AimTarget;
 
@@ -189,8 +189,13 @@ final void decorate_A_BFGSpray(optional class<EntityEx> FlashType,
 			continue;
 		}
 
-		emo = Spawn(FlashType, AimTarget.Origin +
+		spray = Spawn(FlashType, AimTarget.Origin +
 			vector(0.0, 0.0, AimTarget.Height / 4.0));
+
+		if (spray && spray.bPuffGetsOwner)
+		{
+			spray.Target = Target;
+		}
 
 		damage = 0;
 		for (j = 0; j < DamageAmount; j++)

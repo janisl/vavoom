@@ -649,6 +649,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 	SetSpriteLump(Tex, Translation, CMap);
 
+	glEnable(GL_ALPHA_TEST);
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		glAlphaFunc(GL_GREATER, 0.0);
@@ -658,7 +659,6 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	}
-	glEnable(GL_ALPHA_TEST);
 
 	vuint32 alpha = (int)(255 * Alpha);
 	SetColour((light & 0x00ffffff) | (alpha << 24));

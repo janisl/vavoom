@@ -73,6 +73,8 @@ byte			FireMode;
 
 float			BotCombatDist;
 
+int				ReloadCounter;
+
 //	Switch away if got ammo for more powerfull weapon.
 bool			bWimpyWeapon;
 //	Don't auto fire

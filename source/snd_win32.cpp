@@ -175,7 +175,7 @@ bool VDirectSoundDevice::Init()
 	caps.dwSize = sizeof(caps);
 	DSound->GetCaps(&caps);
 	if (caps.dwFreeHw3DStaticBuffers && caps.dwFreeHwMixingStaticBuffers && 
-		!GArgs.CheckParm("-no3dsound"))
+		GArgs.CheckParm("-3dsound"))
 	{
 		Sound3D = true;
 		GCon->Log(NAME_Init, "3D sound on");

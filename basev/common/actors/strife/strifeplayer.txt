@@ -13,6 +13,7 @@ actor StrifePlayer : PlayerPawn
 	Player.ColorRange 128, 143
 	Player.DisplayName "Rebel"
 	Player.StartItem "PunchDagger"
+	CrushPainSound "misc/pcrush"
 	states
 	{
 	Spawn:

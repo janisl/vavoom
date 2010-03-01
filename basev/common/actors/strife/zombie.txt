@@ -8,6 +8,7 @@ actor Zombie : StrifeHumanoid 169
 	Height 56
 	Translation 0
 	DeathSound "zombie/death"
+	CrushPainSound "misc/pcrush"
 	+Solid
 	+Shootable
 	+ActivateMCross

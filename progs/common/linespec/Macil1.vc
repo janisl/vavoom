@@ -93,6 +93,7 @@ defaultproperties
 	bNoIceDeath = true;
 	bFireResist = true;
 	bNoDamage = true;
+	bNeverRespawn = true;
 	SightSound = 'macil/sight';
 	ActiveSound = 'macil/active';
 	PainSound = 'macil/pain';

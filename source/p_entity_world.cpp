@@ -1225,12 +1225,14 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			O->CeilingZ - (O->Origin.z + O->Height) < Height ||
 			tmtrace.CeilingZ - (O->Origin.z + O->Height) < Height)
 		{
+			// Can't step up or doesn't fit
 			PushLine(tmtrace);
 			return false;
 		}
 		if (!(EntityFlags & EF_PassMobj) || compat_nopassover ||
 			(Level->LevelInfoFlags2 & VLevelInfo::LIF2_CompatNoPassOver))
 		{
+			// Can't go over
 			return false;
 		}
 	}
@@ -1263,8 +1265,8 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 				PushLine(tmtrace);
 				return false;
 			}
-			else if (Origin.z < tmtrace.FloorZ
-				&& tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
+			else if (Origin.z < tmtrace.FloorZ &&
+				tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
 			{
 				Velocity.z = 8.0 * 35.0;
 				PushLine(tmtrace);
@@ -1276,8 +1278,20 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
 			{
 				// Too big a step up
-				PushLine(tmtrace);
-				return false;
+				if (EntityFlags & EF_CanJump)
+				{
+					// Check to make sure there's nothing in the way for the step up
+					if (TestMobjZ(TVec(newPos.x, newPos.y, tmtrace.FloorZ)))
+					{
+						PushLine(tmtrace);
+						return false;
+					}
+				}
+				else
+				{
+					PushLine(tmtrace);
+					return false;
+				}
 			}
 			if (Origin.z < tmtrace.FloorZ)
 			{
@@ -1769,7 +1783,6 @@ void VEntity::UpdateVelocity()
 	if (!(EntityFlags & EF_NoGravity) && (Origin.z > FloorZ ||
 		Floor->normal.z <= 0.7))
 	{
-		//	Add gravity
 		if (WaterLevel < 2)
 		{
 			Velocity.z -= Gravity * Level->Gravity * Sector->Gravity *

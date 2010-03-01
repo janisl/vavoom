@@ -1737,9 +1737,9 @@ void VParser::ParseStates(VClass* InClass)
 			ParseError(Lex.Location, "Identifier expected");
 		}
 		char FChar = VStr::ToUpper(Lex.String[0]);
-		if (FChar < 'A' || FChar > ']')
+		if (FChar < '0' || FChar < 'A' || FChar > ']')
 		{
-			ParseError(Lex.Location, "Frames must be A-Z, [, \\ or ]");
+			ParseError(Lex.Location, "Frames must be 0-9, A-Z, [, \\ or ]");
 		}
 		s->Frame = FChar - 'A';
 		FramesString = Lex.String;

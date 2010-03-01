@@ -5638,7 +5638,8 @@ final bool EV_SilentLineTeleport(line_t *line, int side, EntityEx thing,
 //
 //==========================================================================
 
-final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
+final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget,
+			bool Splash)
 {
 	int			i;
 	line_t*		check;
@@ -5658,7 +5659,7 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 
 	for (Ent = sec->ThingList; Ent; Ent = Ent.SNext)
 	{
-		if (Ent != soundtarget)
+		if (Ent != soundtarget && (!Splash || !EntityEx(Ent).bNoSplashAlert))
 		{
 			EntityEx(Ent).LastHeard = EntityEx(soundtarget);
 		}
@@ -5700,12 +5701,12 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 		{
 			if (!soundblocks)
 			{
-				RecursiveSound(other, 1, soundtarget);
+				RecursiveSound(other, 1, soundtarget, Splash);
 			}
 		}
 		else
 		{
-			RecursiveSound(other, soundblocks, soundtarget);
+			RecursiveSound(other, soundblocks, soundtarget, Splash);
 		}
 	}
 }
@@ -5719,7 +5720,7 @@ final void RecursiveSound(sector_t* sec, int soundblocks, Entity soundtarget)
 //
 //==========================================================================
 
-final void NoiseAlert(Entity target, Entity emmiter)
+final void NoiseAlert(Entity target, Entity emmiter, optional bool Splash)
 {
 	if (!emmiter)
 	{
@@ -5731,8 +5732,13 @@ final void NoiseAlert(Entity target, Entity emmiter)
 		return;
 	}
 
+	if (!specified_Splash)
+	{
+		Splash = false;
+	}
+
 	(*Game.validcount)++;
-	RecursiveSound(emmiter.Sector, 0, target);
+	RecursiveSound(emmiter.Sector, 0, target, Splash);
 }
 
 //==========================================================================

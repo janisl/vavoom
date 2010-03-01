@@ -113,6 +113,16 @@ enum
 
 const int TRANSL_TYPE_SHIFT = 16;
 
+//	Flags for A_LookEx method
+enum
+{
+	LOF_NOSIGHTCHECK = 1,
+	LOF_NOSOUNDCHECK = 2,
+	LOF_DONTCHASEGOAL = 4,
+	LOF_NOSEESOUND = 8,
+	LOF_FULLVOLSEESOUND = 16
+};
+
 struct LightEffectDef
 {
 	name				Name;
@@ -277,6 +287,7 @@ readonly bool bUseDispState;	// Use DispState for rendering
 bool bActLikeBridge;	// Always allow obkects to pass.
 bool bNoDropOff;		// Can't drop off under any circumstances
 bool bBright;			// Always render full bright
+bool bCanJump;			// A dedicated flag instead of the BOUNCES+FLOAT+sentient as in MBF
 
 int				Health;
 

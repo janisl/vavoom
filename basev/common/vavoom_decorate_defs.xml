@@ -20,6 +20,7 @@
 		<prop_vspeed name="VSpeed" />
 		<prop_speed name="FastSpeed" property="FastSpeed" />
 		<prop_speed name="FloatSpeed" property="FloatSpeed" />
+		<prop_speed name="JumpVelZ" property="JumpVelZ" />
 		<!-- Collision and physics -->
 		<prop_float name="Radius" property="Radius" />
 		<prop_float name="Height" property="Height" />
@@ -32,10 +33,13 @@
 		<prop_float name="MaxDropOffHeight" property="MaxDropoffHeight" />
 		<prop_float name="BounceFactor" property="BounceFactor" />
 		<prop_int name="BounceCount" property="BounceCount" />
+		<prop_int_unsupported name="WallBounceFactor" />
+		<prop_int_unsupported name="ProjectilePassHeight" />
 		<!-- Sound -->
 		<prop_name name="SeeSound" property="SightSound" />
 		<prop_name name="AttackSound" property="AttackSound" />
 		<prop_name name="PainSound" property="PainSound" />
+		<prop_name name="CrushPainSound" property="CrushPainSound" />
 		<prop_name name="DeathSound" property="DeathSound" />
 		<prop_name name="ActiveSound" property="ActiveSound" />
 		<prop_name name="HowlSound" property="HowlSound" />
@@ -121,10 +125,10 @@
 		<flag name="MissileEvenMore" property="bMissileEvenMore" />
 		<flag name="NoTargetSwitch" property="bNoTargetSwitch" />
 		<flag name="NoInfighting" property="bNoInfighting" />
+		<flag name="NoSplashAlert" property="bNoSplashAlert" />
 		<flag_float name="LongMeleeRange" property="MissileMinRange" true_value="196.0" false_value="0.0" />
-		<flag_float name="ShortMissileRange" property="MissileMaxRange" true_value="896.0" false_value="0.0" />
-		<flag_unsupported name="NoSplashAlert" />
-		<!-- Abilities -->
+		<flag_float name="ShortMissileRange" property="MissileMaxRange" true_value="896.0" false_value="0.0" />		
+		<!-- (In)Abilities -->
 		<flag name="CannotPush" property="bCannotPush" />
 		<flag name="NoTeleport" property="bNoTeleport" />
 		<flag name="ActivateImpact" property="bActivateImpact" />
@@ -140,13 +144,16 @@
 		<flag name="CanBounceWater" property="bCanBounceWater" />
 		<flag name="ThruGhost" property="bThruGhost" />
 		<flag name="Spectral" property="bSpectral" />
-		<flag_unsupported name="Frightened" />
+		<flag name="Frightened" property="bFrightened" />
+		<flag name="NoFear" property="bNoFear" />
+		<flag_unsupported name="CantSeek" />
 		<!-- Defenses -->
 		<flag name="Invulnerable" property="bInvulnerable" />
 		<flag name="Reflective" property="bReflective" />
 		<flag name="ShieldReflect" property="bShieldReflect" />
 		<flag name="Deflect" property="bDeflect" />
 		<flag name="FireResist" property="bFireResist" />
+		<flag name="LowSpectralResist" property="bLowSpectralResist" />
 		<flag name="NoRadiusDmg" property="bNoRadiusDamage" />
 		<flag name="DontBlast" property="bDontBlast" />
 		<flag name="NoTarget" property="bNeverTarget" />
@@ -207,6 +214,7 @@
 		<flag name="DehExplosion" property="bDehExplosion" />
 		<flag_name name="FireDamage" property="DamageType" true_value="Fire" false_value="None" />
 		<flag_name name="IceDamage" property="DamageType" true_value="Ice" false_value="None" />
+		<flag_name name="SpectralLow" property="DamageType" true_value="SpectralLow" false_value="None" />
 		<!-- Miscellaneous -->
 		<flag name="Dropped" property="bDropped" />
 		<flag name="IsMonster" property="bMonster" />
@@ -226,11 +234,14 @@
 		<flag name="FastMelee" property="bFastMelee" />
 		<flag name="BossDeath" property="bBossDeath" />
 		<flag name="UseSpecial" property="bUseSpecial" />
+		<flag name="Touchy" property="bTouchy" />
+		<flag name="PuffGetsOwner" property="bPuffGetsOwner" />
+		<flag name="NoInteraction" property="bNoInteraction" />
 		<flag_unsupported name="OldRadiusDmg" />
 		<flag_unsupported name="ClientSideOnly" />
-		<flag_unsupported name="NoInteraction" />
 		<flag_unsupported name="AllowClientSpawn" />
-		<flag_unsupported name="NoTimeFreeze" />
+		<flag_unsupported name="NoTimeFreeze" />		
+		<flag_unsupported name="NoNetID" />
 		<!-- Limited use -->
 		<flag name="InCombat" property="bInCombat" />
 		<flag name="NoSector" property="bNoSector" />
@@ -239,9 +250,11 @@
 		<flag name="JustAttacked" property="bJustAttacked" />
 		<flag name="Teleport" property="bTeleport" />
 		<flag name="SeesDaggers" property="bSeesDaggers" />
+		<flag name="NeverRespawn" property="bNeverRespawn" />
 		<flag_noclip name="NoClip" />
 		<flag_unsupported name="ForceYBillboard" />
 		<flag_unsupported name="ForceXYBillboard" />
+		<flag_unsupported name="ExplodeOnDeath" />
 		<!-- Not documented -->
 		<flag name="InFloat" property="bInFloat" />
 		<flag name="SkullFly" property="bSkullFly" />
@@ -254,6 +267,8 @@
 		<!-- Vavoom specific -->
 		<flag name="FallingFriction" property="bFallingFriction" />
 		<flag name="CantAutoAim" property="bCantAutoAim" />
+		<flag name="CanJump" property="bCanJump" />
+		<flag name="JumpDown" property="bJumpDown" />
 	</class>
 
 	<class name="Inventory">
@@ -354,6 +369,7 @@
 		<flag name="BFG" property="bBotBfg" />
 		<flag name="CheatNotWeapon" property="bCheatNotWeapon" />
 		<flag name="No_Auto_Switch" property="bNoAutoSwitch" />
+		<flag_unsupported name="NoAutoAim" />
 	</class>
 
 	<class name="WeaponPiece">

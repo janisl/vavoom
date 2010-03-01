@@ -12,6 +12,7 @@ actor Sentinel 3006
 	PainChance 255
 	MinMissileChance 150
 	Monster
+	+NeverRespawn
 	+SpawnCeiling
 	+NoGravity
 	+DropOff

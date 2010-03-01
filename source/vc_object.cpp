@@ -1008,6 +1008,12 @@ IMPLEMENT_FUNCTION(VObject, GetClassReplacement)
 	RET_PTR(SomeClass->GetReplacement());
 }
 
+IMPLEMENT_FUNCTION(VObject, GetClassReplacee)
+{
+	P_GET_PTR(VClass, SomeClass);
+	RET_PTR(SomeClass->GetReplacee());
+}
+
 IMPLEMENT_FUNCTION(VObject, FindClassState)
 {
 	P_GET_NAME(StateName);

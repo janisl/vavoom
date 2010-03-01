@@ -7,7 +7,8 @@ class Actor extends Thinker
 	//
 	action native A_Look();
 	action native A_Look2();
-	//A_LookEx
+	action native A_LookEx(eval int flags, eval float minseedist, eval float maxseedist, eval float maxheardist,
+			eval float fov, eval name wakestate);
 	action native A_TurretLook();
 	action native A_Wander();
 	action native A_Chase(optional state melee, optional state missile, optional eval int flags);
@@ -29,8 +30,8 @@ class Actor extends Thinker
 	//
 	//	Generic monster attacks
 	//
-	action native A_CustomMissile(class<Actor> missiletype, eval float spawnheight,
-		eval int spawnoffs_xy, optional eval float angle, optional eval int aimmode,
+	action native A_CustomMissile(class<Actor> missiletype, optional eval float spawnheight,
+		optional eval int spawnoffs_xy, optional eval float angle, optional eval int aimmode,
 		optional eval float pitch);
 	action native A_CustomBulletAttack(eval float spread_horiz, eval float spread_vert,
 		eval int numbullets, eval int damage, class<Actor> pufftype,
@@ -279,6 +280,8 @@ class Inventory extends Actor
 	action native A_ClearReFire();
 	action native A_GunFlash();
 	action native A_CheckReload();
+	action native A_CheckForReload(eval int Count, state Jump, optional eval bool DoIncrement);
+	action native A_ResetReloadCounter();
 	action native A_Light(eval int value);
 	action native A_Light0();
 	action native A_Light1();
@@ -299,7 +302,7 @@ class Inventory extends Actor
 	action native A_FireCustomMissile(class<Actor> MissileType,
 		optional eval float Angle, optional evalnot bool UseAmmo,
 		optional eval int SpawnXY, optional eval float SpawnZ,
-		optional eval int AimAtAngle);
+		optional eval int AimAtAngle, optional eval float Pitch);
 	action native A_RailAttack(eval int damage, optional eval float offset_xy,
 		optional evalnot bool useammo, optional color color1, optional color color2,
 		optional eval bool silent, optional eval float maxdiff, optional class<Actor> pufftype);

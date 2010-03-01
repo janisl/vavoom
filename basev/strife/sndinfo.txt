@@ -248,19 +248,19 @@ alienspectre/death				dsalndth
 entity/sight					dsmnalse
 entity/active					dsalnact
 entity/melee					dsrevbld
-entity/pain						dsalnpn
+entity/pain					dsalnpn
 entity/death					dsmnaldt
 
 // Kneeling guy
 
-misc/chant						dschant
-misc/static						dsstatic
+misc/chant					dschant
+misc/static					dsstatic
 
 // Rat
 
-rat/sight						dsratact
-rat/active						dsratact
-rat/death						dsratact
+rat/sight					dsratact
+rat/active					dsratact
+rat/death					dsratact
 $singular rat/sight
 
 //==========================================================================
@@ -271,12 +271,12 @@ $singular rat/sight
 
 // Alarm
 
-misc/alarm						dsalarm
+misc/alarm					dsalarm
 $singular misc/alarm
 
 // Water
 
-world/river						dswriver
+world/river					dswriver
 world/waterfall					dswfall
 world/waterdrip					dswdrip
 world/watersplash				dswsplsh
@@ -303,7 +303,7 @@ world/barrelx					dsbarexp
 world/smallfire					dssmfire
 world/largefire					dslgfire
 woodenbarrel/death				dswbrldt
-ore/explode						dsexplod
+ore/explode					dsexplod
 misc/explosion					dsexplod
 
 world/glassbreak				dsbglass
@@ -320,18 +320,18 @@ switches/scanner				dsswscan
 switches/fool					dsdifool
 switches/valve					dsvalve
 switches/sizzle					dsfirxpl
-$alias switches/exitbutn 		switches/normbutn
+$alias switches/exitbutn 			switches/normbutn
 
 // Doors
 
-doors/small_metal_open			dsdrsmto // FIXME
-doors/small_metal_close			dsdrsmtc // FIXME
-doors/large_metal_open			dsdrlmto
-doors/large_metal_close			dsdrlmtc
-doors/large_wood_open			dsdrlwud
-doors/large_wood_close			dsdrlwud
-doors/small_wood_open			dsdrswud
-doors/small_wood_close			dsdrswud
+doors/small_metal_open				dsdrsmto // FIXME
+doors/small_metal_close				dsdrsmtc // FIXME
+doors/large_metal_open				dsdrlmto
+doors/large_metal_close				dsdrlmtc
+doors/large_wood_open				dsdrlwud
+doors/large_wood_close				dsdrlwud
+doors/small_wood_open				dsdrswud
+doors/small_wood_close				dsdrswud
 doors/stone_open				dsdrston
 doors/stone_close				dsdrston
 doors/dr2_open					dsbdopn
@@ -359,6 +359,8 @@ world/quake						dsquake
 // Shared by player and others
 
 misc/pcrush						dspcrush
+$limit misc/pcrush 0
+
 misc/gibbed						dsslop
 human/imonfire					dsburnme
 misc/disruptordeath				dsdsrptr

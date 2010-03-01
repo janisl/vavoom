@@ -1,0 +1,101 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: template.vc 1583 2006-06-27 19:05:42Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Janis Legzdinš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PowerDamage : Powerup;
+
+//==========================================================================
+//
+//	AbsorbDamage
+//
+//==========================================================================
+
+void AbsorbDamage(int damage, name DmgType, out int NewDamage)
+{
+	int i;
+	float dmg_factor;
+
+	if (damage > 0)
+	{
+		for (i = 0; i < DamageFactors.Num; i++)
+		{
+			if (DamageFactors[i].DamageType == DmgType)
+			{
+				dmg_factor = DamageFactors[i].Factor;
+				break;
+			}
+		}
+		NewDamage = ftoi(itof(damage) * dmg_factor > 0.0 ? dmg_factor : 1.0);
+		if (NewDamage == 0)
+		{
+			// don't allow zero damage as result of an underflow
+			NewDamage = 1;
+		}
+		
+		if (Owner && dmg_factor > 1.0)
+		{
+			Owner.PlaySound(ActiveSound, CHAN_VOICE);
+		}
+	}
+
+	if (Inventory)
+	{
+		Inventory.AbsorbDamage(damage, DmgType, NewDamage);
+	}
+}
+
+//==========================================================================
+//
+//	InitEffect
+//
+//==========================================================================
+
+void InitEffect()
+{
+	if (Owner)
+	{
+		Owner.PlaySound(SightSound, CHAN_VOICE);
+	}
+}
+
+//==========================================================================
+//
+//	EndEffect
+//
+//==========================================================================
+
+void EndEffect()
+{
+	if (Owner)
+	{
+		Owner.PlaySound(DeathSound, CHAN_VOICE);
+	}
+}
+
+defaultproperties
+{
+	BlendColour = 0;
+	EffectTime = 60.0;
+	bHubPower = true;
+}

@@ -265,7 +265,7 @@ vuint8* VPngTexture::GetPixels()
 	}
 	if (ColourType == PNG_COLOR_TYPE_GRAY && BitDepth < 8)
 	{
-		png_set_gray_1_2_4_to_8(png_ptr);
+		png_set_expand_gray_1_2_4_to_8(png_ptr);
 	}
 	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
 	{

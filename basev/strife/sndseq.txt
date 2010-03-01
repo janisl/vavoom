@@ -40,7 +40,7 @@ end
 end
 
 :DoorCloseSmallWood
-	play		doors/large_wood_open
+	play		doors/small_wood_close
 	nostopcutoff
 end
 
@@ -134,20 +134,20 @@ end
 ]
 
 :CeilingNormal
-	playrepeat	plats/pt1_mid
+	playrepeat		plats/pt1_mid
 end
 
 :CeilingSemiSilent
-	stopsound	plats/pt1_stop
+	stopsound		plats/pt1_stop
 end
 
 :Floor
-	playrepeat	plats/pt1_mid
-	stopsound	plats/pt1_stop
+	playrepeat		plats/pt1_mid
+	stopsound		plats/pt1_stop
 end
 
 :Platform
-	playuntildone   plats/pt1_strt
+	playuntildone   	plats/pt1_strt
 	stopsound		plats/pt1_stop
 end
 

@@ -603,8 +603,8 @@ void VMethod::PostLoad()
 
 #ifndef IN_VCC
 	//	Set up builtins
-	if (NumParams > 16)
-		Sys_Error("Function has more than 16 params");
+	if (NumParams > VMethod::MAX_PARAMS)
+		Sys_Error("Function has more than %i params", VMethod::MAX_PARAMS);
 	for (FBuiltinInfo* B = FBuiltinInfo::Builtins; B; B = B->Next)
 	{
 		if (Outer == B->OuterClass && !VStr::Cmp(*Name, B->Name))

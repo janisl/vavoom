@@ -303,7 +303,7 @@ COMMAND(Fly)
 
 //==========================================================================
 //
-//  NoTaget_f
+//  NoTarget_f
 //
 //==========================================================================
 
@@ -318,5 +318,25 @@ COMMAND(NoTarget)
 	if (CheatAllowed(Player))
 	{
 		Player->eventCheat_NoTarget();
+	}
+}
+
+//==========================================================================
+//
+//  Anubis_f
+//
+//==========================================================================
+
+COMMAND(Anubis)
+{
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_Anubis();
 	}
 }

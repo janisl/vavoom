@@ -11,8 +11,10 @@ actor Peasant : StrifeHumanoid
 	AttackSound "peasant/attack"
 	PainSound "peasant/pain"
 	DeathSound "peasant/death"
+	CrushPainSound "misc/pcrush"
 	Obituary "$ob_peasant"
 	Monster
+	+NeverRespawn
 	-CountKill
 	+Friendly
 	states

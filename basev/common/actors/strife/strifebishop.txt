@@ -18,6 +18,7 @@ actor StrifeBishop 187
 	Obituary "$ob_stfbishop"
 	DropItem "CrateOfMissiles", 256, 20
 	Monster
+	+NeverRespawn
 	+FloorClip
 	+InCombat
 	+NoBlood

@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -39,7 +39,7 @@
 final void Damage(EntityEx inflictor, EntityEx source, int damage,
 	optional name DmgType, optional bool NoArmor)
 {
-	int			i;
+	int	i;
 
 	if (!bShootable)
 	{
@@ -135,6 +135,11 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		{
 			return;
 		}
+	}
+
+	if (DmgType == 'SpectralLow' && bLowSpectralResist)
+	{
+		damage = 0;
 	}
 
 	if (DmgType == 'Fire' && bFireResist)

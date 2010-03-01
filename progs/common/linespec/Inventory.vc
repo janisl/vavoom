@@ -1316,7 +1316,7 @@ final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
 
 final void A_FireCustomMissile(class<Actor> MissileType, optional float Angle,
 	optional bool UseAmmo, optional int SpawnXY, optional float SpawnZ,
-	optional int AimAtAngle)
+	optional int AimAtAngle, optional float Pitch)
 {
 	if (!MissileType || !bIsPlayer)
 	{
@@ -1350,10 +1350,15 @@ final void A_FireCustomMissile(class<Actor> MissileType, optional float Angle,
 	{
 		ShootAngle += Angle;
 	}
+	// Temporarily adjusts the pitch
+	float SavedPitch = Angles.pitch;
+	Angles.pitch -= Pitch;
 
 	EntityEx AimTarget;
 	EntityEx A = SpawnPlayerMissileEx(MissileType, false, AimTarget,
 		ShootAngle, ShootOrg);
+	Angles.pitch = SavedPitch;
+
 	if (A)
 	{
 		//	Handle seeker missiles.

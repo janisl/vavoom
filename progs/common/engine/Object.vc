@@ -609,6 +609,7 @@ native static final bool ClassIsChildOf(class SomeClass, class BaseClass);
 native static final name GetClassName(class C);
 native static final class GetClassParent(class C);
 native static final class GetClassReplacement(class C);
+native static final class GetClassReplacee(class C);
 native static final state FindClassState(class C, name StateName);
 native static final int GetClassNumOwnedStates(class C);
 native static final state GetClassFirstState(class C);

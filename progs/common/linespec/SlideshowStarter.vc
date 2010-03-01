@@ -33,18 +33,24 @@ class SlideshowStarter : DummyStrifeItem;
 
 bool TryPickup(EntityEx Toucher)
 {
+	name Old_Music;
+
 	if (XLevel.MapName == 'map03')
 	{
 		LineSpecialLevelInfo(Level).ConversationSlideshow = true;
+		Old_Music = Level.SongLump;
 		Level.ChangeMusic('d_dark');
 		PlayerEx(Toucher.Player).ClientSlideshow1();
+		Level.ChangeMusic(Old_Music);
 	}
 	else if (XLevel.MapName == 'map10')
 	{
 		LineSpecialLevelInfo(Level).ConversationSlideshow = true;
+		Old_Music = Level.SongLump;
 		Level.ChangeMusic('d_dark');
 		PlayerEx(Toucher.Player).ClientSlideshow2();
 		Toucher.GiveInventoryType(QuestItem17);
+		Level.ChangeMusic(Old_Music);
 	}
 	GoAwayAndDie();
 	return true;

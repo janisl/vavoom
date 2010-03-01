@@ -63,9 +63,9 @@ bool Use(bool Pickup)
 		{
 			continue;
 		}
-		else if (!mo.bMonster && !mo.bIsPlayer && !mo.bMissile)
+		else if (!mo.bMonster && !mo.bIsPlayer && !mo.bMissile && !mo.bTouchy)
 		{
-			// Must be monster, player, or missile
+			// Must be monster, player, missile or touchy
 			continue;
 		}
 		if (mo.bDormant)
@@ -175,6 +175,12 @@ final void Blast(Actor victim, Actor source, float strength)
 		{
 			victim.bSlide = true;
 			victim.bBlasted = true;
+		}
+		// Touchy objects die when blasted
+		if (victim.bTouchy)
+		{
+			victim.bArmed = false; // Disarm
+			Damage(victim, source, victim.Health);
 		}
 	}
 }

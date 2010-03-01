@@ -1,0 +1,209 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: template.vc 1583 2006-06-27 19:05:42Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Janis Legzdinš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class RandomSpawner : Actor
+	abstract;
+
+const int MAX_RANDOMSPAWNERS_RECURSION = 32; // Should be largely more than enough...
+
+int BounceCount;
+
+//==========================================================================
+//
+//	BeginPlay
+//
+//==========================================================================
+
+void BeginPlay()
+{
+	int n = 0, i = 0;
+	bool IsBoss = false;
+	Entity NewEntity;
+
+	::BeginPlay();
+	if (DropItemList.Num)
+	{
+		while (i < DropItemList.Num)
+		{
+			if (DropItemList[i].Type)
+			{
+				if (DropItemList[i].Amount < 0)
+				{
+					// default value is -1, we need a positive value.
+					DropItemList[i].Amount = 1;
+				}
+				// this is how we can weight the list.
+				n += DropItemList[i].Amount;
+				i++;
+			}
+		}
+		// Then we reset the iterator to the start position...
+		i = 0;
+		// Take a random number...
+		n = P_Random() % n;
+		// And iterate in the array up to the random number chosen.
+		while (n > -1)
+		{
+			if (DropItemList[i].Type)
+			{
+				n -= DropItemList[i].Amount;
+				if ((i + 1) < DropItemList.Num && (n > -1))
+				{
+					i++;
+				}
+				else
+				{
+					n = -1;
+				}
+			}
+		}
+		//
+		// ...and we can spawn the dropped item...
+		//
+
+		// Prevent infinite recursions
+		if (BounceCount >= MAX_RANDOMSPAWNERS_RECURSION)
+		{
+			// Show that there's a problem.
+			Spawn(Unknown, Origin,,, false);
+			Destroy();
+			return;
+		}
+		else if (Random() <= DropItemList[i].Chance)
+		{
+			class<EntityEx> cls = class<EntityEx>(FindClass(GetClassName(GetClassReplacement(DropItemList[i].Type))));
+
+			if (!cls)
+			{
+				// Show that there's a problem.
+				Spawn(Unknown, Origin,,, false);
+				Destroy();
+				return;
+			}
+
+			if (bMissile && Target && Target.Target)
+			{
+				// Attempting to spawn a missile.
+				if (!Tracer && bSeekerMissile)
+				{
+					Tracer = Target;
+				}
+				NewEntity = SpawnMissileXYZ(Origin, Target, cls);
+			}
+			else
+			{
+				NewEntity = Spawn(cls, Origin,,, false);
+			}
+
+			if (NewEntity)
+			{
+				// copy everything relevant
+				NewEntity.Angles = Angles;
+				NewEntity.Special = Special;
+				NewEntity.Args[0] = Args[0];
+				NewEntity.Args[1] = Args[1];
+				NewEntity.Args[2] = Args[2];
+				NewEntity.Args[3] = Args[3];
+				NewEntity.Args[4] = Args[4];
+				EntityEx(NewEntity).Special1 = Special1;
+				EntityEx(NewEntity).Special2 = Special2;
+	//			EntityEx(NewEntity).TID = TID;
+				EntityEx(NewEntity).Master = Master;
+				EntityEx(NewEntity).Target = Target;
+				EntityEx(NewEntity).Tracer = Tracer;
+				EntityEx(NewEntity).CopyFriendliness(self, false);
+				// This handles things such as projectiles with the MF4_SPECTRAL flag that have
+				// a health set to -2 after spawning, for internal reasons.
+				if (Health != default.Health)
+				{
+					NewEntity.Health = Health;
+				}
+				if (NewEntity.IsA('Inventory'))
+				{
+					EntityEx(NewEntity).bDropped = bDropped;
+				}
+				else
+				{
+					EntityEx(NewEntity).bDropped = false;
+				}
+				// Handle special altitude flags
+				if (EntityEx(NewEntity).bSpawnCeiling)
+				{
+					NewEntity.Origin.z = NewEntity.CeilingZ - NewEntity.Height;
+				}
+				else if (EntityEx(NewEntity).bSpawnFloat) 
+				{
+					NewEntity.Origin.z = FLOATRANDZ;
+				}
+				if (EntityEx(NewEntity).bMissile)
+				{
+					EntityEx(NewEntity).CheckMissileSpawn();
+				}
+
+				// Bouncecount is used to count how many recursions we're in.
+				if (NewEntity.IsA('RandomSpawner'))
+				{
+					RandomSpawner(NewEntity).BounceCount = ++BounceCount;
+				}
+				// If the spawned actor has either of those flags, it's a boss.
+				if (EntityEx(NewEntity).bBossDeath || EntityEx(NewEntity).bBoss)
+				{
+					IsBoss = true;
+				}
+			}
+		}
+		if (NewEntity && IsBoss)
+		{
+			Tracer = EntityEx(NewEntity);
+		}
+		else
+		{
+			// "else" because a boss-replacing spawner must wait until it can call A_BossDeath.
+			Destroy();
+		}
+	}
+}
+
+//==========================================================================
+//
+//	Tick
+//
+//==========================================================================
+
+void Tick(float deltaTime)
+{
+	::Tick(deltaTime);
+
+	if (!Tracer || Tracer.Health <= 0)
+	{
+		A_BossDeath();
+		Destroy();
+	}
+}
+
+defaultproperties
+{
+	BounceCount = 0;
+}

@@ -47,7 +47,7 @@ const float TOCENTRE		= -128.0;
 
 struct VViewState
 {
-	state		State;	// a 0 state means not active
+	state		State;							// a 0 state means not active
 	float		StateTime;
 	float		SX;
 	float		SY;
@@ -59,11 +59,11 @@ readonly bool			bActive;
 readonly bool			bSpawned;
 readonly bool			bIsBot;
 bool					bFixAngle;
-bool					bAttackDown;	// True if button down last tic.
+bool					bAttackDown;			// True if button down last tic.
 bool					bUseDown;
-bool					bDidSecret;	// True if secret level has been done.
+bool					bDidSecret;				// True if secret level has been done.
 readonly private bool	bCentreing;
-readonly bool			bIsClient;	// Player on client side
+readonly bool			bIsClient;				// Player on client side
 bool					bAutomapRevealed;
 bool					bAutomapShowThings;
 
@@ -73,18 +73,18 @@ string					UserInfo;
 
 string					PlayerName;
 byte					BaseClass;
-byte					PClass;	// player class type
+byte					PClass;					// player class type
 byte					TranslStart;
 byte					TranslEnd;
 int						Colour;
 
-float					ClientForwardMove;	// *2048 for move
-float					ClientSideMove;	// *2048 for move
-float					ForwardMove;	// *2048 for move
-float					SideMove;	// *2048 for move
-float					FlyMove;	// fly up/down/centreing
-byte					Buttons;	// fire, use
-byte					Impulse;	// weapon changes, inventory, etc
+float					ClientForwardMove;		// *2048 for move
+float					ClientSideMove;			// *2048 for move
+float					ForwardMove;			// *2048 for move
+float					SideMove;				// *2048 for move
+float					FlyMove;				// fly up/down/centreing
+byte					Buttons;				// fire, use
+byte					Impulse;				// weapon changes, inventory, etc
 //	For ACS
 byte					OldButtons;
 TAVec					OldViewAngles;
@@ -126,13 +126,13 @@ int						CShift;
 VViewState				ViewStates[NUMPSPRITES];
 float					PSpriteSY;
 
-float					WorldTimer;	// total time the player's been playing
+float					WorldTimer;				// total time the player's been playing
 
 native readonly byte	ClientNum;
 
 int						SoundEnvironment;
 
-native readonly ClientGameBase	ClGame;	//	Valid only on client side
+native readonly ClientGameBase	ClGame;			//	Valid only on client side
 
 PlayerReplicationInfo	PlayerReplicationInfo;
 
@@ -265,6 +265,10 @@ void Cheat_Fly()
 }
 
 void Cheat_NoTarget()
+{
+}
+
+void Cheat_Anubis()
 {
 }
 

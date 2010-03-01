@@ -81,6 +81,7 @@ enum
 #include "PlayerPawn.vc"
 #include "PlayerChunk.vc"
 #include "PlayerEx.vc"
+#include "RandomSpawner.vc"
 
 #include "Inventory.vc"
 #include "PickupFlash.vc"
@@ -108,6 +109,9 @@ enum
 #include "PowerScanner.vc"
 #include "PowerTargeter.vc"
 #include "PowerMorph.vc"
+#include "PowerDamage.vc"
+#include "PowerProtection.vc"
+#include "PowerRegeneration.vc"
 #include "Health.vc"
 #include "HealthPickup.vc"
 #include "Armor.vc"

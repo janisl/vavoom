@@ -10,6 +10,7 @@ actor Acolyte : StrifeHumanoid
 	PainChance 150
 	MinMissileChance 150
 	Monster
+	+NeverRespawn
 	+SeesDaggers
 	+NoSplashAlert
 	+FloorClip
@@ -18,6 +19,7 @@ actor Acolyte : StrifeHumanoid
 	AttackSound "acolyte/rifle"
 	PainSound "acolyte/pain"
 	DeathSound "acolyte/death"
+	CrushPainSound "misc/pcrush"
 	Obituary "$ob_acolyte"
 
 	action native A_AcolyteBits();
@@ -182,7 +184,8 @@ actor AcolyteToBe : Acolyte 201
 	Height 56
 	PainChance 256
 	-CountKill
-	-IsMonster
+//	-IsMonster
+	-NeverRespawn
 	DeathSound "becoming/death"
 
 	action native A_HideDecepticon();

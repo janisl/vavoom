@@ -50,9 +50,13 @@ class VMain : public wxFrame
 public:
 	wxComboBox*		Game;
 	wxComboBox*		RendererBox;
+	wxComboBox*		Resolution;
+	wxComboBox*		Colour;
+	wxTextCtrl*		Particles;
+	wxTextCtrl*		CacheMemory;
 	wxCheckBox*		CheckBoxNoSound;
 	wxCheckBox*		CheckBoxNoSfx;
-	wxCheckBox*		CheckBoxNo3DSound;
+	wxCheckBox*		CheckBox3DSound;
 	wxCheckBox*		CheckBoxNoMusic;
 	wxCheckBox*		CheckBoxNoCDAudio;
 	wxCheckBox*		CheckBoxUseOpenAL;
@@ -148,20 +152,6 @@ VMain::VMain()
 	Game = new wxComboBox(page, -1, GameChoices[0], wxDefaultPosition, wxDefaultSize, 8, GameChoices, wxCB_READONLY);
 	gsizer->Add(Game, 0, wxALL, 4);
 
-	gsizer->Add(new wxStaticText(page, -1, wxT("Renderer:")), 0, wxALL, 4);
-	wxString RendChoices[3];
-	RendChoices[0] = wxT("Software");
-	RendChoices[1] = wxT("OpenGL");
-	RendChoices[2] = wxT("Direct3D");
-	RendererBox = new wxComboBox(page, -1, RendChoices[1], wxDefaultPosition, wxDefaultSize,
-#ifdef _WIN32
-		3,
-#else
-		2,
-#endif
-		RendChoices, wxCB_READONLY);
-	gsizer->Add(RendererBox, 0, wxALL, 4);
-
 	gsizer->Add(new wxStaticText(page, -1, wxT("Custom game:")), 0, wxALL, 4);
 	EditGame = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
 	gsizer->Add(EditGame, 0, wxALL, 4);
@@ -183,6 +173,53 @@ VMain::VMain()
 	page->SetSizer(gsizer);
 	gsizer->Layout();
 
+	//	Video options
+	page = new wxPanel(nbook);
+	nbook->AddPage(page, wxT("Video"));
+	wxFlexGridSizer* vsizer = new wxFlexGridSizer(2);
+
+	vsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+	vsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+
+	vsizer->Add(new wxStaticText(page, -1, wxT("Renderer:")), 0, wxALL, 4);
+	wxString RendChoices[3];
+	RendChoices[0] = wxT("Software");
+	RendChoices[1] = wxT("OpenGL");
+	RendChoices[2] = wxT("Direct3D");
+	RendererBox = new wxComboBox(page, -1, RendChoices[1], wxDefaultPosition, wxDefaultSize,
+#ifdef _WIN32
+		3,
+#else
+		2,
+#endif
+		RendChoices, wxCB_READONLY);
+	vsizer->Add(RendererBox, 0, wxALL, 4);
+	vsizer->Add(new wxStaticText(page, -1, wxT("Resolution:")), 0, wxALL, 4);
+	wxString ResolutionChoices[6];
+	ResolutionChoices[0] = wxT("640x480");
+	ResolutionChoices[1] = wxT("800x600");
+	ResolutionChoices[2] = wxT("1024x768");
+	ResolutionChoices[3] = wxT("1152x864");
+	ResolutionChoices[4] = wxT("1280x1024");
+	ResolutionChoices[5] = wxT("1600x1200");
+	Resolution = new wxComboBox(page, -1, ResolutionChoices[0], wxDefaultPosition, wxDefaultSize, 6, ResolutionChoices, wxCB_READONLY);
+	vsizer->Add(Resolution, 0, wxALL, 4);
+	vsizer->Add(new wxStaticText(page, -1, wxT("Color Depth:")), 0, wxALL, 4);
+	wxString ColourChoices[3];
+	ColourChoices[0] = wxT("8 bits");
+	ColourChoices[1] = wxT("16 bits");
+	ColourChoices[2] = wxT("32 bits");
+	Colour = new wxComboBox(page, -1, ColourChoices[0], wxDefaultPosition, wxDefaultSize, 3, ColourChoices, wxCB_READONLY);
+	vsizer->Add(Colour, 0, wxALL, 4);
+	vsizer->Add(new wxStaticText(page, -1, wxT("Particles:")), 0, wxALL, 4);
+	Particles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
+	vsizer->Add(Particles, 0, wxALL, 4);
+	vsizer->Add(new wxStaticText(page, -1, wxT("Surface Cache Memory (kb):")), 0, wxALL, 4);
+	CacheMemory = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
+	vsizer->Add(CacheMemory, 0, wxALL, 4);
+	page->SetSizer(vsizer);
+	vsizer->Layout();
+
 	//	Sound options
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Sound"));
@@ -191,12 +228,12 @@ VMain::VMain()
 	bsizer->Add(CheckBoxNoSound, 0, wxALL, 4);
 	CheckBoxNoSfx = new wxCheckBox(page, -1, wxT("No sounds"));
 	bsizer->Add(CheckBoxNoSfx, 0, wxALL, 4);
-	CheckBoxNo3DSound = new wxCheckBox(page, -1, wxT("No 3D sound"));
-	bsizer->Add(CheckBoxNo3DSound, 0, wxALL, 4);
 	CheckBoxNoMusic = new wxCheckBox(page, -1, wxT("No music"));
 	bsizer->Add(CheckBoxNoMusic, 0, wxALL, 4);
 	CheckBoxNoCDAudio = new wxCheckBox(page, -1, wxT("No CD audio"));
 	bsizer->Add(CheckBoxNoCDAudio, 0, wxALL, 4);
+	CheckBox3DSound = new wxCheckBox(page, -1, wxT("Use 3D sound"));
+	bsizer->Add(CheckBox3DSound, 0, wxALL, 4);
 	CheckBoxUseOpenAL = new wxCheckBox(page, -1, wxT("Use OpenAL"));
 	bsizer->Add(CheckBoxUseOpenAL, 0, wxALL, 4);
 	page->SetSizer(bsizer);
@@ -240,9 +277,13 @@ VMain::VMain()
 	wxConfigBase* Conf = wxConfigBase::Get();
 	Game->SetSelection(Conf->Read(wxT("Game"), 0l));
 	RendererBox->SetSelection(Conf->Read(wxT("Renderer"), 0l));
+	Resolution->SetSelection(Conf->Read(wxT("Resolution"), 0l));
+	Colour->SetSelection(Conf->Read(wxT("Colour"), 0l));
+	Particles->SetValue(Conf->Read(wxT("Particles"), wxT("")));
+	CacheMemory->SetValue(Conf->Read(wxT("CacheMemory"), wxT("")));
 	CheckBoxNoSound->SetValue(!!Conf->Read(wxT("NoSound"), 0l));
 	CheckBoxNoSfx->SetValue(!!Conf->Read(wxT("NoSfx"), 0l));
-	CheckBoxNo3DSound->SetValue(!!Conf->Read(wxT("No3DSound"), 0l));
+	CheckBox3DSound->SetValue(!!Conf->Read(wxT("3DSound"), 0l));
 	CheckBoxNoMusic->SetValue(!!Conf->Read(wxT("NoMusic"), 0l));
 	CheckBoxNoCDAudio->SetValue(!!Conf->Read(wxT("NoCDAudio"), 0l));
 	CheckBoxUseOpenAL->SetValue(!!Conf->Read(wxT("UseOpenAL"), 0l));
@@ -271,9 +312,13 @@ VMain::~VMain()
 	wxConfigBase* Conf = wxConfigBase::Get();
 	Conf->Write(wxT("Game"), Game->GetSelection());
 	Conf->Write(wxT("Renderer"), RendererBox->GetSelection());
+	Conf->Write(wxT("Resolution"), Resolution->GetSelection());
+	Conf->Write(wxT("Colour"), Colour->GetSelection());
+	Conf->Write(wxT("Particles"), Particles->GetValue());
+	Conf->Write(wxT("CacheMemory"), CacheMemory->GetValue());
 	Conf->Write(wxT("NoSound"), CheckBoxNoSound->IsChecked());
 	Conf->Write(wxT("NoSfx"), CheckBoxNoSfx->IsChecked());
-	Conf->Write(wxT("No3DSound"), CheckBoxNo3DSound->IsChecked());
+	Conf->Write(wxT("3DSound"), CheckBox3DSound->IsChecked());
 	Conf->Write(wxT("NoMusic"), CheckBoxNoMusic->IsChecked());
 	Conf->Write(wxT("NoCDAudio"), CheckBoxNoCDAudio->IsChecked());
 	Conf->Write(wxT("UseOpenAL"), CheckBoxUseOpenAL->IsChecked());
@@ -336,17 +381,25 @@ void VMain::OnRun(wxCommandEvent&)
 		break;
 	}
 
+	// Particles
+	if (Particles->GetValue().Length())
+		CmdLine += wxT(" -particles ") + EditMisc->GetValue();
+
+	// Cache Memory
+	if (CacheMemory->GetValue().Length())
+		CmdLine += wxT(" -surfcache ") + EditMisc->GetValue();
+
 	// Sound
 	if (CheckBoxNoSound->IsChecked())
 		CmdLine += wxT(" -nosound");
 	if (CheckBoxNoSfx->IsChecked())
 		CmdLine += wxT(" -nosfx");
-	if (CheckBoxNo3DSound->IsChecked())
-		CmdLine += wxT(" -no3dsound");
 	if (CheckBoxNoMusic->IsChecked())
 		CmdLine += wxT(" -nomusic");
 	if (CheckBoxNoCDAudio->IsChecked())
 		CmdLine += wxT(" -nocdaudio");
+	if (CheckBox3DSound->IsChecked())
+		CmdLine += wxT(" -3dsound");
 	if (CheckBoxUseOpenAL->IsChecked())
 		CmdLine += wxT(" -openal");
 
@@ -381,6 +434,42 @@ void VMain::OnRun(wxCommandEvent&)
 		CmdLine += wxT(" -file ") + EditFiles->GetValue();
 	if (EditMisc->GetValue().Length())
 		CmdLine += wxT(" ") + EditMisc->GetValue();
+
+	// Set Resolution
+	switch (Resolution->GetSelection())
+	{
+	case 0:
+		CmdLine += wxT(" +setresolution 640 480");
+		break;
+	case 1:
+		CmdLine += wxT(" +setresolution 800 600");
+		break;
+	case 2:
+		CmdLine += wxT(" +setresolution 1024 768");
+		break;
+	case 3:
+		CmdLine += wxT(" +setresolution 1152 864");
+		break;
+	case 4:
+		CmdLine += wxT(" +setresolution 1280 1024");
+		break;
+	case 5:
+		CmdLine += wxT(" +setresolution 1600 1200");
+		break;
+	}
+
+	switch (Colour->GetSelection())
+	{
+	case 0:
+		CmdLine += wxT(" 8");
+		break;
+	case 1:
+		CmdLine += wxT(" 16");
+		break;
+	case 2:
+		CmdLine += wxT(" 32");
+		break;
+	}
 
 	//	Run game
 	wxExecute(CmdLine, wxEXEC_SYNC);

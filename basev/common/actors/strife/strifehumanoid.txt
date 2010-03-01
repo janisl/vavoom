@@ -3,6 +3,7 @@ actor StrifeHumanoid
 {
 	MaxDropoffHeight 32
 	MaxStepHeight 16
+	CrushPainSound "misc/pcrush"
 	states
 	{
 	Burn:

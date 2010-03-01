@@ -29,8 +29,13 @@ class PlayerEx : BasePlayer
 //
 // Player internal flags, for cheats and debug.
 //
-const int CF_NOCLIP			= 1;	// No clipping, walk through barriers.
-const int CF_GODMODE		= 2;	// No damage, no health loss.
+enum
+{
+	CF_NOCLIP		= 1 << 0,		// No clipping, walk through barriers.
+	CF_GODMODE		= 1 << 1,		// No damage, no health loss.
+	CF_REGENERATION	= 1 << 2,		// Regenerate Health points.
+	CF_FRIGHTENING	= 1 << 3		// Scare monsters away.
+};
 
 const float USERANGE		= 64.0;
 const float USETHINGRANGE	= 128.0;
@@ -3002,16 +3007,13 @@ void PlayerTick(float deltaTime)
 		BotTick(deltaTime);
 	}
 
-	// fixme: do this in the cheat code
-	if (Cheats & CF_NOCLIP)
+	if ((MO.XLevel.TicTime % (3 * 35) == 0) && Cheats & CF_REGENERATION && Health > 0)
 	{
-		MO.bColideWithThings = false;
-		MO.bColideWithWorld = false;
-	}
-	else
-	{
-		MO.bColideWithThings = true;
-		MO.bColideWithWorld = true;
+		if (EntityEx(MO).GiveBody(5) &&
+			!GetSoundPlayingInfo(MO, GetSoundID('*regenerate')))
+		{
+			MO.PlaySound('*regenerate', CHAN_VOICE);
+		}
 	}
 
 	if (Actor(MO).bJustAttacked)
@@ -3152,7 +3154,6 @@ void PlayerTick(float deltaTime)
 	MovePsprites(deltaTime);
 
 	//	Counters.
-
 	if (PoisonCount && Level.XLevel.Time - LastPoisonTime >= 0.5)
 	{
 		PoisonCount -= 5;
@@ -3530,10 +3531,14 @@ final void Cheat_NoClip()
 	Cheats ^= CF_NOCLIP;
 	if (Cheats & CF_NOCLIP)
 	{
+		MO.bColideWithThings = false;
+		MO.bColideWithWorld = false;
 		cprint("No Clipping Mode ON");
 	}
 	else
 	{
+		MO.bColideWithThings = true;
+		MO.bColideWithWorld = true;
 		cprint("No Clipping Mode OFF");
 	}
 }
@@ -3641,6 +3646,25 @@ final void Cheat_NoTarget()
 	else
 	{
 		cprint("No Target Mode OFF");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_Anubis
+//
+//==========================================================================
+
+final void Cheat_Anubis()
+{
+	Cheats ^= CF_FRIGHTENING;
+	if (Cheats & CF_FRIGHTENING)
+	{
+		cprint("\"Quake with fear!\"");
+	}
+	else
+	{
+		cprint("No more ogre armor");
 	}
 }
 

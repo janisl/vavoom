@@ -4004,3 +4004,18 @@
   I added printing of supported screenshot formats.
 28.02.2010
   I added support for writing screenshots in PNG and JPG formats.
+  Firebrand fixed many Strife bugs reported on the forums.
+  Firebrand fixed a crash when changing the episode when starting a new net game in Heretic.
+  Firebrand fixed crashes that were presenting when building Vavoom using Debug configuration.
+  Firebrand made gravity to be applied to movements on Z plane.
+  Firebrand added flags for allowing monsters to drop down and jump up of tall ledges.
+  Firebrand added a flag for simulating mine actors that damage other actors on contact.
+  Firebrand added video options to the launcher.
+  Firebrand made 3d sound a toggleable option in the launcher instead of it being on by default.
+  Firebrand implemented RandomSpawner class.
+  Firebrand implemented PowerDamage, PowerProtection and PowerRegeneration classes.
+  Firebrand fixed crash when selecting a different episode and starting a net game in Heretic.
+  Firebrand made SNDINFO be able to load sound names from more than 8 characters.
+  Firebrand made duplicated actors a warning for DECORATE parser.
+  Firebrand made internal changes to DECORATE parser to recognize arrays of Args for actors.
+  

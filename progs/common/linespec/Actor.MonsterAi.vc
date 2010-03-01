@@ -231,6 +231,183 @@ final void A_Look2()
 
 //==========================================================================
 //
+// A_LookEx
+//
+// [KS] Borrowed the A_Look code to make a parameterized version.
+//
+//==========================================================================
+
+final void A_LookEx (int flags, float minseedist, float maxseedist, float maxheardist,
+			float fov, name wakestate)
+{
+	EntityEx	targ;
+	Entity		Ent;
+	float		dist;
+
+	//	Set goal now if appropriate.
+	if (Special == LNSPEC_ThingSetGoal && Args[0] == 0)
+	{
+		Goal = none;
+		for (Ent = Level.FindMobjFromTID(Args[1], none); Ent;
+			Ent = Level.FindMobjFromTID(Args[1], Ent))
+		{
+			if (!Ent.IsA('PatrolPoint'))
+			{
+				continue;
+			}
+			Goal = EntityEx(Ent);
+			break;
+		}
+		Special = 0;
+		ReactionTime = itof(Args[2]) + XLevel.Time;
+		bChaseGoal = !!Args[3];
+	}
+
+	Threshold = 0;	// any shot will wake up
+	if (TIDToHate)
+	{
+		targ = Target;
+	}
+	else
+	{
+		if (!(flags & Entity::LOF_NOSOUNDCHECK))
+		{
+			targ = Level.CompatSoundTarget || bNoSector ?
+				EntityEx(Sector->SoundTarget) : LastHeard;
+			//	If it's dead, don't chase it.
+			if (targ && targ.Health <= 0)
+			{
+				targ = none;
+			}
+
+			// [KS] If the target is too far away, don't respond to the sound.
+			if (maxheardist && DistTo(targ) > maxheardist)
+			{
+				targ = none;
+			}
+		}
+
+		if (targ && targ.bIsPlayer && PlayerEx(targ.Player).bNoTarget)
+		{
+			return;
+		}
+	}
+
+	//	Andy Baker's stealth monsters
+	if (bStealth)
+	{
+		VisDir = -1;
+	}
+
+	if (targ && targ.bShootable)
+	{
+		if (bFriendly && targ.bFriendly)
+		{
+			if (!(flags & Entity::LOF_NOSIGHTCHECK))
+			{
+				//	If we find a valid target here, the wandering logic should
+				// *not* be activated! If would cause the seestate to be set twice.
+				if (!LookForPlayers(bLookAllAround))
+				{
+					// Let the actor wander around aimlessly looking for a fight
+					if (FindState(wakestate))
+					{
+						if (!bInChase)
+						{
+							SetState(FindState(wakestate));
+						}
+					}
+					else
+					{
+						A_Wander();
+					}
+				}
+			}
+			else
+			{
+				// Let the actor wander around aimlessly looking for a fight
+				if (FindState(wakestate))
+				{
+					if (!bInChase)
+					{
+						SetState(FindState(wakestate));
+					}
+				}
+				else
+				{
+					A_Wander();
+				}
+			}
+		}
+		else
+		{
+			Target = targ;
+
+			if (bAmbush)
+			{
+				if (!CanSee(Target) && (!minseedist || DistTo(Target) < minseedist) &&
+					(!maxseedist || DistTo(Target) > maxseedist))
+				{
+					if (!LookForPlayers(bLookAllAround))
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		if (!(flags & Entity::LOF_NOSIGHTCHECK))
+		{
+			if (!LookForPlayers(bLookAllAround))
+			{
+				return;
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	//	Go into chase state
+	//	Don't start chasing after a goal if it isn't time yet.
+	if (Target == Goal)
+	{
+		if (ReactionTime > XLevel.Time)
+		{
+			Target = none;
+		}
+	}
+	else if (SightSound && !(flags & Entity::LOF_NOSEESOUND))
+	{
+		if (flags & Entity::LOF_FULLVOLSEESOUND)
+		{
+			// Full volume
+			PlaySound(SightSound, CHAN_VOICE, 1.0, ATTN_NONE);
+		}
+		else
+		{
+			PlaySound(SightSound, CHAN_VOICE);
+		}
+	}
+
+	if (Target)
+	{
+		if (FindState(wakestate))
+		{
+			SetState(FindState(wakestate));
+		}
+		else
+		{
+			SetState(SeeState);
+		}
+	}
+}
+
+//==========================================================================
+//
 //	A_TurretLook
 //
 //	Stay in state untill alarm is triggered.
@@ -542,29 +719,36 @@ void DoChase(bool FastChase, state AMeleeState, state AMissileState,
 			}
 		}
 
-		//	Check for melee attack.
-		if (AMeleeState && CheckMeleeRange())
+		// Scared monsters attack less frequently
+		if ((!Target.bIsPlayer ||
+			 !(PlayerEx(Target.Player).Cheats & PlayerEx::CF_FRIGHTENING)) &&
+			!bFrightened ||
+			P_Random() < 43)
 		{
-			if (AttackSound)
+			//	Check for melee attack.
+			if (AMeleeState && CheckMeleeRange())
 			{
-				PlaySound(AttackSound, CHAN_WEAPON);
-			}
-			SetState(AMeleeState);
-			bInChase = false;
-			return;
-		}
-
-		//	Check for missile attack.
-		if (AMissileState)
-		{
-			if (IsFast() || !MoveCount)
-			{
-				if (CheckMissileRange())
+				if (AttackSound)
 				{
-					SetState(AMissileState);
-					bJustAttacked = true;
-					bInChase = false;
-					return;
+					PlaySound(AttackSound, CHAN_WEAPON);
+				}
+				SetState(AMeleeState);
+				bInChase = false;
+				return;
+			}
+
+			//	Check for missile attack.
+			if (AMissileState)
+			{
+				if (IsFast() || !MoveCount)
+				{
+					if (CheckMissileRange())
+					{
+						SetState(AMissileState);
+						bJustAttacked = true;
+						bInChase = false;
+						return;
+					}
 				}
 			}
 		}

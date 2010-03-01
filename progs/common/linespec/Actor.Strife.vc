@@ -862,7 +862,10 @@ final void A_AttackAlert(EntityEx target, EntityEx emitter) self(Actor)
 	emitter.bInCombat = true;
 
 	emitter.Target = target;
-	emitter.SetState(emitter.FindState('Pain'));
+	if (emitter.FindState('Pain'))
+	{
+		emitter.SetState(emitter.FindState('Pain'));
+	}
 
 	for (looker = Sector->ThingList; looker; looker = looker.SNext)
 	{
@@ -880,10 +883,13 @@ final void A_AttackAlert(EntityEx target, EntityEx emitter) self(Actor)
 			if (!looker.CanSee(target) && !looker.CanSee(emitter))
 				continue;
 
-			EntityEx(looker).Target = target;
-			looker.PlaySound(SightSound, CHAN_VOICE);
-			looker.SetState(EntityEx(looker).SeeState);
-			EntityEx(looker).bInCombat = true;
+			if (EntityEx(looker).SeeState)
+			{
+				EntityEx(looker).Target = target;
+				looker.PlaySound(SightSound, CHAN_VOICE);
+				looker.SetState(EntityEx(looker).SeeState);
+				EntityEx(looker).bInCombat = true;
+			}
 		}
 	}
 }

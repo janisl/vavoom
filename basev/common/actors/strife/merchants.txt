@@ -10,6 +10,7 @@ actor Merchant
 	+Shootable
 	+NotDMatch
 	+NoDamage
+	CrushPainSound "misc/pcrush"
 	states
 	{
 	Spawn:

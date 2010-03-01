@@ -11,6 +11,7 @@ actor Loremaster 12
 	FloatSpeed 5
 	MinMissileChance 150
 	Monster
+	+NeverRespawn
 	+FloorClip
 	+NoGravity
 	+LookAllAround

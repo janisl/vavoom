@@ -187,6 +187,7 @@ progs/linespec/PolyobjRotator.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Poly
 progs/linespec/PolyobjThinker.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PolyobjThinker.vc
 progs/linespec/Pottery1.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pottery1.vc
 progs/linespec/PowerCoupling.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerCoupling.vc
+progs/linespec/PowerDamage.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerDamage.vc
 progs/linespec/PowerFlight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerFlight.vc
 progs/linespec/PowerGhost.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerGhost.vc
 progs/linespec/PowerInvisibility.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInvisibility.vc
@@ -196,6 +197,8 @@ progs/linespec/PowerLightAmp.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Powe
 progs/linespec/PowerMask.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerMask.vc
 progs/linespec/PowerMinotaur.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerMinotaur.vc
 progs/linespec/PowerMorph.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerMorph.vc
+progs/linespec/PowerProtection.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerProtection.vc
+progs/linespec/PowerRegeneration.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerRegeneration.vc
 progs/linespec/PowerScanner.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerScanner.vc
 progs/linespec/PowerShadow.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerShadow.vc
 progs/linespec/PowerSpeed.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerSpeed.vc
@@ -214,6 +217,7 @@ progs/linespec/RainPlayer2.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPl
 progs/linespec/RainPlayer3.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer3.vc
 progs/linespec/RainPlayer4.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RainPlayer4.vc
 progs/linespec/RaiseAlarm.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RaiseAlarm.vc
+progs/linespec/RandomSpawner.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/RandomSpawner.vc
 progs/linespec/Ripper.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Ripper.vc
 progs/linespec/Scanner.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Scanner.vc
 progs/linespec/ScriptedMarine.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/ScriptedMarine.vc

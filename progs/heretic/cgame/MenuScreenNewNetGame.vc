@@ -154,7 +154,7 @@ void InitMapList(int epi)
 
 bool ChangeEpisode(Object Sender, int newValue)
 {
-	MenuScreenNewNetGame(Parent).InitMapList(newValue);
+	InitMapList(newValue);
 	return true;
 }
 

@@ -309,6 +309,7 @@ public:
 	DECLARE_FUNCTION(GetClassName)
 	DECLARE_FUNCTION(GetClassParent)
 	DECLARE_FUNCTION(GetClassReplacement)
+	DECLARE_FUNCTION(GetClassReplacee)
 	DECLARE_FUNCTION(FindClassState)
 	DECLARE_FUNCTION(GetClassNumOwnedStates)
 	DECLARE_FUNCTION(GetClassFirstState)

@@ -43,6 +43,7 @@ defaultproperties
 	MeleeRange = 44.0;	//	MELEERANGE(64.0) - 20.0
 	MissileHeight = 32.0;
 	WoundHealth = 6;
+	JumpVelZ = 9.5;
 	BloodType = Blood;
 	BloodSplatterType = BloodSplatter;
 	AxeBloodType = AxeBlood;

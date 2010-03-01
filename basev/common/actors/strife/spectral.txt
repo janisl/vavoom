@@ -60,6 +60,7 @@ actor SpectralLightningV1 : SpectralLightningDeathShort
 	Speed 22
 	Damage 100
 	Projectile
+	DamageType "SpectralLow"
 	+Spectral
 	states
 	{
@@ -85,6 +86,7 @@ actor SpectralLightningSpot : SpectralLightningDeath1
 	ReactionTime 70
 	RenderStyle Translucent
 	Alpha 0.6
+	DamageType "SpectralLow"
 	+NoBlockmap
 	+NoBlockMonst
 	+NoDropOff
@@ -110,6 +112,7 @@ actor SpectralLightningH1 : SpectralLightningBase
 	Speed 30
 	Damage 70
 	Projectile
+	DamageType "SpectralLow"
 	+Spectral
 
 	action native A_SpectralLightningTail();
@@ -161,6 +164,7 @@ actor SpectralLightningBall1 : SpectralLightningBase
 	Speed 30
 	Damage 70
 	Projectile
+	DamageType "SpectralLow"
 	+Spectral
 	states
 	{
