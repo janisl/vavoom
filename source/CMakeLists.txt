@@ -32,6 +32,8 @@ set(MAIN_COMMON_SOURCES
 	args.cpp
 	args.h
 	array.h
+	arraystream.cpp
+	arraystream.h
 	asm_i386.h
 	automap.h
 	bitstream.cpp
@@ -101,6 +103,8 @@ set(MAIN_COMMON_SOURCES
 	mapinfo.h
 	maths.cpp
 	maths.h
+	memorystream.cpp
+	memorystream.h
 	menu.cpp
 	menu.h
 	misc.cpp
@@ -432,6 +436,7 @@ set(MAIN_OPENGL_WIN32_SOURCES
 
 set(SERVER_COMMON_SOURCES
 	args.cpp
+	arraystream.cpp
 	bitstream.cpp
 	cheats.cpp
 	cmd.cpp
@@ -449,6 +454,7 @@ set(SERVER_COMMON_SOURCES
 	lockdefs.cpp
 	mapinfo.cpp
 	maths.cpp
+	memorystream.cpp
 	misc.cpp
 	name.cpp
 	net_channel.cpp

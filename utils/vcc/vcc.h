@@ -47,8 +47,8 @@ void Free(void* ptr);
 #define Z_Free		Free
 #define Sys_Error	FatalError
 
-#include "../../source/array.h"
 #include "../../source/stream.h"
+#include "../../source/array.h"
 #include "../../source/names.h"
 #include "../../source/name.h"
 #include "../../source/str.h"

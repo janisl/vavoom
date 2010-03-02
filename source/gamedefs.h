@@ -41,9 +41,11 @@
 #include "common.h"		//	Common types
 #include "args.h"		//	Command line arguments.
 #include "zone.h"		//	Zone memory allocation
+#include "stream.h"		//	Streams
 #include "array.h"		//	Dynamic arrays
 #include "map.h"		//	Mapping of keys to values
-#include "stream.h"		//	Streams
+#include "memorystream.h"//	In-memory streams
+#include "arraystream.h"//	Stream for reding from array
 #include "bitstream.h"	//	Streams for bit-data
 #include "names.h"		//	Built-in names
 #include "name.h"		//	Names

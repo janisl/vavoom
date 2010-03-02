@@ -248,6 +248,20 @@ public:
 		}
 	}
 
+	friend VStream& operator << (VStream& Strm, TArray<T>& Array)
+	{
+		int NumElem = Array.Num();
+		Strm << STRM_INDEX(NumElem);
+		if (Strm.IsLoading())
+		{
+			Array.SetNum(NumElem);
+		}
+		for (int i = 0; i < Array.Num(); i++)
+		{
+			Strm << Array[i];
+		}
+	}
+
 private:
 	int ArrNum;
 	int ArrSize;
