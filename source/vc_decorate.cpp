@@ -4129,7 +4129,7 @@ void ProcessDecorateScripts()
 	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
 	{
 #ifdef DEBUG_PARSING
-		GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+		GCon->Logf("Class %s", *DecPkg->ParsedClasses[i]->GetFullName());
 #endif
 		DecPkg->ParsedClasses[i]->DecorateEmit();
 	}
@@ -4137,7 +4137,7 @@ void ProcessDecorateScripts()
 	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
 	{
 #ifdef DEBUG_PARSING
-		GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+		GCon->Logf("Class %s", *DecPkg->ParsedClasses[i]->GetFullName());
 #endif
 		DecPkg->ParsedClasses[i]->DecoratePostLoad();
 	}
