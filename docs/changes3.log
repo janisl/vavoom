@@ -4020,4 +4020,4 @@
   Firebrand made internal changes to DECORATE parser to recognize arrays of Args for actors.
 02.03.2010
   I split memory and array streams to their own files, added serialisation
- operator to array.
+ operator to array and used it in some places.

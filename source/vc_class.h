@@ -98,6 +98,11 @@ struct VRepField
 	VName				Name;
 	TLocation			Loc;
 	VMemberBase*		Member;
+
+	friend VStream& operator<<(VStream& Strm, VRepField& Fld)
+	{
+		return Strm << Fld.Member;
+	}
 };
 
 //==========================================================================
@@ -111,6 +116,11 @@ struct VRepInfo
 	bool				Reliable;
 	VMethod*			Cond;
 	TArray<VRepField>	RepFields;
+
+	friend VStream& operator<<(VStream& Strm, VRepInfo& RI)
+	{
+		return Strm << RI.Cond << RI.RepFields;
+	}
 };
 
 //==========================================================================

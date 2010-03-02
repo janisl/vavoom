@@ -104,6 +104,8 @@ struct FInstruction
 	VMemberBase*	Member;
 	VName			NameArg;
 	VFieldType		TypeArg;
+
+	friend VStream& operator << (VStream&, FInstruction&);
 };
 
 //==========================================================================

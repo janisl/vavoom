@@ -375,7 +375,11 @@ void VClass::Serialise(VStream& Strm)
 #endif
 	Strm << ParentClass
 		<< Fields
-		<< States;
+		<< States
+		<< Methods
+		<< DefaultProperties
+		<< RepInfos
+		<< StateLabels;
 #ifndef IN_VCC
 	if ((ObjectFlags & CLASSOF_Native) && ParentClass != PrevParent)
 	{
@@ -384,50 +388,6 @@ void VClass::Serialise(VStream& Strm)
 			ParentClass ? ParentClass->GetName() : "(none)");
 	}
 #endif
-
-	int NumMethods = Methods.Num();
-	Strm << STRM_INDEX(NumMethods);
-	if (Strm.IsLoading())
-	{
-		Methods.SetNum(NumMethods);
-	}
-	for (int i = 0; i < NumMethods; i++)
-	{
-		Strm << Methods[i];
-	}
-	Strm << DefaultProperties;
-
-	int NumRepInfos = RepInfos.Num();
-	Strm << STRM_INDEX(NumRepInfos);
-	if (Strm.IsLoading())
-	{
-		RepInfos.SetNum(NumRepInfos);
-	}
-	for (int i = 0; i < RepInfos.Num(); i++)
-	{
-		Strm << RepInfos[i].Cond;
-		int NumRepFields = RepInfos[i].RepFields.Num();
-		Strm << STRM_INDEX(NumRepFields);
-		if (Strm.IsLoading())
-		{
-			RepInfos[i].RepFields.SetNum(NumRepFields);
-		}
-		for (int j = 0; j < RepInfos[i].RepFields.Num(); j++)
-		{
-			Strm << RepInfos[i].RepFields[j].Member;
-		}
-	}
-
-	int NumStateLabels = StateLabels.Num();
-	Strm << STRM_INDEX(NumStateLabels);
-	if (Strm.IsLoading())
-	{
-		StateLabels.SetNum(NumStateLabels);
-	}
-	for (int i = 0; i < StateLabels.Num(); i++)
-	{
-		Strm << StateLabels[i];
-	}
 	unguard;
 }
 
@@ -2047,16 +2007,5 @@ VClass* VClass::FindClassLowerCase(VName AName)
 
 VStream& operator<<(VStream& Strm, VStateLabel& Lbl)
 {
-	Strm << Lbl.Name << Lbl.State;
-	int NumSub = Lbl.SubLabels.Num();
-	Strm << STRM_INDEX(NumSub);
-	if (Strm.IsLoading())
-	{
-		Lbl.SubLabels.SetNum(NumSub);
-	}
-	for (int i = 0; i < NumSub; i++)
-	{
-		Strm << Lbl.SubLabels[i];
-	}
-	return Strm;
+	return Strm << Lbl.Name << Lbl.State << Lbl.SubLabels;
 }

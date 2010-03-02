@@ -158,75 +158,8 @@ void VMethod::Serialise(VStream& Strm)
 		Strm << ParamTypes[i]
 			<< ParamFlags[i];
 	}
-	Strm << ReplCond;
-
-	//
-	//	Instructions
-	//
-	if (Strm.IsLoading())
-	{
-		int NumInstructions;
-		Strm << STRM_INDEX(NumInstructions);
-		Instructions.SetNum(NumInstructions);
-	}
-	else
-	{
-		int NumInstructions = Instructions.Num();
-		Strm << STRM_INDEX(NumInstructions);
-	}
-	for (int i = 0; i < Instructions.Num(); i++)
-	{
-		vuint8 Opc;
-		if (Strm.IsLoading())
-		{
-			Strm << Opc;
-			Instructions[i].Opcode = Opc;
-		}
-		else
-		{
-			Opc = Instructions[i].Opcode;
-			Strm << Opc;
-		}
-		switch (StatementInfo[Opc].Args)
-		{
-		case OPCARGS_None:
-			break;
-		case OPCARGS_Member:
-		case OPCARGS_FieldOffset:
-		case OPCARGS_VTableIndex:
-			Strm << Instructions[i].Member;
-			break;
-		case OPCARGS_VTableIndex_Byte:
-		case OPCARGS_FieldOffset_Byte:
-			Strm << Instructions[i].Member;
-			Strm << STRM_INDEX(Instructions[i].Arg2);
-			break;
-		case OPCARGS_BranchTarget:
-			Strm << Instructions[i].Arg1;
-			break;
-		case OPCARGS_ByteBranchTarget:
-		case OPCARGS_ShortBranchTarget:
-		case OPCARGS_IntBranchTarget:
-			Strm << STRM_INDEX(Instructions[i].Arg1);
-			Strm << Instructions[i].Arg2;
-			break;
-		case OPCARGS_Byte:
-		case OPCARGS_Short:
-		case OPCARGS_Int:
-			Strm << STRM_INDEX(Instructions[i].Arg1);
-			break;
-		case OPCARGS_Name:
-			Strm << Instructions[i].NameArg;
-			break;
-		case OPCARGS_String:
-			Strm << Instructions[i].Arg1;
-			break;
-		case OPCARGS_TypeSize:
-		case OPCARGS_Type:
-			Strm << Instructions[i].TypeArg;
-			break;
-		}
-	}
+	Strm << ReplCond
+		<< Instructions;
 	unguard;
 }
 
@@ -1016,4 +949,65 @@ void VMethod::OptimiseInstructions()
 	}
 	Instructions[Instructions.Num() - 1].Address = Addr;
 	unguard;
+}
+
+//==========================================================================
+//
+//	operator <<
+//
+//==========================================================================
+
+VStream& operator << (VStream& Strm, FInstruction& Instr)
+{
+	vuint8 Opc;
+	if (Strm.IsLoading())
+	{
+		Strm << Opc;
+		Instr.Opcode = Opc;
+	}
+	else
+	{
+		Opc = Instr.Opcode;
+		Strm << Opc;
+	}
+	switch (StatementInfo[Opc].Args)
+	{
+	case OPCARGS_None:
+		break;
+	case OPCARGS_Member:
+	case OPCARGS_FieldOffset:
+	case OPCARGS_VTableIndex:
+		Strm << Instr.Member;
+		break;
+	case OPCARGS_VTableIndex_Byte:
+	case OPCARGS_FieldOffset_Byte:
+		Strm << Instr.Member;
+		Strm << STRM_INDEX(Instr.Arg2);
+		break;
+	case OPCARGS_BranchTarget:
+		Strm << Instr.Arg1;
+		break;
+	case OPCARGS_ByteBranchTarget:
+	case OPCARGS_ShortBranchTarget:
+	case OPCARGS_IntBranchTarget:
+		Strm << STRM_INDEX(Instr.Arg1);
+		Strm << Instr.Arg2;
+		break;
+	case OPCARGS_Byte:
+	case OPCARGS_Short:
+	case OPCARGS_Int:
+		Strm << STRM_INDEX(Instr.Arg1);
+		break;
+	case OPCARGS_Name:
+		Strm << Instr.NameArg;
+		break;
+	case OPCARGS_String:
+		Strm << Instr.Arg1;
+		break;
+	case OPCARGS_TypeSize:
+	case OPCARGS_Type:
+		Strm << Instr.TypeArg;
+		break;
+	}
+	return Strm;
 }

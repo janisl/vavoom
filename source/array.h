@@ -260,6 +260,7 @@ public:
 		{
 			Strm << Array[i];
 		}
+		return Strm;
 	}
 
 private:

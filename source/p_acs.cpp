@@ -5069,6 +5069,23 @@ VAcsGlobal::VAcsGlobal()
 
 //==========================================================================
 //
+//	operator <<
+//
+//==========================================================================
+
+VStream& operator << (VStream& Strm, VAcsStore& Store)
+{
+	return Strm << Store.Map
+			<< Store.Type
+			<< Store.PlayerNum
+			<< STRM_INDEX(Store.Script)
+			<< STRM_INDEX(Store.Args[0])
+			<< STRM_INDEX(Store.Args[1])
+			<< STRM_INDEX(Store.Args[2]);
+}
+
+//==========================================================================
+//
 //	VAcsGlobal::Serialise
 //
 //==========================================================================
@@ -5092,23 +5109,7 @@ void VAcsGlobal::Serialise(VStream& Strm)
 	{
 		GlobalArrays[i].Serialise(Strm);
 	}
-
-	vint32 NumAcsStore = Store.Num();
-	Strm << STRM_INDEX(NumAcsStore);
-	if (Strm.IsLoading())
-	{
-		Store.SetNum(NumAcsStore);
-	}
-	for (int i = 0; i < NumAcsStore; i++)
-	{
-		Strm << Store[i].Map
-			<< Store[i].Type
-			<< Store[i].PlayerNum
-			<< STRM_INDEX(Store[i].Script)
-			<< STRM_INDEX(Store[i].Args[0])
-			<< STRM_INDEX(Store[i].Args[1])
-			<< STRM_INDEX(Store[i].Args[2]);
-	}
+	Strm << Store;
 	unguard;
 }
 
