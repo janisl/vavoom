@@ -49,9 +49,9 @@ void BeginPlay()
 		{
 			if (DropItemList[i].Type)
 			{
-				if (DropItemList[i].Amount < 0)
+				if (DropItemList[i].Amount <= 0)
 				{
-					// default value is -1, we need a positive value.
+					// default value is negative, we need a positive value.
 					DropItemList[i].Amount = 1;
 				}
 				// this is how we can weight the list.
