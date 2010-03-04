@@ -175,15 +175,19 @@ void VSDLMidiDevice::Tick(float)
 void VSDLMidiDevice::Play(void* Data, int len, const char* song, bool loop)
 {
 	guard(VSDLMidiDevice::Play);
-	int		handle;
-
 	Mus_SndPtr = Data;
-	if ((handle = Sys_FileOpenWrite("vv_temp.mid")) < 0) return;
-	if (Sys_FileWrite(handle, Mus_SndPtr, len) != len) return;
-	if (Sys_FileClose(handle) < 0) return;
+	VStr TmpFileName = fl_savedir.IsNotEmpty() ? fl_savedir + "/vv_temp.mid" :
+		"vv_temp.mid";
+	FILE* f = fopen(*TmpFileName, "wb");
+	if (!f)
+	{
+		return;
+	}
+	fwrite(Mus_SndPtr, 1, len, f);
+	fclose(f);
 
-	music = Mix_LoadMUS("vv_temp.mid");
-	remove("vv_temp.mid");
+	music = Mix_LoadMUS(*TmpFileName);
+	remove(*TmpFileName);
 
 	if (!music)
 	{
