@@ -359,7 +359,6 @@ world/quake						dsquake
 // Shared by player and others
 
 misc/pcrush						dspcrush
-$limit misc/pcrush 0
 
 misc/gibbed						dsslop
 human/imonfire					dsburnme
