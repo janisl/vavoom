@@ -23,13 +23,6 @@
 //**
 //**************************************************************************
 
-int Sys_FileOpenRead(const VStr&);
-int Sys_FileOpenWrite(const VStr&);
-int Sys_FileRead(int, void*, int);
-int Sys_FileWrite(int, const void*, int);
-int Sys_FileSize(int);
-int Sys_FileSeek(int, int);
-int Sys_FileClose(int);
 int Sys_FileExists(const VStr&);
 int Sys_FileTime(const VStr&);
 

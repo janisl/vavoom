@@ -56,9 +56,6 @@ public:
 extern FOutputDevice*		GLogSysError;
 extern FOutputDevice*		GLogHostError;
 
-int M_ReadFile(const char* name, byte** buffer);
-bool M_WriteFile(const char* name, const void* source, int length);
-
 int superatoi(const char *s);
 
 char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));

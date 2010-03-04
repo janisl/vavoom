@@ -213,67 +213,6 @@ void VLogHostError::Serialise(const char* V, EName)
 
 //==========================================================================
 //
-//	M_ReadFile
-//
-//==========================================================================
-
-int M_ReadFile(const char* name, byte** buffer)
-{
-	int			handle;
-	int			count;
-	int			length;
-	byte		*buf;
-	
-	handle = Sys_FileOpenRead(name);
-	if (handle == -1)
-	{
-		Sys_Error("Couldn't open file %s", name);
-	}
-	length = Sys_FileSize(handle);
-	buf = (byte*)Z_Malloc(length + 1);
-	count = Sys_FileRead(handle, buf, length);
-	buf[length] = 0;
-	Sys_FileClose(handle);
-	
-	if (count < length)
-	{
-		Sys_Error("Couldn't read file %s", name);
-	}
-
-	*buffer = buf;
-	return length;
-}
-
-//==========================================================================
-//
-//	M_WriteFile
-//
-//==========================================================================
-
-bool M_WriteFile(const char* name, const void* source, int length)
-{
-	int		handle;
-	int		count;
-	
-	handle = Sys_FileOpenWrite(name);
-	if (handle == -1)
-	{
-		return false;
-	}
-
-	count = Sys_FileWrite(handle, source, length);
-	Sys_FileClose(handle);
-	
-	if (count < length)
-	{
-		return false;
-	}
-		
-	return true;
-}
-
-//==========================================================================
-//
 //  superatoi
 //
 //==========================================================================
