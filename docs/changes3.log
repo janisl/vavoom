@@ -4023,3 +4023,5 @@
  operator to array and used it in some places.
 04.03.2010
   I implemented optional auto-aiming.
+  I fixed potential problem with SDL mixer not playing MIDI files if current
+ directory is not writeable.
