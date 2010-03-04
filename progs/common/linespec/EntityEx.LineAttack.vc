@@ -226,23 +226,34 @@ final EntityEx Aim(out TVec OutDir, float distance, optional float yaw)
 	{
 		ang.yaw = yaw;
 	}
+	if (bIsPlayer && !PlayerEx(Player).bAutoAim)
+	{
+		AngleVector(&ang, &dir);
+		OutDir = dir;
+	}
 
-	LineTarget = AimLineAttack(OutDir, ang, distance);
+	//	Try to aim at a target. This is done even when autoaim is off so that
+	// we get a LineTarget that is needed for seeker missiles.
+	LineTarget = AimLineAttack(dir, ang, distance);
 	if (!LineTarget)
 	{
 		ang.yaw = AngleMod360(ang.yaw + 45.0 / 8.0);
-		LineTarget = AimLineAttack(OutDir, ang, distance);
+		LineTarget = AimLineAttack(dir, ang, distance);
 		if (!LineTarget)
 		{
 			ang.yaw = AngleMod360(ang.yaw - 45.0 / 4.0);
-			LineTarget = AimLineAttack(OutDir, ang, distance);
+			LineTarget = AimLineAttack(dir, ang, distance);
 			if (!LineTarget)
 			{
 				ang.yaw = AngleMod360(ang.yaw + 45.0 / 8.0);
 				AngleVector(&ang, &dir);
-				OutDir = dir;
 			}
 		}
+	}
+
+	if (!bIsPlayer || PlayerEx(Player).bAutoAim)
+	{
+		OutDir = dir;
 	}
 	return LineTarget;
 }

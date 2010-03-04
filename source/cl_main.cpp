@@ -203,6 +203,7 @@ void CL_ReadFromServer()
 		}
 
 		CL_UpdateMobjs();
+		cl->eventClientTick(host_frametime);
 		CL_Ticker();
 	}
 

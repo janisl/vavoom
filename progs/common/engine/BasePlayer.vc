@@ -224,6 +224,10 @@ void PlayerTick(float deltaTime)
 {
 }
 
+void ClientTick(float deltaTime)
+{
+}
+
 void SetViewPos()
 {
 }

@@ -109,6 +109,8 @@ bool			bInstantWeaponSwitch;
 bool			bFly;
 //	Inventory bar is always open
 bool			bInventoryAlwaysOpen;
+//	Auto aiming
+bool			bAutoAim;
 
 int				PoisonCount;	// screen flash for poison damage
 float			LastPoisonTime;
@@ -152,6 +154,9 @@ replication
 	reliable if (!bIsClient)
 		ClientVoice, ClientSpeech, ClientFinaleType, ClientSlideshow1,
 		ClientSlideshow2;
+
+	reliable if (bIsClient)
+		bAutoAim;
 }
 
 //==========================================================================
@@ -3263,6 +3268,17 @@ final void SetViewPos()
 			SoundEnvironment = 1;
 		}
 	}
+}
+
+//==========================================================================
+//
+//  ClientTick
+//
+//==========================================================================
+
+void ClientTick(float deltaTime)
+{
+	bAutoAim = !!GetCvar('autoaim');
 }
 
 //==========================================================================

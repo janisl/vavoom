@@ -38,6 +38,7 @@ void CreateBot()
 	Bot = BotPlayer(SpawnObject(BotPlayer));
 	Bot.player = self;
 	Bot.OnBeginPlay();
+	bAutoAim = true;
 }
 
 //==========================================================================

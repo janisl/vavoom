@@ -296,6 +296,12 @@ class VBasePlayer : public VGameObject
 		P_PASS_FLOAT(deltaTime);
 		EV_RET_VOID(NAME_PlayerTick);
 	}
+	void eventClientTick(float DeltaTime)
+	{
+		P_PASS_SELF;
+		P_PASS_FLOAT(DeltaTime);
+		EV_RET_VOID(NAME_ClientTick);
+	}
 	void eventSetViewPos()
 	{
 		P_PASS_SELF;
