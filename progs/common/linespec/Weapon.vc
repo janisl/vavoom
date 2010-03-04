@@ -523,6 +523,23 @@ state GetAltAttackState(bool Hold)
 
 bool CheckAmmo(byte Mode, bool AutoSwitch, optional bool RequireAmmo)
 {
+	//	Search for infinite ammo power. Any subclass will do.
+	Inventory InfiniteAmmo = EntityEx(Owner).Inventory;
+	while (InfiniteAmmo)
+	{
+		if (PowerInfiniteAmmo(InfiniteAmmo))
+		{
+			break;
+		}
+		InfiniteAmmo = InfiniteAmmo.Inventory;
+	}
+
+	if (InfiniteAmmo)
+	{
+		// Don't waste ammo if we have an infinite ammo powerup
+		return true;
+	}
+
 	if (Mode == FIRE_Either)
 	{
 		if (CheckAmmo(FIRE_Primary, false) || CheckAmmo(FIRE_Secondary, false))
@@ -582,6 +599,23 @@ bool CheckAmmo(byte Mode, bool AutoSwitch, optional bool RequireAmmo)
 final bool DepleteAmmo(byte Mode, optional bool CheckEnough,
 	optional int DehackedUse)
 {
+	//	Search for infinite ammo power. Any subclass will do.
+	Inventory InfiniteAmmo = EntityEx(Owner).Inventory;
+	while (InfiniteAmmo)
+	{
+		if (PowerInfiniteAmmo(InfiniteAmmo))
+		{
+			break;
+		}
+		InfiniteAmmo = InfiniteAmmo.Inventory;
+	}
+
+	if (InfiniteAmmo)
+	{
+		// Don't waste ammo if we have an infinite ammo powerup
+		return true;
+	}
+
 	//	Default parameter values
 	if (!specified_CheckEnough)
 	{

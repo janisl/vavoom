@@ -231,6 +231,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\arraystream.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\bitstream.cpp"
 				>
 			</File>
@@ -296,6 +300,10 @@
 			</File>
 			<File
 				RelativePath="..\source\maths.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\memorystream.cpp"
 				>
 			</File>
 			<File
@@ -500,6 +508,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\arraystream.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\asm_i386.h"
 				>
 			</File>
@@ -577,6 +589,10 @@
 			</File>
 			<File
 				RelativePath="..\source\maths.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\memorystream.h"
 				>
 			</File>
 			<File

@@ -151,7 +151,7 @@ void Tick(float deltaTime)
 		if (Timer <= 0.0)
 		{
 			CurrentFrame++;
-			if (CurrentFrame >= Def->NumFrames )
+			if (CurrentFrame >= Def->NumFrames)
 			{
 				Line1->flags &= ~ML_BLOCKING;
 				Line2->flags &= ~ML_BLOCKING;

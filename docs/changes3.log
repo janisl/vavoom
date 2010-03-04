@@ -4025,3 +4025,7 @@
   I implemented optional auto-aiming.
   I fixed potential problem with SDL mixer not playing MIDI files if current
  directory is not writeable.
+  Firebrand added the possibility of obtaining optional debug output from DECORATE parsing.
+  Firebrand added an infinite ammo powerup class.
+  Firebrand added a special property for powerup type parsing.
+  Firebrand fixed a crash with Strife's animated doors.

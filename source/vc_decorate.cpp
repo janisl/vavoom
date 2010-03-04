@@ -30,8 +30,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define DEBUG_PARSING
-
 // TYPES -------------------------------------------------------------------
 
 enum
@@ -75,6 +73,7 @@ enum
 	PROP_Str,
 	PROP_StrUnsupported,
 	PROP_Class,
+	PROP_Power_Class,
 	PROP_BoolConst,
 	PROP_State,
 	PROP_Game,
@@ -358,6 +357,15 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_class")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Class, PN);
+				P.SetField(Lst.Class, *PN->GetAttribute("property"));
+				if (PN->HasAttribute("prefix"))
+				{
+					P.CPrefix = PN->GetAttribute("prefix");
+				}
+			}
+			else if (PN->Name == "prop_power_class")
+			{
+				VPropDef& P = Lst.NewProp(PROP_Power_Class, PN);
 				P.SetField(Lst.Class, *PN->GetAttribute("property"));
 				if (PN->HasAttribute("prefix"))
 				{
@@ -2286,7 +2294,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	int ColonPos = sc->String.IndexOf(':');
 	if (ColonPos >= 0)
 	{
-		//	There's a colon inside, so plit up the string.
+		//	There's a colon inside, so split up the string.
 		NameStr = VStr(sc->String, 0, ColonPos);
 		ParentStr = VStr(sc->String, ColonPos + 1, sc->String.Length() -
 			ColonPos - 1);
@@ -2296,14 +2304,15 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		NameStr = sc->String;
 	}
 
-#ifdef DEBUG_PARSING
-	sc->Message(va("Parsing class %s", *NameStr));
-#endif
+	if (GArgs.CheckParm("-debug_decorate"))
+	{
+		sc->Message(va("Parsing class %s", *NameStr));
+	}
 
 	VClass* DupCheck = VClass::FindClassLowerCase(*NameStr.ToLower());
 	if (DupCheck && DupCheck->MemberType == MEMBER_Class)
 	{
-		sc->Error(va("Redeclared class %s", *NameStr));
+		sc->Message(va("Warning: Redeclared class %s", *NameStr));
 	}
 
 	if (ColonPos < 0)
@@ -2532,6 +2541,13 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 				case PROP_Class:
 					sc->ExpectString();
 					AddClassFixup(Class, P.Field, P.CPrefix + sc->String, ClassFixups);
+					break;
+				case PROP_Power_Class:
+					// This is a very inconvenient shit!
+					// but ZDoom had to prepend "power" to the name...
+					sc->ExpectString();
+					AddClassFixup(Class, P.Field, sc->String.StartsWith("Power") || sc->String.StartsWith("power") ?
+							sc->String : P.CPrefix + sc->String, ClassFixups);
 					break;
 				case PROP_BoolConst:
 					P.Field->SetBool(DefObj, P.IConst);
@@ -4128,17 +4144,19 @@ void ProcessDecorateScripts()
 	//	Emit code.
 	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
 	{
-#ifdef DEBUG_PARSING
-		GCon->Logf("Class %s", *DecPkg->ParsedClasses[i]->GetFullName());
-#endif
+		if (GArgs.CheckParm("-debug_decorate"))
+		{
+			GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+		}
 		DecPkg->ParsedClasses[i]->DecorateEmit();
 	}
 	//	Compile and set up for execution.
 	for (int i = 0; i < DecPkg->ParsedClasses.Num(); i++)
 	{
-#ifdef DEBUG_PARSING
-		GCon->Logf("Class %s", *DecPkg->ParsedClasses[i]->GetFullName());
-#endif
+		if (GArgs.CheckParm("-debug_decorate"))
+		{
+			GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+		}
 		DecPkg->ParsedClasses[i]->DecoratePostLoad();
 	}
 

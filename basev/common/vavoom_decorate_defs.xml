@@ -324,7 +324,7 @@
 	<class name="PowerupGiver">
 		<prop_powerup_colour name="Powerup.Color" />
 		<prop_tics name="Powerup.Duration" property="EffectTime" />
-		<prop_class name="Powerup.Type" property="PowerupType" prefix="Power" />
+		<prop_power_class name="Powerup.Type" property="PowerupType" prefix="Power" />
 		<prop_name name="Powerup.Mode" property="Mode" />
 	</class>
 

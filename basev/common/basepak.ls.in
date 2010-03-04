@@ -190,6 +190,7 @@ progs/linespec/PowerCoupling.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/Powe
 progs/linespec/PowerDamage.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerDamage.vc
 progs/linespec/PowerFlight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerFlight.vc
 progs/linespec/PowerGhost.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerGhost.vc
+progs/linespec/PowerInfiniteAmmo.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInfiniteAmmo.vc
 progs/linespec/PowerInvisibility.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInvisibility.vc
 progs/linespec/PowerInvulnerable.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInvulnerable.vc
 progs/linespec/PowerIronFeet.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerIronFeet.vc

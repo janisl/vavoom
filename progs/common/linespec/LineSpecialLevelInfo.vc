@@ -1472,7 +1472,7 @@ final int EV_TextureChangeDoor(int Arg1, int Arg2, int Arg3, int Arg4,
 			{
 				continue;
 			}
-			for (i = 0; i < i < Sec->linecount; i++)
+			for (i = 0; i < Sec->linecount; i++)
 			{
 				Line = Sec->lines[i];
 				if (!Line->backsector)
