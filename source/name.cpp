@@ -154,7 +154,7 @@ VName::VName(const char* Name, ENameFindType FindType)
 	}
 
 	//	Add new name if not found.
-	if (!TempHash && (FindType == Add || FindType == AddLower8))
+	if (!TempHash && FindType != Find)
 	{
 		Index = Names.Num();
 		Names.Append(AllocateNameEntry(NameBuf, Index, HashTable[HashIndex]));
