@@ -1151,6 +1151,136 @@ static void ParseLightDef(VScriptParser* sc, int LightType)
 
 //==========================================================================
 //
+//	IntensityToRadius
+//
+//==========================================================================
+
+float IntensityToRadius(float Val)
+{
+	if (Val <= 20.0)
+	{
+		return Val * 4.5;
+	}
+	if (Val <= 30.0)
+	{
+		return Val * 3.6;
+	}
+	if (Val <= 40.0)
+	{
+		return Val * 3.3;
+	}
+	if (Val <= 60.0)
+	{
+		return Val * 2.8;
+	}
+	return Val * 2.5;
+}
+
+//==========================================================================
+//
+//	ParseGZLightDef
+//
+//==========================================================================
+
+static void ParseGZLightDef(VScriptParser* sc, int LightType)
+{
+	guard(ParseGZLightDef);
+	//	Get name, find it in the list or add it if it's not there yet.
+	sc->ExpectString();
+	VLightEffectDef* L = FindLightEffect(sc->String);
+	if (!L)
+	{
+		L = &GLightEffectDefs.Alloc();
+	}
+
+	//	Set default values.
+	L->Name = *sc->String.ToLower();
+	L->Type = LightType;
+	L->Colour = 0xffffffff;
+	L->Radius = 0.0;
+	L->Radius2 = 0.0;
+	L->MinLight = 0.0;
+	L->Offset = TVec(0, 0, 0);
+
+	//	Parse light def.
+	sc->Expect("{");
+	while (!sc->Check("}"))
+	{
+		if (sc->Check("color"))
+		{
+			sc->ExpectFloat();
+			float r = MID(0, sc->Float, 1);
+			sc->ExpectFloat();
+			float g = MID(0, sc->Float, 1);
+			sc->ExpectFloat();
+			float b = MID(0, sc->Float, 1);
+			L->Colour = ((int)(r * 255) << 16) | ((int)(g * 255) << 8) |
+				(int)(b * 255) | 0xff000000;
+		}
+		else if (sc->Check("size"))
+		{
+			sc->ExpectNumber();
+			L->Radius = IntensityToRadius(float(sc->Number));
+		}
+		else if (sc->Check("secondarySize"))
+		{
+			sc->ExpectNumber();
+			L->Radius2 = IntensityToRadius(float(sc->Number));
+		}
+		else if (sc->Check("offset"))
+		{
+			sc->ExpectNumber();
+			L->Offset.x = float(sc->Number);
+			sc->ExpectNumber();
+			L->Offset.y = float(sc->Number);
+			sc->ExpectNumber();
+			L->Offset.z = float(sc->Number);
+		}
+		else if (sc->Check("subtractive"))
+		{
+			sc->ExpectNumber();
+			sc->Message("Subtractive lights not supported.");
+		}
+		else if (sc->Check("chance"))
+		{
+			sc->ExpectFloat();
+			sc->Message("Chance parameter not implemented.");
+		}
+		else if (sc->Check("scale"))
+		{
+			sc->ExpectFloat();
+			sc->Message("Scale parameter not supported.");
+		}
+		else if (sc->Check("interval"))
+		{
+			sc->ExpectFloat();
+			sc->Message("Interval parameter not supported.");
+		}
+		else if (sc->Check("additive"))
+		{
+			sc->ExpectNumber();
+			sc->Message("Additive parameter not supported.");
+		}
+		else if (sc->Check("halo"))
+		{
+			sc->ExpectNumber();
+			sc->Message("Halo parameter not supported.");
+		}
+		else if (sc->Check("dontlightself"))
+		{
+			sc->ExpectNumber();
+			sc->Message("DontLightSelf parameter not supported.");
+		}
+		else
+		{
+			sc->Error(va("Bad point light parameter %s", sc->String));
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	FindParticleEffect
 //
 //==========================================================================
@@ -1449,6 +1579,75 @@ static void ParseEffectDefs(VScriptParser* sc,
 
 //==========================================================================
 //
+//	ParseGZDoomEffectDefs
+//
+//==========================================================================
+
+static void ParseGZDoomEffectDefs(VScriptParser* sc,
+	TArray<VTempClassEffects>& ClassDefs)
+{
+	guard(ParseEffectDefs);
+	while (!sc->AtEnd())
+	{
+		if (sc->Check("#include"))
+		{
+			sc->ExpectString();
+			int Lump = W_CheckNumForFileName(sc->String);
+			//	Check WAD lump only if it's no longer than 8 characters and
+			// has no path separator.
+			if (Lump < 0 && sc->String.Length() <= 8 &&
+				sc->String.IndexOf('/') < 0)
+			{
+				Lump = W_CheckNumForName(VName(*sc->String, VName::AddLower8));
+			}
+			if (Lump < 0)
+			{
+				sc->Error(va("Lump %s not found", *sc->String));
+			}
+			ParseGZDoomEffectDefs(new VScriptParser(sc->String,
+				W_CreateLumpReaderNum(Lump)), ClassDefs);
+			continue;
+		}
+		else if (sc->Check("pointlight") || sc->Check("pulselight") ||
+				sc->Check("sectorlight"))
+		{
+			ParseGZLightDef(sc, 0);
+		}
+		else if ( sc->Check("flickerlight") || sc->Check("flickerlight2"))
+		{
+			ParseGZLightDef(sc, 1);
+		}
+		else if (sc->Check("object"))
+		{
+			ParseClassEffects(sc, ClassDefs);
+		}
+		else if (sc->Check("skybox"))
+		{
+			sc->Message("Skybox parsing isn't implemented yet.");
+		}
+		else if (sc->Check("brightmap"))
+		{
+			sc->Message("Brightmaps are not supported.");
+		}
+		else if (sc->Check("glow"))
+		{
+			sc->Message("Glowing textures aren't supported yet.");
+		}
+		else if (sc->Check("hardwareshader"))
+		{
+			sc->Message("Shaders are not supported");
+		}
+		else
+		{
+			sc->Error("Unknown command");
+		}
+	}
+	delete sc;
+	unguard;
+}
+
+//==========================================================================
+//
 //	SetClassFieldInt
 //
 //==========================================================================
@@ -1526,13 +1725,20 @@ void R_ParseEffectDefs()
 
 	TArray<VTempClassEffects>	ClassDefs;
 
-	//	Parse VFXDEFS scripts.
+	//	Parse VFXDEFS, GLDEFS, etc. scripts.
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
 		if (W_LumpName(Lump) == NAME_vfxdefs)
 		{
 			ParseEffectDefs(new VScriptParser(*W_LumpName(Lump),
+				W_CreateLumpReaderNum(Lump)), ClassDefs);
+		}
+		if (W_LumpName(Lump) == NAME_gldefs ||
+			W_LumpName(Lump) == NAME_doomdefs || W_LumpName(Lump) == NAME_hticdefs ||
+			W_LumpName(Lump) == NAME_hexndefs || W_LumpName(Lump) == NAME_strfdefs)
+		{
+			ParseGZDoomEffectDefs(new VScriptParser(*W_LumpName(Lump),
 				W_CreateLumpReaderNum(Lump)), ClassDefs);
 		}
 	}

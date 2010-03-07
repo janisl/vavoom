@@ -4029,3 +4029,5 @@
   Firebrand added an infinite ammo powerup class.
   Firebrand added a special property for powerup type parsing.
   Firebrand fixed a crash with Strife's animated doors.
+06.03.2010
+  Firebrand added support for basic parsing of GLDEFS variants for adding light effects for actors.
