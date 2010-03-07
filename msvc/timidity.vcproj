@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="timidity"
 	ProjectGUID="{A5E43684-5BC7-4DEE-965B-F2E20C360793}"
 	RootNamespace="timidity"
@@ -206,50 +206,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
-			<File
-				RelativePath="..\source\timidity\common.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\controls.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\filter.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\instrum.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\mix.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\output.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\playmidi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\readmidi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\resample.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\timidity\tables.h"
-				>
-			</File>
 			<File
 				RelativePath="..\source\timidity\timidity.h"
 				>
