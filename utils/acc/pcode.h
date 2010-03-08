@@ -35,7 +35,8 @@ enum
 // Values added to script number to indicate flags (requires new-style .o)
 enum
 {
-	NET_SCRIPT_FLAG			= 0x00010000
+	NET_SCRIPT_FLAG			= 0x00010000,
+	CLIENTSIDE_SCRIPT_FLAG	= 0x00020000, // [BB]
 };
 
 // Or'ed with variable index when passing variables of type "out"
@@ -185,8 +186,8 @@ typedef enum
 	PCD_BLUETEAMSCORE,
 	PCD_REDTEAMSCORE,
 	PCD_ISONEFLAGCTF,
-	PCD_LSPEC6,				// [RH] LSPEC6 is never actually used.
-	PCD_LSPEC6DIRECT,		// Should these be removed?
+	PCD_GETINVASIONWAVE,
+	PCD_GETINVASIONSTATE,
 	PCD_PRINTNAME,
 	PCD_MUSICCHANGE,
 	PCD_CONSOLECOMMANDDIRECT,
@@ -412,6 +413,7 @@ typedef enum
 	PCD_CLASSIFYACTOR,
 	PCD_PRINTBINARY,
 	PCD_PRINTHEX,
+	PCD_CALLFUNC,
 
 	PCODE_COMMAND_COUNT
 } pcd_t;

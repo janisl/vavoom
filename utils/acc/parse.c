@@ -93,6 +93,7 @@ static boolean ProcessStatement(statement_t owner);
 static void LeadingCompoundStatement(statement_t owner);
 static void LeadingVarDeclare(void);
 static void LeadingLineSpecial(boolean executewait);
+static void LeadingFunction();
 static void LeadingIdentifier(void);
 static void BuildPrintString(void);
 static void PrintCharArray(void);
@@ -695,6 +696,13 @@ static void OuterScript(void)
 		scriptNumber += NET_SCRIPT_FLAG;
 		TK_NextToken();
 	}
+	// [BB] If NET and CLIENTSIDE are specified, this construction can only parse
+	// "NET CLIENTSIDE" but not "CLIENTSIDE NET".
+	if(tk_Token == TK_CLIENTSIDE)
+	{
+		scriptNumber += CLIENTSIDE_SCRIPT_FLAG;
+		TK_NextToken();
+	}
 	CountScript(scriptType);
 	PC_AddScript(scriptNumber + scriptType, ScriptVarCount);
 	pc_LastAppendedCommand = PCD_NOP;
@@ -1136,8 +1144,16 @@ static void OuterSpecialDef(void)
 	{
 		do
 		{
-			TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_VAL);
-			special = tk_Number;
+			if (TK_NextToken() == TK_MINUS)
+			{
+				TK_NextTokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_VAL);
+				special = -tk_Number;
+			}
+			else
+			{
+				TK_TokenMustBe(TK_NUMBER, ERR_MISSING_SPEC_VAL);
+				special = tk_Number;
+			}
 			TK_NextTokenMustBe(TK_COLON, ERR_MISSING_SPEC_COLON);
 			TK_NextTokenMustBe(TK_IDENTIFIER, ERR_INVALID_IDENTIFIER);
 			sym = SY_InsertGlobalUnique(tk_String, SY_SPECIAL);
@@ -1253,6 +1269,7 @@ static boolean ProcessStatement(statement_t owner)
 		ERR_Exit(ERR_STATEMENT_OVERFLOW, YES);
 	}
 	StatementHistory[StatementIndex++] = owner;
+	StatementLevel += AdjustStmtLevel[owner];
 	switch(tk_Token)
 	{
 		case TK_INT:
@@ -1262,7 +1279,14 @@ static boolean ProcessStatement(statement_t owner)
 			LeadingVarDeclare();
 			break;
 		case TK_LINESPECIAL:
-			LeadingLineSpecial(NO);
+			if (tk_SpecialValue >= 0)
+			{
+				LeadingLineSpecial(NO);
+			}
+			else
+			{
+				LeadingFunction();
+			}
 			break;
 		case TK_ACSEXECUTEWAIT:
 			tk_SpecialArgCount = 1 | (5<<16);
@@ -1373,10 +1397,12 @@ static boolean ProcessStatement(statement_t owner)
 			break;
 		default:
 			StatementIndex--;
+			StatementLevel -= AdjustStmtLevel[owner];
 			return NO;
 			break;
 	}
 	StatementIndex--;
+	StatementLevel -= AdjustStmtLevel[owner];
 	return YES;
 }
 
@@ -1388,12 +1414,12 @@ static boolean ProcessStatement(statement_t owner)
 
 static void LeadingCompoundStatement(statement_t owner)
 {
-	StatementLevel += AdjustStmtLevel[owner];
+	//StatementLevel += AdjustStmtLevel[owner];
 	TK_NextToken(); // Eat the TK_LBRACE
 	do {} while(ProcessStatement(owner) == YES);
 	TK_TokenMustBe(TK_RBRACE, ERR_INVALID_STATEMENT);
 	TK_NextToken();
-	StatementLevel -= AdjustStmtLevel[owner];
+	//StatementLevel -= AdjustStmtLevel[owner];
 }
 
 //==========================================================================
@@ -1603,6 +1629,81 @@ static void LeadingLineSpecial(boolean executewait)
 			PC_AppendInt(argSave[0]);
 		}
 	}
+	TK_NextToken();
+}
+
+//==========================================================================
+//
+// LeadingLineSpecial
+//
+//==========================================================================
+
+static void LeadingFunction()
+{
+	int i;
+	int argCount;
+	int argCountMin;
+	int argCountMax;
+	int specialValue;
+
+	MS_Message(MSG_DEBUG, "---- LeadingFunction ----\n");
+	argCountMin = tk_SpecialArgCount & 0xffff;
+	argCountMax = tk_SpecialArgCount >> 16;
+	specialValue = -tk_SpecialValue;
+	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
+	i = 0;
+	if(argCountMax > 0)
+	{
+		if(TK_NextToken() == TK_CONST)
+		{
+			// Just skip const declarators
+			TK_NextTokenMustBe(TK_COLON, ERR_MISSING_COLON);
+		}
+		else
+		{
+			TK_Undo();
+		}
+		do
+		{
+			if(i == argCountMax)
+			{
+				ERR_Error(ERR_BAD_ARG_COUNT, YES);
+				i = argCountMax+1;
+			}
+			TK_NextToken();
+			EvalExpression();
+			if(i < argCountMax)
+			{
+				i++;
+			}
+		} while(tk_Token == TK_COMMA);
+		if(i < argCountMin)
+		{
+			ERR_Error(ERR_BAD_ARG_COUNT, YES);
+			TK_SkipPast(TK_SEMICOLON);
+			return;
+		}
+		argCount = i;
+	}
+	else
+	{
+		argCount = 0;
+		TK_NextToken ();
+	}
+	TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+	TK_NextTokenMustBe(TK_SEMICOLON, ERR_MISSING_SEMICOLON);
+	PC_AppendCmd(PCD_CALLFUNC);
+	if(pc_NoShrink)
+	{
+		PC_AppendInt(argCount);
+		PC_AppendInt(specialValue);
+	}
+	else
+	{
+		PC_AppendByte((U_BYTE)argCount);
+		PC_AppendWord((U_WORD)specialValue);
+	}
+	PC_AppendCmd(PCD_DROP);
 	TK_NextToken();
 }
 
@@ -2326,7 +2427,7 @@ static void LeadingFor(void)
 	MS_Message(MSG_DEBUG, "---- LeadingFor ----\n");
 	TK_NextTokenMustBe(TK_LPAREN, ERR_MISSING_LPAREN);
 	TK_NextToken();
-	if(ProcessStatement(STMT_FOR) == NO)
+	if(ProcessStatement(STMT_IF) == NO)
 	{
 		ERR_Error(ERR_INVALID_STATEMENT, YES);
 	}
@@ -2342,7 +2443,7 @@ static void LeadingFor(void)
 	PC_SkipInt();
 	incAddr = pc_Address;
 	forSemicolonHack = TRUE;
-	if(ProcessStatement(STMT_FOR) == NO)
+	if(ProcessStatement(STMT_IF) == NO)
 	{
 		ERR_Error(ERR_INVALID_STATEMENT, YES);
 	}
@@ -3156,9 +3257,9 @@ static void ExprLevX(int level)
 
 static void ExprLineSpecial(void)
 {
-	U_BYTE specialValue = tk_SpecialValue;
 	int argCountMin = tk_SpecialArgCount & 0xffff;
 	int argCountMax = tk_SpecialArgCount >> 16;
+	int specialValue = tk_SpecialValue;
 
 	// There are two ways to use a special in an expression:
 	// 1. The special name by itself returns the special's number.
@@ -3166,7 +3267,7 @@ static void ExprLineSpecial(void)
 	TK_NextToken();
 	if(tk_Token != TK_LPAREN)
 	{
-		PC_AppendPushVal(tk_SpecialValue);
+		PC_AppendPushVal(specialValue);
 	}
 	else
 	{
@@ -3185,23 +3286,42 @@ static void ExprLineSpecial(void)
 		}
 		if(argCount < argCountMin || argCount > argCountMax)
 		{
-			ERR_Error(ERR_BAD_LSPEC_ARG_COUNT, YES);
+			ERR_Error(specialValue >=0? ERR_BAD_LSPEC_ARG_COUNT : ERR_BAD_ARG_COUNT, YES);
 			return;
 		}
-		for(; argCount < 5; ++argCount)
+		if (specialValue >= 0)
 		{
-			PC_AppendPushVal(0);
-		}
-		TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
-		TK_NextToken();
-		PC_AppendCmd(PCD_LSPEC5RESULT);
-		if(pc_NoShrink)
-		{
-			PC_AppendInt(specialValue);
+			for(; argCount < 5; ++argCount)
+			{
+				PC_AppendPushVal(0);
+			}
+			TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+			TK_NextToken();
+			PC_AppendCmd(PCD_LSPEC5RESULT);
+			if(pc_NoShrink)
+			{
+				PC_AppendInt(specialValue);
+			}
+			else
+			{
+				PC_AppendByte((U_BYTE)specialValue);
+			}
 		}
 		else
 		{
-			PC_AppendByte(specialValue);
+			TK_TokenMustBe(TK_RPAREN, ERR_MISSING_RPAREN);
+			TK_NextToken();
+			PC_AppendCmd(PCD_CALLFUNC);
+			if(pc_NoShrink)
+			{
+				PC_AppendInt(argCount);
+				PC_AppendInt(-specialValue);
+			}
+			else
+			{
+				PC_AppendByte((U_BYTE)argCount);
+				PC_AppendWord((U_WORD)-specialValue);
+			}
 		}
 	}
 }

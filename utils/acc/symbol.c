@@ -100,6 +100,8 @@ static internFuncDef_t InternalFunctions[] =
 	{ "bluescore", PCD_NOP, PCD_BLUETEAMSCORE, 0, 0, 0, YES, NO },
 	{ "redscore", PCD_NOP, PCD_REDTEAMSCORE, 0, 0, 0, YES, NO },
 	{ "isoneflagctf", PCD_NOP, PCD_ISONEFLAGCTF, 0, 0, 0, YES, NO },
+	{ "getinvasionwave", PCD_NOP, PCD_GETINVASIONWAVE, 0, 0, 0, YES, NO },
+	{ "getinvasionstate", PCD_NOP, PCD_GETINVASIONSTATE, 0, 0, 0, YES, NO },
 	{ "music_change", PCD_NOP, PCD_MUSICCHANGE, 2, 0, 0, NO, NO },
 	{ "consolecommand", PCD_CONSOLECOMMANDDIRECT, PCD_CONSOLECOMMAND, 3, 2|4, 0, NO, NO },
 	{ "singleplayer", PCD_NOP, PCD_SINGLEPLAYER, 0, 0, 0, YES, NO },
@@ -518,6 +520,7 @@ static void FreeNodesAtDepth(symbolNode_t **root, int depth)
 static void DeleteNode(symbolNode_t *node, symbolNode_t **parent_p)
 {
 	symbolNode_t **temp;
+	char *nametemp;
 
 	if(node->left == NULL)
 	{
@@ -553,7 +556,9 @@ static void DeleteNode(symbolNode_t *node, symbolNode_t **parent_p)
 				temp = &(*temp)->left;
 			}
 		}
+		nametemp = node->name;
 		node->name = (*temp)->name;
+		(*temp)->name = nametemp;
 		node->type = (*temp)->type;
 		node->unused = (*temp)->unused;
 		node->imported = (*temp)->imported;

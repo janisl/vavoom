@@ -22,7 +22,7 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define VERSION_TEXT "1.47"
+#define VERSION_TEXT "1.49"
 #define COPYRIGHT_YEARS_TEXT "1995"
 
 // TYPES -------------------------------------------------------------------
@@ -243,6 +243,7 @@ static void ProcessArgs(void)
 		DisplayUsage();
 	}
 
+	TK_AddIncludePath(".");
 	TK_AddProgramIncludePath(ArgVector[0]);
 	
 	if(count == 1)
