@@ -89,11 +89,6 @@ typedef double FLOAT_T;
    click removal. */
 #define MAX_DIE_TIME 20
 
-/* Shawn McHorse's resampling optimizations. These may not in fact be
-   faster on your particular machine and compiler. You'll have to run
-   a benchmark to find out. */
-#define PRECALC_LOOPS
-
 /**************************************************************************/
 /* Anything below this shouldn't need to be changed unless you're porting
    to a new machine with other than 32-bit, big-endian words. */
@@ -265,13 +260,10 @@ extern void *safe_malloc(size_t count);
 #define sine(x) (sin((2*PI/1024.0) * (x)))
 
 #define SINE_CYCLE_LENGTH 1024
-extern int32 freq_table[];
-extern double vol_table[];
-extern double expr_table[];
-extern double bend_fine[];
-extern double bend_coarse[];
-extern uint8 *_l2u; /* 13-bit PCM to 8-bit u-law */
-extern uint8 _l2u_[]; /* used in LOOKUP_HACK */
+extern const int32 freq_table[];
+extern const double vol_table[];
+extern const double bend_fine[];
+extern const double bend_coarse[];
 
 #define XMAPMAX 800
 extern int xmap[XMAPMAX][5];
@@ -576,11 +568,7 @@ extern int AUDIO_BUFFER_SIZE;
 #define CMSG_WARNING	1
 #define CMSG_ERROR		2
 #define CMSG_FATAL		3
-#define CMSG_TRACE		4
-#define CMSG_TIME		5
-#define CMSG_TOTAL		6
-#define CMSG_FILE		7
-#define CMSG_TEXT		8
+#define CMSG_TEXT		4
 
 #define VERB_NORMAL			0
 #define VERB_VERBOSE		1

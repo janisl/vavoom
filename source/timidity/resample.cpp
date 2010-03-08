@@ -57,7 +57,6 @@ static resample_t* rs_plain(int v, int32* countptr)
 		le = vp->sample->data_length,
 		count = *countptr;
 
-#ifdef PRECALC_LOOPS
 	int32 i, j;
 
 	if (incr < 0)
@@ -88,22 +87,6 @@ static resample_t* rs_plain(int v, int32* countptr)
 		*countptr -= count + 1;
 	}
 
-#else /* PRECALC_LOOPS */
-	while (count--)
-	{
-		RESAMPLATION;
-		ofs += incr;
-		if (ofs >= le)
-		{
-			FINALINTERP;
-			vp->status = VOICE_FREE;
-			ctl->note(v);
-			*countptr -= count + 1;
-			break;
-		}
-	}
-#endif /* PRECALC_LOOPS */
-
 	vp->sample_offset = ofs; /* Update offset */
 	return resample_buffer;
 }
@@ -122,7 +105,6 @@ static resample_t* rs_loop(Voice* vp, int32 count)
 	resample_t* dest = resample_buffer;
 	sample_t* src = vp->sample->data;
 
-#ifdef PRECALC_LOOPS
 	int32 i;
 
 	if (ofs < 0 || le < 0)
@@ -149,15 +131,6 @@ static resample_t* rs_loop(Voice* vp, int32 count)
 				ofs += incr;
 			}
 	}
-#else
-	while (count--)
-	{
-		RESAMPLATION;
-		ofs += incr;
-		if (ofs >= le)
-			ofs -= ll; /* Hopefully the loop is longer than an increment. */
-	}
-#endif
 
 	vp->sample_offset = ofs; /* Update offset */
 	return resample_buffer;
@@ -174,7 +147,6 @@ static resample_t* rs_bidir(Voice* vp, int32 count)
 	resample_t* dest = resample_buffer;
 	sample_t* src = vp->sample->data;
 
-#ifdef PRECALC_LOOPS
 	int32
 		le2 = le << 1, 
 		ls2 = ls << 1,
@@ -232,40 +204,6 @@ static resample_t* rs_bidir(Voice* vp, int32 count)
 		}
 	}
 
-#else /* PRECALC_LOOPS */
-	/* Play normally until inside the loop region */
-
-	if (ofs < ls)
-	{
-		while (count--)
-		{
-			RESAMPLATION;
-			ofs += incr;
-			if (ofs >= ls)
-				break;
-		}
-	}
-
-	/* Then do the bidirectional looping */
-
-	if (count > 0)
-		while (count--)
-		{
-			RESAMPLATION;
-			ofs += incr;
-			if (ofs >= le)
-			{
-				/* fold the overshoot back in */
-				ofs = le - (ofs - le);
-				incr = -incr;
-			}
-			else if (ofs <= ls)
-			{
-				ofs = ls + (ls - ofs);
-				incr = -incr;
-			}
-		}
-#endif /* PRECALC_LOOPS */
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
 	return resample_buffer;
@@ -409,7 +347,6 @@ static resample_t* rs_vib_loop(Voice* vp, int32 count)
 	sample_t* src = vp->sample->data;
 	int cc = vp->vibrato_control_counter;
 
-#ifdef PRECALC_LOOPS
 	int32 i;
 	int vibflag = 0;
 
@@ -444,21 +381,6 @@ static resample_t* rs_vib_loop(Voice* vp, int32 count)
 		}
 	}
 
-#else /* PRECALC_LOOPS */
-	while (count--)
-	{
-		if (!cc--)
-		{
-			cc = vp->vibrato_control_ratio;
-			incr = update_vibrato(vp, 0);
-		}
-		RESAMPLATION;
-		ofs += incr;
-		if (ofs >= le)
-			ofs -= ll; /* Hopefully the loop is longer than an increment. */
-	}
-#endif /* PRECALC_LOOPS */
-
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
@@ -477,7 +399,6 @@ static resample_t* rs_vib_bidir(Voice* vp, int32 count)
 	sample_t* src = vp->sample->data;
 	int cc = vp->vibrato_control_counter;
 
-#ifdef PRECALC_LOOPS
 	int32
 		le2 = le << 1,
 		ls2 = ls << 1,
@@ -550,51 +471,6 @@ static resample_t* rs_vib_bidir(Voice* vp, int32 count)
 			incr *= -1;
 		}
 	}
-
-#else /* PRECALC_LOOPS */
-	/* Play normally until inside the loop region */
-
-	if (ofs < ls)
-	{
-		while (count--)
-		{
-			if (!cc--)
-			{
-				cc = vp->vibrato_control_ratio;
-				incr = update_vibrato(vp, 0);
-			}
-			RESAMPLATION;
-			ofs += incr;
-			if (ofs >= ls)
-				break;
-		}
-	}
-
-	/* Then do the bidirectional looping */
-
-	if (count > 0)
-		while (count--)
-		{
-			if (!cc--)
-			{
-				cc = vp->vibrato_control_ratio;
-				incr = update_vibrato(vp, (incr < 0));
-			}
-			RESAMPLATION;
-			ofs += incr;
-			if (ofs >= le)
-			{
-				/* fold the overshoot back in */
-				ofs = le - (ofs - le);
-				incr = -incr;
-			}
-			else if (ofs <= ls)
-			{
-				ofs = ls + (ls - ofs);
-				incr = -incr;
-			}
-		}
-#endif /* PRECALC_LOOPS */
 
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;

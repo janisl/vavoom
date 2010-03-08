@@ -30,20 +30,6 @@
 namespace LibTimidity
 {
 
-static int dont_cspline=0;
-static int opt_dry = 1;
-static int opt_expression_curve = 2;
-static int opt_volume_curve = 2;
-static int opt_stereo_surround = 0;
-static int dont_filter_melodic=1;
-static int dont_filter_drums=1;
-static int dont_chorus=0;
-static int dont_reverb=0;
-static int current_interpolation=1;
-static int dont_keep_looping=0;
-static int voice_reserve=0;
-
-
 Channel channel[MAXCHAN];
 Voice voice[MAX_VOICES];
 signed char drumvolume[MAXCHAN][MAXNOTE];
@@ -278,31 +264,6 @@ static void recompute_freq(int v)
 	voice[v].sample_increment = (int32)(a);
 }
 
-static int expr_curve[128] =
-{
-	7, 8, 8, 8, 8, 8, 9, 9, 9, 9, 9, 10, 10, 10, 10, 11, 
-	11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 14, 14, 14, 14, 15, 15, 
-	15, 16, 16, 17, 17, 17, 18, 18, 19, 19, 19, 20, 20, 21, 21, 22, 
-	22, 23, 23, 24, 24, 25, 25, 26, 26, 27, 28, 28, 29, 30, 30, 31, 
-	32, 32, 33, 34, 35, 35, 36, 37, 38, 39, 39, 40, 41, 42, 43, 44, 
-	45, 46, 47, 48, 49, 50, 51, 53, 54, 55, 56, 57, 59, 60, 61, 63, 
-	64, 65, 67, 68, 70, 71, 73, 75, 76, 78, 80, 82, 83, 85, 87, 89, 
-	91, 93, 95, 97, 99, 102, 104, 106, 109, 111, 113, 116, 118, 121,
-	124, 127 
-};
-
-static int panf(int pan, int speaker, int separation)
-{
-	int val;
-	val = abs(pan - speaker);
-	val = (val * 127) / separation;
-	val = 127 - val;
-	if (val < 0) val = 0;
-	if (val > 127) val = 127;
-	return expr_curve[val];
-}
-
-
 static int vcurve[128] =
 {
 	0,0,18,29,36,42,47,51,55,58,
@@ -340,19 +301,9 @@ static void recompute_amp(int v)
 			panning = drumvolume[chan][note];
 	}
 
-	if (opt_expression_curve == 2)
-		curved_expression = 127.0 * vol_table[expr];
-	else if (opt_expression_curve == 1)
-		curved_expression = 127.0 * expr_table[expr];
-	else
-		curved_expression = (FLOAT_T)expr;
+	curved_expression = 127.0 * vol_table[expr];
 
-	if (opt_volume_curve == 2)
-		curved_volume = 127.0 * vol_table[vol];
-	else if (opt_volume_curve == 1)
-		curved_volume = 127.0 * expr_table[vol];
-	else
-		curved_volume = (FLOAT_T)vol;
+	curved_volume = 127.0 * vol_table[vol];
 
 	tempamp= (int32)((FLOAT_T)vel * curved_volume * curved_expression); /* 21 bits */
 
@@ -556,20 +507,10 @@ static void clone_voice(Instrument* ip, int v, MidiEvent* e, int clone_type, int
 
 	if (reverb)
 	{
-		if (opt_stereo_surround)
-		{
-			if (voice[w].panning > 64)
-				voice[w].panning = 127;
-			else
-				voice[w].panning = 0;
-		}
+		if (voice[v].panning < 64)
+			voice[w].panning = 64 + reverb/2;
 		else
-		{
-			if (voice[v].panning < 64)
-				voice[w].panning = 64 + reverb/2;
-			else
-				voice[w].panning = 64 - reverb/2;
-		}
+			voice[w].panning = 64 - reverb/2;
 
 		/* try 98->99 for melodic instruments ? (bit much for percussion) */
 		voice[w].volume *= vol_table[(127 - reverb) / 8 + 98];
@@ -634,14 +575,6 @@ static void clone_voice(Instrument* ip, int v, MidiEvent* e, int clone_type, int
 
 	if (chorus)
 	{
-		if (opt_stereo_surround)
-		{
-			if (voice[v].panning < 64)
-				voice[w].panning = voice[v].panning + 32;
-			else
-				voice[w].panning = voice[v].panning - 32;
-		}
-
 		if (!voice[w].vibrato_control_ratio)
 		{
 			voice[w].vibrato_control_ratio = 100;
