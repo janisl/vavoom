@@ -38,8 +38,6 @@ namespace LibTimidity
 #define FINALINTERP if (ofs == le) *dest++=src[ofs>>FRACTION_BITS];
 /* So it isn't interpolation. At least it's final. */
 
-extern resample_t* resample_buffer;
-
 /*************** resampling with fixed increment *****************/
 
 static resample_t* rs_plain(int v, int32* countptr)
@@ -48,8 +46,8 @@ static resample_t* rs_plain(int v, int32* countptr)
 	/* Play sample until end, then free the voice. */
 
 	INTERPVARS;
-	Voice* vp = &voice[v];
-	resample_t* dest = resample_buffer;
+	Voice* vp = &song->voice[v];
+	resample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int32 
 		ofs = vp->sample_offset,
@@ -88,7 +86,7 @@ static resample_t* rs_plain(int v, int32* countptr)
 	}
 
 	vp->sample_offset = ofs; /* Update offset */
-	return resample_buffer;
+	return song->resample_buffer;
 }
 
 static resample_t* rs_loop(Voice* vp, int32 count)
@@ -102,13 +100,13 @@ static resample_t* rs_loop(Voice* vp, int32 count)
 		incr = vp->sample_increment,
 		le = vp->sample->loop_end, 
 		ll = le - vp->sample->loop_start;
-	resample_t* dest = resample_buffer;
+	resample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 
 	int32 i;
 
 	if (ofs < 0 || le < 0)
-		return resample_buffer;
+		return song->resample_buffer;
 
 	while (count)
 	{
@@ -133,7 +131,7 @@ static resample_t* rs_loop(Voice* vp, int32 count)
 	}
 
 	vp->sample_offset = ofs; /* Update offset */
-	return resample_buffer;
+	return song->resample_buffer;
 }
 
 static resample_t* rs_bidir(Voice* vp, int32 count)
@@ -144,7 +142,7 @@ static resample_t* rs_bidir(Voice* vp, int32 count)
 		incr = vp->sample_increment,
 		le = vp->sample->loop_end,
 		ls = vp->sample->loop_start;
-	resample_t* dest = resample_buffer;
+	resample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 
 	int32
@@ -206,7 +204,7 @@ static resample_t* rs_bidir(Voice* vp, int32 count)
 
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
-	return resample_buffer;
+	return song->resample_buffer;
 }
 
 /*********************** vibrato versions ***************************/
@@ -292,8 +290,8 @@ static resample_t* rs_vib_plain(int v, int32* countptr)
 	/* Play sample until end, then free the voice. */
 
 	INTERPVARS;
-	Voice* vp = &voice[v];
-	resample_t* dest = resample_buffer;
+	Voice* vp = &song->voice[v];
+	resample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int32 
 		le = vp->sample->data_length,
@@ -329,7 +327,7 @@ static resample_t* rs_vib_plain(int v, int32* countptr)
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
-	return resample_buffer;
+	return song->resample_buffer;
 }
 
 static resample_t* rs_vib_loop(Voice* vp, int32 count)
@@ -343,7 +341,7 @@ static resample_t* rs_vib_loop(Voice* vp, int32 count)
 		incr=vp->sample_increment, 
 		le=vp->sample->loop_end,
 		ll=le - vp->sample->loop_start;
-	resample_t* dest = resample_buffer;
+	resample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int cc = vp->vibrato_control_counter;
 
@@ -384,7 +382,7 @@ static resample_t* rs_vib_loop(Voice* vp, int32 count)
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
-	return resample_buffer;
+	return song->resample_buffer;
 }
 
 static resample_t* rs_vib_bidir(Voice* vp, int32 count)
@@ -395,7 +393,7 @@ static resample_t* rs_vib_bidir(Voice* vp, int32 count)
 		incr = vp->sample_increment,
 		le = vp->sample->loop_end, 
 		ls = vp->sample->loop_start;
-	resample_t* dest = resample_buffer;
+	resample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int cc = vp->vibrato_control_counter;
 
@@ -475,14 +473,14 @@ static resample_t* rs_vib_bidir(Voice* vp, int32 count)
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
-	return resample_buffer;
+	return song->resample_buffer;
 }
 
 resample_t* resample_voice(int v, int32* countptr)
 {
 	int32 ofs;
 	uint8 modes;
-	Voice* vp = &voice[v];
+	Voice* vp = &song->voice[v];
 
 	if (!(vp->sample->sample_rate))
 	{

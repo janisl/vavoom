@@ -34,16 +34,9 @@ namespace LibTimidity
 
 /* Some functions get aggravated if not even the standard banks are 
    available. */
-static ToneBank standard_tonebank, standard_drumset;
-ToneBank 
-  *tonebank[MAXBANK]={&standard_tonebank},
-  *drumset[MAXBANK]={&standard_drumset};
-
-/* This is a special instrument, used for all melodic programs */
-InstrumentLayer *default_instrument=0;
-
-/* This is only used for tracks that don't specify a program */
-int default_program=DEFAULT_PROGRAM;
+ToneBank standard_tonebank, standard_drumset;
+ToneBank*			master_tonebank[MAXBANK] = { &standard_tonebank };
+ToneBank*			master_drumset[MAXBANK] = { &standard_drumset };
 
 #ifdef FAST_DECAY
 int fast_decay=1;
@@ -104,7 +97,7 @@ static void free_layer(InstrumentLayer* lp)
 
 static void free_bank(int dr, int b)
 {
-	ToneBank* bank = ((dr) ? drumset[b] : tonebank[b]);
+	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
 	for (int i = 0; i < MAXPROG; i++)
 	{
 		if (bank->tone[i].layer)
@@ -128,7 +121,7 @@ static void free_bank(int dr, int b)
 
 static void free_old_bank(int dr, int b, int how_old)
 {
-	ToneBank* bank = ((dr) ? drumset[b] : tonebank[b]);
+	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
 	for (int i = 0; i < MAXPROG; i++)
 		if (bank->tone[i].layer && bank->tone[i].last_used < how_old)
 		{
@@ -153,7 +146,7 @@ int32 convert_envelope_rate_attack(uint8 rate, uint8 fastness)
 	r = (int32)(rate & 0x3f) << r; /* 6.9 fixed point */
 
 	/* 15.15 fixed point. */
-	return (((r * 44100) / OUTPUT_RATE) * control_ratio) << 10;
+	return (((r * 44100) / OUTPUT_RATE) * song->control_ratio) << 10;
 }
 
 int32 convert_envelope_rate(uint8 rate)
@@ -163,7 +156,7 @@ int32 convert_envelope_rate(uint8 rate)
 	r = (int32)(rate & 0x3f) << r; /* 6.9 fixed point */
 
 	/* 15.15 fixed point. */
-	return (((r * 44100) / OUTPUT_RATE) * control_ratio) << ((fast_decay) ? 10 : 9);
+	return (((r * 44100) / OUTPUT_RATE) * song->control_ratio) << ((fast_decay) ? 10 : 9);
 }
 
 int32 convert_envelope_offset(uint8 offset)
@@ -180,7 +173,7 @@ int32 convert_tremolo_sweep(uint8 sweep)
 	if (!sweep)
 		return 0;
 
-	return ((control_ratio * SWEEP_TUNING) << SWEEP_SHIFT) /
+	return ((song->control_ratio * SWEEP_TUNING) << SWEEP_SHIFT) /
 		(OUTPUT_RATE * sweep);
 }
 
@@ -200,7 +193,7 @@ int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
 
 int32 convert_tremolo_rate(uint8 rate)
 {
-	return ((SINE_CYCLE_LENGTH * control_ratio * rate) << RATE_SHIFT) /
+	return ((SINE_CYCLE_LENGTH * song->control_ratio * rate) << RATE_SHIFT) /
 		(TREMOLO_RATE_TUNING * OUTPUT_RATE);
 }
 
@@ -848,7 +841,7 @@ fail:
 static int fill_bank(int dr, int b)
 {
 	int i, errors = 0;
-	ToneBank* bank = ((dr) ? drumset[b] : tonebank[b]);
+	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
 	if (!bank)
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -941,9 +934,9 @@ static void free_old_instruments(int how_old)
 	int i = MAXBANK;
 	while (i--)
 	{
-		if (tonebank[i])
+		if (song->tonebank[i])
 			free_old_bank(0, i, how_old);
-		if (drumset[i])
+		if (song->drumset[i])
 			free_old_bank(1, i, how_old);
 	}
 }
@@ -967,9 +960,9 @@ int load_missing_instruments()
 	int i = MAXBANK, errors = 0;
 	while (i--)
 	{
-		if (tonebank[i])
+		if (song->tonebank[i])
 			errors += fill_bank(0, i);
-		if (drumset[i])
+		if (song->drumset[i])
 			errors += fill_bank(1, i);
 	}
 	current_tune_number++;
@@ -981,9 +974,9 @@ void free_instruments()
 	int i = 128;
 	while(i--)
 	{
-		if (tonebank[i])
+		if (song->tonebank[i])
 			free_bank(0, i);
-		if (drumset[i])
+		if (song->drumset[i])
 			free_bank(1, i);
 	}
 }
@@ -994,10 +987,10 @@ int set_default_instrument(const char* name)
 	/*  if (!(lp=load_instrument(name, 0, -1, -1, -1, 0, 0, 0))) */
 	if (!(lp = load_instrument(name, FONT_NORMAL, 0, -1, -1, 0, -1, -1, -1, -1, 0, -1, -1)))
 		return -1;
-	if (default_instrument)
-		free_layer(default_instrument);
-	default_instrument = lp;
-	default_program = SPECIAL_PROGRAM;
+	if (song->default_instrument)
+		free_layer(song->default_instrument);
+	song->default_instrument = lp;
+	song->default_program = SPECIAL_PROGRAM;
 	return 0;
 }
 

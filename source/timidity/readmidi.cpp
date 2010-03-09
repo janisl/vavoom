@@ -29,36 +29,6 @@
 namespace LibTimidity
 {
 
-struct MidiEventList
-{
-	MidiEvent		event;
-	MidiEventList*	next;
-};
-
-static int32 quietchannels = 0;
-
-static int midi_port_number;
-
-static int track_info, curr_track, curr_title_track;
-static char title[128];
-
-#if MAXCHAN <= 16
-#define MERGE_CHANNEL_PORT(ch) ((int)(ch))
-#else
-#define MERGE_CHANNEL_PORT(ch) ((int)(ch) | (midi_port_number << 4))
-#endif
-
-/* to avoid some unnecessary parameter passing */
-static MidiEventList *evlist;
-static int32 event_count;
-static uint8 *midi_image;
-static uint32 image_left;
-static int32 at;
-
-/* These would both fit into 32 bits, but they are often added in
-   large multiples, so it's simpler to have two roomy ints */
-static int32 sample_increment, sample_correction; /*samples per MIDI delta-t*/
-
 /* Computes how many (fractional) samples one MIDI delta-time unit contains */
 static void compute_sample_increment(int32 tempo, int32 divisions)
 {
@@ -66,29 +36,29 @@ static void compute_sample_increment(int32 tempo, int32 divisions)
 	a = (double) (tempo) * (double) (OUTPUT_RATE) * (65536.0/1000000.0) /
 		(double)(divisions);
 
-	sample_correction = (int32)(a) & 0xFFFF;
-	sample_increment = (int32)(a) >> 16;
+	song->sample_correction = (int32)(a) & 0xFFFF;
+	song->sample_increment = (int32)(a) >> 16;
 
 	ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Samples per delta-t: %d (correction %d)",
-		sample_increment, sample_correction);
+		song->sample_increment, song->sample_correction);
 }
 
 static int midi_read(void* ptr, uint32 size)
 {
-	if (size > image_left)
-		size = image_left;
-	memcpy(ptr, midi_image, size);
-	midi_image += size;
-	image_left -= size;
+	if (size > song->image_left)
+		size = song->image_left;
+	memcpy(ptr, song->midi_image, size);
+	song->midi_image += size;
+	song->image_left -= size;
 	return size;
 }
 
 static void midi_skip(uint32 size)
 {
-	if (size > image_left)
-		size = image_left;
-	midi_image += size;
-	image_left -= size;
+	if (size > song->image_left)
+		size = song->image_left;
+	song->midi_image += size;
+	song->image_left -= size;
 }
 
 /* Read variable-length number (7 bits per byte, MSB first) */
@@ -121,8 +91,6 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
 		free(s);
 		return 0;
 	}
-	if (curr_track == curr_title_track && track_info > 1)
-		title[0] = '\0';
 	id = s[0];
 	port = s[1];
 	model = s[2];
@@ -213,8 +181,8 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
 				break;
 			case 0x08: /*  */
 				/* d->channel[adlo&0x0f].transpose = (char)(dta-64); */
-				channel[ch].transpose = (char)(dta-64);
-						ctl->cmsg(CMSG_TEXT, VERB_DEBUG, "transpose channel %d by %d",
+				song->channel[ch].transpose = (char)(dta-64);
+				ctl->cmsg(CMSG_TEXT, VERB_DEBUG, "transpose channel %d by %d",
 					(adlo&0x0f)+1, dta-64);
 				break;
 			case 0x0b: /* volume */
@@ -262,8 +230,7 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
 				chan = 9;
 			else if (chan < 10)
 				chan--;
-			chan = MERGE_CHANNEL_PORT(chan);
-			channel[chan].kit = dtb;
+			song->channel[chan].kit = dtb;
 		}
 		else if (cd == 0x01)
 			switch(dta)
@@ -377,7 +344,7 @@ static MidiEventList* read_midi_event()
 
 	for (;;)
 	{
-		at += getvl();
+		song->at += getvl();
 		if (midi_read(&me, 1) != 1)
 		{
 			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: read_midi_event: %s",
@@ -394,7 +361,7 @@ static MidiEventList* read_midi_event()
 			sret = sysex(len, &syschan, &sysa, &sysb);
 			if (sret)
 			{
-				MIDIEVENT(at, sret, syschan, sysa, sysb);
+				MIDIEVENT(song->at, sret, syschan, sysa, sysb);
 			}
 		}
 		else if (me == 0xFF) /* Meta event */
@@ -413,33 +380,12 @@ static MidiEventList* read_midi_event()
 			else
 				switch(type)
 				{
-
-				case 0x21: /* MIDI port number */
-					if (len == 1)
-					{
-						midi_read(&midi_port_number, 1);
-						if (midi_port_number == EOF)
-						{
-							ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
-								"Warning: Short midi file.");
-							return 0;
-						}
-						midi_port_number &= 0x0f;
-						if (midi_port_number)
-							ctl->cmsg(CMSG_INFO, VERB_VERBOSE,
-								"(MIDI port number %d)", midi_port_number);
-						midi_port_number &= 0x03;
-					}
-					else
-						midi_skip(len);
-					break;
-
 				case 0x2F: /* End of Track */
 					return MAGIC_EOT;
 
 				case 0x51: /* Tempo */
 					midi_read(&a,1); midi_read(&b,1); midi_read(&c,1);
-					MIDIEVENT(at, ME_TEMPO, c, a, b);
+					MIDIEVENT(song->at, ME_TEMPO, c, a, b);
 
 				default:
 					ctl->cmsg(CMSG_INFO, VERB_DEBUG,
@@ -463,20 +409,18 @@ static MidiEventList* read_midi_event()
 			case 0: /* Note off */
 				midi_read(&b, 1);
 				b &= 0x7F;
-				MIDIEVENT(at, ME_NOTEOFF, lastchan, a,b);
+				MIDIEVENT(song->at, ME_NOTEOFF, lastchan, a,b);
 
 			case 1: /* Note on */
 				midi_read(&b, 1);
 				b &= 0x7F;
-				if (curr_track == curr_title_track && track_info > 1)
-					title[0] = '\0';
-				MIDIEVENT(at, ME_NOTEON, lastchan, a, b);
+				MIDIEVENT(song->at, ME_NOTEON, lastchan, a, b);
 
 
 			case 2: /* Key Pressure */
 				midi_read(&b, 1);
 				b &= 0x7F;
-				MIDIEVENT(at, ME_KEYPRESSURE, lastchan, a, b);
+				MIDIEVENT(song->at, ME_KEYPRESSURE, lastchan, a, b);
 
 			case 3: /* Control change */
 				midi_read(&b, 1);
@@ -636,7 +580,7 @@ static MidiEventList* read_midi_event()
 
 						case 0x7F7F: /* RPN reset */
 							/* reset pitch bend sensitivity to 2 */
-							MIDIEVENT(at, ME_PITCH_SENS, lastchan, 2, 0);
+							MIDIEVENT(song->at, ME_PITCH_SENS, lastchan, 2, 0);
 
 						default:
 							ctl->cmsg(CMSG_INFO, VERB_DEBUG, 
@@ -654,14 +598,14 @@ static MidiEventList* read_midi_event()
 					}
 					if (control != 255)
 					{
-						MIDIEVENT(at, control, lastchan, b, 0);
+						MIDIEVENT(song->at, control, lastchan, b, 0);
 					}
 				}
 				break;
 
 			case 4: /* Program change */
 				a &= 0x7f;
-				MIDIEVENT(at, ME_PROGRAM, lastchan, a, 0);
+				MIDIEVENT(song->at, ME_PROGRAM, lastchan, a, 0);
 
 			case 5: /* Channel pressure - NOT IMPLEMENTED */
 				break;
@@ -669,7 +613,7 @@ static MidiEventList* read_midi_event()
 			case 6: /* Pitch wheel */
 				midi_read(&b, 1);
 				b &= 0x7F;
-				MIDIEVENT(at, ME_PITCHWHEEL, lastchan, a, b);
+				MIDIEVENT(song->at, ME_PITCHWHEEL, lastchan, a, b);
 
 			default: 
 				ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
@@ -694,16 +638,16 @@ static int read_track(int append)
 	int32 len;
 	char tmp[4];
 
-	meep = evlist;
+	meep = song->evlist;
 	if (append && meep)
 	{
 		/* find the last event in the list */
 		for (; meep->next; meep=meep->next)
 			;
-		at = meep->event.time;
+		song->at = meep->event.time;
 	}
 	else
-		at = 0;
+		song->at = 0;
 
 	/* Check the formalities */
 	if ((midi_read(tmp, 4) != 4) || (midi_read(&len, 4) != 4))
@@ -741,7 +685,7 @@ static int read_track(int append)
 		new_ev->next = next;
 		meep->next = new_ev;
 
-		event_count++; /* Count the event. (About one?) */
+		song->event_count++; /* Count the event. (About one?) */
 		meep = new_ev;
 	}
 }
@@ -750,7 +694,7 @@ static int read_track(int append)
 static void free_midi_list()
 {
 	MidiEventList *meep, *next;
-	if (!(meep = evlist))
+	if (!(meep = song->evlist))
 		return;
 	while (meep)
 	{
@@ -758,7 +702,7 @@ static void free_midi_list()
 		free(meep);
 		meep = next;
 	}
-	evlist = 0;
+	song->evlist = 0;
 }
 
 
@@ -789,7 +733,7 @@ static void xremap_percussion(int* banknumpt, int* this_notept, int this_kit)
 		newnote = xmap[i][4];
 		if (newbank == banknum && newnote == this_note)
 			return;
-		if (!drumset[newbank])
+		if (!song->drumset[newbank])
 			return;
 		*banknumpt = newbank;
 		*this_notept = newnote;
@@ -818,22 +762,22 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 		current_bank[i] = 0;
 		current_banktype[i] = 0;
 		current_set[i] = 0;
-		current_kit[i] = channel[i].kit;
-		current_program[i] = default_program;
+		current_kit[i] = song->channel[i].kit;
+		current_program[i] = song->default_program;
 	}
 
 	tempo = 500000;
 	compute_sample_increment(tempo, divisions);
 
 	/* This may allocate a bit more than we need */
-	groomed_list = lp = (MidiEvent*)safe_malloc(sizeof(MidiEvent) * (event_count + 1));
-	meep = evlist;
+	groomed_list = lp = (MidiEvent*)safe_malloc(sizeof(MidiEvent) * (song->event_count + 1));
+	meep = song->evlist;
 
 	our_event_count = 0;
 	st = at = sample_cum = 0;
 	counting_time = 2; /* We strip any silence before the first NOTE ON. */
 
-	for (i=0; i<event_count; i++)
+	for (i=0; i<song->event_count; i++)
 	{
 		skip_this_event = 0;
 		ctl->cmsg(CMSG_INFO, VERB_DEBUG_SILLY,
@@ -848,8 +792,6 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 			compute_sample_increment(tempo, divisions);
 			skip_this_event = 1;
 		}
-		else if ((quietchannels & (1 << meep->event.channel)))
-			skip_this_event = 1;
 		else
 			switch (meep->event.type)
 			{
@@ -860,13 +802,13 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 					if (current_kit[meep->event.channel]==126)
 					{
 						/* note request for 2nd sfx rhythm kit */
-						if (meep->event.a && drumset[SFXDRUM2])
+						if (meep->event.a && song->drumset[SFXDRUM2])
 						{
 							current_kit[meep->event.channel] = 125;
 							current_set[meep->event.channel] = SFXDRUM2;
 							new_value = SFXDRUM2;
 						}
-						else if (!meep->event.a && drumset[SFXDRUM1])
+						else if (!meep->event.a && song->drumset[SFXDRUM1])
 						{
 							current_set[meep->event.channel] = SFXDRUM1;
 							new_value = SFXDRUM1;
@@ -879,13 +821,13 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 							break;
 						}
 					}
-					if (drumset[meep->event.a]) /* Is this a defined drumset? */
+					if (song->drumset[meep->event.a]) /* Is this a defined drumset? */
 						new_value = meep->event.a;
 					else
 					{
 						ctl->cmsg(CMSG_WARNING, VERB_VERBOSE,
 							"Drum set %d is undefined", meep->event.a);
-						if (drumset[0])
+						if (song->drumset[0])
 							new_value = meep->event.a = 0;
 						else
 						{
@@ -927,14 +869,14 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 					if (drumsflag)
 					{
 						/* Mark this instrument to be loaded */
-						if (!(drumset[dset]->tone[dnote].layer))
+						if (!(song->drumset[dset]->tone[dnote].layer))
 						{
-							drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
+							song->drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
 						}
 						else
-							drumset[dset]->tone[dnote].last_used = current_tune_number;
-						if (!channel[meep->event.channel].name)
-							channel[meep->event.channel].name = drumset[dset]->name;
+							song->drumset[dset]->tone[dnote].last_used = current_tune_number;
+						if (!song->channel[meep->event.channel].name)
+							song->channel[meep->event.channel].name = song->drumset[dset]->name;
 					}
 				}
 
@@ -953,7 +895,7 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 					if (mprog == SPECIAL_PROGRAM)
 						break;
 
-					if (XG_System_On && banknum == SFXBANK && !tonebank[SFXBANK] && tonebank[120])
+					if (XG_System_On && banknum == SFXBANK && !song->tonebank[SFXBANK] && song->tonebank[120])
 						banknum = 120;
 
 					/*if (current_config_pc42b) pcmap(&banknum, &dnote, &mprog, &drumsflag);*/
@@ -961,26 +903,26 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 					if (drumsflag)
 					{
 						/* Mark this instrument to be loaded */
-						if (!(drumset[dset]->tone[dnote].layer))
+						if (!(song->drumset[dset]->tone[dnote].layer))
 						{
-							drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
+							song->drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
 						}
 						else
-							drumset[dset]->tone[dnote].last_used = current_tune_number;
-						if (!channel[meep->event.channel].name)
-							channel[meep->event.channel].name= drumset[dset]->name;
+							song->drumset[dset]->tone[dnote].last_used = current_tune_number;
+						if (!song->channel[meep->event.channel].name)
+							song->channel[meep->event.channel].name= song->drumset[dset]->name;
 					}
 					if (!drumsflag)
 					{
 						/* Mark this instrument to be loaded */
-						if (!(tonebank[banknum]->tone[mprog].layer))
+						if (!(song->tonebank[banknum]->tone[mprog].layer))
 						{
-							tonebank[banknum]->tone[mprog].layer = MAGIC_LOAD_INSTRUMENT;
+							song->tonebank[banknum]->tone[mprog].layer = MAGIC_LOAD_INSTRUMENT;
 						}
 						else
-							tonebank[banknum]->tone[mprog].last_used = current_tune_number;
-						if (!channel[meep->event.channel].name)
-							channel[meep->event.channel].name = tonebank[banknum]->tone[mprog].name;
+							song->tonebank[banknum]->tone[mprog].last_used = current_tune_number;
+						if (!song->channel[meep->event.channel].name)
+							song->channel[meep->event.channel].name = song->tonebank[banknum]->tone[mprog].name;
 					}
 				}
 				break;
@@ -997,7 +939,7 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 				}
 				else if (meep->event.a == 126)
 				{
-					if (drumset[SFXDRUM1]) /* Is this a defined tone bank? */
+					if (song->drumset[SFXDRUM1]) /* Is this a defined tone bank? */
 						new_value = meep->event.a;
 					else
 					{
@@ -1023,7 +965,7 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 					skip_this_event = 1;
 					break;
 				}
-				if (tonebank[SFXBANK] || tonebank[120]) /* Is this a defined tone bank? */
+				if (song->tonebank[SFXBANK] || song->tonebank[120]) /* Is this a defined tone bank? */
 					new_value = SFX_BANKTYPE;
 				else
 				{
@@ -1046,11 +988,11 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 				}
 				if (XG_System_On && meep->event.a > 0 && meep->event.a < 48)
 				{
-					channel[meep->event.channel].variationbank = meep->event.a;
+					song->channel[meep->event.channel].variationbank = meep->event.a;
 					ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, "XG variation bank %d", meep->event.a);
 					new_value = meep->event.a = 0;
 				}
-				else if (tonebank[meep->event.a]) /* Is this a defined tone bank? */
+				else if (song->tonebank[meep->event.a]) /* Is this a defined tone bank? */
 					new_value = meep->event.a;
 				else 
 				{
@@ -1066,10 +1008,10 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 				break;
 
 			case ME_HARMONICCONTENT:
-				channel[meep->event.channel].harmoniccontent = meep->event.a;
+				song->channel[meep->event.channel].harmoniccontent = meep->event.a;
 				break;
 			case ME_BRIGHTNESS:
-				channel[meep->event.channel].brightness = meep->event.a;
+				song->channel[meep->event.channel].brightness = meep->event.a;
 				break;
 
 			}
@@ -1077,8 +1019,8 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 		/* Recompute time in samples*/
 		if ((dt = meep->event.time - at) && !counting_time)
 		{
-			samples_to_do = sample_increment * dt;
-			sample_cum += sample_correction * dt;
+			samples_to_do = song->sample_increment * dt;
+			sample_cum += song->sample_correction * dt;
 			if (sample_cum & 0xFFFF0000)
 			{
 				samples_to_do += ((sample_cum >> 16) & 0xFFFF);
@@ -1117,11 +1059,11 @@ MidiEvent* read_midi_mem(void* mimage, int msize, int32* count, int32* sp)
 	int i;
 	char tmp[4];
 
-	midi_image = (uint8*)mimage;
-	image_left = msize;
-	event_count=0;
-	at=0;
-	evlist=0;
+	song->midi_image = (uint8*)mimage;
+	song->image_left = msize;
+	song->event_count=0;
+	song->at=0;
+	song->evlist=0;
 
 	GM_System_On = GS_System_On = XG_System_On = 0;
 	/* vol_table = def_vol_table; */
@@ -1134,15 +1076,15 @@ MidiEvent* read_midi_mem(void* mimage, int msize, int32* count, int32* sp)
 	for (i = 0; i < MAXCHAN; i++)
 	{
 		if (ISDRUMCHANNEL(i))
-			channel[i].kit = 127;
+			song->channel[i].kit = 127;
 		else
-			channel[i].kit = 0;
-		channel[i].brightness = 64;
-		channel[i].harmoniccontent = 64;
-		channel[i].variationbank = 0;
-		channel[i].chorusdepth = 0;
-		channel[i].reverberation = 0;
-		channel[i].transpose = 0;
+			song->channel[i].kit = 0;
+		song->channel[i].brightness = 64;
+		song->channel[i].harmoniccontent = 64;
+		song->channel[i].variationbank = 0;
+		song->channel[i].chorusdepth = 0;
+		song->channel[i].reverberation = 0;
+		song->channel[i].transpose = 0;
 	}
 
 past_riff:
@@ -1170,9 +1112,6 @@ past_riff:
 	midi_read(&divisions_tmp, 2);
 	format = BE_SHORT(format);
 	tracks = BE_SHORT(tracks);
-	track_info = tracks;
-	curr_track = 0;
-	curr_title_track = -1;
 	divisions_tmp = BE_SHORT(divisions_tmp);
 
 	if (divisions_tmp < 0)
@@ -1200,11 +1139,11 @@ past_riff:
 		"Format: %d  Tracks: %d  Divisions: %d", format, tracks, divisions);
 
 	/* Put a do-nothing event first in the list for easier processing */
-	evlist = (MidiEventList*)safe_malloc(sizeof(MidiEventList));
-	evlist->event.time = 0;
-	evlist->event.type = ME_NONE;
-	evlist->next = 0;
-	event_count++;
+	song->evlist = (MidiEventList*)safe_malloc(sizeof(MidiEventList));
+	song->evlist->event.time = 0;
+	song->evlist->event.type = ME_NONE;
+	song->evlist->next = 0;
+	song->event_count++;
 
 	switch(format)
 	{
@@ -1214,8 +1153,6 @@ past_riff:
 			free_midi_list();
 			return 0;
 		}
-		else
-			curr_track++;
 		break;
 
 	case 1:
@@ -1234,8 +1171,6 @@ past_riff:
 				free_midi_list();
 				return 0;
 			}
-			else
-				curr_track++;
 		break;
 	}
 	return groom_list(divisions, count, sp);

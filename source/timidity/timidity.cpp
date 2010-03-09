@@ -28,11 +28,7 @@ namespace LibTimidity
 {
 
 int free_instruments_afterwards=0;
-static char def_instr_name[256]="";
-
-int AUDIO_BUFFER_SIZE;
-resample_t *resample_buffer = NULL;
-int32 *common_buffer = NULL;
+char def_instr_name[256]="";
 
 ControlMode*	ctl;
 
@@ -125,12 +121,12 @@ static int read_config_file(const char* name)
 					name, line);
 				return -2;
 			}
-			if (!drumset[i])
+			if (!master_drumset[i])
 			{
-				drumset[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
-				memset(drumset[i], 0, sizeof(ToneBank));
+				master_drumset[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
+				memset(master_drumset[i], 0, sizeof(ToneBank));
 			}
-			bank = drumset[i];
+			bank = master_drumset[i];
 		}
 		else if (!strcmp(w[0], "bank"))
 		{
@@ -149,12 +145,12 @@ static int read_config_file(const char* name)
 					name, line);
 				return -2;
 			}
-			if (!tonebank[i])
+			if (!master_tonebank[i])
 			{
-				tonebank[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
-				memset(tonebank[i], 0, sizeof(ToneBank));
+				master_tonebank[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
+				memset(master_tonebank[i], 0, sizeof(ToneBank));
 			}
-			bank = tonebank[i];
+			bank = master_tonebank[i];
 		}
 		else
 		{
@@ -295,23 +291,6 @@ int Timidity_Init()
 	{
 		return(-1);
 	}
-
-	AUDIO_BUFFER_SIZE = 2 * 1024;
-
-	/* Allocate memory for mixing (WARNING:  Memory leak!) */
-	resample_buffer = (resample_t*)safe_malloc(AUDIO_BUFFER_SIZE * sizeof(resample_t) + 100);
-	common_buffer = (int32*)safe_malloc(AUDIO_BUFFER_SIZE * 2 * sizeof(int32));
-
-	if (!control_ratio)
-	{
-		control_ratio = OUTPUT_RATE / CONTROLS_PER_SECOND;
-		if (control_ratio < 1)
-			control_ratio = 1;
-		else if (control_ratio > MAX_CONTROL_RATIO)
-			control_ratio = MAX_CONTROL_RATIO;
-	}
-	if (*def_instr_name)
-		set_default_instrument(def_instr_name);
 	return(0);
 }
 

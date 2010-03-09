@@ -369,10 +369,10 @@ struct ToneBank
 
 extern char*		sf_file;
 
-extern ToneBank *tonebank[], *drumset[];
+extern ToneBank standard_tonebank, standard_drumset;
+extern ToneBank*			master_tonebank[MAXBANK];
+extern ToneBank*			master_drumset[MAXBANK];
 
-extern InstrumentLayer *default_instrument;
-extern int default_program;
 extern int fast_decay;
 extern int free_instruments_afterwards;
 
@@ -393,6 +393,8 @@ extern int max_patch_memory;
 extern int current_patch_memory;
 #define XMAPMAX 800
 extern int xmap[XMAPMAX][5];
+
+extern char def_instr_name[256];
 
 extern resample_t* resample_voice(int v, int32* countptr);
 extern void pre_resample(Sample* sp);
@@ -531,19 +533,15 @@ struct Voice
 #define RELEASEC 5
 #define DELAY 6
 
-extern Channel channel[16];
-extern Voice voice[MAX_VOICES];
 extern signed char drumvolume[MAXCHAN][MAXNOTE];
 extern signed char drumpanpot[MAXCHAN][MAXNOTE];
 extern signed char drumreverberation[MAXCHAN][MAXNOTE];
 extern signed char drumchorusdepth[MAXCHAN][MAXNOTE];
 
-extern int32 control_ratio, amp_with_poly, amplification;
-extern int32 drumchannels;
+extern int32 amp_with_poly, amplification;
 extern int adjust_panning_immediately;
-extern int voices;
 
-#define ISDRUMCHANNEL(c) ((drumchannels & (1<<(c))))
+#define ISDRUMCHANNEL(c) ((song->drumchannels & (1<<(c))))
 
 extern int GM_System_On;
 extern int XG_System_On;
@@ -560,9 +558,6 @@ extern void dumb_pass_playing_list(int number_of_files, char *list_of_files[]);
 MidiEvent* read_midi_mem(void* mimage, int msize, int32* count, int32* sp);
 
 #define OUTPUT_RATE		44100
-
-/* The size of the output buffers */
-extern int AUDIO_BUFFER_SIZE;
 
 #define CMSG_INFO		0
 #define CMSG_WARNING	1
@@ -583,11 +578,50 @@ struct ControlMode
 
 extern ControlMode*		ctl;
 
+struct MidiEventList
+{
+	MidiEvent		event;
+	MidiEventList*	next;
+};
+
 struct MidiSong
 {
-	int32		samples;
-	MidiEvent*	events;
+	int					playing;
+	uint8*				midi_image;
+	uint32				image_left;
+	FLOAT_T				master_volume;
+	int32				amplification;
+	ToneBank*			tonebank[MAXBANK];
+	ToneBank*			drumset[MAXBANK];
+	/* This is a special instrument, used for all melodic programs */
+	InstrumentLayer*	default_instrument;
+	/* This is only used for tracks that don't specify a program */
+	int					default_program;
+	int					buffer_size;
+	resample_t*			resample_buffer;
+	int32*				common_buffer;
+	/* These would both fit into 32 bits, but they are often added in
+		large multiples, so it's simpler to have two roomy ints */
+	/*samples per MIDI delta-t*/
+	int32				sample_increment;
+	int32				sample_correction;
+	Channel				channel[MAXCHAN];
+	Voice				voice[MAX_VOICES];
+	int					voices;
+	int32				drumchannels;
+	int32				control_ratio;
+	int32				lost_notes;
+	int32				cut_notes;
+	int32				samples;
+	MidiEvent*			events;
+	MidiEvent*			current_event;
+	MidiEventList*		evlist;
+	int32				current_sample;
+	int32				event_count;
+	int32				at;
 };
+
+extern MidiSong* song;
 
 extern int Timidity_Init();
 extern void Timidity_SetVolume(int volume);
