@@ -50,7 +50,7 @@ int last_tune_purged = 0;
 int current_patch_memory = 0;
 int max_patch_memory = 60000000;
 
-static void purge_as_required();
+static void purge_as_required(MidiSong* song);
 
 static void free_instrument(Instrument* ip)
 {
@@ -95,7 +95,7 @@ static void free_layer(InstrumentLayer* lp)
 	}
 }
 
-static void free_bank(int dr, int b)
+static void free_bank(MidiSong* song, int dr, int b)
 {
 	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
 	for (int i = 0; i < MAXPROG; i++)
@@ -119,7 +119,7 @@ static void free_bank(int dr, int b)
 }
 
 
-static void free_old_bank(int dr, int b, int how_old)
+static void free_old_bank(MidiSong* song, int dr, int b, int how_old)
 {
 	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
 	for (int i = 0; i < MAXPROG; i++)
@@ -139,7 +139,7 @@ static void free_old_bank(int dr, int b, int how_old)
 }
 
 
-int32 convert_envelope_rate_attack(uint8 rate, uint8 fastness)
+static int32 convert_envelope_rate_attack(MidiSong* song, uint8 rate, uint8 fastness)
 {
 	int32 r = 3 - ((rate >> 6) & 0x3);
 	r *= 3;
@@ -149,7 +149,7 @@ int32 convert_envelope_rate_attack(uint8 rate, uint8 fastness)
 	return (((r * 44100) / OUTPUT_RATE) * song->control_ratio) << 10;
 }
 
-int32 convert_envelope_rate(uint8 rate)
+static int32 convert_envelope_rate(MidiSong* song, uint8 rate)
 {
 	int32 r = 3 - ((rate >> 6) & 0x3);
 	r *= 3;
@@ -168,7 +168,7 @@ int32 convert_envelope_offset(uint8 offset)
 	return offset << (7 + 15);
 }
 
-int32 convert_tremolo_sweep(uint8 sweep)
+static int32 convert_tremolo_sweep(MidiSong* song, uint8 sweep)
 {
 	if (!sweep)
 		return 0;
@@ -191,7 +191,7 @@ int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
 	(play_mode->rate * sweep); */
 }
 
-int32 convert_tremolo_rate(uint8 rate)
+static int32 convert_tremolo_rate(MidiSong *song, uint8 rate)
 {
 	return ((SINE_CYCLE_LENGTH * song->control_ratio * rate) << RATE_SHIFT) /
 		(TREMOLO_RATE_TUNING * OUTPUT_RATE);
@@ -228,7 +228,7 @@ static void reverse_data(int16* sp, int32 ls, int32 le)
    undefined.
 
    TODO: do reverse loops right */
-static InstrumentLayer* load_instrument(const char *name, int font_type, int percussion,
+static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int font_type, int percussion,
 	int panning, int amp, int cfg_tuning, int note_to_use,
 	int strip_loop, int strip_envelope,
 	int strip_tail, int bank, int gm_num, int sf_ix)
@@ -531,8 +531,8 @@ fail:
 				}
 				else
 				{
-					sp->tremolo_sweep_increment = convert_tremolo_sweep(tmp[12]);
-					sp->tremolo_phase_increment = convert_tremolo_rate(tmp[13]);
+					sp->tremolo_sweep_increment = convert_tremolo_sweep(song, tmp[12]);
+					sp->tremolo_phase_increment = convert_tremolo_rate(song, tmp[13]);
 					sp->tremolo_depth = tmp[14];
 					ctl->cmsg(CMSG_INFO, VERB_DEBUG,
 						" * tremolo: sweep %d, phase %d, depth %d",
@@ -640,7 +640,7 @@ fail:
 				for (j=ATTACK; j<DELAY; j++)
 				{
 					sp->envelope_rate[j] =
-						(j < 3) ? convert_envelope_rate_attack(tmp[j], 11) : convert_envelope_rate(tmp[j]);
+						(j < 3) ? convert_envelope_rate_attack(song, tmp[j], 11) : convert_envelope_rate(song, tmp[j]);
 					sp->envelope_offset[j] =
 						convert_envelope_offset(tmp[6 + j]);
 				}
@@ -838,7 +838,7 @@ fail:
 	return headlp;
 }
 
-static int fill_bank(int dr, int b)
+static int fill_bank(MidiSong* song, int dr, int b)
 {
 	int i, errors = 0;
 	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
@@ -880,7 +880,7 @@ static int fill_bank(int dr, int b)
 				errors++;
 			}
 			else if (!(bank->tone[i].layer =
-				load_instrument(bank->tone[i].name, 
+				load_instrument(song, bank->tone[i].name, 
 						bank->tone[i].font_type,
 					(dr) ? 1 : 0,
 					bank->tone[i].pan,
@@ -911,7 +911,7 @@ static int fill_bank(int dr, int b)
 			{ /* it's loaded now */
 				bank->tone[i].last_used = current_tune_number;
 				current_patch_memory += bank->tone[i].layer->size;
-				purge_as_required();
+				purge_as_required(song);
 				if (current_patch_memory > max_patch_memory)
 				{
 					ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -929,19 +929,19 @@ static int fill_bank(int dr, int b)
 	return errors;
 }
 
-static void free_old_instruments(int how_old)
+static void free_old_instruments(MidiSong* song, int how_old)
 {
 	int i = MAXBANK;
 	while (i--)
 	{
 		if (song->tonebank[i])
-			free_old_bank(0, i, how_old);
+			free_old_bank(song, 0, i, how_old);
 		if (song->drumset[i])
-			free_old_bank(1, i, how_old);
+			free_old_bank(song, 1, i, how_old);
 	}
 }
 
-static void purge_as_required()
+static void purge_as_required(MidiSong* song)
 {
 	if (!max_patch_memory)
 		return;
@@ -950,42 +950,41 @@ static void purge_as_required()
 		current_patch_memory > max_patch_memory)
 	{
 		last_tune_purged++;
-		free_old_instruments(last_tune_purged);
+		free_old_instruments(song, last_tune_purged);
 	}
 }
 
 
-int load_missing_instruments()
+int load_missing_instruments(MidiSong* song)
 {
 	int i = MAXBANK, errors = 0;
 	while (i--)
 	{
 		if (song->tonebank[i])
-			errors += fill_bank(0, i);
+			errors += fill_bank(song, 0, i);
 		if (song->drumset[i])
-			errors += fill_bank(1, i);
+			errors += fill_bank(song, 1, i);
 	}
 	current_tune_number++;
 	return errors;
 }
 
-void free_instruments()
+void free_instruments(MidiSong* song)
 {
 	int i = 128;
 	while(i--)
 	{
 		if (song->tonebank[i])
-			free_bank(0, i);
+			free_bank(song, 0, i);
 		if (song->drumset[i])
-			free_bank(1, i);
+			free_bank(song, 1, i);
 	}
 }
 
-int set_default_instrument(const char* name)
+int set_default_instrument(MidiSong* song, const char* name)
 {
 	InstrumentLayer* lp;
-	/*  if (!(lp=load_instrument(name, 0, -1, -1, -1, 0, 0, 0))) */
-	if (!(lp = load_instrument(name, FONT_NORMAL, 0, -1, -1, 0, -1, -1, -1, -1, 0, -1, -1)))
+	if (!(lp = load_instrument(song, name, FONT_NORMAL, 0, -1, -1, 0, -1, -1, -1, -1, 0, -1, -1)))
 		return -1;
 	if (song->default_instrument)
 		free_layer(song->default_instrument);

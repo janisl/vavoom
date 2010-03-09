@@ -378,16 +378,6 @@ extern int free_instruments_afterwards;
 
 #define SPECIAL_PROGRAM -1
 
-extern int load_missing_instruments();
-extern void free_instruments();
-extern int set_default_instrument(const char *name);
-
-
-extern int32 convert_tremolo_sweep(uint8 sweep);
-extern int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio);
-extern int32 convert_tremolo_rate(uint8 rate);
-extern int32 convert_vibrato_rate(uint8 rate);
-
 extern int current_tune_number;
 extern int max_patch_memory;
 extern int current_patch_memory;
@@ -395,13 +385,6 @@ extern int current_patch_memory;
 extern int xmap[XMAPMAX][5];
 
 extern char def_instr_name[256];
-
-extern resample_t* resample_voice(int v, int32* countptr);
-extern void pre_resample(Sample* sp);
-
-extern void mix_voice(int32* buf, int v, int32 c);
-extern int recompute_envelope(int v);
-extern void apply_envelope_to_amp(int v);
 
 struct MidiEvent
 {
@@ -551,12 +534,6 @@ extern int XG_System_reverb_type;
 extern int XG_System_chorus_type;
 extern int XG_System_variation_type;
 
-extern int play_midi(MidiEvent *el, int32 events, int32 samples);
-extern int play_midi_file(char *fn);
-extern void dumb_pass_playing_list(int number_of_files, char *list_of_files[]);
-
-MidiEvent* read_midi_mem(void* mimage, int msize, int32* count, int32* sp);
-
 #define OUTPUT_RATE		44100
 
 #define CMSG_INFO		0
@@ -621,15 +598,34 @@ struct MidiSong
 	int32				at;
 };
 
-extern MidiSong* song;
+extern int load_missing_instruments(MidiSong* song);
+extern void free_instruments(MidiSong* song);
+extern int set_default_instrument(MidiSong* song, const char *name);
+
+
+extern int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio);
+extern int32 convert_vibrato_rate(uint8 rate);
+
+extern int play_midi(MidiEvent *el, int32 events, int32 samples);
+extern int play_midi_file(char *fn);
+extern void dumb_pass_playing_list(int number_of_files, char *list_of_files[]);
+
+MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, int32* sp);
+
+extern resample_t* resample_voice(MidiSong* song, int v, int32* countptr);
+extern void pre_resample(Sample* sp);
+
+extern void mix_voice(MidiSong* song, int32* buf, int v, int32 c);
+extern int recompute_envelope(MidiSong* song, int v);
+extern void apply_envelope_to_amp(MidiSong* song, int v);
 
 extern int Timidity_Init();
-extern void Timidity_SetVolume(int volume);
-extern int Timidity_PlaySome(void* stream, int samples);
+extern void Timidity_SetVolume(MidiSong* song, int volume);
+extern int Timidity_PlaySome(MidiSong* song, void* stream, int samples);
 extern MidiSong *Timidity_LoadSongMem(void* data, int size);
 extern void Timidity_Start(MidiSong* song);
-extern int Timidity_Active();
-extern void Timidity_Stop();
+extern int Timidity_Active(MidiSong* song);
+extern void Timidity_Stop(MidiSong* song);
 extern void Timidity_FreeSong(MidiSong* song);
 extern void Timidity_Close();
 

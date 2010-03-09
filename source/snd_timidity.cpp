@@ -94,7 +94,7 @@ VTimidityAudioCodec::VTimidityAudioCodec(MidiSong* InSong)
 : Song(InSong)
 {
 	guard(VTimidityAudioCodec::VTimidityAudioCodec);
-	Timidity_SetVolume(100);
+	Timidity_SetVolume(Song, 100);
 	Timidity_Start(Song);
 	unguard;
 }
@@ -108,7 +108,7 @@ VTimidityAudioCodec::VTimidityAudioCodec(MidiSong* InSong)
 VTimidityAudioCodec::~VTimidityAudioCodec()
 {
 	guard(VTimidityAudioCodec::~VTimidityAudioCodec);
-	Timidity_Stop();
+	Timidity_Stop(Song);
 	Timidity_FreeSong(Song);
 	Timidity_Close();
 	unguard;
@@ -123,7 +123,7 @@ VTimidityAudioCodec::~VTimidityAudioCodec()
 int VTimidityAudioCodec::Decode(short* Data, int NumSamples)
 {
 	guard(VTimidityAudioCodec::Decode);
-	return Timidity_PlaySome(Data, NumSamples);
+	return Timidity_PlaySome(Song, Data, NumSamples);
 	unguard;
 }
 
@@ -135,7 +135,7 @@ int VTimidityAudioCodec::Decode(short* Data, int NumSamples)
 
 bool VTimidityAudioCodec::Finished()
 {
-	return !Timidity_Active();
+	return !Timidity_Active(Song);
 }
 
 //==========================================================================

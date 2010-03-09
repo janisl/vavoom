@@ -40,7 +40,7 @@ namespace LibTimidity
 
 /*************** resampling with fixed increment *****************/
 
-static resample_t* rs_plain(int v, int32* countptr)
+static resample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 {
 
 	/* Play sample until end, then free the voice. */
@@ -89,7 +89,7 @@ static resample_t* rs_plain(int v, int32* countptr)
 	return song->resample_buffer;
 }
 
-static resample_t* rs_loop(Voice* vp, int32 count)
+static resample_t* rs_loop(MidiSong* song, Voice* vp, int32 count)
 {
 
 	/* Play sample until end-of-loop, skip back and continue. */
@@ -134,7 +134,7 @@ static resample_t* rs_loop(Voice* vp, int32 count)
 	return song->resample_buffer;
 }
 
-static resample_t* rs_bidir(Voice* vp, int32 count)
+static resample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 {
 	INTERPVARS;
 	int32 
@@ -284,7 +284,7 @@ static int32 update_vibrato(Voice* vp, int sign)
 	return (int32) a;
 }
 
-static resample_t* rs_vib_plain(int v, int32* countptr)
+static resample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
 {
 
 	/* Play sample until end, then free the voice. */
@@ -330,7 +330,7 @@ static resample_t* rs_vib_plain(int v, int32* countptr)
 	return song->resample_buffer;
 }
 
-static resample_t* rs_vib_loop(Voice* vp, int32 count)
+static resample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
 {
 
 	/* Play sample until end-of-loop, skip back and continue. */
@@ -385,7 +385,7 @@ static resample_t* rs_vib_loop(Voice* vp, int32 count)
 	return song->resample_buffer;
 }
 
-static resample_t* rs_vib_bidir(Voice* vp, int32 count)
+static resample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 {
 	INTERPVARS;
 	int32 
@@ -476,7 +476,7 @@ static resample_t* rs_vib_bidir(Voice* vp, int32 count)
 	return song->resample_buffer;
 }
 
-resample_t* resample_voice(int v, int32* countptr)
+resample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 {
 	int32 ofs;
 	uint8 modes;
@@ -512,12 +512,12 @@ resample_t* resample_voice(int v, int32* countptr)
 			(vp->status == VOICE_ON || vp->status == VOICE_SUSTAINED)))
 		{
 			if (modes & MODES_PINGPONG)
-				return rs_vib_bidir(vp, *countptr);
+				return rs_vib_bidir(song, vp, *countptr);
 			else
-				return rs_vib_loop(vp, *countptr);
+				return rs_vib_loop(song, vp, *countptr);
 		}
 		else
-			return rs_vib_plain(v, countptr);
+			return rs_vib_plain(song, v, countptr);
 	}
 	else
 	{
@@ -526,12 +526,12 @@ resample_t* resample_voice(int v, int32* countptr)
 			(vp->status == VOICE_ON || vp->status == VOICE_SUSTAINED)))
 		{
 			if (modes & MODES_PINGPONG)
-				return rs_bidir(vp, *countptr);
+				return rs_bidir(song, vp, *countptr);
 			else
-				return rs_loop(vp, *countptr);
+				return rs_loop(song, vp, *countptr);
 		}
 		else
-			return rs_plain(v, countptr);
+			return rs_plain(song, v, countptr);
 	}
 }
 

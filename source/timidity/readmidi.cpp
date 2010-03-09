@@ -30,7 +30,7 @@ namespace LibTimidity
 {
 
 /* Computes how many (fractional) samples one MIDI delta-time unit contains */
-static void compute_sample_increment(int32 tempo, int32 divisions)
+static void compute_sample_increment(MidiSong* song, int32 tempo, int32 divisions)
 {
 	double a;
 	a = (double) (tempo) * (double) (OUTPUT_RATE) * (65536.0/1000000.0) /
@@ -43,7 +43,7 @@ static void compute_sample_increment(int32 tempo, int32 divisions)
 		song->sample_increment, song->sample_correction);
 }
 
-static int midi_read(void* ptr, uint32 size)
+static int midi_read(MidiSong* song, void* ptr, uint32 size)
 {
 	if (size > song->image_left)
 		size = song->image_left;
@@ -53,7 +53,7 @@ static int midi_read(void* ptr, uint32 size)
 	return size;
 }
 
-static void midi_skip(uint32 size)
+static void midi_skip(MidiSong* song, uint32 size)
 {
 	if (size > song->image_left)
 		size = song->image_left;
@@ -62,13 +62,13 @@ static void midi_skip(uint32 size)
 }
 
 /* Read variable-length number (7 bits per byte, MSB first) */
-static int32 getvl()
+static int32 getvl(MidiSong* song)
 {
 	int32 l = 0;
 	uint8 c;
 	for (;;)
 	{
-		midi_read(&c, 1);
+		midi_read(song, &c, 1);
 		l += (c & 0x7f);
 		if (!(c & 0x80))
 			return l;
@@ -77,11 +77,11 @@ static int32 getvl()
 }
 
 
-static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
+static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
 {
 	unsigned char* s = (unsigned char*)safe_malloc(len);
 	int id, model, ch, port, adhi, adlo, cd, dta, dtb, dtc;
-	if (len != midi_read(s, len))
+	if (len != midi_read(song, s, len))
 	{
 		free(s);
 		return 0;
@@ -301,10 +301,10 @@ static int sysex(uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
 
 /* Print a string from the file, followed by a newline. Any non-ASCII
    or unprintable characters will be converted to periods. */
-static int dumpstring(int32 len, const char* label)
+static int dumpstring(MidiSong* song, int32 len, const char* label)
 {
 	signed char* s = (signed char*)safe_malloc(len + 1);
-	if (len != (int32)midi_read(s, len))
+	if (len != (int32)midi_read(song, s, len))
 	{
 		free(s);
 		return -1;
@@ -334,7 +334,7 @@ static int dumpstring(int32 len, const char* label)
 
 /* Read a MIDI event, returning a freshly allocated element that can
    be linked to the event list */
-static MidiEventList* read_midi_event()
+static MidiEventList* read_midi_event(MidiSong* song)
 {
 	static uint8 laststatus, lastchan;
 	static uint8 nrpn=0, rpn_msb[16], rpn_lsb[16]; /* one per channel */
@@ -344,8 +344,8 @@ static MidiEventList* read_midi_event()
 
 	for (;;)
 	{
-		song->at += getvl();
-		if (midi_read(&me, 1) != 1)
+		song->at += getvl(song);
+		if (midi_read(song, &me, 1) != 1)
 		{
 			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: read_midi_event: %s",
 				current_filename, strerror(errno));
@@ -357,8 +357,8 @@ static MidiEventList* read_midi_event()
 			int32 sret;
 			uint8 sysa = 0, sysb = 0, syschan = 0;
 
-			len = getvl();
-			sret = sysex(len, &syschan, &sysa, &sysb);
+			len = getvl(song);
+			sret = sysex(song, len, &syschan, &sysa, &sysb);
 			if (sret)
 			{
 				MIDIEVENT(song->at, sret, syschan, sysa, sysb);
@@ -366,8 +366,8 @@ static MidiEventList* read_midi_event()
 		}
 		else if (me == 0xFF) /* Meta event */
 		{
-			midi_read(&type, 1);
-			len = getvl();
+			midi_read(song, &type, 1);
+			len = getvl(song);
 			if (type > 0 && type < 16)
 			{
 				static const char* label[] =
@@ -375,7 +375,7 @@ static MidiEventList* read_midi_event()
 					"Text event: ", "Text: ", "Copyright: ", "Track name: ",
 					"Instrument: ", "Lyric: ", "Marker: ", "Cue point: "
 				};
-				dumpstring(len, label[(type > 7) ? 0 : type]);
+				dumpstring(song, len, label[(type > 7) ? 0 : type]);
 			}
 			else
 				switch(type)
@@ -384,13 +384,15 @@ static MidiEventList* read_midi_event()
 					return MAGIC_EOT;
 
 				case 0x51: /* Tempo */
-					midi_read(&a,1); midi_read(&b,1); midi_read(&c,1);
+					midi_read(song, &a,1);
+					midi_read(song, &b,1);
+					midi_read(song, &c,1);
 					MIDIEVENT(song->at, ME_TEMPO, c, a, b);
 
 				default:
 					ctl->cmsg(CMSG_INFO, VERB_DEBUG,
 						"(Meta event type 0x%02x, length %ld)", type, len);
-					midi_skip(len);
+					midi_skip(song, len);
 					break;
 				}
 		}
@@ -401,29 +403,29 @@ static MidiEventList* read_midi_event()
 			{
 				lastchan = a & 0x0F;
 				laststatus = (a >> 4) & 0x07;
-				midi_read(&a, 1);
+				midi_read(song, &a, 1);
 				a &= 0x7F;
 			}
 			switch (laststatus)
 			{
 			case 0: /* Note off */
-				midi_read(&b, 1);
+				midi_read(song, &b, 1);
 				b &= 0x7F;
 				MIDIEVENT(song->at, ME_NOTEOFF, lastchan, a,b);
 
 			case 1: /* Note on */
-				midi_read(&b, 1);
+				midi_read(song, &b, 1);
 				b &= 0x7F;
 				MIDIEVENT(song->at, ME_NOTEON, lastchan, a, b);
 
 
 			case 2: /* Key Pressure */
-				midi_read(&b, 1);
+				midi_read(song, &b, 1);
 				b &= 0x7F;
 				MIDIEVENT(song->at, ME_KEYPRESSURE, lastchan, a, b);
 
 			case 3: /* Control change */
-				midi_read(&b, 1);
+				midi_read(song, &b, 1);
 				b &= 0x7F;
 				{
 					int control = 255;
@@ -611,7 +613,7 @@ static MidiEventList* read_midi_event()
 				break;
 
 			case 6: /* Pitch wheel */
-				midi_read(&b, 1);
+				midi_read(song, &b, 1);
 				b &= 0x7F;
 				MIDIEVENT(song->at, ME_PITCHWHEEL, lastchan, a, b);
 
@@ -631,7 +633,7 @@ static MidiEventList* read_midi_event()
 
 /* Read a midi track into the linked list, either merging with any previous
    tracks or appending to them. */
-static int read_track(int append)
+static int read_track(MidiSong* song, int append)
 {
 	MidiEventList* meep;
 	MidiEventList *next, *new_ev;
@@ -650,7 +652,7 @@ static int read_track(int append)
 		song->at = 0;
 
 	/* Check the formalities */
-	if ((midi_read(tmp, 4) != 4) || (midi_read(&len, 4) != 4))
+	if ((midi_read(song, tmp, 4) != 4) || (midi_read(song, &len, 4) != 4))
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
 			"%s: Can't read track header.", current_filename);
@@ -667,7 +669,7 @@ static int read_track(int append)
 
 	for (;;)
 	{
-		if (!(new_ev = read_midi_event())) /* Some kind of error  */
+		if (!(new_ev = read_midi_event(song))) /* Some kind of error  */
 			return -2;
 
 		if (new_ev == MAGIC_EOT) /* End-of-track Hack. */
@@ -691,7 +693,7 @@ static int read_track(int append)
 }
 
 /* Free the linked event list from memory. */
-static void free_midi_list()
+static void free_midi_list(MidiSong* song)
 {
 	MidiEventList *meep, *next;
 	if (!(meep = song->evlist))
@@ -706,7 +708,7 @@ static void free_midi_list()
 }
 
 
-static void xremap_percussion(int* banknumpt, int* this_notept, int this_kit)
+static void xremap_percussion(MidiSong* song, int* banknumpt, int* this_notept, int this_kit)
 {
 	int i, newmap;
 	int banknum = *banknumpt;
@@ -745,7 +747,7 @@ static void xremap_percussion(int* banknumpt, int* this_notept, int this_kit)
    events, marking used instruments for loading. Convert event times to
    samples: handle tempo changes. Strip unnecessary events from the list.
    Free the linked list. */
-static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
+static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, int32* samplesp)
 {
 	MidiEvent *groomed_list, *lp;
 	MidiEventList *meep;
@@ -767,7 +769,7 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 	}
 
 	tempo = 500000;
-	compute_sample_increment(tempo, divisions);
+	compute_sample_increment(song, tempo, divisions);
 
 	/* This may allocate a bit more than we need */
 	groomed_list = lp = (MidiEvent*)safe_malloc(sizeof(MidiEvent) * (song->event_count + 1));
@@ -789,7 +791,7 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 		{
 			tempo =
 				meep->event.channel + meep->event.b * 256 + meep->event.a * 65536;
-			compute_sample_increment(tempo, divisions);
+			compute_sample_increment(song, tempo, divisions);
 			skip_this_event = 1;
 		}
 		else
@@ -862,7 +864,7 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 					dset = current_set[meep->event.channel];
 					dnote = meep->event.a;
 					if (XG_System_On)
-						xremap_percussion(&dset, &dnote, drumsflag);
+						xremap_percussion(song, &dset, &dnote, drumsflag);
 
 					/*if (current_config_pc42b) pcmap(&dset, &dnote, &mprog, &drumsflag);*/
 
@@ -1045,14 +1047,14 @@ static MidiEvent* groom_list(int32 divisions, int32* eventsp, int32* samplesp)
 	lp->time = st;
 	lp->type = ME_EOT;
 	our_event_count++;
-	free_midi_list();
+	free_midi_list(song);
 
 	*eventsp = our_event_count;
 	*samplesp = st;
 	return groomed_list;
 }
 
-MidiEvent* read_midi_mem(void* mimage, int msize, int32* count, int32* sp)
+MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, int32* sp)
 {
 	int32 len, divisions;
 	int16 format, tracks, divisions_tmp;
@@ -1089,7 +1091,7 @@ MidiEvent* read_midi_mem(void* mimage, int msize, int32* count, int32* sp)
 
 past_riff:
 
-	if ((midi_read(tmp,4) != 4) || (midi_read(&len,4) != 4))
+	if ((midi_read(song, tmp,4) != 4) || (midi_read(song, &len,4) != 4))
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: Not a MIDI file!", current_filename);
 		return 0;
@@ -1098,7 +1100,7 @@ past_riff:
 
 	if (!memcmp(tmp, "RIFF", 4))
 	{
-		midi_read(tmp, 12);
+		midi_read(song, tmp, 12);
 		goto past_riff;
 	}
 	if (memcmp(tmp, "MThd", 4) || len < 6)
@@ -1107,9 +1109,9 @@ past_riff:
 		return 0;
 	}
 
-	midi_read(&format, 2);
-	midi_read(&tracks, 2);
-	midi_read(&divisions_tmp, 2);
+	midi_read(song, &format, 2);
+	midi_read(song, &tracks, 2);
+	midi_read(song, &divisions_tmp, 2);
 	format = BE_SHORT(format);
 	tracks = BE_SHORT(tracks);
 	divisions_tmp = BE_SHORT(divisions_tmp);
@@ -1127,7 +1129,7 @@ past_riff:
 		ctl->cmsg(CMSG_WARNING, VERB_NORMAL, 
 			"%s: MIDI file header size %ld bytes", 
 			current_filename, len);
-		midi_skip(len - 6); /* skip the excess */
+		midi_skip(song, len - 6); /* skip the excess */
 	}
 	if (format < 0 || format > 2)
 	{
@@ -1148,32 +1150,32 @@ past_riff:
 	switch(format)
 	{
 	case 0:
-		if (read_track(0))
+		if (read_track(song, 0))
 		{
-			free_midi_list();
+			free_midi_list(song);
 			return 0;
 		}
 		break;
 
 	case 1:
 		for (i = 0; i < tracks; i++)
-			if (read_track(0))
+			if (read_track(song, 0))
 			{
-				free_midi_list();
+				free_midi_list(song);
 				return 0;
 			}
 		break;
 
 	case 2: /* We simply play the tracks sequentially */
 		for (i = 0; i < tracks; i++)
-			if (read_track(1))
+			if (read_track(song, 1))
 			{
-				free_midi_list();
+				free_midi_list(song);
 				return 0;
 			}
 		break;
 	}
-	return groom_list(divisions, count, sp);
+	return groom_list(song, divisions, count, sp);
 }
 
 };

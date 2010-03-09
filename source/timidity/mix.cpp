@@ -31,7 +31,7 @@ namespace LibTimidity
 {
 
 /* Returns 1 if envelope runs out */
-int recompute_envelope(int v)
+int recompute_envelope(MidiSong* song, int v)
 {
 	int stage = song->voice[v].envelope_stage;
 
@@ -58,7 +58,7 @@ int recompute_envelope(int v)
 	song->voice[v].envelope_stage=stage+1;
 
 	if (song->voice[v].envelope_volume == song->voice[v].sample->envelope_offset[stage])
-		return recompute_envelope(v);
+		return recompute_envelope(song, v);
 	song->voice[v].envelope_target = song->voice[v].sample->envelope_offset[stage];
 	song->voice[v].envelope_increment = song->voice[v].sample->envelope_rate[stage];
 	if (song->voice[v].envelope_target < song->voice[v].envelope_volume)
@@ -66,7 +66,7 @@ int recompute_envelope(int v)
 	return 0;
 }
 
-void apply_envelope_to_amp(int v)
+void apply_envelope_to_amp(MidiSong* song, int v)
 {
 	FLOAT_T lamp=song->voice[v].left_amp, ramp, lramp, rramp, ceamp, lfeamp;
 	int32 la,ra, lra, rra, cea, lfea;
@@ -142,7 +142,7 @@ void apply_envelope_to_amp(int v)
 	}
 }
 
-static int update_envelope(int v)
+static int update_envelope(MidiSong* song, int v)
 {
 	song->voice[v].envelope_volume += song->voice[v].envelope_increment;
 	/* Why is there no ^^ operator?? */
@@ -152,13 +152,13 @@ static int update_envelope(int v)
 		(song->voice[v].envelope_volume >= song->voice[v].envelope_target)))
 	{
 		song->voice[v].envelope_volume = song->voice[v].envelope_target;
-		if (recompute_envelope(v))
+		if (recompute_envelope(song, v))
 			return 1;
 	}
 	return 0;
 }
 
-static void update_tremolo(int v)
+static void update_tremolo(MidiSong* song, int v)
 {
 	int32 depth = song->voice[v].sample->tremolo_depth << 7;
 
@@ -188,22 +188,22 @@ static void update_tremolo(int v)
 }
 
 /* Returns 1 if the note died */
-static int update_signal(int v)
+static int update_signal(MidiSong* song, int v)
 {
-	if (song->voice[v].envelope_increment && update_envelope(v))
+	if (song->voice[v].envelope_increment && update_envelope(song, v))
 		return 1;
 
 	if (song->voice[v].tremolo_phase_increment)
-		update_tremolo(v);
+		update_tremolo(song, v);
 
-	apply_envelope_to_amp(v);
+	apply_envelope_to_amp(song, v);
 	return 0;
 }
 
 #define MIXATION(a)		*lp++ += (a)*s;
 #define MIXSKIP			lp++
 
-static void mix_mystery_signal(resample_t* sp, int32* lp, int v, int count)
+static void mix_mystery_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
@@ -219,7 +219,7 @@ static void mix_mystery_signal(resample_t* sp, int32* lp, int v, int count)
 	if (!(cc = vp->control_counter))
 	{
 		cc = song->control_ratio;
-		if (update_signal(v))
+		if (update_signal(song, v))
 			return;	/* Envelope ran out */
 
 		left_rear = vp->lr_mix;
@@ -241,7 +241,7 @@ static void mix_mystery_signal(resample_t* sp, int32* lp, int v, int count)
 				MIXATION(right);
 			}
 			cc = song->control_ratio;
-			if (update_signal(v))
+			if (update_signal(song, v))
 				return;	/* Envelope ran out */
 			left_rear = vp->lr_mix;
 			left = vp->left_mix;
@@ -263,7 +263,7 @@ static void mix_mystery_signal(resample_t* sp, int32* lp, int v, int count)
 		}
 }
 
-static void mix_centre_signal(resample_t* sp, int32* lp, int v, int count)
+static void mix_centre_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
@@ -274,7 +274,7 @@ static void mix_centre_signal(resample_t* sp, int32* lp, int v, int count)
 	if (!(cc = vp->control_counter))
 	{
 		cc = song->control_ratio;
-		if (update_signal(v))
+		if (update_signal(song, v))
 			return;	/* Envelope ran out */
 		left = vp->left_mix;
 	}
@@ -290,7 +290,7 @@ static void mix_centre_signal(resample_t* sp, int32* lp, int v, int count)
 				MIXATION(left);
 			}
 			cc = song->control_ratio;
-			if (update_signal(v))
+			if (update_signal(song, v))
 				return;	/* Envelope ran out */
 			left = vp->left_mix;
 		}
@@ -307,7 +307,7 @@ static void mix_centre_signal(resample_t* sp, int32* lp, int v, int count)
 		}
 }
 
-static void mix_single_left_signal(resample_t* sp, int32* lp, int v, int count)
+static void mix_single_left_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
@@ -318,7 +318,7 @@ static void mix_single_left_signal(resample_t* sp, int32* lp, int v, int count)
 	if (!(cc = vp->control_counter))
 	{
 		cc = song->control_ratio;
-		if (update_signal(v))
+		if (update_signal(song, v))
 			return;	/* Envelope ran out */
 		left = vp->left_mix;
 	}
@@ -334,7 +334,7 @@ static void mix_single_left_signal(resample_t* sp, int32* lp, int v, int count)
 				MIXSKIP;
 			}
 			cc = song->control_ratio;
-			if (update_signal(v))
+			if (update_signal(song, v))
 				return;	/* Envelope ran out */
 			left = vp->left_mix;
 		}
@@ -351,7 +351,7 @@ static void mix_single_left_signal(resample_t* sp, int32* lp, int v, int count)
 		}
 }
 
-static void mix_single_right_signal(resample_t* sp, int32* lp, int v, int count)
+static void mix_single_right_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t left = vp->left_mix;
@@ -361,7 +361,7 @@ static void mix_single_right_signal(resample_t* sp, int32* lp, int v, int count)
 	if (!(cc = vp->control_counter))
 	{
 		cc = song->control_ratio;
-		if (update_signal(v))
+		if (update_signal(song, v))
 			return;	/* Envelope ran out */
 		left = vp->left_mix;
 	}
@@ -377,7 +377,7 @@ static void mix_single_right_signal(resample_t* sp, int32* lp, int v, int count)
 				MIXATION(left);
 			}
 			cc = song->control_ratio;
-			if (update_signal(v))
+			if (update_signal(song, v))
 				return;	/* Envelope ran out */
 			left = vp->left_mix;
 		}
@@ -394,7 +394,7 @@ static void mix_single_right_signal(resample_t* sp, int32* lp, int v, int count)
 		}
 }
 
-static void mix_mystery(resample_t* sp, int32* lp, int v, int count)
+static void mix_mystery(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t 
 		left_rear = song->voice[v].lr_mix, 
@@ -413,7 +413,7 @@ static void mix_mystery(resample_t* sp, int32* lp, int v, int count)
 	}
 }
 
-static void mix_centre(resample_t* sp, int32* lp, int v, int count)
+static void mix_centre(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t 
 		left=song->voice[v].left_mix;
@@ -427,7 +427,7 @@ static void mix_centre(resample_t* sp, int32* lp, int v, int count)
 	}
 }
 
-static void mix_single_left(resample_t* sp, int32* lp, int v, int count)
+static void mix_single_left(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t left = song->voice[v].left_mix;
 	resample_t s;
@@ -440,7 +440,7 @@ static void mix_single_left(resample_t* sp, int32* lp, int v, int count)
 	}
 }
 
-static void mix_single_right(resample_t* sp, int32* lp, int v, int count)
+static void mix_single_right(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t left = song->voice[v].left_mix;
 	resample_t s;
@@ -454,7 +454,7 @@ static void mix_single_right(resample_t* sp, int32* lp, int v, int count)
 }
 
 /* Ramp a note out in c samples */
-static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
+static void ramp_out(MidiSong* song, resample_t* sp, int32* lp, int v, int32 c)
 {
 	/* should be final_volume_t, but uint8 gives trouble. */
 	int32 left_rear, left, centre, right, right_rear, lfe, li, ri;
@@ -549,7 +549,7 @@ static void ramp_out(resample_t* sp, int32* lp, int v, int32 c)
 
 /**************** interface function ******************/
 
-void mix_voice(int32* buf, int v, int32 c)
+void mix_voice(MidiSong* song, int32* buf, int v, int32 c)
 {
 	Voice* vp = song->voice + v;
 	int32 count = c;
@@ -562,28 +562,28 @@ void mix_voice(int32* buf, int v, int32 c)
 	{
 		if (count >= MAX_DIE_TIME)
 			count = MAX_DIE_TIME;
-		sp = resample_voice(v, &count);
-		ramp_out(sp, buf, v, count);
+		sp = resample_voice(song, v, &count);
+		ramp_out(song, sp, buf, v, count);
 		vp->status = VOICE_FREE;
 	}
 	else
 	{
-		sp = resample_voice(v, &count);
+		sp = resample_voice(song, v, &count);
 		if (count < 0)
 			return;
 		if (vp->panned == PANNED_MYSTERY)
 		{
 			if (vp->envelope_increment || vp->tremolo_phase_increment)
-				mix_mystery_signal(sp, buf, v, count);
+				mix_mystery_signal(song, sp, buf, v, count);
 			else
-				mix_mystery(sp, buf, v, count);
+				mix_mystery(song, sp, buf, v, count);
 		}
 		else if (vp->panned == PANNED_CENTRE)
 		{
 			if (vp->envelope_increment || vp->tremolo_phase_increment)
-				mix_centre_signal(sp, buf, v, count);
+				mix_centre_signal(song, sp, buf, v, count);
 			else
-				mix_centre(sp, buf, v, count);
+				mix_centre(song, sp, buf, v, count);
 		}
 		else
 		{
@@ -593,16 +593,16 @@ void mix_voice(int32* buf, int v, int32 c)
 			if (vp->envelope_increment || vp->tremolo_phase_increment)
 			{
 				if (vp->panned == PANNED_RIGHT)
-					mix_single_right_signal(sp, buf, v, count);
+					mix_single_right_signal(song, sp, buf, v, count);
 				else
-					mix_single_left_signal(sp, buf, v, count);
+					mix_single_left_signal(song, sp, buf, v, count);
 			}
 			else
 			{
 				if (vp->panned == PANNED_RIGHT)
-					mix_single_right(sp, buf, v, count);
+					mix_single_right(song, sp, buf, v, count);
 				else
-					mix_single_left(sp, buf, v, count);
+					mix_single_left(song, sp, buf, v, count);
 			}
 		}
 	}
