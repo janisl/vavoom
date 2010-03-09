@@ -522,17 +522,13 @@ extern signed char drumreverberation[MAXCHAN][MAXNOTE];
 extern signed char drumchorusdepth[MAXCHAN][MAXNOTE];
 
 extern int32 amp_with_poly, amplification;
-extern int adjust_panning_immediately;
 
-#define ISDRUMCHANNEL(c) ((song->drumchannels & (1<<(c))))
+#define ISDRUMCHANNEL(s, c) (((s)->drumchannels & (1<<(c))))
 
-extern int GM_System_On;
 extern int XG_System_On;
-extern int GS_System_On;
 
 extern int XG_System_reverb_type;
 extern int XG_System_chorus_type;
-extern int XG_System_variation_type;
 
 #define OUTPUT_RATE		44100
 

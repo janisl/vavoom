@@ -35,16 +35,9 @@ signed char drumpanpot[MAXCHAN][MAXNOTE];
 signed char drumreverberation[MAXCHAN][MAXNOTE];
 signed char drumchorusdepth[MAXCHAN][MAXNOTE];
 
-int adjust_panning_immediately=0;
-
-static int32 sample_count;
-
-int GM_System_On=0;
 int XG_System_On=0;
-int GS_System_On=0;
 int XG_System_reverb_type;
 int XG_System_chorus_type;
-int XG_System_variation_type;
 
 
 static void adjust_amplification(MidiSong* song)
@@ -1140,21 +1133,6 @@ static void adjust_pressure(MidiSong* song, MidiEvent* e)
 		}
 }
 
-static void adjust_panning(MidiSong* song, int c)
-{
-	int i = song->voices;
-	while (i--)
-		if ((song->voice[i].channel == c) &&
-			(song->voice[i].status == VOICE_ON || song->voice[i].status == VOICE_SUSTAINED))
-		{
-			if (song->voice[i].clone_type != NOT_CLONE)
-				continue;
-			song->voice[i].panning = song->channel[c].panning;
-			recompute_amp(song, i);
-			apply_envelope_to_amp(song, i);
-		}
-}
-
 static void drop_sustain(MidiSong* song, int c)
 {
 	int i = song->voices;
@@ -1223,7 +1201,7 @@ static void seek_forward(MidiSong* song, int32 until_time)
 			break;
 
 		case ME_PROGRAM:
-			/* if (ISDRUMCHANNEL(song->current_event->channel)) */
+			/* if (ISDRUMCHANNEL(song, song->current_event->channel)) */
 			if (song->channel[song->current_event->channel].kit)
 				/* Change drum set */
 				song->channel[song->current_event->channel].bank = song->current_event->a;
@@ -1422,8 +1400,6 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 
 			case ME_PAN:
 				song->channel[song->current_event->channel].panning=song->current_event->a;
-				if (adjust_panning_immediately)
-					adjust_panning(song, song->current_event->channel);
 				break;
 
 			case ME_EXPRESSION:
@@ -1432,7 +1408,7 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				break;
 
 			case ME_PROGRAM:
-				/* if (ISDRUMCHANNEL(song->current_event->channel)) */
+				/* if (ISDRUMCHANNEL(song, song->current_event->channel)) */
 				if (song->channel[song->current_event->channel].kit)
 				{
 					/* Change drum set */
@@ -1591,7 +1567,6 @@ void Timidity_Start(MidiSong *song)
 {
 	load_missing_instruments(song);
 	adjust_amplification(song);
-	sample_count = song->samples;
 	song->lost_notes = song->cut_notes = 0;
 
 	skip_to(song, 0);

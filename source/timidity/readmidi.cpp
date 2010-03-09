@@ -98,8 +98,6 @@ static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 
 	adlo = s[4];
 	if (id == 0x7e && port == 0x7f && model == 0x09 && adhi == 0x01)
 	{
-		ctl->cmsg(CMSG_TEXT, VERB_VERBOSE, "GM System On", len);
-		GM_System_On = 1;
 		free(s);
 		return 0;
 	}
@@ -138,9 +136,6 @@ static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 
 		{
 			ctl->cmsg(CMSG_TEXT, VERB_VERBOSE, "XG System On", len);
 			XG_System_On = 1;
-			#ifdef tplus
-			vol_table = xg_vol_table;
-			#endif
 		}
 		else if (adhi == 2 && adlo == 1)
 		{
@@ -153,9 +148,6 @@ static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 
 				break;
 			case 0x20:
 				XG_System_chorus_type = ((dta - 64) << 3) + dtb;
-				break;
-			case 0x40:
-				XG_System_variation_type = dta;
 				break;
 			case 0x5a:
 				/* dta==0 Insertion; dta==1 System */
@@ -215,14 +207,6 @@ static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 
 	{
 		if (dtc < 0)
 			return 0;
-		if (!cd && dta == 0x7f && !dtb && dtc == 0x41)
-		{
-			ctl->cmsg(CMSG_TEXT, VERB_VERBOSE, "GS System On", len);
-				GS_System_On = 1;
-#ifdef tplus
-			vol_table = gs_vol_table;
-#endif
-		}
 		else if (dta == 0x15 && (cd & 0xf0) == 0x10)
 		{
 			int chan = cd & 0x0f;
@@ -514,17 +498,6 @@ static MidiEventList* read_midi_event(MidiSong* song)
 							if (rpn_msb[lastchan] == 1)
 								switch (rpn_lsb[lastchan])
 								{
-#ifdef tplus
-								case 0x08:
-									control = ME_VIBRATO_RATE;
-									break;
-								case 0x09:
-									control = ME_VIBRATO_DEPTH;
-									break;
-								case 0x0a:
-									control = ME_VIBRATO_DELAY;
-									break;
-#endif
 								case 0x20:
 									control = ME_BRIGHTNESS;
 									break;
@@ -1067,9 +1040,9 @@ MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, 
 	song->at=0;
 	song->evlist=0;
 
-	GM_System_On = GS_System_On = XG_System_On = 0;
+	XG_System_On = 0;
 	/* vol_table = def_vol_table; */
-	XG_System_reverb_type = XG_System_chorus_type = XG_System_variation_type = 0;
+	XG_System_reverb_type = XG_System_chorus_type = 0;
 	memset(&drumvolume, -1, sizeof(drumvolume));
 	memset(&drumchorusdepth, -1, sizeof(drumchorusdepth));
 	memset(&drumreverberation, -1, sizeof(drumreverberation));
@@ -1077,7 +1050,7 @@ MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, 
 
 	for (i = 0; i < MAXCHAN; i++)
 	{
-		if (ISDRUMCHANNEL(i))
+		if (ISDRUMCHANNEL(song, i))
 			song->channel[i].kit = 127;
 		else
 			song->channel[i].kit = 0;
