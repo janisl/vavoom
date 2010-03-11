@@ -202,7 +202,7 @@ static int update_signal(MidiSong* song, int v)
 #define MIXATION(a)		*lp++ += (a)*s;
 #define MIXSKIP			lp++
 
-static void mix_mystery_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_mystery_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
@@ -213,7 +213,7 @@ static void mix_mystery_signal(MidiSong* song, resample_t* sp, int32* lp, int v,
 		right_rear = vp->rr_mix, 
 		lfe = vp->lfe_mix;
 	int cc;
-	resample_t s;
+	sample_t s;
 
 	if (!(cc = vp->control_counter))
 	{
@@ -262,13 +262,13 @@ static void mix_mystery_signal(MidiSong* song, resample_t* sp, int32* lp, int v,
 		}
 }
 
-static void mix_centre_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_centre_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
 		left = vp->left_mix;
 	int cc;
-	resample_t s;
+	sample_t s;
 
 	if (!(cc = vp->control_counter))
 	{
@@ -306,13 +306,13 @@ static void mix_centre_signal(MidiSong* song, resample_t* sp, int32* lp, int v, 
 		}
 }
 
-static void mix_single_left_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_single_left_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
 		left = vp->left_mix;
 	int cc;
-	resample_t s;
+	sample_t s;
 
 	if (!(cc = vp->control_counter))
 	{
@@ -350,12 +350,12 @@ static void mix_single_left_signal(MidiSong* song, resample_t* sp, int32* lp, in
 		}
 }
 
-static void mix_single_right_signal(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_single_right_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t left = vp->left_mix;
 	int cc;
-	resample_t s;
+	sample_t s;
 
 	if (!(cc = vp->control_counter))
 	{
@@ -393,7 +393,7 @@ static void mix_single_right_signal(MidiSong* song, resample_t* sp, int32* lp, i
 		}
 }
 
-static void mix_mystery(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_mystery(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t 
 		left_rear = song->voice[v].lr_mix, 
@@ -402,7 +402,7 @@ static void mix_mystery(MidiSong* song, resample_t* sp, int32* lp, int v, int co
 		right = song->voice[v].right_mix, 
 		right_rear = song->voice[v].rr_mix, 
 		lfe = song->voice[v].lfe_mix;
-	resample_t s;
+	sample_t s;
 
 	while (count--)
 	{
@@ -412,11 +412,11 @@ static void mix_mystery(MidiSong* song, resample_t* sp, int32* lp, int v, int co
 	}
 }
 
-static void mix_centre(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_centre(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t 
 		left=song->voice[v].left_mix;
-	resample_t s;
+	sample_t s;
 
 	while (count--)
 	{
@@ -426,10 +426,10 @@ static void mix_centre(MidiSong* song, resample_t* sp, int32* lp, int v, int cou
 	}
 }
 
-static void mix_single_left(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_single_left(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t left = song->voice[v].left_mix;
-	resample_t s;
+	sample_t s;
 
 	while (count--)
 	{
@@ -439,10 +439,10 @@ static void mix_single_left(MidiSong* song, resample_t* sp, int32* lp, int v, in
 	}
 }
 
-static void mix_single_right(MidiSong* song, resample_t* sp, int32* lp, int v, int count)
+static void mix_single_right(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t left = song->voice[v].left_mix;
-	resample_t s;
+	sample_t s;
 
 	while (count--)
 	{
@@ -453,12 +453,12 @@ static void mix_single_right(MidiSong* song, resample_t* sp, int32* lp, int v, i
 }
 
 /* Ramp a note out in c samples */
-static void ramp_out(MidiSong* song, resample_t* sp, int32* lp, int v, int32 c)
+static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 {
 	/* should be final_volume_t, but uint8 gives trouble. */
 	int32 left_rear, left, centre, right, right_rear, lfe, li, ri;
 
-	resample_t s = 0; /* silly warning about uninitialised s */
+	sample_t s = 0; /* silly warning about uninitialised s */
 
 	/* Fix by James Caldwell */
 	if (c == 0)
@@ -552,7 +552,7 @@ void mix_voice(MidiSong* song, int32* buf, int v, int32 c)
 {
 	Voice* vp = song->voice + v;
 	int32 count = c;
-	resample_t* sp;
+	sample_t* sp;
 	if (c < 0)
 	{
 		return;

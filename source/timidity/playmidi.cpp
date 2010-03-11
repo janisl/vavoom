@@ -1516,7 +1516,7 @@ MidiSong *Timidity_LoadSongMem(void* data, int size)
 	memcpy(song->drumset, master_drumset, sizeof(master_drumset));
 	song->default_program = DEFAULT_PROGRAM;
 	song->buffer_size = 2 * 1024;
-	song->resample_buffer = (resample_t*)safe_malloc(song->buffer_size * sizeof(resample_t) + 100);
+	song->resample_buffer = (sample_t*)safe_malloc(song->buffer_size * sizeof(sample_t) + 100);
 	song->common_buffer = (int32*)safe_malloc(song->buffer_size * 2 * sizeof(int32));
 	song->voices = DEFAULT_VOICES;
 	song->drumchannels = DEFAULT_DRUMCHANNELS;

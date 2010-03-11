@@ -353,8 +353,6 @@ typedef double FLOAT_T;
 typedef int16 sample_t;
 typedef int32 final_volume_t;
 
-typedef int16 resample_t;
-
 struct ControlMode
 {
 	int (*cmsg)(int type, int verbosity_level, const char *fmt, ...);
@@ -509,7 +507,7 @@ struct MidiSong
 	/* This is only used for tracks that don't specify a program */
 	int					default_program;
 	int					buffer_size;
-	resample_t*			resample_buffer;
+	sample_t*			resample_buffer;
 	int32*				common_buffer;
 	/* These would both fit into 32 bits, but they are often added in
 		large multiples, so it's simpler to have two roomy ints */
@@ -552,7 +550,7 @@ extern void dumb_pass_playing_list(int number_of_files, char *list_of_files[]);
 
 MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, int32* sp);
 
-extern resample_t* resample_voice(MidiSong* song, int v, int32* countptr);
+extern sample_t* resample_voice(MidiSong* song, int v, int32* countptr);
 extern void pre_resample(Sample* sp);
 
 extern void mix_voice(MidiSong* song, int32* buf, int v, int32 c);

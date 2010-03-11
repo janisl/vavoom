@@ -32,7 +32,7 @@ namespace LibTimidity
 #define RESAMPLATION \
       v1=src[ofs>>FRACTION_BITS];\
       v2=src[(ofs>>FRACTION_BITS)+1];\
-      *dest++ = (resample_t)(v1 + (((v2-v1) * (ofs & FRACTION_MASK)) >> FRACTION_BITS));
+      *dest++ = (sample_t)(v1 + (((v2 - v1) * (ofs & FRACTION_MASK)) >> FRACTION_BITS));
 #define INTERPVARS sample_t v1, v2
 
 #define FINALINTERP if (ofs == le) *dest++=src[ofs>>FRACTION_BITS];
@@ -40,14 +40,14 @@ namespace LibTimidity
 
 /*************** resampling with fixed increment *****************/
 
-static resample_t* rs_plain(MidiSong* song, int v, int32* countptr)
+static sample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 {
 
 	/* Play sample until end, then free the voice. */
 
 	INTERPVARS;
 	Voice* vp = &song->voice[v];
-	resample_t* dest = song->resample_buffer;
+	sample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int32 
 		ofs = vp->sample_offset,
@@ -89,7 +89,7 @@ static resample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 	return song->resample_buffer;
 }
 
-static resample_t* rs_loop(MidiSong* song, Voice* vp, int32 count)
+static sample_t* rs_loop(MidiSong* song, Voice* vp, int32 count)
 {
 
 	/* Play sample until end-of-loop, skip back and continue. */
@@ -100,13 +100,10 @@ static resample_t* rs_loop(MidiSong* song, Voice* vp, int32 count)
 		incr = vp->sample_increment,
 		le = vp->sample->loop_end, 
 		ll = le - vp->sample->loop_start;
-	resample_t* dest = song->resample_buffer;
+	sample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 
 	int32 i;
-
-	if (ofs < 0 || le < 0)
-		return song->resample_buffer;
 
 	while (count)
 	{
@@ -122,19 +119,18 @@ static resample_t* rs_loop(MidiSong* song, Voice* vp, int32 count)
 		}
 		else
 			count -= i;
-		if (i > 0)
-			while (i--)
-			{
-				RESAMPLATION;
-				ofs += incr;
-			}
+		while (i--)
+		{
+			RESAMPLATION;
+			ofs += incr;
+		}
 	}
 
 	vp->sample_offset = ofs; /* Update offset */
 	return song->resample_buffer;
 }
 
-static resample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
+static sample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 {
 	INTERPVARS;
 	int32 
@@ -142,7 +138,7 @@ static resample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 		incr = vp->sample_increment,
 		le = vp->sample->loop_end,
 		ls = vp->sample->loop_start;
-	resample_t* dest = song->resample_buffer;
+	sample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 
 	int32
@@ -284,14 +280,14 @@ static int32 update_vibrato(Voice* vp, int sign)
 	return (int32) a;
 }
 
-static resample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
+static sample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
 {
 
 	/* Play sample until end, then free the voice. */
 
 	INTERPVARS;
 	Voice* vp = &song->voice[v];
-	resample_t* dest = song->resample_buffer;
+	sample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int32 
 		le = vp->sample->data_length,
@@ -330,7 +326,7 @@ static resample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
 	return song->resample_buffer;
 }
 
-static resample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
+static sample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
 {
 
 	/* Play sample until end-of-loop, skip back and continue. */
@@ -341,7 +337,7 @@ static resample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
 		incr=vp->sample_increment, 
 		le=vp->sample->loop_end,
 		ll=le - vp->sample->loop_start;
-	resample_t* dest = song->resample_buffer;
+	sample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int cc = vp->vibrato_control_counter;
 
@@ -385,7 +381,7 @@ static resample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
 	return song->resample_buffer;
 }
 
-static resample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
+static sample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 {
 	INTERPVARS;
 	int32 
@@ -393,7 +389,7 @@ static resample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 		incr = vp->sample_increment,
 		le = vp->sample->loop_end, 
 		ls = vp->sample->loop_start;
-	resample_t* dest = song->resample_buffer;
+	sample_t* dest = song->resample_buffer;
 	sample_t* src = vp->sample->data;
 	int cc = vp->vibrato_control_counter;
 
@@ -476,7 +472,7 @@ static resample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 	return song->resample_buffer;
 }
 
-resample_t* resample_voice(MidiSong* song, int v, int32* countptr)
+sample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 {
 	int32 ofs;
 	uint8 modes;
@@ -499,7 +495,7 @@ resample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 		else
 			vp->sample_offset += *countptr << FRACTION_BITS;
 
-		return (resample_t*)vp->sample->data + ofs;
+		return vp->sample->data + ofs;
 	}
 
 	/* Need to resample. Use the proper function. */
@@ -540,7 +536,7 @@ void pre_resample(Sample* sp)
 	double a, xdiff;
 	int32 incr, ofs, newlen, count;
 	int16 *src = (int16 *) sp->data;
-	resample_t *newdata, *dest;
+	sample_t *newdata, *dest;
 	int16 v1, v2, v3, v4, *vptr;
 	static const char note_name[12][3] =
 	{
@@ -558,7 +554,7 @@ void pre_resample(Sample* sp)
 	newlen = (int32)(sp->data_length / a);
 	if (newlen < 0 || (newlen >> FRACTION_BITS) > MAX_SAMPLE_SIZE)
 		return;
-	dest = newdata = (resample_t*)safe_malloc(newlen >> (FRACTION_BITS - 1));
+	dest = newdata = (sample_t*)safe_malloc(newlen >> (FRACTION_BITS - 1));
 
 	count = (newlen >> FRACTION_BITS) - 1;
 	ofs = incr = (sp->data_length - (1 << FRACTION_BITS)) / count;
@@ -571,12 +567,17 @@ void pre_resample(Sample* sp)
 	while (--count)
 	{
 		vptr = src + (ofs >> FRACTION_BITS);
-		v1 = *(vptr - 1);
+		/*
+		 * Electric Fence to the rescue: Accessing *(vptr - 1) is not a
+		 * good thing to do when vptr <= src. (TiMidity++ has a similar
+		 * safe-guard here.)
+		 */
+		v1 = (vptr == src) ? *vptr : *(vptr - 1);
 		v2 = *vptr;
 		v3 = *(vptr + 1);
 		v4 = *(vptr + 2);
 		xdiff = FSCALENEG(ofs & FRACTION_MASK, FRACTION_BITS);
-		*dest++ = (resample_t)(v2 + (xdiff / 6.0) * (-2 * v1 - 3 * v2 + 6 * v3 - v4 +
+		*dest++ = (sample_t)(v2 + (xdiff / 6.0) * (-2 * v1 - 3 * v2 + 6 * v3 - v4 +
 			xdiff * (3 * (v1 - 2 * v2 + v3) + xdiff * (-v1 + 3 * (v2 - v3) + v4))));
 		ofs += incr;
 	}
