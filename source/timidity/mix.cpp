@@ -35,10 +35,9 @@ int recompute_envelope(MidiSong* song, int v)
 {
 	int stage = song->voice[v].envelope_stage;
 
-	if (stage>5)
+	if (stage >= DELAY)
 	{
 		/* Envelope ran out. */
-		int tmp = (song->voice[v].status == VOICE_DIE); /* Already displayed as dead */
 		song->voice[v].status = VOICE_FREE;
 		return 1;
 	}
@@ -47,7 +46,7 @@ int recompute_envelope(MidiSong* song, int v)
 	{
 		if (song->voice[v].status == VOICE_ON || song->voice[v].status == VOICE_SUSTAINED)
 		{
-			if (stage > 2)
+			if (stage > DECAY)
 			{
 				/* Freeze envelope until note turns off. Trumpets want this. */
 				song->voice[v].envelope_increment = 0;
@@ -55,7 +54,7 @@ int recompute_envelope(MidiSong* song, int v)
 			}
 		}
 	}
-	song->voice[v].envelope_stage=stage+1;
+	song->voice[v].envelope_stage = stage + 1;
 
 	if (song->voice[v].envelope_volume == song->voice[v].sample->envelope_offset[stage])
 		return recompute_envelope(song, v);

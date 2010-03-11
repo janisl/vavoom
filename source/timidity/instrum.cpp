@@ -735,13 +735,13 @@ fail:
 					sp->modes |= MODES_LOOPING; /* just in case */
 				}
 
-#ifdef ADJUST_SAMPLE_VOLUMES
 				if (amp != -1)
 					sp->volume = (FLOAT_T)((amp) / 100.0);
 				else if (sf2flag)
 					sp->volume = (FLOAT_T)((sample_volume) / 255.0);
 				else
 				{
+#ifdef ADJUST_SAMPLE_VOLUMES
 					/* Try to determine a volume scaling factor for the sample.
 						This is a very crude adjustment, but things sound more
 						balanced with it. Still, this should be a runtime option. */
@@ -777,13 +777,10 @@ fail:
 						higher = 10000;
 					sp->volume = (32768.0 * 0.875) / (double)higher;
 					ctl->cmsg(CMSG_INFO, VERB_DEBUG, " * volume comp: %f", sp->volume);
-				}
 #else
-				if (amp != -1)
-					sp->volume = (double)(amp) / 100.0;
-				else
 					sp->volume = 1.0;
 #endif
+				}
 
 				sp->data_length /= 2; /* These are in bytes. Convert into samples. */
 

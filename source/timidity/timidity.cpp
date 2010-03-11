@@ -27,7 +27,7 @@
 namespace LibTimidity
 {
 
-int free_instruments_afterwards=0;
+int free_instruments_afterwards=1;
 char def_instr_name[256]="";
 
 ControlMode*	ctl;

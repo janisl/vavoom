@@ -55,7 +55,7 @@ static resample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 		le = vp->sample->data_length,
 		count = *countptr;
 
-	int32 i, j;
+	int32 i;
 
 	if (incr < 0)
 		incr = -incr; /* In case we're coming out of a bidir loop */
@@ -72,7 +72,7 @@ static resample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 	else
 		count -= i;
 
-	for (j = 0; j < i; j++)
+	while (i--) 
 	{
 		RESAMPLATION;
 		ofs += incr;
@@ -576,16 +576,14 @@ void pre_resample(Sample* sp)
 		v3 = *(vptr + 1);
 		v4 = *(vptr + 2);
 		xdiff = FSCALENEG(ofs & FRACTION_MASK, FRACTION_BITS);
-		*dest++ = (int16)(v2 + (xdiff / 6.0) * (-2 * v1 - 3 * v2 + 6 * v3 - v4 +
+		*dest++ = (resample_t)(v2 + (xdiff / 6.0) * (-2 * v1 - 3 * v2 + 6 * v3 - v4 +
 			xdiff * (3 * (v1 - 2 * v2 + v3) + xdiff * (-v1 + 3 * (v2 - v3) + v4))));
 		ofs += incr;
 	}
 
 	if (ofs & FRACTION_MASK)
 	{
-		v1 = src[ofs >> FRACTION_BITS];
-		v2 = src[(ofs >> FRACTION_BITS) + 1];
-		*dest++ = (resample_t)(v1 + (((v2 - v1) * (ofs & FRACTION_MASK)) >> FRACTION_BITS));
+		RESAMPLATION;
 	}
 	else
 		*dest++ = src[ofs >> FRACTION_BITS];

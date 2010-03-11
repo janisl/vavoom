@@ -136,20 +136,7 @@ void close_file(FILE* fp)
 /* This is meant for skipping a few bytes in a file or fifo. */
 void skip(FILE* fp, size_t len)
 {
-	char tmp[1024];
-	while (len > 0)
-	{
-		size_t c = len;
-		if (c > 1024)
-		{
-			c = 1024;
-		}
-		len -= c;
-		if (c != fread(tmp, 1, c, fp))
-		{
-			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: skip: %s", current_filename, strerror(errno));
-		}
-	}
+	fseek(fp, (long)len, SEEK_CUR);
 }
 
 /* This'll allocate memory or die. */

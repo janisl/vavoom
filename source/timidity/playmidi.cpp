@@ -969,25 +969,6 @@ static void note_on(MidiSong* song, MidiEvent* e)
 		return;
 	}
 
-#if 0
-  /* Look for the decaying note with the lowest volume */
-  i=song->voices;
-  while (i--)
-    {
-      if (song->voice[i].status & ~(VOICE_ON | VOICE_DIE | VOICE_FREE))
-	{
-	  v=song->voice[i].left_mix;
-	  if ((song->voice[i].panned==PANNED_MYSTERY) && (song->voice[i].right_mix>v))
-	    v=song->voice[i].right_mix;
-	  if (v<lv)
-	    {
-	      lv=v;
-	      lowest=i;
-	    }
-	}
-    }
-#endif
-
 	/* Look for the decaying note with the lowest volume */
 	if (lowest == -1)
 	{
@@ -1040,7 +1021,7 @@ static void finish_note(MidiSong* song, int i)
 	if (song->voice[i].sample->modes & MODES_ENVELOPE)
 	{
 		/* We need to get the envelope out of Sustain stage */
-		song->voice[i].envelope_stage = 3;
+		song->voice[i].envelope_stage = RELEASE;
 		song->voice[i].status = VOICE_OFF;
 		recompute_envelope(song, i);
 		apply_envelope_to_amp(song, i);
