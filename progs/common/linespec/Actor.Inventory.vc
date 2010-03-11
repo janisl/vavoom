@@ -218,7 +218,9 @@ final void A_SelectWeapon(class<Weapon> WeaponType)
 final void A_Recoil(float Force)
 {
 	TVec Dir;
-	AngleVector(&Angles, &Dir);
+	TAVec Ang = Angles;
+	Ang.yaw += 180.0;
+	AngleVector(&Ang, &Dir);
 	Velocity += Dir * Force * 35.0;
 }
 

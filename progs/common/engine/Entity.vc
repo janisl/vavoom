@@ -132,6 +132,9 @@ struct LightEffectDef
 	float				Radius2;
 	float				MinLight;
 	TVec				Offset;
+	float				Chance;
+	float				Interval;
+	float				Scale;
 };
 
 struct ParticleEffectDef

@@ -28,6 +28,7 @@ class DynamicLight : Actor;
 enum
 {
 	DLTYPE_Point,
+	DLTYPE_MuzzleFlash,
 	DLTYPE_Pulse,
 	DLTYPE_Flicker,
 	DLTYPE_FlickerRandom,

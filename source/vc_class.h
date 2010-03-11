@@ -37,12 +37,25 @@ enum EClassFlags
 };
 
 //
-// Flags describing an class instance.
+// Flags describing a class instance.
 //
 enum EClassObjectFlags
 {
 	CLASSOF_Native			= 0x00000001,   // Native
 	CLASSOF_PostLoaded		= 0x00000002,	// PostLoad has been called
+};
+
+//
+// Dynamic Light types
+//
+enum DLType
+{
+	DLTYPE_Point,
+	DLTYPE_MuzzleFlash,
+	DLTYPE_Pulse,
+	DLTYPE_Flicker,
+	DLTYPE_FlickerRandom,
+	DLTYPE_Sector,
 };
 
 //==========================================================================
@@ -150,6 +163,9 @@ struct VLightEffectDef
 	float				Radius2;
 	float				MinLight;
 	TVec				Offset;
+	float				Chance;
+	float				Interval;
+	float				Scale;
 };
 
 //==========================================================================

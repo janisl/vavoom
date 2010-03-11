@@ -63,32 +63,32 @@ struct VTempClassEffects
 //
 //	Main palette
 //
-rgba_t					r_palette[256];
-vuint8					r_black_colour;
+rgba_t								r_palette[256];
+vuint8								r_black_colour;
 
 extern "C" {
-vuint8					r_rgbtable[32 * 32 * 32 + 4];
+vuint8								r_rgbtable[32 * 32 * 32 + 4];
 };
 
 //	variables used to look up
 // and range check thing_t sprites patches
-spritedef_t				sprites[MAX_SPRITE_MODELS];
+spritedef_t							sprites[MAX_SPRITE_MODELS];
 
-VTextureTranslation**			TranslationTables;
-int								NumTranslationTables;
-VTextureTranslation				IceTranslation;
-TArray<VTextureTranslation*>	DecorateTranslations;
-TArray<VTextureTranslation*>	BloodTranslations;
+VTextureTranslation**				TranslationTables;
+int									NumTranslationTables;
+VTextureTranslation					IceTranslation;
+TArray<VTextureTranslation*>		DecorateTranslations;
+TArray<VTextureTranslation*>		BloodTranslations;
 
 //	They basicly work the same as translations.
-VTextureTranslation				ColourMaps[CM_Max];
+VTextureTranslation					ColourMaps[CM_Max];
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 //	Temporary variables for sprite installing
-static spriteframe_t	sprtemp[30];
-static int				maxframe;
-static const char*		spritename;
+static spriteframe_t				sprtemp[30];
+static int							maxframe;
+static const char*					spritename;
 
 static TArray<VLightEffectDef>		GLightEffectDefs;
 static TArray<VParticleEffectDef>	GParticleEffectDefs;
@@ -1101,6 +1101,9 @@ static void ParseLightDef(VScriptParser* sc, int LightType)
 	L->Radius2 = 0.0;
 	L->MinLight = 0.0;
 	L->Offset = TVec(0, 0, 0);
+	L->Chance = 0.0;
+	L->Interval = 0.0;
+	L->Scale = 0.0;
 
 	//	Parse light def.
 	sc->Expect("{");
@@ -1201,6 +1204,9 @@ static void ParseGZLightDef(VScriptParser* sc, int LightType)
 	L->Radius2 = 0.0;
 	L->MinLight = 0.0;
 	L->Offset = TVec(0, 0, 0);
+	L->Chance = 0.0;
+	L->Interval = 0.0;
+	L->Scale = 0.0;
 
 	//	Parse light def.
 	sc->Expect("{");
@@ -1229,12 +1235,13 @@ static void ParseGZLightDef(VScriptParser* sc, int LightType)
 		}
 		else if (sc->Check("offset"))
 		{
+			// GZDoom manages Z offset as Y offset...
 			sc->ExpectNumber();
 			L->Offset.x = float(sc->Number);
 			sc->ExpectNumber();
-			L->Offset.y = float(sc->Number);
-			sc->ExpectNumber();
 			L->Offset.z = float(sc->Number);
+			sc->ExpectNumber();
+			L->Offset.y = float(sc->Number);
 		}
 		else if (sc->Check("subtractive"))
 		{
@@ -1244,17 +1251,17 @@ static void ParseGZLightDef(VScriptParser* sc, int LightType)
 		else if (sc->Check("chance"))
 		{
 			sc->ExpectFloat();
-			sc->Message("Chance parameter not implemented.");
+			L->Chance = sc->Float;
 		}
 		else if (sc->Check("scale"))
 		{
 			sc->ExpectFloat();
-			sc->Message("Scale parameter not supported.");
+			L->Scale = sc->Float;
 		}
 		else if (sc->Check("interval"))
 		{
 			sc->ExpectFloat();
-			sc->Message("Interval parameter not supported.");
+			L->Interval = sc->Float;
 		}
 		else if (sc->Check("additive"))
 		{
@@ -1273,7 +1280,7 @@ static void ParseGZLightDef(VScriptParser* sc, int LightType)
 		}
 		else
 		{
-			sc->Error(va("Bad point light parameter %s", sc->String));
+			sc->Error("Bad point light parameter");
 		}
 	}
 	unguard;
@@ -1550,11 +1557,11 @@ static void ParseEffectDefs(VScriptParser* sc,
 		}
 		else if (sc->Check("pointlight"))
 		{
-			ParseLightDef(sc, 0);
+			ParseLightDef(sc, DLTYPE_Point);
 		}
 		else if (sc->Check("muzzleflashlight"))
 		{
-			ParseLightDef(sc, 1);
+			ParseLightDef(sc, DLTYPE_MuzzleFlash);
 		}
 		else if (sc->Check("particleeffect"))
 		{
@@ -1608,14 +1615,25 @@ static void ParseGZDoomEffectDefs(VScriptParser* sc,
 				W_CreateLumpReaderNum(Lump)), ClassDefs);
 			continue;
 		}
-		else if (sc->Check("pointlight") || sc->Check("pulselight") ||
-				sc->Check("sectorlight"))
+		else if (sc->Check("pointlight"))
 		{
-			ParseGZLightDef(sc, 0);
+			ParseGZLightDef(sc, DLTYPE_Point);
 		}
-		else if ( sc->Check("flickerlight") || sc->Check("flickerlight2"))
+		else if (sc->Check("pulselight"))
 		{
-			ParseGZLightDef(sc, 1);
+			ParseGZLightDef(sc, DLTYPE_Pulse);
+		}
+		else if (sc->Check("flickerlight"))
+		{
+			ParseGZLightDef(sc, DLTYPE_Flicker);
+		}
+		else if (sc->Check("flickerlight2"))
+		{
+			ParseGZLightDef(sc, DLTYPE_FlickerRandom);
+		}
+		else if (sc->Check("sectorlight"))
+		{
+			ParseGZLightDef(sc, DLTYPE_Sector);
 		}
 		else if (sc->Check("object"))
 		{
