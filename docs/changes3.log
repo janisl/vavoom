@@ -4034,3 +4034,7 @@
 08.03.2010
   I started to update Timidity to the version that's included in SDL_sound
  library.
+11.03.2010
+  Firebrand added full support for parsing of GLDEFS light variants.
+  Firebrand fixed A_Recoil method logic.
+  Firebrand added options to use timidity for music playback and setting the patches directory to the launcher.
