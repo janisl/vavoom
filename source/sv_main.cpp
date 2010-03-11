@@ -82,7 +82,7 @@ static bool		mapteleport_issued;
 
 static VCvarI	TimeLimit("TimeLimit", "0");
 static VCvarI	DeathMatch("DeathMatch", "0", CVAR_ServerInfo);
-static VCvarI  	NoMonsters("NoMonsters", "0");
+static VCvarI	NoMonsters("NoMonsters", "0");
 static VCvarI	Skill("Skill", "2");
 static VCvarI	sv_cheats("sv_cheats", "0", CVAR_ServerInfo | CVAR_Latch);
 static VCvarI	split_frame("split_frame", "1", CVAR_Archive);
