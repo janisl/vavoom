@@ -59,22 +59,20 @@ static void free_instrument(Instrument* ip)
 		return;
 	}
 
-	if (!ip->contents)
-		for (int i = 0; i < ip->samples; i++)
-		{
-			Sample* sp = &(ip->sample[i]);
-			if (sp->data)
-				free(sp->data);
-		}
+	for (int i = 0; i < ip->samples; i++)
+	{
+		Sample* sp = &(ip->sample[i]);
+		if (sp->data)
+			free(sp->data);
+	}
 	free(ip->sample);
 
-	if (!ip->contents)
-		for (int i = 0; i < ip->right_samples; i++)
-		{
-			Sample* sp = &(ip->right_sample[i]);
-			if (sp->data)
-				free(sp->data);
-		}
+	for (int i = 0; i < ip->right_samples; i++)
+	{
+		Sample* sp = &(ip->right_sample[i]);
+		if (sp->data)
+			free(sp->data);
+	}
 	if (ip->right_sample)
 		free(ip->right_sample);
 	free(ip);
@@ -400,7 +398,6 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 		}
 		else
 			ip->right_sample = 0;
-		ip->contents = 0;
 
 		ctl->cmsg(CMSG_INFO, VERB_NOISY, "%s%s[%d,%d] %s(%d-%d layer %d of %d)",
 			(percussion)? "   ":"", name,
@@ -502,15 +499,7 @@ fail:
 				else
 					sp->panning = (uint8)(panning & 0x7F);
 
-				sp->resonance = 0;
-				sp->cutoff_freq = 0;
-				sp->reverberation = 0;
-				sp->chorusdepth = 0;
 				sp->exclusiveClass = 0;
-				sp->keyToModEnvHold = 0;
-				sp->keyToModEnvDecay = 0;
-				sp->keyToVolEnvHold = 0;
-				sp->keyToVolEnvDecay = 0;
 
 				if (cfg_tuning)
 				{
@@ -559,8 +548,7 @@ fail:
 				}
 
 				READ_CHAR(sp->modes);
-				READ_SHORT(sp->freq_centre);
-				READ_SHORT(sp->freq_scale);
+				skip(fp, 4);
 
 				if (sf2flag)
 				{
@@ -635,9 +623,7 @@ fail:
 					}
 				}
 
-				sp->attenuation = 0;
-
-				for (j=ATTACK; j<DELAY; j++)
+				for (j = ATTACK; j < DELAY; j++)
 				{
 					sp->envelope_rate[j] =
 						(j < 3) ? convert_envelope_rate_attack(song, tmp[j], 11) : convert_envelope_rate(song, tmp[j]);
@@ -658,15 +644,9 @@ fail:
 
 				for (j = ATTACK; j < DELAY; j++)
 				{
-					sp->modulation_rate[j] = sp->envelope_rate[j];
 					sp->modulation_offset[j] = sp->envelope_offset[j];
 				}
-				sp->modulation_rate[DELAY] = sp->modulation_offset[DELAY] = 0;
-				sp->modEnvToFilterFc = 0;
-				sp->modEnvToPitch = 0;
-				sp->lfo_sweep_increment = 0;
-				sp->lfo_phase_increment = 0;
-				sp->modLfoToFilterFc = 0;
+				sp->modulation_offset[DELAY] = 0;
 
 				/* Then read the sample data */
 				if (sp->data_length / 2 > MAX_SAMPLE_SIZE)

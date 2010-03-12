@@ -548,7 +548,6 @@ static void clone_voice(MidiSong* song, Instrument* ip, int v, MidiEvent* e, int
 		if (!song->voice[w].vibrato_control_ratio)
 		{
 			song->voice[w].vibrato_control_ratio = 100;
-			song->voice[w].vibrato_depth = 6;
 			song->voice[w].vibrato_sweep = 74;
 		}
 		song->voice[w].volume *= 0.40;
@@ -556,15 +555,11 @@ static void clone_voice(MidiSong* song, Instrument* ip, int v, MidiEvent* e, int
 		recompute_amp(song, v);
 		apply_envelope_to_amp(song, v);
 		song->voice[w].vibrato_sweep = chorus/2;
-		song->voice[w].vibrato_depth /= 2;
-		if (!song->voice[w].vibrato_depth)
-			song->voice[w].vibrato_depth = 2;
 		song->voice[w].vibrato_control_ratio /= 2;
 		song->voice[w].echo_delay += 30 * milli;
 
 		if (XG_System_chorus_type >= 0)
 		{
-			int subtype = XG_System_chorus_type & 0x07;
 			int chtype = 0x0f & (XG_System_chorus_type >> 3);
 			switch (chtype)
 			{
@@ -578,15 +573,12 @@ static void clone_voice(MidiSong* song, Instrument* ip, int v, MidiEvent* e, int
 				else
 					song->voice[w].orig_frequency =
 						(uint32)( (FLOAT_T)song->voice[w].orig_frequency / bend_fine[chorus] );
-				if (subtype)
-					song->voice[w].vibrato_depth *= 2;
 				break;
 			case 2: /* celeste */
 				song->voice[w].orig_frequency += (song->voice[w].orig_frequency / 128) * chorus;
 				break;
 			case 3: /* flanger */
 				song->voice[w].vibrato_control_ratio = 10;
-				song->voice[w].vibrato_depth = 100;
 				song->voice[w].vibrato_sweep = 8;
 				song->voice[w].echo_delay += 200 * milli;
 				break;
@@ -622,18 +614,14 @@ static void clone_voice(MidiSong* song, Instrument* ip, int v, MidiEvent* e, int
 	{
 		/* Ramp up from 0 */
 		song->voice[w].envelope_stage = ATTACK;
-		song->voice[w].modulation_stage = ATTACK;
 		song->voice[w].envelope_volume = 0;
-		song->voice[w].modulation_volume = 0;
 		song->voice[w].control_counter = 0;
-		song->voice[w].modulation_counter = 0;
 		recompute_envelope(song, w);
 		/*recompute_modulation(w);*/
 	}
 	else
 	{
 		song->voice[w].envelope_increment = 0;
-		song->voice[w].modulation_increment = 0;
 	}
 	apply_envelope_to_amp(song, w);
 }
@@ -772,7 +760,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 
 	song->voice[i].vibrato_sweep = song->voice[i].sample->vibrato_sweep_increment;
 	song->voice[i].vibrato_sweep_position = 0;
-	song->voice[i].vibrato_depth = song->voice[i].sample->vibrato_depth;
 	song->voice[i].vibrato_control_ratio = song->voice[i].sample->vibrato_control_ratio;
 	song->voice[i].vibrato_control_counter = song->voice[i].vibrato_phase=0;
 
@@ -810,28 +797,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	case 20:
 		harmoniccontent = 64+16;
 		break;
-#if 0
-	case 24:
-		song->voice[i].modEnvToFilterFc=2.0;
-      		song->voice[i].sample->cutoff_freq = 800;
-		break;
-	case 25:
-		song->voice[i].modEnvToFilterFc=-2.0;
-      		song->voice[i].sample->cutoff_freq = 800;
-		break;
-	case 27:
-		song->voice[i].modLfoToFilterFc=2.0;
-		song->voice[i].lfo_phase_increment=109;
-		song->voice[i].lfo_sweep=122;
-      		song->voice[i].sample->cutoff_freq = 800;
-		break;
-	case 28:
-		song->voice[i].modLfoToFilterFc=-2.0;
-		song->voice[i].lfo_phase_increment=109;
-		song->voice[i].lfo_sweep=122;
-      		song->voice[i].sample->cutoff_freq = 800;
-		break;
-#endif
 	default:
 		break;
 	}
@@ -840,7 +805,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	for (j = ATTACK; j < MAXPOINT; j++)
 	{
 		song->voice[i].envelope_rate[j] = song->voice[i].sample->envelope_rate[j];
-		song->voice[i].envelope_offset[j] = song->voice[i].sample->envelope_offset[j];
 	}
 
 	song->voice[i].echo_delay = song->voice[i].envelope_rate[DELAY];

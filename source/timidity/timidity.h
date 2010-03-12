@@ -368,24 +368,16 @@ struct Sample
 {
 	int32		loop_start, loop_end, data_length,
 				sample_rate, low_vel, high_vel, low_freq, high_freq, root_freq;
-	uint8		root_tune, fine_tune;
 	int32		envelope_rate[7], envelope_offset[7],
-				modulation_rate[7], modulation_offset[7];
-	FLOAT_T		volume, resonance,
-				modEnvToFilterFc, modEnvToPitch, modLfoToFilterFc;
+				modulation_offset[7];
+	FLOAT_T		volume;
 	sample_t*	data;
 	int32 		tremolo_sweep_increment, tremolo_phase_increment, 
-				lfo_sweep_increment, lfo_phase_increment,
-				vibrato_sweep_increment, vibrato_control_ratio,
-				cutoff_freq;
-	uint8		reverberation, chorusdepth,
-				tremolo_depth, vibrato_depth,
+				vibrato_sweep_increment, vibrato_control_ratio;
+	uint8		tremolo_depth, vibrato_depth,
 				modes;
-	uint8		attenuation, freq_centre;
+	uint8		freq_centre;
 	int8		panning, note_to_use, exclusiveClass;
-	int16		keyToModEnvHold, keyToModEnvDecay,
-				keyToVolEnvHold, keyToVolEnvDecay;
-	int32		freq_scale;
 };
 
 struct Instrument
@@ -397,7 +389,6 @@ struct Instrument
 	Sample*			left_sample;
 	int				right_samples;
 	Sample*			right_sample;
-	unsigned char*	contents;
 };
 
 struct InstrumentLayer
@@ -448,23 +439,16 @@ struct Voice
 	int32 clone_voice;
 	int32
 		orig_frequency, frequency,
-		sample_offset, loop_start, loop_end;
+		sample_offset, sample_increment;
 	int32
-		envelope_volume, modulation_volume;
+		envelope_volume, envelope_target, envelope_increment;
 	int32
-		envelope_target, modulation_target;
-	int32
-		tremolo_sweep, tremolo_sweep_position, tremolo_phase,
-		lfo_sweep, lfo_sweep_position, lfo_phase,
-		vibrato_sweep, vibrato_sweep_position, vibrato_depth,
+		tremolo_sweep, tremolo_sweep_position,
+		tremolo_phase, tremolo_phase_increment,
+		vibrato_sweep, vibrato_sweep_position,
 		echo_delay_count;
 	int32
-		echo_delay,
-		sample_increment,
-		envelope_increment,
-		modulation_increment,
-		tremolo_phase_increment,
-		lfo_phase_increment;
+		echo_delay;
 
 	final_volume_t left_mix, right_mix;
 
@@ -473,11 +457,10 @@ struct Voice
 	int32
 		vibrato_sample_increment[VIBRATO_SAMPLE_INCREMENTS];
 	int32
-		envelope_rate[MAXPOINT], envelope_offset[MAXPOINT];
+		envelope_rate[MAXPOINT];
 	int32
 		vibrato_phase, vibrato_control_ratio, vibrato_control_counter,
-		envelope_stage, modulation_stage, control_counter,
-		modulation_delay, modulation_counter, panning, panned;
+		envelope_stage, control_counter, panning, panned;
 };
 
 struct MidiEvent
