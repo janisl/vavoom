@@ -312,12 +312,8 @@ static void recompute_amp(MidiSong* song, int v)
 		FLOAT_T refv = (double)(tempamp) * song->voice[v].sample->volume * song->master_volume;
 
 		song->voice[v].panned = PANNED_MYSTERY;
-		song->voice[v].lfe_amp = FSCALENEG(refv * 64, 27);
-		song->voice[v].lr_amp = 0;
 		song->voice[v].left_amp = FSCALENEG(refv * (128-panning), 27);
-		song->voice[v].ce_amp = 0;
 		song->voice[v].right_amp = FSCALENEG(refv * panning, 27);
-		song->voice[v].rr_amp = 0;
 	}
 }
 
@@ -758,7 +754,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 
 	select_stereo_samples(song, i, lp);
 
-	song->voice[i].starttime = e->time;
 	played_note = song->voice[i].sample->note_to_use;
 	
 	if (!played_note || !drumsflag)
@@ -780,7 +775,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	song->voice[i].vibrato_depth = song->voice[i].sample->vibrato_depth;
 	song->voice[i].vibrato_control_ratio = song->voice[i].sample->vibrato_control_ratio;
 	song->voice[i].vibrato_control_counter = song->voice[i].vibrato_phase=0;
-	song->voice[i].vibrato_delay = song->voice[i].sample->vibrato_delay;
 
 	kill_others(song, i);
 

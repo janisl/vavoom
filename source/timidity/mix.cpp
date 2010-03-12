@@ -67,63 +67,34 @@ int recompute_envelope(MidiSong* song, int v)
 
 void apply_envelope_to_amp(MidiSong* song, int v)
 {
-	FLOAT_T lamp=song->voice[v].left_amp, ramp, lramp, rramp, ceamp, lfeamp;
-	int32 la,ra, lra, rra, cea, lfea;
+	FLOAT_T lamp = song->voice[v].left_amp, ramp;
+	int32 la, ra;
 	if (song->voice[v].panned == PANNED_MYSTERY)
 	{
-		lramp=song->voice[v].lr_amp;
-		ramp=song->voice[v].right_amp;
-		ceamp=song->voice[v].ce_amp;
-		rramp=song->voice[v].rr_amp;
-		lfeamp=song->voice[v].lfe_amp;
-
+		ramp = song->voice[v].right_amp;
 		if (song->voice[v].tremolo_phase_increment)
 		{
 			FLOAT_T tv = song->voice[v].tremolo_volume;
-			lramp *= tv;
 			lamp *= tv;
-			ceamp *= tv;
 			ramp *= tv;
-			rramp *= tv;
-			lfeamp *= tv;
 		}
 		if (song->voice[v].sample->modes & MODES_ENVELOPE)
 		{
 			FLOAT_T ev = (FLOAT_T)vol_table[song->voice[v].envelope_volume >> 23];
-			lramp *= ev;
 			lamp *= ev;
-			ceamp *= ev;
 			ramp *= ev;
-			rramp *= ev;
-			lfeamp *= ev;
 		}
 
 		la = (int32)FSCALE(lamp,AMP_BITS);
 		ra = (int32)FSCALE(ramp,AMP_BITS);
-		lra = (int32)FSCALE(lramp,AMP_BITS);
-		rra = (int32)FSCALE(rramp,AMP_BITS);
-		cea = (int32)FSCALE(ceamp,AMP_BITS);
-		lfea = (int32)FSCALE(lfeamp,AMP_BITS);
 
 		if (la > MAX_AMP_VALUE)
 			la = MAX_AMP_VALUE;
 		if (ra > MAX_AMP_VALUE)
 			ra = MAX_AMP_VALUE;
-		if (lra > MAX_AMP_VALUE)
-			lra = MAX_AMP_VALUE;
-		if (rra > MAX_AMP_VALUE)
-			rra = MAX_AMP_VALUE;
-		if (cea > MAX_AMP_VALUE)
-			cea = MAX_AMP_VALUE;
-		if (lfea > MAX_AMP_VALUE)
-			lfea = MAX_AMP_VALUE;
 
-		song->voice[v].lr_mix=FINAL_VOLUME(lra);
-		song->voice[v].left_mix=FINAL_VOLUME(la);
-		song->voice[v].ce_mix=FINAL_VOLUME(cea);
-		song->voice[v].right_mix=FINAL_VOLUME(ra);
-		song->voice[v].rr_mix=FINAL_VOLUME(rra);
-		song->voice[v].lfe_mix=FINAL_VOLUME(lfea);
+		song->voice[v].left_mix = FINAL_VOLUME(la);
+		song->voice[v].right_mix = FINAL_VOLUME(ra);
 	}
 	else
 	{
@@ -206,12 +177,8 @@ static void mix_mystery_signal(MidiSong* song, sample_t* sp, int32* lp, int v, i
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
-		left_rear = vp->lr_mix, 
 		left = vp->left_mix, 
-		centre = vp->ce_mix, 
-		right = vp->right_mix, 
-		right_rear = vp->rr_mix, 
-		lfe = vp->lfe_mix;
+		right = vp->right_mix;
 	int cc;
 	sample_t s;
 
@@ -221,12 +188,8 @@ static void mix_mystery_signal(MidiSong* song, sample_t* sp, int32* lp, int v, i
 		if (update_signal(song, v))
 			return;	/* Envelope ran out */
 
-		left_rear = vp->lr_mix;
 		left = vp->left_mix;
-		centre = vp->ce_mix;
 		right = vp->right_mix;
-		right_rear = vp->rr_mix;
-		lfe = vp->lfe_mix;
 	}
 
 	while (count)
@@ -242,12 +205,8 @@ static void mix_mystery_signal(MidiSong* song, sample_t* sp, int32* lp, int v, i
 			cc = song->control_ratio;
 			if (update_signal(song, v))
 				return;	/* Envelope ran out */
-			left_rear = vp->lr_mix;
 			left = vp->left_mix;
-			centre = vp->ce_mix;
 			right = vp->right_mix;
-			right_rear = vp->rr_mix;
-			lfe = vp->lfe_mix;
 		}
 		else
 		{
@@ -396,12 +355,8 @@ static void mix_single_right_signal(MidiSong* song, sample_t* sp, int32* lp, int
 static void mix_mystery(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t 
-		left_rear = song->voice[v].lr_mix, 
 		left = song->voice[v].left_mix, 
-		centre = song->voice[v].ce_mix, 
-		right = song->voice[v].right_mix, 
-		right_rear = song->voice[v].rr_mix, 
-		lfe = song->voice[v].lfe_mix;
+		right = song->voice[v].right_mix;
 	sample_t s;
 
 	while (count--)
@@ -456,7 +411,7 @@ static void mix_single_right(MidiSong* song, sample_t* sp, int32* lp, int v, int
 static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 {
 	/* should be final_volume_t, but uint8 gives trouble. */
-	int32 left_rear, left, centre, right, right_rear, lfe, li, ri;
+	int32 left, right, li, ri;
 
 	sample_t s = 0; /* silly warning about uninitialised s */
 
@@ -475,33 +430,16 @@ static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 
 	if (song->voice[v].panned == PANNED_MYSTERY)
 	{
-		left_rear = song->voice[v].lr_mix;
-		centre=song->voice[v].ce_mix;
 		right=song->voice[v].right_mix;
-		right_rear = song->voice[v].rr_mix;
-		lfe = song->voice[v].lfe_mix;
-
 		ri = -(right / c);
 		while (c--)
 		{
-			left_rear += li;
-			if (left_rear < 0)
-				left_rear=0;
 			left += li;
 			if (left < 0)
 				left = 0;
-			centre += li;
-			if (centre < 0)
-				centre = 0;
 			right += ri;
 			if (right < 0)
 				right = 0;
-			right_rear += ri;
-			if (right_rear < 0)
-				right_rear = 0;
-			lfe += li;
-			if (lfe < 0)
-				lfe = 0;
 			s = *sp++;
 			MIXATION(left);
 			MIXATION(right);

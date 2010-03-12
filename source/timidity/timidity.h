@@ -383,9 +383,9 @@ struct Sample
 				modes;
 	uint8		attenuation, freq_centre;
 	int8		panning, note_to_use, exclusiveClass;
-	int16		scale_tuning, keyToModEnvHold, keyToModEnvDecay,
+	int16		keyToModEnvHold, keyToModEnvDecay,
 				keyToVolEnvHold, keyToVolEnvDecay;
-	int32		freq_scale, vibrato_delay;
+	int32		freq_scale;
 };
 
 struct Instrument
@@ -456,8 +456,8 @@ struct Voice
 	int32
 		tremolo_sweep, tremolo_sweep_position, tremolo_phase,
 		lfo_sweep, lfo_sweep_position, lfo_phase,
-		vibrato_sweep, vibrato_sweep_position, vibrato_depth, vibrato_delay,
-		starttime, echo_delay_count;
+		vibrato_sweep, vibrato_sweep_position, vibrato_depth,
+		echo_delay_count;
 	int32
 		echo_delay,
 		sample_increment,
@@ -466,11 +466,10 @@ struct Voice
 		tremolo_phase_increment,
 		lfo_phase_increment;
 
-	final_volume_t left_mix, right_mix, lr_mix, rr_mix, ce_mix, lfe_mix;
+	final_volume_t left_mix, right_mix;
 
 	FLOAT_T
-		left_amp, right_amp, lr_amp, rr_amp, ce_amp, lfe_amp,
-		volume, tremolo_volume, lfo_volume;
+		left_amp, right_amp, volume, tremolo_volume;
 	int32
 		vibrato_sample_increment[VIBRATO_SAMPLE_INCREMENTS];
 	int32

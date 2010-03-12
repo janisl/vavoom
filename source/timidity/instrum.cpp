@@ -667,7 +667,6 @@ fail:
 				sp->lfo_sweep_increment = 0;
 				sp->lfo_phase_increment = 0;
 				sp->modLfoToFilterFc = 0;
-				sp->vibrato_delay = 0;
 
 				/* Then read the sample data */
 				if (sp->data_length / 2 > MAX_SAMPLE_SIZE)
