@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="timidity"
 	ProjectGUID="{A5E43684-5BC7-4DEE-965B-F2E20C360793}"
 	RootNamespace="timidity"
@@ -178,6 +178,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\timidity\instrum_dls.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\timidity\mix.cpp"
 				>
 			</File>
@@ -206,6 +210,14 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
+			<File
+				RelativePath="..\source\timidity\dls1.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\timidity\dls2.h"
+				>
+			</File>
 			<File
 				RelativePath="..\source\timidity\timidity.h"
 				>
