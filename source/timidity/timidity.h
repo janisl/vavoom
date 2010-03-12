@@ -367,7 +367,7 @@ struct PathList
 struct Sample
 {
 	int32		loop_start, loop_end, data_length,
-				sample_rate, low_freq, high_freq, root_freq;
+				sample_rate, low_vel, high_vel, low_freq, high_freq, root_freq;
 	uint8		root_tune, fine_tune;
 	int32		envelope_rate[7], envelope_offset[7],
 				modulation_rate[7], modulation_offset[7];
@@ -493,6 +493,8 @@ struct MidiEventList
 	MidiEventList*	next;
 };
 
+struct DLS_Data;
+
 struct MidiSong
 {
 	int					playing;
@@ -500,6 +502,7 @@ struct MidiSong
 	uint32				image_left;
 	FLOAT_T				master_volume;
 	int32				amplification;
+	DLS_Data*			patches;
 	ToneBank*			tonebank[MAXBANK];
 	ToneBank*			drumset[MAXBANK];
 	/* This is a special instrument, used for all melodic programs */
@@ -540,6 +543,10 @@ extern void *safe_malloc(size_t count);
 extern int load_missing_instruments(MidiSong* song);
 extern void free_instruments(MidiSong* song);
 extern int set_default_instrument(MidiSong* song, const char *name);
+
+extern DLS_Data *Timidity_LoadDLS(FILE *src);
+extern void Timidity_FreeDLS(DLS_Data *patches);
+extern Instrument *load_instrument_dls(MidiSong *song, int drum, int bank, int instrument);
 
 extern int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio);
 extern int32 convert_vibrato_rate(uint8 rate);
