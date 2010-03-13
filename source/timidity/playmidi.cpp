@@ -32,8 +32,6 @@ namespace LibTimidity
 
 signed char drumvolume[MAXCHAN][MAXNOTE];
 signed char drumpanpot[MAXCHAN][MAXNOTE];
-signed char drumreverberation[MAXCHAN][MAXNOTE];
-signed char drumchorusdepth[MAXCHAN][MAXNOTE];
 
 int XG_System_On=0;
 int XG_System_reverb_type;
@@ -68,9 +66,6 @@ static void reset_controllers(MidiSong* song, int c)
 	song->channel[c].sustain = 0;
 	song->channel[c].pitchbend = 0x2000;
 	song->channel[c].pitchfactor = 0; /* to be computed */
-
-	song->channel[c].reverberation = 0;
-	song->channel[c].chorusdepth = 0;
 }
 
 static void reset_midi(MidiSong* song)
@@ -83,10 +78,8 @@ static void reset_midi(MidiSong* song)
 		song->channel[i].panning = NO_PANNING;
 		song->channel[i].pitchsens = 2;
 		song->channel[i].bank = 0; /* tone bank or drum set */
-		song->channel[i].harmoniccontent = 64,
 		song->channel[i].releasetime = 64,
 		song->channel[i].attacktime = 64,
-		song->channel[i].brightness = 64,
 		song->channel[i].sfx = 0;
 	}
 	reset_voices(song);
@@ -167,15 +160,6 @@ static void select_stereo_samples(MidiSong* song, int v, InstrumentLayer* lp)
 	}
 	ip = bestvel->instrument;
 
-	if (ip->right_sample)
-	{
-		ip->sample = ip->right_sample;
-		ip->samples = ip->right_samples;
-		select_sample(song, v, ip);
-		song->voice[v].right_sample = song->voice[v].sample;
-	}
-	else
-		song->voice[v].right_sample = 0;
 	ip->sample = ip->left_sample;
 	ip->samples = ip->left_samples;
 	select_sample(song, v, ip);
@@ -318,12 +302,6 @@ static void recompute_amp(MidiSong* song, int v)
 }
 
 
-#define NOT_CLONE 0
-#define STEREO_CLONE 1
-#define REVERB_CLONE 2
-#define CHORUS_CLONE 3
-
-
 static void kill_note(MidiSong* song, int i);
 
 static void kill_others(MidiSong* song, int i)
@@ -408,8 +386,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	int played_note, drumpan=NO_PANNING;
 	int32 rt;
 	int attacktime, releasetime, decaytime, variationbank;
-	int brightness = song->channel[ch].brightness;
-	int harmoniccontent = song->channel[ch].harmoniccontent;
 	int this_note = e->a;
 	int this_velocity = e->b;
 	int drumsflag = song->channel[ch].kit;
@@ -506,21 +482,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	case 12:
 		decaytime = 64-32;
 		break;
-	case 16:
-		brightness = 64+16;
-		break;
-	case 17:
-		brightness = 64+32;
-		break;
-	case 18:
-		brightness = 64-16;
-		break;
-	case 19:
-		brightness = 64-32;
-		break;
-	case 20:
-		harmoniccontent = 64+16;
-		break;
 	default:
 		break;
 	}
@@ -531,8 +492,7 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 		song->voice[i].envelope_rate[j] = song->voice[i].sample->envelope_rate[j];
 	}
 
-	song->voice[i].echo_delay = song->voice[i].envelope_rate[DELAY];
-	song->voice[i].echo_delay_count = song->voice[i].echo_delay;
+	song->voice[i].echo_delay_count = song->voice[i].envelope_rate[DELAY];
 
 	if (attacktime!=64)
 	{
@@ -612,8 +572,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 		song->voice[i].envelope_increment = 0;
 	}
 	apply_envelope_to_amp(song, i);
-
-	song->voice[i].clone_type = NOT_CLONE;
 }
 
 static void kill_note(MidiSong* song, int i)
@@ -650,8 +608,7 @@ static void note_on(MidiSong* song, MidiEvent* e)
 		i = song->voices;
 		while (i--)
 		{
-			if ((song->voice[i].status & ~(VOICE_ON | VOICE_DIE | VOICE_FREE)) &&
-				(!song->voice[i].clone_type))
+			if (song->voice[i].status & ~(VOICE_ON | VOICE_DIE | VOICE_FREE))
 			{
 				v = song->voice[i].left_mix;
 				if ((song->voice[i].panned == PANNED_MYSTERY) && (song->voice[i].right_mix > v))
@@ -843,28 +800,12 @@ static void seek_forward(MidiSong* song, int32 until_time)
 			break;
 
 
-		case ME_REVERBERATION:
-			song->channel[song->current_event->channel].reverberation = song->current_event->a;
-			break;
-
-		case ME_CHORUSDEPTH:
-			song->channel[song->current_event->channel].chorusdepth = song->current_event->a;
-			break;
-
-		case ME_HARMONICCONTENT:
-			song->channel[song->current_event->channel].harmoniccontent = song->current_event->a;
-			break;
-
 		case ME_RELEASETIME:
 			song->channel[song->current_event->channel].releasetime = song->current_event->a;
 			break;
 
 		case ME_ATTACKTIME:
 			song->channel[song->current_event->channel].attacktime = song->current_event->a;
-			break;
-
-		case ME_BRIGHTNESS:
-			song->channel[song->current_event->channel].brightness = song->current_event->a;
 			break;
 
 		case ME_TONE_KIT:
@@ -1019,14 +960,6 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				adjust_master_volume(song, song->current_event->a + (song->current_event->b <<7));
 				break;
 
-			case ME_REVERBERATION:
-				song->channel[song->current_event->channel].reverberation=song->current_event->a;
-				break;
-
-			case ME_CHORUSDEPTH:
-				song->channel[song->current_event->channel].chorusdepth=song->current_event->a;
-				break;
-
 			case ME_PAN:
 				song->channel[song->current_event->channel].panning=song->current_event->a;
 				break;
@@ -1067,20 +1000,12 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				all_sounds_off(song, song->current_event->channel);
 				break;
 
-			case ME_HARMONICCONTENT:
-				song->channel[song->current_event->channel].harmoniccontent=song->current_event->a;
-				break;
-
 			case ME_RELEASETIME:
 				song->channel[song->current_event->channel].releasetime=song->current_event->a;
 				break;
 
 			case ME_ATTACKTIME:
 				song->channel[song->current_event->channel].attacktime=song->current_event->a;
-				break;
-
-			case ME_BRIGHTNESS:
-				song->channel[song->current_event->channel].brightness=song->current_event->a;
 				break;
 
 			case ME_TONE_BANK:

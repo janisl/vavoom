@@ -261,13 +261,8 @@ namespace LibTimidity
 #define ME_MASTERVOLUME			18
 #define ME_CHANNEL_PRESSURE		19
 
-#define ME_HARMONICCONTENT		71
 #define ME_RELEASETIME			72
 #define ME_ATTACKTIME			73
-#define ME_BRIGHTNESS			74
-
-#define ME_REVERBERATION		91
-#define ME_CHORUSDEPTH			93
 
 #define ME_EOT					99
 
@@ -369,8 +364,7 @@ struct Sample
 {
 	int32		loop_start, loop_end, data_length,
 				sample_rate, low_vel, high_vel, low_freq, high_freq, root_freq;
-	int32		envelope_rate[7], envelope_offset[7],
-				modulation_offset[7];
+	int32		envelope_rate[7], envelope_offset[6];
 	FLOAT_T		volume;
 	sample_t*	data;
 	int32 		tremolo_sweep_increment, tremolo_phase_increment, 
@@ -419,8 +413,7 @@ struct Channel
 		bank, program, volume, sustain, panning, pitchbend, expression, 
 		mono, /* one note only on this channel -- not implemented yet */
 		/* new stuff */
-		variationbank, reverberation, chorusdepth, harmoniccontent,
-		releasetime, attacktime, brightness, kit, sfx,
+		variationbank, releasetime, attacktime, kit, sfx,
 		/* end new */
 		pitchsens;
 	FLOAT_T
@@ -432,10 +425,8 @@ struct Channel
 struct Voice
 {
 	uint8
-		status, channel, note, velocity, clone_type;
+		status, channel, note, velocity;
 	Sample* sample;
-	Sample* left_sample;
-	Sample* right_sample;
 	int32
 		orig_frequency, frequency,
 		sample_offset, sample_increment;
@@ -446,13 +437,11 @@ struct Voice
 		tremolo_phase, tremolo_phase_increment,
 		vibrato_sweep, vibrato_sweep_position,
 		echo_delay_count;
-	int32
-		echo_delay;
 
 	final_volume_t left_mix, right_mix;
 
 	FLOAT_T
-		left_amp, right_amp, volume, tremolo_volume;
+		left_amp, right_amp, tremolo_volume;
 	int32
 		vibrato_sample_increment[VIBRATO_SAMPLE_INCREMENTS];
 	int32
@@ -576,8 +565,6 @@ extern char def_instr_name[256];
 
 extern signed char drumvolume[MAXCHAN][MAXNOTE];
 extern signed char drumpanpot[MAXCHAN][MAXNOTE];
-extern signed char drumreverberation[MAXCHAN][MAXNOTE];
-extern signed char drumchorusdepth[MAXCHAN][MAXNOTE];
 
 extern int XG_System_On;
 

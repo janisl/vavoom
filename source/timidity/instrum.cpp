@@ -606,13 +606,6 @@ fail:
 				{
 					sp->envelope_rate[DELAY] = 0;
 				}
-				sp->envelope_offset[DELAY] = 0;
-
-				for (j = ATTACK; j < DELAY; j++)
-				{
-					sp->modulation_offset[j] = sp->envelope_offset[j];
-				}
-				sp->modulation_offset[DELAY] = 0;
 
 				/* Then read the sample data */
 				if (sp->data_length / 2 > MAX_SAMPLE_SIZE)

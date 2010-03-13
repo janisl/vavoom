@@ -183,20 +183,6 @@ static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 
 			case 0x0e: /* pan */
 				return ME_PAN;
 				break;
-			case 0x12: /* chorus send */
-				return ME_CHORUSDEPTH;
-				break;
-			case 0x13: /* reverb send */
-				return ME_REVERBERATION;
-				break;
-			case 0x14: /* variation send */
-				break;
-			case 0x18: /* filter cutoff */
-				return ME_BRIGHTNESS;
-				break;
-			case 0x19: /* filter resonance */
-				return ME_HARMONICCONTENT;
-				break;
 			default:
 				break;
 			}
@@ -428,23 +414,11 @@ static MidiEventList* read_midi_event(MidiSong* song)
 						control = ME_SUSTAIN;
 						break;
 
-					case 71:
-						control = ME_HARMONICCONTENT;
-						break;
 					case 72:
 						control = ME_RELEASETIME;
 						break;
 					case 73:
 						control = ME_ATTACKTIME;
-						break;
-					case 74:
-						control = ME_BRIGHTNESS;
-						break;
-					case 91:
-						control = ME_REVERBERATION;
-						break;
-					case 93:
-						control = ME_CHORUSDEPTH;
 						break;
 
 					case 120:
@@ -495,32 +469,9 @@ static MidiEventList* read_midi_event(MidiSong* song)
 					case 6:
 						if (nrpn)
 						{
-							if (rpn_msb[lastchan] == 1)
-								switch (rpn_lsb[lastchan])
-								{
-								case 0x20:
-									control = ME_BRIGHTNESS;
-									break;
-								case 0x21:
-									control = ME_HARMONICCONTENT;
-									break;
-								/*
-								case 0x63: envelope attack rate
-								case 0x64: envelope decay rate
-								case 0x66: envelope release rate
-								*/
-								}
-							else
+							if (rpn_msb[lastchan] != 1)
 								switch (rpn_msb[lastchan])
 								{
-								/*
-								case 0x14: filter cutoff frequency
-								case 0x15: filter resonance
-								case 0x16: envelope attack rate
-								case 0x17: envelope decay rate
-								case 0x18: pitch coarse
-								case 0x19: pitch fine
-								*/
 								case 0x1a:
 									drumvolume[lastchan][0x7f & rpn_lsb[lastchan]] = b;
 									break;
@@ -529,15 +480,6 @@ static MidiEventList* read_midi_event(MidiSong* song)
 										b = (int) (127.0 * rand() / (RAND_MAX));
 									drumpanpot[lastchan][0x7f & rpn_lsb[lastchan]] = b;
 									break;
-								case 0x1d:
-									drumreverberation[lastchan][0x7f & rpn_lsb[lastchan]] = b;
-									break;
-								case 0x1e:
-									drumchorusdepth[lastchan][0x7f & rpn_lsb[lastchan]] = b;
-									break;
-								/*
-								case 0x1f: variation send level
-								*/
 								}
 
 							ctl->cmsg(CMSG_INFO, VERB_DEBUG, 
@@ -975,14 +917,6 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 				else
 					skip_this_event = 1;
 				break;
-
-			case ME_HARMONICCONTENT:
-				song->channel[meep->event.channel].harmoniccontent = meep->event.a;
-				break;
-			case ME_BRIGHTNESS:
-				song->channel[meep->event.channel].brightness = meep->event.a;
-				break;
-
 			}
 
 		/* Recompute time in samples*/
@@ -1038,8 +972,6 @@ MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, 
 	/* vol_table = def_vol_table; */
 	XG_System_reverb_type = XG_System_chorus_type = 0;
 	memset(&drumvolume, -1, sizeof(drumvolume));
-	memset(&drumchorusdepth, -1, sizeof(drumchorusdepth));
-	memset(&drumreverberation, -1, sizeof(drumreverberation));
 	memset(&drumpanpot, NO_PANNING, sizeof(drumpanpot));
 
 	for (i = 0; i < MAXCHAN; i++)
@@ -1048,11 +980,7 @@ MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, 
 			song->channel[i].kit = 127;
 		else
 			song->channel[i].kit = 0;
-		song->channel[i].brightness = 64;
-		song->channel[i].harmoniccontent = 64;
 		song->channel[i].variationbank = 0;
-		song->channel[i].chorusdepth = 0;
-		song->channel[i].reverberation = 0;
 		song->channel[i].transpose = 0;
 	}
 
