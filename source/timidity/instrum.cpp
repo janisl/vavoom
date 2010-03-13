@@ -443,8 +443,6 @@ fail:
 				else
 					sp->panning = (uint8)(panning & 0x7F);
 
-				sp->exclusiveClass = 0;
-
 				if (cfg_tuning)
 				{
 					double tune_factor = (double)(cfg_tuning)/1200.0;
@@ -562,7 +560,6 @@ fail:
 					sp->envelope_offset[j] =
 						convert_envelope_offset(tmp[6 + j]);
 				}
-				sp->envelope_rate[DELAY] = 0;
 
 				/* Then read the sample data */
 				if (sp->data_length / 2 > MAX_SAMPLE_SIZE)

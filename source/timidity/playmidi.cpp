@@ -301,34 +301,6 @@ static void recompute_amp(MidiSong* song, int v)
 	}
 }
 
-
-static void kill_note(MidiSong* song, int i);
-
-static void kill_others(MidiSong* song, int i)
-{
-	int j = song->voices;
-
-	if (!song->voice[i].sample->exclusiveClass)
-		return;
-
-	while (j--)
-	{
-		if (song->voice[j].status & (VOICE_FREE|VOICE_OFF|VOICE_DIE))
-			continue;
-		if (i == j)
-			continue;
-		if (song->voice[i].channel != song->voice[j].channel)
-			continue;
-		if (song->voice[j].sample->note_to_use)
-		{
-			if (song->voice[j].sample->exclusiveClass != song->voice[i].sample->exclusiveClass)
-				continue;
-			kill_note(song, j);
-		}
-	}
-}
-
-
 static void xremap(MidiSong* song, int* banknumpt, int* this_notept, int this_kit)
 {
 	int i, newmap;
@@ -462,11 +434,10 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	song->voice[i].vibrato_sweep_position = 0;
 	song->voice[i].vibrato_control_ratio = song->voice[i].sample->vibrato_control_ratio;
 	song->voice[i].vibrato_control_counter = song->voice[i].vibrato_phase=0;
-
-	kill_others(song, i);
-
 	for (j = 0; j < VIBRATO_SAMPLE_INCREMENTS; j++)
+	{
 		song->voice[i].vibrato_sample_increment[j] = 0;
+	}
 
 
 	attacktime = song->channel[ch].attacktime;
@@ -491,8 +462,6 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	{
 		song->voice[i].envelope_rate[j] = song->voice[i].sample->envelope_rate[j];
 	}
-
-	song->voice[i].echo_delay_count = song->voice[i].envelope_rate[DELAY];
 
 	if (attacktime!=64)
 	{
@@ -864,18 +833,7 @@ static void do_compute_data(MidiSong* song, uint32 count)
 	{
 		if (song->voice[i].status != VOICE_FREE)
 		{
-			if (!song->voice[i].sample_offset && song->voice[i].echo_delay_count)
-			{
-				if ((uint32)song->voice[i].echo_delay_count >= count)
-					song->voice[i].echo_delay_count -= count;
-				else
-				{
-					mix_voice(song, song->common_buffer + song->voice[i].echo_delay_count, i, count - song->voice[i].echo_delay_count);
-					song->voice[i].echo_delay_count = 0;
-				}
-			}
-			else
-				mix_voice(song, song->common_buffer, i, count);
+			mix_voice(song, song->common_buffer, i, count);
 		}
 	}
 	song->current_sample += count;

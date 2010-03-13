@@ -364,7 +364,7 @@ struct Sample
 {
 	int32		loop_start, loop_end, data_length,
 				sample_rate, low_vel, high_vel, low_freq, high_freq, root_freq;
-	int32		envelope_rate[7], envelope_offset[6];
+	int32		envelope_rate[6], envelope_offset[6];
 	FLOAT_T		volume;
 	sample_t*	data;
 	int32 		tremolo_sweep_increment, tremolo_phase_increment, 
@@ -372,7 +372,7 @@ struct Sample
 	uint8		tremolo_depth, vibrato_depth,
 				modes;
 	uint8		freq_centre;
-	int8		panning, note_to_use, exclusiveClass;
+	int8		panning, note_to_use;
 };
 
 struct Instrument
@@ -435,8 +435,7 @@ struct Voice
 	int32
 		tremolo_sweep, tremolo_sweep_position,
 		tremolo_phase, tremolo_phase_increment,
-		vibrato_sweep, vibrato_sweep_position,
-		echo_delay_count;
+		vibrato_sweep, vibrato_sweep_position;
 
 	final_volume_t left_mix, right_mix;
 
