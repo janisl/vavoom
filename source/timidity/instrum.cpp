@@ -209,7 +209,6 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 #ifdef PATCH_EXT_LIST
 	static const char* patch_ext[] = PATCH_EXT_LIST;
 #endif
-	int sf2flag = 0;
 	int right_samples = 0;
 	int stereo_channels = 1, stereo_layer;
 	int vlayer_list[19][4], vlayer, vlayer_count;
@@ -287,12 +286,6 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 	* THEN, for each sample, see below
 	*/
 
-	if (!memcmp(tmp + 93, "SF2EXT", 6))
-	{
-		sf2flag = 1;
-		vlayer_count = tmp[152];
-	}
-
 	if (tmp[82] != 1 && tmp[82] != 0) /* instruments. To some patch makers, 0 means 1 */
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -308,26 +301,14 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 	}
 
 
-	if (sf2flag && vlayer_count > 0)
-	{
-		for (i = 0; i < 9; i++)
-			for (j = 0; j < 4; j++)
-				vlayer_list[i][j] = tmp[153+i*4+j];
-		for (i = 9; i < 19; i++)
-			for (j = 0; j < 4; j++)
-				vlayer_list[i][j] = tmp[199+(i-9)*4+j];
-	}
-	else
-	{
-		for (i = 0; i < 19; i++)
-			for (j = 0; j < 4; j++)
-				vlayer_list[i][j] = 0;
-		vlayer_list[0][0] = 0;
-		vlayer_list[0][1] = 127;
-		vlayer_list[0][2] = tmp[198];
-		vlayer_list[0][3] = 0;
-		vlayer_count = 1;
-	}
+	for (i = 0; i < 19; i++)
+		for (j = 0; j < 4; j++)
+			vlayer_list[i][j] = 0;
+	vlayer_list[0][0] = 0;
+	vlayer_list[0][1] = 127;
+	vlayer_list[0][2] = tmp[198];
+	vlayer_list[0][3] = 0;
+	vlayer_count = 1;
 
 	lastlp = 0;
 
@@ -347,10 +328,7 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 
 		lastlp = lp;
 
-		if (sf2flag)
-			ip->type = INST_SF2;
-		else
-			ip->type = INST_GUS;
+		ip->type = INST_GUS;
 		ip->samples = vlayer_list[vlayer][2];
 		ip->sample = (Sample*)safe_malloc(sizeof(Sample) * ip->samples);
 		ip->left_samples = ip->samples;
@@ -514,19 +492,7 @@ fail:
 				}
 
 				READ_CHAR(sp->modes);
-				skip(fp, 4);
-
-				if (sf2flag)
-				{
-					READ_SHORT(sample_volume);
-					READ_CHAR(sf2delay);
-					READ_CHAR(sp->exclusiveClass);
-					skip(fp, 32);
-				}
-				else
-				{
-					skip(fp, 36);
-				}
+				skip(fp, 40);
 
 				/* Mark this as a fixed-pitch instrument if such a deed is desired. */
 				if (note_to_use != -1)
@@ -596,16 +562,7 @@ fail:
 					sp->envelope_offset[j] =
 						convert_envelope_offset(tmp[6 + j]);
 				}
-				if (sf2flag)
-				{
-					if (sf2delay > 5)
-						sf2delay = 5;
-					sp->envelope_rate[DELAY] = (int32)((sf2delay * OUTPUT_RATE) / 1000);
-				}
-				else
-				{
-					sp->envelope_rate[DELAY] = 0;
-				}
+				sp->envelope_rate[DELAY] = 0;
 
 				/* Then read the sample data */
 				if (sp->data_length / 2 > MAX_SAMPLE_SIZE)
@@ -674,8 +631,6 @@ fail:
 
 				if (amp != -1)
 					sp->volume = (FLOAT_T)((amp) / 100.0);
-				else if (sf2flag)
-					sp->volume = (FLOAT_T)((sample_volume) / 255.0);
 				else
 				{
 #ifdef ADJUST_SAMPLE_VOLUMES
