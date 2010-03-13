@@ -45,13 +45,6 @@ int fast_decay=0;
 #endif
 
 
-int current_tune_number = 0;
-int last_tune_purged = 0;
-int current_patch_memory = 0;
-int max_patch_memory = 60000000;
-
-static void purge_as_required(MidiSong* song);
-
 static void free_instrument(Instrument* ip)
 {
 	if (!ip)
@@ -83,8 +76,6 @@ static void free_layer(InstrumentLayer* lp)
 {
 	InstrumentLayer* next;
 
-	current_patch_memory -= lp->size;
-	
 	for (; lp; lp = next)
 	{
 		next = lp->next;
@@ -105,7 +96,6 @@ static void free_bank(MidiSong* song, int dr, int b)
 			{
 				free_layer(bank->tone[i].layer);
 				bank->tone[i].layer = NULL;
-				bank->tone[i].last_used = -1;
 			}
 		}
 		if (bank->tone[i].name)
@@ -114,26 +104,6 @@ static void free_bank(MidiSong* song, int dr, int b)
 			bank->tone[i].name = NULL;
 		}
 	}
-}
-
-
-static void free_old_bank(MidiSong* song, int dr, int b, int how_old)
-{
-	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
-	for (int i = 0; i < MAXPROG; i++)
-		if (bank->tone[i].layer && bank->tone[i].last_used < how_old)
-		{
-			if (bank->tone[i].layer != MAGIC_LOAD_INSTRUMENT)
-			{
-				ctl->cmsg(CMSG_INFO, VERB_DEBUG,
-					"Unloading %s %s[%d,%d] - last used %d.",
-					(dr)? "drum" : "inst", bank->tone[i].name,
-					i, b, bank->tone[i].last_used);
-				free_layer(bank->tone[i].layer);
-				bank->tone[i].layer = NULL;
-				bank->tone[i].last_used = -1;
-			}
-		}
 }
 
 
@@ -364,11 +334,9 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 	for (vlayer = 0; vlayer < vlayer_count; vlayer++)
 	{
 		lp=(InstrumentLayer *)safe_malloc(sizeof(InstrumentLayer));
-		lp->size = sizeof(InstrumentLayer);
 		lp->lo = vlayer_list[vlayer][0];
 		lp->hi = vlayer_list[vlayer][1];
 		ip=(Instrument *)safe_malloc(sizeof(Instrument));
-		lp->size += sizeof(Instrument);
 		lp->instrument = ip;
 		lp->next = 0;
 
@@ -385,7 +353,6 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 			ip->type = INST_GUS;
 		ip->samples = vlayer_list[vlayer][2];
 		ip->sample = (Sample*)safe_malloc(sizeof(Sample) * ip->samples);
-		lp->size += sizeof(Sample) * ip->samples;
 		ip->left_samples = ip->samples;
 		ip->left_sample = ip->sample;
 		right_samples = vlayer_list[vlayer][3];
@@ -393,7 +360,6 @@ static InstrumentLayer* load_instrument(MidiSong *song, const char *name, int fo
 		if (right_samples)
 		{
 			ip->right_sample = (Sample*)safe_malloc(sizeof(Sample) * right_samples);
-			lp->size += sizeof(Sample) * right_samples;
 			stereo_channels = 2;
 		}
 		else
@@ -654,7 +620,6 @@ fail:
 					goto fail;
 				}
 				sp->data = (sample_t*)safe_malloc(sp->data_length + 2);
-				lp->size += sp->data_length + 2;
 
 				if (1 != fread(sp->data, sp->data_length, 1, fp))
 					goto fail;
@@ -888,53 +853,10 @@ static int fill_bank(MidiSong* song, int dr, int b)
 					(dr)? "drum set" : "tone bank", b, i);
 				errors++;
 			}
-			else
-			{ /* it's loaded now */
-				bank->tone[i].last_used = current_tune_number;
-				current_patch_memory += bank->tone[i].layer->size;
-				purge_as_required(song);
-				if (current_patch_memory > max_patch_memory)
-				{
-					ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
-						"Not enough memory to load instrument %s (%s %d, program %d)",
-						bank->tone[i].name,
-						(dr)? "drum set" : "tone bank", b, i);
-					errors++;
-					free_layer(bank->tone[i].layer);
-					bank->tone[i].layer = 0;
-					bank->tone[i].last_used = -1;
-				}
-			}
 		}
 	}
 	return errors;
 }
-
-static void free_old_instruments(MidiSong* song, int how_old)
-{
-	int i = MAXBANK;
-	while (i--)
-	{
-		if (song->tonebank[i])
-			free_old_bank(song, 0, i, how_old);
-		if (song->drumset[i])
-			free_old_bank(song, 1, i, how_old);
-	}
-}
-
-static void purge_as_required(MidiSong* song)
-{
-	if (!max_patch_memory)
-		return;
-
-	while (last_tune_purged < current_tune_number &&
-		current_patch_memory > max_patch_memory)
-	{
-		last_tune_purged++;
-		free_old_instruments(song, last_tune_purged);
-	}
-}
-
 
 int load_missing_instruments(MidiSong* song)
 {
@@ -946,7 +868,6 @@ int load_missing_instruments(MidiSong* song)
 		if (song->drumset[i])
 			errors += fill_bank(song, 1, i);
 	}
-	current_tune_number++;
 	return errors;
 }
 

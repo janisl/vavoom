@@ -848,8 +848,6 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 						{
 							song->drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
 						}
-						else
-							song->drumset[dset]->tone[dnote].last_used = current_tune_number;
 						if (!song->channel[meep->event.channel].name)
 							song->channel[meep->event.channel].name = song->drumset[dset]->name;
 					}
@@ -882,8 +880,6 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 						{
 							song->drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
 						}
-						else
-							song->drumset[dset]->tone[dnote].last_used = current_tune_number;
 						if (!song->channel[meep->event.channel].name)
 							song->channel[meep->event.channel].name= song->drumset[dset]->name;
 					}
@@ -894,8 +890,6 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 						{
 							song->tonebank[banknum]->tone[mprog].layer = MAGIC_LOAD_INSTRUMENT;
 						}
-						else
-							song->tonebank[banknum]->tone[mprog].last_used = current_tune_number;
 						if (!song->channel[meep->event.channel].name)
 							song->channel[meep->event.channel].name = song->tonebank[banknum]->tone[mprog].name;
 					}

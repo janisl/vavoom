@@ -395,7 +395,6 @@ struct Instrument
 struct InstrumentLayer
 {
 	uint8				lo, hi;
-	int					size;
 	Instrument*			instrument;
 	InstrumentLayer*	next;
 };
@@ -404,7 +403,7 @@ struct ToneBankElement
 {
 	char*				name;
 	InstrumentLayer*	layer;
-	int					font_type, sf_ix, last_used, tuning;
+	int					font_type, sf_ix, tuning;
 	int					note, amp, pan, strip_loop, strip_envelope, strip_tail;
 };
 
@@ -572,10 +571,6 @@ extern ToneBank*			master_drumset[MAXBANK];
 
 extern int fast_decay;
 extern int free_instruments_afterwards;
-
-extern int current_tune_number;
-extern int max_patch_memory;
-extern int current_patch_memory;
 
 extern char def_instr_name[256];
 

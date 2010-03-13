@@ -1292,7 +1292,6 @@ InstrumentLayer* load_instrument_dls(MidiSong *song, int drum, int bank, int ins
 	layer->hi = 127;
 	layer->instrument = inst;
 	layer->next = NULL;
-	layer->size = 0;
 	return layer;
 }
 
