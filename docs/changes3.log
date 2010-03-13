@@ -4038,3 +4038,6 @@
   Firebrand added full support for parsing of GLDEFS light variants.
   Firebrand fixed A_Recoil method logic.
   Firebrand added options to use timidity for music playback and setting the patches directory to the launcher.
+13.03.2010
+  I got Timidity working with DLS instruments, tested it with gm.dls from
+ Windows.

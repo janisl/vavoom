@@ -324,23 +324,6 @@ static void recompute_amp(MidiSong* song, int v)
 #define CHORUS_CLONE 3
 
 
-/* just a variant of note_on() */
-static int vc_alloc(MidiSong* song, int j)
-{
-	int i = song->voices; 
-
-	while (i--)
-	{
-		if (i == j)
-			continue;
-		if (song->voice[i].status & VOICE_FREE)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
 static void kill_note(MidiSong* song, int i);
 
 static void kill_others(MidiSong* song, int i)
@@ -365,265 +348,6 @@ static void kill_others(MidiSong* song, int i)
 			kill_note(song, j);
 		}
 	}
-}
-
-
-static void clone_voice(MidiSong* song, Instrument* ip, int v, MidiEvent* e, int clone_type, int variationbank)
-{
-	int w, played_note, chorus = 0, reverb = 0, milli;
-	int chan = song->voice[v].channel;
-
-	if (clone_type == STEREO_CLONE)
-	{
-		if (!song->voice[v].right_sample && variationbank != 3)
-			return;
-		if (variationbank == 6)
-			return;
-	}
-
-	if (song->channel[chan].kit)
-	{
-		reverb = drumreverberation[chan][song->voice[v].note];
-		chorus = drumchorusdepth[chan][song->voice[v].note];
-	}
-	else
-	{
-		reverb = song->channel[chan].reverberation;
-		chorus = song->channel[chan].chorusdepth;
-	}
-
-	if (clone_type == REVERB_CLONE)
-		chorus = 0;
-	else if (clone_type == CHORUS_CLONE)
-		reverb = 0;
-	else if (clone_type == STEREO_CLONE)
-		reverb = chorus = 0;
-
-	if (reverb > 127)
-		reverb = 127;
-	if (chorus > 127)
-		chorus = 127;
-
-	if (clone_type == CHORUS_CLONE)
-	{
-		if (variationbank == 32)
-			chorus = 30;
-		else if (variationbank == 33)
-			chorus = 60;
-		else if (variationbank == 34)
-			chorus = 90;
-	}
-
-	chorus /= 2;  /* This is an ad hoc adjustment. */
-
-	if (!reverb && !chorus && clone_type != STEREO_CLONE)
-		return;
-
-	if ((w = vc_alloc(song, v)) < 0)
-		return;
-
-	song->voice[w] = song->voice[v];
-	if (clone_type == STEREO_CLONE)
-		song->voice[v].clone_voice = w;
-	song->voice[w].clone_voice = v;
-	song->voice[w].clone_type = clone_type;
-
-	song->voice[w].sample = song->voice[v].right_sample;
-	song->voice[w].velocity= e->b;
-
-	milli = OUTPUT_RATE/1000;
-
-	if (clone_type == STEREO_CLONE)
-	{
-		int left, right, leftpan, rightpan;
-		int panrequest = song->voice[v].panning;
-		if (variationbank == 3)
-		{
-			song->voice[v].panning = 0;
-			song->voice[w].panning = 127;
-		}
-		else
-		{
-			if (song->voice[v].sample->panning > song->voice[w].sample->panning)
-			{
-				left = w;
-				right = v;
-			}
-			else
-			{
-				left = v;
-				right = w;
-			}
-#define INSTRUMENT_SEPARATION 12
-			leftpan = panrequest - INSTRUMENT_SEPARATION / 2;
-			rightpan = leftpan + INSTRUMENT_SEPARATION;
-			if (leftpan < 0)
-			{
-				leftpan = 0;
-				rightpan = leftpan + INSTRUMENT_SEPARATION;
-			}
-			if (rightpan > 127)
-			{
-				rightpan = 127;
-				leftpan = rightpan - INSTRUMENT_SEPARATION;
-			}
-			song->voice[left].panning = leftpan;
-			song->voice[right].panning = rightpan;
-			song->voice[right].echo_delay = 20 * milli;
-		}
-	}
-
-	song->voice[w].volume = song->voice[w].sample->volume;
-
-	if (reverb)
-	{
-		if (song->voice[v].panning < 64)
-			song->voice[w].panning = 64 + reverb/2;
-		else
-			song->voice[w].panning = 64 - reverb/2;
-
-		/* try 98->99 for melodic instruments ? (bit much for percussion) */
-		song->voice[w].volume *= vol_table[(127 - reverb) / 8 + 98];
-
-		song->voice[w].echo_delay += reverb * milli;
-		song->voice[w].envelope_rate[DECAY] *= 2;
-		song->voice[w].envelope_rate[RELEASE] /= 2;
-
-		if (XG_System_reverb_type >= 0)
-		{
-			int subtype = XG_System_reverb_type & 0x07;
-			int rtype = XG_System_reverb_type >>3;
-			switch (rtype)
-			{
-			case 0: /* no effect */
-				break;
-			case 1: /* hall */
-				if (subtype) song->voice[w].echo_delay += 100 * milli;
-				break;
-			case 2: /* room */
-				song->voice[w].echo_delay /= 2;
-				break;
-			case 3: /* stage */
-				song->voice[w].velocity = song->voice[v].velocity;
-				break;
-			case 4: /* plate */
-				song->voice[w].panning = song->voice[v].panning;
-				break;
-			case 16: /* white room */
-				song->voice[w].echo_delay = 0;
-				break;
-			case 17: /* tunnel */
-				song->voice[w].echo_delay *= 2;
-				song->voice[w].velocity /= 2;
-				break;
-			case 18: /* canyon */
-				song->voice[w].echo_delay *= 2;
-				break;
-			case 19: /* basement */
-				song->voice[w].velocity /= 2;
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	played_note = song->voice[w].sample->note_to_use;
-	if (!played_note)
-	{
-		played_note = e->a & 0x7f;
-		if (variationbank == 35)
-			played_note += 12;
-		else if (variationbank == 36)
-			played_note -= 12;
-		else if (variationbank == 37)
-			played_note += 7;
-		else if (variationbank == 36)
-			played_note -= 7;
-	}
-	song->voice[w].note = played_note;
-	song->voice[w].orig_frequency = freq_table[played_note];
-
-	if (chorus)
-	{
-		if (!song->voice[w].vibrato_control_ratio)
-		{
-			song->voice[w].vibrato_control_ratio = 100;
-			song->voice[w].vibrato_sweep = 74;
-		}
-		song->voice[w].volume *= 0.40;
-		song->voice[v].volume = song->voice[w].volume;
-		recompute_amp(song, v);
-		apply_envelope_to_amp(song, v);
-		song->voice[w].vibrato_sweep = chorus/2;
-		song->voice[w].vibrato_control_ratio /= 2;
-		song->voice[w].echo_delay += 30 * milli;
-
-		if (XG_System_chorus_type >= 0)
-		{
-			int chtype = 0x0f & (XG_System_chorus_type >> 3);
-			switch (chtype)
-			{
-			case 0: /* no effect */
-				break;
-			case 1: /* chorus */
-				chorus /= 3;
-				if (song->channel[ song->voice[w].channel ].pitchbend + chorus < 0x2000)
-					song->voice[w].orig_frequency =
-						(uint32)( (FLOAT_T)song->voice[w].orig_frequency * bend_fine[chorus] );
-				else
-					song->voice[w].orig_frequency =
-						(uint32)( (FLOAT_T)song->voice[w].orig_frequency / bend_fine[chorus] );
-				break;
-			case 2: /* celeste */
-				song->voice[w].orig_frequency += (song->voice[w].orig_frequency / 128) * chorus;
-				break;
-			case 3: /* flanger */
-				song->voice[w].vibrato_control_ratio = 10;
-				song->voice[w].vibrato_sweep = 8;
-				song->voice[w].echo_delay += 200 * milli;
-				break;
-			case 4: /* symphonic : cf Children of the Night /128 bad, /1024 ok */
-				song->voice[w].orig_frequency += (song->voice[w].orig_frequency/512) * chorus;
-				song->voice[v].orig_frequency -= (song->voice[v].orig_frequency/512) * chorus;
-				recompute_freq(song, v);
-				break;
-			case 8: /* phaser */
-				break;
-			default:
-				break;
-			}
-		}
-		else
-		{
-			chorus /= 3;
-			if (song->channel[ song->voice[w].channel ].pitchbend + chorus < 0x2000)
-				song->voice[w].orig_frequency =
-					(uint32)( (FLOAT_T)song->voice[w].orig_frequency * bend_fine[chorus] );
-			else
-				song->voice[w].orig_frequency =
-					(uint32)( (FLOAT_T)song->voice[w].orig_frequency / bend_fine[chorus] );
-		}
-	}
-	song->voice[w].echo_delay_count = song->voice[w].echo_delay;
-	if (reverb)
-		song->voice[w].echo_delay *= 2;
-
-	recompute_freq(song, w);
-	recompute_amp(song, w);
-	if (song->voice[w].sample->modes & MODES_ENVELOPE)
-	{
-		/* Ramp up from 0 */
-		song->voice[w].envelope_stage = ATTACK;
-		song->voice[w].envelope_volume = 0;
-		song->voice[w].control_counter = 0;
-		recompute_envelope(song, w);
-		/*recompute_modulation(w);*/
-	}
-	else
-	{
-		song->voice[w].envelope_increment = 0;
-	}
-	apply_envelope_to_amp(song, w);
 }
 
 
@@ -889,19 +613,12 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	}
 	apply_envelope_to_amp(song, i);
 
-	song->voice[i].clone_voice = -1;
 	song->voice[i].clone_type = NOT_CLONE;
-
-	clone_voice(song, ip, i, e, STEREO_CLONE, variationbank);
-	clone_voice(song, ip, i, e, CHORUS_CLONE, variationbank);
-	clone_voice(song, ip, i, e, REVERB_CLONE, variationbank);
 }
 
 static void kill_note(MidiSong* song, int i)
 {
 	song->voice[i].status=VOICE_DIE;
-	if (song->voice[i].clone_voice >= 0)
-		song->voice[ song->voice[i].clone_voice ].status = VOICE_DIE;
 }
 
 
@@ -950,22 +667,10 @@ static void note_on(MidiSong* song, MidiEvent* e)
 
 	if (lowest != -1)
 	{
-		int cl = song->voice[lowest].clone_voice;
-
 		/* This can still cause a click, but if we had a free voice to
 		spare for ramping down this note, we wouldn't need to kill it
 		in the first place... Still, this needs to be fixed. Perhaps
 		we could use a reserve of voices to play dying notes only. */
-
-		if (cl >= 0)
-		{
-			if (song->voice[cl].clone_type == STEREO_CLONE ||
-					(!song->voice[cl].clone_type && song->voice[lowest].clone_type == STEREO_CLONE))
-				song->voice[cl].status = VOICE_FREE;
-			else if (song->voice[cl].clone_voice==lowest)
-				song->voice[cl].clone_voice = -1;
-		}
-
 		song->cut_notes++;
 		song->voice[lowest].status = VOICE_FREE;
 		start_note(song, e,lowest);
@@ -991,15 +696,6 @@ static void finish_note(MidiSong* song, int i)
 			hits the end of its data (ofs>=data_length). */
 		song->voice[i].status = VOICE_OFF;
 	}
-
-	{
-		int v;
-		if ((v = song->voice[i].clone_voice) >= 0)
-		{
-			song->voice[i].clone_voice = -1;
-			finish_note(song, v);
-		}
-	}
 }
 
 static void note_off(MidiSong* song, MidiEvent* e)
@@ -1013,12 +709,6 @@ static void note_off(MidiSong* song, MidiEvent* e)
 			if (song->channel[e->channel].sustain)
 			{
 				song->voice[i].status = VOICE_SUSTAINED;
-
-				if ((v = song->voice[i].clone_voice) >= 0)
-				{
-					if (song->voice[v].status == VOICE_ON)
-						song->voice[v].status = VOICE_SUSTAINED;
-				}
 			}
 			else
 				finish_note(song, i);
@@ -1462,13 +1152,14 @@ void Timidity_SetVolume(MidiSong* song, int volume)
 		}
 }
 
-MidiSong *Timidity_LoadSongMem(void* data, int size)
+MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches)
 {
 	int32 events;
 
 	/* Allocate memory for the song */
 	MidiSong* song = (MidiSong *)safe_malloc(sizeof(*song));
 	memset(song, 0, sizeof(*song));
+	song->patches = patches;
 	song->amplification = DEFAULT_AMPLIFICATION;
 	memcpy(song->tonebank, master_tonebank, sizeof(master_tonebank));
 	memcpy(song->drumset, master_drumset, sizeof(master_drumset));

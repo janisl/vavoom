@@ -829,6 +829,11 @@ static int fill_bank(MidiSong* song, int dr, int b)
 	{
 		if (bank->tone[i].layer == MAGIC_LOAD_INSTRUMENT)
 		{
+			bank->tone[i].layer = load_instrument_dls(song, dr, b, i);
+			if (bank->tone[i].layer)
+			{
+				continue;
+			}
 			if (!(bank->tone[i].name))
 			{
 				ctl->cmsg(CMSG_WARNING, (b != 0) ? VERB_VERBOSE : VERB_NORMAL,

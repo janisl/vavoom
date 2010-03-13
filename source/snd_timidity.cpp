@@ -81,6 +81,7 @@ static VCvarS	s_timidity_patches("s_timidity_patches", "\\TIMIDITY", CVAR_Archiv
 static VCvarI	s_timidity("s_timidity", "1", CVAR_Archive);
 static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_Archive);
 #endif
+static VCvarI	s_timidity_test_dls("s_timidity_test_dls", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -109,6 +110,8 @@ VTimidityAudioCodec::~VTimidityAudioCodec()
 {
 	guard(VTimidityAudioCodec::~VTimidityAudioCodec);
 	Timidity_Stop(Song);
+	if (Song->patches)
+		Timidity_FreeDLS(Song->patches);
 	Timidity_FreeSong(Song);
 	Timidity_Close();
 	unguard;
@@ -205,12 +208,27 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 		return NULL;
 	}
 
+	DLS_Data* patches = NULL;
+	if (s_timidity_test_dls)
+	{
+		FILE* f = fopen("gm.dls", "rb");
+		if (f)
+		{
+			patches = Timidity_LoadDLS(f);
+			fclose(f);
+			if (patches)
+			{
+				GCon->Logf("Loaded DLS");
+			}
+		}
+	}
+
 	//	Load song.
 	int Size = InStrm->TotalSize();
 	void* Data = Z_Malloc(Size);
 	InStrm->Seek(0);
 	InStrm->Serialise(Data, Size);
-	MidiSong* Song = Timidity_LoadSongMem(Data, Size);
+	MidiSong* Song = Timidity_LoadSongMem(Data, Size, patches);
 	Z_Free(Data);
 	if (!Song)
 	{

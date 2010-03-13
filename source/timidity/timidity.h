@@ -215,6 +215,7 @@ namespace LibTimidity
 
 #define INST_GUS	0
 #define INST_SF2	1
+#define INST_DLS	2
 
 #define FONT_NORMAL		0
 #define FONT_FFF		1
@@ -436,7 +437,6 @@ struct Voice
 	Sample* sample;
 	Sample* left_sample;
 	Sample* right_sample;
-	int32 clone_voice;
 	int32
 		orig_frequency, frequency,
 		sample_offset, sample_increment;
@@ -528,7 +528,7 @@ extern int set_default_instrument(MidiSong* song, const char *name);
 
 extern DLS_Data *Timidity_LoadDLS(FILE *src);
 extern void Timidity_FreeDLS(DLS_Data *patches);
-extern Instrument *load_instrument_dls(MidiSong *song, int drum, int bank, int instrument);
+extern InstrumentLayer* load_instrument_dls(MidiSong *song, int drum, int bank, int instrument);
 
 extern int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio);
 extern int32 convert_vibrato_rate(uint8 rate);
@@ -549,7 +549,7 @@ extern void apply_envelope_to_amp(MidiSong* song, int v);
 extern int Timidity_Init();
 extern void Timidity_SetVolume(MidiSong* song, int volume);
 extern int Timidity_PlaySome(MidiSong* song, void* stream, int samples);
-extern MidiSong *Timidity_LoadSongMem(void* data, int size);
+extern MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches);
 extern void Timidity_Start(MidiSong* song);
 extern int Timidity_Active(MidiSong* song);
 extern void Timidity_Stop(MidiSong* song);
