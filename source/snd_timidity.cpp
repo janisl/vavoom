@@ -202,13 +202,32 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 
 	//	Initialise Timidity.
 	add_to_pathlist(s_timidity_patches);
+	DLS_Data* patches = NULL;
 	if (Timidity_Init())
 	{
+#ifdef _WIN32
+        VStr GMPath = VStr(getenv("WINDIR")) + "/system32/drivers/gm.dls";
+		FILE* f = fopen(*GMPath, "rb");
+		if (f)
+		{
+			patches = Timidity_LoadDLS(f);
+			fclose(f);
+			if (patches)
+			{
+				GCon->Logf("Loaded gm.dls");
+			}
+		}
+        if (!patches)
+        {
+		    GCon->Logf("Timidity init failed");
+		    return NULL;
+        }
+#else
 		GCon->Logf("Timidity init failed");
 		return NULL;
+#endif
 	}
 
-	DLS_Data* patches = NULL;
 	if (s_timidity_test_dls)
 	{
 		FILE* f = fopen("gm.dls", "rb");
