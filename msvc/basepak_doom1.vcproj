@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="basepak_doom1"
 	ProjectGUID="{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}"
 	RootNamespace="basepak_doom1"
@@ -19,7 +19,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="0"
 			CharacterSet="1"
 			>
@@ -39,8 +39,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ProjectDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
+			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="0"
 			CharacterSet="1"
 			WholeProgramOptimization="1"

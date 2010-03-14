@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="basepak_strife"
 	ProjectGUID="{1CD88557-1039-4B0C-9DF6-AB181E799536}"
 	RootNamespace="progs_doom_shared"
@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
@@ -38,7 +38,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool

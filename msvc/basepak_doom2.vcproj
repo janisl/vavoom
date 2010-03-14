@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1253"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="basepak_doom2"
 	ProjectGUID="{DC9BBFA1-6B89-44AA-ADDE-DBBBF3B2E533}"
 	RootNamespace="progs_doom2"
@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
@@ -38,7 +38,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
