@@ -226,7 +226,7 @@ namespace LibTimidity
 
 /* A hack to delay instrument loading until after reading the
    entire MIDI file. */
-#define MAGIC_LOAD_INSTRUMENT	((InstrumentLayer *)(-1))
+#define MAGIC_LOAD_INSTRUMENT	((Instrument*)(-1))
 
 #define MAXPROG		128
 #define MAXBANK		130
@@ -380,24 +380,12 @@ struct Instrument
 	int				type;
 	int				samples;
 	Sample*			sample;
-	int				left_samples;
-	Sample*			left_sample;
-	int				right_samples;
-	Sample*			right_sample;
-};
-
-struct InstrumentLayer
-{
-	uint8				lo, hi;
-	Instrument*			instrument;
-	InstrumentLayer*	next;
 };
 
 struct ToneBankElement
 {
 	char*				name;
-	InstrumentLayer*	layer;
-	int					font_type, sf_ix, tuning;
+	Instrument*			layer;
 	int					note, amp, pan, strip_loop, strip_envelope, strip_tail;
 };
 
@@ -475,7 +463,7 @@ struct MidiSong
 	ToneBank*			tonebank[MAXBANK];
 	ToneBank*			drumset[MAXBANK];
 	/* This is a special instrument, used for all melodic programs */
-	InstrumentLayer*	default_instrument;
+	Instrument*			default_instrument;
 	/* This is only used for tracks that don't specify a program */
 	int					default_program;
 	int					buffer_size;
@@ -515,14 +503,7 @@ extern int set_default_instrument(MidiSong* song, const char *name);
 
 extern DLS_Data *Timidity_LoadDLS(FILE *src);
 extern void Timidity_FreeDLS(DLS_Data *patches);
-extern InstrumentLayer* load_instrument_dls(MidiSong *song, int drum, int bank, int instrument);
-
-extern int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio);
-extern int32 convert_vibrato_rate(uint8 rate);
-
-extern int play_midi(MidiEvent *el, int32 events, int32 samples);
-extern int play_midi_file(char *fn);
-extern void dumb_pass_playing_list(int number_of_files, char *list_of_files[]);
+extern Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrument);
 
 MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, int32* sp);
 
@@ -566,9 +547,6 @@ extern signed char drumvolume[MAXCHAN][MAXNOTE];
 extern signed char drumpanpot[MAXCHAN][MAXNOTE];
 
 extern int XG_System_On;
-
-extern int XG_System_reverb_type;
-extern int XG_System_chorus_type;
 
 extern ControlMode*		ctl;
 

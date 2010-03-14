@@ -137,25 +137,6 @@ static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 
 			ctl->cmsg(CMSG_TEXT, VERB_VERBOSE, "XG System On", len);
 			XG_System_On = 1;
 		}
-		else if (adhi == 2 && adlo == 1)
-		{
-			if (dtb == 8)
-				dtb = 3;
-			switch (cd)
-			{
-			case 0x00:
-				XG_System_reverb_type = (dta << 3) + dtb;
-				break;
-			case 0x20:
-				XG_System_chorus_type = ((dta - 64) << 3) + dtb;
-				break;
-			case 0x5a:
-				/* dta==0 Insertion; dta==1 System */
-				break;
-			default:
-				break;
-			}
-		}
 		else if (adhi == 8 && cd <= 40)
 		{
 			*sysa = dta & 0x7f;
@@ -202,68 +183,6 @@ static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 
 				chan--;
 			song->channel[chan].kit = dtb;
 		}
-		else if (cd == 0x01)
-			switch(dta)
-			{
-			case 0x30:
-				switch(dtb)
-				{
-				case 0:
-					XG_System_reverb_type = 16 + 0;
-					break;
-				case 1:
-					XG_System_reverb_type = 16 + 1;
-					break;
-				case 2:
-					XG_System_reverb_type = 16 + 2;
-					break;
-				case 3:
-					XG_System_reverb_type = 8 + 0;
-					break;
-				case 4:
-					XG_System_reverb_type = 8 + 1;
-					break;
-				case 5:
-					XG_System_reverb_type = 32 + 0;
-					break;
-				case 6:
-					XG_System_reverb_type = 8 * 17;
-					break;
-				case 7:
-					XG_System_reverb_type = 8 * 18;
-					break;
-				}
-				break;
-			case 0x38:
-				switch(dtb)
-				{
-				case 0:
-					XG_System_chorus_type = 8 + 0;
-					break;
-				case 1:
-					XG_System_chorus_type = 8 + 1;
-					break;
-				case 2:
-					XG_System_chorus_type = 8 + 2;
-					break;
-				case 3:
-					XG_System_chorus_type = 8 + 4;
-					break;
-				case 4:
-					XG_System_chorus_type = -1;
-					break;
-				case 5:
-					XG_System_chorus_type = 8 * 3;
-					break;
-				case 6:
-					XG_System_chorus_type = -1;
-					break;
-				case 7:
-					XG_System_chorus_type = -1;
-					break;
-				}
-				break;
-			}
 		return 0;
 	}
 	return 0;
@@ -970,7 +889,6 @@ MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, 
 
 	XG_System_On = 0;
 	/* vol_table = def_vol_table; */
-	XG_System_reverb_type = XG_System_chorus_type = 0;
 	memset(&drumvolume, -1, sizeof(drumvolume));
 	memset(&drumpanpot, NO_PANNING, sizeof(drumpanpot));
 

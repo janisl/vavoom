@@ -34,8 +34,6 @@ signed char drumvolume[MAXCHAN][MAXNOTE];
 signed char drumpanpot[MAXCHAN][MAXNOTE];
 
 int XG_System_On=0;
-int XG_System_reverb_type;
-int XG_System_chorus_type;
 
 
 static void adjust_amplification(MidiSong* song)
@@ -129,42 +127,6 @@ static void select_sample(MidiSong* song, int v, Instrument* ip)
 	song->voice[v].sample = closest;
 	return;
 }
-
-
-
-static void select_stereo_samples(MidiSong* song, int v, InstrumentLayer* lp)
-{
-	Instrument *ip;
-	InstrumentLayer *nlp, *bestvel;
-	int diffvel, midvel, mindiff;
-
-	/* select closest velocity */
-	bestvel = lp;
-	mindiff = 500;
-	for (nlp = lp; nlp; nlp = nlp->next)
-	{
-		midvel = (nlp->hi + nlp->lo) / 2;
-		if (!midvel)
-			diffvel = 127;
-		else if (song->voice[v].velocity < nlp->lo || song->voice[v].velocity > nlp->hi)
-			diffvel = 200;
-		else
-			diffvel = song->voice[v].velocity - midvel;
-		if (diffvel < 0)
-			diffvel = -diffvel;
-		if (diffvel < mindiff)
-		{
-			mindiff = diffvel;
-			bestvel = nlp;
-		}
-	}
-	ip = bestvel->instrument;
-
-	ip->sample = ip->left_sample;
-	ip->samples = ip->left_samples;
-	select_sample(song, v, ip);
-}
-
 
 static void recompute_freq(MidiSong* song, int v)
 {
@@ -352,7 +314,6 @@ static void xremap(MidiSong* song, int* banknumpt, int* this_notept, int this_ki
 
 static void start_note(MidiSong* song, MidiEvent* e, int i)
 {
-	InstrumentLayer *lp;
 	Instrument *ip;
 	int j, banknum, ch=e->channel;
 	int played_note, drumpan=NO_PANNING;
@@ -376,12 +337,11 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 
 	if (drumsflag)
 	{
-		if (!(lp=song->drumset[banknum]->tone[this_note].layer))
+		if (!(ip=song->drumset[banknum]->tone[this_note].layer))
 		{
-			if (!(lp=song->drumset[0]->tone[this_note].layer))
+			if (!(ip=song->drumset[0]->tone[this_note].layer))
 				return; /* No instrument? Then we can't play. */
 		}
-		ip = lp->instrument;
 		if (ip->type == INST_GUS && ip->samples != 1)
 		{
 			ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, 
@@ -399,20 +359,19 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 	else
 	{
 		if (song->channel[ch].program == SPECIAL_PROGRAM)
-			lp = song->default_instrument;
-		else if (!(lp = song->tonebank[song->channel[ch].bank]->tone[song->channel[ch].program].layer))
+			ip = song->default_instrument;
+		else if (!(ip = song->tonebank[song->channel[ch].bank]->tone[song->channel[ch].program].layer))
 		{
-			if (!(lp=song->tonebank[0]->tone[this_prog].layer))
+			if (!(ip=song->tonebank[0]->tone[this_prog].layer))
 				return; /* No instrument? Then we can't play. */
 		}
-		ip = lp->instrument;
 		if (ip->sample->note_to_use) /* Fixed-pitch instrument? */
 			song->voice[i].orig_frequency = freq_table[(int)(ip->sample->note_to_use)];
 		else
 			song->voice[i].orig_frequency = freq_table[this_note & 0x7F];
 	}
 
-	select_stereo_samples(song, i, lp);
+	select_sample(song, i, ip);
 
 	played_note = song->voice[i].sample->note_to_use;
 	

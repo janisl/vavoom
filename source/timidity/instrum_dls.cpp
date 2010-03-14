@@ -1236,7 +1236,7 @@ static void load_region_dls(MidiSong *song, Sample *sample, DLS_Instrument *ins,
 	sample->loop_end <<= FRACTION_BITS;
 }
 
-InstrumentLayer* load_instrument_dls(MidiSong *song, int drum, int bank, int instrument)
+Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrument)
 {
 	Instrument *inst;
 	uint32 i;
@@ -1274,10 +1274,6 @@ InstrumentLayer* load_instrument_dls(MidiSong *song, int drum, int bank, int ins
 	inst->type = INST_DLS;
 	inst->samples = dls_ins->header->cRegions;
 	inst->sample = (Sample *)safe_malloc(inst->samples * sizeof(*inst->sample));
-	inst->left_samples = inst->samples;
-	inst->left_sample = inst->sample;
-	inst->right_samples = 0;
-	inst->right_sample = NULL;
 	memset(inst->sample, 0, inst->samples * sizeof(*inst->sample));
 	/*
 	printf("Found %s instrument %d in bank %d named %s with %d regions\n", drum ? "drum" : "melodic", instrument, bank, dls_ins->name, inst->samples);
@@ -1287,12 +1283,7 @@ InstrumentLayer* load_instrument_dls(MidiSong *song, int drum, int bank, int ins
 		load_region_dls(song, &inst->sample[i], dls_ins, i);
 	}
 
-	InstrumentLayer* layer = (InstrumentLayer*)safe_malloc(sizeof(InstrumentLayer));
-	layer->lo = 0;
-	layer->hi = 127;
-	layer->instrument = inst;
-	layer->next = NULL;
-	return layer;
+	return inst;
 }
 
 }
