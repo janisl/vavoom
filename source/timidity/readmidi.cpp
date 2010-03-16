@@ -76,118 +76,6 @@ static int32 getvl(MidiSong* song)
 	}
 }
 
-
-static int sysex(MidiSong* song, uint32 len, uint8 *syschan, uint8 *sysa, uint8 *sysb)
-{
-	unsigned char* s = (unsigned char*)safe_malloc(len);
-	int id, model, ch, port, adhi, adlo, cd, dta, dtb, dtc;
-	if (len != midi_read(song, s, len))
-	{
-		free(s);
-		return 0;
-	}
-	if (len<5)
-	{
-		free(s);
-		return 0;
-	}
-	id = s[0];
-	port = s[1];
-	model = s[2];
-	adhi = s[3];
-	adlo = s[4];
-	if (id == 0x7e && port == 0x7f && model == 0x09 && adhi == 0x01)
-	{
-		free(s);
-		return 0;
-	}
-	ch = adlo & 0x0f;
-	*syschan = (uint8)ch;
-	if (id == 0x7f && len == 7 && port == 0x7f && model == 0x04 && adhi == 0x01)
-	{
-		ctl->cmsg(CMSG_TEXT, VERB_DEBUG, "Master Volume %d", s[4] + (s[5] << 7));
-		free(s);
-		*sysa = s[4];
-		*sysb = s[5];
-		return ME_MASTERVOLUME;
-		/** return s[4]+(s[5]<<7); **/
-	}
-	if (len < 8)
-	{
-		free(s);
-		return 0;
-	}
-	port &= 0x0f;
-	ch = (adlo & 0x0f) | ((port & 0x03) << 4);
-	*syschan = (uint8)ch;
-	cd = s[5]; dta = s[6];
-	if (len >= 8)
-		dtb = s[7];
-	else
-		dtb = -1;
-	if (len >= 9)
-		dtc = s[8];
-	else
-		dtc = -1;
-	free(s);
-	if (id == 0x43 && model == 0x4c)
-	{
-		if (!adhi && !adlo && cd == 0x7e && !dta)
-		{
-			ctl->cmsg(CMSG_TEXT, VERB_VERBOSE, "XG System On", len);
-			XG_System_On = 1;
-		}
-		else if (adhi == 8 && cd <= 40)
-		{
-			*sysa = dta & 0x7f;
-			switch (cd)
-			{
-			case 0x01: /* bank select MSB */
-				return ME_TONE_KIT;
-				break;
-			case 0x02: /* bank select LSB */
-				return ME_TONE_BANK;
-				break;
-			case 0x03: /* program number */
-					/** MIDIEVENT(d->at, ME_PROGRAM, lastchan, a, 0); **/
-				return ME_PROGRAM;
-				break;
-			case 0x08: /*  */
-				/* d->channel[adlo&0x0f].transpose = (char)(dta-64); */
-				song->channel[ch].transpose = (char)(dta-64);
-				ctl->cmsg(CMSG_TEXT, VERB_DEBUG, "transpose channel %d by %d",
-					(adlo&0x0f)+1, dta-64);
-				break;
-			case 0x0b: /* volume */
-				return ME_MAINVOLUME;
-				break;
-			case 0x0e: /* pan */
-				return ME_PAN;
-				break;
-			default:
-				break;
-			}
-		}
-		return 0;
-	}
-	else if (id == 0x41 && model == 0x42 && adhi == 0x12 && adlo == 0x40)
-	{
-		if (dtc < 0)
-			return 0;
-		else if (dta == 0x15 && (cd & 0xf0) == 0x10)
-		{
-			int chan = cd & 0x0f;
-			if (!chan)
-				chan = 9;
-			else if (chan < 10)
-				chan--;
-			song->channel[chan].kit = dtb;
-		}
-		return 0;
-	}
-	return 0;
-}
-
 /* Print a string from the file, followed by a newline. Any non-ASCII
    or unprintable characters will be converted to periods. */
 static int dumpstring(MidiSong* song, int32 len, const char* label)
@@ -243,15 +131,8 @@ static MidiEventList* read_midi_event(MidiSong* song)
 
 		if (me == 0xF0 || me == 0xF7) /* SysEx event */
 		{
-			int32 sret;
-			uint8 sysa = 0, sysb = 0, syschan = 0;
-
 			len = getvl(song);
-			sret = sysex(song, len, &syschan, &sysa, &sysb);
-			if (sret)
-			{
-				MIDIEVENT(song->at, sret, syschan, sysa, sysb);
-			}
+			midi_skip(song, len);
 		}
 		else if (me == 0xFF) /* Meta event */
 		{
@@ -332,14 +213,6 @@ static MidiEventList* read_midi_event(MidiSong* song)
 					case 64:
 						control = ME_SUSTAIN;
 						break;
-
-					case 72:
-						control = ME_RELEASETIME;
-						break;
-					case 73:
-						control = ME_ATTACKTIME;
-						break;
-
 					case 120:
 						control = ME_ALL_SOUNDS_OFF;
 						break;
@@ -357,15 +230,14 @@ static MidiEventList* read_midi_event(MidiSong* song)
 						continuous controller. This will cause lots of
 						warnings about undefined tone banks. */
 					case 0:
-						if (XG_System_On)
-							control = ME_TONE_KIT;
-						else
-							control = ME_TONE_BANK;
+						control = ME_TONE_BANK;
 						break;
 
 					case 32:
-						if (XG_System_On)
-							control = ME_TONE_BANK;
+						if (b!=0)
+							ctl->cmsg(CMSG_INFO, VERB_DEBUG, "(Strange: tone bank change 0x20%02x)\n", b);
+						else
+							control=ME_TONE_BANK;
 						break;
 
 					case 100:
@@ -388,19 +260,6 @@ static MidiEventList* read_midi_event(MidiSong* song)
 					case 6:
 						if (nrpn)
 						{
-							if (rpn_msb[lastchan] != 1)
-								switch (rpn_msb[lastchan])
-								{
-								case 0x1a:
-									drumvolume[lastchan][0x7f & rpn_lsb[lastchan]] = b;
-									break;
-								case 0x1c:
-									if (!b)
-										b = (int) (127.0 * rand() / (RAND_MAX));
-									drumpanpot[lastchan][0x7f & rpn_lsb[lastchan]] = b;
-									break;
-								}
-
 							ctl->cmsg(CMSG_INFO, VERB_DEBUG, 
 								"(Data entry (MSB) for NRPN %02x,%02x: %ld)",
 								rpn_msb[lastchan], rpn_lsb[lastchan],
@@ -541,42 +400,6 @@ static void free_midi_list(MidiSong* song)
 	song->evlist = 0;
 }
 
-
-static void xremap_percussion(MidiSong* song, int* banknumpt, int* this_notept, int this_kit)
-{
-	int i, newmap;
-	int banknum = *banknumpt;
-	int this_note = *this_notept;
-	int newbank, newnote;
-
-	if (this_kit != 127 && this_kit != 126)
-		return;
-
-	for (i = 0; i < XMAPMAX; i++)
-	{
-		newmap = xmap[i][0];
-		if (!newmap)
-			return;
-		if (this_kit == 127 && newmap != XGDRUM)
-			continue;
-		if (this_kit == 126 && newmap != SFXDRUM1)
-			continue;
-		if (xmap[i][1] != banknum)
-			continue;
-		if (xmap[i][3] != this_note)
-			continue;
-		newbank = xmap[i][2];
-		newnote = xmap[i][4];
-		if (newbank == banknum && newnote == this_note)
-			return;
-		if (!song->drumset[newbank])
-			return;
-		*banknumpt = newbank;
-		*this_notept = newnote;
-		return;
-	}
-}
-
 /* Allocate an array of MidiEvents and fill it from the linked list of
    events, marking used instruments for loading. Convert event times to
    samples: handle tempo changes. Strip unnecessary events from the list.
@@ -588,17 +411,14 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 	int32 i, our_event_count, tempo, skip_this_event, new_value;
 	int32 sample_cum, samples_to_do, at, st, dt, counting_time;
 
-	int current_bank[MAXCHAN], current_banktype[MAXCHAN], current_set[MAXCHAN],
-		current_kit[MAXCHAN], current_program[MAXCHAN];
+	int current_bank[16], current_set[16], current_program[16];
 	/* Or should each bank have its own current program? */
-	int dset, dnote, drumsflag, mprog;
+	int mprog;
 
-	for (i=0; i<MAXCHAN; i++)
+	for (i=0; i<16; i++)
 	{
 		current_bank[i] = 0;
-		current_banktype[i] = 0;
 		current_set[i] = 0;
-		current_kit[i] = song->channel[i].kit;
 		current_program[i] = song->default_program;
 	}
 
@@ -616,10 +436,6 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 	for (i=0; i<song->event_count; i++)
 	{
 		skip_this_event = 0;
-		ctl->cmsg(CMSG_INFO, VERB_DEBUG_SILLY,
-			"%6d: ch %2d: event %d (%d,%d)",
-			meep->event.time, meep->event.channel + 1,
-			meep->event.type, meep->event.a, meep->event.b);
 
 		if (meep->event.type == ME_TEMPO)
 		{
@@ -633,43 +449,15 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 			{
 			case ME_PROGRAM:
 
-				if (current_kit[meep->event.channel])
+				if (ISDRUMCHANNEL(song, meep->event.channel))
 				{
-					if (current_kit[meep->event.channel]==126)
-					{
-						/* note request for 2nd sfx rhythm kit */
-						if (meep->event.a && song->drumset[SFXDRUM2])
-						{
-							current_kit[meep->event.channel] = 125;
-							current_set[meep->event.channel] = SFXDRUM2;
-							new_value = SFXDRUM2;
-						}
-						else if (!meep->event.a && song->drumset[SFXDRUM1])
-						{
-							current_set[meep->event.channel] = SFXDRUM1;
-							new_value = SFXDRUM1;
-						}
-						else
-						{
-							ctl->cmsg(CMSG_WARNING, VERB_VERBOSE,
-								"XG SFX drum set is undefined");
-							skip_this_event = 1;
-							break;
-						}
-					}
 					if (song->drumset[meep->event.a]) /* Is this a defined drumset? */
 						new_value = meep->event.a;
 					else
 					{
 						ctl->cmsg(CMSG_WARNING, VERB_VERBOSE,
 							"Drum set %d is undefined", meep->event.a);
-						if (song->drumset[0])
-							new_value = meep->event.a = 0;
-						else
-						{
-							skip_this_event = 1;
-							break;
-						}
+						new_value = meep->event.a = 0;
 					}
 					if (current_set[meep->event.channel] != new_value)
 						current_set[meep->event.channel] = new_value;
@@ -690,139 +478,39 @@ static MidiEvent* groom_list(MidiSong* song, int32 divisions, int32* eventsp, in
 			case ME_NOTEON:
 				if (counting_time)
 					counting_time = 1;
-
-				drumsflag = current_kit[meep->event.channel];
-
-				if (drumsflag) /* percussion channel? */
+				if (ISDRUMCHANNEL(song, meep->event.channel)) /* percussion channel? */
 				{
-					dset = current_set[meep->event.channel];
-					dnote = meep->event.a;
-					if (XG_System_On)
-						xremap_percussion(song, &dset, &dnote, drumsflag);
-
-					/*if (current_config_pc42b) pcmap(&dset, &dnote, &mprog, &drumsflag);*/
-
-					if (drumsflag)
+					int dset = current_set[meep->event.channel];
+					int dnote = meep->event.a;
+					/* Mark this instrument to be loaded */
+					if (!(song->drumset[dset]->instrument[dnote]))
 					{
-						/* Mark this instrument to be loaded */
-						if (!(song->drumset[dset]->tone[dnote].layer))
-						{
-							song->drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
-						}
-						if (!song->channel[meep->event.channel].name)
-							song->channel[meep->event.channel].name = song->drumset[dset]->name;
+						song->drumset[dset]->instrument[dnote] = MAGIC_LOAD_INSTRUMENT;
 					}
 				}
-
-				if (!drumsflag) /* not percussion */
+				else
 				{
 					int chan = meep->event.channel;
-					int banknum;
-
-					if (current_banktype[chan])
-						banknum = SFXBANK;
-					else
-						banknum = current_bank[chan];
-
+					int banknum = current_bank[chan];
 					mprog = current_program[chan];
-
 					if (mprog == SPECIAL_PROGRAM)
 						break;
 
-					if (XG_System_On && banknum == SFXBANK && !song->tonebank[SFXBANK] && song->tonebank[120])
-						banknum = 120;
-
-					/*if (current_config_pc42b) pcmap(&banknum, &dnote, &mprog, &drumsflag);*/
-
-					if (drumsflag)
+					/* Mark this instrument to be loaded */
+					if (!(song->tonebank[banknum]->instrument[mprog]))
 					{
-						/* Mark this instrument to be loaded */
-						if (!(song->drumset[dset]->tone[dnote].layer))
-						{
-							song->drumset[dset]->tone[dnote].layer = MAGIC_LOAD_INSTRUMENT;
-						}
-						if (!song->channel[meep->event.channel].name)
-							song->channel[meep->event.channel].name= song->drumset[dset]->name;
-					}
-					if (!drumsflag)
-					{
-						/* Mark this instrument to be loaded */
-						if (!(song->tonebank[banknum]->tone[mprog].layer))
-						{
-							song->tonebank[banknum]->tone[mprog].layer = MAGIC_LOAD_INSTRUMENT;
-						}
-						if (!song->channel[meep->event.channel].name)
-							song->channel[meep->event.channel].name = song->tonebank[banknum]->tone[mprog].name;
+						song->tonebank[banknum]->instrument[mprog] = MAGIC_LOAD_INSTRUMENT;
 					}
 				}
-				break;
-
-			case ME_TONE_KIT:
-				if (!meep->event.a || meep->event.a == 127)
-				{
-					new_value = meep->event.a;
-					if (current_kit[meep->event.channel] != new_value)
-						current_kit[meep->event.channel] = new_value;
-					else
-						skip_this_event = 1;
-					break;
-				}
-				else if (meep->event.a == 126)
-				{
-					if (song->drumset[SFXDRUM1]) /* Is this a defined tone bank? */
-						new_value = meep->event.a;
-					else
-					{
-						ctl->cmsg(CMSG_WARNING, VERB_VERBOSE,
-							"XG rhythm kit %d is undefined", meep->event.a);
-						skip_this_event = 1;
-						break;
-					}
-					current_set[meep->event.channel] = SFXDRUM1;
-					current_kit[meep->event.channel] = new_value;
-					break;
-				}
-				else if (meep->event.a != SFX_BANKTYPE)
-				{
-					ctl->cmsg(CMSG_WARNING, VERB_VERBOSE,
-						"XG kit %d is impossible", meep->event.a);
-					skip_this_event = 1;
-					break;
-				}
-
-				if (current_kit[meep->event.channel])
-				{
-					skip_this_event = 1;
-					break;
-				}
-				if (song->tonebank[SFXBANK] || song->tonebank[120]) /* Is this a defined tone bank? */
-					new_value = SFX_BANKTYPE;
-				else
-				{
-					ctl->cmsg(CMSG_WARNING, VERB_VERBOSE,
-						"XG Sfx bank is undefined");
-					skip_this_event = 1;
-					break;
-				}
-				if (current_banktype[meep->event.channel] != new_value)
-					current_banktype[meep->event.channel] = new_value;
-				else
-					skip_this_event = 1;
 				break;
 
 			case ME_TONE_BANK:
-				if (current_kit[meep->event.channel])
+				if (ISDRUMCHANNEL(song, meep->event.channel))
 				{
 					skip_this_event = 1;
 					break;
 				}
-				if (XG_System_On && meep->event.a > 0 && meep->event.a < 48)
-				{
-					song->channel[meep->event.channel].variationbank = meep->event.a;
-					ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, "XG variation bank %d", meep->event.a);
-					new_value = meep->event.a = 0;
-				}
-				else if (song->tonebank[meep->event.a]) /* Is this a defined tone bank? */
+				if (song->tonebank[meep->event.a]) /* Is this a defined tone bank? */
 					new_value = meep->event.a;
 				else 
 				{
@@ -886,21 +574,6 @@ MidiEvent* read_midi_mem(MidiSong* song, void* mimage, int msize, int32* count, 
 	song->event_count=0;
 	song->at=0;
 	song->evlist=0;
-
-	XG_System_On = 0;
-	/* vol_table = def_vol_table; */
-	memset(&drumvolume, -1, sizeof(drumvolume));
-	memset(&drumpanpot, NO_PANNING, sizeof(drumpanpot));
-
-	for (i = 0; i < MAXCHAN; i++)
-	{
-		if (ISDRUMCHANNEL(song, i))
-			song->channel[i].kit = 127;
-		else
-			song->channel[i].kit = 0;
-		song->channel[i].variationbank = 0;
-		song->channel[i].transpose = 0;
-	}
 
 past_riff:
 

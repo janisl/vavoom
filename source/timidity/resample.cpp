@@ -535,8 +535,7 @@ void pre_resample(Sample* sp)
 {
 	double a, xdiff;
 	int32 incr, ofs, newlen, count;
-	int16 *src = (int16 *) sp->data;
-	sample_t *newdata, *dest;
+	sample_t *newdata, *dest, *src = sp->data;
 	int16 v1, v2, v3, v4, *vptr;
 	static const char note_name[12][3] =
 	{
@@ -549,11 +548,7 @@ void pre_resample(Sample* sp)
 
 	a = ((double) (sp->sample_rate) * freq_table[(int) (sp->note_to_use)]) /
 		((double) (sp->root_freq) * OUTPUT_RATE);
-	if (a <= 0)
-		return;
 	newlen = (int32)(sp->data_length / a);
-	if (newlen < 0 || (newlen >> FRACTION_BITS) > MAX_SAMPLE_SIZE)
-		return;
 	dest = newdata = (sample_t*)safe_malloc(newlen >> (FRACTION_BITS - 1));
 
 	count = (newlen >> FRACTION_BITS) - 1;

@@ -44,7 +44,6 @@ namespace LibTimidity
 /* #define DEFAULT_VOICES	32 */
 #define DEFAULT_VOICES	256
 #define MAX_VOICES		256
-#define MAXCHAN			16
 #define MAXNOTE			128
 
 /* 1000 here will give a control ratio of 22:1 with 22 kHz output.
@@ -153,10 +152,8 @@ namespace LibTimidity
 #endif
 
 /* change FRACTION_BITS above, not these */
-#define INTEGER_BITS		(32 - FRACTION_BITS)
 #define INTEGER_MASK		(0xFFFFFFFF << FRACTION_BITS)
 #define FRACTION_MASK		(~ INTEGER_MASK)
-#define MAX_SAMPLE_SIZE		(1 << INTEGER_BITS)
 
 /* This is enforced by some computations that must fit in an int */
 #define MAX_CONTROL_RATIO	255
@@ -164,8 +161,6 @@ namespace LibTimidity
 #define MAX_AMPLIFICATION	800
 
 #define CONFIG_FILE			"timidity.cfg"
-
-#define FINAL_VOLUME(v) (v)
 
 #define FSCALE(a,b)		(float)((a) * (double)(1<<(b)))
 #define FSCALENEG(a,b)	(float)((a) * (1.0L / (double)(1<<(b))))
@@ -201,7 +196,6 @@ namespace LibTimidity
 #define VERB_VERBOSE		1
 #define VERB_NOISY			2
 #define VERB_DEBUG			3
-#define VERB_DEBUG_SILLY	4
 
 /* Bits in modes: */
 #define MODES_16BIT			(1<<0)
@@ -211,29 +205,14 @@ namespace LibTimidity
 #define MODES_REVERSE		(1<<4)
 #define MODES_SUSTAIN		(1<<5)
 #define MODES_ENVELOPE		(1<<6)
-#define MODES_FAST_RELEASE	(1<<7)
 
 #define INST_GUS	0
 #define INST_SF2	1
 #define INST_DLS	2
 
-#define FONT_NORMAL		0
-#define FONT_FFF		1
-#define FONT_SBK		2
-#define FONT_TONESET	3
-#define FONT_DRUMSET	4
-#define FONT_PRESET		5
-
 /* A hack to delay instrument loading until after reading the
    entire MIDI file. */
 #define MAGIC_LOAD_INSTRUMENT	((Instrument*)(-1))
-
-#define MAXPROG		128
-#define MAXBANK		130
-#define SFXBANK		(MAXBANK-1)
-#define SFXDRUM1	(MAXBANK-2)
-#define SFXDRUM2	(MAXBANK-1)
-#define XGDRUM		1
 
 #define SPECIAL_PROGRAM		-1
 
@@ -257,21 +236,11 @@ namespace LibTimidity
 #define ME_TONE_BANK			15
 
 #define ME_LYRIC				16
-#define ME_TONE_KIT				17
-#define ME_MASTERVOLUME			18
-#define ME_CHANNEL_PRESSURE		19
-
-#define ME_RELEASETIME			72
-#define ME_ATTACKTIME			73
 
 #define ME_EOT					99
 
-#define SFX_BANKTYPE	64
-
 /* Causes the instrument's default panning to be used. */
 #define NO_PANNING		-1
-/* envelope points */
-#define MAXPOINT		7
 
 /* Voice status options: */
 #define VOICE_FREE		0
@@ -303,9 +272,7 @@ namespace LibTimidity
 #define OUTPUT_RATE		44100
 
 /* In percent. */
-/* #define DEFAULT_AMPLIFICATION 	70 */
-/* #define DEFAULT_AMPLIFICATION 	50 */
-#define DEFAULT_AMPLIFICATION 	30
+#define DEFAULT_AMPLIFICATION 	70
 
 /* You could specify a complete path, e.g. "/etc/timidity.cfg", and
    then specify the library directory in the configuration file. */
@@ -344,8 +311,6 @@ typedef short int16;
 typedef unsigned char uint8;
 typedef char int8;
 
-typedef double FLOAT_T;
-
 typedef int16 sample_t;
 typedef int32 final_volume_t;
 
@@ -365,13 +330,12 @@ struct Sample
 	int32		loop_start, loop_end, data_length,
 				sample_rate, low_vel, high_vel, low_freq, high_freq, root_freq;
 	int32		envelope_rate[6], envelope_offset[6];
-	FLOAT_T		volume;
+	float		volume;
 	sample_t*	data;
 	int32 		tremolo_sweep_increment, tremolo_phase_increment, 
 				vibrato_sweep_increment, vibrato_control_ratio;
 	uint8		tremolo_depth, vibrato_depth,
 				modes;
-	uint8		freq_centre;
 	int8		panning, note_to_use;
 };
 
@@ -385,14 +349,14 @@ struct Instrument
 struct ToneBankElement
 {
 	char*				name;
-	Instrument*			layer;
 	int					note, amp, pan, strip_loop, strip_envelope, strip_tail;
 };
 
 struct ToneBank
 {
 	char*				name;
-	ToneBankElement		tone[MAXPROG];
+	ToneBankElement		tone[128];
+	Instrument*			instrument[128];
 };
 
 struct Channel
@@ -400,14 +364,9 @@ struct Channel
 	int
 		bank, program, volume, sustain, panning, pitchbend, expression, 
 		mono, /* one note only on this channel -- not implemented yet */
-		/* new stuff */
-		variationbank, releasetime, attacktime, kit, sfx,
-		/* end new */
 		pitchsens;
-	FLOAT_T
+	float
 		pitchfactor; /* precomputed pitch bend factor to save some fdiv's */
-	char transpose;
-	char *name;
 };
 
 struct Voice
@@ -427,12 +386,10 @@ struct Voice
 
 	final_volume_t left_mix, right_mix;
 
-	FLOAT_T
+	float
 		left_amp, right_amp, tremolo_volume;
 	int32
 		vibrato_sample_increment[VIBRATO_SAMPLE_INCREMENTS];
-	int32
-		envelope_rate[MAXPOINT];
 	int32
 		vibrato_phase, vibrato_control_ratio, vibrato_control_counter,
 		envelope_stage, control_counter, panning, panned;
@@ -457,11 +414,11 @@ struct MidiSong
 	int					playing;
 	uint8*				midi_image;
 	uint32				image_left;
-	FLOAT_T				master_volume;
+	float				master_volume;
 	int32				amplification;
 	DLS_Data*			patches;
-	ToneBank*			tonebank[MAXBANK];
-	ToneBank*			drumset[MAXBANK];
+	ToneBank*			tonebank[128];
+	ToneBank*			drumset[128];
 	/* This is a special instrument, used for all melodic programs */
 	Instrument*			default_instrument;
 	/* This is only used for tracks that don't specify a program */
@@ -474,7 +431,7 @@ struct MidiSong
 	/*samples per MIDI delta-t*/
 	int32				sample_increment;
 	int32				sample_correction;
-	Channel				channel[MAXCHAN];
+	Channel				channel[16];
 	Voice				voice[MAX_VOICES];
 	int					voices;
 	int32				drumchannels;
@@ -531,22 +488,14 @@ extern const double vol_table[];
 extern const double bend_fine[];
 extern const double bend_coarse[];
 
-#define XMAPMAX 800
-extern int xmap[XMAPMAX][5];
-
 extern ToneBank standard_tonebank, standard_drumset;
-extern ToneBank*			master_tonebank[MAXBANK];
-extern ToneBank*			master_drumset[MAXBANK];
+extern ToneBank*			master_tonebank[128];
+extern ToneBank*			master_drumset[128];
 
 extern int fast_decay;
 extern int free_instruments_afterwards;
 
 extern char def_instr_name[256];
-
-extern signed char drumvolume[MAXCHAN][MAXNOTE];
-extern signed char drumpanpot[MAXCHAN][MAXNOTE];
-
-extern int XG_System_On;
 
 extern ControlMode*		ctl;
 

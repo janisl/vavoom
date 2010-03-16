@@ -67,20 +67,20 @@ int recompute_envelope(MidiSong* song, int v)
 
 void apply_envelope_to_amp(MidiSong* song, int v)
 {
-	FLOAT_T lamp = song->voice[v].left_amp, ramp;
+	float lamp = song->voice[v].left_amp, ramp;
 	int32 la, ra;
 	if (song->voice[v].panned == PANNED_MYSTERY)
 	{
 		ramp = song->voice[v].right_amp;
 		if (song->voice[v].tremolo_phase_increment)
 		{
-			FLOAT_T tv = song->voice[v].tremolo_volume;
+			float tv = song->voice[v].tremolo_volume;
 			lamp *= tv;
 			ramp *= tv;
 		}
 		if (song->voice[v].sample->modes & MODES_ENVELOPE)
 		{
-			FLOAT_T ev = (FLOAT_T)vol_table[song->voice[v].envelope_volume >> 23];
+			float ev = (float)vol_table[song->voice[v].envelope_volume >> 23];
 			lamp *= ev;
 			ramp *= ev;
 		}
@@ -93,22 +93,22 @@ void apply_envelope_to_amp(MidiSong* song, int v)
 		if (ra > MAX_AMP_VALUE)
 			ra = MAX_AMP_VALUE;
 
-		song->voice[v].left_mix = FINAL_VOLUME(la);
-		song->voice[v].right_mix = FINAL_VOLUME(ra);
+		song->voice[v].left_mix = la;
+		song->voice[v].right_mix = ra;
 	}
 	else
 	{
 		if (song->voice[v].tremolo_phase_increment)
 			lamp *= song->voice[v].tremolo_volume;
 		if (song->voice[v].sample->modes & MODES_ENVELOPE)
-			lamp *= (FLOAT_T)vol_table[song->voice[v].envelope_volume >> 23];
+			lamp *= (float)vol_table[song->voice[v].envelope_volume >> 23];
 
 		la = (int32)FSCALE(lamp,AMP_BITS);
 
 		if (la > MAX_AMP_VALUE)
 			la = MAX_AMP_VALUE;
 
-		song->voice[v].left_mix = FINAL_VOLUME(la);
+		song->voice[v].left_mix = la;
 	}
 }
 
@@ -150,7 +150,7 @@ static void update_tremolo(MidiSong* song, int v)
 	song->voice[v].tremolo_phase += song->voice[v].tremolo_phase_increment;
 
 	song->voice[v].tremolo_volume =
-		(FLOAT_T)(1.0 - FSCALENEG((sine(song->voice[v].tremolo_phase >> RATE_SHIFT) + 1.0) *
+		(float)(1.0 - FSCALENEG((sine(song->voice[v].tremolo_phase >> RATE_SHIFT) + 1.0) *
 		depth * TREMOLO_AMPLITUDE_TUNING, 17));
 
 	/* I'm not sure about the +1.0 there -- it makes tremoloed voices'

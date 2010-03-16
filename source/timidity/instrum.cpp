@@ -35,8 +35,8 @@ namespace LibTimidity
 /* Some functions get aggravated if not even the standard banks are 
    available. */
 ToneBank standard_tonebank, standard_drumset;
-ToneBank*			master_tonebank[MAXBANK] = { &standard_tonebank };
-ToneBank*			master_drumset[MAXBANK] = { &standard_drumset };
+ToneBank*			master_tonebank[128] = { &standard_tonebank };
+ToneBank*			master_drumset[128] = { &standard_drumset };
 
 #ifdef FAST_DECAY
 int fast_decay=1;
@@ -64,15 +64,15 @@ static void free_instrument(Instrument* ip)
 static void free_bank(MidiSong* song, int dr, int b)
 {
 	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
-	for (int i = 0; i < MAXPROG; i++)
+	for (int i = 0; i < 128; i++)
 	{
-		if (bank->tone[i].layer)
+		if (bank->instrument[i])
 		{
 			/* Not that this could ever happen, of course */
-			if (bank->tone[i].layer != MAGIC_LOAD_INSTRUMENT)
+			if (bank->instrument[i] != MAGIC_LOAD_INSTRUMENT)
 			{
-				free_instrument(bank->tone[i].layer);
-				bank->tone[i].layer = NULL;
+				free_instrument(bank->instrument[i]);
+				bank->instrument[i] = NULL;
 			}
 		}
 		if (bank->tone[i].name)
@@ -408,7 +408,7 @@ fail:
 			}
 		}
 
-		for (j = ATTACK; j < DELAY; j++)
+		for (j = 0; j < 6; j++)
 		{
 			sp->envelope_rate[j] =
 				(j < 3) ? convert_envelope_rate_attack(song, tmp[j], 11) : convert_envelope_rate(song, tmp[j]);
@@ -417,11 +417,7 @@ fail:
 		}
 
 		/* Then read the sample data */
-		if (sp->data_length / 2 > MAX_SAMPLE_SIZE)
-		{
-			goto fail;
-		}
-		sp->data = (sample_t*)safe_malloc(sp->data_length + 2);
+		sp->data = (sample_t*)safe_malloc(sp->data_length);
 
 		if (1 != fread(sp->data, sp->data_length, 1, fp))
 			goto fail;
@@ -431,7 +427,7 @@ fail:
 			int32 i = sp->data_length;
 			uint8 *cp = (uint8*)(sp->data);
 			uint16 *tmp,*newdta;
-			tmp = newdta = (uint16*)safe_malloc(sp->data_length * 2 + 2);
+			tmp = newdta = (uint16*)safe_malloc(sp->data_length * 2);
 			while (i--)
 				*tmp++ = (uint16)(*cp++) << 8;
 			cp = (uint8*)(sp->data);
@@ -482,18 +478,16 @@ fail:
 		}
 
 		if (amp != -1)
-			sp->volume = (FLOAT_T)((amp) / 100.0);
+			sp->volume = (float)((amp) / 100.0);
 		else
 		{
 #ifdef ADJUST_SAMPLE_VOLUMES
 			/* Try to determine a volume scaling factor for the sample.
 				This is a very crude adjustment, but things sound more
 				balanced with it. Still, this should be a runtime option. */
-			uint32 i, numsamps = sp->data_length / 2;
-			uint32 higher = 0, highcount = 0;
+			int32 i = sp->data_length / 2;
 			int16 maxamp = 0, a;
 			int16* tmp = (int16*)sp->data;
-			i = numsamps;
 			while (i--)
 			{
 				a = *tmp++;
@@ -502,24 +496,7 @@ fail:
 				if (a > maxamp)
 					maxamp = a;
 			}
-			tmp = (int16*)sp->data;
-			i = numsamps;
-			while (i--)
-			{
-				a = *tmp++;
-				if (a < 0)
-					a = -a;
-				if (a > 3 * maxamp / 4)
-				{
-					higher += a;
-					highcount++;
-				}
-			}
-			if (highcount)
-				higher /= highcount;
-			else
-				higher = 10000;
-			sp->volume = (32768.0 * 0.875) / (double)higher;
+			sp->volume=(float)(32768.0 / maxamp);
 			ctl->cmsg(CMSG_INFO, VERB_DEBUG, " * volume comp: %f", sp->volume);
 #else
 			sp->volume = 1.0;
@@ -530,27 +507,11 @@ fail:
 
 		sp->loop_start /= 2;
 		sp->loop_end /= 2;
-		sp->data[sp->data_length] = sp->data[sp->data_length - 1];
 
 		/* Then fractional samples */
 		sp->data_length <<= FRACTION_BITS;
 		sp->loop_start <<= FRACTION_BITS;
 		sp->loop_end <<= FRACTION_BITS;
-
-		/* trim off zero data at end */
-		{
-			int ls = sp->loop_start >> FRACTION_BITS;
-			int le = sp->loop_end >> FRACTION_BITS;
-			int se = sp->data_length >> FRACTION_BITS;
-			while (se > 1 && !sp->data[se - 1])
-				se--;
-			if (le > se)
-				le = se;
-			if (ls >= le)
-				sp->modes &= ~MODES_LOOPING;
-			sp->loop_end = le << FRACTION_BITS;
-			sp->data_length = se << FRACTION_BITS;
-		}
 
 		/* Adjust for fractional loop points. This is a guess. Does anyone
 		know what "fractions" really stands for? */
@@ -588,12 +549,12 @@ static int fill_bank(MidiSong* song, int dr, int b)
 			(dr) ? "drumset" : "tone bank", b);
 		return 0;
 	}
-	for (i = 0; i < MAXPROG; i++)
+	for (i = 0; i < 128; i++)
 	{
-		if (bank->tone[i].layer == MAGIC_LOAD_INSTRUMENT)
+		if (bank->instrument[i] == MAGIC_LOAD_INSTRUMENT)
 		{
-			bank->tone[i].layer = load_instrument_dls(song, dr, b, i);
-			if (bank->tone[i].layer)
+			bank->instrument[i] = load_instrument_dls(song, dr, b, i);
+			if (bank->instrument[i])
 			{
 				continue;
 			}
@@ -609,21 +570,19 @@ static int fill_bank(MidiSong* song, int dr, int b)
 						bank / drumset for loading (if it isn't already) */
 					if (!dr)
 					{
-						if (!(standard_tonebank.tone[i].layer))
-							standard_tonebank.tone[i].layer=
-								MAGIC_LOAD_INSTRUMENT;
+						if (!(song->tonebank[0]->instrument[i]))
+							song->tonebank[0]->instrument[i] = MAGIC_LOAD_INSTRUMENT;
 					}
 					else
 					{
-						if (!(standard_drumset.tone[i].layer))
-							standard_drumset.tone[i].layer=
-								MAGIC_LOAD_INSTRUMENT;
+						if (!(song->drumset[0]->instrument[i]))
+							song->drumset[0]->instrument[i] = MAGIC_LOAD_INSTRUMENT;
 					}
 				}
-				bank->tone[i].layer = 0;
+				bank->instrument[i] = 0;
 				errors++;
 			}
-			else if (!(bank->tone[i].layer =
+			else if (!(bank->instrument[i] =
 				load_instrument(song, bank->tone[i].name, 
 					(dr) ? 1 : 0,
 					bank->tone[i].pan,
@@ -652,7 +611,7 @@ static int fill_bank(MidiSong* song, int dr, int b)
 
 int load_missing_instruments(MidiSong* song)
 {
-	int i = MAXBANK, errors = 0;
+	int i = 128, errors = 0;
 	while (i--)
 	{
 		if (song->tonebank[i])
@@ -678,7 +637,7 @@ void free_instruments(MidiSong* song)
 int set_default_instrument(MidiSong* song, const char* name)
 {
 	Instrument* ip;
-	if (!(ip = load_instrument(song, name, 0, -1, -1, -1, -1, -1, -1)))
+	if (!(ip = load_instrument(song, name, 0, -1, -1, -1, 0, 0, 0)))
 		return -1;
 	if (song->default_instrument)
 		free_instrument(song->default_instrument);

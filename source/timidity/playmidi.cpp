@@ -30,25 +30,10 @@
 namespace LibTimidity
 {
 
-signed char drumvolume[MAXCHAN][MAXNOTE];
-signed char drumpanpot[MAXCHAN][MAXNOTE];
-
-int XG_System_On=0;
-
-
 static void adjust_amplification(MidiSong* song)
 {
-	song->master_volume = (FLOAT_T)(song->amplification) / (FLOAT_T)100.0;
-	song->master_volume /= 2;
+	song->master_volume = (float)(song->amplification) / (float)100.0;
 }
-
-
-static void adjust_master_volume(MidiSong* song, int32 vol)
-{
-	song->master_volume = (double)(vol*song->amplification) / 1638400.0L;
-	song->master_volume /= 2;
-}
-
 
 static void reset_voices(MidiSong* song)
 {
@@ -68,7 +53,7 @@ static void reset_controllers(MidiSong* song, int c)
 
 static void reset_midi(MidiSong* song)
 {
-	for (int i = 0; i < MAXCHAN; i++)
+	for (int i = 0; i < 16; i++)
 	{
 		reset_controllers(song, i);
 		/* The rest of these are unaffected by the Reset All Controllers event */
@@ -76,16 +61,13 @@ static void reset_midi(MidiSong* song)
 		song->channel[i].panning = NO_PANNING;
 		song->channel[i].pitchsens = 2;
 		song->channel[i].bank = 0; /* tone bank or drum set */
-		song->channel[i].releasetime = 64,
-		song->channel[i].attacktime = 64,
-		song->channel[i].sfx = 0;
 	}
 	reset_voices(song);
 }
 
-static void select_sample(MidiSong* song, int v, Instrument* ip)
+static void select_sample(MidiSong* song, int v, Instrument* ip, int vel)
 {
-	int32 f, cdiff, diff, midfreq;
+	int32 f, cdiff, diff;
 	int s,i;
 	Sample *sp, *closest;
 
@@ -99,6 +81,17 @@ static void select_sample(MidiSong* song, int v, Instrument* ip)
 	}
 
 	f = song->voice[v].orig_frequency;
+	for (i=0; i<s; i++)
+	{
+		if (sp->low_vel <= vel && sp->high_vel >= vel &&
+			sp->low_freq <= f && sp->high_freq >= f)
+		{
+			song->voice[v].sample=sp;
+			return;
+		}
+		sp++;
+	}
+
 	/* 
 		No suitable sample found! We'll select the sample whose root
 		frequency is closest to the one we want. (Actually we should
@@ -107,14 +100,9 @@ static void select_sample(MidiSong* song, int v, Instrument* ip)
 
 	cdiff = 0x7FFFFFFF;
 	closest = sp = ip->sample;
-	midfreq = (sp->low_freq + sp->high_freq) / 2;
 	for (i = 0; i < s; i++)
 	{
 		diff = sp->root_freq - f;
-		/*  But the root freq. can perfectly well lie outside the keyrange
-		*  frequencies, so let's try:
-		*/
-		/* diff=midfreq - f; */
 		if (diff < 0)
 			diff = -diff;
 		if (diff < cdiff)
@@ -160,7 +148,7 @@ static void recompute_freq(MidiSong* song, int v)
 			if (pb < 0)
 				i = -i;
 			song->channel[song->voice[v].channel].pitchfactor =
-				(FLOAT_T)(bend_fine[(i >> 5) & 0xFF] * bend_coarse[i >> 13]);
+				(float)(bend_fine[(i >> 5) & 0xFF] * bend_coarse[i >> 13]);
 		}
 		if (pb > 0)
 			song->voice[v].frequency =
@@ -209,23 +197,13 @@ static void recompute_amp(MidiSong* song, int v)
 	int vol = song->channel[chan].volume;
 	int expr = song->channel[chan].expression;
 	int vel = vcurve[song->voice[v].velocity];
-	int drumpan = NO_PANNING;
-	FLOAT_T curved_expression, curved_volume;
-
-	if (song->channel[chan].kit)
-	{
-		int note = song->voice[v].sample->note_to_use;
-		if (note > 0 && drumvolume[chan][note] >= 0)
-			vol = drumvolume[chan][note];
-		if (note > 0 && drumpanpot[chan][note] >= 0)
-			panning = drumvolume[chan][note];
-	}
+	float curved_expression, curved_volume;
 
 	curved_expression = 127.0 * vol_table[expr];
 
 	curved_volume = 127.0 * vol_table[vol];
 
-	tempamp= (int32)((FLOAT_T)vel * curved_volume * curved_expression); /* 21 bits */
+	tempamp= (int32)((float)vel * curved_volume * curved_expression); /* 21 bits */
 
 	/* TODO: use fscale */
 
@@ -255,7 +233,7 @@ static void recompute_amp(MidiSong* song, int v)
 	}
 	else
 	{
-		FLOAT_T refv = (double)(tempamp) * song->voice[v].sample->volume * song->master_volume;
+		float refv = (double)(tempamp) * song->voice[v].sample->volume * song->master_volume;
 
 		song->voice[v].panned = PANNED_MYSTERY;
 		song->voice[v].left_amp = FSCALENEG(refv * (128-panning), 27);
@@ -263,83 +241,25 @@ static void recompute_amp(MidiSong* song, int v)
 	}
 }
 
-static void xremap(MidiSong* song, int* banknumpt, int* this_notept, int this_kit)
-{
-	int i, newmap;
-	int banknum = *banknumpt;
-	int this_note = *this_notept;
-	int newbank, newnote;
-
-	if (!this_kit)
-	{
-		if (banknum == SFXBANK && song->tonebank[SFXBANK])
-			return;
-		if (banknum == SFXBANK && song->tonebank[120])
-			*banknumpt = 120;
-		return;
-	}
-
-	if (this_kit != 127 && this_kit != 126)
-		return;
-
-	for (i = 0; i < XMAPMAX; i++)
-	{
-		newmap = xmap[i][0];
-		if (!newmap)
-			return;
-		if (this_kit == 127 && newmap != XGDRUM)
-			continue;
-		if (this_kit == 126 && newmap != SFXDRUM1)
-			continue;
-		if (xmap[i][1] != banknum)
-			continue;
-		if (xmap[i][3] != this_note)
-			continue;
-		newbank = xmap[i][2];
-		newnote = xmap[i][4];
-		if (newbank == banknum && newnote == this_note)
-			return;
-		if (!song->drumset[newbank])
-			return;
-		if (!song->drumset[newbank]->tone[newnote].layer)
-			return;
-		if (song->drumset[newbank]->tone[newnote].layer == MAGIC_LOAD_INSTRUMENT)
-			return;
-		*banknumpt = newbank;
-		*this_notept = newnote;
-		return;
-	}
-}
-
-
 static void start_note(MidiSong* song, MidiEvent* e, int i)
 {
 	Instrument *ip;
 	int j, banknum, ch=e->channel;
-	int played_note, drumpan=NO_PANNING;
+	int played_note;
 	int32 rt;
-	int attacktime, releasetime, decaytime, variationbank;
 	int this_note = e->a;
 	int this_velocity = e->b;
-	int drumsflag = song->channel[ch].kit;
 	int this_prog = song->channel[ch].program;
 
-	if (song->channel[ch].sfx)
-		banknum = song->channel[ch].sfx;
-	else
-		banknum = song->channel[ch].bank;
+	banknum = song->channel[ch].bank;
 
 	song->voice[i].velocity = this_velocity;
 
-	if (XG_System_On)
-		xremap(song, &banknum, &this_note, drumsflag);
-	/*   if (current_config_pc42b) pcmap(&banknum, &this_note, &this_prog, &drumsflag); */
-
-	if (drumsflag)
+	if (ISDRUMCHANNEL(song, ch))
 	{
-		if (!(ip=song->drumset[banknum]->tone[this_note].layer))
+		if (!(ip=song->drumset[banknum]->instrument[this_note]))
 		{
-			if (!(ip=song->drumset[0]->tone[this_note].layer))
+			if (!(ip=song->drumset[0]->instrument[this_note]))
 				return; /* No instrument? Then we can't play. */
 		}
 		if (ip->type == INST_GUS && ip->samples != 1)
@@ -349,33 +269,32 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 		}
 	
 		if (ip->sample->note_to_use) /* Do we have a fixed pitch? */
-		{
 			song->voice[i].orig_frequency=freq_table[(int)(ip->sample->note_to_use)];
-			drumpan = drumpanpot[ch][(int)ip->sample->note_to_use];
-		}
 		else
 			song->voice[i].orig_frequency=freq_table[this_note & 0x7F];
+      
+		/* drums are supposed to have only one sample */
+		song->voice[i].sample = ip->sample;
 	}
 	else
 	{
 		if (song->channel[ch].program == SPECIAL_PROGRAM)
 			ip = song->default_instrument;
-		else if (!(ip = song->tonebank[song->channel[ch].bank]->tone[song->channel[ch].program].layer))
+		else if (!(ip = song->tonebank[song->channel[ch].bank]->instrument[song->channel[ch].program]))
 		{
-			if (!(ip=song->tonebank[0]->tone[this_prog].layer))
+			if (!(ip=song->tonebank[0]->instrument[this_prog]))
 				return; /* No instrument? Then we can't play. */
 		}
 		if (ip->sample->note_to_use) /* Fixed-pitch instrument? */
 			song->voice[i].orig_frequency = freq_table[(int)(ip->sample->note_to_use)];
 		else
 			song->voice[i].orig_frequency = freq_table[this_note & 0x7F];
+		select_sample(song, i, ip, e->b);
 	}
-
-	select_sample(song, i, ip);
 
 	played_note = song->voice[i].sample->note_to_use;
 	
-	if (!played_note || !drumsflag)
+	if (!played_note || !ISDRUMCHANNEL(song, ch))
 		played_note = this_note & 0x7f;
 	song->voice[i].status = VOICE_ON;
 	song->voice[i].channel = ch;
@@ -398,92 +317,10 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 		song->voice[i].vibrato_sample_increment[j] = 0;
 	}
 
-
-	attacktime = song->channel[ch].attacktime;
-	releasetime = song->channel[ch].releasetime;
-	decaytime = 64;
-	variationbank = song->channel[ch].variationbank;
-
-	switch (variationbank)
-	{
-	case  8:
-		attacktime = 64+32;
-		break;
-	case 12:
-		decaytime = 64-32;
-		break;
-	default:
-		break;
-	}
-
-
-	for (j = ATTACK; j < MAXPOINT; j++)
-	{
-		song->voice[i].envelope_rate[j] = song->voice[i].sample->envelope_rate[j];
-	}
-
-	if (attacktime!=64)
-	{
-		rt = song->voice[i].envelope_rate[ATTACK];
-		rt = rt + ((64 - attacktime) * rt) / 100;
-		if (rt > 1000)
-			song->voice[i].envelope_rate[ATTACK] = rt;
-	}
-	if (releasetime!=64)
-	{
-		rt = song->voice[i].envelope_rate[RELEASE];
-		rt = rt + ((64 - releasetime) * rt) / 100;
-		if (rt > 1000)
-			song->voice[i].envelope_rate[RELEASE] = rt;
-	}
-	if (decaytime!=64)
-	{
-		rt = song->voice[i].envelope_rate[DECAY];
-		rt = rt + ((64 - decaytime) * rt) / 100;
-		if (rt > 1000)
-			song->voice[i].envelope_rate[DECAY] = rt;
-	}
-
 	if (song->channel[ch].panning != NO_PANNING)
 		song->voice[i].panning = song->channel[ch].panning;
 	else
 		song->voice[i].panning = song->voice[i].sample->panning;
-	if (drumpan != NO_PANNING)
-		song->voice[i].panning = drumpan;
-
-	if (variationbank == 1)
-	{
-		int pan = song->voice[i].panning;
-		int disturb = 0;
-		/* If they're close up (no reverb) and you are behind the pianist,
-		* high notes come from the right, so we'll spread piano etc. notes
-		* out horizontally according to their pitches.
-		*/
-		if (this_prog < 21)
-		{
-			int n = song->voice[i].velocity - 32;
-			if (n < 0) n = 0;
-			if (n > 64) n = 64;
-			pan = pan / 2 + n;
-		}
-		/* For other types of instruments, the music sounds more alive if
-		* notes come from slightly different directions.  However, instruments
-		* do drift around in a sometimes disconcerting way, so the following
-		* might not be such a good idea.
-		*/
-		else
-			disturb = (song->voice[i].velocity/32 % 8) + (song->voice[i].note % 8); /* /16? */
-
-		if (pan < 64)
-			pan += disturb;
-		else
-			pan -= disturb;
-		if (pan < 0)
-			pan = 0;
-		else if (pan > 127)
-			pan = 127;
-		song->voice[i].panning = pan;
-	}
 
 	recompute_freq(song, i);
 	recompute_amp(song, i);
@@ -531,21 +368,19 @@ static void note_on(MidiSong* song, MidiEvent* e)
 	}
 
 	/* Look for the decaying note with the lowest volume */
-	if (lowest == -1)
+	i = song->voices;
+	while (i--)
 	{
-		i = song->voices;
-		while (i--)
+		if ((song->voice[i].status != VOICE_ON) &&
+			(song->voice[i].status != VOICE_DIE))
 		{
-			if (song->voice[i].status & ~(VOICE_ON | VOICE_DIE | VOICE_FREE))
+			v = song->voice[i].left_mix;
+			if ((song->voice[i].panned == PANNED_MYSTERY) && (song->voice[i].right_mix > v))
+				v = song->voice[i].right_mix;
+			if (v < lv)
 			{
-				v = song->voice[i].left_mix;
-				if ((song->voice[i].panned == PANNED_MYSTERY) && (song->voice[i].right_mix > v))
-					v = song->voice[i].right_mix;
-				if (v < lv)
-				{
-					lv = v;
-					lowest = i;
-				}
+				lv = v;
+				lowest = i;
 			}
 		}
 	}
@@ -585,7 +420,7 @@ static void finish_note(MidiSong* song, int i)
 
 static void note_off(MidiSong* song, MidiEvent* e)
 {
-	int i = song->voices, v;
+	int i = song->voices;
 	while (i--)
 		if (song->voice[i].status == VOICE_ON &&
 			song->voice[i].channel == e->channel &&
@@ -702,10 +537,6 @@ static void seek_forward(MidiSong* song, int32 until_time)
 			song->channel[song->current_event->channel].volume = song->current_event->a;
 			break;
 
-		case ME_MASTERVOLUME:
-			adjust_master_volume(song, song->current_event->a + (song->current_event->b << 7));
-			break;
-
 		case ME_PAN:
 			song->channel[song->current_event->channel].panning = song->current_event->a;
 			break;
@@ -715,8 +546,7 @@ static void seek_forward(MidiSong* song, int32 until_time)
 			break;
 
 		case ME_PROGRAM:
-			/* if (ISDRUMCHANNEL(song, song->current_event->channel)) */
-			if (song->channel[song->current_event->channel].kit)
+			if (ISDRUMCHANNEL(song, song->current_event->channel))
 				/* Change drum set */
 				song->channel[song->current_event->channel].bank = song->current_event->a;
 			else
@@ -726,29 +556,6 @@ static void seek_forward(MidiSong* song, int32 until_time)
 		case ME_SUSTAIN:
 			song->channel[song->current_event->channel].sustain = song->current_event->a;
 			break;
-
-
-		case ME_RELEASETIME:
-			song->channel[song->current_event->channel].releasetime = song->current_event->a;
-			break;
-
-		case ME_ATTACKTIME:
-			song->channel[song->current_event->channel].attacktime = song->current_event->a;
-			break;
-
-		case ME_TONE_KIT:
-			if (song->current_event->a == SFX_BANKTYPE)
-			{
-				song->channel[song->current_event->channel].sfx = SFXBANK;
-				song->channel[song->current_event->channel].kit = 0;
-			}
-			else
-			{
-				song->channel[song->current_event->channel].sfx = 0;
-				song->channel[song->current_event->channel].kit = song->current_event->a;
-			}
-			break;
-
 
 		case ME_RESET_CONTROLLERS:
 			reset_controllers(song, song->current_event->channel);
@@ -837,7 +644,6 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 			/* Effects affecting a single note */
 
 			case ME_NOTEON:
-				song->current_event->a += song->channel[song->current_event->channel].transpose;
 				if (!(song->current_event->b)) /* Velocity 0? */
 					note_off(song, song->current_event);
 				else
@@ -845,7 +651,6 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				break;
 
 			case ME_NOTEOFF:
-				song->current_event->a += song->channel[song->current_event->channel].transpose;
 				note_off(song, song->current_event);
 				break;
 
@@ -873,10 +678,6 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				adjust_volume(song, song->current_event->channel);
 				break;
 
-			case ME_MASTERVOLUME:
-				adjust_master_volume(song, song->current_event->a + (song->current_event->b <<7));
-				break;
-
 			case ME_PAN:
 				song->channel[song->current_event->channel].panning=song->current_event->a;
 				break;
@@ -887,8 +688,7 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				break;
 
 			case ME_PROGRAM:
-				/* if (ISDRUMCHANNEL(song, song->current_event->channel)) */
-				if (song->channel[song->current_event->channel].kit)
+				if (ISDRUMCHANNEL(song, song->current_event->channel))
 				{
 					/* Change drum set */
 					song->channel[song->current_event->channel].bank=song->current_event->a;
@@ -917,30 +717,8 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				all_sounds_off(song, song->current_event->channel);
 				break;
 
-			case ME_RELEASETIME:
-				song->channel[song->current_event->channel].releasetime=song->current_event->a;
-				break;
-
-			case ME_ATTACKTIME:
-				song->channel[song->current_event->channel].attacktime=song->current_event->a;
-				break;
-
 			case ME_TONE_BANK:
 				song->channel[song->current_event->channel].bank=song->current_event->a;
-				break;
-
-
-			case ME_TONE_KIT:
-				if (song->current_event->a==SFX_BANKTYPE)
-				{
-					song->channel[song->current_event->channel].sfx=SFXBANK;
-					song->channel[song->current_event->channel].kit=0;
-				}
-				else
-				{
-					song->channel[song->current_event->channel].sfx=0;
-					song->channel[song->current_event->channel].kit=song->current_event->a;
-				}
 				break;
 
 			case ME_EOT:
