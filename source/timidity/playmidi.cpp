@@ -172,7 +172,7 @@ static void recompute_freq(MidiSong* song, int v)
 	song->voice[v].sample_increment = (int32)(a);
 }
 
-static int vcurve[128] =
+/*static int vcurve[128] =
 {
 	0,0,18,29,36,42,47,51,55,58,
 	60,63,65,67,69,71,73,74,76,77,
@@ -187,82 +187,63 @@ static int vcurve[128] =
 	121,121,121,122,122,122,122,123,123,123,
 	123,123,124,124,124,124,125,125,125,125,
 	126,126,126,126,126,127,127,127
-};
+};*/
 
 static void recompute_amp(MidiSong* song, int v)
 {
 	int32 tempamp;
 	int chan = song->voice[v].channel;
 	int panning = song->voice[v].panning;
-	int vol = song->channel[chan].volume;
-	int expr = song->channel[chan].expression;
-	int vel = vcurve[song->voice[v].velocity];
-	float curved_expression, curved_volume;
 
-	curved_expression = 127.0 * vol_table[expr];
-
-	curved_volume = 127.0 * vol_table[vol];
-
-	tempamp= (int32)((float)vel * curved_volume * curved_expression); /* 21 bits */
+	//	SDL_mixer's equatation.
+	//tempamp= (int32)((float)vcurve[song->voice[v].velocity] *
+	//	127.0 * vol_table[song->channel[chan].volume] *
+	//	127.0 * vol_table[song->channel[chan].expression]); /* 21 bits */
+	tempamp= (song->voice[v].velocity *
+		song->channel[chan].volume * 
+		song->channel[chan].expression); /* 21 bits */
 
 	/* TODO: use fscale */
 
+	float refv = (double)(tempamp) * song->voice[v].sample->volume * song->master_volume;
 	if (panning > 60 && panning < 68)
 	{
 		song->voice[v].panned=PANNED_CENTRE;
-
-		song->voice[v].left_amp=
-			FSCALENEG((double)(tempamp) * song->voice[v].sample->volume *
-			song->master_volume, 21);
+		song->voice[v].left_amp= FSCALENEG(refv, 21);
 	}
 	else if (panning < 5)
 	{
 		song->voice[v].panned = PANNED_LEFT;
-
-		song->voice[v].left_amp =
-			FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
-			20);
+		song->voice[v].left_amp = FSCALENEG(refv, 20);
 	}
 	else if (panning > 123)
 	{
 		song->voice[v].panned = PANNED_RIGHT;
-
-		song->voice[v].left_amp = /* left_amp will be used */
-			FSCALENEG((double)(tempamp) * song->voice[v].sample->volume * song->master_volume,
-			20);
+		song->voice[v].left_amp = FSCALENEG(refv, 20);/* left_amp will be used */
 	}
 	else
 	{
-		float refv = (double)(tempamp) * song->voice[v].sample->volume * song->master_volume;
-
 		song->voice[v].panned = PANNED_MYSTERY;
-		song->voice[v].left_amp = FSCALENEG(refv * (128-panning), 27);
+		song->voice[v].left_amp = FSCALENEG(refv * (127 - panning), 27);
 		song->voice[v].right_amp = FSCALENEG(refv * panning, 27);
 	}
 }
 
-static void start_note(MidiSong* song, MidiEvent* e, int i)
+static void start_note(MidiSong* song, const MidiEvent* e, int i)
 {
 	Instrument *ip;
-	int j, banknum, ch=e->channel;
-	int played_note;
-	int32 rt;
+	int j, ch=e->channel;
 	int this_note = e->a;
 	int this_velocity = e->b;
-	int this_prog = song->channel[ch].program;
-
-	banknum = song->channel[ch].bank;
-
-	song->voice[i].velocity = this_velocity;
 
 	if (ISDRUMCHANNEL(song, ch))
 	{
-		if (!(ip=song->drumset[banknum]->instrument[this_note]))
+		if (!(ip=song->drumset[song->channel[ch].bank]->instrument[this_note]))
 		{
 			if (!(ip=song->drumset[0]->instrument[this_note]))
 				return; /* No instrument? Then we can't play. */
 		}
-		if (ip->type == INST_GUS && ip->samples != 1)
+		if (ip->samples != 1)
 		{
 			ctl->cmsg(CMSG_WARNING, VERB_VERBOSE, 
 				"Strange: percussion instrument with %d samples!", ip->samples);
@@ -282,7 +263,7 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 			ip = song->default_instrument;
 		else if (!(ip = song->tonebank[song->channel[ch].bank]->instrument[song->channel[ch].program]))
 		{
-			if (!(ip=song->tonebank[0]->instrument[this_prog]))
+			if (!(ip=song->tonebank[0]->instrument[song->channel[ch].program]))
 				return; /* No instrument? Then we can't play. */
 		}
 		if (ip->sample->note_to_use) /* Fixed-pitch instrument? */
@@ -292,13 +273,9 @@ static void start_note(MidiSong* song, MidiEvent* e, int i)
 		select_sample(song, i, ip, e->b);
 	}
 
-	played_note = song->voice[i].sample->note_to_use;
-	
-	if (!played_note || !ISDRUMCHANNEL(song, ch))
-		played_note = this_note & 0x7f;
 	song->voice[i].status = VOICE_ON;
 	song->voice[i].channel = ch;
-	song->voice[i].note = played_note;
+	song->voice[i].note = this_note;
 	song->voice[i].velocity = this_velocity;
 	song->voice[i].sample_offset = 0;
 	song->voice[i].sample_increment = 0; /* make sure it isn't negative */
@@ -346,8 +323,9 @@ static void kill_note(MidiSong* song, int i)
 
 
 /* Only one instance of a note can be playing on a single channel. */
-static void note_on(MidiSong* song, MidiEvent* e)
+static void note_on(MidiSong* song)
 {
+	const MidiEvent* e = song->current_event;
 	int i = song->voices, lowest = -1;
 	int32 lv = 0x7FFFFFFF, v;
 
@@ -363,7 +341,7 @@ static void note_on(MidiSong* song, MidiEvent* e)
 	if (lowest != -1)
 	{
 		/* Found a free voice. */
-		start_note(song, e,lowest);
+		start_note(song, e, lowest);
 		return;
 	}
 
@@ -418,8 +396,9 @@ static void finish_note(MidiSong* song, int i)
 	}
 }
 
-static void note_off(MidiSong* song, MidiEvent* e)
+static void note_off(MidiSong* song)
 {
+	const MidiEvent* e = song->current_event;
 	int i = song->voices;
 	while (i--)
 		if (song->voice[i].status == VOICE_ON &&
@@ -437,8 +416,9 @@ static void note_off(MidiSong* song, MidiEvent* e)
 }
 
 /* Process the All Notes Off event */
-static void all_notes_off(MidiSong* song, int c)
+static void all_notes_off(MidiSong* song)
 {
+	int c = song->current_event->channel;
 	int i = song->voices;
 	ctl->cmsg(CMSG_INFO, VERB_DEBUG, "All notes off on channel %d", c);
 	while (i--)
@@ -455,9 +435,10 @@ static void all_notes_off(MidiSong* song, int c)
 }
 
 /* Process the All Sounds Off event */
-static void all_sounds_off(MidiSong* song, int c)
+static void all_sounds_off(MidiSong* song)
 {
-	int i=song->voices;
+	int c = song->current_event->channel;
+	int i = song->voices;
 	while (i--)
 		if (song->voice[i].channel == c &&
 			song->voice[i].status != VOICE_FREE &&
@@ -467,9 +448,10 @@ static void all_sounds_off(MidiSong* song, int c)
 		}
 }
 
-static void adjust_pressure(MidiSong* song, MidiEvent* e)
+static void adjust_pressure(MidiSong* song)
 {
-	int i=song->voices;
+	const MidiEvent* e = song->current_event;
+	int i = song->voices;
 	while (i--)
 		if (song->voice[i].status == VOICE_ON &&
 			song->voice[i].channel == e->channel &&
@@ -482,16 +464,18 @@ static void adjust_pressure(MidiSong* song, MidiEvent* e)
 		}
 }
 
-static void drop_sustain(MidiSong* song, int c)
+static void drop_sustain(MidiSong* song)
 {
+	int c = song->current_event->channel;
 	int i = song->voices;
 	while (i--)
 		if (song->voice[i].status == VOICE_SUSTAINED && song->voice[i].channel == c)
 			finish_note(song, i);
 }
 
-static void adjust_pitchbend(MidiSong* song, int c)
+static void adjust_pitchbend(MidiSong* song)
 {
+	int c = song->current_event->channel;
 	int i = song->voices;
 	while (i--)
 		if (song->voice[i].status != VOICE_FREE && song->voice[i].channel == c)
@@ -500,8 +484,9 @@ static void adjust_pitchbend(MidiSong* song, int c)
 		}
 }
 
-static void adjust_volume(MidiSong* song, int c)
+static void adjust_volume(MidiSong* song)
 {
+	int c = song->current_event->channel;
 	int i = song->voices;
 	while (i--)
 		if (song->voice[i].channel == c &&
@@ -589,12 +574,10 @@ static void skip_to(MidiSong* song, int32 until_time)
 		seek_forward(song, until_time);
 }
 
-static void do_compute_data(MidiSong* song, uint32 count)
+static void do_compute_data(MidiSong* song, int32 count)
 {
 	int i;
-	if (!count)
-		return; /* (gl) */
-	memset(song->common_buffer, 0, count * 2 * 4);
+	memset(song->common_buffer, 0, count * 8);
 	for (i = 0; i < song->voices; i++)
 	{
 		if (song->voice[i].status != VOICE_FREE)
@@ -645,17 +628,17 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 
 			case ME_NOTEON:
 				if (!(song->current_event->b)) /* Velocity 0? */
-					note_off(song, song->current_event);
+					note_off(song);
 				else
-					note_on(song, song->current_event);
+					note_on(song);
 				break;
 
 			case ME_NOTEOFF:
-				note_off(song, song->current_event);
+				note_off(song);
 				break;
 
 			case ME_KEYPRESSURE:
-				adjust_pressure(song, song->current_event);
+				adjust_pressure(song);
 				break;
 
 			/* Effects affecting a single channel */
@@ -670,12 +653,12 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 					song->current_event->a + song->current_event->b * 128;
 				song->channel[song->current_event->channel].pitchfactor=0;
 				/* Adjust pitch for notes already playing */
-				adjust_pitchbend(song, song->current_event->channel);
+				adjust_pitchbend(song);
 				break;
 
 			case ME_MAINVOLUME:
 				song->channel[song->current_event->channel].volume=song->current_event->a;
-				adjust_volume(song, song->current_event->channel);
+				adjust_volume(song);
 				break;
 
 			case ME_PAN:
@@ -684,7 +667,7 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 
 			case ME_EXPRESSION:
 				song->channel[song->current_event->channel].expression=song->current_event->a;
-				adjust_volume(song, song->current_event->channel);
+				adjust_volume(song);
 				break;
 
 			case ME_PROGRAM:
@@ -702,7 +685,7 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 			case ME_SUSTAIN:
 				song->channel[song->current_event->channel].sustain=song->current_event->a;
 				if (!song->current_event->a)
-					drop_sustain(song, song->current_event->channel);
+					drop_sustain(song);
 				break;
 
 			case ME_RESET_CONTROLLERS:
@@ -710,11 +693,11 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				break;
 
 			case ME_ALL_NOTES_OFF:
-				all_notes_off(song, song->current_event->channel);
+				all_notes_off(song);
 				break;
 
 			case ME_ALL_SOUNDS_OFF:
-				all_sounds_off(song, song->current_event->channel);
+				all_sounds_off(song);
 				break;
 
 			case ME_TONE_BANK:
@@ -785,7 +768,7 @@ MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches)
 	memcpy(song->drumset, master_drumset, sizeof(master_drumset));
 	song->default_program = DEFAULT_PROGRAM;
 	song->buffer_size = 2 * 1024;
-	song->resample_buffer = (sample_t*)safe_malloc(song->buffer_size * sizeof(sample_t) + 100);
+	song->resample_buffer = (sample_t*)safe_malloc(song->buffer_size * sizeof(sample_t));
 	song->common_buffer = (int32*)safe_malloc(song->buffer_size * 2 * sizeof(int32));
 	song->voices = DEFAULT_VOICES;
 	song->drumchannels = DEFAULT_DRUMCHANNELS;

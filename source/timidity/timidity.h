@@ -41,10 +41,9 @@ namespace LibTimidity
 
 /* Default sampling rate, default polyphony, and maximum polyphony.
    All but the last can be overridden from the command line. */
-/* #define DEFAULT_VOICES	32 */
-#define DEFAULT_VOICES	256
+#define DEFAULT_VOICES	32
+//#define DEFAULT_VOICES	256
 #define MAX_VOICES		256
-#define MAXNOTE			128
 
 /* 1000 here will give a control ratio of 22:1 with 22 kHz output.
    Higher CONTROLS_PER_SECOND values allow more accurate rendering
@@ -54,7 +53,7 @@ namespace LibTimidity
 /* Make envelopes twice as fast. Saves ~20% CPU time (notes decay
    faster) and sounds more like a GUS. There is now a command line
    option to toggle this as well. */
-/* #define FAST_DECAY */
+#define FAST_DECAY
 
 /* How many bits to use for the fractional part of sample positions.
    This affects tonal accuracy. The entire position counter must fit
@@ -354,7 +353,6 @@ struct ToneBankElement
 
 struct ToneBank
 {
-	char*				name;
 	ToneBankElement		tone[128];
 	Instrument*			instrument[128];
 };
