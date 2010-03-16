@@ -170,9 +170,6 @@ static int update_signal(MidiSong* song, int v)
 	return 0;
 }
 
-#define MIXATION(a)		*lp++ += (a)*s;
-#define MIXSKIP			lp++
-
 static void mix_mystery_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
@@ -199,8 +196,9 @@ static void mix_mystery_signal(MidiSong* song, sample_t* sp, int32* lp, int v, i
 			while (cc--)
 			{
 				s = *sp++;
-				MIXATION(left);
-				MIXATION(right);
+				lp[0] += left * s;
+				lp[1] += right * s;
+				lp += 2;
 			}
 			cc = song->control_ratio;
 			if (update_signal(song, v))
@@ -214,8 +212,9 @@ static void mix_mystery_signal(MidiSong* song, sample_t* sp, int32* lp, int v, i
 			while (count--)
 			{
 				s = *sp++;
-				MIXATION(left);
-				MIXATION(right);
+				lp[0] += left * s;
+				lp[1] += right * s;
+				lp += 2;
 			}
 			return;
 		}
@@ -244,8 +243,9 @@ static void mix_centre_signal(MidiSong* song, sample_t* sp, int32* lp, int v, in
 			while (cc--)
 			{
 				s = *sp++;
-				MIXATION(left);
-				MIXATION(left);
+				lp[0] += left * s;
+				lp[1] += left * s;
+				lp += 2;
 			}
 			cc = song->control_ratio;
 			if (update_signal(song, v))
@@ -258,14 +258,15 @@ static void mix_centre_signal(MidiSong* song, sample_t* sp, int32* lp, int v, in
 			while (count--)
 			{
 				s = *sp++;
-				MIXATION(left);
-				MIXATION(left);
+				lp[0] += left * s;
+				lp[1] += left * s;
+				lp += 2;
 			}
 			return;
 		}
 }
 
-static void mix_single_left_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
+static void mix_single_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	Voice *vp = song->voice + v;
 	final_volume_t 
@@ -288,8 +289,8 @@ static void mix_single_left_signal(MidiSong* song, sample_t* sp, int32* lp, int 
 			while (cc--)
 			{
 				s = *sp++;
-				MIXATION(left);
-				MIXSKIP;
+				lp[0] += left * s;
+				lp += 2;
 			}
 			cc = song->control_ratio;
 			if (update_signal(song, v))
@@ -302,51 +303,8 @@ static void mix_single_left_signal(MidiSong* song, sample_t* sp, int32* lp, int 
 			while (count--)
 			{
 				s = *sp++;
-				MIXATION(left);
-				MIXSKIP;
-			}
-			return;
-		}
-}
-
-static void mix_single_right_signal(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
-{
-	Voice *vp = song->voice + v;
-	final_volume_t left = vp->left_mix;
-	int cc;
-	sample_t s;
-
-	if (!(cc = vp->control_counter))
-	{
-		cc = song->control_ratio;
-		if (update_signal(song, v))
-			return;	/* Envelope ran out */
-		left = vp->left_mix;
-	}
-
-	while (count)
-		if (cc < count)
-		{
-			count -= cc;
-			while (cc--)
-			{
-				s = *sp++;
-				MIXSKIP;
-				MIXATION(left);
-			}
-			cc = song->control_ratio;
-			if (update_signal(song, v))
-				return;	/* Envelope ran out */
-			left = vp->left_mix;
-		}
-		else
-		{
-			vp->control_counter = cc - count;
-			while (count--)
-			{
-				s = *sp++;
-				MIXSKIP;
-				MIXATION(left);
+				lp[0] += left * s;
+				lp += 2;
 			}
 			return;
 		}
@@ -362,8 +320,9 @@ static void mix_mystery(MidiSong* song, sample_t* sp, int32* lp, int v, int coun
 	while (count--)
 	{
 		s = *sp++;
-		MIXATION(left);
-		MIXATION(right);
+		lp[0] += left * s;
+		lp[1] += right * s;
+		lp += 2;
 	}
 }
 
@@ -376,12 +335,13 @@ static void mix_centre(MidiSong* song, sample_t* sp, int32* lp, int v, int count
 	while (count--)
 	{
 		s = *sp++;
-		MIXATION(left);
-		MIXATION(left);
+		lp[0] += left * s;
+		lp[1] += left * s;
+		lp += 2;
 	}
 }
 
-static void mix_single_left(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
+static void mix_single(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
 {
 	final_volume_t left = song->voice[v].left_mix;
 	sample_t s;
@@ -389,21 +349,8 @@ static void mix_single_left(MidiSong* song, sample_t* sp, int32* lp, int v, int 
 	while (count--)
 	{
 		s = *sp++;
-		MIXATION(left);
-		MIXSKIP;
-	}
-}
-
-static void mix_single_right(MidiSong* song, sample_t* sp, int32* lp, int v, int count)
-{
-	final_volume_t left = song->voice[v].left_mix;
-	sample_t s;
-
-	while (count--)
-	{
-		s = *sp++;
-		MIXSKIP;
-		MIXATION(left);
+		lp[0] += left * s;
+		lp += 2;
 	}
 }
 
@@ -441,8 +388,9 @@ static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 			if (right < 0)
 				right = 0;
 			s = *sp++;
-			MIXATION(left);
-			MIXATION(right);
+			lp[0] += left * s;
+			lp[1] += right * s;
+			lp += 2;
 		}
 	}
 	else if (song->voice[v].panned == PANNED_CENTRE)
@@ -453,8 +401,9 @@ static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 			if (left < 0)
 				return;
 			s = *sp++;	
-			MIXATION(left);
-			MIXATION(left);
+			lp[0] += left * s;
+			lp[1] += left * s;
+			lp += 2;
 		}
 	}
 	else if (song->voice[v].panned == PANNED_LEFT)
@@ -465,8 +414,8 @@ static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 			if (left < 0)
 				return;
 			s = *sp++;
-			MIXATION(left);
-			MIXSKIP;
+			lp[0] += left * s;
+			lp += 2;
 		}
 	}
 	else if (song->voice[v].panned == PANNED_RIGHT)
@@ -477,8 +426,8 @@ static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 			if (left < 0)
 				return;
 			s = *sp++;
-			MIXSKIP;
-			MIXATION(left);
+			lp[1] += left * s;
+			lp += 2;
 		}
 	}
 }
@@ -491,10 +440,6 @@ void mix_voice(MidiSong* song, int32* buf, int v, int32 c)
 	Voice* vp = song->voice + v;
 	int32 count = c;
 	sample_t* sp;
-	if (c < 0)
-	{
-		return;
-	}
 	if (vp->status == VOICE_DIE)
 	{
 		if (count >= MAX_DIE_TIME)
@@ -506,8 +451,6 @@ void mix_voice(MidiSong* song, int32* buf, int v, int32 c)
 	else
 	{
 		sp = resample_voice(song, v, &count);
-		if (count < 0)
-			return;
 		if (vp->panned == PANNED_MYSTERY)
 		{
 			if (vp->envelope_increment || vp->tremolo_phase_increment)
@@ -530,16 +473,16 @@ void mix_voice(MidiSong* song, int32* buf, int v, int32 c)
 			if (vp->envelope_increment || vp->tremolo_phase_increment)
 			{
 				if (vp->panned == PANNED_RIGHT)
-					mix_single_right_signal(song, sp, buf, v, count);
+					mix_single_signal(song, sp, buf + 1, v, count);
 				else
-					mix_single_left_signal(song, sp, buf, v, count);
+					mix_single_signal(song, sp, buf, v, count);
 			}
 			else
 			{
 				if (vp->panned == PANNED_RIGHT)
-					mix_single_right(song, sp, buf, v, count);
+					mix_single(song, sp, buf + 1, v, count);
 				else
-					mix_single_left(song, sp, buf, v, count);
+					mix_single(song, sp, buf, v, count);
 			}
 		}
 	}
