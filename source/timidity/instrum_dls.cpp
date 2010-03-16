@@ -1245,42 +1245,88 @@ Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrume
 	if (!song->patches)
 		return(NULL);
 
-	drum = drum ? 0x80000000 : 0;
-	for (i = 0; i < song->patches->cInstruments; ++i)
-	{
-		dls_ins = &song->patches->instruments[i];
-		if ((dls_ins->header->Locale.ulBank & 0x80000000) == drum &&
-			((dls_ins->header->Locale.ulBank >> 8) & 0xFF) == bank &&
-			dls_ins->header->Locale.ulInstrument == instrument)
-			break;
-	}
-	if (i == song->patches->cInstruments && !bank)
+	if (!drum)
 	{
 		for (i = 0; i < song->patches->cInstruments; ++i)
 		{
 			dls_ins = &song->patches->instruments[i];
-			if ((dls_ins->header->Locale.ulBank & 0x80000000) == drum &&
+			if (!(dls_ins->header->Locale.ulBank & 0x80000000) &&
+				((dls_ins->header->Locale.ulBank >> 8) & 0xFF) == bank &&
 				dls_ins->header->Locale.ulInstrument == instrument)
 				break;
 		}
-	}
-	if (i == song->patches->cInstruments)
-	{
-		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't find %s instrument %d in bank %d\n", drum ? "drum" : "melodic", instrument, bank);
-		return(NULL);
-	}
+		if (i == song->patches->cInstruments && !bank)
+		{
+			for (i = 0; i < song->patches->cInstruments; ++i)
+			{
+				dls_ins = &song->patches->instruments[i];
+				if (!(dls_ins->header->Locale.ulBank & 0x80000000) &&
+					dls_ins->header->Locale.ulInstrument == instrument)
+					break;
+			}
+		}
+		if (i == song->patches->cInstruments)
+		{
+			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't find melodic instrument %d in bank %d\n", instrument, bank);
+			return(NULL);
+		}
 
-	inst = (Instrument *)safe_malloc(sizeof(*inst));
-	inst->type = INST_DLS;
-	inst->samples = dls_ins->header->cRegions;
-	inst->sample = (Sample *)safe_malloc(inst->samples * sizeof(*inst->sample));
-	memset(inst->sample, 0, inst->samples * sizeof(*inst->sample));
-	/*
-	printf("Found %s instrument %d in bank %d named %s with %d regions\n", drum ? "drum" : "melodic", instrument, bank, dls_ins->name, inst->samples);
-	*/
-	for (i = 0; i < dls_ins->header->cRegions; ++i)
+		inst = (Instrument *)safe_malloc(sizeof(*inst));
+		inst->type = INST_DLS;
+		inst->samples = dls_ins->header->cRegions;
+		inst->sample = (Sample *)safe_malloc(inst->samples * sizeof(*inst->sample));
+		memset(inst->sample, 0, inst->samples * sizeof(*inst->sample));
+		for (i = 0; i < dls_ins->header->cRegions; ++i)
+		{
+			load_region_dls(song, &inst->sample[i], dls_ins, i);
+		}
+	}
+	else
 	{
-		load_region_dls(song, &inst->sample[i], dls_ins, i);
+		for (i = 0; i < song->patches->cInstruments; ++i)
+		{
+			dls_ins = &song->patches->instruments[i];
+			if ((dls_ins->header->Locale.ulBank & 0x80000000) &&
+				dls_ins->header->Locale.ulInstrument == bank)
+				break;
+		}
+		if (i == song->patches->cInstruments && !bank)
+		{
+			for (i = 0; i < song->patches->cInstruments; ++i)
+			{
+				dls_ins = &song->patches->instruments[i];
+				if ((dls_ins->header->Locale.ulBank & 0x80000000) &&
+					dls_ins->header->Locale.ulInstrument == 0)
+					break;
+			}
+		}
+		if (i == song->patches->cInstruments)
+		{
+			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't find drum instrument %d\n", bank);
+			return(NULL);
+		}
+
+		int drum_reg = -1;
+		for (i = 0; i < dls_ins->header->cRegions; i++)
+		{
+			if (dls_ins->regions[i].header->RangeKey.usLow == instrument)
+			{
+				drum_reg = i;
+				break;
+			}
+		}
+		if (drum_reg == -1)
+		{
+			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't find drum note %d\n", instrument);
+			return(NULL);
+		}
+
+		inst = (Instrument *)safe_malloc(sizeof(*inst));
+		inst->type = INST_DLS;
+		inst->samples = 1;
+		inst->sample = (Sample *)safe_malloc(inst->samples * sizeof(*inst->sample));
+		memset(inst->sample, 0, inst->samples * sizeof(*inst->sample));
+		load_region_dls(song, &inst->sample[0], dls_ins, drum_reg);
 	}
 
 	return inst;
