@@ -31,22 +31,12 @@
 namespace LibTimidity
 {
 
-/* I guess "rb" should be right for any libc */
-#define OPEN_MODE "rb"
-
 char				current_filename[1024];
 
-static PathList*	pathlist = NULL;
+/* The paths in this list will be tried whenever we're reading a file */
+static PathList*	pathlist = NULL; /* This is a linked list */
 
-/* Try to open a file for reading. If the filename ends in one of the 
-   defined compressor extensions, pipe the file through the decompressor */
-static FILE* try_to_open(const char* name, int decompress, int noise_mode)
-{
-	return fopen(name, OPEN_MODE); /* First just check that the file exists */
-}
-
-/* This is meant to find and open files for reading, possibly piping
-   them through a decompressor. */
+/* This is meant to find and open files for reading */
 FILE* open_file(const char* name, int decompress, int noise_mode)
 {
 	if (!name || !(*name))
@@ -55,21 +45,13 @@ FILE* open_file(const char* name, int decompress, int noise_mode)
 		return 0;
 	}
 
-#ifdef DEFAULT_PATH
-	if (pathlist == NULL)
-	{
-		/* Generate path list */
-		add_to_pathlist(DEFAULT_PATH);
-	}
-#endif
-
 	/* First try the given name */
 
 	strncpy(current_filename, name, 1023);
 	current_filename[1023] = '\0';
 
 	ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s", current_filename);
-	FILE* fp = try_to_open(current_filename, decompress, noise_mode);
+	FILE* fp = fopen(current_filename, "rb");
 	if (fp)
 	{
 		return fp;
@@ -100,7 +82,7 @@ FILE* open_file(const char* name, int decompress, int noise_mode)
 			}
 			strcat(current_filename, name);
 			ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s", current_filename);
-			fp = try_to_open(current_filename, decompress, noise_mode);
+			fp = fopen(current_filename, "rb");
 			if (fp)
 			{
 				return fp;
@@ -143,13 +125,7 @@ void skip(FILE* fp, size_t len)
 void* safe_malloc(size_t count)
 {
 	void* p;
-	if (count > (1 << 21))
-	{
-		ctl->cmsg(CMSG_FATAL, VERB_NORMAL, 
-			"Strange, I feel like allocating %d bytes. This must be a bug.",
-		count);
-	}
-	else if ((p = malloc(count)))
+	if ((p = malloc(count)))
 		return p;
 	else
 		ctl->cmsg(CMSG_FATAL, VERB_NORMAL, "Sorry. Couldn't malloc %d bytes.", count);

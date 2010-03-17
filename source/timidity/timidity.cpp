@@ -388,11 +388,21 @@ static int read_config_file(const char* name)
 
 int Timidity_Init()
 {
-	if (read_config_file(CONFIG_FILE) < 0)
-	{
-		return(-1);
-	}
-	return(0);
+	/* !!! FIXME: This may be ugly, but slightly less so than requiring the
+	*            default search path to have only one element. I think.
+	*
+	*            We only need to include the likely locations for the config
+	*            file itself since that file should contain any other directory
+	*            that needs to be added to the search path.
+	*/
+#ifdef WIN32
+	add_to_pathlist("\\TIMIDITY");
+#else
+	add_to_pathlist("/usr/local/lib/timidity");
+	add_to_pathlist("/etc");
+#endif
+
+	return read_config_file(CONFIG_FILE);
 }
 
 };

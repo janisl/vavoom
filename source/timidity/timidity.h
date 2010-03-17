@@ -273,14 +273,6 @@ namespace LibTimidity
 /* In percent. */
 #define DEFAULT_AMPLIFICATION 	70
 
-/* You could specify a complete path, e.g. "/etc/timidity.cfg", and
-   then specify the library directory in the configuration file. */
-#if defined(DJGPP) || defined(__WIN32__) || defined(__OS2__)
-#define DEFAULT_PATH	"\\TIMIDITY"
-#else
-#define DEFAULT_PATH	"/usr/local/lib/timidity"
-#endif
-
 /* These affect general volume */
 #define GUARD_BITS 3
 #define AMP_BITS (15-GUARD_BITS)
