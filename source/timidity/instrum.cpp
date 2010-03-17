@@ -32,12 +32,6 @@
 namespace LibTimidity
 {
 
-/* Some functions get aggravated if not even the standard banks are 
-   available. */
-ToneBank standard_tonebank, standard_drumset;
-ToneBank*			master_tonebank[128] = { &standard_tonebank };
-ToneBank*			master_drumset[128] = { &standard_drumset };
-
 #ifdef FAST_DECAY
 int fast_decay=1;
 #else
@@ -639,8 +633,6 @@ int set_default_instrument(MidiSong* song, const char* name)
 	Instrument* ip;
 	if (!(ip = load_instrument(song, name, 0, -1, -1, -1, 0, 0, 0)))
 		return -1;
-	if (song->default_instrument)
-		free_instrument(song->default_instrument);
 	song->default_instrument = ip;
 	song->default_program = SPECIAL_PROGRAM;
 	return 0;

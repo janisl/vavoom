@@ -27,10 +27,11 @@
 namespace LibTimidity
 {
 
-int free_instruments_afterwards=1;
-char def_instr_name[256]="";
+char				def_instr_name[256] = "";
+ToneBank*			master_tonebank[128];
+ToneBank*			master_drumset[128];
 
-ControlMode*	ctl;
+ControlMode*		ctl;
 
 #define MAXWORDS 10
 
@@ -55,7 +56,7 @@ static int read_config_file(const char* name)
 	while (fgets(tmp, sizeof(tmp), fp))
 	{
 		line++;
-		w[words=0] = strtok(tmp, " \t\240");
+		w[words=0] = strtok(tmp, " \t\n\r\240");
 		if (!w[0])
 			continue;
 
@@ -66,7 +67,7 @@ static int read_config_file(const char* name)
 			continue;
 
 		while (w[words] && *w[words] != '#' && (words < MAXWORDS))
-			w[++words]=strtok(0," \t\240");
+			w[++words]=strtok(0," \t\n\r\240");
 
 		/*
 		* TiMidity++ adds a number of extensions to the config file format.
@@ -226,6 +227,8 @@ static int read_config_file(const char* name)
 			{
 				master_drumset[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
 				memset(master_drumset[i], 0, sizeof(ToneBank));
+				master_drumset[i]->tone = (ToneBankElement*)safe_malloc(128 * sizeof(ToneBankElement));
+				memset(master_drumset[i]->tone, 0, 128 * sizeof(ToneBankElement));
 			}
 			bank = master_drumset[i];
 		}
@@ -250,6 +253,8 @@ static int read_config_file(const char* name)
 			{
 				master_tonebank[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
 				memset(master_tonebank[i], 0, sizeof(ToneBank));
+				master_tonebank[i]->tone = (ToneBankElement*)safe_malloc(128 * sizeof(ToneBankElement));
+				memset(master_tonebank[i]->tone, 0, 128 * sizeof(ToneBankElement));
 			}
 			bank = master_tonebank[i];
 		}
@@ -401,6 +406,17 @@ int Timidity_Init()
 	add_to_pathlist("/usr/local/lib/timidity");
 	add_to_pathlist("/etc");
 #endif
+
+	/* Allocate memory for the standard tonebank and drumset */
+	master_tonebank[0] = (ToneBank*)safe_malloc(sizeof(ToneBank));
+	memset(master_tonebank[0], 0, sizeof(ToneBank));
+	master_tonebank[0]->tone = (ToneBankElement*)safe_malloc(128 * sizeof(ToneBankElement));
+	memset(master_tonebank[0]->tone, 0, 128 * sizeof(ToneBankElement));
+
+	master_drumset[0] = (ToneBank*)safe_malloc(sizeof(ToneBank));
+	memset(master_drumset[0], 0, sizeof(ToneBank));
+	master_drumset[0]->tone = (ToneBankElement*)safe_malloc(128 * sizeof(ToneBankElement));
+	memset(master_drumset[0]->tone, 0, 128 * sizeof(ToneBankElement));
 
 	return read_config_file(CONFIG_FILE);
 }

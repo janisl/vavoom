@@ -763,47 +763,59 @@ MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches)
 	MidiSong* song = (MidiSong *)safe_malloc(sizeof(*song));
 	memset(song, 0, sizeof(*song));
 	song->patches = patches;
+
+	for (int i = 0; i < 128; i++)
+	{
+		if (master_tonebank[i])
+		{
+			song->tonebank[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
+			memset(song->tonebank[i], 0, sizeof(ToneBank));
+			song->tonebank[i]->tone = master_tonebank[i]->tone;
+		}
+		if (master_drumset[i])
+		{
+			song->drumset[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
+			memset(song->drumset[i], 0, sizeof(ToneBank));
+			song->drumset[i]->tone = master_drumset[i]->tone;
+		}
+	}
+
 	song->amplification = DEFAULT_AMPLIFICATION;
-	memcpy(song->tonebank, master_tonebank, sizeof(master_tonebank));
-	memcpy(song->drumset, master_drumset, sizeof(master_drumset));
-	song->default_program = DEFAULT_PROGRAM;
+	song->voices = DEFAULT_VOICES;
+	song->drumchannels = DEFAULT_DRUMCHANNELS;
 	song->buffer_size = 2 * 1024;
 	song->resample_buffer = (sample_t*)safe_malloc(song->buffer_size * sizeof(sample_t));
 	song->common_buffer = (int32*)safe_malloc(song->buffer_size * 2 * sizeof(int32));
-	song->voices = DEFAULT_VOICES;
-	song->drumchannels = DEFAULT_DRUMCHANNELS;
-	if (!song->control_ratio)
-	{
-		song->control_ratio = OUTPUT_RATE / CONTROLS_PER_SECOND;
-		if (song->control_ratio < 1)
-			song->control_ratio = 1;
-		else if (song->control_ratio > MAX_CONTROL_RATIO)
-			song->control_ratio = MAX_CONTROL_RATIO;
-	}
-
-	if (*def_instr_name)
-		set_default_instrument(song, def_instr_name);
+	song->control_ratio = OUTPUT_RATE / CONTROLS_PER_SECOND;
+	if (song->control_ratio < 1)
+		song->control_ratio = 1;
+	else if (song->control_ratio > MAX_CONTROL_RATIO)
+		song->control_ratio = MAX_CONTROL_RATIO;
 
 	/* Open the file */
 	song->events = read_midi_mem(song, data, size, &events, &song->samples);
-
 	/* Make sure everything is okay */
 	if (!song->events)
 	{
 		free(song);
-		song = NULL;
+		return NULL;
 	}
+
+	song->default_program = DEFAULT_PROGRAM;
+
+	if (*def_instr_name)
+		set_default_instrument(song, def_instr_name);
+
+	load_missing_instruments(song);
+
 	return song;
 }
 
 void Timidity_Start(MidiSong *song)
 {
-	load_missing_instruments(song);
 	adjust_amplification(song);
-	song->lost_notes = song->cut_notes = 0;
-
-	skip_to(song, 0);
 	song->playing = 1;
+	skip_to(song, 0);
 }
 
 int Timidity_Active(MidiSong* song)
@@ -818,8 +830,15 @@ void Timidity_Stop(MidiSong* song)
 
 void Timidity_FreeSong(MidiSong *song)
 {
-	if (free_instruments_afterwards)
-		free_instruments(song);
+	free_instruments(song);
+
+	for (int i = 0; i < 128; i++)
+	{
+		if (song->tonebank[i])
+			free(song->tonebank[i]);
+		if (song->drumset[i])
+			free(song->drumset[i]);
+	}
 
 	free(song->events);
 	free(song->resample_buffer);
@@ -829,7 +848,38 @@ void Timidity_FreeSong(MidiSong *song)
 
 void Timidity_Close()
 {
-//	free_instruments(song);
+	for (int i = 0; i < 128; i++)
+	{
+		if (master_tonebank[i])
+		{
+			ToneBankElement *e = master_tonebank[i]->tone;
+			if (e != NULL)
+			{
+				for (int j = 0; j < 128; j++)
+				{
+					if (e[j].name != NULL)
+						free(e[j].name);
+				}
+				free(e);
+			}
+			free(master_tonebank[i]);
+		}
+		if (master_drumset[i])
+		{
+			ToneBankElement *e = master_drumset[i]->tone;
+			if (e != NULL)
+			{
+				for (int j = 0; j < 128; j++)
+				{
+					if (e[j].name != NULL)
+						free(e[j].name);
+				}
+				free(e);
+			}
+			free(master_drumset[i]);
+		}
+	}
+
 	free_pathlist();
 }
 

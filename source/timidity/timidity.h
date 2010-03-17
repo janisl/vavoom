@@ -337,6 +337,7 @@ struct Instrument
 	Sample*			sample;
 };
 
+/* Shared data */
 struct ToneBankElement
 {
 	char*				name;
@@ -345,7 +346,7 @@ struct ToneBankElement
 
 struct ToneBank
 {
-	ToneBankElement		tone[128];
+	ToneBankElement*	tone;
 	Instrument*			instrument[128];
 };
 
@@ -483,7 +484,6 @@ extern ToneBank*			master_tonebank[128];
 extern ToneBank*			master_drumset[128];
 
 extern int fast_decay;
-extern int free_instruments_afterwards;
 
 extern char def_instr_name[256];
 
