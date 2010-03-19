@@ -70,6 +70,16 @@ void CreateChoices()
 	Slider.ValueChanging = ChangeFactor;
 	currentY += Slider.Height;
 
+	Slider = NewChild(MenuChoiceSlider);
+	Slider.SetOrigin(ChoicesStartX, currentY);
+	Slider.Text = "Sky Brightness Factor";
+	Slider.ValueDelta = 0.1;
+	Slider.MaxValue = 1.0;
+	Slider.MinValue = 0.1;
+	Slider.SetInitialValue(GetCvarF('r_sky_bright_factor'));
+	Slider.ValueChanging = ChangeSkyFactor;
+	currentY += Slider.Height;
+
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Extra samples";
@@ -248,6 +258,18 @@ bool ChangeFade(Object Sender, int newValue)
 bool ChangeFactor(Object Sender, float newValue)
 {
 	SetCvarF('r_fade_factor', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeSkyFactor
+//
+//==========================================================================
+
+bool ChangeSkyFactor(Object Sender, float newValue)
+{
+	SetCvarF('r_sky_bright_factor', newValue);
 	return true;
 }
 
@@ -458,6 +480,7 @@ bool ChangeD3dSpecularHighlights(Object Sender, int newValue)
 defaultproperties
 {
 	Width = 360;
+	Height = 210;
 	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	TitleX = 180;

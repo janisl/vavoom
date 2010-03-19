@@ -231,7 +231,7 @@ void VSky::InitOldSky(int Sky1Texture, int Sky2Texture, float Sky1ScrollDelta,
 			s.plane.Set(normal, DotProduct(s.surf.verts[1], normal));
 
 			s.texinfo.saxis = hdir * (1024 / HDIVS / DotProduct(hdir, hdir));
-float tk = skyh / RADIUS;
+			float tk = skyh / RADIUS;
 			s.texinfo.taxis = TVec(0, 0, -tk);
 			s.texinfo.soffs = -DotProduct(s.surf.verts[j < VDIVS / 2 ? 0 : 1],
 				s.texinfo.saxis);

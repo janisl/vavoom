@@ -177,6 +177,8 @@ extern VCvarI			r_vsync;
 extern VCvarI			r_fade_light;
 extern VCvarF			r_fade_factor;
 
+extern VCvarF			r_sky_bright_factor;
+
 extern "C" {
 extern TClipPlane		view_clipplanes[5];
 }

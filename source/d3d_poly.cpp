@@ -548,7 +548,8 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		TexStage = 0;
 		for (i = 0; i < surf->count; i++)
 		{
-			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
+			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xff000000 | (int(r_sky_bright_factor * 255) << 16) & 0x00ff0000 |
+					(int(r_sky_bright_factor * 255) << 8) & 0x0000ff00 | int(r_sky_bright_factor * 255) & 0x000000ff,
 				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
 				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih,
 				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
@@ -564,7 +565,8 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		SetTexture(Texture1, CMap);
 		for (i = 0; i < surf->count; i++)
 		{
-			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
+			out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xff000000 | (int(r_sky_bright_factor * 255) << 16) & 0x00ff0000 |
+					(int(r_sky_bright_factor * 255) << 8) & 0x0000ff00 | int(r_sky_bright_factor * 255) & 0x000000ff,
 				(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs1) * tex_iw,
 				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 		}
@@ -575,7 +577,8 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 			SetTexture(Texture2, CMap);
 			for (i = 0; i < surf->count; i++)
 			{
-				out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xffffffff,
+				out[i] = MyD3DVertex(surf->verts[i] + vieworg, 0xff000000 | (int(r_sky_bright_factor * 255) << 16) & 0x00ff0000 |
+					(int(r_sky_bright_factor * 255) << 8) & 0x0000ff00 | int(r_sky_bright_factor * 255) & 0x000000ff,
 					(DotProduct(surf->verts[sidx[i]], tex->saxis) + tex->soffs - offs2) * tex_iw,
 					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 			}

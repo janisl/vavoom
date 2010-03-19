@@ -75,6 +75,7 @@ VCvarI					r_interpolate_frames("r_interpolate_frames", "1", CVAR_Archive);
 VCvarI					r_vsync("r_vsync", "1", CVAR_Archive);
 VCvarI					r_fade_light("r_fade_light", "0", CVAR_Archive);
 VCvarF					r_fade_factor("r_fade_factor", "4.0", CVAR_Archive);
+VCvarF					r_sky_bright_factor("r_sky_bright_factor", "1.0", CVAR_Archive);
 
 VDrawer					*Drawer;
 

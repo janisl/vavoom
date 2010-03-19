@@ -4041,3 +4041,5 @@
 13.03.2010
   I got Timidity working with DLS instruments, tested it with gm.dls from
  Windows.
+19.03.2010
+  Firebrand implemented an option to set the sky brightness, so that users can set it when using darker lights.

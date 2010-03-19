@@ -508,7 +508,7 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		SetTexture(Texture2, CMap);
 		SelectTexture(0);
 
-		glColor4f(1, 1, 1, 1);
+		glColor4f(r_sky_bright_factor * 1, r_sky_bright_factor * 1, r_sky_bright_factor * 1, 1);
 		glBegin(GL_POLYGON);
 		for (i = 0; i < surf->count; i++)
 		{
@@ -530,7 +530,7 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	{
 		SetTexture(Texture1, CMap);
 		glBegin(GL_POLYGON);
-		glColor4f(1, 1, 1, 1);
+		glColor4f(r_sky_bright_factor * 1, r_sky_bright_factor * 1, r_sky_bright_factor * 1, 1);
 		for (i = 0; i < surf->count; i++)
 		{
 			glTexCoord2f(
