@@ -142,8 +142,8 @@ static VCvarF	cl_anglespeedkey("cl_anglespeedkey", "1.5", CVAR_Archive);
 static VCvarF	cl_deathroll("cl_deathroll", "75", CVAR_Archive);
 static VCvarF	cl_deathrollspeed("cl_deathrollspeed", "80", CVAR_Archive);
 
-static VCvarF	mouse_x_sensitivity("mouse_x_sensitivity", "3.0", CVAR_Archive);
-static VCvarF	mouse_y_sensitivity("mouse_y_sensitivity", "3.0", CVAR_Archive);
+static VCvarF	mouse_x_sensitivity("mouse_x_sensitivity", "5.0", CVAR_Archive);
+static VCvarF	mouse_y_sensitivity("mouse_y_sensitivity", "5.0", CVAR_Archive);
 static VCvarI	mouse_look("mouse_look", "1", CVAR_Archive);
 static VCvarI	invert_mouse("invert_mouse", "0", CVAR_Archive);
 static VCvarI	lookstrafe("lookstrafe", "0", CVAR_Archive);

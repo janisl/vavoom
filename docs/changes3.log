@@ -4055,3 +4055,6 @@
   Firebrand implemented an option to set the sky brightness, so that users can set it when using darker lights.
 21.03.2010
   I implemented loading of SF2 files.
+  Firebrand added mouse sensitivity options to the launcher, so that users who feel that Vavoom's max value (10)
+for mouse sensitivity isn't enough can set it up beyond that.
+  Firebrand added options for setting up a Vavoom master server from the launcher.

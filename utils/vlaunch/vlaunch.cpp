@@ -62,9 +62,14 @@ public:
 	wxCheckBox*		CheckBoxUseOpenAL;
 	wxCheckBox*		CheckBoxUseTimidity;
 	wxTextCtrl*		PatchFiles;
+	wxTextCtrl*		MouseX;
+	wxTextCtrl*		MouseY;
 	wxCheckBox*		CheckBoxNoLan;
+	wxCheckBox*		CheckBoxMaster;
 	wxTextCtrl*		EditIPAddress;
 	wxTextCtrl*		EditPort;
+	wxTextCtrl*		EditMasterIPAddress;
+	wxTextCtrl*		EditMasterPort;
 	wxCheckBox*		CheckBoxNoMouse;
 	wxCheckBox*		CheckBoxNoJoy;
 	wxCheckBox*		CheckBoxDebug;
@@ -214,10 +219,10 @@ VMain::VMain()
 	Colour = new wxComboBox(page, -1, ColourChoices[0], wxDefaultPosition, wxDefaultSize, 3, ColourChoices, wxCB_READONLY);
 	vsizer->Add(Colour, 0, wxALL, 4);
 	vsizer->Add(new wxStaticText(page, -1, wxT("Particles:")), 0, wxALL, 4);
-	Particles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
+	Particles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition,wxSize(48, -1));
 	vsizer->Add(Particles, 0, wxALL, 4);
 	vsizer->Add(new wxStaticText(page, -1, wxT("Surface Cache Memory (kb):")), 0, wxALL, 4);
-	CacheMemory = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
+	CacheMemory = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(48, -1));
 	vsizer->Add(CacheMemory, 0, wxALL, 4);
 	page->SetSizer(vsizer);
 	vsizer->Layout();
@@ -225,55 +230,86 @@ VMain::VMain()
 	//	Sound options
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Sound"));
-	wxBoxSizer* bsizer = new wxBoxSizer(wxVERTICAL);
+	wxFlexGridSizer* ssizer = new wxFlexGridSizer(2);
 	CheckBoxNoSound = new wxCheckBox(page, -1, wxT("Disable all sound"));
-	bsizer->Add(CheckBoxNoSound, 0, wxALL, 4);
+	ssizer->Add(CheckBoxNoSound, 0, wxALL, 4);
 	CheckBoxNoSfx = new wxCheckBox(page, -1, wxT("No sounds"));
-	bsizer->Add(CheckBoxNoSfx, 0, wxALL, 4);
+	ssizer->Add(CheckBoxNoSfx, 0, wxALL, 4);
 	CheckBoxNoMusic = new wxCheckBox(page, -1, wxT("No music"));
-	bsizer->Add(CheckBoxNoMusic, 0, wxALL, 4);
+	ssizer->Add(CheckBoxNoMusic, 0, wxALL, 4);
 	CheckBoxNoCDAudio = new wxCheckBox(page, -1, wxT("No CD audio"));
-	bsizer->Add(CheckBoxNoCDAudio, 0, wxALL, 4);
+	ssizer->Add(CheckBoxNoCDAudio, 0, wxALL, 4);
 	CheckBox3DSound = new wxCheckBox(page, -1, wxT("Use 3D sound"));
-	bsizer->Add(CheckBox3DSound, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	ssizer->Add(CheckBox3DSound, 0, wxALL, 4);
 	CheckBoxUseOpenAL = new wxCheckBox(page, -1, wxT("Use OpenAL"));
-	bsizer->Add(CheckBoxUseOpenAL, 0, wxALL, 4);
+	ssizer->Add(CheckBoxUseOpenAL, 0, wxALL, 4);
 	CheckBoxUseTimidity = new wxCheckBox(page, -1, wxT("Use Timidity"));
-	bsizer->Add(CheckBoxUseTimidity, 0, wxALL, 4);
-	bsizer->Add(new wxStaticText(page, -1, wxT("Timidity Patches Location:")), 0, wxALL, 4);
+	ssizer->Add(CheckBoxUseTimidity, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
+	ssizer->Add(new wxStaticText(page, -1, wxT("Timidity Patches Location:")), 0, wxALL, 4);
 	PatchFiles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(209, -1));
-	bsizer->Add(PatchFiles, 0, wxALL, 4);
-	page->SetSizer(bsizer);
-	bsizer->Layout();
+	ssizer->Add(PatchFiles, 0, wxALL, 4);
+	page->SetSizer(ssizer);
+	ssizer->Layout();
 
 	//	Input options
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Input"));
-	bsizer = new wxBoxSizer(wxVERTICAL);
+	wxFlexGridSizer* isizer = new wxFlexGridSizer(2);
 	CheckBoxNoMouse = new wxCheckBox(page, -1, wxT("Disable mouse"));
-	bsizer->Add(CheckBoxNoMouse, 0, wxALL, 4);
+	isizer->Add(CheckBoxNoMouse, 0, wxALL, 4);
 	CheckBoxNoJoy = new wxCheckBox(page, -1, wxT("Disable joystick"));
-	bsizer->Add(CheckBoxNoJoy, 0, wxALL, 4);
-	page->SetSizer(bsizer);
-	bsizer->Layout();
+	isizer->Add(CheckBoxNoJoy, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
+	ssizer->AddSpacer(1);
+	isizer->Add(new wxStaticText(page, -1, wxT("Mouse X sensitivity:")), 0, wxALL, 4);
+	MouseX = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(48, -1));
+	isizer->Add(MouseX, 0, wxALL, 4);
+	isizer->Add(new wxStaticText(page, -1, wxT("Mouse Y sensitivity:")), 0, wxALL, 4);
+	MouseY = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(48, -1));
+	isizer->Add(MouseY, 0, wxALL, 4);
+	page->SetSizer(isizer);
+	isizer->Layout();
 
 	//	Network options
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Network"));
 	gsizer = new wxFlexGridSizer(2);
 	CheckBoxNoLan = new wxCheckBox(page, -1, wxT("Disable network driver"));
-	gsizer->AddSpacer(1);
 	gsizer->Add(CheckBoxNoLan, 0, wxALL, 4);
+	gsizer->AddSpacer(1);
 	gsizer->Add(new wxStaticText(page, -1, wxT("IP address:")), 0, wxALL, 4);
 	EditIPAddress = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
 	gsizer->Add(EditIPAddress, 0, wxALL, 4);
 	gsizer->Add(new wxStaticText(page, -1, wxT("Port:")), 0, wxALL, 4);
 	EditPort = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(48, -1));
 	gsizer->Add(EditPort, 0, wxALL, 4);
+	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
+	CheckBoxMaster = new wxCheckBox(page, -1, wxT("Enable Master Server"));
+	gsizer->Add(CheckBoxMaster, 0, wxALL, 4);
+	gsizer->AddSpacer(1);
+	gsizer->Add(new wxStaticText(page, -1, wxT("Master Server IP address:")), 0, wxALL, 4);
+	EditMasterIPAddress = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
+	gsizer->Add(EditMasterIPAddress, 0, wxALL, 4);
 	page->SetSizer(gsizer);
 	gsizer->Layout();
 
-	bsizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* bsizer = new wxBoxSizer(wxHORIZONTAL);
 	bsizer->Add(new wxButton(panel, VLaunch_Run, wxT("Run")), 0, wxALL, 4);
 	bsizer->Add(new wxButton(panel, VLaunch_Exit, wxT("Exit")), 0, wxALL, 4);
 	mainsizer->Add(bsizer, 0, wxALIGN_RIGHT);
@@ -298,12 +334,15 @@ VMain::VMain()
 	CheckBoxNoLan->SetValue(!!Conf->Read(wxT("NoLAN"), 0l));
 	EditIPAddress->SetValue(Conf->Read(wxT("IPAddress"), wxT("")));
 	EditPort->SetValue(Conf->Read(wxT("Port"), wxT("")));
+	CheckBoxMaster->SetValue(!!Conf->Read(wxT("UseMaster"), 0l));
+	EditMasterIPAddress->SetValue(Conf->Read(wxT("MasterIPAddress"), wxT("")));
 	CheckBoxNoMouse->SetValue(!!Conf->Read(wxT("NoMouse"), 0l));
 	CheckBoxNoJoy->SetValue(!!Conf->Read(wxT("NoJoy"), 0l));
 	CheckBoxDebug->SetValue(!!Conf->Read(wxT("Debug"), 0l));
 	EditIWadDir->SetValue(Conf->Read(wxT("IWadDir"), wxT("")));
 	EditGame->SetValue(Conf->Read(wxT("CustomGame"), wxT("")));
-	PatchFiles->SetValue(Conf->Read(wxT("PatchFiles"), wxT("")));
+	MouseX->SetValue(Conf->Read(wxT("MouseX"), wxT("")));
+	MouseY->SetValue(Conf->Read(wxT("MouseY"), wxT("")));
 	CheckBoxDevGame->SetValue(!!Conf->Read(wxT("DevGame"), 0l));
 	EditFiles->SetValue(Conf->Read(wxT("Files"), wxT("")));
 	EditMisc->SetValue(Conf->Read(wxT("Options"), wxT("")));
@@ -335,12 +374,16 @@ VMain::~VMain()
 	Conf->Write(wxT("NoLAN"), CheckBoxNoLan->IsChecked());
 	Conf->Write(wxT("IPAddress"), EditIPAddress->GetValue());
 	Conf->Write(wxT("Port"), EditPort->GetValue());
+	Conf->Write(wxT("UseMaster"), CheckBoxNoLan->IsChecked());
+	Conf->Write(wxT("MasterIPAddress"), EditIPAddress->GetValue());
 	Conf->Write(wxT("NoMouse"), CheckBoxNoMouse->IsChecked());
 	Conf->Write(wxT("NoJoy"), CheckBoxNoJoy->IsChecked());
 	Conf->Write(wxT("Debug"), CheckBoxDebug->IsChecked());
 	Conf->Write(wxT("IWadDir"), EditIWadDir->GetValue());
 	Conf->Write(wxT("CustomGame"), EditGame->GetValue());
 	Conf->Write(wxT("PatchFiles"), PatchFiles->GetValue());
+	Conf->Write(wxT("MouseX"), MouseX->GetValue());
+	Conf->Write(wxT("MouseY"), MouseY->GetValue());
 	Conf->Write(wxT("DevGame"), CheckBoxDevGame->IsChecked());
 	Conf->Write(wxT("Files"), EditFiles->GetValue());
 	Conf->Write(wxT("Options"), EditMisc->GetValue());
@@ -446,7 +489,7 @@ void VMain::OnRun(wxCommandEvent&)
 	if (EditMisc->GetValue().Length())
 		CmdLine += wxT(" ") + EditMisc->GetValue();
 
-	// Timidity option
+	// Timidity
 	if (CheckBoxUseTimidity->IsChecked())
 	{
 		CmdLine += wxT(" +s_timidity 1");
@@ -458,6 +501,19 @@ void VMain::OnRun(wxCommandEvent&)
 
 	if (PatchFiles->GetValue().Length())
 		CmdLine += wxT(" +s_timidity_patches ") + PatchFiles->GetValue();
+
+	// Mouse Sensitivity
+	if (MouseX->GetValue().Length())
+		CmdLine += wxT(" +mouse_x_sensitivity ") + MouseX->GetValue();
+
+	if (MouseY->GetValue().Length())
+		CmdLine += wxT(" +mouse_y_sensitivity ") + MouseY->GetValue();
+
+	// Master Server
+	if (CheckBoxMaster->IsChecked())
+		CmdLine += wxT(" +use_master 1");
+	if (EditMasterIPAddress->GetValue().Length())
+		CmdLine += wxT(" +master_srv ") + EditMasterIPAddress->GetValue();
 
 	// Set Resolution
 	switch (Resolution->GetSelection())
