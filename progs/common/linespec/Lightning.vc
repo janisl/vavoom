@@ -47,79 +47,76 @@ bool Touch(Entity InOther)
 	}
 
 	Other = EntityEx(InOther);
-	if (Other)
+	// Check for a non-shootable mobj
+	if (!Other.bShootable || Other.bNonShootable)
 	{
-		// Check for a non-shootable mobj
-		if (!Other.bShootable || Other.bNonShootable)
-		{
-			return true;
-		}
+		return true;
+	}
 
-		// Check for blasted thing running into another
-		if (bBlasted && Other.bShootable)
+	// Check for blasted thing running into another
+	if (bBlasted && Other.bShootable)
+	{
+		if (!Other.bBoss && Other.bMonster)
 		{
-			if (!Other.bBoss && Other.bMonster)
+			Other.Velocity.x += Velocity.x;
+			Other.Velocity.y += Velocity.y;
+			if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
 			{
-				Other.Velocity.x += Velocity.x;
-				Other.Velocity.y += Velocity.y;
-				if ((Other.Velocity.x + Other.Velocity.y) > 3.0 * 35.0)
-				{
-					damage = (ftoi(Mass) / 100) + 1;
-					Other.Damage(self, self, damage);
-					damage = (ftoi(Other.Mass) / 100) + 1;
-					Damage(Other, Other, damage >> 2);
-				}
-				return false;
+				damage = (ftoi(Mass) / 100) + 1;
+				Other.Damage(self, self, damage);
+				damage = (ftoi(Other.Mass) / 100) + 1;
+				Damage(Other, Other, damage >> 2);
 			}
-		}
-
-		if (Other == Target)
-		{
-			return true;
-		}
-
-		if (Other.Mass != 99999.0)
-		{
-			Other.Velocity.x += Velocity.x / 16.0;
-			Other.Velocity.y += Velocity.y / 16.0;
-		}
-		if ((!Other.bIsPlayer && !Other.bBoss) || !(XLevel.TicTime & 1))
-		{
-			if (Other.IsA('Centaur'))
-			{
-				// Lightning does more damage to centaurs
-				Other.Damage(self, Target, 9);
-			}
-			else
-			{
-				Other.Damage(self, Target, 3);
-			}
-			if (!(GetSoundPlayingInfo(self, GetSoundID('MageLightningZap'))))
-			{
-				PlaySound('MageLightningZap', CHAN_VOICE);
-			}
-			if (Other.HowlSound && Other.bMonster && P_Random() < 64 &&
-				!GetSoundPlayingInfo(Other, GetSoundID(Other.HowlSound)))
-			{
-				Other.PlaySound(Other.HowlSound, CHAN_VOICE);
-			}
-		}
-		Health--;
-		if (Health <= 0 || Other.Health <= 0)
-		{
 			return false;
 		}
-		if (Class == GetClassReplacement(LightningFloor))
+	}
+
+	if (Other == Target)
+	{
+		return true;
+	}
+
+	if (Other.Mass != 99999.0)
+	{
+		Other.Velocity.x += Velocity.x / 16.0;
+		Other.Velocity.y += Velocity.y / 16.0;
+	}
+	if ((!Other.bIsPlayer && !Other.bBoss) || !(XLevel.TicTime & 1))
+	{
+		if (Other.IsA('Centaur'))
 		{
-			if (LightningLink && !LightningLink.Tracer)
-			{
-				LightningLink.Tracer = Other;
-			}
+			// Lightning does more damage to centaurs
+			Other.Damage(self, Target, 9);
 		}
-		else if (!Tracer)
+		else
 		{
-			Tracer = Other;
+			Other.Damage(self, Target, 3);
 		}
+		if (!(GetSoundPlayingInfo(self, GetSoundID('MageLightningZap'))))
+		{
+			PlaySound('MageLightningZap', CHAN_VOICE);
+		}
+		if (Other.HowlSound && Other.bMonster && P_Random() < 64 &&
+			!GetSoundPlayingInfo(Other, GetSoundID(Other.HowlSound)))
+		{
+			Other.PlaySound(Other.HowlSound, CHAN_VOICE);
+		}
+	}
+	Health--;
+	if (Health <= 0 || Other.Health <= 0)
+	{
+		return false;
+	}
+	if (Class == GetClassReplacement(LightningFloor))
+	{
+		if (LightningLink && !LightningLink.Tracer)
+		{
+			LightningLink.Tracer = Other;
+		}
+	}
+	else if (!Tracer)
+	{
+		Tracer = Other;
 	}
 	return true;	// lightning zaps through all sprites
 }
