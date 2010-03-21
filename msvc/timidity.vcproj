@@ -182,6 +182,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\timidity\instrum_sf2.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\timidity\mix.cpp"
 				>
 			</File>
@@ -216,6 +220,10 @@
 			</File>
 			<File
 				RelativePath="..\source\timidity\dls2.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\timidity\sf2.h"
 				>
 			</File>
 			<File
