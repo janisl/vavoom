@@ -19,7 +19,6 @@
 
 */
 
-#include <stdio.h>
 #include "timidity.h"
 
 namespace LibTimidity

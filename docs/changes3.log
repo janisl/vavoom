@@ -4032,6 +4032,7 @@
 06.03.2010
   Firebrand added support for basic parsing of GLDEFS variants for adding light effects for actors.
 08.03.2010
+  I updated acc to latest version.
   I started to update Timidity to the version that's included in SDL_sound
  library.
 11.03.2010
@@ -4041,5 +4042,16 @@
 13.03.2010
   I got Timidity working with DLS instruments, tested it with gm.dls from
  Windows.
+14.03.2010
+  On Windows if Timidity init failed try to load gm.dls. Drums doesn't work
+ correctly so it sounds like shit.
+16.03.2010
+  I fixed loading of drum instruments from DLS. It now sounds better but
+ d_runnin still has problems.
+17.03.2010
+  I finished changing Timidity to match version of SDL_sound.
+  I started to experiment with loading of SF2 files.
 19.03.2010
   Firebrand implemented an option to set the sky brightness, so that users can set it when using darker lights.
+21.03.2010
+  I implemented loading of SF2 files.

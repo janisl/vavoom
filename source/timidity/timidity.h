@@ -19,6 +19,10 @@
 
 */
 
+#ifndef TIMIDITY_H
+#define TIMIDITY_H
+
+#include <stdio.h>
 #include <math.h>
 
 namespace LibTimidity
@@ -399,6 +403,7 @@ struct MidiEventList
 };
 
 struct DLS_Data;
+struct Sf2Data;
 
 struct MidiSong
 {
@@ -408,6 +413,7 @@ struct MidiSong
 	float				master_volume;
 	int32				amplification;
 	DLS_Data*			patches;
+    Sf2Data*            sf2_font;
 	ToneBank*			tonebank[128];
 	ToneBank*			drumset[128];
 	/* This is a special instrument, used for all melodic programs */
@@ -465,12 +471,16 @@ extern void apply_envelope_to_amp(MidiSong* song, int v);
 extern int Timidity_Init();
 extern void Timidity_SetVolume(MidiSong* song, int volume);
 extern int Timidity_PlaySome(MidiSong* song, void* stream, int samples);
-extern MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches);
+extern MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches, Sf2Data* sf2_font);
 extern void Timidity_Start(MidiSong* song);
 extern int Timidity_Active(MidiSong* song);
 extern void Timidity_Stop(MidiSong* song);
 extern void Timidity_FreeSong(MidiSong* song);
 extern void Timidity_Close();
+
+Sf2Data* Timidity_LoadSF2(const char* FileName);
+void Timidity_FreeSf2(Sf2Data* data);
+Instrument* load_instrument_sf2(MidiSong* song, int Bank, int Instrument, bool Drum);
 
 extern char current_filename[];
 
@@ -490,3 +500,5 @@ extern char def_instr_name[256];
 extern ControlMode*		ctl;
 
 };
+
+#endif

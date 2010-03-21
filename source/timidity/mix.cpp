@@ -22,7 +22,6 @@
     mix.c */
 
 #include <math.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #include "timidity.h"

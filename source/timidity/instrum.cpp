@@ -23,7 +23,6 @@
 
 */
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -77,16 +76,6 @@ static void free_bank(MidiSong* song, int dr, int b)
 	}
 }
 
-
-static int32 convert_envelope_rate_attack(MidiSong* song, uint8 rate, uint8 fastness)
-{
-	int32 r = 3 - ((rate >> 6) & 0x3);
-	r *= 3;
-	r = (int32)(rate & 0x3f) << r; /* 6.9 fixed point */
-
-	/* 15.15 fixed point. */
-	return (((r * 44100) / OUTPUT_RATE) * song->control_ratio) << 10;
-}
 
 static int32 convert_envelope_rate(MidiSong* song, uint8 rate)
 {
@@ -405,7 +394,7 @@ fail:
 		for (j = 0; j < 6; j++)
 		{
 			sp->envelope_rate[j] =
-				(j < 3) ? convert_envelope_rate_attack(song, tmp[j], 11) : convert_envelope_rate(song, tmp[j]);
+				convert_envelope_rate(song, tmp[j]);
 			sp->envelope_offset[j] =
 				convert_envelope_offset(tmp[6 + j]);
 		}
@@ -547,6 +536,11 @@ static int fill_bank(MidiSong* song, int dr, int b)
 	{
 		if (bank->instrument[i] == MAGIC_LOAD_INSTRUMENT)
 		{
+			bank->instrument[i] = load_instrument_sf2(song, b, i, dr);
+			if (bank->instrument[i])
+			{
+				continue;
+			}
 			bank->instrument[i] = load_instrument_dls(song, dr, b, i);
 			if (bank->instrument[i])
 			{

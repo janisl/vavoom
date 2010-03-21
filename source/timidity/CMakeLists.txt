@@ -4,10 +4,12 @@ add_library(timidity STATIC
 	dls2.h
 	instrum.cpp
 	instrum_dls.cpp
+	instrum_sf2.cpp
 	mix.cpp
 	playmidi.cpp
 	readmidi.cpp
 	resample.cpp
+	sf2.h
 	tables.cpp
 	timidity.cpp
 	timidity.h

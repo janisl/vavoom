@@ -21,7 +21,6 @@
 
    */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -158,8 +157,8 @@ static void LoadSubChunks(RIFF_Chunk *chunk, uint8 *data, uint32 left)
 			LoadSubChunks(child, subchunkData, subchunkDataLen);
 		}
 
-		data += child->length;
-		left -= child->length;
+		data += (child->length + 1) & ~1;
+		left -= (child->length + 1) & ~1;
 	}
 }
 
@@ -252,32 +251,6 @@ void PrintRIFF(RIFF_Chunk *chunk, int level)
 		prefix[(level-1)*2] = '\0';
 	}
 }
-
-#ifdef TEST_MAIN_RIFF
-
-main(int argc, char *argv[])
-{
-	int i;
-	for ( i = 1; i < argc; ++i ) {
-		RIFF_Chunk *chunk;
-		SDL_RWops *src = SDL_RWFromFile(argv[i], "rb");
-		if ( !src ) {
-			fprintf(stderr, "Couldn't open %s: %s", argv[i], SDL_GetError());
-			continue;
-		}
-		chunk = LoadRIFF(src);
-		if ( chunk ) {
-			PrintRIFF(chunk, 0);
-			FreeRIFF(chunk);
-		} else {
-			fprintf(stderr, "Couldn't load %s: %s\n", argv[i], SDL_GetError());
-		}
-		SDL_RWclose(src);
-	}
-}
-
-#endif // TEST_MAIN
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /*-------------------------------------------------------------------------*/
 /* * * * * * * * * * * * * * * * * load_dls.h  * * * * * * * * * * * * * * */
@@ -476,8 +449,8 @@ static void Parse_wlnk(DLS_Data *data, RIFF_Chunk *chunk, DLS_Region *region)
 	WAVELINK *wlnk = (WAVELINK *)chunk->data;
 	wlnk->fusOptions = LE_SHORT(wlnk->fusOptions);
 	wlnk->usPhaseGroup = LE_SHORT(wlnk->usPhaseGroup);
-	wlnk->ulChannel = LE_SHORT(wlnk->ulChannel);
-	wlnk->ulTableIndex = LE_SHORT(wlnk->ulTableIndex);
+	wlnk->ulChannel = LE_LONG(wlnk->ulChannel);
+	wlnk->ulTableIndex = LE_LONG(wlnk->ulTableIndex);
 	region->wlnk = wlnk;
 }
 
@@ -1048,33 +1021,6 @@ void PrintDLS(DLS_Data *data)
 	}
 }
 
-#ifdef TEST_MAIN_DLS
-
-main(int argc, char *argv[])
-{
-	int i;
-	for ( i = 1; i < argc; ++i ) {
-		DLS_Data *data;
-		SDL_RWops *src = SDL_RWFromFile(argv[i], "rb");
-		if ( !src ) {
-			fprintf(stderr, "Couldn't open %s: %s", argv[i], SDL_GetError());
-			continue;
-		}
-		data = LoadDLS(src);
-		if ( data ) {
-			PrintRIFF(data->chunk, 0);
-			PrintDLS(data);
-			FreeDLS(data);
-		} else {
-			fprintf(stderr, "Couldn't load %s: %s\n", argv[i], SDL_GetError());
-		}
-		SDL_RWclose(src);
-	}
-}
-
-#endif // TEST_MAIN
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /*-------------------------------------------------------------------------*/
 /* * * * * * * * * * * * * * * * * instrum_dls.c * * * * * * * * * * * * * */
 /*-------------------------------------------------------------------------*/
@@ -1210,23 +1156,23 @@ static void load_region_dls(MidiSong *song, Sample *sample, DLS_Instrument *ins,
 	printf("%d, Rate=%d LV=%d HV=%d Low=%d Hi=%d Root=%d Pan=%d Attack=%f Hold=%f Sustain=%d Decay=%f Release=%f\n", index, sample->sample_rate, rgn->header->RangeVelocity.usLow, rgn->header->RangeVelocity.usHigh, sample->low_freq, sample->high_freq, sample->root_freq, sample->panning, attack, hold, sustain, decay, release);
 	*/
 
-		sample->envelope_offset[0] = to_offset(255);
-		sample->envelope_rate[0] = calc_rate(song, 255, sample->sample_rate, attack);
+		sample->envelope_offset[ATTACK] = to_offset(255);
+		sample->envelope_rate[ATTACK] = calc_rate(song, 255, sample->sample_rate, attack);
 
-		sample->envelope_offset[1] = to_offset(250);
-		sample->envelope_rate[1] = calc_rate(song, 5, sample->sample_rate, hold);
+		sample->envelope_offset[HOLD] = to_offset(250);
+		sample->envelope_rate[HOLD] = calc_rate(song, 5, sample->sample_rate, hold);
 
-		sample->envelope_offset[2] = to_offset(sustain);
-		sample->envelope_rate[2] = calc_rate(song, 255 - sustain, sample->sample_rate, decay);
+		sample->envelope_offset[DECAY] = to_offset(sustain);
+		sample->envelope_rate[DECAY] = calc_rate(song, 255 - sustain, sample->sample_rate, decay);
 
-		sample->envelope_offset[3] = to_offset(0);
-		sample->envelope_rate[3] = calc_rate(song, 5 + sustain, sample->sample_rate, release);
+		sample->envelope_offset[RELEASE] = to_offset(0);
+		sample->envelope_rate[RELEASE] = calc_rate(song, 5 + sustain, sample->sample_rate, release);
 
-		sample->envelope_offset[4] = to_offset(0);
-		sample->envelope_rate[4] = to_offset(1);
+		sample->envelope_offset[RELEASEB] = to_offset(0);
+		sample->envelope_rate[RELEASEB] = to_offset(1);
 
-		sample->envelope_offset[5] = to_offset(0);
-		sample->envelope_rate[5] = to_offset(1);
+		sample->envelope_offset[RELEASEC] = to_offset(0);
+		sample->envelope_rate[RELEASEC] = to_offset(1);
 
 		sample->modes |= MODES_ENVELOPE;
 	}

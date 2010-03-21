@@ -82,6 +82,7 @@ static VCvarI	s_timidity("s_timidity", "1", CVAR_Archive);
 static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_Archive);
 #endif
 static VCvarI	s_timidity_test_dls("s_timidity_test_dls", "0", CVAR_Archive);
+static VCvarI	s_timidity_test_sf2("s_timidity_test_sf2", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -112,6 +113,8 @@ VTimidityAudioCodec::~VTimidityAudioCodec()
 	Timidity_Stop(Song);
 	if (Song->patches)
 		Timidity_FreeDLS(Song->patches);
+	if (Song->sf2_font)
+		Timidity_FreeSf2(Song->sf2_font);
 	Timidity_FreeSong(Song);
 	Timidity_Close();
 	unguard;
@@ -242,12 +245,22 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 		}
 	}
 
+	Sf2Data* sf2_data = NULL;
+	if (s_timidity_test_sf2)
+	{
+		sf2_data = Timidity_LoadSF2("gm.sf2");
+		if (sf2_data)
+		{
+			GCon->Logf("Loaded SF2");
+		}
+	}
+
 	//	Load song.
 	int Size = InStrm->TotalSize();
 	void* Data = Z_Malloc(Size);
 	InStrm->Seek(0);
 	InStrm->Serialise(Data, Size);
-	MidiSong* Song = Timidity_LoadSongMem(Data, Size, patches);
+	MidiSong* Song = Timidity_LoadSongMem(Data, Size, patches, sf2_data);
 	Z_Free(Data);
 	if (!Song)
 	{

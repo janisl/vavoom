@@ -21,7 +21,6 @@
 
 */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -755,7 +754,7 @@ void Timidity_SetVolume(MidiSong* song, int volume)
 		}
 }
 
-MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches)
+MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches, Sf2Data* sf2_font)
 {
 	int32 events;
 
@@ -763,6 +762,7 @@ MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches)
 	MidiSong* song = (MidiSong *)safe_malloc(sizeof(*song));
 	memset(song, 0, sizeof(*song));
 	song->patches = patches;
+	song->sf2_font = sf2_font;
 
 	for (int i = 0; i < 128; i++)
 	{
