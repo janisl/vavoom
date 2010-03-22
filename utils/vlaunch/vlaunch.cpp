@@ -486,8 +486,6 @@ void VMain::OnRun(wxCommandEvent&)
 		CmdLine += wxT(" -iwaddir ") + EditIWadDir->GetValue();
 	if (EditFiles->GetValue().Length())
 		CmdLine += wxT(" -file ") + EditFiles->GetValue();
-	if (EditMisc->GetValue().Length())
-		CmdLine += wxT(" ") + EditMisc->GetValue();
 
 	// Timidity
 	if (CheckBoxUseTimidity->IsChecked())
@@ -550,6 +548,12 @@ void VMain::OnRun(wxCommandEvent&)
 		CmdLine += wxT(" 32");
 		break;
 	}
+
+	// EditMisc must always be the last option we fill
+	// to the command line, to avoid problems while
+	// loading dehacked patches, for example...
+	if (EditMisc->GetValue().Length())
+		CmdLine += wxT(" ") + EditMisc->GetValue();
 
 	//	Run game
 	wxExecute(CmdLine, wxEXEC_SYNC);
