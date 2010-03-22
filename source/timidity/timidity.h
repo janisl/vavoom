@@ -290,11 +290,6 @@ namespace LibTimidity
 #  define PATH_STRING "/"
 #endif
 
-/* When a patch file can't be opened, one of these extensions is
-   appended to the filename and the open is tried again.
- */
-#define PATCH_EXT_LIST { ".pat", 0 }
-
 #define MAX_AMP_VALUE ((1<<(AMP_BITS+1))-1)
 
 #define SINE_CYCLE_LENGTH 1024

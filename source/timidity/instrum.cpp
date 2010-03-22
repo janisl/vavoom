@@ -165,9 +165,6 @@ static Instrument* load_instrument(MidiSong *song, const char *name, int percuss
 	FILE *fp;
 	uint8 tmp[1024];
 	int i,j,noluck=0;
-#ifdef PATCH_EXT_LIST
-	static const char* patch_ext[] = PATCH_EXT_LIST;
-#endif
 
 	if (!name)
 		return 0;
@@ -176,23 +173,16 @@ static Instrument* load_instrument(MidiSong *song, const char *name, int percuss
 	if ((fp=open_file(name, 1, OF_NORMAL)) == NULL)
 	{
 		noluck = 1;
-#ifdef PATCH_EXT_LIST
-		/* Try with various extensions */
-		for (i = 0; patch_ext[i]; i++)
+		if (strlen(name) + strlen(".pat") < 1024)
 		{
-			if (strlen(name) + strlen(patch_ext[i]) < 1024)
+			char path[1024];
+			strcpy(path, name);
+			strcat(path, ".pat");
+			if ((fp = open_file(path, 1, OF_NORMAL)) != NULL)
 			{
-				char path[1024];
-				strcpy(path, name);
-				strcat(path, patch_ext[i]);
-				if ((fp = open_file(path, 1, OF_NORMAL)) != NULL)
-				{
-					noluck = 0;
-					break;
-				}
+				noluck = 0;
 			}
 		}
-#endif
 	}
 
 	if (noluck)
