@@ -937,7 +937,7 @@ static double to_normalized_percent(int decipercent)
 //
 //==========================================================================
 
-static Instrument* LoadPreset(Sf2Data* font, MidiSong* song, int PresetIndex, bool Drum, int DrumNote)
+static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int DrumNote)
 {
 	if (font == NULL)
 	{
@@ -1236,7 +1236,7 @@ Instrument* load_instrument_sf2(MidiSong* song, int Bank, int Instr, bool Drum)
 	{
 		return NULL; 
 	}
-	return LoadPreset(song->sf2_font, song, PresetIndex, Drum, Instr);
+	return LoadPreset(song->sf2_font, PresetIndex, Drum, Instr);
 }
 
 }
