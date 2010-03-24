@@ -762,7 +762,7 @@ static int32 to_offset(int offset)
 /* calculate ramp rate in fractional unit;
 * diff = 8bit, time = msec
 */
-static int32 calc_rate(MidiSong *song, int diff, int sample_rate, double msec)
+static int32 calc_rate(int diff, int sample_rate, double msec)
 {
 	double rate;
 
@@ -771,7 +771,7 @@ static int32 calc_rate(MidiSong *song, int diff, int sample_rate, double msec)
 	if(diff == 0)
 		diff = 255;
 	diff <<= (7+15);
-	rate = ((double)diff / OUTPUT_RATE) * song->control_ratio * 1000.0 / msec;
+	rate = ((double)diff / CONTROLS_PER_SECOND) * 1000.0 / msec;
 	return (int32)rate;
 }
 
@@ -797,10 +797,10 @@ static int load_connection(ULONG cConnections, CONNECTION *artList, USHORT desti
 	return value;
 }
 
-static void load_region_dls(MidiSong *song, Sample *sample, DLS_Instrument *ins, uint32 index)
+static void load_region_dls(DLS_Data *patches, Sample *sample, DLS_Instrument *ins, uint32 index)
 {
 	DLS_Region *rgn = &ins->regions[index];
-	DLS_Wave *wave = &song->patches->waveList[rgn->wlnk->ulTableIndex];
+	DLS_Wave *wave = &patches->waveList[rgn->wlnk->ulTableIndex];
 
 	sample->low_freq = freq_table[rgn->header->RangeKey.usLow];
 	sample->high_freq = freq_table[rgn->header->RangeKey.usHigh];
@@ -857,16 +857,16 @@ static void load_region_dls(MidiSong *song, Sample *sample, DLS_Instrument *ins,
 	*/
 
 		sample->envelope_offset[ATTACK] = to_offset(255);
-		sample->envelope_rate[ATTACK] = calc_rate(song, 255, sample->sample_rate, attack);
+		sample->envelope_rate[ATTACK] = calc_rate(255, sample->sample_rate, attack);
 
 		sample->envelope_offset[HOLD] = to_offset(250);
-		sample->envelope_rate[HOLD] = calc_rate(song, 5, sample->sample_rate, hold);
+		sample->envelope_rate[HOLD] = calc_rate(5, sample->sample_rate, hold);
 
 		sample->envelope_offset[DECAY] = to_offset(sustain);
-		sample->envelope_rate[DECAY] = calc_rate(song, 255 - sustain, sample->sample_rate, decay);
+		sample->envelope_rate[DECAY] = calc_rate(255 - sustain, sample->sample_rate, decay);
 
 		sample->envelope_offset[RELEASE] = to_offset(0);
-		sample->envelope_rate[RELEASE] = calc_rate(song, 5 + sustain, sample->sample_rate, release);
+		sample->envelope_rate[RELEASE] = calc_rate(5 + sustain, sample->sample_rate, release);
 
 		sample->envelope_offset[RELEASEB] = to_offset(0);
 		sample->envelope_rate[RELEASEB] = to_offset(1);
@@ -924,7 +924,7 @@ Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrume
 		memset(inst->sample, 0, inst->samples * sizeof(*inst->sample));
 		for (i = 0; i < dls_ins->header->cRegions; ++i)
 		{
-			load_region_dls(song, &inst->sample[i], dls_ins, i);
+			load_region_dls(song->patches, &inst->sample[i], dls_ins, i);
 		}
 	}
 	else
@@ -972,7 +972,7 @@ Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrume
 		inst->samples = 1;
 		inst->sample = (Sample *)safe_malloc(inst->samples * sizeof(*inst->sample));
 		memset(inst->sample, 0, inst->samples * sizeof(*inst->sample));
-		load_region_dls(song, &inst->sample[0], dls_ins, drum_reg);
+		load_region_dls(song->patches, &inst->sample[0], dls_ins, drum_reg);
 	}
 
 	return inst;
