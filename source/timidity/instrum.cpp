@@ -31,6 +31,8 @@
 namespace LibTimidity
 {
 
+#include "gf1.h"
+
 #ifdef FAST_DECAY
 int fast_decay=1;
 #else
@@ -48,7 +50,10 @@ static void free_instrument(Instrument* ip)
 	for (int i = 0; i < ip->samples; i++)
 	{
 		Sample* sp = &(ip->sample[i]);
-		free(sp->data);
+		if (sp->data)
+		{
+			free(sp->data);
+		}
 	}
 	free(ip->sample);
 	free(ip);
@@ -164,7 +169,6 @@ static Instrument* load_instrument(const char *name, int percussion,
 {
 	Instrument *ip;
 	FILE *fp;
-	uint8 tmp[1024];
 	int i,j,noluck=0;
 
 	if (!name)
@@ -194,96 +198,87 @@ static Instrument* load_instrument(const char *name, int percussion,
 
 	/*ctl->cmsg(CMSG_INFO, VERB_NOISY, "Loading instrument %s", current_filename);*/
 
-	/* Read some headers and do cursory sanity checks. There are loads
-	   of magic offsets. This could be rewritten... */
+	/* Read some headers and do cursory sanity checks. */
+	GF1PatchHeader PatchHdr;
+	GF1InstrumentHeader InstrHdr;
+	GF1LayerHeader LayerHdr;
+	if (1 != fread(&PatchHdr, sizeof(PatchHdr), 1, fp) ||
+		1 != fread(&InstrHdr, sizeof(InstrHdr), 1, fp) ||
+		1 != fread(&LayerHdr, sizeof(LayerHdr), 1, fp))
+	{
+		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: Failed to read headers", name);
+		return 0;
+	}
 
-	if ((239 != fread(tmp, 1, 239, fp)) ||
-		(memcmp(tmp, "GF1PATCH110\0ID#000002", 22) &&
-		memcmp(tmp, "GF1PATCH100\0ID#000002", 22))) /* don't know what the differences are */
+	if ((memcmp(PatchHdr.Magic, GF1_MAGIC1, 12) &&
+		memcmp(PatchHdr.Magic, GF1_MAGIC2, 12)) ||
+		memcmp(PatchHdr.Id, GF1_PATCH_ID, 10))
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "%s: not an instrument", name);
 		return 0;
 	}
 
-	if (tmp[82] != 1 && tmp[82] != 0) /* instruments. To some patch makers, 0 means 1 */
+	//	instruments. To some patch makers, 0 means 1
+	if (PatchHdr.NumInstruments != 1 && PatchHdr.NumInstruments != 0) 
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
-			"Can't handle patches with %d instruments", tmp[82]);
+			"Can't handle patches with %d instruments", PatchHdr.NumInstruments);
 		return 0;
 	}
 
-	if (tmp[151] != 1 && tmp[151] != 0) /* layers. What's a layer? */
+	//	layers. What's a layer?
+	if (InstrHdr.NumLayers != 1 && InstrHdr.NumLayers != 0)
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
-			"Can't handle instruments with %d layers", tmp[151]);
+			"Can't handle instruments with %d layers", InstrHdr.NumLayers);
 		return 0;
 	}
 
+	if (LayerHdr.NumSamples == 0)
+	{
+		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Instrument has 0 samples");
+		return 0;
+	}
 
-	ip=(Instrument *)safe_malloc(sizeof(Instrument));
+	ip = (Instrument *)safe_malloc(sizeof(Instrument));
 	ip->type = INST_GUS;
-	ip->samples = tmp[198];
+	ip->samples = LayerHdr.NumSamples;
 	ip->sample = (Sample*)safe_malloc(sizeof(Sample) * ip->samples);
+	memset(ip->sample, 0, sizeof(Sample) * ip->samples);
 	for (i = 0; i < ip->samples; i++)
 	{
-		uint8 fractions;
-		int32 tmplong;
-		uint16 tmpshort;
-		uint8 tmpchar;
-		Sample *sp;
+		GF1SampleHeader SmplHdr;
 
-#define READ_CHAR(thing) \
-      if (1 != fread(&tmpchar, 1, 1, fp)) goto fail; \
-      thing = tmpchar;
-#define READ_SHORT(thing) \
-      if (1 != fread(&tmpshort, 2, 1, fp)) goto fail; \
-      thing = LE_SHORT(tmpshort);
-#define READ_LONG(thing) \
-      if (1 != fread(&tmplong, 4, 1, fp)) goto fail; \
-      thing = LE_LONG(tmplong);
-
-		skip(fp, 7); /* Skip the wave name */
-
-		if (1 != fread(&fractions, 1, 1, fp))
+		if (1 != fread(&SmplHdr, sizeof(GF1SampleHeader), 1, fp))
 		{
 fail:
 			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Error reading sample %d", i);
-			for (j=0; j<i; j++)
-				free(ip->sample[j].data);
-			free(ip->sample);
-			free(ip);
+			free_instrument(ip);
 			return 0;
 		}
 
-		sp = &(ip->sample[i]);
+		Sample* sp = &ip->sample[i];
 
-		READ_LONG(sp->data_length);
-		READ_LONG(sp->loop_start);
-		READ_LONG(sp->loop_end);
-		READ_SHORT(sp->sample_rate);
-		READ_LONG(sp->low_freq);
-		READ_LONG(sp->high_freq);
-		READ_LONG(sp->root_freq);
-		skip(fp, 2); /* Why have a "root frequency" and then "tuning"?? */
+		sp->data_length = LE_LONG(SmplHdr.DataLength);
+		sp->loop_start = LE_LONG(SmplHdr.LoopStart);
+		sp->loop_end = LE_LONG(SmplHdr.LoopEnd);
+		sp->sample_rate = LE_SHORT(SmplHdr.SampleRate);
+		sp->low_freq = LE_LONG(SmplHdr.LowFreq);
+		sp->high_freq = LE_LONG(SmplHdr.HighFreq);
+		sp->root_freq = LE_LONG(SmplHdr.RootFreq);
 		sp->low_vel = 0;
 		sp->high_vel = 127;
 
-		READ_CHAR(tmp[0]);
-
 		if (panning == -1)
 		{
-			sp->panning = (tmp[0] * 8 + 4) & 0x7f;
+			sp->panning = (SmplHdr.Panning * 8 + 4) & 0x7f;
 		}
 		else
 		{
 			sp->panning = (uint8)(panning & 0x7F);
 		}
 
-		/* envelope, tremolo, and vibrato */
-		if (18 != fread(tmp, 1, 18, fp))
-			goto fail; 
-
-		if (!tmp[13] || !tmp[14])
+		if (!SmplHdr.TremoloRate || !SmplHdr.TremoloDepth)
 		{
 			sp->tremolo_sweep_increment =
 				sp->tremolo_phase_increment = sp->tremolo_depth = 0;
@@ -291,16 +286,18 @@ fail:
 		}
 		else
 		{
-			sp->tremolo_sweep_increment = convert_tremolo_sweep(tmp[12]);
-			sp->tremolo_phase_increment = convert_tremolo_rate(tmp[13]);
-			sp->tremolo_depth = tmp[14];
+			sp->tremolo_sweep_increment =
+				convert_tremolo_sweep(SmplHdr.TremoloSweep);
+			sp->tremolo_phase_increment =
+				convert_tremolo_rate(SmplHdr.TremoloRate);
+			sp->tremolo_depth = SmplHdr.TremoloDepth;
 			ctl->cmsg(CMSG_INFO, VERB_DEBUG,
 				" * tremolo: sweep %d, phase %d, depth %d",
 				sp->tremolo_sweep_increment, sp->tremolo_phase_increment,
 				sp->tremolo_depth);
 		}
 
-		if (!tmp[16] || !tmp[17])
+		if (!SmplHdr.VibratoRate || !SmplHdr.VibratoDepth)
 		{
 			sp->vibrato_sweep_increment =
 				sp->vibrato_control_ratio = sp->vibrato_depth = 0;
@@ -308,18 +305,19 @@ fail:
 		}
 		else
 		{
-			sp->vibrato_control_ratio = convert_vibrato_rate(tmp[16]);
+			sp->vibrato_control_ratio =
+				convert_vibrato_rate(SmplHdr.VibratoRate);
 			sp->vibrato_sweep_increment =
-				convert_vibrato_sweep(tmp[15], sp->vibrato_control_ratio);
-			sp->vibrato_depth = tmp[17];
+				convert_vibrato_sweep(SmplHdr.VibratoSweep,
+				sp->vibrato_control_ratio);
+			sp->vibrato_depth = SmplHdr.VibratoDepth;
 			ctl->cmsg(CMSG_INFO, VERB_DEBUG,
 				" * vibrato: sweep %d, ctl %d, depth %d",
 				sp->vibrato_sweep_increment, sp->vibrato_control_ratio,
 				sp->vibrato_depth);
 		}
 
-		READ_CHAR(sp->modes);
-		skip(fp, 40);
+		sp->modes = SmplHdr.Modes;
 
 		/* Mark this as a fixed-pitch instrument if such a deed is desired. */
 		if (note_to_use != -1)
@@ -362,7 +360,8 @@ fail:
 				ctl->cmsg(CMSG_INFO, VERB_DEBUG, 
 					" - No loop, removing sustain and envelope");
 			}
-			else if (!memcmp(tmp, "??????", 6) || tmp[11] >= 100) 
+			else if (!memcmp(SmplHdr.EnvelopeRate, "??????", 6) ||
+				SmplHdr.EnvelopeOffset[5] >= 100) 
 			{
 				/* Envelope rates all maxed out? Envelope end at a high "offset"?
 				That's a weird envelope. Take it out. */
@@ -385,9 +384,9 @@ fail:
 		for (j = 0; j < 6; j++)
 		{
 			sp->envelope_rate[j] =
-				convert_envelope_rate(tmp[j]);
+				convert_envelope_rate(SmplHdr.EnvelopeRate[j]);
 			sp->envelope_offset[j] =
-				convert_envelope_offset(tmp[6 + j]);
+				convert_envelope_offset(SmplHdr.EnvelopeOffset[j]);
 		}
 
 		/* Then read the sample data */
@@ -490,9 +489,9 @@ fail:
 		/* Adjust for fractional loop points. This is a guess. Does anyone
 		know what "fractions" really stands for? */
 		sp->loop_start |=
-			(fractions & 0x0F) << (FRACTION_BITS - 4);
+			(SmplHdr.Fractions & 0x0F) << (FRACTION_BITS - 4);
 		sp->loop_end |=
-			((fractions >> 4) & 0x0F) << (FRACTION_BITS - 4);
+			((SmplHdr.Fractions >> 4) & 0x0F) << (FRACTION_BITS - 4);
 
 		/* If this instrument will always be played on the same note,
 		and it's not looped, we can resample it now. */
