@@ -1365,7 +1365,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 			GCon->Log("Please enter name of the song.");
 			return;
 		}
-		PlaySong(*VName(*Args[2], VName::AddLower8), false);
+		PlaySong(*Args[2].ToLower(), false);
 		return;
 	}
 
@@ -1376,7 +1376,7 @@ void VAudio::CmdMusic(const TArray<VStr>& Args)
 			GCon->Log("Please enter name of the song.");
 			return;
 		}
-		PlaySong(*VName(*Args[2], VName::AddLower8), true);
+		PlaySong(*Args[2].ToLower(), true);
 		return;
 	}
 
