@@ -223,6 +223,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\timidity\gf1.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\timidity\sf2.h"
 				>
 			</File>
