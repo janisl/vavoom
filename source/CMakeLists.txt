@@ -703,7 +703,7 @@ if(WIN32)
 	set(RC_OBJ ${CMAKE_CURRENT_BINARY_DIR}/vavoom.o)
 	add_custom_command(OUTPUT ${RC_OBJ}
 		DEPENDS ${RC_SRC}
-		COMMAND windres --include-dir=${CMAKE_CURRENT_SOURCE_DIR} -o ${RC_OBJ} -i ${RC_SRC}
+		COMMAND windres --include-dir=${CMAKE_CURRENT_SOURCE_DIR} --include-dir=${CMAKE_CURRENT_BINARY_DIR} -o ${RC_OBJ} -i ${RC_SRC}
 	)
 	set(MAIN_SOURCES ${MAIN_SOURCES} ${RC_OBJ})
 
@@ -1009,7 +1009,7 @@ if(WIN32)
 	set(RC_OBJ ${CMAKE_CURRENT_BINARY_DIR}/vavoom_sv.o)
 	add_custom_command(OUTPUT ${RC_OBJ}
 		DEPENDS ${RC_SRC}
-		COMMAND windres --include-dir=${CMAKE_CURRENT_SOURCE_DIR} -o ${RC_OBJ} -i ${RC_SRC}
+		COMMAND windres --include-dir=${CMAKE_CURRENT_SOURCE_DIR} --include-dir=${CMAKE_CURRENT_BINARY_DIR} -o ${RC_OBJ} -i ${RC_SRC}
 	)
 	set(SERVER_SOURCES ${SERVER_SOURCES} ${RC_OBJ})
 else(WIN32)
