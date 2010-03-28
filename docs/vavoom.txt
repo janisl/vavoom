@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.30
+                                                    Version 1.31
 
 Contents:
     0. Disclaimer
@@ -125,8 +125,8 @@ Step by step:
 
   1. Unpack the Vavoom source package and change directory to it:
 
-    tar xvjf vavoom-1.29.tar.bz2
-    cd vavoom-1.29
+    tar xvjf vavoom-1.31.tar.bz2
+    cd vavoom-1.31
 
   2. Run the CMake:
 
@@ -278,8 +278,8 @@ Sound
 -NOSFX disables sound
 -nosfx
 
--NO3DSOUND disables 3D sound, use original mode, Windows version only
--no3dsound
+-3DSOUND disables 3D sound, use original mode, Windows version only
+-3dsound
 
 -NOMUSIC disables music
 -nomusic
@@ -1144,6 +1144,18 @@ Version 1.30
 * Morph system enhancements.
 * Added support for text format texture definition scripts.
 * Many bug fixes and improvements.
+
+==============================================================================
+Version 1.31
+==============================================================================
+
+* Added support for writing screenshots in PNG and JPG formats.
+* Auto-aim can be turned off.
+* Implemented saving of the game into a single file.
+* Added basic model frame interpolation.
+* Support for basic parsing of GLDEFS variants.
+* Implemented multiple missing DECORATE features.
+* Many bug fixes.
 
 *****************************************************************************
 8. Licensing
