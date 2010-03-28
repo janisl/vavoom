@@ -4146,7 +4146,7 @@ void ProcessDecorateScripts()
 	{
 		if (GArgs.CheckParm("-debug_decorate"))
 		{
-			GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+			GCon->Logf("Class %s", *DecPkg->ParsedClasses[i]->GetFullName());
 		}
 		DecPkg->ParsedClasses[i]->DecorateEmit();
 	}
@@ -4155,7 +4155,7 @@ void ProcessDecorateScripts()
 	{
 		if (GArgs.CheckParm("-debug_decorate"))
 		{
-			GCon->Logf("Class %s", DecPkg->ParsedClasses[i]->GetFullName());
+			GCon->Logf("Class %s", *DecPkg->ParsedClasses[i]->GetFullName());
 		}
 		DecPkg->ParsedClasses[i]->DecoratePostLoad();
 	}
