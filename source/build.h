@@ -24,15 +24,15 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	30
+#define VERSION_MINOR	31
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.30"
+#define VERSION_TEXT	"1.31"
 
 // The version as seen in the Windows resource
-#define RC_FILEVERSION 1,3,0,SVN_REVISION_NUMBER
-#define RC_PRODUCTVERSION 1,3,0
+#define RC_FILEVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_RELEASE,SVN_REVISION_NUMBER
+#define RC_PRODUCTVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_RELEASE,0
 #define RC_FILEVERSION2 VERSION_TEXT " (r" SVN_REVISION_STRING ")"
-#define RC_PRODUCTVERSION2 "1.30"
+#define RC_PRODUCTVERSION2 VERSION_TEXT
 
 #if !defined CLIENT && !defined SERVER
 #define CLIENT
