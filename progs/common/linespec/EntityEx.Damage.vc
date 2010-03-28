@@ -267,13 +267,13 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			// Try to use some inventory health
 			AutoUseHealth(damage - Health + 1);
 		}
-		if (Health < 50 || damage >= Health)
+
+		Player.Health -= damage;	// mirror mobj health here for Dave
+		if (Player.Health < 50 && !Level.Game.deathmatch)
 		{
 			// Try to use some inventory health
 			AutoUseStrifeHealth(damage - Health + 1);
 		}
-
-		Player.Health -= damage;	// mirror mobj health here for Dave
 		if (Player.Health < 0)
 		{
 			Player.Health = 0;

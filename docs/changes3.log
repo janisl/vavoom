@@ -4062,3 +4062,8 @@ for mouse sensitivity isn't enough can set it up beyond that.
   I added structure definitions for GUS patch file format, changed loading to
  use them and make it more readable.
   I fixed 'music' command truncating song names to 8 characters.
+27.03.2010
+  Firebrand fixed Strife's flame death had incorrect origin of RadiusDamage call.
+  Firebrand fixed Strife's auto-health threshhold, it was working fine, but the call was being done in the wrong
+place.
+  

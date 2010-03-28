@@ -211,7 +211,7 @@ final void A_DropFire()
 {
 	Actor A = Spawn(FireDroplet, Origin + vector(0.0, 0.0, 24.0));
 	A.Velocity.z = -35.0;
-	RadiusAttack(Target, 64, 64.0, false, 'Fire');
+	RadiusAttack(self, 64, 64.0, false, 'Fire');
 }
 
 //==========================================================================
