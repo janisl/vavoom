@@ -101,7 +101,7 @@ void Host_CoreDump(const char *fmt, ...)
 	vsprintf(string, fmt, argptr);
 	va_end(argptr);
 
-//	dprintf("- %s\n", string);
+	GLog.WriteLine("- %s", string);
 
 //	char *new_string = new char[VStr::Length(host_error_string) +
 //		VStr::Length(string) + 6];
@@ -146,6 +146,6 @@ void Sys_Error(const char *error, ...)
 	vsprintf(buf, error, argptr);
 	va_end(argptr);
 
-//	dprintf("Sys_Error: %s\n", buf);
+	GLog.WriteLine("Sys_Error: %s", buf);
 	throw VavoomError(buf);
 }

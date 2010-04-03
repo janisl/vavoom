@@ -42,7 +42,6 @@
 #include "memorystream.h"//	In-memory streams
 #include "arraystream.h"//	Stream for reading from array
 #include "bitstream.h"	//	Streams for bit-data
-#include "names.h"		//	Built-in names
 #include "name.h"		//	Names
 #include "str.h"		//	Strings
 #include "language.h"	//	Localisation

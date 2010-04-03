@@ -4,4 +4,7 @@ add_library(core STATIC
 	core.h
 	exception.cpp
 	exception.h
+	log.cpp
+	log.h
+	names.h
 )

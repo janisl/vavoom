@@ -111,7 +111,6 @@ set(MAIN_COMMON_SOURCES
 	misc.h
 	name.cpp
 	name.h
-	names.h
 	net_channel.cpp
 	net_channel_control.cpp
 	net_channel_level.cpp

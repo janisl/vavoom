@@ -42,7 +42,6 @@ void Free(void* ptr);
 
 #include "../../source/stream.h"
 #include "../../source/array.h"
-#include "../../source/names.h"
 #include "../../source/name.h"
 #include "../../source/str.h"
 #include "../../source/vector.h"

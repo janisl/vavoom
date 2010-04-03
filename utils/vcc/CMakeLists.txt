@@ -5,7 +5,6 @@ add_executable(vcc
 	../../source/crc.h
 	../../source/name.cpp
 	../../source/name.h
-	../../source/names.h
 	../../source/str.cpp
 	../../source/str.h
 	../../source/stream.cpp

@@ -36,12 +36,11 @@ extern float (*LittleFloat)(float);
 extern float (*BigFloat)(float);
 
 // An output device.
-class FOutputDevice
+class FOutputDevice : public VLogListener
 {
 public:
 	// FOutputDevice interface.
 	virtual ~FOutputDevice();
-	virtual void Serialise(const char* V, EName Event) = 0;
 
 	// Simple text printing.
 	void Log(const char* S);

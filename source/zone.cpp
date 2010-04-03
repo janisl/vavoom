@@ -23,18 +23,16 @@
 //**
 //**************************************************************************
 //**
-//**	ZONE MEMORY ALLOCATION
+//**	Memory allocation
 //**
-//**	There is never any space between memblocks, and there will never be
-//**  two contiguous free memblocks. The rover can be left pointing at a
-//**  non-empty block. It is of no value to free a cachable block, because
-//**  it will get overwritten automatically if needed.
+//**	Mostly based on memory allocator of Doom 3.
 //**
 //**************************************************************************
 
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+//#include "../libs/core/core.h"
 
 // MACROS ------------------------------------------------------------------
 

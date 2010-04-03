@@ -52,7 +52,7 @@ bool				VName::Initialised;
 #define REGISTER_NAME(name)		{ NULL, NAME_##name, #name },
 static VNameEntry AutoNames[] =
 {
-#include "names.h"
+#include "../libs/core/names.h"
 };
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------

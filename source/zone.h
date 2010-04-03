@@ -23,9 +23,7 @@
 //**
 //**************************************************************************
 //**
-//**	Zone Memory Allocation, perhaps NeXT ObjectiveC inspired.
-//**	Remark: this was the only stuff that, according
-//**  to John Carmack, might have been useful for Quake.
+//**	Memory Allocation.
 //**
 //**************************************************************************
 
