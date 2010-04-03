@@ -48,8 +48,6 @@ set(MAIN_COMMON_SOURCES
 	common.h
 	console.cpp
 	console.h
-	crc.cpp
-	crc.h
 	cvar.cpp
 	cvar.h
 	d_aclip.cpp
@@ -106,8 +104,6 @@ set(MAIN_COMMON_SOURCES
 	menu.h
 	misc.cpp
 	misc.h
-	name.cpp
-	name.h
 	net_channel.cpp
 	net_channel_control.cpp
 	net_channel_level.cpp
@@ -209,8 +205,6 @@ set(MAIN_COMMON_SOURCES
 	snd_timidity.cpp
 	snd_wav.cpp
 	sound.h
-	str.cpp
-	str.h
 	sv_local.h
 	sv_main.cpp
 	sv_save.cpp
@@ -432,7 +426,6 @@ set(SERVER_COMMON_SOURCES
 	bitstream.cpp
 	cheats.cpp
 	cmd.cpp
-	crc.cpp
 	cvar.cpp
 	debug.cpp
 	files.cpp
@@ -448,7 +441,6 @@ set(SERVER_COMMON_SOURCES
 	maths.cpp
 	memorystream.cpp
 	misc.cpp
-	name.cpp
 	net_channel.cpp
 	net_channel_control.cpp
 	net_channel_level.cpp
@@ -505,7 +497,6 @@ set(SERVER_COMMON_SOURCES
 	snd_data.cpp
 	snd_reverbs.cpp
 	sc_man.cpp
-	str.cpp
 	sv_main.cpp
 	sv_save.cpp
 	sv_world.cpp

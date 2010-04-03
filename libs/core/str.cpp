@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2006 Jānis Legzdiņš
+//**	Copyright (C) 1999-2010 Jānis Legzdiņš
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -29,11 +29,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#ifdef IN_VCC
-#include "../utils/vcc/vcc.h"
-#else
-#include "gamedefs.h"
-#endif
+#include "core.h"
 #include <cctype>
 
 // MACROS ------------------------------------------------------------------

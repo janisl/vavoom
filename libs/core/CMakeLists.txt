@@ -3,6 +3,8 @@ add_library(core STATIC
 	common.cpp
 	common.h
 	core.h
+	crc.cpp
+	crc.h
 	endian.cpp
 	endian.h
 	exception.cpp
@@ -10,7 +12,11 @@ add_library(core STATIC
 	log.cpp
 	log.h
 	map.h
+	name.cpp
+	name.h
 	names.h
+	str.cpp
+	str.h
 	stream.cpp
 	stream.h
 	zone.cpp

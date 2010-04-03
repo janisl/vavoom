@@ -1,11 +1,5 @@
 add_executable(vcc
 	../../source/common.h
-	../../source/crc.cpp
-	../../source/crc.h
-	../../source/name.cpp
-	../../source/name.h
-	../../source/str.cpp
-	../../source/str.h
 	../../source/vc_class.cpp
 	../../source/vc_class.h
 	../../source/vc_constant.cpp

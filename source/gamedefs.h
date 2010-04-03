@@ -38,14 +38,11 @@
 #include "memorystream.h"//	In-memory streams
 #include "arraystream.h"//	Stream for reading from array
 #include "bitstream.h"	//	Streams for bit-data
-#include "name.h"		//	Names
-#include "str.h"		//	Strings
 #include "language.h"	//	Localisation
 #include "misc.h"		//	Misc utilites
 #include "vector.h"		//	Vector math
 #include "maths.h"		//	Misc math methods
 #include "cvar.h"		//	Console variables
-#include "crc.h"		//	CRC calcuation
 #include "infostr.h"	//	Info strings
 #include "debug.h"		//	Debug file
 #include "system.h"		//	System specific routines

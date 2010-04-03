@@ -42,5 +42,8 @@
 #include "stream.h"		//	Streams
 #include "array.h"		//	Dynamic arrays
 #include "map.h"		//	Mapping of keys to values
+#include "crc.h"		//	CRC calcuation
+#include "name.h"		//	Names
+#include "str.h"		//	Strings
 
 #endif
