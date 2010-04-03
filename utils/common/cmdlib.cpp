@@ -39,75 +39,15 @@ namespace VavoomUtils {
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static void *DefaultMalloc(size_t size);
-static void *DefaultRealloc(void *data, size_t size);
-static void DefaultFree(void *ptr);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
-
-void *(*Malloc)(size_t size) = DefaultMalloc;
-void *(*Realloc)(void *data, size_t size) = DefaultRealloc;
-void (*Free)(void *ptr) = DefaultFree;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int		empty_ptr;
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	DefaultMalloc
-//
-//==========================================================================
-
-static void *DefaultMalloc(size_t size)
-{
-	if (!size)
-	{
-		return &empty_ptr;
-	}
-
-	void *ptr = malloc(size);
-	if (!ptr)
-	{
-		Error("Couldn't alloc %d bytes", (int)size);
-	}
-	memset(ptr, 0, size);
-	return ptr;
-}
-
-//==========================================================================
-//
-//	DefaultRealloc
-//
-//==========================================================================
-
-static void *DefaultRealloc(void *data, size_t size)
-{
-	void *ptr = realloc(data, size);
-	if (!ptr)
-	{
-		Error("Couldn't realloc %d bytes", (int)size);
-	}
-	return ptr;
-}
-
-//==========================================================================
-//
-//	DefaultFree
-//
-//==========================================================================
-
-static void DefaultFree(void *ptr)
-{
-	if (ptr != &empty_ptr)
-	{
-		free(ptr);
-	}
-}
 
 //==========================================================================
 //
@@ -365,7 +305,7 @@ int LoadFile(const char *name, void **bufferptr)
 	length = ftell(f);
 	fseek(f, 0, SEEK_SET);
 
-	buffer = Malloc(length);
+	buffer = Z_Malloc(length);
 
 	count = fread(buffer, 1, length, f);
 	fclose (f);

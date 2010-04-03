@@ -29,12 +29,6 @@
 
 //#define ZONE_DEBUG		1
 
-class ZoneError : public VavoomError
-{
-public:
-	explicit ZoneError(const char* text) : VavoomError(text) { }
-};
-
 void Z_Shutdown();
 
 #ifdef ZONE_DEBUG

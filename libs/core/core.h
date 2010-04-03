@@ -34,6 +34,7 @@
 #include <cmath>
 
 #include "common.h"		//	Common types and definitions
+#include "zone.h"		//	Zone memory allocation
 #include "names.h"		//	Built-in names
 #include "log.h"		//	General logging interface
 #include "exception.h"	//	Exception handling

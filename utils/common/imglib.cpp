@@ -169,7 +169,7 @@ static void LoadPCX(const char *filename)
 		}
 	}
 
-	Free(pcx);
+	Z_Free(pcx);
 }
 
 //==========================================================================
@@ -234,12 +234,12 @@ static void LoadTGA(const char *filename)
 		hdr->img_type == 9 || hdr->img_type == 11)
 	{
 		ImgBPP = 8;
-		ImgData = (vuint8*)Malloc(ImgWidth * ImgHeight);
+		ImgData = (vuint8*)Z_Malloc(ImgWidth * ImgHeight);
 	}
 	else
 	{
 		ImgBPP = 32;
-		ImgData = (vuint8*)Malloc(ImgWidth * ImgHeight * 4);
+		ImgData = (vuint8*)Z_Malloc(ImgWidth * ImgHeight * 4);
 	}
 
 	if (hdr->img_type == 1 && hdr->bpp == 8 && hdr->pal_type == 1)
@@ -536,7 +536,7 @@ static void LoadTGA(const char *filename)
 	}
 
 
-	Free(hdr);
+	Z_Free(hdr);
 }
 
 //==========================================================================
@@ -568,7 +568,7 @@ void ConvertImageTo32Bit()
 {
 	if (ImgBPP == 8)
 	{
-		rgba_t *NewData = (rgba_t *)Malloc(ImgWidth * ImgHeight * 4);
+		rgba_t *NewData = (rgba_t *)Z_Malloc(ImgWidth * ImgHeight * 4);
 		for (int i = 0; i < ImgWidth * ImgHeight; i++)
 		{
 			NewData[i].r = ImgPal[ImgData[i]].r;
@@ -576,7 +576,7 @@ void ConvertImageTo32Bit()
 			NewData[i].b = ImgPal[ImgData[i]].b;
 			NewData[i].a = 255;
 		}
-		Free(ImgData);
+		Z_Free(ImgData);
 		ImgData = (vuint8*)NewData;
 		ImgBPP = 32;
 	}

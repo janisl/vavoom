@@ -9,7 +9,6 @@ option(WITH_LIBMAD "Enable MP3 support" ON)
 option(WITH_MIKMOD "Enable MikMod support" ON)
 option(WITH_FLAC "Enable FLAC support" ON)
 
-option(ENABLE_ZONE_DEBUG "Enable memory allocation debuging")
 option(ENABLE_CLIENT "Build client executable" ON)
 option(ENABLE_SERVER "Build dedicated server executable" ON)
 option(ENABLE_ASM "Enable assembly-language code" ON)
@@ -301,8 +300,6 @@ set(MAIN_COMMON_SOURCES
 	xml.h
 	zipstream.cpp
 	zipstream.h
-	zone.cpp
-	zone.h
 )
 
 #-- i386 assembler files --
@@ -551,7 +548,6 @@ set(SERVER_COMMON_SOURCES
 	wad.cpp
 	xml.cpp
 	zipstream.cpp
-	zone.cpp
 )
 
 set(SERVER_UNIX_SOURCES
@@ -577,20 +573,6 @@ add_custom_target( revision_check ALL
 	DEPENDS updaterevision )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
-#---------------------------------------
-#
-#	Common checks
-#
-#---------------------------------------
-
-#
-#  **** Add debug / development flags ****
-#
-
-if(ENABLE_ZONE_DEBUG)
-	add_definitions(-DZONE_DEBUG=1)
-endif(ENABLE_ZONE_DEBUG)
 
 #---------------------------------------
 #

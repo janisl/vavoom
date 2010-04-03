@@ -101,7 +101,7 @@ void SC_Close()
 {
 	if (ScriptOpen)
 	{
-		Free(ScriptBuffer);
+		Z_Free(ScriptBuffer);
 		ScriptOpen = false;
 	}
 }

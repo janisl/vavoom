@@ -260,7 +260,7 @@ static void AddWadFile(const char *name)
 	{
 		void *data = inwad.GetLump(i);
 		outwad.AddLump(inwad.LumpName(i), data, inwad.LumpSize(i));
-		Free(data);
+		Z_Free(data);
 	}
 	inwad.Close();
 }
@@ -526,7 +526,7 @@ void GrabRaw()
 	int x2 = x1 + w;
 	int y2 = y1 + h;
 
-	vuint8 *data = (vuint8*)Malloc(w * h);
+	vuint8 *data = (vuint8*)Z_Malloc(w * h);
 	vuint8 *dst = data;
 	for (int y = y1; y < y2; y++)
 	{
@@ -545,7 +545,7 @@ void GrabRaw()
 	{
 		outwad.AddLump(lumpname, data, w * h);
 	}
-	Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
@@ -572,7 +572,7 @@ void GrabPatch()
 	int topoffset = sc_Number;
 
 	int TransColour = 0;
-	patch_t* Patch = (patch_t*)Malloc(8 + 4 * w + w * h * 4);
+	patch_t* Patch = (patch_t*)Z_Malloc(8 + 4 * w + w * h * 4);
 	Patch->width = LittleShort(w);
 	Patch->height = LittleShort(h);
 	Patch->leftoffset = LittleShort(leftoffset);
@@ -641,7 +641,7 @@ void GrabPatch()
 	{
 		outwad.AddLump(lumpname, Patch, (vuint8*)Col - (vuint8*)Patch);
 	}
-	Free(Patch);
+	Z_Free(Patch);
 }
 
 //==========================================================================
@@ -665,7 +665,7 @@ void GrabPic()
 	int x2 = x1 + w;
 	int y2 = y1 + h;
 
-	vpic_t *pic = (vpic_t*)Malloc(sizeof(vpic_t) + w * h);
+	vpic_t *pic = (vpic_t*)Z_Malloc(sizeof(vpic_t) + w * h);
 	memcpy(pic->magic, "VPIC", 4);
 	pic->width = LittleShort(w);
 	pic->height = LittleShort(h);
@@ -688,7 +688,7 @@ void GrabPic()
 	{
 		outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h);
 	}
-	Free(pic);
+	Z_Free(pic);
 }
 
 //==========================================================================
@@ -713,7 +713,7 @@ void GrabPic15()
 	int y2 = y1 + h;
 
 	ConvertImageTo32Bit();
-	vpic_t *pic = (vpic_t*)Malloc(sizeof(vpic_t) + w * h * 2);
+	vpic_t *pic = (vpic_t*)Z_Malloc(sizeof(vpic_t) + w * h * 2);
 	memcpy(pic->magic, "VPIC", 4);
 	pic->width = LittleShort(w);
 	pic->height = LittleShort(h);
@@ -743,7 +743,7 @@ void GrabPic15()
 	{
 		outwad.AddLump(lumpname, pic, sizeof(vpic_t) + w * h * 2);
 	}
-	Free(pic);
+	Z_Free(pic);
 }
 
 //==========================================================================
@@ -812,7 +812,7 @@ void GrabFon1()
 	int MaxCharBytes = CharW * CharH + (CharW * CharH + 127) / 128;
 
 	//	Allocate memory and fill in header.
-	fon1_header_t* Font = (fon1_header_t*)Malloc(sizeof(fon1_header_t) +
+	fon1_header_t* Font = (fon1_header_t*)Z_Malloc(sizeof(fon1_header_t) +
 		MaxCharBytes * 256);
 	Font->Id[0] = 'F';
 	Font->Id[1] = 'O';
@@ -822,7 +822,7 @@ void GrabFon1()
 	Font->Height = LittleShort(CharH);
 
 	//	Process characters.
-	vuint8* CharBuf = (vuint8*)Malloc(CharW * CharH);
+	vuint8* CharBuf = (vuint8*)Z_Malloc(CharW * CharH);
 	vint8* pDst = (vint8*)(Font + 1);
 	for (int i = 0; i < 256; i++)
 	{
@@ -847,8 +847,8 @@ void GrabFon1()
 	{
 		outwad.AddLump(lumpname, Font, pDst - (vint8*)Font);
 	}
-	Free(Font);
-	Free(CharBuf);
+	Z_Free(Font);
+	Z_Free(CharBuf);
 }
 
 //==========================================================================
@@ -935,7 +935,7 @@ void GrabFon2()
 				Chars[CharNum] = Chr;
 				Chr->Width = EndX - StartX;
 				Chr->Height = EndY - StartY;
-				Chr->Data = (vuint8*)Malloc(Chr->Width * Chr->Height);
+				Chr->Data = (vuint8*)Z_Malloc(Chr->Width * Chr->Height);
 				vuint8* pData = Chr->Data;
 				for (int ch = StartY; ch < EndY; ch++)
 				{
@@ -1010,11 +1010,11 @@ void GrabFon2()
 		{
 			continue;
 		}
-		vuint8* NewData = (vuint8*)Malloc(Chr->Width * FontHeight);
+		vuint8* NewData = (vuint8*)Z_Malloc(Chr->Width * FontHeight);
 		memset(NewData, 0, Chr->Width * (FontHeight - Chr->Height));
 		memcpy(NewData + Chr->Width * (FontHeight - Chr->Height),
 			Chr->Data, Chr->Width * Chr->Height);
-		Free(Chr->Data);
+		Z_Free(Chr->Data);
 		Chr->Data = NewData;
 		Chr->Height = FontHeight;
 	}
@@ -1028,7 +1028,7 @@ void GrabFon2()
 		{
 			continue;
 		}
-		Chr->ComprData = (vint8*)Malloc(Chr->Width * Chr->Height +
+		Chr->ComprData = (vint8*)Z_Malloc(Chr->Width * Chr->Height +
 			(Chr->Width * Chr->Height + 127) / 128);
 		vint8* pEnd = CompressChar(Chr->Data, Chr->ComprData,
 			Chr->Width * Chr->Height);
@@ -1038,7 +1038,7 @@ void GrabFon2()
 
 	//	Allocate memory and fill in header.
 	int NumChars = CharNum - ' ';
-	fon2_header_t* Font = (fon2_header_t*)Malloc(sizeof(fon2_header_t) +
+	fon2_header_t* Font = (fon2_header_t*)Z_Malloc(sizeof(fon2_header_t) +
 		NumColours * 3 + NumChars * 2 + DataSize);
 	Font->Id[0] = 'F';
 	Font->Id[1] = 'O';
@@ -1086,14 +1086,14 @@ void GrabFon2()
 		outwad.AddLump(lumpname, Font, pDst - (vint8*)Font);
 	}
 
-	Free(Font);
+	Z_Free(Font);
 	for (int i = ' '; i < CharNum; i++)
 	{
 		fon2_char_t* Chr = Chars[i];
 		if (Chr)
 		{
-			Free(Chr->Data);
-			Free(Chr->ComprData);
+			Z_Free(Chr->Data);
+			Z_Free(Chr->ComprData);
 			delete Chr;
 		}
 	}
@@ -1264,7 +1264,7 @@ void ParseScript(const char *name)
 			void *data;
 			int size = LoadFile(fn(sc_String), &data);
 			AddToZip(lumpname, data, size);
-			Free(data);
+			Z_Free(data);
 		}
 		else
 		{
@@ -1276,7 +1276,7 @@ void ParseScript(const char *name)
 			void *data;
 			int size = LoadFile(fn(sc_String), &data);
 			outwad.AddLump(lumpname, data, size);
-			Free(data);
+			Z_Free(data);
 		}
 	}
 

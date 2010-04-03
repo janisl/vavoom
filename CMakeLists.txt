@@ -1,5 +1,7 @@
 project(vavoom)
 
+option(ENABLE_ZONE_DEBUG "Enable memory allocation debuging")
+
 cmake_minimum_required(VERSION 2.4)
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
@@ -11,6 +13,14 @@ endif(NOT DEFINED DATADIR)
 if(NOT DEFINED BINDIR)
 	set(BINDIR bin)
 endif(NOT DEFINED BINDIR)
+
+#
+#  **** Add debug / development flags ****
+#
+
+if(ENABLE_ZONE_DEBUG)
+	add_definitions(-DZONE_DEBUG=1)
+endif(ENABLE_ZONE_DEBUG)
 
 #
 #  **** Check for zlib ****

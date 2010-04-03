@@ -60,6 +60,12 @@ public:
 	explicit RecoverableError(const char *text) : VavoomError(text) { }
 };
 
+class ZoneError : public VavoomError
+{
+public:
+	explicit ZoneError(const char* text) : VavoomError(text) { }
+};
+
 //==========================================================================
 //
 //	Guard macros

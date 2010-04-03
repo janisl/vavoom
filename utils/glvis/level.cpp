@@ -150,7 +150,7 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	}
 
 	// Free buffer memory.
-	Free(data);
+	Z_Free(data);
 
 	//	Save pointer to GL vertexes for seg loading
 	gl_vertexes = li;
@@ -180,7 +180,7 @@ void TVisBuilder::LoadVertexes(int lump, int gl_lump)
 	}
 
 	// Free buffer memory.
-	Free(gldata);
+	Z_Free(gldata);
 }
 
 //==========================================================================
@@ -212,7 +212,7 @@ void TVisBuilder::LoadSideDefs(int lump)
 	{
 		sidesecs[i] = LittleShort(data[i].sector);
 	}
-	Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
@@ -252,7 +252,7 @@ void TVisBuilder::LoadLineDefs1(int lump)
 			ld->secnum[1] = -1;
 	}
 
-	Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
@@ -292,7 +292,7 @@ void TVisBuilder::LoadLineDefs2(int lump)
 			ld->secnum[1] = -1;
 	}
 
-	Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
@@ -423,7 +423,7 @@ void TVisBuilder::LoadSegs(int lump)
 		}
 	}
 
-	Free(data);
+	Z_Free(data);
 
 	portals = new portal_t[numportals];
 	memset(portals, 0, sizeof(portal_t) * numportals);
@@ -517,7 +517,7 @@ void TVisBuilder::LoadSubsectors(int lump)
 		}
 	}
 
-	Free(data);
+	Z_Free(data);
 }
 
 //==========================================================================
@@ -707,7 +707,7 @@ void TVisBuilder::CopyLump(int i)
 {
 	void *ptr =	glwad->GetLump(i);
 	outwad.AddLump(glwad->LumpName(i), ptr, glwad->LumpSize(i));
-	Free(ptr);
+	Z_Free(ptr);
 }
 
 //==========================================================================
@@ -731,7 +731,7 @@ void TVisBuilder::BuildGWA()
 				int Len = glwad->LumpSize(i);
 				if (Len < 12 || memcmp(Ptr, "LEVEL=", 6))
 				{
-					Free(Ptr);
+					Z_Free(Ptr);
 					throw GLVisError("Bad GL_LEVEL format");
 				}
 				int EndCh = 12;
@@ -742,7 +742,7 @@ void TVisBuilder::BuildGWA()
 				}
 				memcpy(LevName, Ptr + 6, EndCh - 6);
 				LevName[EndCh - 6] = 0;
-				Free(Ptr);
+				Z_Free(Ptr);
 			}
 			else
 			{
@@ -803,7 +803,7 @@ void TVisBuilder::BuildWAD()
 						int Len = mainwad->LumpSize(gli);
 						if (Len < 12 || memcmp(Ptr, "LEVEL=", 6))
 						{
-							Free(Ptr);
+							Z_Free(Ptr);
 							throw GLVisError("Bad GL_LEVEL format");
 						}
 						int EndCh = 12;
@@ -820,7 +820,7 @@ void TVisBuilder::BuildWAD()
 							gl_lump = gli;
 							break;
 						}
-						Free(Ptr);
+						Z_Free(Ptr);
 					}
 				}
 				if (gl_lump == -1)
@@ -877,17 +877,6 @@ void TVisBuilder::Run(const char *srcfile, const char* gwafile)
 	char destfile[1024];
 	char tempfile[1024];
 	char bakext[8];
-
-	if (Owner.Malloc && Owner.Free)
-	{
-		Malloc = Owner.Malloc;
-		Free = Owner.Free;
-	}
-	else
-	{
-		Malloc = GLVisMalloc;
-		Free = GLVisFree;
-	}
 
 	strcpy(filename, srcfile);
 	DefaultExtension(filename, ".wad");

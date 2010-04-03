@@ -50,7 +50,7 @@ public:
 class TGLVis
 {
 public:
-	TGLVis() : Malloc(NULL), Free(NULL), fastvis(false), verbose(false),
+	TGLVis() : fastvis(false), verbose(false),
 		no_reject(false), testlevel(2), num_specified_maps(0)
 	{}
 	virtual ~TGLVis()
@@ -63,9 +63,6 @@ public:
 	virtual void DisplayBaseVisProgress(int count, int total) = 0;
 	virtual void DisplayPortalVisProgress(int count, int total) = 0;
 	virtual void DisplayMapDone(int accepts, int total) = 0;
-
-	void *(*Malloc)(size_t);
-	void (*Free)(void *);
 
 	bool fastvis;
 	bool verbose;

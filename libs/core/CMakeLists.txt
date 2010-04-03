@@ -7,4 +7,6 @@ add_library(core STATIC
 	log.cpp
 	log.h
 	names.h
+	zone.cpp
+	zone.h
 )

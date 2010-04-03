@@ -67,10 +67,6 @@ int LoadFile(const char *name, void **bufferptr);
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
-extern void *(*Malloc)(size_t size);
-extern void *(*Realloc)(void *data, size_t size);
-extern void (*Free)(void *ptr);
-
 } // namespace VavoomUtils
 
 #endif

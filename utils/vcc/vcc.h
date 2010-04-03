@@ -28,18 +28,10 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "../../libs/core/core.h"
-#include "../../source/common.h"
-
 #define OPCODE_STATS
 
-void* Malloc(size_t size);
-void Free(void* ptr);
-
-//	For compatibility with engine files.
-#define Z_Malloc	Malloc
-#define Z_Free		Free
-
+#include "../../libs/core/core.h"
+#include "../../source/common.h"
 #include "../../source/stream.h"
 #include "../../source/array.h"
 #include "../../source/name.h"

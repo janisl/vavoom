@@ -134,7 +134,7 @@ void* TIWadFile::GetLump(int lump)
 	
 	l = lumpinfo + lump;
 
-	ptr = Malloc(l->size);
+	ptr = Z_Malloc(l->size);
 	fseek(handle, l->position, SEEK_SET);
 	fread(ptr, 1, l->size, handle);
 	return ptr;
