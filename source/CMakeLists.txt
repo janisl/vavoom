@@ -28,14 +28,8 @@ set(MAIN_COMMON_SOURCES
 	am_map.cpp
 	anorm_dots.h
 	anorms.h
-	args.cpp
-	args.h
-	arraystream.cpp
-	arraystream.h
 	asm_i386.h
 	automap.h
-	bitstream.cpp
-	bitstream.h
 	build.h
 	chat.cpp
 	chat.h
@@ -98,8 +92,6 @@ set(MAIN_COMMON_SOURCES
 	mapinfo.h
 	maths.cpp
 	maths.h
-	memorystream.cpp
-	memorystream.h
 	menu.cpp
 	menu.h
 	misc.cpp
@@ -282,12 +274,9 @@ set(MAIN_COMMON_SOURCES
 	vc_struct.h
 	vc_type.cpp
 	vc_type.h
-	vector.h
 	video.h
 	wad.cpp
 	wad.h
-	xml.cpp
-	xml.h
 	zipstream.cpp
 	zipstream.h
 )
@@ -421,9 +410,6 @@ set(MAIN_OPENGL_WIN32_SOURCES
 #---------------------------------------
 
 set(SERVER_COMMON_SOURCES
-	args.cpp
-	arraystream.cpp
-	bitstream.cpp
 	cheats.cpp
 	cmd.cpp
 	cvar.cpp
@@ -439,7 +425,6 @@ set(SERVER_COMMON_SOURCES
 	lockdefs.cpp
 	mapinfo.cpp
 	maths.cpp
-	memorystream.cpp
 	misc.cpp
 	net_channel.cpp
 	net_channel_control.cpp
@@ -532,7 +517,6 @@ set(SERVER_COMMON_SOURCES
 	vc_struct.cpp
 	vc_type.cpp
 	wad.cpp
-	xml.cpp
 	zipstream.cpp
 )
 

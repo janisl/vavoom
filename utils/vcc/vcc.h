@@ -32,7 +32,6 @@
 
 #include "../../libs/core/core.h"
 #include "../../source/common.h"
-#include "../../source/vector.h"
 #include "../../source/vc_location.h"
 #include "../../source/vc_type.h"
 #include "../../source/vc_member.h"

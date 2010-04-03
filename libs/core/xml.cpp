@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2006 Jānis Legzdiņš
+//**	Copyright (C) 1999-2010 Jānis Legzdiņš
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "gamedefs.h"
+#include "core.h"
 
 // MACROS ------------------------------------------------------------------
 

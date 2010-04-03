@@ -45,5 +45,11 @@
 #include "crc.h"		//	CRC calcuation
 #include "name.h"		//	Names
 #include "str.h"		//	Strings
+#include "args.h"		//	Command line arguments.
+#include "memorystream.h"//	In-memory streams
+#include "arraystream.h"//	Stream for reading from array
+#include "bitstream.h"	//	Streams for bit-data
+#include "vector.h"		//	Vector math
+#include "xml.h"		//	XML file parsing
 
 #endif

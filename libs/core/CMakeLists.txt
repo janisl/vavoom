@@ -1,5 +1,11 @@
 add_library(core STATIC
+	args.cpp
+	args.h
 	array.h
+	arraystream.cpp
+	arraystream.h
+	bitstream.cpp
+	bitstream.h
 	common.cpp
 	common.h
 	core.h
@@ -12,6 +18,8 @@ add_library(core STATIC
 	log.cpp
 	log.h
 	map.h
+	memorystream.cpp
+	memorystream.h
 	name.cpp
 	name.h
 	names.h
@@ -19,6 +27,9 @@ add_library(core STATIC
 	str.h
 	stream.cpp
 	stream.h
+	vector.h
+	xml.cpp
+	xml.h
 	zone.cpp
 	zone.h
 )

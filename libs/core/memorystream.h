@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2006 Jānis Legzdiņš
+//**	Copyright (C) 1999-2010 Jānis Legzdiņš
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -24,18 +24,22 @@
 //**************************************************************************
 
 //
-//	VArrayStream
+//	VMemoryStream
 //
-//	Similar to VMemoryStream, but uses reference to an external array.
+//	Stream for reading and writing in memory.
 //
-class VArrayStream : public VStream
+class VMemoryStream : public VStream
 {
 protected:
-	TArray<vuint8>&	Array;
+	TArray<vuint8>	Array;
 	int				Pos;
 
 public:
-	VArrayStream(TArray<vuint8>&);
+	//	Initialise empty writing stream.
+	VMemoryStream();
+	//	Initialise reading streams.
+	VMemoryStream(void*, int);
+	VMemoryStream(const TArray<vuint8>&);
 
 	void Serialise(void*, int);
 	void Seek(int);

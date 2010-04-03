@@ -32,6 +32,7 @@
 #include "cmdlib.h"
 using namespace VavoomUtils;
 
+#undef clock
 #include <time.h>
 #ifdef _WIN32
 #include <windows.h>

@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2006 Jānis Legzdiņš
+//**	Copyright (C) 1999-2010 Jānis Legzdiņš
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "gamedefs.h"
+#include "core.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -47,26 +47,56 @@
 
 //==========================================================================
 //
-//	VArrayStream::VArrayStream
+//	VMemoryStream::VMemoryStream
 //
 //==========================================================================
 
-VArrayStream::VArrayStream(TArray<vuint8>& InArray)
-: Array(InArray)
-, Pos(0)
+VMemoryStream::VMemoryStream()
+: Pos(0)
 {
-	bLoading = true;
+	bLoading = false;
 }
 
 //==========================================================================
 //
-//	VArrayStream::Serialise
+//	VMemoryStream::VMemoryStream
 //
 //==========================================================================
 
-void VArrayStream::Serialise(void* Data, int Len)
+VMemoryStream::VMemoryStream(void* InData, int InLen)
+: Pos(0)
 {
-	guard(VArrayStream::Serialise);
+	guard(VMemoryStream::VMemoryStream);
+	bLoading = true;
+	Array.SetNum(InLen);
+	memcpy(Array.Ptr(), InData, InLen);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMemoryStream::VMemoryStream
+//
+//==========================================================================
+
+VMemoryStream::VMemoryStream(const TArray<vuint8>& InArray)
+: Pos(0)
+{
+	guard(VMemoryStream::VMemoryStream);
+	bLoading = true;
+	Array = InArray;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VMemoryStream::Serialise
+//
+//==========================================================================
+
+void VMemoryStream::Serialise(void* Data, int Len)
+{
+	guard(VMemoryStream::Serialise);
 	if (bLoading)
 	{
 		if (Pos + Len > Array.Num())
@@ -96,13 +126,13 @@ void VArrayStream::Serialise(void* Data, int Len)
 
 //==========================================================================
 //
-//	VArrayStream::Seek
+//	VMemoryStream::Seek
 //
 //==========================================================================
 
-void VArrayStream::Seek(int InPos)
+void VMemoryStream::Seek(int InPos)
 {
-	guard(VArrayStream::Seek);
+	guard(VMemoryStream::Seek);
 	if (InPos < 0 || InPos > Array.Num())
 	{
 		bError = true;
@@ -116,22 +146,22 @@ void VArrayStream::Seek(int InPos)
 
 //==========================================================================
 //
-//	VArrayStream::Tell
+//	VMemoryStream::Tell
 //
 //==========================================================================
 
-int VArrayStream::Tell()
+int VMemoryStream::Tell()
 {
 	return Pos;
 }
 
 //==========================================================================
 //
-//	VArrayStream::TotalSize
+//	VMemoryStream::TotalSize
 //
 //==========================================================================
 
-int VArrayStream::TotalSize()
+int VMemoryStream::TotalSize()
 {
 	return Array.Num();
 }

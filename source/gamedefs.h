@@ -34,13 +34,8 @@
 
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types
-#include "args.h"		//	Command line arguments.
-#include "memorystream.h"//	In-memory streams
-#include "arraystream.h"//	Stream for reading from array
-#include "bitstream.h"	//	Streams for bit-data
 #include "language.h"	//	Localisation
 #include "misc.h"		//	Misc utilites
-#include "vector.h"		//	Vector math
 #include "maths.h"		//	Misc math methods
 #include "cvar.h"		//	Console variables
 #include "infostr.h"	//	Info strings
@@ -48,7 +43,6 @@
 #include "system.h"		//	System specific routines
 #include "files.h"		//	File I/O routines
 #include "wad.h"		//	WAD file I/O routines
-#include "xml.h"		//	XML file parsing
 #include "progs.h"		//	Progs
 #include "vc_location.h"
 #include "vc_type.h"
