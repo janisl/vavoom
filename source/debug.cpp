@@ -33,6 +33,15 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VDebugLog : public VLogListener
+{
+public:
+	void Serialise(const char* Text, EName Event)
+	{
+		dprintf("%s: %s", VName::SafeString(Event), *VStr(Text).RemoveColours());
+	}
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -47,6 +56,7 @@
 
 static FILE*		df = NULL;
 static const char*	debug_file_name;
+static VDebugLog	DebugLog;
 
 // CODE --------------------------------------------------------------------
 
@@ -73,6 +83,10 @@ void OpenDebugFile(const char* name)
 			df = fopen(debug_file_name, "w");
 	}
 #endif
+	if (df)
+	{
+		GLog.AddListener(&DebugLog);
+	}
 }
 
 //==========================================================================

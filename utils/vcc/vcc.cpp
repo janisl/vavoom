@@ -33,6 +33,15 @@
 
 // TYPES -------------------------------------------------------------------
 
+class VVccLog : public VLogListener
+{
+public:
+	void Serialise(const char* Text, EName Event)
+	{
+		dprintf(Text);
+	}
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -66,6 +75,7 @@ static bool			DebugMode;
 static FILE*		DebugFile;
 
 static VLexer		Lex;
+static VVccLog		VccLog;
 
 // CODE --------------------------------------------------------------------
 
@@ -79,6 +89,8 @@ int main(int argc, char **argv)
 {
 	try
 	{
+		GLog.AddListener(&VccLog);
+
 		int starttime;
 		int endtime;
 

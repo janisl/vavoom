@@ -74,6 +74,18 @@ bool			host_request_exit = false;
 
 vuint32			host_cycles[16];
 
+#ifndef CLIENT
+class VDedLog : public VLogListener
+{
+public:
+	void Serialise(const char* Text, EName)
+	{
+		printf("%s", Text);
+	}
+};
+static VDedLog	DedLog;
+#endif
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VCvarF	host_framerate("framerate", "0");
@@ -104,6 +116,11 @@ void Host_Init()
 	guard(Host_Init);
 	//  Memory must be initialised before anything else
 	Z_Init();
+#ifdef CLIENT
+	C_Init();
+#else
+	GLog.AddListener(&DedLog);
+#endif
 
 #if !defined(_WIN32)
 	const char* HomeDir = getenv("HOME");
@@ -160,7 +177,6 @@ void Host_Init()
 	GAudio->Init();
 	SCR_Init();
 	CT_Init();
-	C_Init();
 	V_Init();
 
 	R_Init();

@@ -50,6 +50,12 @@ public:
 	void Serialise(const char* V, EName Event);
 };
 
+class FConsoleLog : public VLogListener
+{
+public:
+	void Serialise(const char* V, EName Event);
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -90,6 +96,7 @@ static VCvarF			con_speed("con_speed", "480", CVAR_Archive);
 //	Autocomplete
 static int				c_autocompleteIndex = -1;
 static VStr				c_autocompleteString;
+static FConsoleLog		ConsoleLog;
 
 // CODE --------------------------------------------------------------------
 
@@ -105,6 +112,7 @@ void C_Init()
 {
 	c_history_last = 0;
 	c_history_size = 0;
+	GLog.AddListener(&ConsoleLog);
 }
 
 //==========================================================================
@@ -561,4 +569,19 @@ void FConsoleDevice::Serialise(const char* V, EName Event)
 	}
 	DoPrint(V);
 	DoPrint("\n");
+}
+
+//==========================================================================
+//
+//	FConsoleLog::Serialise
+//
+//==========================================================================
+
+void FConsoleLog::Serialise(const char* Text, EName Event)
+{
+	if (Event == NAME_Dev && !developer)
+	{
+		return;
+	}
+	DoPrint(Text);
 }
