@@ -114,8 +114,6 @@ static VCvarS	Language("language", "en", CVAR_Archive);
 void Host_Init()
 {
 	guard(Host_Init);
-	//  Memory must be initialised before anything else
-	Z_Init();
 #ifdef CLIENT
 	C_Init();
 #else

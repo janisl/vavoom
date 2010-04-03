@@ -35,7 +35,6 @@ public:
 	explicit ZoneError(const char* text) : VavoomError(text) { }
 };
 
-void Z_Init();
 void Z_Shutdown();
 
 #ifdef ZONE_DEBUG

@@ -31,8 +31,8 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#include "gamedefs.h"
-//#include "../libs/core/core.h"
+//#include "gamedefs.h"
+#include "../libs/core/core.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -65,8 +65,7 @@ struct MemDebug_t
 class TMemZone
 {
 public:
-	void Init();
-	void Shutdown();
+	TMemZone();
 
 	void* Alloc(size_t Bytes);
 	void Free(void* Ptr);
@@ -114,7 +113,7 @@ static void Z_MemDebugDump();
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static TMemZone*	mainzone;
+static TMemZone		mainzone;
 static MemDebug_t*	MemDebug;
 
 // CODE --------------------------------------------------------------------
@@ -125,46 +124,13 @@ static MemDebug_t*	MemDebug;
 //
 //==========================================================================
 
-void TMemZone::Init()
+TMemZone::TMemZone()
+: PageSize(0)
+, SmallPage(NULL)
+, SmallOffset(0)
+, SmallUsedPages(NULL)
+, LargeFirstUsedPage(NULL)
 {
-	guard(TMemZone::Init);
-	PageSize = 65536 - sizeof(VPage);
-
-	memset(SmallFirstFree, 0, sizeof(SmallFirstFree));
-	SmallPage = AllocPage(PageSize);
-	SmallOffset = 0;
-	SmallUsedPages = NULL;
-
-	LargeFirstUsedPage = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	TMemZone::Shutdown
-//
-//==========================================================================
-
-void TMemZone::Shutdown()
-{
-	guard(TMemZone::Shutdown);
-	//	Free small allocation pages.
-	for (VPage* Page = SmallUsedPages; Page;)
-	{
-		VPage* Next = Page->Next;
-		FreePage(Page);
-		Page = Next;
-	}
-	FreePage(SmallPage);
-
-	//	Free large allocation pages.
-	for (VPage* Page = LargeFirstUsedPage; Page;)
-	{
-		VPage* Next = Page->Next;
-		FreePage(Page);
-		Page = Next;
-	}
-	unguard;
 }
 
 //==========================================================================
@@ -257,6 +223,16 @@ void* TMemZone::SmallAlloc(size_t Bytes)
 	if (Bytes < sizeof(void*))
 	{
 		Bytes = sizeof(void*);
+	}
+
+	if (!PageSize)
+	{
+		PageSize = 65536 - sizeof(VPage);
+
+		memset(SmallFirstFree, 0, sizeof(SmallFirstFree));
+		SmallPage = AllocPage(PageSize);
+		SmallOffset = 0;
+		SmallUsedPages = NULL;
 	}
 
 	//	Align the size.
@@ -372,35 +348,15 @@ void TMemZone::LargeFree(void* Ptr)
 
 //==========================================================================
 //
-//  Z_Init
-//
-//==========================================================================
-
-void Z_Init()
-{
-	guard(Z_Init);
-	mainzone = (TMemZone*)::malloc(sizeof(TMemZone));
-	mainzone->Init();
-	unguard;
-}
-
-//==========================================================================
-//
 //  Z_Shutdown
 //
 //==========================================================================
 
 void Z_Shutdown()
 {
-	if (mainzone)
-	{
 #ifdef ZONE_DEBUG
-		Z_MemDebugDump();
+	Z_MemDebugDump();
 #endif
-		mainzone->Shutdown();
-		::free(mainzone);
-		mainzone = NULL;
-	}
 }
 
 #ifdef ZONE_DEBUG
@@ -423,12 +379,8 @@ void *Z_Malloc(int size, const char* FileName, int LineNumber)
 	{
 		return NULL;
 	}
-	if (!mainzone)
-	{
-		return ::malloc(size);
-	}
 
-	void* ptr = mainzone->Alloc(size + sizeof(MemDebug_t));
+	void* ptr = mainzone.Alloc(size + sizeof(MemDebug_t));
 	if (!ptr)
 	{
 		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
@@ -473,12 +425,6 @@ void Z_Free(void* ptr, const char* FileName, int LineNumber)
 	{
 		return;
 	}
-	if (!mainzone)
-	{
-		//::free(ptr);
-		dprintf("Z_Free after Z_Shutdown at %s:%d\n", FileName, LineNumber);
-		return;
-	}
 
 	//	Unlink debug info.
 	MemDebug_t* m = (MemDebug_t*)((char*)ptr - sizeof(MemDebug_t));
@@ -489,7 +435,7 @@ void Z_Free(void* ptr, const char* FileName, int LineNumber)
 	else
 		m->Prev->Next = m->Next;
 
-	mainzone->Free((char*)ptr - sizeof(MemDebug_t));
+	mainzone.Free((char*)ptr - sizeof(MemDebug_t));
 	unguard;
 }
 
@@ -504,22 +450,11 @@ static void Z_MemDebugDump()
 	int NumBlocks = 0;
 	for (MemDebug_t* m = MemDebug; m; m = m->Next)
 	{
-		GCon->Logf("block %p size %8d at %s:%d", m + 1, m->Size,
+		GLog.WriteLine("block %p size %8d at %s:%d", m + 1, m->Size,
 			m->FileName, m->LineNumber);
 		NumBlocks++;
 	}
-	GCon->Logf("%d blocks allocated", NumBlocks);
-}
-
-//==========================================================================
-//
-//	COMMAND MemDebugDump
-//
-//==========================================================================
-
-COMMAND(MemDebugDump)
-{
-	Z_MemDebugDump();
+	GLog.WriteLine("%d blocks allocated", NumBlocks);
 }
 
 #else
@@ -537,12 +472,8 @@ void *Z_Malloc(int size)
 	{
 		return NULL;
 	}
-	if (!mainzone)
-	{
-		return ::malloc(size);
-	}
 
-	void* ptr = mainzone->Alloc(size);
+	void* ptr = mainzone.Alloc(size);
 	if (!ptr)
 	{
 		Sys_Error("Z_Malloc: failed on allocation of %d bytes", size);
@@ -577,14 +508,8 @@ void Z_Free(void* ptr)
 	{
 		return;
 	}
-	if (!mainzone)
-	{
-		//::free(ptr);
-		dprintf("Z_Free after Z_Shutdown\n");
-		return;
-	}
 
-	mainzone->Free(ptr);
+	mainzone.Free(ptr);
 	unguard;
 }
 
