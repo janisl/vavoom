@@ -25,16 +25,6 @@
 
 #define Random()	((float)(rand() & 0x7fff) / (float)0x8000)
 
-//	Endianess handling
-void M_InitByteOrder();
-extern bool GBigEndian;
-extern short (*LittleShort)(short);
-extern short (*BigShort)(short);
-extern int (*LittleLong)(int);
-extern int (*BigLong)(int);
-extern float (*LittleFloat)(float);
-extern float (*BigFloat)(float);
-
 // An output device.
 class FOutputDevice : public VLogListener
 {

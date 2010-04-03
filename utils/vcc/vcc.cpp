@@ -60,8 +60,6 @@ static void PC_DumpAsm(char*);
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-bool				GBigEndian;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static VStr			SourceFileName;
@@ -94,10 +92,7 @@ int main(int argc, char **argv)
 		int starttime;
 		int endtime;
 
-		vuint8 swaptest[2] = {1, 0};
-
-		// set the byte swapping variables in a portable manner
-		GBigEndian = *(short*)swaptest != 1;
+		M_InitByteOrder();
 
 		signal(SIGSEGV, SignalHandler);
 

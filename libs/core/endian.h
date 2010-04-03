@@ -23,21 +23,14 @@
 //**
 //**************************************************************************
 
-#ifndef _CORE_H
-#define _CORE_H
+//	Endianess handling
+extern bool			GBigEndian;
 
-//	C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdarg>
-#include <cmath>
+extern vint16		(*LittleShort)(vint16);
+extern vint16		(*BigShort)(vint16);
+extern vint32		(*LittleLong)(vint32);
+extern vint32		(*BigLong)(vint32);
+extern float		(*LittleFloat)(float);
+extern float		(*BigFloat)(float);
 
-#include "common.h"		//	Common types and definitions
-#include "zone.h"		//	Zone memory allocation
-#include "endian.h"		//	Endianes handling
-#include "names.h"		//	Built-in names
-#include "log.h"		//	General logging interface
-#include "exception.h"	//	Exception handling
-
-#endif
+void M_InitByteOrder();

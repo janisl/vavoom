@@ -52,9 +52,6 @@ void Error(const char *error, ...) __attribute__ ((noreturn))
 
 char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
 
-short LittleShort(short val);
-int LittleLong(int val);
-
 void DefaultPath(char *path, const char *basepath);
 void DefaultExtension(char *path, const char *extension);
 void StripFilename(char *path);

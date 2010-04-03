@@ -878,6 +878,8 @@ void TVisBuilder::Run(const char *srcfile, const char* gwafile)
 	char tempfile[1024];
 	char bakext[8];
 
+	M_InitByteOrder();
+
 	strcpy(filename, srcfile);
 	DefaultExtension(filename, ".wad");
 	strcpy(destfile, filename);
