@@ -5,6 +5,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vavoom", "vavoom.vcproj", "
 	ProjectSection(ProjectDependencies) = postProject
 		{0292D20B-0826-40E7-B713-A9B512505155} = {0292D20B-0826-40E7-B713-A9B512505155}
 		{3DC4FB0F-24B7-4051-9FAA-B2215CF73554} = {3DC4FB0F-24B7-4051-9FAA-B2215CF73554}
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F} = {D509CF19-F957-4F58-8F05-3AA6AA520B2F}
 		{A5E43684-5BC7-4DEE-965B-F2E20C360793} = {A5E43684-5BC7-4DEE-965B-F2E20C360793}
 		{6077B7D6-349F-4077-B552-3BC302EF5859} = {6077B7D6-349F-4077-B552-3BC302EF5859}
 	EndProjectSection
@@ -12,20 +13,39 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libglbsp", "libglbsp.vcproj", "{3DC4FB0F-24B7-4051-9FAA-B2215CF73554}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libglvis", "libglvis.vcproj", "{0292D20B-0826-40E7-B713-A9B512505155}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F} = {D509CF19-F957-4F58-8F05-3AA6AA520B2F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timidity", "timidity.vcproj", "{A5E43684-5BC7-4DEE-965B-F2E20C360793}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vcc", "vcc.vcproj", "{2DB17B76-8B9F-4F30-A5FA-DC3FBC2E6768}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F} = {D509CF19-F957-4F58-8F05-3AA6AA520B2F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vlumpy", "vlumpy.vcproj", "{F65AC2B2-1632-4584-BDA1-DAC149FC9BDD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F} = {D509CF19-F957-4F58-8F05-3AA6AA520B2F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "acc", "acc.vcproj", "{023239F2-F1D1-43FB-9B2C-604727C13BC5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vavoom-master", "vavoom-master.vcproj", "{6CE404BD-51D1-4DA4-BE5F-827226C6A1CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F} = {D509CF19-F957-4F58-8F05-3AA6AA520B2F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glvis", "glvis.vcproj", "{F424FB4F-2341-4CA6-A13F-71E4A8C696DC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0292D20B-0826-40E7-B713-A9B512505155} = {0292D20B-0826-40E7-B713-A9B512505155}
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F} = {D509CF19-F957-4F58-8F05-3AA6AA520B2F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fixmd2", "fixmd2.vcproj", "{EF16EEF7-10E7-4A02-866F-1F2F21237DA7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F} = {D509CF19-F957-4F58-8F05-3AA6AA520B2F}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "updaterevision", "..\utils\updaterevision\updaterevision.vcproj", "{6077B7D6-349F-4077-B552-3BC302EF5859}"
 EndProject
@@ -70,6 +90,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basepak_tnt", "basepak_tnt.
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "basepak_doom1", "basepak_doom1.vcproj", "{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core", "core.vcproj", "{D509CF19-F957-4F58-8F05-3AA6AA520B2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -201,6 +223,12 @@ Global
 		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Release|Win32.ActiveCfg = Release|Win32
 		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Release|Win32.Build.0 = Release|Win32
 		{8BF28A9B-EB60-4C1F-84B2-D133718C21A4}.Release|x64.ActiveCfg = Release|Win32
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F}.Debug|Win32.Build.0 = Debug|Win32
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F}.Debug|x64.ActiveCfg = Debug|Win32
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F}.Release|Win32.ActiveCfg = Release|Win32
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F}.Release|Win32.Build.0 = Release|Win32
+		{D509CF19-F957-4F58-8F05-3AA6AA520B2F}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

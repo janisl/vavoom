@@ -199,22 +199,6 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\source\crc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\name.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\str.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\stream.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\vc_class.cpp"
 				>
 			</File>

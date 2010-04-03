@@ -227,27 +227,11 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\source\args.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\arraystream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\bitstream.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\cheats.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\source\cmd.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\crc.cpp"
 				>
 			</File>
 			<File
@@ -303,15 +287,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\memorystream.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\misc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\name.cpp"
 				>
 			</File>
 			<File
@@ -324,14 +300,6 @@
 			</File>
 			<File
 				RelativePath="..\source\sc_man.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\str.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\stream.cpp"
 				>
 			</File>
 			<File
@@ -483,15 +451,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\xml.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\zipstream.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\zone.cpp"
 				>
 			</File>
 		</Filter>
@@ -500,23 +460,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\source\args.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\array.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\arraystream.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\asm_i386.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\bitstream.h"
 				>
 			</File>
 			<File
@@ -529,10 +473,6 @@
 			</File>
 			<File
 				RelativePath="..\source\common.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\crc.h"
 				>
 			</File>
 			<File
@@ -580,10 +520,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\map.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\mapinfo.h"
 				>
 			</File>
@@ -592,19 +528,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\memorystream.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\misc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\name.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\names.h"
 				>
 			</File>
 			<File
@@ -625,14 +549,6 @@
 			</File>
 			<File
 				RelativePath="..\source\scripts.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\str.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\stream.h"
 				>
 			</File>
 			<File
@@ -764,23 +680,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\vector.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\wad.h"
 				>
 			</File>
 			<File
-				RelativePath="..\source\xml.h"
-				>
-			</File>
-			<File
 				RelativePath="..\source\zipstream.h"
-				>
-			</File>
-			<File
-				RelativePath="..\source\zone.h"
 				>
 			</File>
 		</Filter>
