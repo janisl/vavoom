@@ -88,8 +88,6 @@ static VCvarI	show_time("show_time", "0");
 
 static VCvarS	configfile("configfile", "config.cfg", CVAR_Archive);
 
-static char		*host_error_string;
-
 static char		CurrentLanguage[4];
 static VCvarS	Language("language", "en", CVAR_Archive);
 
@@ -628,57 +626,6 @@ COMMAND(Quit)
 
 //==========================================================================
 //
-//	Host_CoreDump
-//
-//==========================================================================
-
-void Host_CoreDump(const char *fmt, ...)
-{
-	static bool first = true;
-
-	if (!host_error_string)
-	{
-		host_error_string = new char[32];
-		VStr::Cpy(host_error_string, "Stack trace: ");
-		first = true;
-
-		PR_Traceback();
-	}
-
-	va_list argptr;
-	char string[1024];
-	
-	va_start(argptr, fmt);
-	vsprintf(string, fmt, argptr);
-	va_end(argptr);
-
-	dprintf("- %s\n", string);
-
-	char *new_string = new char[VStr::Length(host_error_string) +
-		VStr::Length(string) + 6];
-	VStr::Cpy(new_string, host_error_string);
-	if (first)
-		first = false;
-	else
-		strcat(new_string, " <- ");
-	strcat(new_string, string);
-	delete host_error_string;
-	host_error_string = new_string;
-}
-
-//==========================================================================
-//
-//	Host_GetCoreDump
-//
-//==========================================================================
-
-const char *Host_GetCoreDump()
-{
-	return host_error_string ? host_error_string : "";
-}
-
-//==========================================================================
-//
 //	Host_Shutdown
 //
 //	Return to default system state
@@ -745,10 +692,4 @@ void Host_Shutdown()
 	SAFE_SHUTDOWN(VObject::StaticExit, ())
 	SAFE_SHUTDOWN(VName::StaticExit, ())
 	SAFE_SHUTDOWN(Z_Shutdown, ())
-}
-
-VavoomError::VavoomError(const char *text)
-{
-	VStr::NCpy(message, text, MAX_ERROR_TEXT_SIZE - 1);
-	message[MAX_ERROR_TEXT_SIZE - 1] = 0;
 }

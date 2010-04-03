@@ -107,20 +107,9 @@ enum EObjectFlags
 //==========================================================================
 
 //
-//  A dummy class, which guaranties that compiler creates virtual function 
-// table at offset 0. This is because in GCC by default virtual funvtion
-// table is appended at the end. It also guaranties virtual destructors.
-//
-class VVirtualObjectBase
-{
-public:
-	virtual ~VVirtualObjectBase() { }
-};
-
-//
 // The base class of all objects.
 //
-class VObject : public VVirtualObjectBase
+class VObject : public VInterface
 {
 	// Declarations.
 	DECLARE_BASE_CLASS(VObject, VObject, CLASS_Abstract)
@@ -590,7 +579,7 @@ inline vuint32 GetTypeHash(VObject* Obj)
 //
 //==========================================================================
 
-class VScriptIterator : public VVirtualObjectBase
+class VScriptIterator : public VInterface
 {
 public:
 	VScriptIterator*	Next;	//	Linked list of active iterators.

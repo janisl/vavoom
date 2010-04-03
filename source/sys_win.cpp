@@ -368,26 +368,6 @@ void Sys_Quit(const char*)
 
 //==========================================================================
 //
-// 	Sys_Error
-//
-//	Exits game and displays error message.
-//
-//==========================================================================
-
-void Sys_Error(const char *error, ...)
-{
-	va_list argptr;
-	char buf[1024];
-
-	va_start(argptr,error);
-	vsprintf(buf, error, argptr);
-	va_end(argptr);
-
-	throw VavoomError(buf);
-}
-
-//==========================================================================
-//
 // 	signal_handler
 //
 // 	Shuts down system, on error signal

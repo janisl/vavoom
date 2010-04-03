@@ -9,7 +9,7 @@
 //**
 //**	$Id$
 //**
-//**	Copyright (C) 1999-2006 Jānis Legzdiņš
+//**	Copyright (C) 1999-2010 Jānis Legzdiņš
 //**
 //**	This program is free software; you can redistribute it and/or
 //**  modify it under the terms of the GNU General Public License
@@ -23,54 +23,34 @@
 //**
 //**************************************************************************
 
-#ifndef CMDLIB_H
-#define CMDLIB_H
-
 // HEADER FILES ------------------------------------------------------------
 
-#include "../../libs/core/core.h"
-
-#include <ctype.h>
-
-#if !defined _WIN32 && !defined DJGPP
-#undef stricmp	//	Allegro defines them
-#undef strnicmp
-#define stricmp		strcasecmp
-#define strnicmp	strncasecmp
-#endif
-
-namespace VavoomUtils {
+#include "core.h"
 
 // MACROS ------------------------------------------------------------------
 
 // TYPES -------------------------------------------------------------------
 
+// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void Error(const char *error, ...) __attribute__ ((noreturn))
-	__attribute__ ((format(printf, 1, 2)));
+// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
+// EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-short LittleShort(short val);
-int LittleLong(int val);
+// PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-void DefaultPath(char *path, const char *basepath);
-void DefaultExtension(char *path, const char *extension);
-void StripFilename(char *path);
-void StripExtension(char *path);
-void ExtractFilePath(const char *path, char *dest);
-void ExtractFileBase(const char *path, char *dest);
-void ExtractFileExtension(const char *path, char *dest);
-void FixFileSlashes(char *path);
-int LoadFile(const char *name, void **bufferptr);
+// PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
+// CODE --------------------------------------------------------------------
 
-extern void *(*Malloc)(size_t size);
-extern void *(*Realloc)(void *data, size_t size);
-extern void (*Free)(void *ptr);
+//==========================================================================
+//
+//	VInterface::~VInterface
+//
+//==========================================================================
 
-} // namespace VavoomUtils
-
-#endif
+VInterface::~VInterface()
+{
+}

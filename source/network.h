@@ -76,7 +76,7 @@ enum EChannelIndex
 //
 //	Public interface of a network socket.
 //
-class VSocketPublic : public VVirtualObjectBase
+class VSocketPublic : public VInterface
 {
 public:
 	VStr			Address;
@@ -126,7 +126,7 @@ struct slist_t
 //
 //	Public networking driver interface.
 //
-class VNetworkPublic : public VVirtualObjectBase
+class VNetworkPublic : public VInterface
 {
 public:
 	//	Public API

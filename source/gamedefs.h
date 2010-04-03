@@ -30,12 +30,7 @@
 #ifndef _GAMEDEFS_H
 #define _GAMEDEFS_H
 
-//	C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdarg>
-#include <cmath>
+#include "../libs/core/core.h"
 
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types

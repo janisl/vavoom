@@ -109,7 +109,7 @@ struct VAnimDoorDef
 	vint32*		Frames;
 };
 
-class VRenderLevelPublic : public VVirtualObjectBase
+class VRenderLevelPublic : public VInterface
 {
 public:
 	virtual void PreRender() = 0;

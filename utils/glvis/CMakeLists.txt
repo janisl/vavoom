@@ -14,12 +14,14 @@ add_library(libglvis STATIC
 	vector.h
 )
 set_target_properties(libglvis PROPERTIES OUTPUT_NAME glvis)
+add_dependencies(libglvis core)
 
 add_executable(glvis
 	glvis.cpp
 )
 add_dependencies(glvis libglvis)
-target_link_libraries(glvis libglvis)
+target_link_libraries(glvis libglvis core)
 set_target_properties(glvis PROPERTIES OUTPUT_NAME ../bin/glvis)
+add_dependencies(glvis core)
 
 #EXTRA_DIST = glvis.txt

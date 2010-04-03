@@ -153,7 +153,7 @@ struct event_t
 //
 //	Input device class, handles actual reading of the input.
 //
-class VInputDevice : public VVirtualObjectBase
+class VInputDevice : public VInterface
 {
 public:
 	//	VInputDevice interface.
@@ -166,7 +166,7 @@ public:
 //
 //	Input subsystem, handles all input events.
 //
-class VInputPublic : public VVirtualObjectBase
+class VInputPublic : public VInterface
 {
 public:
 	int				ShiftDown;

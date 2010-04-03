@@ -71,5 +71,7 @@ add_executable(vcc
 )
 set_target_properties(vcc PROPERTIES OUTPUT_NAME ../bin/vcc)
 set_target_properties(vcc PROPERTIES COMPILE_FLAGS -DIN_VCC)
+target_link_libraries(vcc core)
+add_dependencies(vcc core)
 
 #EXTRA_DIST = vcc.txt

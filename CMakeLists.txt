@@ -41,6 +41,7 @@ else(WIN32)
 #	AC_SEARCH_LIBS([gethostbyname], [nsl], [], [AC_ERROR([Library containing gethostbyname not found])])
 endif(WIN32)
 
+add_subdirectory(libs)
 add_subdirectory(utils)
 add_subdirectory(source)
 add_subdirectory(progs)

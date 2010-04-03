@@ -112,7 +112,7 @@ public:
 	virtual void Slist() = 0;
 };
 
-class VNetDriver : public VVirtualObjectBase
+class VNetDriver : public VInterface
 {
 public:
 	const char*		name;
@@ -132,7 +132,7 @@ public:
 	virtual void Shutdown() = 0;
 };
 
-class VNetLanDriver : public VVirtualObjectBase
+class VNetLanDriver : public VInterface
 {
 public:
 	const char*		name;

@@ -142,7 +142,7 @@ private:
 //
 //	Main audio management class.
 //
-class VAudioPublic : public VVirtualObjectBase
+class VAudioPublic : public VInterface
 {
 public:
 	//	Top level methods.

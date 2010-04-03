@@ -77,39 +77,46 @@ static VLexer		Lex;
 
 int main(int argc, char **argv)
 {
-	int starttime;
-	int endtime;
+	try
+	{
+		int starttime;
+		int endtime;
 
-	vuint8 swaptest[2] = {1, 0};
+		vuint8 swaptest[2] = {1, 0};
 
-	// set the byte swapping variables in a portable manner
-	GBigEndian = *(short*)swaptest != 1;
+		// set the byte swapping variables in a portable manner
+		GBigEndian = *(short*)swaptest != 1;
 
-	signal(SIGSEGV, SignalHandler);
+		signal(SIGSEGV, SignalHandler);
 
-	starttime = time(0);
-	Init();
-	ProcessArgs(argc, argv);
+		starttime = time(0);
+		Init();
+		ProcessArgs(argc, argv);
 
-	Lex.OpenSource(SourceFileName);
-	VParser Parser(Lex, CurrentPackage);
-	Parser.Parse();
-	int parsetime = time(0);
-	dprintf("Parsed in %02d:%02d\n",
-		(parsetime - starttime) / 60, (parsetime - starttime) % 60);
-	CurrentPackage->Emit();
-	int compiletime = time(0);
-	dprintf("Compiled in %02d:%02d\n",
-		(compiletime - parsetime) / 60, (compiletime - parsetime) % 60);
-	CurrentPackage->WriteObject(*ObjectFileName);
-	DumpAsm();
-	VName::StaticExit();
-	endtime = time(0);
-	dprintf("Wrote in %02d:%02d\n",
-		(endtime - compiletime) / 60, (endtime - compiletime) % 60);
-	dprintf("Time elapsed: %02d:%02d\n",
-		(endtime - starttime) / 60, (endtime - starttime) % 60);
-	VMemberBase::StaticExit();
+		Lex.OpenSource(SourceFileName);
+		VParser Parser(Lex, CurrentPackage);
+		Parser.Parse();
+		int parsetime = time(0);
+		dprintf("Parsed in %02d:%02d\n",
+			(parsetime - starttime) / 60, (parsetime - starttime) % 60);
+		CurrentPackage->Emit();
+		int compiletime = time(0);
+		dprintf("Compiled in %02d:%02d\n",
+			(compiletime - parsetime) / 60, (compiletime - parsetime) % 60);
+		CurrentPackage->WriteObject(*ObjectFileName);
+		DumpAsm();
+		VName::StaticExit();
+		endtime = time(0);
+		dprintf("Wrote in %02d:%02d\n",
+			(endtime - compiletime) / 60, (endtime - compiletime) % 60);
+		dprintf("Time elapsed: %02d:%02d\n",
+			(endtime - starttime) / 60, (endtime - starttime) % 60);
+		VMemberBase::StaticExit();
+	}
+	catch (VException& e)
+	{
+		FatalError(e.What());
+	}
 	return 0;
 }
 

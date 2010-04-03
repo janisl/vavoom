@@ -52,11 +52,3 @@
 //#define PARANOID		1
 
 //#define DEVELOPER		1
-
-#define DO_GUARD		1
-#define DO_CHECK		1
-
-#ifdef PARANOID
-#define DO_GUARD_SLOW	1
-#define DO_CHECK_SLOW	1
-#endif

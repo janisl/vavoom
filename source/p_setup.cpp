@@ -694,7 +694,6 @@ void VLevel::LoadSectors(int Lump)
 		//	Params
 		ss->params.lightlevel = lightlevel;
 		ss->params.LightColour = 0x00ffffff;
-
 		//	Region
 		sec_region_t* region = new sec_region_t;
 		memset(region, 0, sizeof(*region));

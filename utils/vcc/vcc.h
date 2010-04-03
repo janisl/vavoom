@@ -28,13 +28,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-//	C headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include <math.h>
-
+#include "../../libs/core/core.h"
 #include "../../source/common.h"
 
 #define OPCODE_STATS
@@ -45,7 +39,6 @@ void Free(void* ptr);
 //	For compatibility with engine files.
 #define Z_Malloc	Malloc
 #define Z_Free		Free
-#define Sys_Error	FatalError
 
 #include "../../source/stream.h"
 #include "../../source/array.h"

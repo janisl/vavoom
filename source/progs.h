@@ -42,7 +42,6 @@ union VStack
 
 void PR_Init();
 void PR_OnAbort();
-void PR_Traceback();
 
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 

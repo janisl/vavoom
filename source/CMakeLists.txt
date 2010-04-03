@@ -602,7 +602,7 @@ endif(ENABLE_ZONE_DEBUG)
 if(ENABLE_CLIENT)
 
 set(MAIN_SOURCES ${MAIN_COMMON_SOURCES})
-set(MAIN_LIBS glbsp libglvis timidity ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+set(MAIN_LIBS glbsp libglvis timidity core ${ZLIB_LIBRARY} ${NET_LIBRARIES})
 set(MAIN_COMPILE_FLAGS "")
 
 #
@@ -969,7 +969,7 @@ if (MAIN_COMPILE_FLAGS)
 	set_target_properties(vavoom PROPERTIES COMPILE_FLAGS ${MAIN_COMPILE_FLAGS})
 endif (MAIN_COMPILE_FLAGS)
 target_link_libraries(vavoom ${MAIN_LIBS})
-add_dependencies(vavoom timidity glbsp libglvis)
+add_dependencies(vavoom core timidity glbsp libglvis)
 
 install(TARGETS vavoom DESTINATION ${BINDIR})
 
@@ -1023,8 +1023,8 @@ else(ENABLE_WRAPPERS)
 	set_target_properties(vavoom-dedicated PROPERTIES OUTPUT_NAME ../vavoom-dedicated)
 endif(ENABLE_WRAPPERS)
 set_target_properties(vavoom-dedicated PROPERTIES COMPILE_FLAGS -DSERVER)
-target_link_libraries(vavoom-dedicated glbsp ${ZLIB_LIBRARY} ${NET_LIBRARIES})
-add_dependencies(vavoom-dedicated glbsp)
+target_link_libraries(vavoom-dedicated glbsp core ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+add_dependencies(vavoom-dedicated core glbsp)
 
 install(TARGETS vavoom-dedicated DESTINATION ${BINDIR})
 

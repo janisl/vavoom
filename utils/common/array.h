@@ -27,8 +27,6 @@
 //**
 //**************************************************************************
 
-enum ENoInit			{E_NoInit};
-
 template<class T> class TArray
 {
 public:

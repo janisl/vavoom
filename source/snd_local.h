@@ -169,7 +169,7 @@ struct VReverbInfo
 //
 //	Sound device interface. This class implements dummy driver.
 //
-class VSoundDevice : public VVirtualObjectBase
+class VSoundDevice : public VInterface
 {
 public:
 	bool		Sound3D;
@@ -227,7 +227,7 @@ FSoundDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClas
 //
 //	Midi player device interface. This class implements dummy driver.
 //
-class VMidiDevice : public VVirtualObjectBase
+class VMidiDevice : public VInterface
 {
 public:
 	bool		Initialised;
@@ -277,7 +277,7 @@ FMidiDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass
 //
 //	CD player device interface. This class implements dummy driver.
 //
-class VCDAudioDevice : public VVirtualObjectBase
+class VCDAudioDevice : public VInterface
 {
 public:
 	bool		Initialised;
@@ -335,7 +335,7 @@ VCDAudioDevice* Create##TClass() \
 FCDAudioDeviceDesc TClass##Desc(Type, Name, Description, CmdLineArg, Create##TClass);
 
 //	Loader of sound samples.
-class VSampleLoader : public VVirtualObjectBase
+class VSampleLoader : public VInterface
 {
 public:
 	VSampleLoader*			Next;
@@ -351,7 +351,7 @@ public:
 };
 
 //	Streamed audio decoder interface.
-class VAudioCodec : public VVirtualObjectBase
+class VAudioCodec : public VInterface
 {
 public:
 	int			SampleRate;

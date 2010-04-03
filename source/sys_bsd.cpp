@@ -66,11 +66,6 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-#ifdef USE_GUARD_SIGNAL_CONTEXT
-jmp_buf __Context::Env;
-const char* __Context::ErrToThrow;
-#endif
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static DIR *current_dir;
@@ -249,26 +244,6 @@ void Sys_Quit(const char*)
 
 	// Exit
 	exit(0);
-}
-
-//==========================================================================
-//
-// 	Sys_Error
-//
-//	Exits game and displays error message.
-//
-//==========================================================================
-
-void Sys_Error(const char *error, ...)
-{
-	va_list argptr;
-	char buf[1024];
-
-	va_start(argptr, error);
-	vsprintf(buf, error, argptr);
-	va_end(argptr);
-
-	throw VavoomError(buf);
 }
 
 //==========================================================================
