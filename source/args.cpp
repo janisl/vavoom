@@ -26,6 +26,8 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+//#include "../libs/core/core.h"
+//#include "args.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -91,7 +93,7 @@ void VArgs::FindResponseFile()
 			printf("\nNo such response file %s!", &Argv[i][1]);
 			exit(1);
 		}
-		dprintf("Found response file %s!\n", &Argv[i][1]);
+		GLog.WriteLine("Found response file %s!", &Argv[i][1]);
 		fseek(handle, 0, SEEK_END);
 		int size = ftell(handle);
 		fseek(handle, 0, SEEK_SET);
@@ -170,9 +172,9 @@ void VArgs::FindResponseFile()
 		Argc = indexinfile;
 
 		//	Display args
-	    dprintf("%d command-line args:\n", Argc);
+	    GLog.WriteLine("%d command-line args:", Argc);
 		for (k = 1; k < Argc; k++)
-			dprintf("%s\n", Argv[k]);
+			GLog.WriteLine("%s", Argv[k]);
 		i--;
 	}
 }

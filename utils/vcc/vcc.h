@@ -32,7 +32,6 @@
 
 #include "../../libs/core/core.h"
 #include "../../source/common.h"
-#include "../../source/array.h"
 #include "../../source/name.h"
 #include "../../source/str.h"
 #include "../../source/vector.h"

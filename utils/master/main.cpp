@@ -29,10 +29,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#define check(a)
-
 #include "cmdlib.h"
-#include "array.h"
 using namespace VavoomUtils;
 
 #include <time.h>

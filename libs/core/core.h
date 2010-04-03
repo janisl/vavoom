@@ -40,5 +40,6 @@
 #include "log.h"		//	General logging interface
 #include "exception.h"	//	Exception handling
 #include "stream.h"		//	Streams
+#include "array.h"		//	Dynamic arrays
 
 #endif
