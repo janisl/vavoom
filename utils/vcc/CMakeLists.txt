@@ -7,8 +7,6 @@ add_executable(vcc
 	../../source/name.h
 	../../source/str.cpp
 	../../source/str.h
-	../../source/stream.cpp
-	../../source/stream.h
 	../../source/vc_class.cpp
 	../../source/vc_class.h
 	../../source/vc_constant.cpp

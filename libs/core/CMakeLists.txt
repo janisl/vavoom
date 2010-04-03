@@ -9,6 +9,8 @@ add_library(core STATIC
 	log.cpp
 	log.h
 	names.h
+	stream.cpp
+	stream.h
 	zone.cpp
 	zone.h
 )

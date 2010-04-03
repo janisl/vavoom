@@ -213,8 +213,6 @@ set(MAIN_COMMON_SOURCES
 	sound.h
 	str.cpp
 	str.h
-	stream.cpp
-	stream.h
 	sv_local.h
 	sv_main.cpp
 	sv_save.cpp
@@ -510,7 +508,6 @@ set(SERVER_COMMON_SOURCES
 	snd_reverbs.cpp
 	sc_man.cpp
 	str.cpp
-	stream.cpp
 	sv_main.cpp
 	sv_save.cpp
 	sv_world.cpp

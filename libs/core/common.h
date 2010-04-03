@@ -116,3 +116,14 @@ class VInterface
 public:
 	virtual ~VInterface();
 };
+
+//==========================================================================
+//
+//	Forward declarations
+//
+//==========================================================================
+
+class	VName;
+class	VMemberBase;
+class	VStruct;
+class	VObject;
