@@ -1,4 +1,5 @@
 add_library(core STATIC
+	array.h
 	common.cpp
 	common.h
 	core.h
@@ -8,6 +9,7 @@ add_library(core STATIC
 	exception.h
 	log.cpp
 	log.h
+	map.h
 	names.h
 	stream.cpp
 	stream.h

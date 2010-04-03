@@ -41,5 +41,6 @@
 #include "exception.h"	//	Exception handling
 #include "stream.h"		//	Streams
 #include "array.h"		//	Dynamic arrays
+#include "map.h"		//	Mapping of keys to values
 
 #endif

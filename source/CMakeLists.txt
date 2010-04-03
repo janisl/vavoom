@@ -30,7 +30,6 @@ set(MAIN_COMMON_SOURCES
 	anorms.h
 	args.cpp
 	args.h
-	array.h
 	arraystream.cpp
 	arraystream.h
 	asm_i386.h
@@ -97,7 +96,6 @@ set(MAIN_COMMON_SOURCES
 	level.h
 	lockdefs.cpp
 	lockdefs.h
-	map.h
 	mapinfo.cpp
 	mapinfo.h
 	maths.cpp

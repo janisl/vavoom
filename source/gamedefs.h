@@ -35,7 +35,6 @@
 #include "build.h"		//	Build settings
 #include "common.h"		//	Common types
 #include "args.h"		//	Command line arguments.
-#include "map.h"		//	Mapping of keys to values
 #include "memorystream.h"//	In-memory streams
 #include "arraystream.h"//	Stream for reading from array
 #include "bitstream.h"	//	Streams for bit-data
