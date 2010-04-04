@@ -68,26 +68,6 @@ void Error(const char *error, ...)
 
 //==========================================================================
 //
-//	va
-//
-//	Very usefull function from QUAKE
-//
-//==========================================================================
-
-char *va(const char *text, ...)
-{
-	va_list		args;
-	static char	va_buffer[1024];
-
-	va_start(args, text);
-	vsprintf(va_buffer, text, args);
-	va_end(args);
-
-	return va_buffer;
-}
-
-//==========================================================================
-//
 //	DefaultPath
 //
 //==========================================================================

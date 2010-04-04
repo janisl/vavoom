@@ -396,3 +396,5 @@ public:
 	static char ToUpper(char);
 	static char ToLower(char);
 };
+
+char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));

@@ -50,8 +50,6 @@ namespace VavoomUtils {
 void Error(const char *error, ...) __attribute__ ((noreturn))
 	__attribute__ ((format(printf, 1, 2)));
 
-char *va(const char *text, ...) __attribute__ ((format(printf, 1, 2)));
-
 void DefaultPath(char *path, const char *basepath);
 void DefaultExtension(char *path, const char *extension);
 void StripFilename(char *path);

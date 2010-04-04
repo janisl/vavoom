@@ -4120,3 +4120,7 @@
 ******************************************************************************
                             VERSION 1.31
 ******************************************************************************
+
+03.04.2010
+  I started to split common code into a core library, changed utilities to use
+ it. Many basic classes have been moved there.

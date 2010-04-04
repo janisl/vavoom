@@ -55,6 +55,9 @@
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static char		va_buffer[4][1024];
+static int		va_bufnum;
+
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -1179,4 +1182,27 @@ char VStr::ToUpper(char C)
 char VStr::ToLower(char C)
 {
 	return tolower(C);
+}
+
+//==========================================================================
+//
+//	va
+//
+//	Very usefull function from QUAKE
+//	Does a varargs printf into a temp buffer, so I don't need to have
+// varargs versions of all text functions.
+//	FIXME: make this buffer size safe someday
+//
+//==========================================================================
+
+char *va(const char *text, ...)
+{
+	va_list args;
+
+	va_bufnum = (va_bufnum + 1) & 3;
+	va_start(args, text);
+	vsprintf(va_buffer[va_bufnum], text, args);
+	va_end(args);
+
+	return va_buffer[va_bufnum];
 }
