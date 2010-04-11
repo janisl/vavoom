@@ -4124,3 +4124,5 @@
 03.04.2010
   I started to split common code into a core library, changed utilities to use
  it. Many basic classes have been moved there.
+11.04.2010
+  Firebrand corrected wrong changes to Sigil projectiles.

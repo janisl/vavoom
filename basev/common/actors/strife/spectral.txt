@@ -112,7 +112,6 @@ actor SpectralLightningH1 : SpectralLightningBase
 	Speed 30
 	Damage 70
 	Projectile
-	DamageType "SpectralLow"
 	+Spectral
 
 	action native A_SpectralLightningTail();
@@ -164,7 +163,6 @@ actor SpectralLightningBall1 : SpectralLightningBase
 	Speed 30
 	Damage 70
 	Projectile
-	DamageType "SpectralLow"
 	+Spectral
 	states
 	{
