@@ -124,7 +124,6 @@
 				FloatingPointModel="1"
 				WarningLevel="3"
 				DebugInformationFormat="1"
-				CallingConvention="1"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
