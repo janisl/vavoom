@@ -109,6 +109,9 @@ void VOpenGLDrawer::InitResolution()
 		{
 			GCon->Log(NAME_Init, "Multitexture extensions found.");
 			mtexable = true;
+			GLint tmp;
+			glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &tmp);
+			GCon->Logf("Max texture units: %d", tmp);
 		}
 		else
 		{
@@ -163,6 +166,9 @@ void VOpenGLDrawer::InitResolution()
 	{
 		ClampToEdge = GL_CLAMP;
 	}
+
+	p_glStencilFuncSeparate = glStencilFuncSeparate_t(GetExtFuncPtr("glStencilFuncSeparate"));
+	p_glStencilOpSeparate = glStencilOpSeparate_t(GetExtFuncPtr("glStencilOpSeparate"));
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup

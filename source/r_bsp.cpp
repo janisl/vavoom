@@ -48,6 +48,8 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+VCvarI					r_shadow("r_shadow", "0", CVAR_Archive);
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static subsector_t*		r_sub;
@@ -480,17 +482,20 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 	}
 
 	float dist = DotProduct(vieworg, line->normal) - line->dist;
-	if (dist <= 0)
+	if (!r_shadow)
 	{
-		//	Viewer is in back side or on plane
-		return;
-	}
+		if (dist <= 0)
+		{
+			//	Viewer is in back side or on plane
+			return;
+		}
 
-	float a1 = ViewClip.PointToClipAngle(*line->v2);
-	float a2 = ViewClip.PointToClipAngle(*line->v1);
-	if (!ViewClip.IsRangeVisible(a1, a2))
-	{
-		return;
+		float a1 = ViewClip.PointToClipAngle(*line->v2);
+		float a2 = ViewClip.PointToClipAngle(*line->v1);
+		if (!ViewClip.IsRangeVisible(a1, a2))
+		{
+			return;
+		}
 	}
 
 	if (MirrorClipSegs)
@@ -578,7 +583,7 @@ void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 	}
 
 	float dist = DotProduct(vieworg, plane.normal) - plane.dist;
-	if (dist <= 0)
+	if (!r_shadow && dist <= 0)
 	{
 		//	Viewer is in back side or on plane
 		return;
@@ -690,7 +695,7 @@ void VRenderLevel::RenderSubsector(int num, int clipflags)
 	subsector_t* Sub = &Level->Subsectors[num];
 	r_sub = Sub;
 
-	if (Sub->VisFrame != r_visframecount)
+	if (!r_shadow && Sub->VisFrame != r_visframecount)
 	{
 		return;
 	}
@@ -701,7 +706,7 @@ void VRenderLevel::RenderSubsector(int num, int clipflags)
 		return;
 	}
 
-	if (!ViewClip.ClipCheckSubsector(Sub))
+	if (!r_shadow && !ViewClip.ClipCheckSubsector(Sub))
 	{
 		return;
 	}
@@ -729,13 +734,13 @@ void VRenderLevel::RenderSubsector(int num, int clipflags)
 void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 {
 	guard(VRenderLevel::RenderBSPNode);
-	if (ViewClip.ClipIsFull())
+	if (!r_shadow && ViewClip.ClipIsFull())
 	{
 		return;
 	}
 	int clipflags = AClipflags;
 	// cull the clipping planes if not trivial accept
-	if (clipflags)
+	if (!r_shadow && clipflags)
 	{
 		for (int i = 0; i < 5; i++)
 		{
@@ -780,7 +785,7 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 		}
 	}
 
-	if (!ViewClip.ClipIsBBoxVisible(bbox))
+	if (!r_shadow && !ViewClip.ClipIsBBoxVisible(bbox))
 	{
 		return;
 	}
@@ -801,7 +806,7 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 
 	node_t* bsp = &Level->Nodes[bspnum];
 
-	if (bsp->VisFrame != r_visframecount)
+	if (!r_shadow && bsp->VisFrame != r_visframecount)
 	{
 		return;
 	}

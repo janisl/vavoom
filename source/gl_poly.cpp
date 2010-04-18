@@ -147,6 +147,77 @@ void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
 
 void VOpenGLDrawer::WorldDrawing()
 {
+	if (!r_shadow)
+	{
+		DoWorldDrawing();
+		return;
+	}
+
+	TVec LightPos(1060, -3200, 32);
+
+	DrawSurfsDepth();
+	SetFade(0);
+
+	glDepthMask(GL_FALSE);
+	glEnable(GL_STENCIL_TEST);
+
+	DoLight(LightPos);
+	LightPos = vieworg + viewup * 64 + viewforward * 256;
+	DoLight(LightPos);
+
+	//  finish
+	glDisable(GL_STENCIL_TEST);
+	DrawTextures();
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
+}
+
+void VOpenGLDrawer::DoLight(TVec& LightPos)
+{
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0.0f, 1.0f);
+
+	if (p_glStencilFuncSeparate && p_glStencilOpSeparate)
+	{
+		glDisable(GL_CULL_FACE);
+		glStencilFunc(GL_ALWAYS, 0x0, 0xff);
+		p_glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP_EXT, GL_KEEP);
+		p_glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP_EXT, GL_KEEP);
+		DrawSurfsShadowVolumes(LightPos);
+	}
+	else
+	{
+		glCullFace(GL_BACK);
+		glStencilFunc(GL_ALWAYS, 0x0, 0xff);
+		glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
+		DrawSurfsShadowVolumes(LightPos);
+
+		glCullFace(GL_FRONT);
+		glStencilFunc(GL_ALWAYS, 0x0, 0xff);
+		glStencilOp(GL_KEEP, GL_DECR, GL_KEEP);
+		DrawSurfsShadowVolumes(LightPos);
+
+		glCullFace(GL_FRONT);
+	}
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+
+	glStencilFunc(GL_EQUAL, 0x0, 0xff);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+	DrawShadow(LightPos, 1024);
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::WorldDrawing
+//
+//==========================================================================
+
+void VOpenGLDrawer::DoWorldDrawing()
+{
 	guard(VOpenGLDrawer::WorldDrawing);
 	int			lb, i;
 	surfcache_t	*cache;
@@ -376,6 +447,275 @@ void VOpenGLDrawer::WorldDrawing()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(1);		// back to normal Z buffering
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawSurfsDepth
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawSurfsDepth()
+{
+	int			lb, i;
+	surfcache_t	*cache;
+	surface_t	*surf;
+
+	glDisable(GL_TEXTURE_2D);
+//	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glColor4f(0, 0, 0, 1);
+
+	if (SkyPortalsHead)
+	{
+		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		{
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+	if (SimpleSurfsHead)
+	{
+		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		{
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+	{
+		if (!light_chain[lb])
+		{
+			continue;
+		}
+
+		for (cache = light_chain[lb]; cache; cache = cache->chain)
+		{
+			surf = cache->surf;
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+//	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glEnable(GL_TEXTURE_2D);
+}
+
+#define M_INFINITY  2048
+
+void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos)
+{
+	float dist = DotProduct(LightPos, surf->plane->normal) - surf->plane->dist;
+	if (dist <= 0)
+	{
+		//	Viewer is in back side or on plane
+		return;
+	}
+
+	int i;
+	TArray<TVec>    v;
+	v.SetNum(surf->count);
+
+	for (int i = 0; i < surf->count; i++)
+	{
+		v[i] = Normalise(surf->verts[i] - LightPos);
+		v[i] *= M_INFINITY;
+		v[i] += LightPos;
+	}
+
+	glBegin(GL_POLYGON);
+	for (i = surf->count - 1; i >= 0; i--)
+	{
+		glVertex(v[i]);
+	}
+	glEnd();
+
+	glBegin(GL_POLYGON);
+	for (i = 0; i < surf->count; i++)
+	{
+		glVertex(surf->verts[i]);
+	}
+	glEnd();
+
+	glBegin(GL_TRIANGLE_STRIP);
+	for (i = 0; i < surf->count; i++)
+	{
+		glVertex(surf->verts[i]);
+		glVertex(v[i]);
+	}
+	glVertex(surf->verts[0]);
+	glVertex(v[0]);
+	glEnd();
+}
+
+void VOpenGLDrawer::DrawSurfsShadowVolumes(TVec& LightPos)
+{
+	int			lb;
+	surfcache_t	*cache;
+	surface_t	*surf;
+
+	if (SkyPortalsHead)
+	{
+		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		{
+			RenderSurfaceShadowVolume(surf, LightPos);
+		}
+	}
+
+	if (SimpleSurfsHead)
+	{
+		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		{
+			RenderSurfaceShadowVolume(surf, LightPos);
+		}
+	}
+
+	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+	{
+		if (!light_chain[lb])
+		{
+			continue;
+		}
+
+		for (cache = light_chain[lb]; cache; cache = cache->chain)
+		{
+			surf = cache->surf;
+			RenderSurfaceShadowVolume(surf, LightPos);
+		}
+	}
+}
+
+void VOpenGLDrawer::DrawShadow(TVec& LightPos, float Radius)
+{
+	int			lb, i;
+	surfcache_t	*cache;
+	surface_t	*surf;
+
+	glDisable(GL_TEXTURE_2D);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glEnable(GL_BLEND);
+	glShadeModel(GL_SMOOTH);
+	glColor4f(1, 1, 1, 1);
+
+	//	Draw surfaces.
+	if (SimpleSurfsHead)
+	{
+		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		{
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				float Col = (Radius - Length(surf->verts[i] - LightPos)) / Radius;
+				if (Col < 0)
+					Col = 0;
+				glColor4f(Col, Col, Col, 1);
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+	{
+		if (!light_chain[lb])
+		{
+			continue;
+		}
+
+		for (cache = light_chain[lb]; cache; cache = cache->chain)
+		{
+			surf = cache->surf;
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				float Col = (Radius - Length(surf->verts[i] - LightPos)) / Radius;
+				if (Col < 0)
+					Col = 0;
+				glColor4f(Col, Col, Col, 1);
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_TEXTURE_2D);
+	glShadeModel(GL_FLAT);
+}
+
+void VOpenGLDrawer::DrawTextures()
+{
+	guard(VOpenGLDrawer::WorldDrawing);
+	int			lb, i;
+	surfcache_t	*cache;
+	GLfloat		s, t;
+	GLfloat		lights, lightt;
+	surface_t	*surf;
+	texinfo_t	*tex;
+
+	glBlendFunc(GL_DST_COLOR, GL_ZERO);
+	glEnable(GL_BLEND);
+	glColor4f(1, 1, 1, 1);
+
+	//	Draw surfaces.
+	if (SimpleSurfsHead)
+	{
+		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		{
+			texinfo_t* tex = surf->texinfo;
+			SetTexture(tex->Tex, tex->ColourMap);
+			glColor4f(1, 1, 1, 1);
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+	{
+		if (!light_chain[lb])
+		{
+			continue;
+		}
+
+		for (cache = light_chain[lb]; cache; cache = cache->chain)
+		{
+			surf = cache->surf;
+			texinfo_t* tex = surf->texinfo;
+			SetTexture(tex->Tex, tex->ColourMap);
+			glColor4f(1, 1, 1, 1);
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	unguard;
 }
 
