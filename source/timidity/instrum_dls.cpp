@@ -78,6 +78,7 @@ static void FreeRIFFChunk(RIFF_Chunk *chunk)
 		FreeRIFFChunk(chunk->next);
 	}
 	free(chunk);
+	chunk = NULL;
 }
 
 static int ChunkHasSubType(uint32 magic)
@@ -211,6 +212,7 @@ RIFF_Chunk *LoadRIFF(FILE* src)
 void FreeRIFF(RIFF_Chunk *chunk)
 {
 	free(chunk->data);
+	chunk->data = NULL;
 	FreeRIFFChunk(chunk);
 }
 
@@ -327,6 +329,7 @@ static void FreeRegions(DLS_Instrument *instrument)
 {
 	if ( instrument->regions ) {
 		free(instrument->regions);
+		instrument->regions = NULL;
 	}
 }
 
@@ -348,6 +351,7 @@ static void FreeInstruments(DLS_Data *data)
 			FreeRegions(&data->instruments[i]);
 		}
 		free(data->instruments);
+		data->instruments = NULL;
 	}
 }
 
@@ -365,6 +369,7 @@ static void FreeWaveList(DLS_Data *data)
 {
 	if ( data->waveList ) {
 		free(data->waveList);
+		data->waveList = NULL;
 	}
 }
 
@@ -719,6 +724,7 @@ void FreeDLS(DLS_Data *data)
 	FreeInstruments(data);
 	FreeWaveList(data);
 	free(data);
+	data = NULL;
 }
 
 /*-------------------------------------------------------------------------*/

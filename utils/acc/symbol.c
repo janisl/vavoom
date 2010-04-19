@@ -469,7 +469,9 @@ static void FreeNodes(symbolNode_t *root)
 	FreeNodes(root->left);
 	FreeNodes(root->right);
 	free(root->name);
+	root->name = NULL;
 	free(root);
+	root = NULL;
 }
 
 //==========================================================================
@@ -526,13 +528,17 @@ static void DeleteNode(symbolNode_t *node, symbolNode_t **parent_p)
 	{
 		*parent_p = node->right;
 		free(node->name);
+		node->name = NULL;
 		free(node);
+		node = NULL;
 	}
 	else if(node->right == NULL)
 	{
 		*parent_p = node->left;
 		free(node->name);
+		node->name = NULL;
 		free(node);
+		node = NULL;
 	}
 	else
 	{

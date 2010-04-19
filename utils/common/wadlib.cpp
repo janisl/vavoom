@@ -99,6 +99,7 @@ void TIWadFile::Open(const char* filename)
 	}
 	
 	delete fileinfo;
+	fileinfo = NULL;
 }
 
 //==========================================================================
@@ -151,6 +152,7 @@ void TIWadFile::Close()
 	fclose(handle);
 	handle = NULL;
 	delete lumpinfo;
+	lumpinfo = NULL;
 }
 
 //==========================================================================
@@ -213,6 +215,7 @@ void TOWadFile::Close()
 	fclose(handle);
 	handle = NULL;
 	delete lumpinfo;
+	lumpinfo = NULL;
 }
 
 } // namespace VavoomUtils

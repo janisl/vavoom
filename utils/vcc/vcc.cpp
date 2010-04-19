@@ -405,6 +405,7 @@ void Free(void* ptr)
 	if (ptr)
 	{
 		free(ptr);
+		ptr = NULL;
 	}
 }
 

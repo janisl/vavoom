@@ -1095,6 +1095,7 @@ void GrabFon2()
 			Z_Free(Chr->Data);
 			Z_Free(Chr->ComprData);
 			delete Chr;
+			Chr = NULL;
 		}
 	}
 }

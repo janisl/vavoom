@@ -43,7 +43,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="4"
+				Optimization="3"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
@@ -58,7 +58,6 @@
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				DebugInformationFormat="1"
-				CallingConvention="0"
 				CompileAs="2"
 			/>
 			<Tool

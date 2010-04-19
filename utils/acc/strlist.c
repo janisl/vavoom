@@ -239,6 +239,7 @@ static int STR_PutStringInSomeList(stringList_t *list, int index, char *name)
 	if(list->strings[index].name != NULL)
 	{
 		free(list->strings[index].name);
+		list->strings[index].name = NULL;
 	}
 	if(name != NULL)
 	{

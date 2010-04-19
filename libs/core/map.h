@@ -48,6 +48,7 @@ protected:
 		if (HashTable)
 		{
 			delete[] HashTable;
+			HashTable = NULL;
 		}
 		HashTable = new vint32[HashSize];
 		for (int i = 0; i < HashSize; i++)
@@ -97,6 +98,7 @@ public:
 		if (HashTable)
 		{
 			delete[] HashTable;
+			HashTable = NULL;
 		}
 		HashTable = NULL;
 		HashSize = 0;

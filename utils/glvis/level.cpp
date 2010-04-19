@@ -80,6 +80,7 @@ static void *GLVisMalloc(size_t size)
 static void GLVisFree(void *ptr)
 {
 	free(ptr);
+	ptr = NULL;
 }
 
 //==========================================================================
@@ -610,9 +611,17 @@ void TVisBuilder::FreeLevel()
 	delete[] subsectors;
 	delete[] portals;
 	delete[] vis;
+	vertexes = NULL;
+	sidesecs = NULL;
+	lines = NULL;
+	segs = NULL;
+	subsectors = NULL;
+	portals = NULL;
+	vis = NULL;
 	if (reject)
 	{
 		delete[] reject;
+		reject = NULL;
 	}
 }
 

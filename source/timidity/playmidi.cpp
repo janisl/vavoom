@@ -721,6 +721,7 @@ MidiSong *Timidity_LoadSongMem(void* data, int size, DLS_Data* patches, Sf2Data*
 	if (!song->events)
 	{
 		free(song);
+		song = NULL;
 		return NULL;
 	}
 
@@ -759,15 +760,25 @@ void Timidity_FreeSong(MidiSong *song)
 	for (int i = 0; i < 128; i++)
 	{
 		if (song->tonebank[i])
+		{
 			free(song->tonebank[i]);
+//			song->tonebank[i] = NULL;
+		}
 		if (song->drumset[i])
+		{
 			free(song->drumset[i]);
+//			song->drumset[i] = NULL;
+		}
 	}
 
 	free(song->events);
+//	song->events = NULL;
 	free(song->resample_buffer);
+//	song->resample_buffer = NULL;
 	free(song->common_buffer);
+//	song->common_buffer = NULL;
 	free(song);
+//	song = NULL;
 }
 
 void Timidity_Close()
@@ -782,11 +793,16 @@ void Timidity_Close()
 				for (int j = 0; j < 128; j++)
 				{
 					if (e[j].name != NULL)
+					{
 						free(e[j].name);
+						e[j].name = NULL;
+					}
 				}
 				free(e);
+				e = NULL;
 			}
 			free(master_tonebank[i]);
+			master_tonebank[i] = NULL;
 		}
 		if (master_drumset[i])
 		{
@@ -796,11 +812,16 @@ void Timidity_Close()
 				for (int j = 0; j < 128; j++)
 				{
 					if (e[j].name != NULL)
+					{
 						free(e[j].name);
+						e[j].name = NULL;
+					}
 				}
 				free(e);
+				e = NULL;
 			}
 			free(master_drumset[i]);
+			master_drumset[i] = NULL;
 		}
 	}
 

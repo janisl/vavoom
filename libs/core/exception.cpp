@@ -110,6 +110,7 @@ void Host_CoreDump(const char *fmt, ...)
 		strcat(new_string, " <- ");
 	strcat(new_string, string);
 	delete host_error_string;
+	host_error_string = NULL;
 	host_error_string = new_string;
 }
 

@@ -141,6 +141,7 @@ void TVisBuilder::BasePortalVis()
 	}
 	Owner.DisplayBaseVisProgress(numportals, numportals);
 	delete[] portalsee;
+	portalsee = NULL;
 }
 
 //==========================================================================
@@ -167,7 +168,10 @@ void TVisBuilder::CheckStack(leaf_t *leaf, threaddata_t *thread)
 void TVisBuilder::FreeWinding(winding_t *w)
 {
 	if (!w->original)
+	{
 		delete w;
+		w = NULL;
+	}
 }
 
 //==========================================================================
@@ -506,6 +510,7 @@ void TVisBuilder::RecursiveLeafFlow(int leafnum, threaddata_t *thread,
 	}
 	
 	delete[] stack.mightsee;
+	stack.mightsee = NULL;
 }
 
 //==========================================================================
@@ -537,6 +542,7 @@ void TVisBuilder::PortalFlow(portal_t *p)
 	RecursiveLeafFlow(p->leaf, &data, &data.pstack_head, 0);
 
 	delete[] p->mightsee;
+	p->mightsee = NULL;
 	p->status = stat_done;
 }
 
@@ -650,6 +656,7 @@ void TVisBuilder::LeafFlow(int leafnum)
 		for (j = 0; j < rowbytes; j++)
 			outbuffer[j] |= p->visbits[j];
 		delete[] p->visbits;
+		p->visbits = NULL;
 	}
 
 	if (outbuffer[leafnum >> 3] & (1 << (leafnum & 7)))

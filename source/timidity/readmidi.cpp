@@ -83,6 +83,7 @@ static int dumpstring(MidiSong* song, int32 len, const char* label)
 	if (len != (int32)midi_read(song, s, len))
 	{
 		free(s);
+		s = NULL;
 		return -1;
 	}
 	s[len] = '\0';
@@ -93,6 +94,7 @@ static int dumpstring(MidiSong* song, int32 len, const char* label)
 	}
 	ctl->cmsg(CMSG_TEXT, VERB_VERBOSE, "%s%s", label, s);
 	free(s);
+	s = NULL;
 	return 0;
 }
 

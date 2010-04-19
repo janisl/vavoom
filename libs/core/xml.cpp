@@ -74,6 +74,7 @@ VXmlNode::~VXmlNode()
 		VXmlNode* Temp = FirstChild;
 		FirstChild = FirstChild->NextSibling;
 		delete Temp;
+		Temp = NULL;
 	}
 	unguard;
 }

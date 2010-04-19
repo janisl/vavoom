@@ -79,6 +79,7 @@ void UtilFree(void *data)
     InternalError("Trying to free a NULL pointer");
   
   free(data);
+  data = NULL;
 }
 
 //

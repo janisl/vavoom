@@ -114,6 +114,7 @@ void VStr::Resize(int NewLen)
 			size_t Len = Min(Length(), (size_t)NewLen);
 			NCpy(NewStr, Str, Len);
 			delete[] (Str - sizeof(int));
+			Str = NULL;
 		}
 		Str = NewStr;
 		//	Set length.

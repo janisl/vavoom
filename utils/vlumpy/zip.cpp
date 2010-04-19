@@ -50,7 +50,7 @@ Read zip.h for more info
 # define ALLOC(size) (malloc(size))
 #endif
 #ifndef TRYFREE
-# define TRYFREE(p) {if (p) free(p);}
+# define TRYFREE(p) { if (p) { free(p); p = NULL; } }
 #endif
 
 /*
@@ -1021,6 +1021,7 @@ extern int ZEXPORT zipCloseFileInZipRaw (zipFile file,
 		err = add_data_in_datablock(&zi->central_dir,zi->ci.central_header,
 									(uLong)zi->ci.size_centralheader);
 	free(zi->ci.central_header);
+	zi->ci.central_header = NULL;
 
 	if (err==ZIP_OK)
 	{

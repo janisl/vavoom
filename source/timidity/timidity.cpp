@@ -282,7 +282,10 @@ static int read_config_file(const char* name)
 				return -2;
 			}
 			if (bank->tone[i].name)
+			{
 				free(bank->tone[i].name);
+				bank->tone[i].name = NULL;
+			}
 			strcpy((bank->tone[i].name = (char*)safe_malloc(strlen(w[1]) + 1)), w[1]);
 			bank->tone[i].note = bank->tone[i].amp = bank->tone[i].pan =
 				bank->tone[i].strip_loop = bank->tone[i].strip_envelope =

@@ -206,6 +206,7 @@ void TMemZone::FreePage(TMemZone::VPage* Page)
 	guard(TMemZone::FreePage);
 	check(Page);
 	::free(Page);
+	Page = NULL;
 	unguard;
 }
 
@@ -435,6 +436,7 @@ void Z_Free(void* ptr, const char* FileName, int LineNumber)
 		m->Prev->Next = m->Next;
 
 	mainzone.Free((char*)ptr - sizeof(MemDebug_t));
+	ptr = NULL;
 	unguard;
 }
 
@@ -509,6 +511,7 @@ void Z_Free(void* ptr)
 	}
 
 	mainzone.Free(ptr);
+	ptr = NULL;
 	unguard;
 }
 

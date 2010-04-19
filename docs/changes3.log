@@ -4126,3 +4126,6 @@
  it. Many basic classes have been moved there.
 11.04.2010
   Firebrand corrected wrong changes to Sigil projectiles.
+19.04.2010
+  Firebrand fixed crashes in Timidity music player.
+  Firebrand made freed pointers to be properly NULLed, this helps improve performance.

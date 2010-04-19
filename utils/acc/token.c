@@ -516,6 +516,7 @@ static int PopNestedSource(enum ImportModes *prevMode)
 	
 	MS_Message(MSG_DEBUG, "*Leaving %s\n", tk_SourceName);
 	free(FileStart);
+	FileStart = NULL;
 	SY_FreeConstants(NestDepth);
 	tk_IncludedLines += tk_Line;
 	info = &OpenFiles[--NestDepth];
@@ -550,9 +551,11 @@ void TK_CloseSource(void)
 	if(SourceOpen)
 	{
 		free(FileStart);
+		FileStart = NULL;
 		for(i = 0; i < NestDepth; i++)
 		{
 			free(OpenFiles[i].start);
+			OpenFiles[i].start = NULL;
 		}
 		SourceOpen = FALSE;
 	}

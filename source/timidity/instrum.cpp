@@ -53,10 +53,13 @@ static void free_instrument(Instrument* ip)
 		if (sp->data)
 		{
 			free(sp->data);
+			sp->data = NULL;
 		}
 	}
 	free(ip->sample);
+	ip->sample = NULL;
 	free(ip);
+	ip = NULL;
 }
 
 static void free_bank(MidiSong* song, int dr, int b)
@@ -406,6 +409,7 @@ fail:
 			cp = (uint8*)(sp->data);
 			sp->data = (sample_t*)newdta;
 			free(cp);
+			cp = NULL;
 			sp->data_length *= 2;
 			sp->loop_start *= 2;
 			sp->loop_end *= 2;

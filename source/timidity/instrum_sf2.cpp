@@ -173,6 +173,7 @@ void Timidity_FreeSf2(Sf2Data* font)
 		FreeRIFF(font->Riff);
 	}
 	free(font);
+	font = NULL;
 }
 
 //==========================================================================
