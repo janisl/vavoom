@@ -120,7 +120,7 @@ typedef void (APIENTRY*glStencilOpSeparate_t)(GLenum, GLenum, GLenum, GLenum);
 #define GL_DECR_WRAP_EXT					0x8508
 #endif
 
-class VOpenGLDrawer : public VHardwareDrawer
+class VOpenGLDrawer : public VAdvDrawer
 {
 public:
 	//
@@ -139,13 +139,11 @@ public:
 	void SetupView(VRenderLevelDrawer*, const refdef_t*);
 	void SetupViewOrg();
 	void WorldDrawing();
-	void DoWorldDrawing();
-	void DoLight(TVec& LightPos);
-	void DrawSurfsDepth();
-	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos);
-	void DrawSurfsShadowVolumes(TVec& LightPos);
-	void DrawShadow(TVec& LightPos, float Radius);
-	void DrawTextures();
+	void DrawWorldAmbientPass();
+	void BeginLightShadowVolumes();
+	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius);
+	void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour);
+	void DrawWorldTexturesPass();
 	void EndView();
 
 	//	Texture stuff

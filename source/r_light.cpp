@@ -752,6 +752,10 @@ void VRenderLevel::PushDlights()
 	{
 		return;
 	}
+	if (r_shadow)
+	{
+		return;
+	}
 
 	dlight_t* l = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, l++)

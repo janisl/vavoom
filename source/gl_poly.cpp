@@ -147,77 +147,6 @@ void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
 
 void VOpenGLDrawer::WorldDrawing()
 {
-	if (!r_shadow)
-	{
-		DoWorldDrawing();
-		return;
-	}
-
-	TVec LightPos(1060, -3200, 32);
-
-	DrawSurfsDepth();
-	SetFade(0);
-
-	glDepthMask(GL_FALSE);
-	glEnable(GL_STENCIL_TEST);
-
-	DoLight(LightPos);
-	LightPos = vieworg + viewup * 64 + viewforward * 256;
-	DoLight(LightPos);
-
-	//  finish
-	glDisable(GL_STENCIL_TEST);
-	DrawTextures();
-	glDepthFunc(GL_LEQUAL);
-	glDepthMask(GL_TRUE);
-}
-
-void VOpenGLDrawer::DoLight(TVec& LightPos)
-{
-	glClear(GL_STENCIL_BUFFER_BIT);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(0.0f, 1.0f);
-
-	if (p_glStencilFuncSeparate && p_glStencilOpSeparate)
-	{
-		glDisable(GL_CULL_FACE);
-		glStencilFunc(GL_ALWAYS, 0x0, 0xff);
-		p_glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP_EXT, GL_KEEP);
-		p_glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP_EXT, GL_KEEP);
-		DrawSurfsShadowVolumes(LightPos);
-	}
-	else
-	{
-		glCullFace(GL_BACK);
-		glStencilFunc(GL_ALWAYS, 0x0, 0xff);
-		glStencilOp(GL_KEEP, GL_INCR, GL_KEEP);
-		DrawSurfsShadowVolumes(LightPos);
-
-		glCullFace(GL_FRONT);
-		glStencilFunc(GL_ALWAYS, 0x0, 0xff);
-		glStencilOp(GL_KEEP, GL_DECR, GL_KEEP);
-		DrawSurfsShadowVolumes(LightPos);
-
-		glCullFace(GL_FRONT);
-	}
-
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDisable(GL_POLYGON_OFFSET_FILL);
-
-	glStencilFunc(GL_EQUAL, 0x0, 0xff);
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-	DrawShadow(LightPos, 1024);
-}
-
-//==========================================================================
-//
-//	VOpenGLDrawer::WorldDrawing
-//
-//==========================================================================
-
-void VOpenGLDrawer::DoWorldDrawing()
-{
 	guard(VOpenGLDrawer::WorldDrawing);
 	int			lb, i;
 	surfcache_t	*cache;
@@ -452,22 +381,23 @@ void VOpenGLDrawer::DoWorldDrawing()
 
 //==========================================================================
 //
-//	VOpenGLDrawer::DrawSurfsDepth
+//	VOpenGLDrawer::DrawWorldAmbientPass
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawSurfsDepth()
+void VOpenGLDrawer::DrawWorldAmbientPass()
 {
+	guard(VOpenGLDrawer::DrawWorldAmbientPass);
 	int			lb, i;
 	surfcache_t	*cache;
 	surface_t	*surf;
 
+	SetFade(0);
 	glDisable(GL_TEXTURE_2D);
-//	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glColor4f(0, 0, 0, 1);
 
 	if (SkyPortalsHead)
 	{
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			glBegin(GL_POLYGON);
@@ -477,12 +407,17 @@ void VOpenGLDrawer::DrawSurfsDepth()
 			}
 			glEnd();
 		}
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	}
 
 	if (SimpleSurfsHead)
 	{
 		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
+			float lev = float(surf->Light >> 24) / 255.0;
+			glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
+				((surf->Light >> 8) & 255) * lev / 255.0,
+				(surf->Light & 255) * lev / 255.0, 1.0);
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
 			{
@@ -491,6 +426,9 @@ void VOpenGLDrawer::DrawSurfsDepth()
 			glEnd();
 		}
 	}
+
+	glEnable(GL_TEXTURE_2D);
+	glColor4f(1, 1, 1, 1);
 
 	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 	{
@@ -499,26 +437,73 @@ void VOpenGLDrawer::DrawSurfsDepth()
 			continue;
 		}
 
+		glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		if (block_changed[lb])
+		{
+			block_changed[lb] = false;
+			glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
+				0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
+		}
+
 		for (cache = light_chain[lb]; cache; cache = cache->chain)
 		{
 			surf = cache->surf;
+			texinfo_t* tex = surf->texinfo;
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
 			{
+				float s = (DotProduct(surf->verts[i], tex->saxis) + tex->soffs -
+					surf->texturemins[0] + cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
+				float t = (DotProduct(surf->verts[i], tex->taxis) + tex->toffs -
+					surf->texturemins[1] + cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
+				glTexCoord2f(s, t);
 				glVertex(surf->verts[i]);
 			}
 			glEnd();
 		}
 	}
 
-//	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glEnable(GL_TEXTURE_2D);
+	//	Set up for shadow volume rendering.
+	glDepthMask(GL_FALSE);
+	glEnable(GL_STENCIL_TEST);
+	unguard;
 }
+
+//==========================================================================
+//
+//	VOpenGLDrawer::BeginLightShadowVolumes
+//
+//==========================================================================
+
+void VOpenGLDrawer::BeginLightShadowVolumes()
+{
+	guard(VOpenGLDrawer::BeginLightShadowVolumes);
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(0.0f, 1.0f);
+
+	glDisable(GL_CULL_FACE);
+	glStencilFunc(GL_ALWAYS, 0x0, 0xff);
+	p_glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP_EXT, GL_KEEP);
+	p_glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP_EXT, GL_KEEP);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::RenderSurfaceShadowVolume
+//
+//==========================================================================
 
 #define M_INFINITY  2048
 
-void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos)
+void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius)
 {
+	guard(VOpenGLDrawer::RenderSurfaceShadowVolume);
 	float dist = DotProduct(LightPos, surf->plane->normal) - surf->plane->dist;
 	if (dist <= 0)
 	{
@@ -560,56 +545,36 @@ void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos)
 	glVertex(surf->verts[0]);
 	glVertex(v[0]);
 	glEnd();
+	unguard;
 }
 
-void VOpenGLDrawer::DrawSurfsShadowVolumes(TVec& LightPos)
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawLightShadowsPass
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour)
 {
-	int			lb;
-	surfcache_t	*cache;
-	surface_t	*surf;
-
-	if (SkyPortalsHead)
-	{
-		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
-		{
-			RenderSurfaceShadowVolume(surf, LightPos);
-		}
-	}
-
-	if (SimpleSurfsHead)
-	{
-		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
-		{
-			RenderSurfaceShadowVolume(surf, LightPos);
-		}
-	}
-
-	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
-	{
-		if (!light_chain[lb])
-		{
-			continue;
-		}
-
-		for (cache = light_chain[lb]; cache; cache = cache->chain)
-		{
-			surf = cache->surf;
-			RenderSurfaceShadowVolume(surf, LightPos);
-		}
-	}
-}
-
-void VOpenGLDrawer::DrawShadow(TVec& LightPos, float Radius)
-{
+	guard(VOpenGLDrawer::DrawLightShadowsPass);
 	int			lb, i;
 	surfcache_t	*cache;
 	surface_t	*surf;
+
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+
+	glStencilFunc(GL_EQUAL, 0x0, 0xff);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
 	glDisable(GL_TEXTURE_2D);
 	glBlendFunc(GL_ONE, GL_ONE);
 	glEnable(GL_BLEND);
 	glShadeModel(GL_SMOOTH);
-	glColor4f(1, 1, 1, 1);
+
+	float r = ((Colour >> 16) & 255) / 255.0;
+	float g = ((Colour >> 8) & 255) / 255.0;
+	float b = (Colour & 255) / 255.0;
 
 	//	Draw surfaces.
 	if (SimpleSurfsHead)
@@ -622,7 +587,7 @@ void VOpenGLDrawer::DrawShadow(TVec& LightPos, float Radius)
 				float Col = (Radius - Length(surf->verts[i] - LightPos)) / Radius;
 				if (Col < 0)
 					Col = 0;
-				glColor4f(Col, Col, Col, 1);
+				glColor4f(r * Col, g * Col, b * Col, 1);
 				glVertex(surf->verts[i]);
 			}
 			glEnd();
@@ -645,7 +610,7 @@ void VOpenGLDrawer::DrawShadow(TVec& LightPos, float Radius)
 				float Col = (Radius - Length(surf->verts[i] - LightPos)) / Radius;
 				if (Col < 0)
 					Col = 0;
-				glColor4f(Col, Col, Col, 1);
+				glColor4f(r * Col, g * Col, b * Col, 1);
 				glVertex(surf->verts[i]);
 			}
 			glEnd();
@@ -655,17 +620,27 @@ void VOpenGLDrawer::DrawShadow(TVec& LightPos, float Radius)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_TEXTURE_2D);
 	glShadeModel(GL_FLAT);
+	unguard;
 }
 
-void VOpenGLDrawer::DrawTextures()
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawWorldTexturesPass
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawWorldTexturesPass()
 {
-	guard(VOpenGLDrawer::WorldDrawing);
+	guard(VOpenGLDrawer::DrawWorldTexturesPass);
 	int			lb, i;
 	surfcache_t	*cache;
 	GLfloat		s, t;
 	GLfloat		lights, lightt;
 	surface_t	*surf;
 	texinfo_t	*tex;
+
+	//	Stop stenciling now.
+	glDisable(GL_STENCIL_TEST);
 
 	glBlendFunc(GL_DST_COLOR, GL_ZERO);
 	glEnable(GL_BLEND);
@@ -716,6 +691,10 @@ void VOpenGLDrawer::DrawTextures()
 
 	glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//	Back to normal z-buffering.
+	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_TRUE);
 	unguard;
 }
 

@@ -102,3 +102,13 @@ protected:
 	void ResampleTexture(int, int, const vuint8*, int, int, vuint8*);
 	void MipMap(int, int, vuint8*);
 };
+
+class VAdvDrawer : public VHardwareDrawer
+{
+public:
+	virtual void DrawWorldAmbientPass() = 0;
+	virtual void BeginLightShadowVolumes() = 0;
+	virtual void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius) = 0;
+	virtual void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour) = 0;
+	virtual void DrawWorldTexturesPass() = 0;
+};
