@@ -51,6 +51,7 @@ VCvarI VOpenGLDrawer::blend_sprites("gl_blend_sprites", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_multitexture("gl_ext_multitexture", "1", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_point_parameters("gl_ext_point_parameters", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_anisotropy("gl_ext_anisotropy", "1", CVAR_Archive);
+VCvarI VOpenGLDrawer::ext_shaders("gl_ext_shaders", "1", CVAR_Archive);
 VCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_Archive);
 VCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_Archive);
@@ -97,15 +98,18 @@ void VOpenGLDrawer::InitResolution()
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTexSize);
 	GCon->Logf(NAME_Init, "Maximum texture size: %d", maxTexSize);
 
+#define _(x)	p_##x = x##_t(GetExtFuncPtr(#x)); if (!p_##x) found = false
+
 	//	Check multi-texture extensions
 	if (ext_multitexture && CheckExtension("GL_ARB_multitexture"))
 	{
 		GCon->Log(NAME_Init, "Found GL_ARB_multitexture...");
 
-		p_MultiTexCoord2f = MultiTexCoord2f_t(GetExtFuncPtr("glMultiTexCoord2fARB"));
-		p_SelectTexture = SelectTexture_t(GetExtFuncPtr("glActiveTextureARB"));
+		bool found = true;
+		_(glMultiTexCoord2fARB);
+		_(glActiveTextureARB);
 
-		if (p_MultiTexCoord2f && p_SelectTexture)
+		if (found)
 		{
 			GCon->Log(NAME_Init, "Multitexture extensions found.");
 			mtexable = true;
@@ -129,9 +133,10 @@ void VOpenGLDrawer::InitResolution()
 	{
 		GCon->Log(NAME_Init, "Found GL_EXT_point_parameters...");
 
-		p_PointParameterf = PointParameterf_t(GetExtFuncPtr("glPointParameterfEXT"));
-		p_PointParameterfv = PointParameterfv_t(GetExtFuncPtr("glPointParameterfvEXT"));
-		if (p_PointParameterf && p_PointParameterfv)
+		bool found = true;
+		_(glPointParameterfEXT);
+		_(glPointParameterfvEXT);
+		if (found)
 		{
 			GCon->Log(NAME_Init, "Point parameters extensions found");
 			pointparmsable = true;
@@ -167,8 +172,127 @@ void VOpenGLDrawer::InitResolution()
 		ClampToEdge = GL_CLAMP;
 	}
 
-	p_glStencilFuncSeparate = glStencilFuncSeparate_t(GetExtFuncPtr("glStencilFuncSeparate"));
-	p_glStencilOpSeparate = glStencilOpSeparate_t(GetExtFuncPtr("glStencilOpSeparate"));
+	//	Check for shader extensions
+	if (ext_shaders && mtexable &&
+		CheckExtension("GL_ARB_shader_objects") && CheckExtension("GL_ARB_shading_language_100") &&
+		CheckExtension("GL_ARB_vertex_shader") && CheckExtension("GL_ARB_fragment_shader"))
+	{
+		GCon->Log(NAME_Init, "Found GL_ARB_vertex_shader, GL_ARB_fragment_shader...");
+
+		bool found = true;
+		_(glDeleteObjectARB);
+		_(glGetHandleARB);
+		_(glDetachObjectARB);
+		_(glCreateShaderObjectARB);
+		_(glShaderSourceARB);
+		_(glCompileShaderARB);
+		_(glCreateProgramObjectARB);
+		_(glAttachObjectARB);
+		_(glLinkProgramARB);
+		_(glUseProgramObjectARB);
+		_(glValidateProgramARB);
+		_(glUniform1fARB);
+		_(glUniform2fARB);
+		_(glUniform3fARB);
+		_(glUniform4fARB);
+		_(glUniform1iARB);
+		_(glUniform2iARB);
+		_(glUniform3iARB);
+		_(glUniform4iARB);
+		_(glUniform1fvARB);
+		_(glUniform2fvARB);
+		_(glUniform3fvARB);
+		_(glUniform4fvARB);
+		_(glUniform1ivARB);
+		_(glUniform2ivARB);
+		_(glUniform3ivARB);
+		_(glUniform4ivARB);
+		_(glUniformMatrix2fvARB);
+		_(glUniformMatrix3fvARB);
+		_(glUniformMatrix4fvARB);
+		_(glGetObjectParameterfvARB);
+		_(glGetObjectParameterivARB);
+		_(glGetInfoLogARB);
+		_(glGetAttachedObjectsARB);
+		_(glGetUniformLocationARB);
+		_(glGetActiveUniformARB);
+		_(glGetUniformfvARB);
+		_(glGetUniformivARB);
+		_(glGetShaderSourceARB);
+
+		_(glVertexAttrib1dARB);
+		_(glVertexAttrib1dvARB);
+		_(glVertexAttrib1fARB);
+		_(glVertexAttrib1fvARB);
+		_(glVertexAttrib1sARB);
+		_(glVertexAttrib1svARB);
+		_(glVertexAttrib2dARB);
+		_(glVertexAttrib2dvARB);
+		_(glVertexAttrib2fARB);
+		_(glVertexAttrib2fvARB);
+		_(glVertexAttrib2sARB);
+		_(glVertexAttrib2svARB);
+		_(glVertexAttrib3dARB);
+		_(glVertexAttrib3dvARB);
+		_(glVertexAttrib3fARB);
+		_(glVertexAttrib3fvARB);
+		_(glVertexAttrib3sARB);
+		_(glVertexAttrib3svARB);
+		_(glVertexAttrib4NbvARB);
+		_(glVertexAttrib4NivARB);
+		_(glVertexAttrib4NsvARB);
+		_(glVertexAttrib4NubARB);
+		_(glVertexAttrib4NubvARB);
+		_(glVertexAttrib4NuivARB);
+		_(glVertexAttrib4NusvARB);
+		_(glVertexAttrib4bvARB);
+		_(glVertexAttrib4dARB);
+		_(glVertexAttrib4dvARB);
+		_(glVertexAttrib4fARB);
+		_(glVertexAttrib4fvARB);
+		_(glVertexAttrib4ivARB);
+		_(glVertexAttrib4sARB);
+		_(glVertexAttrib4svARB);
+		_(glVertexAttrib4ubvARB);
+		_(glVertexAttrib4uivARB);
+		_(glVertexAttrib4usvARB);
+		_(glVertexAttribPointerARB);
+		_(glEnableVertexAttribArrayARB);
+		_(glDisableVertexAttribArrayARB);
+		_(glBindAttribLocationARB);
+		_(glGetActiveAttribARB);
+		_(glGetAttribLocationARB);
+		_(glGetVertexAttribdvARB);
+		_(glGetVertexAttribfvARB);
+		_(glGetVertexAttribivARB);
+		_(glGetVertexAttribPointervARB);
+
+		if (found)
+		{
+			GCon->Log(NAME_Init, "Shader extensions found.");
+			HaveShaders = true;
+			GLint tmp;
+			glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &tmp);
+			GCon->Logf("Max texture image units: %d", tmp);
+		}
+		else
+		{
+			GCon->Log(NAME_Init, "Symbol not found, disabled.");
+			HaveShaders = false;
+		}
+	}
+	else
+	{
+		HaveShaders = false;
+	}
+
+	{
+		bool found = true;
+		_(glStencilFuncSeparate);
+		_(glStencilOpSeparate);
+	}
+
+#undef _
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup
@@ -193,6 +317,21 @@ void VOpenGLDrawer::InitResolution()
 	glDepthRange(0.0, 1.0);
 
 	glDisable(GL_POLYGON_SMOOTH);
+
+	if (HaveShaders)
+	{
+		GLhandleARB VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_zbuf.vs");
+		GLhandleARB FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_zbuf.fs");
+		SurfZBufProgram = CreateProgram(VertexShader, FragmentShader);
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_simple.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_simple.fs");
+		SurfSimpleProgram = CreateProgram(VertexShader, FragmentShader);
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_lightmap.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_lightmap.fs");
+		SurfLightmapProgram = CreateProgram(VertexShader, FragmentShader);
+	}
 	unguard;
 }
 
@@ -566,5 +705,96 @@ void VOpenGLDrawer::SetFade(vuint32 NewFade)
 		glDisable(GL_FOG);
 	}
 	CurrentFade = NewFade;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::LoadShader
+//
+//==========================================================================
+
+GLhandleARB VOpenGLDrawer::LoadShader(GLenum Type, const VStr& FileName)
+{
+	guard(VOpenGLDrawer::LoadShader);
+	//	Create shader object.
+	GLhandleARB Shader = p_glCreateShaderObjectARB(Type);
+	if (!Shader)
+	{
+		Sys_Error("Failed to create shader object");
+	}
+	CreatedShaderObjects.Append(Shader);
+
+	//	Load source file.
+	VStream* Strm = FL_OpenFileRead(FileName);
+	if (!Strm)
+	{
+		Sys_Error("Failed to open %s", *FileName);
+	}
+	int Size = Strm->TotalSize();
+	char* Buf = new GLcharARB[Size + 1];
+	Strm->Serialise(Buf, Size);
+	delete Strm;
+	Buf[Size] = 0; // Append terminator
+
+	//	Upload source text.
+	const GLcharARB* ShaderText = Buf;
+	p_glShaderSourceARB(Shader, 1, &ShaderText, NULL);
+	delete[] Buf;
+
+	//	Compile it.
+	p_glCompileShaderARB(Shader);
+
+	//	Check id it is compiled successfuly.
+	GLint Status;
+	p_glGetObjectParameterivARB(Shader, GL_OBJECT_COMPILE_STATUS_ARB, &Status);
+	if (!Status)
+	{
+		GLcharARB LogText[1024];
+		GLsizei LogLen;
+		p_glGetInfoLogARB(Shader, sizeof(LogText) - 1, &LogLen, LogText);
+		LogText[LogLen] = 0;
+		Sys_Error("Failed to compile shader %s: %s", *FileName, LogText);
+	}
+	return Shader;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::CreateProgram
+//
+//==========================================================================
+
+GLhandleARB VOpenGLDrawer::CreateProgram(GLhandleARB VertexShader, GLhandleARB FragmentShader)
+{
+	guard(VOpenGLDrawer::CreateProgram);
+	//	Create program object.
+	GLhandleARB Program = p_glCreateProgramObjectARB();
+	if (!Program)
+	{
+		Sys_Error("Failed to create program object");
+	}
+	CreatedShaderObjects.Append(Program);
+
+	//	Attach shaders.
+	p_glAttachObjectARB(Program, VertexShader);
+	p_glAttachObjectARB(Program, FragmentShader);
+
+	//	Link program.
+	p_glLinkProgramARB(Program);
+
+	//	Check if it was linked successfuly.
+	GLint Status;
+	p_glGetObjectParameterivARB(Program, GL_OBJECT_LINK_STATUS_ARB, &Status);
+	if (!Status)
+	{
+		GLcharARB LogText[1024];
+		GLsizei LogLen;
+		p_glGetInfoLogARB(Program, sizeof(LogText) - 1, &LogLen, LogText);
+		LogText[LogLen] = 0;
+		Sys_Error("Failed to link program %s", LogText);
+	}
+	return Program;
 	unguard;
 }

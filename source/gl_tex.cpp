@@ -123,6 +123,13 @@ void VOpenGLDrawer::DeleteTextures()
 		glDeleteTextures(1, &particle_texture);
 		texturesGenerated = false;
 	}
+
+	//	Delete all created shader objects.
+	for (int i = CreatedShaderObjects.Num() - 1; i >= 0; i--)
+	{
+		p_glDeleteObjectARB(CreatedShaderObjects[i]);
+	}
+	CreatedShaderObjects.Clear();
 	unguard;
 }
 

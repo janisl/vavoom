@@ -556,6 +556,13 @@ fxdefs/strife/decorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/decoratio
 fxdefs/strife/monsters.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/monsters.txt
 fxdefs/strife/weapons.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/weapons.txt
 
+glshaders/surf_lightmap.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_lightmap.fs
+glshaders/surf_lightmap.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_lightmap.vs
+glshaders/surf_simple.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_simple.fs
+glshaders/surf_simple.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_simple.vs
+glshaders/surf_zbuf.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_zbuf.fs
+glshaders/surf_zbuf.vs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_zbuf.vs
+
 //	Console font
 $load @CMAKE_CURRENT_SOURCE_DIR@/confont.pcx
 confont.lmp				fon1

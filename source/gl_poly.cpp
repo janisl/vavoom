@@ -73,7 +73,7 @@ void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 	if (lightmaped)
 	{
 		CacheSurface(surf);
-		if (mtexable)
+		if (mtexable || HaveShaders)
 		{
 			return;
 		}
@@ -148,6 +148,12 @@ void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
 void VOpenGLDrawer::WorldDrawing()
 {
 	guard(VOpenGLDrawer::WorldDrawing);
+	if (HaveShaders)
+	{
+		WorldDrawingShaders();
+		return;
+	}
+
 	int			lb, i;
 	surfcache_t	*cache;
 	GLfloat		s, t;
@@ -376,6 +382,222 @@ void VOpenGLDrawer::WorldDrawing()
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glDepthMask(1);		// back to normal Z buffering
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::WorldDrawingShaders
+//
+//==========================================================================
+
+void VOpenGLDrawer::WorldDrawingShaders()
+{
+	guard(VOpenGLDrawer::WorldDrawingShaders);
+	int			lb, i;
+	surfcache_t	*cache;
+	GLfloat		s, t;
+	GLfloat		lights, lightt;
+	surface_t	*surf;
+	texinfo_t	*tex;
+
+	//	First draw horizons.
+	if (HorizonPortalsHead)
+	{
+		for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		{
+			DoHorizonPolygon(surf);
+		}
+	}
+
+	//	For sky areas we just write to the depth buffer to prevent drawing
+	// polygons behind the sky.
+	if (SkyPortalsHead)
+	{
+		p_glUseProgramObjectARB(SurfZBufProgram);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		{
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	}
+
+	//	Draw surfaces.
+	if (SimpleSurfsHead)
+	{
+		p_glUseProgramObjectARB(SurfSimpleProgram);
+		GLint SAxisLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "SAxis");
+		GLint TAxisLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TAxis");
+		GLint SOffsLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "SOffs");
+		GLint TOffsLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TOffs");
+		GLint TexIWLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIW");
+		GLint TexIHLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIH");
+		GLint TextureLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "Texture");
+		GLint LightLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "Light");
+		GLint FogEnabledLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "FogEnabled");
+		GLint FogTypeLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "FogType");
+		GLint FogColourLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "FogColour");
+		GLint FogDensityLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "FogDensity");
+		GLint FogStartLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "FogStart");
+		GLint FogEndLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "FogEnd");
+		p_glUniform1iARB(TextureLoc, 0);
+		p_glUniform1iARB(FogTypeLoc, r_fog & 3);
+
+		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		{
+			texinfo_t* tex = surf->texinfo;
+			SetTexture(tex->Tex, tex->ColourMap);
+			p_glUniform3fvARB(SAxisLoc, 1, &tex->saxis.x);
+			p_glUniform1fARB(SOffsLoc, tex->soffs);
+			p_glUniform1fARB(TexIWLoc, tex_iw);
+			p_glUniform3fvARB(TAxisLoc, 1, &tex->taxis.x);
+			p_glUniform1fARB(TOffsLoc, tex->toffs);
+			p_glUniform1fARB(TexIHLoc, tex_ih);
+
+			float lev = float(surf->Light >> 24) / 255.0;
+			p_glUniform4fARB(LightLoc,
+				((surf->Light >> 16) & 255) * lev / 255.0,
+				((surf->Light >> 8) & 255) * lev / 255.0,
+				(surf->Light & 255) * lev / 255.0, 1.0);
+			if (surf->Fade)
+			{
+				p_glUniform1iARB(FogEnabledLoc, GL_TRUE);
+				p_glUniform4fARB(FogColourLoc,
+					((surf->Fade >> 16) & 255) / 255.0,
+					((surf->Fade >> 8) & 255) / 255.0,
+					(surf->Fade & 255) / 255.0, 1.0);
+				p_glUniform1fARB(FogDensityLoc, surf->Fade == FADE_LIGHT ? 0.3 : r_fog_density);
+				p_glUniform1fARB(FogStartLoc, surf->Fade == FADE_LIGHT ? 1.0 : r_fog_start);
+				p_glUniform1fARB(FogEndLoc, surf->Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
+			}
+			else
+			{
+				p_glUniform1iARB(FogEnabledLoc, GL_FALSE);
+			}
+
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+	p_glUseProgramObjectARB(SurfLightmapProgram);
+	GLint SAxisLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "SAxis");
+	GLint TAxisLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "TAxis");
+	GLint SOffsLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "SOffs");
+	GLint TOffsLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "TOffs");
+	GLint TexIWLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "TexIW");
+	GLint TexIHLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "TexIH");
+	GLint TexMinSLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "TexMinS");
+	GLint TexMinTLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "TexMinT");
+	GLint CacheSLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "CacheS");
+	GLint CacheTLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "CacheT");
+	GLint TextureLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "Texture");
+	GLint LightMapLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "LightMap");
+	GLint SpecularMapLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "SpecularMap");
+	GLint FogEnabledLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "FogEnabled");
+	GLint FogTypeLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "FogType");
+	GLint FogColourLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "FogColour");
+	GLint FogDensityLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "FogDensity");
+	GLint FogStartLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "FogStart");
+	GLint FogEndLoc = p_glGetUniformLocationARB(SurfLightmapProgram, "FogEnd");
+	p_glUniform1iARB(TextureLoc, 0);
+	p_glUniform1iARB(LightMapLoc, 1);
+	p_glUniform1iARB(SpecularMapLoc, 2);
+	p_glUniform1iARB(FogTypeLoc, r_fog & 3);
+
+	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
+	{
+		if (!light_chain[lb])
+		{
+			continue;
+		}
+
+		SelectTexture(1);
+		glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		if (block_changed[lb])
+		{
+			block_changed[lb] = false;
+			glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
+				0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
+			add_changed[lb] = true;
+		}
+
+		SelectTexture(2);
+		glBindTexture(GL_TEXTURE_2D, addmap_id[lb]);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		if (add_changed[lb])
+		{
+			add_changed[lb] = false;
+			glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
+				0, GL_RGBA, GL_UNSIGNED_BYTE, add_block[lb]);
+		}
+
+		SelectTexture(0);
+
+		for (cache = light_chain[lb]; cache; cache = cache->chain)
+		{
+			surf = cache->surf;
+			tex = surf->texinfo;
+			SetTexture(tex->Tex, tex->ColourMap);
+
+			p_glUniform3fvARB(SAxisLoc, 1, &tex->saxis.x);
+			p_glUniform1fARB(SOffsLoc, tex->soffs);
+			p_glUniform1fARB(TexIWLoc, tex_iw);
+			p_glUniform3fvARB(TAxisLoc, 1, &tex->taxis.x);
+			p_glUniform1fARB(TOffsLoc, tex->toffs);
+			p_glUniform1fARB(TexIHLoc, tex_ih);
+			p_glUniform1fARB(TexMinSLoc, surf->texturemins[0]);
+			p_glUniform1fARB(TexMinTLoc, surf->texturemins[1]);
+			p_glUniform1fARB(CacheSLoc, cache->s);
+			p_glUniform1fARB(CacheTLoc, cache->t);
+
+			if (surf->Fade)
+			{
+				p_glUniform1iARB(FogEnabledLoc, GL_TRUE);
+				p_glUniform4fARB(FogColourLoc,
+					((surf->Fade >> 16) & 255) / 255.0,
+					((surf->Fade >> 8) & 255) / 255.0,
+					(surf->Fade & 255) / 255.0, 1.0);
+				p_glUniform1fARB(FogDensityLoc, surf->Fade == FADE_LIGHT ? 0.3 : r_fog_density);
+				p_glUniform1fARB(FogStartLoc, surf->Fade == FADE_LIGHT ? 1.0 : r_fog_start);
+				p_glUniform1fARB(FogEndLoc, surf->Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
+			}
+			else
+			{
+				p_glUniform1iARB(FogEnabledLoc, GL_FALSE);
+			}
+
+			glBegin(GL_POLYGON);
+			for (i = 0; i < surf->count; i++)
+			{
+				s = DotProduct(surf->verts[i], tex->saxis) + tex->soffs;
+				t = DotProduct(surf->verts[i], tex->taxis) + tex->toffs;
+				lights = (s - surf->texturemins[0] +
+					cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
+				lightt = (t - surf->texturemins[1] +
+					cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
+				MultiTexCoord(0, s * tex_iw, t * tex_ih);
+				MultiTexCoord(1, lights, lightt);
+				glVertex(surf->verts[i]);
+			}
+			glEnd();
+		}
+	}
+
+	p_glUseProgramObjectARB(0);
 	unguard;
 }
 
@@ -634,10 +856,7 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 	guard(VOpenGLDrawer::DrawWorldTexturesPass);
 	int			lb, i;
 	surfcache_t	*cache;
-	GLfloat		s, t;
-	GLfloat		lights, lightt;
 	surface_t	*surf;
-	texinfo_t	*tex;
 
 	//	Stop stenciling now.
 	glDisable(GL_STENCIL_TEST);
@@ -1207,8 +1426,8 @@ void VOpenGLDrawer::StartParticles()
 	if (pointparmsable)
 	{
 		GLfloat parms[3] = { 0.0, 1.0, 0.0 };
-		p_PointParameterfv(GLenum(GL_DISTANCE_ATTENUATION_EXT), parms);
-		p_PointParameterf(GLenum(GL_POINT_FADE_THRESHOLD_SIZE_EXT), 1.0);
+		p_glPointParameterfvEXT(GLenum(GL_DISTANCE_ATTENUATION_EXT), parms);
+		p_glPointParameterfEXT(GLenum(GL_POINT_FADE_THRESHOLD_SIZE_EXT), 1.0);
 		glDisable(GL_TEXTURE_2D);
 		glEnable(GL_POINT_SMOOTH);
 		glBegin(GL_POINTS);
