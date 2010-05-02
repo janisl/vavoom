@@ -376,9 +376,42 @@ protected:
 
 	TArray<GLhandleARB>		CreatedShaderObjects;
 
+	GLhandleARB				DrawSimpleProgram;
+	GLint					DrawSimpleTextureLoc;
+	GLint					DrawSimpleAlphaLoc;
+
+	GLhandleARB				DrawShadowProgram;
+	GLint					DrawShadowTextureLoc;
+	GLint					DrawShadowAlphaLoc;
+
+	GLhandleARB				DrawFixedColProgram;
+	GLint					DrawFixedColColourLoc;
+
+	GLhandleARB				DrawAutomapProgram;
+
 	GLhandleARB				SurfZBufProgram;
 	GLhandleARB				SurfSimpleProgram;
 	GLhandleARB				SurfLightmapProgram;
+	GLhandleARB				SurfSkyProgram;
+	GLhandleARB				SurfDSkyProgram;
+	GLhandleARB				SurfMaskedProgram;
+
+	GLhandleARB				SurfModelProgram;
+	GLint					SurfModelInterLoc;
+	GLint					SurfModelTextureLoc;
+	GLint					SurfModelFogEnabledLoc;
+	GLint					SurfModelFogTypeLoc;
+	GLint					SurfModelFogColourLoc;
+	GLint					SurfModelFogDensityLoc;
+	GLint					SurfModelFogStartLoc;
+	GLint					SurfModelFogEndLoc;
+	GLint					SurfModelVert2Loc;
+	GLint					SurfModelTexCoordLoc;
+	GLint					SurfModelLightValLoc;
+
+	GLhandleARB				SurfPartProgram;
+	GLint					SurfPartTexCoordLoc;
+	GLint					SurfPartLightValLoc;
 
 	//
 	//	Console variables

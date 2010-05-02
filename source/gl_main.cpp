@@ -320,8 +320,29 @@ void VOpenGLDrawer::InitResolution()
 
 	if (HaveShaders)
 	{
-		GLhandleARB VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_zbuf.vs");
-		GLhandleARB FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_zbuf.fs");
+		GLhandleARB VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/draw_simple.vs");
+		GLhandleARB FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/draw_simple.fs");
+		DrawSimpleProgram = CreateProgram(VertexShader, FragmentShader);
+		DrawSimpleTextureLoc = p_glGetUniformLocationARB(DrawSimpleProgram, "Texture");
+		DrawSimpleAlphaLoc = p_glGetUniformLocationARB(DrawSimpleProgram, "Alpha");
+
+		//	Reuses vertex shader.
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/draw_shadow.fs");
+		DrawShadowProgram = CreateProgram(VertexShader, FragmentShader);
+		DrawShadowTextureLoc = p_glGetUniformLocationARB(DrawShadowProgram, "Texture");
+		DrawShadowAlphaLoc = p_glGetUniformLocationARB(DrawShadowProgram, "Alpha");
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/draw_fixed_col.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/draw_fixed_col.fs");
+		DrawFixedColProgram = CreateProgram(VertexShader, FragmentShader);
+		DrawFixedColColourLoc = p_glGetUniformLocationARB(DrawFixedColProgram, "Colour");
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/draw_automap.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/draw_automap.fs");
+		DrawAutomapProgram = CreateProgram(VertexShader, FragmentShader);
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_zbuf.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_zbuf.fs");
 		SurfZBufProgram = CreateProgram(VertexShader, FragmentShader);
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_simple.vs");
@@ -331,6 +352,39 @@ void VOpenGLDrawer::InitResolution()
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_lightmap.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_lightmap.fs");
 		SurfLightmapProgram = CreateProgram(VertexShader, FragmentShader);
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_sky.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_sky.fs");
+		SurfSkyProgram = CreateProgram(VertexShader, FragmentShader);
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_dsky.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_dsky.fs");
+		SurfDSkyProgram = CreateProgram(VertexShader, FragmentShader);
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_masked.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_masked.fs");
+		SurfMaskedProgram = CreateProgram(VertexShader, FragmentShader);
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_model.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_model.fs");
+		SurfModelProgram = CreateProgram(VertexShader, FragmentShader);
+		SurfModelInterLoc = p_glGetUniformLocationARB(SurfModelProgram, "Inter");
+		SurfModelTextureLoc = p_glGetUniformLocationARB(SurfModelProgram, "Texture");
+		SurfModelFogEnabledLoc = p_glGetUniformLocationARB(SurfModelProgram, "FogEnabled");
+		SurfModelFogTypeLoc = p_glGetUniformLocationARB(SurfModelProgram, "FogType");
+		SurfModelFogColourLoc = p_glGetUniformLocationARB(SurfModelProgram, "FogColour");
+		SurfModelFogDensityLoc = p_glGetUniformLocationARB(SurfModelProgram, "FogDensity");
+		SurfModelFogStartLoc = p_glGetUniformLocationARB(SurfModelProgram, "FogStart");
+		SurfModelFogEndLoc = p_glGetUniformLocationARB(SurfModelProgram, "FogEnd");
+		SurfModelVert2Loc = p_glGetAttribLocationARB(SurfModelProgram, "Vert2");
+		SurfModelTexCoordLoc = p_glGetAttribLocationARB(SurfModelProgram, "TexCoord");
+		SurfModelLightValLoc = p_glGetAttribLocationARB(SurfModelProgram, "LightVal");
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_part.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_part.fs");
+		SurfPartProgram = CreateProgram(VertexShader, FragmentShader);
+		SurfPartTexCoordLoc = p_glGetAttribLocationARB(SurfPartProgram, "TexCoord");
+		SurfPartLightValLoc = p_glGetAttribLocationARB(SurfPartProgram, "LightVal");
 	}
 	unguard;
 }
@@ -380,10 +434,13 @@ void VOpenGLDrawer::Setup2D()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
-	glEnable(GL_ALPHA_TEST);
+	if (!HaveShaders)
+	{
+		glEnable(GL_ALPHA_TEST);
 
-	glColor4f(1,1,1,1);
-	SetFade(0);
+		glColor4f(1,1,1,1);
+		SetFade(0);
+	}
 	unguard;
 }
 
@@ -594,14 +651,26 @@ void VOpenGLDrawer::EndView()
 
 	if (cl && cl->CShift)
 	{
-		glDisable(GL_ALPHA_TEST);
-		glDisable(GL_TEXTURE_2D);
-		glEnable(GL_BLEND);
-
-		glColor4f((float)((cl->CShift >> 16) & 0xff) / 255.0,
+		if (HaveShaders)
+		{
+			p_glUseProgramObjectARB(DrawFixedColProgram);
+			p_glUniform4fARB(DrawFixedColColourLoc,
+				(float)((cl->CShift >> 16) & 0xff) / 255.0,
 				(float)((cl->CShift >> 8) & 0xff) / 255.0,
 				(float)(cl->CShift & 0xff) / 255.0,
 				(float)((cl->CShift >> 24) & 0xff) / 255.0);
+		}
+		else
+		{
+			glDisable(GL_ALPHA_TEST);
+			glDisable(GL_TEXTURE_2D);
+			glColor4f((float)((cl->CShift >> 16) & 0xff) / 255.0,
+					(float)((cl->CShift >> 8) & 0xff) / 255.0,
+					(float)(cl->CShift & 0xff) / 255.0,
+					(float)((cl->CShift >> 24) & 0xff) / 255.0);
+		}
+		glEnable(GL_BLEND);
+
 		glBegin(GL_QUADS);
 		glVertex2f(0, 0);
 		glVertex2f(ScreenWidth, 0);
@@ -610,8 +679,11 @@ void VOpenGLDrawer::EndView()
 		glEnd();
 
 		glDisable(GL_BLEND);
-		glEnable(GL_ALPHA_TEST);
-		glEnable(GL_TEXTURE_2D);
+		if (!HaveShaders)
+		{
+			glEnable(GL_ALPHA_TEST);
+			glEnable(GL_TEXTURE_2D);
+		}
 	}
 	unguard;
 }

@@ -556,10 +556,27 @@ fxdefs/strife/decorations.txt	@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/decoratio
 fxdefs/strife/monsters.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/monsters.txt
 fxdefs/strife/weapons.txt		@CMAKE_CURRENT_SOURCE_DIR@/fxdefs/strife/weapons.txt
 
+glshaders/draw_automap.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_automap.fs
+glshaders/draw_automap.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_automap.vs
+glshaders/draw_fixed_col.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_fixed_col.fs
+glshaders/draw_fixed_col.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_fixed_col.vs
+glshaders/draw_shadow.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_shadow.fs
+glshaders/draw_simple.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_simple.fs
+glshaders/draw_simple.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_simple.vs
+glshaders/surf_dsky.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_dsky.fs
+glshaders/surf_dsky.vs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_dsky.vs
 glshaders/surf_lightmap.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_lightmap.fs
 glshaders/surf_lightmap.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_lightmap.vs
+glshaders/surf_masked.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_masked.fs
+glshaders/surf_masked.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_masked.vs
+glshaders/surf_model.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_model.fs
+glshaders/surf_model.vs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_model.vs
+glshaders/surf_part.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_part.fs
+glshaders/surf_part.vs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_part.vs
 glshaders/surf_simple.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_simple.fs
 glshaders/surf_simple.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_simple.vs
+glshaders/surf_sky.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_sky.fs
+glshaders/surf_sky.vs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_sky.vs
 glshaders/surf_zbuf.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_zbuf.fs
 glshaders/surf_zbuf.vs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_zbuf.vs
 
