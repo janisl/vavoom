@@ -390,11 +390,67 @@ protected:
 	GLhandleARB				DrawAutomapProgram;
 
 	GLhandleARB				SurfZBufProgram;
+
 	GLhandleARB				SurfSimpleProgram;
+	GLint					SurfSimpleSAxisLoc;
+	GLint					SurfSimpleTAxisLoc;
+	GLint					SurfSimpleSOffsLoc;
+	GLint					SurfSimpleTOffsLoc;
+	GLint					SurfSimpleTexIWLoc;
+	GLint					SurfSimpleTexIHLoc;
+	GLint					SurfSimpleTextureLoc;
+	GLint					SurfSimpleLightLoc;
+	GLint					SurfSimpleFogEnabledLoc;
+	GLint					SurfSimpleFogTypeLoc;
+	GLint					SurfSimpleFogColourLoc;
+	GLint					SurfSimpleFogDensityLoc;
+	GLint					SurfSimpleFogStartLoc;
+	GLint					SurfSimpleFogEndLoc;
+
 	GLhandleARB				SurfLightmapProgram;
+	GLint					SurfLightmapSAxisLoc;
+	GLint					SurfLightmapTAxisLoc;
+	GLint					SurfLightmapSOffsLoc;
+	GLint					SurfLightmapTOffsLoc;
+	GLint					SurfLightmapTexIWLoc;
+	GLint					SurfLightmapTexIHLoc;
+	GLint					SurfLightmapTexMinSLoc;
+	GLint					SurfLightmapTexMinTLoc;
+	GLint					SurfLightmapCacheSLoc;
+	GLint					SurfLightmapCacheTLoc;
+	GLint					SurfLightmapTextureLoc;
+	GLint					SurfLightmapLightMapLoc;
+	GLint					SurfLightmapSpecularMapLoc;
+	GLint					SurfLightmapFogEnabledLoc;
+	GLint					SurfLightmapFogTypeLoc;
+	GLint					SurfLightmapFogColourLoc;
+	GLint					SurfLightmapFogDensityLoc;
+	GLint					SurfLightmapFogStartLoc;
+	GLint					SurfLightmapFogEndLoc;
+
 	GLhandleARB				SurfSkyProgram;
+	GLint					SurfSkyTextureLoc;
+	GLint					SurfSkyBrightnessLoc;
+	GLint					SurfSkyTexCoordLoc;
+
 	GLhandleARB				SurfDSkyProgram;
+	GLint					SurfDSkyTextureLoc;
+	GLint					SurfDSkyTexture2Loc;
+	GLint					SurfDSkyBrightnessLoc;
+	GLint					SurfDSkyTexCoordLoc;
+	GLint					SurfDSkyTexCoord2Loc;
+
 	GLhandleARB				SurfMaskedProgram;
+	GLint					SurfMaskedTextureLoc;
+	GLint					SurfMaskedLightLoc;
+	GLint					SurfMaskedFogEnabledLoc;
+	GLint					SurfMaskedFogTypeLoc;
+	GLint					SurfMaskedFogColourLoc;
+	GLint					SurfMaskedFogDensityLoc;
+	GLint					SurfMaskedFogStartLoc;
+	GLint					SurfMaskedFogEndLoc;
+	GLint					SurfMaskedAlphaRefLoc;
+	GLint					SurfMaskedTexCoordLoc;
 
 	GLhandleARB				SurfModelProgram;
 	GLint					SurfModelInterLoc;
