@@ -115,6 +115,7 @@ public:
 	virtual void PreRender() = 0;
 	virtual void SegMoved(seg_t*) = 0;
 	virtual void SetupFakeFloors(sector_t*) = 0;
+	virtual void RenderPlayerView() = 0;
 
 	virtual void AddStaticLight(const TVec&, float, vuint32) = 0;
 	virtual dlight_t* AllocDlight(VThinker*) = 0;

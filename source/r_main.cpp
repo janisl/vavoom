@@ -705,7 +705,7 @@ void VRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
 void R_RenderPlayerView()
 {
 	guard(R_RenderPlayerView);
-	((VRenderLevel*)GClLevel->RenderData)->RenderPlayerView();
+	GClLevel->RenderData->RenderPlayerView();
 	unguard;
 }
 
