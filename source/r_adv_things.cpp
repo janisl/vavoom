@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: r_things.cpp 4003 2009-03-04 20:08:00Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -66,32 +66,32 @@ extern VCvarI		r_chasecam;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VCvarI			r_draw_mobjs("r_draw_mobjs", "1", CVAR_Archive);
-VCvarI			r_draw_psprites("r_draw_psprites", "1", CVAR_Archive);
-VCvarI			r_models("r_models", "1", CVAR_Archive);
-VCvarI			r_view_models("r_view_models", "1", CVAR_Archive);
-VCvarI			r_sort_sprites("r_sort_sprites", "0");
-VCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_Archive);
-VCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_Archive);
-VCvarI			r_drawfuzz("r_drawfuzz", "1", CVAR_Archive);
-VCvarF			transsouls("transsouls", "1.0", CVAR_Archive);
-VCvarI			croshair("croshair", "0", CVAR_Archive);
-VCvarF			croshair_alpha("croshair_alpha", "1", CVAR_Archive);
+extern VCvarI			r_draw_mobjs;
+extern VCvarI			r_draw_psprites;
+extern VCvarI			r_models;
+extern VCvarI			r_view_models;
+extern VCvarI			r_sort_sprites;
+extern VCvarI			r_fix_sprite_offsets;
+extern VCvarI			r_sprite_fix_delta;
+extern VCvarI			r_drawfuzz;
+extern VCvarF			transsouls;
+extern VCvarI			croshair;
+extern VCvarF			croshair_alpha;
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VRenderLevel::DrawTranslucentPoly
+//	VAdvancedRenderLevel::DrawTranslucentPoly
 //
 //==========================================================================
 
-void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
+void VAdvancedRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 	int lump, float Alpha, bool Additive, int translation, bool type,
 	vuint32 light, vuint32 Fade, const TVec& normal, float pdist,
 	const TVec& saxis, const TVec& taxis, const TVec& texorg)
 {
-	guard(VRenderLevel::DrawTranslucentPoly);
+	guard(VAdvancedRenderLevel::DrawTranslucentPoly);
 	int i;
 
 	TVec mid(0, 0, 0);
@@ -190,14 +190,14 @@ void VRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int count,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderSprite
+//	VAdvancedRenderLevel::RenderSprite
 //
 //==========================================================================
 
-void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
+void VAdvancedRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 	float Alpha, bool Additive)
 {
-	guard(VRenderLevel::RenderSprite);
+	guard(VAdvancedRenderLevel::RenderSprite);
 	int spr_type = thing->SpriteType;
 
 	TVec sprorigin = thing->Origin;
@@ -421,14 +421,14 @@ void VRenderLevel::RenderSprite(VEntity* thing, vuint32 light, vuint32 Fade,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderTranslucentAliasModel
+//	VAdvancedRenderLevel::RenderTranslucentAliasModel
 //
 //==========================================================================
 
-void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
+void VAdvancedRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 	vuint32 Fade, float Alpha, bool Additive, float TimeFrac)
 {
-	guard(VRenderLevel::RenderTranslucentAliasModel);
+	guard(VAdvancedRenderLevel::RenderTranslucentAliasModel);
 	int i;
 
 	float dist = fabs(DotProduct(mobj->Origin - vieworg, viewforward));
@@ -492,14 +492,14 @@ void VRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 light,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderAliasModel
+//	VAdvancedRenderLevel::RenderAliasModel
 //
 //==========================================================================
 
-bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
+bool VAdvancedRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 	vuint32 Fade, float Alpha, bool Additive)
 {
-	guard(VRenderLevel::RenderAliasModel);
+	guard(VAdvancedRenderLevel::RenderAliasModel);
 	if (!r_models)
 	{
 		return false;
@@ -532,13 +532,13 @@ bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderThing
+//	VAdvancedRenderLevel::RenderThing
 //
 //==========================================================================
 
-void VRenderLevel::RenderThing(VEntity* mobj)
+void VAdvancedRenderLevel::RenderThing(VEntity* mobj)
 {
-	guard(VRenderLevel::RenderThing);
+	guard(VAdvancedRenderLevel::RenderThing);
 	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
@@ -629,13 +629,13 @@ void VRenderLevel::RenderThing(VEntity* mobj)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderMobjs
+//	VAdvancedRenderLevel::RenderMobjs
 //
 //==========================================================================
 
-void VRenderLevel::RenderMobjs()
+void VAdvancedRenderLevel::RenderMobjs()
 {
-	guard(VRenderLevel::RenderMobjs);
+	guard(VAdvancedRenderLevel::RenderMobjs);
 	if (!r_draw_mobjs)
 	{
 		return;
@@ -650,13 +650,13 @@ void VRenderLevel::RenderMobjs()
 
 //==========================================================================
 //
-//	VRenderLevel::DrawTranslucentPolys
+//	VAdvancedRenderLevel::DrawTranslucentPolys
 //
 //==========================================================================
 
-void VRenderLevel::DrawTranslucentPolys()
+void VAdvancedRenderLevel::DrawTranslucentPolys()
 {
-	guard(VRenderLevel::DrawTranslucentPolys);
+	guard(VAdvancedRenderLevel::DrawTranslucentPolys);
 	int i, found;
 	do
 	{
@@ -703,14 +703,14 @@ void VRenderLevel::DrawTranslucentPolys()
 
 //==========================================================================
 //
-//	VRenderLevel::RenderPSprite
+//	VAdvancedRenderLevel::RenderPSprite
 //
 //==========================================================================
 
-void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
+void VAdvancedRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 	vuint32 light, vuint32 Fade, float Alpha, bool Additive)
 {
-	guard(VRenderLevel::RenderPSprite);
+	guard(VAdvancedRenderLevel::RenderPSprite);
 	spritedef_t*		sprdef;
 	spriteframe_t*		sprframe;
 	int					lump;
@@ -799,14 +799,14 @@ void VRenderLevel::RenderPSprite(VViewState* VSt, float PSP_DIST,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderViewModel
+//	VAdvancedRenderLevel::RenderViewModel
 //
 //==========================================================================
 
-bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
+bool VAdvancedRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 	vuint32 Fade, float Alpha, bool Additive)
 {
-	guard(VRenderLevel::RenderViewModel);
+	guard(VAdvancedRenderLevel::RenderViewModel);
 	if (!r_view_models)
 	{
 		return false;
@@ -840,13 +840,13 @@ bool VRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 
 //==========================================================================
 //
-//	VRenderLevel::DrawPlayerSprites
+//	VAdvancedRenderLevel::DrawPlayerSprites
 //
 //==========================================================================
 
-void VRenderLevel::DrawPlayerSprites()
+void VAdvancedRenderLevel::DrawPlayerSprites()
 {
-	guard(VRenderLevel::DrawPlayerSprites);
+	guard(VAdvancedRenderLevel::DrawPlayerSprites);
 	if (!r_draw_psprites || r_chasecam)
 	{
 		return;
@@ -922,13 +922,13 @@ void VRenderLevel::DrawPlayerSprites()
 
 //==========================================================================
 //
-//	VRenderLevel::DrawCroshair
+//	VAdvancedRenderLevel::DrawCroshair
 //
 //==========================================================================
 
-void VRenderLevel::DrawCroshair()
+void VAdvancedRenderLevel::DrawCroshair()
 {
-	guard(VRenderLevel::DrawCroshair);
+	guard(VAdvancedRenderLevel::DrawCroshair);
 	if (croshair)
 	{
 		if (croshair_alpha < 0.0)	croshair_alpha = 0.0;
@@ -943,40 +943,5 @@ void VRenderLevel::DrawCroshair()
 			(int)croshair), VName::AddLower8), TEXTYPE_Pic);
 		R_DrawPic(320, cy, handle, croshair_alpha);
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//  R_DrawSpritePatch
-//
-//==========================================================================
-
-void R_DrawSpritePatch(int x, int y, int sprite, int frame, int rot,
-	int TranslStart, int TranslEnd, int Colour)
-{
-	guard(R_DrawSpritePatch);
-	bool			flip;
-	int				lump;
-
-	spriteframe_t *sprframe = &sprites[sprite].spriteframes[frame & VState::FF_FRAMEMASK];
-	flip = sprframe->flip[rot];
-	lump = sprframe->lump[rot];
-	VTexture* Tex = GTextureManager[lump];
-
-	Tex->GetWidth();
-
-	float x1 = x - Tex->SOffset;
-	float y1 = y - Tex->TOffset;
-	float x2 = x1 + Tex->GetWidth();
-	float y2 = y1 + Tex->GetHeight();
-
-	x1 *= fScaleX;
-	y1 *= fScaleY;
-	x2 *= fScaleX;
-	y2 *= fScaleY;
-
-	Drawer->DrawSpriteLump(x1, y1, x2, y2, Tex, R_GetCachedTranslation(
-		R_SetMenuPlayerTrans(TranslStart, TranslEnd, Colour), NULL), flip);
 	unguard;
 }

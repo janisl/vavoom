@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: r_main.cpp 4198 2010-03-28 18:22:57Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -32,6 +32,7 @@
 
 #include "gamedefs.h"
 #include "r_local.h"
+#include "r_hardware.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -39,158 +40,36 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-void R_FreeSkyboxData();
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
+extern subsector_t*		r_oldviewleaf;
+extern VCvarI			precache;
+extern bool				set_resolutioon_needed;
+extern VCvarI			screen_size;
+extern VCvarF			fov;
+extern float			old_fov;
+extern int				prev_old_aspect;
+extern TVec				clip_base[4];
+extern VCvarI			r_fog_test;
+extern VTextureTranslation*	PlayerTranslations[MAXPLAYERS + 1];
+
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int						screenblocks = 0;
-
-TVec					vieworg;
-TVec					viewforward;
-TVec					viewright;
-TVec					viewup;
-TAVec					viewangles;
-
-TClipPlane				view_clipplanes[5];
-
-int						r_visframecount;
-
-VCvarI					r_fog("r_fog", "0");
-VCvarI					r_fog_test("r_fog_test", "0");
-VCvarF					r_fog_r("r_fog_r", "0.5");
-VCvarF					r_fog_g("r_fog_g", "0.5");
-VCvarF					r_fog_b("r_fog_b", "0.5");
-VCvarF					r_fog_start("r_fog_start", "1.0");
-VCvarF					r_fog_end("r_fog_end", "2048.0");
-VCvarF					r_fog_density("r_fog_density", "0.5");
-
-VCvarI					old_aspect("r_old_aspect_ratio", "1", CVAR_Archive);
-VCvarI					r_interpolate_frames("r_interpolate_frames", "1", CVAR_Archive);
-VCvarI					r_vsync("r_vsync", "1", CVAR_Archive);
-VCvarI					r_fade_light("r_fade_light", "0", CVAR_Archive);
-VCvarF					r_fade_factor("r_fade_factor", "4.0", CVAR_Archive);
-VCvarF					r_sky_bright_factor("r_sky_bright_factor", "1.0", CVAR_Archive);
-
-VDrawer					*Drawer;
-
-refdef_t				refdef;
-
-float					PixelAspect;
-
-bool					MirrorFlip;
-bool					MirrorClip;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-
-static FDrawerDesc		*DrawerList[DRAWER_MAX];
-
-VCvarI					screen_size("screen_size", "10", CVAR_Archive);
-bool					set_resolutioon_needed = true;
-
-// Angles in the SCREENWIDTH wide window.
-VCvarF					fov("fov", "90");
-float					old_fov = 90.0;
-
-int						prev_old_aspect;
-
-TVec					clip_base[4];
-
-subsector_t				*r_viewleaf;
-subsector_t				*r_oldviewleaf;
-
-//
-//	Translation tables
-//
-VTextureTranslation*	PlayerTranslations[MAXPLAYERS + 1];
-static TArray<VTextureTranslation*>	CachedTranslations;
-
-// if true, load all graphics at start
-VCvarI					precache("precache", "1", CVAR_Archive);
-
-static VCvarI			_driver("_driver", "0", CVAR_Rom);
-
-static VCvarI			r_level_renderer("r_level_renderer", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//  FDrawerDesc::FDrawerDesc
+//	VAdvancedRenderLevel::VAdvancedRenderLevel
 //
 //==========================================================================
 
-FDrawerDesc::FDrawerDesc(int Type, const char* AName, const char* ADescription,
-	const char* ACmdLineArg, VDrawer* (*ACreator)())
-: Name(AName)
-, Description(ADescription)
-, CmdLineArg(ACmdLineArg)
-, Creator(ACreator)
-{
-	guard(FDrawerDesc::FDrawerDesc);
-	DrawerList[Type] = this;
-	unguard
-}
-
-//==========================================================================
-//
-//  R_Init
-//
-//==========================================================================
-
-void R_Init()
-{
-	guard(R_Init);
-	R_InitSkyBoxes();
-	R_InitModels();
-	Drawer->InitData();
-
-	for (int i = 0; i < 256; i++)
-	{
-		light_remap[i] = byte(i * i / 255);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//  R_Start
-//
-//==========================================================================
-
-void R_Start(VLevel* ALevel)
-{
-	guard(R_Start);
-	switch (r_level_renderer)
-	{
-	case 1:
-		ALevel->RenderData = new VRenderLevel(ALevel);
-		break;
-
-	case 2:
-		ALevel->RenderData = new VAdvancedRenderLevel(ALevel);
-		break;
-
-	default:
-		//FIXME Should select based on what drawer can do.
-		ALevel->RenderData = new VRenderLevel(ALevel);
-		break;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VRenderLevel::VRenderLevel
-//
-//==========================================================================
-
-VRenderLevel::VRenderLevel(VLevel* ALevel)
+VAdvancedRenderLevel::VAdvancedRenderLevel(VLevel* ALevel)
 : VRenderLevelShared(ALevel)
 , c_subdivides(0)
 , free_wsurfs(0)
@@ -207,7 +86,7 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 , ActiveParticles(0)
 , FreeParticles(0)
 {
-	guard(VRenderLevel::VRenderLevel);
+	guard(VAdvancedRenderLevel::VAdvancedRenderLevel);
 	r_oldviewleaf = NULL;
 	trans_sprites = MainTransSprites;
 
@@ -234,13 +113,13 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 
 //==========================================================================
 //
-//	VRenderLevel::~VRenderLevel
+//	VAdvancedRenderLevel::~VAdvancedRenderLevel
 //
 //==========================================================================
 
-VRenderLevel::~VRenderLevel()
+VAdvancedRenderLevel::~VAdvancedRenderLevel()
 {
-	guard(VRenderLevel::~VRenderLevel);
+	guard(VAdvancedRenderLevel::~VAdvancedRenderLevel);
 	//	Free fake floor data.
 	for (int i = 0; i < Level->NumSectors; i++)
 	{
@@ -307,59 +186,13 @@ VRenderLevel::~VRenderLevel()
 
 //==========================================================================
 //
-// 	R_SetViewSize
-//
-// 	Do not really change anything here, because it might be in the middle
-// of a refresh. The change will take effect next refresh.
+//	VAdvancedRenderLevel::ExecuteSetViewSize
 //
 //==========================================================================
 
-void R_SetViewSize(int blocks)
+void VAdvancedRenderLevel::ExecuteSetViewSize()
 {
-	guard(R_SetViewSize);
-	if (blocks > 2)
-	{
-		screen_size = blocks;
-	}
-	set_resolutioon_needed = true;
-	unguard;
-}
-
-//==========================================================================
-//
-//  COMMAND SizeDown
-//
-//==========================================================================
-
-COMMAND(SizeDown)
-{
-	R_SetViewSize(screenblocks - 1);
-	GAudio->PlaySound(GSoundManager->GetSoundID("menu/change"),
-		TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1, 0, false);
-}
-
-//==========================================================================
-//
-//  COMMAND SizeUp
-//
-//==========================================================================
-
-COMMAND(SizeUp)
-{
-	R_SetViewSize(screenblocks + 1);
-	GAudio->PlaySound(GSoundManager->GetSoundID("menu/change"),
-		TVec(0, 0, 0), TVec(0, 0, 0), 0, 0, 1, 0, false);
-}
-
-//==========================================================================
-//
-//	VRenderLevel::ExecuteSetViewSize
-//
-//==========================================================================
-
-void VRenderLevel::ExecuteSetViewSize()
-{
-	guard(VRenderLevel::ExecuteSetViewSize);
+	guard(VAdvancedRenderLevel::ExecuteSetViewSize);
 	set_resolutioon_needed = false;
 	if (screen_size < 3)
 	{
@@ -429,37 +262,13 @@ void VRenderLevel::ExecuteSetViewSize()
 
 //==========================================================================
 //
-//	R_DrawViewBorder
+//	VAdvancedRenderLevel::TransformFrustum
 //
 //==========================================================================
 
-void R_DrawViewBorder()
+void VAdvancedRenderLevel::TransformFrustum()
 {
-	guard(R_DrawViewBorder);
-	if (GGameInfo->NetMode == NM_TitleMap)
-	{
-		GClGame->eventDrawViewBorder(320 - screenblocks * 32,
-			(480 - screenblocks * 480 / 10) / 2,
-			screenblocks * 64, screenblocks * 480 / 10);
-	}
-	else
-	{
-		GClGame->eventDrawViewBorder(320 - screenblocks * 32,
-			(480 - sb_height - screenblocks * (480 - sb_height) / 10) / 2,
-			screenblocks * 64, screenblocks * (480 - sb_height) / 10);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VRenderLevel::TransformFrustum
-//
-//==========================================================================
-
-void VRenderLevel::TransformFrustum()
-{
-	guard(VRenderLevel::TransformFrustum);
+	guard(VAdvancedRenderLevel::TransformFrustum);
 	for (int i = 0; i < 4; i++)
 	{
 		TVec &v = clip_base[i];
@@ -479,19 +288,19 @@ void VRenderLevel::TransformFrustum()
 
 //==========================================================================
 //
-//	VRenderLevel::SetupFrame
+//	VAdvancedRenderLevel::SetupFrame
 //
 //==========================================================================
 
-VCvarI			r_chasecam("r_chasecam", "0", CVAR_Archive);
-VCvarF			r_chase_dist("r_chase_dist", "32.0", CVAR_Archive);
-VCvarF			r_chase_up("r_chase_up", "128.0", CVAR_Archive);
-VCvarF			r_chase_right("r_chase_right", "0", CVAR_Archive);
-VCvarI			r_chase_front("r_chase_front", "0", CVAR_Archive);
+extern VCvarI			r_chasecam;
+extern VCvarF			r_chase_dist;
+extern VCvarF			r_chase_up;
+extern VCvarF			r_chase_right;
+extern VCvarI			r_chase_front;
 
-void VRenderLevel::SetupFrame()
+void VAdvancedRenderLevel::SetupFrame()
 {
-	guard(VRenderLevel::SetupFrame);
+	guard(VAdvancedRenderLevel::SetupFrame);
 	// change the view size if needed
 	if (screen_size != screenblocks || !screenblocks ||
 		set_resolutioon_needed || old_fov != fov ||
@@ -577,14 +386,14 @@ void VRenderLevel::SetupFrame()
 
 //==========================================================================
 //
-//	VRenderLevel::SetupCameraFrame
+//	VAdvancedRenderLevel::SetupCameraFrame
 //
 //==========================================================================
 
-void VRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
+void VAdvancedRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
 	refdef_t* rd)
 {
-	guard(VRenderLevel::SetupCameraFrame);
+	guard(VAdvancedRenderLevel::SetupCameraFrame);
 	rd->width = Tex->GetWidth();
 	rd->height = Tex->GetHeight();
 	rd->y = 0;
@@ -629,13 +438,13 @@ void VRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
 
 //==========================================================================
 //
-//	VRenderLevel::MarkLeaves
+//	VAdvancedRenderLevel::MarkLeaves
 //
 //==========================================================================
 
-void VRenderLevel::MarkLeaves()
+void VAdvancedRenderLevel::MarkLeaves()
 {
-	guard(VRenderLevel::MarkLeaves);
+	guard(VAdvancedRenderLevel::MarkLeaves);
 	byte	*vis;
 	node_t	*node;
 	int		i;
@@ -669,13 +478,13 @@ void VRenderLevel::MarkLeaves()
 
 //==========================================================================
 //
-//  VRenderLevel::RenderScene
+//  VAdvancedRenderLevel::RenderScene
 //
 //==========================================================================
 
-void VRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
+void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
 {
-	guard(VRenderLevel::RenderScene);
+	guard(VAdvancedRenderLevel::RenderScene);
 	r_viewleaf = Level->PointInSubsector(vieworg);
 
 	TransformFrustum();
@@ -688,6 +497,18 @@ void VRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
 
 	RenderWorld(RD, Range);
 
+	dlight_t* l = DLights;
+	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
+	{
+		if (l->die < Level->Time || !l->radius)
+		{
+			continue;
+		}
+		RenderLightShadows(l->origin, l->radius, l->colour);
+	}
+
+	((VAdvDrawer*)Drawer)->DrawWorldTexturesPass();
+
 	RenderMobjs();
 
 	DrawParticles();
@@ -698,26 +519,13 @@ void VRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
 
 //==========================================================================
 //
-//  R_RenderPlayerView
+//  VAdvancedRenderLevel::RenderPlayerView
 //
 //==========================================================================
 
-void R_RenderPlayerView()
+void VAdvancedRenderLevel::RenderPlayerView()
 {
-	guard(R_RenderPlayerView);
-	((VRenderLevel*)GClLevel->RenderData)->RenderPlayerView();
-	unguard;
-}
-
-//==========================================================================
-//
-//  VRenderLevel::RenderPlayerView
-//
-//==========================================================================
-
-void VRenderLevel::RenderPlayerView()
-{
-	guard(VRenderLevel::RenderPlayerView);
+	guard(VAdvancedRenderLevel::RenderPlayerView);
 	if (!Level->LevelInfo)
 	{
 		return;
@@ -763,13 +571,13 @@ void VRenderLevel::RenderPlayerView()
 
 //==========================================================================
 //
-//	VRenderLevel::UpdateCameraTexture
+//	VAdvancedRenderLevel::UpdateCameraTexture
 //
 //==========================================================================
 
-void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
+void VAdvancedRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
 {
-	guard(VRenderLevel::UpdateCameraTexture);
+	guard(VAdvancedRenderLevel::UpdateCameraTexture);
 	if (!Camera)
 	{
 		return;
@@ -800,13 +608,13 @@ void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
 
 //==========================================================================
 //
-//	VRenderLevel::GetFade
+//	VAdvancedRenderLevel::GetFade
 //
 //==========================================================================
 
-vuint32 VRenderLevel::GetFade(sec_region_t* Reg)
+vuint32 VAdvancedRenderLevel::GetFade(sec_region_t* Reg)
 {
-	guard(VRenderLevel::GetFade);
+	guard(VAdvancedRenderLevel::GetFade);
 	if (r_fog_test)
 	{
 		return 0xff000000 | (int(255 * r_fog_r) << 16) |
@@ -842,38 +650,15 @@ vuint32 VRenderLevel::GetFade(sec_region_t* Reg)
 
 //==========================================================================
 //
-//	R_DrawPic
-//
-//==========================================================================
-
-void R_DrawPic(int x, int y, int handle, float Alpha)
-{
-	guard(R_DrawPic);
-	if (handle < 0)
-	{
-		return;
-	}
-
-	VTexture* Tex = GTextureManager(handle);
-	x -= Tex->GetScaledSOffset();
-	y -= Tex->GetScaledTOffset();
-	Drawer->DrawPic(fScaleX * x, fScaleY * y,
-		fScaleX * (x + Tex->GetScaledWidth()), fScaleY * (y + Tex->GetScaledHeight()),
-		0, 0, Tex->GetWidth(), Tex->GetHeight(), Tex, NULL, Alpha);
-	unguard;
-}
-
-//==========================================================================
-//
-// 	VRenderLevel::PrecacheLevel
+// 	VAdvancedRenderLevel::PrecacheLevel
 //
 // 	Preloads all relevant graphics for the level.
 //
 //==========================================================================
 
-void VRenderLevel::PrecacheLevel()
+void VAdvancedRenderLevel::PrecacheLevel()
 {
-	guard(VRenderLevel::PrecacheLevel);
+	guard(VAdvancedRenderLevel::PrecacheLevel);
 	int			i;
 
 	if (cls.demoplayback)
@@ -916,26 +701,26 @@ void VRenderLevel::PrecacheLevel()
 
 //==========================================================================
 //
-//	VRenderLevel::GetTranslation
+//	VAdvancedRenderLevel::GetTranslation
 //
 //==========================================================================
 
-VTextureTranslation* VRenderLevel::GetTranslation(int TransNum)
+VTextureTranslation* VAdvancedRenderLevel::GetTranslation(int TransNum)
 {
-	guard(VRenderLevel::GetTranslation);
+	guard(VAdvancedRenderLevel::GetTranslation);
 	return R_GetCachedTranslation(TransNum, Level);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VRenderLevel::BuildPlayerTranslations
+//	VAdvancedRenderLevel::BuildPlayerTranslations
 //
 //==========================================================================
 
-void VRenderLevel::BuildPlayerTranslations()
+void VAdvancedRenderLevel::BuildPlayerTranslations()
 {
-	guard(VRenderLevel::BuildPlayerTranslations);
+	guard(VAdvancedRenderLevel::BuildPlayerTranslations);
 	for (TThinkerIterator<VPlayerReplicationInfo> It(Level); It; ++It)
 	{
 		if (It->PlayerNum < 0 || It->PlayerNum >= MAXPLAYERS)
@@ -968,251 +753,5 @@ void VRenderLevel::BuildPlayerTranslations()
 		}
 		Tr->BuildPlayerTrans(It->TranslStart, It->TranslEnd, It->Colour);
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_SetMenuPlayerTrans
-//
-//==========================================================================
-
-int R_SetMenuPlayerTrans(int Start, int End, int Col)
-{
-	guard(R_SetMenuPlayerTrans);
-	if (!Start || !End)
-	{
-		return 0;
-	}
-
-	VTextureTranslation* Tr = PlayerTranslations[MAXPLAYERS];
-	if (Tr && Tr->TranslStart == Start && Tr->TranslEnd == End &&
-		Tr->Colour == Col)
-	{
-		return (TRANSL_Player << TRANSL_TYPE_SHIFT) + MAXPLAYERS;
-	}
-
-	if (!Tr)
-	{
-		Tr = new VTextureTranslation;
-		PlayerTranslations[MAXPLAYERS] = Tr;
-	}
-	if (Tr->TranslStart != Start || Tr->TranslEnd == End)
-	{
-		Tr->Clear();
-	}
-	Tr->BuildPlayerTrans(Start, End, Col);
-	return (TRANSL_Player << TRANSL_TYPE_SHIFT) + MAXPLAYERS;
-	unguard;
-}
-
-//==========================================================================
-//
-//	R_GetCachedTranslation
-//
-//==========================================================================
-
-VTextureTranslation* R_GetCachedTranslation(int TransNum, VLevel* Level)
-{
-	guard(R_GetCachedTranslation);
-	int Type = TransNum >> TRANSL_TYPE_SHIFT;
-	int Index = TransNum & ((1 << TRANSL_TYPE_SHIFT) - 1);
-	VTextureTranslation* Tr;
-	switch (Type)
-	{
-	case TRANSL_Standard:
-		if (Index == 7)
-		{
-			Tr = &IceTranslation;
-		}
-		else
-		{
-			if (Index < 0 || Index >= NumTranslationTables)
-			{
-				return NULL;
-			}
-			Tr = TranslationTables[Index];
-		}
-		break;
-
-	case TRANSL_Player:
-		if (Index < 0 || Index >= MAXPLAYERS + 1)
-		{
-			return NULL;
-		}
-		Tr = PlayerTranslations[Index];
-		break;
-
-	case TRANSL_Level:
-		if (!Level || Index < 0 || Index >= Level->Translations.Num())
-		{
-			return NULL;
-		}
-		Tr = Level->Translations[Index];
-		break;
-
-	case TRANSL_BodyQueue:
-		if (!Level || Index < 0 || Index >= Level->BodyQueueTrans.Num())
-		{
-			return NULL;
-		}
-		Tr = Level->BodyQueueTrans[Index];
-		break;
-
-	case TRANSL_Decorate:
-		if (Index < 0 || Index >= DecorateTranslations.Num())
-		{
-			return NULL;
-		}
-		Tr = DecorateTranslations[Index];
-		break;
-
-	case TRANSL_Blood:
-		if (Index < 0 || Index >= BloodTranslations.Num())
-		{
-			return NULL;
-		}
-		Tr = BloodTranslations[Index];
-		break;
-
-	default:
-		return NULL;
-	}
-
-	if (!Tr)
-	{
-		return NULL;
-	}
-
-	for (int i = 0; i < CachedTranslations.Num(); i++)
-	{
-		VTextureTranslation* Check = CachedTranslations[i];
-		if (Check->Crc != Tr->Crc)
-		{
-			continue;
-		}
-		if (memcmp(Check->Palette, Tr->Palette, sizeof(Tr->Palette)))
-		{
-			continue;
-		}
-		return Check;
-	}
-
-	VTextureTranslation* Copy = new VTextureTranslation;
-	*Copy = *Tr;
-	CachedTranslations.Append(Copy);
-	return Copy;
-	unguard;
-}
-
-//==========================================================================
-//
-//	COMMAND TimeRefresh
-//
-//	For program optimization
-//
-//==========================================================================
-
-COMMAND(TimeRefresh)
-{
-	guard(COMMAND TimeRefresh);
-	int			i;
-	double		start, stop, time, RenderTime, UpdateTime;
-	float		startangle;
-
-	if (!cl)
-	{
-		return;
-	}
-
-	startangle = cl->ViewAngles.yaw;
-
-	RenderTime = 0;
-	UpdateTime = 0;
-	start = Sys_Time();
-	for (i = 0; i < 128; i++)
-	{
-		cl->ViewAngles.yaw = (float)(i) * 360.0 / 128.0;
-
-		Drawer->StartUpdate();
-
-		RenderTime -= Sys_Time();
-		R_RenderPlayerView();
-		RenderTime += Sys_Time();
-
-		UpdateTime -= Sys_Time();
-		Drawer->Update();
-		UpdateTime += Sys_Time();
-	}
-	stop = Sys_Time();
-	time = stop - start;
-	GCon->Logf("%f seconds (%f fps)", time, 128 / time);
-	GCon->Logf("Render time %f, update time %f", RenderTime, UpdateTime);
-
-	cl->ViewAngles.yaw = startangle;
-	unguard;
-}
-
-//==========================================================================
-//
-//	V_Init
-//
-//==========================================================================
-
-void V_Init()
-{
-	guard(V_Init);
-	int DIdx = -1;
-	for (int i = 0; i < DRAWER_MAX; i++)
-	{
-		if (!DrawerList[i])
-			continue;
-		//	Pick first available as default.
-		if (DIdx == -1)
-			DIdx = i;
-		//	Check for user driver selection.
-		if (DrawerList[i]->CmdLineArg && GArgs.CheckParm(DrawerList[i]->CmdLineArg))
-			DIdx = i;
-	}
-	if (DIdx == -1)
-		Sys_Error("No drawers are available");
-	_driver = DIdx;
-	GCon->Logf(NAME_Init, "Selected %s", DrawerList[DIdx]->Description);
-	//	Create drawer.
-	Drawer = DrawerList[DIdx]->Creator();
-	Drawer->Init();
-	unguard;
-}
-
-//==========================================================================
-//
-//	V_Shutdown
-//
-//==========================================================================
-
-void V_Shutdown()
-{
-	guard(V_Shutdown);
-	if (Drawer)
-	{
-		Drawer->Shutdown();
-		delete Drawer;
-		Drawer = NULL;
-	}
-	R_FreeModels();
-	for (int i = 0; i < MAXPLAYERS + 1; i++)
-	{
-		if (PlayerTranslations[i])
-		{
-			delete PlayerTranslations[i];
-			PlayerTranslations[i] = NULL;
-		}
-	}
-	for (int i = 0; i < CachedTranslations.Num(); i++)
-	{
-		delete CachedTranslations[i];
-	}
-	CachedTranslations.Clear();
-	R_FreeSkyboxData();
 	unguard;
 }

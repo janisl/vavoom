@@ -1269,3 +1269,191 @@ bool R_DrawStateModelFrame(VState* State, VState* NextState, float Inter,
 	Drawer->EndView();
 	return true;
 }
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::DrawAliasModel
+//
+//==========================================================================
+
+bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
+	float ScaleX, float ScaleY, VModel* Mdl, int Frame, int NextFrame,
+	VTextureTranslation* Trans, int Version, vuint32 Light, vuint32 Fade,
+	float Alpha, bool Additive, bool IsViewModel, float Inter, bool Interpolate)
+{
+	guard(VAdvancedRenderLevel::DrawAliasModel);
+	void* MData = Mod_Extradata(Mdl);
+
+	if (Mdl->type != MODEL_Script)
+	{
+		Sys_Error("Must use model scripts");
+	}
+
+	VScriptedModel* SMdl = (VScriptedModel*)MData;
+	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	if (FIdx == -1)
+	{
+		return false;
+	}
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+		InterpFrac);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
+	}
+
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+		NFIdx, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
+		IsViewModel, InterpFrac, Interpolate);
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::DrawAliasModel
+//
+//==========================================================================
+
+bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
+	float ScaleX, float ScaleY, VState* State, VState* NextState,
+	VTextureTranslation* Trans, int Version, vuint32 Light, vuint32 Fade,
+	float Alpha, bool Additive,	bool IsViewModel, float Inter, bool Interpolate)
+{
+	guard(VAdvancedRenderLevel::DrawAliasModel);
+	VClassModelScript* Cls = NULL;
+	for (int i = 0; i < ClassModels.Num(); i++)
+	{
+		if (ClassModels[i]->Name == State->Outer->Name)
+		{
+			Cls = ClassModels[i];
+		}
+	}
+	if (!Cls)
+	{
+		return false;
+	}
+
+	int FIdx = FindFrame(*Cls, State->InClassIndex, Inter);
+	if (FIdx == -1)
+	{
+		return false;
+	}
+
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*Cls, FIdx, NextState->InClassIndex, Inter,
+		InterpFrac);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
+	}
+
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, Trans,
+		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel,
+		InterpFrac, Interpolate);
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::DrawEntityModel
+//
+//==========================================================================
+
+bool VAdvancedRenderLevel::DrawEntityModel(VEntity* Ent, vuint32 Light, vuint32 Fade,
+	float Alpha, bool Additive, float Inter)
+{
+	guard(VAdvancedRenderLevel::DrawEntityModel);
+	VState* DispState = (Ent->EntityFlags & VEntity::EF_UseDispState) ?
+		Ent->DispState : Ent->State;
+	bool Interpolate;
+	// Check if we want to interpolate model frames
+	if (!r_interpolate_frames)
+	{
+		Interpolate = false;
+	}
+	else
+	{
+		Interpolate = true;
+	}
+	if (Ent->EntityFlags & VEntity::EF_FixedModel)
+	{
+		if (!FL_FileExists(VStr("models/") + Ent->FixedModelName))
+		{
+			GCon->Logf("Can't find %s", *Ent->FixedModelName);
+			return false;
+		}
+		VModel* Mdl = Mod_FindName(VStr("models/") + Ent->FixedModelName);
+		if (!Mdl)
+		{
+			return false;
+		}
+		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+			Ent->Angles, Ent->ScaleX, Ent->ScaleY, Mdl,
+			DispState->InClassIndex,
+			DispState->NextState ? DispState->NextState->InClassIndex :
+			DispState->InClassIndex, GetTranslation(Ent->Translation),
+			Ent->ModelVersion, Light, Fade, Alpha, Additive, false, Inter,
+			Interpolate);
+	}
+	else
+	{
+		return DrawAliasModel(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+			Ent->Angles, Ent->ScaleX, Ent->ScaleY, DispState,
+			DispState->NextState ? DispState->NextState : DispState,
+			GetTranslation(Ent->Translation), Ent->ModelVersion, Light, Fade,
+			Alpha, Additive, false, Inter, Interpolate);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::CheckAliasModelFrame
+//
+//==========================================================================
+
+bool VAdvancedRenderLevel::CheckAliasModelFrame(VEntity* Ent, float Inter)
+{
+	guard(VAdvancedRenderLevel::CheckAliasModelFrame);
+	if (Ent->EntityFlags & VEntity::EF_FixedModel)
+	{
+		if (!FL_FileExists(VStr("models/") + Ent->FixedModelName))
+		{
+			return false;
+		}
+		VModel* Mdl = Mod_FindName(VStr("models/") + Ent->FixedModelName);
+		if (!Mdl)
+		{
+			return false;
+		}
+		Mod_Extradata(Mdl);
+		if (Mdl->type != MODEL_Script)
+		{
+			Sys_Error("Must use model scripts");
+		}
+		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
+		return FindFrame(*SMdl->DefaultClass, Ent->State->InClassIndex, Inter) != -1;
+	}
+	else
+	{
+		VClassModelScript* Cls = NULL;
+		for (int i = 0; i < ClassModels.Num(); i++)
+		{
+			if (ClassModels[i]->Name == Ent->State->Outer->Name)
+			{
+				Cls = ClassModels[i];
+			}
+		}
+		if (!Cls)
+		{
+			return false;
+		}
+		return FindFrame(*Cls, Ent->State->InClassIndex, Inter) != -1;
+	}
+	unguard;
+}

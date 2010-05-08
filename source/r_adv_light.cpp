@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: r_light.cpp 4220 2010-04-24 15:24:35Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -42,27 +42,15 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-int					r_dlightframecount;
-bool				r_light_add;
-
-vuint32				blocklights[18 * 18];
-vuint32				blocklightsr[18 * 18];
-vuint32				blocklightsg[18 * 18];
-vuint32				blocklightsb[18 * 18];
-vuint32				blockaddlightsr[18 * 18];
-vuint32				blockaddlightsg[18 * 18];
-vuint32				blockaddlightsb[18 * 18];
-
-byte				light_remap[256];
-VCvarI				r_darken("r_darken", "0", CVAR_Archive);
-VCvarI				r_ambient("r_ambient", "0");
-int					light_mem;
-VCvarI				r_extrasamples("r_extrasamples", "0", CVAR_Archive);
-VCvarI				r_dynamic("r_dynamic", "1", CVAR_Archive);
-VCvarI				r_dynamic_clip("r_dynamic_clip", "0", CVAR_Archive);
-VCvarI				r_static_lights("r_static_lights", "1", CVAR_Archive);
-VCvarI				r_static_add("r_static_add", "0", CVAR_Archive);
-VCvarF				r_specular("r_specular", "0.1", CVAR_Archive);
+extern VCvarI				r_darken;
+extern VCvarI				r_ambient;
+extern int					light_mem;
+extern VCvarI				r_extrasamples;
+extern VCvarI				r_dynamic;
+extern VCvarI				r_dynamic_clip;
+extern VCvarI				r_static_lights;
+extern VCvarI				r_static_add;
+extern VCvarF				r_specular;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -87,14 +75,14 @@ static int			c_bad;
 
 //==========================================================================
 //
-//	VRenderLevel::AddStaticLight
+//	VAdvancedRenderLevel::AddStaticLight
 //
 //==========================================================================
 
-void VRenderLevel::AddStaticLight(const TVec &origin, float radius,
+void VAdvancedRenderLevel::AddStaticLight(const TVec &origin, float radius,
 	vuint32 colour)
 {
-	guard(VRenderLevel::AddStaticLight);
+	guard(VAdvancedRenderLevel::AddStaticLight);
 	light_t& L = Lights.Alloc();
 	L.origin = origin;
 	L.radius = radius;
@@ -105,13 +93,13 @@ void VRenderLevel::AddStaticLight(const TVec &origin, float radius,
 
 //==========================================================================
 //
-//	VRenderLevel::CalcMinMaxs
+//	VAdvancedRenderLevel::CalcMinMaxs
 //
 //==========================================================================
 
-void VRenderLevel::CalcMinMaxs(surface_t *surf)
+void VAdvancedRenderLevel::CalcMinMaxs(surface_t *surf)
 {
-	guard(VRenderLevel::CalcMinMaxs);
+	guard(VAdvancedRenderLevel::CalcMinMaxs);
 	smins = TVec(99999.0, 99999.0, 99999.0);
 	smaxs = TVec(-999999.0, -999999.0, -999999.0);
 
@@ -136,16 +124,16 @@ void VRenderLevel::CalcMinMaxs(surface_t *surf)
 
 //==========================================================================
 //
-//	VRenderLevel::CastRay
+//	VAdvancedRenderLevel::CastRay
 //
 //	Returns the distance between the points, or -1 if blocked
 //
 //==========================================================================
 
-float VRenderLevel::CastRay(const TVec &p1, const TVec &p2,
+float VAdvancedRenderLevel::CastRay(const TVec &p1, const TVec &p2,
 	float squaredist)
 {
-	guard(VRenderLevel::CastRay);
+	guard(VAdvancedRenderLevel::CastRay);
 	linetrace_t		Trace;
 
 	TVec delta = p2 - p1;
@@ -164,15 +152,15 @@ float VRenderLevel::CastRay(const TVec &p1, const TVec &p2,
 
 //==========================================================================
 //
-//	VRenderLevel::CalcFaceVectors
+//	VAdvancedRenderLevel::CalcFaceVectors
 //
 //	Fills in texorg, worldtotex. and textoworld
 //
 //==========================================================================
 
-void VRenderLevel::CalcFaceVectors(surface_t *surf)
+void VAdvancedRenderLevel::CalcFaceVectors(surface_t *surf)
 {
-	guard(VRenderLevel::CalcFaceVectors);
+	guard(VAdvancedRenderLevel::CalcFaceVectors);
 	texinfo_t	*tex;
 	int			i;
 	TVec		texnormal;
@@ -231,16 +219,16 @@ void VRenderLevel::CalcFaceVectors(surface_t *surf)
 
 //==========================================================================
 //
-//	VRenderLevel::CalcPoints
+//	VAdvancedRenderLevel::CalcPoints
 //
 //	For each texture aligned grid point, back project onto the plane
 // to get the world xyz value of the sample point
 //
 //==========================================================================
 
-void VRenderLevel::CalcPoints(surface_t *surf)
+void VAdvancedRenderLevel::CalcPoints(surface_t *surf)
 {
-	guard(VRenderLevel::CalcPoints);
+	guard(VAdvancedRenderLevel::CalcPoints);
 	int			i;
 	int			s, t;
 	int			w, h;
@@ -341,13 +329,13 @@ void VRenderLevel::CalcPoints(surface_t *surf)
 
 //==========================================================================
 //
-//	VRenderLevel::SingleLightFace
+//	VAdvancedRenderLevel::SingleLightFace
 //
 //==========================================================================
 
-void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
+void VAdvancedRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 {
-	guard(VRenderLevel::SingleLightFace);
+	guard(VAdvancedRenderLevel::SingleLightFace);
 	float	dist;
 	TVec	incoming;
 	float	angle;
@@ -435,13 +423,13 @@ void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 
 //==========================================================================
 //
-//	VRenderLevel::LightFace
+//	VAdvancedRenderLevel::LightFace
 //
 //==========================================================================
 
-void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
+void VAdvancedRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 {
-	guard(VRenderLevel::LightFace);
+	guard(VAdvancedRenderLevel::LightFace);
 	int			i, s, t, w, h;
 	float		total;
 
@@ -600,13 +588,13 @@ void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 
 //==========================================================================
 //
-//	VRenderLevel::AllocDlight
+//	VAdvancedRenderLevel::AllocDlight
 //
 //==========================================================================
 
-dlight_t* VRenderLevel::AllocDlight(VThinker* Owner)
+dlight_t* VAdvancedRenderLevel::AllocDlight(VThinker* Owner)
 {
-	guard(VRenderLevel::AllocDlight);
+	guard(VAdvancedRenderLevel::AllocDlight);
 	int			i;
 	dlight_t*	dl;
 
@@ -657,13 +645,13 @@ dlight_t* VRenderLevel::AllocDlight(VThinker* Owner)
 
 //==========================================================================
 //
-//	VRenderLevel::DecayLights
+//	VAdvancedRenderLevel::DecayLights
 //
 //==========================================================================
 
-void VRenderLevel::DecayLights(float time)
+void VAdvancedRenderLevel::DecayLights(float time)
 {
-	guard(VRenderLevel::DecayLights);
+	guard(VAdvancedRenderLevel::DecayLights);
 	dlight_t* dl = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
@@ -679,13 +667,13 @@ void VRenderLevel::DecayLights(float time)
 
 //==========================================================================
 //
-//	VRenderLevel::MarkLights
+//	VAdvancedRenderLevel::MarkLights
 //
 //==========================================================================
 
-void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
+void VAdvancedRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 {
-	guard(VRenderLevel::MarkLights);
+	guard(VAdvancedRenderLevel::MarkLights);
 	int leafnum;
 
     if (bspnum & NF_SUBSECTOR)
@@ -735,13 +723,13 @@ void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 
 //==========================================================================
 //
-//	VRenderLevel::PushDlights
+//	VAdvancedRenderLevel::PushDlights
 //
 //==========================================================================
 
-void VRenderLevel::PushDlights()
+void VAdvancedRenderLevel::PushDlights()
 {
-	guard(VRenderLevel::PushDlights);
+	guard(VAdvancedRenderLevel::PushDlights);
 	if (GGameInfo->IsPaused())
 	{
 		return;
@@ -752,6 +740,7 @@ void VRenderLevel::PushDlights()
 	{
 		return;
 	}
+	return;
 
 	dlight_t* l = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
@@ -765,13 +754,13 @@ void VRenderLevel::PushDlights()
 
 //==========================================================================
 //
-//	VRenderLevel::LightPoint
+//	VAdvancedRenderLevel::LightPoint
 //
 //==========================================================================
 
-vuint32 VRenderLevel::LightPoint(const TVec &p)
+vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 {
-	guard(VRenderLevel::LightPoint);
+	guard(VAdvancedRenderLevel::LightPoint);
 	subsector_t		*sub;
 	subregion_t		*reg;
 	float			l, lr, lg, lb, d, add;
@@ -899,13 +888,13 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 
 //==========================================================================
 //
-//	VRenderLevel::AddDynamicLights
+//	VAdvancedRenderLevel::AddDynamicLights
 //
 //==========================================================================
 
-void VRenderLevel::AddDynamicLights(surface_t *surf)
+void VAdvancedRenderLevel::AddDynamicLights(surface_t *surf)
 {
-	guard(VRenderLevel::AddDynamicLights);
+	guard(VAdvancedRenderLevel::AddDynamicLights);
 	int			lnum;
 	int			sd, td;
 	float		dist, rad, minlight, rmul, gmul, bmul;
@@ -998,15 +987,15 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 
 //==========================================================================
 //
-//	VRenderLevel::BuildLightMap
+//	VAdvancedRenderLevel::BuildLightMap
 //
 //	Combine and scale multiple lightmaps into the 8.8 format in blocklights
 //
 //==========================================================================
 
-bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
+bool VAdvancedRenderLevel::BuildLightMap(surface_t *surf, int shift)
 {
-	guard(VRenderLevel::BuildLightMap);
+	guard(VAdvancedRenderLevel::BuildLightMap);
 	int			smax, tmax;
 	int			t;
 	int			i, size;

@@ -56,7 +56,7 @@
 //
 //==========================================================================
 
-VPortal::VPortal(class VRenderLevel* ARLev)
+VPortal::VPortal(VRenderLevelShared* ARLev)
 : RLev(ARLev)
 {
 	Level = RLev->PortalLevel + 1;

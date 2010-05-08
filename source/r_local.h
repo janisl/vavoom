@@ -178,7 +178,7 @@ class VSkyPortal : public VPortal
 public:
 	VSky*			Sky;
 
-	VSkyPortal(class VRenderLevel* ARLev, VSky* ASky)
+	VSkyPortal(VRenderLevelShared* ARLev, VSky* ASky)
 	: VPortal(ARLev)
 	, Sky(ASky)
 	{}
@@ -193,7 +193,7 @@ class VSkyBoxPortal : public VPortal
 public:
 	VEntity*		Viewport;
 
-	VSkyBoxPortal(class VRenderLevel* ARLev, VEntity* AViewport)
+	VSkyBoxPortal(VRenderLevelShared* ARLev, VEntity* AViewport)
 	: VPortal(ARLev)
 	, Viewport(AViewport)
 	{}
@@ -207,7 +207,7 @@ class VSectorStackPortal : public VPortal
 public:
 	VEntity*		Viewport;
 
-	VSectorStackPortal(class VRenderLevel* ARLev, VEntity* AViewport)
+	VSectorStackPortal(VRenderLevelShared* ARLev, VEntity* AViewport)
 	: VPortal(ARLev)
 	, Viewport(AViewport)
 	{}
@@ -220,7 +220,7 @@ class VMirrorPortal : public VPortal
 public:
 	TPlane*			Plane;
 
-	VMirrorPortal(class VRenderLevel* ARLev, TPlane* APlane)
+	VMirrorPortal(VRenderLevelShared* ARLev, TPlane* APlane)
 	: VPortal(ARLev)
 	, Plane(APlane)
 	{}
@@ -228,32 +228,16 @@ public:
 	void DrawContents();
 };
 
-class VRenderLevel : public VRenderLevelDrawer
+class VRenderLevelShared : public VRenderLevelDrawer
 {
-private:
+protected:
 	friend class VPortal;
 	friend class VSkyPortal;
 	friend class VSkyBoxPortal;
 	friend class VSectorStackPortal;
 	friend class VMirrorPortal;
 
-	struct light_t
-	{
-		TVec			origin;
-		float			radius;
-		vuint32			colour;
-		int				leafnum;
-	};
-
-	enum { MAX_DLIGHTS	= 32 };
-
-	enum
-	{
-		MAX_PARTICLES			= 2048,	// default max # of particles at one
-										//  time
-		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
-										//  on the command line
-	};
+	enum { MAX_TRANS_SPRITES	= 256 };
 
 	struct trans_sprite_t
 	{
@@ -282,16 +266,65 @@ private:
 		vuint32			Fade;
 	};
 
+	VLevel*			Level;
+
+	VEntity*		ViewEnt;
+
+	int				FrustumIndexes[5][6];
+	int				MirrorLevel;
+	int				PortalLevel;
+	int				VisSize;
+	vuint8*			BspVis;
+	trans_sprite_t*	trans_sprites;
+
+	//	Bumped light from gun blasts
+	int				ExtraLight;
+	int				FixedLight;
+	int				ColourMap;
+
+	VRenderLevelShared(VLevel* ALevel)
+	: Level(ALevel)
+	, ViewEnt(NULL)
+	, MirrorLevel(0)
+	, PortalLevel(0)
+	, VisSize(0)
+	, BspVis(NULL)
+	, trans_sprites(NULL)
+	, ExtraLight(0)
+	, FixedLight(0)
+	{}
+
+	virtual void TransformFrustum() = 0;
+	virtual void RenderScene(const refdef_t*, const VViewClipper*) = 0;
+};
+
+class VRenderLevel : public VRenderLevelShared
+{
+private:
+	struct light_t
+	{
+		TVec			origin;
+		float			radius;
+		vuint32			colour;
+		int				leafnum;
+	};
+
+	enum { MAX_DLIGHTS	= 32 };
+
+	enum
+	{
+		MAX_PARTICLES			= 2048,	// default max # of particles at one
+										//  time
+		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
+										//  on the command line
+	};
+
 	struct world_surf_t
 	{
 		surface_t*		Surf;
 		vuint8			ClipFlags;
 		vuint8			Type;
 	};
-
-	enum { MAX_TRANS_SPRITES	= 256 };
-
-	VLevel*			Level;
 
 	//	Surf variables
 	sec_plane_t		sky_plane;
@@ -325,23 +358,10 @@ private:
 
 	//	World render variables
 	VViewClipper			ViewClip;
-	int						VisSize;
-	vuint8*					BspVis;
-	int						FrustumIndexes[5][6];
 	TArray<world_surf_t>	WorldSurfs;
 	TArray<VPortal*>		Portals;
-	int						PortalLevel;
-	int						MirrorLevel;
 
 	trans_sprite_t	MainTransSprites[MAX_TRANS_SPRITES];
-	trans_sprite_t*	trans_sprites;
-
-	VEntity*		ViewEnt;
-
-	//	Bumped light from gun blasts
-	int				ExtraLight;
-	int				FixedLight;
-	int				ColourMap;
 
 	VViewClipper			LightClip;
 
@@ -472,6 +492,200 @@ public:
 	particle_t* NewParticle();
 };
 
+class VAdvancedRenderLevel : public VRenderLevelShared
+{
+private:
+	struct light_t
+	{
+		TVec			origin;
+		float			radius;
+		vuint32			colour;
+		int				leafnum;
+	};
+
+	enum { MAX_DLIGHTS	= 32 };
+
+	enum
+	{
+		MAX_PARTICLES			= 2048,	// default max # of particles at one
+										//  time
+		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
+										//  on the command line
+	};
+
+	struct world_surf_t
+	{
+		surface_t*		Surf;
+		vuint8			ClipFlags;
+		vuint8			Type;
+	};
+
+	//	Surf variables
+	sec_plane_t		sky_plane;
+	float			skyheight;
+
+	int				c_subdivides;
+
+	surface_t*		free_wsurfs;
+	int				c_seg_div;
+	void*			AllocatedWSurfBlocks;
+	subregion_t*	AllocatedSubRegions;
+	drawseg_t*		AllocatedDrawSegs;
+	segpart_t*		AllocatedSegParts;
+
+	//	Sky variables
+	int				CurrentSky1Texture;
+	int				CurrentSky2Texture;
+	bool			CurrentDoubleSky;
+	bool			CurrentLightning;
+	VSky			BaseSky;
+	TArray<VSky*>	SideSkies;
+
+	//	Light variables
+	TArray<light_t>	Lights;
+	dlight_t		DLights[MAX_DLIGHTS];
+
+	int				NumParticles;
+	particle_t*		Particles;
+	particle_t*		ActiveParticles;
+	particle_t*		FreeParticles;
+
+	//	World render variables
+	VViewClipper			ViewClip;
+	TArray<world_surf_t>	WorldSurfs;
+	TArray<VPortal*>		Portals;
+
+	trans_sprite_t	MainTransSprites[MAX_TRANS_SPRITES];
+
+	VViewClipper			LightClip;
+
+	//	General
+	void PrecacheLevel();
+	void ExecuteSetViewSize();
+	void TransformFrustum();
+	void SetupFrame();
+	void SetupCameraFrame(VEntity*, VTexture*, int, refdef_t*);
+	void MarkLeaves();
+	void RenderScene(const refdef_t*, const VViewClipper*);
+	vuint32 GetFade(sec_region_t*);
+	void UpdateCameraTexture(VEntity*, int, int);
+	VTextureTranslation* GetTranslation(int);
+	void BuildPlayerTranslations();
+
+	//	Surf methods
+	void SetupSky();
+	void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*);
+	void FlushSurfCaches(surface_t*);
+	surface_t* SubdivideFace(surface_t*, const TVec&, const TVec*);
+	sec_surface_t* CreateSecSurface(subsector_t*, sec_plane_t*);
+	void UpdateSecSurface(sec_surface_t*, sec_plane_t*, subsector_t*);
+	surface_t* NewWSurf();
+	void FreeWSurfs(surface_t*);
+	surface_t* SubdivideSeg(surface_t*, const TVec&, const TVec*);
+	surface_t* CreateWSurfs(TVec*, texinfo_t*, seg_t*, subsector_t*);
+	int CountSegParts(seg_t*);
+	void CreateSegParts(drawseg_t*, seg_t*);
+	void UpdateRowOffset(segpart_t*, float);
+	void UpdateTextureOffset(segpart_t*, float);
+	void UpdateDrawSeg(drawseg_t*);
+	void UpdateSubRegion(subregion_t*);
+	void UpdateSubsector(int, float*);
+	void UpdateBSPNode(int, float*);
+	void UpdateWorld(const refdef_t*, const VViewClipper*);
+	bool CopyPlaneIfValid(sec_plane_t*, const sec_plane_t*,
+		const sec_plane_t*);
+	void UpdateFakeFlats(sector_t*);
+	void FreeSurfaces(surface_t*);
+	void FreeSegParts(segpart_t*);
+
+	//	Sky methods
+	void InitSky();
+	void AnimateSky(float);
+
+	//	Light methods
+	static void CalcMinMaxs(surface_t*);
+	float CastRay(const TVec&, const TVec&, float);
+	static void CalcFaceVectors(surface_t*);
+	void CalcPoints(surface_t*);
+	void SingleLightFace(light_t*, surface_t*);
+	void LightFace(surface_t*, subsector_t*);
+	void MarkLights(dlight_t*, int, int);
+	void AddDynamicLights(surface_t*);
+
+	//	Particles
+	void InitParticles();
+	void ClearParticles();
+	void UpdateParticles(float);
+	void DrawParticles();
+
+	//	World BSP rendering
+	void SetUpFrustumIndexes();
+	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int, int, bool,
+		bool);
+	void RenderHorizon(drawseg_t*, int);
+	void RenderMirror(drawseg_t*, int);
+	void RenderLine(drawseg_t*, int);
+	void RenderSecSurface(sec_surface_t*, int, VEntity*);
+	void RenderSubRegion(subregion_t*, int);
+	void RenderSubsector(int, int);
+	void RenderBSPNode(int, float*, int);
+	void RenderWorld(const refdef_t*, const VViewClipper*);
+
+	void DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
+		VEntity* SkyBox, int LightSourceSector, int SideLight,
+		bool AbsSideLight, bool CheckSkyBoxAlways);
+	void RenderShadowLine(drawseg_t* dseg);
+	void RenderShadowSecSurface(sec_surface_t* ssurf, VEntity* SkyBox);
+	void RenderShadowSubRegion(subregion_t* region);
+	void RenderShadowSubsector(int num);
+	void RenderShadowBSPNode(int bspnum, float* bbox);
+	void RenderLightShadows(TVec& Pos, float Radius, vuint32 Colour);
+
+	//	Things
+	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, bool, int,
+		bool, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
+		const TVec&);
+	void RenderSprite(VEntity*, vuint32, vuint32, float, bool);
+	void RenderTranslucentAliasModel(VEntity*, vuint32, vuint32, float, bool,
+		float);
+	bool RenderAliasModel(VEntity*, vuint32, vuint32, float, bool);
+	void RenderThing(VEntity*);
+	void RenderMobjs();
+	void DrawTranslucentPolys();
+	void RenderPSprite(VViewState*, float, vuint32, vuint32, float, bool);
+	bool RenderViewModel(VViewState*, vuint32, vuint32, float, bool);
+	void DrawPlayerSprites();
+	void DrawCroshair();
+
+	//	Models
+	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VModel*,
+		int, int, VTextureTranslation*, int, vuint32, vuint32, float, bool, bool,
+		float, bool);
+	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*, VState*,
+		VTextureTranslation*, int, vuint32, vuint32, float, bool, bool, float, bool);
+	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
+	bool CheckAliasModelFrame(VEntity*, float);
+
+public:
+	VAdvancedRenderLevel(VLevel*);
+	~VAdvancedRenderLevel();
+
+	void RenderPlayerView();
+
+	void PreRender();
+	void SegMoved(seg_t*);
+	void SetupFakeFloors(sector_t*);
+
+	void AddStaticLight(const TVec&, float, vuint32);
+	dlight_t* AllocDlight(VThinker*);
+	void DecayLights(float);
+	void PushDlights();
+	vuint32 LightPoint(const TVec &p);
+	bool BuildLightMap(surface_t*, int);
+
+	particle_t* NewParticle();
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 //
@@ -505,8 +719,6 @@ extern refdef_t			refdef;
 
 extern VCvarI			old_aspect;
 extern VCvarI			r_interpolate_frames;
-
-extern VCvarI			r_shadow;
 
 extern VTextureTranslation**		TranslationTables;
 extern int							NumTranslationTables;

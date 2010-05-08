@@ -7,7 +7,7 @@
 //**	  ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**	   #    ##    ##    #      ####     ####   ##       ##
 //**
-//**	$Id$
+//**	$Id: r_bsp.cpp 4220 2010-04-24 15:24:35Z dj_jl $
 //**
 //**	Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -49,14 +49,14 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+extern VCvarI			r_maxmirrors;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static subsector_t*		r_sub;
 static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
 static bool				MirrorClipSegs;
-
-VCvarI					r_maxmirrors("r_maxmirrors", "4", CVAR_Archive);
 
 static TVec				CurrLightPos;
 static float			CurrLightRadius;
@@ -65,13 +65,13 @@ static float			CurrLightRadius;
 
 //==========================================================================
 //
-//	VRenderLevel::SetUpFrustumIndexes
+//	VAdvancedRenderLevel::SetUpFrustumIndexes
 //
 //==========================================================================
 
-void VRenderLevel::SetUpFrustumIndexes()
+void VAdvancedRenderLevel::SetUpFrustumIndexes()
 {
-	guard(VRenderLevel::SetUpFrustumIndexes);
+	guard(VAdvancedRenderLevel::SetUpFrustumIndexes);
 	for (int i = 0; i < 4; i++)
 	{
 		int *pindex = FrustumIndexes[i];
@@ -94,15 +94,15 @@ void VRenderLevel::SetUpFrustumIndexes()
 
 //==========================================================================
 //
-//	VRenderLevel::DrawSurfaces
+//	VAdvancedRenderLevel::DrawSurfaces
 //
 //==========================================================================
 
-void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
+void VAdvancedRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	int clipflags, VEntity* SkyBox, int LightSourceSector, int SideLight,
 	bool AbsSideLight, bool CheckSkyBoxAlways)
 {
-	guard(VRenderLevel::DrawSurfaces);
+	guard(VAdvancedRenderLevel::DrawSurfaces);
 	surface_t* surfs = InSurfs;
 	if (!surfs)
 	{
@@ -286,13 +286,13 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderHorizon
+//	VAdvancedRenderLevel::RenderHorizon
 //
 //==========================================================================
 
-void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
+void VAdvancedRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 {
-	guard(VRenderLevel::RenderHorizon);
+	guard(VAdvancedRenderLevel::RenderHorizon);
 	seg_t* Seg = dseg->seg;
 
 	if (!dseg->HorizonTop)
@@ -422,13 +422,13 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderMirror
+//	VAdvancedRenderLevel::RenderMirror
 //
 //==========================================================================
 
-void VRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
+void VAdvancedRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
 {
-	guard(VRenderLevel::RenderMirror);
+	guard(VAdvancedRenderLevel::RenderMirror);
 	seg_t* Seg = dseg->seg;
 
 	if (Drawer->HasStencil && MirrorLevel < r_maxmirrors)
@@ -466,15 +466,15 @@ void VRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderLine
+//	VAdvancedRenderLevel::RenderLine
 //
 // 	Clips the given segment and adds any visible pieces to the line list.
 //
 //==========================================================================
 
-void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
+void VAdvancedRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 {
-	guard(VRenderLevel::RenderLine);
+	guard(VAdvancedRenderLevel::RenderLine);
 	seg_t *line = dseg->seg;
 
 	if (!line->linedef)
@@ -566,14 +566,14 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderSecSurface
+//	VAdvancedRenderLevel::RenderSecSurface
 //
 //==========================================================================
 
-void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
+void VAdvancedRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 	VEntity* SkyBox)
 {
-	guard(VRenderLevel::RenderSecSurface);
+	guard(VAdvancedRenderLevel::RenderSecSurface);
 	sec_plane_t& plane = *ssurf->secplane;
 
 	if (!plane.pic)
@@ -627,16 +627,16 @@ void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderSubRegion
+//	VAdvancedRenderLevel::RenderSubRegion
 //
 // 	Determine floor/ceiling planes.
 // 	Draw one or more line segments.
 //
 //==========================================================================
 
-void VRenderLevel::RenderSubRegion(subregion_t* region, int clipflags)
+void VAdvancedRenderLevel::RenderSubRegion(subregion_t* region, int clipflags)
 {
-	guard(VRenderLevel::RenderSubRegion);
+	guard(VAdvancedRenderLevel::RenderSubRegion);
 	int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
@@ -684,13 +684,13 @@ void VRenderLevel::RenderSubRegion(subregion_t* region, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderSubsector
+//	VAdvancedRenderLevel::RenderSubsector
 //
 //==========================================================================
 
-void VRenderLevel::RenderSubsector(int num, int clipflags)
+void VAdvancedRenderLevel::RenderSubsector(int num, int clipflags)
 {
-	guard(VRenderLevel::RenderSubsector);
+	guard(VAdvancedRenderLevel::RenderSubsector);
 	subsector_t* Sub = &Level->Subsectors[num];
 	r_sub = Sub;
 
@@ -723,16 +723,16 @@ void VRenderLevel::RenderSubsector(int num, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderBSPNode
+//	VAdvancedRenderLevel::RenderBSPNode
 //
 //	Renders all subsectors below a given node, traversing subtree
 // recursively. Just call with BSP root.
 //
 //==========================================================================
 
-void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
+void VAdvancedRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 {
-	guard(VRenderLevel::RenderBSPNode);
+	guard(VAdvancedRenderLevel::RenderBSPNode);
 	if (ViewClip.ClipIsFull())
 	{
 		return;
@@ -823,15 +823,15 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::DrawShadowSurfaces
+//	VAdvancedRenderLevel::DrawShadowSurfaces
 //
 //==========================================================================
 
-void VRenderLevel::DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
+void VAdvancedRenderLevel::DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	VEntity* SkyBox, int LightSourceSector, int SideLight,
 	bool AbsSideLight, bool CheckSkyBoxAlways)
 {
-	guard(VRenderLevel::DrawShadowSurfaces);
+	guard(VAdvancedRenderLevel::DrawShadowSurfaces);
 	surface_t* surfs = InSurfs;
 	if (!surfs)
 	{
@@ -868,15 +868,15 @@ void VRenderLevel::DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderShadowLine
+//	VAdvancedRenderLevel::RenderShadowLine
 //
 // 	Clips the given segment and adds any visible pieces to the line list.
 //
 //==========================================================================
 
-void VRenderLevel::RenderShadowLine(drawseg_t* dseg)
+void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 {
-	guard(VRenderLevel::RenderShadowLine);
+	guard(VAdvancedRenderLevel::RenderShadowLine);
 	seg_t *line = dseg->seg;
 
 	if (!line->linedef)
@@ -939,13 +939,13 @@ void VRenderLevel::RenderShadowLine(drawseg_t* dseg)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderShadowSecSurface
+//	VAdvancedRenderLevel::RenderShadowSecSurface
 //
 //==========================================================================
 
-void VRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity* SkyBox)
+void VAdvancedRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity* SkyBox)
 {
-	guard(VRenderLevel::RenderShadowSecSurface);
+	guard(VAdvancedRenderLevel::RenderShadowSecSurface);
 	sec_plane_t& plane = *ssurf->secplane;
 
 	if (!plane.pic)
@@ -967,16 +967,16 @@ void VRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity* SkyBox)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderShadowSubRegion
+//	VAdvancedRenderLevel::RenderShadowSubRegion
 //
 // 	Determine floor/ceiling planes.
 // 	Draw one or more line segments.
 //
 //==========================================================================
 
-void VRenderLevel::RenderShadowSubRegion(subregion_t* region)
+void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 {
-	guard(VRenderLevel::RenderShadowSubRegion);
+	guard(VAdvancedRenderLevel::RenderShadowSubRegion);
 	int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
@@ -1024,13 +1024,13 @@ void VRenderLevel::RenderShadowSubRegion(subregion_t* region)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderShadowSubsector
+//	VAdvancedRenderLevel::RenderShadowSubsector
 //
 //==========================================================================
 
-void VRenderLevel::RenderShadowSubsector(int num)
+void VAdvancedRenderLevel::RenderShadowSubsector(int num)
 {
-	guard(VRenderLevel::RenderShadowSubsector);
+	guard(VAdvancedRenderLevel::RenderShadowSubsector);
 	subsector_t* Sub = &Level->Subsectors[num];
 	r_sub = Sub;
 
@@ -1062,16 +1062,16 @@ void VRenderLevel::RenderShadowSubsector(int num)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderShadowBSPNode
+//	VAdvancedRenderLevel::RenderShadowBSPNode
 //
 //	Renders all subsectors below a given node, traversing subtree
 // recursively. Just call with BSP root.
 //
 //==========================================================================
 
-void VRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox)
+void VAdvancedRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox)
 {
-	guard(VRenderLevel::RenderShadowBSPNode);
+	guard(VAdvancedRenderLevel::RenderShadowBSPNode);
 	if (LightClip.ClipIsFull())
 	{
 		return;
@@ -1130,13 +1130,13 @@ void VRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderLightShadows
+//	VAdvancedRenderLevel::RenderLightShadows
 //
 //==========================================================================
 
-void VRenderLevel::RenderLightShadows(TVec& Pos, float Radius, vuint32 Colour)
+void VAdvancedRenderLevel::RenderLightShadows(TVec& Pos, float Radius, vuint32 Colour)
 {
-	guard(VRenderLevel::RenderLightShadows);
+	guard(VAdvancedRenderLevel::RenderLightShadows);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
 	CurrLightPos = Pos;
@@ -1151,13 +1151,13 @@ void VRenderLevel::RenderLightShadows(TVec& Pos, float Radius, vuint32 Colour)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderWorld
+//	VAdvancedRenderLevel::RenderWorld
 //
 //==========================================================================
 
-void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
+void VAdvancedRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 {
-	guard(VRenderLevel::RenderWorld);
+	guard(VAdvancedRenderLevel::RenderWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
 	SetUpFrustumIndexes();
@@ -1228,7 +1228,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		unguard;
 	}
 
-	Drawer->WorldDrawing();
+	((VAdvDrawer*)Drawer)->DrawWorldAmbientPass();
 
 	guard(Portals);
 	PortalLevel++;

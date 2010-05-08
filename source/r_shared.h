@@ -121,17 +121,19 @@ public:
 	VTexture* GetHighResolutionTexture();
 };
 
+class VRenderLevelShared;
+
 //
 //	Base class for portals.
 //
 class VPortal
 {
 public:
-	class VRenderLevel*		RLev;
+	VRenderLevelShared*		RLev;
 	TArray<surface_t*>		Surfs;
 	int						Level;
 
-	VPortal(class VRenderLevel* ARLev);
+	VPortal(VRenderLevelShared* ARLev);
 	virtual ~VPortal();
 	virtual bool NeedsDepthBuffer() const;
 	virtual bool IsSky() const;
