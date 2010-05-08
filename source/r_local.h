@@ -609,7 +609,6 @@ private:
 	void CalcPoints(surface_t*);
 	void SingleLightFace(light_t*, surface_t*);
 	void LightFace(surface_t*, subsector_t*);
-	void MarkLights(dlight_t*, int, int);
 	void AddDynamicLights(surface_t*);
 
 	//	Particles

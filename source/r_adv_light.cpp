@@ -667,62 +667,6 @@ void VAdvancedRenderLevel::DecayLights(float time)
 
 //==========================================================================
 //
-//	VAdvancedRenderLevel::MarkLights
-//
-//==========================================================================
-
-void VAdvancedRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
-{
-	guard(VAdvancedRenderLevel::MarkLights);
-	int leafnum;
-
-    if (bspnum & NF_SUBSECTOR)
-    {
-		int num;
-
-		if (bspnum == -1)
-		    num = 0;
-		else
-		    num = bspnum & (~NF_SUBSECTOR);
-		subsector_t *ss = &Level->Subsectors[num];
-
-		if (r_dynamic_clip)
-		{
-			vuint8* dyn_facevis = Level->LeafPVS(ss);
-			leafnum = Level->PointInSubsector(light->origin) -
-				Level->Subsectors;
-
-			// Check potential visibility
-			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
-				return;
-		}
-
-		if (ss->dlightframe != r_dlightframecount)
-		{
-			ss->dlightbits = 0;
-			ss->dlightframe = r_dlightframecount;
-		}
-		ss->dlightbits |= bit;
-	}
-	else
-	{
-		node_t* node = &Level->Nodes[bspnum];
-		float dist = DotProduct(light->origin, node->normal) - node->dist;
-
-		if (dist > -light->radius + light->minlight)
-		{
-			MarkLights(light, bit, node->children[0]);
-		}
-		if (dist < light->radius - light->minlight)
-		{
-			MarkLights(light, bit, node->children[1]);
-		}
-	}
-	unguard;
-}
-
-//==========================================================================
-//
 //	VAdvancedRenderLevel::PushDlights
 //
 //==========================================================================
@@ -735,20 +679,6 @@ void VAdvancedRenderLevel::PushDlights()
 		return;
 	}
 	r_dlightframecount++;
-
-	if (!r_dynamic)
-	{
-		return;
-	}
-	return;
-
-	dlight_t* l = DLights;
-	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
-	{
-		if (l->die < Level->Time || !l->radius)
-			continue;
-		MarkLights(l, 1 << i, Level->NumNodes - 1);
-	}
 	unguard;
 }
 
