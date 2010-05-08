@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="vavoom"
 	ProjectGUID="{D4D2D73F-1D39-4832-8FBC-FE49CF3F0833}"
 	RootNamespace="vavoom"
@@ -730,6 +730,34 @@
 			</File>
 			<File
 				RelativePath="..\source\fmd2defs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\r_adv_bsp.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\r_adv_light.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\r_adv_main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\r_adv_particle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\r_adv_sky.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\r_adv_surf.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\r_adv_things.cpp"
 				>
 			</File>
 			<File
