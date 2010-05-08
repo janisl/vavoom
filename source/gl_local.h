@@ -469,6 +469,20 @@ protected:
 	GLint					SurfPartTexCoordLoc;
 	GLint					SurfPartLightValLoc;
 
+	GLhandleARB				ShadowsAmbientProgram;
+	GLint					ShadowsAmbientLightLoc;
+
+	GLhandleARB				ShadowsLightProgram;
+	GLint					ShadowsLightLightPosLoc;
+	GLint					ShadowsLightLightRadiusLoc;
+	GLint					ShadowsLightLightColourLoc;
+	GLint					ShadowsLightSurfNormalLoc;
+	GLint					ShadowsLightSurfDistLoc;
+
+	GLhandleARB				ShadowsTextureProgram;
+	GLint					ShadowsTextureTexCoordLoc;
+	GLint					ShadowsTextureTextureLoc;
+
 	//
 	//	Console variables
 	//

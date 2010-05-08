@@ -577,12 +577,9 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 		}
 	}
 
-	p_glUseProgramObjectARB(0);
-	SetFade(0);
-	glDisable(GL_TEXTURE_2D);
-
 	if (SkyPortalsHead)
 	{
+		p_glUseProgramObjectARB(SurfZBufProgram);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
@@ -598,10 +595,12 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 
 	if (SimpleSurfsHead)
 	{
+		p_glUseProgramObjectARB(ShadowsAmbientProgram);
 		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
 			float lev = float(surf->Light >> 24) / 255.0;
-			glColor4f(((surf->Light >> 16) & 255) * lev / 255.0,
+			p_glUniform4fARB(ShadowsAmbientLightLoc,
+				((surf->Light >> 16) & 255) * lev / 255.0,
 				((surf->Light >> 8) & 255) * lev / 255.0,
 				(surf->Light & 255) * lev / 255.0, 1.0);
 			glBegin(GL_POLYGON);
@@ -613,8 +612,8 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 		}
 	}
 
-	glEnable(GL_TEXTURE_2D);
-	glColor4f(1, 1, 1, 1);
+	p_glUseProgramObjectARB(ShadowsTextureProgram);
+	p_glUniform1iARB(ShadowsTextureTextureLoc, 0);
 
 	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 	{
@@ -645,7 +644,7 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 					surf->texturemins[0] + cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
 				float t = (DotProduct(surf->verts[i], tex->taxis) + tex->toffs -
 					surf->texturemins[1] + cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
-				glTexCoord2f(s, t);
+				p_glVertexAttrib2fARB(ShadowsTextureTexCoordLoc, s, t);
 				glVertex(surf->verts[i]);
 			}
 			glEnd();
@@ -676,6 +675,8 @@ void VOpenGLDrawer::BeginLightShadowVolumes()
 	glStencilFunc(GL_ALWAYS, 0x0, 0xff);
 	p_glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP_EXT, GL_KEEP);
 	p_glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP_EXT, GL_KEEP);
+
+	p_glUseProgramObjectARB(SurfZBufProgram);
 	unguard;
 }
 
@@ -753,14 +754,16 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 	glStencilFunc(GL_EQUAL, 0x0, 0xff);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-	glDisable(GL_TEXTURE_2D);
-	glBlendFunc(GL_ONE, GL_ONE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glEnable(GL_BLEND);
-	glShadeModel(GL_SMOOTH);
 
-	float r = ((Colour >> 16) & 255) / 255.0;
-	float g = ((Colour >> 8) & 255) / 255.0;
-	float b = (Colour & 255) / 255.0;
+	p_glUseProgramObjectARB(ShadowsLightProgram);
+	p_glUniform3fARB(ShadowsLightLightPosLoc, LightPos.x, LightPos.y, LightPos.z);
+	p_glUniform1fARB(ShadowsLightLightRadiusLoc, Radius);
+	p_glUniform3fARB(ShadowsLightLightColourLoc,
+		((Colour >> 16) & 255) / 255.0,
+		((Colour >> 8) & 255) / 255.0,
+		(Colour & 255) / 255.0);
 
 	//	Draw surfaces.
 	if (SimpleSurfsHead)
@@ -770,10 +773,8 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
 			{
-				float Col = (Radius - Length(surf->verts[i] - LightPos)) / Radius;
-				if (Col < 0)
-					Col = 0;
-				glColor4f(r * Col, g * Col, b * Col, 1);
+				p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &surf->plane->normal.x);
+				p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &surf->plane->dist);
 				glVertex(surf->verts[i]);
 			}
 			glEnd();
@@ -793,10 +794,8 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
 			{
-				float Col = (Radius - Length(surf->verts[i] - LightPos)) / Radius;
-				if (Col < 0)
-					Col = 0;
-				glColor4f(r * Col, g * Col, b * Col, 1);
+				p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &surf->plane->normal.x);
+				p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &surf->plane->dist);
 				glVertex(surf->verts[i]);
 			}
 			glEnd();
@@ -804,8 +803,6 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 	}
 	glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_TEXTURE_2D);
-	glShadeModel(GL_FLAT);
 	unguard;
 }
 
@@ -827,7 +824,9 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 
 	glBlendFunc(GL_DST_COLOR, GL_ZERO);
 	glEnable(GL_BLEND);
-	glColor4f(1, 1, 1, 1);
+
+	p_glUseProgramObjectARB(ShadowsTextureProgram);
+	p_glUniform1iARB(ShadowsTextureTextureLoc, 0);
 
 	//	Draw surfaces.
 	if (SimpleSurfsHead)
@@ -836,11 +835,11 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 		{
 			texinfo_t* tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
-			glColor4f(1, 1, 1, 1);
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
 			{
-				glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+				p_glVertexAttrib2fARB(ShadowsTextureTexCoordLoc,
+					(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
 					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 				glVertex(surf->verts[i]);
 			}
@@ -860,11 +859,11 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 			surf = cache->surf;
 			texinfo_t* tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
-			glColor4f(1, 1, 1, 1);
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
 			{
-				glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+				p_glVertexAttrib2fARB(ShadowsTextureTexCoordLoc,
+					(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
 					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 				glVertex(surf->verts[i]);
 			}

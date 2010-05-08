@@ -436,6 +436,26 @@ void VOpenGLDrawer::InitResolution()
 		SurfPartProgram = CreateProgram(VertexShader, FragmentShader);
 		SurfPartTexCoordLoc = p_glGetAttribLocationARB(SurfPartProgram, "TexCoord");
 		SurfPartLightValLoc = p_glGetAttribLocationARB(SurfPartProgram, "LightVal");
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_ambient.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_ambient.fs");
+		ShadowsAmbientProgram = CreateProgram(VertexShader, FragmentShader);
+		ShadowsAmbientLightLoc = p_glGetUniformLocationARB(ShadowsAmbientProgram, "Light");
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_light.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_light.fs");
+		ShadowsLightProgram = CreateProgram(VertexShader, FragmentShader);
+		ShadowsLightLightPosLoc = p_glGetUniformLocationARB(ShadowsLightProgram, "LightPos");
+		ShadowsLightLightRadiusLoc = p_glGetUniformLocationARB(ShadowsLightProgram, "LightRadius");
+		ShadowsLightLightColourLoc = p_glGetUniformLocationARB(ShadowsLightProgram, "LightColour");
+		ShadowsLightSurfNormalLoc = p_glGetAttribLocationARB(ShadowsLightProgram, "SurfNormal");
+		ShadowsLightSurfDistLoc = p_glGetAttribLocationARB(ShadowsLightProgram, "SurfDist");
+
+		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_texture.vs");
+		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_texture.fs");
+		ShadowsTextureProgram = CreateProgram(VertexShader, FragmentShader);
+		ShadowsTextureTexCoordLoc = p_glGetAttribLocationARB(ShadowsTextureProgram, "TexCoord");
+		ShadowsTextureTextureLoc = p_glGetUniformLocationARB(ShadowsTextureProgram, "Texture");
 	}
 	unguard;
 }

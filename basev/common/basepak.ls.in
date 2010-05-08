@@ -563,6 +563,12 @@ glshaders/draw_fixed_col.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_fixed_col
 glshaders/draw_shadow.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_shadow.fs
 glshaders/draw_simple.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_simple.fs
 glshaders/draw_simple.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_simple.vs
+glshaders/shadows_ambient.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_ambient.fs
+glshaders/shadows_ambient.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_ambient.vs
+glshaders/shadows_light.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_light.fs
+glshaders/shadows_light.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_light.vs
+glshaders/shadows_texture.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_texture.fs
+glshaders/shadows_texture.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_texture.vs
 glshaders/surf_dsky.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_dsky.fs
 glshaders/surf_dsky.vs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_dsky.vs
 glshaders/surf_lightmap.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_lightmap.fs
