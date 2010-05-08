@@ -56,6 +56,7 @@ extern int				prev_old_aspect;
 extern TVec				clip_base[4];
 extern VCvarI			r_fog_test;
 extern VTextureTranslation*	PlayerTranslations[MAXPLAYERS + 1];
+extern VCvarI			r_dynamic;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -497,14 +498,17 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 
 	RenderWorld(RD, Range);
 
-	dlight_t* l = DLights;
-	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
+	if (r_dynamic)
 	{
-		if (l->die < Level->Time || !l->radius)
+		dlight_t* l = DLights;
+		for (int i = 0; i < MAX_DLIGHTS; i++, l++)
 		{
-			continue;
+			if (l->die < Level->Time || !l->radius)
+			{
+				continue;
+			}
+			RenderLightShadows(l->origin, l->radius, l->colour);
 		}
-		RenderLightShadows(l->origin, l->radius, l->colour);
 	}
 
 	((VAdvDrawer*)Drawer)->DrawWorldTexturesPass();
