@@ -21,8 +21,8 @@ void main()
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
 	//	Calculate texture coordinates.
-	float s = (dot(gl_Vertex, SAxis) + SOffs);
-	float t = (dot(gl_Vertex, TAxis) + TOffs);
+	float s = (dot(gl_Vertex.xyz, SAxis) + SOffs);
+	float t = (dot(gl_Vertex.xyz, TAxis) + TOffs);
 	float lights = (s - TexMinS + CacheS * 16 + 8) / (BLOCK_WIDTH * 16);
 	float lightt = (t - TexMinT + CacheT * 16 + 8) / (BLOCK_HEIGHT * 16);
 	TextureCoordinate = vec2(s * TexIW, t * TexIH);
