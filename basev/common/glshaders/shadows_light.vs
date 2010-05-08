@@ -15,7 +15,7 @@ void main()
 
 	Normal = SurfNormal; 
 	Dist = dot(LightPos, SurfNormal) - SurfDist;
-	VertToLight = LightPos - gl_Vertex;
+	VertToLight.xyz = LightPos.xyz - gl_Vertex.xyz;
 
 	AlphaVal = (LightRadius - length(gl_Vertex.xyz - LightPos)) / LightRadius;
 }
