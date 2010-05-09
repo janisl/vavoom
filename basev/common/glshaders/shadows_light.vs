@@ -7,7 +7,6 @@ attribute float		SurfDist;
 varying vec3		Normal;
 varying float		Dist;
 varying vec3		VertToLight;
-varying float		AlphaVal;
 
 void main()
 {
@@ -16,6 +15,4 @@ void main()
 	Normal = SurfNormal; 
 	Dist = dot(LightPos, SurfNormal) - SurfDist;
 	VertToLight.xyz = LightPos.xyz - gl_Vertex.xyz;
-
-	AlphaVal = (LightRadius - length(gl_Vertex.xyz - LightPos)) / LightRadius;
 }

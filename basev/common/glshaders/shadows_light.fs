@@ -4,7 +4,6 @@ uniform float		LightRadius;
 varying vec3		Normal;
 varying float		Dist;
 varying vec3		VertToLight;
-varying float		AlphaVal;
 
 void main()
 {
