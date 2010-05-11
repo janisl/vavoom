@@ -300,6 +300,7 @@ public:
 	void WorldDrawing();
 	void WorldDrawingShaders();
 	void DrawWorldAmbientPass();
+	void BeginShadowVolumesPass();
 	void BeginLightShadowVolumes();
 	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius);
 	void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour);
@@ -322,6 +323,8 @@ public:
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		mmdl_t*, int, int, VTexture*, VTextureTranslation*, int, vuint32, vuint32,
 		float, bool, bool, float, bool);
+	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -482,6 +485,13 @@ protected:
 	GLhandleARB				ShadowsTextureProgram;
 	GLint					ShadowsTextureTexCoordLoc;
 	GLint					ShadowsTextureTextureLoc;
+
+	GLhandleARB				ShadowsModelAmbientProgram;
+	GLint					ShadowsModelAmbientInterLoc;
+	GLint					ShadowsModelAmbientTextureLoc;
+	GLint					ShadowsModelAmbientLightLoc;
+	GLint					ShadowsModelAmbientVert2Loc;
+	GLint					ShadowsModelAmbientTexCoordLoc;
 
 	//
 	//	Console variables

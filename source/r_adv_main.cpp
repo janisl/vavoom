@@ -497,8 +497,10 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	UpdateWorld(RD, Range);
 
 	RenderWorld(RD, Range);
+	RenderMobjsAmbient();
 
-	if (r_dynamic)
+	((VAdvDrawer*)Drawer)->BeginShadowVolumesPass();
+	if (!FixedLight && r_dynamic)
 	{
 		dlight_t* l = DLights;
 		for (int i = 0; i < MAX_DLIGHTS; i++, l++)
@@ -508,6 +510,13 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 				continue;
 			}
 			RenderLightShadows(l->origin, l->radius, l->colour);
+		}
+	}
+	if (!FixedLight)
+	{
+		for (int i = 0; i < Lights.Num(); i++)
+		{
+			RenderLightShadows(Lights[i].origin, Lights[i].radius, Lights[i].colour);
 		}
 	}
 
@@ -543,7 +552,7 @@ void VAdvancedRenderLevel::RenderPlayerView()
 
 	UpdateParticles(host_frametime);
 
-	PushDlights();
+	r_dlightframecount = 1;
 
 	//	Update camera textures that were visible in last frame.
 	for (int i = 0; i < Level->CameraTextures.Num(); i++)

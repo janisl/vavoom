@@ -231,8 +231,6 @@ void VAdvancedRenderLevel::InitSurfs(surface_t* ASurfs, texinfo_t *texinfo,
 			Sys_Error("Bad extents");
 		}
 
-		LightFace(surfs, sub);
-
 		surfs = surfs->next;
 	}
 	unguard;

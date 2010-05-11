@@ -107,8 +107,11 @@ class VAdvDrawer : public VHardwareDrawer
 {
 public:
 	virtual void DrawWorldAmbientPass() = 0;
+	virtual void BeginShadowVolumesPass() = 0;
 	virtual void BeginLightShadowVolumes() = 0;
 	virtual void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius) = 0;
 	virtual void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour) = 0;
 	virtual void DrawWorldTexturesPass() = 0;
+	virtual void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) = 0;
 };

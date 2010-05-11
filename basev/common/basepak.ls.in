@@ -567,6 +567,8 @@ glshaders/shadows_ambient.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_ambien
 glshaders/shadows_ambient.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_ambient.vs
 glshaders/shadows_light.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_light.fs
 glshaders/shadows_light.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_light.vs
+glshaders/shadows_model_ambient.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_ambient.fs
+glshaders/shadows_model_ambient.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_ambient.vs
 glshaders/shadows_texture.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_texture.fs
 glshaders/shadows_texture.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_texture.vs
 glshaders/surf_dsky.fs			@CMAKE_CURRENT_SOURCE_DIR@/glshaders/surf_dsky.fs

@@ -564,14 +564,10 @@ void VOpenGLDrawer::WorldDrawingShaders()
 void VOpenGLDrawer::DrawWorldAmbientPass()
 {
 	guard(VOpenGLDrawer::DrawWorldAmbientPass);
-	int			lb, i;
-	surfcache_t	*cache;
-	surface_t	*surf;
-
 	//	First draw horizons.
 	if (HorizonPortalsHead)
 	{
-		for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		for (surface_t* surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
 			DoHorizonPolygon(surf);
 		}
@@ -581,10 +577,10 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 	{
 		p_glUseProgramObjectARB(SurfZBufProgram);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		for (surface_t* surf = SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
+			for (int i = 0; i < surf->count; i++)
 			{
 				glVertex(surf->verts[i]);
 			}
@@ -593,67 +589,37 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	}
 
-	if (SimpleSurfsHead)
+	p_glUseProgramObjectARB(ShadowsAmbientProgram);
+	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
-		p_glUseProgramObjectARB(ShadowsAmbientProgram);
-		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		float lev = float(surf->Light >> 24) / 255.0;
+		p_glUniform4fARB(ShadowsAmbientLightLoc,
+			((surf->Light >> 16) & 255) * lev / 255.0,
+			((surf->Light >> 8) & 255) * lev / 255.0,
+			(surf->Light & 255) * lev / 255.0, 1.0);
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < surf->count; i++)
 		{
-			float lev = float(surf->Light >> 24) / 255.0;
-			p_glUniform4fARB(ShadowsAmbientLightLoc,
-				((surf->Light >> 16) & 255) * lev / 255.0,
-				((surf->Light >> 8) & 255) * lev / 255.0,
-				(surf->Light & 255) * lev / 255.0, 1.0);
-			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
-			{
-				glVertex(surf->verts[i]);
-			}
-			glEnd();
+			glVertex(surf->verts[i]);
 		}
+		glEnd();
 	}
+	unguard;
+}
 
-	p_glUseProgramObjectARB(ShadowsTextureProgram);
-	p_glUniform1iARB(ShadowsTextureTextureLoc, 0);
 
-	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
-	{
-		if (!light_chain[lb])
-		{
-			continue;
-		}
+//==========================================================================
+//
+//	VOpenGLDrawer::BeginShadowVolumesPass
+//
+//==========================================================================
 
-		glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		if (block_changed[lb])
-		{
-			block_changed[lb] = false;
-			glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
-				0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
-		}
-
-		for (cache = light_chain[lb]; cache; cache = cache->chain)
-		{
-			surf = cache->surf;
-			texinfo_t* tex = surf->texinfo;
-			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
-			{
-				float s = (DotProduct(surf->verts[i], tex->saxis) + tex->soffs -
-					surf->texturemins[0] + cache->s * 16 + 8) / (BLOCK_WIDTH * 16);
-				float t = (DotProduct(surf->verts[i], tex->taxis) + tex->toffs -
-					surf->texturemins[1] + cache->t * 16 + 8) / (BLOCK_HEIGHT * 16);
-				p_glVertexAttrib2fARB(ShadowsTextureTexCoordLoc, s, t);
-				glVertex(surf->verts[i]);
-			}
-			glEnd();
-		}
-	}
-
+void VOpenGLDrawer::BeginShadowVolumesPass()
+{
+	guard(VOpenGLDrawer::BeginShadowVolumesPass);
 	//	Set up for shadow volume rendering.
-	glDepthMask(GL_FALSE);
 	glEnable(GL_STENCIL_TEST);
+	glDepthMask(GL_FALSE);
 	unguard;
 }
 
@@ -666,6 +632,7 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 void VOpenGLDrawer::BeginLightShadowVolumes()
 {
 	guard(VOpenGLDrawer::BeginLightShadowVolumes);
+	//	Set up for shadow volume rendering.
 	glClear(GL_STENCIL_BUFFER_BIT);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glEnable(GL_POLYGON_OFFSET_FILL);
@@ -744,10 +711,6 @@ void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, f
 void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour)
 {
 	guard(VOpenGLDrawer::DrawLightShadowsPass);
-	int			lb, i;
-	surfcache_t	*cache;
-	surface_t	*surf;
-
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -765,42 +728,18 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 		((Colour >> 8) & 255) / 255.0,
 		(Colour & 255) / 255.0);
 
-	//	Draw surfaces.
-	if (SimpleSurfsHead)
+	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
-		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < surf->count; i++)
 		{
-			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
-			{
-				p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &surf->plane->normal.x);
-				p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &surf->plane->dist);
-				glVertex(surf->verts[i]);
-			}
-			glEnd();
+			p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &surf->plane->normal.x);
+			p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &surf->plane->dist);
+			glVertex(surf->verts[i]);
 		}
+		glEnd();
 	}
 
-	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
-	{
-		if (!light_chain[lb])
-		{
-			continue;
-		}
-
-		for (cache = light_chain[lb]; cache; cache = cache->chain)
-		{
-			surf = cache->surf;
-			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
-			{
-				p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &surf->plane->normal.x);
-				p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &surf->plane->dist);
-				glVertex(surf->verts[i]);
-			}
-			glEnd();
-		}
-	}
 	glDisable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	unguard;
@@ -815,10 +754,6 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 void VOpenGLDrawer::DrawWorldTexturesPass()
 {
 	guard(VOpenGLDrawer::DrawWorldTexturesPass);
-	int			lb, i;
-	surfcache_t	*cache;
-	surface_t	*surf;
-
 	//	Stop stenciling now.
 	glDisable(GL_STENCIL_TEST);
 
@@ -828,47 +763,19 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 	p_glUseProgramObjectARB(ShadowsTextureProgram);
 	p_glUniform1iARB(ShadowsTextureTextureLoc, 0);
 
-	//	Draw surfaces.
-	if (SimpleSurfsHead)
+	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
-		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		texinfo_t* tex = surf->texinfo;
+		SetTexture(tex->Tex, tex->ColourMap);
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < surf->count; i++)
 		{
-			texinfo_t* tex = surf->texinfo;
-			SetTexture(tex->Tex, tex->ColourMap);
-			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
-			{
-				p_glVertexAttrib2fARB(ShadowsTextureTexCoordLoc,
-					(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
-					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
-				glVertex(surf->verts[i]);
-			}
-			glEnd();
+			p_glVertexAttrib2fARB(ShadowsTextureTexCoordLoc,
+				(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
+				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
+			glVertex(surf->verts[i]);
 		}
-	}
-
-	for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
-	{
-		if (!light_chain[lb])
-		{
-			continue;
-		}
-
-		for (cache = light_chain[lb]; cache; cache = cache->chain)
-		{
-			surf = cache->surf;
-			texinfo_t* tex = surf->texinfo;
-			SetTexture(tex->Tex, tex->ColourMap);
-			glBegin(GL_POLYGON);
-			for (i = 0; i < surf->count; i++)
-			{
-				p_glVertexAttrib2fARB(ShadowsTextureTexCoordLoc,
-					(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
-					(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
-				glVertex(surf->verts[i]);
-			}
-			glEnd();
-		}
+		glEnd();
 	}
 
 	glDisable(GL_BLEND);
@@ -1706,6 +1613,145 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		glDepthRange(0.0, 1.0);
 	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawAliasModelAmbient
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angles,
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	VTexture* Skin, vuint32 light, float Inter, bool Interpolate)
+{
+	guard(VOpenGLDrawer::DrawAliasModelAmbient);
+	mframe_t	*framedesc;
+	mframe_t	*nextframedesc;
+	float 		l;
+	int			index;
+	trivertx_t	*verts;
+	trivertx_t	*verts2;
+	int			*order;
+	int			count;
+	float		shadelightr;
+	float		shadelightg;
+	float		shadelightb;
+	float		*shadedots;
+
+	//
+	// get lighting information
+	//
+	shadelightr = ((light >> 16) & 0xff) / 510.0;
+	shadelightg = ((light >> 8) & 0xff) / 510.0;
+	shadelightb = (light & 0xff) / 510.0;
+	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
+
+	float smooth_inter;
+	smooth_inter = SMOOTHSTEP(Inter);
+
+	//
+	// draw all the triangles
+	//
+	glPushMatrix();
+	glTranslatef(origin.x, origin.y, origin.z);
+
+	glRotatef(angles.yaw,  0, 0, 1);
+	glRotatef(angles.pitch,  0, 1, 0);
+	glRotatef(angles.roll,  1, 0, 0);
+
+	glScalef(Scale.x, Scale.y, Scale.z);
+	glTranslatef(Offset.x, Offset.y, Offset.z);
+
+	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
+
+	// Interpolate Scales
+	TVec scale_origin;
+	if (Interpolate)
+	{
+		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
+	}
+	else
+	{
+		scale_origin[0] = framedesc->scale_origin[0];
+		scale_origin[1] = framedesc->scale_origin[1];
+		scale_origin[2] = framedesc->scale_origin[2];
+	}
+	glTranslatef(scale_origin[0], scale_origin[1], scale_origin[2]);
+
+	TVec scale;
+	if (Interpolate)
+	{
+		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
+	}
+	else
+	{
+		scale[0] = framedesc->scale[0];
+		scale[1] = framedesc->scale[1];
+		scale[2] = framedesc->scale[2];
+	}
+	glScalef(scale[0], scale[1], scale[2]);
+
+	SetPic(Skin, NULL, CM_Default);
+
+	p_glUseProgramObjectARB(ShadowsModelAmbientProgram);
+	p_glUniform1iARB(ShadowsModelAmbientTextureLoc, 0);
+	p_glUniform1fARB(ShadowsModelAmbientInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniform4fARB(ShadowsModelAmbientLightLoc,
+		((light >> 16) & 255) / 255.0,
+		((light >> 8) & 255) / 255.0,
+		(light & 255) / 255.0, 1);
+
+	verts = (trivertx_t *)(framedesc + 1);
+	order = (int *)((byte *)pmdl + pmdl->ofscmds);
+	if (Interpolate)
+	{
+		verts2 = (trivertx_t *)(nextframedesc + 1);
+	}
+
+	while (*order)
+	{
+		// get the vertex count and primitive type
+		count = *order++;
+		if (count < 0)
+		{
+			count = -count;
+			glBegin(GL_TRIANGLE_FAN);
+		}
+		else
+		{
+			glBegin(GL_TRIANGLE_STRIP);
+		}
+
+		do
+		{
+			// texture coordinates come from the draw list
+			p_glVertexAttrib2fARB(ShadowsModelAmbientTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
+			order += 2;
+
+			// normals and vertexes come from the frame list
+			index = *order++;
+			if (Interpolate)
+			{
+				p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
+			}
+			else
+			{
+				p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc, 0, 0, 0);
+			}
+			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
+		} while (--count);
+
+		glEnd();
+	}
+
+	glPopMatrix();
 	unguard;
 }
 

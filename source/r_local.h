@@ -603,13 +603,8 @@ private:
 	void AnimateSky(float);
 
 	//	Light methods
-	static void CalcMinMaxs(surface_t*);
 	float CastRay(const TVec&, const TVec&, float);
-	static void CalcFaceVectors(surface_t*);
-	void CalcPoints(surface_t*);
-	void SingleLightFace(light_t*, surface_t*);
-	void LightFace(surface_t*, subsector_t*);
-	void AddDynamicLights(surface_t*);
+	vuint32 LightPointAmbient(const TVec &p);
 
 	//	Particles
 	void InitParticles();
@@ -650,6 +645,9 @@ private:
 	bool RenderAliasModel(VEntity*, vuint32, vuint32, float, bool);
 	void RenderThing(VEntity*);
 	void RenderMobjs();
+	void RenderAliasModelAmbient(VEntity*, vuint32);
+	void RenderThingAmbient(VEntity*);
+	void RenderMobjsAmbient();
 	void DrawTranslucentPolys();
 	void RenderPSprite(VViewState*, float, vuint32, vuint32, float, bool);
 	bool RenderViewModel(VViewState*, vuint32, vuint32, float, bool);
@@ -662,7 +660,12 @@ private:
 		float, bool);
 	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*, VState*,
 		VTextureTranslation*, int, vuint32, vuint32, float, bool, bool, float, bool);
+	bool DrawAliasModelAmbient(const TVec&, const TAVec&, float, float, VModel*,
+		int, int, int, vuint32, float, bool);
+	bool DrawAliasModelAmbient(const TVec&, const TAVec&, float, float, VState*, VState*,
+		int, vuint32, float, bool);
 	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
+	bool DrawEntityModelAmbient(VEntity*, vuint32, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
 public:
@@ -678,7 +681,6 @@ public:
 	void AddStaticLight(const TVec&, float, vuint32);
 	dlight_t* AllocDlight(VThinker*);
 	void DecayLights(float);
-	void PushDlights();
 	vuint32 LightPoint(const TVec &p);
 	bool BuildLightMap(surface_t*, int);
 
