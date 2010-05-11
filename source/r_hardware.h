@@ -114,4 +114,7 @@ public:
 	virtual void DrawWorldTexturesPass() = 0;
 	virtual void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) = 0;
+	virtual void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
+		float, bool) = 0;
 };

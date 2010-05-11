@@ -521,6 +521,7 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	}
 
 	((VAdvDrawer*)Drawer)->DrawWorldTexturesPass();
+	RenderMobjsTextures();
 
 	RenderMobjs();
 

@@ -325,6 +325,8 @@ public:
 		float, bool, bool, float, bool);
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
+	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,
+		mmdl_t*, int, int, VTexture*, VTextureTranslation*, int, float, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -492,6 +494,12 @@ protected:
 	GLint					ShadowsModelAmbientLightLoc;
 	GLint					ShadowsModelAmbientVert2Loc;
 	GLint					ShadowsModelAmbientTexCoordLoc;
+
+	GLhandleARB				ShadowsModelTexturesProgram;
+	GLint					ShadowsModelTexturesInterLoc;
+	GLint					ShadowsModelTexturesTextureLoc;
+	GLint					ShadowsModelTexturesVert2Loc;
+	GLint					ShadowsModelTexturesTexCoordLoc;
 
 	//
 	//	Console variables

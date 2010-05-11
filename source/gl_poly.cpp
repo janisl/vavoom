@@ -1757,6 +1757,135 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 
 //==========================================================================
 //
+//	VOpenGLDrawer::DrawAliasModelTextures
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angles,
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	VTexture* Skin, VTextureTranslation* Trans, int CMap, float Inter,
+	bool Interpolate)
+{
+	guard(VOpenGLDrawer::DrawAliasModelTextures);
+	mframe_t	*framedesc;
+	mframe_t	*nextframedesc;
+	float 		l;
+	int			index;
+	trivertx_t	*verts;
+	trivertx_t	*verts2;
+	int			*order;
+	int			count;
+
+	float smooth_inter;
+	smooth_inter = SMOOTHSTEP(Inter);
+
+	//
+	// draw all the triangles
+	//
+	glPushMatrix();
+	glTranslatef(origin.x, origin.y, origin.z);
+
+	glRotatef(angles.yaw,  0, 0, 1);
+	glRotatef(angles.pitch,  0, 1, 0);
+	glRotatef(angles.roll,  1, 0, 0);
+
+	glScalef(Scale.x, Scale.y, Scale.z);
+	glTranslatef(Offset.x, Offset.y, Offset.z);
+
+	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
+
+	// Interpolate Scales
+	TVec scale_origin;
+	if (Interpolate)
+	{
+		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
+	}
+	else
+	{
+		scale_origin[0] = framedesc->scale_origin[0];
+		scale_origin[1] = framedesc->scale_origin[1];
+		scale_origin[2] = framedesc->scale_origin[2];
+	}
+	glTranslatef(scale_origin[0], scale_origin[1], scale_origin[2]);
+
+	TVec scale;
+	if (Interpolate)
+	{
+		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
+	}
+	else
+	{
+		scale[0] = framedesc->scale[0];
+		scale[1] = framedesc->scale[1];
+		scale[2] = framedesc->scale[2];
+	}
+	glScalef(scale[0], scale[1], scale[2]);
+
+	SetPic(Skin, Trans, CMap);
+
+	p_glUseProgramObjectARB(ShadowsModelTexturesProgram);
+	p_glUniform1iARB(ShadowsModelTexturesTextureLoc, 0);
+	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Interpolate ? smooth_inter : 0.0);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_DST_COLOR, GL_ZERO);
+
+	verts = (trivertx_t *)(framedesc + 1);
+	order = (int *)((byte *)pmdl + pmdl->ofscmds);
+	if (Interpolate)
+	{
+		verts2 = (trivertx_t *)(nextframedesc + 1);
+	}
+
+	while (*order)
+	{
+		// get the vertex count and primitive type
+		count = *order++;
+		if (count < 0)
+		{
+			count = -count;
+			glBegin(GL_TRIANGLE_FAN);
+		}
+		else
+		{
+			glBegin(GL_TRIANGLE_STRIP);
+		}
+
+		do
+		{
+			// texture coordinates come from the draw list
+			p_glVertexAttrib2fARB(ShadowsModelTexturesTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
+			order += 2;
+
+			// normals and vertexes come from the frame list
+			index = *order++;
+			if (Interpolate)
+			{
+				p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
+			}
+			else
+			{
+				p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc, 0, 0, 0);
+			}
+			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
+		} while (--count);
+
+		glEnd();
+	}
+
+	glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glPopMatrix();
+	unguard;
+}
+
+//==========================================================================
+//
 //	VOpenGLDrawer::StartParticles
 //
 //==========================================================================
