@@ -638,6 +638,7 @@ void VOpenGLDrawer::BeginLightShadowVolumes()
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(0.0f, 1.0f);
 
+	glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 	glStencilFunc(GL_ALWAYS, 0x0, 0xff);
 	p_glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP_EXT, GL_KEEP);
@@ -740,8 +741,6 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 		glEnd();
 	}
 
-	glDisable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	unguard;
 }
 
@@ -1618,6 +1617,93 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 //==========================================================================
 //
+//	ConcatTransforms
+//
+//==========================================================================
+
+static void ConcatTransforms(float in1[4][4], float in2[4][4], float out[4][4])
+{
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			out[i][j] = in1[i][0] * in2[0][j] + in1[i][1] * in2[1][j] +
+						in1[i][2] * in2[2][j] + in1[i][3] * in2[3][j];
+		}
+	}
+}
+
+//==========================================================================
+//
+//	AliasSetUpTransform
+//
+//==========================================================================
+
+static const float Identity[4][4] =
+{
+	{ 1, 0, 0, 0 },
+	{ 0, 1, 0, 0 },
+	{ 0, 0, 1, 0 },
+	{ 0, 0, 0, 1 },
+};
+
+static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
+	const TVec& Offset, const TVec& Scale, const TVec& FrameOrigin,
+	const TVec& FrameScale, float rotationmatrix[4][4])
+{
+// TODO: should really be stored with the entity instead of being reconstructed
+// TODO: should use a look-up table
+// TODO: could cache lazily, stored in the entity
+
+	TVec alias_forward, alias_right, alias_up;
+	AngleVectors(angles, alias_forward, alias_right, alias_up);
+
+	float tmatrix[4][4];
+	memcpy(tmatrix, Identity, sizeof(Identity));
+	tmatrix[0][0] = FrameScale[0];
+	tmatrix[1][1] = FrameScale[1];
+	tmatrix[2][2] = FrameScale[2];
+	tmatrix[3][3] = 1;
+
+	tmatrix[0][3] = FrameOrigin[0];
+	tmatrix[1][3] = FrameOrigin[1];
+	tmatrix[2][3] = FrameOrigin[2];
+
+	// TODO: can do this with simple matrix rearrangement
+	float t2matrix[4][4];
+	memset(t2matrix, 0, sizeof(t2matrix));
+	t2matrix[0][0] = Scale.x;
+	t2matrix[1][1] = Scale.y;
+	t2matrix[2][2] = Scale.z;
+	t2matrix[3][3] = 1;
+
+	t2matrix[0][3] = Scale.x * Offset.x;
+	t2matrix[1][3] = Scale.y * Offset.y;
+	t2matrix[2][3] = Scale.z * Offset.z;
+
+	// FIXME: can do more efficiently than full concatenation
+	float t3matrix[4][4];
+	ConcatTransforms(t2matrix, tmatrix, t3matrix);
+
+	memset(t2matrix, 0, sizeof(t2matrix));
+	for (int i = 0; i < 3; i++)
+	{
+		t2matrix[i][0] = alias_forward[i];
+		t2matrix[i][1] = -alias_right[i];
+		t2matrix[i][2] = alias_up[i];
+	}
+
+	t2matrix[0][3] = modelorg[0];
+	t2matrix[1][3] = modelorg[1];
+	t2matrix[2][3] = modelorg[2];
+	t2matrix[3][3] = 1;
+
+// FIXME: can do more efficiently than full concatenation
+	ConcatTransforms(t2matrix, t3matrix, rotationmatrix);
+}
+
+//==========================================================================
+//
 //	VOpenGLDrawer::DrawAliasModelAmbient
 //
 //==========================================================================
@@ -1655,14 +1741,6 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	// draw all the triangles
 	//
 	glPushMatrix();
-	glTranslatef(origin.x, origin.y, origin.z);
-
-	glRotatef(angles.yaw,  0, 0, 1);
-	glRotatef(angles.pitch,  0, 1, 0);
-	glRotatef(angles.roll,  1, 0, 0);
-
-	glScalef(Scale.x, Scale.y, Scale.z);
-	glTranslatef(Offset.x, Offset.y, Offset.z);
 
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
@@ -1681,7 +1759,6 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		scale_origin[1] = framedesc->scale_origin[1];
 		scale_origin[2] = framedesc->scale_origin[2];
 	}
-	glTranslatef(scale_origin[0], scale_origin[1], scale_origin[2]);
 
 	TVec scale;
 	if (Interpolate)
@@ -1696,9 +1773,11 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		scale[1] = framedesc->scale[1];
 		scale[2] = framedesc->scale[2];
 	}
-	glScalef(scale[0], scale[1], scale[2]);
 
 	SetPic(Skin, NULL, CM_Default);
+
+	float rotationmatrix[4][4];
+	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelAmbientProgram);
 	p_glUniform1iARB(ShadowsModelAmbientTextureLoc, 0);
@@ -1707,6 +1786,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		((light >> 16) & 255) / 255.0,
 		((light >> 8) & 255) / 255.0,
 		(light & 255) / 255.0, 1);
+	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
 	verts = (trivertx_t *)(framedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
@@ -1783,14 +1863,6 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	// draw all the triangles
 	//
 	glPushMatrix();
-	glTranslatef(origin.x, origin.y, origin.z);
-
-	glRotatef(angles.yaw,  0, 0, 1);
-	glRotatef(angles.pitch,  0, 1, 0);
-	glRotatef(angles.roll,  1, 0, 0);
-
-	glScalef(Scale.x, Scale.y, Scale.z);
-	glTranslatef(Offset.x, Offset.y, Offset.z);
 
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
@@ -1809,7 +1881,6 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 		scale_origin[1] = framedesc->scale_origin[1];
 		scale_origin[2] = framedesc->scale_origin[2];
 	}
-	glTranslatef(scale_origin[0], scale_origin[1], scale_origin[2]);
 
 	TVec scale;
 	if (Interpolate)
@@ -1824,13 +1895,16 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 		scale[1] = framedesc->scale[1];
 		scale[2] = framedesc->scale[2];
 	}
-	glScalef(scale[0], scale[1], scale[2]);
 
 	SetPic(Skin, Trans, CMap);
+
+	float rotationmatrix[4][4];
+	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelTexturesProgram);
 	p_glUniform1iARB(ShadowsModelTexturesTextureLoc, 0);
 	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_DST_COLOR, GL_ZERO);
 
@@ -1881,6 +1955,156 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glPopMatrix();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::BeginModelsLightPass
+//
+//==========================================================================
+
+void VOpenGLDrawer::BeginModelsLightPass(TVec& LightPos, float Radius, vuint32 Colour)
+{
+	guard(VOpenGLDrawer::BeginModelsLightPass);
+	p_glUseProgramObjectARB(ShadowsModelLightProgram);
+	p_glUniform1iARB(ShadowsModelLightTextureLoc, 0);
+	p_glUniform3fARB(ShadowsModelLightLightPosLoc, LightPos.x, LightPos.y, LightPos.z);
+	p_glUniform1fARB(ShadowsModelLightLightRadiusLoc, Radius);
+	p_glUniform3fARB(ShadowsModelLightLightColourLoc,
+		((Colour >> 16) & 255) / 255.0,
+		((Colour >> 8) & 255) / 255.0,
+		(Colour & 255) / 255.0);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawAliasModelLight
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	VTexture* Skin, float Inter, bool Interpolate)
+{
+	guard(VOpenGLDrawer::DrawAliasModelLight);
+	mframe_t	*framedesc;
+	mframe_t	*nextframedesc;
+	float 		l;
+	int			index;
+	trivertx_t	*verts;
+	trivertx_t	*verts2;
+	int			*order;
+	int			count;
+
+	float smooth_inter;
+	smooth_inter = SMOOTHSTEP(Inter);
+
+	//
+	// draw all the triangles
+	//
+	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
+
+	// Interpolate Scales
+	TVec scale_origin;
+	if (Interpolate)
+	{
+		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
+	}
+	else
+	{
+		scale_origin[0] = framedesc->scale_origin[0];
+		scale_origin[1] = framedesc->scale_origin[1];
+		scale_origin[2] = framedesc->scale_origin[2];
+	}
+
+	TVec scale;
+	if (Interpolate)
+	{
+		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
+	}
+	else
+	{
+		scale[0] = framedesc->scale[0];
+		scale[1] = framedesc->scale[1];
+		scale[2] = framedesc->scale[2];
+	}
+
+	float rotationmatrix[4][4];
+	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+	float normalmatrix[4][4];
+	AliasSetUpTransform(TVec(0,0,0), angles, TVec(0,0,0), Scale, TVec(0,0,0), TVec(1,1,1), normalmatrix);
+	float NormalMat[3][3];
+	NormalMat[0][0] = normalmatrix[0][0];
+	NormalMat[0][1] = normalmatrix[0][1];
+	NormalMat[0][2] = normalmatrix[0][2];
+	NormalMat[1][0] = normalmatrix[1][0];
+	NormalMat[1][1] = normalmatrix[1][1];
+	NormalMat[1][2] = normalmatrix[1][2];
+	NormalMat[2][0] = normalmatrix[2][0];
+	NormalMat[2][1] = normalmatrix[2][1];
+	NormalMat[2][2] = normalmatrix[2][2];
+
+	SetPic(Skin, NULL, CM_Default);
+
+	p_glUniform1fARB(ShadowsModelLightInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniformMatrix4fvARB(ShadowsModelLightModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+	p_glUniformMatrix3fvARB(ShadowsModelLightNormalToWorldMatLoc, 1, GL_FALSE, NormalMat[0]);
+
+	verts = (trivertx_t *)(framedesc + 1);
+	order = (int *)((byte *)pmdl + pmdl->ofscmds);
+	if (Interpolate)
+	{
+		verts2 = (trivertx_t *)(nextframedesc + 1);
+	}
+
+	while (*order)
+	{
+		// get the vertex count and primitive type
+		count = *order++;
+		if (count < 0)
+		{
+			count = -count;
+			glBegin(GL_TRIANGLE_FAN);
+		}
+		else
+		{
+			glBegin(GL_TRIANGLE_STRIP);
+		}
+
+		do
+		{
+			p_glVertexAttrib3fvARB(ShadowsModelLightVertNormalLoc,
+				r_avertexnormals[verts[index].lightnormalindex]);
+			// texture coordinates come from the draw list
+			p_glVertexAttrib2fARB(ShadowsModelLightTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
+			order += 2;
+
+			// normals and vertexes come from the frame list
+			index = *order++;
+			if (Interpolate)
+			{
+				p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
+				p_glVertexAttrib3fvARB(ShadowsModelLightVert2NormalLoc,
+					r_avertexnormals[verts2[index].lightnormalindex]);
+			}
+			else
+			{
+				p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc, 0, 0, 0);
+				p_glVertexAttrib3fvARB(ShadowsModelLightVert2NormalLoc,
+					r_avertexnormals[verts[index].lightnormalindex]);
+			}
+			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
+		} while (--count);
+
+		glEnd();
+	}
 	unguard;
 }
 

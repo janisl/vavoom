@@ -1333,6 +1333,193 @@ static void DrawModelTextures(VLevel* Level, const TVec& Org, const TAVec& Angle
 
 //==========================================================================
 //
+//	DrawModelLight
+//
+//==========================================================================
+
+static void DrawModelLight(VLevel* Level, const TVec& Org, const TAVec& Angles,
+	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
+	int Version, float Inter, bool Interpolate)
+{
+	guard(DrawModelLight);
+	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
+	VScriptedModelFrame& NFDef = Cls.Frames[NFIdx];
+	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
+	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
+	{
+		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
+		if (SubMdl.Version != -1 && SubMdl.Version != Version)
+		{
+			continue;
+		}
+		if (FDef.FrameIndex >= SubMdl.Frames.Num())
+		{
+			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
+			continue;
+		}
+		if (Interpolate && NFDef.FrameIndex >= SubMdl.Frames.Num() &&
+			NFDef.ModelIndex != FDef.ModelIndex)
+		{
+			NFDef.FrameIndex = FDef.FrameIndex;
+			Interpolate = false;
+			continue;
+		}
+		if (Interpolate && FDef.ModelIndex != NFDef.ModelIndex)
+		{
+			Interpolate = false;
+		}
+		if (NFDef.FrameIndex >= SubMdl.Frames.Num())
+		{
+			continue;
+		}
+		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
+		VScriptSubModel::VFrame& NF = SubMdl.Frames[NFDef.FrameIndex];
+
+		//	Locate the proper data.
+		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
+
+		//	Skin aniations.
+		int Md2SkinIdx = 0;
+		if (F.SkinIndex >= 0)
+		{
+			Md2SkinIdx = F.SkinIndex;
+		}
+		else if (SubMdl.SkinAnimSpeed)
+		{
+			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
+				SubMdl.SkinAnimRange;
+		}
+
+		//	Get the proper skin texture ID.
+		int SkinID;
+		if (SubMdl.Skins.Num())
+		{
+			//	Skins defined in definition file override all skins in MD2 file.
+			if (Md2SkinIdx < 0 || Md2SkinIdx >= SubMdl.Skins.Num())
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Skins[0], TEXTYPE_Skin);
+			}
+			else
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Skins[Md2SkinIdx], TEXTYPE_Skin);
+			}
+		}
+		else
+		{
+			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Model->Skins[0], TEXTYPE_Skin);
+			}
+			else
+			{
+				SkinID = GTextureManager.AddFileTexture(
+					SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
+			}
+		}
+
+		//	Get and verify frame number.
+		int Md2Frame = F.Index;
+		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
+		{
+			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
+				*SubMdl.Model->name);
+			Md2Frame = 0;
+			//	Stop further warnings.
+			F.Index = 0;
+		}
+
+		//  Get and verify next frame number.
+		int Md2NextFrame = NF.Index;
+		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
+		{
+			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
+				*SubMdl.Model->name);
+			Md2NextFrame = 0;
+			//	Stop further warnings.
+			NF.Index = 0;
+		}
+
+		//	Position
+		TVec Md2Org = Org;
+
+		//	Angle
+		TAVec Md2Angle = Angles;
+		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
+		{
+			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
+				(FDef.AngleEnd - FDef.AngleStart) * Inter);
+		}
+
+		//	Position model
+		if (SubMdl.PositionModel)
+		{
+			PositionModel(Md2Org, Md2Angle, SubMdl.PositionModel, F.PositionIndex);
+		}
+
+		//	Alpha
+		float Md2Alpha = 1;
+		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
+		{
+			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd - FDef.AlphaStart) * Inter;
+		}
+		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
+		{
+			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
+		}
+		if (Md2Alpha < 1)
+		{
+			continue;
+		}
+
+		float smooth_inter;
+		if (Interpolate)
+		{
+			smooth_inter = SMOOTHSTEP(Inter);
+		}
+
+		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
+		// scales z.
+		TVec Scale;
+		if (Interpolate)
+		{
+			// Interpolate Scale
+			Scale.x = (F.Scale.x + smooth_inter * (NF.Scale.x - F.Scale.x) * ScaleX);
+			Scale.y = (F.Scale.y + smooth_inter * (NF.Scale.y - F.Scale.y) * ScaleX);
+			Scale.z = (F.Scale.z + smooth_inter * (NF.Scale.z - F.Scale.z) * ScaleY);
+		}
+		else
+		{
+			Scale.x = F.Scale.x * ScaleX;
+			Scale.y = F.Scale.y * ScaleX;
+			Scale.z = F.Scale.z * ScaleY;
+		}
+
+		TVec Offset;
+		if (Interpolate)
+		{
+			// Interpolate Offsets too
+			Offset.x = ((1 - smooth_inter) * F.Offset.x + (smooth_inter) * NF.Offset.x);
+			Offset.y = ((1 - smooth_inter) * F.Offset.y + (smooth_inter) * NF.Offset.y);
+			Offset.z = ((1 - smooth_inter) * F.Offset.z + (smooth_inter) * NF.Offset.z);
+		}
+		else
+		{
+			Offset.x = F.Offset.x;
+			Offset.y = F.Offset.y;
+			Offset.z = F.Offset.z;
+		}
+
+		((VAdvDrawer*)Drawer)->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale, pmdl,
+			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Inter, Interpolate);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VRenderLevel::DrawAliasModel
 //
 //==========================================================================
@@ -1913,6 +2100,90 @@ bool VAdvancedRenderLevel::DrawAliasModelTextures(const TVec& Org, const TAVec& 
 
 //==========================================================================
 //
+//	VAdvancedRenderLevel::DrawAliasModelLight
+//
+//==========================================================================
+
+bool VAdvancedRenderLevel::DrawAliasModelLight(const TVec& Org, const TAVec& Angles,
+	float ScaleX, float ScaleY, VModel* Mdl, int Frame, int NextFrame,
+	int Version, float Inter, bool Interpolate)
+{
+	guard(VAdvancedRenderLevel::DrawAliasModelLight);
+	void* MData = Mod_Extradata(Mdl);
+
+	if (Mdl->type != MODEL_Script)
+	{
+		Sys_Error("Must use model scripts");
+	}
+
+	VScriptedModel* SMdl = (VScriptedModel*)MData;
+	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	if (FIdx == -1)
+	{
+		return false;
+	}
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+		InterpFrac);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
+	}
+
+	DrawModelLight(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+		NFIdx, Version, InterpFrac, Interpolate);
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::DrawAliasModelLight
+//
+//==========================================================================
+
+bool VAdvancedRenderLevel::DrawAliasModelLight(const TVec& Org, const TAVec& Angles,
+	float ScaleX, float ScaleY, VState* State, VState* NextState,
+	int Version, float Inter, bool Interpolate)
+{
+	guard(VAdvancedRenderLevel::DrawAliasModelLight);
+	VClassModelScript* Cls = NULL;
+	for (int i = 0; i < ClassModels.Num(); i++)
+	{
+		if (ClassModels[i]->Name == State->Outer->Name)
+		{
+			Cls = ClassModels[i];
+		}
+	}
+	if (!Cls)
+	{
+		return false;
+	}
+
+	int FIdx = FindFrame(*Cls, State->InClassIndex, Inter);
+	if (FIdx == -1)
+	{
+		return false;
+	}
+
+	float InterpFrac;
+	int NFIdx = FindNextFrame(*Cls, FIdx, NextState->InClassIndex, Inter,
+		InterpFrac);
+	if (NFIdx == -1)
+	{
+		NFIdx = 0;
+		Interpolate = false;
+	}
+
+	DrawModelLight(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx,
+		Version, InterpFrac, Interpolate);
+	return true;
+	unguard;
+}
+
+//==========================================================================
+//
 //	VAdvancedRenderLevel::DrawEntityModel
 //
 //==========================================================================
@@ -2061,6 +2332,55 @@ bool VAdvancedRenderLevel::DrawEntityModelTextures(VEntity* Ent, float Inter)
 			Ent->Angles, Ent->ScaleX, Ent->ScaleY, DispState,
 			DispState->NextState ? DispState->NextState : DispState,
 			GetTranslation(Ent->Translation), Ent->ModelVersion, Inter, Interpolate);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::DrawEntityModelLight
+//
+//==========================================================================
+
+bool VAdvancedRenderLevel::DrawEntityModelLight(VEntity* Ent, float Inter)
+{
+	guard(VAdvancedRenderLevel::DrawEntityModelLight);
+	VState* DispState = (Ent->EntityFlags & VEntity::EF_UseDispState) ?
+		Ent->DispState : Ent->State;
+	bool Interpolate;
+	// Check if we want to interpolate model frames
+	if (!r_interpolate_frames)
+	{
+		Interpolate = false;
+	}
+	else
+	{
+		Interpolate = true;
+	}
+	if (Ent->EntityFlags & VEntity::EF_FixedModel)
+	{
+		if (!FL_FileExists(VStr("models/") + Ent->FixedModelName))
+		{
+			GCon->Logf("Can't find %s", *Ent->FixedModelName);
+			return false;
+		}
+		VModel* Mdl = Mod_FindName(VStr("models/") + Ent->FixedModelName);
+		if (!Mdl)
+		{
+			return false;
+		}
+		return DrawAliasModelLight(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+			Ent->Angles, Ent->ScaleX, Ent->ScaleY, Mdl,
+			DispState->InClassIndex,
+			DispState->NextState ? DispState->NextState->InClassIndex :
+			DispState->InClassIndex, Ent->ModelVersion, Inter, Interpolate);
+	}
+	else
+	{
+		return DrawAliasModelLight(Ent->Origin - TVec(0, 0, Ent->FloorClip),
+			Ent->Angles, Ent->ScaleX, Ent->ScaleY, DispState,
+			DispState->NextState ? DispState->NextState : DispState,
+			Ent->ModelVersion, Inter, Interpolate);
 	}
 	unguard;
 }

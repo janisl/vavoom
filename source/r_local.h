@@ -558,6 +558,9 @@ private:
 	trans_sprite_t	MainTransSprites[MAX_TRANS_SPRITES];
 
 	VViewClipper			LightClip;
+	TVec					CurrLightPos;
+	float					CurrLightRadius;
+	vuint32					CurrLightColour;
 
 	//	General
 	void PrecacheLevel();
@@ -651,6 +654,9 @@ private:
 	void RenderAliasModelTextures(VEntity*);
 	void RenderThingTextures(VEntity*);
 	void RenderMobjsTextures();
+	void RenderAliasModelLight(VEntity*);
+	void RenderThingLight(VEntity*);
+	void RenderMobjsLight();
 	void DrawTranslucentPolys();
 	void RenderPSprite(VViewState*, float, vuint32, vuint32, float, bool);
 	bool RenderViewModel(VViewState*, vuint32, vuint32, float, bool);
@@ -671,9 +677,14 @@ private:
 		int, int, VTextureTranslation*, int, float, bool);
 	bool DrawAliasModelTextures(const TVec&, const TAVec&, float, float, VState*, VState*,
 		VTextureTranslation*, int, float, bool);
+	bool DrawAliasModelLight(const TVec&, const TAVec&, float, float, VModel*,
+		int, int, int, float, bool);
+	bool DrawAliasModelLight(const TVec&, const TAVec&, float, float, VState*, VState*,
+		int, float, bool);
 	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
 	bool DrawEntityModelAmbient(VEntity*, vuint32, float);
 	bool DrawEntityModelTextures(VEntity*, float);
+	bool DrawEntityModelLight(VEntity*, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
 public:

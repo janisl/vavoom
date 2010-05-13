@@ -58,9 +58,6 @@ static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
 static bool				MirrorClipSegs;
 
-static TVec				CurrLightPos;
-static float			CurrLightRadius;
-
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
@@ -1141,11 +1138,14 @@ void VAdvancedRenderLevel::RenderLightShadows(TVec& Pos, float Radius, vuint32 C
 
 	CurrLightPos = Pos;
 	CurrLightRadius = Radius;
+	CurrLightColour = Colour;
 
 	((VAdvDrawer*)Drawer)->BeginLightShadowVolumes();
 	LightClip.ClearClipNodes(CurrLightPos, Level);
 	RenderShadowBSPNode(Level->NumNodes - 1, dummy_bbox);
 	((VAdvDrawer*)Drawer)->DrawLightShadowsPass(CurrLightPos, CurrLightRadius, Colour);
+	((VAdvDrawer*)Drawer)->BeginModelsLightPass(CurrLightPos, CurrLightRadius, Colour);
+	RenderMobjsLight();
 	unguard;
 }
 

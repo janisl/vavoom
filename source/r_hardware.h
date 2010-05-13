@@ -90,6 +90,8 @@ protected:
 
 	enum { SHADEDOT_QUANT = 16 };
 	static float	r_avertexnormal_dots[SHADEDOT_QUANT][256];
+	enum { NUMVERTEXNORMALS = 162 };
+	static float	r_avertexnormals[NUMVERTEXNORMALS][3];
 
 	void FlushCaches(bool);
 	void FlushOldCaches();
@@ -109,12 +111,15 @@ public:
 	virtual void DrawWorldAmbientPass() = 0;
 	virtual void BeginShadowVolumesPass() = 0;
 	virtual void BeginLightShadowVolumes() = 0;
-	virtual void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius) = 0;
-	virtual void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour) = 0;
+	virtual void RenderSurfaceShadowVolume(surface_t*, TVec&, float) = 0;
+	virtual void DrawLightShadowsPass(TVec&, float, vuint32) = 0;
 	virtual void DrawWorldTexturesPass() = 0;
 	virtual void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) = 0;
 	virtual void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
 		float, bool) = 0;
+	virtual void BeginModelsLightPass(TVec&, float, vuint32) = 0;
+	virtual void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, float, bool) = 0;
 };

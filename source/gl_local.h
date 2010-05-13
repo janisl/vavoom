@@ -327,6 +327,9 @@ public:
 		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,
 		mmdl_t*, int, int, VTexture*, VTextureTranslation*, int, float, bool);
+	void BeginModelsLightPass(TVec& LightPos, float Radius, vuint32 Colour);
+	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, float, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -492,14 +495,29 @@ protected:
 	GLint					ShadowsModelAmbientInterLoc;
 	GLint					ShadowsModelAmbientTextureLoc;
 	GLint					ShadowsModelAmbientLightLoc;
+	GLint					ShadowsModelAmbientModelToWorldMatLoc;
 	GLint					ShadowsModelAmbientVert2Loc;
 	GLint					ShadowsModelAmbientTexCoordLoc;
 
 	GLhandleARB				ShadowsModelTexturesProgram;
 	GLint					ShadowsModelTexturesInterLoc;
 	GLint					ShadowsModelTexturesTextureLoc;
+	GLint					ShadowsModelTexturesModelToWorldMatLoc;
 	GLint					ShadowsModelTexturesVert2Loc;
 	GLint					ShadowsModelTexturesTexCoordLoc;
+
+	GLhandleARB				ShadowsModelLightProgram;
+	GLint					ShadowsModelLightInterLoc;
+	GLint					ShadowsModelLightTextureLoc;
+	GLint					ShadowsModelLightLightPosLoc;
+	GLint					ShadowsModelLightLightRadiusLoc;
+	GLint					ShadowsModelLightLightColourLoc;
+	GLint					ShadowsModelLightModelToWorldMatLoc;
+	GLint					ShadowsModelLightNormalToWorldMatLoc;
+	GLint					ShadowsModelLightVert2Loc;
+	GLint					ShadowsModelLightVertNormalLoc;
+	GLint					ShadowsModelLightVert2NormalLoc;
+	GLint					ShadowsModelLightTexCoordLoc;
 
 	//
 	//	Console variables

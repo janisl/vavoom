@@ -886,6 +886,118 @@ void VAdvancedRenderLevel::RenderMobjsTextures()
 
 //==========================================================================
 //
+//	VAdvancedRenderLevel::RenderAliasModelLight
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::RenderAliasModelLight(VEntity* mobj)
+{
+	guard(VAdvancedRenderLevel::RenderAliasModelLight);
+	float TimeFrac = 0;
+	if (mobj->State->Time > 0)
+	{
+		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
+		TimeFrac = MID(0.0, TimeFrac, 1.0);
+	}
+
+	DrawEntityModelLight(mobj, TimeFrac);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::RenderThingLight
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
+{
+	guard(VAdvancedRenderLevel::RenderThingLight);
+	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
+	{
+		//	Don't draw camera actor.
+		return;
+	}
+
+	if ((mobj->EntityFlags & VEntity::EF_NoSector) ||
+		(mobj->EntityFlags & VEntity::EF_Invisible))
+	{
+		return;
+	}
+	if (!mobj->State)
+	{
+		return;
+	}
+
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
+
+	int RendStyle = mobj->RenderStyle;
+	float Alpha = mobj->Alpha;
+
+	if (RendStyle == STYLE_SoulTrans)
+	{
+		RendStyle = STYLE_Translucent;
+		Alpha = transsouls;
+	}
+	else if (RendStyle == STYLE_OptFuzzy)
+	{
+		RendStyle = r_drawfuzz ? STYLE_Fuzzy : STYLE_Translucent;
+	}
+
+	switch (RendStyle)
+	{
+	case STYLE_None:
+		return;
+
+	case STYLE_Normal:
+		Alpha = 1.0;
+		break;
+
+	case STYLE_Fuzzy:
+		return;
+
+	case STYLE_Add:
+		return;
+	}
+	Alpha = MID(0.0, Alpha, 1.0);
+
+	if (Alpha < 1.0)
+	{
+		return;
+	}
+
+	RenderAliasModelLight(mobj);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::RenderMobjsLight
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::RenderMobjsLight()
+{
+	guard(VAdvancedRenderLevel::RenderMobjsLight);
+	if (!r_draw_mobjs || !r_models)
+	{
+		return;
+	}
+
+	for (TThinkerIterator<VEntity> Ent(Level); Ent; ++Ent)
+	{
+		RenderThingLight(*Ent);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VAdvancedRenderLevel::DrawTranslucentPolys
 //
 //==========================================================================
