@@ -658,6 +658,8 @@ private:
 	void RenderMobjsLight();
 	void RenderThingShadow(VEntity*);
 	void RenderMobjsShadow();
+	void RenderThingFog(VEntity*);
+	void RenderMobjsFog();
 	void DrawTranslucentPolys();
 	void RenderPSprite(VViewState*, float, vuint32, vuint32, float, bool);
 	bool RenderViewModel(VViewState*, vuint32, vuint32, float, bool);
@@ -686,11 +688,16 @@ private:
 		int, int, int, float, bool);
 	bool DrawAliasModelShadow(const TVec&, const TAVec&, float, float, VState*, VState*,
 		int, float, bool);
+	bool DrawAliasModelFog(const TVec&, const TAVec&, float, float, VModel*,
+		int, int, int, vuint32, float, bool);
+	bool DrawAliasModelFog(const TVec&, const TAVec&, float, float, VState*, VState*,
+		int, vuint32, float, bool);
 	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
 	bool DrawEntityModelAmbient(VEntity*, vuint32, float);
 	bool DrawEntityModelTextures(VEntity*, float);
 	bool DrawEntityModelLight(VEntity*, float);
 	bool DrawEntityModelShadow(VEntity*, float);
+	bool DrawEntityModelFog(VEntity*, vuint32, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
 public:

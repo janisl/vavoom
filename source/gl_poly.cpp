@@ -776,9 +776,59 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 		}
 		glEnd();
 	}
+	unguard;
+}
 
-	glDisable(GL_BLEND);
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawWorldFogPass
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawWorldFogPass()
+{
+	guard(VOpenGLDrawer::DrawWorldFogPass);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	//	Draw surfaces.
+	p_glUseProgramObjectARB(ShadowsFogProgram);
+	p_glUniform1iARB(ShadowsFogFogTypeLoc, r_fog & 3);
+
+	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	{
+		if (!surf->Fade)
+		{
+			continue;
+		}
+
+		p_glUniform4fARB(ShadowsFogFogColourLoc,
+			((surf->Fade >> 16) & 255) / 255.0,
+			((surf->Fade >> 8) & 255) / 255.0,
+			(surf->Fade & 255) / 255.0, 1.0);
+		p_glUniform1fARB(ShadowsFogFogDensityLoc, surf->Fade == FADE_LIGHT ? 0.3 : r_fog_density);
+		p_glUniform1fARB(ShadowsFogFogStartLoc, surf->Fade == FADE_LIGHT ? 1.0 : r_fog_start);
+		p_glUniform1fARB(ShadowsFogFogEndLoc, surf->Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
+
+		glBegin(GL_POLYGON);
+		for (int i = 0; i < surf->count; i++)
+		{
+			glVertex(surf->verts[i]);
+		}
+		glEnd();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::EndFogPass
+//
+//==========================================================================
+
+void VOpenGLDrawer::EndFogPass()
+{
+	guard(VOpenGLDrawer::EndFogPass);
+	glDisable(GL_BLEND);
 
 	//	Back to normal z-buffering.
 	glDepthFunc(GL_LEQUAL);
@@ -1755,8 +1805,6 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	//
 	// draw all the triangles
 	//
-	glPushMatrix();
-
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
@@ -1842,8 +1890,6 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 
 		glEnd();
 	}
-
-	glPopMatrix();
 	unguard;
 }
 
@@ -1874,8 +1920,6 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	//
 	// draw all the triangles
 	//
-	glPushMatrix();
-
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
@@ -1917,8 +1961,6 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	p_glUniform1iARB(ShadowsModelTexturesTextureLoc, 0);
 	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Interpolate ? smooth_inter : 0.0);
 	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_DST_COLOR, GL_ZERO);
 
 	verts = (trivertx_t *)(framedesc + 1);
 	order = (int *)((byte *)pmdl + pmdl->ofscmds);
@@ -1959,11 +2001,6 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 
 		glEnd();
 	}
-
-	glDisable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glPopMatrix();
 	unguard;
 }
 
@@ -2297,6 +2334,124 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 			v2 = v3;
 			index2 = index3;
 		} while (--count);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawAliasModelFog
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	VTexture* Skin, vuint32 Fade, float Inter, bool Interpolate)
+{
+	guard(VOpenGLDrawer::DrawAliasModelFog);
+	mframe_t	*framedesc;
+	mframe_t	*nextframedesc;
+	float 		l;
+	int			index;
+	trivertx_t	*verts;
+	trivertx_t	*verts2;
+	int			*order;
+	int			count;
+
+	float smooth_inter;
+	smooth_inter = SMOOTHSTEP(Inter);
+
+	//
+	// draw all the triangles
+	//
+	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
+
+	// Interpolate Scales
+	TVec scale_origin;
+	if (Interpolate)
+	{
+		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
+	}
+	else
+	{
+		scale_origin[0] = framedesc->scale_origin[0];
+		scale_origin[1] = framedesc->scale_origin[1];
+		scale_origin[2] = framedesc->scale_origin[2];
+	}
+
+	TVec scale;
+	if (Interpolate)
+	{
+		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
+	}
+	else
+	{
+		scale[0] = framedesc->scale[0];
+		scale[1] = framedesc->scale[1];
+		scale[2] = framedesc->scale[2];
+	}
+
+	SetPic(Skin, NULL, CM_Default);
+
+	float rotationmatrix[4][4];
+	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+
+	p_glUseProgramObjectARB(ShadowsModelFogProgram);
+	p_glUniform1iARB(ShadowsModelFogTextureLoc, 0);
+	p_glUniform1fARB(ShadowsModelFogInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniformMatrix4fvARB(ShadowsModelFogModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+	p_glUniform1iARB(ShadowsModelFogFogTypeLoc, r_fog & 3);
+	p_glUniform4fARB(ShadowsModelFogFogColourLoc,
+		((Fade >> 16) & 255) / 255.0,
+		((Fade >> 8) & 255) / 255.0,
+		(Fade & 255) / 255.0, 1.0);
+	p_glUniform1fARB(ShadowsModelFogFogDensityLoc, Fade == FADE_LIGHT ? 0.3 : r_fog_density);
+	p_glUniform1fARB(ShadowsModelFogFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
+	p_glUniform1fARB(ShadowsModelFogFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
+
+	verts = (trivertx_t *)(framedesc + 1);
+	order = (int *)((byte *)pmdl + pmdl->ofscmds);
+	if (Interpolate)
+	{
+		verts2 = (trivertx_t *)(nextframedesc + 1);
+	}
+	else
+	{
+		verts2 = verts;
+	}
+
+	while (*order)
+	{
+		// get the vertex count and primitive type
+		count = *order++;
+		if (count < 0)
+		{
+			count = -count;
+			glBegin(GL_TRIANGLE_FAN);
+		}
+		else
+		{
+			glBegin(GL_TRIANGLE_STRIP);
+		}
+
+		do
+		{
+			// texture coordinates come from the draw list
+			p_glVertexAttrib2fARB(ShadowsModelFogTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
+			order += 2;
+
+			// normals and vertexes come from the frame list
+			index = *order++;
+			p_glVertexAttrib3fARB(ShadowsModelFogVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
+			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
+		} while (--count);
+
+		glEnd();
 	}
 	unguard;
 }

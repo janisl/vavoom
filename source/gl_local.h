@@ -311,6 +311,8 @@ public:
 	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius);
 	void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour);
 	void DrawWorldTexturesPass();
+	void DrawWorldFogPass();
+	void EndFogPass();
 	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float,
@@ -333,6 +335,8 @@ public:
 	void BeginModelsShadowsPass(TVec&, float);
 	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float);
+	void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -528,6 +532,25 @@ protected:
 	GLint					ShadowsModelShadowModelToWorldMatLoc;
 	GLint					ShadowsModelShadowVert2Loc;
 	GLint					ShadowsModelShadowOffsetLoc;
+
+	GLhandleARB				ShadowsFogProgram;
+	GLint					ShadowsFogFogTypeLoc;
+	GLint					ShadowsFogFogColourLoc;
+	GLint					ShadowsFogFogDensityLoc;
+	GLint					ShadowsFogFogStartLoc;
+	GLint					ShadowsFogFogEndLoc;
+
+	GLhandleARB				ShadowsModelFogProgram;
+	GLint					ShadowsModelFogInterLoc;
+	GLint					ShadowsModelFogModelToWorldMatLoc;
+	GLint					ShadowsModelFogTextureLoc;
+	GLint					ShadowsModelFogFogTypeLoc;
+	GLint					ShadowsModelFogFogColourLoc;
+	GLint					ShadowsModelFogFogDensityLoc;
+	GLint					ShadowsModelFogFogStartLoc;
+	GLint					ShadowsModelFogFogEndLoc;
+	GLint					ShadowsModelFogVert2Loc;
+	GLint					ShadowsModelFogTexCoordLoc;
 
 	//
 	//	Console variables

@@ -565,10 +565,14 @@ glshaders/draw_simple.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_simple.fs
 glshaders/draw_simple.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/draw_simple.vs
 glshaders/shadows_ambient.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_ambient.fs
 glshaders/shadows_ambient.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_ambient.vs
+glshaders/shadows_fog.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_fog.fs
+glshaders/shadows_fog.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_fog.vs
 glshaders/shadows_light.fs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_light.fs
 glshaders/shadows_light.vs		@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_light.vs
 glshaders/shadows_model_ambient.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_ambient.fs
 glshaders/shadows_model_ambient.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_ambient.vs
+glshaders/shadows_model_fog.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_fog.fs
+glshaders/shadows_model_fog.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_fog.vs
 glshaders/shadows_model_light.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_light.fs
 glshaders/shadows_model_light.vs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_light.vs
 glshaders/shadows_model_shadow.fs	@CMAKE_CURRENT_SOURCE_DIR@/glshaders/shadows_model_shadow.fs
