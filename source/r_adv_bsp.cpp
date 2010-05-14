@@ -1047,7 +1047,7 @@ void VAdvancedRenderLevel::RenderShadowSubsector(int num)
 		return;
 	}
 
-	//BspVis[num >> 3] |= 1 << (num & 7);
+	LightVis[num >> 3] |= 1 << (num & 7);
 
 	RenderShadowSubRegion(Sub->regions);
 
@@ -1142,7 +1142,11 @@ void VAdvancedRenderLevel::RenderLightShadows(TVec& Pos, float Radius, vuint32 C
 
 	((VAdvDrawer*)Drawer)->BeginLightShadowVolumes();
 	LightClip.ClearClipNodes(CurrLightPos, Level);
+	memset(LightVis, 0, VisSize);
 	RenderShadowBSPNode(Level->NumNodes - 1, dummy_bbox);
+	((VAdvDrawer*)Drawer)->BeginModelsShadowsPass(CurrLightPos, CurrLightRadius);
+	RenderMobjsShadow();
+
 	((VAdvDrawer*)Drawer)->DrawLightShadowsPass(CurrLightPos, CurrLightRadius, Colour);
 	((VAdvDrawer*)Drawer)->BeginModelsLightPass(CurrLightPos, CurrLightRadius, Colour);
 	RenderMobjsLight();

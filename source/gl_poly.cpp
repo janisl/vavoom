@@ -654,7 +654,7 @@ void VOpenGLDrawer::BeginLightShadowVolumes()
 //
 //==========================================================================
 
-#define M_INFINITY  2048
+#define M_INFINITY	2048
 
 void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius)
 {
@@ -1704,6 +1704,21 @@ static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
 
 //==========================================================================
 //
+//	TransformVec
+//
+//==========================================================================
+
+static TVec TransformVec(const float m[4][4], const TVec& v)
+{
+	TVec Out;
+	Out.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3];
+	Out.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3];
+	Out.z = m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3];
+	return Out;
+}
+
+//==========================================================================
+//
 //	VOpenGLDrawer::DrawAliasModelAmbient
 //
 //==========================================================================
@@ -1794,6 +1809,10 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	{
 		verts2 = (trivertx_t *)(nextframedesc + 1);
 	}
+	else
+	{
+		verts2 = verts;
+	}
 
 	while (*order)
 	{
@@ -1817,14 +1836,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 
 			// normals and vertexes come from the frame list
 			index = *order++;
-			if (Interpolate)
-			{
-				p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
-			}
-			else
-			{
-				p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc, 0, 0, 0);
-			}
+			p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
 			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
 		} while (--count);
 
@@ -1914,6 +1926,10 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	{
 		verts2 = (trivertx_t *)(nextframedesc + 1);
 	}
+	else
+	{
+		verts2 = verts;
+	}
 
 	while (*order)
 	{
@@ -1937,14 +1953,7 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 
 			// normals and vertexes come from the frame list
 			index = *order++;
-			if (Interpolate)
-			{
-				p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
-			}
-			else
-			{
-				p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc, 0, 0, 0);
-			}
+			p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
 			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
 		} while (--count);
 
@@ -2063,6 +2072,10 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	{
 		verts2 = (trivertx_t *)(nextframedesc + 1);
 	}
+	else
+	{
+		verts2 = verts;
+	}
 
 	while (*order)
 	{
@@ -2088,22 +2101,202 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 
 			// normals and vertexes come from the frame list
 			index = *order++;
-			if (Interpolate)
-			{
-				p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
-				p_glVertexAttrib3fvARB(ShadowsModelLightVert2NormalLoc,
+			p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
+			p_glVertexAttrib3fvARB(ShadowsModelLightVert2NormalLoc,
 					r_avertexnormals[verts2[index].lightnormalindex]);
-			}
-			else
-			{
-				p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc, 0, 0, 0);
-				p_glVertexAttrib3fvARB(ShadowsModelLightVert2NormalLoc,
-					r_avertexnormals[verts[index].lightnormalindex]);
-			}
 			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
 		} while (--count);
 
 		glEnd();
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::BeginModelsShadowsPass
+//
+//==========================================================================
+
+void VOpenGLDrawer::BeginModelsShadowsPass(TVec& LightPos, float LightRadius)
+{
+	guard(VOpenGLDrawer::BeginModelsShadowsPass);
+	p_glUseProgramObjectARB(ShadowsModelShadowProgram);
+	p_glUniform3fARB(ShadowsModelShadowLightPosLoc, LightPos.x, LightPos.y, LightPos.z);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawAliasModelShadow
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles,
+	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	float Inter, bool Interpolate, const TVec& LightPos, float LightRadius)
+{
+	guard(VOpenGLDrawer::DrawAliasModelShadow);
+	mframe_t	*framedesc;
+	mframe_t	*nextframedesc;
+	float 		l;
+	trivertx_t	*verts;
+	trivertx_t	*verts2;
+	int			*order;
+	int			count;
+
+	float smooth_inter;
+	smooth_inter = SMOOTHSTEP(Inter);
+
+	//
+	// draw all the triangles
+	//
+	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
+
+	// Interpolate Scales
+	TVec scale_origin;
+	if (Interpolate)
+	{
+		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] +
+			smooth_inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] +
+			smooth_inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] +
+			smooth_inter * nextframedesc->scale_origin[2]);
+	}
+	else
+	{
+		scale_origin[0] = framedesc->scale_origin[0];
+		scale_origin[1] = framedesc->scale_origin[1];
+		scale_origin[2] = framedesc->scale_origin[2];
+	}
+
+	TVec scale;
+	if (Interpolate)
+	{
+		scale[0] = framedesc->scale[0] + smooth_inter *
+			(nextframedesc->scale[0] - framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + smooth_inter *
+			(nextframedesc->scale[1] - framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + smooth_inter *
+			(nextframedesc->scale[2] - framedesc->scale[2]) * Scale.z;
+	}
+	else
+	{
+		scale[0] = framedesc->scale[0];
+		scale[1] = framedesc->scale[1];
+		scale[2] = framedesc->scale[2];
+	}
+
+	float rotationmatrix[4][4];
+	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+
+	p_glUniform1fARB(ShadowsModelShadowInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+
+	verts = (trivertx_t *)(framedesc + 1);
+	order = (int *)((byte *)pmdl + pmdl->ofscmds);
+	if (Interpolate)
+	{
+		verts2 = (trivertx_t *)(nextframedesc + 1);
+	}
+	else
+	{
+		verts2 = verts;
+	}
+
+	float Offset = M_INFINITY;
+	while (*order)
+	{
+		// get the vertex count and primitive type
+		count = *order++;
+		GLenum Prim;
+		if (count < 0)
+		{
+			count = -count;
+			Prim = GL_TRIANGLE_FAN;
+		}
+		else
+		{
+			Prim = GL_TRIANGLE_STRIP;
+		}
+
+		order += 2;
+		int index1 = *order++;
+		TVec v1((1 - smooth_inter) * verts[index1].v[0] + smooth_inter * verts2[index1].v[0],
+				(1 - smooth_inter) * verts[index1].v[1] + smooth_inter * verts2[index1].v[1],
+				(1 - smooth_inter) * verts[index1].v[2] + smooth_inter * verts2[index1].v[2]);
+		v1 = TransformVec(rotationmatrix, v1);
+
+		order += 2;
+		int index2 = *order++;
+		TVec v2((1 - smooth_inter) * verts[index2].v[0] + smooth_inter * verts2[index2].v[0],
+				(1 - smooth_inter) * verts[index2].v[1] + smooth_inter * verts2[index2].v[1],
+				(1 - smooth_inter) * verts[index2].v[2] + smooth_inter * verts2[index2].v[2]);
+		v2 = TransformVec(rotationmatrix, v2);
+
+		count -= 2;
+		do
+		{
+			order += 2;
+			int index3 = *order++;
+			TVec v3((1 - smooth_inter) * verts[index3].v[0] + smooth_inter * verts2[index3].v[0],
+					(1 - smooth_inter) * verts[index3].v[1] + smooth_inter * verts2[index3].v[1],
+					(1 - smooth_inter) * verts[index3].v[2] + smooth_inter * verts2[index3].v[2]);
+			v3 = TransformVec(rotationmatrix, v3);
+
+			TVec d1 = v2 - v3;
+			TVec d2 = v1 - v3;
+			TVec PlaneNormal = Normalise(CrossProduct(d1, d2));
+			float PlaneDist = DotProduct(PlaneNormal, v3);
+
+			float dist = DotProduct(LightPos, PlaneNormal) - PlaneDist;
+			if (dist > 0)
+			{
+#define outv(idx, offs) \
+				p_glVertexAttrib3fARB(ShadowsModelShadowVert2Loc, \
+					verts2[index ## idx].v[0], verts2[index ## idx].v[1], verts2[index ## idx].v[2]); \
+				p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, offs); \
+				glVertex3f(verts[index ## idx].v[0], verts[index ## idx].v[1], verts[index ## idx].v[2]);
+
+				glBegin(GL_TRIANGLES);
+				outv(3, Offset);
+				outv(2, Offset);
+				outv(1, Offset);
+				glEnd();
+
+				glBegin(GL_TRIANGLES);
+				outv(1, 0);
+				outv(2, 0);
+				outv(3, 0);
+				glEnd();
+
+				glBegin(GL_TRIANGLE_STRIP);
+
+				outv(1, 0);
+				outv(1, Offset);
+
+				outv(2, 0);
+				outv(2, Offset);
+
+				outv(3, 0);
+				outv(3, Offset);
+
+				outv(1, 0);
+				outv(1, Offset);
+
+				glEnd();
+			}
+
+			if (Prim == GL_TRIANGLE_STRIP)
+			{
+				v1 = v2;
+				index1 = index2;
+			}
+			v2 = v3;
+			index2 = index3;
+		} while (--count);
 	}
 	unguard;
 }

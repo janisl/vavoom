@@ -86,6 +86,7 @@ VAdvancedRenderLevel::VAdvancedRenderLevel(VLevel* ALevel)
 , Particles(0)
 , ActiveParticles(0)
 , FreeParticles(0)
+, LightVis(NULL)
 {
 	guard(VAdvancedRenderLevel::VAdvancedRenderLevel);
 	r_oldviewleaf = NULL;
@@ -96,6 +97,7 @@ VAdvancedRenderLevel::VAdvancedRenderLevel(VLevel* ALevel)
 
 	VisSize = (Level->NumSubsectors + 7) >> 3;
 	BspVis = new vuint8[VisSize];
+	LightVis = new vuint8[VisSize];
 
 	InitParticles();
 	ClearParticles();

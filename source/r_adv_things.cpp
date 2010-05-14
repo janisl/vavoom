@@ -650,26 +650,6 @@ void VAdvancedRenderLevel::RenderMobjs()
 
 //==========================================================================
 //
-//	VAdvancedRenderLevel::RenderAliasModelAmbient
-//
-//==========================================================================
-
-void VAdvancedRenderLevel::RenderAliasModelAmbient(VEntity* mobj, vuint32 light)
-{
-	guard(VAdvancedRenderLevel::RenderAliasModelAmbient);
-	float TimeFrac = 0;
-	if (mobj->State->Time > 0)
-	{
-		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
-		TimeFrac = MID(0.0, TimeFrac, 1.0);
-	}
-
-	DrawEntityModelAmbient(mobj, light, TimeFrac);
-	unguard;
-}
-
-//==========================================================================
-//
 //	VAdvancedRenderLevel::RenderThingAmbient
 //
 //==========================================================================
@@ -747,7 +727,14 @@ void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 		light = LightPointAmbient(mobj->Origin);
 	}
 
-	RenderAliasModelAmbient(mobj, light);
+	float TimeFrac = 0;
+	if (mobj->State->Time > 0)
+	{
+		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
+		TimeFrac = MID(0.0, TimeFrac, 1.0);
+	}
+
+	DrawEntityModelAmbient(mobj, light, TimeFrac);
 	unguard;
 }
 
@@ -769,26 +756,6 @@ void VAdvancedRenderLevel::RenderMobjsAmbient()
 	{
 		RenderThingAmbient(*Ent);
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAdvancedRenderLevel::RenderAliasModelTextures
-//
-//==========================================================================
-
-void VAdvancedRenderLevel::RenderAliasModelTextures(VEntity* mobj)
-{
-	guard(VAdvancedRenderLevel::RenderAliasModelTextures);
-	float TimeFrac = 0;
-	if (mobj->State->Time > 0)
-	{
-		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
-		TimeFrac = MID(0.0, TimeFrac, 1.0);
-	}
-
-	DrawEntityModelTextures(mobj, TimeFrac);
 	unguard;
 }
 
@@ -859,7 +826,14 @@ void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 		return;
 	}
 
-	RenderAliasModelTextures(mobj);
+	float TimeFrac = 0;
+	if (mobj->State->Time > 0)
+	{
+		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
+		TimeFrac = MID(0.0, TimeFrac, 1.0);
+	}
+
+	DrawEntityModelTextures(mobj, TimeFrac);
 	unguard;
 }
 
@@ -886,21 +860,33 @@ void VAdvancedRenderLevel::RenderMobjsTextures()
 
 //==========================================================================
 //
-//	VAdvancedRenderLevel::RenderAliasModelLight
+//	VAdvancedRenderLevel::IsTouchedByLight
 //
 //==========================================================================
 
-void VAdvancedRenderLevel::RenderAliasModelLight(VEntity* mobj)
+bool VAdvancedRenderLevel::IsTouchedByLight(VEntity* Ent)
 {
-	guard(VAdvancedRenderLevel::RenderAliasModelLight);
-	float TimeFrac = 0;
-	if (mobj->State->Time > 0)
+	guard(VAdvancedRenderLevel::IsTouchedByLight);
+	TVec Delta = Ent->Origin - CurrLightPos;
+	float Dist = Ent->Radius + CurrLightRadius;
+	if (fabs(Delta.x) > Dist || Delta.y > Dist)
 	{
-		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
-		TimeFrac = MID(0.0, TimeFrac, 1.0);
+		return false;
 	}
-
-	DrawEntityModelLight(mobj, TimeFrac);
+	if (Delta.z < -CurrLightRadius)
+	{
+		return false;
+	}
+	if (Delta.z > CurrLightRadius + Ent->Height)
+	{
+		return false;
+	}
+	Delta.z = 0;
+	if (Delta.Length() > Dist)
+	{
+		return false;
+	}
+	return true;
 	unguard;
 }
 
@@ -928,10 +914,14 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 	{
 		return;
 	}
+	if (!IsTouchedByLight(mobj))
+	{
+		return;
+	}
 
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}
@@ -971,7 +961,14 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 		return;
 	}
 
-	RenderAliasModelLight(mobj);
+	float TimeFrac = 0;
+	if (mobj->State->Time > 0)
+	{
+		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
+		TimeFrac = MID(0.0, TimeFrac, 1.0);
+	}
+
+	DrawEntityModelLight(mobj, TimeFrac);
 	unguard;
 }
 
@@ -992,6 +989,109 @@ void VAdvancedRenderLevel::RenderMobjsLight()
 	for (TThinkerIterator<VEntity> Ent(Level); Ent; ++Ent)
 	{
 		RenderThingLight(*Ent);
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::RenderThingShadow
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
+{
+	guard(VAdvancedRenderLevel::RenderThingShadow);
+	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
+	{
+		//	Don't draw camera actor.
+		return;
+	}
+
+	if ((mobj->EntityFlags & VEntity::EF_NoSector) ||
+		(mobj->EntityFlags & VEntity::EF_Invisible))
+	{
+		return;
+	}
+	if (!mobj->State)
+	{
+		return;
+	}
+	if (!IsTouchedByLight(mobj))
+	{
+		return;
+	}
+
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
+
+	int RendStyle = mobj->RenderStyle;
+	float Alpha = mobj->Alpha;
+
+	if (RendStyle == STYLE_SoulTrans)
+	{
+		RendStyle = STYLE_Translucent;
+		Alpha = transsouls;
+	}
+	else if (RendStyle == STYLE_OptFuzzy)
+	{
+		RendStyle = r_drawfuzz ? STYLE_Fuzzy : STYLE_Translucent;
+	}
+
+	switch (RendStyle)
+	{
+	case STYLE_None:
+		return;
+
+	case STYLE_Normal:
+		Alpha = 1.0;
+		break;
+
+	case STYLE_Fuzzy:
+		return;
+
+	case STYLE_Add:
+		return;
+	}
+	Alpha = MID(0.0, Alpha, 1.0);
+
+	if (Alpha < 1.0)
+	{
+		return;
+	}
+
+	float TimeFrac = 0;
+	if (mobj->State->Time > 0)
+	{
+		TimeFrac = 1.0 - (mobj->StateTime / mobj->State->Time);
+		TimeFrac = MID(0.0, TimeFrac, 1.0);
+	}
+
+	DrawEntityModelShadow(mobj, TimeFrac);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::RenderMobjsShadow
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::RenderMobjsShadow()
+{
+	guard(VAdvancedRenderLevel::RenderMobjsShadow);
+	if (!r_draw_mobjs || !r_models)
+	{
+		return;
+	}
+
+	for (TThinkerIterator<VEntity> Ent(Level); Ent; ++Ent)
+	{
+		RenderThingShadow(*Ent);
 	}
 	unguard;
 }

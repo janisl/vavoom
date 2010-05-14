@@ -122,4 +122,7 @@ public:
 	virtual void BeginModelsLightPass(TVec&, float, vuint32) = 0;
 	virtual void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, VTexture*, float, bool) = 0;
+	virtual void BeginModelsShadowsPass(TVec&, float) = 0;
+	virtual void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float) = 0;
 };

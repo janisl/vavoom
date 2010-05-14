@@ -558,6 +558,7 @@ private:
 	trans_sprite_t	MainTransSprites[MAX_TRANS_SPRITES];
 
 	VViewClipper			LightClip;
+	byte*					LightVis;
 	TVec					CurrLightPos;
 	float					CurrLightRadius;
 	vuint32					CurrLightColour;
@@ -648,15 +649,15 @@ private:
 	bool RenderAliasModel(VEntity*, vuint32, vuint32, float, bool);
 	void RenderThing(VEntity*);
 	void RenderMobjs();
-	void RenderAliasModelAmbient(VEntity*, vuint32);
 	void RenderThingAmbient(VEntity*);
 	void RenderMobjsAmbient();
-	void RenderAliasModelTextures(VEntity*);
 	void RenderThingTextures(VEntity*);
 	void RenderMobjsTextures();
-	void RenderAliasModelLight(VEntity*);
+	bool IsTouchedByLight(VEntity*);
 	void RenderThingLight(VEntity*);
 	void RenderMobjsLight();
+	void RenderThingShadow(VEntity*);
+	void RenderMobjsShadow();
 	void DrawTranslucentPolys();
 	void RenderPSprite(VViewState*, float, vuint32, vuint32, float, bool);
 	bool RenderViewModel(VViewState*, vuint32, vuint32, float, bool);
@@ -681,10 +682,15 @@ private:
 		int, int, int, float, bool);
 	bool DrawAliasModelLight(const TVec&, const TAVec&, float, float, VState*, VState*,
 		int, float, bool);
+	bool DrawAliasModelShadow(const TVec&, const TAVec&, float, float, VModel*,
+		int, int, int, float, bool);
+	bool DrawAliasModelShadow(const TVec&, const TAVec&, float, float, VState*, VState*,
+		int, float, bool);
 	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
 	bool DrawEntityModelAmbient(VEntity*, vuint32, float);
 	bool DrawEntityModelTextures(VEntity*, float);
 	bool DrawEntityModelLight(VEntity*, float);
+	bool DrawEntityModelShadow(VEntity*, float);
 	bool CheckAliasModelFrame(VEntity*, float);
 
 public:

@@ -297,6 +297,12 @@ public:
 	//	Rendering stuff
 	void SetupView(VRenderLevelDrawer*, const refdef_t*);
 	void SetupViewOrg();
+	void EndView();
+
+	//	Texture stuff
+	void PrecacheTexture(VTexture*);
+
+	//	Polygon drawing
 	void WorldDrawing();
 	void WorldDrawingShaders();
 	void DrawWorldAmbientPass();
@@ -305,12 +311,6 @@ public:
 	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius);
 	void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour);
 	void DrawWorldTexturesPass();
-	void EndView();
-
-	//	Texture stuff
-	void PrecacheTexture(VTexture*);
-
-	//	Polygon drawing
 	void DrawPolygon(surface_t*, int);
 	void DrawSkyPortal(surface_t*, int);
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float,
@@ -327,9 +327,12 @@ public:
 		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,
 		mmdl_t*, int, int, VTexture*, VTextureTranslation*, int, float, bool);
-	void BeginModelsLightPass(TVec& LightPos, float Radius, vuint32 Colour);
+	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 		const TVec&, mmdl_t*, int, int, VTexture*, float, bool);
+	void BeginModelsShadowsPass(TVec&, float);
+	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -518,6 +521,13 @@ protected:
 	GLint					ShadowsModelLightVertNormalLoc;
 	GLint					ShadowsModelLightVert2NormalLoc;
 	GLint					ShadowsModelLightTexCoordLoc;
+
+	GLhandleARB				ShadowsModelShadowProgram;
+	GLint					ShadowsModelShadowInterLoc;
+	GLint					ShadowsModelShadowLightPosLoc;
+	GLint					ShadowsModelShadowModelToWorldMatLoc;
+	GLint					ShadowsModelShadowVert2Loc;
+	GLint					ShadowsModelShadowOffsetLoc;
 
 	//
 	//	Console variables
