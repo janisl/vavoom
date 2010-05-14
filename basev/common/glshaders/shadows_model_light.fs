@@ -15,22 +15,22 @@ void main()
 		discard;
 	}
 
-	float DistToLight = length(VertToLight);// * 100.0;
+	float DistToLight = length(VertToLight); //* 100.0;
 	if (DistToLight >= LightRadius)
 	{
 		discard;
 	}
 	vec3 Incoming = normalize(VertToLight);
-	Normal = normalize(Normal);
+//	vec3 Norm = normalize(Normal);
 	float Angle = dot(Incoming, Normal);
 //	Angle = 0.5 + 0.5 * Angle;
-	//float Add = LightRadius - Dist;
+//	float Add = LightRadius - Dist;
 	float Add = LightRadius - DistToLight;
 	Add *= Angle;
-	//if (Add <= 0.0)
-	//{
-	//	discard;
-	//}
+//	if (Add <= 0.0)
+//	{
+//		discard;
+//	}
 	Add = clamp(Add / 255.0, 0.0, 1.0);
 
 	gl_FragColor = vec4(LightColour.r, LightColour.g, LightColour.b, Add);

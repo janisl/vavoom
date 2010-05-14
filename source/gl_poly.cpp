@@ -2001,7 +2001,7 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	mframe_t	*framedesc;
 	mframe_t	*nextframedesc;
 	float 		l;
-	int			index;
+	int			index = 0;
 	trivertx_t	*verts;
 	trivertx_t	*verts2;
 	int			*order;
