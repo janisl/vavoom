@@ -21,8 +21,8 @@ void main()
 		discard;
 	}
 	vec3 Incoming = normalize(VertToLight);
-//	vec3 Norm = normalize(Normal);
-	float Angle = dot(Incoming, Normal);
+	vec3 Norm = normalize(Normal);
+	float Angle = dot(Incoming, Norm);
 //	Angle = 0.5 + 0.5 * Angle;
 //	float Add = LightRadius - Dist;
 	float Add = LightRadius - DistToLight;
