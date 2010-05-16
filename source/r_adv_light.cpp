@@ -650,6 +650,17 @@ void VAdvancedRenderLevel::RenderLightShadows(TVec& Pos, float Radius, vuint32 C
 	guard(VAdvancedRenderLevel::RenderLightShadows);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
+	//	Clip against frustrum.
+	for (int i = 0; i < (MirrorClip ? 5 : 4); i++)
+	{
+		float d = DotProduct(Pos, view_clipplanes[i].normal);
+		d -= view_clipplanes[i].dist;
+		if (d <= -Radius)
+		{
+			return;
+		}
+	}
+
 	CurrLightPos = Pos;
 	CurrLightRadius = Radius;
 	CurrLightColour = Colour;
