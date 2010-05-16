@@ -32,7 +32,6 @@
 
 #include "gamedefs.h"
 #include "r_local.h"
-#include "r_hardware.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -501,7 +500,7 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	RenderWorld(RD, Range);
 	RenderMobjsAmbient();
 
-	((VAdvDrawer*)Drawer)->BeginShadowVolumesPass();
+	Drawer->BeginShadowVolumesPass();
 	if (!FixedLight && r_dynamic)
 	{
 		dlight_t* l = DLights;
@@ -522,12 +521,12 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 		}
 	}
 
-	((VAdvDrawer*)Drawer)->DrawWorldTexturesPass();
+	Drawer->DrawWorldTexturesPass();
 	RenderMobjsTextures();
 
-	((VAdvDrawer*)Drawer)->DrawWorldFogPass();
+	Drawer->DrawWorldFogPass();
 	RenderMobjsFog();
-	((VAdvDrawer*)Drawer)->EndFogPass();
+	Drawer->EndFogPass();
 
 	RenderMobjs();
 

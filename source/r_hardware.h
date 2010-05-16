@@ -104,29 +104,3 @@ protected:
 	void ResampleTexture(int, int, const vuint8*, int, int, vuint8*);
 	void MipMap(int, int, vuint8*);
 };
-
-class VAdvDrawer : public VHardwareDrawer
-{
-public:
-	virtual void DrawWorldAmbientPass() = 0;
-	virtual void BeginShadowVolumesPass() = 0;
-	virtual void BeginLightShadowVolumes() = 0;
-	virtual void RenderSurfaceShadowVolume(surface_t*, TVec&, float) = 0;
-	virtual void DrawLightShadowsPass(TVec&, float, vuint32) = 0;
-	virtual void DrawWorldTexturesPass() = 0;
-	virtual void DrawWorldFogPass() = 0;
-	virtual void EndFogPass() = 0;
-	virtual void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) = 0;
-	virtual void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
-		float, bool) = 0;
-	virtual void BeginModelsLightPass(TVec&, float, vuint32) = 0;
-	virtual void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, float, bool) = 0;
-	virtual void BeginModelsShadowsPass(TVec&, float) = 0;
-	virtual void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float) = 0;
-	virtual void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) = 0;
-};

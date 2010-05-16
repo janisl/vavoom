@@ -279,7 +279,7 @@ typedef void (APIENTRY*glGetVertexAttribPointervARB_t)(GLuint, GLenum, GLvoid* *
 #define GL_SHADING_LANGUAGE_VERSION_ARB		0x8B8C
 #endif
 
-class VOpenGLDrawer : public VAdvDrawer
+class VOpenGLDrawer : public VHardwareDrawer
 {
 public:
 	//
@@ -362,6 +362,9 @@ public:
 	void StartAutomap();
 	void DrawLine(int, int, vuint32, int, int, vuint32);
 	void EndAutomap();
+
+	//	Advanced drawing.
+	bool SupportsAdvancedRendering();
 
 protected:
 	GLint					maxTexSize;

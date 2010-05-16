@@ -550,6 +550,17 @@ bool VOpenGLDrawer::CheckExtension(const char *ext)
 
 //==========================================================================
 //
+//	VOpenGLDrawer::SupportsAdvancedRendering
+//
+//==========================================================================
+
+bool VOpenGLDrawer::SupportsAdvancedRendering()
+{
+	return HasStencil && HaveShaders && p_glStencilFuncSeparate;
+}
+
+//==========================================================================
+//
 //	VOpenGLDrawer::Setup2D
 //
 //==========================================================================

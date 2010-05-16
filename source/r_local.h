@@ -437,16 +437,6 @@ private:
 	void RenderBSPNode(int, float*, int);
 	void RenderWorld(const refdef_t*, const VViewClipper*);
 
-	void DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-		VEntity* SkyBox, int LightSourceSector, int SideLight,
-		bool AbsSideLight, bool CheckSkyBoxAlways);
-	void RenderShadowLine(drawseg_t* dseg);
-	void RenderShadowSecSurface(sec_surface_t* ssurf, VEntity* SkyBox);
-	void RenderShadowSubRegion(subregion_t* region);
-	void RenderShadowSubsector(int num);
-	void RenderShadowBSPNode(int bspnum, float* bbox);
-	void RenderLightShadows(TVec& Pos, float Radius, vuint32 Colour);
-
 	//	Things
 	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, bool, int,
 		bool, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
@@ -607,7 +597,6 @@ private:
 	void AnimateSky(float);
 
 	//	Light methods
-	float CastRay(const TVec&, const TVec&, float);
 	vuint32 LightPointAmbient(const TVec &p);
 
 	//	Particles

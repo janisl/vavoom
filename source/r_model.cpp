@@ -27,7 +27,6 @@
 
 #include "gamedefs.h"
 #include "r_local.h"
-#include "r_hardware.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -1139,7 +1138,7 @@ static void DrawModelAmbient(VLevel* Level, const TVec& Org, const TAVec& Angles
 			Md2Light = 0xffffffff;
 		}
 
-		((VAdvDrawer*)Drawer)->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale, pmdl,
+		Drawer->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale, pmdl,
 			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Md2Light,
 			Inter, Interpolate);
 	}
@@ -1328,7 +1327,7 @@ static void DrawModelTextures(VLevel* Level, const TVec& Org, const TAVec& Angle
 			Offset.z = F.Offset.z;
 		}
 
-		((VAdvDrawer*)Drawer)->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale, pmdl,
+		Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale, pmdl,
 			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap,
 			Inter, Interpolate);
 	}
@@ -1516,7 +1515,7 @@ static void DrawModelLight(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Offset.z = F.Offset.z;
 		}
 
-		((VAdvDrawer*)Drawer)->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale, pmdl,
+		Drawer->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale, pmdl,
 			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Inter, Interpolate);
 	}
 	unguard;
@@ -1704,7 +1703,7 @@ static void DrawModelShadow(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Offset.z = F.Offset.z;
 		}
 
-		((VAdvDrawer*)Drawer)->DrawAliasModelShadow(Md2Org, Md2Angle, Offset, Scale, pmdl,
+		Drawer->DrawAliasModelShadow(Md2Org, Md2Angle, Offset, Scale, pmdl,
 			Md2Frame, Md2NextFrame, Inter, Interpolate, LightPos, LightRadius);
 	}
 	unguard;
@@ -1891,7 +1890,7 @@ static void DrawModelFog(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Offset.z = F.Offset.z;
 		}
 
-		((VAdvDrawer*)Drawer)->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale, pmdl,
+		Drawer->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale, pmdl,
 			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Fade,
 			Inter, Interpolate);
 	}

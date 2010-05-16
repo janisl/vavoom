@@ -218,6 +218,29 @@ public:
 	void DrawLine(int, int, vuint32, int, int, vuint32);
 	void EndAutomap();
 
+	bool SupportsAdvancedRendering();
+	void DrawWorldAmbientPass();
+	void BeginShadowVolumesPass();
+	void BeginLightShadowVolumes();
+	void RenderSurfaceShadowVolume(surface_t*, TVec&, float);
+	void DrawLightShadowsPass(TVec&, float, vuint32);
+	void DrawWorldTexturesPass();
+	void DrawWorldFogPass();
+	void EndFogPass();
+	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
+	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
+		float, bool);
+	void BeginModelsLightPass(TVec&, float, vuint32);
+	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, float, bool);
+	void BeginModelsShadowsPass(TVec&, float);
+	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float);
+	void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
+		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
+
 protected:
 	VRenderLevelDrawer*		RendLev;
 

@@ -690,3 +690,35 @@ void VSoftwareDrawer::FreeAllMemory()
 	}
 	unguard;
 }
+
+//==========================================================================
+//
+//	Advanced rendering stubs
+//
+//==========================================================================
+
+bool VSoftwareDrawer::SupportsAdvancedRendering()
+{
+	return false;
+}
+void VSoftwareDrawer::DrawWorldAmbientPass() {}
+void VSoftwareDrawer::BeginShadowVolumesPass() {}
+void VSoftwareDrawer::BeginLightShadowVolumes() {}
+void VSoftwareDrawer::RenderSurfaceShadowVolume(surface_t*, TVec&, float) {}
+void VSoftwareDrawer::DrawLightShadowsPass(TVec&, float, vuint32) {}
+void VSoftwareDrawer::DrawWorldTexturesPass() {}
+void VSoftwareDrawer::DrawWorldFogPass() {}
+void VSoftwareDrawer::EndFogPass() {}
+void VSoftwareDrawer::DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
+	const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) {}
+void VSoftwareDrawer::DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
+	const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
+	float, bool) {}
+void VSoftwareDrawer::BeginModelsLightPass(TVec&, float, vuint32) {}
+void VSoftwareDrawer::DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
+	const TVec&, mmdl_t*, int, int, VTexture*, float, bool) {}
+void VSoftwareDrawer::BeginModelsShadowsPass(TVec&, float) {}
+void VSoftwareDrawer::DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
+	const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float) {}
+void VSoftwareDrawer::DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
+	const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) {}
