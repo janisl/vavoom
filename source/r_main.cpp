@@ -173,12 +173,22 @@ void R_Start(VLevel* ALevel)
 		break;
 
 	case 2:
+		if (!Drawer->SupportsAdvancedRendering())
+		{
+			Host_Error("Advanced rendering not supported by graphics card");
+		}
 		ALevel->RenderData = new VAdvancedRenderLevel(ALevel);
 		break;
 
 	default:
-		//FIXME Should select based on what drawer can do.
-		ALevel->RenderData = new VRenderLevel(ALevel);
+		if (Drawer->SupportsAdvancedRendering())
+		{
+			ALevel->RenderData = new VAdvancedRenderLevel(ALevel);
+		}
+		else
+		{
+			ALevel->RenderData = new VRenderLevel(ALevel);
+		}
 		break;
 	}
 	unguard;
