@@ -621,16 +621,14 @@ private:
 
 	void BuildLightVis(int bspnum, float* bbox);
 	void DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-		VEntity* SkyBox, int LightSourceSector, int SideLight,
-		bool AbsSideLight, bool CheckSkyBoxAlways);
+		bool CheckSkyBoxAlways);
 	void RenderShadowLine(drawseg_t* dseg);
 	void RenderShadowSecSurface(sec_surface_t* ssurf, VEntity* SkyBox);
 	void RenderShadowSubRegion(subregion_t* region);
 	void RenderShadowSubsector(int num);
 	void RenderShadowBSPNode(int bspnum, float* bbox);
 	void DrawLightSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-		VEntity* SkyBox, int LightSourceSector, int SideLight,
-		bool AbsSideLight, bool CheckSkyBoxAlways);
+		VEntity* SkyBox, bool CheckSkyBoxAlways);
 	void RenderLightLine(drawseg_t* dseg);
 	void RenderLightSecSurface(sec_surface_t* ssurf, VEntity* SkyBox);
 	void RenderLightSubRegion(subregion_t* region);

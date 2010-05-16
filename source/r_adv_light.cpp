@@ -406,8 +406,7 @@ void VAdvancedRenderLevel::BuildLightVis(int bspnum, float* bbox)
 //==========================================================================
 
 void VAdvancedRenderLevel::DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-	VEntity* SkyBox, int LightSourceSector, int SideLight,
-	bool AbsSideLight, bool CheckSkyBoxAlways)
+	bool CheckSkyBoxAlways)
 {
 	guard(VAdvancedRenderLevel::DrawShadowSurfaces);
 	surface_t* surfs = InSurfs;
@@ -472,33 +471,19 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 	if (!line->backsector)
 	{
 		// single sided line
-		DrawShadowSurfaces(dseg->mid->surfs, &dseg->mid->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
-		DrawShadowSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+		DrawShadowSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, false);
+		DrawShadowSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, false);
 	}
 	else
 	{
 		// two sided line
-		DrawShadowSurfaces(dseg->top->surfs, &dseg->top->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
-		DrawShadowSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
-		DrawShadowSurfaces(dseg->bot->surfs, &dseg->bot->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
-		DrawShadowSurfaces(dseg->mid->surfs, &dseg->mid->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+		DrawShadowSurfaces(dseg->top->surfs, &dseg->top->texinfo, false);
+		DrawShadowSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, false);
+		DrawShadowSurfaces(dseg->bot->surfs, &dseg->bot->texinfo, false);
+		DrawShadowSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, false);
 		for (segpart_t *sp = dseg->extra; sp; sp = sp->next)
 		{
-			DrawShadowSurfaces(sp->surfs, &sp->texinfo,
-				r_region->ceiling->SkyBox, -1, sidedef->Light,
-				!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			DrawShadowSurfaces(sp->surfs, &sp->texinfo, false);
 		}
 	}
 	unguard;
@@ -527,8 +512,7 @@ void VAdvancedRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity*
 		return;
 	}
 
-	DrawShadowSurfaces(ssurf->surfs, &ssurf->texinfo, SkyBox,
-		plane.LightSourceSector, 0, false, true);
+	DrawShadowSurfaces(ssurf->surfs, &ssurf->texinfo, true);
 	unguard;
 }
 
@@ -695,8 +679,7 @@ void VAdvancedRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox)
 //==========================================================================
 
 void VAdvancedRenderLevel::DrawLightSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-	VEntity* SkyBox, int LightSourceSector, int SideLight,
-	bool AbsSideLight, bool CheckSkyBoxAlways)
+	VEntity* SkyBox, bool CheckSkyBoxAlways)
 {
 	guard(VAdvancedRenderLevel::DrawLightSurfaces);
 	surface_t* surfs = InSurfs;
@@ -785,32 +768,25 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 	{
 		// single sided line
 		DrawLightSurfaces(dseg->mid->surfs, &dseg->mid->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			r_region->ceiling->SkyBox, false);
 		DrawLightSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			r_region->ceiling->SkyBox, false);
 	}
 	else
 	{
 		// two sided line
 		DrawLightSurfaces(dseg->top->surfs, &dseg->top->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			r_region->ceiling->SkyBox, false);
 		DrawLightSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			r_region->ceiling->SkyBox, false);
 		DrawLightSurfaces(dseg->bot->surfs, &dseg->bot->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			r_region->ceiling->SkyBox, false);
 		DrawLightSurfaces(dseg->mid->surfs, &dseg->mid->texinfo,
-			r_region->ceiling->SkyBox, -1, sidedef->Light,
-			!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			r_region->ceiling->SkyBox, false);
 		for (segpart_t *sp = dseg->extra; sp; sp = sp->next)
 		{
 			DrawLightSurfaces(sp->surfs, &sp->texinfo,
-				r_region->ceiling->SkyBox, -1, sidedef->Light,
-				!!(sidedef->Flags & SDF_ABSLIGHT), false);
+				r_region->ceiling->SkyBox, false);
 		}
 	}
 	unguard;
@@ -845,8 +821,7 @@ void VAdvancedRenderLevel::RenderLightSecSurface(sec_surface_t* ssurf, VEntity* 
 		return;
 	}
 
-	DrawLightSurfaces(ssurf->surfs, &ssurf->texinfo, SkyBox,
-		plane.LightSourceSector, 0, false, true);
+	DrawLightSurfaces(ssurf->surfs, &ssurf->texinfo, SkyBox, true);
 	unguard;
 }
 
