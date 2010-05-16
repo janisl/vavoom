@@ -309,7 +309,8 @@ public:
 	void BeginShadowVolumesPass();
 	void BeginLightShadowVolumes();
 	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius);
-	void DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour);
+	void BeginLightPass(TVec&, float, vuint32);
+	void DrawSurfaceLight(surface_t*);
 	void DrawWorldTexturesPass();
 	void DrawWorldFogPass();
 	void EndFogPass();

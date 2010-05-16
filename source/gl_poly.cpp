@@ -705,13 +705,13 @@ void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, f
 
 //==========================================================================
 //
-//	VOpenGLDrawer::DrawLightShadowsPass
+//	VOpenGLDrawer::BeginLightPass
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 Colour)
+void VOpenGLDrawer::BeginLightPass(TVec& LightPos, float Radius, vuint32 Colour)
 {
-	guard(VOpenGLDrawer::DrawLightShadowsPass);
+	guard(VOpenGLDrawer::BeginLightPass);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -728,19 +728,26 @@ void VOpenGLDrawer::DrawLightShadowsPass(TVec& LightPos, float Radius, vuint32 C
 		((Colour >> 16) & 255) / 255.0,
 		((Colour >> 8) & 255) / 255.0,
 		(Colour & 255) / 255.0);
+	unguard;
+}
 
-	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+//==========================================================================
+//
+//	VOpenGLDrawer::DrawSurfaceLight
+//
+//==========================================================================
+
+void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf)
+{
+	guard(VOpenGLDrawer::DrawSurfaceLight);
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < Surf->count; i++)
 	{
-		glBegin(GL_POLYGON);
-		for (int i = 0; i < surf->count; i++)
-		{
-			p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &surf->plane->normal.x);
-			p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &surf->plane->dist);
-			glVertex(surf->verts[i]);
-		}
-		glEnd();
+		p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &Surf->plane->normal.x);
+		p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &Surf->plane->dist);
+		glVertex(Surf->verts[i]);
 	}
-
+	glEnd();
 	unguard;
 }
 

@@ -145,7 +145,8 @@ public:
 	virtual void BeginShadowVolumesPass() = 0;
 	virtual void BeginLightShadowVolumes() = 0;
 	virtual void RenderSurfaceShadowVolume(surface_t*, TVec&, float) = 0;
-	virtual void DrawLightShadowsPass(TVec&, float, vuint32) = 0;
+	virtual void BeginLightPass(TVec&, float, vuint32) = 0;
+	virtual void DrawSurfaceLight(surface_t*) = 0;
 	virtual void DrawWorldTexturesPass() = 0;
 	virtual void DrawWorldFogPass() = 0;
 	virtual void EndFogPass() = 0;

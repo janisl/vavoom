@@ -97,6 +97,7 @@ VAdvancedRenderLevel::VAdvancedRenderLevel(VLevel* ALevel)
 	VisSize = (Level->NumSubsectors + 7) >> 3;
 	BspVis = new vuint8[VisSize];
 	LightVis = new vuint8[VisSize];
+	LightBspVis = new vuint8[VisSize];
 
 	InitParticles();
 	ClearParticles();
@@ -510,14 +511,14 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 			{
 				continue;
 			}
-			RenderLightShadows(l->origin, l->radius, l->colour);
+			RenderLightShadows(RD, Range, l->origin, l->radius, l->colour);
 		}
 	}
 	if (!FixedLight)
 	{
 		for (int i = 0; i < Lights.Num(); i++)
 		{
-			RenderLightShadows(Lights[i].origin, Lights[i].radius, Lights[i].colour);
+			RenderLightShadows(RD, Range, Lights[i].origin, Lights[i].radius, Lights[i].colour);
 		}
 	}
 

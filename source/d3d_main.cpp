@@ -875,7 +875,8 @@ void VDirect3DDrawer::DrawWorldAmbientPass() {}
 void VDirect3DDrawer::BeginShadowVolumesPass() {}
 void VDirect3DDrawer::BeginLightShadowVolumes() {}
 void VDirect3DDrawer::RenderSurfaceShadowVolume(surface_t*, TVec&, float) {}
-void VDirect3DDrawer::DrawLightShadowsPass(TVec&, float, vuint32) {}
+void VDirect3DDrawer::BeginLightPass(TVec&, float, vuint32) {}
+void VDirect3DDrawer::DrawSurfaceLight(surface_t*) {}
 void VDirect3DDrawer::DrawWorldTexturesPass() {}
 void VDirect3DDrawer::DrawWorldFogPass() {}
 void VDirect3DDrawer::EndFogPass() {}

@@ -549,6 +549,7 @@ private:
 
 	VViewClipper			LightClip;
 	byte*					LightVis;
+	byte*					LightBspVis;
 	TVec					CurrLightPos;
 	float					CurrLightRadius;
 	vuint32					CurrLightColour;
@@ -618,6 +619,7 @@ private:
 	void RenderBSPNode(int, float*, int);
 	void RenderWorld(const refdef_t*, const VViewClipper*);
 
+	void BuildLightVis(int bspnum, float* bbox);
 	void DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		VEntity* SkyBox, int LightSourceSector, int SideLight,
 		bool AbsSideLight, bool CheckSkyBoxAlways);
@@ -626,7 +628,16 @@ private:
 	void RenderShadowSubRegion(subregion_t* region);
 	void RenderShadowSubsector(int num);
 	void RenderShadowBSPNode(int bspnum, float* bbox);
-	void RenderLightShadows(TVec& Pos, float Radius, vuint32 Colour);
+	void DrawLightSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
+		VEntity* SkyBox, int LightSourceSector, int SideLight,
+		bool AbsSideLight, bool CheckSkyBoxAlways);
+	void RenderLightLine(drawseg_t* dseg);
+	void RenderLightSecSurface(sec_surface_t* ssurf, VEntity* SkyBox);
+	void RenderLightSubRegion(subregion_t* region);
+	void RenderLightSubsector(int num);
+	void RenderLightBSPNode(int bspnum, float* bbox);
+	void RenderLightShadows(const refdef_t* RD, const VViewClipper* Range,
+		TVec& Pos, float Radius, vuint32 Colour);
 
 	//	Things
 	void DrawTranslucentPoly(surface_t*, TVec*, int, int, float, bool, int,

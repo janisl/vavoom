@@ -705,7 +705,8 @@ void VSoftwareDrawer::DrawWorldAmbientPass() {}
 void VSoftwareDrawer::BeginShadowVolumesPass() {}
 void VSoftwareDrawer::BeginLightShadowVolumes() {}
 void VSoftwareDrawer::RenderSurfaceShadowVolume(surface_t*, TVec&, float) {}
-void VSoftwareDrawer::DrawLightShadowsPass(TVec&, float, vuint32) {}
+void VSoftwareDrawer::BeginLightPass(TVec&, float, vuint32) {}
+void VSoftwareDrawer::DrawSurfaceLight(surface_t*) {}
 void VSoftwareDrawer::DrawWorldTexturesPass() {}
 void VSoftwareDrawer::DrawWorldFogPass() {}
 void VSoftwareDrawer::EndFogPass() {}
