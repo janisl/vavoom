@@ -496,7 +496,7 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 
 	MarkLeaves();
 
-	UpdateWorld(RD, Range);
+	UpdateWorld();
 
 	RenderWorld(RD, Range);
 	RenderMobjsAmbient();

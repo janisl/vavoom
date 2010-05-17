@@ -569,14 +569,10 @@ private:
 
 	//	Surf methods
 	void SetupSky();
-	void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*);
-	void FlushSurfCaches(surface_t*);
-	surface_t* SubdivideFace(surface_t*, const TVec&, const TVec*);
 	sec_surface_t* CreateSecSurface(subsector_t*, sec_plane_t*);
 	void UpdateSecSurface(sec_surface_t*, sec_plane_t*, subsector_t*);
 	surface_t* NewWSurf();
 	void FreeWSurfs(surface_t*);
-	surface_t* SubdivideSeg(surface_t*, const TVec&, const TVec*);
 	surface_t* CreateWSurfs(TVec*, texinfo_t*, seg_t*, subsector_t*);
 	int CountSegParts(seg_t*);
 	void CreateSegParts(drawseg_t*, seg_t*);
@@ -586,7 +582,7 @@ private:
 	void UpdateSubRegion(subregion_t*);
 	void UpdateSubsector(int, float*);
 	void UpdateBSPNode(int, float*);
-	void UpdateWorld(const refdef_t*, const VViewClipper*);
+	void UpdateWorld();
 	bool CopyPlaneIfValid(sec_plane_t*, const sec_plane_t*,
 		const sec_plane_t*);
 	void UpdateFakeFlats(sector_t*);

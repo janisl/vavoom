@@ -30,10 +30,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define MAXSPLITVERTS		128
-#define ON_EPSILON			0.1
-#define subdivide_size		240
-
 #define MAXWVERTS	8
 #define WSURFSIZE	(sizeof(surface_t) + sizeof(TVec) * (MAXWVERTS - 1))
 
@@ -169,234 +165,6 @@ void VAdvancedRenderLevel::SetupSky()
 
 //==========================================================================
 //
-//	VAdvancedRenderLevel::InitSurfs
-//
-//==========================================================================
-
-void VAdvancedRenderLevel::InitSurfs(surface_t* ASurfs, texinfo_t *texinfo,
-	TPlane *plane, subsector_t* sub)
-{
-	guard(VAdvancedRenderLevel::InitSurfs);
-	surface_t* surfs = ASurfs;
-	int i;
-	float dot;
-	float mins;
-	float maxs;
-	int bmins;
-	int bmaxs;
-
-	while (surfs)
-	{
-		if (plane)
-		{
-			surfs->texinfo = texinfo;
-			surfs->plane = plane;
-		}
-
-		mins = 99999.0;
-		maxs = -99999.0;
-		for (i = 0; i < surfs->count; i++)
-		{
-			dot = DotProduct(surfs->verts[i], texinfo->saxis) + texinfo->soffs;
-			if (dot < mins)
-				mins = dot;
-			if (dot > maxs)
-				maxs = dot;
-		}
-		bmins = (int)floor(mins / 16);
-		bmaxs = (int)ceil(maxs / 16);
-		surfs->texturemins[0] = bmins * 16;
-		surfs->extents[0] = (bmaxs - bmins) * 16;
-		if (surfs->extents[0] > 256)
-		{
-			Sys_Error("Bad extents");
-		}
-
-		mins = 99999.0;
-		maxs = -99999.0;
-		for (i = 0; i < surfs->count; i++)
-		{
-			dot = DotProduct(surfs->verts[i], texinfo->taxis) + texinfo->toffs;
-			if (dot < mins)
-				mins = dot;
-			if (dot > maxs)
-				maxs = dot;
-		}
-		bmins = (int)floor(mins / 16);
-		bmaxs = (int)ceil(maxs / 16);
-		surfs->texturemins[1] = bmins * 16;
-		surfs->extents[1] = (bmaxs - bmins) * 16;
-		if (surfs->extents[1] > 256)
-		{
-			Sys_Error("Bad extents");
-		}
-
-		surfs = surfs->next;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAdvancedRenderLevel::FlushSurfCaches
-//
-//==========================================================================
-
-void VAdvancedRenderLevel::FlushSurfCaches(surface_t* InSurfs)
-{
-	guard(VAdvancedRenderLevel::FlushSurfCaches);
-	surface_t* surfs = InSurfs;
-	while (surfs)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			if (surfs->cachespots[i])
-			{
-				Drawer->FreeSurfCache(surfs->cachespots[i]);
-			}
-		}
-		surfs = surfs->next;
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAdvancedRenderLevel::SubdivideFace
-//
-//==========================================================================
-
-surface_t* VAdvancedRenderLevel::SubdivideFace(surface_t* InF, const TVec &axis,
-	const TVec *nextaxis)
-{
-	guard(VAdvancedRenderLevel::SubdivideFace);
-	surface_t* f = InF;
-	int i;
-	float dot;
-	float mins = 99999.0;
-	float maxs = -99999.0;
-
-	for (i = 0; i < f->count; i++)
-	{
-		dot = DotProduct(f->verts[i], axis);
-		if (dot < mins)
-			mins = dot;
-		if (dot > maxs)
-			maxs = dot;
-	}
-
-	if (maxs - mins <= subdivide_size)
-	{
-		if (nextaxis)
-		{
-			f = SubdivideFace(f, *nextaxis, NULL);
-		}
-		return f;
-	}
-
-	c_subdivides++;
-
-	if (f->count > MAXSPLITVERTS)
-	{
-		Host_Error("f->count > MAXSPLITVERTS\n");
-	}
-
-	TPlane plane;
-
-	plane.normal = axis;
-	dot = Length(plane.normal);
-	plane.normal = Normalise(plane.normal);
-	plane.dist = (mins + subdivide_size - 16) / dot;
-
-	float dots[MAXSPLITVERTS + 1];
-	int sides[MAXSPLITVERTS + 1];
-
-	for (i = 0; i < f->count; i++)
-	{
-		dot = DotProduct(f->verts[i], plane.normal) - plane.dist;
-		dots[i] = dot;
-		if (dot < -ON_EPSILON)
-			sides[i] = -1;
-		else if (dot > ON_EPSILON)
-			sides[i] = 1;
-		else
-			sides[i] = 0;
-	}
-	dots[f->count] = dots[0];
-	sides[f->count] = sides[0];
-
-	TVec verts1[MAXSPLITVERTS];
-	TVec verts2[MAXSPLITVERTS];
-	int count1 = 0;
-	int count2 = 0;
-
-	for (i = 0; i < f->count; i++)
-	{
-		if (sides[i] == 0)
-		{
-			verts1[count1++] = f->verts[i];
-			verts2[count2++] = f->verts[i];
-			continue;
-		}
-		if (sides[i] == 1)
-		{
-			verts1[count1++] = f->verts[i];
-		}
-		else
-		{
-			verts2[count2++] = f->verts[i];
-		}
-		if (sides[i + 1] == 0 || sides[i] == sides[i + 1])
-		{
-			continue;
-		}
-
-		// generate a split point
-		TVec mid;
-		TVec &p1 = f->verts[i];
-		TVec &p2 = f->verts[(i + 1) % f->count];
-		
-		dot = dots[i] / (dots[i] - dots[i + 1]);
-		for (int j = 0; j < 3; j++)
-		{
-			// avoid round off error when possible
-			if (plane.normal[j] == 1)
-				mid[j] = plane.dist;
-			else if (plane.normal[j] == -1)
-				mid[j] = -plane.dist;
-			else
-				mid[j] = p1[j] + dot * (p2[j] - p1[j]);
-		}
-
-		verts1[count1++] = mid;
-		verts2[count2++] = mid;
-	}
-
-	surface_t *next = f->next;
-	Z_Free(f);
-
-	surface_t *back = (surface_t*)Z_Calloc(sizeof(surface_t) +
-		(count2 - 1) * sizeof(TVec));
-	back->count = count2;
-	memcpy(back->verts, verts2, count2 * sizeof(TVec));
-
-	surface_t *front = (surface_t*)Z_Calloc(sizeof(surface_t) +
-		(count1 - 1) * sizeof(TVec));
-	front->count = count1;
-	memcpy(front->verts, verts1, count1 * sizeof(TVec));
-
-	front->next = next;
-	back->next = SubdivideFace(front, axis, nextaxis);
-	if (nextaxis)
-	{
-		back = SubdivideFace(back, *nextaxis, NULL);
-	}
-	return back;
-	unguard;
-}
-
-//==========================================================================
-//
 //	VAdvancedRenderLevel::CreateSecSurface
 //
 //==========================================================================
@@ -459,20 +227,9 @@ sec_surface_t* VAdvancedRenderLevel::CreateSecSurface(subsector_t* sub,
 		dst.z = splane->GetPointZ(dst);
 	}
 
-	if (splane->pic == skyflatnum)
-	{
-		//	Don't subdivide sky
-		ssurf->surfs = surf;
-		surf->texinfo = &ssurf->texinfo;
-		surf->plane = splane;
-	}
-	else
-	{
-		ssurf->surfs = SubdivideFace(surf, ssurf->texinfo.saxis,
-			&ssurf->texinfo.taxis);
-		InitSurfs(ssurf->surfs, &ssurf->texinfo, splane, sub);
-	}
-
+	ssurf->surfs = surf;
+	surf->texinfo = &ssurf->texinfo;
+	surf->plane = splane;
 	return ssurf;
 	unguard;
 }
@@ -501,12 +258,8 @@ void VAdvancedRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 		{
 			ssurf->secplane = RealPlane;
 			plane = RealPlane;
-			if (!ssurf->surfs->extents[0])
-			{
-				ssurf->surfs = SubdivideFace(ssurf->surfs,
-					ssurf->texinfo.saxis, &ssurf->texinfo.taxis);
-				InitSurfs(ssurf->surfs, &ssurf->texinfo, plane, sub);
-			}
+			ssurf->surfs->texinfo = &ssurf->texinfo;
+			ssurf->surfs->plane = plane;
 		}
 		else if (plane->pic != skyflatnum && RealPlane->pic == skyflatnum)
 		{
@@ -529,11 +282,6 @@ void VAdvancedRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 			{
 				surf->verts[i].z = plane->GetPointZ(surf->verts[i]);
 			}
-		}
-		if (plane->pic != skyflatnum)
-		{
-			FlushSurfCaches(ssurf->surfs);
-			InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
 		}
 	}
 	if (FASI(ssurf->XScale) != FASI(plane->XScale) ||
@@ -562,36 +310,12 @@ void VAdvancedRenderLevel::UpdateSecSurface(sec_surface_t *ssurf,
 		ssurf->XScale = plane->XScale;
 		ssurf->YScale = plane->YScale;
 		ssurf->Angle = plane->BaseAngle - plane->Angle;
-		if (plane->pic != skyflatnum)
-		{
-			FreeSurfaces(ssurf->surfs);
-			surface_t* surf = (surface_t*)Z_Calloc(sizeof(surface_t) +
-				(sub->numlines - 1) * sizeof(TVec));
-			surf->count = sub->numlines;
-			seg_t* line = &Level->Segs[sub->firstline];
-			int vlindex = (plane->normal.z < 0);
-			for (int i = 0; i < surf->count; i++)
-			{
-				TVec &v = *line[vlindex ? surf->count - i - 1 : i].v1;
-				TVec &dst = surf->verts[i];
-				dst = v;
-				dst.z = plane->GetPointZ(dst);
-			}
-			ssurf->surfs = SubdivideFace(surf, ssurf->texinfo.saxis,
-				&ssurf->texinfo.taxis);
-			InitSurfs(ssurf->surfs, &ssurf->texinfo, plane, sub);
-		}
 	}
 	else if (FASI(ssurf->texinfo.soffs) != FASI(plane->xoffs) ||
 		ssurf->texinfo.toffs != plane->yoffs + plane->BaseYOffs)
 	{
 		ssurf->texinfo.soffs = plane->xoffs;
 		ssurf->texinfo.toffs = plane->yoffs + plane->BaseYOffs;
-		if (plane->pic != skyflatnum)
-		{
-			FlushSurfCaches(ssurf->surfs);
-			InitSurfs(ssurf->surfs, &ssurf->texinfo, NULL, sub);
-		}
 	}
 	unguard;
 }
@@ -644,7 +368,6 @@ void VAdvancedRenderLevel::FreeWSurfs(surface_t* InSurfs)
 {
 	guard(VAdvancedRenderLevel::FreeWSurfs);
 	surface_t* surfs = InSurfs;
-	FlushSurfCaches(surfs);
 	while (surfs)
 	{
 		if (surfs->lightmap)
@@ -660,130 +383,6 @@ void VAdvancedRenderLevel::FreeWSurfs(surface_t* InSurfs)
 		free_wsurfs = surfs;
 		surfs = next;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAdvancedRenderLevel::SubdivideSeg
-//
-//==========================================================================
-
-surface_t* VAdvancedRenderLevel::SubdivideSeg(surface_t* InSurf,
-	const TVec &axis, const TVec *nextaxis)
-{
-	guard(VAdvancedRenderLevel::SubdivideSeg);
-	surface_t* surf = InSurf;
-	int i;
-	float dot;
-	float mins = 99999.0;
-	float maxs = -99999.0;
-
-	for (i = 0; i < surf->count; i++)
-	{
-		dot = DotProduct(surf->verts[i], axis);
-		if (dot < mins)
-			mins = dot;
-		if (dot > maxs)
-			maxs = dot;
-	}
-
-	if (maxs - mins <= subdivide_size)
-	{
-		if (nextaxis)
-		{
-			surf = SubdivideSeg(surf, *nextaxis, NULL);
-		}
-		return surf;
-	}
-
-	c_seg_div++;
-
-	TPlane plane;
-
-	plane.normal = axis;
-	dot = Length(plane.normal);
-	plane.normal = Normalise(plane.normal);
-	plane.dist = (mins + subdivide_size - 16) / dot;
-
-	float dots[MAXWVERTS + 1];
-	int sides[MAXWVERTS + 1];
-
-	for (i = 0; i < surf->count; i++)
-	{
-		dot = DotProduct(surf->verts[i], plane.normal) - plane.dist;
-		dots[i] = dot;
-		if (dot < -ON_EPSILON)
-			sides[i] = -1;
-		else if (dot > ON_EPSILON)
-			sides[i] = 1;
-		else
-			sides[i] = 0;
-	}
-	dots[surf->count] = dots[0];
-	sides[surf->count] = sides[0];
-
-	TVec verts1[MAXWVERTS];
-	TVec verts2[MAXWVERTS];
-	int count1 = 0;
-	int count2 = 0;
-
-	for (i = 0; i < surf->count; i++)
-	{
-		if (sides[i] == 0)
-		{
-			verts1[count1++] = surf->verts[i];
-			verts2[count2++] = surf->verts[i];
-			continue;
-		}
-		if (sides[i] == 1)
-		{
-			verts1[count1++] = surf->verts[i];
-		}
-		else
-		{
-			verts2[count2++] = surf->verts[i];
-		}
-		if (sides[i + 1] == 0 || sides[i] == sides[i + 1])
-		{
-			continue;
-		}
-
-		// generate a split point
-		TVec mid;
-		TVec &p1 = surf->verts[i];
-		TVec &p2 = surf->verts[(i + 1) % surf->count];
-		
-		dot = dots[i] / (dots[i] - dots[i + 1]);
-		for (int j = 0; j < 3; j++)
-		{
-			// avoid round off error when possible
-			if (plane.normal[j] == 1)
-				mid[j] = plane.dist;
-			else if (plane.normal[j] == -1)
-				mid[j] = -plane.dist;
-			else
-				mid[j] = p1[j] + dot * (p2[j] - p1[j]);
-		}
-
-		verts1[count1++] = mid;
-		verts2[count2++] = mid;
-	}
-
-	surf->count = count2;
-	memcpy(surf->verts, verts2, count2 * sizeof(TVec));
-
-	surface_t *news = NewWSurf();
-	news->count = count1;
-	memcpy(news->verts, verts1, count1 * sizeof(TVec));
-
-	news->next = surf->next;
-	surf->next = SubdivideSeg(news, axis, nextaxis);
-	if (nextaxis)
-	{
-		surf = SubdivideSeg(surf, *nextaxis, NULL);
-	}
-	return surf;
 	unguard;
 }
 
@@ -807,26 +406,12 @@ surface_t* VAdvancedRenderLevel::CreateWSurfs(TVec* wv, texinfo_t* texinfo,
 		return NULL;
 	}
 
-	surface_t *surf;
-
-	if (texinfo->Tex == GTextureManager[skyflatnum])
-	{
-		//	Never split sky surfaces
-		surf = NewWSurf();
-		surf->next = NULL;
-		surf->count = 4;
-		surf->texinfo = texinfo;
-		surf->plane = seg;
-		memcpy(surf->verts, wv, 4 * sizeof(TVec));
-		return surf;
-	}
-
-	surf = NewWSurf();
+	surface_t* surf = NewWSurf();
 	surf->next = NULL;
 	surf->count = 4;
+	surf->texinfo = texinfo;
+	surf->plane = seg;
 	memcpy(surf->verts, wv, 4 * sizeof(TVec));
-	surf = SubdivideSeg(surf, texinfo->saxis, &texinfo->taxis);
-	InitSurfs(surf, texinfo, seg, sub);
 	return surf;
 	unguard;
 }
@@ -1282,8 +867,6 @@ void VAdvancedRenderLevel::UpdateRowOffset(segpart_t *sp, float RowOffset)
 	sp->texinfo.toffs += (RowOffset - sp->RowOffset) *
 		TextureOffsetTScale(sp->texinfo.Tex);
 	sp->RowOffset = RowOffset;
-	FlushSurfCaches(sp->surfs);
-	InitSurfs(sp->surfs, &sp->texinfo, NULL, r_sub);
 	unguard;
 }
 
@@ -1299,8 +882,6 @@ void VAdvancedRenderLevel::UpdateTextureOffset(segpart_t* sp, float TextureOffse
 	sp->texinfo.soffs += (TextureOffset - sp->TextureOffset) *
 		TextureOffsetSScale(sp->texinfo.Tex);
 	sp->TextureOffset = TextureOffset;
-	FlushSurfCaches(sp->surfs);
-	InitSurfs(sp->surfs, &sp->texinfo, NULL, r_sub);
 	unguard;
 }
 
@@ -1325,13 +906,6 @@ void VAdvancedRenderLevel::UpdateDrawSeg(drawseg_t* dseg)
 
 	side_t* sidedef = seg->sidedef;
 	line_t* linedef = seg->linedef;
-
-	float a1 = ViewClip.PointToClipAngle(*seg->v2);
-	float a2 = ViewClip.PointToClipAngle(*seg->v1);
-	if (!ViewClip.IsRangeVisible(a1, a2))
-	{
-		return;
-	}
 
 	if (!seg->backsector)
 	{
@@ -2071,19 +1645,9 @@ void VAdvancedRenderLevel::UpdateSubsector(int num, float *bbox)
 	guard(VAdvancedRenderLevel::UpdateSubsector);
 	r_sub = &Level->Subsectors[num];
 
-	if (r_sub->VisFrame != r_visframecount)
-	{
-		return;
-	}
-
 	if (!r_sub->sector->linecount)
 	{
 		//	Skip sectors containing original polyobjs
-		return;
-	}
-
-	if (!ViewClip.ClipCheckSubsector(r_sub))
-	{
 		return;
 	}
 
@@ -2098,8 +1662,6 @@ void VAdvancedRenderLevel::UpdateSubsector(int num, float *bbox)
 	}
 
 	UpdateSubRegion(r_sub->regions);
-
-	ViewClip.ClipAddSubsectorSegs(r_sub);
 	unguard;
 }
 
@@ -2112,16 +1674,6 @@ void VAdvancedRenderLevel::UpdateSubsector(int num, float *bbox)
 void VAdvancedRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 {
 	guard(VAdvancedRenderLevel::UpdateBSPNode);
-	if (ViewClip.ClipIsFull())
-	{
-		return;
-	}
-
-	if (!ViewClip.ClipIsBBoxVisible(bbox))
-	{
-		return;
-	}
-
 	// Found a subsector?
 	if (bspnum & NF_SUBSECTOR)
 	{
@@ -2137,11 +1689,6 @@ void VAdvancedRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 	}
 
 	node_t* bsp = &Level->Nodes[bspnum];
-
-	if (bsp->VisFrame != r_visframecount)
-	{
-		return;
-	}
 
 	// Decide which side the view point is on.
 	int side = bsp->PointOnSide(vieworg);
@@ -2435,19 +1982,10 @@ void VAdvancedRenderLevel::UpdateFakeFlats(sector_t* sec)
 //
 //==========================================================================
 
-void VAdvancedRenderLevel::UpdateWorld(const refdef_t* rd, const VViewClipper* Range)
+void VAdvancedRenderLevel::UpdateWorld()
 {
 	guard(VAdvancedRenderLevel::UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
-
-	ViewClip.ClearClipNodes(vieworg, Level);
-	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
-		rd->fovx, rd->fovy);
-	if (Range)
-	{
-		//	Range contains a valid range, so we must clip away holes in it.
-		ViewClip.ClipToRanges(*Range);
-	}
 
 	//	Update fake sectors.
 	for (int i = 0; i < Level->NumSectors; i++)
