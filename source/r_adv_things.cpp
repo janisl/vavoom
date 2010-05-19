@@ -140,7 +140,7 @@ void VAdvancedRenderLevel::DrawTranslucentPoly(surface_t* surf, TVec* sv, int co
 		if (spr.type == 2)
 		{
 			DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
-				spr.Additive, spr.TimeFrac);
+				spr.Additive, spr.TimeFrac, RPASS_NonShadow);
 		}
 		else if (spr.type)
 		{
@@ -462,7 +462,7 @@ void VAdvancedRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 li
 		if (spr.type == 2)
 		{
 			DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
-				spr.Additive, spr.TimeFrac);
+				spr.Additive, spr.TimeFrac, RPASS_NonShadow);
 		}
 		else if (spr.type)
 		{
@@ -486,7 +486,7 @@ void VAdvancedRenderLevel::RenderTranslucentAliasModel(VEntity* mobj, vuint32 li
 		spr.TimeFrac = TimeFrac;
 		return;
 	}
-	DrawEntityModel(mobj, light, Fade, Alpha, Additive, TimeFrac);
+	DrawEntityModel(mobj, light, Fade, Alpha, Additive, TimeFrac, RPASS_NonShadow);
 	unguard;
 }
 
@@ -525,7 +525,8 @@ bool VAdvancedRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 	}
 	else
 	{
-		return DrawEntityModel(mobj, light, Fade, 1.0, false, TimeFrac);
+		return DrawEntityModel(mobj, light, Fade, 1.0, false, TimeFrac,
+			RPASS_NonShadow);
 	}
 	unguard;
 }
@@ -734,7 +735,7 @@ void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	DrawEntityModelAmbient(mobj, light, TimeFrac);
+	DrawEntityModel(mobj, light, 0, 1, false, TimeFrac, RPASS_Ambient);
 	unguard;
 }
 
@@ -833,7 +834,7 @@ void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	DrawEntityModelTextures(mobj, TimeFrac);
+	DrawEntityModel(mobj, 0xffffffff, 0, 1, false, TimeFrac, RPASS_Textures);
 	unguard;
 }
 
@@ -968,7 +969,7 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	DrawEntityModelLight(mobj, TimeFrac);
+	DrawEntityModel(mobj, 0xffffffff, 0, 1, false, TimeFrac, RPASS_Light);
 	unguard;
 }
 
@@ -1071,7 +1072,7 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	DrawEntityModelShadow(mobj, TimeFrac);
+	DrawEntityModel(mobj, 0xffffffff, 0, 1, false, TimeFrac, RPASS_ShadowVolumes);
 	unguard;
 }
 
@@ -1175,7 +1176,7 @@ void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 		TimeFrac = MID(0.0, TimeFrac, 1.0);
 	}
 
-	DrawEntityModelFog(mobj, Fade, TimeFrac);
+	DrawEntityModel(mobj, 0xffffffff, Fade, 1, false, TimeFrac, RPASS_Fog);
 	unguard;
 }
 
@@ -1233,7 +1234,7 @@ void VAdvancedRenderLevel::DrawTranslucentPolys()
 			if (spr.type == 2)
 			{
 				DrawEntityModel(spr.Ent, spr.light, spr.Fade, spr.Alpha,
-					spr.Additive, spr.TimeFrac);
+					spr.Additive, spr.TimeFrac, RPASS_NonShadow);
 			}
 			else if (spr.type)
 			{
@@ -1386,7 +1387,8 @@ bool VAdvancedRenderLevel::RenderViewModel(VViewState* VSt, vuint32 light,
 	}
 	return DrawAliasModel(origin, cl->ViewAngles, 1.0, 1.0, VSt->State,
 		VSt->State->NextState ? VSt->State->NextState : VSt->State, NULL,
-		0, light, Fade, Alpha, Additive, true, TimeFrac, Interpolate);
+		0, light, Fade, Alpha, Additive, true, TimeFrac, Interpolate,
+		RPASS_NonShadow);
 	unguard;
 }
 

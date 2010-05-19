@@ -228,6 +228,19 @@ public:
 	void DrawContents();
 };
 
+enum ERenderPass
+{
+	//	For regular renderer.
+	RPASS_Normal,
+	//	For advanced renderer.
+	RPASS_Ambient,
+	RPASS_ShadowVolumes,
+	RPASS_Light,
+	RPASS_Textures,
+	RPASS_Fog,
+	RPASS_NonShadow,
+};
+
 class VRenderLevelShared : public VRenderLevelDrawer
 {
 protected:
@@ -662,36 +675,13 @@ private:
 
 	//	Models
 	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VModel*,
-		int, int, VTextureTranslation*, int, vuint32, vuint32, float, bool, bool,
-		float, bool);
-	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*, VState*,
-		VTextureTranslation*, int, vuint32, vuint32, float, bool, bool, float, bool);
-	bool DrawAliasModelAmbient(const TVec&, const TAVec&, float, float, VModel*,
-		int, int, int, vuint32, float, bool);
-	bool DrawAliasModelAmbient(const TVec&, const TAVec&, float, float, VState*, VState*,
-		int, vuint32, float, bool);
-	bool DrawAliasModelTextures(const TVec&, const TAVec&, float, float, VModel*,
-		int, int, VTextureTranslation*, int, float, bool);
-	bool DrawAliasModelTextures(const TVec&, const TAVec&, float, float, VState*, VState*,
-		VTextureTranslation*, int, float, bool);
-	bool DrawAliasModelLight(const TVec&, const TAVec&, float, float, VModel*,
-		int, int, int, float, bool);
-	bool DrawAliasModelLight(const TVec&, const TAVec&, float, float, VState*, VState*,
-		int, float, bool);
-	bool DrawAliasModelShadow(const TVec&, const TAVec&, float, float, VModel*,
-		int, int, int, float, bool);
-	bool DrawAliasModelShadow(const TVec&, const TAVec&, float, float, VState*, VState*,
-		int, float, bool);
-	bool DrawAliasModelFog(const TVec&, const TAVec&, float, float, VModel*,
-		int, int, int, vuint32, float, bool);
-	bool DrawAliasModelFog(const TVec&, const TAVec&, float, float, VState*, VState*,
-		int, vuint32, float, bool);
-	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float);
-	bool DrawEntityModelAmbient(VEntity*, vuint32, float);
-	bool DrawEntityModelTextures(VEntity*, float);
-	bool DrawEntityModelLight(VEntity*, float);
-	bool DrawEntityModelShadow(VEntity*, float);
-	bool DrawEntityModelFog(VEntity*, vuint32, float);
+		int, int, VTextureTranslation*, int, vuint32, vuint32, float, bool,
+		bool, float, bool, ERenderPass);
+	bool DrawAliasModel(const TVec&, const TAVec&, float, float, VState*,
+		VState*, VTextureTranslation*, int, vuint32, vuint32, float, bool,
+		bool, float, bool, ERenderPass);
+	bool DrawEntityModel(VEntity*, vuint32, vuint32, float, bool, float,
+		ERenderPass);
 	bool CheckAliasModelFrame(VEntity*, float);
 
 public:
