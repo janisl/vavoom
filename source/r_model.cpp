@@ -34,24 +34,15 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct VModel
+struct VMeshModel
 {
-	VStr			name;
-	void*			data;		// only access through Mod_Extradata
-	int				type;
+	VStr			Name;
+	mmdl_t*			Data;		// only access through Mod_Extradata
 	TArray<VName>	Skins;
 };
 
-enum
+struct VScriptSubModel
 {
-	MODEL_Unknown,
-	MODEL_MD2,
-	MODEL_Script,
-};
-
-class VScriptSubModel
-{
-public:
 	struct VFrame
 	{
 		int		Index;
@@ -63,8 +54,8 @@ public:
 		int		SkinIndex;
 	};
 
-	VModel*				Model;
-	VModel*				PositionModel;
+	VMeshModel*			Model;
+	VMeshModel*			PositionModel;
 	int					SkinAnimSpeed;
 	int					SkinAnimRange;
 	int					Version;
@@ -73,16 +64,14 @@ public:
 	bool				FullBright;
 };
 
-class VScriptModel
+struct VScriptModel
 {
-public:
 	VName						Name;
 	TArray<VScriptSubModel>		SubModels;
 };
 
-class VScriptedModelFrame
+struct VScriptedModelFrame
 {
-public:
 	int			Number;
 	float		Inter;
 	int			ModelIndex;
@@ -93,19 +82,16 @@ public:
 	float		AlphaEnd;
 };
 
-class VScriptedModel;
-
-class VClassModelScript
+struct VClassModelScript
 {
-public:
 	VName						Name;
-	VScriptedModel*				Model;
+	VModel*						Model;
 	TArray<VScriptedModelFrame>	Frames;
 };
 
-class VScriptedModel
+struct VModel
 {
-public:
+	VStr						Name;
 	TArray<VScriptModel>		Models;
 	VClassModelScript*			DefaultClass;
 };
@@ -116,8 +102,6 @@ public:
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
-static VModel* Mod_LoadModel(VModel* mod);
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -125,6 +109,7 @@ static VModel* Mod_LoadModel(VModel* mod);
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<VModel*>				mod_known;
+static TArray<VMeshModel*>			GMeshModels;
 static TArray<VClassModelScript*>	ClassModels;
 
 // CODE --------------------------------------------------------------------
@@ -151,8 +136,7 @@ void R_InitModels()
 
 		for (VXmlNode* N = Doc->Root.FindChild("include"); N; N = N->FindNext())
 		{
-			VModel* Mdl = Mod_FindName(N->GetAttribute("file"));
-			Mod_Extradata(Mdl);
+			Mod_FindName(N->GetAttribute("file"));
 		}
 
 		delete Doc;
@@ -171,20 +155,19 @@ void R_FreeModels()
 	guard(R_FreeModels);
 	for (int i = 0; i < mod_known.Num(); i++)
 	{
-		if (mod_known[i]->data)
-		{
-			if (mod_known[i]->type == MODEL_Script)
-			{
-				delete (VScriptedModel*)mod_known[i]->data;
-			}
-			else
-			{
-				Z_Free(mod_known[i]->data);
-			}
-		}
 		delete mod_known[i];
 	}
 	mod_known.Clear();
+
+	for (int i = 0; i < GMeshModels.Num(); i++)
+	{
+		if (GMeshModels[i]->Data)
+		{
+			Z_Free(GMeshModels[i]->Data);
+		}
+		delete GMeshModels[i];
+	}
+	GMeshModels.Clear();
 
 	for (int i = 0; i < ClassModels.Num(); i++)
 	{
@@ -196,38 +179,13 @@ void R_FreeModels()
 
 //==========================================================================
 //
-//	Mod_Extradata
-//
-//	Caches the data if needed
+//	Mod_FindMeshModel
 //
 //==========================================================================
 
-void *Mod_Extradata(VModel* mod)
+static VMeshModel* Mod_FindMeshModel(const VStr& name)
 {
-	guard(Mod_Extradata);
-	void	*r;
-	
-	r = mod->data;
-	if (r)
-		return r;
-
-	Mod_LoadModel(mod);
-	
-	if (!mod->data)
-		Sys_Error("Mod_Extradata: caching failed");
-	return mod->data;
-	unguard;
-}
-
-//==========================================================================
-//
-//	Mod_FindName
-//
-//==========================================================================
-
-VModel* Mod_FindName(const VStr& name)
-{
-	guard(Mod_FindName);
+	guard(Mod_FindMeshModel);
 	if (name.IsEmpty())
 	{
 		Sys_Error("Mod_ForName: NULL name");
@@ -236,133 +194,20 @@ VModel* Mod_FindName(const VStr& name)
 	//
 	// search the currently loaded models
 	//
-	for (int i = 0; i < mod_known.Num(); i++)
+	for (int i = 0; i < GMeshModels.Num(); i++)
 	{
-		if (mod_known[i]->name == name)
+		if (GMeshModels[i]->Name == name)
 		{
-			return mod_known[i];
+			return GMeshModels[i];
 		}
 	}
 
-	VModel* mod = new VModel();
-	mod->name = name;
-	mod->data = NULL;
-	mod->type = MODEL_Unknown;
-	mod_known.Append(mod);
+	VMeshModel* mod = new VMeshModel();
+	mod->Name = name;
+	mod->Data = NULL;
+	GMeshModels.Append(mod);
 
 	return mod;
-	unguard;
-}
-
-//==========================================================================
-//
-//	Mod_SwapAliasModel
-//
-//==========================================================================
-
-static void Mod_SwapAliasModel(VModel* mod)
-{
-	guard(Mod_SwapAliasModel);
-	int					i, j;
-	mmdl_t				*pmodel;
-	mstvert_t			*pstverts;
-	mtriangle_t			*ptri;
-	mframe_t			*pframe;
-	vint32				*pcmds;
-
-	pmodel = (mmdl_t*)mod->data;
-
-	//
-	// endian-adjust and swap the data, starting with the alias model header
-	//
-	for (i = 0; i < (int)sizeof(mmdl_t) / 4; i++)
-	{
-		((vint32*)pmodel)[i] = LittleLong(((vint32*)pmodel)[i]);
-	}
-
-	if (pmodel->version != ALIAS_VERSION)
-		Sys_Error("%s has wrong version number (%i should be %i)",
-			*mod->name, pmodel->version, ALIAS_VERSION);
-
-	if (pmodel->numverts <= 0)
-		Sys_Error("model %s has no vertices", *mod->name);
-
-	if (pmodel->numverts > MAXALIASVERTS)
-		Sys_Error("model %s has too many vertices", *mod->name);
-
-	if (pmodel->numstverts <= 0)
-		Sys_Error("model %s has no texture vertices", *mod->name);
-
-	if (pmodel->numstverts > MAXALIASSTVERTS)
-		Sys_Error("model %s has too many texture vertices", *mod->name);
-
-	if (pmodel->numtris <= 0)
-		Sys_Error("model %s has no triangles", *mod->name);
-
-	if (pmodel->skinwidth & 0x03)
-		Sys_Error("Mod_LoadAliasModel: skinwidth not multiple of 4");
-
-	if (pmodel->numskins < 1)
-		Sys_Error("Mod_LoadAliasModel: Invalid # of skins: %d\n", pmodel->numskins);
-
-	if (pmodel->numframes < 1)
-		Sys_Error("Mod_LoadAliasModel: Invalid # of frames: %d\n", pmodel->numframes);
-
-	//
-	// base s and t vertices
-	//
-	pstverts = (mstvert_t*)((byte*)pmodel + pmodel->ofsstverts);
-	for (i = 0; i < pmodel->numstverts; i++)
-	{
-		pstverts[i].s = LittleShort(pstverts[i].s);
-		pstverts[i].t = LittleShort(pstverts[i].t);
-	}
-
-	//
-	// triangles
-	//
-	ptri = (mtriangle_t *)((byte*)pmodel + pmodel->ofstris);
-	for (i = 0; i < pmodel->numtris; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			ptri[i].vertindex[j] = LittleShort(ptri[i].vertindex[j]);
-			ptri[i].stvertindex[j] = LittleShort(ptri[i].stvertindex[j]);
-		}
-	}
-
-	//
-	// frames
-	//
-	pframe = (mframe_t *)((byte*)pmodel + pmodel->ofsframes);
-	for (i = 0; i < pmodel->numframes; i++)
-	{
-		pframe->scale[0] = LittleFloat(pframe->scale[0]);
-		pframe->scale[1] = LittleFloat(pframe->scale[1]);
-		pframe->scale[2] = LittleFloat(pframe->scale[2]);
-		pframe->scale_origin[0] = LittleFloat(pframe->scale_origin[0]);
-		pframe->scale_origin[1] = LittleFloat(pframe->scale_origin[1]);
-		pframe->scale_origin[2] = LittleFloat(pframe->scale_origin[2]);
-		pframe = (mframe_t*)((byte*)pframe + pmodel->framesize);
-	}
-
-	//
-	// commands
-	//
-	pcmds = (vint32*)((byte*)pmodel + pmodel->ofscmds);
-	for (i = 0; i < pmodel->numcmds; i++)
-	{
-		pcmds[i] = LittleLong(pcmds[i]);
-	}
-
-	//
-	//	Skins
-	//
-	mskin_t* pskindesc = (mskin_t *)((byte *)pmodel + pmodel->ofsskins);
-	for (i = 0; i < pmodel->numskins; i++)
-	{
-		mod->Skins.Append(*VStr(pskindesc[i].name).ToLower());
-	}
 	unguard;
 }
 
@@ -372,24 +217,19 @@ static void Mod_SwapAliasModel(VModel* mod)
 //
 //==========================================================================
 
-static void ParseModelScript(VModel* mod, VStream& Strm)
+static void ParseModelScript(VModel* Mdl, VStream& Strm)
 {
 	guard(ParseModelScript);
-	//	Free loaded XML text.
-	Z_Free(mod->data);
-	mod->data = NULL;
-
 	//	Parse XML file.
 	VXmlDocument* Doc = new VXmlDocument();
-	Doc->Parse(Strm, mod->name);
+	Doc->Parse(Strm, Mdl->Name);
 
 	//	Verify that it's a model definition file.
 	if (Doc->Root.Name != "vavoom_model_definition")
-		Sys_Error("%s is not a valid model definition file", *mod->name);
+	{
+		Sys_Error("%s is not a valid model definition file", *Mdl->Name);
+	}
 
-	VScriptedModel* Mdl = new VScriptedModel();
-	mod->data = Mdl;
-	mod->type = MODEL_Script;
 	Mdl->DefaultClass = NULL;
 
 	//	Process model definitions.
@@ -402,7 +242,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		for (VXmlNode* SN = N->FindChild("md2"); SN; SN = SN->FindNext())
 		{
 			VScriptSubModel& Md2 = SMdl.SubModels.Alloc();
-			Md2.Model = Mod_FindName(SN->GetAttribute("file").ToLower().FixFileSlashes());
+			Md2.Model = Mod_FindMeshModel(SN->GetAttribute("file").ToLower().FixFileSlashes());
 
 			//	Version
 			Md2.Version = -1;
@@ -415,7 +255,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 			Md2.PositionModel = NULL;
 			if (SN->HasAttribute("position_file"))
 			{
-				Md2.PositionModel = Mod_FindName(SN->GetAttribute(
+				Md2.PositionModel = Mod_FindMeshModel(SN->GetAttribute(
 					"position_file").ToLower().FixFileSlashes());
 			}
 
@@ -577,7 +417,7 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 			}
 			if (F.ModelIndex == -1)
 			{
-				Sys_Error("%s has no model %s", *mod->name, *MdlName);
+				Sys_Error("%s has no model %s", *Mdl->Name, *MdlName);
 			}
 
 			F.Inter = 0.0;
@@ -611,12 +451,12 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 		if (!Cls->Frames.Num())
 		{
 			Sys_Error("%s class %s has no states defined",
-				*mod->name, *Cls->Name);
+				*Mdl->Name, *Cls->Name);
 		}
 	}
 	if (!ClassDefined)
 	{
-		Sys_Error("%s defined no classes", *mod->name);
+		Sys_Error("%s defined no classes", *Mdl->Name);
 	}
 
 	//	We don't need the XML file anymore.
@@ -626,48 +466,196 @@ static void ParseModelScript(VModel* mod, VStream& Strm)
 
 //==========================================================================
 //
-//	Mod_LoadModel
-//
-//	Loads a model into the cache
+//	Mod_FindName
 //
 //==========================================================================
 
-static VModel* Mod_LoadModel(VModel* mod)
+VModel* Mod_FindName(const VStr& name)
 {
-	guard(Mod_LoadModel);
-	if (mod->data)
+	guard(Mod_FindName);
+	if (name.IsEmpty())
 	{
-		return mod;
+		Sys_Error("Mod_ForName: NULL name");
+	}
+
+	//
+	// search the currently loaded models
+	//
+	for (int i = 0; i < mod_known.Num(); i++)
+	{
+		if (mod_known[i]->Name == name)
+		{
+			return mod_known[i];
+		}
+	}
+
+	VModel* mod = new VModel();
+	mod->Name = name;
+	mod_known.Append(mod);
+	//
+	// load the file
+	//
+	VStream* Strm = FL_OpenFileRead(mod->Name);
+	if (!Strm)
+	{
+		Sys_Error("Couldn't load %s", *mod->Name);
+	}
+	ParseModelScript(mod, *Strm);
+	delete Strm;
+	return mod;
+	unguard;
+}
+
+//==========================================================================
+//
+//	Mod_SwapAliasModel
+//
+//==========================================================================
+
+static void Mod_SwapAliasModel(VMeshModel* mod)
+{
+	guard(Mod_SwapAliasModel);
+	int					i, j;
+	mmdl_t				*pmodel;
+	mstvert_t			*pstverts;
+	mtriangle_t			*ptri;
+	mframe_t			*pframe;
+	vint32				*pcmds;
+
+	pmodel = mod->Data;
+
+	//
+	// endian-adjust and swap the data, starting with the alias model header
+	//
+	for (i = 0; i < (int)sizeof(mmdl_t) / 4; i++)
+	{
+		((vint32*)pmodel)[i] = LittleLong(((vint32*)pmodel)[i]);
+	}
+
+	if (pmodel->version != ALIAS_VERSION)
+		Sys_Error("%s has wrong version number (%i should be %i)",
+			*mod->Name, pmodel->version, ALIAS_VERSION);
+
+	if (pmodel->numverts <= 0)
+		Sys_Error("model %s has no vertices", *mod->Name);
+
+	if (pmodel->numverts > MAXALIASVERTS)
+		Sys_Error("model %s has too many vertices", *mod->Name);
+
+	if (pmodel->numstverts <= 0)
+		Sys_Error("model %s has no texture vertices", *mod->Name);
+
+	if (pmodel->numstverts > MAXALIASSTVERTS)
+		Sys_Error("model %s has too many texture vertices", *mod->Name);
+
+	if (pmodel->numtris <= 0)
+		Sys_Error("model %s has no triangles", *mod->Name);
+
+	if (pmodel->skinwidth & 0x03)
+		Sys_Error("Mod_LoadAliasModel: skinwidth not multiple of 4");
+
+	if (pmodel->numskins < 1)
+		Sys_Error("Mod_LoadAliasModel: Invalid # of skins: %d\n", pmodel->numskins);
+
+	if (pmodel->numframes < 1)
+		Sys_Error("Mod_LoadAliasModel: Invalid # of frames: %d\n", pmodel->numframes);
+
+	//
+	// base s and t vertices
+	//
+	pstverts = (mstvert_t*)((byte*)pmodel + pmodel->ofsstverts);
+	for (i = 0; i < pmodel->numstverts; i++)
+	{
+		pstverts[i].s = LittleShort(pstverts[i].s);
+		pstverts[i].t = LittleShort(pstverts[i].t);
+	}
+
+	//
+	// triangles
+	//
+	ptri = (mtriangle_t *)((byte*)pmodel + pmodel->ofstris);
+	for (i = 0; i < pmodel->numtris; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			ptri[i].vertindex[j] = LittleShort(ptri[i].vertindex[j]);
+			ptri[i].stvertindex[j] = LittleShort(ptri[i].stvertindex[j]);
+		}
+	}
+
+	//
+	// frames
+	//
+	pframe = (mframe_t *)((byte*)pmodel + pmodel->ofsframes);
+	for (i = 0; i < pmodel->numframes; i++)
+	{
+		pframe->scale[0] = LittleFloat(pframe->scale[0]);
+		pframe->scale[1] = LittleFloat(pframe->scale[1]);
+		pframe->scale[2] = LittleFloat(pframe->scale[2]);
+		pframe->scale_origin[0] = LittleFloat(pframe->scale_origin[0]);
+		pframe->scale_origin[1] = LittleFloat(pframe->scale_origin[1]);
+		pframe->scale_origin[2] = LittleFloat(pframe->scale_origin[2]);
+		pframe = (mframe_t*)((byte*)pframe + pmodel->framesize);
+	}
+
+	//
+	// commands
+	//
+	pcmds = (vint32*)((byte*)pmodel + pmodel->ofscmds);
+	for (i = 0; i < pmodel->numcmds; i++)
+	{
+		pcmds[i] = LittleLong(pcmds[i]);
+	}
+
+	//
+	//	Skins
+	//
+	mskin_t* pskindesc = (mskin_t *)((byte *)pmodel + pmodel->ofsskins);
+	for (i = 0; i < pmodel->numskins; i++)
+	{
+		mod->Skins.Append(*VStr(pskindesc[i].name).ToLower());
+	}
+	unguard;
+}
+
+//==========================================================================
+//
+//	Mod_Extradata
+//
+//	Loads the data if needed
+//
+//==========================================================================
+
+static mmdl_t* Mod_Extradata(VMeshModel* mod)
+{
+	guard(Mod_Extradata);
+	if (mod->Data)
+	{
+		return mod->Data;
 	}
 
 	//
 	// load the file
 	//
-	VStream* Strm = FL_OpenFileRead(mod->name);
+	VStream* Strm = FL_OpenFileRead(mod->Name);
 	if (!Strm)
-		Sys_Error("Couldn't load %s", *mod->name);
-
-	mod->data = Z_Malloc(Strm->TotalSize());
-	Strm->Serialise(mod->data, Strm->TotalSize());
-
-	if (LittleLong(*(vuint32*)mod->data) == IDPOLY2HEADER)
 	{
-		// swap model
-		Mod_SwapAliasModel(mod);
-		mod->type = MODEL_MD2;
-	}
-	else if (!VStr::NCmp((char*)mod->data, "<?xml", 5))
-	{
-		ParseModelScript(mod, *Strm);
-	}
-	else
-	{
-		Sys_Error("model %s is not a md2 model", *mod->name);
+		Sys_Error("Couldn't load %s", *mod->Name);
 	}
 
+	mod->Data = (mmdl_t*)Z_Malloc(Strm->TotalSize());
+	Strm->Serialise(mod->Data, Strm->TotalSize());
 	delete Strm;
 
-	return mod;
+	if (LittleLong(*(vuint32*)mod->Data) != IDPOLY2HEADER)
+	{
+		Sys_Error("model %s is not a md2 model", *mod->Name);
+	}
+
+	// swap model
+	Mod_SwapAliasModel(mod);
+
+	return mod->Data;
 	unguard;
 }
 
@@ -677,7 +665,7 @@ static VModel* Mod_LoadModel(VModel* mod)
 //
 //==========================================================================
 
-static void PositionModel(TVec& Origin, TAVec& Angles, VModel* wpmodel,
+static void PositionModel(TVec& Origin, TAVec& Angles, VMeshModel* wpmodel,
 	int InFrame)
 {
 	guard(PositionModel);
@@ -849,7 +837,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2Frame = 0;
 			//	Stop further warnings.
 			F.Index = 0;
@@ -860,7 +848,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2NextFrame = 0;
 			//	Stop further warnings.
 			NF.Index = 0;
@@ -1044,7 +1032,7 @@ static void DrawModelAmbient(VLevel* Level, const TVec& Org, const TAVec& Angles
 		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2Frame = 0;
 			//	Stop further warnings.
 			F.Index = 0;
@@ -1055,7 +1043,7 @@ static void DrawModelAmbient(VLevel* Level, const TVec& Org, const TAVec& Angles
 		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2NextFrame = 0;
 			//	Stop further warnings.
 			NF.Index = 0;
@@ -1240,7 +1228,7 @@ static void DrawModelTextures(VLevel* Level, const TVec& Org, const TAVec& Angle
 		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2Frame = 0;
 			//	Stop further warnings.
 			F.Index = 0;
@@ -1251,7 +1239,7 @@ static void DrawModelTextures(VLevel* Level, const TVec& Org, const TAVec& Angle
 		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2NextFrame = 0;
 			//	Stop further warnings.
 			NF.Index = 0;
@@ -1428,7 +1416,7 @@ static void DrawModelLight(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2Frame = 0;
 			//	Stop further warnings.
 			F.Index = 0;
@@ -1439,7 +1427,7 @@ static void DrawModelLight(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2NextFrame = 0;
 			//	Stop further warnings.
 			NF.Index = 0;
@@ -1616,7 +1604,7 @@ static void DrawModelShadow(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2Frame = 0;
 			//	Stop further warnings.
 			F.Index = 0;
@@ -1627,7 +1615,7 @@ static void DrawModelShadow(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2NextFrame = 0;
 			//	Stop further warnings.
 			NF.Index = 0;
@@ -1803,7 +1791,7 @@ static void DrawModelFog(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2Frame = 0;
 			//	Stop further warnings.
 			F.Index = 0;
@@ -1814,7 +1802,7 @@ static void DrawModelFog(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
 		{
 			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->name);
+				*SubMdl.Model->Name);
 			Md2NextFrame = 0;
 			//	Stop further warnings.
 			NF.Index = 0;
@@ -1909,21 +1897,13 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	float Alpha, bool Additive, bool IsViewModel, float Inter, bool Interpolate)
 {
 	guard(VRenderLevel::DrawAliasModel);
-	void* MData = Mod_Extradata(Mdl);
-
-	if (Mdl->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Mdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Mdl->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -1931,7 +1911,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		Interpolate = false;
 	}
 
-	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
 		IsViewModel, InterpFrac, Interpolate);
 	return true;
@@ -2058,13 +2038,7 @@ bool VRenderLevel::CheckAliasModelFrame(VEntity* Ent, float Inter)
 		{
 			return false;
 		}
-		Mod_Extradata(Mdl);
-		if (Mdl->type != MODEL_Script)
-		{
-			Sys_Error("Must use model scripts");
-		}
-		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
-		return FindFrame(*SMdl->DefaultClass, Ent->State->InClassIndex, Inter) != -1;
+		return FindFrame(*Mdl->DefaultClass, Ent->State->InClassIndex, Inter) != -1;
 	}
 	else
 	{
@@ -2097,21 +2071,14 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 {
 	guard(R_DrawModelFrame);
 	bool Interpolate = true;
-	void* MData = Mod_Extradata(Model);
-	if (Model->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Model->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return;
 	}
 
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Model->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -2144,7 +2111,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	Angles.pitch = 0;
 	Angles.roll = 0;
 
-	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *SMdl->DefaultClass, FIdx,
+	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Model->DefaultClass, FIdx,
 		NFIdx, R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
 		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false,
 		InterpFrac, Interpolate);
@@ -2233,21 +2200,13 @@ bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 	float Alpha, bool Additive, bool IsViewModel, float Inter, bool Interpolate)
 {
 	guard(VAdvancedRenderLevel::DrawAliasModel);
-	void* MData = Mod_Extradata(Mdl);
-
-	if (Mdl->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Mdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Mdl->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -2255,7 +2214,7 @@ bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		Interpolate = false;
 	}
 
-	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
 		IsViewModel, InterpFrac, Interpolate, !IsViewModel);
 	return true;
@@ -2320,21 +2279,13 @@ bool VAdvancedRenderLevel::DrawAliasModelAmbient(const TVec& Org, const TAVec& A
 	int Version, vuint32 Light, float Inter, bool Interpolate)
 {
 	guard(VAdvancedRenderLevel::DrawAliasModelAmbient);
-	void* MData = Mod_Extradata(Mdl);
-
-	if (Mdl->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Mdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Mdl->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -2342,7 +2293,7 @@ bool VAdvancedRenderLevel::DrawAliasModelAmbient(const TVec& Org, const TAVec& A
 		Interpolate = false;
 	}
 
-	DrawModelAmbient(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+	DrawModelAmbient(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Version, Light, InterpFrac, Interpolate);
 	return true;
 	unguard;
@@ -2404,21 +2355,13 @@ bool VAdvancedRenderLevel::DrawAliasModelTextures(const TVec& Org, const TAVec& 
 	VTextureTranslation* Trans, int Version, float Inter, bool Interpolate)
 {
 	guard(VAdvancedRenderLevel::DrawAliasModelTextures);
-	void* MData = Mod_Extradata(Mdl);
-
-	if (Mdl->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Mdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Mdl->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -2426,7 +2369,7 @@ bool VAdvancedRenderLevel::DrawAliasModelTextures(const TVec& Org, const TAVec& 
 		Interpolate = false;
 	}
 
-	DrawModelTextures(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+	DrawModelTextures(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Trans, ColourMap, Version, InterpFrac, Interpolate);
 	return true;
 	unguard;
@@ -2488,21 +2431,13 @@ bool VAdvancedRenderLevel::DrawAliasModelLight(const TVec& Org, const TAVec& Ang
 	int Version, float Inter, bool Interpolate)
 {
 	guard(VAdvancedRenderLevel::DrawAliasModelLight);
-	void* MData = Mod_Extradata(Mdl);
-
-	if (Mdl->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Mdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Mdl->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -2510,7 +2445,7 @@ bool VAdvancedRenderLevel::DrawAliasModelLight(const TVec& Org, const TAVec& Ang
 		Interpolate = false;
 	}
 
-	DrawModelLight(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+	DrawModelLight(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Version, InterpFrac, Interpolate);
 	return true;
 	unguard;
@@ -2572,21 +2507,13 @@ bool VAdvancedRenderLevel::DrawAliasModelShadow(const TVec& Org, const TAVec& An
 	int Version, float Inter, bool Interpolate)
 {
 	guard(VAdvancedRenderLevel::DrawAliasModelShadow);
-	void* MData = Mod_Extradata(Mdl);
-
-	if (Mdl->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Mdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Mdl->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -2594,7 +2521,7 @@ bool VAdvancedRenderLevel::DrawAliasModelShadow(const TVec& Org, const TAVec& An
 		Interpolate = false;
 	}
 
-	DrawModelShadow(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+	DrawModelShadow(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Version, InterpFrac, Interpolate, CurrLightPos, CurrLightRadius);
 	return true;
 	unguard;
@@ -2656,21 +2583,13 @@ bool VAdvancedRenderLevel::DrawAliasModelFog(const TVec& Org, const TAVec& Angle
 	int Version, vuint32 Fade, float Inter, bool Interpolate)
 {
 	guard(VAdvancedRenderLevel::DrawAliasModelFog);
-	void* MData = Mod_Extradata(Mdl);
-
-	if (Mdl->type != MODEL_Script)
-	{
-		Sys_Error("Must use model scripts");
-	}
-
-	VScriptedModel* SMdl = (VScriptedModel*)MData;
-	int FIdx = FindFrame(*SMdl->DefaultClass, Frame, Inter);
+	int FIdx = FindFrame(*Mdl->DefaultClass, Frame, Inter);
 	if (FIdx == -1)
 	{
 		return false;
 	}
 	float InterpFrac;
-	int NFIdx = FindNextFrame(*SMdl->DefaultClass, FIdx, NextFrame, Inter,
+	int NFIdx = FindNextFrame(*Mdl->DefaultClass, FIdx, NextFrame, Inter,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
@@ -2678,7 +2597,7 @@ bool VAdvancedRenderLevel::DrawAliasModelFog(const TVec& Org, const TAVec& Angle
 		Interpolate = false;
 	}
 
-	DrawModelFog(Level, Org, Angles, ScaleX, ScaleY, *SMdl->DefaultClass, FIdx,
+	DrawModelFog(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Version, Fade, InterpFrac, Interpolate);
 	return true;
 	unguard;
@@ -3051,13 +2970,7 @@ bool VAdvancedRenderLevel::CheckAliasModelFrame(VEntity* Ent, float Inter)
 		{
 			return false;
 		}
-		Mod_Extradata(Mdl);
-		if (Mdl->type != MODEL_Script)
-		{
-			Sys_Error("Must use model scripts");
-		}
-		VScriptedModel* SMdl = (VScriptedModel*)Mdl->data;
-		return FindFrame(*SMdl->DefaultClass, Ent->State->InClassIndex, Inter) != -1;
+		return FindFrame(*Mdl->DefaultClass, Ent->State->InClassIndex, Inter) != -1;
 	}
 	else
 	{

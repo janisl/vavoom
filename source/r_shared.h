@@ -151,8 +151,6 @@ protected:
 
 void R_DrawViewBorder();
 
-void *Mod_Extradata(VModel* mod);	// handles caching
-
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 //
