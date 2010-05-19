@@ -34,6 +34,19 @@
 
 // TYPES -------------------------------------------------------------------
 
+enum ERenderPass
+{
+	//	For regular renderer.
+	RPASS_Normal,
+	//	For advanced renderer.
+	RPASS_Ambient,
+	RPASS_ShadowVolumes,
+	RPASS_Light,
+	RPASS_Textures,
+	RPASS_Fog,
+	RPASS_NonShadow,
+};
+
 struct VMeshModel
 {
 	VStr			Name;
@@ -751,7 +764,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
 	VTextureTranslation* Trans, int ColourMap, int Version, vuint32 Light,
 	vuint32 Fade, float Alpha, bool Additive, bool IsViewModel, float Inter,
-	bool Interpolate, bool OnlyNonShadow = false)
+	bool Interpolate, const TVec& LightPos, float LightRadius, ERenderPass Pass)
 {
 	guard(DrawModel);
 	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
@@ -881,9 +894,28 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		{
 			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
 		}
-		if (OnlyNonShadow && Md2Alpha >= 1.0 && !Additive && !IsViewModel)
+		switch (Pass)
 		{
-			continue;
+		case RPASS_Normal:
+			break;
+
+		case RPASS_Ambient:
+		case RPASS_ShadowVolumes:
+		case RPASS_Light:
+		case RPASS_Textures:
+		case RPASS_Fog:
+			if (Md2Alpha < 1)
+			{
+				continue;
+			}
+			break;
+
+		case RPASS_NonShadow:
+			if (Md2Alpha >= 1.0 && !Additive && !IsViewModel)
+			{
+				continue;
+			}
+			break;
 		}
 
 		float smooth_inter;
@@ -931,956 +963,43 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Md2Light = 0xffffffff;
 		}
 
-		Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale, pmdl,
-			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap, Md2Light,
-			Fade, Md2Alpha, Additive, IsViewModel, Inter, Interpolate);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	DrawModelAmbient
-//
-//==========================================================================
-
-static void DrawModelAmbient(VLevel* Level, const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
-	int Version, vuint32 Light, float Inter, bool Interpolate)
-{
-	guard(DrawModelAmbient);
-	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
-	VScriptedModelFrame& NFDef = Cls.Frames[NFIdx];
-	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
-	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
-	{
-		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
-		if (SubMdl.Version != -1 && SubMdl.Version != Version)
-		{
-			continue;
-		}
-		if (FDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
-			continue;
-		}
-		if (Interpolate && NFDef.FrameIndex >= SubMdl.Frames.Num() &&
-			NFDef.ModelIndex != FDef.ModelIndex)
-		{
-			NFDef.FrameIndex = FDef.FrameIndex;
-			Interpolate = false;
-			continue;
-		}
-		if (Interpolate && FDef.ModelIndex != NFDef.ModelIndex)
-		{
-			Interpolate = false;
-		}
-		if (NFDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			continue;
-		}
-		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
-		VScriptSubModel::VFrame& NF = SubMdl.Frames[NFDef.FrameIndex];
-
-		//	Locate the proper data.
-		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
-
-		//	Skin aniations.
-		int Md2SkinIdx = 0;
-		if (F.SkinIndex >= 0)
-		{
-			Md2SkinIdx = F.SkinIndex;
-		}
-		else if (SubMdl.SkinAnimSpeed)
-		{
-			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
-				SubMdl.SkinAnimRange;
-		}
-
-		//	Get the proper skin texture ID.
-		int SkinID;
-		if (SubMdl.Skins.Num())
-		{
-			//	Skins defined in definition file override all skins in MD2 file.
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= SubMdl.Skins.Num())
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-		else
-		{
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-
-		//	Get and verify frame number.
-		int Md2Frame = F.Index;
-		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->Name);
-			Md2Frame = 0;
-			//	Stop further warnings.
-			F.Index = 0;
-		}
-
-		//  Get and verify next frame number.
-		int Md2NextFrame = NF.Index;
-		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->Name);
-			Md2NextFrame = 0;
-			//	Stop further warnings.
-			NF.Index = 0;
-		}
-
-		//	Position
-		TVec Md2Org = Org;
-
-		//	Angle
-		TAVec Md2Angle = Angles;
-		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
-		{
-			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
-				(FDef.AngleEnd - FDef.AngleStart) * Inter);
-		}
-
-		//	Position model
-		if (SubMdl.PositionModel)
-		{
-			PositionModel(Md2Org, Md2Angle, SubMdl.PositionModel, F.PositionIndex);
-		}
-
-		//	Alpha
-		float Md2Alpha = 1;
-		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd - FDef.AlphaStart) * Inter;
-		}
-		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
-		}
-		if (Md2Alpha < 1)
-		{
-			continue;
-		}
-
-		float smooth_inter;
-		if (Interpolate)
-		{
-			smooth_inter = SMOOTHSTEP(Inter);
-		}
-
-		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
-		// scales z.
-		TVec Scale;
-		if (Interpolate)
-		{
-			// Interpolate Scale
-			Scale.x = (F.Scale.x + smooth_inter * (NF.Scale.x - F.Scale.x) * ScaleX);
-			Scale.y = (F.Scale.y + smooth_inter * (NF.Scale.y - F.Scale.y) * ScaleX);
-			Scale.z = (F.Scale.z + smooth_inter * (NF.Scale.z - F.Scale.z) * ScaleY);
-		}
-		else
-		{
-			Scale.x = F.Scale.x * ScaleX;
-			Scale.y = F.Scale.y * ScaleX;
-			Scale.z = F.Scale.z * ScaleY;
-		}
-
-		TVec Offset;
-		if (Interpolate)
-		{
-			// Interpolate Offsets too
-			Offset.x = ((1 - smooth_inter) * F.Offset.x + (smooth_inter) * NF.Offset.x);
-			Offset.y = ((1 - smooth_inter) * F.Offset.y + (smooth_inter) * NF.Offset.y);
-			Offset.z = ((1 - smooth_inter) * F.Offset.z + (smooth_inter) * NF.Offset.z);
-		}
-		else
-		{
-			Offset.x = F.Offset.x;
-			Offset.y = F.Offset.y;
-			Offset.z = F.Offset.z;
-		}
-
-		//	Light
-		vuint32 Md2Light = Light;
-		if (SubMdl.FullBright)
-		{
-			Md2Light = 0xffffffff;
-		}
-
-		Drawer->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale, pmdl,
-			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Md2Light,
-			Inter, Interpolate);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	DrawModelTextures
-//
-//==========================================================================
-
-static void DrawModelTextures(VLevel* Level, const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
-	VTextureTranslation* Trans, int ColourMap, int Version, float Inter,
-	bool Interpolate)
-{
-	guard(DrawModelTextures);
-	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
-	VScriptedModelFrame& NFDef = Cls.Frames[NFIdx];
-	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
-	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
-	{
-		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
-		if (SubMdl.Version != -1 && SubMdl.Version != Version)
-		{
-			continue;
-		}
-		if (FDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
-			continue;
-		}
-		if (Interpolate && NFDef.FrameIndex >= SubMdl.Frames.Num() &&
-			NFDef.ModelIndex != FDef.ModelIndex)
-		{
-			NFDef.FrameIndex = FDef.FrameIndex;
-			Interpolate = false;
-			continue;
-		}
-		if (Interpolate && FDef.ModelIndex != NFDef.ModelIndex)
-		{
-			Interpolate = false;
-		}
-		if (NFDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			continue;
-		}
-		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
-		VScriptSubModel::VFrame& NF = SubMdl.Frames[NFDef.FrameIndex];
-
-		//	Locate the proper data.
-		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
-
-		//	Skin aniations.
-		int Md2SkinIdx = 0;
-		if (F.SkinIndex >= 0)
-		{
-			Md2SkinIdx = F.SkinIndex;
-		}
-		else if (SubMdl.SkinAnimSpeed)
-		{
-			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
-				SubMdl.SkinAnimRange;
-		}
-
-		//	Get the proper skin texture ID.
-		int SkinID;
-		if (SubMdl.Skins.Num())
-		{
-			//	Skins defined in definition file override all skins in MD2 file.
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= SubMdl.Skins.Num())
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-		else
-		{
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-
-		//	Get and verify frame number.
-		int Md2Frame = F.Index;
-		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->Name);
-			Md2Frame = 0;
-			//	Stop further warnings.
-			F.Index = 0;
-		}
-
-		//  Get and verify next frame number.
-		int Md2NextFrame = NF.Index;
-		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->Name);
-			Md2NextFrame = 0;
-			//	Stop further warnings.
-			NF.Index = 0;
-		}
-
-		//	Position
-		TVec Md2Org = Org;
-
-		//	Angle
-		TAVec Md2Angle = Angles;
-		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
-		{
-			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
-				(FDef.AngleEnd - FDef.AngleStart) * Inter);
-		}
-
-		//	Position model
-		if (SubMdl.PositionModel)
-		{
-			PositionModel(Md2Org, Md2Angle, SubMdl.PositionModel, F.PositionIndex);
-		}
-
-		//	Alpha
-		float Md2Alpha = 1;
-		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd - FDef.AlphaStart) * Inter;
-		}
-		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
-		}
-		if (Md2Alpha < 1)
-		{
-			continue;
-		}
-
-		float smooth_inter;
-		if (Interpolate)
-		{
-			smooth_inter = SMOOTHSTEP(Inter);
-		}
-
-		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
-		// scales z.
-		TVec Scale;
-		if (Interpolate)
-		{
-			// Interpolate Scale
-			Scale.x = (F.Scale.x + smooth_inter * (NF.Scale.x - F.Scale.x) * ScaleX);
-			Scale.y = (F.Scale.y + smooth_inter * (NF.Scale.y - F.Scale.y) * ScaleX);
-			Scale.z = (F.Scale.z + smooth_inter * (NF.Scale.z - F.Scale.z) * ScaleY);
-		}
-		else
-		{
-			Scale.x = F.Scale.x * ScaleX;
-			Scale.y = F.Scale.y * ScaleX;
-			Scale.z = F.Scale.z * ScaleY;
-		}
-
-		TVec Offset;
-		if (Interpolate)
-		{
-			// Interpolate Offsets too
-			Offset.x = ((1 - smooth_inter) * F.Offset.x + (smooth_inter) * NF.Offset.x);
-			Offset.y = ((1 - smooth_inter) * F.Offset.y + (smooth_inter) * NF.Offset.y);
-			Offset.z = ((1 - smooth_inter) * F.Offset.z + (smooth_inter) * NF.Offset.z);
-		}
-		else
-		{
-			Offset.x = F.Offset.x;
-			Offset.y = F.Offset.y;
-			Offset.z = F.Offset.z;
-		}
-
-		Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale, pmdl,
-			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap,
-			Inter, Interpolate);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	DrawModelLight
-//
-//==========================================================================
-
-static void DrawModelLight(VLevel* Level, const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
-	int Version, float Inter, bool Interpolate)
-{
-	guard(DrawModelLight);
-	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
-	VScriptedModelFrame& NFDef = Cls.Frames[NFIdx];
-	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
-	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
-	{
-		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
-		if (SubMdl.Version != -1 && SubMdl.Version != Version)
-		{
-			continue;
-		}
-		if (FDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
-			continue;
-		}
-		if (Interpolate && NFDef.FrameIndex >= SubMdl.Frames.Num() &&
-			NFDef.ModelIndex != FDef.ModelIndex)
-		{
-			NFDef.FrameIndex = FDef.FrameIndex;
-			Interpolate = false;
-			continue;
-		}
-		if (Interpolate && FDef.ModelIndex != NFDef.ModelIndex)
-		{
-			Interpolate = false;
-		}
-		if (NFDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			continue;
-		}
-		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
-		VScriptSubModel::VFrame& NF = SubMdl.Frames[NFDef.FrameIndex];
-
-		//	Locate the proper data.
-		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
-
-		//	Skin aniations.
-		int Md2SkinIdx = 0;
-		if (F.SkinIndex >= 0)
-		{
-			Md2SkinIdx = F.SkinIndex;
-		}
-		else if (SubMdl.SkinAnimSpeed)
-		{
-			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
-				SubMdl.SkinAnimRange;
-		}
-
-		//	Get the proper skin texture ID.
-		int SkinID;
-		if (SubMdl.Skins.Num())
-		{
-			//	Skins defined in definition file override all skins in MD2 file.
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= SubMdl.Skins.Num())
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-		else
-		{
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-
-		//	Get and verify frame number.
-		int Md2Frame = F.Index;
-		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->Name);
-			Md2Frame = 0;
-			//	Stop further warnings.
-			F.Index = 0;
-		}
-
-		//  Get and verify next frame number.
-		int Md2NextFrame = NF.Index;
-		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->Name);
-			Md2NextFrame = 0;
-			//	Stop further warnings.
-			NF.Index = 0;
-		}
-
-		//	Position
-		TVec Md2Org = Org;
-
-		//	Angle
-		TAVec Md2Angle = Angles;
-		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
-		{
-			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
-				(FDef.AngleEnd - FDef.AngleStart) * Inter);
-		}
-
-		//	Position model
-		if (SubMdl.PositionModel)
-		{
-			PositionModel(Md2Org, Md2Angle, SubMdl.PositionModel, F.PositionIndex);
-		}
-
-		//	Alpha
-		float Md2Alpha = 1;
-		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd - FDef.AlphaStart) * Inter;
-		}
-		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
-		}
-		if (Md2Alpha < 1)
-		{
-			continue;
-		}
-
-		float smooth_inter;
-		if (Interpolate)
-		{
-			smooth_inter = SMOOTHSTEP(Inter);
-		}
-
-		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
-		// scales z.
-		TVec Scale;
-		if (Interpolate)
-		{
-			// Interpolate Scale
-			Scale.x = (F.Scale.x + smooth_inter * (NF.Scale.x - F.Scale.x) * ScaleX);
-			Scale.y = (F.Scale.y + smooth_inter * (NF.Scale.y - F.Scale.y) * ScaleX);
-			Scale.z = (F.Scale.z + smooth_inter * (NF.Scale.z - F.Scale.z) * ScaleY);
-		}
-		else
-		{
-			Scale.x = F.Scale.x * ScaleX;
-			Scale.y = F.Scale.y * ScaleX;
-			Scale.z = F.Scale.z * ScaleY;
-		}
-
-		TVec Offset;
-		if (Interpolate)
-		{
-			// Interpolate Offsets too
-			Offset.x = ((1 - smooth_inter) * F.Offset.x + (smooth_inter) * NF.Offset.x);
-			Offset.y = ((1 - smooth_inter) * F.Offset.y + (smooth_inter) * NF.Offset.y);
-			Offset.z = ((1 - smooth_inter) * F.Offset.z + (smooth_inter) * NF.Offset.z);
-		}
-		else
-		{
-			Offset.x = F.Offset.x;
-			Offset.y = F.Offset.y;
-			Offset.z = F.Offset.z;
-		}
-
-		Drawer->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale, pmdl,
-			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Inter, Interpolate);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	DrawModelShadow
-//
-//==========================================================================
-
-static void DrawModelShadow(VLevel* Level, const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
-	int Version, float Inter, bool Interpolate, const TVec& LightPos,
-	float LightRadius)
-{
-	guard(DrawModelShadow);
-	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
-	VScriptedModelFrame& NFDef = Cls.Frames[NFIdx];
-	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
-	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
-	{
-		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
-		if (SubMdl.Version != -1 && SubMdl.Version != Version)
-		{
-			continue;
-		}
-		if (FDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
-			continue;
-		}
-		if (Interpolate && NFDef.FrameIndex >= SubMdl.Frames.Num() &&
-			NFDef.ModelIndex != FDef.ModelIndex)
-		{
-			NFDef.FrameIndex = FDef.FrameIndex;
-			Interpolate = false;
-			continue;
-		}
-		if (Interpolate && FDef.ModelIndex != NFDef.ModelIndex)
-		{
-			Interpolate = false;
-		}
-		if (NFDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			continue;
-		}
-		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
-		VScriptSubModel::VFrame& NF = SubMdl.Frames[NFDef.FrameIndex];
-
-		//	Locate the proper data.
-		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
-
-		//	Skin aniations.
-		int Md2SkinIdx = 0;
-		if (F.SkinIndex >= 0)
-		{
-			Md2SkinIdx = F.SkinIndex;
-		}
-		else if (SubMdl.SkinAnimSpeed)
-		{
-			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
-				SubMdl.SkinAnimRange;
-		}
-
-		//	Get the proper skin texture ID.
-		int SkinID;
-		if (SubMdl.Skins.Num())
-		{
-			//	Skins defined in definition file override all skins in MD2 file.
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= SubMdl.Skins.Num())
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-		else
-		{
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-
-		//	Get and verify frame number.
-		int Md2Frame = F.Index;
-		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->Name);
-			Md2Frame = 0;
-			//	Stop further warnings.
-			F.Index = 0;
-		}
-
-		//  Get and verify next frame number.
-		int Md2NextFrame = NF.Index;
-		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->Name);
-			Md2NextFrame = 0;
-			//	Stop further warnings.
-			NF.Index = 0;
-		}
-
-		//	Position
-		TVec Md2Org = Org;
-
-		//	Angle
-		TAVec Md2Angle = Angles;
-		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
-		{
-			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
-				(FDef.AngleEnd - FDef.AngleStart) * Inter);
-		}
-
-		//	Position model
-		if (SubMdl.PositionModel)
-		{
-			PositionModel(Md2Org, Md2Angle, SubMdl.PositionModel, F.PositionIndex);
-		}
-
-		//	Alpha
-		float Md2Alpha = 1;
-		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd - FDef.AlphaStart) * Inter;
-		}
-		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
-		}
-		if (Md2Alpha < 1)
-		{
-			continue;
-		}
-
-		float smooth_inter;
-		if (Interpolate)
-		{
-			smooth_inter = SMOOTHSTEP(Inter);
-		}
-
-		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
-		// scales z.
-		TVec Scale;
-		if (Interpolate)
-		{
-			// Interpolate Scale
-			Scale.x = (F.Scale.x + smooth_inter * (NF.Scale.x - F.Scale.x) * ScaleX);
-			Scale.y = (F.Scale.y + smooth_inter * (NF.Scale.y - F.Scale.y) * ScaleX);
-			Scale.z = (F.Scale.z + smooth_inter * (NF.Scale.z - F.Scale.z) * ScaleY);
-		}
-		else
-		{
-			Scale.x = F.Scale.x * ScaleX;
-			Scale.y = F.Scale.y * ScaleX;
-			Scale.z = F.Scale.z * ScaleY;
-		}
-
-		TVec Offset;
-		if (Interpolate)
-		{
-			// Interpolate Offsets too
-			Offset.x = ((1 - smooth_inter) * F.Offset.x + (smooth_inter) * NF.Offset.x);
-			Offset.y = ((1 - smooth_inter) * F.Offset.y + (smooth_inter) * NF.Offset.y);
-			Offset.z = ((1 - smooth_inter) * F.Offset.z + (smooth_inter) * NF.Offset.z);
-		}
-		else
-		{
-			Offset.x = F.Offset.x;
-			Offset.y = F.Offset.y;
-			Offset.z = F.Offset.z;
-		}
-
-		Drawer->DrawAliasModelShadow(Md2Org, Md2Angle, Offset, Scale, pmdl,
-			Md2Frame, Md2NextFrame, Inter, Interpolate, LightPos, LightRadius);
-	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	DrawModelFog
-//
-//==========================================================================
-
-static void DrawModelFog(VLevel* Level, const TVec& Org, const TAVec& Angles,
-	float ScaleX, float ScaleY, VClassModelScript& Cls, int FIdx, int NFIdx,
-	int Version, vuint32 Fade, float Inter, bool Interpolate)
-{
-	guard(DrawModelFog);
-	VScriptedModelFrame& FDef = Cls.Frames[FIdx];
-	VScriptedModelFrame& NFDef = Cls.Frames[NFIdx];
-	VScriptModel& ScMdl = Cls.Model->Models[FDef.ModelIndex];
-	for (int i = 0; i < ScMdl.SubModels.Num(); i++)
-	{
-		VScriptSubModel& SubMdl = ScMdl.SubModels[i];
-		if (SubMdl.Version != -1 && SubMdl.Version != Version)
-		{
-			continue;
-		}
-		if (FDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			GCon->Logf("Bad sub-model frame index %d", FDef.FrameIndex);
-			continue;
-		}
-		if (Interpolate && NFDef.FrameIndex >= SubMdl.Frames.Num() &&
-			NFDef.ModelIndex != FDef.ModelIndex)
-		{
-			NFDef.FrameIndex = FDef.FrameIndex;
-			Interpolate = false;
-			continue;
-		}
-		if (Interpolate && FDef.ModelIndex != NFDef.ModelIndex)
-		{
-			Interpolate = false;
-		}
-		if (NFDef.FrameIndex >= SubMdl.Frames.Num())
-		{
-			continue;
-		}
-		VScriptSubModel::VFrame& F = SubMdl.Frames[FDef.FrameIndex];
-		VScriptSubModel::VFrame& NF = SubMdl.Frames[NFDef.FrameIndex];
-
-		//	Locate the proper data.
-		mmdl_t* pmdl = (mmdl_t*)Mod_Extradata(SubMdl.Model);
-
-		//	Skin aniations.
-		int Md2SkinIdx = 0;
-		if (F.SkinIndex >= 0)
-		{
-			Md2SkinIdx = F.SkinIndex;
-		}
-		else if (SubMdl.SkinAnimSpeed)
-		{
-			Md2SkinIdx = int((Level ? Level->Time : 0) * SubMdl.SkinAnimSpeed) %
-				SubMdl.SkinAnimRange;
-		}
-
-		//	Get the proper skin texture ID.
-		int SkinID;
-		if (SubMdl.Skins.Num())
-		{
-			//	Skins defined in definition file override all skins in MD2 file.
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= SubMdl.Skins.Num())
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
+		switch (Pass)
+		{
+		case RPASS_Normal:
+		case RPASS_NonShadow:
+			Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale, pmdl,
+				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap, Md2Light,
+				Fade, Md2Alpha, Additive, IsViewModel, Inter, Interpolate);
+			break;
+
+		case RPASS_Ambient:
+			Drawer->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale, pmdl,
+				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Md2Light,
+				Inter, Interpolate);
+			break;
+
+		case RPASS_ShadowVolumes:
+			Drawer->DrawAliasModelShadow(Md2Org, Md2Angle, Offset, Scale, pmdl,
+				Md2Frame, Md2NextFrame, Inter, Interpolate, LightPos, LightRadius);
+			break;
+
+		case RPASS_Light:
+			Drawer->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale, pmdl,
+				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Inter, Interpolate);
+			break;
+
+		case RPASS_Textures:
+			Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale, pmdl,
+				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap,
+				Inter, Interpolate);
+			break;
+
+		case RPASS_Fog:
+			Drawer->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale, pmdl,
+				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Fade,
+				Inter, Interpolate);
+			break;
 		}
-		else
-		{
-			if (Md2SkinIdx < 0 || Md2SkinIdx >= pmdl->numskins)
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[0], TEXTYPE_Skin);
-			}
-			else
-			{
-				SkinID = GTextureManager.AddFileTexture(
-					SubMdl.Model->Skins[Md2SkinIdx], TEXTYPE_Skin);
-			}
-		}
-
-		//	Get and verify frame number.
-		int Md2Frame = F.Index;
-		if (Md2Frame >= pmdl->numframes || Md2Frame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such frame %d in %s", Md2Frame,
-				*SubMdl.Model->Name);
-			Md2Frame = 0;
-			//	Stop further warnings.
-			F.Index = 0;
-		}
-
-		//  Get and verify next frame number.
-		int Md2NextFrame = NF.Index;
-		if (Md2NextFrame >= pmdl->numframes || Md2NextFrame < 0)
-		{
-			GCon->Logf(NAME_Dev, "no such next frame %d in %s", Md2NextFrame,
-				*SubMdl.Model->Name);
-			Md2NextFrame = 0;
-			//	Stop further warnings.
-			NF.Index = 0;
-		}
-
-		//	Position
-		TVec Md2Org = Org;
-
-		//	Angle
-		TAVec Md2Angle = Angles;
-		if (FDef.AngleStart || FDef.AngleEnd != 1.0)
-		{
-			Md2Angle.yaw = AngleMod(Md2Angle.yaw + FDef.AngleStart +
-				(FDef.AngleEnd - FDef.AngleStart) * Inter);
-		}
-
-		//	Position model
-		if (SubMdl.PositionModel)
-		{
-			PositionModel(Md2Org, Md2Angle, SubMdl.PositionModel, F.PositionIndex);
-		}
-
-		//	Alpha
-		float Md2Alpha = 1;
-		if (FDef.AlphaStart != 1.0 || FDef.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= FDef.AlphaStart + (FDef.AlphaEnd - FDef.AlphaStart) * Inter;
-		}
-		if (F.AlphaStart != 1.0 || F.AlphaEnd != 1.0)
-		{
-			Md2Alpha *= F.AlphaStart + (F.AlphaEnd - F.AlphaStart) * Inter;
-		}
-		if (Md2Alpha < 1)
-		{
-			continue;
-		}
-
-		float smooth_inter;
-		if (Interpolate)
-		{
-			smooth_inter = SMOOTHSTEP(Inter);
-		}
-
-		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
-		// scales z.
-		TVec Scale;
-		if (Interpolate)
-		{
-			// Interpolate Scale
-			Scale.x = (F.Scale.x + smooth_inter * (NF.Scale.x - F.Scale.x) * ScaleX);
-			Scale.y = (F.Scale.y + smooth_inter * (NF.Scale.y - F.Scale.y) * ScaleX);
-			Scale.z = (F.Scale.z + smooth_inter * (NF.Scale.z - F.Scale.z) * ScaleY);
-		}
-		else
-		{
-			Scale.x = F.Scale.x * ScaleX;
-			Scale.y = F.Scale.y * ScaleX;
-			Scale.z = F.Scale.z * ScaleY;
-		}
-
-		TVec Offset;
-		if (Interpolate)
-		{
-			// Interpolate Offsets too
-			Offset.x = ((1 - smooth_inter) * F.Offset.x + (smooth_inter) * NF.Offset.x);
-			Offset.y = ((1 - smooth_inter) * F.Offset.y + (smooth_inter) * NF.Offset.y);
-			Offset.z = ((1 - smooth_inter) * F.Offset.z + (smooth_inter) * NF.Offset.z);
-		}
-		else
-		{
-			Offset.x = F.Offset.x;
-			Offset.y = F.Offset.y;
-			Offset.z = F.Offset.z;
-		}
-
-		Drawer->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale, pmdl,
-			Md2Frame, Md2NextFrame, GTextureManager(SkinID), Fade,
-			Inter, Interpolate);
 	}
 	unguard;
 }
@@ -1913,7 +1032,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
-		IsViewModel, InterpFrac, Interpolate);
+		IsViewModel, InterpFrac, Interpolate, TVec(), 0, RPASS_Normal);
 	return true;
 	unguard;
 }
@@ -1960,7 +1079,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, Trans,
 		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel,
-		InterpFrac, Interpolate);
+		InterpFrac, Interpolate, TVec(), 0, RPASS_Normal);
 	return true;
 	unguard;
 }
@@ -2114,7 +1233,7 @@ void R_DrawModelFrame(const TVec& Origin, float Angle, VModel* Model,
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Model->DefaultClass, FIdx,
 		NFIdx, R_GetCachedTranslation(R_SetMenuPlayerTrans(TranslStart,
 		TranslEnd, Colour), NULL), 0, 0, 0xffffffff, 0, 1.0, false, false,
-		InterpFrac, Interpolate);
+		InterpFrac, Interpolate, TVec(), 0, RPASS_Normal);
 
 	Drawer->EndView();
 	unguard;
@@ -2182,7 +1301,8 @@ bool R_DrawStateModelFrame(VState* State, VState* NextState, float Inter,
 	Angles.roll = 0;
 
 	DrawModel(NULL, Origin, Angles, 1.0, 1.0, *Cls, FIdx, NFIdx, NULL, 0, 0,
-		0xffffffff, 0, 1.0, false, false, InterpFrac, Interpolate);
+		0xffffffff, 0, 1.0, false, false, InterpFrac, Interpolate,
+		TVec(), 0, RPASS_Normal);
 
 	Drawer->EndView();
 	return true;
@@ -2216,7 +1336,7 @@ bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
 		NFIdx, Trans, ColourMap, Version, Light, Fade, Alpha, Additive,
-		IsViewModel, InterpFrac, Interpolate, !IsViewModel);
+		IsViewModel, InterpFrac, Interpolate, TVec(), 0, RPASS_NonShadow);
 	return true;
 	unguard;
 }
@@ -2263,7 +1383,7 @@ bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 
 	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, Trans,
 		ColourMap, Version, Light, Fade, Alpha, Additive, IsViewModel,
-		InterpFrac, Interpolate, !IsViewModel);
+		InterpFrac, Interpolate, TVec(), 0, RPASS_NonShadow);
 	return true;
 	unguard;
 }
@@ -2293,8 +1413,9 @@ bool VAdvancedRenderLevel::DrawAliasModelAmbient(const TVec& Org, const TAVec& A
 		Interpolate = false;
 	}
 
-	DrawModelAmbient(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
-		NFIdx, Version, Light, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
+		NFIdx, NULL, CM_Default, Version, Light, 0, 1, false, false,
+		InterpFrac, Interpolate, TVec(), 0, RPASS_Ambient);
 	return true;
 	unguard;
 }
@@ -2338,8 +1459,9 @@ bool VAdvancedRenderLevel::DrawAliasModelAmbient(const TVec& Org, const TAVec& A
 		Interpolate = false;
 	}
 
-	DrawModelAmbient(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx,
-		Version, Light, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, NULL,
+		CM_Default, Version, Light, 0, 1, false, false, InterpFrac,
+		Interpolate, TVec(), 0, RPASS_Ambient);
 	return true;
 	unguard;
 }
@@ -2369,8 +1491,9 @@ bool VAdvancedRenderLevel::DrawAliasModelTextures(const TVec& Org, const TAVec& 
 		Interpolate = false;
 	}
 
-	DrawModelTextures(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
-		NFIdx, Trans, ColourMap, Version, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
+		NFIdx, Trans, ColourMap, Version, 0xffffff, 0, 1, false, false,
+		InterpFrac, Interpolate, TVec(), 0, RPASS_Textures);
 	return true;
 	unguard;
 }
@@ -2414,8 +1537,9 @@ bool VAdvancedRenderLevel::DrawAliasModelTextures(const TVec& Org, const TAVec& 
 		Interpolate = false;
 	}
 
-	DrawModelTextures(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx,
-		Trans, ColourMap, Version, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, Trans,
+		ColourMap, Version, 0xffffff, 0, 1, false, false, InterpFrac,
+		Interpolate, TVec(), 0, RPASS_Textures);
 	return true;
 	unguard;
 }
@@ -2445,8 +1569,9 @@ bool VAdvancedRenderLevel::DrawAliasModelLight(const TVec& Org, const TAVec& Ang
 		Interpolate = false;
 	}
 
-	DrawModelLight(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
-		NFIdx, Version, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
+		NFIdx, NULL, CM_Default, Version, 0xffffffff, 0, 1, false, false,
+		InterpFrac, Interpolate, TVec(), 0, RPASS_Light);
 	return true;
 	unguard;
 }
@@ -2490,8 +1615,9 @@ bool VAdvancedRenderLevel::DrawAliasModelLight(const TVec& Org, const TAVec& Ang
 		Interpolate = false;
 	}
 
-	DrawModelLight(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx,
-		Version, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, NULL,
+		CM_Default, Version, 0xffffffff, 0, 1, false, false, InterpFrac,
+		Interpolate, TVec(), 0, RPASS_Light);
 	return true;
 	unguard;
 }
@@ -2521,8 +1647,9 @@ bool VAdvancedRenderLevel::DrawAliasModelShadow(const TVec& Org, const TAVec& An
 		Interpolate = false;
 	}
 
-	DrawModelShadow(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
-		NFIdx, Version, InterpFrac, Interpolate, CurrLightPos, CurrLightRadius);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx, NFIdx,
+		NULL, CM_Default, Version, 0xffffffff, 0, 1, false, false, InterpFrac,
+		Interpolate, CurrLightPos, CurrLightRadius, RPASS_ShadowVolumes);
 	return true;
 	unguard;
 }
@@ -2566,8 +1693,9 @@ bool VAdvancedRenderLevel::DrawAliasModelShadow(const TVec& Org, const TAVec& An
 		Interpolate = false;
 	}
 
-	DrawModelShadow(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx,
-		Version, InterpFrac, Interpolate, CurrLightPos, CurrLightRadius);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx,
+		NULL, CM_Default, Version, 0xffffffff, 0, 1, false, false, InterpFrac,
+		Interpolate, CurrLightPos, CurrLightRadius, RPASS_ShadowVolumes);
 	return true;
 	unguard;
 }
@@ -2597,8 +1725,9 @@ bool VAdvancedRenderLevel::DrawAliasModelFog(const TVec& Org, const TAVec& Angle
 		Interpolate = false;
 	}
 
-	DrawModelFog(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
-		NFIdx, Version, Fade, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Mdl->DefaultClass, FIdx,
+		NFIdx, NULL, CM_Default, Version, 0xffffffff, Fade, 1, false, false,
+		InterpFrac, Interpolate, TVec(), 0, RPASS_Fog);
 	return true;
 	unguard;
 }
@@ -2642,8 +1771,9 @@ bool VAdvancedRenderLevel::DrawAliasModelFog(const TVec& Org, const TAVec& Angle
 		Interpolate = false;
 	}
 
-	DrawModelFog(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx,
-		Version, Fade, InterpFrac, Interpolate);
+	DrawModel(Level, Org, Angles, ScaleX, ScaleY, *Cls, FIdx, NFIdx, NULL,
+		CM_Default, Version, 0xffffffff, Fade, 1, false, false, InterpFrac,
+		Interpolate, TVec(), 0, RPASS_Fog);
 	return true;
 	unguard;
 }
