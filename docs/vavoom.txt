@@ -370,6 +370,9 @@ Debugging
 -RHIDE prints debug file to stderr
 -rhide
 
+-DEBUG_DECORATE prints additional debugging messages when loading DECORATE files.
+-debug_decorate
+
 *****************************************************************************
 6. Differences from the original game
 *****************************************************************************
