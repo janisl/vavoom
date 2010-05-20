@@ -62,6 +62,7 @@ struct VScriptSubModel
 	TArray<VFrame>		Frames;
 	TArray<VName>		Skins;
 	bool				FullBright;
+	bool				NoShadow;
 };
 
 struct VScriptModel
@@ -309,6 +310,13 @@ static void ParseModelScript(VModel* Mdl, VStream& Strm)
 			if (SN->HasAttribute("fullbright"))
 			{
 				Md2.FullBright = !SN->GetAttribute("fullbright").ICmp("true");
+			}
+
+			//	No shadow flag.
+			Md2.NoShadow = false;
+			if (SN->HasAttribute("noshadow"))
+			{
+				Md2.NoShadow = !SN->GetAttribute("noshadow").ICmp("true");
 			}
 
 			//	Process frames.
@@ -891,14 +899,14 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		case RPASS_Light:
 		case RPASS_Textures:
 		case RPASS_Fog:
-			if (Md2Alpha < 1)
+			if (Md2Alpha < 1 || SubMdl.NoShadow)
 			{
 				continue;
 			}
 			break;
 
 		case RPASS_NonShadow:
-			if (Md2Alpha >= 1.0 && !Additive && !IsViewModel)
+			if (Md2Alpha >= 1.0 && !Additive && !IsViewModel && !SubMdl.NoShadow)
 			{
 				continue;
 			}
