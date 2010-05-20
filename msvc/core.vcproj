@@ -185,6 +185,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\libs\core\matrix.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\libs\core\memorystream.cpp"
 				>
 			</File>
@@ -256,6 +260,10 @@
 			</File>
 			<File
 				RelativePath="..\libs\core\map.h"
+				>
+			</File>
+			<File
+				RelativePath="..\libs\core\matrix.h"
 				>
 			</File>
 			<File
