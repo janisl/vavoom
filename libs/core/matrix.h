@@ -23,34 +23,33 @@
 //**
 //**************************************************************************
 
-#ifndef _CORE_H
-#define _CORE_H
+class VMatrix4
+{
+public:
+	float		m[4][4];
 
-//	C headers
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdarg>
-#include <cmath>
+	static const VMatrix4	Identity;
 
-#include "common.h"		//	Common types and definitions
-#include "zone.h"		//	Zone memory allocation
-#include "endian.h"		//	Endianes handling
-#include "names.h"		//	Built-in names
-#include "log.h"		//	General logging interface
-#include "exception.h"	//	Exception handling
-#include "stream.h"		//	Streams
-#include "array.h"		//	Dynamic arrays
-#include "map.h"		//	Mapping of keys to values
-#include "crc.h"		//	CRC calcuation
-#include "name.h"		//	Names
-#include "str.h"		//	Strings
-#include "args.h"		//	Command line arguments.
-#include "memorystream.h"//	In-memory streams
-#include "arraystream.h"//	Stream for reading from array
-#include "bitstream.h"	//	Streams for bit-data
-#include "vector.h"		//	Vector math
-#include "matrix.h"		//	Matrices
-#include "xml.h"		//	XML file parsing
+	VMatrix4()
+	{}
+	VMatrix4(float m00, float m01, float m02, float m03,
+		float m10, float m11, float m12, float m13,
+		float m20, float m21, float m22, float m23,
+		float m30, float m31, float m32, float m33);
+	VMatrix4(float* m2);
+	float Determinant() const;
+	VMatrix4 Inverse() const;
+	VMatrix4 Transpose() const;
+	TVec Transform(const TVec& V) const;
 
-#endif
+	float* operator[] (int i)
+	{
+		return m[i];
+	}
+	const float* operator[] (int i) const
+	{
+		return m[i];
+	}
+
+	friend VMatrix4 operator * (const VMatrix4& M1, const VMatrix4& M2);
+};

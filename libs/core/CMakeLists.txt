@@ -18,6 +18,8 @@ add_library(core STATIC
 	log.cpp
 	log.h
 	map.h
+	matrix.cpp
+	matrix.h
 	memorystream.cpp
 	memorystream.h
 	name.cpp

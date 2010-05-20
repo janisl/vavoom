@@ -1674,39 +1674,13 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 //==========================================================================
 //
-//	ConcatTransforms
-//
-//==========================================================================
-
-static void ConcatTransforms(float in1[4][4], float in2[4][4], float out[4][4])
-{
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			out[i][j] = in1[i][0] * in2[0][j] + in1[i][1] * in2[1][j] +
-						in1[i][2] * in2[2][j] + in1[i][3] * in2[3][j];
-		}
-	}
-}
-
-//==========================================================================
-//
 //	AliasSetUpTransform
 //
 //==========================================================================
 
-static const float Identity[4][4] =
-{
-	{ 1, 0, 0, 0 },
-	{ 0, 1, 0, 0 },
-	{ 0, 0, 1, 0 },
-	{ 0, 0, 0, 1 },
-};
-
 static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
 	const TVec& Offset, const TVec& Scale, const TVec& FrameOrigin,
-	const TVec& FrameScale, float rotationmatrix[4][4])
+	const TVec& FrameScale, VMatrix4& rotationmatrix)
 {
 // TODO: should really be stored with the entity instead of being reconstructed
 // TODO: should use a look-up table
@@ -1715,34 +1689,29 @@ static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
 	TVec alias_forward, alias_right, alias_up;
 	AngleVectors(angles, alias_forward, alias_right, alias_up);
 
-	float tmatrix[4][4];
-	memcpy(tmatrix, Identity, sizeof(Identity));
+	VMatrix4 tmatrix = VMatrix4::Identity;
 	tmatrix[0][0] = FrameScale[0];
 	tmatrix[1][1] = FrameScale[1];
 	tmatrix[2][2] = FrameScale[2];
-	tmatrix[3][3] = 1;
 
 	tmatrix[0][3] = FrameOrigin[0];
 	tmatrix[1][3] = FrameOrigin[1];
 	tmatrix[2][3] = FrameOrigin[2];
 
 	// TODO: can do this with simple matrix rearrangement
-	float t2matrix[4][4];
-	memset(t2matrix, 0, sizeof(t2matrix));
+	VMatrix4 t2matrix = VMatrix4::Identity;
 	t2matrix[0][0] = Scale.x;
 	t2matrix[1][1] = Scale.y;
 	t2matrix[2][2] = Scale.z;
-	t2matrix[3][3] = 1;
 
 	t2matrix[0][3] = Scale.x * Offset.x;
 	t2matrix[1][3] = Scale.y * Offset.y;
 	t2matrix[2][3] = Scale.z * Offset.z;
 
 	// FIXME: can do more efficiently than full concatenation
-	float t3matrix[4][4];
-	ConcatTransforms(t2matrix, tmatrix, t3matrix);
+	VMatrix4 t3matrix = t2matrix * tmatrix;
 
-	memset(t2matrix, 0, sizeof(t2matrix));
+	t2matrix = VMatrix4::Identity;
 	for (int i = 0; i < 3; i++)
 	{
 		t2matrix[i][0] = alias_forward[i];
@@ -1753,25 +1722,43 @@ static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
 	t2matrix[0][3] = modelorg[0];
 	t2matrix[1][3] = modelorg[1];
 	t2matrix[2][3] = modelorg[2];
-	t2matrix[3][3] = 1;
 
 // FIXME: can do more efficiently than full concatenation
-	ConcatTransforms(t2matrix, t3matrix, rotationmatrix);
+	rotationmatrix = t2matrix * t3matrix;
 }
 
 //==========================================================================
 //
-//	TransformVec
+//	AliasSetUpNormalTransform
 //
 //==========================================================================
 
-static TVec TransformVec(const float m[4][4], const TVec& v)
+static void AliasSetUpNormalTransform(const TAVec& angles, const TVec& Scale,
+	VMatrix4& rotationmatrix)
 {
-	TVec Out;
-	Out.x = m[0][0] * v.x + m[0][1] * v.y + m[0][2] * v.z + m[0][3];
-	Out.y = m[1][0] * v.x + m[1][1] * v.y + m[1][2] * v.z + m[1][3];
-	Out.z = m[2][0] * v.x + m[2][1] * v.y + m[2][2] * v.z + m[2][3];
-	return Out;
+	TVec alias_forward, alias_right, alias_up;
+	AngleVectors(angles, alias_forward, alias_right, alias_up);
+
+	VMatrix4 t3matrix = VMatrix4::Identity;
+	t3matrix[0][0] = Scale.x;
+	t3matrix[1][1] = Scale.y;
+	t3matrix[2][2] = Scale.z;
+
+	VMatrix4 t2matrix = VMatrix4::Identity;
+	for (int i = 0; i < 3; i++)
+	{
+		t2matrix[i][0] = alias_forward[i];
+		t2matrix[i][1] = -alias_right[i];
+		t2matrix[i][2] = alias_up[i];
+	}
+
+	rotationmatrix = t2matrix * t3matrix;
+
+	if (fabs(Scale.x) != fabs(Scale.y) || fabs(Scale.x) != fabs(Scale.z))
+	{
+		//	Non-uniform scale, do full inverse transpose.
+		rotationmatrix = rotationmatrix.Inverse().Transpose();
+	}
 }
 
 //==========================================================================
@@ -1846,7 +1833,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 
 	SetPic(Skin, NULL, CM_Default);
 
-	float rotationmatrix[4][4];
+	VMatrix4 rotationmatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelAmbientProgram);
@@ -1961,7 +1948,7 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 
 	SetPic(Skin, Trans, CMap);
 
-	float rotationmatrix[4][4];
+	VMatrix4 rotationmatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelTexturesProgram);
@@ -2089,10 +2076,10 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 		scale[2] = framedesc->scale[2];
 	}
 
-	float rotationmatrix[4][4];
+	VMatrix4 rotationmatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
-	float normalmatrix[4][4];
-	AliasSetUpTransform(TVec(0,0,0), angles, TVec(0,0,0), Scale, TVec(0,0,0), TVec(1,1,1), normalmatrix);
+	VMatrix4 normalmatrix;
+	AliasSetUpNormalTransform(angles, Scale, normalmatrix);
 	float NormalMat[3][3];
 	NormalMat[0][0] = normalmatrix[0][0];
 	NormalMat[0][1] = normalmatrix[0][1];
@@ -2233,7 +2220,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 		scale[2] = framedesc->scale[2];
 	}
 
-	float rotationmatrix[4][4];
+	VMatrix4 rotationmatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
 
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Interpolate ? smooth_inter : 0.0);
@@ -2271,14 +2258,14 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 		TVec v1((1 - smooth_inter) * verts[index1].v[0] + smooth_inter * verts2[index1].v[0],
 				(1 - smooth_inter) * verts[index1].v[1] + smooth_inter * verts2[index1].v[1],
 				(1 - smooth_inter) * verts[index1].v[2] + smooth_inter * verts2[index1].v[2]);
-		v1 = TransformVec(rotationmatrix, v1);
+		v1 = rotationmatrix.Transform(v1);
 
 		order += 2;
 		int index2 = *order++;
 		TVec v2((1 - smooth_inter) * verts[index2].v[0] + smooth_inter * verts2[index2].v[0],
 				(1 - smooth_inter) * verts[index2].v[1] + smooth_inter * verts2[index2].v[1],
 				(1 - smooth_inter) * verts[index2].v[2] + smooth_inter * verts2[index2].v[2]);
-		v2 = TransformVec(rotationmatrix, v2);
+		v2 = rotationmatrix.Transform(v2);
 
 		count -= 2;
 		do
@@ -2288,7 +2275,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 			TVec v3((1 - smooth_inter) * verts[index3].v[0] + smooth_inter * verts2[index3].v[0],
 					(1 - smooth_inter) * verts[index3].v[1] + smooth_inter * verts2[index3].v[1],
 					(1 - smooth_inter) * verts[index3].v[2] + smooth_inter * verts2[index3].v[2]);
-			v3 = TransformVec(rotationmatrix, v3);
+			v3 = rotationmatrix.Transform(v3);
 
 			TVec d1 = v2 - v3;
 			TVec d2 = v1 - v3;
@@ -2405,7 +2392,7 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 
 	SetPic(Skin, NULL, CM_Default);
 
-	float rotationmatrix[4][4];
+	VMatrix4 rotationmatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelFogProgram);
