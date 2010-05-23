@@ -406,6 +406,8 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const r
 	}
 	if (w != width || h != height)
 	{
+		// Smooth transparent edges
+		SmoothEdges((vuint8*)data, width, height, (vuint8*)data);
 		//	Must rescale image to get "top" mipmap texture image
 		ResampleTexture(width, height, (vuint8*)data, w, h, image);
 	}

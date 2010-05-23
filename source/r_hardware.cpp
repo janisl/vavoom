@@ -535,6 +535,100 @@ void VHardwareDrawer::AdjustGamma(rgba_t* data, int size)
 	unguard;
 }
 
+#ifdef WORDS_BIGENDIAN
+#define MSB 0
+#define SOME_MASK 0xffffff00
+#else
+#define MSB 3
+#define SOME_MASK 0x00ffffff
+#endif
+
+#define CHKPIX(ofs) (l1[(ofs) * 4 + MSB] == 255 ? (( ((vuint32*)l1)[0] = ((vuint32*)l1)[ofs] & SOME_MASK), trans = true ) : false)
+
+//==========================================================================
+//
+//	VHardwareDrawer::SmoothEdges
+//
+//	This one comes directly from GZDoom
+//
+//==========================================================================
+
+void VHardwareDrawer::SmoothEdges(vuint8* buffer, int w, int h, vuint8* dataout)
+{
+	guard(VHardwareDrawer::SmoothEdges);
+	int x, y;
+	bool trans = buffer[MSB] == 0;	// If I set this to false here the code won't detect textures 
+									// that only contain transparent pixels.
+	vuint8* l1;
+
+	if (h <= 1 || w <= 1)
+	{
+		return;  // makes (a) no sense and (b) doesn't work with this code!
+	}
+	l1 = buffer;
+
+	if (l1[MSB] == 0 && !CHKPIX(1))
+	{
+		CHKPIX(w);
+	}
+	l1 += 4;
+
+	for(x = 1; x < w - 1; x++, l1 += 4)
+	{
+		if (l1[MSB] == 0 && !CHKPIX(-1) && !CHKPIX(1))
+		{
+			CHKPIX(w);
+		}
+	}
+	if (l1[MSB] == 0 && !CHKPIX(-1))
+	{
+		CHKPIX(w);
+	}
+	l1 += 4;
+
+	for(y = 1; y < h - 1; y++)
+	{
+		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(1))
+		{
+			CHKPIX(w);
+		}
+		l1 += 4;
+
+		for(x = 1; x < w - 1; x++, l1 += 4)
+		{
+			if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1) && !CHKPIX(1))
+			{
+				CHKPIX(w);
+			}
+		}
+		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1))
+		{
+			CHKPIX(w);
+		}
+		l1 += 4;
+	}
+
+	if (l1[MSB] == 0 && !CHKPIX(-w))
+	{
+		CHKPIX(1);
+	}
+	l1 += 4;
+	for(x = 1;x < w - 1; x++, l1 += 4)
+	{
+		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1))
+		{
+			CHKPIX(1);
+		}
+	}
+	if (l1[MSB] == 0 && !CHKPIX(-w))
+	{
+		CHKPIX(-1);
+	}
+
+	dataout = l1;
+	unguard;
+}
+
 //==========================================================================
 //
 //	VHardwareDrawer::ResampleTexture

@@ -102,5 +102,6 @@ protected:
 	static int ToPowerOf2(int val);
 	void AdjustGamma(rgba_t*, int);
 	void ResampleTexture(int, int, const vuint8*, int, int, vuint8*);
+	void SmoothEdges(vuint8*, int, int, vuint8*);
 	void MipMap(int, int, vuint8*);
 };
