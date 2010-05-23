@@ -540,6 +540,12 @@ bool VAdvancedRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 void VAdvancedRenderLevel::RenderThing(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThing);
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
 	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
@@ -552,13 +558,6 @@ void VAdvancedRenderLevel::RenderThing(VEntity* mobj)
 		return;
 	}
 	if (!mobj->State)
-	{
-		return;
-	}
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}
@@ -658,6 +657,12 @@ void VAdvancedRenderLevel::RenderMobjs()
 void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
 	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
@@ -670,13 +675,6 @@ void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 		return;
 	}
 	if (!mobj->State)
-	{
-		return;
-	}
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}
@@ -769,6 +767,12 @@ void VAdvancedRenderLevel::RenderMobjsAmbient()
 void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
 	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
@@ -781,13 +785,6 @@ void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 		return;
 	}
 	if (!mobj->State)
-	{
-		return;
-	}
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}
@@ -900,6 +897,12 @@ bool VAdvancedRenderLevel::IsTouchedByLight(VEntity* Ent)
 void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingLight);
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
 	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
@@ -915,14 +918,8 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 	{
 		return;
 	}
-	if (!IsTouchedByLight(mobj))
-	{
-		return;
-	}
 
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(LightBspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	if (!IsTouchedByLight(mobj))
 	{
 		return;
 	}
@@ -1003,6 +1000,12 @@ void VAdvancedRenderLevel::RenderMobjsLight()
 void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingShadow);
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
 	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
@@ -1014,18 +1017,12 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 	{
 		return;
 	}
+
 	if (!mobj->State)
 	{
 		return;
 	}
 	if (!IsTouchedByLight(mobj))
-	{
-		return;
-	}
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}
@@ -1106,6 +1103,13 @@ void VAdvancedRenderLevel::RenderMobjsShadow()
 void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingFog);
+	//	Skip things in subsectors that are not visible.
+	int SubIdx = mobj->SubSector - Level->Subsectors;
+	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
+
 	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
@@ -1118,13 +1122,6 @@ void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 		return;
 	}
 	if (!mobj->State)
-	{
-		return;
-	}
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}

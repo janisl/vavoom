@@ -1774,7 +1774,6 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	guard(VOpenGLDrawer::DrawAliasModelAmbient);
 	mframe_t	*framedesc;
 	mframe_t	*nextframedesc;
-	float 		l;
 	int			index;
 	trivertx_t	*verts;
 	trivertx_t	*verts2;
@@ -1901,7 +1900,6 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	guard(VOpenGLDrawer::DrawAliasModelTextures);
 	mframe_t	*framedesc;
 	mframe_t	*nextframedesc;
-	float 		l;
 	int			index;
 	trivertx_t	*verts;
 	trivertx_t	*verts2;
@@ -2031,8 +2029,7 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	guard(VOpenGLDrawer::DrawAliasModelLight);
 	mframe_t	*framedesc;
 	mframe_t	*nextframedesc;
-	float 		l;
-	int			index = 0;
+	int			index;
 	trivertx_t	*verts;
 	trivertx_t	*verts2;
 	int			*order;
@@ -2124,14 +2121,14 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 
 		do
 		{
-			p_glVertexAttrib3fvARB(ShadowsModelLightVertNormalLoc,
-				r_avertexnormals[verts[index].lightnormalindex]);
 			// texture coordinates come from the draw list
 			p_glVertexAttrib2fARB(ShadowsModelLightTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
 			order += 2;
 
 			// normals and vertexes come from the frame list
 			index = *order++;
+			p_glVertexAttrib3fvARB(ShadowsModelLightVertNormalLoc,
+					r_avertexnormals[verts[index].lightnormalindex]);
 			p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
 			p_glVertexAttrib3fvARB(ShadowsModelLightVert2NormalLoc,
 					r_avertexnormals[verts2[index].lightnormalindex]);
@@ -2170,7 +2167,6 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	guard(VOpenGLDrawer::DrawAliasModelShadow);
 	mframe_t	*framedesc;
 	mframe_t	*nextframedesc;
-	float 		l;
 	trivertx_t	*verts;
 	trivertx_t	*verts2;
 	int			*order;
@@ -2345,7 +2341,6 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	guard(VOpenGLDrawer::DrawAliasModelFog);
 	mframe_t	*framedesc;
 	mframe_t	*nextframedesc;
-	float 		l;
 	int			index;
 	trivertx_t	*verts;
 	trivertx_t	*verts2;

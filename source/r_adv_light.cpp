@@ -161,10 +161,7 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	subsector_t		*sub;
 	subregion_t		*reg;
 	float			l, lr, lg, lb, d, add;
-	int				i, s, t, ds, dt;
-	surface_t		*surf;
-	int				ltmp;
-	rgb_t			*rgbtmp;
+	int				i;
 	int				leafnum;
 	linetrace_t		Trace;
 
@@ -203,17 +200,11 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	//	Add static lights
 	for (i = 0; i < Lights.Num(); i++)
 	{
-		leafnum = Level->PointInSubsector(Lights[i].origin) -
-			Level->Subsectors;
+/*		leafnum = Level->PointInSubsector(Lights[i].origin) -
+			Level->Subsectors;*/
 
 		// Check potential visibility
-		if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
-		{
-			continue;
-		}
-
-		add = Lights[i].radius - Length(p - Lights[i].origin);
-		if (add <= 0)
+		if (!(dyn_facevis[Lights[i].leafnum >> 3] & (1 << (Lights[i].leafnum & 7))))
 		{
 			continue;
 		}
@@ -224,15 +215,22 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 			continue;
 		}
 
-		l += add;
-		lr += add * ((Lights[i].colour >> 16) & 0xff) / 255.0;
-		lg += add * ((Lights[i].colour >> 8) & 0xff) / 255.0;
-		lb += add * (Lights[i].colour & 0xff) / 255.0;
+		add = Lights[i].radius - Length(p - Lights[i].origin);
+		if (add > 0)
+		{
+			l += add;
+			lr += add * ((Lights[i].colour >> 16) & 0xff) / 255.0;
+			lg += add * ((Lights[i].colour >> 8) & 0xff) / 255.0;
+			lb += add * (Lights[i].colour & 0xff) / 255.0;
+		}
 	}
 
 	//	Add dynamic lights
 	for (i = 0; i < MAX_DLIGHTS; i++)
 	{
+		if (DLights[i].die < Level->Time || !DLights[i].radius)
+			continue;
+
 		leafnum = Level->PointInSubsector(DLights[i].origin) -
 			Level->Subsectors;
 
@@ -243,7 +241,6 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 		}
 
 		add = (DLights[i].radius - DLights[i].minlight) - Length(p - DLights[i].origin);
-
 		if (add > 0)
 		{
 			l += add;
@@ -277,12 +274,7 @@ vuint32 VAdvancedRenderLevel::LightPointAmbient(const TVec &p)
 	guard(VAdvancedRenderLevel::LightPointAmbient);
 	subsector_t		*sub;
 	subregion_t		*reg;
-	float			l, lr, lg, lb, d, add;
-	int				i, s, t, ds, dt;
-	surface_t		*surf;
-	int				ltmp;
-	rgb_t			*rgbtmp;
-	int				leafnum;
+	float			l, lr, lg, lb, d;
 	linetrace_t		Trace;
 
 	if (FixedLight)
@@ -291,7 +283,6 @@ vuint32 VAdvancedRenderLevel::LightPointAmbient(const TVec &p)
 	}
 
 	sub = Level->PointInSubsector(p);
-	vuint8* dyn_facevis = Level->LeafPVS(sub);
 	reg = sub->regions;
 	while (reg->next)
 	{

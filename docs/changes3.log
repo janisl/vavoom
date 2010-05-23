@@ -4129,3 +4129,6 @@
 19.04.2010
   Firebrand fixed crashes in Timidity music player.
   Firebrand made freed pointers to be properly NULLed, this helps improve performance.
+23.05.2010
+  Firebrand implemented GZDoom's SmoothEdges method to smooth transparent edges from sprites and textures,
+ this should fix the problem with PNG images with alpha channels having cyan pixels around the edges.
