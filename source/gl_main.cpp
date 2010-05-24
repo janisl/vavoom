@@ -290,6 +290,11 @@ void VOpenGLDrawer::InitResolution()
 		bool found = true;
 		_(glStencilFuncSeparate);
 		_(glStencilOpSeparate);
+		if (!found && CheckExtension("GL_ATI_separate_stencil"))
+		{
+			p_glStencilFuncSeparate = glStencilFuncSeparate_t(GetExtFuncPtr("glStencilFuncSeparateATI"));
+			p_glStencilOpSeparate = glStencilOpSeparate_t(GetExtFuncPtr("glStencilOpSeparateATI"));
+		}
 	}
 
 #undef _
