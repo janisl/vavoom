@@ -279,6 +279,10 @@ typedef void (APIENTRY*glGetVertexAttribPointervARB_t)(GLuint, GLenum, GLvoid* *
 #define GL_SHADING_LANGUAGE_VERSION_ARB		0x8B8C
 #endif
 
+#ifndef GL_ARB_depth_clamp
+#define GL_DEPTH_CLAMP_ARB					0x864F
+#endif
+
 class VOpenGLDrawer : public VHardwareDrawer
 {
 public:
@@ -392,6 +396,7 @@ protected:
 	bool					mtexable;
 	bool					pointparmsable;
 	bool					HaveShaders;
+	bool					HaveDepthClamp;
 
 	TArray<GLhandleARB>		CreatedShaderObjects;
 

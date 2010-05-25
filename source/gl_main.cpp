@@ -292,7 +292,7 @@ void VOpenGLDrawer::InitResolution()
 		_(glStencilOpSeparate);
 		if (found)
 		{
-			GCon->Log(NAME_Init, "Found OpenGL standard separate stencil methods");
+			GCon->Log(NAME_Init, "Found OpenGL 2.0 separate stencil methods");
 		}
 		else if (CheckExtension("GL_ATI_separate_stencil"))
 		{
@@ -304,6 +304,21 @@ void VOpenGLDrawer::InitResolution()
 				GCon->Log(NAME_Init, "Separate stencil extensions found");
 			}
 		}
+	}
+
+	if (CheckExtension("GL_ARB_depth_clamp"))
+	{
+		GCon->Log(NAME_Init, "Found GL_ARB_depth_clamp...");
+		HaveDepthClamp = true;
+	}
+	else if (CheckExtension("GL_NV_depth_clamp"))
+	{
+		GCon->Log(NAME_Init, "Found GL_NV_depth_clamp...");
+		HaveDepthClamp = true;
+	}
+	else
+	{
+		HaveDepthClamp = false;
 	}
 
 #undef _
@@ -596,6 +611,10 @@ void VOpenGLDrawer::Setup2D()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_BLEND);
+	if (HaveDepthClamp)
+	{
+		glDisable(GL_DEPTH_CLAMP_ARB);
+	}
 	if (!HaveShaders)
 	{
 		glEnable(GL_ALPHA_TEST);
@@ -720,7 +739,7 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	ProjMat[1][1] = 1.0 / rd->fovy;
 	ProjMat[2][3] = -1.0;
 	ProjMat[3][3] = 0.0;
-	if (RendLev && RendLev->NeedsInfiniteFarClip)
+	if (RendLev && RendLev->NeedsInfiniteFarClip && !HaveDepthClamp)
 	{
 		ProjMat[2][2] = -1.0;
 		ProjMat[3][2] = -2.0;
@@ -742,6 +761,10 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_ALPHA_TEST);
+	if (RendLev && RendLev->NeedsInfiniteFarClip && HaveDepthClamp)
+	{
+		glEnable(GL_DEPTH_CLAMP_ARB);
+	}
 
 	if (pointparmsable)
 	{
