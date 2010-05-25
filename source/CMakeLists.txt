@@ -742,7 +742,7 @@ else(WIN32)
 		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_UNIX_SDL_SOURCES})
 		set(MAIN_LIBS ${SDLMIXER_LIBRARY} ${SDL_LIBRARY} ${MAIN_LIBS})
 	else(ALLEGRO_FOUND)
-		mesage(FATAL_ERROR "Vavoom requires Allegro or SDL to compile")
+		message(FATAL_ERROR "Vavoom requires Allegro or SDL to compile")
 	endif(ALLEGRO_FOUND)
 
 	find_path(LINUX_CDROM_INCLUDE_DIR linux/cdrom.h)
