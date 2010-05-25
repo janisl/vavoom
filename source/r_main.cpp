@@ -220,6 +220,7 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 	guard(VRenderLevel::VRenderLevel);
 	r_oldviewleaf = NULL;
 	trans_sprites = MainTransSprites;
+	NeedsInfiniteFarClip = false;
 
 	memset(DLights, 0, sizeof(DLights));
 	memset(MainTransSprites, 0, sizeof(MainTransSprites));

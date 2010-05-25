@@ -715,18 +715,22 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	}
 
 	glMatrixMode(GL_PROJECTION);		// Select The Projection Matrix
-	glLoadIdentity();					// Reset The Projection Matrix
-
-	GLdouble zNear = 1.0;
-	GLdouble zFar =	maxdist;
-
-	GLdouble xmax = zNear * rd->fovx;
-	GLdouble xmin = -xmax;
-
-	GLdouble ymax = zNear * rd->fovy;
-	GLdouble ymin = -ymax;
-
-	glFrustum(xmin, xmax, ymin, ymax, zNear, zFar);
+	VMatrix4 ProjMat = VMatrix4::Identity;
+	ProjMat[0][0] = 1.0 / rd->fovx;
+	ProjMat[1][1] = 1.0 / rd->fovy;
+	ProjMat[2][3] = -1.0;
+	ProjMat[3][3] = 0.0;
+	if (RendLev && RendLev->NeedsInfiniteFarClip)
+	{
+		ProjMat[2][2] = -1.0;
+		ProjMat[3][2] = -2.0;
+	}
+	else
+	{
+		ProjMat[2][2] = -(maxdist + 1.0) / (maxdist - 1.0);
+		ProjMat[3][2] = -2.0 * maxdist / (maxdist - 1.0);
+	}
+	glLoadMatrixf(ProjMat[0]);
 
 	glMatrixMode(GL_MODELVIEW);			// Select The Modelview Matrix
 

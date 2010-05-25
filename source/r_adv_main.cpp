@@ -88,6 +88,7 @@ VAdvancedRenderLevel::VAdvancedRenderLevel(VLevel* ALevel)
 , LightVis(NULL)
 {
 	guard(VAdvancedRenderLevel::VAdvancedRenderLevel);
+	NeedsInfiniteFarClip = true;
 	r_oldviewleaf = NULL;
 	trans_sprites = MainTransSprites;
 

@@ -63,6 +63,8 @@ struct refdef_t
 class VRenderLevelDrawer : public VRenderLevelPublic
 {
 public:
+	bool		NeedsInfiniteFarClip;
+
 	virtual bool BuildLightMap(surface_t*, int) = 0;
 };
 
