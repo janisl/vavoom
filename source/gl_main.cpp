@@ -290,10 +290,19 @@ void VOpenGLDrawer::InitResolution()
 		bool found = true;
 		_(glStencilFuncSeparate);
 		_(glStencilOpSeparate);
-		if (!found && CheckExtension("GL_ATI_separate_stencil"))
+		if (found)
 		{
+			GCon->Log(NAME_Init, "Found OpenGL standard separate stencil methods");
+		}
+		else if (CheckExtension("GL_ATI_separate_stencil"))
+		{
+			GCon->Log(NAME_Init, "Found GL_ATI_separate_stencil...");
 			p_glStencilFuncSeparate = glStencilFuncSeparate_t(GetExtFuncPtr("glStencilFuncSeparateATI"));
 			p_glStencilOpSeparate = glStencilOpSeparate_t(GetExtFuncPtr("glStencilOpSeparateATI"));
+			if (p_glStencilFuncSeparate && p_glStencilOpSeparate)
+			{
+				GCon->Log(NAME_Init, "Separate stencil extensions found");
+			}
 		}
 	}
 
