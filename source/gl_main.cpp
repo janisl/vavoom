@@ -272,8 +272,17 @@ void VOpenGLDrawer::InitResolution()
 			GCon->Log(NAME_Init, "Shader extensions found.");
 			HaveShaders = true;
 			GLint tmp;
+			GCon->Logf(NAME_Init, "Shading language version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION_ARB));
 			glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS_ARB, &tmp);
-			GCon->Logf("Max texture image units: %d", tmp);
+			GCon->Logf(NAME_Init, "Max texture image units: %d", tmp);
+			glGetIntegerv(GL_MAX_VERTEX_UNIFORM_COMPONENTS_ARB, &tmp);
+			GCon->Logf(NAME_Init, "Max vertex uniform components: %d", tmp);
+			glGetIntegerv(GL_MAX_VARYING_FLOATS_ARB, &tmp);
+			GCon->Logf(NAME_Init, "Max varying floats: %d", tmp);
+			glGetIntegerv(GL_MAX_VERTEX_ATTRIBS_ARB, &tmp);
+			GCon->Logf(NAME_Init, "Max vertex attribs: %d", tmp);
+			glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS_ARB, &tmp);
+			GCon->Logf(NAME_Init, "Max fragment uniform components: %d", tmp);
 		}
 		else
 		{
