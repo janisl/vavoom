@@ -321,6 +321,16 @@ void VOpenGLDrawer::InitResolution()
 		HaveDepthClamp = false;
 	}
 
+	if (CheckExtension("GL_EXT_stencil_wrap"))
+	{
+		GCon->Log(NAME_Init, "Found GL_EXT_stencil_wrap...");
+		HaveStencilWrap = true;
+	}
+	else
+	{
+		HaveStencilWrap = false;
+	}
+
 #undef _
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
@@ -585,7 +595,8 @@ bool VOpenGLDrawer::CheckExtension(const char *ext)
 
 bool VOpenGLDrawer::SupportsAdvancedRendering()
 {
-	return HasStencil && HaveShaders && p_glStencilFuncSeparate;
+	return HasStencil && HaveStencilWrap && p_glStencilFuncSeparate &&
+		HaveShaders;
 }
 
 //==========================================================================

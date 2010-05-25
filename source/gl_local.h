@@ -397,6 +397,7 @@ protected:
 	bool					pointparmsable;
 	bool					HaveShaders;
 	bool					HaveDepthClamp;
+	bool					HaveStencilWrap;
 
 	TArray<GLhandleARB>		CreatedShaderObjects;
 
