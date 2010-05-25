@@ -1131,6 +1131,11 @@ void CalcSecMinMaxs(sector_t *sector)
 				minz = z;
 			if (maxz < z)
 				maxz = z;
+			z = sector->floor.GetPointZ(*sector->lines[i]->v2);
+			if (minz > z)
+				minz = z;
+			if (maxz < z)
+				maxz = z;
 		}
 		sector->floor.minz = minz;
 		sector->floor.maxz = maxz;
@@ -1151,6 +1156,11 @@ void CalcSecMinMaxs(sector_t *sector)
 		{
 			float z;
 			z = sector->ceiling.GetPointZ(*sector->lines[i]->v1);
+			if (minz > z)
+				minz = z;
+			if (maxz < z)
+				maxz = z;
+			z = sector->ceiling.GetPointZ(*sector->lines[i]->v2);
 			if (minz > z)
 				minz = z;
 			if (maxz < z)
