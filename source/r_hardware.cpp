@@ -47,11 +47,6 @@ float			VHardwareDrawer::r_avertexnormal_dots[
 	VHardwareDrawer::SHADEDOT_QUANT][256] =
 #include "anorm_dots.h"
 ;
-float			VHardwareDrawer::r_avertexnormals[
-	VHardwareDrawer::NUMVERTEXNORMALS][3] =
-{
-#include "anorms.h"
-};
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

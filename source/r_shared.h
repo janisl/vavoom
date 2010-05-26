@@ -147,6 +147,35 @@ protected:
 	void SetUpRanges(VViewClipper&, bool);
 };
 
+struct VMeshFrame
+{
+	TVec*			Verts;
+	TVec*			Normals;
+};
+
+struct VMeshSTVert
+{
+	float			S;
+	float			T;
+};
+
+struct VMeshTri
+{
+	int				VertIndex[3];
+};
+
+struct VMeshModel
+{
+	VStr				Name;
+	mmdl_t*				Data;		// only access through Mod_Extradata
+	TArray<VName>		Skins;
+	TArray<VMeshFrame>	Frames;
+	TArray<TVec>		AllVerts;
+	TArray<TVec>		AllNormals;
+	TArray<VMeshSTVert>	STVerts;
+	TArray<VMeshTri>	Tris;
+};
+
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 void R_DrawViewBorder();
@@ -209,6 +238,11 @@ extern vuint8			gammatable[5][256];
 extern float			PixelAspect;
 
 extern VTextureTranslation	ColourMaps[CM_Max];
+
+enum { NUMVERTEXNORMALS = 162 };
+extern "C" {
+extern float			r_avertexnormals[NUMVERTEXNORMALS][3];
+}
 
 //==========================================================================
 //

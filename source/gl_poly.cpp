@@ -1768,38 +1768,18 @@ static void AliasSetUpNormalTransform(const TAVec& angles, const TVec& Scale,
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, vuint32 light, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelAmbient);
-	mframe_t	*framedesc;
-	mframe_t	*nextframedesc;
-	int			index;
-	trivertx_t	*verts;
-	trivertx_t	*verts2;
-	int			*order;
-	int			count;
-	float		shadelightr;
-	float		shadelightg;
-	float		shadelightb;
-	float		*shadedots;
-
-	//
-	// get lighting information
-	//
-	shadelightr = ((light >> 16) & 0xff) / 510.0;
-	shadelightg = ((light >> 8) & 0xff) / 510.0;
-	shadelightb = (light & 0xff) / 510.0;
-	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
-
-	float smooth_inter;
-	smooth_inter = SMOOTHSTEP(Inter);
+	float smooth_inter = SMOOTHSTEP(Inter);
 
 	//
 	// draw all the triangles
 	//
-	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
-	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
+	mmdl_t* pmdl = Mdl->Data;
+	mframe_t* framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
+	mframe_t* nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
 	// Interpolate Scales
 	TVec scale_origin;
@@ -1844,21 +1824,14 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		(light & 255) / 255.0, 1);
 	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	verts = (trivertx_t *)(framedesc + 1);
-	order = (int *)((byte *)pmdl + pmdl->ofscmds);
-	if (Interpolate)
-	{
-		verts2 = (trivertx_t *)(nextframedesc + 1);
-	}
-	else
-	{
-		verts2 = verts;
-	}
+	trivertx_t* verts = (trivertx_t *)(framedesc + 1);
+	trivertx_t* verts2 = (trivertx_t *)(nextframedesc + 1);
+	int* order = (int *)((byte *)pmdl + pmdl->ofscmds);
 
 	while (*order)
 	{
 		// get the vertex count and primitive type
-		count = *order++;
+		int count = *order++;
 		if (count < 0)
 		{
 			count = -count;
@@ -1876,7 +1849,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 			order += 2;
 
 			// normals and vertexes come from the frame list
-			index = *order++;
+			int index = *order++;
 			p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
 			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
 		} while (--count);
@@ -1893,7 +1866,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, float Inter,
 	bool Interpolate)
 {
@@ -1912,6 +1885,7 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	//
 	// draw all the triangles
 	//
+	mmdl_t* pmdl = Mdl->Data;
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
@@ -2023,7 +1997,7 @@ void VOpenGLDrawer::BeginModelsLightPass(TVec& LightPos, float Radius, vuint32 C
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelLight);
@@ -2041,6 +2015,7 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	//
 	// draw all the triangles
 	//
+	mmdl_t* pmdl = Mdl->Data;
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
@@ -2161,7 +2136,7 @@ void VOpenGLDrawer::BeginModelsShadowsPass(TVec& LightPos, float LightRadius)
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	float Inter, bool Interpolate, const TVec& LightPos, float LightRadius)
 {
 	guard(VOpenGLDrawer::DrawAliasModelShadow);
@@ -2178,6 +2153,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	//
 	// draw all the triangles
 	//
+	mmdl_t* pmdl = Mdl->Data;
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
@@ -2335,7 +2311,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 //==========================================================================
 
 void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
+	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, vuint32 Fade, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelFog);
@@ -2353,6 +2329,7 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	//
 	// draw all the triangles
 	//
+	mmdl_t* pmdl = Mdl->Data;
 	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 

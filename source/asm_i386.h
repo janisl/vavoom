@@ -324,7 +324,7 @@
 .extern	C(aliasycentre)
 .extern	C(ziscale)
 .extern	C(d_plightvec)
-.extern	C(d_avertexnormals)
+.extern	C(r_avertexnormals)
 .extern	C(d_ambientlightr)
 .extern	C(d_ambientlightg)
 .extern	C(d_ambientlightb)

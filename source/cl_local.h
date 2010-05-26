@@ -32,6 +32,7 @@
 #include "drawer.h"
 
 class VRootWidget;
+struct VModel;
 
 // MACROS ------------------------------------------------------------------
 

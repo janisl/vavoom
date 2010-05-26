@@ -38,7 +38,6 @@
 
 #define LIGHT_MIN			5	//	lowest light value we'll allow, to avoid
 								// the need for inner-loop light clamping
-#define NUMVERTEXNORMALS	162
 
 // TYPES -------------------------------------------------------------------
 
@@ -88,11 +87,6 @@ int				d_ambientlightb;
 float			d_shadelightr;
 float			d_shadelightg;
 float			d_shadelightb;
-
-float d_avertexnormals[NUMVERTEXNORMALS][3] =
-{
-#include "anorms.h"
-};
 
 }
 
@@ -705,7 +699,7 @@ extern "C" void D_AliasTransformAndProjectFinalVerts(finalvert_t *fv)
 		fv->flags = 0;
 
 		//	lighting
-		plightnormal = d_avertexnormals[pverts->lightnormalindex];
+		plightnormal = r_avertexnormals[pverts->lightnormalindex];
 		lightcos = DotProduct(plightnormal, d_plightvec);
 		int r = d_ambientlightr;
 		int g = d_ambientlightg;
@@ -754,7 +748,7 @@ extern "C" void D_AliasTransformFinalVert(finalvert_t *fv, auxvert_t *av,
 	fv->flags = 0;
 
 // lighting
-	plightnormal = d_avertexnormals[pverts->lightnormalindex];
+	plightnormal = r_avertexnormals[pverts->lightnormalindex];
 	lightcos = DotProduct(plightnormal, d_plightvec);
 	int r = d_ambientlightr;
 	int g = d_ambientlightg;

@@ -227,7 +227,7 @@ C(D_AliasTransformFinalVert):
 	xorl	%eax,%eax
 	movb	3(%edx),%al
 	leal	(%eax,%eax,2),%eax
-	leal	C(d_avertexnormals)(,%eax,4),%eax
+	leal	C(r_avertexnormals)(,%eax,4),%eax
 
 	fildl	Lcoords					// v[0]
 	fildl	Lcoords+4				// v[1] | v[0]
@@ -446,15 +446,15 @@ LTLoop:
 	fxch	%st(1)					// zaccum1 | zaccum2 | v[2] | v[1] | v[0]
 	fadds	C(aliastransform)+44	// zaccum14 | zaccum2 | v[2] | v[1] |
 									// v[0]
-	flds	C(d_avertexnormals)+0(%eax)	// avn[0] | zaccum14 | zaccum2 |
+	flds	C(r_avertexnormals)+0(%eax)	// avn[0] | zaccum14 | zaccum2 |
 									// v[2] | v[1] | v[0]
 	fmuls	C(d_plightvec)+0		// laccum1 | zaccum14 | zaccum2 | v[2] |
 									// v[1] | v[0]
-	flds	C(d_avertexnormals)+4(%eax)	// avn[1] | laccum1 | zaccum14 |
+	flds	C(r_avertexnormals)+4(%eax)	// avn[1] | laccum1 | zaccum14 |
 									// zaccum2 | v[2] | v[1] | v[0]
 	fmuls	C(d_plightvec)+4		// laccum2 | laccum1 | zaccum14 |
 									// zaccum2 | v[2] | v[1] | v[0]
-	flds	C(d_avertexnormals)+8(%eax)	// avn[2] | laccum2 | laccum1 |
+	flds	C(r_avertexnormals)+8(%eax)	// avn[2] | laccum2 | laccum1 |
 									// zaccum14 | zaccum2 | v[2] | v[1] |
 									// v[0]
 	fmuls	C(d_plightvec)+8		// laccum3 | laccum2 | laccum1 |

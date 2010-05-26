@@ -229,18 +229,18 @@ public:
 	void DrawWorldFogPass();
 	void EndFogPass();
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
+		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
 		float, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, float, bool);
 	void BeginModelsShadowsPass(TVec&, float);
 	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float);
+		const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float);
 	void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
 
 protected:
 	VRenderLevelDrawer*		RendLev;

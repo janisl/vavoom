@@ -34,13 +34,6 @@
 
 // TYPES -------------------------------------------------------------------
 
-struct VMeshModel
-{
-	VStr			Name;
-	mmdl_t*			Data;		// only access through Mod_Extradata
-	TArray<VName>	Skins;
-};
-
 struct VScriptSubModel
 {
 	struct VFrame
@@ -97,6 +90,12 @@ struct VModel
 	VClassModelScript*			DefaultClass;
 };
 
+struct TVertMap
+{
+	int		VertIndex;
+	int		STIndex;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -106,6 +105,13 @@ struct VModel
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
+
+extern "C" {
+float			r_avertexnormals[NUMVERTEXNORMALS][3] =
+{
+#include "anorms.h"
+};
+}
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -523,7 +529,6 @@ VModel* Mod_FindName(const VStr& name)
 static void Mod_SwapAliasModel(VMeshModel* mod)
 {
 	guard(Mod_SwapAliasModel);
-	int					i, j;
 	mmdl_t				*pmodel;
 	mstvert_t			*pstverts;
 	mtriangle_t			*ptri;
@@ -535,7 +540,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	//
 	// endian-adjust and swap the data, starting with the alias model header
 	//
-	for (i = 0; i < (int)sizeof(mmdl_t) / 4; i++)
+	for (int i = 0; i < (int)sizeof(mmdl_t) / 4; i++)
 	{
 		((vint32*)pmodel)[i] = LittleLong(((vint32*)pmodel)[i]);
 	}
@@ -572,7 +577,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	// base s and t vertices
 	//
 	pstverts = (mstvert_t*)((byte*)pmodel + pmodel->ofsstverts);
-	for (i = 0; i < pmodel->numstverts; i++)
+	for (int i = 0; i < pmodel->numstverts; i++)
 	{
 		pstverts[i].s = LittleShort(pstverts[i].s);
 		pstverts[i].t = LittleShort(pstverts[i].t);
@@ -581,21 +586,55 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	//
 	// triangles
 	//
+	TArray<TVertMap> VertMap;
+	mod->Tris.SetNum(pmodel->numtris);
 	ptri = (mtriangle_t *)((byte*)pmodel + pmodel->ofstris);
-	for (i = 0; i < pmodel->numtris; i++)
+	for (int i = 0; i < pmodel->numtris; i++)
 	{
-		for (j = 0; j < 3; j++)
+		for (int j = 0; j < 3; j++)
 		{
 			ptri[i].vertindex[j] = LittleShort(ptri[i].vertindex[j]);
 			ptri[i].stvertindex[j] = LittleShort(ptri[i].stvertindex[j]);
+
+			bool Found = false;
+			for (int vi = 0; vi < VertMap.Num(); vi++)
+			{
+				if (VertMap[vi].VertIndex == ptri[i].vertindex[j] &&
+					VertMap[vi].STIndex == ptri[i].stvertindex[j])
+				{
+					Found = true;
+					mod->Tris[i].VertIndex[j] = vi;
+					break;
+				}
+			}
+			if (!Found)
+			{
+				mod->Tris[i].VertIndex[j] = VertMap.Num();
+				TVertMap& V = VertMap.Alloc();
+				V.VertIndex = ptri[i].vertindex[j];
+				V.STIndex = ptri[i].stvertindex[j];
+			}
 		}
+	}
+
+	//
+	//	Calculate remapped ST verts.
+	//
+	mod->STVerts.SetNum(VertMap.Num());
+	for (int i = 0; i < VertMap.Num(); i++)
+	{
+		mod->STVerts[i].S = (float)pstverts[VertMap[i].STIndex].s / (float)pmodel->skinwidth;
+		mod->STVerts[i].T = (float)pstverts[VertMap[i].STIndex].t / (float)pmodel->skinheight;
 	}
 
 	//
 	// frames
 	//
+	mod->Frames.SetNum(pmodel->numframes);
+	mod->AllVerts.SetNum(pmodel->numframes * VertMap.Num());
+	mod->AllNormals.SetNum(pmodel->numframes * VertMap.Num());
 	pframe = (mframe_t *)((byte*)pmodel + pmodel->ofsframes);
-	for (i = 0; i < pmodel->numframes; i++)
+	for (int i = 0; i < pmodel->numframes; i++)
 	{
 		pframe->scale[0] = LittleFloat(pframe->scale[0]);
 		pframe->scale[1] = LittleFloat(pframe->scale[1]);
@@ -603,6 +642,21 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 		pframe->scale_origin[0] = LittleFloat(pframe->scale_origin[0]);
 		pframe->scale_origin[1] = LittleFloat(pframe->scale_origin[1]);
 		pframe->scale_origin[2] = LittleFloat(pframe->scale_origin[2]);
+
+		mod->Frames[i].Verts = &mod->AllVerts[i * VertMap.Num()];
+		mod->Frames[i].Normals = &mod->AllNormals[i * VertMap.Num()];
+		trivertx_t* Verts = (trivertx_t *)(pframe + 1);
+		for (int j = 0; j < VertMap.Num(); j++)
+		{
+			mod->Frames[i].Verts[j].x = Verts[VertMap[j].VertIndex].v[0] *
+				pframe->scale[0] + pframe->scale_origin[0];
+			mod->Frames[i].Verts[j].y = Verts[VertMap[j].VertIndex].v[1] *
+				pframe->scale[1] + pframe->scale_origin[1];
+			mod->Frames[i].Verts[j].z = Verts[VertMap[j].VertIndex].v[2] *
+				pframe->scale[2] + pframe->scale_origin[2];
+			mod->Frames[i].Normals[j] = r_avertexnormals[
+				Verts[VertMap[j].VertIndex].lightnormalindex];
+		}
 		pframe = (mframe_t*)((byte*)pframe + pmodel->framesize);
 	}
 
@@ -610,7 +664,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	// commands
 	//
 	pcmds = (vint32*)((byte*)pmodel + pmodel->ofscmds);
-	for (i = 0; i < pmodel->numcmds; i++)
+	for (int i = 0; i < pmodel->numcmds; i++)
 	{
 		pcmds[i] = LittleLong(pcmds[i]);
 	}
@@ -619,7 +673,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	//	Skins
 	//
 	mskin_t* pskindesc = (mskin_t *)((byte *)pmodel + pmodel->ofsskins);
-	for (i = 0; i < pmodel->numskins; i++)
+	for (int i = 0; i < pmodel->numskins; i++)
 	{
 		mod->Skins.Append(*VStr(pskindesc[i].name).ToLower());
 	}
@@ -963,36 +1017,39 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		case RPASS_Normal:
 		case RPASS_NonShadow:
 			Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale, pmdl,
-				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap, Md2Light,
-				Fade, Md2Alpha, Additive, IsViewModel, Inter, Interpolate);
+				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans,
+				ColourMap, Md2Light, Fade, Md2Alpha, Additive, IsViewModel,
+				Inter, Interpolate);
 			break;
 
 		case RPASS_Ambient:
-			Drawer->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale, pmdl,
-				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Md2Light,
-				Inter, Interpolate);
+			Drawer->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale,
+				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
+				Md2Light, Inter, Interpolate);
 			break;
 
 		case RPASS_ShadowVolumes:
-			Drawer->DrawAliasModelShadow(Md2Org, Md2Angle, Offset, Scale, pmdl,
-				Md2Frame, Md2NextFrame, Inter, Interpolate, LightPos, LightRadius);
+			Drawer->DrawAliasModelShadow(Md2Org, Md2Angle, Offset, Scale,
+				SubMdl.Model, Md2Frame, Md2NextFrame, Inter, Interpolate,
+				LightPos, LightRadius);
 			break;
 
 		case RPASS_Light:
-			Drawer->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale, pmdl,
-				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Inter, Interpolate);
+			Drawer->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale,
+				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
+				Inter, Interpolate);
 			break;
 
 		case RPASS_Textures:
-			Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale, pmdl,
-				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans, ColourMap,
-				Inter, Interpolate);
+			Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale,
+				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
+				Trans, ColourMap, Inter, Interpolate);
 			break;
 
 		case RPASS_Fog:
-			Drawer->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale, pmdl,
-				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Fade,
-				Inter, Interpolate);
+			Drawer->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale,
+				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
+				Fade, Inter, Interpolate);
 			break;
 		}
 	}
@@ -1021,7 +1078,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
-		NFIdx = 0;
+		NFIdx = FIdx;
 		Interpolate = false;
 	}
 
@@ -1068,7 +1125,7 @@ bool VRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
-		NFIdx = 0;
+		NFIdx = FIdx;
 		Interpolate = false;
 	}
 
@@ -1326,7 +1383,7 @@ bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
-		NFIdx = 0;
+		NFIdx = FIdx;
 		Interpolate = false;
 	}
 
@@ -1375,7 +1432,7 @@ bool VAdvancedRenderLevel::DrawAliasModel(const TVec& Org, const TAVec& Angles,
 		InterpFrac);
 	if (NFIdx == -1)
 	{
-		NFIdx = 0;
+		NFIdx = FIdx;
 		Interpolate = false;
 	}
 

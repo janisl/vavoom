@@ -881,15 +881,15 @@ void VDirect3DDrawer::DrawWorldTexturesPass() {}
 void VDirect3DDrawer::DrawWorldFogPass() {}
 void VDirect3DDrawer::EndFogPass() {}
 void VDirect3DDrawer::DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-	const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) {}
+	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool) {}
 void VDirect3DDrawer::DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
-	const TVec&, mmdl_t*, int, int, VTexture*, VTextureTranslation*, int,
+	const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
 	float, bool) {}
 void VDirect3DDrawer::BeginModelsLightPass(TVec&, float, vuint32) {}
 void VDirect3DDrawer::DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
-	const TVec&, mmdl_t*, int, int, VTexture*, float, bool) {}
+	const TVec&, VMeshModel*, int, int, VTexture*, float, bool) {}
 void VDirect3DDrawer::BeginModelsShadowsPass(TVec&, float) {}
 void VDirect3DDrawer::DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
-	const TVec&, mmdl_t*, int, int, float, bool, const TVec&, float) {}
+	const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float) {}
 void VDirect3DDrawer::DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-	const TVec&, mmdl_t*, int, int, VTexture*, vuint32, float, bool) {}
+	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool) {}

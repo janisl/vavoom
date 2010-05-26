@@ -90,8 +90,6 @@ protected:
 
 	enum { SHADEDOT_QUANT = 16 };
 	static float	r_avertexnormal_dots[SHADEDOT_QUANT][256];
-	enum { NUMVERTEXNORMALS = 162 };
-	static float	r_avertexnormals[NUMVERTEXNORMALS][3];
 
 	void FlushCaches(bool);
 	void FlushOldCaches();
