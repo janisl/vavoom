@@ -52,6 +52,7 @@ VCvarI VOpenGLDrawer::ext_multitexture("gl_ext_multitexture", "1", CVAR_Archive)
 VCvarI VOpenGLDrawer::ext_point_parameters("gl_ext_point_parameters", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_anisotropy("gl_ext_anisotropy", "1", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_shaders("gl_ext_shaders", "1", CVAR_Archive);
+VCvarI VOpenGLDrawer::ext_vertex_buffer_objects("gl_ext_vertex_buffer_objects", "1", CVAR_Archive);
 VCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_Archive);
 VCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_Archive);
@@ -340,6 +341,39 @@ void VOpenGLDrawer::InitResolution()
 		HaveStencilWrap = false;
 	}
 
+	if (ext_vertex_buffer_objects && CheckExtension("GL_ARB_vertex_buffer_object"))
+	{
+		GCon->Log(NAME_Init, "Found GL_ARB_vertex_buffer_object...");
+
+		bool found = true;
+		_(glBindBufferARB);
+		_(glDeleteBuffersARB);
+		_(glGenBuffersARB);
+		_(glIsBufferARB);
+		_(glBufferDataARB);
+		_(glBufferSubDataARB);
+		_(glGetBufferSubDataARB);
+		_(glMapBufferARB);
+		_(glUnmapBufferARB);
+		_(glGetBufferParameterivARB);
+		_(glGetBufferPointervARB);
+
+		if (found)
+		{
+			GCon->Log(NAME_Init, "Vertex buffer object extensions found.");
+			HaveVertexBufferObject = true;
+		}
+		else
+		{
+			GCon->Log(NAME_Init, "Symbol not found, vertex buffer object extensions disabled.");
+			HaveVertexBufferObject = false;
+		}
+	}
+	else
+	{
+		HaveVertexBufferObject = false;
+	}
+
 #undef _
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
@@ -605,7 +639,7 @@ bool VOpenGLDrawer::CheckExtension(const char *ext)
 bool VOpenGLDrawer::SupportsAdvancedRendering()
 {
 	return HasStencil && HaveStencilWrap && p_glStencilFuncSeparate &&
-		HaveShaders;
+		HaveShaders && HaveVertexBufferObject;
 }
 
 //==========================================================================

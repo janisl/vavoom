@@ -283,6 +283,56 @@ typedef void (APIENTRY*glGetVertexAttribPointervARB_t)(GLuint, GLenum, GLvoid* *
 #define GL_DEPTH_CLAMP_ARB					0x864F
 #endif
 
+#ifndef GL_ARB_vertex_buffer_object
+#define GL_BUFFER_SIZE_ARB					0x8764
+#define GL_BUFFER_USAGE_ARB					0x8765
+#define GL_ARRAY_BUFFER_ARB					0x8892
+#define GL_ELEMENT_ARRAY_BUFFER_ARB			0x8893
+#define GL_ARRAY_BUFFER_BINDING_ARB			0x8894
+#define GL_ELEMENT_ARRAY_BUFFER_BINDING_ARB	0x8895
+#define GL_VERTEX_ARRAY_BUFFER_BINDING_ARB	0x8896
+#define GL_NORMAL_ARRAY_BUFFER_BINDING_ARB	0x8897
+#define GL_COLOR_ARRAY_BUFFER_BINDING_ARB	0x8898
+#define GL_INDEX_ARRAY_BUFFER_BINDING_ARB	0x8899
+#define GL_TEXTURE_COORD_ARRAY_BUFFER_BINDING_ARB	0x889A
+#define GL_EDGE_FLAG_ARRAY_BUFFER_BINDING_ARB	0x889B
+#define GL_SECONDARY_COLOR_ARRAY_BUFFER_BINDING_ARB	0x889C
+#define GL_FOG_COORDINATE_ARRAY_BUFFER_BINDING_ARB	0x889D
+#define GL_WEIGHT_ARRAY_BUFFER_BINDING_ARB	0x889E
+#define GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING_ARB	0x889F
+#define GL_READ_ONLY_ARB					0x88B8
+#define GL_WRITE_ONLY_ARB					0x88B9
+#define GL_READ_WRITE_ARB					0x88BA
+#define GL_BUFFER_ACCESS_ARB				0x88BB
+#define GL_BUFFER_MAPPED_ARB				0x88BC
+#define GL_BUFFER_MAP_POINTER_ARB			0x88BD
+#define GL_STREAM_DRAW_ARB					0x88E0
+#define GL_STREAM_READ_ARB					0x88E1
+#define GL_STREAM_COPY_ARB					0x88E2
+#define GL_STATIC_DRAW_ARB					0x88E4
+#define GL_STATIC_READ_ARB					0x88E5
+#define GL_STATIC_COPY_ARB					0x88E6
+#define GL_DYNAMIC_DRAW_ARB					0x88E8
+#define GL_DYNAMIC_READ_ARB					0x88E9
+#define GL_DYNAMIC_COPY_ARB					0x88EA
+
+/* GL types for handling large vertex buffer objects */
+typedef ptrdiff_t GLintptrARB;
+typedef ptrdiff_t GLsizeiptrARB;
+#endif
+
+typedef void (APIENTRY*glBindBufferARB_t)(GLenum, GLuint);
+typedef void (APIENTRY*glDeleteBuffersARB_t)(GLsizei, const GLuint *);
+typedef void (APIENTRY*glGenBuffersARB_t)(GLsizei, GLuint *);
+typedef GLboolean (APIENTRY*glIsBufferARB_t)(GLuint);
+typedef void (APIENTRY*glBufferDataARB_t)(GLenum, GLsizeiptrARB, const GLvoid *, GLenum);
+typedef void (APIENTRY*glBufferSubDataARB_t)(GLenum, GLintptrARB, GLsizeiptrARB, const GLvoid *);
+typedef void (APIENTRY*glGetBufferSubDataARB_t)(GLenum, GLintptrARB, GLsizeiptrARB, GLvoid *);
+typedef GLvoid* (APIENTRY*glMapBufferARB_t)(GLenum, GLenum);
+typedef GLboolean (APIENTRY*glUnmapBufferARB_t)(GLenum);
+typedef void (APIENTRY*glGetBufferParameterivARB_t)(GLenum, GLenum, GLint *);
+typedef void (APIENTRY*glGetBufferPointervARB_t)(GLenum, GLenum, GLvoid* *);
+
 class VOpenGLDrawer : public VHardwareDrawer
 {
 public:
@@ -398,6 +448,7 @@ protected:
 	bool					HaveShaders;
 	bool					HaveDepthClamp;
 	bool					HaveStencilWrap;
+	bool					HaveVertexBufferObject;
 
 	TArray<GLhandleARB>		CreatedShaderObjects;
 
@@ -572,6 +623,7 @@ protected:
 	static VCvarI ext_point_parameters;
 	static VCvarI ext_anisotropy;
 	static VCvarI ext_shaders;
+	static VCvarI ext_vertex_buffer_objects;
 	static VCvarF maxdist;
 	static VCvarI model_lighting;
 	static VCvarI specular_highlights;
@@ -695,6 +747,18 @@ protected:
 	_(glGetVertexAttribfvARB);
 	_(glGetVertexAttribivARB);
 	_(glGetVertexAttribPointervARB);
+
+	_(glBindBufferARB);
+	_(glDeleteBuffersARB);
+	_(glGenBuffersARB);
+	_(glIsBufferARB);
+	_(glBufferDataARB);
+	_(glBufferSubDataARB);
+	_(glGetBufferSubDataARB);
+	_(glMapBufferARB);
+	_(glUnmapBufferARB);
+	_(glGetBufferParameterivARB);
+	_(glGetBufferPointervARB);
 #undef _
 
 	void MultiTexCoord(int level, GLfloat s, GLfloat t)
