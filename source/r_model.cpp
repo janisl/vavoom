@@ -967,11 +967,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			break;
 		}
 
-		float smooth_inter;
-		if (Interpolate)
-		{
-			smooth_inter = SMOOTHSTEP(Inter);
-		}
+		float smooth_inter = Interpolate ? SMOOTHSTEP(Inter) : 0.0;
 
 		//	Scale, in case of models thing's ScaleX scales x and y and ScaleY
 		// scales z.
@@ -1019,37 +1015,37 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale, pmdl,
 				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans,
 				ColourMap, Md2Light, Fade, Md2Alpha, Additive, IsViewModel,
-				Inter, Interpolate);
+				smooth_inter, Interpolate);
 			break;
 
 		case RPASS_Ambient:
 			Drawer->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Md2Light, Inter, Interpolate);
+				Md2Light, smooth_inter, Interpolate);
 			break;
 
 		case RPASS_ShadowVolumes:
 			Drawer->DrawAliasModelShadow(Md2Org, Md2Angle, Offset, Scale,
-				SubMdl.Model, Md2Frame, Md2NextFrame, Inter, Interpolate,
+				SubMdl.Model, Md2Frame, Md2NextFrame, smooth_inter, Interpolate,
 				LightPos, LightRadius);
 			break;
 
 		case RPASS_Light:
 			Drawer->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Inter, Interpolate);
+				smooth_inter, Interpolate);
 			break;
 
 		case RPASS_Textures:
 			Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Trans, ColourMap, Inter, Interpolate);
+				Trans, ColourMap, smooth_inter, Interpolate);
 			break;
 
 		case RPASS_Fog:
 			Drawer->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Fade, Inter, Interpolate);
+				Fade, smooth_inter, Interpolate);
 			break;
 		}
 	}

@@ -29,8 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define SMOOTHSTEP(x) ((x) * (x) * (3.0 - 2.0 * (x)))
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -804,22 +802,16 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	matTmp(3, 2) = Offset.z * Scale.z;
 	matWorld = matTmp * matWorld;
 
-	float smooth_inter;
-	if (Interpolate)
-	{
-		smooth_inter = SMOOTHSTEP(Inter);
-	}
-
 	TVec scale;
 	TVec scale_origin;
 	if (Interpolate)
 	{
-		scale[0] = pframedesc->scale[0] + smooth_inter * (pnextframedesc->scale[0] - pframedesc->scale[0]);
-		scale[1] = pframedesc->scale[1] + smooth_inter * (pnextframedesc->scale[1] - pframedesc->scale[1]);
-		scale[2] = pframedesc->scale[2] + smooth_inter * (pnextframedesc->scale[2] - pframedesc->scale[2]);
-		scale_origin[0] = ((1 - smooth_inter) * pframedesc->scale_origin[0] + smooth_inter * pnextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - smooth_inter) * pframedesc->scale_origin[1] + smooth_inter * pnextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - smooth_inter) * pframedesc->scale_origin[2] + smooth_inter * pnextframedesc->scale_origin[2]);
+		scale[0] = pframedesc->scale[0] + Inter * (pnextframedesc->scale[0] - pframedesc->scale[0]);
+		scale[1] = pframedesc->scale[1] + Inter * (pnextframedesc->scale[1] - pframedesc->scale[1]);
+		scale[2] = pframedesc->scale[2] + Inter * (pnextframedesc->scale[2] - pframedesc->scale[2]);
+		scale_origin[0] = ((1 - Inter) * pframedesc->scale_origin[0] + Inter * pnextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - Inter) * pframedesc->scale_origin[1] + Inter * pnextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - Inter) * pframedesc->scale_origin[2] + Inter * pnextframedesc->scale_origin[2]);
 	}
 	else
 	{
@@ -904,9 +896,9 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			}
 			if (Interpolate)
 			{
-				out[i].x = ((1 - smooth_inter) * verts[index].v[0] + (smooth_inter) * verts2[index].v[0]);
-				out[i].y = ((1 - smooth_inter) * verts[index].v[1] + (smooth_inter) * verts2[index].v[1]);
-				out[i].z = ((1 - smooth_inter) * verts[index].v[2] + (smooth_inter) * verts2[index].v[2]);
+				out[i].x = ((1 - Inter) * verts[index].v[0] + (Inter) * verts2[index].v[0]);
+				out[i].y = ((1 - Inter) * verts[index].v[1] + (Inter) * verts2[index].v[1]);
+				out[i].z = ((1 - Inter) * verts[index].v[2] + (Inter) * verts2[index].v[2]);
 			}
 			else
 			{

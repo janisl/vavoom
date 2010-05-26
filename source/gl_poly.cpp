@@ -29,8 +29,6 @@
 
 // MACROS ------------------------------------------------------------------
 
-#define SMOOTHSTEP(x) ((x) * (x) * (3.0 - 2.0 * (x)))
-
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -1478,9 +1476,6 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	shadelightb = (light & 0xff) / 510.0;
 	shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
 
-	float smooth_inter;
-	smooth_inter = SMOOTHSTEP(Inter);
-
 	//
 	// draw all the triangles
 	//
@@ -1501,9 +1496,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	TVec scale_origin;
 	if (Interpolate)
 	{
-		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
+		scale_origin[0] = ((1 - Inter) * framedesc->scale_origin[0] + Inter * nextframedesc->scale_origin[0]);
+		scale_origin[1] = ((1 - Inter) * framedesc->scale_origin[1] + Inter * nextframedesc->scale_origin[1]);
+		scale_origin[2] = ((1 - Inter) * framedesc->scale_origin[2] + Inter * nextframedesc->scale_origin[2]);
 	}
 	else
 	{
@@ -1516,9 +1511,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	TVec scale;
 	if (Interpolate)
 	{
-		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
-		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
-		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
+		scale[0] = framedesc->scale[0] + Inter * (nextframedesc->scale[0] - framedesc->scale[0]) * Scale.x;
+		scale[1] = framedesc->scale[1] + Inter * (nextframedesc->scale[1] - framedesc->scale[1]) * Scale.y;
+		scale[2] = framedesc->scale[2] + Inter * (nextframedesc->scale[2] - framedesc->scale[2]) * Scale.z;
 	}
 	else
 	{
@@ -1551,7 +1546,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		{
 			p_glUniform1iARB(SurfModelFogEnabledLoc, GL_FALSE);
 		}
-		p_glUniform1fARB(SurfModelInterLoc, Interpolate ? smooth_inter : 0.0);
+		p_glUniform1fARB(SurfModelInterLoc, Inter);
 	}
 	else
 	{
@@ -1638,9 +1633,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 				}
 				if (Interpolate)
 				{
-					glVertex3f((1 - smooth_inter) * verts[index].v[0] + smooth_inter * verts2[index].v[0],
-						(1 - smooth_inter) * verts[index].v[1] + smooth_inter * verts2[index].v[1],
-						(1 - smooth_inter) * verts[index].v[2] + smooth_inter * verts2[index].v[2]);
+					glVertex3f((1 - Inter) * verts[index].v[0] + Inter * verts2[index].v[0],
+						(1 - Inter) * verts[index].v[1] + Inter * verts2[index].v[1],
+						(1 - Inter) * verts[index].v[2] + Inter * verts2[index].v[2]);
 				}
 				else
 				{
@@ -1753,8 +1748,6 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	VTexture* Skin, vuint32 light, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelAmbient);
-	float smooth_inter = SMOOTHSTEP(Inter);
-
 	//
 	// draw all the triangles
 	//
@@ -1768,7 +1761,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 
 	p_glUseProgramObjectARB(ShadowsModelAmbientProgram);
 	p_glUniform1iARB(ShadowsModelAmbientTextureLoc, 0);
-	p_glUniform1fARB(ShadowsModelAmbientInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniform1fARB(ShadowsModelAmbientInterLoc, Inter);
 	p_glUniform4fARB(ShadowsModelAmbientLightLoc,
 		((light >> 16) & 255) / 255.0,
 		((light >> 8) & 255) / 255.0,
@@ -1804,8 +1797,6 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelTextures);
-	float smooth_inter = SMOOTHSTEP(Inter);
-
 	//
 	// draw all the triangles
 	//
@@ -1819,7 +1810,7 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 
 	p_glUseProgramObjectARB(ShadowsModelTexturesProgram);
 	p_glUniform1iARB(ShadowsModelTexturesTextureLoc, 0);
-	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
 	glBegin(GL_TRIANGLES);
@@ -1870,8 +1861,6 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	VTexture* Skin, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelLight);
-	float smooth_inter = SMOOTHSTEP(Inter);
-
 	//
 	// draw all the triangles
 	//
@@ -1895,7 +1884,7 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 
 	SetPic(Skin, NULL, CM_Default);
 
-	p_glUniform1fARB(ShadowsModelLightInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniform1fARB(ShadowsModelLightInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelLightModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 	p_glUniformMatrix3fvARB(ShadowsModelLightNormalToWorldMatLoc, 1, GL_FALSE, NormalMat[0]);
 
@@ -1945,8 +1934,6 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	float Inter, bool Interpolate, const TVec& LightPos, float LightRadius)
 {
 	guard(VOpenGLDrawer::DrawAliasModelShadow);
-	float smooth_inter = SMOOTHSTEP(Inter);
-
 	//
 	// draw all the triangles
 	//
@@ -1956,22 +1943,22 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	VMatrix4 rotationmatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, rotationmatrix);
 
-	p_glUniform1fARB(ShadowsModelShadowInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniform1fARB(ShadowsModelShadowInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
 	float Offset = M_INFINITY;
 	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
 		int index1 = Mdl->Tris[i].VertIndex[0];
-		TVec v1 = (1 - smooth_inter) * FrameDesc->Verts[index1] + smooth_inter * NextFrameDesc->Verts[index1];
+		TVec v1 = (1 - Inter) * FrameDesc->Verts[index1] + Inter * NextFrameDesc->Verts[index1];
 		v1 = rotationmatrix.Transform(v1);
 
 		int index2 = Mdl->Tris[i].VertIndex[1];
-		TVec v2 = (1 - smooth_inter) * FrameDesc->Verts[index2] + smooth_inter * NextFrameDesc->Verts[index2];
+		TVec v2 = (1 - Inter) * FrameDesc->Verts[index2] + Inter * NextFrameDesc->Verts[index2];
 		v2 = rotationmatrix.Transform(v2);
 
 		int index3 = Mdl->Tris[i].VertIndex[2];
-		TVec v3 = (1 - smooth_inter) * FrameDesc->Verts[index3] + smooth_inter * NextFrameDesc->Verts[index3];
+		TVec v3 = (1 - Inter) * FrameDesc->Verts[index3] + Inter * NextFrameDesc->Verts[index3];
 		v3 = rotationmatrix.Transform(v3);
 
 		TVec d1 = v2 - v3;
@@ -2031,8 +2018,6 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	VTexture* Skin, vuint32 Fade, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelFog);
-	float smooth_inter = SMOOTHSTEP(Inter);
-
 	//
 	// draw all the triangles
 	//
@@ -2046,7 +2031,7 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 
 	p_glUseProgramObjectARB(ShadowsModelFogProgram);
 	p_glUniform1iARB(ShadowsModelFogTextureLoc, 0);
-	p_glUniform1fARB(ShadowsModelFogInterLoc, Interpolate ? smooth_inter : 0.0);
+	p_glUniform1fARB(ShadowsModelFogInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelFogModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 	p_glUniform1iARB(ShadowsModelFogFogTypeLoc, r_fog & 3);
 	p_glUniform4fARB(ShadowsModelFogFogColourLoc,
