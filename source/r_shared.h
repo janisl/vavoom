@@ -151,6 +151,8 @@ struct VMeshFrame
 {
 	TVec*			Verts;
 	TVec*			Normals;
+	vuint32			VertsBufferObject;
+	vuint32			NormalsBufferObject;
 };
 
 struct VMeshSTVert
@@ -174,6 +176,8 @@ struct VMeshModel
 	TArray<TVec>		AllNormals;
 	TArray<VMeshSTVert>	STVerts;
 	TArray<VMeshTri>	Tris;
+	bool				Uploaded;
+	vuint32				STVertsBufferObject;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

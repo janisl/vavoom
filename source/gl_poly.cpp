@@ -1748,9 +1748,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	VTexture* Skin, vuint32 light, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelAmbient);
-	//
-	// draw all the triangles
-	//
+	UploadModel(Mdl);
 	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
 	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
@@ -1768,20 +1766,21 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		(light & 255) / 255.0, 1);
 	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	glBegin(GL_TRIANGLES);
-	for (int i = 0; i < Mdl->Tris.Num(); i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			int Idx = Mdl->Tris[i].VertIndex[j];
-			p_glVertexAttrib2fARB(ShadowsModelAmbientTexCoordLoc,
-				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
-			p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc,
-				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
-			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
-		}
-	}
-	glEnd();
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelAmbientVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelAmbientVert2Loc);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->STVertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelAmbientTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelAmbientTexCoordLoc);
+
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_INT, &Mdl->Tris[0]);
+
+	p_glDisableVertexAttribArrayARB(0);
+	p_glDisableVertexAttribArrayARB(ShadowsModelAmbientVert2Loc);
+	p_glDisableVertexAttribArrayARB(ShadowsModelAmbientTexCoordLoc);
 	unguard;
 }
 
@@ -1797,9 +1796,7 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelTextures);
-	//
-	// draw all the triangles
-	//
+	UploadModel(Mdl);
 	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
 	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
@@ -1813,20 +1810,21 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	glBegin(GL_TRIANGLES);
-	for (int i = 0; i < Mdl->Tris.Num(); i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			int Idx = Mdl->Tris[i].VertIndex[j];
-			p_glVertexAttrib2fARB(ShadowsModelTexturesTexCoordLoc,
-				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
-			p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc,
-				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
-			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
-		}
-	}
-	glEnd();
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelTexturesVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelTexturesVert2Loc);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->STVertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelTexturesTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelTexturesTexCoordLoc);
+
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_INT, &Mdl->Tris[0]);
+
+	p_glDisableVertexAttribArrayARB(0);
+	p_glDisableVertexAttribArrayARB(ShadowsModelTexturesVert2Loc);
+	p_glDisableVertexAttribArrayARB(ShadowsModelTexturesTexCoordLoc);
 	unguard;
 }
 
@@ -1888,24 +1886,29 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glUniformMatrix4fvARB(ShadowsModelLightModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 	p_glUniformMatrix3fvARB(ShadowsModelLightNormalToWorldMatLoc, 1, GL_FALSE, NormalMat[0]);
 
-	glBegin(GL_TRIANGLES);
-	for (int i = 0; i < Mdl->Tris.Num(); i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			int Idx = Mdl->Tris[i].VertIndex[j];
-			p_glVertexAttrib2fARB(ShadowsModelLightTexCoordLoc,
-				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
-			p_glVertexAttrib3fARB(ShadowsModelLightVertNormalLoc,
-				FrameDesc->Normals[Idx].x, FrameDesc->Normals[Idx].y, FrameDesc->Normals[Idx].z);
-			p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc,
-				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
-			p_glVertexAttrib3fARB(ShadowsModelLightVert2NormalLoc,
-				NextFrameDesc->Normals[Idx].x, NextFrameDesc->Normals[Idx].y, NextFrameDesc->Normals[Idx].z);
-			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
-		}
-	}
-	glEnd();
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->NormalsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelLightVertNormalLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightVertNormalLoc);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelLightVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2Loc);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->NormalsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelLightVert2NormalLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2NormalLoc);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->STVertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelLightTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
+
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_INT, &Mdl->Tris[0]);
+
+	p_glDisableVertexAttribArrayARB(0);
+	p_glDisableVertexAttribArrayARB(ShadowsModelLightVertNormalLoc);
+	p_glDisableVertexAttribArrayARB(ShadowsModelLightVert2Loc);
+	p_glDisableVertexAttribArrayARB(ShadowsModelLightVert2NormalLoc);
+	p_glDisableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
 	unguard;
 }
 
@@ -1946,6 +1949,13 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
+	//p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
+	//p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//p_glEnableVertexAttribArrayARB(0);
+	//p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
+	//p_glVertexAttribPointerARB(ShadowsModelShadowVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	//p_glEnableVertexAttribArrayARB(ShadowsModelShadowVert2Loc);
+
 	float Offset = M_INFINITY;
 	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
@@ -1974,6 +1984,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 				NextFrameDesc->Verts[index ## idx].x, NextFrameDesc->Verts[index ## idx].y, NextFrameDesc->Verts[index ## idx].z); \
 			p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, offs); \
 			glVertex3f(FrameDesc->Verts[index ## idx].x, FrameDesc->Verts[index ## idx].y, FrameDesc->Verts[index ## idx].z);
+			//glArrayElement(index ## idx);
 
 			glBegin(GL_TRIANGLES);
 			outv(3, Offset);
@@ -2004,6 +2015,9 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 			glEnd();
 		}
 	}
+
+	//p_glDisableVertexAttribArrayARB(0);
+	//p_glDisableVertexAttribArrayARB(ShadowsModelShadowVert2Loc);
 	unguard;
 }
 
@@ -2042,20 +2056,21 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glUniform1fARB(ShadowsModelFogFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 	p_glUniform1fARB(ShadowsModelFogFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
 
-	glBegin(GL_TRIANGLES);
-	for (int i = 0; i < Mdl->Tris.Num(); i++)
-	{
-		for (int j = 0; j < 3; j++)
-		{
-			int Idx = Mdl->Tris[i].VertIndex[j];
-			p_glVertexAttrib2fARB(ShadowsModelFogTexCoordLoc,
-				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
-			p_glVertexAttrib3fARB(ShadowsModelFogVert2Loc,
-				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
-			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
-		}
-	}
-	glEnd();
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelFogVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelFogVert2Loc);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->STVertsBufferObject);
+	p_glVertexAttribPointerARB(ShadowsModelFogTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glEnableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
+
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_INT, &Mdl->Tris[0]);
+
+	p_glDisableVertexAttribArrayARB(0);
+	p_glDisableVertexAttribArrayARB(ShadowsModelFogVert2Loc);
+	p_glDisableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
 	unguard;
 }
 

@@ -651,6 +651,8 @@ protected:
 	GLhandleARB LoadShader(GLenum Type, const VStr& FileName);
 	GLhandleARB CreateProgram(GLhandleARB VertexShader, GLhandleARB FragmentShader);
 
+	void UploadModel(VMeshModel* Mdl);
+
 #define _(x)	x##_t	p_##x
 	_(glMultiTexCoord2fARB);
 	_(glActiveTextureARB);

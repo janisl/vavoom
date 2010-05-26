@@ -1113,3 +1113,42 @@ GLhandleARB VOpenGLDrawer::CreateProgram(GLhandleARB VertexShader, GLhandleARB F
 	return Program;
 	unguard;
 }
+
+//==========================================================================
+//
+//	VOpenGLDrawer::UploadModel
+//
+//==========================================================================
+
+void VOpenGLDrawer::UploadModel(VMeshModel* Mdl)
+{
+	guard(VOpenGLDrawer::UploadModel);
+	if (Mdl->Uploaded)
+	{
+		return;
+	}
+
+	for (int i = 0; i < Mdl->Frames.Num(); i++)
+	{
+		//	Vertexes
+		p_glGenBuffersARB(1, &Mdl->Frames[i].VertsBufferObject);
+		p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->Frames[i].VertsBufferObject);
+		p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(TVec) * Mdl->STVerts.Num(),
+			Mdl->Frames[i].Verts, GL_STATIC_DRAW_ARB);
+
+		//	Normals
+		p_glGenBuffersARB(1, &Mdl->Frames[i].NormalsBufferObject);
+		p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->Frames[i].NormalsBufferObject);
+		p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(TVec) * Mdl->STVerts.Num(),
+			Mdl->Frames[i].Normals, GL_STATIC_DRAW_ARB);
+	}
+
+	//	Texture coordinates
+	p_glGenBuffersARB(1, &Mdl->STVertsBufferObject);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->STVertsBufferObject);
+	p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(VMeshSTVert) * Mdl->STVerts.Num(),
+		&Mdl->STVerts[0], GL_STATIC_DRAW_ARB);
+
+	Mdl->Uploaded = true;
+	unguard;
+}

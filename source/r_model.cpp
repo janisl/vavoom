@@ -536,6 +536,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	vint32				*pcmds;
 
 	pmodel = mod->Data;
+	mod->Uploaded = false;
 
 	//
 	// endian-adjust and swap the data, starting with the alias model header
@@ -621,6 +622,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	//	Calculate remapped ST verts.
 	//
 	mod->STVerts.SetNum(VertMap.Num());
+	mod->STVertsBufferObject = 0;
 	for (int i = 0; i < VertMap.Num(); i++)
 	{
 		mod->STVerts[i].S = (float)pstverts[VertMap[i].STIndex].s / (float)pmodel->skinwidth;
@@ -645,6 +647,8 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 
 		mod->Frames[i].Verts = &mod->AllVerts[i * VertMap.Num()];
 		mod->Frames[i].Normals = &mod->AllNormals[i * VertMap.Num()];
+		mod->Frames[i].VertsBufferObject = 0;
+		mod->Frames[i].NormalsBufferObject = 0;
 		trivertx_t* Verts = (trivertx_t *)(pframe + 1);
 		for (int j = 0; j < VertMap.Num(); j++)
 		{
