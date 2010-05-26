@@ -1777,43 +1777,13 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	//
 	// draw all the triangles
 	//
-	mmdl_t* pmdl = Mdl->Data;
-	mframe_t* framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
-	mframe_t* nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
-
-	// Interpolate Scales
-	TVec scale_origin;
-	if (Interpolate)
-	{
-		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
-	}
-	else
-	{
-		scale_origin[0] = framedesc->scale_origin[0];
-		scale_origin[1] = framedesc->scale_origin[1];
-		scale_origin[2] = framedesc->scale_origin[2];
-	}
-
-	TVec scale;
-	if (Interpolate)
-	{
-		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
-		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
-		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
-	}
-	else
-	{
-		scale[0] = framedesc->scale[0];
-		scale[1] = framedesc->scale[1];
-		scale[2] = framedesc->scale[2];
-	}
+	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
+	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
 	SetPic(Skin, NULL, CM_Default);
 
 	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+	AliasSetUpTransform(origin, angles, Offset, Scale, TVec(0,0,0), TVec(1,1,1), rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelAmbientProgram);
 	p_glUniform1iARB(ShadowsModelAmbientTextureLoc, 0);
@@ -1824,38 +1794,20 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		(light & 255) / 255.0, 1);
 	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	trivertx_t* verts = (trivertx_t *)(framedesc + 1);
-	trivertx_t* verts2 = (trivertx_t *)(nextframedesc + 1);
-	int* order = (int *)((byte *)pmdl + pmdl->ofscmds);
-
-	while (*order)
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
-		// get the vertex count and primitive type
-		int count = *order++;
-		if (count < 0)
+		for (int j = 0; j < 3; j++)
 		{
-			count = -count;
-			glBegin(GL_TRIANGLE_FAN);
+			int Idx = Mdl->Tris[i].VertIndex[j];
+			p_glVertexAttrib2fARB(ShadowsModelAmbientTexCoordLoc,
+				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
+			p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc,
+				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
+			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
 		}
-		else
-		{
-			glBegin(GL_TRIANGLE_STRIP);
-		}
-
-		do
-		{
-			// texture coordinates come from the draw list
-			p_glVertexAttrib2fARB(ShadowsModelAmbientTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
-			order += 2;
-
-			// normals and vertexes come from the frame list
-			int index = *order++;
-			p_glVertexAttrib3fARB(ShadowsModelAmbientVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
-			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
-		} while (--count);
-
-		glEnd();
 	}
+	glEnd();
 	unguard;
 }
 
@@ -1871,102 +1823,38 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelTextures);
-	mframe_t	*framedesc;
-	mframe_t	*nextframedesc;
-	int			index;
-	trivertx_t	*verts;
-	trivertx_t	*verts2;
-	int			*order;
-	int			count;
-
-	float smooth_inter;
-	smooth_inter = SMOOTHSTEP(Inter);
+	float smooth_inter = SMOOTHSTEP(Inter);
 
 	//
 	// draw all the triangles
 	//
-	mmdl_t* pmdl = Mdl->Data;
-	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
-	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
-
-	// Interpolate Scales
-	TVec scale_origin;
-	if (Interpolate)
-	{
-		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
-	}
-	else
-	{
-		scale_origin[0] = framedesc->scale_origin[0];
-		scale_origin[1] = framedesc->scale_origin[1];
-		scale_origin[2] = framedesc->scale_origin[2];
-	}
-
-	TVec scale;
-	if (Interpolate)
-	{
-		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
-		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
-		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
-	}
-	else
-	{
-		scale[0] = framedesc->scale[0];
-		scale[1] = framedesc->scale[1];
-		scale[2] = framedesc->scale[2];
-	}
+	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
+	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
 	SetPic(Skin, Trans, CMap);
 
 	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+	AliasSetUpTransform(origin, angles, Offset, Scale, TVec(0,0,0), TVec(1,1,1), rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelTexturesProgram);
 	p_glUniform1iARB(ShadowsModelTexturesTextureLoc, 0);
 	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Interpolate ? smooth_inter : 0.0);
 	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	verts = (trivertx_t *)(framedesc + 1);
-	order = (int *)((byte *)pmdl + pmdl->ofscmds);
-	if (Interpolate)
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
-		verts2 = (trivertx_t *)(nextframedesc + 1);
-	}
-	else
-	{
-		verts2 = verts;
-	}
-
-	while (*order)
-	{
-		// get the vertex count and primitive type
-		count = *order++;
-		if (count < 0)
+		for (int j = 0; j < 3; j++)
 		{
-			count = -count;
-			glBegin(GL_TRIANGLE_FAN);
+			int Idx = Mdl->Tris[i].VertIndex[j];
+			p_glVertexAttrib2fARB(ShadowsModelTexturesTexCoordLoc,
+				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
+			p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc,
+				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
+			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
 		}
-		else
-		{
-			glBegin(GL_TRIANGLE_STRIP);
-		}
-
-		do
-		{
-			// texture coordinates come from the draw list
-			p_glVertexAttrib2fARB(ShadowsModelTexturesTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
-			order += 2;
-
-			// normals and vertexes come from the frame list
-			index = *order++;
-			p_glVertexAttrib3fARB(ShadowsModelTexturesVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
-			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
-		} while (--count);
-
-		glEnd();
 	}
+	glEnd();
 	unguard;
 }
 
@@ -2001,55 +1889,16 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	VTexture* Skin, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelLight);
-	mframe_t	*framedesc;
-	mframe_t	*nextframedesc;
-	int			index;
-	trivertx_t	*verts;
-	trivertx_t	*verts2;
-	int			*order;
-	int			count;
-
-	float smooth_inter;
-	smooth_inter = SMOOTHSTEP(Inter);
+	float smooth_inter = SMOOTHSTEP(Inter);
 
 	//
 	// draw all the triangles
 	//
-	mmdl_t* pmdl = Mdl->Data;
-	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
-	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
-
-	// Interpolate Scales
-	TVec scale_origin;
-	if (Interpolate)
-	{
-		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
-	}
-	else
-	{
-		scale_origin[0] = framedesc->scale_origin[0];
-		scale_origin[1] = framedesc->scale_origin[1];
-		scale_origin[2] = framedesc->scale_origin[2];
-	}
-
-	TVec scale;
-	if (Interpolate)
-	{
-		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
-		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
-		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
-	}
-	else
-	{
-		scale[0] = framedesc->scale[0];
-		scale[1] = framedesc->scale[1];
-		scale[2] = framedesc->scale[2];
-	}
+	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
+	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
 	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+	AliasSetUpTransform(origin, angles, Offset, Scale, TVec(0,0,0), TVec(1,1,1), rotationmatrix);
 	VMatrix4 normalmatrix;
 	AliasSetUpNormalTransform(angles, Scale, normalmatrix);
 	float NormalMat[3][3];
@@ -2069,49 +1918,24 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glUniformMatrix4fvARB(ShadowsModelLightModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 	p_glUniformMatrix3fvARB(ShadowsModelLightNormalToWorldMatLoc, 1, GL_FALSE, NormalMat[0]);
 
-	verts = (trivertx_t *)(framedesc + 1);
-	order = (int *)((byte *)pmdl + pmdl->ofscmds);
-	if (Interpolate)
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
-		verts2 = (trivertx_t *)(nextframedesc + 1);
-	}
-	else
-	{
-		verts2 = verts;
-	}
-
-	while (*order)
-	{
-		// get the vertex count and primitive type
-		count = *order++;
-		if (count < 0)
+		for (int j = 0; j < 3; j++)
 		{
-			count = -count;
-			glBegin(GL_TRIANGLE_FAN);
+			int Idx = Mdl->Tris[i].VertIndex[j];
+			p_glVertexAttrib2fARB(ShadowsModelLightTexCoordLoc,
+				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
+			p_glVertexAttrib3fARB(ShadowsModelLightVertNormalLoc,
+				FrameDesc->Normals[Idx].x, FrameDesc->Normals[Idx].y, FrameDesc->Normals[Idx].z);
+			p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc,
+				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
+			p_glVertexAttrib3fARB(ShadowsModelLightVert2NormalLoc,
+				NextFrameDesc->Normals[Idx].x, NextFrameDesc->Normals[Idx].y, NextFrameDesc->Normals[Idx].z);
+			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
 		}
-		else
-		{
-			glBegin(GL_TRIANGLE_STRIP);
-		}
-
-		do
-		{
-			// texture coordinates come from the draw list
-			p_glVertexAttrib2fARB(ShadowsModelLightTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
-			order += 2;
-
-			// normals and vertexes come from the frame list
-			index = *order++;
-			p_glVertexAttrib3fvARB(ShadowsModelLightVertNormalLoc,
-					r_avertexnormals[verts[index].lightnormalindex]);
-			p_glVertexAttrib3fARB(ShadowsModelLightVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
-			p_glVertexAttrib3fvARB(ShadowsModelLightVert2NormalLoc,
-					r_avertexnormals[verts2[index].lightnormalindex]);
-			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
-		} while (--count);
-
-		glEnd();
 	}
+	glEnd();
 	unguard;
 }
 
@@ -2140,166 +1964,77 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	float Inter, bool Interpolate, const TVec& LightPos, float LightRadius)
 {
 	guard(VOpenGLDrawer::DrawAliasModelShadow);
-	mframe_t	*framedesc;
-	mframe_t	*nextframedesc;
-	trivertx_t	*verts;
-	trivertx_t	*verts2;
-	int			*order;
-	int			count;
-
-	float smooth_inter;
-	smooth_inter = SMOOTHSTEP(Inter);
+	float smooth_inter = SMOOTHSTEP(Inter);
 
 	//
 	// draw all the triangles
 	//
-	mmdl_t* pmdl = Mdl->Data;
-	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
-	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
-
-	// Interpolate Scales
-	TVec scale_origin;
-	if (Interpolate)
-	{
-		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] +
-			smooth_inter * nextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] +
-			smooth_inter * nextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] +
-			smooth_inter * nextframedesc->scale_origin[2]);
-	}
-	else
-	{
-		scale_origin[0] = framedesc->scale_origin[0];
-		scale_origin[1] = framedesc->scale_origin[1];
-		scale_origin[2] = framedesc->scale_origin[2];
-	}
-
-	TVec scale;
-	if (Interpolate)
-	{
-		scale[0] = framedesc->scale[0] + smooth_inter *
-			(nextframedesc->scale[0] - framedesc->scale[0]) * Scale.x;
-		scale[1] = framedesc->scale[1] + smooth_inter *
-			(nextframedesc->scale[1] - framedesc->scale[1]) * Scale.y;
-		scale[2] = framedesc->scale[2] + smooth_inter *
-			(nextframedesc->scale[2] - framedesc->scale[2]) * Scale.z;
-	}
-	else
-	{
-		scale[0] = framedesc->scale[0];
-		scale[1] = framedesc->scale[1];
-		scale[2] = framedesc->scale[2];
-	}
+	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
+	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
 	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+	AliasSetUpTransform(origin, angles, Offset, Scale, TVec(0,0,0), TVec(1,1,1), rotationmatrix);
 
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Interpolate ? smooth_inter : 0.0);
 	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	verts = (trivertx_t *)(framedesc + 1);
-	order = (int *)((byte *)pmdl + pmdl->ofscmds);
-	if (Interpolate)
-	{
-		verts2 = (trivertx_t *)(nextframedesc + 1);
-	}
-	else
-	{
-		verts2 = verts;
-	}
-
 	float Offset = M_INFINITY;
-	while (*order)
+	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
-		// get the vertex count and primitive type
-		count = *order++;
-		GLenum Prim;
-		if (count < 0)
-		{
-			count = -count;
-			Prim = GL_TRIANGLE_FAN;
-		}
-		else
-		{
-			Prim = GL_TRIANGLE_STRIP;
-		}
-
-		order += 2;
-		int index1 = *order++;
-		TVec v1((1 - smooth_inter) * verts[index1].v[0] + smooth_inter * verts2[index1].v[0],
-				(1 - smooth_inter) * verts[index1].v[1] + smooth_inter * verts2[index1].v[1],
-				(1 - smooth_inter) * verts[index1].v[2] + smooth_inter * verts2[index1].v[2]);
+		int index1 = Mdl->Tris[i].VertIndex[0];
+		TVec v1 = (1 - smooth_inter) * FrameDesc->Verts[index1] + smooth_inter * NextFrameDesc->Verts[index1];
 		v1 = rotationmatrix.Transform(v1);
 
-		order += 2;
-		int index2 = *order++;
-		TVec v2((1 - smooth_inter) * verts[index2].v[0] + smooth_inter * verts2[index2].v[0],
-				(1 - smooth_inter) * verts[index2].v[1] + smooth_inter * verts2[index2].v[1],
-				(1 - smooth_inter) * verts[index2].v[2] + smooth_inter * verts2[index2].v[2]);
+		int index2 = Mdl->Tris[i].VertIndex[1];
+		TVec v2 = (1 - smooth_inter) * FrameDesc->Verts[index2] + smooth_inter * NextFrameDesc->Verts[index2];
 		v2 = rotationmatrix.Transform(v2);
 
-		count -= 2;
-		do
+		int index3 = Mdl->Tris[i].VertIndex[2];
+		TVec v3 = (1 - smooth_inter) * FrameDesc->Verts[index3] + smooth_inter * NextFrameDesc->Verts[index3];
+		v3 = rotationmatrix.Transform(v3);
+
+		TVec d1 = v2 - v3;
+		TVec d2 = v1 - v3;
+		TVec PlaneNormal = Normalise(CrossProduct(d1, d2));
+		float PlaneDist = DotProduct(PlaneNormal, v3);
+
+		float dist = DotProduct(LightPos, PlaneNormal) - PlaneDist;
+		if (dist > 0)
 		{
-			order += 2;
-			int index3 = *order++;
-			TVec v3((1 - smooth_inter) * verts[index3].v[0] + smooth_inter * verts2[index3].v[0],
-					(1 - smooth_inter) * verts[index3].v[1] + smooth_inter * verts2[index3].v[1],
-					(1 - smooth_inter) * verts[index3].v[2] + smooth_inter * verts2[index3].v[2]);
-			v3 = rotationmatrix.Transform(v3);
-
-			TVec d1 = v2 - v3;
-			TVec d2 = v1 - v3;
-			TVec PlaneNormal = Normalise(CrossProduct(d1, d2));
-			float PlaneDist = DotProduct(PlaneNormal, v3);
-
-			float dist = DotProduct(LightPos, PlaneNormal) - PlaneDist;
-			if (dist > 0)
-			{
 #define outv(idx, offs) \
-				p_glVertexAttrib3fARB(ShadowsModelShadowVert2Loc, \
-					verts2[index ## idx].v[0], verts2[index ## idx].v[1], verts2[index ## idx].v[2]); \
-				p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, offs); \
-				glVertex3f(verts[index ## idx].v[0], verts[index ## idx].v[1], verts[index ## idx].v[2]);
+			p_glVertexAttrib3fARB(ShadowsModelShadowVert2Loc, \
+				NextFrameDesc->Verts[index ## idx].x, NextFrameDesc->Verts[index ## idx].y, NextFrameDesc->Verts[index ## idx].z); \
+			p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, offs); \
+			glVertex3f(FrameDesc->Verts[index ## idx].x, FrameDesc->Verts[index ## idx].y, FrameDesc->Verts[index ## idx].z);
 
-				glBegin(GL_TRIANGLES);
-				outv(3, Offset);
-				outv(2, Offset);
-				outv(1, Offset);
-				glEnd();
+			glBegin(GL_TRIANGLES);
+			outv(3, Offset);
+			outv(2, Offset);
+			outv(1, Offset);
+			glEnd();
 
-				glBegin(GL_TRIANGLES);
-				outv(1, 0);
-				outv(2, 0);
-				outv(3, 0);
-				glEnd();
+			glBegin(GL_TRIANGLES);
+			outv(1, 0);
+			outv(2, 0);
+			outv(3, 0);
+			glEnd();
 
-				glBegin(GL_TRIANGLE_STRIP);
+			glBegin(GL_TRIANGLE_STRIP);
 
-				outv(1, 0);
-				outv(1, Offset);
+			outv(1, 0);
+			outv(1, Offset);
 
-				outv(2, 0);
-				outv(2, Offset);
+			outv(2, 0);
+			outv(2, Offset);
 
-				outv(3, 0);
-				outv(3, Offset);
+			outv(3, 0);
+			outv(3, Offset);
 
-				outv(1, 0);
-				outv(1, Offset);
+			outv(1, 0);
+			outv(1, Offset);
 
-				glEnd();
-			}
-
-			if (Prim == GL_TRIANGLE_STRIP)
-			{
-				v1 = v2;
-				index1 = index2;
-			}
-			v2 = v3;
-			index2 = index3;
-		} while (--count);
+			glEnd();
+		}
 	}
 	unguard;
 }
@@ -2315,57 +2050,18 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	VTexture* Skin, vuint32 Fade, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelFog);
-	mframe_t	*framedesc;
-	mframe_t	*nextframedesc;
-	int			index;
-	trivertx_t	*verts;
-	trivertx_t	*verts2;
-	int			*order;
-	int			count;
-
-	float smooth_inter;
-	smooth_inter = SMOOTHSTEP(Inter);
+	float smooth_inter = SMOOTHSTEP(Inter);
 
 	//
 	// draw all the triangles
 	//
-	mmdl_t* pmdl = Mdl->Data;
-	framedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
-	nextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
-
-	// Interpolate Scales
-	TVec scale_origin;
-	if (Interpolate)
-	{
-		scale_origin[0] = ((1 - smooth_inter) * framedesc->scale_origin[0] + smooth_inter * nextframedesc->scale_origin[0]);
-		scale_origin[1] = ((1 - smooth_inter) * framedesc->scale_origin[1] + smooth_inter * nextframedesc->scale_origin[1]);
-		scale_origin[2] = ((1 - smooth_inter) * framedesc->scale_origin[2] + smooth_inter * nextframedesc->scale_origin[2]);
-	}
-	else
-	{
-		scale_origin[0] = framedesc->scale_origin[0];
-		scale_origin[1] = framedesc->scale_origin[1];
-		scale_origin[2] = framedesc->scale_origin[2];
-	}
-
-	TVec scale;
-	if (Interpolate)
-	{
-		scale[0] = framedesc->scale[0] + smooth_inter * (nextframedesc->scale[0] -	framedesc->scale[0]) * Scale.x;
-		scale[1] = framedesc->scale[1] + smooth_inter * (nextframedesc->scale[1] -	framedesc->scale[1]) * Scale.y;
-		scale[2] = framedesc->scale[2] + smooth_inter * (nextframedesc->scale[2] -	framedesc->scale[2]) * Scale.z;
-	}
-	else
-	{
-		scale[0] = framedesc->scale[0];
-		scale[1] = framedesc->scale[1];
-		scale[2] = framedesc->scale[2];
-	}
+	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
+	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
 	SetPic(Skin, NULL, CM_Default);
 
 	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, scale_origin, scale, rotationmatrix);
+	AliasSetUpTransform(origin, angles, Offset, Scale, TVec(0,0,0), TVec(1,1,1), rotationmatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelFogProgram);
 	p_glUniform1iARB(ShadowsModelFogTextureLoc, 0);
@@ -2380,45 +2076,20 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glUniform1fARB(ShadowsModelFogFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 	p_glUniform1fARB(ShadowsModelFogFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
 
-	verts = (trivertx_t *)(framedesc + 1);
-	order = (int *)((byte *)pmdl + pmdl->ofscmds);
-	if (Interpolate)
+	glBegin(GL_TRIANGLES);
+	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
-		verts2 = (trivertx_t *)(nextframedesc + 1);
-	}
-	else
-	{
-		verts2 = verts;
-	}
-
-	while (*order)
-	{
-		// get the vertex count and primitive type
-		count = *order++;
-		if (count < 0)
+		for (int j = 0; j < 3; j++)
 		{
-			count = -count;
-			glBegin(GL_TRIANGLE_FAN);
+			int Idx = Mdl->Tris[i].VertIndex[j];
+			p_glVertexAttrib2fARB(ShadowsModelFogTexCoordLoc,
+				Mdl->STVerts[Idx].S, Mdl->STVerts[Idx].T);
+			p_glVertexAttrib3fARB(ShadowsModelFogVert2Loc,
+				NextFrameDesc->Verts[Idx].x, NextFrameDesc->Verts[Idx].y, NextFrameDesc->Verts[Idx].z);
+			glVertex3f(FrameDesc->Verts[Idx].x, FrameDesc->Verts[Idx].y, FrameDesc->Verts[Idx].z);
 		}
-		else
-		{
-			glBegin(GL_TRIANGLE_STRIP);
-		}
-
-		do
-		{
-			// texture coordinates come from the draw list
-			p_glVertexAttrib2fARB(ShadowsModelFogTexCoordLoc, ((float *)order)[0], ((float *)order)[1]);
-			order += 2;
-
-			// normals and vertexes come from the frame list
-			index = *order++;
-			p_glVertexAttrib3fARB(ShadowsModelFogVert2Loc, verts2[index].v[0], verts2[index].v[1], verts2[index].v[2]);
-			glVertex3f(verts[index].v[0], verts[index].v[1], verts[index].v[2]);
-		} while (--count);
-
-		glEnd();
 	}
+	glEnd();
 	unguard;
 }
 
