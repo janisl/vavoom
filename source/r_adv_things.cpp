@@ -1002,7 +1002,7 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 	guard(VAdvancedRenderLevel::RenderThingShadow);
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	if (!(LightBspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 	{
 		return;
 	}
