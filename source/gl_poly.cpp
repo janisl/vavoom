@@ -1562,13 +1562,12 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		VMeshFrame* FrameDesc = &Mdl->Frames[frame];
 		VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
-		p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
-		p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		p_glEnableVertexAttribArrayARB(0);
-		p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
-		p_glVertexAttribPointerARB(SurfModelVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		p_glEnableVertexAttribArrayARB(SurfModelVert2Loc);
 		p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
+		p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
+		p_glEnableVertexAttribArrayARB(0);
+		p_glVertexAttribPointerARB(SurfModelVert2Loc, 3, GL_FLOAT, GL_FALSE, 0,
+			(void*)NextFrameDesc->VertsOffset);
+		p_glEnableVertexAttribArrayARB(SurfModelVert2Loc);
 		p_glVertexAttribPointerARB(SurfModelTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 		p_glEnableVertexAttribArrayARB(SurfModelTexCoordLoc);
 		p_glVertexAttrib4fARB(SurfModelLightValLoc,
@@ -1779,13 +1778,12 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		(light & 255) / 255.0, 1);
 	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(0);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(ShadowsModelAmbientVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(ShadowsModelAmbientVert2Loc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glVertexAttribPointerARB(ShadowsModelAmbientVert2Loc, 3, GL_FLOAT, GL_FALSE, 0,
+		(void*)NextFrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(ShadowsModelAmbientVert2Loc);
 	p_glVertexAttribPointerARB(ShadowsModelAmbientTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelAmbientTexCoordLoc);
 
@@ -1826,13 +1824,12 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(0);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(ShadowsModelTexturesVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(ShadowsModelTexturesVert2Loc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glVertexAttribPointerARB(ShadowsModelTexturesVert2Loc, 3, GL_FLOAT, GL_FALSE, 0,
+		(void*)NextFrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(ShadowsModelTexturesVert2Loc);
 	p_glVertexAttribPointerARB(ShadowsModelTexturesTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelTexturesTexCoordLoc);
 
@@ -1903,19 +1900,18 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glUniformMatrix4fvARB(ShadowsModelLightModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 	p_glUniformMatrix3fvARB(ShadowsModelLightNormalToWorldMatLoc, 1, GL_FALSE, NormalMat[0]);
 
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(0);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->NormalsBufferObject);
-	p_glVertexAttribPointerARB(ShadowsModelLightVertNormalLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(ShadowsModelLightVertNormalLoc);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(ShadowsModelLightVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2Loc);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->NormalsBufferObject);
-	p_glVertexAttribPointerARB(ShadowsModelLightVert2NormalLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2NormalLoc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glVertexAttribPointerARB(ShadowsModelLightVertNormalLoc, 3, GL_FLOAT, GL_FALSE, 0,
+		(void*)FrameDesc->NormalsOffset);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightVertNormalLoc);
+	p_glVertexAttribPointerARB(ShadowsModelLightVert2Loc, 3, GL_FLOAT, GL_FALSE, 0,
+		(void*)NextFrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2Loc);
+	p_glVertexAttribPointerARB(ShadowsModelLightVert2NormalLoc, 3, GL_FLOAT, GL_FALSE, 0,
+		(void*)NextFrameDesc->NormalsOffset);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2NormalLoc);
 	p_glVertexAttribPointerARB(ShadowsModelLightTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
 
@@ -1967,11 +1963,11 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
 	p_glEnableVertexAttribArrayARB(0);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(ShadowsModelShadowVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	p_glVertexAttribPointerARB(ShadowsModelShadowVert2Loc, 3, GL_FLOAT, GL_FALSE, 0,
+		(void*)NextFrameDesc->VertsOffset);
 	p_glEnableVertexAttribArrayARB(ShadowsModelShadowVert2Loc);
 
 	float Offset = M_INFINITY;
@@ -2070,13 +2066,12 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glUniform1fARB(ShadowsModelFogFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 	p_glUniform1fARB(ShadowsModelFogFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
 
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(0);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, NextFrameDesc->VertsBufferObject);
-	p_glVertexAttribPointerARB(ShadowsModelFogVert2Loc, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	p_glEnableVertexAttribArrayARB(ShadowsModelFogVert2Loc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
+	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(0);
+	p_glVertexAttribPointerARB(ShadowsModelFogVert2Loc, 3, GL_FLOAT, GL_FALSE, 0,
+		(void*)NextFrameDesc->VertsOffset);
+	p_glEnableVertexAttribArrayARB(ShadowsModelFogVert2Loc);
 	p_glVertexAttribPointerARB(ShadowsModelFogTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
 

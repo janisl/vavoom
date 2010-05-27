@@ -151,8 +151,8 @@ struct VMeshFrame
 {
 	TVec*			Verts;
 	TVec*			Normals;
-	vuint32			VertsBufferObject;
-	vuint32			NormalsBufferObject;
+	vuint32			VertsOffset;
+	vuint32			NormalsOffset;
 };
 
 struct VMeshSTVert

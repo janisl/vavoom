@@ -1128,30 +1128,30 @@ void VOpenGLDrawer::UploadModel(VMeshModel* Mdl)
 		return;
 	}
 
+	//	Create buffer.
 	p_glGenBuffersARB(1, &Mdl->VertsBuffer);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
-
 	int Size = sizeof(VMeshSTVert) * Mdl->STVerts.Num() +
 		sizeof(TVec) * Mdl->STVerts.Num() * 2 * Mdl->Frames.Num();
-	GCon->Logf("%s takes %d", *Mdl->Name, Size);
+	p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, Size, NULL, GL_STATIC_DRAW_ARB);
 
-	//	Texture coordinates
-	p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(VMeshSTVert) * Mdl->STVerts.Num(),
-		&Mdl->STVerts[0], GL_STATIC_DRAW_ARB);
+	//	Upload data
+	p_glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, 0, sizeof(VMeshSTVert) * Mdl->STVerts.Num(),
+		&Mdl->STVerts[0]);
+	p_glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, sizeof(VMeshSTVert) * Mdl->STVerts.Num(),
+		sizeof(TVec) * Mdl->AllVerts.Num(), &Mdl->AllVerts[0]);
+	p_glBufferSubDataARB(GL_ARRAY_BUFFER_ARB, sizeof(VMeshSTVert) * Mdl->STVerts.Num() +
+		sizeof(TVec) * Mdl->AllVerts.Num(), sizeof(TVec) * Mdl->AllNormals.Num(),
+		&Mdl->AllNormals[0]);
 
+	//	Pre-calculate offsets.
 	for (int i = 0; i < Mdl->Frames.Num(); i++)
 	{
-		//	Vertexes
-		p_glGenBuffersARB(1, &Mdl->Frames[i].VertsBufferObject);
-		p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->Frames[i].VertsBufferObject);
-		p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(TVec) * Mdl->STVerts.Num(),
-			Mdl->Frames[i].Verts, GL_STATIC_DRAW_ARB);
-
-		//	Normals
-		p_glGenBuffersARB(1, &Mdl->Frames[i].NormalsBufferObject);
-		p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->Frames[i].NormalsBufferObject);
-		p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(TVec) * Mdl->STVerts.Num(),
-			Mdl->Frames[i].Normals, GL_STATIC_DRAW_ARB);
+		Mdl->Frames[i].VertsOffset = sizeof(VMeshSTVert) * Mdl->STVerts.Num() +
+			i * sizeof(TVec) * Mdl->STVerts.Num();
+		Mdl->Frames[i].NormalsOffset = sizeof(VMeshSTVert) * Mdl->STVerts.Num() +
+			sizeof(TVec) * Mdl->AllVerts.Num() +
+			i * sizeof(TVec) * Mdl->STVerts.Num();
 	}
 
 	//	Indexes

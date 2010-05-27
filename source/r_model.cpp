@@ -648,8 +648,8 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 
 		mod->Frames[i].Verts = &mod->AllVerts[i * VertMap.Num()];
 		mod->Frames[i].Normals = &mod->AllNormals[i * VertMap.Num()];
-		mod->Frames[i].VertsBufferObject = 0;
-		mod->Frames[i].NormalsBufferObject = 0;
+		mod->Frames[i].VertsOffset = 0;
+		mod->Frames[i].NormalsOffset = 0;
 		trivertx_t* Verts = (trivertx_t *)(pframe + 1);
 		for (int j = 0; j < VertMap.Num(); j++)
 		{
