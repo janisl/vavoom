@@ -163,7 +163,7 @@ struct VMeshSTVert
 
 struct VMeshTri
 {
-	int				VertIndex[3];
+	vuint16				VertIndex[3];
 };
 
 struct VMeshModel
