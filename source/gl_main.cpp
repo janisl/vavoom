@@ -1128,6 +1128,17 @@ void VOpenGLDrawer::UploadModel(VMeshModel* Mdl)
 		return;
 	}
 
+	p_glGenBuffersARB(1, &Mdl->VertsBuffer);
+	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
+
+	int Size = sizeof(VMeshSTVert) * Mdl->STVerts.Num() +
+		sizeof(TVec) * Mdl->STVerts.Num() * 2 * Mdl->Frames.Num();
+	GCon->Logf("%s takes %d", *Mdl->Name, Size);
+
+	//	Texture coordinates
+	p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(VMeshSTVert) * Mdl->STVerts.Num(),
+		&Mdl->STVerts[0], GL_STATIC_DRAW_ARB);
+
 	for (int i = 0; i < Mdl->Frames.Num(); i++)
 	{
 		//	Vertexes
@@ -1142,12 +1153,6 @@ void VOpenGLDrawer::UploadModel(VMeshModel* Mdl)
 		p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(TVec) * Mdl->STVerts.Num(),
 			Mdl->Frames[i].Normals, GL_STATIC_DRAW_ARB);
 	}
-
-	//	Texture coordinates
-	p_glGenBuffersARB(1, &Mdl->STVertsBufferObject);
-	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->STVertsBufferObject);
-	p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(VMeshSTVert) * Mdl->STVerts.Num(),
-		&Mdl->STVerts[0], GL_STATIC_DRAW_ARB);
 
 	//	Indexes
 	p_glGenBuffersARB(1, &Mdl->IndexBuffer);

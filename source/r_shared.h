@@ -177,7 +177,7 @@ struct VMeshModel
 	TArray<VMeshSTVert>	STVerts;
 	TArray<VMeshTri>	Tris;
 	bool				Uploaded;
-	vuint32				STVertsBufferObject;
+	vuint32				VertsBuffer;
 	vuint32				IndexBuffer;
 };
 
