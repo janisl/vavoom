@@ -1149,7 +1149,14 @@ void VOpenGLDrawer::UploadModel(VMeshModel* Mdl)
 	p_glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(VMeshSTVert) * Mdl->STVerts.Num(),
 		&Mdl->STVerts[0], GL_STATIC_DRAW_ARB);
 
+	//	Indexes
+	p_glGenBuffersARB(1, &Mdl->IndexBuffer);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	p_glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 6 * Mdl->Tris.Num(),
+		&Mdl->Tris[0], GL_STATIC_DRAW_ARB);
+
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 	Mdl->Uploaded = true;
 	unguard;
 }

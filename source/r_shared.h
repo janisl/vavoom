@@ -178,6 +178,7 @@ struct VMeshModel
 	TArray<VMeshTri>	Tris;
 	bool				Uploaded;
 	vuint32				STVertsBufferObject;
+	vuint32				IndexBuffer;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

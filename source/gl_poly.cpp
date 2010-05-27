@@ -1576,7 +1576,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			((light >> 8) & 255) / 255.0,
 			(light & 255) / 255.0, Alpha);
 
-		glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, &Mdl->Tris[0]);
+		p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+		glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+		p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 		p_glDisableVertexAttribArrayARB(0);
 		p_glDisableVertexAttribArrayARB(SurfModelVert2Loc);
@@ -1787,7 +1789,9 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	p_glVertexAttribPointerARB(ShadowsModelAmbientTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelAmbientTexCoordLoc);
 
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, &Mdl->Tris[0]);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
 	p_glDisableVertexAttribArrayARB(ShadowsModelAmbientVert2Loc);
@@ -1832,7 +1836,9 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	p_glVertexAttribPointerARB(ShadowsModelTexturesTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelTexturesTexCoordLoc);
 
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, &Mdl->Tris[0]);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
 	p_glDisableVertexAttribArrayARB(ShadowsModelTexturesVert2Loc);
@@ -1913,7 +1919,9 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glVertexAttribPointerARB(ShadowsModelLightTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
 
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, &Mdl->Tris[0]);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
 	p_glDisableVertexAttribArrayARB(ShadowsModelLightVertNormalLoc);
@@ -1949,7 +1957,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	float Inter, bool Interpolate, const TVec& LightPos, float LightRadius)
 {
 	guard(VOpenGLDrawer::DrawAliasModelShadow);
-if (Mdl->STVerts.Num() == 1899) dprintf("Frames %d %d\n", frame, nextframe);
+//if (Mdl->STVerts.Num() == 1899) dprintf("Frames %d %d\n", frame, nextframe);
 	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
 	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
@@ -1959,7 +1967,7 @@ if (Mdl->STVerts.Num() == 1899) dprintf("Frames %d %d\n", frame, nextframe);
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
 
-#define DO_BUF
+//#define DO_BUF
 #ifdef DO_BUF
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, FrameDesc->VertsBufferObject);
 	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
@@ -2087,7 +2095,9 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glVertexAttribPointerARB(ShadowsModelFogTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
 
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, &Mdl->Tris[0]);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
 	p_glDisableVertexAttribArrayARB(ShadowsModelFogVert2Loc);
