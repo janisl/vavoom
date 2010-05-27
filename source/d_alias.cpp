@@ -117,14 +117,14 @@ static aedge_t aedges[12] =
 //==========================================================================
 
 void VSoftwareDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* Apmdl, int frame, int nextframe,
+	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
 	vuint32 Fade, float Alpha, bool Additive, bool is_view_model, float Inter, bool Interpolate)
 {
 	guard(VSoftwareDrawer::DrawAliasModel);
 	modelorg = vieworg - origin;
 
-	pmdl = Apmdl;
+	pmdl = Mdl->Data;
 
 	// see if the bounding box lets us trivially reject, also sets
 	// trivial accept status

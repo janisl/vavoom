@@ -378,8 +378,8 @@ public:
 		int, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,
 		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
-		mmdl_t*, int, int, VTexture*, VTextureTranslation*, int, vuint32, vuint32,
-		float, bool, bool, float, bool);
+		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, vuint32,
+		vuint32, float, bool, bool, float, bool);
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,

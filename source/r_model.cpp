@@ -1016,10 +1016,10 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		{
 		case RPASS_Normal:
 		case RPASS_NonShadow:
-			Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale, pmdl,
-				Md2Frame, Md2NextFrame, GTextureManager(SkinID), Trans,
-				ColourMap, Md2Light, Fade, Md2Alpha, Additive, IsViewModel,
-				smooth_inter, Interpolate);
+			Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale,
+				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
+				Trans, ColourMap, Md2Light, Fade, Md2Alpha, Additive,
+				IsViewModel, smooth_inter, Interpolate);
 			break;
 
 		case RPASS_Ambient:

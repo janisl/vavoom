@@ -729,10 +729,10 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 //==========================================================================
 
 void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
-	const TVec& Offset, const TVec& Scale, mmdl_t* pmdl, int frame, int nextframe,
-	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
-	vuint32 Fade, float Alpha, bool Additive, bool is_view_model, float Inter,
-	bool Interpolate)
+	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame,
+	int nextframe, VTexture* Skin, VTextureTranslation* Trans, int CMap,
+	vuint32 light, vuint32 Fade, float Alpha, bool Additive,
+	bool is_view_model, float Inter, bool Interpolate)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
@@ -777,6 +777,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 	// draw all the triangles
 	//
+	mmdl_t* pmdl = Mdl->Data;
 	pframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + frame * pmdl->framesize);
 	pnextframedesc = (mframe_t*)((byte *)pmdl + pmdl->ofsframes + nextframe * pmdl->framesize);
 
