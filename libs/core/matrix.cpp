@@ -260,3 +260,18 @@ TVec VMatrix4::Transform(const TVec& V) const
 	Out.z = m[2][0] * V.x + m[2][1] * V.y + m[2][2] * V.z + m[2][3];
 	return Out;
 }
+
+//==========================================================================
+//
+//	VMatrix4::Transform2
+//
+//==========================================================================
+
+TVec VMatrix4::Transform2(const TVec& V) const
+{
+	TVec Out;
+	Out.x = m[0][0] * V.x + m[1][0] * V.y + m[2][0] * V.z + m[3][0];
+	Out.y = m[0][1] * V.x + m[1][1] * V.y + m[2][1] * V.z + m[3][1];
+	Out.z = m[0][2] * V.x + m[1][2] * V.y + m[2][2] * V.z + m[3][2];
+	return Out;
+}

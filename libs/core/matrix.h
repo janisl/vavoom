@@ -41,6 +41,7 @@ public:
 	VMatrix4 Inverse() const;
 	VMatrix4 Transpose() const;
 	TVec Transform(const TVec& V) const;
+	TVec Transform2(const TVec& V) const;
 
 	float* operator[] (int i)
 	{

@@ -52,7 +52,7 @@
 //==========================================================================
 
 static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
-	const TVec& Offset, const TVec& Scale, VMatrix4& rotationmatrix)
+	const TVec& Offset, const TVec& Scale, VMatrix4& RotationMatrix)
 {
 	VMatrix4 t3matrix = VMatrix4::Identity;
 	t3matrix[0][0] = Scale.x;
@@ -78,7 +78,7 @@ static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
 	t2matrix[1][3] = modelorg[1];
 	t2matrix[2][3] = modelorg[2];
 
-	rotationmatrix = t2matrix * t3matrix;
+	RotationMatrix = t2matrix * t3matrix;
 }
 
 //==========================================================================
@@ -88,7 +88,7 @@ static void AliasSetUpTransform(const TVec& modelorg, const TAVec& angles,
 //==========================================================================
 
 static void AliasSetUpNormalTransform(const TAVec& angles, const TVec& Scale,
-	VMatrix4& rotationmatrix)
+	VMatrix4& RotationMatrix)
 {
 	TVec alias_forward, alias_right, alias_up;
 	AngleVectors(angles, alias_forward, alias_right, alias_up);
@@ -106,12 +106,12 @@ static void AliasSetUpNormalTransform(const TAVec& angles, const TVec& Scale,
 		t2matrix[i][2] = alias_up[i];
 	}
 
-	rotationmatrix = t2matrix * t3matrix;
+	RotationMatrix = t2matrix * t3matrix;
 
 	if (fabs(Scale.x) != fabs(Scale.y) || fabs(Scale.x) != fabs(Scale.z))
 	{
 		//	Non-uniform scale, do full inverse transpose.
-		rotationmatrix = rotationmatrix.Inverse().Transpose();
+		RotationMatrix = RotationMatrix.Inverse().Transpose();
 	}
 }
 
@@ -430,8 +430,8 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 
 	SetPic(Skin, NULL, CM_Default);
 
-	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, rotationmatrix);
+	VMatrix4 RotationMatrix;
+	AliasSetUpTransform(origin, angles, Offset, Scale, RotationMatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelAmbientProgram);
 	p_glUniform1iARB(ShadowsModelAmbientTextureLoc, 0);
@@ -440,7 +440,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 		((light >> 16) & 255) / 255.0,
 		((light >> 8) & 255) / 255.0,
 		(light & 255) / 255.0, 1);
-	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
 	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
@@ -480,13 +480,13 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 
 	SetPic(Skin, Trans, CMap);
 
-	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, rotationmatrix);
+	VMatrix4 RotationMatrix;
+	AliasSetUpTransform(origin, angles, Offset, Scale, RotationMatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelTexturesProgram);
 	p_glUniform1iARB(ShadowsModelTexturesTextureLoc, 0);
 	p_glUniform1fARB(ShadowsModelTexturesInterLoc, Inter);
-	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+	p_glUniformMatrix4fvARB(ShadowsModelTexturesModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
 	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
@@ -543,8 +543,8 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
 	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
-	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, rotationmatrix);
+	VMatrix4 RotationMatrix;
+	AliasSetUpTransform(origin, angles, Offset, Scale, RotationMatrix);
 	VMatrix4 normalmatrix;
 	AliasSetUpNormalTransform(angles, Scale, normalmatrix);
 	float NormalMat[3][3];
@@ -561,7 +561,7 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	SetPic(Skin, NULL, CM_Default);
 
 	p_glUniform1fARB(ShadowsModelLightInterLoc, Inter);
-	p_glUniformMatrix4fvARB(ShadowsModelLightModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+	p_glUniformMatrix4fvARB(ShadowsModelLightModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 	p_glUniformMatrix3fvARB(ShadowsModelLightNormalToWorldMatLoc, 1, GL_FALSE, NormalMat[0]);
 
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
@@ -621,11 +621,14 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	VMeshFrame* FrameDesc = &Mdl->Frames[frame];
 	VMeshFrame* NextFrameDesc = &Mdl->Frames[nextframe];
 
-	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, rotationmatrix);
+	VMatrix4 RotationMatrix;
+	AliasSetUpTransform(origin, angles, Offset, Scale, RotationMatrix);
+
+	VMatrix4 InvRotationMatrix = RotationMatrix.Inverse();
+	TVec LocalLightPos = InvRotationMatrix.Transform(LightPos);
 
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Inter);
-	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
 	p_glVertexAttribPointerARB(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)FrameDesc->VertsOffset);
@@ -639,22 +642,19 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	{
 		int index1 = Mdl->Tris[i].VertIndex[0];
 		TVec v1 = (1 - Inter) * FrameDesc->Verts[index1] + Inter * NextFrameDesc->Verts[index1];
-		v1 = rotationmatrix.Transform(v1);
 
 		int index2 = Mdl->Tris[i].VertIndex[1];
 		TVec v2 = (1 - Inter) * FrameDesc->Verts[index2] + Inter * NextFrameDesc->Verts[index2];
-		v2 = rotationmatrix.Transform(v2);
 
 		int index3 = Mdl->Tris[i].VertIndex[2];
 		TVec v3 = (1 - Inter) * FrameDesc->Verts[index3] + Inter * NextFrameDesc->Verts[index3];
-		v3 = rotationmatrix.Transform(v3);
 
 		TVec d1 = v2 - v3;
 		TVec d2 = v1 - v3;
 		TVec PlaneNormal = Normalise(CrossProduct(d1, d2));
 		float PlaneDist = DotProduct(PlaneNormal, v3);
 
-		float dist = DotProduct(LightPos, PlaneNormal) - PlaneDist;
+		float dist = DotProduct(LocalLightPos, PlaneNormal) - PlaneDist;
 		if (dist > 0)
 		{
 #define outv(idx, offs) \
@@ -714,13 +714,13 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 
 	SetPic(Skin, NULL, CM_Default);
 
-	VMatrix4 rotationmatrix;
-	AliasSetUpTransform(origin, angles, Offset, Scale, rotationmatrix);
+	VMatrix4 RotationMatrix;
+	AliasSetUpTransform(origin, angles, Offset, Scale, RotationMatrix);
 
 	p_glUseProgramObjectARB(ShadowsModelFogProgram);
 	p_glUniform1iARB(ShadowsModelFogTextureLoc, 0);
 	p_glUniform1fARB(ShadowsModelFogInterLoc, Inter);
-	p_glUniformMatrix4fvARB(ShadowsModelFogModelToWorldMatLoc, 1, GL_FALSE, rotationmatrix[0]);
+	p_glUniformMatrix4fvARB(ShadowsModelFogModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 	p_glUniform1iARB(ShadowsModelFogFogTypeLoc, r_fog & 3);
 	p_glUniform4fARB(ShadowsModelFogFogColourLoc,
 		((Fade >> 16) & 255) / 255.0,
