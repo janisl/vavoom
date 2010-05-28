@@ -429,7 +429,7 @@ public:
 	bool SupportsAdvancedRendering();
 
 protected:
-	enum { M_INFINITY	= 2048 };
+	enum { M_INFINITY	= 8000 };
 
 	GLint					maxTexSize;
 	bool					texturesGenerated;

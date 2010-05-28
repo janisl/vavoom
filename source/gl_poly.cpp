@@ -633,8 +633,9 @@ void VOpenGLDrawer::BeginLightShadowVolumes()
 	//	Set up for shadow volume rendering.
 	glClear(GL_STENCIL_BUFFER_BIT);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glPolygonOffset(0.0f, 1.0f);
+	//glEnable(GL_POLYGON_OFFSET_FILL);
+	//glPolygonOffset(0.0f, 10.0f);
+	glDepthFunc(GL_LESS);
 
 	glDisable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
@@ -710,6 +711,7 @@ void VOpenGLDrawer::BeginLightPass(TVec& LightPos, float Radius, vuint32 Colour)
 	guard(VOpenGLDrawer::BeginLightPass);
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	glDisable(GL_POLYGON_OFFSET_FILL);
+	glDepthFunc(GL_LEQUAL);
 
 	glStencilFunc(GL_EQUAL, 0x0, 0xff);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -834,7 +836,6 @@ void VOpenGLDrawer::EndFogPass()
 	glDisable(GL_BLEND);
 
 	//	Back to normal z-buffering.
-	glDepthFunc(GL_LEQUAL);
 	glDepthMask(GL_TRUE);
 	unguard;
 }
