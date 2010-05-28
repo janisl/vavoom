@@ -96,6 +96,16 @@ struct TVertMap
 	int		STIndex;
 };
 
+struct VTempEdge
+{
+	vuint16				Vert1;
+	vuint16				Vert2;
+	vuint16				OrigVert1;
+	vuint16				OrigVert2;
+	vint16				Tri1;
+	vint16				Tri2;
+};
+
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
@@ -522,6 +532,39 @@ VModel* Mod_FindName(const VStr& name)
 
 //==========================================================================
 //
+//	AddEdge
+//
+//==========================================================================
+
+static void AddEdge(TArray<VTempEdge>& Edges, int Vert1, int OrigVert1,
+	int Vert2, int OrigVert2, int Tri)
+{
+	guard(AddEdge);
+	//	Check for a match. Compare original vertex indices since texture
+	// coordinates are not important here.
+	for (int i = 0; i < Edges.Num(); i++)
+	{
+		VTempEdge& E = Edges[i];
+		if (E.Tri2 == -1 && E.OrigVert1 == OrigVert2 && E.OrigVert2 == OrigVert1)
+		{
+			E.Tri2 = Tri;
+			return;
+		}
+	}
+
+	//	Add new edge
+	VTempEdge& E = Edges.Alloc();
+	E.Vert1 = Vert1;
+	E.Vert2 = Vert2;
+	E.OrigVert1 = OrigVert1;
+	E.OrigVert2 = OrigVert2;
+	E.Tri1 = Tri;
+	E.Tri2 = -1;
+	unguard;
+}
+
+//==========================================================================
+//
 //	Mod_SwapAliasModel
 //
 //==========================================================================
@@ -590,6 +633,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	// triangles
 	//
 	TArray<TVertMap> VertMap;
+	TArray<VTempEdge> Edges;
 	mod->Tris.SetNum(pmodel->numtris);
 	ptri = (mtriangle_t *)((byte*)pmodel + pmodel->ofstris);
 	for (int i = 0; i < pmodel->numtris; i++)
@@ -618,6 +662,20 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 				V.STIndex = ptri[i].stvertindex[j];
 			}
 		}
+		for (int j = 0; j < 3; j++)
+		{
+			AddEdge(Edges, mod->Tris[i].VertIndex[j], ptri[i].vertindex[j],
+				mod->Tris[i].VertIndex[(j + 1) % 3], ptri[i].vertindex[(j + 1) % 3], i);
+		}
+	}
+
+	mod->Edges.SetNum(Edges.Num());
+	for (int i = 0; i < Edges.Num(); i++)
+	{
+		mod->Edges[i].Vert1 = Edges[i].Vert1;
+		mod->Edges[i].Vert2 = Edges[i].Vert2;
+		mod->Edges[i].Tri1 = Edges[i].Tri1;
+		mod->Edges[i].Tri2 = Edges[i].Tri2;
 	}
 
 	//

@@ -167,6 +167,14 @@ struct VMeshTri
 	vuint16				VertIndex[3];
 };
 
+struct VMeshEdge
+{
+	vuint16				Vert1;
+	vuint16				Vert2;
+	vint16				Tri1;
+	vint16				Tri2;
+};
+
 struct VMeshModel
 {
 	VStr				Name;
@@ -178,6 +186,7 @@ struct VMeshModel
 	TArray<TPlane>		AllPlanes;
 	TArray<VMeshSTVert>	STVerts;
 	TArray<VMeshTri>	Tris;
+	TArray<VMeshEdge>	Edges;
 	bool				Uploaded;
 	vuint32				VertsBuffer;
 	vuint32				IndexBuffer;
