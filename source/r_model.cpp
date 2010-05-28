@@ -636,6 +636,7 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 	mod->Frames.SetNum(pmodel->numframes);
 	mod->AllVerts.SetNum(pmodel->numframes * VertMap.Num());
 	mod->AllNormals.SetNum(pmodel->numframes * VertMap.Num());
+	mod->AllPlanes.SetNum(pmodel->numframes * pmodel->numtris);
 	pframe = (mframe_t *)((byte*)pmodel + pmodel->ofsframes);
 	for (int i = 0; i < pmodel->numframes; i++)
 	{
@@ -646,21 +647,31 @@ static void Mod_SwapAliasModel(VMeshModel* mod)
 		pframe->scale_origin[1] = LittleFloat(pframe->scale_origin[1]);
 		pframe->scale_origin[2] = LittleFloat(pframe->scale_origin[2]);
 
-		mod->Frames[i].Verts = &mod->AllVerts[i * VertMap.Num()];
-		mod->Frames[i].Normals = &mod->AllNormals[i * VertMap.Num()];
-		mod->Frames[i].VertsOffset = 0;
-		mod->Frames[i].NormalsOffset = 0;
+		VMeshFrame& Frame = mod->Frames[i];
+		Frame.Verts = &mod->AllVerts[i * VertMap.Num()];
+		Frame.Normals = &mod->AllNormals[i * VertMap.Num()];
+		Frame.Planes = &mod->AllPlanes[i * pmodel->numtris];
+		Frame.VertsOffset = 0;
+		Frame.NormalsOffset = 0;
 		trivertx_t* Verts = (trivertx_t *)(pframe + 1);
 		for (int j = 0; j < VertMap.Num(); j++)
 		{
-			mod->Frames[i].Verts[j].x = Verts[VertMap[j].VertIndex].v[0] *
-				pframe->scale[0] + pframe->scale_origin[0];
-			mod->Frames[i].Verts[j].y = Verts[VertMap[j].VertIndex].v[1] *
-				pframe->scale[1] + pframe->scale_origin[1];
-			mod->Frames[i].Verts[j].z = Verts[VertMap[j].VertIndex].v[2] *
-				pframe->scale[2] + pframe->scale_origin[2];
-			mod->Frames[i].Normals[j] = r_avertexnormals[
-				Verts[VertMap[j].VertIndex].lightnormalindex];
+			trivertx_t& Vert = Verts[VertMap[j].VertIndex];
+			Frame.Verts[j].x = Vert.v[0] * pframe->scale[0] + pframe->scale_origin[0];
+			Frame.Verts[j].y = Vert.v[1] * pframe->scale[1] + pframe->scale_origin[1];
+			Frame.Verts[j].z = Vert.v[2] * pframe->scale[2] + pframe->scale_origin[2];
+			Frame.Normals[j] = r_avertexnormals[Vert.lightnormalindex];
+		}
+		for (int j = 0; j < pmodel->numtris; j++)
+		{
+			TVec v1 = Frame.Verts[mod->Tris[j].VertIndex[0]];
+			TVec v2 = Frame.Verts[mod->Tris[j].VertIndex[1]];
+			TVec v3 = Frame.Verts[mod->Tris[j].VertIndex[2]];
+			TVec d1 = v2 - v3;
+			TVec d2 = v1 - v3;
+			TVec PlaneNormal = Normalise(CrossProduct(d1, d2));
+			float PlaneDist = DotProduct(PlaneNormal, v3);
+			Frame.Planes[j].Set(PlaneNormal, PlaneDist);
 		}
 		pframe = (mframe_t*)((byte*)pframe + pmodel->framesize);
 	}

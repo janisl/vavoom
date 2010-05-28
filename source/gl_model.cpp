@@ -627,6 +627,15 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	VMatrix4 InvRotationMatrix = RotationMatrix.Inverse();
 	TVec LocalLightPos = InvRotationMatrix.Transform(LightPos);
 
+	TArray<bool> PlaneSides;
+	PlaneSides.SetNum(Mdl->Tris.Num());
+	VMeshFrame* PlanesFrame = Inter >= 0.5 ? NextFrameDesc : FrameDesc;
+	TPlane* P = PlanesFrame->Planes;
+	for (int i = 0; i < Mdl->Tris.Num(); i++, P++)
+	{
+		PlaneSides[i] = DotProduct(LocalLightPos, P->normal) - P->dist > 0.1;
+	}
+
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Inter);
 	p_glUniformMatrix4fvARB(ShadowsModelShadowModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 
@@ -638,40 +647,42 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	p_glEnableVertexAttribArrayARB(ShadowsModelShadowVert2Loc);
 
 	float Offset = M_INFINITY;
+
+	glBegin(GL_TRIANGLES);
+	p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, 0);
 	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
-		int index1 = Mdl->Tris[i].VertIndex[0];
-		TVec v1 = (1 - Inter) * FrameDesc->Verts[index1] + Inter * NextFrameDesc->Verts[index1];
-
-		int index2 = Mdl->Tris[i].VertIndex[1];
-		TVec v2 = (1 - Inter) * FrameDesc->Verts[index2] + Inter * NextFrameDesc->Verts[index2];
-
-		int index3 = Mdl->Tris[i].VertIndex[2];
-		TVec v3 = (1 - Inter) * FrameDesc->Verts[index3] + Inter * NextFrameDesc->Verts[index3];
-
-		TVec d1 = v2 - v3;
-		TVec d2 = v1 - v3;
-		TVec PlaneNormal = Normalise(CrossProduct(d1, d2));
-		float PlaneDist = DotProduct(PlaneNormal, v3);
-
-		float dist = DotProduct(LocalLightPos, PlaneNormal) - PlaneDist;
-		if (dist > 0)
+		if (PlaneSides[i])
 		{
+			glArrayElement(Mdl->Tris[i].VertIndex[0]);
+			glArrayElement(Mdl->Tris[i].VertIndex[1]);
+			glArrayElement(Mdl->Tris[i].VertIndex[2]);
+		}
+	}
+
+	p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, Offset);
+	for (int i = 0; i < Mdl->Tris.Num(); i++)
+	{
+		if (PlaneSides[i])
+		{
+			glArrayElement(Mdl->Tris[i].VertIndex[2]);
+			glArrayElement(Mdl->Tris[i].VertIndex[1]);
+			glArrayElement(Mdl->Tris[i].VertIndex[0]);
+		}
+	}
+	glEnd();
+
+	for (int i = 0; i < Mdl->Tris.Num(); i++)
+	{
+		if (PlaneSides[i])
+		{
+			int index1 = Mdl->Tris[i].VertIndex[0];
+			int index2 = Mdl->Tris[i].VertIndex[1];
+			int index3 = Mdl->Tris[i].VertIndex[2];
+
 #define outv(idx, offs) \
 			p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, offs); \
 			glArrayElement(index ## idx);
-
-			glBegin(GL_TRIANGLES);
-			outv(1, 0);
-			outv(2, 0);
-			outv(3, 0);
-			glEnd();
-
-			glBegin(GL_TRIANGLES);
-			outv(3, Offset);
-			outv(2, Offset);
-			outv(1, Offset);
-			glEnd();
 
 			glBegin(GL_TRIANGLE_STRIP);
 

@@ -151,6 +151,7 @@ struct VMeshFrame
 {
 	TVec*			Verts;
 	TVec*			Normals;
+	TPlane*			Planes;
 	vuint32			VertsOffset;
 	vuint32			NormalsOffset;
 };
@@ -174,6 +175,7 @@ struct VMeshModel
 	TArray<VMeshFrame>	Frames;
 	TArray<TVec>		AllVerts;
 	TArray<TVec>		AllNormals;
+	TArray<TPlane>		AllPlanes;
 	TArray<VMeshSTVert>	STVerts;
 	TArray<VMeshTri>	Tris;
 	bool				Uploaded;
