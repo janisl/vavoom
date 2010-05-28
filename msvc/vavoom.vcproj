@@ -1584,6 +1584,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\gl_model.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\gl_poly.cpp"
 					>
 				</File>

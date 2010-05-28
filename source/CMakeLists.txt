@@ -322,6 +322,7 @@ set(MAIN_OPENGL_SOURCES
 	gl_draw.cpp
 	gl_local.h
 	gl_main.cpp
+	gl_model.cpp
 	gl_poly.cpp
 	gl_tex.cpp
 )
