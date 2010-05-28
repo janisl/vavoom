@@ -374,6 +374,29 @@ void VOpenGLDrawer::InitResolution()
 		HaveVertexBufferObject = false;
 	}
 
+	if (CheckExtension("GL_EXT_draw_range_elements"))
+	{
+		GCon->Log(NAME_Init, "Found GL_EXT_draw_range_elements...");
+
+		bool found = true;
+		_(glDrawRangeElementsEXT);
+
+		if (found)
+		{
+			GCon->Log(NAME_Init, "Draw range elements extensions found.");
+			HaveDrawRangeElements = true;
+		}
+		else
+		{
+			GCon->Log(NAME_Init, "Symbol not found, draw range elements extensions disabled.");
+			HaveDrawRangeElements = false;
+		}
+	}
+	else
+	{
+		HaveDrawRangeElements = false;
+	}
+
 #undef _
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
@@ -639,7 +662,7 @@ bool VOpenGLDrawer::CheckExtension(const char *ext)
 bool VOpenGLDrawer::SupportsAdvancedRendering()
 {
 	return HasStencil && HaveStencilWrap && p_glStencilFuncSeparate &&
-		HaveShaders && HaveVertexBufferObject;
+		HaveShaders && HaveVertexBufferObject && HaveDrawRangeElements;
 }
 
 //==========================================================================

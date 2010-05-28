@@ -1576,7 +1576,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			(light & 255) / 255.0, Alpha);
 
 		p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-		glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+		p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
 		p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 		p_glDisableVertexAttribArrayARB(0);
@@ -1788,7 +1788,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	p_glEnableVertexAttribArrayARB(ShadowsModelAmbientTexCoordLoc);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
@@ -1834,7 +1834,7 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	p_glEnableVertexAttribArrayARB(ShadowsModelTexturesTexCoordLoc);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
@@ -1916,7 +1916,7 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glEnableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
@@ -2076,7 +2076,7 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glEnableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-	glDrawElements(GL_TRIANGLES, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);

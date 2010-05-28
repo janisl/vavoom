@@ -333,6 +333,13 @@ typedef GLboolean (APIENTRY*glUnmapBufferARB_t)(GLenum);
 typedef void (APIENTRY*glGetBufferParameterivARB_t)(GLenum, GLenum, GLint *);
 typedef void (APIENTRY*glGetBufferPointervARB_t)(GLenum, GLenum, GLvoid* *);
 
+#ifndef GL_EXT_draw_range_elements
+#define GL_MAX_ELEMENTS_VERTICES_EXT		0x80E8
+#define GL_MAX_ELEMENTS_INDICES_EXT			0x80E9
+#endif
+
+typedef void (APIENTRY*glDrawRangeElementsEXT_t)(GLenum, GLuint, GLuint, GLsizei, GLenum, const GLvoid *);
+
 class VOpenGLDrawer : public VHardwareDrawer
 {
 public:
@@ -449,6 +456,7 @@ protected:
 	bool					HaveDepthClamp;
 	bool					HaveStencilWrap;
 	bool					HaveVertexBufferObject;
+	bool					HaveDrawRangeElements;
 
 	TArray<GLhandleARB>		CreatedShaderObjects;
 
@@ -761,6 +769,8 @@ protected:
 	_(glUnmapBufferARB);
 	_(glGetBufferParameterivARB);
 	_(glGetBufferPointervARB);
+
+	_(glDrawRangeElementsEXT);
 #undef _
 
 	void MultiTexCoord(int level, GLfloat s, GLfloat t)
