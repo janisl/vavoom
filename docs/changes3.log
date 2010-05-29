@@ -4132,3 +4132,6 @@
 23.05.2010
   Firebrand implemented GZDoom's SmoothEdges method to smooth transparent edges from sprites and textures,
  this should fix the problem with PNG images with alpha channels having cyan pixels around the edges.
+28.05.2010
+  Firebrand fixed an infinite loop in Timidity music player with looped songs.
+  Firebrand made beautification to the Timidity music player files.

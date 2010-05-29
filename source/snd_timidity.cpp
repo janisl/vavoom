@@ -83,6 +83,7 @@ static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CV
 #endif
 static VCvarI	s_timidity_test_dls("s_timidity_test_dls", "0", CVAR_Archive);
 static VCvarI	s_timidity_test_sf2("s_timidity_test_sf2", "0", CVAR_Archive);
+static VCvarI	s_timidity_verbosity("s_timidity_verbosity", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -141,7 +142,9 @@ int VTimidityAudioCodec::Decode(short* Data, int NumSamples)
 
 bool VTimidityAudioCodec::Finished()
 {
+	guard(VTimidityAudioCodec::Finished);
 	return !Timidity_Active(Song);
+	unguard;
 }
 
 //==========================================================================
@@ -165,17 +168,18 @@ void VTimidityAudioCodec::Restart()
 
 int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, const char *fmt, ...)
 {
+	guard(VTimidityAudioCodec::ctl_msg);
 	char Buf[1024];
 	va_list ap;
 	if ((type == CMSG_TEXT || type == CMSG_INFO || type == CMSG_WARNING) &&
-//		MyControlMode.verbosity < verbosity_level)
-		0 < verbosity_level)
+		s_timidity_verbosity < verbosity_level)
 		return 0;
 	va_start(ap, fmt);
 	vsprintf(Buf, fmt, ap);
 	GCon->Log(Buf);
 	va_end(ap);
 	return 0;
+	unguard;
 }
 
 //==========================================================================

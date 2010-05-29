@@ -155,6 +155,7 @@ void free_pathlist()
 		}
 		PathList* next_plp = plp->next;
 		free(plp);
+		plp = NULL;
 		plp = next_plp;
 	}
 	pathlist = NULL;

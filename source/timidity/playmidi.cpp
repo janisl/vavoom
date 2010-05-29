@@ -545,9 +545,7 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 		{
 			switch (song->current_event->type)
 			{
-
 			/* Effects affecting a single note */
-
 			case ME_NOTEON:
 				if (!(song->current_event->b)) /* Velocity 0? */
 					note_off(song);
@@ -564,31 +562,30 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				break;
 
 			/* Effects affecting a single channel */
-
 			case ME_PITCH_SENS:
-				song->channel[song->current_event->channel].pitchsens=song->current_event->a;
-				song->channel[song->current_event->channel].pitchfactor=0;
+				song->channel[song->current_event->channel].pitchsens = song->current_event->a;
+				song->channel[song->current_event->channel].pitchfactor = 0;
 				break;
 
 			case ME_PITCHWHEEL:
-				song->channel[song->current_event->channel].pitchbend=
+				song->channel[song->current_event->channel].pitchbend =
 					song->current_event->a + song->current_event->b * 128;
-				song->channel[song->current_event->channel].pitchfactor=0;
+				song->channel[song->current_event->channel].pitchfactor = 0;
 				/* Adjust pitch for notes already playing */
 				adjust_pitchbend(song);
 				break;
 
 			case ME_MAINVOLUME:
-				song->channel[song->current_event->channel].volume=song->current_event->a;
+				song->channel[song->current_event->channel].volume = song->current_event->a;
 				adjust_volume(song);
 				break;
 
 			case ME_PAN:
-				song->channel[song->current_event->channel].panning=song->current_event->a;
+				song->channel[song->current_event->channel].panning = song->current_event->a;
 				break;
 
 			case ME_EXPRESSION:
-				song->channel[song->current_event->channel].expression=song->current_event->a;
+				song->channel[song->current_event->channel].expression = song->current_event->a;
 				adjust_volume(song);
 				break;
 
@@ -596,16 +593,16 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				if (ISDRUMCHANNEL(song, song->current_event->channel))
 				{
 					/* Change drum set */
-					song->channel[song->current_event->channel].bank=song->current_event->a;
+					song->channel[song->current_event->channel].bank = song->current_event->a;
 				}
 				else
 				{
-					song->channel[song->current_event->channel].program=song->current_event->a;
+					song->channel[song->current_event->channel].program = song->current_event->a;
 				}
 				break;
 
 			case ME_SUSTAIN:
-				song->channel[song->current_event->channel].sustain=song->current_event->a;
+				song->channel[song->current_event->channel].sustain = song->current_event->a;
 				if (!song->current_event->a)
 					drop_sustain(song);
 				break;
@@ -623,18 +620,19 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 				break;
 
 			case ME_TONE_BANK:
-				song->channel[song->current_event->channel].bank=song->current_event->a;
+				song->channel[song->current_event->channel].bank = song->current_event->a;
 				break;
 
 			case ME_EOT:
 				/* Give the last notes a couple of seconds to decay  */
 				ctl->cmsg(CMSG_INFO, VERB_VERBOSE,
-					"Playing time: ~%d seconds", song->current_sample/OUTPUT_RATE+2);
+					"Playing time: ~%d seconds", song->current_sample / OUTPUT_RATE + 2);
 				ctl->cmsg(CMSG_INFO, VERB_VERBOSE,
 					"Notes cut: %d", song->cut_notes);
 				ctl->cmsg(CMSG_INFO, VERB_VERBOSE,
 					"Notes lost totally: %d", song->lost_notes);
-				song->playing = 0;
+				Timidity_Stop(song);
+				song->current_sample = 0;
 				return stream_start;
 			}
 			song->current_event++;
@@ -644,7 +642,7 @@ int Timidity_PlaySome(MidiSong* song, void *stream, int samples)
 		else
 			conv_count = song->current_event->time - song->current_sample;
 
-		while (conv_count)
+		while (conv_count > 0)
 		{
 			int comp_count = conv_count;
 			if (comp_count > song->buffer_size)
@@ -745,7 +743,7 @@ void Timidity_Start(MidiSong *song)
 
 int Timidity_Active(MidiSong* song)
 {
-	return(song->playing);
+	return song->playing;
 }
 
 void Timidity_Stop(MidiSong* song)
@@ -762,23 +760,23 @@ void Timidity_FreeSong(MidiSong *song)
 		if (song->tonebank[i])
 		{
 			free(song->tonebank[i]);
-//			song->tonebank[i] = NULL;
+			song->tonebank[i] = NULL;
 		}
 		if (song->drumset[i])
 		{
 			free(song->drumset[i]);
-//			song->drumset[i] = NULL;
+			song->drumset[i] = NULL;
 		}
 	}
 
 	free(song->events);
-//	song->events = NULL;
+	song->events = NULL;
 	free(song->resample_buffer);
-//	song->resample_buffer = NULL;
+	song->resample_buffer = NULL;
 	free(song->common_buffer);
-//	song->common_buffer = NULL;
+	song->common_buffer = NULL;
 	free(song);
-//	song = NULL;
+	song = NULL;
 }
 
 void Timidity_Close()

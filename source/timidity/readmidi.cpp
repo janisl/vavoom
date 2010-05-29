@@ -396,6 +396,7 @@ static void free_midi_list(MidiSong* song)
 	{
 		next = meep->next;
 		free(meep);
+		meep = NULL;
 		meep = next;
 	}
 	song->evlist = 0;
