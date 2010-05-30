@@ -4128,10 +4128,71 @@
   Firebrand corrected wrong changes to Sigil projectiles.
 19.04.2010
   Firebrand fixed crashes in Timidity music player.
-  Firebrand made freed pointers to be properly NULLed, this helps improve performance.
+  Firebrand made freed pointers to be properly NULLed, this helps improve
+ performance.
+18.04.2010
+  I started to experiment with doing shadow volumes.
+25.04.2010
+  I started to add support for OpenGL shaders.
+  I moved main shadow volume code to level renderer, added separate BSP pass
+ for shadow volume rendering.
+07.05.2010
+  I added separate advanced level renderer class that will use shadow volumes.
+ All shadow volume code has been removed from regular renderer. Dynamic lights
+ are drawn with shadow volumes.
+08.05.2010
+  I added shaders for all rendering.
+  In advanced renderer I chaged static lights to be rendered with shadow
+ volumes.
+10.05.2010
+  I removed all lightmap code from advanced renderer.
+  I started toadd shadow volume code for models.
+11.05.2010
+  I dod more work on models.
+12.05.2010
+  Sice light position is in world coordinates I can't change GL matrices, so I
+ added calculation of model to world matrix and use it in shader. Now models
+ are properly lit and receive shadows.
+13.05.2010
+  I implemented casting of shadows from models.
+14.05.2010
+  I added fog to advanced rendering.
+16.05.2010
+  I moved advanced rendering API to main drawer class.
+  When drawing light calculate combined light and view vis data and process
+ light only if there's intersecting subsectors.
+17.05.2010
+  I removed splitting of surfaces in advanced renderer.
+19.05.2010
+  I merged multiple copies of model rendering methods, separated MD2 models
+ from scripts.
+20.05.2010
+  I added matrix class.
+  In model scripts I added no shadow flag.
 23.05.2010
-  Firebrand implemented GZDoom's SmoothEdges method to smooth transparent edges from sprites and textures,
- this should fix the problem with PNG images with alpha channels having cyan pixels around the edges.
+  Firebrand implemented GZDoom's SmoothEdges method to smooth transparent edges
+ from sprites and textures, this should fix the problem with PNG images with
+ alpha channels having cyan pixels around the edges.
+24.05.2010
+  If OpenGL 2.0 separate stencil methods are not available try ATI extension.
+25.05.2010
+  In advancer rendrer use infinite far clip. If depth calamp extension is
+ available, use it instead. I also added proper check for stencil wrap
+ extension.
+  I fixed min/max of a sector calculation.
+  I changed model loading to also load data in separate structure.
+26.05.2010
+  I changed all model rendering in advanced renderer to use buffer objects to
+ store vertex data.
+27.05.2010
+  I also changed models to store indices in a buffer.
+  I changed regular models also to be rendered from buffers if available.
 28.05.2010
+  I changed array drawing to use draw range elements.
+  For models collect list of edges between triangles and use it to draw only
+ those edges where side changes.
   Firebrand fixed an infinite loop in Timidity music player with looped songs.
   Firebrand made beautification to the Timidity music player files.
+30.05.2010
+  I changed light drawing BSP walk to avoid drawing areas that are not touched
+ by light.

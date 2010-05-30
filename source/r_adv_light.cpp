@@ -638,7 +638,7 @@ void VAdvancedRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox)
 		return;
 	}*/
 
-	// Decide which side the view point is on.
+	// Decide which side the light is on.
 	float Dist = DotProduct(CurrLightPos, bsp->normal) - bsp->dist;
 	if (Dist >= CurrLightRadius)
 	{
@@ -951,14 +951,28 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox)
 
 	node_t* bsp = &Level->Nodes[bspnum];
 
-	// Decide which side the view point is on.
-	int side = bsp->PointOnSide(vieworg);
+	// Decide which side the light is on.
+	float Dist = DotProduct(CurrLightPos, bsp->normal) - bsp->dist;
+	if (Dist >= CurrLightRadius)
+	{
+		//	Light is completely on front side.
+		RenderLightBSPNode(bsp->children[0], bsp->bbox[0]);
+	}
+	else if (Dist <= -CurrLightRadius)
+	{
+		//	Light is completely on back side.
+		RenderLightBSPNode(bsp->children[1], bsp->bbox[1]);
+	}
+	else
+	{
+		int side = Dist < 0;
 
-	// Recursively divide front space.
-	RenderLightBSPNode(bsp->children[side], bsp->bbox[side]);
+		// Recursively divide front space.
+		RenderLightBSPNode(bsp->children[side], bsp->bbox[side]);
 
-	// Divide back space.
-	RenderLightBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
+		// Divide back space.
+		RenderLightBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
+	}
 	unguard;
 }
 
@@ -968,6 +982,8 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox)
 //
 //==========================================================================
 
+VCvarI test1("test1", "1");
+VCvarI test2("test2", "1");
 void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 	const VViewClipper* Range, TVec& Pos, float Radius, vuint32 Colour)
 {
@@ -1012,7 +1028,7 @@ void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 	//	Do shadow volumes.
 	Drawer->BeginLightShadowVolumes();
 	LightClip.ClearClipNodes(CurrLightPos, Level);
-	RenderShadowBSPNode(Level->NumNodes - 1, dummy_bbox);
+	if (test1) RenderShadowBSPNode(Level->NumNodes - 1, dummy_bbox);
 	Drawer->BeginModelsShadowsPass(CurrLightPos, CurrLightRadius);
 	RenderMobjsShadow();
 
@@ -1027,7 +1043,7 @@ void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 		ViewClip.ClipToRanges(*Range);
 	}
 	LightClip.ClearClipNodes(CurrLightPos, Level);
-	RenderLightBSPNode(Level->NumNodes - 1, dummy_bbox);
+	if (test2) RenderLightBSPNode(Level->NumNodes - 1, dummy_bbox);
 	Drawer->BeginModelsLightPass(CurrLightPos, CurrLightRadius, Colour);
 	RenderMobjsLight();
 	unguard;
