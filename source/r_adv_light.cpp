@@ -982,8 +982,6 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox)
 //
 //==========================================================================
 
-VCvarI test1("test1", "1");
-VCvarI test2("test2", "1");
 void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 	const VViewClipper* Range, TVec& Pos, float Radius, vuint32 Colour)
 {
@@ -1028,7 +1026,7 @@ void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 	//	Do shadow volumes.
 	Drawer->BeginLightShadowVolumes();
 	LightClip.ClearClipNodes(CurrLightPos, Level);
-	if (test1) RenderShadowBSPNode(Level->NumNodes - 1, dummy_bbox);
+	RenderShadowBSPNode(Level->NumNodes - 1, dummy_bbox);
 	Drawer->BeginModelsShadowsPass(CurrLightPos, CurrLightRadius);
 	RenderMobjsShadow();
 
@@ -1043,7 +1041,7 @@ void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 		ViewClip.ClipToRanges(*Range);
 	}
 	LightClip.ClearClipNodes(CurrLightPos, Level);
-	if (test2) RenderLightBSPNode(Level->NumNodes - 1, dummy_bbox);
+	RenderLightBSPNode(Level->NumNodes - 1, dummy_bbox);
 	Drawer->BeginModelsLightPass(CurrLightPos, CurrLightRadius, Colour);
 	RenderMobjsLight();
 	unguard;

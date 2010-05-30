@@ -56,6 +56,7 @@ extern TVec				clip_base[4];
 extern VCvarI			r_fog_test;
 extern VTextureTranslation*	PlayerTranslations[MAXPLAYERS + 1];
 extern VCvarI			r_dynamic;
+extern VCvarI			r_static_lights;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
@@ -515,7 +516,7 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 			RenderLightShadows(RD, Range, l->origin, l->radius, l->colour);
 		}
 	}
-	if (!FixedLight)
+	if (!FixedLight && r_static_lights)
 	{
 		for (int i = 0; i < Lights.Num(); i++)
 		{
