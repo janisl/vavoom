@@ -461,6 +461,7 @@ protected:
 	bool					HaveDrawRangeElements;
 
 	TArray<GLhandleARB>		CreatedShaderObjects;
+	TArray<VMeshModel*>		UploadedModels;
 
 	GLhandleARB				DrawSimpleProgram;
 	GLint					DrawSimpleTextureLoc;
@@ -662,6 +663,7 @@ protected:
 	GLhandleARB CreateProgram(GLhandleARB VertexShader, GLhandleARB FragmentShader);
 
 	void UploadModel(VMeshModel* Mdl);
+	void UnloadModels();
 
 #define _(x)	x##_t	p_##x
 	_(glMultiTexCoord2fARB);

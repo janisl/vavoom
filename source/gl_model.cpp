@@ -164,6 +164,26 @@ void VOpenGLDrawer::UploadModel(VMeshModel* Mdl)
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 	Mdl->Uploaded = true;
+	UploadedModels.Append(Mdl);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VOpenGLDrawer::UnloadModels
+//
+//==========================================================================
+
+void VOpenGLDrawer::UnloadModels()
+{
+	guard(VOpenGLDrawer::UnloadModels);
+	for (int i = 0; i < UploadedModels.Num(); i++)
+	{
+		p_glDeleteBuffersARB(1, &UploadedModels[i]->VertsBuffer);
+		p_glDeleteBuffersARB(1, &UploadedModels[i]->IndexBuffer);
+		UploadedModels[i]->Uploaded = false;
+	}
+	UploadedModels.Clear();
 	unguard;
 }
 

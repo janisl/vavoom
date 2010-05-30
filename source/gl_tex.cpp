@@ -130,6 +130,8 @@ void VOpenGLDrawer::DeleteTextures()
 		p_glDeleteObjectARB(CreatedShaderObjects[i]);
 	}
 	CreatedShaderObjects.Clear();
+
+	UnloadModels();
 	unguard;
 }
 
