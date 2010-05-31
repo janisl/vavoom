@@ -1,3 +1,5 @@
+#version 110
+
 uniform vec3		SAxis;
 uniform vec3		TAxis;
 uniform float		SOffs;

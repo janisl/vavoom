@@ -1,3 +1,5 @@
+#version 110
+
 uniform sampler2D	Texture;
 uniform int			FogType;
 uniform vec4		FogColour;

@@ -1,3 +1,5 @@
+#version 110
+
 uniform float		Inter;
 uniform mat4		ModelToWorldMat;
 

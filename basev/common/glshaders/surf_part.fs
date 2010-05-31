@@ -1,3 +1,5 @@
+#version 110
+
 varying vec4		Light;
 varying vec2		TextureCoordinate;
 

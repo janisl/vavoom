@@ -1,3 +1,5 @@
+#version 110
+
 uniform sampler2D	Texture;
 uniform sampler2D	LightMap;
 uniform sampler2D	SpecularMap;

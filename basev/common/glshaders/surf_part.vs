@@ -1,3 +1,5 @@
+#version 110
+
 attribute vec4		LightVal;
 attribute vec2		TexCoord;
 

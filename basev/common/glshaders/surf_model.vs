@@ -1,3 +1,5 @@
+#version 110
+
 uniform float		Inter;
 
 attribute vec4		Vert2;

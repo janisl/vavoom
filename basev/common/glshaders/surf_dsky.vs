@@ -1,3 +1,5 @@
+#version 110
+
 attribute vec2		TexCoord;
 attribute vec2		TexCoord2;
 

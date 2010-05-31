@@ -1,3 +1,5 @@
+#version 110
+
 uniform vec3		LightPos;
 uniform float		LightRadius;
 

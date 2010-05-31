@@ -1,3 +1,5 @@
+#version 110
+
 uniform sampler2D	Texture;
 
 varying vec2		TextureCoordinate;

@@ -1,3 +1,5 @@
+#version 110
+
 uniform int			FogType;
 uniform vec4		FogColour;
 uniform float		FogDensity;

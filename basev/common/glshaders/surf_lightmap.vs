@@ -1,3 +1,5 @@
+#version 110
+
 uniform vec3		SAxis;
 uniform vec3		TAxis;
 uniform float		SOffs;
@@ -23,8 +25,8 @@ void main()
 	//	Calculate texture coordinates.
 	float s = (dot(gl_Vertex.xyz, SAxis) + SOffs);
 	float t = (dot(gl_Vertex.xyz, TAxis) + TOffs);
-	float lights = (s - TexMinS + CacheS * 16 + 8) / (BLOCK_WIDTH * 16);
-	float lightt = (t - TexMinT + CacheT * 16 + 8) / (BLOCK_HEIGHT * 16);
+	float lights = (s - TexMinS + CacheS * 16.0 + 8.0) / (BLOCK_WIDTH * 16.0);
+	float lightt = (t - TexMinT + CacheT * 16.0 + 8.0) / (BLOCK_HEIGHT * 16.0);
 	TextureCoordinate = vec2(s * TexIW, t * TexIH);
 	LightmapCoordinate = vec2(lights, lightt);
 }
