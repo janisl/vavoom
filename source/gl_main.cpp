@@ -690,7 +690,7 @@ void VOpenGLDrawer::Setup2D()
 	glDisable(GL_BLEND);
 	if (HaveDepthClamp)
 	{
-		glDisable(GL_DEPTH_CLAMP_ARB);
+		glDisable(GL_DEPTH_CLAMP);
 	}
 	if (!HaveShaders)
 	{
@@ -840,7 +840,7 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	glDisable(GL_ALPHA_TEST);
 	if (RendLev && RendLev->NeedsInfiniteFarClip && HaveDepthClamp)
 	{
-		glEnable(GL_DEPTH_CLAMP_ARB);
+		glEnable(GL_DEPTH_CLAMP);
 	}
 
 	if (pointparmsable)

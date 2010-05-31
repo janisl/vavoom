@@ -280,7 +280,7 @@ typedef void (APIENTRY*glGetVertexAttribPointervARB_t)(GLuint, GLenum, GLvoid* *
 #endif
 
 #ifndef GL_ARB_depth_clamp
-#define GL_DEPTH_CLAMP_ARB					0x864F
+#define GL_DEPTH_CLAMP						0x864F
 #endif
 
 #ifndef GL_ARB_vertex_buffer_object
