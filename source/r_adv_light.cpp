@@ -739,14 +739,8 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 		return;
 	}
 
-	float a1 = ViewClip.PointToClipAngle(*line->v2);
-	float a2 = ViewClip.PointToClipAngle(*line->v1);
-	if (!ViewClip.IsRangeVisible(a1, a2))
-	{
-		return;
-	}
-	a1 = LightClip.PointToClipAngle(*line->v2);
-	a2 = LightClip.PointToClipAngle(*line->v1);
+	float a1 = LightClip.PointToClipAngle(*line->v2);
+	float a2 = LightClip.PointToClipAngle(*line->v1);
 	if (!LightClip.IsRangeVisible(a1, a2))
 	{
 		return;
@@ -900,7 +894,6 @@ void VAdvancedRenderLevel::RenderLightSubsector(int num)
 
 	//	Add subsector's segs to the clipper. Clipping against mirror
 	// is done only for vertical mirror planes.
-	ViewClip.ClipAddSubsectorSegs(Sub);
 	LightClip.ClipAddSubsectorSegs(Sub);
 	unguard;
 }
@@ -921,15 +914,7 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox)
 	{
 		return;
 	}
-	if (ViewClip.ClipIsFull())
-	{
-		return;
-	}
 
-	if (!ViewClip.ClipIsBBoxVisible(bbox))
-	{
-		return;
-	}
 	if (!LightClip.ClipIsBBoxVisible(bbox))
 	{
 		return;
@@ -1032,14 +1017,6 @@ void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 
 	//	Draw light.
 	Drawer->BeginLightPass(CurrLightPos, CurrLightRadius, Colour);
-	ViewClip.ClearClipNodes(vieworg, Level);
-	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
-		RD->fovx, RD->fovy);
-	if (Range)
-	{
-		//	Range contains a valid range, so we must clip away holes in it.
-		ViewClip.ClipToRanges(*Range);
-	}
 	LightClip.ClearClipNodes(CurrLightPos, Level);
 	RenderLightBSPNode(Level->NumNodes - 1, dummy_bbox);
 	Drawer->BeginModelsLightPass(CurrLightPos, CurrLightRadius, Colour);
