@@ -24,7 +24,7 @@
 //**************************************************************************
 //**
 //**	Rendering main loop and setup functions, utility functions (BSP,
-//**  geometry, trigonometry). See tables.c, too.
+//**  geometry, trigonometry).
 //**
 //**************************************************************************
 
@@ -490,6 +490,11 @@ void VAdvancedRenderLevel::MarkLeaves()
 void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
 {
 	guard(VAdvancedRenderLevel::RenderScene);
+	if (!Drawer->SupportsAdvancedRendering())
+	{
+		Host_Error("Advanced rendering not supported by graphics card");
+	}
+
 	r_viewleaf = Level->PointInSubsector(vieworg);
 
 	TransformFrustum();
@@ -551,6 +556,10 @@ void VAdvancedRenderLevel::RenderPlayerView()
 	if (!Level->LevelInfo)
 	{
 		return;
+	}
+	if (!Drawer->SupportsAdvancedRendering())
+	{
+		Host_Error("Advanced rendering not supported by graphics card");
 	}
 
 	GTextureManager.Time = Level->Time;

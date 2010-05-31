@@ -173,10 +173,6 @@ void R_Start(VLevel* ALevel)
 		break;
 
 	case 2:
-		if (!Drawer->SupportsAdvancedRendering())
-		{
-			Host_Error("Advanced rendering not supported by graphics card");
-		}
 		ALevel->RenderData = new VAdvancedRenderLevel(ALevel);
 		break;
 
