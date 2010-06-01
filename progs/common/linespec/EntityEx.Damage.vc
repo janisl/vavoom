@@ -39,6 +39,10 @@
 final void Damage(EntityEx inflictor, EntityEx source, int damage,
 	optional name DmgType, optional bool NoArmor)
 {
+	if (bIsPlayer && Player.Health != Health)
+	{
+		print("Starts with wrong health %d != %d", Health, Player.Health);
+	}
 	int	i;
 
 	if (!bShootable)
@@ -268,12 +272,12 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			AutoUseHealth(damage - Health + 1);
 		}
 
-		Player.Health -= damage;	// mirror mobj health here for Dave
-		if (Player.Health < 50 && !Level.Game.deathmatch)
+		if (Player.Health - damage < 50 && !Level.Game.deathmatch)
 		{
 			// Try to use some inventory health
 			AutoUseStrifeHealth(damage - Health + 1);
 		}
+		Player.Health -= damage;	// mirror mobj health here for Dave
 		if (Player.Health < 0)
 		{
 			Player.Health = 0;
@@ -291,6 +295,10 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 
 	// do the damage    
 	Health -= damage;
+	if (bIsPlayer && Player.Health != Health)
+	{
+		print("Wrong health %d != %d", Health, Player.Health);
+	}
 	if (Health <= 0)
 	{
 		// Death
