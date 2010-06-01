@@ -39,10 +39,6 @@
 final void Damage(EntityEx inflictor, EntityEx source, int damage,
 	optional name DmgType, optional bool NoArmor)
 {
-	if (bIsPlayer && Player.Health != Health)
-	{
-		print("Starts with wrong health %d != %d", Health, Player.Health);
-	}
 	int	i;
 
 	if (!bShootable)
@@ -295,10 +291,6 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 
 	// do the damage    
 	Health -= damage;
-	if (bIsPlayer && Player.Health != Health)
-	{
-		print("Wrong health %d != %d", Health, Player.Health);
-	}
 	if (Health <= 0)
 	{
 		// Death
