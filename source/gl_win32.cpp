@@ -91,9 +91,9 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	bool AWindowed)
 {
 	guard(VWin32OpenGLDrawer::SetResolution);
-	int Width = AWidth;
-	int Height = AHeight;
-	int BPP = ABPP;
+	int			Width = AWidth;
+	int			Height = AHeight;
+	int			BPP = ABPP;
 	int			pixelformat;
 	MSG			msg;
 
@@ -113,7 +113,7 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		return false;
 	}
 
-	//	Sut down current mode
+	//	Shut down current mode
 	Shutdown();
 
 	Windowed = AWindowed;
@@ -137,7 +137,7 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 
 	//	Create window
 	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows",
-		Windowed ? WS_OVERLAPPEDWINDOW : WS_POPUP,
+		Windowed ? WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS : WS_POPUP,
 		0, 0, 2, 2, hwnd, NULL, hInst, NULL);
 	if (!RenderWindow)
 	{
@@ -166,7 +166,7 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		DispatchMessage(&msg);
 	}
 
-	Sleep(100);
+	Sleep(10);
 
 	if (Windowed)
 	{
@@ -175,8 +175,8 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		WindowRect.right=(long)Width;
 		WindowRect.top=(long)0;
 		WindowRect.bottom=(long)Height;
-		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
-			WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
+			FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 		SetWindowPos(RenderWindow, HWND_TOP, 0, 0,
 			WindowRect.right-WindowRect.left,
 			WindowRect.bottom-WindowRect.top, SWP_NOMOVE);

@@ -217,6 +217,7 @@ public:
 		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
 
 private:
+	bool Reset();
 	void Setup2D();
 	void FlushTextures();
 	void ReleaseTextures();

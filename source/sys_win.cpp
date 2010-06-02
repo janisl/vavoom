@@ -434,15 +434,32 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg,
 
 	 case MM_MCINOTIFY:
 		if (GCDMsgHandler)
+		{
 			return GCDMsgHandler->OnMessage(hwnd, iMsg, wParam, lParam);
+		}
 		break;
 
-	 case WM_SYSCOMMAND:
+	case WM_SYSKEYDOWN:
+		// Pressing Alt+Enter can toggle between fullscreen and windowed.
+		if (wParam == VK_RETURN && !(lParam & 0x40000000))
+		{
+			// TODO: Add something here...
+		}
+		// Pressing Alt+F4 quits the program.
+		if (wParam == VK_F4 && !(lParam & 0x40000000))
+		{
+			PostQuitMessage(0);
+		}
+		break;
+
+	case WM_SYSCOMMAND:
 		// Check for maximize being hit
 		switch (wParam & ~0x0F)
 		{
 		 case SC_SCREENSAVE:
 		 case SC_MONITORPOWER:
+		 case SC_KEYMENU:
+		 case SC_HOTKEY:
 			// don't call DefWindowProc() because we don't want to start
 			// the screen saver fullscreen
 			return 0;
@@ -554,7 +571,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 		//	Create window class
 		wndclass.cbSize        = sizeof(wndclass);
-		wndclass.style         = 0;
+		wndclass.style         = CS_VREDRAW | CS_HREDRAW | CS_OWNDC;
 		wndclass.lpfnWndProc   = WndProc;
 		wndclass.cbClsExtra    = 0;
 		wndclass.cbWndExtra    = 0;
@@ -564,7 +581,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		wndclass.hbrBackground = NULL;
 		wndclass.lpszMenuName  = NULL;
 		wndclass.lpszClassName = "VAVOOM";
-		wndclass.hIconSm       = NULL;
+		wndclass.hIconSm       = LoadIcon(hInstance, "APPICON");
 
 		if (!RegisterClassEx(&wndclass))
 		{
@@ -574,7 +591,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 		//	Create window
 		hwnd = CreateWindowEx(WS_EX_APPWINDOW, "VAVOOM", "VAVOOM for Windows",
-			WS_POPUP, 0, 0, 2, 2, NULL, NULL, hInst, NULL);
+			WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 2, 2,
+			NULL, NULL, hInst, NULL);
 		if (!hwnd)
 		{
 			MessageBox(NULL, "Couldn't create window", "Error", MB_OK);

@@ -123,6 +123,26 @@ void VDirect3DDrawer::Init()
 
 //==========================================================================
 //
+// 	VDirect3DDrawer::Reset
+//
+// 	Set up the video mode
+//
+//==========================================================================
+
+bool VDirect3DDrawer::Reset()
+{
+	guard(VDirect3DDrawer::Reset);
+	if (SetResolution(ScreenWidth, ScreenHeight, ScreenBPP,	Windowed))
+	{
+		InitResolution();
+		return true;
+	}
+	return false;
+	unguard;
+}
+
+//==========================================================================
+//
 // 	VDirect3DDrawer::SetResolution
 //
 // 	Set up the video mode
@@ -168,8 +188,8 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 		WindowRect.right = Width;
 		WindowRect.top = 0;
 		WindowRect.bottom = Height;
-		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW, FALSE,
-			WS_EX_APPWINDOW);
+		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
+			FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 		SetWindowPos(hwnd, HWND_TOP, 0, 0, WindowRect.right - WindowRect.left,
 			WindowRect.bottom - WindowRect.top, SWP_NOMOVE);
 	}
@@ -287,6 +307,13 @@ void VDirect3DDrawer::InitResolution()
 void VDirect3DDrawer::StartUpdate()
 {
 	guard(VDirect3DDrawer::StartUpdate);
+	HRESULT hr = RenderDevice->TestCooperativeLevel();
+	if (FAILED(hr) && (hr != D3DERR_DEVICENOTRESET || !Reset()))
+	{
+		Sleep(1);
+		return;
+	}
+
 	//	Clear surface
 	if (clear)
 	{
@@ -600,7 +627,9 @@ void VDirect3DDrawer::BeginDirectUpdate()
 
 void VDirect3DDrawer::EndDirectUpdate()
 {
+	guard(VDirect3DDrawer::EndDirectUpdate);
 	Update();
+	unguard;
 }
 
 //==========================================================================
