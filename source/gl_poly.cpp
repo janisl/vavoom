@@ -1555,6 +1555,12 @@ bool VOpenGLDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 	guard(VOpenGLDrawer::StartPortal);
 	if (UseStencil)
 	{
+		//	Doesn't work for now.
+		if (RendLev->NeedsInfiniteFarClip)
+		{
+			return false;
+		}
+
 		//	Disable drawing
 		if (HaveShaders)
 		{
