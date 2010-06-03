@@ -388,6 +388,7 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	//	Close stream.
 	InStrm->Close();
 	delete InStrm;
+	InStrm = NULL;
 
 	//	Start playback.
 	Player_Start(module);

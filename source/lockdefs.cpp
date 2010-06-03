@@ -81,6 +81,7 @@ static void ParseLockDefs(VScriptParser* sc)
 			if (LockDefs[Lock])
 			{
 				delete LockDefs[Lock];
+				LockDefs[Lock] = NULL;
 			}
 			VLockDef* LDef = new VLockDef;
 			LockDefs[Lock] = LDef;
@@ -167,6 +168,7 @@ static void ParseLockDefs(VScriptParser* sc)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

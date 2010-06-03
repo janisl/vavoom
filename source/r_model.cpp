@@ -150,6 +150,7 @@ void R_InitModels()
 		VXmlDocument* Doc = new VXmlDocument();
 		Doc->Parse(*Strm, "models/models.xml");
 		delete Strm;
+		Strm = NULL;
 
 		for (VXmlNode* N = Doc->Root.FindChild("include"); N; N = N->FindNext())
 		{
@@ -157,6 +158,7 @@ void R_InitModels()
 		}
 
 		delete Doc;
+		Doc = NULL;
 	}
 	unguard;
 }
@@ -173,6 +175,7 @@ void R_FreeModels()
 	for (int i = 0; i < mod_known.Num(); i++)
 	{
 		delete mod_known[i];
+		mod_known[i] = NULL;
 	}
 	mod_known.Clear();
 
@@ -183,12 +186,14 @@ void R_FreeModels()
 			Z_Free(GMeshModels[i]->Data);
 		}
 		delete GMeshModels[i];
+		GMeshModels[i] = NULL;
 	}
 	GMeshModels.Clear();
 
 	for (int i = 0; i < ClassModels.Num(); i++)
 	{
 		delete ClassModels[i];
+		ClassModels[i] = NULL;
 	}
 	ClassModels.Clear();
 	unguard;
@@ -485,6 +490,7 @@ static void ParseModelScript(VModel* Mdl, VStream& Strm)
 
 	//	We don't need the XML file anymore.
 	delete Doc;
+	Doc = NULL;
 	unguard;
 }
 
@@ -526,6 +532,7 @@ VModel* Mod_FindName(const VStr& name)
 	}
 	ParseModelScript(mod, *Strm);
 	delete Strm;
+	Strm = NULL;
 	return mod;
 	unguard;
 }
@@ -782,6 +789,7 @@ static mmdl_t* Mod_Extradata(VMeshModel* mod)
 	mod->Data = (mmdl_t*)Z_Malloc(Strm->TotalSize());
 	Strm->Serialise(mod->Data, Strm->TotalSize());
 	delete Strm;
+	Strm = NULL;
 
 	if (LittleLong(*(vuint32*)mod->Data) != IDPOLY2HEADER)
 	{

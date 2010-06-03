@@ -101,6 +101,7 @@ VFlatTexture::~VFlatTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }
@@ -139,6 +140,7 @@ vuint8* VFlatTexture::GetPixels()
 			Pixels[i] = r_black_colour;
 	}
 	delete Strm;
+	Strm = NULL;
 
 	return Pixels;
 	unguard;

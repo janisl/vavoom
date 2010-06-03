@@ -161,25 +161,30 @@ VClass::~VClass()
 	if (GameExpr)
 	{
 		delete GameExpr;
+		GameExpr = NULL;
 	}
 	if (MobjInfoExpr)
 	{
 		delete MobjInfoExpr;
+		MobjInfoExpr = NULL;
 	}
 	if (ScriptIdExpr)
 	{
 		delete ScriptIdExpr;
+		ScriptIdExpr = NULL;
 	}
 
 	if (ClassVTable)
 	{
 		delete[] ClassVTable;
+		ClassVTable = NULL;
 	}
 #ifndef IN_VCC
 	if (Defaults)
 	{
 		DestructObject((VObject*)Defaults);
 		delete[] Defaults;
+		Defaults = NULL;
 	}
 #endif
 

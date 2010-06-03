@@ -71,6 +71,7 @@ VConstant::~VConstant()
 	if (ValueExpr)
 	{
 		delete ValueExpr;
+		ValueExpr = NULL;
 	}
 }
 

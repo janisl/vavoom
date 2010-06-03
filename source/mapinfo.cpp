@@ -1491,6 +1491,7 @@ static void ParseMapInfo(VScriptParser* sc)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

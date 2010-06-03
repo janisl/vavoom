@@ -81,6 +81,7 @@ VViewClipper::~VViewClipper()
 	{
 		VClipNode* Next = Node->Next;
 		delete Node;
+		Node = NULL;
 		Node = Next;
 	}
 	unguard;

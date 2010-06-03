@@ -82,11 +82,20 @@ VVector::VVector(VExpression* AOp1, VExpression* AOp2, VExpression* AOp3, const 
 VVector::~VVector()
 {
 	if (op1)
+	{
 		delete op1;
+		op1 = NULL;
+	}
 	if (op2)
+	{
 		delete op2;
+		op2 = NULL;
+	}
 	if (op3)
+	{
 		delete op3;
+		op3 = NULL;
+	}
 }
 
 //==========================================================================
@@ -498,7 +507,10 @@ VDefaultObject::VDefaultObject(VExpression* AOp, const TLocation& ALoc)
 VDefaultObject::~VDefaultObject()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -600,7 +612,10 @@ VPushPointed::VPushPointed(VExpression* AOp)
 VPushPointed::~VPushPointed()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -704,11 +719,20 @@ VConditional::VConditional(VExpression* AOp, VExpression* AOp1, VExpression* AOp
 VConditional::~VConditional()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 	if (op1)
+	{
 		delete op1;
+		op1 = NULL;
+	}
 	if (op2)
+	{
 		delete op2;
+		op2 = NULL;
+	}
 }
 
 //==========================================================================
@@ -953,7 +977,10 @@ VDropResult::VDropResult(VExpression* AOp)
 VDropResult::~VDropResult()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================

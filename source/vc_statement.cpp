@@ -143,11 +143,20 @@ VIf::VIf(VExpression* AExpr, VStatement* ATrueStatement,
 VIf::~VIf()
 {
 	if (Expr)
+	{
 		delete Expr;
+		Expr = NULL;
+	}
 	if (TrueStatement)
+	{
 		delete TrueStatement;
+		TrueStatement = NULL;
+	}
 	if (FalseStatement)
+	{
 		delete FalseStatement;
+		FalseStatement = NULL;
+	}
 }
 
 //==========================================================================
@@ -234,9 +243,15 @@ VWhile::VWhile(VExpression* AExpr, VStatement* AStatement, const TLocation& ALoc
 VWhile::~VWhile()
 {
 	if (Expr)
+	{
 		delete Expr;
+		Expr = NULL;
+	}
 	if (Statement)
+	{
 		delete Statement;
+		Statement = NULL;
+	}
 }
 
 //==========================================================================
@@ -314,9 +329,15 @@ VDo::VDo(VExpression* AExpr, VStatement* AStatement, const TLocation& ALoc)
 VDo::~VDo()
 {
 	if (Expr)
+	{
 		delete Expr;
+		Expr = NULL;
+	}
 	if (Statement)
+	{
 		delete Statement;
+		Statement = NULL;
+	}
 }
 
 //==========================================================================
@@ -394,14 +415,26 @@ VFor::~VFor()
 {
 	for (int i = 0; i < InitExpr.Num(); i++)
 		if (InitExpr[i])
+		{
 			delete InitExpr[i];
+			InitExpr[i] = NULL;
+		}
 	if (CondExpr)
+	{
 		delete CondExpr;
+		CondExpr = NULL;
+	}
 	for (int i = 0; i < LoopExpr.Num(); i++)
 		if (LoopExpr[i])
+		{
 			delete LoopExpr[i];
+			LoopExpr[i] = NULL;
+		}
 	if (Statement)
+	{
 		delete Statement;
+		Statement = NULL;
+	}
 }
 
 //==========================================================================
@@ -532,9 +565,15 @@ VForeach::VForeach(VExpression* AExpr, VStatement* AStatement,
 VForeach::~VForeach()
 {
 	if (Expr)
+	{
 		delete Expr;
+		Expr = NULL;
+	}
 	if (Statement)
+	{
 		delete Statement;
+		Statement = NULL;
+	}
 }
 
 //==========================================================================
@@ -616,10 +655,18 @@ VSwitch::VSwitch(const TLocation& ALoc)
 VSwitch::~VSwitch()
 {
 	if (Expr)
+	{
 		delete Expr;
+		Expr = NULL;
+	}
 	for (int i = 0; i < Statements.Num(); i++)
+	{
 		if (Statements[i])
+		{
 			delete Statements[i];
+			Statements[i] = NULL;
+		}
+	}
 }
 
 //==========================================================================
@@ -736,6 +783,7 @@ VSwitchCase::~VSwitchCase()
 	if (Expr)
 	{
 		delete Expr;
+		Expr = NULL;
 	}
 }
 
@@ -926,7 +974,10 @@ VReturn::VReturn(VExpression* AExpr, const TLocation& ALoc)
 VReturn::~VReturn()
 {
 	if (Expr)
+	{
 		delete Expr;
+		Expr = NULL;
+	}
 }
 
 //==========================================================================
@@ -1020,7 +1071,10 @@ VExpressionStatement::VExpressionStatement(VExpression* AExpr)
 VExpressionStatement::~VExpressionStatement()
 {
 	if (Expr)
+	{
 		delete Expr;
+		Expr = NULL;
+	}
 }
 
 //==========================================================================
@@ -1071,7 +1125,10 @@ VLocalVarStatement::VLocalVarStatement(VLocalDecl* ADecl)
 VLocalVarStatement::~VLocalVarStatement()
 {
 	if (Decl)
+	{
 		delete Decl;
+		Decl = NULL;
+	}
 }
 
 //==========================================================================
@@ -1118,8 +1175,13 @@ VCompound::VCompound(const TLocation& ALoc)
 VCompound::~VCompound()
 {
 	for (int i = 0; i < Statements.Num(); i++)
+	{
 		if (Statements[i])
+		{
 			delete Statements[i];
+			Statements[i] = NULL;
+		}
+	}
 }
 
 //==========================================================================

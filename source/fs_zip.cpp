@@ -233,6 +233,7 @@ VZipFile::VZipFile(const VStr& zipfile)
 		FileStream->Serialise(filename_inzip, file_info.size_filename);
 		Files[i].Name = VStr(filename_inzip).ToLower().FixFileSlashes();
 		delete[] filename_inzip;
+		filename_inzip = NULL;
 
 		//	Set up lump name for WAD-like access.
 		VStr LumpName = Files[i].Name.ExtractFileName().StripExtension();
@@ -481,6 +482,7 @@ void VZipFile::ReadFromLump(int Lump, void* Dest, int Pos, int Size)
 	Strm->Seek(Pos);
 	Strm->Serialise(Dest, Size);
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 

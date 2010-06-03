@@ -409,6 +409,7 @@ IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLight)
 		memcpy(Self->XLevel->StaticLights, OldLights,
 			(Self->XLevel->NumStaticLights - 1) * sizeof(rep_light_t));
 		delete[] OldLights;
+		OldLights = NULL;
 	}
 	rep_light_t& L = Self->XLevel->StaticLights[Self->XLevel->NumStaticLights - 1];
 	L.Origin = Origin;
@@ -430,6 +431,7 @@ IMPLEMENT_FUNCTION(VLevelInfo, AddStaticLightRGB)
 		memcpy(Self->XLevel->StaticLights, OldLights,
 			(Self->XLevel->NumStaticLights - 1) * sizeof(rep_light_t));
 		delete[] OldLights;
+		OldLights = NULL;
 	}
 	rep_light_t& L = Self->XLevel->StaticLights[Self->XLevel->NumStaticLights - 1];
 	L.Origin = Origin;

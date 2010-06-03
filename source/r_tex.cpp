@@ -659,6 +659,7 @@ void VTextureManager::AddTexturesLump(int NamesLump, int TexLump,
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 
 	//	Load the map texture definitions from textures.lmp.
 	//	The data is contained in one or two lumps, TEXTURE1 for shareware,
@@ -696,7 +697,9 @@ void VTextureManager::AddTexturesLump(int NamesLump, int TexLump,
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	delete[] patchtexlookup;
+	patchtexlookup = NULL;
 	unguard;
 }
 
@@ -774,6 +777,7 @@ void VTextureManager::AddHiResTextures()
 			NewTex->TextureTranslation = OldTex->TextureTranslation;
 			Textures[OldIdx] = NewTex;
 			delete OldTex;
+			OldTex = NULL;
 		}
 	}
 
@@ -842,6 +846,7 @@ void VTextureManager::AddHiResTextures()
 				NewTex->TextureTranslation = OldTex->TextureTranslation;
 				Textures[OldIdx] = NewTex;
 				delete OldTex;
+				OldTex = NULL;
 			}
 			else if (sc->Check("define"))
 			{
@@ -882,6 +887,7 @@ void VTextureManager::AddHiResTextures()
 					NewTex->TextureTranslation = OldTex->TextureTranslation;
 					Textures[OldIdx] = NewTex;
 					delete OldTex;
+					OldTex = NULL;
 				}
 				else
 				{
@@ -914,6 +920,7 @@ void VTextureManager::AddHiResTextures()
 			}
 		}
 		delete sc;
+		sc = NULL;
 	}
 	unguard;
 }
@@ -1025,6 +1032,7 @@ void P_InitAnimated()
 		AnimDefs.Append(ad);
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1193,6 +1201,7 @@ static int AddSwitchDef(TSwitch* Switch)
 		if (Switches[i]->Tex == Switch->Tex)
 		{
 			delete Switches[i];
+			Switches[i] = NULL;
 			Switches[i] = Switch;
 			return i;
 		}
@@ -1360,9 +1369,15 @@ static void ParseSwitchDef(VScriptParser* sc)
 	if (t1 < 0 || !Def1)
 	{
 		if (Def1)
+		{
 			delete Def1;
+			Def1 = NULL;
+		}
 		if (Def2)
+		{
 			delete Def2;
+			Def2 = NULL;
+		}
 		return;
 	}
 
@@ -1544,6 +1559,7 @@ static void ParseCameraTexture(VScriptParser* sc)
 		FitHeight = OldTex->GetScaledHeight();
 		GTextureManager.ReplaceTexture(TexNum, Tex);
 		delete OldTex;
+		OldTex = NULL;
 	}
 	else
 	{
@@ -1610,6 +1626,7 @@ static void ParseFTAnims(VScriptParser* sc)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 
@@ -1720,6 +1737,7 @@ void P_InitSwitchList()
 			Def1->PairIndex = AddSwitchDef(Def2);
 		}
 		delete Strm;
+		Strm = NULL;
 	}
 	Switches.Condense();
 	unguard;
@@ -1851,6 +1869,7 @@ void R_ShutdownTexture()
 	for (int i = 0; i < Switches.Num(); i++)
 	{
 		delete Switches[i];
+		Switches[i] = NULL;
 	}
 	Switches.Clear();
 	AnimDefs.Clear();
@@ -1858,6 +1877,7 @@ void R_ShutdownTexture()
 	for (int i = 0; i < AnimDoorDefs.Num(); i++)
 	{
 		delete[] AnimDoorDefs[i].Frames;
+		AnimDoorDefs[i].Frames = NULL;
 	}
 	AnimDoorDefs.Clear();
 

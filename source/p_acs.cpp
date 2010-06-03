@@ -429,6 +429,7 @@ VAcsObject::VAcsObject(VAcsLevel* ALevel, int Lump)
 	Data = new vuint8[Strm->TotalSize()];
 	Strm->Serialise(Data, Strm->TotalSize());
 	delete Strm;
+	Strm = NULL;
 	VAcsHeader* header = (VAcsHeader*)Data;
 
 	//	Check header.
@@ -498,15 +499,28 @@ VAcsObject::~VAcsObject()
 {
 	guard(VAcsObject::~VAcsObject);
 	delete[] Scripts;
+	Scripts = NULL;
 	delete[] Strings;
+	Strings = NULL;
 	delete[] LowerCaseNames;
+	LowerCaseNames = NULL;
 	for (int i = 0; i < NumArrays; i++)
+	{
 		delete[] ArrayStore[i].Data;
+		ArrayStore[i].Data = NULL;
+	}
 	if (ArrayStore)
+	{
 		delete[] ArrayStore;
+		ArrayStore = NULL;
+	}
 	if (Arrays)
+	{
 		delete[] Arrays;
+		Arrays = NULL;
+	}
 	delete[] Data;
+	Data = NULL;
 	unguard;
 }
 
@@ -1252,6 +1266,7 @@ VAcsLevel::~VAcsLevel()
 	for (int i = 0; i < LoadedObjects.Num(); i++)
 	{
 		delete LoadedObjects[i];
+		LoadedObjects[i] = NULL;
 	}
 	LoadedObjects.Clear();
 	unguard;
@@ -1684,6 +1699,7 @@ void VAcsGrowingArray::Redim(int NewSize)
 		{
 			memcpy(Data, Temp, Min(Size, NewSize) * sizeof(int));
 			delete[] Temp;
+			Temp = NULL;
 		}
 		//	Clear newly allocated elements.
 		if (NewSize > Size)
@@ -1765,6 +1781,7 @@ void VAcs::Destroy()
 	if (LocalVars)
 	{
 		delete[] LocalVars;
+		LocalVars = NULL;
 	}
 	unguard;
 }

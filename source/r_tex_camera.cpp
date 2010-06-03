@@ -77,6 +77,7 @@ VCameraTexture::~VCameraTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }

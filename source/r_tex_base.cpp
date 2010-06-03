@@ -89,12 +89,14 @@ VTexture* VTexture::CreateTexture(int Type, int LumpNum)
 			{
 				Tex->Type = Type;
 				delete Strm;
+				Strm = NULL;
 				return Tex;
 			}
 		}
 	}
 
 	delete Strm;
+	Strm = NULL;
 	return NULL;
 	unguard;
 }
@@ -139,10 +141,12 @@ VTexture::~VTexture()
 	if (Pixels8Bit)
 	{
 		delete[] Pixels8Bit;
+		Pixels8Bit = NULL;
 	}
 	if (HiResTexture)
 	{
 		delete HiResTexture;
+		HiResTexture = NULL;
 	}
 }
 

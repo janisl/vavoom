@@ -369,6 +369,7 @@ void VObject::CollectGarbage()
 		if (Obj->GetFlags() & _OF_Destroyed)
 		{
 			delete Obj;
+			Obj = NULL;
 		}
 	}
 	GInGarbageCollection = false;
@@ -431,6 +432,7 @@ IMPLEMENT_FUNCTION(VObject, Destroy)
 {
 	P_GET_SELF;
 	delete Self;
+	Self = NULL;
 }
 
 //==========================================================================

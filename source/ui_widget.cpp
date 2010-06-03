@@ -1145,6 +1145,7 @@ IMPLEMENT_FUNCTION(VWidget, Destroy)
 {
 	P_GET_SELF;
 	delete Self;
+	Self = NULL;
 }
 
 IMPLEMENT_FUNCTION(VWidget, DestroyAllChildren)

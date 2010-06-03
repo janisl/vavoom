@@ -98,6 +98,7 @@ static void ParseSkyBoxesScript(VScriptParser* sc)
 		sc->Expect("}");
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

@@ -360,6 +360,7 @@ VAudioCodec* VWavAudioCodec::Create(VStream* InStrm)
 		}
 		//	File seams to be broken.
 		delete Codec;
+		Codec = NULL;
 	}
 	return NULL;
 	unguard;

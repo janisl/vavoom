@@ -74,9 +74,15 @@ VArrayElement::VArrayElement(VExpression* AOp, VExpression* AInd, const TLocatio
 VArrayElement::~VArrayElement()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 	if (ind)
+	{
 		delete ind;
+		ind = NULL;
+	}
 }
 
 //==========================================================================
@@ -213,7 +219,10 @@ VDynArrayGetNum::VDynArrayGetNum(VExpression* AArrayExpr,
 VDynArrayGetNum::~VDynArrayGetNum()
 {
 	if (ArrayExpr)
+	{
 		delete ArrayExpr;
+		ArrayExpr = NULL;
+	}
 }
 
 //==========================================================================
@@ -264,9 +273,15 @@ VDynArraySetNum::VDynArraySetNum(VExpression* AArrayExpr,
 VDynArraySetNum::~VDynArraySetNum()
 {
 	if (ArrayExpr)
+	{
 		delete ArrayExpr;
+		ArrayExpr = NULL;
+	}
 	if (NumExpr)
+	{
 		delete NumExpr;
+		NumExpr = NULL;
+	}
 }
 
 //==========================================================================
@@ -328,11 +343,20 @@ VDynArrayInsert::VDynArrayInsert(VExpression* AArrayExpr,
 VDynArrayInsert::~VDynArrayInsert()
 {
 	if (ArrayExpr)
+	{
 		delete ArrayExpr;
+		ArrayExpr = NULL;
+	}
 	if (IndexExpr)
+	{
 		delete IndexExpr;
+		IndexExpr = NULL;
+	}
 	if (CountExpr)
+	{
 		delete CountExpr;
+		CountExpr = NULL;
+	}
 }
 
 //==========================================================================
@@ -416,11 +440,20 @@ VDynArrayRemove::VDynArrayRemove(VExpression* AArrayExpr,
 VDynArrayRemove::~VDynArrayRemove()
 {
 	if (ArrayExpr)
+	{
 		delete ArrayExpr;
+		ArrayExpr = NULL;
+	}
 	if (IndexExpr)
+	{
 		delete IndexExpr;
+		IndexExpr = NULL;
+	}
 	if (CountExpr)
+	{
 		delete CountExpr;
+		CountExpr = NULL;
+	}
 }
 
 //==========================================================================

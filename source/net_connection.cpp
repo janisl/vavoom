@@ -97,10 +97,12 @@ VNetConnection::~VNetConnection()
 	while (OpenChannels.Num())
 	{
 		delete OpenChannels[OpenChannels.Num() - 1];
+		OpenChannels[OpenChannels.Num() - 1] = NULL;
 	}
 	if (NetCon)
 	{
 		delete NetCon;
+		NetCon = NULL;
 	}
 	NetCon = NULL;
 	if (Context->ServerConnection)
@@ -115,10 +117,12 @@ VNetConnection::~VNetConnection()
 	if (UpdatePvs)
 	{
 		delete[] UpdatePvs;
+		UpdatePvs = NULL;
 	}
 	if (ObjMap)
 	{
 		delete ObjMap;
+		ObjMap = NULL;
 	}
 	unguard;
 }
@@ -621,6 +625,7 @@ void VNetConnection::SetUpFatPVS()
 		if (UpdatePvs)
 		{
 			delete[] UpdatePvs;
+			UpdatePvs = NULL;
 		}
 		UpdatePvsSize = (Level->NumSubsectors + 7) / 8;
 		UpdatePvs = new vuint8[UpdatePvsSize];

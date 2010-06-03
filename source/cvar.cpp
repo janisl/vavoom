@@ -305,7 +305,9 @@ void VCvar::Shutdown()
 		if (var->Flags & CVAR_Delete)
 		{
 			delete[] const_cast<char*>(var->DefaultString);
+			var->DefaultString = NULL;
 			delete var;
+			var = NULL;
 		}
 		var = Next;
 	}

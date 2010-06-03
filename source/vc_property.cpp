@@ -74,6 +74,7 @@ VProperty::~VProperty()
 	if (TypeExpr)
 	{
 		delete TypeExpr;
+		TypeExpr = NULL;
 	}
 }
 

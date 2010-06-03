@@ -89,6 +89,7 @@ VDemoPlaybackNetConnection::VDemoPlaybackNetConnection(VNetContext* AContext,
 VDemoPlaybackNetConnection::~VDemoPlaybackNetConnection()
 {
 	delete Strm;
+	Strm = NULL;
 #ifdef CLIENT
 	cls.demoplayback = false;
 #endif

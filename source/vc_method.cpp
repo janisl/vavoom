@@ -71,6 +71,7 @@ VMethodParam::~VMethodParam()
 	if (TypeExpr)
 	{
 		delete TypeExpr;
+		TypeExpr = NULL;
 	}
 	unguard;
 }
@@ -115,10 +116,12 @@ VMethod::~VMethod()
 	if (ReturnTypeExpr)
 	{
 		delete ReturnTypeExpr;
+		ReturnTypeExpr = NULL;
 	}
 	if (Statement)
 	{
 		delete Statement;
+		Statement = NULL;
 	}
 	unguard;
 }

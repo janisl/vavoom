@@ -166,6 +166,7 @@ void VAllegroSoundDevice::Shutdown()
 			}
 		}
 		delete[] Samples;
+		Samples = NULL;
 	}
 	remove_sound();
 	unguard;

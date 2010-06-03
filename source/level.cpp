@@ -436,21 +436,26 @@ void VLevel::Destroy()
 		msecnode_t* Node = HeadSecNode;
 		HeadSecNode = Node->SNext;
 		delete Node;
+		Node = NULL;
 	}
 
 	//	Free level data.
 	if (RenderData)
 	{
 		delete RenderData;
+		RenderData = NULL;
 	}
 
 	for (int i = 0; i < NumPolyObjs; i++)
 	{
 		delete[] PolyObjs[i].segs;
+		PolyObjs[i].segs = NULL;
 		delete[] PolyObjs[i].originalPts;
+		PolyObjs[i].originalPts = NULL;
 		if (PolyObjs[i].prevPts)
 		{
 			delete[] PolyObjs[i].prevPts;
+			PolyObjs[i].prevPts = NULL;
 		}
 	}
 	if (PolyBlockMap)
@@ -461,18 +466,22 @@ void VLevel::Destroy()
 			{
 				polyblock_t* Next = pb->next;
 				delete pb;
+				pb = NULL;
 				pb = Next;
 			}
 		}
 		delete[] PolyBlockMap;
+		PolyBlockMap = NULL;
 	}
 	if (PolyObjs)
 	{
 		delete[] PolyObjs;
+		PolyObjs = NULL;
 	}
 	if (PolyAnchorPoints)
 	{
 		delete[] PolyAnchorPoints;
+		PolyAnchorPoints = NULL;
 	}
 
 	if (Sectors)
@@ -484,52 +493,76 @@ void VLevel::Destroy()
 			{
 				Next = r->next;
 				delete r;
+				r = NULL;
 			}
 		}
 		delete[] Sectors[0].lines;
+		Sectors[0].lines = NULL;
 	}
 
 	delete[] Vertexes;
+	Vertexes = NULL;
 	delete[] Sectors;
+	Sectors = NULL;
 	delete[] Sides;
+	Sides = NULL;
 	delete[] Lines;
+	Lines = NULL;
 	delete[] Segs;
+	Segs = NULL;
 	delete[] Subsectors;
+	Subsectors = NULL;
 	delete[] Nodes;
+	Nodes = NULL;
 	if (VisData)
 	{
 		delete[] VisData;
+		VisData = NULL;
 	}
 	else
 	{
 		delete[] NoVis;
+		NoVis = NULL;
 	}
 	delete[] BlockMapLump;
+	BlockMapLump = NULL;
 	delete[] BlockLinks;
+	BlockLinks = NULL;
 	delete[] RejectMatrix;
+	RejectMatrix = NULL;
 	delete[] Things;
+	Things = NULL;
 	delete[] Zones;
+	Zones = NULL;
 
 	delete[] BaseLines;
+	BaseLines = NULL;
 	delete[] BaseSides;
+	BaseSides = NULL;
 	delete[] BaseSectors;
+	BaseSectors = NULL;
 	delete[] BasePolyObjs;
+	BasePolyObjs = NULL;
 
 	if (Acs)
 	{
 		delete Acs;
+		Acs = NULL;
 	}
 	if (GenericSpeeches)
 	{
 		delete[] GenericSpeeches;
+		GenericSpeeches = NULL;
 	}
 	if (LevelSpeeches)
 	{
 		delete[] LevelSpeeches;
+		LevelSpeeches = NULL;
 	}
 	if (StaticLights)
 	{
 		delete[] StaticLights;
+		StaticLights = NULL;
 	}
 
 	ActiveSequences.Clear();
@@ -539,6 +572,7 @@ void VLevel::Destroy()
 		if (Translations[i])
 		{
 			delete Translations[i];
+			Translations[i] = NULL;
 		}
 	}
 	Translations.Clear();
@@ -547,6 +581,7 @@ void VLevel::Destroy()
 		if (BodyQueueTrans[i])
 		{
 			delete BodyQueueTrans[i];
+			BodyQueueTrans[i] = NULL;
 		}
 	}
 	BodyQueueTrans.Clear();

@@ -79,7 +79,10 @@ VField::VField(VName AName, VMemberBase* AOuter, TLocation ALoc)
 VField::~VField()
 {
 	if (TypeExpr)
+	{
 		delete TypeExpr;
+		TypeExpr = NULL;
+	}
 }
 
 //==========================================================================

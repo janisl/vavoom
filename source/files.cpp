@@ -97,8 +97,10 @@ static void AddZipFile(VStr ZipName)
 		vuint8* Buf = new vuint8[Len];
 		WadStrm->Serialise(Buf, Len);
 		delete WadStrm;
+		WadStrm = NULL;
 		WadStrm = new VMemoryStream(Buf, Len);
 		delete[] Buf;
+		Buf = NULL;
 
 		if (GwaStrm)
 		{
@@ -106,8 +108,10 @@ static void AddZipFile(VStr ZipName)
 			Buf = new vuint8[Len];
 			GwaStrm->Serialise(Buf, Len);
 			delete GwaStrm;
+			GwaStrm = NULL;
 			GwaStrm = new VMemoryStream(Buf, Len);
 			delete[] Buf;
+			Buf = NULL;
 		}
 
 		W_AddFileFromZip(ZipName + ":" + Wads[i], WadStrm,
@@ -280,6 +284,7 @@ static void ParseBase(const VStr& name)
 		sc->Expect("end");
 	}
 	delete sc;
+	sc = NULL;
 
 	for (int gi = games.Num() - 1; gi >= 0; gi--)
 	{
@@ -422,6 +427,7 @@ static void RenameSprites()
 		R.New[3] = New[3];
 	}
 	delete sc;
+	sc = NULL;
 
 	bool RenameAll = !!GArgs.CheckParm("-oldsprites");
 	for (int i = 0; i < SearchPaths.Num(); i++)
@@ -541,6 +547,7 @@ void FL_Shutdown()
 	for (int i = 0; i < SearchPaths.Num(); i++)
 	{
 		delete SearchPaths[i];
+		SearchPaths[i] = NULL;
 	}
 	SearchPaths.Clear();
 	fl_basedir.Clean();

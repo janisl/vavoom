@@ -660,6 +660,7 @@ void VScriptArray::Resize(int NewSize, VFieldType& Type)
 			VField::DestructField(OldData + i * InnerSize, Type);
 		}
 		delete[] OldData;
+		OldData = NULL;
 	}
 	unguard;
 }

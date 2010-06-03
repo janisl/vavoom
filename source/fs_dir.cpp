@@ -125,6 +125,7 @@ void VFilesDir::ReadFromLump(int Lump, void* Dest, int Pos, int Size)
 	Strm->Seek(Pos);
 	Strm->Serialise(Dest, Size);
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -143,6 +144,7 @@ int VFilesDir::LumpLength(int Lump)
 	check(Strm);
 	int Ret = Strm->TotalSize();
 	delete Strm;
+	Strm = NULL;
 	return Ret;
 	unguard;
 }

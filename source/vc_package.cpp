@@ -195,9 +195,13 @@ public:
 	~VProgsReader()
 	{
 		delete[] NameRemap;
+		NameRemap = NULL;
 		delete[] Imports;
+		Imports = NULL;
 		delete[] Exports;
+		Exports = NULL;
 		delete Stream;
+		Stream = NULL;
 	}
 
 	//	Stream interface.

@@ -99,6 +99,7 @@ VScriptParser::VScriptParser(const VStr& name, VStream* Strm)
 	Strm->Serialise(ScriptBuffer, ScriptSize);
 	ScriptBuffer[ScriptSize] = 0;
 	delete Strm;
+	Strm = NULL;
 	ScriptPtr = ScriptBuffer;
 	ScriptEndPtr = ScriptPtr + ScriptSize;
 
@@ -121,6 +122,7 @@ VScriptParser::~VScriptParser()
 {
 	guard(VScriptParser::~VScriptParser);
 	delete[] ScriptBuffer;
+	ScriptBuffer = NULL;
 	unguard;
 }
 

@@ -134,10 +134,12 @@ VTgaTexture::~VTgaTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	if (Palette)
 	{
 		delete[] Palette;
+		Palette = NULL;
 	}
 	unguard;
 }
@@ -516,6 +518,7 @@ vuint8* VTgaTexture::GetPixels()
 	}
 
 	delete Strm;
+	Strm = NULL;
 
 	//	For 8-bit textures remap colour 0.
 	if (Format == TEXFMT_8Pal)
@@ -620,6 +623,7 @@ void WriteTGA(char* filename, void* data, int width, int height, int bpp,
 	}
 
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 #endif

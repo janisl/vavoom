@@ -224,6 +224,7 @@ void VFont::StaticShutdown()
 	{
 		VFont* Next = F->Next;
 		delete F;
+		F = NULL;
 		F = Next;
 	}
 	Fonts = NULL;
@@ -599,6 +600,7 @@ VFont* VFont::GetFont(VName AName, VName LumpName)
 		char Hdr[4];
 		Strm->Serialise(Hdr, 4);
 		delete Strm;
+		Strm = NULL;
 
 		if (Hdr[0] == 'F' && Hdr[1] == 'O' && Hdr[2] == 'N')
 		{
@@ -759,12 +761,14 @@ VFont::~VFont()
 		if (Chars[i].Textures)
 		{
 			delete[] Chars[i].Textures;
+			Chars[i].Textures = NULL;
 		}
 	}
 	Chars.Clear();
 	if (Translation)
 	{
 		delete[] Translation;
+		Translation = NULL;
 	}
 	unguard;
 }
@@ -1428,6 +1432,7 @@ VFon1Font::VFon1Font(VName AName, int LumpNum)
 	}
 
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1582,7 +1587,9 @@ VFon2Font::VFon2Font(VName AName, int LumpNum)
 	}
 
 	delete Strm;
+	Strm = NULL;
 	delete[] Widths;
+	Widths = NULL;
 	unguard;
 }
 
@@ -1747,6 +1754,7 @@ VFontChar2::~VFontChar2()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 }
 
@@ -1798,6 +1806,7 @@ vuint8* VFontChar2::GetPixels()
 	while (Count > 0);
 
 	delete Strm;
+	Strm = NULL;
 	return Pixels;
 	unguard;
 }
@@ -1827,6 +1836,7 @@ void VFontChar2::Unload()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }

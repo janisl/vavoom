@@ -183,6 +183,7 @@ void VPortal::Draw(bool UseStencil)
 	if (NeedsDepthBuffer())
 	{
 		delete[] RLev->BspVis;
+		RLev->BspVis = NULL;
 	}
 	RLev->BspVis = SavedBspVis;
 	RLev->trans_sprites = SavedTransSprites;

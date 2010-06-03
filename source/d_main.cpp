@@ -677,10 +677,12 @@ void VSoftwareDrawer::FreeAllMemory()
 	for (int i = 0; i < 5; i++)
 	{
 		delete[] tinttables[i];
+		tinttables[i] = NULL;
 	}
 	for (int i = 0; i < 10; i++)
 	{
 		delete[] AdditiveTransTables[i];
+		AdditiveTransTables[i] = NULL;
 	}
 
 	if (consbgmap)

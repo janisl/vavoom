@@ -310,6 +310,7 @@ func_loop:
 				VScriptIterator* Tmp = ActiveIterators;
 				ActiveIterators = Tmp->Next;
 				delete Tmp;
+				Tmp = NULL;
 			}
 			return;
 
@@ -322,6 +323,7 @@ func_loop:
 				VScriptIterator* Tmp = ActiveIterators;
 				ActiveIterators = Tmp->Next;
 				delete Tmp;
+				Tmp = NULL;
 			}
 			return;
 
@@ -336,6 +338,7 @@ func_loop:
 				VScriptIterator* Tmp = ActiveIterators;
 				ActiveIterators = Tmp->Next;
 				delete Tmp;
+				Tmp = NULL;
 			}
 			return;
 
@@ -1845,6 +1848,7 @@ func_loop:
 				VScriptIterator* Temp = ActiveIterators;
 				ActiveIterators = Temp->Next;
 				delete Temp;
+				Temp = NULL;
 			}
 			PR_VM_BREAK;
 

@@ -374,6 +374,7 @@ VAudioCodec* VVorbisAudioCodec::Create(VStream* InStrm)
 	{
 		Codec->Cleanup();
 		delete Codec;
+		Codec = NULL;
 		return NULL;
 	}
 	return Codec;
@@ -394,6 +395,7 @@ void VVorbisSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	{
 		Codec->Cleanup();
 		delete Codec;
+		Codec = NULL;
 		return;
 	}
 
@@ -416,6 +418,7 @@ void VVorbisSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	if (!Data.Num())
 	{
 		delete Codec;
+		Codec = NULL;
 		return;
 	}
 
@@ -429,5 +432,6 @@ void VVorbisSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	memcpy(Sfx.Data, Data.Ptr(), Data.Num() * 2);
 
 	delete Codec;
+	Codec = NULL;
 	unguard;
 }

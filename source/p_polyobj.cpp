@@ -68,6 +68,7 @@ void VLevel::SpawnPolyobj(float x, float y, int tag, bool crush, bool hurt)
 			PolyObjs[i] = Temp[i];
 		}
 		delete[] Temp;
+		Temp = NULL;
     }
 	memset(&PolyObjs[index], 0, sizeof(polyobj_t));
 
@@ -273,6 +274,7 @@ void VLevel::AddPolyAnchorPoint(float x, float y, int tag)
 			PolyAnchorPoints[i] = Temp[i];
 		}
 		delete[] Temp;
+		Temp = NULL;
 	}
 
 	PolyAnchorPoint_t& A = PolyAnchorPoints[NumPolyAnchorPoints - 1];

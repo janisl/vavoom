@@ -69,10 +69,12 @@ VLocalDecl::~VLocalDecl()
 		if (Vars[i].TypeExpr)
 		{
 			delete Vars[i].TypeExpr;
+			Vars[i].TypeExpr = NULL;
 		}
 		if (Vars[i].Value)
 		{
 			delete Vars[i].Value;
+			Vars[i].Value = NULL;
 		}
 	}
 }

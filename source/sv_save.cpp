@@ -118,6 +118,7 @@ public:
 	~VSaveLoaderStream()
 	{
 		delete Stream;
+		Stream = NULL;
 	}
 
 	//	Stream interface.
@@ -223,6 +224,7 @@ public:
 	~VSaveWriterStream()
 	{
 		delete Stream;
+		Stream = NULL;
 	}
 
 	//	Stream interface.
@@ -331,7 +333,10 @@ void VSaveSlot::Clear()
 	Description.Clean();
 	CurrentMap = NAME_None;
 	for (int i = 0; i < Maps.Num(); i++)
+	{
 		delete Maps[i];
+		Maps[i] = NULL;
+	}
 	Maps.Clear();
 	unguard;
 }
@@ -361,6 +366,7 @@ bool VSaveSlot::LoadSlot(int Slot)
 		// Bad version
 		Strm->Close();
 		delete Strm;
+		Strm = NULL;
 		GCon->Log("Savegame is from incompatible version");
 		return false;
 	}
@@ -388,6 +394,7 @@ bool VSaveSlot::LoadSlot(int Slot)
 
 	Strm->Close();
 	delete Strm;
+	Strm = NULL;
 	return true;
 	unguard;
 }
@@ -430,6 +437,7 @@ void VSaveSlot::SaveToSlot(int Slot)
 
 	Strm->Close();
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -474,6 +482,7 @@ bool SV_GetSaveString(int Slot, VStr& Desc)
 			Desc = "*" + Desc;
 		}
 		delete Strm;
+		Strm = NULL;
 		return true;
 	}
 	else
@@ -795,9 +804,12 @@ static void SV_SaveMap(bool savePlayers)
 	VZipStreamWriter* ZipStrm = new VZipStreamWriter(ArrStrm);
 	ZipStrm->Serialise(Buf.Ptr(), Buf.Num());
 	delete ZipStrm;
+	ZipStrm = NULL;
 	delete ArrStrm;
+	ArrStrm = NULL;
 
 	delete Saver;
+	Saver = NULL;
 	unguard;
 }
 
@@ -823,7 +835,9 @@ static void SV_LoadMap(VName MapName)
 	DecompressedData.SetNum(Map->DecompressedSize);
 	ZipStrm->Serialise(DecompressedData.Ptr(), DecompressedData.Num());
 	delete ZipStrm;
+	ZipStrm = NULL;
 	delete ArrStrm;
+	ArrStrm = NULL;
 
 	VSaveLoaderStream* Loader = new VSaveLoaderStream(
 		new VArrayStream(DecompressedData));
@@ -845,6 +859,7 @@ static void SV_LoadMap(VName MapName)
 	// Free save buffer
 	Loader->Close();
 	delete Loader;
+	Loader = NULL;
 
 	//	Do this here so that clients have loaded info, not initial one.
 	SV_SendServerInfoToClients();

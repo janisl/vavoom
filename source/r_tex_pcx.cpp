@@ -153,10 +153,12 @@ VPcxTexture::~VPcxTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	if (Palette)
 	{
 		delete[] Palette;
+		Palette = NULL;
 	}
 	unguard;
 }
@@ -252,6 +254,7 @@ vuint8* VPcxTexture::GetPixels()
 	FixupPalette(Pixels, Palette);
 
 	delete Strm;
+	Strm = NULL;
 	return Pixels;
 	unguard;
 }
@@ -395,6 +398,7 @@ void WritePCX(char* filename, void* data, int width, int height, int bpp,
 	}
 
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 #endif

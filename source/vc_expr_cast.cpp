@@ -68,7 +68,10 @@ VDelegateToBool::VDelegateToBool(VExpression* AOp)
 VDelegateToBool::~VDelegateToBool()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -117,7 +120,10 @@ VStringToBool::VStringToBool(VExpression* AOp)
 VStringToBool::~VStringToBool()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -165,7 +171,10 @@ VPointerToBool::VPointerToBool(VExpression* AOp)
 VPointerToBool::~VPointerToBool()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -213,7 +222,10 @@ VDynamicCast::VDynamicCast(VClass* AClass, VExpression* AOp, const TLocation& AL
 VDynamicCast::~VDynamicCast()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -277,7 +289,10 @@ VDynamicClassCast::VDynamicClassCast(VName AClassName, VExpression* AOp,
 VDynamicClassCast::~VDynamicClassCast()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================

@@ -84,26 +84,32 @@ VWarpTexture::~VWarpTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	if (SrcTex)
 	{
 		delete SrcTex;
+		SrcTex = NULL;
 	}
 	if (XSin1)
 	{
 		delete[] XSin1;
+		XSin1 = NULL;
 	}
 	if (XSin2)
 	{
 		delete[] XSin2;
+		XSin2 = NULL;
 	}
 	if (YSin1)
 	{
 		delete[] YSin1;
+		YSin1 = NULL;
 	}
 	if (YSin2)
 	{
 		delete[] YSin2;
+		YSin2 = NULL;
 	}
 	unguard;
 }

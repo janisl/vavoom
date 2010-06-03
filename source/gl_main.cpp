@@ -1000,6 +1000,7 @@ void VOpenGLDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 			Width * sizeof(rgba_t));
 	}
 	delete[] Temp;
+	Temp = NULL;
 	unguard;
 }
 
@@ -1078,12 +1079,14 @@ GLhandleARB VOpenGLDrawer::LoadShader(GLenum Type, const VStr& FileName)
 	char* Buf = new GLcharARB[Size + 1];
 	Strm->Serialise(Buf, Size);
 	delete Strm;
+	Strm = NULL;
 	Buf[Size] = 0; // Append terminator
 
 	//	Upload source text.
 	const GLcharARB* ShaderText = Buf;
 	p_glShaderSourceARB(Shader, 1, &ShaderText, NULL);
 	delete[] Buf;
+	Buf = NULL;
 
 	//	Compile it.
 	p_glCompileShaderARB(Shader);

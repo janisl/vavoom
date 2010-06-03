@@ -191,6 +191,7 @@ void VCommand::Shutdown()
 	{
 		VAlias* Next = a->Next;
 		delete a;
+		a = NULL;
 		a = Next;
 	}
 	AutoCompleteTable.Clear();
@@ -222,12 +223,14 @@ void VCommand::ProcessKeyConf()
 			Strm->Serialise(Buf, Strm->TotalSize());
 			Buf[Strm->TotalSize()] = 0;
 			delete Strm;
+			Strm = NULL;
 
 			//	Parse it
 			VCmdBuf CmdBuf;
 			CmdBuf << Buf;
 			CmdBuf.Exec();
 			delete[] Buf;
+			Buf = NULL;
 		}
 	}
 
@@ -760,10 +763,12 @@ COMMAND(Exec)
 	Strm->Serialise(buf, Len);
 	buf[Len] = 0;
 	delete Strm;
+	Strm = NULL;
 
 	GCmdBuf.Insert(buf);
 
 	delete[] buf;
+	buf = NULL;
 	unguard;
 }
 

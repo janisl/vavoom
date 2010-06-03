@@ -173,6 +173,7 @@ VJpegTexture::~VJpegTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }
@@ -430,6 +431,7 @@ vuint8* VJpegTexture::GetPixels()
 
 	//	Free memory.
 	delete Strm;
+	Strm = NULL;
 	return Pixels;
 #else
 	Sys_Error("ReadPixels on dedicated server");
@@ -596,6 +598,7 @@ void WriteJPG(const VStr& FileName, const void* Data, int Width, int Height,
 	jpeg_destroy_compress(&cinfo);
 	Strm->Close();
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 

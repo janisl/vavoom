@@ -72,7 +72,10 @@ VUnary::VUnary(VUnary::EUnaryOp AOper, VExpression* AOp, const TLocation& ALoc)
 VUnary::~VUnary()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -293,7 +296,10 @@ VUnaryMutator::VUnaryMutator(EIncDec AOper, VExpression* AOp, const TLocation& A
 VUnaryMutator::~VUnaryMutator()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -416,9 +422,15 @@ VBinary::VBinary(EBinOp AOper, VExpression* AOp1, VExpression* AOp2, const TLoca
 VBinary::~VBinary()
 {
 	if (op1)
+	{
 		delete op1;
+		op1 = NULL;
+	}
 	if (op2)
+	{
 		delete op2;
+		op2 = NULL;
+	}
 }
 
 //==========================================================================
@@ -976,9 +988,15 @@ VBinaryLogical::VBinaryLogical(ELogOp AOper, VExpression* AOp1,
 VBinaryLogical::~VBinaryLogical()
 {
 	if (op1)
+	{
 		delete op1;
+		op1 = NULL;
+	}
 	if (op2)
+	{
 		delete op2;
+		op2 = NULL;
+	}
 }
 
 //==========================================================================

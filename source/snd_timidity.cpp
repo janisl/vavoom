@@ -274,6 +274,7 @@ VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 	}
 	InStrm->Close();
 	delete InStrm;
+	InStrm = NULL;
 
 	//	Create codec.
 	return new VTimidityAudioCodec(Song);

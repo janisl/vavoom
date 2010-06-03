@@ -166,6 +166,7 @@ VPointerType::~VPointerType()
 	if (Expr)
 	{
 		delete Expr;
+		Expr = NULL;
 	}
 }
 
@@ -231,10 +232,12 @@ VFixedArrayType::~VFixedArrayType()
 	if (Expr)
 	{
 		delete Expr;
+		Expr = NULL;
 	}
 	if (SizeExpr)
 	{
 		delete SizeExpr;
+		SizeExpr = NULL;
 	}
 }
 
@@ -296,6 +299,7 @@ VDynamicArrayType::~VDynamicArrayType()
 	if (Expr)
 	{
 		delete Expr;
+		Expr = NULL;
 	}
 }
 

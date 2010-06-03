@@ -268,6 +268,7 @@ void VLevel::LoadMap(VName AMapName)
 				}
 			}
 			delete TmpStrm;
+			TmpStrm = NULL;
 		}
 	}
 	InitTime += Sys_Time();
@@ -537,6 +538,7 @@ int VLevel::FindGLNodes(VName name) const
 		VStream* Strm = W_CreateLumpReaderNum(Lump);
 		Strm->Serialise(Buf, Strm->TotalSize() < 16 ? Strm->TotalSize() : 16);
 		delete Strm;
+		Strm = NULL;
 		if (memcmp(Buf, "LEVEL=", 6))
 		{
 			//	LEVEL keyword expected, but missing.
@@ -602,6 +604,7 @@ void VLevel::LoadVertexes(int Lump, int GLLump, int& NumBaseVerts)
 		*pDst = TVec(x, y, 0);
 	}
 	delete Strm;
+	Strm = NULL;
 
 	if (GLLump >= 0)
 	{
@@ -629,6 +632,7 @@ void VLevel::LoadVertexes(int Lump, int GLLump, int& NumBaseVerts)
 			}
 		}
 		delete Strm;
+		Strm = NULL;
 	}
 	unguard;
 }
@@ -711,6 +715,7 @@ void VLevel::LoadSectors(int Lump)
 		ss->Zone = -1;
 	}
 	delete Strm;
+	Strm = NULL;
 	HashSectors();
 	unguard;
 }
@@ -919,6 +924,7 @@ void VLevel::LoadSideDefs(int Lump)
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -975,6 +981,7 @@ void VLevel::LoadLineDefs1(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1049,6 +1056,7 @@ void VLevel::LoadLineDefs2(int Lump, int NumBaseVerts, const mapInfo_t& MInfo)
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1214,6 +1222,7 @@ void VLevel::LoadGLSegs(int Lump, int NumBaseVerts)
 		CalcSeg(li);
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1300,6 +1309,7 @@ void VLevel::LoadSubsectors(int Lump)
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1363,6 +1373,7 @@ void VLevel::LoadNodes(int Lump)
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1388,6 +1399,7 @@ void VLevel::LoadPVS(int Lump)
 		VStream* Strm = W_CreateLumpReaderNum(Lump);
 		Strm->Serialise(VisData, W_LumpLength(Lump));
 		delete Strm;
+		Strm = NULL;
 	}
 	unguard;
 }
@@ -1409,7 +1421,9 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	BaseStrm->Serialise(TmpData, BaseStrm->TotalSize() - 4);
 	VStream* DataStrm = new VMemoryStream(TmpData, BaseStrm->TotalSize() - 4);
 	delete[] TmpData;
+	TmpData = NULL;
 	delete BaseStrm;
+	BaseStrm = NULL;
 	VStream* Strm = new VZipStreamReader(DataStrm);
 
 	//	Read extra vertex data
@@ -1434,6 +1448,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 			L.v2 = &Vertexes[v2];
 		}
 		delete[] OldVerts;
+		OldVerts = NULL;
 	}
 
 	vertex_t* DstVert = Vertexes + OrgVerts;
@@ -1604,7 +1619,9 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	memset(NoVis, 0xff, (NumSubsectors + 7) / 8);
 
 	delete Strm;
+	Strm = NULL;
 	delete DataStrm;
+	DataStrm = NULL;
 	unguard;
 }
 
@@ -1655,6 +1672,7 @@ void VLevel::LoadBlockMap(int Lump)
 	if (Strm)
 	{
 		delete Strm;
+		Strm = NULL;
 	}
 
 	//	Read blockmap origin and size.
@@ -1819,6 +1837,7 @@ void VLevel::CreateBlockMap()
 	memcpy(BlockMapLump, BMap.Ptr(), BMap.Num() * sizeof(vint32));
 
 	delete[] BlockLines;
+	BlockLines = NULL;
 	unguard;
 }
 
@@ -1871,6 +1890,7 @@ void VLevel::LoadReject(int Lump)
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1914,6 +1934,7 @@ void VLevel::LoadThings1(int Lump)
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -1967,6 +1988,7 @@ void VLevel::LoadThings2(int Lump)
 		th->arg5 = arg5;
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -2019,6 +2041,7 @@ void VLevel::LoadACScripts(int Lump)
 			}
 		}
 		delete sc;
+		sc = NULL;
 	}
 	unguard;
 }
@@ -2152,6 +2175,7 @@ void VLevel::LoadRogueConScript(VName LumpName, int ALumpNum,
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -2290,6 +2314,7 @@ void VLevel::GroupLines() const
 		sector->blockbox[BOXLEFT] = block;
 	}
 	delete[] SecLineCount;
+	SecLineCount = NULL;
 	unguard;
 }
 

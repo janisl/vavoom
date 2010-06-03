@@ -234,6 +234,7 @@ void VMemberBase::StaticExit()
 			!(((VClass*)GMembers[i])->ObjectFlags & CLASSOF_Native))
 		{
 			delete GMembers[i];
+			GMembers[i] = NULL;
 		}
 		else
 		{

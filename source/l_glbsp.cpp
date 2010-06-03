@@ -374,5 +374,6 @@ COMMAND(glBSP)
 			GCon->Log("Bad arguments");
 		}
 		delete[] TmpArgs;
+		TmpArgs = NULL;
 	}
 }

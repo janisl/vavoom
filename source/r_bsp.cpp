@@ -871,6 +871,7 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 			PortalLevel = 1;
 			BestSky->Draw(false);
 			delete BestSky;
+			BestSky = NULL;
 			Portals.RemoveIndex(BestSkyIndex);
 			PortalLevel = 0;
 		}

@@ -93,6 +93,7 @@ VSoundManager::~VSoundManager()
 		if (S_sfx[i].Sounds)
 		{
 			delete[] S_sfx[i].Sounds;
+			S_sfx[i].Sounds = NULL;
 		}
 	}
 
@@ -101,6 +102,7 @@ VSoundManager::~VSoundManager()
 		if (AmbientSounds[i])
 		{
 			delete AmbientSounds[i];
+			AmbientSounds[i] = NULL;
 		}
 	}
 
@@ -109,6 +111,7 @@ VSoundManager::~VSoundManager()
 		if (SeqInfo[i].Data)
 		{
 			delete[] SeqInfo[i].Data;
+			SeqInfo[i].Data = NULL;
 		}
 	}
 
@@ -118,7 +121,9 @@ VSoundManager::~VSoundManager()
 		if (!R->Builtin)
 		{
 			delete[] const_cast<char*>(R->Name);
+			R->Name = NULL;
 			delete R;
+			R = NULL;
 		}
 		R = Next;
 	}
@@ -481,6 +486,7 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 
@@ -896,6 +902,7 @@ bool VSoundManager::LoadSound(int sound_id)
 			Ldr->Load(S_sfx[sound_id], *Strm);
 		}
 		delete Strm;
+		Strm = NULL;
 		if (!S_sfx[sound_id].Data)
 		{
 			GCon->Logf(NAME_Dev, "Failed to load sound %s",
@@ -1224,6 +1231,7 @@ void VSoundManager::ParseSequenceScript(VScriptParser* sc)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

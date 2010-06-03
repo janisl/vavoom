@@ -270,6 +270,7 @@ static void InitColourmaps()
 	colourmaps = new vuint8[Strm->TotalSize()];
 	Strm->Serialise(colourmaps, Strm->TotalSize());
 	delete Strm;
+	Strm = NULL;
 	//	Remap colour 0 to alternate black colour
 	for (int i = 0; i < 32 * 256; i++)
 	{

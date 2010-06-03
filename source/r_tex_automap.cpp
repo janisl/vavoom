@@ -92,6 +92,7 @@ VAutopageTexture::~VAutopageTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }
@@ -125,6 +126,7 @@ vuint8* VAutopageTexture::GetPixels()
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 
 	return Pixels;
 	unguard;

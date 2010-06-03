@@ -199,7 +199,9 @@ void W_CloseAuxiliary()
 		SearchPaths[AuxiliaryIndex]->Close();
 		SearchPaths[AuxiliaryIndex + 1]->Close();
 		delete SearchPaths[AuxiliaryIndex];
+		SearchPaths[AuxiliaryIndex] = NULL;
 		delete SearchPaths[AuxiliaryIndex + 1];
+		SearchPaths[AuxiliaryIndex + 1] = NULL;
 		SearchPaths.SetNum(AuxiliaryIndex);
 		AuxiliaryIndex = 0;
 	}
@@ -536,9 +538,11 @@ VStr W_LoadTextLump(VName name)
 	char* buf = new char[msgSize + 1];
 	Strm->Serialise(buf, msgSize);
 	delete Strm;
+	Strm = NULL;
 	buf[msgSize] = 0; // Append terminator
 	VStr Ret = buf;
 	delete[] buf;
+	buf = NULL;
 	if (!Ret.IsValidUtf8())
 	{
 		GCon->Logf("%s is not a valid UTF-8 text lump, assuming Latin 1",
@@ -567,6 +571,7 @@ void W_LoadLumpIntoArray(VName LumpName, TArray<vuint8>& Array)
 	Array.SetNum(Strm->TotalSize());
 	Strm->Serialise(Array.Ptr(), Strm->TotalSize());
 	delete Strm;
+	Strm = NULL;
 }
 
 //==========================================================================
@@ -647,6 +652,7 @@ void W_Shutdown()
 	for (int i = 0; i < SearchPaths.Num(); i++)
 	{
 		delete SearchPaths[i];
+		SearchPaths[i] = NULL;
 	}
 	SearchPaths.Clear();
 	unguard;

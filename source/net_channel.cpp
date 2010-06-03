@@ -83,12 +83,14 @@ VChannel::~VChannel()
 	{
 		VMessageIn* Next = Msg->Next;
 		delete Msg;
+		Msg = NULL;
 		Msg = Next;
 	}
 	for (VMessageOut* Msg = OutMsg; Msg; )
 	{
 		VMessageOut* Next = Msg->Next;
 		delete Msg;
+		Msg = NULL;
 		Msg = Next;
 	}
 	if (Index != -1 && Connection->Channels[Index] == this)
@@ -163,6 +165,7 @@ void VChannel::ReceivedRawMessage(VMessageIn& Msg)
 			Closed = true;
 		}
 		delete OldMsg;
+		OldMsg = NULL;
 		if (Closed)
 		{
 			return;
@@ -229,6 +232,7 @@ void VChannel::ReceivedAck()
 			CloseAcked = true;
 		}
 		delete Msg;
+		Msg = NULL;
 	}
 
 	//	If we received ACK for close message then delete this channel.

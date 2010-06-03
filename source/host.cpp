@@ -619,6 +619,7 @@ void Host_Quit()
 			}
 			Strm->Serialise(EndText, Len);
 			delete Strm;
+			Strm = NULL;
 			GotEndText = true;
 		}
 	}

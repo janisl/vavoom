@@ -155,6 +155,7 @@ void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 		Z_Free(Strm->Data);
 		Sfx.Data = NULL;
 		delete Strm;
+		Strm = NULL;
 		return;
 	}
 	if (!Strm->process_until_end_of_stream())
@@ -163,6 +164,7 @@ void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 		Z_Free(Strm->Data);
 		Sfx.Data = NULL;
 		delete Strm;
+		Strm = NULL;
 		return;
 	}
 	Sfx.SampleRate = Strm->SampleRate;
@@ -170,6 +172,7 @@ void VFlacSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	Sfx.DataSize = Strm->DataSize;
 	Sfx.Data = Strm->Data;
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -324,6 +327,7 @@ VFlacAudioCodec::~VFlacAudioCodec()
 {
 	guard(VFlacAudioCodec::~VFlacAudioCodec);
 	delete Stream;
+	Stream = NULL;
 	unguard;
 }
 
@@ -432,6 +436,7 @@ VFlacAudioCodec::FStream::~FStream()
 		SamplePool[0] = NULL;
 		Strm->Close();
 		delete Strm;
+		Strm = NULL;
 	}
 	unguard;
 }
@@ -605,6 +610,7 @@ VAudioCodec* VFlacAudioCodec::Create(VStream* InStream)
 	if (!Strm->SampleRate)
 	{
 		delete Strm;
+		Strm = NULL;
 		return NULL;
 	}
 	return new VFlacAudioCodec(Strm);

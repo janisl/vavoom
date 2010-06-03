@@ -131,6 +131,7 @@ VAdvancedRenderLevel::~VAdvancedRenderLevel()
 		if (Level->Sectors[i].fakefloors)
 		{
 			delete Level->Sectors[i].fakefloors;
+			Level->Sectors[i].fakefloors = NULL;
 		}
 	}
 
@@ -140,8 +141,10 @@ VAdvancedRenderLevel::~VAdvancedRenderLevel()
 		{
 			FreeSurfaces(r->floor->surfs);
 			delete r->floor;
+			r->floor = NULL;
 			FreeSurfaces(r->ceil->surfs);
 			delete r->ceil;
+			r->ceil = NULL;
 		}
 	}
 
@@ -176,15 +179,21 @@ VAdvancedRenderLevel::~VAdvancedRenderLevel()
 
 	//	Free big blocks.
 	delete[] AllocatedSubRegions;
+	AllocatedSubRegions = NULL;
 	delete[] AllocatedDrawSegs;
+	AllocatedDrawSegs = NULL;
 	delete[] AllocatedSegParts;
+	AllocatedSegParts = NULL;
 
 	delete[] Particles;
+	Particles = NULL;
 	delete[] BspVis;
+	BspVis = NULL;
 
 	for (int i = 0; i < SideSkies.Num(); i++)
 	{
 		delete SideSkies[i];
+		SideSkies[i] = NULL;
 	}
 	unguard;
 }

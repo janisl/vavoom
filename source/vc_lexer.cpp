@@ -286,6 +286,7 @@ void VLexer::PushSource(TLocation& Loc, const VStr& FileName)
 	Strm->Serialise(NewSrc->FileStart, FileSize);
 	Strm->Close();
 	delete Strm;
+	Strm = NULL;
 	NewSrc->FileStart[FileSize] = 0;
 	NewSrc->FileEnd = NewSrc->FileStart + FileSize;
 	NewSrc->FilePtr = NewSrc->FileStart;
@@ -331,10 +332,12 @@ void VLexer::PopSource()
 
 	VSourceFile* Tmp = Src;
 	delete[] Tmp->FileStart;
+	Tmp->FileStart = NULL;
 	Src = Tmp->Next;
 	Chr = Tmp->Chr;
 	Location = Tmp->Loc;
 	delete Tmp;
+	Tmp = NULL;
 }
 
 //==========================================================================
@@ -803,6 +806,7 @@ void VLexer::ProcessInclude()
 			if (Strm)
 			{
 				delete Strm;
+				Strm = NULL;
 				PushSource(Loc, FileName);
 				return;
 			}
@@ -819,6 +823,7 @@ void VLexer::ProcessInclude()
 			if (Strm)
 			{
 				delete Strm;
+				Strm = NULL;
 				PushSource(Loc, FileName);
 				return;
 			}

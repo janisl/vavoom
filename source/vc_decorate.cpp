@@ -763,7 +763,10 @@ VDecorateInvocation::~VDecorateInvocation()
 {
 	for (int i = 0; i < NumArgs; i++)
 		if (Args[i])
+		{
 			delete Args[i];
+			Args[i] = NULL;
+		}
 }
 
 //==========================================================================
@@ -1690,6 +1693,7 @@ static void ParseConst(VScriptParser* sc)
 		{
 			int Val = Expr->GetIntConst();
 			delete Expr;
+			Expr = NULL;
 			VConstant* C = new VConstant(*Name, DecPkg, Loc);
 			C->Type = TYPE_Int;
 			C->Value = Val;
@@ -2155,6 +2159,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 					if (Args[i])
 					{
 						delete Args[i];
+						Args[i] = NULL;
 					}
 				}
 			}
@@ -3982,6 +3987,7 @@ static void ParseDecorate(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 
@@ -4006,6 +4012,7 @@ void ReadLineSpecialInfos()
 		I.Name = sc->String.ToLower();
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 
@@ -4027,8 +4034,10 @@ void ProcessDecorateScripts()
 		VXmlDocument* Doc = new VXmlDocument();
 		Doc->Parse(*Strm, "vavoom_decorate_defs.xml");
 		delete Strm;
+		Strm = NULL;
 		ParseDecorateDef(*Doc);
 		delete Doc;
+		Doc = NULL;
 	}
 
 	GCon->Logf(NAME_Init, "Processing DECORATE scripts");

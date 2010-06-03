@@ -77,6 +77,7 @@ VBaseInvocation::~VBaseInvocation()
 	for (int i = 0; i < NumArgs; i++)
 	{
 		delete Args[i];
+		Args[i] = NULL;
 	}
 	unguard;
 }
@@ -150,8 +151,13 @@ VCastOrInvocation::VCastOrInvocation(VName AName, const TLocation& ALoc, int ANu
 VCastOrInvocation::~VCastOrInvocation()
 {
 	for (int i = 0; i < NumArgs; i++)
+	{
 		if (Args[i])
+		{
 			delete Args[i];
+			Args[i] = NULL;
+		}
+	}
 }
 
 //==========================================================================
@@ -276,9 +282,15 @@ VDotInvocation::VDotInvocation(VExpression* ASelfExpr, VName AMethodName,
 VDotInvocation::~VDotInvocation()
 {
 	if (SelfExpr)
+	{
 		delete SelfExpr;
+		SelfExpr = NULL;
+	}
 	for (int i = 0; i < NumArgs; i++)
+	{
 		delete Args[i];
+		Args[i] = NULL;
+	}
 }
 
 //==========================================================================
@@ -482,10 +494,12 @@ VInvocation::~VInvocation()
 	if (SelfExpr)
 	{
 		delete SelfExpr;
+		SelfExpr = NULL;
 	}
 	for (int i = 0; i < NumArgs; i++)
 	{
 		delete Args[i];
+		Args[i] = NULL;
 	}
 	unguard;
 }
@@ -684,6 +698,7 @@ void VInvocation::CheckParams(VEmitContext& ec)
 							int Val = int(Args[i]->GetFloatConst());
 							TLocation Loc = Args[i]->Loc;
 							delete Args[i];
+							Args[i] = NULL;
 							Args[i] = new VIntLiteral(Val, Loc);
 							Args[i] = Args[i]->Resolve(ec);
 						}
@@ -704,6 +719,7 @@ void VInvocation::CheckParams(VEmitContext& ec)
 							int Val = Args[i]->GetIntConst();
 							TLocation Loc = Args[i]->Loc;
 							delete Args[i];
+							Args[i] = NULL;
 							Args[i] = new VFloatLiteral(Val, Loc);
 							Args[i] = Args[i]->Resolve(ec);
 						}
@@ -809,12 +825,14 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 				VDecorateSingleName* E = (VDecorateSingleName*)Args[i];
 				Args[i] = new VNameLiteral(*E->Name, E->Loc);
 				delete E;
+				E = NULL;
 			}
 			else if (Args[i]->IsStrConst())
 			{
 				VStr Val = Args[i]->GetStrConst(ec.Package);
 				TLocation ALoc = Args[i]->Loc;
 				delete Args[i];
+				Args[i] = NULL;
 				Args[i] = new VNameLiteral(*Val, ALoc);
 			}
 			break;
@@ -825,6 +843,7 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 				VDecorateSingleName* E = (VDecorateSingleName*)Args[i];
 				Args[i] = new VStringLiteral(ec.Package->FindString(*E->Name), E->Loc);
 				delete E;
+				E = NULL;
 			}
 			break;
 
@@ -834,6 +853,7 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 				VDecorateSingleName* E = (VDecorateSingleName*)Args[i];
 				Args[i] = new VStringLiteral(ec.Package->FindString(*E->Name), E->Loc);
 				delete E;
+				E = NULL;
 			}
 			if (Args[i]->IsStrConst())
 			{
@@ -844,6 +864,7 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 				{
 					ParseWarning(ALoc, "No such class %s", *CName);
 					delete Args[i];
+					Args[i] = NULL;
 					Args[i] = new VNoneLiteral(ALoc);
 				}
 				else if (Func->ParamTypes[i].Class &&
@@ -852,11 +873,13 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 					ParseWarning(ALoc, "Class %s is not a descendant of %s",
 						*CName, Func->ParamTypes[i].Class->GetName());
 					delete Args[i];
+					Args[i] = NULL;
 					Args[i] = new VNoneLiteral(ALoc);
 				}
 				else
 				{
 					delete Args[i];
+					Args[i] = NULL;
 					Args[i] = new VClassConstant(Cls, ALoc);
 				}
 			}
@@ -875,6 +898,7 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 				{
 					//	0 means no state
 					delete Args[i];
+					Args[i] = NULL;
 					Args[i] = new VNoneLiteral(ALoc);
 				}
 				else
@@ -888,6 +912,7 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 					else
 					{
 						delete Args[i];
+						Args[i] = NULL;
 						Args[i] = new VStateConstant(S, ALoc);
 					}
 				}
@@ -934,6 +959,7 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 						else
 						{
 							delete Args[i];
+							Args[i] = NULL;
 							Args[i] = new VStateConstant(StLbl->State, ALoc);
 						}
 					}

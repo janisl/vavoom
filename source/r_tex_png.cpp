@@ -171,6 +171,7 @@ VPngTexture::~VPngTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }
@@ -302,9 +303,11 @@ vuint8* VPngTexture::GetPixels()
 	png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
 
 	delete[] RowPtrs;
+	RowPtrs = NULL;
 
 	//	Free memory.
 	delete Strm;
+	Strm = NULL;
 	return Pixels;
 #else
 	Sys_Error("ReadPixels on dedicated server");
@@ -395,6 +398,7 @@ void WritePNG(const VStr& FileName, const void* Data, int Width, int Height,
 
 	Strm->Close();
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 #endif

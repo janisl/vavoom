@@ -74,9 +74,15 @@ VAssignment::VAssignment(VAssignment::EAssignOper AOper, VExpression* AOp1,
 VAssignment::~VAssignment()
 {
 	if (op1)
+	{
 		delete op1;
+		op1 = NULL;
+	}
 	if (op2)
+	{
 		delete op2;
+		op2 = NULL;
+	}
 }
 
 //==========================================================================

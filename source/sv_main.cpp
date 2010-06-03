@@ -172,6 +172,7 @@ void SV_Shutdown()
 		if (GPlayersBase[i])
 		{
 			delete GPlayersBase[i]->Net;
+			GPlayersBase[i]->Net = NULL;
 			GPlayersBase[i]->ConditionalDestroy();
 		}
 	}
@@ -181,6 +182,7 @@ void SV_Shutdown()
 	svs.serverinfo.Clean();
 
 	delete ServerNetContext;
+	ServerNetContext = NULL;
 	unguard;
 }
 
@@ -1025,11 +1027,13 @@ void SV_ShutdownGame()
 		}
 
 		delete cl->Net;
+		cl->Net = NULL;
 		cl->ConditionalDestroy();
 
 		if (GClLevel)
 		{
 			delete GClLevel;
+			GClLevel = NULL;
 		}
 #endif
 	}

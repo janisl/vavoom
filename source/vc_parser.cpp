@@ -172,6 +172,7 @@ VLocalDecl* VParser::ParseLocalVar(VExpression* TypeExpr)
 		Decl->Vars.Append(e);
 	} while (Lex.Check(TK_Comma));
 	delete TypeExpr;
+	TypeExpr = NULL;
 	return Decl;
 	unguard;
 }
@@ -1534,6 +1535,7 @@ void VParser::ParseStruct(VClass* InClass, bool IsVector)
 			Struct->AddField(fi);
 		} while (Lex.Check(TK_Comma));
 		delete Type;
+		Type = NULL;
 		Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
 	}
 	Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);
@@ -2455,6 +2457,7 @@ void VParser::ParseClass()
 			Class->AddField(fi);
 		} while (Lex.Check(TK_Comma));
 		delete Type;
+		Type = NULL;
 		if (need_semicolon)
 		{
 			Lex.Expect(TK_Semicolon, ERR_MISSING_SEMICOLON);

@@ -210,6 +210,7 @@ static VStr LookupColourName(VStr& Name)
 	Buf[Strm->TotalSize()] = 0;
 	char* BufEnd = Buf + Strm->TotalSize();
 	delete Strm;
+	Strm = NULL;
 
 	vuint8 Col[3];
 	int Count = 0;
@@ -265,12 +266,14 @@ static VStr LookupColourName(VStr& Name)
 				char ValBuf[8];
 				sprintf(ValBuf, "#%02x%02x%02x", Col[0], Col[1], Col[2]);
 				delete[] Buf;
+				Buf = NULL;
 				return ValBuf;
 			}
 			Count = 0;
 		}
 	}
 	delete[] Buf;
+	Buf = NULL;
 	return Name;
 	unguard;
 }

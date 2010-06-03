@@ -95,9 +95,11 @@ VTexture* VRawPicTexture::Create(VStream& Strm, int LumpNum)
 		{
 			//	Offsets seem to be valid.
 			delete[] Offsets;
+			Offsets = NULL;
 			return NULL;
 		}
 		delete[] Offsets;
+		Offsets = NULL;
 	}
 
 	return new VRawPicTexture(LumpNum, -1);
@@ -135,10 +137,12 @@ VRawPicTexture::~VRawPicTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	if (Palette)
 	{
 		delete[] Palette;
+		Palette = NULL;
 	}
 	unguard;
 }
@@ -195,6 +199,7 @@ vuint8* VRawPicTexture::GetPixels()
 			}
 		}
 		delete PStrm;
+		PStrm = NULL;
 	}
 
 	//	Read data.
@@ -207,6 +212,7 @@ vuint8* VRawPicTexture::GetPixels()
 			*dst = black;
 	}
 	delete Strm;
+	Strm = NULL;
 
 	return Pixels;
 	unguard;

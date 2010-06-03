@@ -96,7 +96,10 @@ struct TSwitch
 	~TSwitch()
 	{
 		if (Frames)
+		{
 			delete[] Frames;
+			Frames = NULL;
+		}
 	}
 };
 

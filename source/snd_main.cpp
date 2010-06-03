@@ -383,6 +383,7 @@ void VAudio::Init()
 		SoundCurve = new vuint8[MaxSoundDist];
 		Strm->Serialise(SoundCurve, MaxSoundDist);
 		delete Strm;
+		Strm = NULL;
 	}
 	else
 	{
@@ -1207,6 +1208,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 			VXmlDocument* Doc = new VXmlDocument();
 			Doc->Parse(*XmlStrm, "extras/music/remap.xml");
 			delete XmlStrm;
+			XmlStrm = NULL;
 			for (VXmlNode* N = Doc->Root.FirstChild; N; N = N->NextSibling)
 			{
 				if (N->Name != "song")
@@ -1224,6 +1226,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 				}
 			}
 			delete Doc;
+			Doc = NULL;
 		}
 		//	Also try OGG or MP3 directly.
 		if (Lump < 0)
@@ -1248,6 +1251,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	if (Strm->TotalSize() < 4)
 	{
 		delete Strm;
+		Strm = NULL;
 		return;
 	}
 
@@ -1263,9 +1267,11 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 		VQMus2Mid Conv;
 		int MidLength = Conv.Run(*Strm, *MidStrm);
 		delete Strm;
+		Strm = NULL;
 		if (!MidLength)
 		{
 			delete MidStrm;
+			MidStrm = NULL;
 			return;
 		}
 		MidStrm->Seek(0);
@@ -1294,6 +1300,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 		Strm->Serialise(Data, Length);
 		Strm->Close();
 		delete Strm;
+		Strm = NULL;
 
 		if (!memcmp(Data, MIDIMAGIC, 4))
 		{
@@ -1308,6 +1315,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	else
 	{
 		delete Strm;
+		Strm = NULL;
 	}
 	unguard;
 }
@@ -1706,6 +1714,7 @@ VSoundSeqNode::~VSoundSeqNode()
 	if (ChildSeq)
 	{
 		delete ChildSeq;
+		ChildSeq = NULL;
 	}
 
 	//	Play stop sound.

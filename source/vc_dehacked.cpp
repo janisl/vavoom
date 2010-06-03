@@ -1526,7 +1526,9 @@ static void ReadText(int oldSize)
 	FindString(oldStr, newStr);
 
 	delete[] oldStr;
+	oldStr = NULL;
 	delete[] newStr;
+	newStr = NULL;
 
 	GetLine();
 	unguard;
@@ -1682,6 +1684,7 @@ static void LoadDehackedFile(VStream* Strm)
 	Strm->Serialise(Patch, Strm->TotalSize());
 	Patch[Strm->TotalSize()] = 0;
 	delete Strm;
+	Strm = NULL;
 	PatchPtr = Patch;
 
 	if (!VStr::NCmp(Patch, "Patch File for DeHackEd v", 25))
@@ -1689,6 +1692,7 @@ static void LoadDehackedFile(VStream* Strm)
 		if (Patch[25] < '3')
 		{
 			delete[] Patch;
+			Patch = NULL;
 			GCon->Logf("DeHackEd patch is too old");
 			return;
 		}
@@ -1710,6 +1714,7 @@ static void LoadDehackedFile(VStream* Strm)
 		if (!String || DVer == -1 || PFmt == -1)
 		{
 			delete[] Patch;
+			Patch = NULL;
 			GCon->Logf("Not a DeHackEd patch file");
 			return;
 		}
@@ -1822,6 +1827,7 @@ static void LoadDehackedFile(VStream* Strm)
 		}
 	}
 	delete[] Patch;
+	Patch = NULL;
 	unguard;
 }
 
@@ -2048,6 +2054,7 @@ void ProcessDehackedFiles()
 	ArmorBonusClass = VClass::FindClass("ArmorBonus");
 
 	delete sc;
+	sc = NULL;
 
 	//	Get lists of strings to replace.
 	GSoundManager->GetSoundLumpNames(SfxNames);
@@ -2106,5 +2113,6 @@ void ProcessDehackedFiles()
 	MusicNames.Clear();
 	SpriteNames.Clear();
 	delete EngStrings;
+	EngStrings = NULL;
 	unguard;
 }

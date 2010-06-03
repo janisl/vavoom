@@ -134,6 +134,7 @@ void CL_Shutdown()
 		GRoot->ConditionalDestroy();
 	cls.userinfo.Clean();
 	delete ClientNetContext;
+	ClientNetContext = NULL;
 	unguard;
 }
 
@@ -565,6 +566,7 @@ void CL_PlayDemo(const VStr& DemoName, bool IsTimeDemo)
 	if (VStr::Cmp(magic, "VDEM"))
 	{
 		delete Strm;
+		Strm = NULL;
 		GCon->Log("ERROR: not a Vavoom demo.");
 		return;
 	}

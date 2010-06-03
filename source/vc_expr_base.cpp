@@ -122,6 +122,7 @@ VExpression* VExpression::ResolveBoolean(VEmitContext& ec)
 	default:
 		ParseError(Loc, "Expression type mistmatch, boolean expression expected");
 		delete e;
+		e = NULL;
 		return NULL;
 	}
 	return e;

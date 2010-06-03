@@ -254,6 +254,7 @@ void VNetwork::Shutdown()
 	while (ActiveSockets)
 	{
 		delete ActiveSockets;
+		ActiveSockets = NULL;
 	}
 
 	//

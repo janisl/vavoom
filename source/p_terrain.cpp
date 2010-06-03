@@ -384,6 +384,7 @@ static void ParseTerrainScript(VScriptParser* sc)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

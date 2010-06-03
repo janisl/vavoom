@@ -747,12 +747,15 @@ void VSoundManager::ParseReverbs(VScriptParser* sc)
 				NewEnv->Next = Check->Next;
 				*Ptr = NewEnv;
 				delete[] const_cast<char*>(Check->Name);
+				Check->Name = NULL;
 				delete Check;
+				Check = NULL;
 			}
 			else
 			{
 				delete[] NewName;
 				delete NewEnv;
+				NewEnv = NULL;
 			}
 		}
 		else
@@ -762,6 +765,7 @@ void VSoundManager::ParseReverbs(VScriptParser* sc)
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

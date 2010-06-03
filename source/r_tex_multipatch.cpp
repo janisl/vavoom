@@ -310,6 +310,7 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 							if (P.bOwnTrans)
 							{
 								delete P.Trans;
+								P.Trans = NULL;
 								P.bOwnTrans = false;
 							}
 							P.Trans = NULL;
@@ -361,6 +362,7 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 							if (P.bOwnTrans)
 							{
 								delete P.Trans;
+								P.Trans = NULL;
 								P.bOwnTrans = false;
 							}
 							P.Trans = NULL;
@@ -490,13 +492,16 @@ VMultiPatchTexture::~VMultiPatchTexture()
 			if (Patches[i].bOwnTrans)
 			{
 				delete Patches[i].Trans;
+				Patches[i].Trans = NULL;
 			}
 		}
 		delete[] Patches;
+		Patches = NULL;
 	}
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }

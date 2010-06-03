@@ -85,6 +85,7 @@ void VWorldInfo::Destroy()
 {
 	guard(VWorldInfo::Destroy);
 	delete Acs;
+	Acs = NULL;
 
 	Super::Destroy();
 	unguard;

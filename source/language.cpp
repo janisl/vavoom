@@ -257,6 +257,7 @@ void VLanguage::ParseLanguageScript(vint32 Lump, const char* InCode,
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

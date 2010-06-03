@@ -254,6 +254,7 @@ VRenderLevel::~VRenderLevel()
 		if (Level->Sectors[i].fakefloors)
 		{
 			delete Level->Sectors[i].fakefloors;
+			Level->Sectors[i].fakefloors = NULL;
 		}
 	}
 
@@ -263,8 +264,10 @@ VRenderLevel::~VRenderLevel()
 		{
 			FreeSurfaces(r->floor->surfs);
 			delete r->floor;
+			r->floor = NULL;
 			FreeSurfaces(r->ceil->surfs);
 			delete r->ceil;
+			r->ceil = NULL;
 		}
 	}
 
@@ -299,15 +302,21 @@ VRenderLevel::~VRenderLevel()
 
 	//	Free big blocks.
 	delete[] AllocatedSubRegions;
+	AllocatedSubRegions = NULL;
 	delete[] AllocatedDrawSegs;
+	AllocatedDrawSegs = NULL;
 	delete[] AllocatedSegParts;
+	AllocatedSegParts = NULL;
 
 	delete[] Particles;
+	Particles = NULL;
 	delete[] BspVis;
+	BspVis = NULL;
 
 	for (int i = 0; i < SideSkies.Num(); i++)
 	{
 		delete SideSkies[i];
+		SideSkies[i] = NULL;
 	}
 	unguard;
 }
@@ -1218,6 +1227,7 @@ void V_Shutdown()
 	for (int i = 0; i < CachedTranslations.Num(); i++)
 	{
 		delete CachedTranslations[i];
+		CachedTranslations[i] = NULL;
 	}
 	CachedTranslations.Clear();
 	R_FreeSkyboxData();

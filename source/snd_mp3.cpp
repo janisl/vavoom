@@ -359,6 +359,7 @@ VAudioCodec* VMp3AudioCodec::Create(VStream* InStrm)
 	if (!Codec->Init())
 	{
 		delete Codec;
+		Codec = NULL;
 		return NULL;
 	}
 	return Codec;
@@ -378,6 +379,7 @@ void VMp3SampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	if (!Codec->Init())
 	{
 		delete Codec;
+		Codec = NULL;
 		return;
 	}
 
@@ -400,6 +402,7 @@ void VMp3SampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	if (!Data.Num())
 	{
 		delete Codec;
+		Codec = NULL;
 		return;
 	}
 
@@ -413,5 +416,6 @@ void VMp3SampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	memcpy(Sfx.Data, Data.Ptr(), Data.Num() * 2);
 
 	delete Codec;
+	Codec = NULL;
 	unguard;
 }

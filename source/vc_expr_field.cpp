@@ -67,7 +67,10 @@ VPointerField::VPointerField(VExpression* AOp, VName AFieldName, const TLocation
 VPointerField::~VPointerField()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -145,7 +148,10 @@ VDotField::VDotField(VExpression* AOp, VName AFieldName, const TLocation& ALoc)
 VDotField::~VDotField()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -348,7 +354,10 @@ VFieldAccess::VFieldAccess(VExpression* AOp, VField* AField, const TLocation& AL
 VFieldAccess::~VFieldAccess()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================
@@ -471,7 +480,10 @@ VDelegateVal::VDelegateVal(VExpression* AOp, VMethod* AM, const TLocation& ALoc)
 VDelegateVal::~VDelegateVal()
 {
 	if (op)
+	{
 		delete op;
+		op = NULL;
+	}
 }
 
 //==========================================================================

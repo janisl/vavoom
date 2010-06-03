@@ -464,6 +464,7 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 				{
 					ret = 0;
 					delete msg;
+					msg = NULL;
 					continue;
 				}
 			}
@@ -528,14 +529,19 @@ VSocket* VDatagramDriver::Connect(VNetLanDriver* Drv, const char* host)
 	}
 
 	delete msg;
+	msg = NULL;
 //	m_return_onerror = false;
 	return sock;
 
 ErrorReturn:
 	delete sock;
+	sock = NULL;
 	Drv->CloseSocket(newsock);
 	if (msg)
+	{
 		delete msg;
+		msg = NULL;
+	}
 //	if (m_return_onerror)
 //	{
 //		key_dest = key_menu;

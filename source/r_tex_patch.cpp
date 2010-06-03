@@ -95,10 +95,12 @@ VTexture* VPatchTexture::Create(VStream& Strm, int LumpNum)
 		else if (Offsets[i] < Width * 4 + 8 || Offsets[i] >= Strm.TotalSize())
 		{
 			delete[] Offsets;
+			Offsets = NULL;
 			return NULL;
 		}
 	}
 	delete[] Offsets;
+	Offsets = NULL;
 	if (GapAtStart)
 	{
 		return NULL;
@@ -139,6 +141,7 @@ VPatchTexture::~VPatchTexture()
 	if (Pixels)
 	{
 		delete[] Pixels;
+		Pixels = NULL;
 	}
 	unguard;
 }
@@ -272,6 +275,7 @@ vuint8* VPatchTexture::GetPixels()
 
 	//	Close stream.
 	delete Strm;
+	Strm = NULL;
 
 	return Pixels;
 	unguard;

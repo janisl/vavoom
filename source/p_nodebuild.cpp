@@ -331,6 +331,7 @@ static void CopyGLVerts(VLevel* Level, vertex_t*& GLVertexes)
 		ld->v2 = &Level->Vertexes[ld->v2 - OldVertexes];
 	}
 	delete[] OldVertexes;
+	OldVertexes = NULL;
 	unguard;
 }
 
@@ -408,6 +409,7 @@ static void CopySegs(VLevel* Level, vertex_t* GLVertexes)
 	}
 
 	delete[] SrcSegs;
+	SrcSegs = NULL;
 	unguard;
 }
 
