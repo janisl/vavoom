@@ -126,6 +126,7 @@ void VOpenGLDrawer::InitResolution()
 	}
 	else
 	{
+		GCon->Log(NAME_Init, "Symbol not found, Multitexture extensions disabled.");
 		mtexable = false;
 	}
 
@@ -293,6 +294,7 @@ void VOpenGLDrawer::InitResolution()
 	}
 	else
 	{
+		GCon->Log(NAME_Init, "Symbol not found, Shader extensions disabled.");
 		HaveShaders = false;
 	}
 
@@ -328,6 +330,7 @@ void VOpenGLDrawer::InitResolution()
 	}
 	else
 	{
+		GCon->Log(NAME_Init, "Symbol not found, depth clamp extensions disabled.");
 		HaveDepthClamp = false;
 	}
 
@@ -338,6 +341,7 @@ void VOpenGLDrawer::InitResolution()
 	}
 	else
 	{
+		GCon->Log(NAME_Init, "Symbol not found, stencil wrap extensions disabled.");
 		HaveStencilWrap = false;
 	}
 
@@ -371,6 +375,7 @@ void VOpenGLDrawer::InitResolution()
 	}
 	else
 	{
+		GCon->Log(NAME_Init, "Symbol not found, vertex buffer object extensions disabled.");
 		HaveVertexBufferObject = false;
 	}
 
