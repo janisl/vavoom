@@ -49,6 +49,7 @@ extern VCvarI				r_darken;
 static subsector_t*		r_sub;
 static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
+static VCvarF			r_lights_radius("r_lights_radius", "4096", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -971,6 +972,12 @@ void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 	const VViewClipper* Range, TVec& Pos, float Radius, vuint32 Colour)
 {
 	guard(VAdvancedRenderLevel::RenderLightShadows);
+	//	Don't do lights that are too far away.
+	if ((Pos - vieworg).Length() > r_lights_radius + Radius)
+	{
+		return;
+	}
+
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
 	//	Clip against frustrum.
