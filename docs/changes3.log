@@ -4197,6 +4197,11 @@
   I changed light drawing BSP walk to avoid drawing areas that are not touched
  by light.
 01.06.2010
-  Firebrand fixed that in Direct3D, when switching focus from Vavoom and returning it back, it would display a black screen
-  Firebrand changed some parameters of Window creation to make it more responsive and to avoid problems while switching focus
+  Firebrand fixed that in Direct3D, when switching focus from Vavoom and returning it back, it would display a
+ black screen
+  Firebrand changed some parameters of Window creation to make it more responsive and to avoid problems while
+ switching focus
   Firebrand made Vavoom's window unresponsive to windows's hotkeys when running in windowed mode
+04.06.2010
+  Firebrand removed StateTime from the dynamic light's decay time in DoStateEffects method.
+  Firebrand added a check to avoid parsing WAD files named 'gldefs' or 'vfxdefs' that are inside of PK3 files.

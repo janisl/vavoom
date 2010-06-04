@@ -141,6 +141,7 @@ static void InitPalette()
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 	unguard;
 }
 
@@ -216,6 +217,7 @@ static void InitTranslationTables()
 		}
 	}
 	delete Strm;
+	Strm = NULL;
 
 	//	Calculate ice translation.
 	IceTranslation.Table[0] = 0;
@@ -569,6 +571,7 @@ void R_ShutdownData()
 		for (int i = 0; i < NumTranslationTables; i++)
 		{
 			delete TranslationTables[i];
+			TranslationTables[i] = NULL;
 		}
 		delete[] TranslationTables;
 		TranslationTables = NULL;
@@ -577,6 +580,7 @@ void R_ShutdownData()
 	for (int i = 0; i < DecorateTranslations.Num(); i++)
 	{
 		delete DecorateTranslations[i];
+		DecorateTranslations[i] = NULL;
 	}
 	DecorateTranslations.Clear();
 
@@ -1009,6 +1013,7 @@ int R_ParseDecorateTranslation(VScriptParser* sc, int GameMax)
 		}
 		//	Found a match.
 		delete Tr;
+		Tr = NULL;
 		return (TRANSL_Decorate << TRANSL_TYPE_SHIFT) + i;
 	}
 
@@ -1575,12 +1580,18 @@ static void ParseEffectDefs(VScriptParser* sc,
 		{
 			ClassDefs.Clear();
 		}
+		else if (sc->Check("pwad"))
+		{
+			sc->Message("Tried to parse a WAD file, aborting parsing...");
+			break;
+		}
 		else
 		{
-			sc->Error("Unknown command");
+			sc->Error(va("Unknown command %s", sc->String));
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 
@@ -1655,12 +1666,18 @@ static void ParseGZDoomEffectDefs(VScriptParser* sc,
 		{
 			sc->Message("Shaders are not supported");
 		}
+		else if (sc->Check("pwad"))
+		{
+			sc->Message("Tried to parse a WAD file, aborting parsing...");
+			break;
+		}
 		else
 		{
-			sc->Error("Unknown command");
+			sc->Error(va("Unknown command %s", sc->String));
 		}
 	}
 	delete sc;
+	sc = NULL;
 	unguard;
 }
 

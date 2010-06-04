@@ -1759,7 +1759,7 @@ final void DoStateEffects(float DeltaTime)
 			switch (L->Type)
 			{
 			case DynamicLight::DLTYPE_Point:
-				dl->decay = (XLevel.Time + 300.0) * StateTime;
+				dl->decay = XLevel.Time + 300.0;
 				dl->radius = prev_rad <= L->Radius ? prev_rad : (prev_rad - L->Radius) * XLevel.Time;
 				dl->radius += XLevel.Time * dl->decay;
 				if (dl->radius > L->Radius)
@@ -1767,14 +1767,14 @@ final void DoStateEffects(float DeltaTime)
 				break;
 			case DynamicLight::DLTYPE_MuzzleFlash:
 				max = (L->Radius + Random() * (L->Radius2 - L->Radius));
-				dl->decay = (XLevel.Time + 80.0) * StateTime;
+				dl->decay = XLevel.Time + 80.0;
 				dl->radius = prev_rad <= L->Radius ? prev_rad : (prev_rad - L->Radius) * XLevel.Time;
 				dl->radius += XLevel.Time * dl->decay;
 				if (dl->radius > max)
 					dl->radius = max;
 				break;
 			case DynamicLight::DLTYPE_Pulse:
-				dl->decay = (XLevel.Time + 150.0) * StateTime;
+				dl->decay = XLevel.Time + 150.0;
 				// Avoid division by 0
 				float PulseCycle = L->Interval ? L->Interval / 35.0 : 1.0 / 35.0;
 				LightTime += DeltaTime;
@@ -1786,7 +1786,7 @@ final void DoStateEffects(float DeltaTime)
 				dl->radius = L->Radius + Frac * L->Radius2 - L->Radius;
 				break;
 			case DynamicLight::DLTYPE_Flicker:
-				dl->decay = (XLevel.Time + 80.0) * StateTime;
+				dl->decay = XLevel.Time + 80.0;
 				dl->radius = Random() >= L->Chance / 360.0 ? L->Radius2 : L->Radius;
 				break;
 			case DynamicLight::DLTYPE_FlickerRandom:
@@ -1794,7 +1794,7 @@ final void DoStateEffects(float DeltaTime)
 				if (LightTime > L->Interval / 360.0)
 				{
 					max = (L->Radius + Random() * (L->Radius2 - L->Radius));
-					dl->decay = (XLevel.Time + 80.0) * StateTime;
+					dl->decay = XLevel.Time + 80.0;
 					dl->radius = prev_rad <= L->Radius ? prev_rad : (prev_rad - L->Radius) * XLevel.Time;
 					dl->radius += XLevel.Time * dl->decay;
 					if (dl->radius > max)
