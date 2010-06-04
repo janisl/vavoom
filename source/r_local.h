@@ -252,6 +252,14 @@ protected:
 
 	enum { MAX_TRANS_SPRITES	= 256 };
 
+	enum
+	{
+		MAX_PARTICLES			= 2048,	// default max # of particles at one
+										//  time
+		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
+										//  on the command line
+	};
+
 	struct trans_sprite_t
 	{
 		TVec			Verts[4];
@@ -295,6 +303,11 @@ protected:
 	int				FixedLight;
 	int				ColourMap;
 
+	int				NumParticles;
+	particle_t*		Particles;
+	particle_t*		ActiveParticles;
+	particle_t*		FreeParticles;
+
 	VRenderLevelShared(VLevel* ALevel)
 	: Level(ALevel)
 	, ViewEnt(NULL)
@@ -305,10 +318,22 @@ protected:
 	, trans_sprites(NULL)
 	, ExtraLight(0)
 	, FixedLight(0)
+	, Particles(0)
+	, ActiveParticles(0)
+	, FreeParticles(0)
 	{}
 
 	virtual void TransformFrustum() = 0;
 	virtual void RenderScene(const refdef_t*, const VViewClipper*) = 0;
+
+	//	Particles
+	void InitParticles();
+	void ClearParticles();
+	void UpdateParticles(float);
+	void DrawParticles();
+
+public:
+	particle_t* NewParticle();
 };
 
 class VRenderLevel : public VRenderLevelShared
@@ -323,14 +348,6 @@ private:
 	};
 
 	enum { MAX_DLIGHTS	= 32 };
-
-	enum
-	{
-		MAX_PARTICLES			= 2048,	// default max # of particles at one
-										//  time
-		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
-										//  on the command line
-	};
 
 	struct world_surf_t
 	{
@@ -363,11 +380,6 @@ private:
 	//	Light variables
 	TArray<light_t>	Lights;
 	dlight_t		DLights[MAX_DLIGHTS];
-
-	int				NumParticles;
-	particle_t*		Particles;
-	particle_t*		ActiveParticles;
-	particle_t*		FreeParticles;
 
 	//	World render variables
 	VViewClipper			ViewClip;
@@ -431,12 +443,6 @@ private:
 	void MarkLights(dlight_t*, int, int);
 	void AddDynamicLights(surface_t*);
 
-	//	Particles
-	void InitParticles();
-	void ClearParticles();
-	void UpdateParticles(float);
-	void DrawParticles();
-
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
 	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int, int, bool,
@@ -491,8 +497,6 @@ public:
 	void PushDlights();
 	vuint32 LightPoint(const TVec &p);
 	bool BuildLightMap(surface_t*, int);
-
-	particle_t* NewParticle();
 };
 
 class VAdvancedRenderLevel : public VRenderLevelShared
@@ -507,14 +511,6 @@ private:
 	};
 
 	enum { MAX_DLIGHTS	= 32 };
-
-	enum
-	{
-		MAX_PARTICLES			= 2048,	// default max # of particles at one
-										//  time
-		ABSOLUTE_MIN_PARTICLES	= 512,	// no fewer than this no matter what's
-										//  on the command line
-	};
 
 	struct world_surf_t
 	{
@@ -547,11 +543,6 @@ private:
 	//	Light variables
 	TArray<light_t>	Lights;
 	dlight_t		DLights[MAX_DLIGHTS];
-
-	int				NumParticles;
-	particle_t*		Particles;
-	particle_t*		ActiveParticles;
-	particle_t*		FreeParticles;
 
 	//	World render variables
 	VViewClipper			ViewClip;
@@ -608,12 +599,6 @@ private:
 
 	//	Light methods
 	vuint32 LightPointAmbient(const TVec &p);
-
-	//	Particles
-	void InitParticles();
-	void ClearParticles();
-	void UpdateParticles(float);
-	void DrawParticles();
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
@@ -699,8 +684,6 @@ public:
 	void DecayLights(float);
 	vuint32 LightPoint(const TVec &p);
 	bool BuildLightMap(surface_t*, int);
-
-	particle_t* NewParticle();
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

@@ -83,9 +83,6 @@ VAdvancedRenderLevel::VAdvancedRenderLevel(VLevel* ALevel)
 , CurrentSky2Texture(-1)
 , CurrentDoubleSky(false)
 , CurrentLightning(false)
-, Particles(0)
-, ActiveParticles(0)
-, FreeParticles(0)
 , LightVis(NULL)
 {
 	guard(VAdvancedRenderLevel::VAdvancedRenderLevel);

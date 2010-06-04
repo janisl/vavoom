@@ -745,10 +745,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\r_adv_particle.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\r_adv_sky.cpp"
 				>
 			</File>

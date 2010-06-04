@@ -54,13 +54,13 @@ VCvarI				r_draw_particles("r_draw_particles", "1", CVAR_Archive);
 
 //==========================================================================
 //
-//	VRenderLevel::InitParticles
+//	VRenderLevelShared::InitParticles
 //
 //==========================================================================
 
-void VRenderLevel::InitParticles()
+void VRenderLevelShared::InitParticles()
 {
-	guard(VRenderLevel::InitParticles);
+	guard(VRenderLevelShared::InitParticles);
 	const char* p = GArgs.CheckValue("-particles");
 
 	if (p)
@@ -80,13 +80,13 @@ void VRenderLevel::InitParticles()
 
 //==========================================================================
 //
-//	VRenderLevel::ClearParticles
+//	VRenderLevelShared::ClearParticles
 //
 //==========================================================================
 
-void VRenderLevel::ClearParticles()
+void VRenderLevelShared::ClearParticles()
 {
-	guard(VRenderLevel::ClearParticles);
+	guard(VRenderLevelShared::ClearParticles);
 	FreeParticles = &Particles[0];
 	ActiveParticles = NULL;
 
@@ -98,13 +98,13 @@ void VRenderLevel::ClearParticles()
 
 //==========================================================================
 //
-//	VRenderLevel::NewParticle
+//	VRenderLevelShared::NewParticle
 //
 //==========================================================================
 
-particle_t* VRenderLevel::NewParticle()
+particle_t* VRenderLevelShared::NewParticle()
 {
-	guard(VRenderLevel::NewParticle);
+	guard(VRenderLevelShared::NewParticle);
 	if (!FreeParticles)
 	{
 		//	No free particles
@@ -124,13 +124,13 @@ particle_t* VRenderLevel::NewParticle()
 
 //==========================================================================
 //
-//	VRenderLevel::UpdateParticles
+//	VRenderLevelShared::UpdateParticles
 //
 //==========================================================================
 
-void VRenderLevel::UpdateParticles(float frametime)
+void VRenderLevelShared::UpdateParticles(float frametime)
 {
-	guard(VRenderLevel::UpdateParticles);
+	guard(VRenderLevelShared::UpdateParticles);
 	particle_t		*p, *kill;
 
 	if (GGameInfo->IsPaused())
@@ -166,13 +166,13 @@ void VRenderLevel::UpdateParticles(float frametime)
 
 //==========================================================================
 //
-//	VRenderLevel::DrawParticles
+//	VRenderLevelShared::DrawParticles
 //
 //==========================================================================
 
-void VRenderLevel::DrawParticles()
+void VRenderLevelShared::DrawParticles()
 {
-	guard(VRenderLevel::DrawParticles);
+	guard(VRenderLevelShared::DrawParticles);
 	if (!r_draw_particles)
 	{
 		return;
