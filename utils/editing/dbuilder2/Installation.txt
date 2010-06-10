@@ -1,0 +1,13 @@
+Extract this zip in your DB2/Configurations folder. Allow it to overwrite content in the Includes subfolder.
+Then go to the vavoom subfolder for the configurations you want to use, and move or copy them in the
+Configurations folder. Do not move them all! There are so many that DB2 would become sluggish and unresponsive
+on start up and when opening a map. Just move those you need, and move them back when you don't need them
+anymore.
+
+
+This configurations are based on those provided for ZDoom compatible engines by Gez. You can adapt them for your
+custom games if you read the template for configurations included with this distribution. Enjoy!
+
+
+NOTE: It's safe to overwrite the contents of the Include folder of these config distribution with what's
+included here, it won't break any of the configurations you already have setup.

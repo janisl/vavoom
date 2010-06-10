@@ -73,6 +73,7 @@ public:
 	wxCheckBox*		CheckBoxNoMouse;
 	wxCheckBox*		CheckBoxNoJoy;
 	wxCheckBox*		CheckBoxDebug;
+	wxCheckBox*		CheckBoxWindowedMode;
 	wxTextCtrl*		EditIWadDir;
 	wxTextCtrl*		EditGame;
 	wxCheckBox*		CheckBoxDevGame;
@@ -218,6 +219,9 @@ VMain::VMain()
 	ColourChoices[2] = wxT("32 bits");
 	Colour = new wxComboBox(page, -1, ColourChoices[0], wxDefaultPosition, wxDefaultSize, 3, ColourChoices, wxCB_READONLY);
 	vsizer->Add(Colour, 0, wxALL, 4);
+	vsizer->AddSpacer(1);
+	CheckBoxWindowedMode = new wxCheckBox(page, -1, wxT("Run in Windowed Mode"));
+	vsizer->Add(CheckBoxWindowedMode, 0, wxALL, 4);
 	vsizer->Add(new wxStaticText(page, -1, wxT("Particles:")), 0, wxALL, 4);
 	Particles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition,wxSize(48, -1));
 	vsizer->Add(Particles, 0, wxALL, 4);
@@ -231,29 +235,27 @@ VMain::VMain()
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Sound"));
 	wxFlexGridSizer* ssizer = new wxFlexGridSizer(2);
+	ssizer->AddSpacer(1);
 	CheckBoxNoSound = new wxCheckBox(page, -1, wxT("Disable all sound"));
 	ssizer->Add(CheckBoxNoSound, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
 	CheckBoxNoSfx = new wxCheckBox(page, -1, wxT("No sounds"));
 	ssizer->Add(CheckBoxNoSfx, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
 	CheckBoxNoMusic = new wxCheckBox(page, -1, wxT("No music"));
 	ssizer->Add(CheckBoxNoMusic, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
 	CheckBoxNoCDAudio = new wxCheckBox(page, -1, wxT("No CD audio"));
 	ssizer->Add(CheckBoxNoCDAudio, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
 	CheckBox3DSound = new wxCheckBox(page, -1, wxT("Use 3D sound"));
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
 	ssizer->Add(CheckBox3DSound, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
 	CheckBoxUseOpenAL = new wxCheckBox(page, -1, wxT("Use OpenAL"));
 	ssizer->Add(CheckBoxUseOpenAL, 0, wxALL, 4);
+	ssizer->AddSpacer(1);
 	CheckBoxUseTimidity = new wxCheckBox(page, -1, wxT("Use Timidity"));
 	ssizer->Add(CheckBoxUseTimidity, 0, wxALL, 4);
-	ssizer->AddSpacer(1);
 	ssizer->Add(new wxStaticText(page, -1, wxT("Timidity Patches Location:")), 0, wxALL, 4);
 	PatchFiles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(209, -1));
 	ssizer->Add(PatchFiles, 0, wxALL, 4);
@@ -264,12 +266,14 @@ VMain::VMain()
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Input"));
 	wxFlexGridSizer* isizer = new wxFlexGridSizer(2);
+	isizer->AddSpacer(1);
 	CheckBoxNoMouse = new wxCheckBox(page, -1, wxT("Disable mouse"));
 	isizer->Add(CheckBoxNoMouse, 0, wxALL, 4);
+	isizer->AddSpacer(1);
 	CheckBoxNoJoy = new wxCheckBox(page, -1, wxT("Disable joystick"));
 	isizer->Add(CheckBoxNoJoy, 0, wxALL, 4);
-	ssizer->AddSpacer(1);
-	ssizer->AddSpacer(1);
+	isizer->AddSpacer(1);
+	isizer->AddSpacer(1);
 	isizer->Add(new wxStaticText(page, -1, wxT("Mouse X sensitivity:")), 0, wxALL, 4);
 	MouseX = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(48, -1));
 	isizer->Add(MouseX, 0, wxALL, 4);
@@ -283,9 +287,9 @@ VMain::VMain()
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Network"));
 	gsizer = new wxFlexGridSizer(2);
+	gsizer->AddSpacer(1);
 	CheckBoxNoLan = new wxCheckBox(page, -1, wxT("Disable network driver"));
 	gsizer->Add(CheckBoxNoLan, 0, wxALL, 4);
-	gsizer->AddSpacer(1);
 	gsizer->Add(new wxStaticText(page, -1, wxT("IP address:")), 0, wxALL, 4);
 	EditIPAddress = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
 	gsizer->Add(EditIPAddress, 0, wxALL, 4);
@@ -300,9 +304,9 @@ VMain::VMain()
 	gsizer->AddSpacer(1);
 	gsizer->AddSpacer(1);
 	gsizer->AddSpacer(1);
+	gsizer->AddSpacer(1);
 	CheckBoxMaster = new wxCheckBox(page, -1, wxT("Enable Master Server"));
 	gsizer->Add(CheckBoxMaster, 0, wxALL, 4);
-	gsizer->AddSpacer(1);
 	gsizer->Add(new wxStaticText(page, -1, wxT("Master Server IP address:")), 0, wxALL, 4);
 	EditMasterIPAddress = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(128, -1));
 	gsizer->Add(EditMasterIPAddress, 0, wxALL, 4);
@@ -339,6 +343,7 @@ VMain::VMain()
 	CheckBoxNoMouse->SetValue(!!Conf->Read(wxT("NoMouse"), 0l));
 	CheckBoxNoJoy->SetValue(!!Conf->Read(wxT("NoJoy"), 0l));
 	CheckBoxDebug->SetValue(!!Conf->Read(wxT("Debug"), 0l));
+	CheckBoxWindowedMode->SetValue(!!Conf->Read(wxT("WindowedMode"), 0l));
 	EditIWadDir->SetValue(Conf->Read(wxT("IWadDir"), wxT("")));
 	EditGame->SetValue(Conf->Read(wxT("CustomGame"), wxT("")));
 	MouseX->SetValue(Conf->Read(wxT("MouseX"), wxT("")));
@@ -362,6 +367,7 @@ VMain::~VMain()
 	Conf->Write(wxT("Renderer"), RendererBox->GetSelection());
 	Conf->Write(wxT("Resolution"), Resolution->GetSelection());
 	Conf->Write(wxT("Colour"), Colour->GetSelection());
+	Conf->Write(wxT("WindowedMode"), CheckBoxWindowedMode->IsChecked());
 	Conf->Write(wxT("Particles"), Particles->GetValue());
 	Conf->Write(wxT("CacheMemory"), CacheMemory->GetValue());
 	Conf->Write(wxT("NoSound"), CheckBoxNoSound->IsChecked());
@@ -547,6 +553,16 @@ void VMain::OnRun(wxCommandEvent&)
 	case 2:
 		CmdLine += wxT(" 32");
 		break;
+	}
+
+	// Windowed Mode
+	if (CheckBoxWindowedMode->IsChecked())
+	{
+		CmdLine += wxT(" +screen_windowed 1");
+	}
+	else
+	{
+		CmdLine += wxT(" +screen_windowed 0");
 	}
 
 	// EditMisc must always be the last option we fill
