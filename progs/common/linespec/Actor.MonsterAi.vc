@@ -1004,9 +1004,16 @@ final void A_FaceTarget()
 //
 //==========================================================================
 
-final void A_Die()
+final void A_Die(optional name DamageType)
 {
-	Damage(none, none, Health);
+	if (!specified_DamageType)
+	{
+		Damage(none, none, Health);
+	}
+	else
+	{
+		Damage(none, none, Health, DamageType);
+	}
 }
 
 //==========================================================================

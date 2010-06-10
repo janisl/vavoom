@@ -138,7 +138,7 @@ actor EvilEye 41
 {
 	Game Doom
 	Radius 16
-	Height 16
+	Height 54
 	+Solid
 	states
 	{

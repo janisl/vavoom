@@ -321,6 +321,10 @@
 		<prop_low_message name="Health.LowMessage" />
 	</class>
 
+	<class name="HealthPickup">
+		<prop_int name="HealthPickup.AutoUse"  property="AutoUseMode"  />
+	</class>
+
 	<class name="PowerupGiver">
 		<prop_powerup_colour name="Powerup.Color" />
 		<prop_tics name="Powerup.Duration" property="EffectTime" />

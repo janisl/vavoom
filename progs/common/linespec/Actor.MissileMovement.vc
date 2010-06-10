@@ -178,7 +178,7 @@ final void A_Tracer2()
 //
 //==========================================================================
 
-final void A_Fire()
+final void A_Fire(optional int Height)
 {
 	if (!Target || !Tracer)
 	{
@@ -194,7 +194,14 @@ final void A_Fire()
 	UnlinkFromWorld();
 	Origin.x = Tracer.Origin.x + 24.0 * cos(Tracer.Angles.yaw);
 	Origin.y = Tracer.Origin.y + 24.0 * sin(Tracer.Angles.yaw);
-	Origin.z = Tracer.Origin.z;
+	if (!specified_Height)
+	{
+		Origin.z = Tracer.Origin.z;
+	}
+	else
+	{
+		Origin.z = Tracer.Origin.z + itof(Height);
+	}
 	LinkToWorld();
 }
 

@@ -10,6 +10,7 @@ actor ArtiHealth : HealthPickup 82
 	+CountItem
 	+FloatBob
 	+Inventory.PickupFlash
+	HealthPickup.Autouse 1
 	states
 	{
 	Spawn:
@@ -30,6 +31,7 @@ actor ArtiSuperHealth : HealthPickup 32
 	+CountItem
 	+FloatBob
 	+Inventory.PickupFlash
+	HealthPickup.Autouse 2
 	states
 	{
 	Spawn:

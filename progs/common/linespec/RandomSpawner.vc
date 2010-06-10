@@ -58,6 +58,15 @@ void BeginPlay()
 				n += DropItemList[i].Amount;
 				i++;
 			}
+			else
+			{
+				// Send a warning that this class can't be found and continue the loop
+				print("WARNING: RandomSpawner type definition is incorrect at element %i", DropItemList.Num - i);
+				// Show that there's a problem.
+				Spawn(Unknown, Origin,,, false);
+				Destroy();
+				return;
+			}
 		}
 		// Then we reset the iterator to the start position...
 		i = 0;
@@ -119,8 +128,9 @@ void BeginPlay()
 
 			if (NewEntity)
 			{
-				// copy everything relevant
+				// Copy everything that is relevant
 				NewEntity.Angles = Angles;
+				NewEntity.Origin = Origin;
 				NewEntity.Special = Special;
 				NewEntity.Args[0] = Args[0];
 				NewEntity.Args[1] = Args[1];
@@ -129,11 +139,30 @@ void BeginPlay()
 				NewEntity.Args[4] = Args[4];
 				EntityEx(NewEntity).Special1 = Special1;
 				EntityEx(NewEntity).Special2 = Special2;
-	//			EntityEx(NewEntity).TID = TID;
+				NewEntity.SetTID(TID);
 				EntityEx(NewEntity).Master = Master;
 				EntityEx(NewEntity).Target = Target;
 				EntityEx(NewEntity).Tracer = Tracer;
 				EntityEx(NewEntity).CopyFriendliness(self, false);
+
+				// Copy Map Spawn flags
+				EntityEx(NewEntity).bAmbush = bAmbush;
+				EntityEx(NewEntity).bStanding = bStanding;
+				if (bDormant)
+				{
+					EntityEx(NewEntity).Deactivate(none);
+				}
+				if (bShadow && RenderStyle == STYLE_Translucent && Alpha == 0.25)
+				{
+					EntityEx(NewEntity).bShadow = true;
+					EntityEx(NewEntity).RenderStyle = STYLE_Translucent;
+					EntityEx(NewEntity).Alpha = 0.25;
+				}
+				if (RenderStyle == STYLE_None)
+				{
+					EntityEx(NewEntity).RenderStyle = STYLE_None;
+				}
+
 				// This handles things such as projectiles with the MF4_SPECTRAL flag that have
 				// a health set to -2 after spawning, for internal reasons.
 				if (Health != default.Health)

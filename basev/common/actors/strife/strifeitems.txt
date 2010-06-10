@@ -10,6 +10,7 @@ actor MedPatch : HealthPickup 2011
 	Inventory.MaxAmount 20
 	Inventory.Icon "i_stmp"
 	+FloorClip
+	HealthPickup.Autouse 3
 	states
 	{
 	Spawn:
@@ -30,6 +31,7 @@ actor MedicalKit : HealthPickup 2012
 	Inventory.MaxAmount 15
 	Inventory.Icon "i_mdkt"
 	+FloorClip
+	HealthPickup.Autouse 3
 	states
 	{
 	Spawn:

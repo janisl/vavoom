@@ -1783,7 +1783,12 @@ void R_ParseEffectDefs()
 	{
 		VTempClassEffects& CD = ClassDefs[i];
 		VClass* Cls = VClass::FindClass(*CD.ClassName);
-		if (!Cls)
+		if (Cls)
+		{
+			// Get class replacement
+			Cls = Cls->GetReplacement();
+		}
+		else
 		{
 			GCon->Logf(NAME_Init, "No such class %s", *CD.ClassName);
 			continue;

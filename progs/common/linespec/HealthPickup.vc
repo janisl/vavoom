@@ -26,6 +26,8 @@
 class HealthPickup : Inventory
 	abstract;
 
+int AutoUseMode;
+
 //==========================================================================
 //
 //	CreateCopy
@@ -91,4 +93,5 @@ defaultproperties
 {
 	MaxAmount = DefMaxAmount;
 	bInvBar = true;
+	AutoUseMode = 0;
 }

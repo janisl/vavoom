@@ -17,7 +17,7 @@ class Actor extends Thinker
 	action native A_ExtChase(eval bool usemelee, eval bool usemissile,
 		optional evalnot bool playactive, optional eval bool nightmarefast);
 	action native A_FaceTarget();
-	action native A_Die();
+	action native A_Die(optional DamageType);
 	action native A_CentaurDefend();
 	action native A_AlertMonsters();
 	action native A_ClearTarget();
@@ -168,7 +168,7 @@ class Actor extends Thinker
 	action native A_SeekerMissile(eval int threshold, eval int turnmax);
 	action native A_Tracer();
 	action native A_Tracer2();
-	action native A_Fire();
+	action native A_Fire(optional int Height);
 	action native A_BishopMissileWeave();
 	action native A_CStaffMissileSlither();
 	action native A_Countdown();

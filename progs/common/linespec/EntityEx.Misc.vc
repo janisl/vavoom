@@ -2790,65 +2790,174 @@ final void AutoUseHealth(int saveHealth)
 {
 	int i;
 	int count;
+	int normalhealth = 0;
+	int superhealth = 0;
+	array<Inventory> normal;
+	array<Inventory> super;
+	Inventory inv;
+	int saved = 0;
 
-	Inventory normal = FindInventory(ArtiHealth);
-	Inventory super = FindInventory(ArtiSuperHealth);
-	if (Level.World.bSkillAutoUseHealth && normal &&
-		(normal.Amount * 25 >= saveHealth))
+	for(inv = Inventory; inv; inv = inv.Inventory)
+	{
+		if (inv.Amount > 0 && ClassIsChildOf(inv.Class, HealthPickup))
+		{
+			int mode = HealthPickup(inv).AutoUseMode;
+
+			if (mode == 1)
+			{
+				normal.Num = normal.Num + 1;
+				normal[normal.Num] = inv;
+			}
+			else if (mode == 2)
+			{
+				super.Num = super.Num + 1;
+				super[super.Num] = inv;
+			}
+		}
+	}
+
+	for(i = 0; i < normal.Num; i++)
+	{
+		normalhealth += normal[i].Amount * normal[i].Health;
+	}
+
+	for(i = 0; i < super.Num; i++)
+	{
+		superhealth += super[i].Amount * super[i].Health;
+	}
+
+	if (Level.World.bSkillAutoUseHealth && normalhealth >= saveHealth)
 	{
 		// Use quartz flasks
-		count = (saveHealth + 24) / 25;
-		for (i = 0; i < count; i++)
+		while (normal.Num > 0 && saveHealth > 0)
 		{
-			Health += 25;
-			if (!(--normal.Amount))
+			int maxhealth = 0;
+			int index = -1;
+
+			// Find the largest item in the list
+			for(i = 0; i < normal.Num; i++)
 			{
-				// Used last of a type - compact the artifact list
-				normal.Destroy();
+				if (normal[i].Health > maxhealth)
+				{
+					index = i;
+					maxhealth = normal[i].Health;
+				}
+			}
+
+			// Now apply the health items, using the same logic as Heretic and Hexen.
+			count = (saveHealth + maxhealth - 1) / maxhealth;
+			for(i = 0; i < count; i++)
+			{
+				saved += maxhealth;
+				saveHealth -= maxhealth;
+				if (!(--normal[index].Amount))
+				{
+					// Used last of a type - compact the artifact list
+					normal[index].Destroy();
+				}
 			}
 		}
+
+		Health += saved;
 	}
-	else if (super && super.Amount * 100 >= saveHealth)
-	{
+	else if (superhealth >= saveHealth)
+	{ 
 		// Use mystic urns
-		count = (saveHealth + 99) / 100;
-		for (i = 0; i < count; i++)
+		while (super.Num > 0 && saveHealth > 0)
 		{
-			Health += 100;
-			if (!(--super.Amount))
+			int maxhealth = 0;
+			int index = -1;
+
+			// Find the largest item in the list
+			for(i = 0; i < super.Num; i++)
 			{
-				// Used last of a type - compact the artifact list
-				super.Destroy();
+				if (super[i].Health > maxhealth)
+				{
+					index = i;
+					maxhealth = super[i].Health;
+				}
+			}
+
+			// Now apply the health items, using the same logic as Heretic and Hexen.
+			count = (saveHealth + maxhealth - 1) / maxhealth;
+			for(i = 0; i < count; i++)
+			{
+				saved += maxhealth;
+				saveHealth -= maxhealth;
+				if (!(--super[index].Amount))
+				{
+					// Used last of a type - compact the artifact list
+					super[index].Destroy();
+				}
 			}
 		}
+
+		Health += saved;
 	}
-	else if (Level.World.bSkillAutoUseHealth &&
-		((super ? super.Amount * 100 : 0) +
-		(normal ? normal.Amount * 25 : 0) >= saveHealth))
-	{
-		// Use mystic urns and quartz flasks
-		count = (saveHealth + 24) / 25;
-		saveHealth -= count * 25;
-		for (i = 0; normal && i < count; i++)
+	else if (Level.World.bSkillAutoUseHealth && normalhealth + superhealth >= saveHealth)
+	{ // Use mystic urns and quartz flasks
+		while (normal.Num > 0 && saveHealth > 0)
 		{
-			Health += 25;
-			if (!(--normal.Amount))
+			int maxhealth = 0;
+			int index = -1;
+
+			// Find the largest item in the list
+			for(i = 0; i < normal.Num; i++)
 			{
-				// Used last of a type - compact the artifact list
-				normal.Destroy();
-				normal = none;
+				if (normal[i].Health > maxhealth)
+				{
+					index = i;
+					maxhealth = normal[i].Health;
+				}
+			}
+
+			// Now apply the health items, using the same logic as Heretic and Hexen.
+			count = (saveHealth + maxhealth - 1) / maxhealth;
+			for(i = 0; i < count; i++)
+			{
+				saved += maxhealth;
+				saveHealth -= maxhealth;
+				if (!(--normal[index].Amount))
+				{
+					// Used last of a type - compact the artifact list
+					normal[index].Destroy();
+				}
 			}
 		}
-		count = (saveHealth + 99) / 100;
-		for (i = 0; super && i < count; i++)
+
+		Health += saved;
+		if (saveHealth > 0)
 		{
-			Health += 100;
-			if (!(--super.Amount))
+			while (super.Num > 0 && saveHealth > 0)
 			{
-				// Used last of a type - compact the artifact list
-				super.Destroy();
-				super = none;
+				int maxhealth = 0;
+				int index = -1;
+
+				// Find the largest item in the list
+				for(i = 0; i < super.Num; i++)
+				{
+					if (super[i].Health > maxhealth)
+					{
+						index = i;
+						maxhealth = super[i].Health;
+					}
+				}
+
+				// Now apply the health items, using the same logic as Heretic and Hexen.
+				count = (saveHealth + maxhealth - 1) / maxhealth;
+				for(i = 0; i < count; i++)
+				{
+					saved += maxhealth;
+					saveHealth -= maxhealth;
+					if (!(--super[index].Amount))
+					{
+						// Used last of a type - compact the artifact list
+						super[index].Destroy();
+					}
+				}
 			}
+
+			Health += saved;
 		}
 	}
 	Player.Health = Health;
@@ -2863,38 +2972,61 @@ final void AutoUseHealth(int saveHealth)
 final void AutoUseStrifeHealth(int saveHealth)
 {
 	int i;
+	array<Inventory> Items;
+	Inventory inv;
+	int itemshealth;
 
-	Inventory Item = FindInventory(MedicalKit);
-	if (Item && Item.Amount * 25 >= saveHealth)
+	for(inv = Inventory; inv; inv = inv.Inventory)
 	{
-		// Use medical kits
-		i = (saveHealth + 24) / 25;
-		while (i--)
+		if (inv.Amount > 0 && ClassIsChildOf(inv.Class, HealthPickup))
 		{
-			Health += 25;
-			saveHealth -= 25;
-			if (!(--Item.Amount))
+			int mode = HealthPickup(inv).AutoUseMode;
+
+			if (mode == 3)
 			{
-				Item.Destroy();
+				Items.Num = Items.Num + 1;
+				Items[Items.Num] = inv;
 			}
-			PlaySound('misc/invuse', CHAN_BODY);
 		}
 	}
-	
-	Item = FindInventory(MedPatch);
-	if (saveHealth > 0 && Item && Item.Amount * 10 >= saveHealth)
+
+	for(i = 0; i < Items.Num; i++)
 	{
-		i = (saveHealth + 9) / 10;
-		while (i--)
-		{
-			Health += 10;
-			if (!(--Item.Amount))
-			{
-				Item.Destroy();
-			}
-			PlaySound('misc/invuse', CHAN_BODY);
-		}
+		itemshealth += Items[i].Amount * Items[i].Health;
 	}
+
+	while (Items.Num > 0)
+	{
+		int maxhealth = 0;
+		int index = -1;
+
+		// Find the largest item in the list
+		for(i = 0; i < Items.Num; i++)
+		{
+			if (Items[i].Health > maxhealth)
+			{
+				index = i;
+				maxhealth = Items[i].Amount;
+			}
+		}
+
+		while (Health < 50)
+		{
+			if (!UseInventory(Items[index]))
+			{
+				break;
+			}			
+		}
+		if (Health >= 50)
+		{
+			Player.Health = Health;
+			return;
+		}
+		// Using all of this item was not enough so delete it and restart with the next best one
+		Items[index] = none;
+		Items.Num = Items.Num - 1;
+	}
+
 	Player.Health = Health;
 }
 
