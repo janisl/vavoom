@@ -4221,3 +4221,7 @@
 12.06.2010
   Firebrand fixed the display of Doom and Heretic armor type on fullscreen.
   Firebrand fixed the damage rate of lava pits when the player is using the IronFeet powerup.
+  Firebrand added line flags that avoid the deletion of FloorData or CeilingData when certain sector specials
+ end their effects, this fixes the problem with Heretic's E4M1 last raising floor was being activated more than
+ once, making it impossible for the player to finish the map, special thanks to Appelzin3 at the forums for
+ providing more information for fixing this bug.

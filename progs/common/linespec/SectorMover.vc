@@ -25,6 +25,8 @@
 
 class SectorMover : SectorThinker;
 
+bool Not_Keep;	// This flag let's us know if we can destroy FloorData
+
 //==========================================================================
 //
 //	Finished
@@ -33,14 +35,17 @@ class SectorMover : SectorThinker;
 
 void Finished()
 {
-	if (Sector->FloorData == self)
-		Sector->FloorData = none;
-	if (Sector->CeilingData == self)
-		Sector->CeilingData = none;
-	if (Sector->LightingData == self)
-		Sector->LightingData = none;
-	RemoveAffector();
-	Destroy();
+	if (Not_Keep)
+	{
+		if (Sector->FloorData == self)
+			Sector->FloorData = none;
+		if (Sector->CeilingData == self)
+			Sector->CeilingData = none;
+		if (Sector->LightingData == self)
+			Sector->LightingData = none;
+		RemoveAffector();
+		Destroy();
+	}
 }
 
 //**************************************************************************
@@ -98,7 +103,7 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 				/*if (flag)
 				{
 					sector->floor.dist = lastpos;
-					P_ChangeSector(sector, crush);
+					XLevel.ChangeSector(sector, crush);
 					return RES_CRUSHED;
 				}*/
 			}
@@ -233,4 +238,5 @@ int MovePlane(sector_t* sector, float amount, float dest, int crush,
 
 defaultproperties
 {
+	Not_Keep = true;
 }

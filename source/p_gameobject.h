@@ -125,6 +125,8 @@ enum
 	ML_CLIP_MIDTEX			= 0x00080000,	// Automatic for every Strife line
 	ML_WRAP_MIDTEX			= 0x00100000,
 	ML_FIRSTSIDEONLY		= 0x00800000,	// Actiavte only when crossed from front side.
+	ML_KEEPDATA				= 0x01000000,	// Keep FloorData or CeilingData after activating them.
+											// Used to simulate original Heretic behaviour.
 
 	ML_SPAC_SHIFT			= 10,
 	ML_SPAC_MASK			= 0x00001c00,

@@ -258,12 +258,22 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		DestHeight = Level.FindNextHighestFloor(Sector, &Spot);
 		Spot.z = DestHeight;
 		FloorDestDist = DotProduct(Sector->floor.normal, Spot);
+		// NO MORE DAMAGE, IF APPLICABLE
 		if (Line)
 		{
 			Sector->floor.pic = Line->frontsector->floor.pic;
+			Sector->special = (Sector->special & SECSPEC_SECRET_MASK) |
+				(Line->frontsector->special & ~SECSPEC_SECRET_MASK);
+			if (Line->flags & ML_KEEPDATA)
+			{
+				// Don't destroy the thinker
+				Not_Keep = false;
+			}
 		}
-		// NO MORE DAMAGE, IF APPLICABLE
-		Sector->special &= SECSPEC_SECRET_MASK;
+		else
+		{
+			Sector->special &= SECSPEC_SECRET_MASK;
+		}
 		SeqName = LineSpecialLevelInfo(Level).DefaultFloorAltSound;
 		break;
 

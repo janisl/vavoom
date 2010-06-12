@@ -43,6 +43,7 @@ struct spec_trans_t
 	int spac;
 	int repeat;
 	int monst;
+	int not_destroy;
 };
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
@@ -210,9 +211,9 @@ void InitTranslationTables()
 	SetLineTrans(18, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_Use, false);
 	SetLineTrans(19, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_Cross, false);
 
-	SetLineTrans(20, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Use, false);
+	SetLineTrans(20, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Use, false, false, true);
 	SetLineTrans(21, LNSPEC_PlatDownWaitUpStayLip, -1, 32, 105, 0, 0, SPAC_Use, false);
-	SetLineTrans(22, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Cross, false);
+	SetLineTrans(22, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Cross, false, false, true);
 	SetLineTrans(23, LNSPEC_FloorLowerToLowest, -1, 8, 0, 0, 0, SPAC_Use, false);
 	SetLineTrans(24, LNSPEC_FloorRaiseToLowestCeiling, -1, 8, 0, 0, 0, SPAC_Impact, false);
 	SetLineTrans(25, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_Cross, false);
@@ -239,7 +240,7 @@ void InitTranslationTables()
 	SetLineTrans(44, LNSPEC_CeilingLowerAndCrush, -1, 8, 0, 0, 0, SPAC_Cross, false);
 	SetLineTrans(45, LNSPEC_FloorLowerToHighest, -1, 8, 128, 0, 0, SPAC_Use, true);
 	SetLineTrans(46, LNSPEC_DoorOpen, -1, 16, 0, 0, 0, SPAC_Impact, true, true);
-	SetLineTrans(47, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Impact, false);
+	SetLineTrans(47, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Impact, false, false, true);
 	SetLineTrans(48, LNSPEC_ScrollTextureLeft, 64, 0, 0, 0, 0, SPAC_Cross, false);
 	SetLineTrans(49, LNSPEC_CeilingCrushAndRaiseA, -1, 8, 8, 10, 0, SPAC_Use, false);
 
@@ -262,7 +263,7 @@ void InitTranslationTables()
 	SetLineTrans(65, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_Use, true);
 	SetLineTrans(66, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 3, 0, 0, SPAC_Use, true);
 	SetLineTrans(67, LNSPEC_FloorRaiseByValueChangeTex, -1, 4, 4, 0, 0, SPAC_Use, true);
-	SetLineTrans(68, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Use, true);
+	SetLineTrans(68, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Use, true, false, true);
 	SetLineTrans(69, LNSPEC_FloorRaiseToNearest, -1, 8, 0, 0, 0, SPAC_Use, true);
 
 	SetLineTrans(70, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_Use, true);
@@ -292,7 +293,7 @@ void InitTranslationTables()
 	SetLineTrans(92, LNSPEC_FloorRaiseByValue, -1, 8, 24, 0, 0, SPAC_Cross, true);
 	SetLineTrans(93, LNSPEC_FloorRaiseByValueChange, -1, 8, 24, 0, 0, SPAC_Cross, true);
 	SetLineTrans(94, LNSPEC_FloorRaiseAndCrush, -1, 8, 10, 0, 0, SPAC_Cross, true);
-	SetLineTrans(95, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Cross, true);
+	SetLineTrans(95, LNSPEC_FloorRaiseToNearestChange, -1, 4, 0, 0, 0, SPAC_Cross, true, false, true);
 	SetLineTrans(96, LNSPEC_FloorRaiseByTexture, -1, 8, 0, 0, 0, SPAC_Cross, true);
 	SetLineTrans(97, LNSPEC_Teleport, 0, -1, 0, 0, 0, SPAC_Cross, true, true);
 	SetLineTrans(98, LNSPEC_FloorLowerToHighest, -1, 32, 136, 0, 0, SPAC_Cross, true);
@@ -315,7 +316,8 @@ void InitTranslationTables()
 //==========================================================================
 
 void SetLineTrans(int i, int special, int arg1, int arg2, int arg3,
-	int arg4, int arg5, int spac, int repeat, optional int monst)
+	int arg4, int arg5, int spac, int repeat, optional int monst,
+	optional int not_destroy)
 {
 	spec_trans_tab[i].special = special;
 	spec_trans_tab[i].arg1 = arg1;
@@ -326,6 +328,7 @@ void SetLineTrans(int i, int special, int arg1, int arg2, int arg3,
 	spec_trans_tab[i].spac = spac;
 	spec_trans_tab[i].repeat = repeat;
 	spec_trans_tab[i].monst = monst;
+	spec_trans_tab[i].not_destroy = not_destroy;
 }
 
 //==========================================================================
@@ -416,6 +419,11 @@ void TranslateLine(line_t* line)
 		SPAC_UseThrough))
 	{
 		line->flags &= ~ML_MONSTERSCANACTIVATE;
+	}
+	// Check to see if we want thinkers destroyed or not
+	if (spec_trans_tab[OldSpec].not_destroy)
+	{
+		line->flags |= ML_KEEPDATA;
 	}
 }
 

@@ -38,6 +38,7 @@ struct spec_trans_t
 	int spac;
 	int repeat;
 	int monst;
+	int not_destroy;
 };
 
 spec_trans_t spec_trans_tab[NUM_SPECIALS];
@@ -540,7 +541,8 @@ void InitTranslationTables()
 //==========================================================================
 
 void SetLineTrans(int i, int special, int arg1, int arg2, int arg3,
-	int arg4, int arg5, int spac, int repeat, optional int monst)
+	int arg4, int arg5, int spac, int repeat, optional int monst,
+	optional int not_destroy)
 {
 	spec_trans_tab[i].special = special;
 	spec_trans_tab[i].arg1 = arg1;
@@ -551,6 +553,7 @@ void SetLineTrans(int i, int special, int arg1, int arg2, int arg3,
 	spec_trans_tab[i].spac = spac;
 	spec_trans_tab[i].repeat = repeat;
 	spec_trans_tab[i].monst = monst;
+	spec_trans_tab[i].not_destroy = not_destroy;
 }
 
 //==========================================================================
@@ -1009,6 +1012,11 @@ void TranslateLine(Level InLevel, line_t* line)
 		SPAC_UseThrough))
 	{
 		line->flags &= ~ML_MONSTERSCANACTIVATE;
+	}
+	// Check to see if we want thinkers destroyed or not
+	if (spec_trans_tab[OldSpec].not_destroy)
+	{
+		line->flags |= ML_KEEPDATA;
 	}
 }
 
