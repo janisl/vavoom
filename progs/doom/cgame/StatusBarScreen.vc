@@ -484,7 +484,7 @@ void SB_DrawFullscreenStats()
 	BasicArmor Armor = BasicArmor(EntityEx(cl.MO).FindInventory(BasicArmor));
 	if (Armor && Armor.Amount)
 	{
-		int i = Armor.Amount > 100 ? 1 : 0;
+		int i = Armor.SavePercent > 0.335 ? 1 : 0;
 		SB_DrawTallNum(ST_TDARMORX, ST_TDARMORY, Armor.Amount, 0.6, false);
 		DrawPic(ST_TDARMORX - 60, ST_TDARMORY + 15, pic_armor[i], 0.6);
 	}
