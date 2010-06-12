@@ -517,11 +517,13 @@ final void PlayerInSpecialSector(float deltaTime)
 			break;
 		case SECSPEC_LightStrobeFastDamage:
 		case SECSPEC_DamageSuperHellslime:
-			if ((!IronFeet || (P_Random() < 5)) &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (!IronFeet || (P_Random() < 5 && P_Random() < 5))
 			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 20, 'Slime');
+				if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+				{
+					LastSectorDamageTime = Level.XLevel.Time;
+					EntityEx(MO).Damage(none, none, 20, 'Slime');
+				}
 			}
 			break;
 		case SECSPEC_DamageSuperHellslimeExit:
@@ -599,11 +601,13 @@ final void PlayerInSpecialSector(float deltaTime)
 			}
 			break;
 		case 0x0300:
-			if ((!IronFeet || (P_Random() < 5)) &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (!IronFeet ||  (P_Random() < 5 && P_Random() < 5))
 			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, 20, 'Slime');
+				if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+				{
+					LastSectorDamageTime = Level.XLevel.Time;
+					EntityEx(MO).Damage(none, none, 20, 'Slime');
+				}
 			}
 			break;
 		}
@@ -623,11 +627,13 @@ final void PlayerInSpecialSector(float deltaTime)
 		}
 		else if (MO.Sector->Damage < 50)
 		{
-			if ((!IronFeet || (P_Random() < 5)) &&
-				Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+			if (!IronFeet ||  (P_Random() < 5 && P_Random() < 5))
 			{
-				LastSectorDamageTime = Level.XLevel.Time;
-				EntityEx(MO).Damage(none, none, MO.Sector->Damage);
+				if (Level.XLevel.Time - LastSectorDamageTime >= 32.0 / 35.0)
+				{
+					LastSectorDamageTime = Level.XLevel.Time;
+					EntityEx(MO).Damage(none, none, MO.Sector->Damage);
+				}
 			}
 		}
 		else if (Level.XLevel.Time - LastSectorDamageTime >= 1.0 / 35.0)
