@@ -4211,21 +4211,31 @@
 07.06.2010
   I fixed passing strings to print functions.
 10.06.2010
-  Firebrand made actors spawned by RandomSpawner to copy their spawn flags, this solves a problem reported that
- some enemies were being activated when shooting, instead of behaving as monsters not spawned from RandomSpawner.
-  Firebrand added warnings to avoid crashes by spawning undefined actors with RandomSpawner.
+  Firebrand made actors spawned by RandomSpawner to copy their spawn flags,
+ this solves a problem reported that some enemies were being activated when
+ shooting, instead of behaving as monsters not spawned from RandomSpawner.
+  Firebrand added warnings to avoid crashes by spawning undefined actors with
+ RandomSpawner.
   Firebrand added options for running windowed mode in the launcher.
-  Firebrand added autouse parameters to HealthPickup class, if it's set to 1, it will be cosidered a "small"
- health pickup (like heretic's quartz flasks), if it's set to 2, it will be considered as a "big" health pickup
- (like mystic urns).
+  Firebrand added autouse parameters to HealthPickup class, if it's set to 1,
+ it will be cosidered a "small" health pickup (like heretic's quartz flasks),
+ if it's set to 2, it will be considered as a "big" health pickup (like mystic
+ urns).
 12.06.2010
   Firebrand fixed the display of Doom and Heretic armor type on fullscreen.
-  Firebrand fixed the damage rate of lava pits when the player is using the IronFeet powerup.
-  Firebrand added line flags that avoid the deletion of FloorData or CeilingData when certain sector specials
- end their effects, this fixes the problem with Heretic's E4M1 last raising floor was being activated more than
- once, making it impossible for the player to finish the map, special thanks to Appelzin3 at the forums for
- providing more information for fixing this bug.
+  Firebrand fixed the damage rate of lava pits when the player is using the
+ IronFeet powerup.
+  Firebrand added line flags that avoid the deletion of FloorData or
+ CeilingData when certain sector specials end their effects, this fixes the
+ problem with Heretic's E4M1 last raising floor was being activated more than
+ once, making it impossible for the player to finish the map, special thanks to
+ Appelzin3 at the forums for providing more information for fixing this bug.
 13.06.2010
-  Firebrand made locked doors behave as doors without locks (made them reusable).
-  Firebrand made projectiles to simulate Doom's original behavior, where they would pass through steps up to 32
- units height.
+  Firebrand made locked doors behave as doors without locks (made them
+ reusable).
+  Firebrand made projectiles to simulate Doom's original behavior, where they
+ would pass through steps up to 32 units height.
+
+******************************************************************************
+                            VERSION 1.32
+******************************************************************************

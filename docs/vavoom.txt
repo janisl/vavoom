@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.31
+                                                    Version 1.32
 
 Contents:
     0. Disclaimer
@@ -278,7 +278,7 @@ Sound
 -NOSFX disables sound
 -nosfx
 
--3DSOUND disables 3D sound, use original mode, Windows version only
+-3DSOUND enables 3D sound, Windows version only
 -3dsound
 
 -NOMUSIC disables music
@@ -363,7 +363,7 @@ Debugging
        ~/.vavoom/debug.txt on Unix-like systems with all the console messages.
 -debug
 
--STARTTIME sets start time, it doesn't works in the LINUX version or
+-STARTTIME sets start time, it doesn't work in the LINUX version or
            dedicated servers
 -starttime <time>
 
@@ -416,6 +416,7 @@ Debugging
     - WAV and FLAC sounds, MP3, OGG and mod-style music.
     - High Resolution textures
     - Custom object and weapon definitions using DECORATE script.
+    - Stencil shadows.
     - A lots more.
 
 *****************************************************************************
@@ -1159,6 +1160,15 @@ Version 1.31
 * Support for basic parsing of GLDEFS variants.
 * Implemented multiple missing DECORATE features.
 * Many bug fixes.
+
+==============================================================================
+Version 1.32
+==============================================================================
+
+* Added advanced renderer which is able to do Doom 3 style shadows. OpenGL
+ version only.
+* If available, use GLSL shaders for all OpenGL rendering.
+* Multiple bug fixes.
 
 *****************************************************************************
 8. Licensing
