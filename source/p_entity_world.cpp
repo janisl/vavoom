@@ -1293,6 +1293,12 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 					return false;
 				}
 			}
+// Only Heretic
+//			if ((EntityFlags & EF_Missile) && tmtrace.FloorZ > Origin.z)
+//			{
+//				PushLine(tmtrace);
+//				return false;
+//			}
 			if (Origin.z < tmtrace.FloorZ)
 			{
 				// Check to make sure there's nothing in the way for the step up
@@ -1303,11 +1309,6 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 				}
 			}
 		}
-// Only Heretic
-//		if (bMissile && tmtrace->FloorZ > Origin.z)
-//		{
-//			eventPushLine();
-//		}
 		// killough 3/15/98: Allow certain objects to drop off
 		if ((!AllowDropOff && !(EntityFlags & EF_DropOff) &&
 			!(EntityFlags & EF_Float) && !(EntityFlags & EF_Missile)) ||

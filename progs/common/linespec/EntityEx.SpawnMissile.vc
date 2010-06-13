@@ -578,13 +578,14 @@ final EntityEx SpawnPlayerMissileEx(class<EntityEx> type, bool RetExploded,
 	{
 		org.z += Height * 0.5 - FloorClip;
 		//	Missiles are spawned 4 units lower than hitscan attacks.
+		//  Add an extra unit to simulate Doom's original behaviour.
 		if (bIsPlayer)
 		{
-			org.z += PlayerPawn(Player.MO).AttackZOffset - 4.0;
+			org.z += PlayerPawn(Player.MO).AttackZOffset - 3.0;
 		}
 		else
 		{
-			org.z += 4.0;
+			org.z += 5.0;
 		}
 	}
 	A = Spawn(type, org);

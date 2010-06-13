@@ -105,7 +105,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		else
 		{
 			LightTag = Arg5;
-			Type = DOOREV_Raise;
+//			Type = DOOREV_Raise;
 		}
 
 		//HACK delay 0 means open
@@ -179,7 +179,8 @@ void InitCloseIn30(sector_t* InSector)
 
 bool ReUse(int InType, line_t* Line, Entity Thing)
 {
-	if (InType == DOOREV_Raise && Type == DOOREV_Raise)
+	if ((InType == DOOREV_RaiseLocked && Type == DOOREV_RaiseLocked) ||
+		(InType == DOOREV_Raise && Type == DOOREV_Raise))
 	{
 		// Only for "raise" doors, not "open"s
 		if (Direction == -1)
@@ -237,6 +238,7 @@ void Tick(float deltaTime)
 			switch (Type)
 			{
 			case DOOREV_Raise:
+			case DOOREV_RaiseLocked:
 				Direction = -1;	// time to go back down
 				StartDoorSound(false);
 				break;
@@ -285,6 +287,7 @@ void Tick(float deltaTime)
 			switch (Type)
 			{
 			case DOOREV_Raise:
+			case DOOREV_RaiseLocked:
 			case DOOREV_Close:
 				Finished();	// unlink and free
 				break;
@@ -328,6 +331,7 @@ void Tick(float deltaTime)
 			switch (Type)
 			{
 			case DOOREV_Raise:
+			case DOOREV_RaiseLocked:
 				Direction = 0;	// wait at top
 				TopTime = TopWait;
 				break;

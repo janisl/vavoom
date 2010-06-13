@@ -4225,3 +4225,7 @@
  end their effects, this fixes the problem with Heretic's E4M1 last raising floor was being activated more than
  once, making it impossible for the player to finish the map, special thanks to Appelzin3 at the forums for
  providing more information for fixing this bug.
+13.06.2010
+  Firebrand made locked doors behave as doors without locks (made them reusable).
+  Firebrand made projectiles to simulate Doom's original behavior, where they would pass through steps up to 32
+ units height.
