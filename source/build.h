@@ -24,9 +24,9 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	31
+#define VERSION_MINOR	32
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.31"
+#define VERSION_TEXT	"1.32"
 
 // The version as seen in the Windows resource
 #define RC_FILEVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_RELEASE,SVN_REVISION_NUMBER
