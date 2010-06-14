@@ -109,7 +109,7 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 		}
 
 		//HACK delay 0 means open
-		if (Type == DOOREV_Raise && !Arg3)
+		if ((Type == DOOREV_Raise || Type == DOOREV_RaiseLocked) && !Arg3)
 		{
 			Type = DOOREV_Open;
 		}
