@@ -414,6 +414,7 @@ Debugging
     - glVIS plugin.
     - Support for Skyboxes
     - WAV and FLAC sounds, MP3, OGG and mod-style music.
+    - Possibility of using Timidity for MIDI and MUS playback.
     - High Resolution textures
     - Custom object and weapon definitions using DECORATE script.
     - Stencil shadows.
@@ -1215,7 +1216,7 @@ Randy Heit      Developer of the ZDoom sourceport, which Vavoom uses features
 
 Rachael
 Alexanderson
-(SoulPriestess) Webmaster and administrator of the DRD Team SVN Builds, which host
+(Eruanna)	Webmaster and administrator of the DRD Team SVN Builds, which host
 Nigel Rowand    Vavoom SVN builds.
 (Enjay)
 
