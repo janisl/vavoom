@@ -10,7 +10,7 @@ actor ClericPlayer : PlayerPawn
 	Player.ViewHeight 48
 	Player.ColorRange 146, 163
 	Player.HexenArmor 10, 10, 25, 5, 20
-	Player.JumpZ 9.5
+	Player.JumpZ 9
 	Player.SoundClass "cleric"
 	Player.DisplayName "Cleric"
 	Player.HealRadiusType "Health"

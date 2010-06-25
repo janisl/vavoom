@@ -12,7 +12,7 @@ actor FighterPlayer : PlayerPawn
 	Player.SideMove 1.125, 1.475
 	Player.ColorRange 246, 254
 	Player.HexenArmor 15, 25, 20, 15, 5
-	Player.JumpZ 9.5
+	Player.JumpZ 9
 	Player.DisplayName "Fighter"
 	Player.HealRadiusType "Armor"
 	Player.SoundClass "fighter"

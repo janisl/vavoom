@@ -12,7 +12,7 @@ actor MagePlayer : PlayerPawn
 	Player.SideMove 0.875, 0.925
 	Player.ColorRange 146, 163
 	Player.HexenArmor 5, 5, 15, 10, 25
-	Player.JumpZ 9.5
+	Player.JumpZ 9
 	Player.SoundClass "mage"
 	Player.DisplayName "Mage"
 	Player.HealRadiusType "Mana"
