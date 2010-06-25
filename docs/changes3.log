@@ -4239,3 +4239,7 @@
 ******************************************************************************
                             VERSION 1.32
 ******************************************************************************
+
+25.06.2010
+  Firebrand fixed crashes in Hexen when picking up weapon pieces and already had assembled fourth weapon.
+  Firebrand fixed a crash with the recent changes done for Strife's AutoUseHealth method.

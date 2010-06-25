@@ -111,16 +111,20 @@ bool TryPickup(EntityEx Toucher)
 	Hold.PieceMask |= PieceValue;
 	if (Hold.PieceMask == (WPIECE1 | WPIECE2 | WPIECE3))
 	{
-		Weapon Wpn = Level.Spawn(WeaponType);
-		if (!Wpn.TryPickup(Toucher))
+		// Give the weapon if we don't already have it
+		if (!Weapon(Toucher.FindInventory(WeaponType)))
 		{
-			Wpn.Destroy();
-		}
-		else
-		{
-			gaveWeapon = true;
-			PlayerEx(Toucher.Player).PendingWeapon = Wpn;
-			GivenWeapon = Wpn;
+			Weapon Wpn = Level.Spawn(WeaponType);
+			if (!Wpn.TryPickup(Toucher))
+			{
+				Wpn.Destroy();
+			}
+			else
+			{
+				gaveWeapon = true;
+				PlayerEx(Toucher.Player).PendingWeapon = Wpn;
+				GivenWeapon = Wpn;
+			}
 		}
 	}
 	GoAwayAndDie();

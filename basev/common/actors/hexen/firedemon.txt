@@ -57,7 +57,7 @@ actor FireDemon 10060
 		FDMN L 4 Bright A_Scream
 		FDMN L 4 Bright A_NoBlocking
 		FDMN L 200 Bright
-		Stop
+		Goto Crash
 	XDeath:
 	Crash:
 		FDMN M 5 A_FaceTarget

@@ -204,7 +204,7 @@ static void recompute_amp(MidiSong* song, int v)
 
 	/* TODO: use fscale */
 
-	float refv = (double)(tempamp) * song->voice[v].sample->volume * song->master_volume;
+	float refv = float((double)(tempamp)) * song->voice[v].sample->volume * song->master_volume;
 	if (panning > 60 && panning < 68)
 	{
 		song->voice[v].panned=PANNED_CENTRE;

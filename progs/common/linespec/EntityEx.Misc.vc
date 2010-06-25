@@ -2805,23 +2805,23 @@ final void AutoUseHealth(int saveHealth)
 
 			if (mode == 1)
 			{
-				normal.Num = normal.Num + 1;
 				normal[normal.Num] = inv;
+				normal.Num = normal.Num + 1;
 			}
 			else if (mode == 2)
 			{
-				super.Num = super.Num + 1;
 				super[super.Num] = inv;
+				super.Num = super.Num + 1;
 			}
 		}
 	}
 
-	for(i = 0; i < normal.Num; i++)
+	for(i = 0; i < normal.Num - 1; i++)
 	{
 		normalhealth += normal[i].Amount * normal[i].Health;
 	}
 
-	for(i = 0; i < super.Num; i++)
+	for(i = 0; i < super.Num - 1; i++)
 	{
 		superhealth += super[i].Amount * super[i].Health;
 	}
@@ -2835,7 +2835,7 @@ final void AutoUseHealth(int saveHealth)
 			int index = -1;
 
 			// Find the largest item in the list
-			for(i = 0; i < normal.Num; i++)
+			for(i = 0; i < normal.Num - 1; i++)
 			{
 				if (normal[i].Health > maxhealth)
 				{
@@ -2869,7 +2869,7 @@ final void AutoUseHealth(int saveHealth)
 			int index = -1;
 
 			// Find the largest item in the list
-			for(i = 0; i < super.Num; i++)
+			for(i = 0; i < super.Num - 1; i++)
 			{
 				if (super[i].Health > maxhealth)
 				{
@@ -2902,7 +2902,7 @@ final void AutoUseHealth(int saveHealth)
 			int index = -1;
 
 			// Find the largest item in the list
-			for(i = 0; i < normal.Num; i++)
+			for(i = 0; i < normal.Num - 1; i++)
 			{
 				if (normal[i].Health > maxhealth)
 				{
@@ -2934,7 +2934,7 @@ final void AutoUseHealth(int saveHealth)
 				int index = -1;
 
 				// Find the largest item in the list
-				for(i = 0; i < super.Num; i++)
+				for(i = 0; i < super.Num - 1; i++)
 				{
 					if (super[i].Health > maxhealth)
 					{
@@ -2984,24 +2984,24 @@ final void AutoUseStrifeHealth(int saveHealth)
 
 			if (mode == 3)
 			{
-				Items.Num = Items.Num + 1;
 				Items[Items.Num] = inv;
+				Items.Num = Items.Num + 1;
 			}
 		}
 	}
 
-	for(i = 0; i < Items.Num; i++)
+	for(i = 0; i < Items.Num - 1; i++)
 	{
 		itemshealth += Items[i].Amount * Items[i].Health;
 	}
-
+	
 	while (Items.Num > 0)
 	{
 		int maxhealth = 0;
 		int index = -1;
 
 		// Find the largest item in the list
-		for(i = 0; i < Items.Num; i++)
+		for(i = 0; i < Items.Num - 1; i++)
 		{
 			if (Items[i].Health > maxhealth)
 			{

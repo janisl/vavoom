@@ -207,11 +207,11 @@ Inventory CreateCopy(EntityEx Toucher)
 
 Inventory CreateTossable()
 {
-	//	Drop the wapon that is meant to be placed in a level, i.e. that
-	// normaly gives you ammo.
+	//	Drop the weapon that is meant to be placed in a level, i.e. that
+	// normally gives you ammo.
 	if (SisterWeapon && !default.AmmoGive1 && !default.AmmoGive2 &&
 		(SisterWeapon.default.AmmoGive1 > 0 ||
-		SisterWeapon.default.AmmoGive2 > 0))
+		 SisterWeapon.default.AmmoGive2 > 0))
 	{
 		return SisterWeapon.CreateTossable();
 	}

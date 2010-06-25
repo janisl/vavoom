@@ -51,14 +51,14 @@ actor HereticImp 66
 		Goto See
 	Death:
 		IMPX G 4 A_ImpDeath
-		IMPX H 5
-		Wait
+		IMPX H 200
+		Goto Crash
 	XDeath:
 		IMPX S 5 A_ImpXDeath1
 		IMPX TU 5
 		IMPX V 5 A_Gravity
-		IMPX W 5
-		Wait
+		IMPX W 200
+		Goto XCrash
 	Crash:
 		IMPX I 7 A_ImpExplode
 		IMPX J 7 A_Scream
