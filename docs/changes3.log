@@ -4245,3 +4245,7 @@
   Firebrand fixed a crash with the recent changes done for Strife's AutoUseHealth method.
   Firebrand reverted back jump velocity for Hexen player's to the original value of 9, since there was a time
  when Vavoom needed the speed to be higher to work as expected, but many things have changed since that time.
+26.06.2010
+  Firebrand fixed a problem with setting of aircontrol for the player which was causing problems with players
+ falling down in Hexen and not dying as expected.
+  Firebrand separated the components of velocity conditions affected on most physics methods.

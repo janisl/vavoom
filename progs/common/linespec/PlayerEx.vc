@@ -268,9 +268,9 @@ final void MovePlayer(float deltaTime)
 
 	PlayerPawn(MO).AdjustSpeed(forward, side);
 
-	if (!(onground || MO.bFly))
+	if (!onground && !MO.bNoGravity && !MO.WaterLevel)
 	{
-		//  not on ground, so little effect on velocity
+		//  not on ground, so we have little effect on velocity
 		forward *= Level.AirControl;
 		side *= Level.AirControl;
 	}

@@ -1817,7 +1817,7 @@ void VEntity::UpdateVelocity()
 	}
 
 	// Friction
-	if (Velocity.x || Velocity.y || Velocity.z)
+	if (Velocity.x || Velocity.y/* || Velocity.z*/)
 	{
 		eventApplyFriction();
 	}
@@ -2407,7 +2407,7 @@ IMPLEMENT_FUNCTION(VEntity, CanSee)
 {
 	P_GET_REF(VEntity, Other);
 	P_GET_SELF;
-	RET_BOOL(Self->CanSee(Other));
+	RET_BOOL(Self->CanSee(Other, true));
 }
 
 IMPLEMENT_FUNCTION(VEntity, RoughBlockSearch)
