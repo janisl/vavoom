@@ -69,7 +69,10 @@ extern VCvarI		r_chasecam;
 VCvarI			r_draw_mobjs("r_draw_mobjs", "1", CVAR_Archive);
 VCvarI			r_draw_psprites("r_draw_psprites", "1", CVAR_Archive);
 VCvarI			r_models("r_models", "1", CVAR_Archive);
+VCvarI			r_hide_models("r_hide_models", "0", CVAR_Archive);
 VCvarI			r_view_models("r_view_models", "1", CVAR_Archive);
+VCvarI			r_model_shadows("r_model_shadows", "1", CVAR_Archive);
+VCvarI			r_model_light("r_model_light", "1", CVAR_Archive);
 VCvarI			r_sort_sprites("r_sort_sprites", "0");
 VCvarI			r_fix_sprite_offsets("r_fix_sprite_offsets", "1", CVAR_Archive);
 VCvarI			r_sprite_fix_delta("r_sprite_fix_delta", "-3", CVAR_Archive);
@@ -503,6 +506,14 @@ bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 	if (!r_models)
 	{
 		return false;
+	}
+	//  Don't render models we can't see
+	if (r_hide_models)
+	{
+		if (!mobj->CanSee(ViewEnt, false))
+		{
+			return false;
+		}
 	}
 
 	float TimeFrac = 0;

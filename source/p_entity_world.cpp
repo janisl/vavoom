@@ -659,7 +659,7 @@ bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 //
 //	VEntity::CheckLine
 //
-//  Adjusts cptrace.FoorZ and cptrace.CeilingZ as lines are contacted
+//  Adjusts cptrace.FloorZ and cptrace.CeilingZ as lines are contacted
 //
 //==========================================================================
 
@@ -1261,14 +1261,30 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			// is not blocked.
 			if (Origin.z + Height > tmtrace.CeilingZ)
 			{
-				Velocity.z = -8.0 * 35.0;
+				// If sliding down, make sure we don't have another object below.
+				if ((!tmtrace.BlockingMobj || !tmtrace.BlockingMobj->CheckOnmobj() ||
+					(tmtrace.BlockingMobj->CheckOnmobj() &&
+					 tmtrace.BlockingMobj->CheckOnmobj() != this)) &&
+					(!CheckOnmobj() || (CheckOnmobj() &&
+					 CheckOnmobj() != tmtrace.BlockingMobj)))
+				{
+					Velocity.z = -8.0 * 35.0;
+				}
 				PushLine(tmtrace);
 				return false;
 			}
 			else if (Origin.z < tmtrace.FloorZ &&
 				tmtrace.FloorZ - tmtrace.DropOffZ > MaxStepHeight)
 			{
-				Velocity.z = 8.0 * 35.0;
+				// Check to make sure there's nothing in the way for the step up
+				if ((!tmtrace.BlockingMobj || !tmtrace.BlockingMobj->CheckOnmobj() ||
+					(tmtrace.BlockingMobj->CheckOnmobj() &&
+					 tmtrace.BlockingMobj->CheckOnmobj() != this)) &&
+					(!CheckOnmobj() || (CheckOnmobj() &&
+					 CheckOnmobj() != tmtrace.BlockingMobj)))
+				{
+					Velocity.z = 8.0 * 35.0;
+				}
 				PushLine(tmtrace);
 				return false;
 			}
@@ -1281,7 +1297,9 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 				if (EntityFlags & EF_CanJump)
 				{
 					// Check to make sure there's nothing in the way for the step up
-					if (TestMobjZ(TVec(newPos.x, newPos.y, tmtrace.FloorZ)))
+					if ((tmtrace.BlockingMobj && (tmtrace.BlockingMobj->CheckOnmobj() &&
+						tmtrace.BlockingMobj->CheckOnmobj() == this)) ||
+						TestMobjZ(TVec(newPos.x, newPos.y, tmtrace.FloorZ)))
 					{
 						PushLine(tmtrace);
 						return false;
@@ -1878,6 +1896,7 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 				}
 				if (TryOrg.z > Other->Origin.z + Other->Height)
 				{
+					// over thing
 					continue;
 				}
 				if (TryOrg.z + Height < Other->Origin.z)
@@ -2407,7 +2426,7 @@ IMPLEMENT_FUNCTION(VEntity, CanSee)
 {
 	P_GET_REF(VEntity, Other);
 	P_GET_SELF;
-	RET_BOOL(Self->CanSee(Other));
+	RET_BOOL(Self->CanSee(Other, true));
 }
 
 IMPLEMENT_FUNCTION(VEntity, RoughBlockSearch)

@@ -1167,7 +1167,11 @@ void ParseScript(const char *name)
 			DefaultExtension(destfile, ".wad");
 			char Ext[8];
 			ExtractFileExtension(destfile, Ext);
+#ifdef WIN32
+			if (!_stricmp(Ext, "zip") || !_stricmp(Ext, "pk3"))
+#else
 			if (!stricmp(Ext, "zip") || !stricmp(Ext, "pk3"))
+#endif
 			{
 				Zip = zipOpen(destfile, APPEND_STATUS_CREATE);
 				if (!Zip)

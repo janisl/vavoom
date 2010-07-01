@@ -948,7 +948,11 @@ int SV_GetRebornSlot()
 
 bool SV_RebornSlotAvailable()
 {
-	return Sys_FileExists(SAVE_NAME_ABS(REBORN_SLOT));
+	if (Sys_FileExists(SAVE_NAME_ABS(REBORN_SLOT)))
+	{
+		return true;
+	}
+	return false;
 }
 
 //==========================================================================

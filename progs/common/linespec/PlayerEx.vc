@@ -1018,9 +1018,14 @@ final void ChangeWeapon(int newweapon)
 		return;
 	}
 	Weapon NewWpn = GetSlotChangeWeapon(newweapon);
-	if (NewWpn && NewWpn != ReadyWeapon)
+	if (NewWpn && NewWpn != ReadyWeapon && (!NewWpn.bGivenAsMorphWeapon &&
+		!ReadyWeapon.bGivenAsMorphWeapon))
 	{
 		PendingWeapon = NewWpn;
+	}
+	else
+	{
+		return;
 	}
 }
 
@@ -3425,12 +3430,36 @@ final bool UndoPlayerMorph(bool Force, PlayerEx Activator)
 final void ActivateMorphWeapon()
 {
 	class<Weapon> WpnClass = PlayerPawn(MO).MorphWeapon;
-	Weapon Wpn = Level.Spawn(WpnClass);
+	Weapon Wpn;
+	if (WpnClass)
+	{
+		Wpn = Level.Spawn(WpnClass);
+		Wpn.bGivenAsMorphWeapon = true;
+	}
+	else
+	{
+		// Couldn't find any weapons, use the default weapon for this player
+		// (from initial inventory)
+		int i;
+		for (i = 0; i < EntityEx(MO).DropItemList.Num; i++)
+		{
+			Inventory Item = Inventory(Level.Spawn(EntityEx(MO).DropItemList[i].Type,,,, false));
+			if (EntityEx(MO).DropItemList[i].Amount > 0)
+			{
+				Item.Amount = EntityEx(MO).DropItemList[i].Amount;
+			}
+			if (Weapon(Item))
+			{
+				Wpn = Weapon(Item);
+				WpnClass = class<Weapon>(Weapon(Item).Class);
+			}
+		}		
+	}
 	if (!Wpn.TryPickup(EntityEx(MO)))
 	{
 		Wpn.Destroy();
 	}
-	Wpn.bGivenAsMorphWeapon = true;
+
 	SetWeapon(Weapon(EntityEx(MO).FindInventory(WpnClass)));
 	SetViewState(ps_weapon, ReadyWeapon.GetReadyState());
 	ViewStates[ps_weapon].SY = Weapon::WEAPONTOP;

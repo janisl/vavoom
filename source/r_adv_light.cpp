@@ -204,6 +204,11 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 /*		leafnum = Level->PointInSubsector(Lights[i].origin) -
 			Level->Subsectors;*/
 
+		if (!Lights[i].radius)
+		{
+			continue;
+		}
+
 		// Check potential visibility
 		if (!(dyn_facevis[Lights[i].leafnum >> 3] & (1 << (Lights[i].leafnum & 7))))
 		{

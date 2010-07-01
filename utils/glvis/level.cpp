@@ -574,7 +574,11 @@ void TVisBuilder::CreatePortals()
 void TVisBuilder::LoadLevel(int lumpnum, int gl_lumpnum)
 {
 	const char *levelname = mainwad->LumpName(lumpnum);
+#ifdef WIN32
+	bool extended = !_stricmp(mainwad->LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
+#else
 	bool extended = !stricmp(mainwad->LumpName(lumpnum + ML_BEHAVIOR), "BEHAVIOR");
+#endif
 
 	GLNodesV5 = false;
 	LoadVertexes(lumpnum + ML_VERTEXES, gl_lumpnum + ML_GL_VERT);
@@ -644,7 +648,11 @@ bool TVisBuilder::IsLevelName(int lump)
 	{
 		for (int i = 0; i < Owner.num_specified_maps; i++)
 		{
+#ifdef WIN32
+			if (!_stricmp(Owner.specified_maps[i], name))
+#else
 			if (!stricmp(Owner.specified_maps[i], name))
+#endif
 			{
 				return true;
 			}
@@ -687,7 +695,11 @@ bool TVisBuilder::IsGLLevelName(int lump)
 	{
 		for (int i = 0; i < Owner.num_specified_maps; i++)
 		{
+#ifdef WIN32
+			if (!_stricmp(Owner.specified_maps[i], name + 3))
+#else
 			if (!stricmp(Owner.specified_maps[i], name + 3))
+#endif
 			{
 				return true;
 			}
@@ -734,7 +746,11 @@ void TVisBuilder::BuildGWA()
 		{
 			const char* name = glwad->LumpName(i);
 			char LevName[12];
+#ifdef WIN32
+			if (!_stricmp(name, "GL_LEVEL"))
+#else
 			if (!stricmp(name, "GL_LEVEL"))
+#endif
 			{
 				char* Ptr = (char*)glwad->GetLump(i);
 				int Len = glwad->LumpSize(i);
@@ -806,7 +822,11 @@ void TVisBuilder::BuildWAD()
 				gl_lump = -1;
 				for (int gli = 0; gli < mainwad->numlumps; gli++)
 				{
+#ifdef WIN32
+					if (!_stricmp(mainwad->LumpName(gli), "GL_LEVEL"))
+#else
 					if (!stricmp(mainwad->LumpName(gli), "GL_LEVEL"))
+#endif
 					{
 						char* Ptr = (char*)mainwad->GetLump(gli);
 						int Len = mainwad->LumpSize(gli);
@@ -824,7 +844,11 @@ void TVisBuilder::BuildWAD()
 						char LevName[12];
 						memcpy(LevName, Ptr + 6, EndCh - 6);
 						LevName[EndCh - 6] = 0;
+#ifdef WIN32
+						if (!_stricmp(LevName, name))
+#else
 						if (!stricmp(LevName, name))
+#endif
 						{
 							gl_lump = gli;
 							break;

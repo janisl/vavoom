@@ -666,7 +666,7 @@ static void AM_maxOutWindowScale()
 
 bool AM_Responder(event_t* ev)
 {
-	int 		rc;
+	bool 		rc;
 	static int	bigstate = 0;
 
 	rc = false;

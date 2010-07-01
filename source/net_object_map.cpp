@@ -198,7 +198,7 @@ bool VNetObjectsMap::SerialiseObject(VStream& Strm, VObject*& Obj)
 			if (Chan)
 			{
 				Index = Chan->Index;
-				Ret = Chan->OpenAcked;
+				Ret = Chan->OpenAcked ? true : false;
 			}
 			Strm.SerialiseInt(Index, MAX_CHANNELS);
 			return Ret;

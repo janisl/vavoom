@@ -347,6 +347,7 @@ static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 	int width = InWidth;
 	int height = InHeight;
 	int bpp = InBpp;
+	bool win = false;
 	if (width > MAXSCREENWIDTH)
 		width = MAXSCREENWIDTH;
 	if (height > MAXSCREENHEIGHT)
@@ -356,22 +357,26 @@ static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 		GCon->Log("Invalid bpp, using 8");
 		bpp = 8;
 	}
+	if (screen_windowed > 0)
+	{
+		win = true;
+	}
 
 	// Changing resolution
-	if (!Drawer->SetResolution(width, height, bpp, screen_windowed))
+	if (!Drawer->SetResolution(width, height, bpp, win))
 	{
 		GCon->Logf("Failed to set resolution %dx%dx%d", width, height, bpp);
 		if (ScreenWidth)
 		{
 			if (!Drawer->SetResolution(ScreenWidth, ScreenHeight, ScreenBPP,
-				screen_windowed))
+				win))
 				Sys_Error("ChangeResolution: failed to restore resolution");
 			else
 				GCon->Log("Restoring previous resolution");
 		}
 		else
 		{
-			if (!Drawer->SetResolution(0, 0, 0, screen_windowed))
+			if (!Drawer->SetResolution(0, 0, 0, win))
 				Sys_Error("ChangeResolution: Failed to set default resolution");
 			else
 				GCon->Log("Setting default resolution");

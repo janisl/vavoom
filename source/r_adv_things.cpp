@@ -69,7 +69,10 @@ extern VCvarI		r_chasecam;
 extern VCvarI			r_draw_mobjs;
 extern VCvarI			r_draw_psprites;
 extern VCvarI			r_models;
+extern VCvarI			r_hide_models;
 extern VCvarI			r_view_models;
+extern VCvarI			r_model_shadows;
+extern VCvarI			r_model_light;
 extern VCvarI			r_sort_sprites;
 extern VCvarI			r_fix_sprite_offsets;
 extern VCvarI			r_sprite_fix_delta;
@@ -504,6 +507,14 @@ bool VAdvancedRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 	{
 		return false;
 	}
+	//  Don't render models we can't see
+	if (r_hide_models)
+	{
+		if (!mobj->CanSee(ViewEnt, false))
+		{
+			return false;
+		}
+	}
 
 	float TimeFrac = 0;
 	if (mobj->State->Time > 0)
@@ -657,6 +668,14 @@ void VAdvancedRenderLevel::RenderMobjs()
 void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
+	//  Don't render models we can't see
+	if (r_hide_models)
+	{
+		if (!mobj->CanSee(ViewEnt, false))
+		{
+			return;
+		}
+	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -767,6 +786,14 @@ void VAdvancedRenderLevel::RenderMobjsAmbient()
 void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
+	//  Don't render models we can't see
+	if (r_hide_models)
+	{
+		if (!mobj->CanSee(ViewEnt, false))
+		{
+			return;
+		}
+	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -897,6 +924,14 @@ bool VAdvancedRenderLevel::IsTouchedByLight(VEntity* Ent)
 void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingLight);
+	//  Don't render models we can't see
+	if (r_hide_models)
+	{
+		if (!mobj->CanSee(ViewEnt, false))
+		{
+			return;
+		}
+	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(LightBspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -979,7 +1014,7 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 void VAdvancedRenderLevel::RenderMobjsLight()
 {
 	guard(VAdvancedRenderLevel::RenderMobjsLight);
-	if (!r_draw_mobjs || !r_models)
+	if (!r_draw_mobjs || !r_models || !r_model_light)
 	{
 		return;
 	}
@@ -1000,6 +1035,13 @@ void VAdvancedRenderLevel::RenderMobjsLight()
 void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingShadow);
+	//  Don't render models we can't see
+	//  We don't make this one optional, since
+	//  shadow pass is the most expensive pass...
+	if (!mobj->CanSee(ViewEnt, false))
+	{
+		return;
+	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -1011,13 +1053,11 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 		//	Don't draw camera actor.
 		return;
 	}
-
 	if ((mobj->EntityFlags & VEntity::EF_NoSector) ||
 		(mobj->EntityFlags & VEntity::EF_Invisible))
 	{
 		return;
 	}
-
 	if (!mobj->State)
 	{
 		return;
@@ -1082,7 +1122,7 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 void VAdvancedRenderLevel::RenderMobjsShadow()
 {
 	guard(VAdvancedRenderLevel::RenderMobjsShadow);
-	if (!r_draw_mobjs || !r_models)
+	if (!r_draw_mobjs || !r_models || !r_model_shadows)
 	{
 		return;
 	}
@@ -1103,6 +1143,14 @@ void VAdvancedRenderLevel::RenderMobjsShadow()
 void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingFog);
+	//  Don't render models we can't see
+	if (r_hide_models)
+	{
+		if (!mobj->CanSee(ViewEnt, false))
+		{
+			return;
+		}
+	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))

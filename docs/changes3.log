@@ -4249,3 +4249,14 @@
   Firebrand fixed a problem with setting of aircontrol for the player which was causing problems with players
  falling down in Hexen and not dying as expected.
   Firebrand separated the components of velocity conditions affected on most physics methods.
+29.06.2010
+  Firebrand made objects that fall under gravity to also take into account their mass.
+30.06.2010
+  Firebrand fixed most compiling warnings under MSVC.
+  Firebrand made flying monsters take into account monsters above or below them when changing their heights by
+ blocked lines or because of their normal behavior, to avoid monsters getting stuck on crowded small spaces.
+  Firebrand made objects that are on other objects to respect the floor height, in case the sector changes
+ it's height, to avoid objects getting stuck inside of the floor plane, this was already implemented, but the
+ conditions where it was being applied were wrong.
+  Firebrand added some performance CVars to avoid drawing shadows or lights on models, for slower processors,
+ he also made shadows that can't be seen not to be drawn at all.

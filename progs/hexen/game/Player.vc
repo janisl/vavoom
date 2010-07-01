@@ -473,6 +473,7 @@ void Cheat_Class()
 {
 	int i;
 	int pclass;
+	Inventory Item;
 
 	if (MorphTime)
 	{
@@ -480,11 +481,17 @@ void Cheat_Class()
 		return;
 	}
 	if (Cmd_CheckParm("fighter"))
+	{
 		pclass = HexenDefs::PCLASS_FIGHTER;
+	}
 	else if (Cmd_CheckParm("cleric"))
+	{
 		pclass = HexenDefs::PCLASS_CLERIC;
+	}
 	else if (Cmd_CheckParm("mage"))
+	{
 		pclass = HexenDefs::PCLASS_MAGE;
+	}
 	else
 	{
 		cprint("INVALID PLAYER CLASS");
@@ -497,8 +504,21 @@ void Cheat_Class()
 	{
 		HArmor.Slots[i] = 0.0;
 	}
+
+	// Remove all weapons
+	for (Item = EntityEx(MO).Inventory; Item; )
+	{
+		Inventory Next = Item.Inventory;
+		if (Weapon(Item) || FourthWeaponHolder(Item))
+		{
+			Item.Destroy();
+		}
+		Item = Next;
+	}
 	BaseClass = pclass;
-	//PostMorphWeapon(HexenDefs::WP_FIRST);
+//	PostMorphWeapon(HexenDefs::WP_FIRST);
+	Actor(MO).MorphPlayer(class<PlayerPawn>(Level.Game.PlayerClasses[PClass]), 0.0,
+		PorkFX.default.MorphStyle, none, none, Actor(MO));
 	SetCvar('class', pclass);
 	SB_Start();
 }

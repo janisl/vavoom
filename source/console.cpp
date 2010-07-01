@@ -414,7 +414,7 @@ bool C_Responder(event_t* ev)
 			c_autocompleteString = c_iline.Data;
 		}
 		str = VCommand::GetAutoComplete(c_autocompleteString,
-			c_autocompleteIndex, GInput->ShiftDown);
+			c_autocompleteIndex, GInput->ShiftDown ? true : false);
 		if (str.IsNotEmpty())
 		{
 			c_iline.Init();

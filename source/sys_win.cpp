@@ -105,7 +105,11 @@ static VCvarI		win_sys_keys("win_sys_keys", "1", CVAR_Archive);
 
 int Sys_FileExists(const VStr& filename)
 {
+#ifdef WIN32
+	return !_access(*filename, R_OK);
+#else
 	return !access(*filename, R_OK);
+#endif
 }
 
 //==========================================================================
@@ -134,7 +138,11 @@ int	Sys_FileTime(const VStr& path)
 
 int Sys_CreateDirectory(const VStr& path)
 {
+#ifdef WIN32
+	return _mkdir(*path);
+#else
 	return mkdir(*path);
+#endif
 }
 
 //==========================================================================
@@ -468,7 +476,14 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg,
 
 	 case WM_ACTIVATE:
 		ActiveApp = !(LOWORD(wParam) == WA_INACTIVE);
-		Minimized = (BOOL)HIWORD(wParam);
+		if ((BOOL)HIWORD(wParam))
+		{
+			Minimized = true;
+		}
+		else
+		{
+			Minimized = false;
+		}
 		break;
 
 	 case WM_KILLFOCUS:
@@ -700,7 +715,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		delete tmp_msg;
 		tmp_msg = NULL;
 
-		throw;
+//		throw;
+		SendMessage(hwnd, WM_CLOSE, 0, 0);
+		return 1;
 	}
 #endif
 }

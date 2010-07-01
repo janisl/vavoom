@@ -530,7 +530,7 @@ static int fill_bank(MidiSong* song, int dr, int b)
 	{
 		if (bank->instrument[i] == MAGIC_LOAD_INSTRUMENT)
 		{
-			bank->instrument[i] = load_instrument_sf2(song, b, i, dr);
+			bank->instrument[i] = load_instrument_sf2(song, b, i, dr ? true : false);
 			if (bank->instrument[i])
 			{
 				continue;

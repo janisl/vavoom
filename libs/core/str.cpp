@@ -1127,7 +1127,11 @@ int VStr::NCmp(const char* S1, const char* S2, size_t N)
 
 int VStr::ICmp(const char* S1, const char* S2)
 {
-	return stricmp(S1, S2);
+	#ifdef WIN32
+		return _stricmp(S1, S2);
+	#else
+		return stricmp(S1, S2);
+	#endif
 }
 
 //==========================================================================
@@ -1138,7 +1142,11 @@ int VStr::ICmp(const char* S1, const char* S2)
 
 int VStr::NICmp(const char* S1, const char* S2, size_t N)
 {
-	return strnicmp(S1, S2, N);
+	#ifdef WIN32
+		return _strnicmp(S1, S2, N);
+	#else
+		return strnicmp(S1, S2, N);
+	#endif
 }
 
 //==========================================================================

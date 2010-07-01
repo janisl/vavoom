@@ -859,6 +859,8 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 	{
 		for (i = 0; i < MAX_DLIGHTS; i++)
 		{
+			if (!(sub->dlightbits & (1 << i)))
+				continue;
 			if (r_dynamic_clip)
 			{
 				vuint8* dyn_facevis = Level->LeafPVS(sub);
@@ -869,8 +871,6 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 				if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
 						continue;
 			}
-			if (!(sub->dlightbits & (1 << i)))
-				continue;
 
 			add = (DLights[i].radius - DLights[i].minlight) - Length(p - DLights[i].origin);
 	

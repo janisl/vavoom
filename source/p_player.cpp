@@ -78,7 +78,11 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 		P_PASS_REF(this);
 		vuint32 SavedFlags = PlayerFlags;
 		PlayerFlags &= ~VBasePlayer::PF_IsClient;
-		bool ShouldSend = VObject::ExecuteFunction(Base->ReplCond).i;
+		bool ShouldSend = false;
+		if (VObject::ExecuteFunction(Base->ReplCond).i)
+		{
+			ShouldSend = true;
+		}
 		PlayerFlags = SavedFlags;
 
 		if (ShouldSend)

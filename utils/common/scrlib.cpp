@@ -377,7 +377,11 @@ int SC_MustMatchString(const char **strings)
 
 bool SC_Compare(const char *text)
 {
+#ifdef WIN32
+	return !_stricmp(text, sc_String);
+#else
 	return !stricmp(text, sc_String);
+#endif
 }
 
 //==========================================================================

@@ -531,6 +531,10 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	{
 		for (int i = 0; i < Lights.Num(); i++)
 		{
+			if (!Lights[i].radius)
+			{
+				continue;
+			}
 			RenderLightShadows(RD, Range, Lights[i].origin, Lights[i].radius, Lights[i].colour);
 		}
 	}

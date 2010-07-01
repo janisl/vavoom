@@ -82,7 +82,11 @@ int VFilesDir::CheckNumForFileName(VStr Name)
 bool VFilesDir::FileExists(const VStr& fname)
 {
 	guard(VFilesDir::FileExists);
-	return Sys_FileExists(Path + "/" + fname);
+	if (Sys_FileExists(Path + "/" + fname))
+	{
+		return true;
+	}
+	return false;
 	unguard;
 }
 

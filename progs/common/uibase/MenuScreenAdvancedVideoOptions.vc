@@ -110,6 +110,20 @@ void CreateChoices()
 	Enum.ValueChanging = ChangeAspectRation;
 	currentY += Enum.Height;
 
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "Model Dynamic lighting";
+	Enum.SetInitialValue(GetCvar('r_model_light'));
+	Enum.ValueChanging = ChangeModelLights;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "Model shadows";
+	Enum.SetInitialValue(GetCvar('r_model_shadows'));
+	Enum.ValueChanging = ChangeModelShadows;
+	currentY += Enum.Height;
+
 	if (GetCvar('_driver') == DRV_SOFTWARE)
 	{
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
@@ -168,7 +182,7 @@ void CreateChoices()
 
 			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Model Lightning";
+			Enum.Text = "Model Sector Lightning";
 			Enum.SetInitialValue(GetCvar('gl_model_lighting'));
 			Enum.ValueChanging = ChangeGlModelLighting;
 			currentY += Enum.Height;
@@ -210,7 +224,7 @@ void CreateChoices()
 
 			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Model Lightning";
+			Enum.Text = "Model Sector Lightning";
 			Enum.SetInitialValue(GetCvar('d3d_model_lighting'));
 			Enum.ValueChanging = ChangeD3dModelLighting;
 			currentY += Enum.Height;
@@ -318,6 +332,30 @@ bool ChangeDynamicClip(Object Sender, int newValue)
 bool ChangeAspectRation(Object Sender, int newValue)
 {
 	SetCvar('r_old_aspect_ratio', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeModelLights
+//
+//==========================================================================
+
+bool ChangeModelLights(Object Sender, int newValue)
+{
+	SetCvar('r_model_light', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeModelShadows
+//
+//==========================================================================
+
+bool ChangeModelShadows(Object Sender, int newValue)
+{
+	SetCvar('r_model_shadows', newValue);
 	return true;
 }
 
@@ -480,7 +518,7 @@ bool ChangeD3dSpecularHighlights(Object Sender, int newValue)
 defaultproperties
 {
 	Width = 360;
-	Height = 210;
+	Height = 220;
 	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	TitleX = 180;

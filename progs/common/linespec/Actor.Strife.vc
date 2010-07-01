@@ -32,7 +32,7 @@
 final void A_FlameDie()
 {
 	bNoGravity = true;
-	Velocity.z = Random() * 4.0 * 35.0 / 10.0;
+	Velocity.z = (Random() * 4.0 / 10.0) * 35.0;
 }
 
 //==========================================================================
@@ -228,11 +228,11 @@ final void A_ExtraLightOff()
 //
 // A_HideDecepticon
 //
-// Hide the Acolyte-to-be							->
+// Hide the Acolyte-to-be								->
 // Hide the guy transforming into an Acolyte			->
-// Hide the transformer							->
+// Hide the transformer									->
 // Transformers are Autobots and Decepticons, and
-// Decepticons are the bad guys, so...				->
+// Decepticons are the bad guys, so...					->
 //
 // Hide the Decepticon!
 //

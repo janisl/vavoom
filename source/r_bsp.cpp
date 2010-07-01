@@ -761,7 +761,6 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 
 			d = DotProduct(rejectpt, view_clipplanes[i].normal);
 			d -= view_clipplanes[i].dist;
-
 			if (d <= 0)
 			{
 				return;

@@ -269,7 +269,7 @@ int main(int argc, const char** argv)
 
 		//	Clean up list from old records.
 		time_t CurTime = time(0);
-		for (size_t i = 0; i < SrvList.Num(); i++)
+		for (size_t i = 0; i < (unsigned int)SrvList.Num(); i++)
 		{
 			if (CurTime - SrvList[i].Time > 15 * 60)
 			{

@@ -191,19 +191,19 @@ bool Physics(float DeltaTime)
 				{
 					Velocity.x = onmo.Velocity.x;
 					Velocity.y = onmo.Velocity.y;
-					if (onmo.Origin.z < onmo.FloorZ)
+				}
+				if (onmo.Origin.z < onmo.FloorZ)
+				{
+					Origin.z += onmo.FloorZ - onmo.Origin.z;
+					if (onmo.bIsPlayer)
 					{
-						Origin.z += onmo.FloorZ - onmo.Origin.z;
-						if (onmo.bIsPlayer)
-						{
-							PlayerEx(onmo.Player).ViewHeight -=
-								onmo.FloorZ - onmo.Origin.z;
-							PlayerEx(onmo.Player).DeltaViewHeight =
-								(PlayerPawn(self).ViewHeight -
-								PlayerEx(onmo.Player).ViewHeight) * 4.0;
-						}
-						onmo.Origin.z = onmo.FloorZ;
+						PlayerEx(onmo.Player).ViewHeight -=
+							onmo.FloorZ - onmo.Origin.z;
+						PlayerEx(onmo.Player).DeltaViewHeight =
+							(PlayerPawn(self).ViewHeight -
+							PlayerEx(onmo.Player).ViewHeight) * 4.0;
 					}
+					onmo.Origin.z = onmo.FloorZ;
 				}
 			}
 			else
@@ -397,17 +397,33 @@ final void ZMovement(float DeltaTime, float OldFloorZ)
 
 	// [RH] Double gravity only if running off a ledge. Coming down from
 	// an upward thrust (e.g. a jump) should not double it.
+	// Make objects fall to their own weight.
 	if (Origin.z > FloorZ && !bNoGravity)
 	{
-		float grav = (Gravity * Level.Gravity * Sector->Gravity) / 14.95361328125; // 81.92
+		float grav = (Gravity * Level.Gravity *
+			(WaterLevel < 2 ? Sector->Gravity : Sector->Gravity / 10.0)) / 1.220703125; // 9.8 (1053.52)
 
 		if (Velocity.z == 0.0 && OldFloorZ > FloorZ && Origin.z == OldFloorZ)
 		{
-			Velocity.z -= (grav + grav) * DeltaTime;
+			if (WaterLevel < 2)
+			{
+				Velocity.z -= ((grav + grav) / Mass ? Mass : 1.0) * DeltaTime;
+			}
+			else
+			{
+				Velocity.z -= (((grav + grav) / 10.0) / Mass ? Mass : 1.0) * DeltaTime;
+			}
 		}
 		else
 		{
-			Velocity.z -= grav * DeltaTime;
+			if (WaterLevel < 2)
+			{
+				Velocity.z -= (grav / Mass ? Mass : 1.0) * DeltaTime;
+			}
+			else
+			{
+				Velocity.z -= ((grav / 10.0) / Mass ? Mass : 1.0) * DeltaTime;
+			}
 		}
 	}
 
@@ -432,15 +448,33 @@ final void ZMovement(float DeltaTime, float OldFloorZ)
 		{
 			dist = DistTo2(Target);
 			delta = Target.Origin.z + Height / 2.0 - Origin.z;
-			if (delta < 0.0 && dist < -delta * 3.0)
+			if (delta < 0.0 && dist < -(delta * 3.0))
 			{
-				Origin.z -= FloatSpeed * DeltaTime;
 				Velocity.z = 0.0;
+				EntityEx onmo = EntityEx(CheckOnmobj());
+				if (((onmo && onmo.TestMobjZ()) ||
+					!onmo) && TestMobjZ())
+				{
+					Origin.z -= FloatSpeed * DeltaTime;
+				}
+				else
+				{
+					return;
+				}
 			}
-			else if (delta > 0.0 && dist < delta * 3.0)
+			else if (delta > 0.0 && dist < (delta * 3.0))
 			{
-				Origin.z += FloatSpeed * DeltaTime;
 				Velocity.z = 0.0;
+				EntityEx onmo = EntityEx(CheckOnmobj());
+				if (((onmo && onmo.TestMobjZ()) ||
+					!onmo) && TestMobjZ())
+				{
+					Origin.z += FloatSpeed * DeltaTime;
+				}
+				else
+				{
+					return;
+				}
 			}
 		}
 	}

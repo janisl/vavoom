@@ -177,7 +177,7 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 
 			if (!Other.bIceCorpse && (!DoDamage || !bNoDamageThrust))
 			{
-				float Thrust = itof(damage) * 0.5 / Other.Mass;
+				float Thrust = itof(damage) * 0.5;
 				float VelZ = (Other.Origin.z + Other.Height * 0.5 -
 					Origin.z) * Thrust;
 				if (Source != Other)
@@ -195,10 +195,12 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 					//	Zero length. In this case Doom would use angle 0
 					Dir = vector(1.0, 0.0, 0.0);
 				}
-				Other.Velocity += Normalise(Dir) * Thrust * 35.0;
+				TVec Vel = Normalise(Dir) * Thrust;
+				Other.Velocity.x += (Vel.x / Other.Mass) * 35.0;
+				Other.Velocity.y += (Vel.y / Other.Mass) * 35.0;
 				if (DoDamage)
 				{
-					Other.Velocity.z += VelZ * 35.0;
+					Other.Velocity.z += (VelZ / Other.Mass) * 35.0;
 				}
 			}
 		}
