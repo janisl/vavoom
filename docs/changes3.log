@@ -4260,3 +4260,5 @@
  conditions where it was being applied were wrong.
   Firebrand added some performance CVars to avoid drawing shadows or lights on models, for slower processors,
  he also made shadows that can't be seen not to be drawn at all.
+02.07.2010
+  Firebrand added support for parsing Strife's teaser version of the rogue script files, that have some changes.

@@ -2110,6 +2110,7 @@ void VLevel::LoadRogueConScript(VName LumpName, int ALumpNum,
 	FRogueConSpeech*& SpeechList, int& NumSpeeches) const
 {
 	guard(VLevel::LoadRogueConScript);
+	bool teaser = false;
 	//	Clear variables.
 	SpeechList = NULL;
 	NumSpeeches = 0;
@@ -2132,7 +2133,19 @@ void VLevel::LoadRogueConScript(VName LumpName, int ALumpNum,
 	}
 
 	//	Load them.
-	NumSpeeches = W_LumpLength(LumpNum) / 1516;
+
+	//  First check the size of the lump, if it's 1516,
+	//  we are using a registered strife lump, if it's
+	//  1488, then it's a teaser conversation script
+	if (W_LumpLength(LumpNum) % 1516 != 0)
+	{
+		NumSpeeches = W_LumpLength(LumpNum) / 1488;
+		teaser = true;
+	}
+	else
+	{
+		NumSpeeches = W_LumpLength(LumpNum) / 1516;
+	}
 	SpeechList = new FRogueConSpeech[NumSpeeches];
 
 	VStream* Strm = W_CreateLumpReaderNum(LumpNum);
@@ -2141,22 +2154,64 @@ void VLevel::LoadRogueConScript(VName LumpName, int ALumpNum,
 		char Tmp[324];
 
 		FRogueConSpeech& S = SpeechList[i];
-		*Strm << S.SpeakerID << S.DropItem << S.CheckItem1 << S.CheckItem2
-			<< S.CheckItem3 << S.JumpToConv;
-		Strm->Serialise(Tmp, 16);
-		Tmp[16] = 0;
-		S.Name = Tmp;
-		Strm->Serialise(Tmp, 8);
-		Tmp[8] = 0;
-		S.Voice = VName(Tmp, VName::AddLower8);
-		if (S.Voice != NAME_None)
-			S.Voice = va("svox/%s", *S.Voice);
-		Strm->Serialise(Tmp, 8);
-		Tmp[8] = 0;
-		S.BackPic = VName(Tmp, VName::AddLower8);
-		Strm->Serialise(Tmp, 320);
-		Tmp[320] = 0;
-		S.Text = Tmp;
+		if (!teaser)
+		{
+			// Parse non teaser speech
+			*Strm << S.SpeakerID << S.DropItem << S.CheckItem1 << S.CheckItem2
+				<< S.CheckItem3 << S.JumpToConv;
+
+			// Parse NPC name
+			Strm->Serialise(Tmp, 16);
+			Tmp[16] = 0;
+			S.Name = Tmp;
+
+			// Parse sound name (if any)
+			Strm->Serialise(Tmp, 8);
+			Tmp[8] = 0;
+			S.Voice = VName(Tmp, VName::AddLower8);
+			if (S.Voice != NAME_None)
+			{
+				S.Voice = va("svox/%s", *S.Voice);
+			}
+
+			// Parse backdrop pics (if any)
+			Strm->Serialise(Tmp, 8);
+			Tmp[8] = 0;
+			S.BackPic = VName(Tmp, VName::AddLower8);
+
+			// Parse speech text
+			Strm->Serialise(Tmp, 320);
+			Tmp[320] = 0;
+			S.Text = Tmp;
+		}
+		else
+		{
+			// Parse teaser speech, which doesn't contain all fields
+			*Strm << S.SpeakerID << S.DropItem;
+
+			// Parse NPC name
+			Strm->Serialise(Tmp, 16);
+			Tmp[16] = 0;
+			S.Name = Tmp;
+
+			// Parse sound number (if any)
+			vuint32* num;
+			Strm->Serialise(num, sizeof(vuint32));
+			if (num != 0)
+			{
+				S.Voice = va("svox/voc%i", *num);
+			}
+
+			// Also, teaser speeches don't have backdrop pics
+			S.BackPic = NAME_None;
+
+			// Parse speech text
+			Strm->Serialise(Tmp, 320);
+			Tmp[320] = 0;
+			S.Text = Tmp;
+		}
+
+		// Parse conversation options for PC
 		for (int j = 0; j < 5; j++)
 		{
 			FRogueConChoice& C = S.Choices[j];
