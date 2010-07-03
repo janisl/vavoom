@@ -168,6 +168,18 @@ void PlayerImpulse()
 	{
 		ChangeWeapon(impulse);
 	}
+	else if (impulse == 13)
+	{
+		InventoryLeft();
+	}
+	else if (impulse == 14)
+	{
+		InventoryRight();
+	}
+	else if (impulse == 15)
+	{
+		InventoryUse();
+	}
 	else if (impulse == 16)
 	{
 		//  Suicide

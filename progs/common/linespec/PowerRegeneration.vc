@@ -33,7 +33,7 @@ class PowerRegeneration : Powerup;
 
 void InitEffect()
 {
-	if (Owner)
+	if (Owner && Owner.Player)
 	{
 		Owner.PlaySound(SightSound, CHAN_VOICE);
 		// Give the player the power to regnerate lost life.
@@ -49,7 +49,7 @@ void InitEffect()
 
 void EndEffect()
 {
-	if (Owner)
+	if (Owner && Owner.Player)
 	{
 		Owner.PlaySound(DeathSound, CHAN_VOICE);
 		// Take away the regeneration power.

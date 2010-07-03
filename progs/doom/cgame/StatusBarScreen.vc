@@ -154,6 +154,12 @@ int pic_pause;
 //For Icons in Fullscreen HUD
 int pic_health;
 int pic_armor[2];
+// Additions for inventory bar
+//int pic_artiflash[4];
+int pic_artibox;
+int pic_selectbox;
+int pic_invgeml[2];
+int pic_invgemr[2];
 
 //
 //  FACE WIDGET DATA
@@ -238,6 +244,18 @@ void StartMap()
 	pic_health = R_RegisterPic('stima0');
 	pic_armor[0] = R_RegisterPic('arm1a0');
 	pic_armor[1] = R_RegisterPic('arm2a0');
+
+	// Inventory bar stuff
+/*	pic_artiflash[0] = R_RegisterPic('useartia');
+	pic_artiflash[1] = R_RegisterPic('useartib');
+	pic_artiflash[2] = R_RegisterPic('useartic');
+	pic_artiflash[3] = R_RegisterPic('useartid');*/
+	pic_artibox = R_RegisterPic('artibox');
+	pic_selectbox = R_RegisterPic('selectbo');
+	pic_invgeml[0] = R_RegisterPic('invgeml1');
+	pic_invgeml[1] = R_RegisterPic('invgeml2');
+	pic_invgemr[0] = R_RegisterPic('invgemr1');
+	pic_invgemr[1] = R_RegisterPic('invgemr2');
 }
 
 //==========================================================================
@@ -442,6 +460,43 @@ void SB_DrawMainBar()
 	DrawAmmo(ST_AMMO1X, ST_AMMO1Y, ST_MAXAMMO1X, ST_MAXAMMO1Y, Shell);
 	DrawAmmo(ST_AMMO2X, ST_AMMO2Y, ST_MAXAMMO2X, ST_MAXAMMO2Y, Cell);
 	DrawAmmo(ST_AMMO3X, ST_AMMO3Y, ST_MAXAMMO3X, ST_MAXAMMO3Y, RocketAmmo);
+	
+	// draw inventory bar or ready item when needed (it's drawn with transparency)
+	if (cl.InventoryTime && cl.InvFirst)
+	{
+		//  Inventory
+		Inventory Item = cl.InvFirst;
+		for (i = 0; i < 7; i++)
+		{
+			DrawPic(210 + i * 31, 448, pic_artibox, 0.6);
+			if (Item)
+			{
+				DrawShadowedPic(207 + i * 31, 446,
+					R_RegisterPic(Item.IconName));
+				SB_DrawSmallNum(238 + i * 31, 470, Item.Amount);
+				if (Item == cl.InvPtr)
+				{
+					DrawPic(210 + i * 31, 448, pic_selectbox, 0.6);
+				}
+				Item = Item.NextInv();
+			}
+		}
+		if (cl.InvFirst && cl.InvFirst.PrevInv())
+		{
+			DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+		}
+		if (Item)
+		{
+			DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+		}
+	}
+	else if (cl.InvPtr)
+	{
+		//  Ready artifact
+		DrawPic(486, 448, pic_artibox, 0.6);
+		DrawShadowedPic(483, 446, R_RegisterPic(cl.InvPtr.IconName));
+		SB_DrawSmallNum(514, 470, cl.InvPtr.Amount);
+	}
 }
 
 //==========================================================================
@@ -529,6 +584,45 @@ void SB_DrawFullscreenStats()
 	{
 		// frags sum
 		SB_DrawTallNum(630, 10, cl.Frags, 0.6, false);
+	}
+	
+	// draw inventory bar or ready item when needed (it's drawn with transparency)
+	if (cl.InventoryTime && cl.InvFirst)
+	{
+		//  Inventory
+		int i;
+
+		Item = cl.InvFirst;
+		for (i = 0; i < 7; i++)
+		{
+			DrawPic(210 + i * 31, 448, pic_artibox, 0.6);
+			if (Item)
+			{
+				DrawShadowedPic(207 + i * 31, 446,
+					R_RegisterPic(Item.IconName));
+				SB_DrawSmallNum(238 + i * 31, 470, Item.Amount);
+				if (Item == cl.InvPtr)
+				{
+					DrawPic(210 + i * 31, 448, pic_selectbox, 0.6);
+				}
+				Item = Item.NextInv();
+			}
+		}
+		if (cl.InvFirst && cl.InvFirst.PrevInv())
+		{
+			DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+		}
+		if (Item)
+		{
+			DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+		}
+	}
+	else if (cl.InvPtr)
+	{
+		//  Ready artifact
+		DrawPic(486, 448, pic_artibox, 0.6);
+		DrawShadowedPic(483, 446, R_RegisterPic(cl.InvPtr.IconName));
+		SB_DrawSmallNum(514, 470, cl.InvPtr.Amount);
 	}
 }
 

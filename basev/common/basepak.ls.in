@@ -189,6 +189,7 @@ progs/linespec/Pottery1.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pottery1
 progs/linespec/PowerCoupling.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerCoupling.vc
 progs/linespec/PowerDamage.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerDamage.vc
 progs/linespec/PowerFlight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerFlight.vc
+progs/linespec/PowerFrightener.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerFrightener.vc
 progs/linespec/PowerGhost.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerGhost.vc
 progs/linespec/PowerInfiniteAmmo.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInfiniteAmmo.vc
 progs/linespec/PowerInvisibility.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInvisibility.vc

@@ -347,7 +347,7 @@ vuint32 M_ParseColour(VStr Name)
 		}
 		else if (Str.Length() == 4)
 		{
-			//	#rgb format colur
+			//	#rgb format colour
 			for (int i = 0; i < 3; i++)
 			{
 				char Val[3];

@@ -8,6 +8,14 @@ graphics/croshai1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai1.lmp
 graphics/croshai2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai2.lmp
 graphics/croshai3.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai3.lmp
 
+//  Inventory Bar graphics
+graphics/artibox.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/artibox.lmp
+graphics/invgenl1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenl1.lmp
+graphics/invgenl2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenl2.lmp
+graphics/invgenr1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenr1.lmp
+graphics/invgenr2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenr2.lmp
+graphics/selectbo.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/selectbo.lmp
+
 //	Client progs
 progs/cgame/classes.vc						@CMAKE_SOURCE_DIR@/progs/doom/cgame/classes.vc
 progs/cgame/ClientGame.vc					@CMAKE_SOURCE_DIR@/progs/doom/cgame/ClientGame.vc

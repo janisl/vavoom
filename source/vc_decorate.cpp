@@ -2638,11 +2638,18 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					break;
 				case PROP_DamageFactor:
 				{
-					sc->ExpectString();
-					VName DamageType = !sc->String.ICmp("Normal") ? NAME_None :
-						VName(*sc->String);
-					sc->Expect(",");
-					sc->ExpectFloat();
+					VName DamageType = NAME_None;
+					// Check if we only have a number instead of a string, since
+					// there are some custom WAD files that don't specify a DamageType,
+					// but specify a DamageFactor
+					if (!sc->CheckFloat())
+					{
+						sc->ExpectString();
+						VName DamageType = !sc->String.ICmp("Normal") ? NAME_None :
+							VName(*sc->String);
+						sc->Expect(",");
+						sc->ExpectFloat();
+					}
 		
 					//	Check damage factors array for replacements.
 					TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);

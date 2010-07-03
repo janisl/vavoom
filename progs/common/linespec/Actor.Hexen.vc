@@ -2907,14 +2907,14 @@ final void A_Summon()
 {
 	EntityEx A;
 
-	A = Spawn(MinotaurFriend, Origin);
+	A = Spawn(MinotaurFriend, Origin,,, true);
 	if (A)
 	{
 		if (!A.TestLocation() || !Tracer)
 		{
 			// Didn't fit - change back to artifact
 			A.SetState(none);
-			A = Spawn(ArtiDarkServant, Origin);
+			A = Spawn(ArtiDarkServant, Origin,,, true);
 			if (A)
 				A.bDropped = true;
 			return;
@@ -2938,7 +2938,7 @@ final void A_Summon()
 		}
 
 		// Make smoke puff
-		Spawn(MinotaurSmoke, Origin);
+		Spawn(MinotaurSmoke, Origin,,, true);
 		PlaySound(A.ActiveSound, CHAN_VOICE);
 	}
 }

@@ -4262,3 +4262,8 @@
  he also made shadows that can't be seen not to be drawn at all.
 02.07.2010
   Firebrand added support for parsing Strife's teaser version of the rogue script files, that have some changes.
+03.07.2010
+  Firebrand added the Frightener powerup class.
+  Firebrand added an inventory bar for the Doom statusbar (including new graphics).
+  Firebrand fixed small errors in some powerup classes, which could produce crashes.
+  Firebrand made some small changes in DECORATE parsing of DamageFactors.
