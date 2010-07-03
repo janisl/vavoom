@@ -10,10 +10,10 @@ graphics/croshai3.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/croshai3.lmp
 
 //  Inventory Bar graphics
 graphics/artibox.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/artibox.lmp
-graphics/invgenl1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenl1.lmp
-graphics/invgenl2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenl2.lmp
-graphics/invgenr1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenr1.lmp
-graphics/invgenr2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgenr2.lmp
+graphics/invgeml1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgeml1.lmp
+graphics/invgeml2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgeml2.lmp
+graphics/invgemr1.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgemr1.lmp
+graphics/invgemr2.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/invgemr2.lmp
 graphics/selectbo.lmp	@CMAKE_CURRENT_SOURCE_DIR@/graphics/selectbo.lmp
 
 //	Client progs
