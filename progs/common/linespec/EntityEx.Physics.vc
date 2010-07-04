@@ -407,22 +407,22 @@ final void ZMovement(float DeltaTime, float OldFloorZ)
 		{
 			if (WaterLevel < 2)
 			{
-				Velocity.z -= ((grav + grav) / Mass ? Mass : 1.0) * DeltaTime;
+				Velocity.z -= ((grav + grav) / ((Mass > 0.0) ? Mass : 1.0)) * DeltaTime;
 			}
 			else
 			{
-				Velocity.z -= (((grav + grav) / 10.0) / Mass ? Mass : 1.0) * DeltaTime;
+				Velocity.z -= (((grav + grav) / 10.0) / ((Mass > 0.0) ? Mass : 1.0)) * DeltaTime;
 			}
 		}
 		else
 		{
 			if (WaterLevel < 2)
 			{
-				Velocity.z -= (grav / Mass ? Mass : 1.0) * DeltaTime;
+				Velocity.z -= (grav / ((Mass > 0.0) ? Mass : 1.0)) * DeltaTime;
 			}
 			else
 			{
-				Velocity.z -= ((grav / 10.0) / Mass ? Mass : 1.0) * DeltaTime;
+				Velocity.z -= ((grav / 10.0) / ((Mass > 0.0) ? Mass : 1.0)) * DeltaTime;
 			}
 		}
 	}

@@ -2030,7 +2030,7 @@ void VLevel::LoadACScripts(int Lump)
 		while (!sc->AtEnd())
 		{
 			sc->ExpectName8();
-			int AcsLump = W_CheckNumForName(sc->Name8);
+			int AcsLump = W_CheckNumForName(sc->Name8, WADNS_ACSLibrary);
 			if (AcsLump >= 0)
 			{
 				Acs->LoadObject(AcsLump);
