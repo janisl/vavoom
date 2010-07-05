@@ -588,7 +588,7 @@ static bool SightPathTraverse2(sight_trace_t& Trace, VThinker* Self,
 //
 //==========================================================================
 
-bool VEntity::CanSee(VEntity* Other, bool use_reject)
+bool VEntity::CanSee(VEntity* Other)
 {
 	guard(VEntity::CanSee);
 	int				s1;
@@ -619,39 +619,36 @@ bool VEntity::CanSee(VEntity* Other, bool use_reject)
 		return false;
 	}
 
-	if (use_reject)
+	if (XLevel->RejectMatrix)
 	{
-		if (XLevel->RejectMatrix)
+		//	Determine subsector entries in REJECT table.
+		//	We must do this because REJECT can have some special effects like
+		// "safe sectors"
+		s1 = Sector - XLevel->Sectors;
+		s2 = Other->Sector - XLevel->Sectors;
+		pnum = s1 * XLevel->NumSectors + s2;
+		// Check in REJECT table.
+		if (XLevel->RejectMatrix[pnum >> 3] & (1 << (pnum & 7)))
 		{
-			//	Determine subsector entries in REJECT table.
-			//	We must do this because REJECT can have some special effects like
-			// "safe sectors"
-			s1 = Sector - XLevel->Sectors;
-			s2 = Other->Sector - XLevel->Sectors;
-			pnum = s1 * XLevel->NumSectors + s2;
-			// Check in REJECT table.
-			if (XLevel->RejectMatrix[pnum >> 3] & (1 << (pnum & 7)))
-			{
-				// can't possibly be connected
-				return false;
-			}
-		}
-
-		// killough 4/19/98: make fake floors and ceilings block monster view
-		if ((Sector->heightsec &&
-			((Origin.z + Height <= Sector->heightsec->floor.GetPointZ(Origin.x, Origin.y) &&
-			  Other->Origin.z >= Sector->heightsec->floor.GetPointZ(Other->Origin.x, Other->Origin.y)) ||
-			  (Origin.z >= Sector->heightsec->ceiling.GetPointZ (Origin.x, Origin.y) &&
-			  Other->Origin.z + Height <= Sector->heightsec->ceiling.GetPointZ (Other->Origin.x, Other->Origin.y))))
-			||
-			(Other->Sector->heightsec &&
-			((Other->Origin.z + Other->Height <= Other->Sector->heightsec->floor.GetPointZ (Other->Origin.x, Other->Origin.y) &&
-			Origin.z >= Other->Sector->heightsec->floor.GetPointZ (Origin.x, Origin.y)) ||
-			  (Other->Origin.z >= Other->Sector->heightsec->ceiling.GetPointZ (Other->Origin.x, Other->Origin.y) &&
-			  Origin.z + Other->Height <= Other->Sector->heightsec->ceiling.GetPointZ (Origin.x, Origin.y)))))
-		{
+			// can't possibly be connected
 			return false;
 		}
+	}
+
+	// killough 4/19/98: make fake floors and ceilings block monster view
+	if ((Sector->heightsec &&
+		((Origin.z + Height <= Sector->heightsec->floor.GetPointZ(Origin.x, Origin.y) &&
+		  Other->Origin.z >= Sector->heightsec->floor.GetPointZ(Other->Origin.x, Other->Origin.y)) ||
+		  (Origin.z >= Sector->heightsec->ceiling.GetPointZ (Origin.x, Origin.y) &&
+		  Other->Origin.z + Height <= Sector->heightsec->ceiling.GetPointZ (Other->Origin.x, Other->Origin.y))))
+		||
+		(Other->Sector->heightsec &&
+		((Other->Origin.z + Other->Height <= Other->Sector->heightsec->floor.GetPointZ (Other->Origin.x, Other->Origin.y) &&
+		Origin.z >= Other->Sector->heightsec->floor.GetPointZ (Origin.x, Origin.y)) ||
+		  (Other->Origin.z >= Other->Sector->heightsec->ceiling.GetPointZ (Other->Origin.x, Other->Origin.y) &&
+		  Origin.z + Other->Height <= Other->Sector->heightsec->ceiling.GetPointZ (Origin.x, Origin.y)))))
+	{
+		return false;
 	}
 
 	// An unobstructed LOS is possible.

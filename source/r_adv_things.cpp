@@ -507,14 +507,6 @@ bool VAdvancedRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 	{
 		return false;
 	}
-	//  Don't render models we can't see
-	if (r_hide_models)
-	{
-		if (!mobj->CanSee(ViewEnt, false))
-		{
-			return false;
-		}
-	}
 
 	float TimeFrac = 0;
 	if (mobj->State->Time > 0)
@@ -668,14 +660,6 @@ void VAdvancedRenderLevel::RenderMobjs()
 void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
-	//  Don't render models we can't see
-	if (r_hide_models)
-	{
-		if (!mobj->CanSee(ViewEnt, false))
-		{
-			return;
-		}
-	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -786,14 +770,6 @@ void VAdvancedRenderLevel::RenderMobjsAmbient()
 void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
-	//  Don't render models we can't see
-	if (r_hide_models)
-	{
-		if (!mobj->CanSee(ViewEnt, false))
-		{
-			return;
-		}
-	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -924,14 +900,6 @@ bool VAdvancedRenderLevel::IsTouchedByLight(VEntity* Ent)
 void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingLight);
-	//  Don't render models we can't see
-	if (r_hide_models)
-	{
-		if (!mobj->CanSee(ViewEnt, false))
-		{
-			return;
-		}
-	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(LightBspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -1035,13 +1003,6 @@ void VAdvancedRenderLevel::RenderMobjsLight()
 void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingShadow);
-	//  Don't render models we can't see
-	//  We don't make this one optional, since
-	//  shadow pass is the most expensive pass...
-	if (!mobj->CanSee(ViewEnt, false))
-	{
-		return;
-	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
@@ -1143,14 +1104,6 @@ void VAdvancedRenderLevel::RenderMobjsShadow()
 void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingFog);
-	//  Don't render models we can't see
-	if (r_hide_models)
-	{
-		if (!mobj->CanSee(ViewEnt, false))
-		{
-			return;
-		}
-	}
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))

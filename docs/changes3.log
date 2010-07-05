@@ -4268,3 +4268,6 @@
   Firebrand fixed small errors in some powerup classes, which could produce crashes.
   Firebrand made some small changes in DECORATE parsing of DamageFactors.
   Firebrand fixed that ACS libraries were being searched on the wrong WAD namespace.
+05.07.2010
+  Firebrand removed the option not drawing shadows that can't be seen, since it was determined it's not the
+ best way of doing this.

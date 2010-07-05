@@ -507,14 +507,6 @@ bool VRenderLevel::RenderAliasModel(VEntity* mobj, vuint32 light,
 	{
 		return false;
 	}
-	//  Don't render models we can't see
-	if (r_hide_models)
-	{
-		if (!mobj->CanSee(ViewEnt, false))
-		{
-			return false;
-		}
-	}
 
 	float TimeFrac = 0;
 	if (mobj->State->Time > 0)

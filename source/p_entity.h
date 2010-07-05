@@ -566,7 +566,7 @@ private:
 public:
 	void LinkToWorld();
 	void UnlinkFromWorld();
-	bool CanSee(VEntity*, bool);
+	bool CanSee(VEntity*);
 
 	void StartSound(VName, vint32, float, float, bool);
 	void StartLocalSound(VName, vint32, float, float);
