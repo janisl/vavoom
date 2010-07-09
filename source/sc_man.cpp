@@ -46,6 +46,7 @@ class VScriptsParser : public VObject
 	DECLARE_FUNCTION(get_Number)
 	DECLARE_FUNCTION(get_Float)
 	DECLARE_FUNCTION(get_Crossed)
+	DECLARE_FUNCTION(IsText)
 	DECLARE_FUNCTION(SetCMode)
 	DECLARE_FUNCTION(AtEnd)
 	DECLARE_FUNCTION(GetString)
@@ -124,6 +125,25 @@ VScriptParser::~VScriptParser()
 	delete[] ScriptBuffer;
 	ScriptBuffer = NULL;
 	unguard;
+}
+
+//==========================================================================
+//
+// VScriptParser::IsText
+//
+//==========================================================================
+
+bool VScriptParser::IsText()
+{
+	for(int i = 0; i < ScriptSize; i++)
+	{
+		if (ScriptBuffer[i] < ' ' && ScriptBuffer[i] != '\n'
+			&& ScriptBuffer[i] != '\r' && ScriptBuffer[i] != '\t')
+		{
+			return false;
+		}
+	}
+	return true;
 }
 
 //==========================================================================
@@ -217,7 +237,7 @@ bool VScriptParser::GetString()
 			return false;
 		}
 
-		//	Check for coments
+		//	Check for comments
 		if ((!CMode && *ScriptPtr == ';') ||
 			(ScriptPtr[0] == '/' && ScriptPtr[1] == '/'))
 		{
@@ -672,11 +692,19 @@ void VScriptParser::ExpectFloat()
 	guard(VScriptParser::ExpectFloat);
 	if (GetString())
 	{
-		char* stopper;
-		Float = strtod(*String, &stopper);
-		if (*stopper != 0)
+		if (String.ToLower().StartsWith("0x7f"))
 		{
-			Error(va("Bad floating point constant \"%s\"", *String));
+			Float = 99999.0;
+		}
+		else
+		{
+			char* stopper;
+
+			Float = strtod(*String, &stopper);
+			if (*stopper != 0)
+			{
+				Error(va("Bad floating point constant \"%s\"", *String));
+			}
 		}
 	}
 	else

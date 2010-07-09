@@ -39,6 +39,7 @@ public:
 	int 		Number;
 	double 		Float;
 
+	bool IsText();
 	void SetCMode(bool);
 	void SetEscape(bool);
 	bool AtEnd();

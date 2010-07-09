@@ -55,7 +55,7 @@ const int
 
 struct WeaponSlot
 {
-	class<Weapon>	Weapons[MAX_WEAPONS_PER_SLOT];
+	class<Weapon>	Weapons[MAX_WEAPONS_PER_SLOT+1];
 };
 
 float			contents_alpha[9];
@@ -110,7 +110,7 @@ float			GibsHealthFactor;
 int				ramp1[16];
 int				ramp2[16];
 
-WeaponSlot		WeaponSlots[NUM_WEAPON_SLOTS];
+WeaponSlot		WeaponSlots[NUM_WEAPON_SLOTS+1];
 
 float			RespawnTime;
 
@@ -1189,7 +1189,8 @@ void SpawnWorld(Level InLevel)
 //
 //==========================================================================
 
-bool FindWeaponSlot(class<Weapon> WpnClass, out int Slot, out int Index)
+bool FindWeaponSlot(class<Weapon> WpnClass, out int Slot, out int Index,
+					optional int Position)
 {
 	int			i;
 	int			j;
@@ -1201,7 +1202,15 @@ bool FindWeaponSlot(class<Weapon> WpnClass, out int Slot, out int Index)
 			if (WeaponSlots[i].Weapons[j] == WpnClass)
 			{
 				Slot = i;
-				Index = j;
+				// Assign weapon position, if it's already set...
+				if (Position)
+				{
+					Index = Position;
+				}
+				else
+				{
+					Index = j;
+				}
 				return true;
 			}
 		}
@@ -1220,6 +1229,7 @@ bool FindWeaponSlot(class<Weapon> WpnClass, out int Slot, out int Index)
 bool AddWeaponToSlot(int Slot, class<Weapon> WeaponClass)
 {
 	int i;
+
 	for (i = 0; i < MAX_WEAPONS_PER_SLOT; i++)
 	{
 		if (WeaponSlots[Slot].Weapons[i] == WeaponClass)
@@ -1272,6 +1282,11 @@ void CmdSetSlot(out array<string> Args)
 	{
 		print("Bad weapon slot number");
 		return;
+	}
+	if (Slot == 0)
+	{
+		//  Slot '0' means '10'
+		Slot = 10;
 	}
 
 	//	Clear slot.

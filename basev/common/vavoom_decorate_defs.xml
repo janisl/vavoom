@@ -21,6 +21,7 @@
 		<prop_speed name="FastSpeed" property="FastSpeed" />
 		<prop_speed name="FloatSpeed" property="FloatSpeed" />
 		<prop_speed name="JumpVelZ" property="JumpVelZ" />
+		<prop_string name="Species" property="Species" />
 		<!-- Collision and physics -->
 		<prop_float name="Radius" property="Radius" />
 		<prop_float name="Height" property="Height" />
@@ -147,6 +148,7 @@
 		<flag name="Frightened" property="bFrightened" />
 		<flag name="NoFear" property="bNoFear" />
 		<flag_unsupported name="CantSeek" />
+		<flag_unsupported name="Painless" />
 		<!-- Defenses -->
 		<flag name="Invulnerable" property="bInvulnerable" />
 		<flag name="Reflective" property="bReflective" />
@@ -282,6 +284,7 @@
 		<prop_name name="Inventory.UseSound" property="UseSound" />
 		<prop_tics name="Inventory.RespawnTics" property="RespawnTime" />
 		<prop_int name="Inventory.GiveQuest" property="GiveQuestNum" />
+		<prop_string_unsupported name="Inventory.PickupAnnouncerEntry" />
 
 		<flag name="Quiet" property="bQuiet" />
 		<flag name="AutoActivate" property="bAutoActivate" />
@@ -350,6 +353,7 @@
 		<prop_float name="Weapon.Kickback" property="Kickback" />
 		<prop_name name="Weapon.ReadySound" property="ReadySound" />
 		<prop_int name="Weapon.SelectionOrder" property="SelectionOrder" />
+		<prop_int name="Weapon.SlotPriority" property="Position" />
 		<prop_class name="Weapon.SisterWeapon" property="SisterWeaponType" />
 		<prop_name name="Weapon.UpSound" property="UpSound" />
 		<prop_float name="Weapon.YAdjust" property="PSpriteSY" />
@@ -401,6 +405,7 @@
 		<prop_start_item name="Player.StartItem" />
 		<prop_float name="Player.ViewHeight" property="ViewHeight" />
 		<prop_class name="Player.MorphWeapon" property="MorphWeapon" />
+		<prop_string_unsupported name="Player.WeaponSlot" />
 	</class>
 
 	<class name="MorphProjectile">

@@ -1197,7 +1197,7 @@ final Weapon GetPrevWeapon(Weapon Current)
 	int			Start;
 	int			i;
 
-	if (GI.FindWeaponSlot(class<Weapon>(Current.Class), Slot, Index))
+	if (GI.FindWeaponSlot(class<Weapon>(Current.Class), Slot, Index, Current.Position))
 	{
 		Start = Slot * LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT + Index;
 	}
@@ -1236,7 +1236,7 @@ final Weapon GetNextWeapon(Weapon Current)
 	int			Start;
 	int			i;
 
-	if (GI.FindWeaponSlot(class<Weapon>(Current.Class), Slot, Index))
+	if (GI.FindWeaponSlot(class<Weapon>(Current.Class), Slot, Index, Current.Position))
 	{
 		Start = Slot * LineSpecialGameInfo::MAX_WEAPONS_PER_SLOT + Index;
 	}

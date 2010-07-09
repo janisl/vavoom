@@ -125,7 +125,7 @@ void PlayerImpulse()
 	Impulse = 0;
 	Inventory Arti = none;
 
-	if (impulse <= 7)
+	if (impulse <= LineSpecialGameInfo::NUM_WEAPON_SLOTS)
 	{
 		ChangeWeapon(impulse);
 	}

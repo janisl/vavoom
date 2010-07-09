@@ -143,6 +143,7 @@ void BeginPlay()
 				EntityEx(NewEntity).Master = Master;
 				EntityEx(NewEntity).Target = Target;
 				EntityEx(NewEntity).Tracer = Tracer;
+				EntityEx(NewEntity).Species = Species;
 				EntityEx(NewEntity).CopyFriendliness(self, false);
 
 				// Copy Map Spawn flags

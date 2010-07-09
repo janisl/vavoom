@@ -4271,3 +4271,13 @@
 05.07.2010
   Firebrand removed the option not drawing shadows that can't be seen, since it was determined it's not the
  best way of doing this.
+09.07.2010
+  Firebrand added extensions for Seeker projectiles, so that they can specify searching for targets as they
+ travel, also, they can specify a more exact method for following their Tracer.
+  Firebrand added checks for finding binary LANGUAGE lumps and skipping parsing them.
+  Firebrand changed the amount of weapons players can select, there are some weapon mods that allow for 10
+ weapon slots, but the player was limited to 7 (or 4) weapons depending the game.
+  Firebrand made some fixes for weapon selection methods.
+  Firebrand added a Position property for weapons, that allow to set a weapon to a specific position on a
+ certain weapon slot.
+  Firebrand improved Species property for actors, so that they can specify to whcih monster family they belong.

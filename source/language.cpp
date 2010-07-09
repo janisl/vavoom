@@ -161,6 +161,7 @@ void VLanguage::ParseLanguageScript(vint32 Lump, const char* InCode,
 
 	bool GotLanguageCode = false;
 	bool Skip = false;
+	bool Finished = false;
 
 	while (!sc->AtEnd())
 	{
@@ -217,6 +218,16 @@ void VLanguage::ParseLanguageScript(vint32 Lump, const char* InCode,
 		{
 			if (!GotLanguageCode)
 			{
+				//  Skip old binary LANGUAGE lumps.
+				if (!sc->IsText())
+				{
+					if (!Finished)
+					{
+						GCon->Logf("Skipping binary LANGUAGE lump");
+					}
+					Finished = true;
+					return;
+				}
 				sc->Error("Found a string without language specified");
 			}
 

@@ -60,6 +60,8 @@ name			ReadySound;
 //int				Slot;
 //	Weapons with lower values have greater priority
 int				SelectionOrder;
+//	Position this weapon has in each slot
+int				Position;
 //	Kickback from this weapon
 float			Kickback;
 
@@ -259,10 +261,10 @@ void AttachToOwner(EntityEx NewOwner)
 		{
 			LineSpecialGameInfo(Level.Game).FindWeaponSlot(
 				class<Weapon>(PlayerEx(Owner.Player).ReadyWeapon.Class),
-				ReadySlot, ReadyIndex);
+				ReadySlot, ReadyIndex, PlayerEx(Owner.Player).ReadyWeapon.Position);
 		}
 		LineSpecialGameInfo(Level.Game).FindWeaponSlot(
-			class<Weapon>(Class), NewSlot, NewIndex);
+			class<Weapon>(Class), NewSlot, NewIndex, Position);
 		if (CheckAmmo(FIRE_Either, false) &&
 			(LineSpecialGameInfo(Level.Game).bAlwaysSwitchNewWeapon ||
 			!PlayerEx(Owner.Player).ReadyWeapon || NewSlot > ReadySlot) ||

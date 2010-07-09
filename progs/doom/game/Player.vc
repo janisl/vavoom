@@ -164,7 +164,7 @@ void PlayerImpulse()
 	impulse = Impulse;
 	Impulse = 0;
 
-	if (impulse <= 7)
+	if (impulse <= LineSpecialGameInfo::NUM_WEAPON_SLOTS)
 	{
 		ChangeWeapon(impulse);
 	}

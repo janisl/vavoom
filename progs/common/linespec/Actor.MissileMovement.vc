@@ -33,7 +33,8 @@
 //
 //==========================================================================
 
-final void A_SeekerMissile(int Threshold, int TurnMax)
+final void A_SeekerMissile(int Threshold, int TurnMax, optional int flags,
+							optional int chance, optional int distance)
 {
 	if (Threshold < 0)
 	{
@@ -51,7 +52,36 @@ final void A_SeekerMissile(int Threshold, int TurnMax)
 	{
 		TurnMax = 90;
 	}
-	SeekerMissile(itof(Threshold), itof(TurnMax));
+	if ((flags & SMF_LOOK) && !Tracer && (Random() < itof(chance) / 100.0))
+	{
+		Entity Other;
+
+		foreach RoughBlockSearch(Other, distance)
+		{
+			EntityEx link = EntityEx(Other);
+
+			if (!(link.bMonster || link.bIsPlayer) || link == Target ||
+				link.bDormant)
+			{
+				continue;
+			}
+			if (!link.bShootable)
+			{
+				continue;
+			}
+			if (IsTeammate(link))
+			{
+				continue;
+			}
+			if (!CanSee(link))
+			{
+				continue;
+			}
+			Tracer = link;
+			break;
+		}
+	}
+	SeekerMissile(itof(Threshold), itof(TurnMax), !!(flags & SMF_PRECISE));
 }
 
 //==========================================================================

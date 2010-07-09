@@ -165,7 +165,8 @@ class Actor extends Thinker
 	//
 	//	Missile movement
 	//
-	action native A_SeekerMissile(eval int threshold, eval int turnmax);
+	action native A_SeekerMissile(eval int threshold, eval int turnmax, optional eval int flags,
+					optional eval int chance, optional eval int distance);
 	action native A_Tracer();
 	action native A_Tracer2();
 	action native A_Fire(optional int Height);
