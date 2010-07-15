@@ -87,7 +87,11 @@ public:
 	{
 		char Buf[64];
 
+#ifdef WIN32
+		sprintf_s(Buf, "%d", InInt);
+#else
 		sprintf(Buf, "%d", InInt);
+#endif
 		Resize(Length(Buf));
 		Cpy(Str, Buf);
 	}
@@ -96,7 +100,11 @@ public:
 	{
 		char Buf[64];
 
+#ifdef WIN32
+		sprintf_s(Buf, "%u", InInt);
+#else
 		sprintf(Buf, "%u", InInt);
+#endif
 		Resize(Length(Buf));
 		Cpy(Str, Buf);
 	}
@@ -105,7 +113,11 @@ public:
 	{
 		char Buf[64];
 
+#ifdef WIN32
+		sprintf_s(Buf, "%f", InFloat);
+#else
 		sprintf(Buf, "%f", InFloat);
+#endif
 		Resize(Length(Buf));
 		Cpy(Str, Buf);
 	}
@@ -214,21 +226,33 @@ public:
 	{
 		char Buf[64];
 
+#ifdef WIN32
+		sprintf_s(Buf, "%d", InInt);
+#else
 		sprintf(Buf, "%d", InInt);
+#endif
 		return operator+=(Buf);
 	}
 	VStr& operator+=(unsigned InInt)
 	{
 		char Buf[64];
 
+#ifdef WIN32
+		sprintf_s(Buf, "%u", InInt);
+#else
 		sprintf(Buf, "%u", InInt);
+#endif
 		return operator+=(Buf);
 	}
 	VStr& operator+=(float InFloat)
 	{
 		char Buf[64];
 
+#ifdef WIN32
+		sprintf_s(Buf, "%f", InFloat);
+#else
 		sprintf(Buf, "%f", InFloat);
+#endif
 		return operator+=(Buf);
 	}
 	VStr& operator+=(const VName& InName)

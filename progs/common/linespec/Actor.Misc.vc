@@ -53,6 +53,76 @@ void Destroyed()
 
 //===========================================================================
 //
+//  A_Log
+//
+//===========================================================================
+
+final void A_Log(string text)
+{
+	print("<------------------------------->");
+	print("%s", text);
+	print("<------------------------------->");
+}
+
+//===========================================================================
+//
+//  A_LogInt
+//
+//===========================================================================
+
+final void A_LogInt(int num)
+{
+	print("<------------------------------->");
+	print("%i", num);
+	print("<------------------------------->");
+}
+
+//===========================================================================
+//
+//  A_ChangeVelocity
+//
+//===========================================================================
+
+final void A_ChangeVelocity(float x, float y, float z, int flags)
+{
+	float vx = x, vy = y, vz = z;
+
+	if (flags & 1)	// relative axes - make x, y relative to actor's current angle
+	{
+		vx = x * -y * cos(Angles.yaw) * sin(Angles.yaw);
+		vx /= 4.0 * 35.0;
+		vy = x * sin(Angles.yaw) * y * cos(Angles.yaw);
+		vy /= 4.0 * 35.0;
+	}
+	if (flags & 2)	// discard old velocity - replace old velocity with new velocity
+	{
+		Velocity.x = vx;
+		Velocity.y = vy;
+		Velocity.z = vz;
+	}
+	else	// add new velocity to old velocity
+	{
+		Velocity.x += vx;
+		Velocity.y += vy;
+		Velocity.z += vz;
+	}
+}
+
+//===========================================================================
+//
+//  A_ScaleVelocity
+//
+//===========================================================================
+
+final void A_ScaleVelocity(float scale)
+{
+	Velocity.x *= scale;
+	Velocity.y *= scale;
+	Velocity.z *= scale;
+}
+
+//===========================================================================
+//
 //  A_SetGravity
 //
 //===========================================================================
@@ -76,29 +146,57 @@ final void A_SetGravity(float Grav)
 //
 //===========================================================================
 
-final void A_Respawn(optional bool Fog)
+final void A_Respawn(optional int Flags)
 {
-	if (!specified_Fog)
-	{
-		Fog = true;
-	}
-
 	TVec Org;
+	bool OK = false;
 	Org.x = SpawnPoint.x;
 	Org.y = SpawnPoint.y;
 	Org.z = GetPlanePointZ(&XLevel.PointInSector(Org)->floor, Org);
 	SetOrigin(Org);
 	bSolid = true;
 	Height = default.Height;
-	if (TestLocation())
+	if (Flags & 4)
+	{
+		if (TeleportMove (Org, true))
+		{
+			OK = true;
+		}
+	}
+	else if (TestLocation())
+	{
+			OK = true;
+	}
+	if (OK)
 	{
 		Health = default.Health;
+
+		// [KS] Don't keep target, because it could be self if the monster committed suicide
+		//      ...Actually it's better off an option, so you have better control over monster behavior.
+		if (!(Flags & 2))
+		{
+			Target = none;
+			LastHeard = none;
+			LastEnemy = none;
+		}
+		else
+		{
+			// Don't attack yourself (Re: "Marine targets itself after suicide")
+			if (Target == self)
+			{
+				Target = none;
+			}
+			if (LastEnemy == self)
+			{
+				LastEnemy = none;
+			}
+		}
 
 		//	Restore default flags
 		RespawnResetFlags();
 		SetState(IdleState);
 		bInvisible = false;
-		if (Fog)
+		if (Flags & 1)
 		{
 			Spawn(TeleportFog, Origin + vector(0.0, 0.0,
 				LineSpecialGameInfo(Level.Game).TeleFogHeight));
@@ -397,7 +495,7 @@ final void A_ItBurnsItBurns()
 //
 //==========================================================================
 
-final void A_WeaponReady()
+final void A_WeaponReady(optional int Flags)
 {
 	float angle;
 
@@ -424,38 +522,44 @@ final void A_WeaponReady()
 		PlaySound(Wpn.ReadySound, CHAN_WEAPON);
 	}
 
-	// Put the weapon away if the player has a pending weapon or has died.
-	if (PlayerEx(Player).PendingWeapon || Player.MO.Health <= 0)
+	if (!(Flags & 2))
 	{
-		Player.SetViewState(ps_weapon, Wpn.GetDownState());
-		return;
-	}
-
-	// Check for fire.
-	if (Player.Buttons & BT_ATTACK)
-	{
-		if (!Player.bAttackDown || !Wpn.bNoAutoFire)
+		// Put the weapon away if the player has a pending weapon or has died.
+		if (PlayerEx(Player).PendingWeapon || Player.MO.Health <= 0)
 		{
-			Player.bAttackDown = true;
-			PlayerEx(Player).FireWeapon();
+			Player.SetViewState(ps_weapon, Wpn.GetDownState());
 			return;
 		}
 	}
-	else if (Player.Buttons & BT_ALT_ATTACK && Wpn.FindState('AltFire'))
+
+	if (!(Flags & 12))
 	{
-		if (!Player.bAttackDown || !Wpn.bNoAutoFire)
+		// Check for fire.
+		if (Player.Buttons & BT_ATTACK && !(Flags & 4))
 		{
-			Player.bAttackDown = true;
-			PlayerEx(Player).AltFireWeapon();
-			return;
+			if (!Player.bAttackDown || !Wpn.bNoAutoFire)
+			{
+				Player.bAttackDown = true;
+				PlayerEx(Player).FireWeapon();
+				return;
+			}
+		}
+		else if (Player.Buttons & BT_ALT_ATTACK && Wpn.FindState('AltFire') && !(Flags & 8))
+		{
+			if (!Player.bAttackDown || !Wpn.bNoAutoFire)
+			{
+				Player.bAttackDown = true;
+				PlayerEx(Player).AltFireWeapon();
+				return;
+			}
+		}
+		else
+		{
+			Player.bAttackDown = false;
 		}
 	}
-	else
-	{
-		Player.bAttackDown = false;
-	}
 
-	if (!Wpn.bDontBob)
+	if (!Wpn.bDontBob || !(Flags & 1))
 	{
 		// bob the weapon based on movement speed
 		angle = AngleMod360(180.0 * XLevel.Time);
@@ -468,4 +572,10 @@ final void A_WeaponReady()
 		Player.ViewStates[ps_weapon].SY = Weapon::WEAPONTOP +
 			PlayerEx(Player).Bob * sin(angle);
 	}
+}
+
+// This function replaces calls to A_WeaponReady in other codepointers.
+final void DoReadyWeapon()
+{
+	A_WeaponReady(0);
 }

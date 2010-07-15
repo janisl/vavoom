@@ -40,8 +40,11 @@ bool Touch(Entity InOther)
 	EntityEx Other;
 
 	Other = EntityEx(InOther);
-	if (!Other.bSolid && !Other.bSpecial && !Other.bShootable)
+	if (!Other.bSolid && !Other.bSpecial && (!Other.bShootable || !Other.bTouchy) &&
+		!Other.bBlockedBySolidActors)
+	{
 		return true;
+	}
 
 	// Check for skulls slamming into things
 	if (bSkullFly)
@@ -127,6 +130,25 @@ void CHolyFindTarget()
 		if (!CanSee(link))
 		{
 			continue;
+		}
+		if (bScreenSeeker)
+		{
+			if (CanSee(link))
+			{
+				float angle = AngleMod360(atan2(link.Origin.y - Target.Origin.y,
+					link.Origin.x - Target.Origin.x) - Target.Angles.yaw);
+				if (angle <= 226.0 * 360.0 / 256.0 || angle >= 30.0 * 360.0 / 256.0)
+				{
+					continue;
+				}
+			}
+		}
+		else
+		{
+			if (!CanSee(link))
+			{
+				continue;
+			}
 		}
 		Tracer = link;
 		bColideWithWorld = false;

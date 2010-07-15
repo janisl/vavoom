@@ -104,7 +104,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		VisDir = -1;
 	}
 
-	if (bSkullFly)
+	if (bSkullFly && Health > 0)
 	{
 		if (bSkullFlyInvulnerable)
 		{
@@ -347,7 +347,8 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		}
 	}
 
-	if (!bNoPain && (Random() < PChance) && !bSkullFly)
+	if (!bNoPain && (((Random() < PChance) && !bSkullFly && (inflictor && !inflictor.bPainless)) ||
+		(inflictor && inflictor.bForcePain)))
 	{
 		if (inflictor && inflictor.bLightning)
 		{

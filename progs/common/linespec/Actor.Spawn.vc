@@ -106,12 +106,12 @@ final void A_SpawnDebris(class<Actor> SpawnType, optional bool TransTransl,
 
 //==========================================================================
 //
-//	A_SpawnItem
+//	InitSpawnedItem
 //
 //==========================================================================
 
 final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
-	bool NoCheckPos, bool Telestomp)
+	bool NoCheckPos, bool Telestomp, bool TransPitch, bool TransPointers)
 {
 	if (!A)
 	{
@@ -121,6 +121,18 @@ final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
 	if (TransTransl && !bDontTranslate)
 	{
 		A.Translation = Translation;
+	}
+
+	if (TransPointers)
+	{
+		A.Target = Target;
+		A.Master = Master; // This will be overridden later if SIXF_SETMASTER is set
+		A.Tracer = Tracer;
+	}
+
+	if (TransPitch)
+	{
+		A.Angles.pitch = Angles.pitch;
 	}
 
 	//	Find instigator for missiles.
@@ -180,7 +192,7 @@ final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
 			}
 		}
 	}
-	else
+	else if (!TransPitch)
 	{
 		//	For missiles or anything else set target to instigator.
 		if (!Instig)
@@ -243,12 +255,12 @@ final void A_SpawnItem(class<Actor> ItemType, optional float Distance,
 
 	EntityEx A = Spawn(ItemType, Origin + vector(Distance * cos(Angles.yaw),
 		Distance * sin(Angles.yaw), ZHeight - FloorClip));
-	InitSpawnedItem(A, TransTransl, UseAmmo, false, false);
+	InitSpawnedItem(A, TransTransl, UseAmmo, false, false, false, false);
 }
 
 //==========================================================================
 //
-//	A_SpawnItem
+//	A_SpawnItemEx
 //
 //==========================================================================
 
@@ -294,7 +306,7 @@ final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
 
 	EntityEx A = Spawn(ItemType, Org);
 	InitSpawnedItem(A, !!(Flags & 1), !!(Flags & 16), !!(Flags & 32),
-		!!(Flags & 64));
+		!!(Flags & 64), !!(Flags & 512), !!(Flags & 1024));
 	if (A)
 	{
 		A.Velocity.x = XVel * 35.0;

@@ -231,6 +231,7 @@ class VEntity : public VThinker
 		EF_NoDropOff			= 0x10000000,	// Can't drop off under any circumstances
 		EF_Bright				= 0x20000000,	// Always render full bright
 		EF_CanJump				= 0x40000000,	// This entity can jump to high places
+		EF_StepMissile			= 0x80000000,	// Missile can "walk" up steps
 	};
 	vuint32			EntityFlags;
 

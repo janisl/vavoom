@@ -291,6 +291,7 @@ bool bActLikeBridge;	// Always allow obkects to pass.
 bool bNoDropOff;		// Can't drop off under any circumstances
 bool bBright;			// Always render full bright
 bool bCanJump;			// A dedicated flag instead of the BOUNCES+FLOAT+sentient as in MBF
+bool bStepMissile;		// Missile can "walk" up steps
 
 int				Health;
 

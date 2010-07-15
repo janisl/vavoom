@@ -65,6 +65,10 @@ final void FindEnemy()
 		{
 			continue;
 		}
+		if (!CanSeek(link))
+		{
+			continue;
+		}
 		if (CanSee(link))
 		{
 			float angle = AngleMod360(atan2(link.Origin.y - Target.Origin.y,

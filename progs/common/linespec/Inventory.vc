@@ -1171,19 +1171,20 @@ final void decorate_A_Saw(optional name FullSound, optional name HitSound,
 //===========================================================================
 
 final void A_CustomPunch(int PunchDamage, optional bool NoRandom,
-	optional bool UseAmmo, optional class<Actor> PuffType,
-	optional float Range)
+	optional int Flags, optional class<Actor> PuffType,
+	optional float Range, optional float LifeSteal)
 {
 	TAVec		aimAngles;
 	TVec		dir;
 	EntityEx	AimTarget;
+	bool		UseAmmo = false;
 
 	if (!bIsPlayer)
 	{
 		return;
 	}
 
-	if (!specified_UseAmmo)
+	if (!specified_Flags)
 	{
 		UseAmmo = true;
 	}
@@ -1199,7 +1200,7 @@ final void A_CustomPunch(int PunchDamage, optional bool NoRandom,
 	AimTarget = AimLineAttack(dir, aimAngles, Range);
 
 	//	Use ammo only if hit something.
-	if (UseAmmo && AimTarget && Wpn)
+	if ((specified_Flags && (Flags & 1) || UseAmmo) && AimTarget && Wpn)
 	{
 		if (!Wpn.DepleteAmmo(Wpn.FireMode))
 		{
@@ -1218,6 +1219,10 @@ final void A_CustomPunch(int PunchDamage, optional bool NoRandom,
 	// turn to face target
 	if (AimTarget)
 	{
+		if (LifeSteal)
+		{
+			GiveBody (ftoi(itof(PunchDamage) * LifeSteal));
+		}
 		if (Wpn)
 		{
 			PlaySound(Wpn.AttackSound, CHAN_WEAPON);
@@ -1227,6 +1232,14 @@ final void A_CustomPunch(int PunchDamage, optional bool NoRandom,
 		if (bIsPlayer)
 		{
 			Player.bFixAngle = true;
+		}
+		if (Flags & 4)
+		{
+			bJustAttacked = true;
+		}
+		if (Flags & 2)
+		{
+			A_AttackAlert(self, AimTarget);
 		}
 	}
 }
@@ -1238,7 +1251,7 @@ final void A_CustomPunch(int PunchDamage, optional bool NoRandom,
 //===========================================================================
 
 final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
-	int DamagePerBullet, optional class<Actor> PuffType, optional bool UseAmmo,
+	int DamagePerBullet, optional class<Actor> PuffType, optional int Flags,
 	optional float Range)
 {
 	TVec		dir;
@@ -1246,14 +1259,11 @@ final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
 	int			damage;
 	TAVec		rot;
 	TVec		aimDir;
+	bool		UseAmmo = false;
 
 	if (!PuffType)
 	{
 		PuffType = BulletPuff;
-	}
-	if (!specified_UseAmmo)
-	{
-		UseAmmo = true;
 	}
 	if (!Range)
 	{
@@ -1266,7 +1276,11 @@ final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
 
-	if (UseAmmo && Wpn)
+	if (!specified_Flags)
+	{
+		UseAmmo = true;
+	}
+	if ((specified_Flags && (Flags & 1) || UseAmmo) && Wpn)
 	{
 		if (!Wpn.DepleteAmmo(Wpn.FireMode))
 		{
@@ -1285,7 +1299,11 @@ final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
 
 	if ((NumBullets == 1 && !PlayerEx(Player).Refire) || NumBullets == 0)
 	{
-		damage = DamagePerBullet * (P_Random() % 3 + 1);
+		damage = DamagePerBullet;
+		if (!(Flags & 2))
+		{
+			damage *= (P_Random() % 3 + 1);
+		}
 		LineAttack(aimDir, Range, damage, PuffType,,,
 			PuffType.default.DamageType);
 	}
@@ -1297,11 +1315,23 @@ final void A_FireBullets(float SpreadHoriz, float SpreadVert, int NumBullets,
 		}
 		for (i = 0; i < NumBullets; i++)
 		{
-			rot.pitch = (Random() - Random()) * SpreadVert;
-			rot.yaw = (Random() - Random()) * SpreadHoriz;
+			if (Flags & 4)
+			{
+				rot.pitch = SpreadVert;
+				rot.yaw = SpreadHoriz;
+			}
+			else
+			{
+				rot.pitch = (Random() - Random()) * SpreadVert;
+				rot.yaw = (Random() - Random()) * SpreadHoriz;
+			}
 			rot.roll = 0.0;
 			dir = RotateDirectionVector(aimDir, rot);
-			damage = DamagePerBullet * (P_Random() % 3 + 1);
+			damage = DamagePerBullet;
+			if (!(Flags & 2))
+			{
+				damage *= (P_Random() % 3 + 1);
+			}
 			LineAttack(dir, Range, damage, PuffType,,,
 				PuffType.default.DamageType);
 		}
@@ -1382,7 +1412,7 @@ final void A_FireCustomMissile(class<Actor> MissileType, optional float Angle,
 
 final void A_RailAttack(int RailDamage, optional float Offset,
 	optional bool UseAmmo, optional string Colour1, optional string Colour2,
-	optional bool Silent, optional float MaxDiff,
+	optional int Flags, optional float MaxDiff,
 	optional class<Actor> PuffType)
 {
 	if (!specified_UseAmmo)
@@ -1395,7 +1425,7 @@ final void A_RailAttack(int RailDamage, optional float Offset,
 		return;
 	}
 	Weapon Wpn = PlayerEx(Player).ReadyWeapon;
-	if (UseAmmo)
+	if ((specified_Flags && (Flags & 1)) || UseAmmo)
 	{
 		if (!Wpn.DepleteAmmo(Wpn.FireMode,, 1))
 		{
@@ -1408,7 +1438,7 @@ final void A_RailAttack(int RailDamage, optional float Offset,
 	TVec Dir;
 	AngleVector(&Angles, &Dir);
 	RailAttack(Dir, Offset, RailDamage, Col1, Col2, MaxDiff, PuffType,
-		Silent);
+		!!(Flags & 1), !!(Flags & 2));
 }
 
 //**************************************************************************

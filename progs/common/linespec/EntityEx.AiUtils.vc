@@ -823,16 +823,19 @@ final bool StepMove()
 		// back out when they shouldn't, and creates secondary stickiness).
 
 		good = 0;
-		while (tmtrace.SpecHit.Num)
+		if (!bNoTrigger)
 		{
-			ld = tmtrace.SpecHit[tmtrace.SpecHit.Num - 1];
-			tmtrace.SpecHit.Num = tmtrace.SpecHit.Num - 1;
-			// if the special is not a door that can be opened
-			// then return false
-			if ((bCanUseWalls && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Use)) ||
-			    (bActivatePushWall && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Push)))
+			while (tmtrace.SpecHit.Num)
 			{
-				good |= ld == tmtrace.BlockingLine ? 1 : 2; //true;
+				ld = tmtrace.SpecHit[tmtrace.SpecHit.Num - 1];
+				tmtrace.SpecHit.Num = tmtrace.SpecHit.Num - 1;
+				// if the special is not a door that can be opened
+				// then return false
+				if ((bCanUseWalls && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Use)) ||
+					(bActivatePushWall && LineSpecialLevelInfo(Level).ActivateLine(ld, self, 0, SPAC_Push)))
+				{
+					good |= ld == tmtrace.BlockingLine ? 1 : 2; //true;
+				}
 			}
 		}
 		return good && ((P_Random() >= 203) ^ (good & 1));

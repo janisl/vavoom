@@ -35,9 +35,9 @@ class Actor extends Thinker
 		optional eval float pitch);
 	action native A_CustomBulletAttack(eval float spread_horiz, eval float spread_vert,
 		eval int numbullets, eval int damage, class<Actor> pufftype,
-		optional eval float range, optional eval bool aimfacing);
+		optional eval float range, optional eval int flags);
 	action native A_CustomRailgun(eval int damage, optional eval float offset_xy,
-		optional color color1, optional color color2, optional eval bool silent,
+		optional color color1, optional color color2, optional eval int flags,
 		optional eval bool aim, optional eval float maxdiff, optional class<Actor> pufftype);
 	action native A_CustomMeleeAttack(eval int damage, optional string meleesound,
 		optional string misssound, optional string damagetype, optional eval bool bleed);
@@ -161,6 +161,14 @@ class Actor extends Thinker
 	action native A_FadeOut(optional eval float reduce);
 	action native A_QueueCorpse();
 	action native A_DeQueueCorpse();
+	action native A_ChangeVelocity(float x, float y, float z, int flags);
+  	action native A_ScaleVelocity(float scale);
+
+	//
+	//  Misc. Stuff
+	//
+	action native A_Log(string text);
+	action native A_LogInt(int num);
 
 	//
 	//	Missile movement
@@ -169,7 +177,7 @@ class Actor extends Thinker
 					optional eval int chance, optional eval int distance);
 	action native A_Tracer();
 	action native A_Tracer2();
-	action native A_Fire(optional int Height);
+	action native A_Fire(optional eval int Height);
 	action native A_BishopMissileWeave();
 	action native A_CStaffMissileSlither();
 	action native A_Countdown();
@@ -228,7 +236,9 @@ class Actor extends Thinker
 	action native A_SpawnSound();
 	action native A_BrainScream();
 	action native A_BrainExplode();
-	action native A_Mushroom(optional class<Actor> spawntype, optioal eval int amount);
+	action native A_Mushroom(optional class<Actor> spawntype, optioal eval int amount,
+				optional eval int flags, optional eval float hrange,
+				optional eval float vrange);
 	action native A_M_Saw();
 	action native A_SentinelRefire();
 
@@ -249,7 +259,7 @@ class Actor extends Thinker
 	//
 	action native A_SetGravity(eval float gravity);
 	//action native A_PlayerSkinCheck(state label);
-	action native A_Respawn(optional evalnot bool fog);
+	action native A_Respawn(optional eval int flags);
 	//action native A_BarrelDestroy();
 	action native A_Feathers();
 	action native A_ShootGun();
@@ -274,7 +284,7 @@ class Inventory extends Actor
 	//
 	//	Weapon functions
 	//
-	action native A_WeaponReady();
+	action native A_WeaponReady(optional eval int flags);
 	action native A_Lower();
 	action native A_Raise();
 	action native A_ReFire();
@@ -288,6 +298,7 @@ class Inventory extends Actor
 	action native A_Light1();
 	action native A_Light2();
 	action native A_LightInverse();
+	action native A_ZoomFactor(float zoom, optional eval int flags);
 
 	//
 	//	Weapon attack functions
@@ -295,18 +306,18 @@ class Inventory extends Actor
 	action native A_Saw(optional string fullsound, optional string hitsound,
 		optional eval int damage, optional class<Actor> pufftype);
 	action native A_CustomPunch(eval int PunchDamage, optional eval bool NoRandom,
-		optional evalnot bool UseAmmo, optional class<Actor> PuffType,
-		optional eval float Range);
+		optional eval int flags, optional class<Actor> PuffType,
+		optional eval float Range, optional eval float LifeSteal);
 	action native A_FireBullets(eval float spread_horz, eval float spread_vert,
 		eval int numbullets, eval int damage, optional class<Actor> pufftype,
-		optional evalnot bool useammo, optional eval float range);
+		optional eval int flags, optional eval float range);
 	action native A_FireCustomMissile(class<Actor> MissileType,
 		optional eval float Angle, optional evalnot bool UseAmmo,
 		optional eval int SpawnXY, optional eval float SpawnZ,
 		optional eval int AimAtAngle, optional eval float Pitch);
 	action native A_RailAttack(eval int damage, optional eval float offset_xy,
 		optional evalnot bool useammo, optional color color1, optional color color2,
-		optional eval bool silent, optional eval float maxdiff, optional class<Actor> pufftype);
+		optional eval int flags, optional eval float maxdiff, optional class<Actor> pufftype);
 
 	//
 	//	Not documented Doom weapon atack functions

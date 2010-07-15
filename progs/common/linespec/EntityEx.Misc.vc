@@ -124,7 +124,7 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 	}
 	foreach RadiusThings(Other, Origin, BombDistance)
 	{
-		if (!Other.bShootable)
+		if (!Other || !Other.bShootable)
 		{
 			continue;
 		}
@@ -143,8 +143,10 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 
 		//	Option for monsters that fire explosive projectiles not to hurt
 		// monsters of the same class with it's projectiles.
-		if (Source && Other.Class == Source.Class && !Other.bIsPlayer &&
-			Source.bDontHurtSpecies)
+		// Controlled by the bDontHurtClass and bDontHurtSpecies flags.
+		if (Source && !Other.bIsPlayer && ((Source.bDontHurtClass &&
+			Other.Class == Source.Class) || (Source.bDontHurtSpecies &&
+			Other.GetSpecies() == Source.GetSpecies())))
 		{
 			continue;
 		}
@@ -257,7 +259,8 @@ final bool TeleportMove(TVec org, optional bool ForceTelestomp)
 		}
 
 		//  Check if allowed to stomp things
-		if (!ForceTelestomp && !bTelestomp && !Level.bAllowMonsterTelefrags)
+		if ((!ForceTelestomp && !bTelestomp && !Level.bAllowMonsterTelefrags) ||
+			Other.bNoTeleFrag)
 		{
 			return false;
 		}
@@ -531,7 +534,7 @@ final bool HeightClip()
 	FloorZ = tmtrace.FloorZ;
 	CeilingZ = tmtrace.CeilingZ;
 
-	if (onfloor && (!bNoGravity || !bNoLiftDrop))
+	if (onfloor && (!bNoGravity || !bNoLiftDrop || bMoveWithSector))
 	{
 		// walking monsters rise and fall with the floor
 		if ((Origin.z - FloorZ < 9.0) || bNoGravity || !XLevel.bExtended)
@@ -652,13 +655,21 @@ bool Touch(Entity InOther)
 	//	For Korax Arena
 	if (Other.IsTouched(self))
 	{
-		return !Other.bSolid && !Other.bSpecial && (!Other.bShootable || !Other.bTouchy);
+		return !Other.bSolid && !Other.bSpecial && (!Other.bShootable || !Other.bTouchy) &&
+				!Other.bBlockedBySolidActors;
 	}
 		
-	if (!Other.bSolid && !Other.bSpecial && (!Other.bShootable || !Other.bTouchy))
+	if (!Other.bSolid && !Other.bSpecial && (!Other.bShootable || !Other.bTouchy) &&
+		!Other.bBlockedBySolidActors)
 	{
 		return true;
 	}
+
+	if (bThruActors || Other.bThruActors)
+		return true;
+
+	if (bThruSpecies && (Other.GetSpecies() == GetSpecies()))
+		return true;
 
 	// touchy object is alive, toucher is solid
 	if (Other.bTouchy && bSolid && Other.Health > 0 &&
@@ -680,8 +691,21 @@ bool Touch(Entity InOther)
 		return true;
 	}
 
+	// Check for bBumpSpecial
+	// By default, only players can activate things by bumping into them
+/*	if (bBumpSpecial && (Other.bIsPlayer
+		|| ((thing->activationtype & THINGSPEC_MonsterTrigger) && (tm.thing->flags3 & MF3_ISMONSTER))
+		|| ((thing->activationtype & THINGSPEC_MissileTrigger) && (tm.thing->flags & MF_MISSILE))
+		) && (level.maptime > LastBump)) // Leave the bumper enough time to go away
+	{
+		if (P_ActivateThingSpecial(thing, tm.thing))
+		{
+			LastBump = level.maptime + TICRATE;
+		}
+	}*/
+
 	// check for skulls slamming into things
-	if (bSkullFly && Health > 0)
+	if (bSkullFly)
 	{
 		return Slam(Other);
 	}
@@ -716,6 +740,11 @@ bool Touch(Entity InOther)
 		if (Other.bGhost && bThruGhost)
 		{
 			return true;
+		}
+
+		if (bMThruSpecies && Target	&& (Target.GetSpecies() == GetSpecies()))
+		{
+			return true;		
 		}
 
 		if ((BounceType == BOUNCE_Doom || BounceType == BOUNCE_Hexen) &&
@@ -807,19 +836,22 @@ bool Touch(Entity InOther)
 		}
 		if (bRip && !Other.bDontRip)
 		{
-			if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
+			if (!bNoBossRip || !Other.bBoss)
 			{
-				// Ok to spawn some blood
-				SpawnRipperBlood();
-			}
-			PlaySound('misc/ripslop', CHAN_BODY);
-			damage = GetMissileDamage(3, 2);
-			Other.Damage(self, Target, damage, DamageType);
-			if (Other.bPushable && !bCannotPush)
-			{
-				// Push thing
-				Other.Velocity.x += Velocity.x / 4.0;
-				Other.Velocity.y += Velocity.y / 4.0;
+				if (!Other.bNoBlood && !Other.bReflective && !Other.bInvulnerable)
+				{
+					// Ok to spawn some blood
+					SpawnRipperBlood();
+				}
+				PlaySound('misc/ripslop', CHAN_BODY);
+				damage = GetMissileDamage(3, 2);
+				Other.Damage(self, Target, damage, DamageType);
+				if (Other.bPushable && !bCannotPush)
+				{
+					// Push thing
+					Other.Velocity.x += Velocity.x / 4.0;
+					Other.Velocity.y += Velocity.y / 4.0;
+				}
 			}
 			//WHAT A FUCK IS THIS???????			numspechit = 0;
 			return true;
@@ -892,16 +924,20 @@ bool Slam(EntityEx Other)
 {
 	bSkullFly = false;
 	Velocity = vector(0.0, 0.0, 0.0);
-	if (!bDormant)
+
+	if (Health > 0)
 	{
-		int damage = GetMissileDamage(7, 1);
-		Other.Damage(self, self, damage, 'Melee');
-		SetState(SeeState ? SeeState : IdleState);
-	}
-	else
-	{
-		SetState(IdleState);
-		StateTime = -1.0;
+		if (!bDormant)
+		{
+			int damage = GetMissileDamage(7, 1);
+			Other.Damage(self, self, damage, 'Melee');
+			SetState(SeeState ? SeeState : IdleState);
+		}
+		else
+		{
+			SetState(IdleState);
+			StateTime = -1.0;
+		}
 	}
 	return false;	// stop moving
 }
@@ -971,16 +1007,19 @@ name GetSpecies()
 
 final void CheckForPushSpecial(line_t* line, int side)
 {
-	if (bActivatePushWall)
+	if (!bNoTrigger)
 	{
-		LineSpecialLevelInfo(Level).ActivateLine(line, self, side,
-			SPAC_Push);
-	}
-	else if (bActivateImpact)
-	{
-		LineSpecialLevelInfo(Level).ActivateLine(line,
-			Level.bMissilesActivateImpact || !bMissile || !Target ?
-			self : Target, side, SPAC_Impact);
+		if (bActivatePushWall)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(line, self, side,
+				SPAC_Push);
+		}
+		else if (bActivateImpact)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(line,
+				Level.bMissilesActivateImpact || !bMissile || !Target ?
+				self : Target, side, SPAC_Impact);
+		}
 	}
 }
 
@@ -1003,28 +1042,31 @@ final void BlastedHitLine()
 
 final void CrossSpecialLine(line_t *ld, int side)
 {
-	if (bIsPlayer)
+	if (!bNoTrigger)
 	{
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_Cross);
-	}
-	else if (bActivateMCross)
-	{
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCross);
-	}
-	else if (bActivatePCross)
-	{
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCross);
-	}
-	else if (ld->special == LNSPEC_Teleport ||
-		ld->special == LNSPEC_TeleportNoFog ||
-		ld->special == LNSPEC_TeleportLine)
-	{
-		//	Teleport hack
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCross);
-	}
-	else
-	{
-		LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_AnyCross);
+		if (bIsPlayer)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_Cross);
+		}
+		else if (bActivateMCross)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCross);
+		}
+		else if (bActivatePCross)
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_PCross);
+		}
+		else if (ld->special == LNSPEC_Teleport ||
+			ld->special == LNSPEC_TeleportNoFog ||
+			ld->special == LNSPEC_TeleportLine)
+		{
+			//	Teleport hack
+			LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_MCross);
+		}
+		else
+		{
+			LineSpecialLevelInfo(Level).ActivateLine(ld, self, side, SPAC_AnyCross);
+		}
 	}
 }
 
@@ -1295,6 +1337,28 @@ void OnMapSpawn(mthing_t* mthing)
 		}
 		bStaticLightSpwned = true;
 	}
+}
+
+//==========================================================================
+//
+// CanSeek
+//
+// Checks if a seeker missile can home in on its target
+//
+//==========================================================================
+
+bool CanSeek(EntityEx Targ)
+{
+	if (Targ.bCantSeek)
+	{
+		return false;
+	}
+
+	if (bDontSeekInvisible && (Targ.bShadow || Targ.bGhost))
+	{
+		 return false;
+	}
+	return true;
 }
 
 //==========================================================================
@@ -1721,6 +1785,8 @@ void ClientTick(float DeltaTime)
 	dlight_t*	dl;
 	TVec		fv;
 	int			i, c;
+	float		r = 0.0;
+	bool		alt = false;
 
 	if (bInvisible || bNoSector)
 	{
@@ -1746,8 +1812,22 @@ void ClientTick(float DeltaTime)
 	if (bLeaveTrail)
 	{
 		c = P_Random() >> 1;
-		LineSpecialLevelInfo(Level).ParticleEffect(ftoi(DeltaTime * 256.0), LineSpecialLevelInfo::pt_static, 0, Origin,
-				0.0, vector(16.0, 16.0, 64.0), 0.5, 2.5, 0.0, RGB(c, c, c), 0.5,  0.0);
+		if (P_Random() > 180)
+		{
+			r = Random() * 8.0;
+			alt = true;
+		}
+		LineSpecialLevelInfo(Level).ParticleEffect(ftoi(DeltaTime * 256.0), alt ? LineSpecialLevelInfo::pt_explode : LineSpecialLevelInfo::pt_static, 0, Origin,
+				0.0, vector(16.0, 16.0, 64.0), 0.5, 2.5, 0.0, alt ? RGB(255, 140, 0) : RGB(c, c, c), 0.5,  r);
+	}
+	if (bLeaveTrail2)
+	{
+		c = P_Random() >> 1;
+		LineSpecialLevelInfo(Level).ParticleEffect(6,
+					LineSpecialLevelInfo::pt_static, 0, vector(Origin.x - (cos(Angles.yaw) * Radius * 2.0),
+					Origin.y - (sin(Angles.yaw) * Radius * 2.0),
+					Origin.z - (itof(ftoi(Height) >> 3 * ftoi(Velocity.z) >> 16) + 2.0 * Height / 3.0)),
+					0.0, vector(32.0, 32.0, 32.0), 0.5, 10.0, 40.0,	RGB(c, c, c), 0.6, 0.0);
 	}
 }
 

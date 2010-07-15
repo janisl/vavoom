@@ -479,19 +479,19 @@ Ready:
 	SIGH A 0 Bright A_SelectSigilReady
 	Loop
 Ready1:
-	SIGH A 1 Bright A_WeaponReady
+	SIGH A 1 Bright DoReadyWeapon
 	Loop
 Ready2:
-	SIGH B 1 Bright A_WeaponReady
+	SIGH B 1 Bright DoReadyWeapon
 	Loop
 Ready3:
-	SIGH C 1 Bright A_WeaponReady
+	SIGH C 1 Bright DoReadyWeapon
 	Loop
 Ready4:
-	SIGH D 1 Bright A_WeaponReady
+	SIGH D 1 Bright DoReadyWeapon
 	Loop
 Ready5:
-	SIGH E 1 Bright A_WeaponReady
+	SIGH E 1 Bright DoReadyWeapon
 	Loop
 
 Deselect:

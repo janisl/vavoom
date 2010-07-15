@@ -73,9 +73,28 @@ final void A_SeekerMissile(int Threshold, int TurnMax, optional int flags,
 			{
 				continue;
 			}
-			if (!CanSee(link))
+			if (!CanSeek(link))
 			{
 				continue;
+			}
+			if (bScreenSeeker)
+			{
+				if (CanSee(link))
+				{
+					float angle = AngleMod360(atan2(link.Origin.y - Target.Origin.y,
+						link.Origin.x - Target.Origin.x) - Target.Angles.yaw);
+					if (angle <= 226.0 * 360.0 / 256.0 || angle >= 30.0 * 360.0 / 256.0)
+					{
+						continue;
+					}
+				}
+			}
+			else
+			{
+				if (!CanSee(link))
+				{
+					continue;
+				}
 			}
 			Tracer = link;
 			break;
@@ -120,7 +139,7 @@ final void A_Tracer()
 	}
 
 	// adjust direction
-	if (!Tracer || Tracer.Health <= 0)
+	if (!Tracer || Tracer.Health <= 0 || !CanSeek(Tracer))
 	{
 		return;
 	}
@@ -155,7 +174,7 @@ final void A_Tracer2()
 
 	dest = Tracer;
 
-	if (!dest || dest.Health <= 0)
+	if (!dest || dest.Health <= 0 || !CanSeek(dest))
 		return;
 
 	// change angle

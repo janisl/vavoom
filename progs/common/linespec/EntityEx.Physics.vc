@@ -518,7 +518,7 @@ final void HitLine(tmtrace_t* tmtrace, float StepVelScale)
 {
 	if (bMissile)
 	{
-		if (BounceType == BOUNCE_Doom ||
+		if (bBounceWalls || BounceType == BOUNCE_Doom ||
 			BounceType == BOUNCE_Hexen)
 		{
 			//	If number of bounces is limited.
@@ -537,10 +537,14 @@ final void HitLine(tmtrace_t* tmtrace, float StepVelScale)
 			}
 
 			// Struck a wall
-			BounceWall(BOUNCE_VAL);
-			if (!bNoBounceSound && !bNoWallBounceSnd && SightSound)
+			if (bBounceWalls || BounceType == BOUNCE_Doom ||
+				BounceType == BOUNCE_Hexen)
 			{
-				PlaySound(SightSound, CHAN_VOICE);
+				BounceWall(BOUNCE_VAL);
+				if (!bNoBounceSound && !bNoWallBounceSnd && SightSound)
+				{
+					PlaySound(SightSound, CHAN_VOICE);
+				}
 			}
 			return;
 		}
@@ -609,8 +613,9 @@ final void HitMobj(Entity Other, float ptryx, float ptryy)
 			BounceType == BOUNCE_Hexen)
 		{
 			//  Bounce against walls and non-killable objects
-			if (bBounceOnActors || EntityEx(Other).bReflective ||
-				(!Other.bIsPlayer && !EntityEx(Other).bMonster))
+			if ((bBounceOnActors || EntityEx(Other).bReflective ||
+				(!Other.bIsPlayer && !EntityEx(Other).bMonster) || EntityEx(Other).IsSentient()) ||
+				bBounceOnAllActors)
 			{
 				angle = AngleMod360(atan2(Origin.y - Other.Origin.y,
 					Origin.x - Other.Origin.x) + (Random() * 16.0 - 8.0));
@@ -707,7 +712,7 @@ final bool HitFloor()
 		!LineSpecialGameInfo(Level.Game).bNoClipIgnoreFloor))
 	{
 		Origin.z = FloorZ;
-		if (BounceType != BOUNCE_None)
+		if (bBounceFloors || BounceType != BOUNCE_None)
 		{
 			FloorBounceMissile();
 			return false;
@@ -808,7 +813,7 @@ final bool HitCeiling()
 	if (bMissile && (bColideWithWorld ||
 		!LineSpecialGameInfo(Level.Game).bNoClipIgnoreFloor))
 	{
-		if (BounceType != BOUNCE_None)
+		if (bBounceCeilings || BounceType != BOUNCE_None)
 		{
 			CeilingBounceMissile();
 			return false;
@@ -878,7 +883,7 @@ void FloorBounceMissile()
 
 	vdot = DotProduct(Velocity, Floor->normal);
 
-	if (BounceType == BOUNCE_Heretic)
+	if (bBounceLikeHeretic || BounceType == BOUNCE_Heretic)
 	{
 		Velocity -= 2.0 * vdot * Floor->normal;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
@@ -894,7 +899,7 @@ void FloorBounceMissile()
 		PlaySound(SightSound, CHAN_VOICE);
 	}
 
-	if (BounceType == BOUNCE_Doom)
+	if (bBounceAutoOff || BounceType == BOUNCE_Doom)
 	{
 		if (!bNoGravity && Velocity.z < 3.0 * 35.0)
 		{

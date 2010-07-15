@@ -488,7 +488,7 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 
 			//  Execute line special after checking for hitting floor or ceiling
 			// when we know that it actally hits line
-			if (li->special)
+			if (li->special && !bNoTrigger)
 			{
 				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_Impact);
 			}
@@ -762,7 +762,8 @@ final bool RailCheckPlanes(sector_t* sec, TVec linestart, out TVec lineend,
 
 final void RailAttack(TVec Dir, float Offset, int RailDamage,
 	optional int Col1, optional int Col2, optional float MaxDiff,
-	optional class<EntityEx> PuffType, optional bool Silent)
+	optional class<EntityEx> PuffType, optional bool Silent,
+	optional bool DontPierce)
 {
 	TVec			Dst;
 	intercept_t*	in;
@@ -837,7 +838,7 @@ final void RailAttack(TVec Dir, float Offset, int RailDamage,
 
 			//  Execute line special after checking for hitting floor or ceiling
 			// when we know that it actally hits line
-			if (li->special)
+			if (li->special && !bNoTrigger)
 			{
 				LineSpecialLevelInfo(Level).ActivateLine(li, self, 0, SPAC_Impact);
 			}
@@ -931,7 +932,7 @@ final void RailAttack(TVec Dir, float Offset, int RailDamage,
 		// position a bit closer
 		hit_point -= 10.0 * Dir;
 
-		// Spawn bullet puffs or blod spots, depending on target type.
+		// Spawn bullet puffs or blood spots, depending on target type.
 		if (th.bNoBlood || th.bInvulnerable || th.bDormant)
 		{
 			if (PuffType)
@@ -944,6 +945,14 @@ final void RailAttack(TVec Dir, float Offset, int RailDamage,
 			th.SpawnBlood(hit_point, RailDamage);
 		}
 		th.Damage(self, self, RailDamage, DmgType);
+		if (th && DontPierce)
+		{
+			// We did hit a thing and we can't pierce
+			// so we can stop now...
+			DidHit = true;
+			LineEnd = hit_point;
+			break;
+		}
 	}
 
 	if (!DidHit)

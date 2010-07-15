@@ -120,6 +120,8 @@ Ammo			Ammo1;
 Ammo			Ammo2;
 Weapon			SisterWeapon;
 
+float			FOVScale;
+
 replication
 {
 	reliable if (Role == ROLE_Authority && bNetOwner)

@@ -147,5 +147,6 @@ defaultproperties
 	bHowlVictims = true;
 	bNoSplash = true;
 	bCanBlast = true;
+	bBlockedBySolidActors = true;
 	DeathSound = 'PoisonShroomDeath';
 }

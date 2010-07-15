@@ -93,7 +93,7 @@ final void A_MStaffPalette3() self(Actor)
 states
 {
 Ready:
-	MSTF AAAAAABBBBBBCCCCCCDDDDDDEEEEEEFFFFF 1 A_WeaponReady
+	MSTF AAAAAABBBBBBCCCCCCDDDDDDEEEEEEFFFFF 1 DoReadyWeapon
 	Loop
 Deselect:
 	MSTF A 1 A_Lower

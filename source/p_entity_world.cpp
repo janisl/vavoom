@@ -321,9 +321,12 @@ void VEntity::UnlinkFromWorld()
 			if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
 				blocky >= 0 && blocky < XLevel->BlockMapHeight)
 			{
-				check(XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] == this);
-				XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] =
-					BlockMapNext;
+//				check(XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] == this);
+				if (XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] == this)
+				{
+					XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] =
+						BlockMapNext;
+				}
 			}
 		}
 	}
@@ -1311,12 +1314,12 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 					return false;
 				}
 			}
-// Only Heretic
-//			if ((EntityFlags & EF_Missile) && tmtrace.FloorZ > Origin.z)
-//			{
-//				PushLine(tmtrace);
-//				return false;
-//			}
+			if ((EntityFlags & EF_Missile) && !(EntityFlags & EF_StepMissile) &&
+				tmtrace.FloorZ > Origin.z)
+			{
+				PushLine(tmtrace);
+				return false;
+			}
 			if (Origin.z < tmtrace.FloorZ)
 			{
 				// Check to make sure there's nothing in the way for the step up

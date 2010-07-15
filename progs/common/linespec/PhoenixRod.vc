@@ -55,7 +55,7 @@ final void A_FirePhoenixPL1() self(Actor)
 states
 {
 Ready:
-	PHNX A 1 A_WeaponReady
+	PHNX A 1 DoReadyWeapon
 	Loop
 Deselect:
 	PHNX A 1 A_Lower

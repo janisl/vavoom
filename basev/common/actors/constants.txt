@@ -25,6 +25,8 @@ const int SXF_NOCHECKPOSITION		= 32;
 const int SXF_TELEFRAG				= 64;
 const int SXF_CLIENTSPAWN			= 128;	// only used by Skulltag
 const int SXF_TRANSFERAMBUSHFLAG	= 256;
+const int SXF_TRANSFERPITCH			= 512;
+const int SXF_TRANSFERPOINTERS		= 1024;
 
 //	Morph constants
 const int MRF_ADDSTAMINA			= 1;
@@ -39,3 +41,54 @@ const int MRF_NEWTIDBEHAVIOUR		= 256;
 const int MRF_UNDOBYDEATH			= 512;
 const int MRF_UNDOBYDEATHFORCED		= 1024;
 const int MRF_UNDOBYDEATHSAVES		= 2048;
+
+// Flags for A_CustomBulletAttack
+const int CBAF_AIMFACING			= 1;
+const int CBAF_NORANDOM				= 2;
+
+// Flags for A_FireBullets
+const int FBF_USEAMMO				= 1;
+const int FBF_NORANDOM				= 2;
+const int FBF_EXPLICITANGLE			= 4;
+
+// Flags for A_LookEx
+const int LOF_NOSIGHTCHECK			= 1;
+const int LOF_NOSOUNDCHECK			= 2;
+const int LOF_DONTCHASEGOAL			= 4;
+const int LOF_NOSEESOUND			= 8;
+const int LOF_FULLVOLSEESOUND		= 16;
+
+// Flags for A_Respawn
+const int RSF_FOG					= 1;
+const int RSF_KEEPTARGET			= 2;
+const int RSF_TELEFRAG				= 4;
+
+// Flags for A_ChangeVelocity
+const int CVF_RELATIVE				= 1;
+const int CVF_REPLACE				= 2;
+
+// Flags for A_WeaponReady
+const int WRF_NOBOB					= 1;
+const int WRF_NOFIRE				= 12;
+const int WRF_NOSWITCH				= 2;
+const int WRF_NOPRIMARY				= 4;
+const int WRF_NOSECONDARY			= 8;
+
+// Flags for A_RailAttack and A_CustomRailgun
+const int RGF_SILENT				= 1;
+const int RGF_NOPIERCING			= 2;
+
+// Flags for A_Mushroom
+const int MSF_Standard				= 0;
+const int MSF_Classic				= 1;
+const int MSF_DontHurt				= 2;
+
+// Flags for A_Blast
+const int BF_USEAMMO				= 1;
+const int BF_DONTWARN				= 2;
+const int BF_AFFECTBOSSES			= 4;
+
+// Flags for A_CustomPunch
+const int CPF_USEAMMO				= 1;
+const int CPF_DAGGER				= 2;
+const int CPF_PULLIN				= 4;

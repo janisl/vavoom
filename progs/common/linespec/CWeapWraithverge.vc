@@ -93,7 +93,7 @@ final void A_CHolyPalette3() self(Actor)
 states
 {
 Ready:
-	CHLY A 1 A_WeaponReady
+	CHLY A 1 DoReadyWeapon
 	Loop
 Deselect:
 	CHLY A 1 A_Lower

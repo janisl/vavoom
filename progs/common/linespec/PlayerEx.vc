@@ -140,12 +140,15 @@ const int MAX_MAPS_VISITED = 100;
 
 name			MapsVisited[MAX_MAPS_VISITED];
 
+float			FOV;			// current Field Of Vision
+float			DesiredFOV;		// desired Field Of Vision
+
 replication
 {
 	reliable if (!bIsClient)
 		Cheats, ReadyWeapon, InvFirst, InvPtr, InventoryTime, ArtifactFlash,
 		Objectives, MorphTime, Accuracy, Stamina, MapsVisited, DamageFlash,
-		BonusFlash, Attacker, bFrozen, bTotallyFrozen;
+		BonusFlash, Attacker, bFrozen, bTotallyFrozen, DesiredFOV, FOV;
 
 	unreliable if (!bIsClient)
 		ParticleEffect, ClientExplosion, ClientParticleExplosion,
@@ -153,7 +156,7 @@ replication
 
 	reliable if (!bIsClient)
 		ClientVoice, ClientSpeech, ClientFinaleType, ClientSlideshow1,
-		ClientSlideshow2;
+		ClientSlideshow2, SetFOV;
 
 	reliable if (bIsClient)
 		bAutoAim;
@@ -977,7 +980,9 @@ void FireWeapon()
 	SetViewState(ps_weapon, ReadyWeapon.GetAttackState(Refire));
 	ReadyWeapon.FireMode = Weapon::FIRE_Primary;
 	if (!ReadyWeapon.bNoAlert)
+	{
 		LineSpecialLevelInfo(Level).NoiseAlert(EntityEx(MO), EntityEx(MO));
+	}
 }
 
 //===========================================================================
@@ -988,7 +993,7 @@ void FireWeapon()
 
 void AltFireWeapon()
 {
-	if (!ReadyWeapon.CheckAmmo(Weapon::FIRE_Secondary, false))
+	if (!ReadyWeapon.CheckAmmo(Weapon::FIRE_Secondary, true))
 	{
 		return;
 	}
@@ -2450,6 +2455,8 @@ void SpawnPlayer(mthing_t * mthing, bool Voodoo)
 		PP.ObtainInventory(EntityEx(MO));
 	}
 
+	DesiredFOV = 90.0; //itof(GetCvar('FOV'));
+	FOV = DesiredFOV;
 	PP.Angles.yaw = itof(45 * (mthing->angle / 45));
 	PP.Player = self;
 	PP.bIsPlayer = true;
@@ -3207,6 +3214,40 @@ void PlayerTick(float deltaTime)
 			Actor(MO).Damage(none, none, 5);
 		}
 	}
+	
+	// [RH] Zoom the player's FOV
+	float desired = DesiredFOV; // Default player FOV.
+	// Adjust FOV using on the currently held weapon.
+	if (PlayerState != PST_DEAD &&		// No adjustment while dead.
+		ReadyWeapon &&					// No adjustment if no weapon.
+		ReadyWeapon.FOVScale != 0.0)	// No adjustment if the adjustment is zero.
+	{
+		// A negative scale is used top prevent G_AddViewAngle/G_AddViewPitch
+		// from scaling with the FOV scale.
+		desired *= fabs(ReadyWeapon.FOVScale);
+	}
+	
+	if (FOV != desired)
+	{
+		if (fabs(FOV - desired) < 7.0)
+		{
+			FOV = desired;
+		}
+		else
+		{
+			float zoom = FMax(7.0, fabs(FOV - desired) * 0.025);
+
+			if (FOV > desired)
+			{
+				FOV = FOV - zoom;
+			}
+			else
+			{
+				FOV = FOV + zoom;
+			}
+		}
+		SetFOV(ftoi(FOV));
+	}
 }
 
 //==========================================================================
@@ -3727,6 +3768,19 @@ bool CheckFriendlyFire(EntityEx source, int damage)
 bool IsWeaponAlwaysExtremeDeath()
 {
 	return false;
+}
+
+//==========================================================================
+//
+//  SetFOV
+//
+//  Zoom the player's FOV
+//
+//==========================================================================
+
+final void SetFOV(int New_FOV)
+{
+	SetCvar('FOV', New_FOV);
 }
 
 void StartDeathSlideShow()

@@ -4281,3 +4281,30 @@
   Firebrand added a Position property for weapons, that allow to set a weapon to a specific position on a
  certain weapon slot.
   Firebrand improved Species property for actors, so that they can specify to whcih monster family they belong.
+10.07.2010
+  Firebrand began adding and implementing most existing ZDoom's actor flags, most of them were already present,
+ they only were only "DECORATED".
+11.07.2010
+  Firebrand continued to add and implement most existing ZDoom's actor flags.
+13.07.2010
+  Firebrand fixed some warnings when building the master server MSVC project.
+  Firebrand removed checks for 64-bit portability problems from project files, since this only causes unneeded
+ warnings and it's not really useful.
+14.07.2010
+  Firebrand began adding and implementing most existing ZDoom's flag constants for DECORATE actor methods.
+  Firebrand added flags to A_WeaponReady method.
+  Firebrand added flags to A_Respawn method.
+  Firebrand added flags to A_FireBullets method.
+  Firebrand implemented A_ChangeVelocity method.
+  Firebrand implemented A_ScaleVelocity method.
+15.07.2010
+  Firebrand finished adding and implementing most existing ZDoom's flag constants for DECORATE actor methods.
+  Firebrand added flags to A_CustomPunch method.
+  Firebrand added flags to A_Mushroom method.
+  Firebrand added flags to A_CustomBulletAttack method.
+  Firebrand added flags to A_CustomRailgun method.
+  Firebrand added flags to A_RailAttack method.
+  Firebrand implemented A_ZoomFactor method and a way to set the player's FOV.
+  Firebrand implemented A_Log and A_LogInt mehtods.
+  Firebrand moved most of the Minotaur methods to the Actor class, to make them available for other actors.
+  Firebrand made a generic "blast" method, so that it can be used for weapons.

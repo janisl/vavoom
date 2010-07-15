@@ -1031,7 +1031,8 @@ final void A_Mushroom()
 //==========================================================================
 
 final void decorate_A_Mushroom(optional class<Actor> SpawnType,
-	optional int Amount)
+	optional int Amount, optional int Flags, optional float vrange,
+	optional float hrange)
 {
 	int			i;
 	int			j;
@@ -1046,7 +1047,7 @@ final void decorate_A_Mushroom(optional class<Actor> SpawnType,
 	}
 
 	// First make normal explosion
-	A_Explode();
+	RadiusAttack(self, 128, 128.0, !(Flags & 2), DamageType);
 
 	// Now launch mushroom cloud
 	// We need something to aim at.
@@ -1063,13 +1064,22 @@ final void decorate_A_Mushroom(optional class<Actor> SpawnType,
 			target.LinkToWorld();
 			// Aim up fairly high
 			target.Origin.z = Origin.z + Length(vector(itof(i), itof(j),
-				0.0)) * 4.0;
+				0.0)) * (vrange ? vrange : 4.0);
+			EntityEx mo;
 			// Launch fireball
-			EntityEx mo = SpawnMissile(target, SpawnType);
+			if (Flags & 1)
+			{
+				TVec org = vector(Origin.x, Origin.y, Origin.z + 32.0);
+				mo = SpawnMissileXYZ(org, target, SpawnType);
+			}
+			else
+			{
+				mo = SpawnMissile(target, SpawnType);
+			}
 			if (mo)
 			{
 				// Slow it down a bit
-				mo.Velocity = mo.Velocity * 0.5;
+				mo.Velocity = mo.Velocity * (hrange ? hrange : 0.5);
 				// Make debris fall under gravity
 				mo.bNoGravity = false;
 			}
