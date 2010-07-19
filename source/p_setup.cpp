@@ -2195,11 +2195,11 @@ void VLevel::LoadRogueConScript(VName LumpName, int ALumpNum,
 			S.Name = Tmp;
 
 			// Parse sound number (if any)
-			void* num;
-			Strm->Serialise(num, sizeof(vuint32));
-			if ((vuint32)num != 0)
+			Strm->Serialise(Tmp, 4);
+			S.Voice = VName(va("voc%s", Tmp), VName::AddLower8);
+			if (S.Voice != NAME_None)
 			{
-				S.Voice = va("svox/voc%i", (vuint32)num);
+				S.Voice = va("svox/%s", *S.Voice);
 			}
 
 			// Also, teaser speeches don't have backdrop pics

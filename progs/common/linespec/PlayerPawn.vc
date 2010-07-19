@@ -179,7 +179,7 @@ bool UseInventory(Inventory Item)
 		}
 		return false;
 	}
-	PlaySound(Item.UseSound, CHAN_ITEM);
+	PlaySound(Item.UseSound, CHAN_BODY);
 	PlayerEx(Player).ArtifactFlash = 4;
 	return true;
 }

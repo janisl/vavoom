@@ -4308,3 +4308,7 @@
   Firebrand implemented A_Log and A_LogInt mehtods.
   Firebrand moved most of the Minotaur methods to the Actor class, to make them available for other actors.
   Firebrand made a generic "blast" method, so that it can be used for weapons.
+19.07.2010
+  Firebrand fixed a memory leak when parsing Strife's teaser Rogue Convo Scripts.
+  Firebrand changed the sound channel produced by a few things, to avoid losing sounds for Hexen's activated
+ artifacts.

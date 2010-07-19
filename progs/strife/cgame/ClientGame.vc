@@ -481,7 +481,7 @@ defaultproperties
 	MsgBoxFlat = 'f_pave01';
 	BigSelectorXOffset = -32;
 	BigSelectorYOffset = -5;
-	BigSelectorAnimSpeed = 4;
+	BigSelectorAnimSpeed = 6;
 	BigSelectorAnimFrames[0] = 'm_curs1';
 	BigSelectorAnimFrames[1] = 'm_curs2';
 	BigSelectorAnimFrames[2] = 'm_curs3';

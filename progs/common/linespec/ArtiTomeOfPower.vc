@@ -53,7 +53,7 @@ bool Use(bool Pickup)
 		{
 			// Succeeded
 			PlayerEx(Owner.Player).MorphTime = 0.0;
-			Owner.PlaySound('*evillaugh', CHAN_ITEM);
+			Owner.PlaySound('*evillaugh', CHAN_BODY);
 		}
 		return true;
 	}
