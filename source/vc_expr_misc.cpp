@@ -824,7 +824,7 @@ void VClassConstant::Emit(VEmitContext& ec)
 
 //END
 
-//BEGIN VClassConstant
+//BEGIN VStateConstant
 
 //==========================================================================
 //

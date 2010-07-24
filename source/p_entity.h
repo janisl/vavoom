@@ -542,7 +542,7 @@ class VEntity : public VThinker
 	bool TryMove(tmtrace_t&, TVec, bool);
 	VEntity* TestMobjZ(const TVec&);
 	void SlideMove(float);
-	void BounceWall(float);
+	void BounceWall(float, float);
 	void UpdateVelocity();
 	TVec FakeZMovement();
 	VEntity *CheckOnmobj();

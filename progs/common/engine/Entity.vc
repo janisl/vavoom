@@ -383,7 +383,7 @@ native final bool TryMoveEx(tmtrace_t* tmtrace, TVec newPos, bool AllowDropOff);
 native final bool TestMobjZ();
 
 native final void SlideMove(float StepVelScale);
-native final void BounceWall(float overbounce);
+native final void BounceWall(float overbounce, float bouncefactor);
 
 native final bool CheckWater();
 

@@ -412,6 +412,10 @@ void VFieldType::CheckMatch(TLocation l, const VFieldType& Other) const
 	{
 		return;
 	}
+	if (Type == TYPE_String && Other.Type == TYPE_String)
+	{
+		return;
+	}
 	if (Type == TYPE_Vector && Other.Type == TYPE_Vector)
 	{
 		return;
@@ -468,7 +472,7 @@ void VFieldType::CheckMatch(TLocation l, const VFieldType& Other) const
 		VClass* c2 = Other.Class;
 		if (!c2)
 		{
-			//	Can assgn any class type to generic class type.
+			//	Can assign any class type to generic class type.
 			return;
 		}
 		if (c1 == c2)

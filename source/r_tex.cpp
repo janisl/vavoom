@@ -1123,7 +1123,7 @@ static void ParseFTAnim(VScriptParser* sc, int IsFlat)
 				IsFlat ? TEXTYPE_Flat : TEXTYPE_Wall, true, true);
 			if (fd.Index == -1 && !missing)
 			{
-				sc->Error(va("Unknown texture %s", *sc->String));
+				sc->Message(va("Unknown texture %s", *sc->String));
 			}
 		}
 		if (sc->Check("tics"))
@@ -1456,7 +1456,7 @@ static void ParseAnimatedDoor(VScriptParser* sc)
 					TEXTYPE_Wall, true, true);
 				if (v == -1 && !ignore)
 				{
-					sc->Error(va("Unknown texture %s", *sc->String));
+					sc->Message(va("Unknown texture %s", *sc->String));
 				}
 			}
 			Frames.Append(v);

@@ -90,6 +90,7 @@ enum
 	PROP_StencilColour,
 	PROP_Monster,
 	PROP_Projectile,
+	PROP_BounceType,
 	PROP_ClearFlags,
 	PROP_DropItem,
 	PROP_States,
@@ -448,6 +449,10 @@ static void ParseDecorateDef(VXmlDocument& Doc)
 			else if (PN->Name == "prop_projectile")
 			{
 				VPropDef& P = Lst.NewProp(PROP_Projectile, PN);
+			}
+			else if (PN->Name == "prop_bouncetype")
+			{
+				VPropDef& P = Lst.NewProp(PROP_BounceType, PN);
 			}
 			else if (PN->Name == "prop_clear_flags")
 			{
@@ -1162,6 +1167,14 @@ static VExpression* ParseExpressionPriority0(VScriptParser* sc)
 {
 	guard(ParseExpressionPriority0);
 	TLocation l = sc->GetLoc();
+	//  Check for quoted strings first,
+	//  since these could also have numbers...
+	if (sc->CheckQuotedString())
+	{
+		int Val = DecPkg->FindString(*sc->String);
+		return new VStringLiteral(Val, l);
+	}
+
 	if (sc->CheckNumber())
 	{
 		vint32 Val = sc->Number;
@@ -1172,12 +1185,6 @@ static VExpression* ParseExpressionPriority0(VScriptParser* sc)
 	{
 		float Val = sc->Float;
 		return new VFloatLiteral(Val, l);
-	}
-
-	if (sc->CheckQuotedString())
-	{
-		int Val = DecPkg->FindString(*sc->String);
-		return new VStringLiteral(Val, l);
 	}
 
 	if (sc->Check("false"))
@@ -2746,6 +2753,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						//FIXME
 						GCon->Logf("Render style Stencil in %s is not yet supported", Class->GetName());
 					}
+					else if (sc->Check("Shaded"))
+					{
+						//FIXME -- This is an aproximated style... but it's not the desired one!
+						RenderStyle = STYLE_Fuzzy;
+					}
 					else
 					{
 						sc->Error("Bad render style");
@@ -2828,6 +2840,59 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					if (GGameInfo->Flags & VGameInfo::GIF_DefaultBloodSplatter)
 					{
 						SetClassFieldBool(Class, "bBloodSplatter", true);
+					}
+					break;
+				case PROP_BounceType:
+					if (sc->Check("None"))
+					{
+						SetClassFieldByte(Class, "BounceType", BOUNCE_None);
+					}
+					else if (sc->Check("Doom"))
+					{
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Doom);
+						SetClassFieldBool(Class, "bBounceWalls", true);
+						SetClassFieldBool(Class, "bBounceFloors", true);
+						SetClassFieldBool(Class, "bBounceCeilings", true);
+						SetClassFieldBool(Class, "bBounceOnActors", true);
+						SetClassFieldBool(Class, "bBounceAutoOff", true);
+					}
+					else if (sc->Check("Heretic"))
+					{
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Heretic);
+						SetClassFieldBool(Class, "bBounceFloors", true);
+						SetClassFieldBool(Class, "bBounceCeilings", true);
+					}
+					else if (sc->Check("Hexen"))
+					{
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Hexen);
+						SetClassFieldBool(Class, "bBounceWalls", true);
+						SetClassFieldBool(Class, "bBounceFloors", true);
+						SetClassFieldBool(Class, "bBounceCeilings", true);
+						SetClassFieldBool(Class, "bBounceOnActors", true);
+					}
+					else if (sc->Check("DoomCompat"))
+					{
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Doom);
+					}
+					else if (sc->Check("HereticCompat"))
+					{
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Heretic);
+					}
+					else if (sc->Check("HexenCompat"))
+					{
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Hexen);
+					}
+					else if (sc->Check("Grenade"))
+					{
+						// Bounces on walls and flats like ZDoom bounce.
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Doom);
+						SetClassFieldBool(Class, "bBounceOnActors", false);
+					}
+					else if (sc->Check("Classic"))
+					{
+						// Bounces on flats only, but does not die when bouncing.
+						SetClassFieldByte(Class, "BounceType", BOUNCE_Heretic);
+						SetClassFieldBool(Class, "bMBFBounce", true);
 					}
 					break;
 				case PROP_ClearFlags:
@@ -3179,7 +3244,6 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		SI.DoomEdNum = SpawnNum;
 		SI.GameFilter = GameFilter;
 	}
-
 	if (ReplaceeClass)
 	{
 		ReplaceeClass->Replacement = Class;

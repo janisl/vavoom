@@ -128,14 +128,14 @@ final void A_CustomMissile(class<Actor> MissileType, optional float SpawnHeight,
 //==========================================================================
 
 final void A_CustomBulletAttack(float SpreadHoriz, float SpreadVert,
-	int NumBullets, int DamagePerBullet, class<Actor> PuffType,
+	int NumBullets, int DamagePerBullet, optional class<Actor> PuffType,
 	optional float Range, optional int Flags)
 {
 	if (!Range)
 	{
 		Range = MISSILERANGE;
 	}
-	if (!PuffType)
+	if (!PuffType || !specified_PuffType)
 	{
 		PuffType = BulletPuff;
 	}

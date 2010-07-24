@@ -371,14 +371,15 @@ vuint32 M_ParseColour(VStr Name)
 		size_t Idx = 0;
 		for (int i = 0; i < 3; i++)
 		{
-			//	Skip whitespace.
-			while (Idx < Str.Length() && (vuint8)Str[Idx] <= ' ')
+			//	Skip whitespace and quotes.
+			while (Idx < Str.Length() && (((vuint8)Str[Idx] <= ' ') ||
+					((vuint8)Str[Idx] <= '\"')))
 			{
 				Idx++;
 			}
 			int Count = 0;
 			char Val[3];
-			while (Idx < Str.Length() && (vuint8)Str[Idx] > ' ')
+			while (Idx < Str.Length() && ((vuint8)Str[Idx] != ' '))
 			{
 				if (Count < 2)
 				{

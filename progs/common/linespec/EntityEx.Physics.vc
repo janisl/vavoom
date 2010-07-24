@@ -314,12 +314,15 @@ final float XYMovement(float DeltaTime, float ScrollX, float ScrollY)
 
 	if (!xmove && !ymove)
 	{
-		if (bSkullFly && Health > 0)
+		if (bSkullFly)
 		{
 			//	A flying mobj slammed into something
 			bSkullFly = false;
 			Velocity = vector(0.0, 0.0, 0.0);
-			SetState(SeeState ? SeeState : IdleState);
+			if (Health > 0)
+			{
+				SetState(SeeState ? SeeState : IdleState);
+			}
 		}
 		else if (bBlasted)
 		{
@@ -540,10 +543,10 @@ final void HitLine(tmtrace_t* tmtrace, float StepVelScale)
 			if (bBounceWalls || BounceType == BOUNCE_Doom ||
 				BounceType == BOUNCE_Hexen)
 			{
-				BounceWall(BOUNCE_VAL);
-				if (!bNoBounceSound && !bNoWallBounceSnd && SightSound)
+				BounceWall(BOUNCE_VAL, WallBounceFactor);
+				if (!bNoBounceSound && !bNoWallBounceSnd && (BounceSound || SightSound))
 				{
-					PlaySound(SightSound, CHAN_VOICE);
+					PlaySound(BounceSound ? BounceSound : SightSound, CHAN_VOICE);
 				}
 			}
 			return;
@@ -609,8 +612,8 @@ final void HitMobj(Entity Other, float ptryx, float ptryy)
 
 	if (bMissile)
 	{
-		if (BounceType == BOUNCE_Doom ||
-			BounceType == BOUNCE_Hexen)
+		if (bBounceOnActors || bBounceOnAllActors ||
+			BounceType == BOUNCE_Doom || BounceType == BOUNCE_Hexen)
 		{
 			//  Bounce against walls and non-killable objects
 			if ((bBounceOnActors || EntityEx(Other).bReflective ||
@@ -620,13 +623,13 @@ final void HitMobj(Entity Other, float ptryx, float ptryy)
 				angle = AngleMod360(atan2(Origin.y - Other.Origin.y,
 					Origin.x - Other.Origin.x) + (Random() * 16.0 - 8.0));
 				speed = Length(Velocity);
-				speed = speed * 0.75;
+				speed = speed * WallBounceFactor;
 				Angles.yaw = angle;
 				Velocity.x = speed * cos(angle);
 				Velocity.y = speed * sin(angle);
-				if (!bNoBounceSound && SightSound)
+				if (!bNoBounceSound && (BounceSound || SightSound))
 				{
-					PlaySound(SightSound, CHAN_VOICE);
+					PlaySound(BounceSound ? BounceSound : SightSound, CHAN_VOICE);
 				}
 			}
 			else
@@ -883,7 +886,8 @@ void FloorBounceMissile()
 
 	vdot = DotProduct(Velocity, Floor->normal);
 
-	if (bBounceLikeHeretic || BounceType == BOUNCE_Heretic)
+	if (bBounceLikeHeretic || BounceType == BOUNCE_Heretic &&
+		!bMBFBounce)
 	{
 		Velocity -= 2.0 * vdot * Floor->normal;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
@@ -891,12 +895,24 @@ void FloorBounceMissile()
 		return;
 	}
 
-	Velocity = (Velocity - 2.0 * vdot * Floor->normal) * BounceFactor;
-	Angles.yaw = atan2(Velocity.y, Velocity.x);
-
-	if (!bNoBounceSound && SightSound)
+	if (!bMBFBounce)
 	{
-		PlaySound(SightSound, CHAN_VOICE);
+		Velocity = (Velocity - 2.0 * vdot * Floor->normal) * BounceFactor;
+		Angles.yaw = atan2(Velocity.y, Velocity.x);
+	}
+
+	if (!bNoBounceSound && (BounceSound || SightSound))
+	{
+		PlaySound(BounceSound ? BounceSound : SightSound, CHAN_VOICE);
+	}
+
+	if (bMBFBounce)
+	{
+		if (Velocity.z < (Mass * Gravity / 64.0))
+		{
+			// Bring it to rest below a certain speed
+			Velocity.z = 0.0;
+		}
 	}
 
 	if (bBounceAutoOff || BounceType == BOUNCE_Doom)
@@ -927,7 +943,8 @@ final void CeilingBounceMissile()
 
 	vdot = DotProduct(Velocity, Ceiling->normal);
 
-	if (BounceType == BOUNCE_Heretic)
+	if (bBounceLikeHeretic || BounceType == BOUNCE_Heretic &&
+		!bMBFBounce)
 	{
 		Velocity -= 2.0 * vdot * Ceiling->normal;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
@@ -939,9 +956,9 @@ final void CeilingBounceMissile()
 	Velocity = (Velocity - 2.0 * vdot * Ceiling->normal) * BounceFactor;
 	Angles.yaw = atan2(Velocity.y, Velocity.x);
 
-	if (!bNoBounceSound && SightSound)
+	if (!bNoBounceSound && (BounceSound || SightSound))
 	{
-		PlaySound(SightSound, CHAN_VOICE);
+		PlaySound(BounceSound ? BounceSound : SightSound, CHAN_VOICE);
 	}
 }
 

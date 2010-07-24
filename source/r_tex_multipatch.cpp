@@ -264,10 +264,10 @@ VMultiPatchTexture::VMultiPatchTexture(VScriptParser* sc, int AType)
 
 				//	Parse origin.
 				sc->Expect(",");
-				sc->ExpectNumber();
+				sc->ExpectNumberWithSign();
 				P.XOrigin = sc->Number;
 				sc->Expect(",");
-				sc->ExpectNumber();
+				sc->ExpectNumberWithSign();
 				P.YOrigin = sc->Number;
 
 				//	Initialise parameters.
@@ -576,13 +576,13 @@ vuint8* VMultiPatchTexture::GetPixels()
 			PatchTex->GetPixels();
 		int PWidth = PatchTex->GetWidth();
 		int PHeight = PatchTex->GetHeight();
-		int x1 = patch->XOrigin;
+		int x1 = patch->XOrigin < 0 ? 0 : patch->XOrigin;
 		int x2 = x1 + (patch->Rot & 1 ? PHeight : PWidth);
 		if (x2 > Width)
 		{
 			x2 = Width;
 		}
-		int y1 = patch->YOrigin;
+		int y1 = patch->YOrigin < 0 ? 0 : patch->YOrigin;
 		int y2 = y1 + (patch->Rot & 1 ? PWidth : PHeight);
 		if (y2 > Height)
 		{

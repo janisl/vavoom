@@ -145,6 +145,7 @@ name			PainSound;
 name			CrushPainSound;
 name			DeathSound;
 name			HowlSound;
+name			BounceSound;
 
 //	Flags
 bool bSpecial;			// Call P_SpecialThing when touched.
@@ -321,6 +322,7 @@ bool bNoTeleFrag;		//  Actor can't be telefragged.
 bool bNoBossRip;		//  For rippermissiles: Don't rip through bosses.
 bool bScreenSeeker;		//  Fails the IsOkayToAttack test if potential target is outside player FOV.
 bool bBumpSpecial;		//  Actor executes its special when being collided (as the ST flag).
+bool bMBFBounce;		//	Doesn't dies while bouncing speed is higher than 0.
 
 //  Params
 float			Speed;
@@ -342,6 +344,7 @@ float			MissileMaxRange;
 byte			BounceType;
 byte			BounceCount;
 float			BounceFactor;
+float			WallBounceFactor;
 
 // Thing being chased/attacked (or NULL).
 // Also the originator for missiles.

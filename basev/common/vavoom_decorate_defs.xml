@@ -32,9 +32,11 @@
 		<prop_float name="Mass" property="Mass" />
 		<prop_float name="MaxStepHeight" property="MaxStepHeight" />
 		<prop_float name="MaxDropOffHeight" property="MaxDropoffHeight" />
-		<prop_float name="BounceFactor" property="BounceFactor" />
+		<prop_bouncetype name="BounceType" property="BounceType" />
+		<prop_float_clamped name="BounceFactor" property="BounceFactor" min="0" max="1" />
+		<prop_float_clamped name="WallBounceFactor" property="WallBounceFactor" min="0" max="1" />
 		<prop_int name="BounceCount" property="BounceCount" />
-		<prop_int_unsupported name="WallBounceFactor" />
+		<prop_name name="BounceSound" property="BounceSound" />
 		<prop_int_unsupported name="ProjectilePassHeight" />
 		<!-- Sound -->
 		<prop_name name="SeeSound" property="SightSound" />
@@ -324,6 +326,7 @@
 		<prop_name name="Inventory.UseSound" property="UseSound" />
 		<prop_tics name="Inventory.RespawnTics" property="RespawnTime" />
 		<prop_int name="Inventory.GiveQuest" property="GiveQuestNum" />
+		<prop_int name = "Inventory.InterHubAmount" property="InterHubAmount" />
 		<prop_string_unsupported name="Inventory.PickupAnnouncerEntry" /> <!-- From SkullTag -->
 
 		<flag name="Quiet" property="bQuiet" />

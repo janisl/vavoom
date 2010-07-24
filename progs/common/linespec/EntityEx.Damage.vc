@@ -104,7 +104,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		VisDir = -1;
 	}
 
-	if (bSkullFly && Health > 0)
+	if (bSkullFly)
 	{
 		if (bSkullFlyInvulnerable)
 		{
@@ -112,7 +112,10 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			return;
 		}
 		Velocity = vector(0.0, 0.0, 0.0);
-		SetState(SeeState);
+		if (Health > 0)
+		{
+			SetState(SeeState);
+		}
 	}
 
 	if (bDormant)

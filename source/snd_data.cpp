@@ -473,6 +473,10 @@ void VSoundManager::ParseSndinfo(VScriptParser* sc)
 		{
 			GCon->Log("Conditional SNDINFO commands are not supported");
 		}
+		else if (sc->Check("$volume"))
+		{
+			GCon->Log("$volume is not supported yet.");
+		}
 		else
 		{
 			sc->ExpectString();

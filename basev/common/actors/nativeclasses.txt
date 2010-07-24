@@ -34,10 +34,10 @@ class Actor extends Thinker
 		optional eval int spawnoffs_xy, optional eval float angle, optional eval int aimmode,
 		optional eval float pitch);
 	action native A_CustomBulletAttack(eval float spread_horiz, eval float spread_vert,
-		eval int numbullets, eval int damage, class<Actor> pufftype,
+		eval int numbullets, eval int damage, optional class<Actor> pufftype,
 		optional eval float range, optional eval int flags);
 	action native A_CustomRailgun(eval int damage, optional eval float offset_xy,
-		optional color color1, optional color color2, optional eval int flags,
+		optional eval color color1, optional eval color color2, optional eval int flags,
 		optional eval bool aim, optional eval float maxdiff, optional class<Actor> pufftype);
 	action native A_CustomMeleeAttack(eval int damage, optional string meleesound,
 		optional string misssound, optional string damagetype, optional eval bool bleed);

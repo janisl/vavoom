@@ -4312,3 +4312,11 @@
   Firebrand fixed a memory leak when parsing Strife's teaser Rogue Convo Scripts.
   Firebrand changed the sound channel produced by a few things, to avoid losing sounds for Hexen's activated
  artifacts.
+21.07.2010
+  Firebrand fixed a problem with the DECORATE parser that would force to parse optional parameters, instead of
+ skipping them on some cases.
+  Firebrand changed the order of parsing method parameters, so that quoted strings are parsed before numbers,
+ since parsed quoted strings that contain numbers in them were detected as integer values.
+22.07.2010
+  Firebrand added InterHubAmount, BounceType, BounceSound and (aproximated)Shaded rendering style properties
+ to DECORATE.

@@ -1717,7 +1717,7 @@ void VEntity::SlideMove(float StepVelScale)
 //
 //============================================================================
 
-void VEntity::BounceWall(float overbounce)
+void VEntity::BounceWall(float overbounce, float bouncefactor)
 {
 	guard(VEntity::BounceWall);
 	TVec SlideOrg;
@@ -1777,6 +1777,9 @@ void VEntity::BounceWall(float overbounce)
 	if (BestSlideLine)
 	{
 		Velocity = ClipVelocity(Velocity, BestSlideLine->normal, overbounce);
+		Velocity.x *= bouncefactor;
+		Velocity.y *= bouncefactor;
+		Velocity.z *= bouncefactor;
 	}
 	unguard;
 }
@@ -2397,8 +2400,9 @@ IMPLEMENT_FUNCTION(VEntity, SlideMove)
 IMPLEMENT_FUNCTION(VEntity, BounceWall)
 {
 	P_GET_FLOAT(overbounce);
+	P_GET_FLOAT(bouncefactor);
 	P_GET_SELF;
-	Self->BounceWall(overbounce);
+	Self->BounceWall(overbounce, bouncefactor);
 }
 
 IMPLEMENT_FUNCTION(VEntity, UpdateVelocity)

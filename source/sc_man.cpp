@@ -692,7 +692,8 @@ void VScriptParser::ExpectFloat()
 	guard(VScriptParser::ExpectFloat);
 	if (GetString())
 	{
-		if (String.ToLower().StartsWith("0x7f"))
+		//  Detect when we want to use a really big number
+		if (String.ToLower().StartsWith("0x7f") || String.ToLower().StartsWith("0xff"))
 		{
 			Float = 99999.0;
 		}
