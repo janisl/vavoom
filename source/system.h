@@ -40,13 +40,6 @@ void Sys_Sleep();
 
 char *Sys_ConsoleInput();
 
-extern "C" {
-
-void Sys_LowFPPrecision();
-void Sys_HighFPPrecision();
-
-}
-
 #ifdef INLINE_ASM_I386_GAS
 
 inline vuint32 Sys_Cycles()

@@ -41,15 +41,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-extern "C" {
-
-void MaskExceptions();
-void Sys_SetFPCW();
-void Sys_PushFPCW_SetHigh();
-void Sys_PopFPCW();
-
-} // extern "C"
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -495,40 +486,6 @@ static void signal_handler(int s)
 
 //==========================================================================
 //
-//	Floating point precision dummies for nonintel procesors
-//
-//==========================================================================
-
-#if !USE_ASM_I386
-
-void MaskExceptions()
-{
-}
-
-void Sys_SetFPCW()
-{
-}
-
-void Sys_PushFPCW_SetHigh()
-{
-}
-
-void Sys_PopFPCW()
-{
-}
-
-void Sys_LowFPPrecision()
-{
-}
-
-void Sys_HighFPPrecision()
-{
-}
-
-#endif
-
-//==========================================================================
-//
 //	main
 //
 // 	Main program
@@ -540,8 +497,6 @@ int main(int argc,char** argv)
 	try
 	{
 		GArgs.Init(argc, argv);
-
-		Sys_SetFPCW();
 
 		allegro_init();
 

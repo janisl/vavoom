@@ -11,7 +11,6 @@ option(WITH_FLAC "Enable FLAC support" ON)
 
 option(ENABLE_CLIENT "Build client executable" ON)
 option(ENABLE_SERVER "Build dedicated server executable" ON)
-option(ENABLE_ASM "Enable assembly-language code" ON)
 if(UNIX)
 option(ENABLE_WRAPPERS "Enable creation of wrapper scripts" ON)
 endif(UNIX)
@@ -24,11 +23,9 @@ endif(UNIX)
 
 #-- Common files --
 set(MAIN_COMMON_SOURCES
-	adivtab.h
 	am_map.cpp
 	anorm_dots.h
 	anorms.h
-	asm_i386.h
 	automap.h
 	build.h
 	chat.cpp
@@ -44,20 +41,6 @@ set(MAIN_COMMON_SOURCES
 	console.h
 	cvar.cpp
 	cvar.h
-	d_aclip.cpp
-	d_alias.cpp
-	d_data.cpp
-	d_draw.cpp
-	d_edge.cpp
-	d_local.h
-	d_main.cpp
-	d_part.cpp
-	d_polyse.cpp
-	d_scache.cpp
-	d_span.cpp
-	d_sprite.cpp
-	d_surf.cpp
-	d_tex.cpp
 	debug.cpp
 	debug.h
 	drawer.h
@@ -287,35 +270,6 @@ set(MAIN_COMMON_SOURCES
 	zipstream.h
 )
 
-#-- i386 assembler files --
-set(MAIN_ASM_I386_SOURCES
-	d_aclip_i386.s
-	d_alias_i386.s
-	d_edge_i386.s
-	d_polyset_i386.s
-	d_vars_i386.s
-	d_zspan_i386.s
-	d_part_8_i386.s
-	d_polyset_8_i386.s
-	d_span16_8_i386.s
-	d_span_8_i386.s
-	d_sprite_8_i386.s
-	d_surf_8_i386.s
-	d_part_16_i386.s
-	d_polyset_16_i386.s
-	d_span16_16_i386.s
-	d_span_16_i386.s
-	d_sprite_16_i386.s
-	d_surf_16_i386.s
-	d_part_32_i386.s
-	d_polyset_32_i386.s
-	d_span16_32_i386.s
-	d_span_32_i386.s
-	d_sprite_32_i386.s
-	d_surf_32_i386.s
-	sys_i386.s
-)
-
 #-- Common OpenGL files --
 set(MAIN_OPENGL_SOURCES
 	gl_draw.cpp
@@ -353,7 +307,6 @@ set(MAIN_FLAC_SOURCES
 
 #-- Linux with Allegro --
 set(MAIN_UNIX_ALLEGRO_SOURCES
-	d_alleg.cpp
 	in_alleg.cpp
 	net_udp.cpp
 	snd_allegro.cpp
@@ -366,7 +319,6 @@ set(MAIN_OPENGL_UNIX_ALLEGRO_SOURCES
 
 #-- Linux with SDL --
 set(MAIN_UNIX_SDL_SOURCES
-	d_sdl.cpp
 	in_sdl.cpp
 	net_udp.cpp
 	snd_sdl.cpp
@@ -387,7 +339,6 @@ set(MAIN_CDAUDIO_BSD_SOURCES
 
 #-- Windows --
 set(MAIN_WIN32_SOURCES
-	d_win32.cpp
 	d3d_draw.cpp
 	d3d_local.h
 	d3d_main.cpp
@@ -562,88 +513,6 @@ if(ENABLE_CLIENT)
 set(MAIN_SOURCES ${MAIN_COMMON_SOURCES})
 set(MAIN_LIBS glbsp libglvis timidity core ${ZLIB_LIBRARY} ${NET_LIBRARIES})
 set(MAIN_COMPILE_FLAGS "")
-
-#
-#  **** Test for prefix prepended by compiler to global symbols ****
-#
-
-file(WRITE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c
-	"#ifdef __cplusplus
-	extern \"C\"
-	#endif
-	int test_for_underscore();
-	asm (\".globl _test_for_underscore\\n\"
-	\"_test_for_underscore:\");
-	
-	int main()
-	{
-		test_for_underscore();
-		return 0;
-	}
-	")
-try_compile(RES ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c)
-if(RES)
-	set(ASM_PREFIX "_")
-else(RES)
-	file(WRITE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c
-		"#ifdef __cplusplus
-		extern \"C\"
-		#endif
-		int test_for_underscore();
-		asm (\".globl test_for_underscore\\n\"
-		\"test_for_underscore:\");
-		
-		int main()
-		{
-			test_for_underscore();
-			return 0;
-		}
-		")
-	try_compile(RES ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c)
-	if(RES)
-		set(ASM_PREFIX "")
-	else(RES)
-		message(STATUS "Unknown ASM prefix")
-		set(ASM_PREFIX "")
-	endif(RES)
-endif(RES)
-message(STATUS "ASM prefix: ${ASM_PREFIX}")
-
-if(NOT ${ASM_PREFIX} EQUAL "")
-	set(ASMFLAGS "-DASM_PREFIX=${ASM_PREFIX}")
-endif(NOT ${ASM_PREFIX} EQUAL "")
-
-#
-#  **** Assembly-language files ****
-#
-
-if(ENABLE_ASM)
-	file(WRITE ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c
-		"#if !defined(__i386__)
-		#error Not i386
-		#endif
-		int main() { return 0; }
-		")
-	try_compile(IS_I386 ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/CMakeFiles/CMakeTmp/temp.c)
-	if (IS_I386)
-		message(STATUS "Using i386 assembly files")
-		set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_ASM_I386_SOURCES})
-		set(MAIN_COMPILE_FLAGS ${MAIN_COMPILE_FLAGS} -DUSE_ASM_I386=1)
-		#  CMake doesn't support automatic building of assembly files so
-		# we must add a custom command and add object files to the list
-		# of source files
-		foreach(SRC ${MAIN_ASM_I386_SOURCES})
-			get_filename_component(FILE_BASE ${SRC} NAME_WE)
-			set(OBJ ${CMAKE_CURRENT_BINARY_DIR}/${FILE_BASE}.o)
-			add_custom_command(OUTPUT ${OBJ}
-				DEPENDS ${SRC} ${CMAKE_CURRENT_SOURCE_DIR}/asm_i386.h
-				COMMAND ${CMAKE_C_COMPILER} -x assembler-with-cpp ${ASMFLAGS}
-					-c ${CMAKE_CURRENT_SOURCE_DIR}/${SRC} -o ${OBJ}
-			)
-			set(MAIN_SOURCES ${MAIN_SOURCES} ${OBJ})
-		endforeach(SRC)
-	endif (IS_I386)
-endif(ENABLE_ASM)
 
 #
 #  **** Platform specific library checks ****

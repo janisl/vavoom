@@ -170,7 +170,6 @@ public:
 //	Drawer types, menu system uses these numbers.
 enum
 {
-	DRAWER_Software,
 	DRAWER_OpenGL,
 	DRAWER_Direct3D,
 

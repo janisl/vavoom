@@ -55,15 +55,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-extern "C" {
-
-void MaskExceptions();
-void Sys_SetFPCW();
-void Sys_PushFPCW_SetHigh();
-void Sys_PopFPCW();
-
-} // extern "C"
-
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
@@ -227,8 +218,6 @@ double Sys_Time()
 	vuint32				temp, t2;
 	double				time;
 
-	Sys_PushFPCW_SetHigh();
-
 	QueryPerformanceCounter(&PerformanceCount);
 
 	temp = ((unsigned int)PerformanceCount.u.LowPart >> lowshift) |
@@ -266,9 +255,7 @@ double Sys_Time()
 		lastcurtime = curtime;
 	}
 
-	Sys_PopFPCW();
-
-    return curtime;
+	return curtime;
 }
 
 //==========================================================================
@@ -517,40 +504,6 @@ void SleepUntilInput(int time)
 
 //==========================================================================
 //
-//	Floating point precision dummies for nonintel procesors
-//
-//==========================================================================
-
-#if !USE_ASM_I386
-
-void MaskExceptions()
-{
-}
-
-void Sys_SetFPCW()
-{
-}
-
-void Sys_PushFPCW_SetHigh()
-{
-}
-
-void Sys_PopFPCW()
-{
-}
-
-void Sys_LowFPPrecision()
-{
-}
-
-void Sys_HighFPPrecision()
-{
-}
-
-#endif
-
-//==========================================================================
-//
 //	_matherr
 //
 //	Borland floating point exception handling
@@ -648,9 +601,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		signal(SIGBREAK,signal_handler);
 		signal(SIGABRT, signal_handler);
 #endif
-
-		MaskExceptions();
-		Sys_SetFPCW();
 
 		Sys_InitTime();
 
