@@ -27,7 +27,6 @@ class MenuScreenAdvancedVideoOptions : MenuScreen;
 
 enum
 {
-	DRV_SOFTWARE,
 	DRV_OPENGL,
 	DRV_DIRECT3D
 };
@@ -124,118 +123,97 @@ void CreateChoices()
 	Enum.ValueChanging = ChangeModelShadows;
 	currentY += Enum.Height;
 
-	if (GetCvar('_driver') == DRV_SOFTWARE)
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "Additive Lights";
+	Enum.SetInitialValue(GetCvar('r_static_add'));
+	Enum.ValueChanging = ChangeStaticAdd;
+	currentY += Enum.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetOrigin(ChoicesStartX, currentY);
+	Slider.Text = "Specular Level";
+	Slider.ValueDelta = 0.1;
+	Slider.MaxValue = 2.0;
+	Slider.SetInitialValue(GetCvarF('r_specular'));
+	Slider.ValueChanging = ChangeSpecular;
+	currentY += Slider.Height;
+
+	if (GetCvar('_driver') == DRV_OPENGL)
 	{
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
-		Enum.Text = "Coloured lights";
-		Enum.SetInitialValue(GetCvar('d_coloured_lights'));
-		Enum.ValueChanging = ChangeColouredLights;
+		Enum.Text = "Blend sprite borders";
+		Enum.SetInitialValue(GetCvar('gl_blend_sprites'));
+		Enum.ValueChanging = ChangeGlBlendSprites;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 		Enum.SetOrigin(ChoicesStartX, currentY);
-		Enum.Text = "Span drawing";
-		Enum.AddItem("Subdivision 8");
-		Enum.AddItem("Subdivision 16");
-		Enum.SetInitialValue(GetCvar('d_subdiv') - 1);
-		Enum.ValueChanging = ChangeSubdiv;
+		Enum.Text = "Texture Filter";
+		Enum.AddItem("Nearest");
+		Enum.AddItem("Linear");
+		Enum.AddItem("Linear Nearest");
+		Enum.AddItem("Linear Linear");
+		Enum.SetInitialValue(GetCvar('gl_tex_linear'));
+		Enum.ValueChanging = ChangeGlTexLinear;
+		currentY += Enum.Height;
+
+		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Model Sector Lightning";
+		Enum.SetInitialValue(GetCvar('gl_model_lighting'));
+		Enum.ValueChanging = ChangeGlModelLighting;
+		currentY += Enum.Height;
+
+		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Specular Highlights";
+		Enum.SetInitialValue(GetCvar('gl_specular_highlights'));
+		Enum.ValueChanging = ChangeGlSpecularHighlights;
 		currentY += Enum.Height;
 	}
 	else
 	{
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
-		Enum.Text = "Additive Lights";
-		Enum.SetInitialValue(GetCvar('r_static_add'));
-		Enum.ValueChanging = ChangeStaticAdd;
+		Enum.Text = "Blend sprite borders";
+		Enum.SetInitialValue(GetCvar('d3d_blend_sprites'));
+		Enum.ValueChanging = ChangeD3dBlendSprites;
 		currentY += Enum.Height;
 
-		Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-		Slider.SetOrigin(ChoicesStartX, currentY);
-		Slider.Text = "Specular Level";
-		Slider.ValueDelta = 0.1;
-		Slider.MaxValue = 2.0;
-		Slider.SetInitialValue(GetCvarF('r_specular'));
-		Slider.ValueChanging = ChangeSpecular;
-		currentY += Slider.Height;
+		Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Texture Filter";
+		Enum.AddItem("Point");
+		Enum.AddItem("Linear");
+		Enum.AddItem("Point Linear");
+		Enum.AddItem("Linear Linear");
+		Enum.AddItem("Anisotropic Linear");
+		Enum.SetInitialValue(GetCvar('d3d_tex_linear'));
+		Enum.ValueChanging = ChangeD3dTexFilter;
+		currentY += Enum.Height;
 
-		if (GetCvar('_driver') == DRV_OPENGL)
-		{
-			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Blend sprite borders";
-			Enum.SetInitialValue(GetCvar('gl_blend_sprites'));
-			Enum.ValueChanging = ChangeGlBlendSprites;
-			currentY += Enum.Height;
+		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Dithering";
+		Enum.SetInitialValue(GetCvar('d3d_dither'));
+		Enum.ValueChanging = ChangeD3dDither;
+		currentY += Enum.Height;
 
-			Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Texture Filter";
-			Enum.AddItem("Nearest");
-			Enum.AddItem("Linear");
-			Enum.AddItem("Linear Nearest");
-			Enum.AddItem("Linear Linear");
-			Enum.SetInitialValue(GetCvar('gl_tex_linear'));
-			Enum.ValueChanging = ChangeGlTexLinear;
-			currentY += Enum.Height;
+		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Model Sector Lightning";
+		Enum.SetInitialValue(GetCvar('d3d_model_lighting'));
+		Enum.ValueChanging = ChangeD3dModelLighting;
+		currentY += Enum.Height;
 
-			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Model Sector Lightning";
-			Enum.SetInitialValue(GetCvar('gl_model_lighting'));
-			Enum.ValueChanging = ChangeGlModelLighting;
-			currentY += Enum.Height;
-
-			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Specular Highlights";
-			Enum.SetInitialValue(GetCvar('gl_specular_highlights'));
-			Enum.ValueChanging = ChangeGlSpecularHighlights;
-			currentY += Enum.Height;
-		}
-		else
-		{
-			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Blend sprite borders";
-			Enum.SetInitialValue(GetCvar('d3d_blend_sprites'));
-			Enum.ValueChanging = ChangeD3dBlendSprites;
-			currentY += Enum.Height;
-
-			Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Texture Filter";
-			Enum.AddItem("Point");
-			Enum.AddItem("Linear");
-			Enum.AddItem("Point Linear");
-			Enum.AddItem("Linear Linear");
-			Enum.AddItem("Anisotropic Linear");
-			Enum.SetInitialValue(GetCvar('d3d_tex_linear'));
-			Enum.ValueChanging = ChangeD3dTexFilter;
-			currentY += Enum.Height;
-
-			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Dithering";
-			Enum.SetInitialValue(GetCvar('d3d_dither'));
-			Enum.ValueChanging = ChangeD3dDither;
-			currentY += Enum.Height;
-
-			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Model Sector Lightning";
-			Enum.SetInitialValue(GetCvar('d3d_model_lighting'));
-			Enum.ValueChanging = ChangeD3dModelLighting;
-			currentY += Enum.Height;
-
-			Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-			Enum.SetOrigin(ChoicesStartX, currentY);
-			Enum.Text = "Specular Highlights";
-			Enum.SetInitialValue(GetCvar('d3d_specular_highlights'));
-			Enum.ValueChanging = ChangeD3dSpecularHighlights;
-			currentY += Enum.Height;
-		}
+		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Specular Highlights";
+		Enum.SetInitialValue(GetCvar('d3d_specular_highlights'));
+		Enum.ValueChanging = ChangeD3dSpecularHighlights;
+		currentY += Enum.Height;
 	}
 }
 
