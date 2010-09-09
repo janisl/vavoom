@@ -223,11 +223,22 @@ final void A_Tracer2()
 //
 //  A_Fire
 //
+//==========================================================================
+
+final void A_Fire()
+{
+	decorate_A_Fire();
+}
+
+//==========================================================================
+//
+//  decorate_A_Fire
+//
 //  Keep fire in front of player unless out of sight.
 //
 //==========================================================================
 
-final void A_Fire(optional int Height)
+final void decorate_A_Fire(optional int Height)
 {
 	if (!Target || !Tracer)
 	{
