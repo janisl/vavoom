@@ -190,15 +190,14 @@ VMain::VMain()
 	vsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
 
 	vsizer->Add(new wxStaticText(page, -1, wxT("Renderer:")), 0, wxALL, 4);
-	wxString RendChoices[3];
-	RendChoices[0] = wxT("Software");
-	RendChoices[1] = wxT("OpenGL");
-	RendChoices[2] = wxT("Direct3D");
+	wxString RendChoices[2];
+	RendChoices[0] = wxT("OpenGL");
+	RendChoices[1] = wxT("Direct3D");
 	RendererBox = new wxComboBox(page, -1, RendChoices[1], wxDefaultPosition, wxDefaultSize,
 #ifdef _WIN32
-		3,
-#else
 		2,
+#else
+		1,
 #endif
 		RendChoices, wxCB_READONLY);
 	vsizer->Add(RendererBox, 0, wxALL, 4);
