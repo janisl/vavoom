@@ -312,6 +312,12 @@ class VBasePlayer : public VGameObject
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_PreTravel);
 	}
+	void eventUseInventory(VStr Inv)
+	{
+		P_PASS_SELF;
+		P_PASS_STR(Inv);
+		EV_RET_VOID(NAME_UseInventory);
+	}
 
 	//	Cheats.
 	void eventCheat_God()

@@ -63,6 +63,7 @@ VCommand::VAlias*		VCommand::Alias = NULL;
 static const char*		KeyConfCommands[] =
 {
 	"alias",
+	"bind",
 	"defaultbind",
 	"addkeysection",
 	"addmenukey",

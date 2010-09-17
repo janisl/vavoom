@@ -536,13 +536,13 @@ void VInput::GetBindingKeys(const VStr& Binding, int& Key1, int& Key2)
 
 //==========================================================================
 //
-//	VInput::SetBinding
+//	VInput::GetBinding
 //
 //==========================================================================
 
 void VInput::GetBinding(int KeyNum, VStr& Down, VStr& Up)
 {
-	guard(VInput::SetBinding);
+	guard(VInput::GetBinding);
 	Down = KeyBindingsDown[KeyNum];
 	Up = KeyBindingsUp[KeyNum];
 	unguard;

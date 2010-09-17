@@ -236,6 +236,10 @@ void PreTravel()
 {
 }
 
+void UseInventory(string Inv)
+{
+}
+
 void Cheat_God()
 {
 }

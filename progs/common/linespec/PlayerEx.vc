@@ -1704,6 +1704,23 @@ void PreTravel()
 
 //==========================================================================
 //
+//  UseInventory
+//
+//==========================================================================
+
+void UseInventory(string Inv)
+{
+	Inventory item = EntityEx(MO).FindInventory(class<Inventory>(FindClass(StrToName(Inv))));
+
+	if (item)
+	{
+		// Use Inventory item
+		EntityEx(MO).UseInventory(item);
+	}
+}
+
+//==========================================================================
+//
 //  ClientSpeech
 //
 //==========================================================================

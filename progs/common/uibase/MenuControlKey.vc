@@ -97,6 +97,7 @@ bool OnKeyDown(int key)
 		return true;
 
 	case K_BACKSPACE:
+	case K_MOUSE2:
 		IN_GetBindingKeys(CommandOn, &key1, &key2);
 		if (GetClGame().ControlColumn == 0)
 			IN_SetBinding(key1, "", "");

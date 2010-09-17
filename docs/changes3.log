@@ -4327,3 +4327,4 @@
   Firebrand created a gameplay option to set monster behavior on tall dropoffs, if the option is enabled and the
  map doesn't avoids dropping off, monsters will drop off tall ledges.
   Firebrand added a flag for allowing monsters to drop off tall ledges, overriding any compatibility options.
+  Firebrand added Use Inventory console command, it takes the inventory item name as a parameter.
