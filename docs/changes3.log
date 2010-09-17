@@ -4324,3 +4324,6 @@
   Firebrand added a back button item for the menus, so that they can be navigated with the mouse.
   Firebrand made several menu item values to be set with the mouse wheels (sliders, on/off, yes/no item option).
   Firebrand made menus navigable with the mouse wheels.
+  Firebrand created a gameplay option to set monster behavior on tall dropoffs, if the option is enabled and the
+ map doesn't avoids dropping off, monsters will drop off tall ledges.
+  Firebrand added a flag for allowing monsters to drop off tall ledges, overriding any compatibility options.

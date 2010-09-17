@@ -323,6 +323,7 @@ bool bNoBossRip;		//  For rippermissiles: Don't rip through bosses.
 bool bScreenSeeker;		//  Fails the IsOkayToAttack test if potential target is outside player FOV.
 bool bBumpSpecial;		//  Actor executes its special when being collided (as the ST flag).
 bool bMBFBounce;		//	Doesn't dies while bouncing speed is higher than 0.
+bool bAvoidsDropOffs;	//	Monster does avoid dropoffs, overrides value of compat_dropoff CVar.
 
 //  Params
 float			Speed;

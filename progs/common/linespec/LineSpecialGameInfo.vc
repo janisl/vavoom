@@ -131,6 +131,7 @@ void Init()
 	CreateCvar('addrocketexplosion', "0", CVAR_ARCHIVE);
 	CreateCvar('damage_thrust', "1", CVAR_ARCHIVE);
 	CreateCvar('autoaim', "1", CVAR_ARCHIVE);
+	CreateCvar('monster_dropoff', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================

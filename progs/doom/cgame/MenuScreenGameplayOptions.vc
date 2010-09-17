@@ -111,6 +111,13 @@ void CreateChoices()
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "Monsters can drop off";
+	Enum.SetInitialValue(GetCvar('compat_dropoff'));
+	Enum.ValueChanging = ChangeDropOff;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Optional Fuzzy Effect";
 	Enum.SetInitialValue(GetCvar('r_drawfuzz'));
 	Enum.ValueChanging = ChangeFuzz;
@@ -170,6 +177,18 @@ bool ChangeMonstersBacking(Object Sender, int newValue)
 bool ChangeDamageThrust(Object Sender, int newValue)
 {
 	SetCvar('damage_thrust', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeDropOff
+//
+//==========================================================================
+
+bool ChangeDropOff(Object Sender, int newValue)
+{
+	SetCvar('monster_dropoff', newValue);
 	return true;
 }
 

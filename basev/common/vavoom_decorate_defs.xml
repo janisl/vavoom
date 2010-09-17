@@ -115,6 +115,7 @@
 		<flag name="NoDropOff" property="bNoDropOff" />
 		<flag name="NoTrigger" property="bNoTrigger" />
 		<flag name="BlockedBySolidActors" property="bBlockedBySolidActors" />
+		<flag name="AvoidsDropOffs" property="bAvoidsDropOffs" />
 		<!-- Behavior -->
 		<flag name="Ambush" property="bAmbush" />
 		<flag name="Boss" property="bBoss" />

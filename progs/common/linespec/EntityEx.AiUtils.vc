@@ -1065,7 +1065,7 @@ final void NewChaseDir()
 	// Try to move away from a dropoff
 	if (FloorZ - DropOffZ > MaxDropoffHeight &&
 		Origin.z <= FloorZ && !bDropOff && !bOnMobj && !bFloat &&
-		!Level.CompatDropOff)
+		((!Level.CompatDropOff && GetCvar('monster_dropoff')) || bAvoidsDropOffs))
 	{
 		float AvoidDeltaX;
 		float AvoidDeltaY;
