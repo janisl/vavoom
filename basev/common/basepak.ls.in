@@ -302,6 +302,7 @@ progs/uibase/HUDMessageTypeOnFadeOut.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase
 progs/uibase/IntermissionBackground.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/IntermissionBackground.vc
 progs/uibase/MenuBigTextButton.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuBigTextButton.vc
 progs/uibase/MenuChoice.vc						@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuChoice.vc
+progs/uibase/MenuChoice_BackButton.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuChoice_BackButton.vc
 progs/uibase/MenuChoice_LoadSlot.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuChoice_LoadSlot.vc
 progs/uibase/MenuChoice_OnOff.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuChoice_OnOff.vc
 progs/uibase/MenuChoice_SaveSlot.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuChoice_SaveSlot.vc

@@ -53,6 +53,7 @@ int						TitleY;
 void CreateMenu()
 {
 	CreateTitle();
+	DrawBackButton();
 	CreateChoices();
 	CreateSelector();
 	SetDefaultChoice();
@@ -66,7 +67,7 @@ void CreateMenu()
 
 void OnChildAdded(Widget Child)
 {
-	if (MenuChoice(Child))
+	if (MenuChoice(Child) && !MenuChoice_BackButton(Child))
 	{
 		if (NumItems >= MAX_MENU_ITEMS)
 		{
@@ -93,6 +94,21 @@ void CreateTitle()
 		newTitle.Text = Title;
 		newTitle.SetOrigin(TitleX, TitleY);
 	}
+}
+
+//==========================================================================
+//
+//	DrawBackButton
+//
+//==========================================================================
+
+void DrawBackButton()
+{
+	//  Draw the back button on the top left corner of the menu screen
+	MenuChoice_BackButton	BackButton;
+
+	BackButton =  MenuChoice_BackButton(NewChild(MenuChoice_BackButton));
+	BackButton.SetOrigin(Width - 20, 1);
 }
 
 //==========================================================================
@@ -127,7 +143,7 @@ void CreateSelector()
 
 void CursorMoved()
 {
-	if (CursorPrev == CursorPos)
+	if (CursorPrev == CursorPos || MenuChoice_BackButton(Items[CursorPos]))
 		return;
 
 	if (CursorPos >= 0 && CursorPos < NumItems)
@@ -159,7 +175,7 @@ void SetDefaultChoice()
 	// force first available item to have focus
 	for (i = 0; i < NumItems; i++)
 	{
-		if (Items[i].Focusable && Items[i].Enabled)
+		if (Items[i].Focusable && Items[i].Enabled && !MenuChoice_BackButton(Items[i]))
 		{
 			CursorPrev = -1;
 			CursorPos = i;
@@ -186,7 +202,7 @@ void CyclePrevChoice()
 			CursorPos--;
 	}
 	while ((!Items[CursorPos].Focusable || !Items[CursorPos].Enabled) &&
-		CursorPrev != CursorPos);
+		!MenuChoice_BackButton(Items[CursorPos]) && CursorPrev != CursorPos);
 	CursorMoved();
 }
 
@@ -207,7 +223,7 @@ void CycleNextChoice()
 			CursorPos++;
 	}
 	while ((!Items[CursorPos].Focusable || !Items[CursorPos].Enabled) &&
-		CursorPrev != CursorPos);
+		!MenuChoice_BackButton(Items[CursorPos]) && CursorPrev != CursorPos);
 	CursorMoved();
 }
 
@@ -222,11 +238,13 @@ bool OnKeyDown(int key)
 	switch (key)
 	{
 	case K_DOWNARROW:
+	case K_MWHEELDOWN:
 		CycleNextChoice();
 		LocalSound('menu/cursor');
 		return true;
 
 	case K_UPARROW:
+	case K_MWHEELUP:
 		CyclePrevChoice();
 		LocalSound('menu/cursor');
 		return true;
