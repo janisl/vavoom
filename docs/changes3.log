@@ -4320,3 +4320,7 @@
 22.07.2010
   Firebrand added InterHubAmount, BounceType, BounceSound and (aproximated)Shaded rendering style properties
  to DECORATE.
+17.09.2010
+  Firebrand added a back button item for the menus, so that they can be navigated with the mouse.
+  Firebrand made several menu item values to be set with the mouse wheels (sliders, on/off, yes/no item option).
+  Firebrand made menus navigable with the mouse wheels.
