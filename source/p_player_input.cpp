@@ -389,7 +389,9 @@ COMMAND(Use)
 	{
 		return;
 	}
+#ifdef CLIENT
 	cl->eventUseInventory(*Args[1]);
+#endif
 	unguard;
 }
 
