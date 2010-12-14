@@ -4328,3 +4328,5 @@
  map doesn't avoids dropping off, monsters will drop off tall ledges.
   Firebrand added a flag for allowing monsters to drop off tall ledges, overriding any compatibility options.
   Firebrand added Use Inventory console command, it takes the inventory item name as a parameter.
+14.12.2010
+  I merged renderer parts that were not changed by advanced renderer.

@@ -95,14 +95,8 @@ bool					set_resolutioon_needed = true;
 
 // Angles in the SCREENWIDTH wide window.
 VCvarF					fov("fov", "90");
-float					old_fov = 90.0;
-
-int						prev_old_aspect;
 
 TVec					clip_base[4];
-
-subsector_t				*r_viewleaf;
-subsector_t				*r_oldviewleaf;
 
 //
 //	Translation tables
@@ -192,30 +186,38 @@ void R_Start(VLevel* ALevel)
 
 //==========================================================================
 //
-//	VRenderLevel::VRenderLevel
+//	VRenderLevelShared::VRenderLevelShared
 //
 //==========================================================================
 
-VRenderLevel::VRenderLevel(VLevel* ALevel)
-: VRenderLevelShared(ALevel)
-, c_subdivides(0)
-, free_wsurfs(0)
-, c_seg_div(0)
-, AllocatedWSurfBlocks(0)
-, AllocatedSubRegions(0)
-, AllocatedDrawSegs(0)
-, AllocatedSegParts(0)
+VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
+: Level(ALevel)
+, ViewEnt(NULL)
+, MirrorLevel(0)
+, PortalLevel(0)
+, VisSize(0)
+, BspVis(NULL)
+, r_viewleaf(NULL)
+, r_oldviewleaf(NULL)
+, old_fov(90.0)
+, prev_old_aspect(0)
+, ExtraLight(0)
+, FixedLight(0)
+, Particles(0)
+, ActiveParticles(0)
+, FreeParticles(0)
 , CurrentSky1Texture(-1)
 , CurrentSky2Texture(-1)
 , CurrentDoubleSky(false)
 , CurrentLightning(false)
+, trans_sprites(MainTransSprites)
+, free_wsurfs(NULL)
+, AllocatedWSurfBlocks(NULL)
+, AllocatedSubRegions(NULL)
+, AllocatedDrawSegs(NULL)
+, AllocatedSegParts(NULL)
 {
-	guard(VRenderLevel::VRenderLevel);
-	r_oldviewleaf = NULL;
-	trans_sprites = MainTransSprites;
-	NeedsInfiniteFarClip = false;
-
-	memset(DLights, 0, sizeof(DLights));
+	guard(VRenderLevelShared::VRenderLevelShared);
 	memset(MainTransSprites, 0, sizeof(MainTransSprites));
 
 	VisSize = (Level->NumSubsectors + 7) >> 3;
@@ -238,13 +240,51 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 
 //==========================================================================
 //
-//	VRenderLevel::~VRenderLevel
+//	VRenderLevel::VRenderLevel
 //
 //==========================================================================
 
-VRenderLevel::~VRenderLevel()
+VRenderLevel::VRenderLevel(VLevel* ALevel)
+: VRenderLevelShared(ALevel)
+, c_subdivides(0)
+, c_seg_div(0)
 {
-	guard(VRenderLevel::~VRenderLevel);
+	guard(VRenderLevel::VRenderLevel);
+	NeedsInfiniteFarClip = false;
+
+	memset(DLights, 0, sizeof(DLights));
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::VAdvancedRenderLevel
+//
+//==========================================================================
+
+VAdvancedRenderLevel::VAdvancedRenderLevel(VLevel* ALevel)
+: VRenderLevelShared(ALevel)
+, LightVis(NULL)
+{
+	guard(VAdvancedRenderLevel::VAdvancedRenderLevel);
+	NeedsInfiniteFarClip = true;
+
+	memset(DLights, 0, sizeof(DLights));
+
+	LightVis = new vuint8[VisSize];
+	LightBspVis = new vuint8[VisSize];
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevelShared::~VRenderLevelShared
+//
+//==========================================================================
+
+VRenderLevelShared::~VRenderLevelShared()
+{
+	guard(VRenderLevelShared::~VRenderLevelShared);
 	//	Free fake floor data.
 	for (int i = 0; i < Level->NumSectors; i++)
 	{
@@ -320,6 +360,22 @@ VRenderLevel::~VRenderLevel()
 
 //==========================================================================
 //
+//	VAdvancedRenderLevel::~VAdvancedRenderLevel
+//
+//==========================================================================
+
+VAdvancedRenderLevel::~VAdvancedRenderLevel()
+{
+	guard(VAdvancedRenderLevel::~VAdvancedRenderLevel);
+	delete[] LightVis;
+	LightVis = NULL;
+	delete[] LightBspVis;
+	LightBspVis = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
 // 	R_SetViewSize
 //
 // 	Do not really change anything here, because it might be in the middle
@@ -366,13 +422,13 @@ COMMAND(SizeUp)
 
 //==========================================================================
 //
-//	VRenderLevel::ExecuteSetViewSize
+//	VRenderLevelShared::ExecuteSetViewSize
 //
 //==========================================================================
 
-void VRenderLevel::ExecuteSetViewSize()
+void VRenderLevelShared::ExecuteSetViewSize()
 {
-	guard(VRenderLevel::ExecuteSetViewSize);
+	guard(VRenderLevelShared::ExecuteSetViewSize);
 	set_resolutioon_needed = false;
 	if (screen_size < 3)
 	{
@@ -466,13 +522,13 @@ void R_DrawViewBorder()
 
 //==========================================================================
 //
-//	VRenderLevel::TransformFrustum
+//	VRenderLevelShared::TransformFrustum
 //
 //==========================================================================
 
-void VRenderLevel::TransformFrustum()
+void VRenderLevelShared::TransformFrustum()
 {
-	guard(VRenderLevel::TransformFrustum);
+	guard(VRenderLevelShared::TransformFrustum);
 	for (int i = 0; i < 4; i++)
 	{
 		TVec &v = clip_base[i];
@@ -492,7 +548,7 @@ void VRenderLevel::TransformFrustum()
 
 //==========================================================================
 //
-//	VRenderLevel::SetupFrame
+//	VRenderLevelShared::SetupFrame
 //
 //==========================================================================
 
@@ -502,9 +558,9 @@ VCvarF			r_chase_up("r_chase_up", "128.0", CVAR_Archive);
 VCvarF			r_chase_right("r_chase_right", "0", CVAR_Archive);
 VCvarI			r_chase_front("r_chase_front", "0", CVAR_Archive);
 
-void VRenderLevel::SetupFrame()
+void VRenderLevelShared::SetupFrame()
 {
-	guard(VRenderLevel::SetupFrame);
+	guard(VRenderLevelShared::SetupFrame);
 	// change the view size if needed
 	if (screen_size != screenblocks || !screenblocks ||
 		set_resolutioon_needed || old_fov != fov ||
@@ -590,14 +646,14 @@ void VRenderLevel::SetupFrame()
 
 //==========================================================================
 //
-//	VRenderLevel::SetupCameraFrame
+//	VRenderLevelShared::SetupCameraFrame
 //
 //==========================================================================
 
-void VRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
-	refdef_t* rd)
+void VRenderLevelShared::SetupCameraFrame(VEntity* Camera, VTexture* Tex,
+	int FOV, refdef_t* rd)
 {
-	guard(VRenderLevel::SetupCameraFrame);
+	guard(VRenderLevelShared::SetupCameraFrame);
 	rd->width = Tex->GetWidth();
 	rd->height = Tex->GetHeight();
 	rd->y = 0;
@@ -642,13 +698,13 @@ void VRenderLevel::SetupCameraFrame(VEntity* Camera, VTexture* Tex, int FOV,
 
 //==========================================================================
 //
-//	VRenderLevel::MarkLeaves
+//	VRenderLevelShared::MarkLeaves
 //
 //==========================================================================
 
-void VRenderLevel::MarkLeaves()
+void VRenderLevelShared::MarkLeaves()
 {
-	guard(VRenderLevel::MarkLeaves);
+	guard(VRenderLevelShared::MarkLeaves);
 	byte	*vis;
 	node_t	*node;
 	int		i;
@@ -701,7 +757,74 @@ void VRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
 
 	RenderWorld(RD, Range);
 
-	RenderMobjs();
+	RenderMobjs(RPASS_Normal);
+
+	DrawParticles();
+
+	DrawTranslucentPolys();
+	unguard;
+}
+
+//==========================================================================
+//
+//  VAdvancedRenderLevel::RenderScene
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* Range)
+{
+	guard(VAdvancedRenderLevel::RenderScene);
+	if (!Drawer->SupportsAdvancedRendering())
+	{
+		Host_Error("Advanced rendering not supported by graphics card");
+	}
+
+	r_viewleaf = Level->PointInSubsector(vieworg);
+
+	TransformFrustum();
+
+	Drawer->SetupViewOrg();
+
+	MarkLeaves();
+
+	UpdateWorld();
+
+	RenderWorld(RD, Range);
+	RenderMobjsAmbient();
+
+	Drawer->BeginShadowVolumesPass();
+	if (!FixedLight && r_dynamic)
+	{
+		dlight_t* l = DLights;
+		for (int i = 0; i < MAX_DLIGHTS; i++, l++)
+		{
+			if (l->die < Level->Time || !l->radius)
+			{
+				continue;
+			}
+			RenderLightShadows(RD, Range, l->origin, l->radius, l->colour);
+		}
+	}
+	if (!FixedLight && r_static_lights)
+	{
+		for (int i = 0; i < Lights.Num(); i++)
+		{
+			if (!Lights[i].radius)
+			{
+				continue;
+			}
+			RenderLightShadows(RD, Range, Lights[i].origin, Lights[i].radius, Lights[i].colour);
+		}
+	}
+
+	Drawer->DrawWorldTexturesPass();
+	RenderMobjsTextures();
+
+	Drawer->DrawWorldFogPass();
+	RenderMobjsFog();
+	Drawer->EndFogPass();
+
+	RenderMobjs(RPASS_NonShadow);
 
 	DrawParticles();
 
@@ -724,13 +847,13 @@ void R_RenderPlayerView()
 
 //==========================================================================
 //
-//  VRenderLevel::RenderPlayerView
+//  VRenderLevelShared::RenderPlayerView
 //
 //==========================================================================
 
-void VRenderLevel::RenderPlayerView()
+void VRenderLevelShared::RenderPlayerView()
 {
-	guard(VRenderLevel::RenderPlayerView);
+	guard(VRenderLevelShared::RenderPlayerView);
 	if (!Level->LevelInfo)
 	{
 		return;
@@ -776,13 +899,14 @@ void VRenderLevel::RenderPlayerView()
 
 //==========================================================================
 //
-//	VRenderLevel::UpdateCameraTexture
+//	VRenderLevelShared::UpdateCameraTexture
 //
 //==========================================================================
 
-void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
+void VRenderLevelShared::UpdateCameraTexture(VEntity* Camera, int TexNum,
+	int FOV)
 {
-	guard(VRenderLevel::UpdateCameraTexture);
+	guard(VRenderLevelShared::UpdateCameraTexture);
 	if (!Camera)
 	{
 		return;
@@ -813,13 +937,13 @@ void VRenderLevel::UpdateCameraTexture(VEntity* Camera, int TexNum, int FOV)
 
 //==========================================================================
 //
-//	VRenderLevel::GetFade
+//	VRenderLevelShared::GetFade
 //
 //==========================================================================
 
-vuint32 VRenderLevel::GetFade(sec_region_t* Reg)
+vuint32 VRenderLevelShared::GetFade(sec_region_t* Reg)
 {
-	guard(VRenderLevel::GetFade);
+	guard(VRenderLevelShared::GetFade);
 	if (r_fog_test)
 	{
 		return 0xff000000 | (int(255 * r_fog_r) << 16) |
@@ -878,15 +1002,15 @@ void R_DrawPic(int x, int y, int handle, float Alpha)
 
 //==========================================================================
 //
-// 	VRenderLevel::PrecacheLevel
+// 	VRenderLevelShared::PrecacheLevel
 //
 // 	Preloads all relevant graphics for the level.
 //
 //==========================================================================
 
-void VRenderLevel::PrecacheLevel()
+void VRenderLevelShared::PrecacheLevel()
 {
-	guard(VRenderLevel::PrecacheLevel);
+	guard(VRenderLevelShared::PrecacheLevel);
 	int			i;
 
 	if (cls.demoplayback)
@@ -929,26 +1053,26 @@ void VRenderLevel::PrecacheLevel()
 
 //==========================================================================
 //
-//	VRenderLevel::GetTranslation
+//	VRenderLevelShared::GetTranslation
 //
 //==========================================================================
 
-VTextureTranslation* VRenderLevel::GetTranslation(int TransNum)
+VTextureTranslation* VRenderLevelShared::GetTranslation(int TransNum)
 {
-	guard(VRenderLevel::GetTranslation);
+	guard(VRenderLevelShared::GetTranslation);
 	return R_GetCachedTranslation(TransNum, Level);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VRenderLevel::BuildPlayerTranslations
+//	VRenderLevelShared::BuildPlayerTranslations
 //
 //==========================================================================
 
-void VRenderLevel::BuildPlayerTranslations()
+void VRenderLevelShared::BuildPlayerTranslations()
 {
-	guard(VRenderLevel::BuildPlayerTranslations);
+	guard(VRenderLevelShared::BuildPlayerTranslations);
 	for (TThinkerIterator<VPlayerReplicationInfo> It(Level); It; ++It)
 	{
 		if (It->PlayerNum < 0 || It->PlayerNum >= MAXPLAYERS)

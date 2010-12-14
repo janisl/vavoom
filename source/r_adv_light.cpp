@@ -47,7 +47,6 @@ extern VCvarI				r_darken;
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static subsector_t*		r_sub;
-static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
 static VCvarF			r_lights_radius("r_lights_radius", "4096", CVAR_Archive);
 
@@ -55,99 +54,13 @@ static VCvarF			r_lights_radius("r_lights_radius", "4096", CVAR_Archive);
 
 //==========================================================================
 //
-//	VAdvancedRenderLevel::AddStaticLight
+//	VAdvancedRenderLevel::PushDlights
 //
 //==========================================================================
 
-void VAdvancedRenderLevel::AddStaticLight(const TVec &origin, float radius,
-	vuint32 colour)
+void VAdvancedRenderLevel::PushDlights()
 {
-	guard(VAdvancedRenderLevel::AddStaticLight);
-	light_t& L = Lights.Alloc();
-	L.origin = origin;
-	L.radius = radius;
-	L.colour = colour;
-	L.leafnum = Level->PointInSubsector(origin) - Level->Subsectors;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAdvancedRenderLevel::AllocDlight
-//
-//==========================================================================
-
-dlight_t* VAdvancedRenderLevel::AllocDlight(VThinker* Owner)
-{
-	guard(VAdvancedRenderLevel::AllocDlight);
-	int			i;
-	dlight_t*	dl;
-
-	// first look for an exact key match
-	if (Owner)
-	{
-		dl = DLights;
-		for (i = 0; i < MAX_DLIGHTS; i++, dl++)
-		{
-			if (dl->Owner == Owner)
-			{
-				memset(dl, 0, sizeof(*dl));
-				dl->Owner = Owner;
-				return dl;
-			}
-		}
-	}
-
-	// then look for anything else
-	dl = DLights;
-	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
-	{
-		if (dl->die < Level->Time)
-		{
-			memset(dl, 0, sizeof(*dl));
-			dl->Owner = Owner;
-			return dl;
-		}
-	}
-
-	int bestnum = 0;
-	float bestdist = 0.0;
-	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
-	{
-		float dist = Length(dl->origin - cl->ViewOrg);
-		if (dist > bestdist)
-		{
-			bestnum = i;
-			bestdist = dist;
-		}
-	}
-	dl = &DLights[bestnum];
-	memset(dl, 0, sizeof(*dl));
-	dl->Owner = Owner;
-	return dl;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VAdvancedRenderLevel::DecayLights
-//
-//==========================================================================
-
-void VAdvancedRenderLevel::DecayLights(float time)
-{
-	guard(VAdvancedRenderLevel::DecayLights);
-	dlight_t* dl = DLights;
-	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
-	{
-		if (dl->die < Level->Time || !dl->radius)
-			continue;
-
-		dl->radius -= time * dl->decay;
-		if (dl->radius < 0)
-			dl->radius = 0;
-	}
-	unguard;
+	r_dlightframecount = 1;
 }
 
 //==========================================================================
@@ -537,7 +450,6 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 		RenderShadowSubRegion(region->next);
 	}
 
-	r_subregion = region;
 	r_region = region->secregion;
 
 	if (r_sub->poly)
@@ -840,7 +752,6 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 		RenderLightSubRegion(region->next);
 	}
 
-	r_subregion = region;
 	r_region = region->secregion;
 
 	if (r_sub->poly)

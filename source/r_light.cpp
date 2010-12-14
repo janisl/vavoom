@@ -87,14 +87,14 @@ static int			c_bad;
 
 //==========================================================================
 //
-//	VRenderLevel::AddStaticLight
+//	VRenderLevelShared::AddStaticLight
 //
 //==========================================================================
 
-void VRenderLevel::AddStaticLight(const TVec &origin, float radius,
+void VRenderLevelShared::AddStaticLight(const TVec &origin, float radius,
 	vuint32 colour)
 {
-	guard(VRenderLevel::AddStaticLight);
+	guard(VRenderLevelShared::AddStaticLight);
 	light_t& L = Lights.Alloc();
 	L.origin = origin;
 	L.radius = radius;
@@ -600,13 +600,13 @@ void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 
 //==========================================================================
 //
-//	VRenderLevel::AllocDlight
+//	VRenderLevelShared::AllocDlight
 //
 //==========================================================================
 
-dlight_t* VRenderLevel::AllocDlight(VThinker* Owner)
+dlight_t* VRenderLevelShared::AllocDlight(VThinker* Owner)
 {
-	guard(VRenderLevel::AllocDlight);
+	guard(VRenderLevelShared::AllocDlight);
 	int			i;
 	dlight_t*	dl;
 
@@ -657,13 +657,13 @@ dlight_t* VRenderLevel::AllocDlight(VThinker* Owner)
 
 //==========================================================================
 //
-//	VRenderLevel::DecayLights
+//	VRenderLevelShared::DecayLights
 //
 //==========================================================================
 
-void VRenderLevel::DecayLights(float time)
+void VRenderLevelShared::DecayLights(float time)
 {
-	guard(VRenderLevel::DecayLights);
+	guard(VRenderLevelShared::DecayLights);
 	dlight_t* dl = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{

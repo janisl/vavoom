@@ -55,22 +55,19 @@ static subregion_t*		r_subregion;
 static sec_region_t*	r_region;
 static bool				MirrorClipSegs;
 
-VCvarI					r_maxmirrors("r_maxmirrors", "4", CVAR_Archive);
-
-static TVec				CurrLightPos;
-static float			CurrLightRadius;
+static VCvarI			r_maxmirrors("r_maxmirrors", "4", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
 //==========================================================================
 //
-//	VRenderLevel::SetUpFrustumIndexes
+//	VRenderLevelShared::SetUpFrustumIndexes
 //
 //==========================================================================
 
-void VRenderLevel::SetUpFrustumIndexes()
+void VRenderLevelShared::SetUpFrustumIndexes()
 {
-	guard(VRenderLevel::SetUpFrustumIndexes);
+	guard(VRenderLevelShared::SetUpFrustumIndexes);
 	for (int i = 0; i < 4; i++)
 	{
 		int *pindex = FrustumIndexes[i];
@@ -93,15 +90,15 @@ void VRenderLevel::SetUpFrustumIndexes()
 
 //==========================================================================
 //
-//	VRenderLevel::DrawSurfaces
+//	VRenderLevelShared::DrawSurfaces
 //
 //==========================================================================
 
-void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
+void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	int clipflags, VEntity* SkyBox, int LightSourceSector, int SideLight,
 	bool AbsSideLight, bool CheckSkyBoxAlways)
 {
-	guard(VRenderLevel::DrawSurfaces);
+	guard(VRenderLevelShared::DrawSurfaces);
 	surface_t* surfs = InSurfs;
 	if (!surfs)
 	{
@@ -285,13 +282,13 @@ void VRenderLevel::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderHorizon
+//	VRenderLevelShared::RenderHorizon
 //
 //==========================================================================
 
-void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
+void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 {
-	guard(VRenderLevel::RenderHorizon);
+	guard(VRenderLevelShared::RenderHorizon);
 	seg_t* Seg = dseg->seg;
 
 	if (!dseg->HorizonTop)
@@ -421,13 +418,13 @@ void VRenderLevel::RenderHorizon(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderMirror
+//	VRenderLevelShared::RenderMirror
 //
 //==========================================================================
 
-void VRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
+void VRenderLevelShared::RenderMirror(drawseg_t* dseg, int clipflags)
 {
-	guard(VRenderLevel::RenderMirror);
+	guard(VRenderLevelShared::RenderMirror);
 	seg_t* Seg = dseg->seg;
 
 	if (Drawer->HasStencil && MirrorLevel < r_maxmirrors)
@@ -465,15 +462,15 @@ void VRenderLevel::RenderMirror(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderLine
+//	VRenderLevelShared::RenderLine
 //
 // 	Clips the given segment and adds any visible pieces to the line list.
 //
 //==========================================================================
 
-void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
+void VRenderLevelShared::RenderLine(drawseg_t* dseg, int clipflags)
 {
-	guard(VRenderLevel::RenderLine);
+	guard(VRenderLevelShared::RenderLine);
 	seg_t *line = dseg->seg;
 
 	if (!line->linedef)
@@ -565,14 +562,14 @@ void VRenderLevel::RenderLine(drawseg_t* dseg, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderSecSurface
+//	VRenderLevelShared::RenderSecSurface
 //
 //==========================================================================
 
-void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
+void VRenderLevelShared::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 	VEntity* SkyBox)
 {
-	guard(VRenderLevel::RenderSecSurface);
+	guard(VRenderLevelShared::RenderSecSurface);
 	sec_plane_t& plane = *ssurf->secplane;
 
 	if (!plane.pic)
@@ -626,16 +623,16 @@ void VRenderLevel::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 
 //==========================================================================
 //
-//	VRenderLevel::RenderSubRegion
+//	VRenderLevelShared::RenderSubRegion
 //
 // 	Determine floor/ceiling planes.
 // 	Draw one or more line segments.
 //
 //==========================================================================
 
-void VRenderLevel::RenderSubRegion(subregion_t* region, int clipflags)
+void VRenderLevelShared::RenderSubRegion(subregion_t* region, int clipflags)
 {
-	guard(VRenderLevel::RenderSubRegion);
+	guard(VRenderLevelShared::RenderSubRegion);
 	int				count;
 	int 			polyCount;
 	seg_t**			polySeg;
@@ -683,13 +680,13 @@ void VRenderLevel::RenderSubRegion(subregion_t* region, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderSubsector
+//	VRenderLevelShared::RenderSubsector
 //
 //==========================================================================
 
-void VRenderLevel::RenderSubsector(int num, int clipflags)
+void VRenderLevelShared::RenderSubsector(int num, int clipflags)
 {
-	guard(VRenderLevel::RenderSubsector);
+	guard(VRenderLevelShared::RenderSubsector);
 	subsector_t* Sub = &Level->Subsectors[num];
 	r_sub = Sub;
 
@@ -722,16 +719,16 @@ void VRenderLevel::RenderSubsector(int num, int clipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderBSPNode
+//	VRenderLevelShared::RenderBSPNode
 //
 //	Renders all subsectors below a given node, traversing subtree
 // recursively. Just call with BSP root.
 //
 //==========================================================================
 
-void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
+void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 {
-	guard(VRenderLevel::RenderBSPNode);
+	guard(VRenderLevelShared::RenderBSPNode);
 	if (ViewClip.ClipIsFull())
 	{
 		return;
@@ -821,13 +818,13 @@ void VRenderLevel::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 
 //==========================================================================
 //
-//	VRenderLevel::RenderWorld
+//	VRenderLevelShared::RenderBspWorld
 //
 //==========================================================================
 
-void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
+void VRenderLevelShared::RenderBspWorld(const refdef_t* rd, const VViewClipper* Range)
 {
-	guard(VRenderLevel::RenderWorld);
+	guard(VRenderLevelShared::RenderBspWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
 	SetUpFrustumIndexes();
@@ -898,10 +895,18 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		WorldSurfs.Clear();
 		unguard;
 	}
+	unguard;
+}
 
-	Drawer->WorldDrawing();
+//==========================================================================
+//
+//	VRenderLevelShared::RenderPortals
+//
+//==========================================================================
 
-	guard(Portals);
+void VRenderLevelShared::RenderPortals()
+{
+	guard(VRenderLevelShared::RenderPortals);
 	PortalLevel++;
 	if (Drawer->HasStencil)
 	{
@@ -927,5 +932,38 @@ void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
 		Portals.Clear();
 	}
 	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevel::RenderWorld
+//
+//==========================================================================
+
+void VRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
+{
+	guard(VRenderLevel::RenderWorld);
+	RenderBspWorld(rd, Range);
+
+	Drawer->WorldDrawing();
+
+	RenderPortals();
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::RenderWorld
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::RenderWorld(const refdef_t* rd, const VViewClipper* Range)
+{
+	guard(VAdvancedRenderLevel::RenderWorld);
+	RenderBspWorld(rd, Range);
+
+	Drawer->DrawWorldAmbientPass();
+
+	RenderPortals();
 	unguard;
 }

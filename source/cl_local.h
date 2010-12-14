@@ -29,7 +29,6 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "iline.h"		//	Input line widget
-#include "drawer.h"
 
 class VRootWidget;
 struct VModel;

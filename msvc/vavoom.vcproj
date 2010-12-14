@@ -724,23 +724,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\r_adv_bsp.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\r_adv_light.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\r_adv_main.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\r_adv_sky.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\source\r_adv_surf.cpp"
 				>
 			</File>
 			<File

@@ -33,6 +33,7 @@
 #include "network.h"
 #include "sv_local.h"
 #include "cl_local.h"
+#include "drawer.h"
 
 // MACROS ------------------------------------------------------------------
 

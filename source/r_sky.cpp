@@ -483,15 +483,15 @@ void VSky::Draw(int ColourMap)
 
 //==========================================================================
 //
-//	VRenderLevel::InitSky
+//	VRenderLevelShared::InitSky
 //
 //	Called at level load.
 //
 //==========================================================================
 
-void VRenderLevel::InitSky()
+void VRenderLevelShared::InitSky()
 {
-	guard(VRenderLevel::InitSky);
+	guard(VRenderLevelShared::InitSky);
 	if (CurrentSky1Texture == Level->LevelInfo->Sky1Texture &&
 		CurrentSky2Texture == Level->LevelInfo->Sky2Texture &&
 		CurrentDoubleSky == !!(Level->LevelInfo->LevelInfoFlags & VLevelInfo::LIF_DoubleSky) &&
@@ -521,13 +521,13 @@ void VRenderLevel::InitSky()
 
 //==========================================================================
 //
-//	VRenderLevel::AnimateSky
+//	VRenderLevelShared::AnimateSky
 //
 //==========================================================================
 
-void VRenderLevel::AnimateSky(float frametime)
+void VRenderLevelShared::AnimateSky(float frametime)
 {
-	guard(VRenderLevel::AnimateSky);
+	guard(VRenderLevelShared::AnimateSky);
 	InitSky();
 
 	//	Update sky column offsets

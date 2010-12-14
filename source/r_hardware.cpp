@@ -404,7 +404,7 @@ void VHardwareDrawer::CacheSurface(surface_t *surface)
 	//
 	// see if the cache holds apropriate data
 	//
-	cache = surface->cachespots[0];
+	cache = surface->CacheSurf;
 
 	if (cache && !cache->dlight && surface->dlightframe != r_dlightframecount
 			&& cache->Light == surface->Light)
@@ -428,8 +428,8 @@ void VHardwareDrawer::CacheSurface(surface_t *surface)
 	if (!cache)     // if a texture just animated, don't reallocate it
 	{
 		cache = AllocBlock(smax, tmax);
-		surface->cachespots[0] = cache;
-		cache->owner = &surface->cachespots[0];
+		surface->CacheSurf = cache;
+		cache->owner = &surface->CacheSurf;
 		cache->surf = surface;
 	}
 	

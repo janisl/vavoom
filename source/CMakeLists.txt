@@ -133,11 +133,7 @@ set(MAIN_COMMON_SOURCES
 	pr_exec.cpp
 	progdefs.h
 	progs.h
-	r_adv_bsp.cpp
 	r_adv_light.cpp
-	r_adv_main.cpp
-	r_adv_sky.cpp
-	r_adv_surf.cpp
 	r_adv_things.cpp
 	r_bsp.cpp
 	r_data.cpp

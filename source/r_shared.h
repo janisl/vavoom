@@ -33,6 +33,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "fmd2defs.h"
+#include "drawer.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -98,7 +99,7 @@ struct surface_t
 	int				count;
 	short			texturemins[2];
 	short			extents[2];
-	surfcache_t*	cachespots[4];
+	surfcache_t*	CacheSurf;
 	TVec			verts[1];
 };
 
