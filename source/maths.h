@@ -87,6 +87,7 @@ public:
 
 int mlog2(int val);
 int mround(float);
+int ToPowerOf2(int val);
 
 float AngleMod(float angle);
 float AngleMod180(float angle);

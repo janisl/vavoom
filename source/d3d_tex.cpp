@@ -407,21 +407,21 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const r
 	if (w != width || h != height)
 	{
 		// Smooth transparent edges
-		SmoothEdges((vuint8*)data, width, height, (vuint8*)data);
+		VTexture::SmoothEdges((vuint8*)data, width, height, (vuint8*)data);
 		//	Must rescale image to get "top" mipmap texture image
-		ResampleTexture(width, height, (vuint8*)data, w, h, image);
+		VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image);
 	}
 	else
 	{
 		memcpy(image, data, w * h * 4);
 	}
-	AdjustGamma((rgba_t*)image, w * h);
+	VTexture::AdjustGamma((rgba_t*)image, w * h);
 	surf = CreateSurface(w, h, 16, true);
 	UploadTextureImage(surf, 0, w, h, (rgba_t*)image);
 
 	for (level = 1; level < surf->GetLevelCount(); level++)
 	{
-		MipMap(w, h, image);
+		VTexture::MipMap(w, h, image);
 		if (w > 1)
 			w >>= 1;
 		if (h > 1)

@@ -379,6 +379,296 @@ VTexture::VTransData* VTexture::FindDriverTrans(
 
 //==========================================================================
 //
+//	VTexture::AdjustGamma
+//
+//==========================================================================
+
+void VTexture::AdjustGamma(rgba_t* data, int size)
+{
+#ifdef CLIENT
+	guard(VTexture::AdjustGamma);
+	vuint8* gt = gammatable[usegamma];
+	for (int i = 0; i < size; i++)
+	{
+		data[i].r = gt[data[i].r];
+		data[i].g = gt[data[i].g];
+		data[i].b = gt[data[i].b];
+	}
+	unguard;
+#endif
+}
+
+//==========================================================================
+//
+//	VTexture::SmoothEdges
+//
+//	This one comes directly from GZDoom
+//
+//==========================================================================
+
+#define CHKPIX(ofs) (l1[(ofs) * 4 + MSB] == 255 ? (( ((vuint32*)l1)[0] = ((vuint32*)l1)[ofs] & SOME_MASK), trans = true ) : false)
+
+void VTexture::SmoothEdges(vuint8* buffer, int w, int h, vuint8* dataout)
+{
+	guard(VTexture::SmoothEdges);
+	int x, y;
+	//	Why the fuck you would use 0 on big endian here?
+	int MSB = 3;
+	vuint32 SOME_MASK = GBigEndian ? 0xffffff00 : 0x00ffffff;
+
+	bool trans = buffer[MSB] == 0;	// If I set this to false here the code won't detect textures
+									// that only contain transparent pixels.
+	vuint8* l1;
+
+	if (h <= 1 || w <= 1)
+	{
+		return;  // makes (a) no sense and (b) doesn't work with this code!
+	}
+	l1 = buffer;
+
+	if (l1[MSB] == 0 && !CHKPIX(1))
+	{
+		CHKPIX(w);
+	}
+	l1 += 4;
+
+	for(x = 1; x < w - 1; x++, l1 += 4)
+	{
+		if (l1[MSB] == 0 && !CHKPIX(-1) && !CHKPIX(1))
+		{
+			CHKPIX(w);
+		}
+	}
+	if (l1[MSB] == 0 && !CHKPIX(-1))
+	{
+		CHKPIX(w);
+	}
+	l1 += 4;
+
+	for(y = 1; y < h - 1; y++)
+	{
+		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(1))
+		{
+			CHKPIX(w);
+		}
+		l1 += 4;
+
+		for(x = 1; x < w - 1; x++, l1 += 4)
+		{
+			if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1) && !CHKPIX(1))
+			{
+				CHKPIX(w);
+			}
+		}
+		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1))
+		{
+			CHKPIX(w);
+		}
+		l1 += 4;
+	}
+
+	if (l1[MSB] == 0 && !CHKPIX(-w))
+	{
+		CHKPIX(1);
+	}
+	l1 += 4;
+	for(x = 1;x < w - 1; x++, l1 += 4)
+	{
+		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1))
+		{
+			CHKPIX(1);
+		}
+	}
+	if (l1[MSB] == 0 && !CHKPIX(-w))
+	{
+		CHKPIX(-1);
+	}
+
+	dataout = l1;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTexture::ResampleTexture
+//
+//	Resizes	texture.
+//	This is a simplified version of gluScaleImage from sources of MESA 3.0
+//
+//==========================================================================
+
+void VTexture::ResampleTexture(int widthin, int heightin,
+	const vuint8* datain, int widthout, int heightout, vuint8* dataout)
+{
+	guard(VTexture::ResampleTexture);
+	int i, j, k;
+	float sx, sy;
+
+	if (widthout > 1)
+	{
+		sx = float(widthin - 1) / float(widthout - 1);
+	}
+	else
+	{
+		sx = float(widthin - 1);
+	}
+	if (heightout > 1)
+	{
+		sy = float(heightin - 1) / float(heightout - 1);
+	}
+	else
+	{
+		sy = float(heightin - 1);
+	}
+
+//#define POINT_SAMPLE
+#ifdef POINT_SAMPLE
+	for (i = 0; i < heightout; i++)
+	{
+		int ii = int(i * sy);
+		for (j = 0; j < widthout; j++)
+		{
+			int jj = int(j * sx);
+
+			const vuint8* src = datain + (ii * widthin + jj) * 4;
+			vuint8* dst = dataout + (i * widthout + j) * 4;
+
+			for (k = 0; k < 4; k++)
+			{
+				*dst++ = *src++;
+			}
+		}
+	}
+#else
+	if (sx <= 1.0 && sy <= 1.0)
+	{
+		/* magnify both width and height:  use weighted sample of 4 pixels */
+		int i0, i1, j0, j1;
+		float alpha, beta;
+		const vuint8 *src00, *src01, *src10, *src11;
+		float s1, s2;
+		vuint8* dst;
+
+		for (i = 0; i < heightout; i++)
+		{
+			i0 = int(i * sy);
+			i1 = i0 + 1;
+			if (i1 >= heightin) i1 = heightin-1;
+			alpha = i * sy - i0;
+			for (j = 0; j < widthout; j++)
+			{
+				j0 = int(j * sx);
+				j1 = j0 + 1;
+				if (j1 >= widthin) j1 = widthin-1;
+				beta = j * sx - j0;
+
+				/* compute weighted average of pixels in rect (i0,j0)-(i1,j1) */
+				src00 = datain + (i0 * widthin + j0) * 4;
+				src01 = datain + (i0 * widthin + j1) * 4;
+				src10 = datain + (i1 * widthin + j0) * 4;
+				src11 = datain + (i1 * widthin + j1) * 4;
+
+				dst = dataout + (i * widthout + j) * 4;
+
+				for (k = 0; k < 4; k++)
+				{
+					s1 = *src00++ * (1.0-beta) + *src01++ * beta;
+					s2 = *src10++ * (1.0-beta) + *src11++ * beta;
+					*dst++ = vuint8(s1 * (1.0-alpha) + s2 * alpha);
+				}
+			}
+		}
+	}
+	else
+	{
+		/* shrink width and/or height:  use an unweighted box filter */
+		int i0, i1;
+		int j0, j1;
+		int ii, jj;
+		int sum;
+		vuint8* dst;
+
+		for (i = 0; i < heightout; i++)
+		{
+			i0 = int(i * sy);
+			i1 = i0 + 1;
+			if (i1 >= heightin) i1 = heightin-1;
+			for (j = 0; j < widthout; j++)
+			{
+				j0 = int(j * sx);
+				j1 = j0 + 1;
+				if (j1 >= widthin) j1 = widthin-1;
+
+				dst = dataout + (i * widthout + j) * 4;
+
+				/* compute average of pixels in the rectangle (i0,j0)-(i1,j1) */
+				for (k = 0; k < 4; k++)
+				{
+					sum = 0;
+					for (ii = i0; ii <= i1; ii++)
+					{
+						for (jj = j0; jj <= j1; jj++)
+						{
+							sum += *(datain + (ii * widthin + jj) * 4 + k);
+						}
+					}
+					sum /= (j1 - j0 + 1) * (i1 - i0 + 1);
+					*dst++ = vuint8(sum);
+				}
+			}
+		}
+	}
+#endif
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTexture::MipMap
+//
+//	Scales image down for next mipmap level, operates in place
+//
+//==========================================================================
+
+void VTexture::MipMap(int width, int height, vuint8* InIn)
+{
+	guard(VTexture::MipMap);
+	vuint8* in = InIn;
+	int		i, j;
+	vuint8* out = in;
+
+	if (width == 1 || height == 1)
+	{
+		//	Special case when only one dimension is scaled
+		int total = width * height / 2;
+		for (i = 0; i < total; i++, in += 8, out += 4)
+		{
+			out[0] = vuint8((in[0] + in[4]) >> 1);
+			out[1] = vuint8((in[1] + in[5]) >> 1);
+			out[2] = vuint8((in[2] + in[6]) >> 1);
+			out[3] = vuint8((in[3] + in[7]) >> 1);
+		}
+		return;
+	}
+
+	//	Scale down in both dimensions
+	width <<= 2;
+	height >>= 1;
+	for (i = 0; i < height; i++, in += width)
+	{
+		for (j = 0; j < width; j += 8, in += 8, out += 4)
+		{
+			out[0] = vuint8((in[0] + in[4] + in[width + 0] + in[width + 4]) >> 2);
+			out[1] = vuint8((in[1] + in[5] + in[width + 1] + in[width + 5]) >> 2);
+			out[2] = vuint8((in[2] + in[6] + in[width + 2] + in[width + 6]) >> 2);
+			out[3] = vuint8((in[3] + in[7] + in[width + 3] + in[width + 7]) >> 2);
+		}
+	}
+	unguard;
+}
+
+//==========================================================================
+//
 //	VDummyTexture::VDummyTexture
 //
 //==========================================================================

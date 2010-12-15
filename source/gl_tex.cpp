@@ -382,20 +382,20 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 	if (w != width || h != height)
 	{
 		/* Smooth transparent edges */
-		SmoothEdges((vuint8*)data, width, height, (vuint8*)data);
+		VTexture::SmoothEdges((vuint8*)data, width, height, (vuint8*)data);
 		/* must rescale image to get "top" mipmap texture image */
-		ResampleTexture(width, height, (vuint8*)data, w, h, image);
+		VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image);
 	}
 	else
 	{
 		memcpy(image, data, w * h * 4);
 	}
-	AdjustGamma((rgba_t*)image, w * h);
+	VTexture::AdjustGamma((rgba_t*)image, w * h);
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
 
 	for (level = 1; w > 1 || h > 1; level++)
 	{
-		MipMap(w, h, image);
+		VTexture::MipMap(w, h, image);
 		if (w > 1)
 			w >>= 1;
 		if (h > 1)

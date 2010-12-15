@@ -243,6 +243,11 @@ public:
 	virtual VTexture* GetHighResolutionTexture();
 	VTransData* FindDriverTrans(VTextureTranslation*, int);
 
+	static void AdjustGamma(rgba_t*, int);
+	static void SmoothEdges(vuint8*, int, int, vuint8*);
+	static void ResampleTexture(int, int, const vuint8*, int, int, vuint8*);
+	static void MipMap(int, int, vuint8*);
+
 protected:
 	void FixupPalette(vuint8* Pixels, rgba_t* Palette);
 };
