@@ -142,7 +142,6 @@ void R_Init()
 	guard(R_Init);
 	R_InitSkyBoxes();
 	R_InitModels();
-	Drawer->InitData();
 
 	for (int i = 0; i < 256; i++)
 	{
@@ -216,9 +215,20 @@ VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
 , AllocatedSubRegions(NULL)
 , AllocatedDrawSegs(NULL)
 , AllocatedSegParts(NULL)
+, freeblocks(NULL)
+, cacheframecount(0)
 {
 	guard(VRenderLevelShared::VRenderLevelShared);
 	memset(MainTransSprites, 0, sizeof(MainTransSprites));
+
+	memset(light_block, 0, sizeof(light_block));
+	memset(block_changed, 0, sizeof(block_changed));
+	memset(light_chain, 0, sizeof(light_chain));
+	memset(add_block, 0, sizeof(add_block));
+	memset(add_changed, 0, sizeof(add_changed));
+	memset(add_chain, 0, sizeof(add_chain));
+	memset(cacheblocks, 0, sizeof(cacheblocks));
+	memset(blockbuf, 0, sizeof(blockbuf));
 
 	VisSize = (Level->NumSubsectors + 7) >> 3;
 	BspVis = new vuint8[VisSize];
@@ -228,7 +238,7 @@ VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
 
 	screenblocks = 0;
 
-	Drawer->NewMap();
+	FlushCaches();
 
 	// preload graphics
 	if (precache)
@@ -641,6 +651,7 @@ void VRenderLevelShared::SetupFrame()
 	}
 
 	Drawer->SetupView(this, &refdef);
+	cacheframecount++;
 	unguard;
 }
 
@@ -692,6 +703,7 @@ void VRenderLevelShared::SetupCameraFrame(VEntity* Camera, VTexture* Tex,
 	ColourMap = 0;
 
 	Drawer->SetupView(this, rd);
+	cacheframecount++;
 	set_resolutioon_needed = true;
 	unguard;
 }

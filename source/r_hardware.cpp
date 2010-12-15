@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "gamedefs.h"
+#include "r_local.h"
 #include "r_hardware.h"
 
 // MACROS ------------------------------------------------------------------
@@ -54,78 +55,37 @@ float			VHardwareDrawer::r_avertexnormal_dots[
 
 //==========================================================================
 //
-//	VHardwareDrawer::InitData
-//
-//==========================================================================
-
-void VHardwareDrawer::InitData()
-{
-}
-
-//==========================================================================
-//
 //	VHardwareDrawer::VHardwareDrawer
 //
 //==========================================================================
 
 VHardwareDrawer::VHardwareDrawer()
 : RendLev(NULL)
-, freeblocks(NULL)
-, cacheframecount(0)
 , SimpleSurfsHead(NULL)
 , SimpleSurfsTail(NULL)
 , SkyPortalsHead(NULL)
 , SkyPortalsTail(NULL)
 , PortalDepth(0)
 {
-	memset(light_block, 0, sizeof(light_block));
-	memset(block_changed, 0, sizeof(block_changed));
-	memset(light_chain, 0, sizeof(light_chain));
-	memset(add_block, 0, sizeof(add_block));
-	memset(add_changed, 0, sizeof(add_changed));
-	memset(add_chain, 0, sizeof(add_chain));
-	memset(cacheblocks, 0, sizeof(cacheblocks));
-	memset(blockbuf, 0, sizeof(blockbuf));
 }
 
 //==========================================================================
 //
-//	VHardwareDrawer::FlushCaches
+//	VRenderLevelShared::FlushCaches
 //
 //==========================================================================
 
-void VHardwareDrawer::FlushCaches(bool free_blocks)
+void VRenderLevelShared::FlushCaches()
 {
-	guard(VHardwareDrawer::FlushCaches);
-	int				i;
-	surfcache_t*	blines;
-	surfcache_t*	block;
-
-	if (free_blocks)
-	{
-		for (i = 0; i < NUM_BLOCK_SURFS; i++)
-		{
-			for (blines = cacheblocks[i]; blines; blines = blines->bnext)
-			{
-				for (block = blines; block; block = block->lnext)
-				{
-					if (block->owner)
-					{
-						*block->owner = NULL;
-					}
-				}
-			}
-		}
-	}
-
+	guard(VRenderLevelShared::FlushCaches);
 	memset(blockbuf, 0, sizeof(blockbuf));
 	freeblocks = NULL;
-	for (i = 0; i < NUM_CACHE_BLOCKS; i++)
+	for (int i = 0; i < NUM_CACHE_BLOCKS; i++)
 	{
 		blockbuf[i].chain = freeblocks;
 		freeblocks = &blockbuf[i];
 	}
-	for (i = 0; i < NUM_BLOCK_SURFS; i++)
+	for (int i = 0; i < NUM_BLOCK_SURFS; i++)
 	{
 		cacheblocks[i] = freeblocks;
 		freeblocks = freeblocks->chain;
@@ -138,13 +98,13 @@ void VHardwareDrawer::FlushCaches(bool free_blocks)
 
 //==========================================================================
 //
-//	VHardwareDrawer::FlushOldCaches
+//	VRenderLevelShared::FlushOldCaches
 //
 //==========================================================================
 
-void VHardwareDrawer::FlushOldCaches()
+void VRenderLevelShared::FlushOldCaches()
 {
-	guard(VHardwareDrawer::FlushOldCaches);
+	guard(VRenderLevelShared::FlushOldCaches);
 	int				i;
 	surfcache_t		*blines;
 	surfcache_t		*block;
@@ -175,13 +135,13 @@ void VHardwareDrawer::FlushOldCaches()
 
 //==========================================================================
 //
-//	VHardwareDrawer::AllocBlock
+//	VRenderLevelShared::AllocBlock
 //
 //==========================================================================
 
-surfcache_t* VHardwareDrawer::AllocBlock(int width, int height)
+surfcache_t* VRenderLevelShared::AllocBlock(int width, int height)
 {
-	guard(VHardwareDrawer::AllocBlock);
+	guard(VRenderLevelShared::AllocBlock);
 	int				i;
 	surfcache_t*	blines;
 	surfcache_t*	block;
@@ -301,11 +261,11 @@ surfcache_t* VHardwareDrawer::AllocBlock(int width, int height)
 
 //==========================================================================
 //
-//	VHardwareDrawer::FreeBlock
+//	VRenderLevelShared::FreeBlock
 //
 //==========================================================================
 
-surfcache_t* VHardwareDrawer::FreeBlock(surfcache_t *block, bool check_lines)
+surfcache_t* VRenderLevelShared::FreeBlock(surfcache_t *block, bool check_lines)
 {
 	guard(VHardwareDrawer::FreeBlock);
 	surfcache_t		*other;
@@ -377,26 +337,26 @@ surfcache_t* VHardwareDrawer::FreeBlock(surfcache_t *block, bool check_lines)
 
 //==========================================================================
 //
-//	VHardwareDrawer::FreeSurfCache
+//	VRenderLevelShared::FreeSurfCache
 //
 //==========================================================================
 
-void VHardwareDrawer::FreeSurfCache(surfcache_t *block)
+void VRenderLevelShared::FreeSurfCache(surfcache_t *block)
 {
-	guard(VHardwareDrawer::FreeSurfCache);
+	guard(VRenderLevelShared::FreeSurfCache);
 	FreeBlock(block, true);
 	unguard;
 }
 
 //==========================================================================
 //
-//	VHardwareDrawer::CacheSurface
+//	VRenderLevelShared::CacheSurface
 //
 //==========================================================================
 
-void VHardwareDrawer::CacheSurface(surface_t *surface)
+void VRenderLevelShared::CacheSurface(surface_t *surface)
 {
-	guard(VHardwareDrawer::CacheSurface);
+	guard(VRenderLevelShared::CacheSurface);
 	surfcache_t     *cache;
 	int				smax, tmax;
 	int				i, j, bnum;
@@ -440,7 +400,7 @@ void VHardwareDrawer::CacheSurface(surface_t *surface)
 	cache->Light = surface->Light;
 
 	// calculate the lightings
-	RendLev->BuildLightMap(surface, 0);
+	BuildLightMap(surface, 0);
 	bnum = cache->blocknum;
 	block_changed[bnum] = true;
 
@@ -479,19 +439,6 @@ void VHardwareDrawer::CacheSurface(surface_t *surface)
 		add_chain[bnum] = cache;
 		add_changed[bnum] = true;
 	}
-	unguard;
-}
-
-//==========================================================================
-//
-//	VHardwareDrawer::NewMap
-//
-//==========================================================================
-
-void VHardwareDrawer::NewMap()
-{
-	guard(VHardwareDrawer::NewMap);
-	FlushCaches(false);
 	unguard;
 }
 

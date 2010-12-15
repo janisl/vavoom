@@ -32,6 +32,8 @@
 
 #define SMOOTHSTEP(x) ((x) * (x) * (3.0 - 2.0 * (x)))
 
+enum { NUMVERTEXNORMALS = 162 };
+
 // TYPES -------------------------------------------------------------------
 
 struct VScriptSubModel
@@ -116,18 +118,16 @@ struct VTempEdge
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-extern "C" {
-float			r_avertexnormals[NUMVERTEXNORMALS][3] =
-{
-#include "anorms.h"
-};
-}
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<VModel*>				mod_known;
 static TArray<VMeshModel*>			GMeshModels;
 static TArray<VClassModelScript*>	ClassModels;
+
+static float			r_avertexnormals[NUMVERTEXNORMALS][3] =
+{
+#include "anorms.h"
+};
 
 // CODE --------------------------------------------------------------------
 

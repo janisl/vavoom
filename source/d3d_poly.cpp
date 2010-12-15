@@ -94,7 +94,7 @@ void VDirect3DDrawer::DrawPolygon(surface_t* surf, int)
 
 	if (lightmaped)
 	{
-		CacheSurface(surf);
+		RendLev->CacheSurface(surf);
 		if (maxMultiTex >= 2)
 		{
 			return;
@@ -251,7 +251,7 @@ void VDirect3DDrawer::WorldDrawing()
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
-			if (!light_chain[lb])
+			if (!RendLev->light_chain[lb])
 			{
 				continue;
 			}
@@ -259,17 +259,17 @@ void VDirect3DDrawer::WorldDrawing()
 			if (!light_surf[lb])
 			{
 				light_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16, false);
-				block_changed[lb] = true;
+				RendLev->block_changed[lb] = true;
 			}
-			if (block_changed[lb])
+			if (RendLev->block_changed[lb])
 			{
-				block_changed[lb] = false;
-				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
+				RendLev->block_changed[lb] = false;
+				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, RendLev->light_block[lb]);
 			}
 
 			RenderDevice->SetTexture(1, light_surf[lb]);
 
-			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
@@ -304,7 +304,7 @@ void VDirect3DDrawer::WorldDrawing()
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
-			if (!light_chain[lb])
+			if (!RendLev->light_chain[lb])
 			{
 				continue;
 			}
@@ -312,17 +312,17 @@ void VDirect3DDrawer::WorldDrawing()
 			if (!light_surf[lb])
 			{
 				light_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16, false);
-				block_changed[lb] = true;
+				RendLev->block_changed[lb] = true;
 			}
-			if (block_changed[lb])
+			if (RendLev->block_changed[lb])
 			{
-				block_changed[lb] = false;
-				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, light_block[lb]);
+				RendLev->block_changed[lb] = false;
+				UploadTextureImage(light_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, RendLev->light_block[lb]);
 			}
 
 			RenderDevice->SetTexture(0, light_surf[lb]);
 
-			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
@@ -365,7 +365,7 @@ void VDirect3DDrawer::WorldDrawing()
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
-			if (!add_chain[lb])
+			if (!RendLev->add_chain[lb])
 			{
 				continue;
 			}
@@ -373,17 +373,17 @@ void VDirect3DDrawer::WorldDrawing()
 			if (!add_surf[lb])
 			{
 				add_surf[lb] = CreateSurface(BLOCK_WIDTH, BLOCK_HEIGHT, 16, false);
-				add_changed[lb] = true;
+				RendLev->add_changed[lb] = true;
 			}
-			if (add_changed[lb])
+			if (RendLev->add_changed[lb])
 			{
-				add_changed[lb] = false;
-				UploadTextureImage(add_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, add_block[lb]);
+				RendLev->add_changed[lb] = false;
+				UploadTextureImage(add_surf[lb], 0, BLOCK_WIDTH, BLOCK_HEIGHT, RendLev->add_block[lb]);
 			}
 
 			RenderDevice->SetTexture(0, add_surf[lb]);
 
-			for (cache = add_chain[lb]; cache; cache = cache->addchain)
+			for (cache = RendLev->add_chain[lb]; cache; cache = cache->addchain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;

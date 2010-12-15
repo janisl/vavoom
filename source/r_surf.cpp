@@ -271,7 +271,7 @@ void VRenderLevelShared::FlushSurfCaches(surface_t* InSurfs)
 	{
 		if (surfs->CacheSurf)
 		{
-			Drawer->FreeSurfCache(surfs->CacheSurf);
+			FreeSurfCache(surfs->CacheSurf);
 		}
 		surfs = surfs->next;
 	}
@@ -2664,7 +2664,7 @@ void VRenderLevelShared::FreeSurfaces(surface_t* InSurf)
 	{
 		if (s->CacheSurf)
 		{
-			Drawer->FreeSurfCache(s->CacheSurf);
+			FreeSurfCache(s->CacheSurf);
 		}
 		if (s->lightmap)
 		{

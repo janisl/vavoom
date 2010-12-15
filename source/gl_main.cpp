@@ -855,7 +855,6 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	}
 
 	PortalDepth = 0;
-	cacheframecount++;
 	unguard;
 }
 
@@ -898,8 +897,8 @@ void VOpenGLDrawer::SetupViewOrg()
 		glDisable(GL_CLIP_PLANE0);
 	}
 
-	memset(light_chain, 0, sizeof(light_chain));
-	memset(add_chain, 0, sizeof(add_chain));
+	memset(RendLev->light_chain, 0, sizeof(RendLev->light_chain));
+	memset(RendLev->add_chain, 0, sizeof(RendLev->add_chain));
 	SimpleSurfsHead = NULL;
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;

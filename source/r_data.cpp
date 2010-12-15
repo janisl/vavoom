@@ -66,9 +66,7 @@ struct VTempClassEffects
 rgba_t								r_palette[256];
 vuint8								r_black_colour;
 
-extern "C" {
 vuint8								r_rgbtable[32 * 32 * 32 + 4];
-};
 
 //	variables used to look up
 // and range check thing_t sprites patches

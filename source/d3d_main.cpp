@@ -468,8 +468,6 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-	cacheframecount++;
-
 	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
 	if (HasStencil)
 	{
@@ -529,8 +527,8 @@ void VDirect3DDrawer::SetupViewOrg()
         RenderDevice->SetRenderState(D3DRS_CLIPPLANEENABLE, 0);
 	}
 
-	memset(light_chain, 0, sizeof(light_chain));
-	memset(add_chain, 0, sizeof(add_chain));
+	memset(RendLev->light_chain, 0, sizeof(RendLev->light_chain));
+	memset(RendLev->add_chain, 0, sizeof(RendLev->add_chain));
 	SimpleSurfsHead = NULL;
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;

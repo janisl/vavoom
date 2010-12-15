@@ -356,6 +356,12 @@ protected:
 	TArray<light_t>	Lights;
 	dlight_t		DLights[MAX_DLIGHTS];
 
+	//	Surface cache.
+	surfcache_t*	freeblocks;
+	surfcache_t*	cacheblocks[NUM_BLOCK_SURFS];
+	surfcache_t		blockbuf[NUM_CACHE_BLOCKS];
+	vuint32			cacheframecount;
+
 	//	Moved here so that model rendering methods can be merged.
 	TVec			CurrLightPos;
 	float			CurrLightRadius;
@@ -455,6 +461,12 @@ protected:
 	void DrawPlayerSprites();
 	void DrawCroshair();
 
+	void FlushCaches();
+	void FlushOldCaches();
+	surfcache_t	*AllocBlock(int, int);
+	surfcache_t	*FreeBlock(surfcache_t*, bool);
+	void FreeSurfCache(surfcache_t*);
+
 public:
 	particle_t* NewParticle();
 
@@ -466,6 +478,8 @@ public:
 	void AddStaticLight(const TVec&, float, vuint32);
 	dlight_t* AllocDlight(VThinker*);
 	void DecayLights(float);
+
+	void CacheSurface(surface_t*);
 };
 
 class VRenderLevel : public VRenderLevelShared

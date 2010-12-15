@@ -26,6 +26,11 @@
 #ifndef _DRAWER_H_
 #define _DRAWER_H_
 
+#define BLOCK_WIDTH					128
+#define BLOCK_HEIGHT				128
+#define NUM_BLOCK_SURFS				32
+#define NUM_CACHE_BLOCKS			(8 * 1024)
+
 struct surface_t;
 struct surfcache_t;
 struct mmdl_t;
@@ -60,12 +65,43 @@ struct refdef_t
 	bool		DrawCamera;
 };
 
+struct surfcache_t
+{
+	int				s;			// position in light surface
+	int				t;
+	int				width;		// size
+	int				height;
+	surfcache_t*	bprev;		// line list in block
+	surfcache_t*	bnext;
+	surfcache_t*	lprev;		// cache list in line
+	surfcache_t*	lnext;
+	surfcache_t*	chain;		// list of drawable surfaces
+	surfcache_t*	addchain;	// list of specular surfaces
+	int				blocknum;	// light surface index
+	surfcache_t**	owner;
+	vuint32			Light;		// checked for strobe flash
+	int				dlight;
+	surface_t*		surf;
+	vuint32			lastframe;
+};
+
 class VRenderLevelDrawer : public VRenderLevelPublic
 {
 public:
-	bool		NeedsInfiniteFarClip;
+	bool			NeedsInfiniteFarClip;
+
+	//	Lightmaps.
+	rgba_t			light_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
+	bool			block_changed[NUM_BLOCK_SURFS];
+	surfcache_t*	light_chain[NUM_BLOCK_SURFS];
+
+	//	Specular lightmaps.
+	rgba_t			add_block[NUM_BLOCK_SURFS][BLOCK_WIDTH * BLOCK_HEIGHT];
+	bool			add_changed[NUM_BLOCK_SURFS];
+	surfcache_t*	add_chain[NUM_BLOCK_SURFS];
 
 	virtual bool BuildLightMap(surface_t*, int) = 0;
+	virtual void CacheSurface(surface_t*) = 0;
 };
 
 class VDrawer
@@ -80,10 +116,8 @@ public:
 	{}
 
 	virtual void Init() = 0;
-	virtual void InitData() = 0;
 	virtual bool SetResolution(int, int, int, bool) = 0;
 	virtual void InitResolution() = 0;
-	virtual void NewMap() = 0;
 	virtual void StartUpdate() = 0;
 	virtual void Update() = 0;
 	virtual void BeginDirectUpdate() = 0;
@@ -91,7 +125,6 @@ public:
 	virtual void Shutdown() = 0;
 	virtual void* ReadScreen(int*, bool*) = 0;
 	virtual void ReadBackScreen(int, int, rgba_t*) = 0;
-	virtual void FreeSurfCache(surfcache_t*) = 0;
 
 	//	Rendring stuff
 	virtual void SetupView(VRenderLevelDrawer*, const refdef_t*) = 0;

@@ -202,12 +202,10 @@ void R_DrawViewBorder();
 //
 // POV related.
 //
-extern "C" {
 extern TVec				vieworg;
 extern TVec				viewforward;
 extern TVec				viewright;
 extern TVec				viewup;
-} // extern "C"
 extern TAVec			viewangles;
 
 extern VCvarI			r_fog;
@@ -225,9 +223,7 @@ extern VCvarF			r_fade_factor;
 
 extern VCvarF			r_sky_bright_factor;
 
-extern "C" {
 extern TClipPlane		view_clipplanes[5];
-}
 
 extern bool				MirrorFlip;
 extern bool				MirrorClip;
@@ -245,9 +241,7 @@ extern vuint32			blockaddlightsb[18 * 18];
 extern rgba_t			r_palette[256];
 extern vuint8			r_black_colour;
 
-extern "C" {
 extern vuint8			r_rgbtable[32 * 32 * 32 + 4];
-};
 
 extern int				usegamma;
 extern vuint8			gammatable[5][256];
@@ -255,11 +249,6 @@ extern vuint8			gammatable[5][256];
 extern float			PixelAspect;
 
 extern VTextureTranslation	ColourMaps[CM_Max];
-
-enum { NUMVERTEXNORMALS = 162 };
-extern "C" {
-extern float			r_avertexnormals[NUMVERTEXNORMALS][3];
-}
 
 //==========================================================================
 //

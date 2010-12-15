@@ -70,7 +70,7 @@ void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 
 	if (lightmaped)
 	{
-		CacheSurface(surf);
+		RendLev->CacheSurface(surf);
 		if (mtexable || HaveShaders)
 		{
 			return;
@@ -231,7 +231,7 @@ void VOpenGLDrawer::WorldDrawing()
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
-			if (!light_chain[lb])
+			if (!RendLev->light_chain[lb])
 			{
 				continue;
 			}
@@ -241,15 +241,15 @@ void VOpenGLDrawer::WorldDrawing()
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-			if (block_changed[lb])
+			if (RendLev->block_changed[lb])
 			{
-				block_changed[lb] = false;
+				RendLev->block_changed[lb] = false;
 				glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
-					0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
+					0, GL_RGBA, GL_UNSIGNED_BYTE, RendLev->light_block[lb]);
 			}
 			SelectTexture(0);
 
-			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
@@ -287,7 +287,7 @@ void VOpenGLDrawer::WorldDrawing()
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
-			if (!light_chain[lb])
+			if (!RendLev->light_chain[lb])
 			{
 				continue;
 			}
@@ -296,14 +296,14 @@ void VOpenGLDrawer::WorldDrawing()
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-			if (block_changed[lb])
+			if (RendLev->block_changed[lb])
 			{
-				block_changed[lb] = false;
+				RendLev->block_changed[lb] = false;
 				glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
-					0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
+					0, GL_RGBA, GL_UNSIGNED_BYTE, RendLev->light_block[lb]);
 			}
 
-			for (cache = light_chain[lb]; cache; cache = cache->chain)
+			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
@@ -341,7 +341,7 @@ void VOpenGLDrawer::WorldDrawing()
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
-			if (!add_chain[lb])
+			if (!RendLev->add_chain[lb])
 			{
 				continue;
 			}
@@ -350,14 +350,14 @@ void VOpenGLDrawer::WorldDrawing()
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-			if (add_changed[lb])
+			if (RendLev->add_changed[lb])
 			{
-				add_changed[lb] = false;
+				RendLev->add_changed[lb] = false;
 				glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
-					0, GL_RGBA, GL_UNSIGNED_BYTE, add_block[lb]);
+					0, GL_RGBA, GL_UNSIGNED_BYTE, RendLev->add_block[lb]);
 			}
 
-			for (cache = add_chain[lb]; cache; cache = cache->addchain)
+			for (cache = RendLev->add_chain[lb]; cache; cache = cache->addchain)
 			{
 				surf = cache->surf;
 				tex = surf->texinfo;
@@ -479,7 +479,7 @@ void VOpenGLDrawer::WorldDrawingShaders()
 
 	for (int lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 	{
-		if (!light_chain[lb])
+		if (!RendLev->light_chain[lb])
 		{
 			continue;
 		}
@@ -488,28 +488,28 @@ void VOpenGLDrawer::WorldDrawingShaders()
 		glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		if (block_changed[lb])
+		if (RendLev->block_changed[lb])
 		{
-			block_changed[lb] = false;
+			RendLev->block_changed[lb] = false;
 			glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
-				0, GL_RGBA, GL_UNSIGNED_BYTE, light_block[lb]);
-			add_changed[lb] = true;
+				0, GL_RGBA, GL_UNSIGNED_BYTE, RendLev->light_block[lb]);
+			RendLev->add_changed[lb] = true;
 		}
 
 		SelectTexture(2);
 		glBindTexture(GL_TEXTURE_2D, addmap_id[lb]);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		if (add_changed[lb])
+		if (RendLev->add_changed[lb])
 		{
-			add_changed[lb] = false;
+			RendLev->add_changed[lb] = false;
 			glTexImage2D(GL_TEXTURE_2D, 0, 4, BLOCK_WIDTH, BLOCK_HEIGHT,
-				0, GL_RGBA, GL_UNSIGNED_BYTE, add_block[lb]);
+				0, GL_RGBA, GL_UNSIGNED_BYTE, RendLev->add_block[lb]);
 		}
 
 		SelectTexture(0);
 
-		for (cache = light_chain[lb]; cache; cache = cache->chain)
+		for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 		{
 			surf = cache->surf;
 			tex = surf->texinfo;
