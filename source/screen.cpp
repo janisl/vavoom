@@ -349,10 +349,6 @@ static void ChangeResolution(int InWidth, int InHeight, int InBpp)
 	int height = InHeight;
 	int bpp = InBpp;
 	bool win = false;
-	if (width > MAXSCREENWIDTH)
-		width = MAXSCREENWIDTH;
-	if (height > MAXSCREENHEIGHT)
-		height = MAXSCREENHEIGHT;
 	if (bpp != 8 && bpp != 15 && bpp != 16 && bpp != 24 && bpp != 32)
 	{
 		GCon->Log("Invalid bpp, using 8");
