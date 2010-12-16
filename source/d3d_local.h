@@ -35,7 +35,8 @@
 #include "winlocal.h"
 #include "gamedefs.h"
 #include <d3d9.h>
-#include "r_hardware.h"
+#include "cl_local.h"
+#include "r_shared.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -128,7 +129,7 @@ public:
 	}
 };
 
-class VDirect3DDrawer : public VHardwareDrawer
+class VDirect3DDrawer : public VDrawer
 {
 public:
 	VDirect3DDrawer();

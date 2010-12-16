@@ -229,6 +229,13 @@ VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
 	memset(add_chain, 0, sizeof(add_chain));
 	memset(cacheblocks, 0, sizeof(cacheblocks));
 	memset(blockbuf, 0, sizeof(blockbuf));
+	SimpleSurfsHead = NULL;
+	SimpleSurfsTail = NULL;
+	SkyPortalsHead = NULL;
+	SkyPortalsTail = NULL;
+	HorizonPortalsHead = NULL;
+	HorizonPortalsTail = NULL;
+	PortalDepth = 0;
 
 	VisSize = (Level->NumSubsectors + 7) >> 3;
 	BspVis = new vuint8[VisSize];
@@ -652,6 +659,7 @@ void VRenderLevelShared::SetupFrame()
 
 	Drawer->SetupView(this, &refdef);
 	cacheframecount++;
+	PortalDepth = 0;
 	unguard;
 }
 
@@ -704,6 +712,7 @@ void VRenderLevelShared::SetupCameraFrame(VEntity* Camera, VTexture* Tex,
 
 	Drawer->SetupView(this, rd);
 	cacheframecount++;
+	PortalDepth = 0;
 	set_resolutioon_needed = true;
 	unguard;
 }

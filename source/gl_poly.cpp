@@ -77,15 +77,15 @@ void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 		}
 	}
 
-	if (SimpleSurfsTail)
+	if (RendLev->SimpleSurfsTail)
 	{
-		SimpleSurfsTail->DrawNext = surf;
-		SimpleSurfsTail = surf;
+		RendLev->SimpleSurfsTail->DrawNext = surf;
+		RendLev->SimpleSurfsTail = surf;
 	}
 	else
 	{
-		SimpleSurfsHead = surf;
-		SimpleSurfsTail = surf;
+		RendLev->SimpleSurfsHead = surf;
+		RendLev->SimpleSurfsTail = surf;
 	}
 	surf->DrawNext = NULL;
 	unguard;
@@ -100,15 +100,15 @@ void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 void VOpenGLDrawer::DrawSkyPortal(surface_t* surf, int)
 {
 	guard(VOpenGLDrawer::DrawSkyPortal);
-	if (SkyPortalsTail)
+	if (RendLev->SkyPortalsTail)
 	{
-		SkyPortalsTail->DrawNext = surf;
-		SkyPortalsTail = surf;
+		RendLev->SkyPortalsTail->DrawNext = surf;
+		RendLev->SkyPortalsTail = surf;
 	}
 	else
 	{
-		SkyPortalsHead = surf;
-		SkyPortalsTail = surf;
+		RendLev->SkyPortalsHead = surf;
+		RendLev->SkyPortalsTail = surf;
 	}
 	surf->DrawNext = NULL;
 	unguard;
@@ -123,15 +123,15 @@ void VOpenGLDrawer::DrawSkyPortal(surface_t* surf, int)
 void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
 {
 	guard(VOpenGLDrawer::DrawHorizonPolygon);
-	if (HorizonPortalsTail)
+	if (RendLev->HorizonPortalsTail)
 	{
-		HorizonPortalsTail->DrawNext = surf;
-		HorizonPortalsTail = surf;
+		RendLev->HorizonPortalsTail->DrawNext = surf;
+		RendLev->HorizonPortalsTail = surf;
 	}
 	else
 	{
-		HorizonPortalsHead = surf;
-		HorizonPortalsTail = surf;
+		RendLev->HorizonPortalsHead = surf;
+		RendLev->HorizonPortalsTail = surf;
 	}
 	surf->DrawNext = NULL;
 	unguard;
@@ -160,9 +160,9 @@ void VOpenGLDrawer::WorldDrawing()
 	texinfo_t	*tex;
 
 	//	First draw horizons.
-	if (HorizonPortalsHead)
+	if (RendLev->HorizonPortalsHead)
 	{
-		for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
 			DoHorizonPolygon(surf);
 		}
@@ -170,11 +170,11 @@ void VOpenGLDrawer::WorldDrawing()
 
 	//	For sky areas we just write to the depth buffer to prevent drawing
 	// polygons behind the sky.
-	if (SkyPortalsHead)
+	if (RendLev->SkyPortalsHead)
 	{
 		glDisable(GL_TEXTURE_2D);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
@@ -188,9 +188,9 @@ void VOpenGLDrawer::WorldDrawing()
 	}
 
 	//	Draw surfaces.
-	if (SimpleSurfsHead)
+	if (RendLev->SimpleSurfsHead)
 	{
-		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
 			texinfo_t* tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
@@ -397,9 +397,9 @@ void VOpenGLDrawer::WorldDrawingShaders()
 	texinfo_t	*tex;
 
 	//	First draw horizons.
-	if (HorizonPortalsHead)
+	if (RendLev->HorizonPortalsHead)
 	{
-		for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
 			DoHorizonPolygon(surf);
 		}
@@ -407,11 +407,11 @@ void VOpenGLDrawer::WorldDrawingShaders()
 
 	//	For sky areas we just write to the depth buffer to prevent drawing
 	// polygons behind the sky.
-	if (SkyPortalsHead)
+	if (RendLev->SkyPortalsHead)
 	{
 		p_glUseProgramObjectARB(SurfZBufProgram);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			glBegin(GL_POLYGON);
 			for (int i = 0; i < surf->count; i++)
@@ -424,13 +424,13 @@ void VOpenGLDrawer::WorldDrawingShaders()
 	}
 
 	//	Draw surfaces.
-	if (SimpleSurfsHead)
+	if (RendLev->SimpleSurfsHead)
 	{
 		p_glUseProgramObjectARB(SurfSimpleProgram);
 		p_glUniform1iARB(SurfSimpleTextureLoc, 0);
 		p_glUniform1iARB(SurfSimpleFogTypeLoc, r_fog & 3);
 
-		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
 			texinfo_t* tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
@@ -563,19 +563,19 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 {
 	guard(VOpenGLDrawer::DrawWorldAmbientPass);
 	//	First draw horizons.
-	if (HorizonPortalsHead)
+	if (RendLev->HorizonPortalsHead)
 	{
-		for (surface_t* surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		for (surface_t* surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
 			DoHorizonPolygon(surf);
 		}
 	}
 
-	if (SkyPortalsHead)
+	if (RendLev->SkyPortalsHead)
 	{
 		p_glUseProgramObjectARB(SurfZBufProgram);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		for (surface_t* surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		for (surface_t* surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			glBegin(GL_POLYGON);
 			for (int i = 0; i < surf->count; i++)
@@ -588,7 +588,7 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 	}
 
 	p_glUseProgramObjectARB(ShadowsAmbientProgram);
-	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	for (surface_t* surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
 		float lev = float(surf->Light >> 24) / 255.0;
 		p_glUniform4fARB(ShadowsAmbientLightLoc,
@@ -767,7 +767,7 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 	p_glUseProgramObjectARB(ShadowsTextureProgram);
 	p_glUniform1iARB(ShadowsTextureTextureLoc, 0);
 
-	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	for (surface_t* surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
 		texinfo_t* tex = surf->texinfo;
 		SetTexture(tex->Tex, tex->ColourMap);
@@ -799,7 +799,7 @@ void VOpenGLDrawer::DrawWorldFogPass()
 	p_glUseProgramObjectARB(ShadowsFogProgram);
 	p_glUniform1iARB(ShadowsFogFogTypeLoc, r_fog & 3);
 
-	for (surface_t* surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+	for (surface_t* surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
 		if (!surf->Fade)
 		{
@@ -1574,18 +1574,18 @@ bool VOpenGLDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 		glDepthMask(GL_FALSE);
 
 		//	Set up stencil test.
-		if (!PortalDepth)
+		if (!RendLev->PortalDepth)
 		{
 			glEnable(GL_STENCIL_TEST);
 		}
-		glStencilFunc(GL_EQUAL, PortalDepth, ~0);
+		glStencilFunc(GL_EQUAL, RendLev->PortalDepth, ~0);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_INCR);
 
 		//	Mark the portal area.
 		DrawPortalArea(Portal);
 
 		//	Set up stencil test for portal
-		glStencilFunc(GL_EQUAL, PortalDepth + 1, ~0);
+		glStencilFunc(GL_EQUAL, RendLev->PortalDepth + 1, ~0);
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
 		if (Portal->NeedsDepthBuffer())
@@ -1611,7 +1611,7 @@ bool VOpenGLDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 			glEnable(GL_TEXTURE_2D);
 		}
 
-		PortalDepth++;
+		RendLev->PortalDepth++;
 	}
 	else
 	{
@@ -1692,9 +1692,9 @@ void VOpenGLDrawer::EndPortal(VPortal* Portal, bool UseStencil)
 
 		glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
-		PortalDepth--;
-		glStencilFunc(GL_EQUAL, PortalDepth, ~0);
-		if (!PortalDepth)
+		RendLev->PortalDepth--;
+		glStencilFunc(GL_EQUAL, RendLev->PortalDepth, ~0);
+		if (!RendLev->PortalDepth)
 		{
 			glDisable(GL_STENCIL_TEST);
 		}

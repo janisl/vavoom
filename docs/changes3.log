@@ -4330,3 +4330,7 @@
   Firebrand added Use Inventory console command, it takes the inventory item name as a parameter.
 14.12.2010
   I merged renderer parts that were not changed by advanced renderer.
+15.12.2010
+  I moved code from hardware renderer class to level renderer and texture classes.
+16.12.2010
+  I removed screen resolution limit.

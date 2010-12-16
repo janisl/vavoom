@@ -250,6 +250,9 @@ extern float			PixelAspect;
 
 extern VTextureTranslation	ColourMaps[CM_Max];
 
+enum { SHADEDOT_QUANT = 16 };
+extern float			r_avertexnormal_dots[SHADEDOT_QUANT][256];
+
 //==========================================================================
 //
 //	R_LookupRBG

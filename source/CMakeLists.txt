@@ -138,7 +138,6 @@ set(MAIN_COMMON_SOURCES
 	r_bsp.cpp
 	r_data.cpp
 	r_hardware.cpp
-	r_hardware.h
 	r_light.cpp
 	r_local.h
 	r_main.cpp

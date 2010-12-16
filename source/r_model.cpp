@@ -118,6 +118,11 @@ struct VTempEdge
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
+// precalculated dot products for quantized angles
+float					r_avertexnormal_dots[SHADEDOT_QUANT][256] =
+#include "anorm_dots.h"
+;
+
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static TArray<VModel*>				mod_known;

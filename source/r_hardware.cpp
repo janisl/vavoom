@@ -27,7 +27,6 @@
 
 #include "gamedefs.h"
 #include "r_local.h"
-#include "r_hardware.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -43,31 +42,9 @@
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-// precalculated dot products for quantized angles
-float			VHardwareDrawer::r_avertexnormal_dots[
-	VHardwareDrawer::SHADEDOT_QUANT][256] =
-#include "anorm_dots.h"
-;
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 // CODE --------------------------------------------------------------------
-
-//==========================================================================
-//
-//	VHardwareDrawer::VHardwareDrawer
-//
-//==========================================================================
-
-VHardwareDrawer::VHardwareDrawer()
-: RendLev(NULL)
-, SimpleSurfsHead(NULL)
-, SimpleSurfsTail(NULL)
-, SkyPortalsHead(NULL)
-, SkyPortalsTail(NULL)
-, PortalDepth(0)
-{
-}
 
 //==========================================================================
 //

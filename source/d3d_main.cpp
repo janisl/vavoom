@@ -529,12 +529,12 @@ void VDirect3DDrawer::SetupViewOrg()
 
 	memset(RendLev->light_chain, 0, sizeof(RendLev->light_chain));
 	memset(RendLev->add_chain, 0, sizeof(RendLev->add_chain));
-	SimpleSurfsHead = NULL;
-	SimpleSurfsTail = NULL;
-	SkyPortalsHead = NULL;
-	SkyPortalsTail = NULL;
-	HorizonPortalsHead = NULL;
-	HorizonPortalsTail = NULL;
+	RendLev->SimpleSurfsHead = NULL;
+	RendLev->SimpleSurfsTail = NULL;
+	RendLev->SkyPortalsHead = NULL;
+	RendLev->SkyPortalsTail = NULL;
+	RendLev->HorizonPortalsHead = NULL;
+	RendLev->HorizonPortalsTail = NULL;
 	unguard;
 }
 

@@ -101,15 +101,15 @@ void VDirect3DDrawer::DrawPolygon(surface_t* surf, int)
 		}
 	}
 
-	if (SimpleSurfsTail)
+	if (RendLev->SimpleSurfsTail)
 	{
-		SimpleSurfsTail->DrawNext = surf;
-		SimpleSurfsTail = surf;
+		RendLev->SimpleSurfsTail->DrawNext = surf;
+		RendLev->SimpleSurfsTail = surf;
 	}
 	else
 	{
-		SimpleSurfsHead = surf;
-		SimpleSurfsTail = surf;
+		RendLev->SimpleSurfsHead = surf;
+		RendLev->SimpleSurfsTail = surf;
 	}
 	surf->DrawNext = NULL;
 	unguard;
@@ -124,15 +124,15 @@ void VDirect3DDrawer::DrawPolygon(surface_t* surf, int)
 void VDirect3DDrawer::DrawSkyPortal(surface_t* surf, int)
 {
 	guard(VDirect3DDrawer::DrawSkyPortal);
-	if (SkyPortalsTail)
+	if (RendLev->SkyPortalsTail)
 	{
-		SkyPortalsTail->DrawNext = surf;
-		SkyPortalsTail = surf;
+		RendLev->SkyPortalsTail->DrawNext = surf;
+		RendLev->SkyPortalsTail = surf;
 	}
 	else
 	{
-		SkyPortalsHead = surf;
-		SkyPortalsTail = surf;
+		RendLev->SkyPortalsHead = surf;
+		RendLev->SkyPortalsTail = surf;
 	}
 	surf->DrawNext = NULL;
 	unguard;
@@ -147,15 +147,15 @@ void VDirect3DDrawer::DrawSkyPortal(surface_t* surf, int)
 void VDirect3DDrawer::DrawHorizonPolygon(surface_t* surf, int)
 {
 	guard(VDirect3DDrawer::DrawHorizonPolygon);
-	if (HorizonPortalsTail)
+	if (RendLev->HorizonPortalsTail)
 	{
-		HorizonPortalsTail->DrawNext = surf;
-		HorizonPortalsTail = surf;
+		RendLev->HorizonPortalsTail->DrawNext = surf;
+		RendLev->HorizonPortalsTail = surf;
 	}
 	else
 	{
-		HorizonPortalsHead = surf;
-		HorizonPortalsTail = surf;
+		RendLev->HorizonPortalsHead = surf;
+		RendLev->HorizonPortalsTail = surf;
 	}
 	surf->DrawNext = NULL;
 	unguard;
@@ -179,9 +179,9 @@ void VDirect3DDrawer::WorldDrawing()
 	vuint32			light;
 
 	//	First draw horizons.
-	if (HorizonPortalsHead)
+	if (RendLev->HorizonPortalsHead)
 	{
-		for (surf = HorizonPortalsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
 			DoHorizonPolygon(surf);
 		}
@@ -189,11 +189,11 @@ void VDirect3DDrawer::WorldDrawing()
 
 	//	For sky areas we just write to the depth buffer to prevent drawing
 	// polygons behind the sky.
-	if (SkyPortalsHead)
+	if (RendLev->SkyPortalsHead)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
 		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
-		for (surf = SkyPortalsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
 			for (i = 0; i < surf->count; i++)
 			{
@@ -206,9 +206,9 @@ void VDirect3DDrawer::WorldDrawing()
 	}
 
 	//	Draw surfaces.
-	if (SimpleSurfsHead)
+	if (RendLev->SimpleSurfsHead)
 	{
-		for (surf = SimpleSurfsHead; surf; surf = surf->DrawNext)
+		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
 			texinfo_t *tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
@@ -1013,19 +1013,19 @@ bool VDirect3DDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 		RenderDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
 		//	Set up stencil test.
-		if (!PortalDepth)
+		if (!RendLev->PortalDepth)
 		{
 			RenderDevice->SetRenderState(D3DRS_STENCILENABLE, TRUE);
 		}
 		RenderDevice->SetRenderState(D3DRS_STENCILFUNC, D3DCMP_EQUAL);
-		RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
+		RenderDevice->SetRenderState(D3DRS_STENCILREF, RendLev->PortalDepth);
 		RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_INCR);
 
 		//	Mark the portal area.
 		DrawPortalArea(Portal);
 
 		//	Set up stencil test for portal
-		RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth + 1);
+		RenderDevice->SetRenderState(D3DRS_STENCILREF, RendLev->PortalDepth + 1);
 		RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
 
 		if (Portal->NeedsDepthBuffer())
@@ -1050,7 +1050,7 @@ bool VDirect3DDrawer::StartPortal(VPortal* Portal, bool UseStencil)
 		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0x0f);
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
 
-		PortalDepth++;
+		RendLev->PortalDepth++;
 	}
 	else
 	{
@@ -1132,9 +1132,9 @@ void VDirect3DDrawer::EndPortal(VPortal* Portal, bool UseStencil)
 
 		RenderDevice->SetRenderState(D3DRS_STENCILPASS, D3DSTENCILOP_KEEP);
 
-		PortalDepth--;
-		RenderDevice->SetRenderState(D3DRS_STENCILREF, PortalDepth);
-		if (!PortalDepth)
+		RendLev->PortalDepth--;
+		RenderDevice->SetRenderState(D3DRS_STENCILREF, RendLev->PortalDepth);
+		if (!RendLev->PortalDepth)
 		{
 			RenderDevice->SetRenderState(D3DRS_STENCILENABLE, FALSE);
 		}

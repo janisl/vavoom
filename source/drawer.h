@@ -100,6 +100,15 @@ public:
 	bool			add_changed[NUM_BLOCK_SURFS];
 	surfcache_t*	add_chain[NUM_BLOCK_SURFS];
 
+	surface_t*		SimpleSurfsHead;
+	surface_t*		SimpleSurfsTail;
+	surface_t*		SkyPortalsHead;
+	surface_t*		SkyPortalsTail;
+	surface_t*		HorizonPortalsHead;
+	surface_t*		HorizonPortalsTail;
+
+	int			    PortalDepth;
+
 	virtual bool BuildLightMap(surface_t*, int) = 0;
 	virtual void CacheSurface(surface_t*) = 0;
 };
@@ -109,8 +118,11 @@ class VDrawer
 public:
 	bool			HasStencil;
 
+	VRenderLevelDrawer*	RendLev;
+
 	VDrawer()
 	: HasStencil(false)
+	, RendLev(NULL)
 	{}
 	virtual ~VDrawer()
 	{}

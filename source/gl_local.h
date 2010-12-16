@@ -38,7 +38,8 @@
 #endif
 
 #include "gamedefs.h"
-#include "r_hardware.h"
+#include "cl_local.h"
+#include "r_shared.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -340,7 +341,7 @@ typedef void (APIENTRY*glGetBufferPointervARB_t)(GLenum, GLenum, GLvoid* *);
 
 typedef void (APIENTRY*glDrawRangeElementsEXT_t)(GLenum, GLuint, GLuint, GLsizei, GLenum, const GLvoid *);
 
-class VOpenGLDrawer : public VHardwareDrawer
+class VOpenGLDrawer : public VDrawer
 {
 public:
 	//
