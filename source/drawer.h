@@ -110,7 +110,6 @@ public:
 	int			    PortalDepth;
 
 	virtual bool BuildLightMap(surface_t*, int) = 0;
-	virtual void CacheSurface(surface_t*) = 0;
 };
 
 class VDrawer

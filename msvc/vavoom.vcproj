@@ -740,10 +740,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\r_hardware.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\source\r_light.cpp"
 				>
 			</File>

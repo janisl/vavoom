@@ -4337,3 +4337,4 @@
 17.12.2010
   I moved queuing of surfaces in draw queues to level renderer.
   I moved mutitexture flag to drawe base class.
+  I changed surface caching methods to b used only by regular level renderer.

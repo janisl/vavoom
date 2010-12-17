@@ -355,10 +355,7 @@ protected:
 	TArray<light_t>	Lights;
 	dlight_t		DLights[MAX_DLIGHTS];
 
-	//	Surface cache.
-	surfcache_t*	freeblocks;
-	surfcache_t*	cacheblocks[NUM_BLOCK_SURFS];
-	surfcache_t		blockbuf[NUM_CACHE_BLOCKS];
+	// Only regular renderer needs this.
 	vuint32			cacheframecount;
 
 	//	Moved here so that model rendering methods can be merged.
@@ -374,6 +371,8 @@ protected:
 	virtual void InitSurfs(surface_t*, texinfo_t*, TPlane*, subsector_t*) = 0;
 	virtual surface_t* SubdivideFace(surface_t*, const TVec&, const TVec*) = 0;
 	virtual surface_t* SubdivideSeg(surface_t*, const TVec&, const TVec*) = 0;
+	virtual void QueueWorldSurface(surface_t*) = 0;
+	virtual void FreeSurfCache(surfcache_t*) = 0;
 
 	//	General
 	void ExecuteSetViewSize();
@@ -399,7 +398,6 @@ protected:
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
-	void QueueWorldSurface(surface_t*);
 	void QueueSimpleSurf(surface_t*);
 	void QueueSkyPortal(surface_t*);
 	void QueueHorizonPortal(surface_t*);
@@ -463,12 +461,6 @@ protected:
 	void DrawPlayerSprites();
 	void DrawCroshair();
 
-	void FlushCaches();
-	void FlushOldCaches();
-	surfcache_t	*AllocBlock(int, int);
-	surfcache_t	*FreeBlock(surfcache_t*, bool);
-	void FreeSurfCache(surfcache_t*);
-
 public:
 	particle_t* NewParticle();
 
@@ -480,8 +472,6 @@ public:
 	void AddStaticLight(const TVec&, float, vuint32);
 	dlight_t* AllocDlight(VThinker*);
 	void DecayLights(float);
-
-	void CacheSurface(surface_t*);
 };
 
 class VRenderLevel : public VRenderLevelShared
@@ -489,6 +479,11 @@ class VRenderLevel : public VRenderLevelShared
 private:
 	int				c_subdivides;
 	int				c_seg_div;
+
+	//	Surface cache.
+	surfcache_t*	freeblocks;
+	surfcache_t*	cacheblocks[NUM_BLOCK_SURFS];
+	surfcache_t		blockbuf[NUM_CACHE_BLOCKS];
 
 	//	General
 	void RenderScene(const refdef_t*, const VViewClipper*);
@@ -511,8 +506,15 @@ private:
 	void MarkLights(dlight_t*, int, int);
 	void AddDynamicLights(surface_t*);
 	void PushDlights();
+	void FlushCaches();
+	void FlushOldCaches();
+	surfcache_t* AllocBlock(int, int);
+	surfcache_t	*FreeBlock(surfcache_t*, bool);
+	void FreeSurfCache(surfcache_t*);
+	void CacheSurface(surface_t*);
 
 	//	World BSP rendering
+	void QueueWorldSurface(surface_t*);
 	void RenderWorld(const refdef_t*, const VViewClipper*);
 
 public:
@@ -546,8 +548,10 @@ private:
 	//	Light methods
 	void PushDlights();
 	vuint32 LightPointAmbient(const TVec &p);
+	void FreeSurfCache(surfcache_t*);
 
 	//	World BSP rendering
+	void QueueWorldSurface(surface_t*);
 	void RenderWorld(const refdef_t*, const VViewClipper*);
 
 	void BuildLightVis(int bspnum, float* bbox);

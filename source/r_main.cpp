@@ -215,7 +215,6 @@ VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
 , AllocatedSubRegions(NULL)
 , AllocatedDrawSegs(NULL)
 , AllocatedSegParts(NULL)
-, freeblocks(NULL)
 , cacheframecount(0)
 {
 	guard(VRenderLevelShared::VRenderLevelShared);
@@ -227,8 +226,6 @@ VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
 	memset(add_block, 0, sizeof(add_block));
 	memset(add_changed, 0, sizeof(add_changed));
 	memset(add_chain, 0, sizeof(add_chain));
-	memset(cacheblocks, 0, sizeof(cacheblocks));
-	memset(blockbuf, 0, sizeof(blockbuf));
 	SimpleSurfsHead = NULL;
 	SimpleSurfsTail = NULL;
 	SkyPortalsHead = NULL;
@@ -244,8 +241,6 @@ VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
 	ClearParticles();
 
 	screenblocks = 0;
-
-	FlushCaches();
 
 	// preload graphics
 	if (precache)
@@ -265,9 +260,15 @@ VRenderLevel::VRenderLevel(VLevel* ALevel)
 : VRenderLevelShared(ALevel)
 , c_subdivides(0)
 , c_seg_div(0)
+, freeblocks(NULL)
 {
 	guard(VRenderLevel::VRenderLevel);
 	NeedsInfiniteFarClip = false;
+
+	memset(cacheblocks, 0, sizeof(cacheblocks));
+	memset(blockbuf, 0, sizeof(blockbuf));
+
+	FlushCaches();
 
 	memset(DLights, 0, sizeof(DLights));
 	unguard;

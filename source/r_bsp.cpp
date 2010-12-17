@@ -90,13 +90,13 @@ void VRenderLevelShared::SetUpFrustumIndexes()
 
 //==========================================================================
 //
-//	VRenderLevelShared::QueueWorldSurface
+//	VRenderLevel::QueueWorldSurface
 //
 //==========================================================================
 
-void VRenderLevelShared::QueueWorldSurface(surface_t* surf)
+void VRenderLevel::QueueWorldSurface(surface_t* surf)
 {
-	guard(VRenderLevelShared::QueueWorldSurface);
+	guard(VRenderLevel::QueueWorldSurface);
 	bool lightmaped = surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount;
 
@@ -109,6 +109,19 @@ void VRenderLevelShared::QueueWorldSurface(surface_t* surf)
 		}
 	}
 
+	QueueSimpleSurf(surf);
+	unguard;
+}
+
+//==========================================================================
+//
+//	VAdvancedRenderLevel::QueueWorldSurface
+//
+//==========================================================================
+
+void VAdvancedRenderLevel::QueueWorldSurface(surface_t* surf)
+{
+	guard(VAdvancedRenderLevel::QueueWorldSurface);
 	QueueSimpleSurf(surf);
 	unguard;
 }
