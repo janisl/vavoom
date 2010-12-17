@@ -116,12 +116,12 @@ public:
 class VDrawer
 {
 public:
-	bool			HasStencil;
+	bool				HaveStencil;
 
 	VRenderLevelDrawer*	RendLev;
 
 	VDrawer()
-	: HasStencil(false)
+	: HaveStencil(false)
 	, RendLev(NULL)
 	{}
 	virtual ~VDrawer()

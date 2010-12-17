@@ -228,7 +228,7 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 					false, 0, 0, TVec(), 0, TVec(), TVec(), TVec());
 			}
 
-			if (!Drawer->HasStencil)
+			if (!Drawer->HaveStencil)
 			{
 				if (PortalLevel == 0)
 				{
@@ -427,7 +427,7 @@ void VRenderLevelShared::RenderMirror(drawseg_t* dseg, int clipflags)
 	guard(VRenderLevelShared::RenderMirror);
 	seg_t* Seg = dseg->seg;
 
-	if (Drawer->HasStencil && MirrorLevel < r_maxmirrors)
+	if (Drawer->HaveStencil && MirrorLevel < r_maxmirrors)
 	{
 		VPortal* Portal = NULL;
 		for (int i = 0; i < Portals.Num(); i++)
@@ -584,7 +584,7 @@ void VRenderLevelShared::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 		return;
 	}
 
-	if (plane.MirrorAlpha < 1.0 && Drawer->HasStencil &&
+	if (plane.MirrorAlpha < 1.0 && Drawer->HaveStencil &&
 		MirrorLevel < r_maxmirrors)
 	{
 		VPortal* Portal = NULL;
@@ -908,7 +908,7 @@ void VRenderLevelShared::RenderPortals()
 {
 	guard(VRenderLevelShared::RenderPortals);
 	PortalLevel++;
-	if (Drawer->HasStencil)
+	if (Drawer->HaveStencil)
 	{
 		for (int i = 0; i < Portals.Num(); i++)
 		{

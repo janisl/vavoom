@@ -406,7 +406,7 @@ void VOpenGLDrawer::InitResolution()
 
 	glClearColor(0.0, 0.0, 0.0, 0.0);	// Black Background
 	glClearDepth(1.0);					// Depth Buffer Setup
-	if (HasStencil)
+	if (HaveStencil)
 	{
 		glClearStencil(0);
 	}
@@ -666,7 +666,7 @@ bool VOpenGLDrawer::CheckExtension(const char *ext)
 
 bool VOpenGLDrawer::SupportsAdvancedRendering()
 {
-	return HasStencil && HaveStencilWrap && p_glStencilFuncSeparate &&
+	return HaveStencil && HaveStencilWrap && p_glStencilFuncSeparate &&
 		HaveShaders && HaveVertexBufferObject && HaveDrawRangeElements;
 }
 
@@ -810,7 +810,7 @@ void VOpenGLDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	glViewport(rd->x, ScreenHeight - rd->height - rd->y, rd->width, rd->height);
 
 	glClear(GL_DEPTH_BUFFER_BIT);
-	if (HasStencil)
+	if (HaveStencil)
 	{
 		glClear(GL_STENCIL_BUFFER_BIT);
 	}

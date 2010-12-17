@@ -221,7 +221,7 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	{
 		return false;
 	}
-	HasStencil = true;
+	HaveStencil = true;
 
 	D3DCAPS9 DeviceCaps;
 	RenderDevice->GetDeviceCaps(&DeviceCaps);
@@ -469,7 +469,7 @@ void VDirect3DDrawer::SetupView(VRenderLevelDrawer* ARLev, const refdef_t *rd)
 	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	RenderDevice->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0, 0);
-	if (HasStencil)
+	if (HaveStencil)
 	{
         RenderDevice->Clear(0, NULL, D3DCLEAR_STENCIL, 0, 1.0, 0);
 	}

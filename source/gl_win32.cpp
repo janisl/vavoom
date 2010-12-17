@@ -225,12 +225,12 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		0, 0, 0							// Layer Masks Ignored
 	};
 
-	HasStencil = true;
+	HaveStencil = true;
 	pixelformat = ChoosePixelFormat(DeviceContext, &pfd);
 	if (pixelformat == 0)
 	{
 		//	Try without stencil.
-		HasStencil = false;
+		HaveStencil = false;
 		pfd.cDepthBits = 32;
 		pfd.cStencilBits = 0;
 		pixelformat = ChoosePixelFormat(DeviceContext, &pfd);
@@ -239,7 +239,7 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 			Sys_Error("ChoosePixelFormat failed");
 		}
 	}
-	if (HasStencil)
+	if (HaveStencil)
 	{
 		GCon->Logf(NAME_Init, "Stencil buffer available");
 	}

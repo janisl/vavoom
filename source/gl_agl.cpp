@@ -128,12 +128,12 @@ bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	allegro_gl_set(AGL_SUGGEST, AGL_COLOR_DEPTH | AGL_DOUBLEBUFFER
 			| AGL_RENDERMETHOD | AGL_Z_DEPTH | AGL_WINDOWED);
 
-	HasStencil = true;
+	HaveStencil = true;
 	set_color_depth(BPP);
 	if (set_gfx_mode(GFX_OPENGL, Width, Height, 0, 0))
 	{
 		//	Try without stencil.
-		HasStencil = false;
+		HaveStencil = false;
 		allegro_gl_set(AGL_Z_DEPTH, 8);
 		allegro_gl_set(AGL_STENCIL_DEPTH, 0);
 		if (set_gfx_mode(GFX_OPENGL, Width, Height, 0, 0))
@@ -144,7 +144,7 @@ bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 			return false;
 		}
 	}
-	if (HasStencil)
+	if (HaveStencil)
 	{
 		GCon->Logf(NAME_Init, "Stencil buffer available");
 	}
