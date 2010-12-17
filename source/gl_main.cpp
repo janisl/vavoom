@@ -895,14 +895,17 @@ void VOpenGLDrawer::SetupViewOrg()
 		glDisable(GL_CLIP_PLANE0);
 	}
 
-	memset(RendLev->light_chain, 0, sizeof(RendLev->light_chain));
-	memset(RendLev->add_chain, 0, sizeof(RendLev->add_chain));
-	RendLev->SimpleSurfsHead = NULL;
-	RendLev->SimpleSurfsTail = NULL;
-	RendLev->SkyPortalsHead = NULL;
-	RendLev->SkyPortalsTail = NULL;
-	RendLev->HorizonPortalsHead = NULL;
-	RendLev->HorizonPortalsTail = NULL;
+	if (RendLev)
+	{
+		memset(RendLev->light_chain, 0, sizeof(RendLev->light_chain));
+		memset(RendLev->add_chain, 0, sizeof(RendLev->add_chain));
+		RendLev->SimpleSurfsHead = NULL;
+		RendLev->SimpleSurfsTail = NULL;
+		RendLev->SkyPortalsHead = NULL;
+		RendLev->SkyPortalsTail = NULL;
+		RendLev->HorizonPortalsHead = NULL;
+		RendLev->HorizonPortalsTail = NULL;
+	}
 	unguard;
 }
 
@@ -1073,22 +1076,21 @@ GLhandleARB VOpenGLDrawer::LoadShader(GLenum Type, const VStr& FileName)
 		Sys_Error("Failed to open %s", *FileName);
 	}
 	int Size = Strm->TotalSize();
-	char* Buf = new GLcharARB[Size + 1];
-	Strm->Serialise(Buf, Size);
+	TArray<char> Buf;
+	Buf.SetNum(Size + 1);
+	Strm->Serialise(Buf.Ptr(), Size);
 	delete Strm;
 	Strm = NULL;
 	Buf[Size] = 0; // Append terminator
 
 	//	Upload source text.
-	const GLcharARB* ShaderText = Buf;
+	const GLcharARB* ShaderText = Buf.Ptr();
 	p_glShaderSourceARB(Shader, 1, &ShaderText, NULL);
-	delete[] Buf;
-	Buf = NULL;
 
 	//	Compile it.
 	p_glCompileShaderARB(Shader);
 
-	//	Check id it is compiled successfuly.
+	//	Check id it is compiled successfully.
 	GLint Status;
 	p_glGetObjectParameterivARB(Shader, GL_OBJECT_COMPILE_STATUS_ARB, &Status);
 	if (!Status)
@@ -1127,7 +1129,7 @@ GLhandleARB VOpenGLDrawer::CreateProgram(GLhandleARB VertexShader, GLhandleARB F
 	//	Link program.
 	p_glLinkProgramARB(Program);
 
-	//	Check if it was linked successfuly.
+	//	Check if it was linked successfully.
 	GLint Status;
 	p_glGetObjectParameterivARB(Program, GL_OBJECT_LINK_STATUS_ARB, &Status);
 	if (!Status)

@@ -339,7 +339,7 @@ void VRenderLevelShared::CacheSurface(surface_t *surface)
 	int				i, j, bnum;
 
 	//
-	// see if the cache holds apropriate data
+	// see if the cache holds appropriate data
 	//
 	cache = surface->CacheSurf;
 

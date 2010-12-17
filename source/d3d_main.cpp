@@ -527,14 +527,17 @@ void VDirect3DDrawer::SetupViewOrg()
         RenderDevice->SetRenderState(D3DRS_CLIPPLANEENABLE, 0);
 	}
 
-	memset(RendLev->light_chain, 0, sizeof(RendLev->light_chain));
-	memset(RendLev->add_chain, 0, sizeof(RendLev->add_chain));
-	RendLev->SimpleSurfsHead = NULL;
-	RendLev->SimpleSurfsTail = NULL;
-	RendLev->SkyPortalsHead = NULL;
-	RendLev->SkyPortalsTail = NULL;
-	RendLev->HorizonPortalsHead = NULL;
-	RendLev->HorizonPortalsTail = NULL;
+	if (RendLev)
+	{
+		memset(RendLev->light_chain, 0, sizeof(RendLev->light_chain));
+		memset(RendLev->add_chain, 0, sizeof(RendLev->add_chain));
+		RendLev->SimpleSurfsHead = NULL;
+		RendLev->SimpleSurfsTail = NULL;
+		RendLev->SkyPortalsHead = NULL;
+		RendLev->SkyPortalsTail = NULL;
+		RendLev->HorizonPortalsHead = NULL;
+		RendLev->HorizonPortalsTail = NULL;
+	}
 	unguard;
 }
 

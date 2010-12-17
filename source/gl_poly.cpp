@@ -71,7 +71,7 @@ void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 	if (lightmaped)
 	{
 		RendLev->CacheSurface(surf);
-		if (mtexable || HaveShaders)
+		if (mtexable)
 		{
 			return;
 		}
