@@ -154,7 +154,6 @@ public:
 	void PrecacheTexture(VTexture*);
 
 	//	Polygon drawing
-	void DrawPolygon(surface_t*, int);
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float,
 		int);
 	void DrawMaskedPolygon(surface_t*, float, bool);

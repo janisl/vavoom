@@ -82,31 +82,6 @@ void MatrixMultiply(MyD3DMatrix &out, const MyD3DMatrix& a, const MyD3DMatrix& b
 
 //==========================================================================
 //
-//	VDirect3DDrawer::DrawPolygon
-//
-//==========================================================================
-
-void VDirect3DDrawer::DrawPolygon(surface_t* surf, int)
-{
-	guard(VDirect3DDrawer::DrawPolygon);
-	bool lightmaped = surf->lightmap != NULL ||
-		surf->dlightframe == r_dlightframecount;
-
-	if (lightmaped)
-	{
-		RendLev->CacheSurface(surf);
-		if (HaveMultiTexture)
-		{
-			return;
-		}
-	}
-
-	RendLev->QueueSimpleSurf(surf);
-	unguard;
-}
-
-//==========================================================================
-//
 //	VDirect3DDrawer::WorldDrawing
 //
 //==========================================================================

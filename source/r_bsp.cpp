@@ -90,6 +90,31 @@ void VRenderLevelShared::SetUpFrustumIndexes()
 
 //==========================================================================
 //
+//	VRenderLevelShared::QueueWorldSurface
+//
+//==========================================================================
+
+void VRenderLevelShared::QueueWorldSurface(surface_t* surf)
+{
+	guard(VRenderLevelShared::QueueWorldSurface);
+	bool lightmaped = surf->lightmap != NULL ||
+		surf->dlightframe == r_dlightframecount;
+
+	if (lightmaped)
+	{
+		CacheSurface(surf);
+		if (Drawer->HaveMultiTexture)
+		{
+			return;
+		}
+	}
+
+	QueueSimpleSurf(surf);
+	unguard;
+}
+
+//==========================================================================
+//
 //	VRenderLevelShared::DrawSurfaces
 //
 //==========================================================================
@@ -164,8 +189,8 @@ void VRenderLevelShared::QueueHorizonPortal(surface_t* surf)
 //==========================================================================
 
 void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-	int clipflags, VEntity* SkyBox, int LightSourceSector, int SideLight,
-	bool AbsSideLight, bool CheckSkyBoxAlways)
+	VEntity* SkyBox, int LightSourceSector, int SideLight, bool AbsSideLight,
+	bool CheckSkyBoxAlways)
 {
 	guard(VRenderLevelShared::DrawSurfaces);
 	surface_t* surfs = InSurfs;
@@ -303,7 +328,6 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 				{
 					world_surf_t& S = WorldSurfs.Alloc();
 					S.Surf = surfs;
-					S.ClipFlags = clipflags;
 					S.Type = 1;
 				}
 				else
@@ -330,12 +354,11 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 			{
 				world_surf_t& S = WorldSurfs.Alloc();
 				S.Surf = surfs;
-				S.ClipFlags = clipflags;
 				S.Type = 0;
 			}
 			else
 			{
-				Drawer->DrawPolygon(surfs, clipflags);
+				QueueWorldSurface(surfs);
 			}
 		}
 		else
@@ -355,7 +378,7 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 //
 //==========================================================================
 
-void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
+void VRenderLevelShared::RenderHorizon(drawseg_t* dseg)
 {
 	guard(VRenderLevelShared::RenderHorizon);
 	seg_t* Seg = dseg->seg;
@@ -408,9 +431,9 @@ void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 		if (Ceil->secplane->pic == skyflatnum)
 		{
 			//	If it's a sky, render it as a regular sky surface.
-			DrawSurfaces(Surf, &Ceil->texinfo, clipflags,
-				r_region->ceiling->SkyBox, -1, Seg->sidedef->Light,
-				!!(Seg->sidedef->Flags & SDF_ABSLIGHT), false);
+			DrawSurfaces(Surf, &Ceil->texinfo, r_region->ceiling->SkyBox, -1,
+				Seg->sidedef->Light, !!(Seg->sidedef->Flags & SDF_ABSLIGHT),
+				false);
 		}
 		else
 		{
@@ -418,7 +441,6 @@ void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 			{
 				world_surf_t& S = WorldSurfs.Alloc();
 				S.Surf = Surf;
-				S.ClipFlags = clipflags;
 				S.Type = 2;
 			}
 			else
@@ -463,9 +485,9 @@ void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 		if (Floor->secplane->pic == skyflatnum)
 		{
 			//	If it's a sky, render it as a regular sky surface.
-			DrawSurfaces(Surf, &Floor->texinfo, clipflags,
-				r_region->floor->SkyBox, -1, Seg->sidedef->Light,
-				!!(Seg->sidedef->Flags & SDF_ABSLIGHT), false);
+			DrawSurfaces(Surf, &Floor->texinfo, r_region->floor->SkyBox, -1,
+				Seg->sidedef->Light, !!(Seg->sidedef->Flags & SDF_ABSLIGHT),
+				false);
 		}
 		else
 		{
@@ -473,7 +495,6 @@ void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 			{
 				world_surf_t& S = WorldSurfs.Alloc();
 				S.Surf = Surf;
-				S.ClipFlags = clipflags;
 				S.Type = 2;
 			}
 			else
@@ -491,7 +512,7 @@ void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 //
 //==========================================================================
 
-void VRenderLevelShared::RenderMirror(drawseg_t* dseg, int clipflags)
+void VRenderLevelShared::RenderMirror(drawseg_t* dseg)
 {
 	guard(VRenderLevelShared::RenderMirror);
 	seg_t* Seg = dseg->seg;
@@ -522,7 +543,7 @@ void VRenderLevelShared::RenderMirror(drawseg_t* dseg, int clipflags)
 	}
 	else
 	{
-		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
+		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo,
 			r_region->ceiling->SkyBox, -1, Seg->sidedef->Light,
 			!!(Seg->sidedef->Flags & SDF_ABSLIGHT), false);
 	}
@@ -537,7 +558,7 @@ void VRenderLevelShared::RenderMirror(drawseg_t* dseg, int clipflags)
 //
 //==========================================================================
 
-void VRenderLevelShared::RenderLine(drawseg_t* dseg, int clipflags)
+void VRenderLevelShared::RenderLine(drawseg_t* dseg)
 {
 	guard(VRenderLevelShared::RenderLine);
 	seg_t *line = dseg->seg;
@@ -588,42 +609,41 @@ void VRenderLevelShared::RenderLine(drawseg_t* dseg, int clipflags)
 		// single sided line
 		if (line->linedef->special == LNSPEC_LineHorizon)
 		{
-			RenderHorizon(dseg, clipflags);
+			RenderHorizon(dseg);
 		}
 		else if (line->linedef->special == LNSPEC_LineMirror)
 		{
-			RenderMirror(dseg, clipflags);
+			RenderMirror(dseg);
 		}
 		else
 		{
-			DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
+			DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo,
 				r_region->ceiling->SkyBox, -1, sidedef->Light,
 				!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		}
-		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, clipflags,
+		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo,
 			r_region->ceiling->SkyBox, -1, sidedef->Light,
 			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 	}
 	else
 	{
 		// two sided line
-		DrawSurfaces(dseg->top->surfs, &dseg->top->texinfo, clipflags,
+		DrawSurfaces(dseg->top->surfs, &dseg->top->texinfo,
 			r_region->ceiling->SkyBox, -1, sidedef->Light,
 			!!(sidedef->Flags & SDF_ABSLIGHT), false);
-		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo, clipflags,
+		DrawSurfaces(dseg->topsky->surfs, &dseg->topsky->texinfo,
 			r_region->ceiling->SkyBox, -1, sidedef->Light,
 			!!(sidedef->Flags & SDF_ABSLIGHT), false);
-		DrawSurfaces(dseg->bot->surfs, &dseg->bot->texinfo, clipflags,
+		DrawSurfaces(dseg->bot->surfs, &dseg->bot->texinfo,
 			r_region->ceiling->SkyBox, -1, sidedef->Light,
 			!!(sidedef->Flags & SDF_ABSLIGHT), false);
-		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo, clipflags,
+		DrawSurfaces(dseg->mid->surfs, &dseg->mid->texinfo,
 			r_region->ceiling->SkyBox, -1, sidedef->Light,
 			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		for (segpart_t *sp = dseg->extra; sp; sp = sp->next)
 		{
-			DrawSurfaces(sp->surfs, &sp->texinfo, clipflags,
-				r_region->ceiling->SkyBox, -1, sidedef->Light,
-				!!(sidedef->Flags & SDF_ABSLIGHT), false);
+			DrawSurfaces(sp->surfs, &sp->texinfo,r_region->ceiling->SkyBox,
+				-1, sidedef->Light, !!(sidedef->Flags & SDF_ABSLIGHT), false);
 		}
 	}
 	unguard;
@@ -635,7 +655,7 @@ void VRenderLevelShared::RenderLine(drawseg_t* dseg, int clipflags)
 //
 //==========================================================================
 
-void VRenderLevelShared::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
+void VRenderLevelShared::RenderSecSurface(sec_surface_t* ssurf,
 	VEntity* SkyBox)
 {
 	guard(VRenderLevelShared::RenderSecSurface);
@@ -685,7 +705,7 @@ void VRenderLevelShared::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 		ssurf->texinfo.Alpha = plane.MirrorAlpha;
 	}
 
-	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, clipflags, SkyBox,
+	DrawSurfaces(ssurf->surfs, &ssurf->texinfo, SkyBox,
 		plane.LightSourceSector, 0, false, true);
 	unguard;
 }
@@ -699,7 +719,7 @@ void VRenderLevelShared::RenderSecSurface(sec_surface_t* ssurf, int clipflags,
 //
 //==========================================================================
 
-void VRenderLevelShared::RenderSubRegion(subregion_t* region, int clipflags)
+void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 {
 	guard(VRenderLevelShared::RenderSubRegion);
 	int				count;
@@ -711,7 +731,7 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region, int clipflags)
 		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{
-		RenderSubRegion(region->next, clipflags);
+		RenderSubRegion(region->next);
 	}
 
 	r_subregion = region;
@@ -724,7 +744,7 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region, int clipflags)
 		polySeg = r_sub->poly->segs;
 		while (polyCount--)
 		{
-			RenderLine((*polySeg)->drawsegs, clipflags);
+			RenderLine((*polySeg)->drawsegs);
 			polySeg++;
 		}
 	}
@@ -733,16 +753,16 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region, int clipflags)
 	drawseg_t *ds = region->lines;
 	while (count--)
 	{
-		RenderLine(ds, clipflags);
+		RenderLine(ds);
 		ds++;
 	}
 
-	RenderSecSurface(region->floor, clipflags, r_region->floor->SkyBox);
-	RenderSecSurface(region->ceil, clipflags, r_region->ceiling->SkyBox);
+	RenderSecSurface(region->floor, r_region->floor->SkyBox);
+	RenderSecSurface(region->ceil, r_region->ceiling->SkyBox);
 
 	if (region->next && d > 0.0)
 	{
-		RenderSubRegion(region->next, clipflags);
+		RenderSubRegion(region->next);
 	}
 	unguard;
 }
@@ -753,7 +773,7 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region, int clipflags)
 //
 //==========================================================================
 
-void VRenderLevelShared::RenderSubsector(int num, int clipflags)
+void VRenderLevelShared::RenderSubsector(int num)
 {
 	guard(VRenderLevelShared::RenderSubsector);
 	subsector_t* Sub = &Level->Subsectors[num];
@@ -777,7 +797,7 @@ void VRenderLevelShared::RenderSubsector(int num, int clipflags)
 
 	BspVis[num >> 3] |= 1 << (num & 7);
 
-	RenderSubRegion(Sub->regions, clipflags);
+	RenderSubRegion(Sub->regions);
 
 	//	Add subsector's segs to the clipper. Clipping against mirror
 	// is done only for vertical mirror planes.
@@ -858,11 +878,11 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 	{
 		if (bspnum == -1)
 		{
-			RenderSubsector(0, clipflags);
+			RenderSubsector(0);
 		}
 		else
 		{
-			RenderSubsector(bspnum & (~NF_SUBSECTOR), clipflags);
+			RenderSubsector(bspnum & (~NF_SUBSECTOR));
 		}
 		return;
 	}
@@ -948,8 +968,7 @@ void VRenderLevelShared::RenderBspWorld(const refdef_t* rd, const VViewClipper* 
 			switch (WorldSurfs[i].Type)
 			{
 			case 0:
-				Drawer->DrawPolygon(WorldSurfs[i].Surf,
-					WorldSurfs[i].ClipFlags);
+				QueueWorldSurface(WorldSurfs[i].Surf);
 				break;
 			case 1:
 				QueueSkyPortal(WorldSurfs[i].Surf);

@@ -291,7 +291,6 @@ protected:
 	struct world_surf_t
 	{
 		surface_t*		Surf;
-		vuint8			ClipFlags;
 		vuint8			Type;
 	};
 
@@ -400,16 +399,17 @@ protected:
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
+	void QueueWorldSurface(surface_t*);
+	void QueueSimpleSurf(surface_t*);
 	void QueueSkyPortal(surface_t*);
 	void QueueHorizonPortal(surface_t*);
-	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int, int, bool,
-		bool);
-	void RenderHorizon(drawseg_t*, int);
-	void RenderMirror(drawseg_t*, int);
-	void RenderLine(drawseg_t*, int);
-	void RenderSecSurface(sec_surface_t*, int, VEntity*);
-	void RenderSubRegion(subregion_t*, int);
-	void RenderSubsector(int, int);
+	void DrawSurfaces(surface_t*, texinfo_t*, VEntity*, int, int, bool, bool);
+	void RenderHorizon(drawseg_t*);
+	void RenderMirror(drawseg_t*);
+	void RenderLine(drawseg_t*);
+	void RenderSecSurface(sec_surface_t*, VEntity*);
+	void RenderSubRegion(subregion_t*);
+	void RenderSubsector(int);
 	void RenderBSPNode(int, float*, int);
 	void RenderBspWorld(const refdef_t*, const VViewClipper*);
 	void RenderPortals();
@@ -481,7 +481,6 @@ public:
 	dlight_t* AllocDlight(VThinker*);
 	void DecayLights(float);
 
-	void QueueSimpleSurf(surface_t* surf);
 	void CacheSurface(surface_t*);
 };
 

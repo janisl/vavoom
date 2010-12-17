@@ -58,31 +58,6 @@ inline void glVertex(const TVec &v)
 
 //==========================================================================
 //
-//	VOpenGLDrawer::DrawPolygon
-//
-//==========================================================================
-
-void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
-{
-	guard(VOpenGLDrawer::DrawPolygon);
-	bool lightmaped = surf->lightmap != NULL ||
-		surf->dlightframe == r_dlightframecount;
-
-	if (lightmaped)
-	{
-		RendLev->CacheSurface(surf);
-		if (HaveMultiTexture)
-		{
-			return;
-		}
-	}
-
-	RendLev->QueueSimpleSurf(surf);
-	unguard;
-}
-
-//==========================================================================
-//
 //	VOpenGLDrawer::WorldDrawing
 //
 //==========================================================================
