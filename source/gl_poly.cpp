@@ -71,7 +71,7 @@ void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 	if (lightmaped)
 	{
 		RendLev->CacheSurface(surf);
-		if (mtexable)
+		if (HaveMultiTexture)
 		{
 			return;
 		}
@@ -164,7 +164,7 @@ void VOpenGLDrawer::WorldDrawing()
 		}
 	}
 
-	if (mtexable)
+	if (HaveMultiTexture)
 	{
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 		SelectTexture(1);
@@ -1010,7 +1010,7 @@ void VOpenGLDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	}
 	else
 	{
-		if (mtexable && Texture2->Type != TEXTYPE_Null)
+		if (HaveMultiTexture && Texture2->Type != TEXTYPE_Null)
 		{
 			SetTexture(Texture1, CMap);
 			SelectTexture(1);

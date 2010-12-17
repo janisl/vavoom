@@ -451,7 +451,6 @@ protected:
 	int						lastgamma;
 	int						CurrentFade;
 
-	bool					mtexable;
 	bool					pointparmsable;
 	bool					HaveShaders;
 	bool					HaveDepthClamp;

@@ -263,7 +263,6 @@ private:
 	vuint32						SurfaceMemFlag;
 	bool						square_textures;
 	int							maxTexSize;
-	int							maxMultiTex;
 	int							TexStage;
 
 	float						tex_iw;

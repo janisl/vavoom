@@ -239,11 +239,11 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 	if (device == 1)
 	{
 		//	There can actually be only one texture in software
-		maxMultiTex = 1;
+		HaveMultiTexture = false;
 	}
 	else
 	{
-		maxMultiTex = DeviceCaps.MaxSimultaneousTextures;
+		HaveMultiTexture = DeviceCaps.MaxSimultaneousTextures > 1;
 	}
 	RenderDevice->SetSamplerState(0, D3DSAMP_MAXANISOTROPY, DeviceCaps.MaxAnisotropy);
 

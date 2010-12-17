@@ -113,7 +113,7 @@ void VOpenGLDrawer::InitResolution()
 		if (found)
 		{
 			GCon->Log(NAME_Init, "Multitexture extensions found.");
-			mtexable = true;
+			HaveMultiTexture = true;
 			GLint tmp;
 			glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, &tmp);
 			GCon->Logf("Max texture units: %d", tmp);
@@ -121,13 +121,13 @@ void VOpenGLDrawer::InitResolution()
 		else
 		{
 			GCon->Log(NAME_Init, "Symbol not found, Multitexture extensions disabled.");
-			mtexable = false;
+			HaveMultiTexture = false;
 		}
 	}
 	else
 	{
 		GCon->Log(NAME_Init, "Symbol not found, Multitexture extensions disabled.");
-		mtexable = false;
+		HaveMultiTexture = false;
 	}
 
 	//  Check point parameters extensions
@@ -175,7 +175,7 @@ void VOpenGLDrawer::InitResolution()
 	}
 
 	//	Check for shader extensions
-	if (ext_shaders && mtexable &&
+	if (ext_shaders && HaveMultiTexture &&
 		CheckExtension("GL_ARB_shader_objects") && CheckExtension("GL_ARB_shading_language_100") &&
 		CheckExtension("GL_ARB_vertex_shader") && CheckExtension("GL_ARB_fragment_shader"))
 	{

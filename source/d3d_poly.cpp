@@ -95,7 +95,7 @@ void VDirect3DDrawer::DrawPolygon(surface_t* surf, int)
 	if (lightmaped)
 	{
 		RendLev->CacheSurface(surf);
-		if (maxMultiTex >= 2)
+		if (HaveMultiTexture)
 		{
 			return;
 		}
@@ -183,7 +183,7 @@ void VDirect3DDrawer::WorldDrawing()
 		}
 	}
 
-	if (maxMultiTex >= 2)
+	if (HaveMultiTexture)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_MODULATE);
@@ -476,7 +476,7 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		}
 	}
 	texinfo_t *tex = surf->texinfo;
-	if (maxMultiTex >= 2 && Texture2->Type != TEXTYPE_Null)
+	if (HaveMultiTexture && Texture2->Type != TEXTYPE_Null)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
