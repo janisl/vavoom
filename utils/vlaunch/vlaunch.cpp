@@ -51,6 +51,9 @@ public:
 	wxComboBox*		Game;
 	wxComboBox*		RendererBox;
 	wxComboBox*		Resolution;
+	wxCheckBox*		CheckBoxUseCustomRes;
+	wxTextCtrl*		CustomResolutionHeight;
+	wxTextCtrl*		CustomResolutionWidth;
 	wxComboBox*		Colour;
 	wxTextCtrl*		Particles;
 	wxTextCtrl*		CacheMemory;
@@ -147,6 +150,9 @@ VMain::VMain()
 	nbook->AddPage(page, wxT("Main"));
 	wxFlexGridSizer* gsizer = new wxFlexGridSizer(2);
 
+	gsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+	gsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+
 	gsizer->Add(new wxStaticText(page, -1, wxT("Game:")), 0, wxALL, 4);
 	wxString GameChoices[8];
 	GameChoices[0] = wxT("(Autodetect)");
@@ -186,9 +192,6 @@ VMain::VMain()
 	nbook->AddPage(page, wxT("Video"));
 	wxFlexGridSizer* vsizer = new wxFlexGridSizer(2);
 
-	vsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
-	vsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
-
 	vsizer->Add(new wxStaticText(page, -1, wxT("Renderer:")), 0, wxALL, 4);
 	wxString RendChoices[2];
 	RendChoices[0] = wxT("OpenGL");
@@ -211,6 +214,15 @@ VMain::VMain()
 	ResolutionChoices[5] = wxT("1600x1200");
 	Resolution = new wxComboBox(page, -1, ResolutionChoices[0], wxDefaultPosition, wxDefaultSize, 6, ResolutionChoices, wxCB_READONLY);
 	vsizer->Add(Resolution, 0, wxALL, 4);
+	vsizer->AddSpacer(1);
+	CheckBoxUseCustomRes = new wxCheckBox(page, -1, wxT("Use Custom Resolution"));
+	vsizer->Add(CheckBoxUseCustomRes, 0, wxALL, 4);
+	vsizer->Add(new wxStaticText(page, -1, wxT("Custom Resolution Height:")), 0, wxALL, 4);
+	CustomResolutionHeight = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition,wxSize(48, -1));
+	vsizer->Add(CustomResolutionHeight, 0, wxALL, 4);
+	vsizer->Add(new wxStaticText(page, -1, wxT("Custom Resolution Width:")), 0, wxALL, 4);
+	CustomResolutionWidth = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition,wxSize(48, -1));
+	vsizer->Add(CustomResolutionWidth, 0, wxALL, 4);
 	vsizer->Add(new wxStaticText(page, -1, wxT("Color Depth:")), 0, wxALL, 4);
 	wxString ColourChoices[3];
 	ColourChoices[0] = wxT("8 bits");
@@ -234,6 +246,10 @@ VMain::VMain()
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Sound"));
 	wxFlexGridSizer* ssizer = new wxFlexGridSizer(2);
+
+	ssizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+	ssizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+
 	ssizer->AddSpacer(1);
 	CheckBoxNoSound = new wxCheckBox(page, -1, wxT("Disable all sound"));
 	ssizer->Add(CheckBoxNoSound, 0, wxALL, 4);
@@ -265,6 +281,10 @@ VMain::VMain()
 	page = new wxPanel(nbook);
 	nbook->AddPage(page, wxT("Input"));
 	wxFlexGridSizer* isizer = new wxFlexGridSizer(2);
+
+	isizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+	isizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+
 	isizer->AddSpacer(1);
 	CheckBoxNoMouse = new wxCheckBox(page, -1, wxT("Disable mouse"));
 	isizer->Add(CheckBoxNoMouse, 0, wxALL, 4);
@@ -287,6 +307,10 @@ VMain::VMain()
 	nbook->AddPage(page, wxT("Network"));
 	gsizer = new wxFlexGridSizer(2);
 	gsizer->AddSpacer(1);
+
+	gsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+	gsizer->Add(new wxStaticText(page, -1, wxT(" ")), 0, wxALL, 4);
+
 	CheckBoxNoLan = new wxCheckBox(page, -1, wxT("Disable network driver"));
 	gsizer->Add(CheckBoxNoLan, 0, wxALL, 4);
 	gsizer->Add(new wxStaticText(page, -1, wxT("IP address:")), 0, wxALL, 4);
@@ -324,6 +348,9 @@ VMain::VMain()
 	Game->SetSelection(Conf->Read(wxT("Game"), 0l));
 	RendererBox->SetSelection(Conf->Read(wxT("Renderer"), 0l));
 	Resolution->SetSelection(Conf->Read(wxT("Resolution"), 0l));
+	CheckBoxUseCustomRes->SetValue(!!Conf->Read(wxT("UseCustomResolution"), 01));
+	CustomResolutionHeight->SetValue(Conf->Read(wxT("CustomResolutionHeight"),  wxT("")));
+	CustomResolutionWidth->SetValue(Conf->Read(wxT("CustomResolutionWidth"),  wxT("")));
 	Colour->SetSelection(Conf->Read(wxT("Colour"), 0l));
 	Particles->SetValue(Conf->Read(wxT("Particles"), wxT("")));
 	CacheMemory->SetValue(Conf->Read(wxT("CacheMemory"), wxT("")));
@@ -365,6 +392,9 @@ VMain::~VMain()
 	Conf->Write(wxT("Game"), Game->GetSelection());
 	Conf->Write(wxT("Renderer"), RendererBox->GetSelection());
 	Conf->Write(wxT("Resolution"), Resolution->GetSelection());
+	Conf->Write(wxT("UseCustomResolution"), CheckBoxUseCustomRes->GetValue());
+	Conf->Write(wxT("CustomResolutionHeight"), CustomResolutionHeight->GetValue());
+	Conf->Write(wxT("CustomResolutionWidth"), CustomResolutionWidth->GetValue());
 	Conf->Write(wxT("Colour"), Colour->GetSelection());
 	Conf->Write(wxT("WindowedMode"), CheckBoxWindowedMode->IsChecked());
 	Conf->Write(wxT("Particles"), Particles->GetValue());
@@ -519,26 +549,34 @@ void VMain::OnRun(wxCommandEvent&)
 		CmdLine += wxT(" +master_srv ") + EditMasterIPAddress->GetValue();
 
 	// Set Resolution
-	switch (Resolution->GetSelection())
+	// Are we using custom resolutions?
+	if (!CheckBoxUseCustomRes->IsChecked())
 	{
-	case 0:
-		CmdLine += wxT(" +setresolution 640 480");
-		break;
-	case 1:
-		CmdLine += wxT(" +setresolution 800 600");
-		break;
-	case 2:
-		CmdLine += wxT(" +setresolution 1024 768");
-		break;
-	case 3:
-		CmdLine += wxT(" +setresolution 1152 864");
-		break;
-	case 4:
-		CmdLine += wxT(" +setresolution 1280 1024");
-		break;
-	case 5:
-		CmdLine += wxT(" +setresolution 1600 1200");
-		break;
+		switch (Resolution->GetSelection())
+		{
+		case 0:
+			CmdLine += wxT(" +setresolution 640 480");
+			break;
+		case 1:
+			CmdLine += wxT(" +setresolution 800 600");
+			break;
+		case 2:
+			CmdLine += wxT(" +setresolution 1024 768");
+			break;
+		case 3:
+			CmdLine += wxT(" +setresolution 1152 864");
+			break;
+		case 4:
+			CmdLine += wxT(" +setresolution 1280 1024");
+			break;
+		case 5:
+			CmdLine += wxT(" +setresolution 1600 1200");
+			break;
+		}
+	}
+	else
+	{
+		CmdLine += wxT(" +setresolution ") + CustomResolutionHeight->GetValue() + wxT(" ") + CustomResolutionWidth->GetValue();
 	}
 
 	switch (Colour->GetSelection())
