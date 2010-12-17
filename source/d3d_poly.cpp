@@ -101,63 +101,7 @@ void VDirect3DDrawer::DrawPolygon(surface_t* surf, int)
 		}
 	}
 
-	if (RendLev->SimpleSurfsTail)
-	{
-		RendLev->SimpleSurfsTail->DrawNext = surf;
-		RendLev->SimpleSurfsTail = surf;
-	}
-	else
-	{
-		RendLev->SimpleSurfsHead = surf;
-		RendLev->SimpleSurfsTail = surf;
-	}
-	surf->DrawNext = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::DrawSkyPortal
-//
-//==========================================================================
-
-void VDirect3DDrawer::DrawSkyPortal(surface_t* surf, int)
-{
-	guard(VDirect3DDrawer::DrawSkyPortal);
-	if (RendLev->SkyPortalsTail)
-	{
-		RendLev->SkyPortalsTail->DrawNext = surf;
-		RendLev->SkyPortalsTail = surf;
-	}
-	else
-	{
-		RendLev->SkyPortalsHead = surf;
-		RendLev->SkyPortalsTail = surf;
-	}
-	surf->DrawNext = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VDirect3DDrawer::DrawHorizonPolygon
-//
-//==========================================================================
-
-void VDirect3DDrawer::DrawHorizonPolygon(surface_t* surf, int)
-{
-	guard(VDirect3DDrawer::DrawHorizonPolygon);
-	if (RendLev->HorizonPortalsTail)
-	{
-		RendLev->HorizonPortalsTail->DrawNext = surf;
-		RendLev->HorizonPortalsTail = surf;
-	}
-	else
-	{
-		RendLev->HorizonPortalsHead = surf;
-		RendLev->HorizonPortalsTail = surf;
-	}
-	surf->DrawNext = NULL;
+	RendLev->QueueSimpleSurf(surf);
 	unguard;
 }
 

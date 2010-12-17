@@ -94,6 +94,75 @@ void VRenderLevelShared::SetUpFrustumIndexes()
 //
 //==========================================================================
 
+void VRenderLevelShared::QueueSimpleSurf(surface_t* surf)
+{
+	guard(VRenderLevelShared::QueueSimpleSurf);
+	if (SimpleSurfsTail)
+	{
+		SimpleSurfsTail->DrawNext = surf;
+		SimpleSurfsTail = surf;
+	}
+	else
+	{
+		SimpleSurfsHead = surf;
+		SimpleSurfsTail = surf;
+	}
+	surf->DrawNext = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevelShared::QueueSkyPortal
+//
+//==========================================================================
+
+void VRenderLevelShared::QueueSkyPortal(surface_t* surf)
+{
+	guard(VRenderLevelShared::QueueSkyPortal);
+	if (SkyPortalsTail)
+	{
+		SkyPortalsTail->DrawNext = surf;
+		SkyPortalsTail = surf;
+	}
+	else
+	{
+		SkyPortalsHead = surf;
+		SkyPortalsTail = surf;
+	}
+	surf->DrawNext = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevelShared::QueueHorizonPortal
+//
+//==========================================================================
+
+void VRenderLevelShared::QueueHorizonPortal(surface_t* surf)
+{
+	guard(VRenderLevelShared::QueueHorizonPortal);
+	if (HorizonPortalsTail)
+	{
+		HorizonPortalsTail->DrawNext = surf;
+		HorizonPortalsTail = surf;
+	}
+	else
+	{
+		HorizonPortalsHead = surf;
+		HorizonPortalsTail = surf;
+	}
+	surf->DrawNext = NULL;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VRenderLevelShared::DrawSurfaces
+//
+//==========================================================================
+
 void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 	int clipflags, VEntity* SkyBox, int LightSourceSector, int SideLight,
 	bool AbsSideLight, bool CheckSkyBoxAlways)
@@ -239,7 +308,7 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 				}
 				else
 				{
-					Drawer->DrawSkyPortal(surfs, clipflags);
+					QueueSkyPortal(surfs);
 				}
 			}
 
@@ -354,7 +423,7 @@ void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 			}
 			else
 			{
-				Drawer->DrawHorizonPolygon(Surf, clipflags);
+				QueueHorizonPortal(Surf);
 			}
 		}
 	}
@@ -409,7 +478,7 @@ void VRenderLevelShared::RenderHorizon(drawseg_t* dseg, int clipflags)
 			}
 			else
 			{
-				Drawer->DrawHorizonPolygon(Surf, clipflags);
+				QueueHorizonPortal(Surf);
 			}
 		}
 	}
@@ -883,12 +952,10 @@ void VRenderLevelShared::RenderBspWorld(const refdef_t* rd, const VViewClipper* 
 					WorldSurfs[i].ClipFlags);
 				break;
 			case 1:
-				Drawer->DrawSkyPortal(WorldSurfs[i].Surf,
-					WorldSurfs[i].ClipFlags);
+				QueueSkyPortal(WorldSurfs[i].Surf);
 				break;
 			case 2:
-				Drawer->DrawHorizonPolygon(WorldSurfs[i].Surf,
-					WorldSurfs[i].ClipFlags);
+				QueueHorizonPortal(WorldSurfs[i].Surf);
 				break;
 			}
 		}

@@ -400,6 +400,8 @@ protected:
 
 	//	World BSP rendering
 	void SetUpFrustumIndexes();
+	void QueueSkyPortal(surface_t*);
+	void QueueHorizonPortal(surface_t*);
 	void DrawSurfaces(surface_t*, texinfo_t*, int, VEntity*, int, int, bool,
 		bool);
 	void RenderHorizon(drawseg_t*, int);
@@ -479,6 +481,7 @@ public:
 	dlight_t* AllocDlight(VThinker*);
 	void DecayLights(float);
 
+	void QueueSimpleSurf(surface_t* surf);
 	void CacheSurface(surface_t*);
 };
 

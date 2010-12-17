@@ -377,10 +377,8 @@ public:
 	void DrawWorldFogPass();
 	void EndFogPass();
 	void DrawPolygon(surface_t*, int);
-	void DrawSkyPortal(surface_t*, int);
 	void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*, float,
 		int);
-	void DrawHorizonPolygon(surface_t*, int);
 	void DrawMaskedPolygon(surface_t*, float, bool);
 	void DrawSpritePolygon(TVec*, VTexture*, float, bool, VTextureTranslation*,
 		int, vuint32, vuint32, const TVec&, float, const TVec&, const TVec&,

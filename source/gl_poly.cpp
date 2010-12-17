@@ -77,63 +77,7 @@ void VOpenGLDrawer::DrawPolygon(surface_t* surf, int)
 		}
 	}
 
-	if (RendLev->SimpleSurfsTail)
-	{
-		RendLev->SimpleSurfsTail->DrawNext = surf;
-		RendLev->SimpleSurfsTail = surf;
-	}
-	else
-	{
-		RendLev->SimpleSurfsHead = surf;
-		RendLev->SimpleSurfsTail = surf;
-	}
-	surf->DrawNext = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenGLDrawer::DrawSkyPortal
-//
-//==========================================================================
-
-void VOpenGLDrawer::DrawSkyPortal(surface_t* surf, int)
-{
-	guard(VOpenGLDrawer::DrawSkyPortal);
-	if (RendLev->SkyPortalsTail)
-	{
-		RendLev->SkyPortalsTail->DrawNext = surf;
-		RendLev->SkyPortalsTail = surf;
-	}
-	else
-	{
-		RendLev->SkyPortalsHead = surf;
-		RendLev->SkyPortalsTail = surf;
-	}
-	surf->DrawNext = NULL;
-	unguard;
-}
-
-//==========================================================================
-//
-//	VOpenGLDrawer::DrawHorizonPolygon
-//
-//==========================================================================
-
-void VOpenGLDrawer::DrawHorizonPolygon(surface_t* surf, int)
-{
-	guard(VOpenGLDrawer::DrawHorizonPolygon);
-	if (RendLev->HorizonPortalsTail)
-	{
-		RendLev->HorizonPortalsTail->DrawNext = surf;
-		RendLev->HorizonPortalsTail = surf;
-	}
-	else
-	{
-		RendLev->HorizonPortalsHead = surf;
-		RendLev->HorizonPortalsTail = surf;
-	}
-	surf->DrawNext = NULL;
+	RendLev->QueueSimpleSurf(surf);
 	unguard;
 }
 

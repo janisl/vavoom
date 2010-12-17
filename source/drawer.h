@@ -111,6 +111,8 @@ public:
 
 	virtual bool BuildLightMap(surface_t*, int) = 0;
 	virtual void CacheSurface(surface_t*) = 0;
+
+	virtual void QueueSimpleSurf(surface_t* surf) = 0;
 };
 
 class VDrawer
@@ -149,10 +151,8 @@ public:
 
 	//	Polygon drawing
 	virtual void DrawPolygon(surface_t*, int) = 0;
-	virtual void DrawSkyPortal(surface_t*, int) = 0;
 	virtual void DrawSkyPolygon(surface_t*, bool, VTexture*, float, VTexture*,
 		float, int) = 0;
-	virtual void DrawHorizonPolygon(surface_t*, int) = 0;
 	virtual void DrawMaskedPolygon(surface_t*, float, bool) = 0;
 	virtual void DrawSpritePolygon(TVec*, VTexture*, float, bool,
 		VTextureTranslation*, int, vuint32, vuint32, const TVec&, float,
