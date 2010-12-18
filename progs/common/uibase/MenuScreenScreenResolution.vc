@@ -35,6 +35,8 @@ mode_t				modes[6];
 int					depths[4];
 
 MenuChoiceEnum		Mode;
+MenuInputLine		Width;
+MenuInputLine		Height;
 MenuChoiceEnum		Depth;
 MenuChoiceEnum		Windowed;
 MenuChoiceEnum		VSync;
@@ -60,6 +62,20 @@ void CreateChoices()
 	Mode.AddItem("1600x1200");
 	Mode.SetInitialValue(GetModeValue());
 	ChoicesStartY += Mode.Height;
+
+	Width = MenuInputLine(NewChild(MenuInputLine));
+	Width.SetOrigin(ChoicesStartX + 10, ChoicesStartY);
+	Width.CursorXOffs = -10;
+	Width.Text = "Width";
+	Width.Value = GetCvarS('screen_width');
+	ChoicesStartY += Width.Height;
+
+	Height = MenuInputLine(NewChild(MenuInputLine));
+	Height.SetOrigin(ChoicesStartX + 10, ChoicesStartY);
+	Height.CursorXOffs = -10;
+	Height.Text = "Height";
+	Height.Value = GetCvarS('screen_height');
+	ChoicesStartY += Height.Height;
 
 	Depth = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Depth.SetOrigin(ChoicesStartX, ChoicesStartY);
@@ -155,8 +171,8 @@ void ActivateSetMode(Object Sender)
 {
 	SetCvar('screen_windowed', Windowed.Value);
 	SetCvar('r_vsync', VSync.Value);
-	CmdBuf_AddText("SetResolution %d %d %d\n", modes[Mode.Value].width,
-		modes[Mode.Value].height, depths[Depth.Value]);
+	CmdBuf_AddText("SetResolution %d %d %d\n", atoi(Width.Value) ? atoi(Width.Value) : modes[Mode.Value].width,
+		atoi(Height.Value) ? atoi(Height.Value) : modes[Mode.Value].height, depths[Depth.Value]);
 }
 
 defaultproperties
