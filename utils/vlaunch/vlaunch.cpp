@@ -462,10 +462,10 @@ void VMain::OnRun(wxCommandEvent&)
 
 	switch (RendererBox->GetSelection())
 	{
-	case 1:
+	case 0:
 		CmdLine += wxT(" -opengl");
 		break;
-	case 2:
+	case 1:
 		CmdLine += wxT(" -d3d");
 		break;
 	}
