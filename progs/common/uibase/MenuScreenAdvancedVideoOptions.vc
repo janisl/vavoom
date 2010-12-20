@@ -104,8 +104,10 @@ void CreateChoices()
 	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Aspect Ratio";
 	Enum.AddItem("Normal");
-	Enum.AddItem("Original");
-	Enum.SetInitialValue(GetCvar('r_old_aspect_ratio'));
+	Enum.AddItem("Original (4:3)");
+	Enum.AddItem("Wide Screen 1 (16:9)");
+	Enum.AddItem("Wide Screen 2 (16:10)");
+	Enum.SetInitialValue(GetCvar('r_aspect_ratio'));
 	Enum.ValueChanging = ChangeAspectRation;
 	currentY += Enum.Height;
 
@@ -309,7 +311,7 @@ bool ChangeDynamicClip(Object Sender, int newValue)
 
 bool ChangeAspectRation(Object Sender, int newValue)
 {
-	SetCvar('r_old_aspect_ratio', newValue);
+	SetCvar('r_aspect_ratio', newValue);
 	return true;
 }
 

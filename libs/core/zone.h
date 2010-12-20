@@ -93,7 +93,7 @@ void Z_Free(void* ptr);
 
 inline void* operator new(size_t Size)
 {
-	return Z_Malloc(Size);
+	return Z_Malloc(int(Size));
 }
 
 inline void operator delete(void* Ptr)
@@ -103,7 +103,7 @@ inline void operator delete(void* Ptr)
 
 inline void* operator new[](size_t Size)
 {
-	return Z_Malloc(Size);
+	return Z_Malloc(int(Size));
 }
 
 inline void operator delete[](void* Ptr)

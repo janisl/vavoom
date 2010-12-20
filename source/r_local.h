@@ -315,7 +315,7 @@ protected:
 	subsector_t*	r_viewleaf;
 	subsector_t*	r_oldviewleaf;
 	float			old_fov;
-	int				prev_old_aspect;
+	int				prev_aspect_ratio;
 
 	//	Bumped light from gun blasts
 	int				ExtraLight;
@@ -627,7 +627,7 @@ extern VCvarI			r_static_lights;
 
 extern refdef_t			refdef;
 
-extern VCvarI			old_aspect;
+extern VCvarI			aspect_ratio;
 extern VCvarI			r_interpolate_frames;
 
 extern VTextureTranslation**		TranslationTables;

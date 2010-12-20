@@ -211,7 +211,7 @@ VStr VStr::ToLower() const
 		return VStr();
 	}
 	VStr Ret;
-	int l = Length();
+	int l = int(Length());
 	Ret.Resize(l);
 	for (int i = 0; i < l; i++)
 	{
@@ -235,7 +235,7 @@ VStr VStr::ToUpper() const
 		return VStr();
 	}
 	VStr Ret;
-	int l = Length();
+	int l = int(Length());
 	Ret.Resize(l);
 	for (int i = 0; i < l; i++)
 	{
@@ -254,7 +254,7 @@ VStr VStr::ToUpper() const
 int VStr::IndexOf(char C) const
 {
 	guard(VStr::IndexOf);
-	int l = Length();
+	int l = int(Length());
 	for (int i = 0; i < l; i++)
 	{
 		if (Str[i] == C)
@@ -275,12 +275,12 @@ int VStr::IndexOf(char C) const
 int VStr::IndexOf(const char* S) const
 {
 	guard(VStr::IndexOf);
-	int sl = Length(S);
+	int sl = int(Length(S));
 	if (!sl)
 	{
 		return -1;
 	}
-	int l = Length();
+	int l = int(Length());
 	for (int i = 0; i <= l - sl; i++)
 	{
 		if (NCmp(Str + i, S, sl) == 0)
@@ -301,12 +301,12 @@ int VStr::IndexOf(const char* S) const
 int VStr::IndexOf(const VStr& S) const
 {
 	guard(VStr::IndexOf);
-	int sl = S.Length();
+	int sl = int(S.Length());
 	if (!sl)
 	{
 		return -1;
 	}
-	int l = Length();
+	int l = int(Length());
 	for (int i = 0; i <= l - sl; i++)
 	{
 		if (NCmp(Str + i, *S, sl) == 0)
@@ -327,7 +327,7 @@ int VStr::IndexOf(const VStr& S) const
 int VStr::LastIndexOf(char C) const
 {
 	guard(VStr::LastIndexOf);
-	for (int i = Length() - 1; i >= 0; i--)
+	for (int i = int(Length()) - 1; i >= 0; i--)
 	{
 		if (Str[i] == C)
 		{
@@ -347,12 +347,12 @@ int VStr::LastIndexOf(char C) const
 int VStr::LastIndexOf(const char* S) const
 {
 	guard(VStr::LastIndexOf);
-	int sl = Length(S);
+	int sl = int(Length(S));
 	if (!sl)
 	{
 		return -1;
 	}
-	int l = Length();
+	int l = int(Length());
 	for (int i = l - sl; i >= 0; i--)
 	{
 		if (NCmp(Str + i, S, sl) == 0)
@@ -373,12 +373,12 @@ int VStr::LastIndexOf(const char* S) const
 int VStr::LastIndexOf(const VStr& S) const
 {
 	guard(VStr::LastIndexOf);
-	int sl = S.Length();
+	int sl = int(S.Length());
 	if (!sl)
 	{
 		return -1;
 	}
-	int l = Length();
+	int l = int(Length());
 	for (int i = l - sl; i >= 0; i--)
 	{
 		if (NCmp(Str + i, *S, sl) == 0)
@@ -427,8 +427,8 @@ VStr VStr::Replace(const char* Search, const char* Replacement) const
 			}
 			else
 			{
-				Ret = VStr(Ret, 0, i) + Replacement +
-					VStr(Ret, i + SLen, Ret.Length() - i - SLen);
+				Ret = VStr(Ret, 0, int(i)) + Replacement +
+					VStr(Ret, int(i + SLen), int(Ret.Length() - i - SLen));
 			}
 			i += RLen;
 		}
@@ -478,8 +478,8 @@ VStr VStr::Replace(const VStr& Search, const VStr& Replacement) const
 			}
 			else
 			{
-				Ret = VStr(Ret, 0, i) + Replacement +
-					VStr(Ret, i + SLen, Ret.Length() - i - SLen);
+				Ret = VStr(Ret, 0, int(i)) + Replacement +
+					VStr(Ret, int(i + SLen), int(Ret.Length() - i - SLen));
 			}
 			i += RLen;
 		}
@@ -508,8 +508,8 @@ VStr VStr::Utf8Substring(int Start, int Len) const
 	{
 		return VStr();
 	}
-	int RealStart = ByteLengthForUtf8(Str, Start);
-	int RealLen = ByteLengthForUtf8(Str, Start + Len) - RealStart;
+	int RealStart = int(ByteLengthForUtf8(Str, Start));
+	int RealLen = int(ByteLengthForUtf8(Str, Start + Len) - RealStart);
 	return VStr(*this, RealStart, RealLen);
 }
 
@@ -528,7 +528,7 @@ void VStr::Split(char C, TArray<VStr>& A) const
 		return;
 	}
 	int Start = 0;
-	int Len = Length();
+	int Len = int(Length());
 	for (int i = 0; i <= Len; i++)
 	{
 		if (i == Len || Str[i] == C)
@@ -558,7 +558,7 @@ void VStr::Split(const char* Chars, TArray<VStr>& A) const
 		return;
 	}
 	int Start = 0;
-	int Len = Length();
+	int Len = int(Length());
 	for (int i = 0; i <= Len; i++)
 	{
 		bool DoSplit = i == Len;
@@ -820,7 +820,7 @@ VStr VStr::ExtractFileName() const
 VStr VStr::ExtractFileBase() const
 {
 	guard(VStr::ExtractFileBase);
-	int i = Length() - 1;
+	int i = int(Length() - 1);
 
 	// back up until a \ or the start
 	while (i && Str[i - 1] != '\\' && Str[i - 1] != '/')
@@ -943,7 +943,7 @@ VStr VStr::FixFileSlashes() const
 {
 	guard(VStr::FixFileSlashes);
 	VStr Ret(*this);
-	int l = Length();
+	int l = int(Length());
 	for (int i = 0; i < l; i++)
 	{
 		if (Ret[i] == '\\')

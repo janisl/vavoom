@@ -67,7 +67,7 @@ VStream& operator<<(VStream& Strm, VNameEntry& E)
 	vuint8 Size;
 	if (Strm.IsSaving())
 	{
-		Size = VStr::Length(E.Name) + 1;
+		Size = vuint8(VStr::Length(E.Name) + 1);
 	}
 	Strm << Size;
 	Strm.Serialise(E.Name, Size);
@@ -85,7 +85,7 @@ VNameEntry* AllocateNameEntry(const char* Name, vint32 Index,
 	VNameEntry* HashNext)
 {
 	guard(AllocateNameEntry);
-	int Size = sizeof(VNameEntry) - NAME_SIZE + VStr::Length(Name) + 1;
+	int Size = sizeof(VNameEntry) - NAME_SIZE + int(VStr::Length(Name)) + 1;
 	VNameEntry* E = (VNameEntry*)Z_Malloc(Size);
 	memset(E, 0, Size);
 	VStr::Cpy(E->Name, Name);

@@ -48,7 +48,7 @@ public:
 	{
 		if (*InStr)
 		{
-			Resize(Length(InStr));
+			Resize(int(Length(InStr)));
 			Cpy(Str, InStr);
 		}
 	}
@@ -57,7 +57,7 @@ public:
 	{
 		if (InStr.Str)
 		{
-			Resize(InStr.Length());
+			Resize(int(InStr.Length()));
 			Cpy(Str, InStr.Str);
 		}
 	}
@@ -92,7 +92,7 @@ public:
 #else
 		sprintf(Buf, "%d", InInt);
 #endif
-		Resize(Length(Buf));
+		Resize(int(Length(Buf)));
 		Cpy(Str, Buf);
 	}
 	explicit VStr(unsigned InInt)
@@ -105,7 +105,7 @@ public:
 #else
 		sprintf(Buf, "%u", InInt);
 #endif
-		Resize(Length(Buf));
+		Resize(int(Length(Buf)));
 		Cpy(Str, Buf);
 	}
 	explicit VStr(float InFloat)
@@ -118,13 +118,13 @@ public:
 #else
 		sprintf(Buf, "%f", InFloat);
 #endif
-		Resize(Length(Buf));
+		Resize(int(Length(Buf)));
 		Cpy(Str, Buf);
 	}
 	explicit VStr(const VName& InName)
 	: Str(NULL)
 	{
-		Resize(Length(*InName));
+		Resize(int(Length(*InName)));
 		Cpy(Str, *InName);
 	}
 
@@ -177,14 +177,14 @@ public:
 	//	Assignement operators.
 	VStr& operator=(const char* InStr)
 	{
-		Resize(Length(InStr));
+		Resize(int(Length(InStr)));
 		if (*InStr)
 			Cpy(Str, InStr);
 		return *this;
 	}
 	VStr& operator=(const VStr& InStr)
 	{
-		Resize(InStr.Length());
+		Resize(int(InStr.Length()));
 		if (InStr.Str)
 			Cpy(Str, InStr.Str);
 		return *this;
@@ -195,8 +195,8 @@ public:
 	{
 		if (*InStr)
 		{
-			int l = Length();
-			Resize(l + Length(InStr));
+			int l = int(Length());
+			Resize(int(l + Length(InStr)));
 			Cpy(Str + l, InStr);
 		}
 		return *this;
@@ -205,16 +205,16 @@ public:
 	{
 		if (InStr.Length())
 		{
-			int l = Length();
-			Resize(l + InStr.Length());
+			int l = int(Length());
+			Resize(int(l + InStr.Length()));
 			Cpy(Str + l, *InStr);
 		}
 		return *this;
 	}
 	VStr& operator+=(char InChr)
 	{
-		int l = Length();
-		Resize(l + 1);
+		int l = int(Length());
+		Resize(int(l + 1));
 		Str[l] = InChr;
 		return *this;
 	}
@@ -385,7 +385,7 @@ public:
 		}
 		else
 		{
-			vint32 Len = S.Length();
+			vint32 Len = vint32(S.Length());
 			Strm << STRM_INDEX(Len);
 			if (Len)
 				Strm.Serialise(S.Str, Len + 1);

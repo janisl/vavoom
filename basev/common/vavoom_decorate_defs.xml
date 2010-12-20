@@ -363,6 +363,8 @@
 	<class name="BasicArmorPickup">
 		<prop_int name="Armor.SaveAmount" property="SaveAmount" />
 		<prop_percent name="Armor.SavePercent" property="SavePercent" />
+		<prop_int_unsupported name="Armor.MaxAbsorb" />
+		<prop_int_unsupported name="Armor.MaxFullAbsorb" />
 	</class>
 
 	<class name="Health">

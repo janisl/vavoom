@@ -261,7 +261,7 @@ void VWinSockDriver::GetLocalAddress()
 		return;
 
 	blocktime = Sys_Time();
-	WSASetBlockingHook(BlockingHook);
+	WSASetBlockingHook(FARPROC(BlockingHook));
 	local = gethostbyname(buff);
 	WSAUnhookBlockingHook();
 	if (local == NULL)

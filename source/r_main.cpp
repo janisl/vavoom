@@ -70,7 +70,7 @@ VCvarF					r_fog_start("r_fog_start", "1.0");
 VCvarF					r_fog_end("r_fog_end", "2048.0");
 VCvarF					r_fog_density("r_fog_density", "0.5");
 
-VCvarI					old_aspect("r_old_aspect_ratio", "1", CVAR_Archive);
+VCvarI					aspect_ratio("r_aspect_ratio", "1", CVAR_Archive);
 VCvarI					r_interpolate_frames("r_interpolate_frames", "1", CVAR_Archive);
 VCvarI					r_vsync("r_vsync", "1", CVAR_Archive);
 VCvarI					r_fade_light("r_fade_light", "0", CVAR_Archive);
@@ -199,7 +199,7 @@ VRenderLevelShared::VRenderLevelShared(VLevel* ALevel)
 , r_viewleaf(NULL)
 , r_oldviewleaf(NULL)
 , old_fov(90.0)
-, prev_old_aspect(0)
+, prev_aspect_ratio(0)
 , ExtraLight(0)
 , FixedLight(0)
 , Particles(0)
@@ -489,11 +489,27 @@ void VRenderLevelShared::ExecuteSetViewSize()
 	}
 	refdef.x = (ScreenWidth - refdef.width) >> 1;
 
-	if (old_aspect)
+	if (aspect_ratio == 0)
+	{
+		// Original aspect ratio
 		PixelAspect = ((float)ScreenHeight * 320.0) / ((float)ScreenWidth * 200.0);
-	else
+	}
+	else if (aspect_ratio == 1)
+	{
+		// 4:3 aspect ratio
 		PixelAspect = ((float)ScreenHeight * 4.0) / ((float)ScreenWidth * 3.0);
-	prev_old_aspect = old_aspect;
+	}
+	else if (aspect_ratio == 2)
+	{
+		// 16:9 aspect ratio
+		PixelAspect = ((float)ScreenHeight * 16.0) / ((float)ScreenWidth * 9.0);
+	}
+	else
+	{
+		// 16:10 aspect ratio
+		PixelAspect = ((float)ScreenHeight * 16.0) / ((float)ScreenWidth * 10.0);
+	}
+	prev_aspect_ratio = aspect_ratio;
 
 	refdef.fovx = tan(DEG2RAD(fov) / 2);
 	refdef.fovy = refdef.fovx * refdef.height / refdef.width / PixelAspect;
@@ -582,7 +598,7 @@ void VRenderLevelShared::SetupFrame()
 	// change the view size if needed
 	if (screen_size != screenblocks || !screenblocks ||
 		set_resolutioon_needed || old_fov != fov ||
-		old_aspect != prev_old_aspect)
+		aspect_ratio != prev_aspect_ratio)
 	{
 		ExecuteSetViewSize();
 	}
@@ -679,7 +695,7 @@ void VRenderLevelShared::SetupCameraFrame(VEntity* Camera, VTexture* Tex,
 	rd->y = 0;
 	rd->x = 0;
 
-	if (old_aspect)
+	if (aspect_ratio)
 		PixelAspect = ((float)rd->height * 320.0) / ((float)rd->width * 200.0);
 	else
 		PixelAspect = ((float)rd->height * 4.0) / ((float)rd->width * 3.0);

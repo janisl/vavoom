@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
 	char *srcfile = NULL;
 	int i;
 
-	int starttime = time(0);
+	int starttime = int(time(0));
 
 	for (i = 1; i < argc; i++)
 	{
@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
 
 	if (!silent_mode)
 	{
-		int worktime = time(0) - starttime;
+		int worktime = int(time(0)) - starttime;
 		fprintf(stderr, "Time elapsed: %d:%02d:%02d\n", worktime / 3600,
 			(worktime / 60) % 60, worktime % 60);
 	}

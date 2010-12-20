@@ -121,7 +121,7 @@ void StripFilename(char *path)
 {
 	int			 length;
 
-	length = strlen(path)-1;
+	length = int(strlen(path) - 1);
 	while (length > 0 && path[length] != '/')
 		length--;
 	path[length] = 0;
@@ -263,7 +263,7 @@ int LoadFile(const char *name, void **bufferptr)
 
 	buffer = Z_Malloc(length);
 
-	count = fread(buffer, 1, length, f);
+	count = int(fread(buffer, 1, length, f));
 	fclose (f);
 
 	if (count != length)

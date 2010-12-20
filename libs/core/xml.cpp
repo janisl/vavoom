@@ -653,11 +653,11 @@ VStr VXmlDocument::HandleReferences(const VStr& AStr)
 {
 	guard(VXmlDocument::HandleReferences);
 	VStr Ret = AStr;
-	for (size_t i = 0; i < Ret.Length(); i++)
+	for (int i = 0; i < int(Ret.Length()); i++)
 	{
 		if (Ret[i] == '&')
 		{
-			size_t EndPos = i + 1;
+			int EndPos = i + 1;
 			while (EndPos < Ret.Length() && Ret[EndPos] != ';')
 			{
 				EndPos++;
@@ -667,12 +667,12 @@ VStr VXmlDocument::HandleReferences(const VStr& AStr)
 				Error("Unterminated character or entity reference");
 			}
 			EndPos++;
-			VStr Seq = VStr(Ret, i, EndPos - i);
+			VStr Seq = VStr(Ret, i, int(EndPos) - i);
 			VStr NewVal;
 			if (Seq[1] == '#' && Seq[2] == 'x')
 			{
 				int Val = 0;
-				for (size_t j = 3; j < Seq.Length() - 1; j++)
+				for (int j = 3; j < int(Seq.Length()) - 1; j++)
 				{
 					if (Seq[j] >= '0' && Seq[j] < '9')
 						Val = (Val << 4) + Seq[j] - '0';
@@ -688,7 +688,7 @@ VStr VXmlDocument::HandleReferences(const VStr& AStr)
 			else if (Seq[1] == '#')
 			{
 				int Val = 0;
-				for (size_t j = 2; j < Seq.Length() - 1; j++)
+				for (int j = 2; j < int(Seq.Length()) - 1; j++)
 				{
 					if (Seq[j] >= '0' && Seq[j] < '9')
 						Val = Val * 10 + Seq[j] - '0';
@@ -709,8 +709,8 @@ VStr VXmlDocument::HandleReferences(const VStr& AStr)
 				NewVal = ">";
 			else
 				Error("Unknown entity reference");
-			Ret = VStr(Ret, 0, i) + NewVal + VStr(Ret, EndPos, Ret.Length() - EndPos);
-			i += NewVal.Length() - 1;
+			Ret = VStr(Ret, 0, i) + NewVal + VStr(Ret, int(EndPos), int(Ret.Length() - EndPos));
+			i += int(NewVal.Length() - 1);
 		}
 	}
 	return Ret;
