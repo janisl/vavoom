@@ -1439,11 +1439,11 @@ void VRenderLevel::FreeSurfCache(surfcache_t *block)
 
 //==========================================================================
 //
-//	VAdvancedRenderLevel::FreeSurfCache
+//	VRenderLevelShared::FreeSurfCache
 //
 //==========================================================================
 
-void VAdvancedRenderLevel::FreeSurfCache(surfcache_t*)
+void VRenderLevelShared::FreeSurfCache(surfcache_t*)
 {
 }
 
