@@ -85,6 +85,17 @@ void CreateChoices()
 	Slider.ValueChanging = ChangeCrosshairAlpha;
 	currentY += Slider.Height;
 
+	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Width = 380;
+	Enum.Text = "Level renderer";
+	Enum.EnumNames[0] = "Select automatically";
+	Enum.EnumNames[1] = "Regular";
+	Enum.EnumNames[2] = "Advanced";
+	Enum.SetInitialValue(GetCvar('r_level_renderer'));
+	Enum.ValueChanging = ChangeLevelRenderer;
+	currentY += Enum.Height;
+
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "High Resolution Textures";
@@ -197,6 +208,18 @@ bool ChangeCrosshairAlpha(Object Sender, float newValue)
 
 //==========================================================================
 //
+//	ChangeLevelRenderer
+//
+//==========================================================================
+
+bool ChangeLevelRenderer(Object Sender, int newValue)
+{
+	SetCvar('r_level_renderer', newValue);
+	return true;
+}
+
+//==========================================================================
+//
 //	ChangeHiRestex
 //
 //==========================================================================
@@ -280,7 +303,8 @@ void ActivateAdvanced(Object Sender)
 
 defaultproperties
 {
-	Width = 360;
+	Width = 380;
+	Height = 220;
 	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	SelectorType = MenuSelector_SmallRight;

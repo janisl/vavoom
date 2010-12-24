@@ -4350,3 +4350,5 @@
   Firebrand fixed Heretic and Hexen activated item icons spin speed.
   Firebrand fixed drawing of player weapons on all aspect ratios.
   Firebrand fixed Hexen flechettes should only bounce of inert objects.
+24.12.2010
+  I added level renderer selection to the video options menu.
