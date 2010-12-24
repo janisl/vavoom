@@ -766,7 +766,7 @@ void VRenderLevelShared::RenderPSprite(VViewState* VSt, float PSP_DIST,
 	//	1 / 160.0 * 120 / 100 =	0.0075
 	TVec topdelta = (spry * PSP_DIST * 0.0075) * viewup;
 	TVec botdelta = topdelta - (TexHeight * PSP_DIST * 0.0075) * viewup;
-	if (aspect_ratio)
+	if (aspect_ratio > 1)
 	{
 		topdelta *= 100.0 / 120.0;
 		botdelta *= 100.0 / 120.0;
@@ -790,10 +790,22 @@ void VRenderLevelShared::RenderPSprite(VViewState* VSt, float PSP_DIST,
 		saxis = viewright * 160 * PSP_DISTI;
 		texorg = dv[1];
 	}
-	if (aspect_ratio)
+	if (aspect_ratio == 0)
+	{
 		taxis = -(viewup * 160 * PSP_DISTI);
-	else
+	}
+	else if (aspect_ratio == 1)
+	{
 		taxis = -(viewup * 100 * 4 / 3 * PSP_DISTI);
+	}
+	else if (aspect_ratio == 2)
+	{
+		taxis = -(viewup * 100 * 16 / 9 * PSP_DISTI);
+	}
+	else if (aspect_ratio > 2)
+	{
+		taxis = -(viewup * 100 * 16 / 10 * PSP_DISTI);
+	}
 
 	Drawer->DrawSpritePolygon(dv, GTextureManager[lump], Alpha, Additive,
 		0, ColourMap, light, Fade, -viewforward,

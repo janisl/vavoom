@@ -582,11 +582,11 @@ void SB_DrawInventoryBar()
 
 	if (cl.InvFirst && cl.InvFirst.PrevInv())
 	{
-		DrawPic(BAR_X + 42, BAR_Y + 2, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+		DrawPic(BAR_X + 42, BAR_Y + 2, pic_invgeml[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1]);
 	}
 	if (Item)
 	{
-		DrawPic(BAR_X + 269, BAR_Y + 2, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+		DrawPic(BAR_X + 269, BAR_Y + 2, pic_invgemr[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1]);
 	}
 }
 
@@ -670,11 +670,11 @@ void SB_DrawFullscreenStats()
 		}
 		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
-			DrawPic(200, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+			DrawPic(200, 447, pic_invgeml[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1], 0.6);
 		}
 		if (Item)
 		{
-			DrawPic(428, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+			DrawPic(428, 447, pic_invgemr[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1], 0.6);
 		}
 	}
 	else if (cl.InvPtr)
@@ -749,7 +749,7 @@ void SB_DrawIcons()
 	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(Pw.EffectTime * 35.0) & 16)))
 	{
-		frame = (ClGame.GLevel.TicTime / 3) & 15;
+		frame = (ftoi(cl.MO.Level.XLevel.Time * 35.0) / 3) & 15;
 		if (cl.MO.bFly)
 		{
 			if (hitCentreFrame && frame != 15 && frame != 0)
@@ -777,7 +777,7 @@ void SB_DrawIcons()
 	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(Pw.EffectTime * 35.0) & 16)))
 	{
-		DrawPic(60, 19, pic_boot[(ClGame.GLevel.TicTime / 3) & 15]);
+		DrawPic(60, 19, pic_boot[(ftoi(cl.MO.Level.XLevel.Time * 35.0) / 3) & 15]);
 	}
 
 	// Defensive power
@@ -785,7 +785,7 @@ void SB_DrawIcons()
 	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(Pw.EffectTime * 35.0) & 16)))
 	{
-		DrawPic(580, 19, pic_shld[(ClGame.GLevel.TicTime / 3) & 15]);
+		DrawPic(580, 19, pic_shld[(ftoi(cl.MO.Level.XLevel.Time * 35.0) / 3) & 15]);
 	}
 
 	// Minotaur Active
@@ -793,7 +793,7 @@ void SB_DrawIcons()
 	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(Pw.EffectTime * 35.0) & 16)))
 	{
-		DrawPic(620, 19, pic_mino[(ClGame.GLevel.TicTime / 3) & 15]);
+		DrawPic(620, 19, pic_mino[(ftoi(cl.MO.Level.XLevel.Time * 35.0) / 3) & 15]);
 	}
 }
 

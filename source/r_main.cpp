@@ -695,10 +695,22 @@ void VRenderLevelShared::SetupCameraFrame(VEntity* Camera, VTexture* Tex,
 	rd->y = 0;
 	rd->x = 0;
 
-	if (aspect_ratio)
+	if (aspect_ratio == 0)
+	{
 		PixelAspect = ((float)rd->height * 320.0) / ((float)rd->width * 200.0);
-	else
+	}
+	else if (aspect_ratio == 1)
+	{
 		PixelAspect = ((float)rd->height * 4.0) / ((float)rd->width * 3.0);
+	}
+	else if (aspect_ratio == 2)
+	{
+		PixelAspect = ((float)rd->height * 16.0) / ((float)rd->width * 9.0);
+	}
+	else if (aspect_ratio > 2)
+	{
+		PixelAspect = ((float)rd->height * 16.0) / ((float)rd->width * 10.0);
+	}
 
 	rd->fovx = tan(DEG2RAD(FOV) / 2);
 	rd->fovy = rd->fovx * rd->height / rd->width / PixelAspect;

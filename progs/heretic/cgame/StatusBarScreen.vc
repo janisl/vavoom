@@ -373,11 +373,11 @@ void SB_DrawMainBar()
 		}
 		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
-			DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(BAR_X + 38, BAR_Y + 1, pic_invgeml[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1]);
 		}
 		if (Item)
 		{
-			DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1]);
+			DrawPic(BAR_X + 269, BAR_Y + 1, pic_invgemr[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1]);
 		}
 	}
 }
@@ -466,11 +466,11 @@ void SB_DrawFullscreenStats()
 		}
 		if (cl.InvFirst && cl.InvFirst.PrevInv())
 		{
-			DrawPic(198, 447, pic_invgeml[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+			DrawPic(198, 447, pic_invgeml[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1], 0.6);
 		}
 		if (Item)
 		{
-			DrawPic(429, 447, pic_invgemr[!(ClGame.GLevel.TicTime & 4) ? 0 : 1], 0.6);
+			DrawPic(429, 447, pic_invgemr[!(ftoi(cl.MO.Level.XLevel.Time * 35.0) & 4) ? 0 : 1], 0.6);
 		}
 	}
 	else if (cl.InvPtr)
@@ -502,7 +502,7 @@ void SB_DrawIcons()
 	if (Pw && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
-		frame = (ClGame.GLevel.TicTime / 3) & 15;
+		frame = (ftoi(cl.MO.Level.XLevel.Time * 35.0) /* ClGame.GLevel.TicTime */ / 3) & 15;
 		if (cl.MO.bFly)
 		{
 			if (hitCentreFrame && frame != 15 && frame != 0)
@@ -529,7 +529,7 @@ void SB_DrawIcons()
 	if (Pw && !cl.MorphTime && (Pw.EffectTime > Player::BLINKTHRESHOLD ||
 		!(ftoi(2.0 * Pw.EffectTime) & 1)))
 	{
-		DrawPic(620, 17, pic_book[(ClGame.GLevel.TicTime / 3) & 15]);
+		DrawPic(620, 17, pic_book[(ftoi(cl.MO.Level.XLevel.Time * 35.0) / 3) & 15]);
 	}
 }
 
