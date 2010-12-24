@@ -4338,3 +4338,15 @@
   I moved queuing of surfaces in draw queues to level renderer.
   I moved mutitexture flag to drawe base class.
   I changed surface caching methods to b used only by regular level renderer.
+  Firebrand added options to Screen resolution menu for setting custom resolutions.
+  Firebrand added options for setting custom resolutions via the launcher.
+19.12.2010
+  Firebrand added two more stubs for DECORATE.
+  Firebrand fixed MSVC compilation warnings.
+  Firebrand added options for setting aspect ratios.
+  Firebrand fixed the problem that caused the launcher to always start in OpenGL renderer, even when selecting
+ Direct3d.
+23.12.2010
+  Firebrand fixed Heretic and Hexen activated item icons spin speed.
+  Firebrand fixed drawing of player weapons on all aspect ratios.
+  Firebrand fixed Hexen flechettes should only bounce of inert objects.
