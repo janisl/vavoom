@@ -2641,7 +2641,7 @@ void PlayerExitMap(bool clusterChange)
 	{
 		Inventory Next = Item.Inventory;
 		if (Powerup(Item) && (Level.Game.deathmatch || clusterChange ||
-			!Item.bHubPower) && Item.InterHubAmount < 1)
+			!Item.bHubPower))
 		{
 			Item.Destroy();
 		}
@@ -2655,7 +2655,7 @@ void PlayerExitMap(bool clusterChange)
 		for (Item = EntityEx(MO).Inventory; Item;)
 		{
 			Inventory Next = Item.Inventory;
-			if (Item.bInterHubStrip)
+			if (Item.bInterHubStrip /*&& Item.InterHubAmount < 1*/)
 			{
 				Item.Destroy();
 			}
