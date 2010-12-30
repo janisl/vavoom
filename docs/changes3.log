@@ -4241,64 +4241,82 @@
 ******************************************************************************
 
 25.06.2010
-  Firebrand fixed crashes in Hexen when picking up weapon pieces and already had assembled fourth weapon.
-  Firebrand fixed a crash with the recent changes done for Strife's AutoUseHealth method.
-  Firebrand reverted back jump velocity for Hexen player's to the original value of 9, since there was a time
- when Vavoom needed the speed to be higher to work as expected, but many things have changed since that time.
+  Firebrand fixed crashes in Hexen when picking up weapon pieces and already
+ had assembled fourth weapon.
+  Firebrand fixed a crash with the recent changes done for Strife's
+ AutoUseHealth method.
+  Firebrand reverted back jump velocity for Hexen player's to the original
+ value of 9, since there was a time when Vavoom needed the speed to be higher
+ to work as expected, but many things have changed since that time.
 26.06.2010
-  Firebrand fixed a problem with setting of aircontrol for the player which was causing problems with players
- falling down in Hexen and not dying as expected.
-  Firebrand separated the components of velocity conditions affected on most physics methods.
+  Firebrand fixed a problem with setting of aircontrol for the player which was
+ causing problems with players falling down in Hexen and not dying as expected.
+  Firebrand separated the components of velocity conditions affected on most
+ physics methods.
 29.06.2010
-  Firebrand made objects that fall under gravity to also take into account their mass.
+  Firebrand made objects that fall under gravity to also take into account
+ their mass.
 30.06.2010
   Firebrand fixed most compiling warnings under MSVC.
-  Firebrand made flying monsters take into account monsters above or below them when changing their heights by
- blocked lines or because of their normal behavior, to avoid monsters getting stuck on crowded small spaces.
-  Firebrand made objects that are on other objects to respect the floor height, in case the sector changes
- it's height, to avoid objects getting stuck inside of the floor plane, this was already implemented, but the
- conditions where it was being applied were wrong.
-  Firebrand added some performance CVars to avoid drawing shadows or lights on models, for slower processors,
- he also made shadows that can't be seen not to be drawn at all.
+  Firebrand made flying monsters take into account monsters above or below them
+ when changing their heights by blocked lines or because of their normal
+ behavior, to avoid monsters getting stuck on crowded small spaces.
+  Firebrand made objects that are on other objects to respect the floor height,
+ in case the sector changes it's height, to avoid objects getting stuck inside
+ of the floor plane, this was already implemented, but the conditions where it
+ was being applied were wrong.
+  Firebrand added some performance CVars to avoid drawing shadows or lights on
+ models, for slower processors, he also made shadows that can't be seen not to
+ be drawn at all.
 02.07.2010
-  Firebrand added support for parsing Strife's teaser version of the rogue script files, that have some changes.
+  Firebrand added support for parsing Strife's teaser version of the rogue
+ script files, that have some changes.
 03.07.2010
   Firebrand added the Frightener powerup class.
-  Firebrand added an inventory bar for the Doom statusbar (including new graphics).
-  Firebrand fixed small errors in some powerup classes, which could produce crashes.
+  Firebrand added an inventory bar for the Doom statusbar (including new
+ graphics).
+  Firebrand fixed small errors in some powerup classes, which could produce
+ crashes.
   Firebrand made some small changes in DECORATE parsing of DamageFactors.
-  Firebrand fixed that ACS libraries were being searched on the wrong WAD namespace.
+  Firebrand fixed that ACS libraries were being searched on the wrong WAD
+ namespace.
 05.07.2010
-  Firebrand removed the option not drawing shadows that can't be seen, since it was determined it's not the
- best way of doing this.
+  Firebrand removed the option not drawing shadows that can't be seen, since
+ it was determined it's not the best way of doing this.
 09.07.2010
-  Firebrand added extensions for Seeker projectiles, so that they can specify searching for targets as they
- travel, also, they can specify a more exact method for following their Tracer.
-  Firebrand added checks for finding binary LANGUAGE lumps and skipping parsing them.
-  Firebrand changed the amount of weapons players can select, there are some weapon mods that allow for 10
- weapon slots, but the player was limited to 7 (or 4) weapons depending the game.
+  Firebrand added extensions for Seeker projectiles, so that they can specify
+ searching for targets as they travel, also, they can specify a more exact
+ method for following their Tracer.
+  Firebrand added checks for finding binary LANGUAGE lumps and skipping parsing
+ them.
+  Firebrand changed the amount of weapons players can select, there are some
+ weapon mods that allow for 10 weapon slots, but the player was limited to 7
+ (or 4) weapons depending the game.
   Firebrand made some fixes for weapon selection methods.
-  Firebrand added a Position property for weapons, that allow to set a weapon to a specific position on a
- certain weapon slot.
-  Firebrand improved Species property for actors, so that they can specify to whcih monster family they belong.
+  Firebrand added a Position property for weapons, that allow to set a weapon
+ to a specific position on a certain weapon slot.
+  Firebrand improved Species property for actors, so that they can specify to
+ whcih monster family they belong.
 10.07.2010
-  Firebrand began adding and implementing most existing ZDoom's actor flags, most of them were already present,
- they only were only "DECORATED".
+  Firebrand began adding and implementing most existing ZDoom's actor flags,
+ most of them were already present, they only were only "DECORATED".
 11.07.2010
   Firebrand continued to add and implement most existing ZDoom's actor flags.
 13.07.2010
   Firebrand fixed some warnings when building the master server MSVC project.
-  Firebrand removed checks for 64-bit portability problems from project files, since this only causes unneeded
- warnings and it's not really useful.
+  Firebrand removed checks for 64-bit portability problems from project files,
+ since this only causes unneeded warnings and it's not really useful.
 14.07.2010
-  Firebrand began adding and implementing most existing ZDoom's flag constants for DECORATE actor methods.
+  Firebrand began adding and implementing most existing ZDoom's flag constants
+ for DECORATE actor methods.
   Firebrand added flags to A_WeaponReady method.
   Firebrand added flags to A_Respawn method.
   Firebrand added flags to A_FireBullets method.
   Firebrand implemented A_ChangeVelocity method.
   Firebrand implemented A_ScaleVelocity method.
 15.07.2010
-  Firebrand finished adding and implementing most existing ZDoom's flag constants for DECORATE actor methods.
+  Firebrand finished adding and implementing most existing ZDoom's flag
+ constants for DECORATE actor methods.
   Firebrand added flags to A_CustomPunch method.
   Firebrand added flags to A_Mushroom method.
   Firebrand added flags to A_CustomBulletAttack method.
@@ -4306,49 +4324,65 @@
   Firebrand added flags to A_RailAttack method.
   Firebrand implemented A_ZoomFactor method and a way to set the player's FOV.
   Firebrand implemented A_Log and A_LogInt mehtods.
-  Firebrand moved most of the Minotaur methods to the Actor class, to make them available for other actors.
+  Firebrand moved most of the Minotaur methods to the Actor class, to make them
+ available for other actors.
   Firebrand made a generic "blast" method, so that it can be used for weapons.
 19.07.2010
-  Firebrand fixed a memory leak when parsing Strife's teaser Rogue Convo Scripts.
-  Firebrand changed the sound channel produced by a few things, to avoid losing sounds for Hexen's activated
- artifacts.
+  Firebrand fixed a memory leak when parsing Strife's teaser Rogue Convo
+ Scripts.
+  Firebrand changed the sound channel produced by a few things, to avoid losing
+ sounds for Hexen's activated artifacts.
 21.07.2010
-  Firebrand fixed a problem with the DECORATE parser that would force to parse optional parameters, instead of
- skipping them on some cases.
-  Firebrand changed the order of parsing method parameters, so that quoted strings are parsed before numbers,
- since parsed quoted strings that contain numbers in them were detected as integer values.
+  Firebrand fixed a problem with the DECORATE parser that would force to parse
+ optional parameters, instead of skipping them on some cases.
+  Firebrand changed the order of parsing method parameters, so that quoted
+ strings are parsed before numbers, since parsed quoted strings that contain
+ numbers in them were detected as integer values.
 22.07.2010
-  Firebrand added InterHubAmount, BounceType, BounceSound and (aproximated)Shaded rendering style properties
- to DECORATE.
+  Firebrand added InterHubAmount, BounceType, BounceSound and (aproximated)
+ Shaded rendering style properties to DECORATE.
+07.09.2010
+  I removed software renderer.
 17.09.2010
-  Firebrand added a back button item for the menus, so that they can be navigated with the mouse.
-  Firebrand made several menu item values to be set with the mouse wheels (sliders, on/off, yes/no item option).
+  Firebrand added a back button item for the menus, so that they can be
+ navigated with the mouse.
+  Firebrand made several menu item values to be set with the mouse wheels
+ (sliders, on/off, yes/no item option).
   Firebrand made menus navigable with the mouse wheels.
-  Firebrand created a gameplay option to set monster behavior on tall dropoffs, if the option is enabled and the
- map doesn't avoids dropping off, monsters will drop off tall ledges.
-  Firebrand added a flag for allowing monsters to drop off tall ledges, overriding any compatibility options.
-  Firebrand added Use Inventory console command, it takes the inventory item name as a parameter.
+  Firebrand created a gameplay option to set monster behavior on tall dropoffs,
+ if the option is enabled and the map doesn't avoids dropping off, monsters
+ will drop off tall ledges.
+  Firebrand added a flag for allowing monsters to drop off tall ledges,
+ overriding any compatibility options.
+  Firebrand added Use Inventory console command, it takes the inventory item
+ name as a parameter.
 14.12.2010
   I merged renderer parts that were not changed by advanced renderer.
 15.12.2010
-  I moved code from hardware renderer class to level renderer and texture classes.
+  I moved code from hardware renderer class to level renderer and texture
+ classes.
 16.12.2010
   I removed screen resolution limit.
 17.12.2010
   I moved queuing of surfaces in draw queues to level renderer.
   I moved mutitexture flag to drawe base class.
   I changed surface caching methods to b used only by regular level renderer.
-  Firebrand added options to Screen resolution menu for setting custom resolutions.
+  Firebrand added options to Screen resolution menu for setting custom
+ resolutions.
   Firebrand added options for setting custom resolutions via the launcher.
 19.12.2010
   Firebrand added two more stubs for DECORATE.
   Firebrand fixed MSVC compilation warnings.
   Firebrand added options for setting aspect ratios.
-  Firebrand fixed the problem that caused the launcher to always start in OpenGL renderer, even when selecting
- Direct3d.
+  Firebrand fixed the problem that caused the launcher to always start in
+ OpenGL renderer, even when selecting Direct3d.
 23.12.2010
   Firebrand fixed Heretic and Hexen activated item icons spin speed.
   Firebrand fixed drawing of player weapons on all aspect ratios.
   Firebrand fixed Hexen flechettes should only bounce of inert objects.
 24.12.2010
   I added level renderer selection to the video options menu.
+
+******************************************************************************
+                            VERSION 1.33
+******************************************************************************

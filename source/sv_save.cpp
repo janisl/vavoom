@@ -46,7 +46,7 @@
 	(SV_GetSavesDir() + "/save" + _slot + ".vsg")
 
 #define SAVE_DESCRIPTION_LENGTH		24
-#define SAVE_VERSION_TEXT			"Version 1.31"
+#define SAVE_VERSION_TEXT			"Version 1.33"
 #define SAVE_VERSION_TEXT_LENGTH	16
 
 // TYPES -------------------------------------------------------------------

@@ -10,7 +10,7 @@
             ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
              #    ##    ##    #      ####     ####   ##       ##
 
-                                                    Version 1.32
+                                                    Version 1.33
 
 Contents:
     0. Disclaimer
@@ -1170,6 +1170,15 @@ Version 1.32
  version only.
 * If available, use GLSL shaders for all OpenGL rendering.
 * Multiple bug fixes.
+
+==============================================================================
+Version 1.33
+==============================================================================
+
+* Removed software renderer.
+* Inventory bar for the Doom statusbar.
+* Improvements to DECORATE.
+* Multiple bug fixes
 
 *****************************************************************************
 8. Licensing
