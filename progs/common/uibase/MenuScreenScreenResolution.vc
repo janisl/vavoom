@@ -32,7 +32,7 @@ struct mode_t
 };
 
 mode_t				modes[6];
-int					depths[4];
+int					depths[3];
 
 MenuChoiceEnum		Mode;
 MenuInputLine		Width;
@@ -80,7 +80,6 @@ void CreateChoices()
 	Depth = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 	Depth.SetOrigin(ChoicesStartX, ChoicesStartY);
 	Depth.Text = "Bit depth";
-	Depth.AddItem("8");
 	Depth.AddItem("16");
 	Depth.AddItem("24");
 	Depth.AddItem("32");
@@ -147,14 +146,14 @@ final int GetDepthValue()
 
 	b = GetCvar('screen_bpp');
 
-	for (bi = 0; bi < 4; bi++)
+	for (bi = 0; bi < 3; bi++)
 	{
 		if (depths[bi] == b)
 		{
 			break;
 		}
 	}
-	if (bi == 4)
+	if (bi == 3)
 	{
 		bi = 0;
 	}
@@ -187,8 +186,7 @@ defaultproperties
 	modes[3].width = 1152; modes[3].height = 864;
 	modes[4].width = 1280; modes[4].height = 1024;
 	modes[5].width = 1600; modes[5].height = 1200;
-	depths[0] = 8;
-	depths[1] = 16;
-	depths[2] = 24;
-	depths[3] = 32;
+	depths[0] = 16;
+	depths[1] = 24;
+	depths[2] = 32;
 }

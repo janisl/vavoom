@@ -56,7 +56,6 @@ public:
 	wxTextCtrl*		CustomResolutionWidth;
 	wxComboBox*		Colour;
 	wxTextCtrl*		Particles;
-	wxTextCtrl*		CacheMemory;
 	wxCheckBox*		CheckBoxNoSound;
 	wxCheckBox*		CheckBoxNoSfx;
 	wxCheckBox*		CheckBox3DSound;
@@ -225,10 +224,10 @@ VMain::VMain()
 	vsizer->Add(CustomResolutionWidth, 0, wxALL, 4);
 	vsizer->Add(new wxStaticText(page, -1, wxT("Color Depth:")), 0, wxALL, 4);
 	wxString ColourChoices[3];
-	ColourChoices[0] = wxT("8 bits");
-	ColourChoices[1] = wxT("16 bits");
-	ColourChoices[2] = wxT("32 bits");
-	Colour = new wxComboBox(page, -1, ColourChoices[0], wxDefaultPosition, wxDefaultSize, 3, ColourChoices, wxCB_READONLY);
+	ColourChoices[0] = wxT("16 bits");
+	ColourChoices[0] = wxT("24 bits");
+	ColourChoices[1] = wxT("32 bits");
+	Colour = new wxComboBox(page, -1, ColourChoices[0], wxDefaultPosition, wxDefaultSize, 2, ColourChoices, wxCB_READONLY);
 	vsizer->Add(Colour, 0, wxALL, 4);
 	vsizer->AddSpacer(1);
 	CheckBoxWindowedMode = new wxCheckBox(page, -1, wxT("Run in Windowed Mode"));
@@ -236,9 +235,6 @@ VMain::VMain()
 	vsizer->Add(new wxStaticText(page, -1, wxT("Particles:")), 0, wxALL, 4);
 	Particles = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition,wxSize(48, -1));
 	vsizer->Add(Particles, 0, wxALL, 4);
-	vsizer->Add(new wxStaticText(page, -1, wxT("Surface Cache Memory (kb):")), 0, wxALL, 4);
-	CacheMemory = new wxTextCtrl(page, -1, wxT(""), wxDefaultPosition, wxSize(48, -1));
-	vsizer->Add(CacheMemory, 0, wxALL, 4);
 	page->SetSizer(vsizer);
 	vsizer->Layout();
 
@@ -353,7 +349,6 @@ VMain::VMain()
 	CustomResolutionWidth->SetValue(Conf->Read(wxT("CustomResolutionWidth"),  wxT("")));
 	Colour->SetSelection(Conf->Read(wxT("Colour"), 0l));
 	Particles->SetValue(Conf->Read(wxT("Particles"), wxT("")));
-	CacheMemory->SetValue(Conf->Read(wxT("CacheMemory"), wxT("")));
 	CheckBoxNoSound->SetValue(!!Conf->Read(wxT("NoSound"), 0l));
 	CheckBoxNoSfx->SetValue(!!Conf->Read(wxT("NoSfx"), 0l));
 	CheckBox3DSound->SetValue(!!Conf->Read(wxT("3DSound"), 0l));
@@ -398,7 +393,6 @@ VMain::~VMain()
 	Conf->Write(wxT("Colour"), Colour->GetSelection());
 	Conf->Write(wxT("WindowedMode"), CheckBoxWindowedMode->IsChecked());
 	Conf->Write(wxT("Particles"), Particles->GetValue());
-	Conf->Write(wxT("CacheMemory"), CacheMemory->GetValue());
 	Conf->Write(wxT("NoSound"), CheckBoxNoSound->IsChecked());
 	Conf->Write(wxT("NoSfx"), CheckBoxNoSfx->IsChecked());
 	Conf->Write(wxT("3DSound"), CheckBox3DSound->IsChecked());
@@ -473,10 +467,6 @@ void VMain::OnRun(wxCommandEvent&)
 	// Particles
 	if (Particles->GetValue().Length())
 		CmdLine += wxT(" -particles ") + EditMisc->GetValue();
-
-	// Cache Memory
-	if (CacheMemory->GetValue().Length())
-		CmdLine += wxT(" -surfcache ") + EditMisc->GetValue();
 
 	// Sound
 	if (CheckBoxNoSound->IsChecked())
@@ -582,10 +572,10 @@ void VMain::OnRun(wxCommandEvent&)
 	switch (Colour->GetSelection())
 	{
 	case 0:
-		CmdLine += wxT(" 8");
+		CmdLine += wxT(" 16");
 		break;
 	case 1:
-		CmdLine += wxT(" 16");
+		CmdLine += wxT(" 24");
 		break;
 	case 2:
 		CmdLine += wxT(" 32");

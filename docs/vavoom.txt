@@ -266,9 +266,6 @@ Graphics
 can't have less than 512 (i.e. you can't disable them)
 -particles <count>
 
--SURFCACHESIZE specifies the size of surface cache memory, in kilobytes
--surfcachesize <size>
-
 Sound
 -----
 
