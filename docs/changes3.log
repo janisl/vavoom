@@ -4382,6 +4382,11 @@
   Firebrand fixed Hexen flechettes should only bounce of inert objects.
 24.12.2010
   I added level renderer selection to the video options menu.
+26.12.2010
+  Firebrand fixed the checks made to strip powers when ending levels, since this was making wings of wrath to
+ last even after changing maps in Heretic.
+30.12.2010
+  Firebrand changed the way the bouncefactor is applied to bouncing objects.
 
 ******************************************************************************
                             VERSION 1.33

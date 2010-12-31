@@ -1776,10 +1776,10 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 	}
 	if (BestSlideLine)
 	{
-		Velocity = ClipVelocity(Velocity, BestSlideLine->normal, overbounce);
-		Velocity.x *= bouncefactor;
-		Velocity.y *= bouncefactor;
-		Velocity.z *= bouncefactor;
+//		Velocity.x *= bouncefactor;
+//		Velocity.y *= bouncefactor;
+//		Velocity.z *= bouncefactor;
+		Velocity = ClipVelocity(Velocity * bouncefactor, BestSlideLine->normal, overbounce * bouncefactor);
 	}
 	unguard;
 }
