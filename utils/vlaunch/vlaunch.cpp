@@ -225,9 +225,9 @@ VMain::VMain()
 	vsizer->Add(new wxStaticText(page, -1, wxT("Color Depth:")), 0, wxALL, 4);
 	wxString ColourChoices[3];
 	ColourChoices[0] = wxT("16 bits");
-	ColourChoices[0] = wxT("24 bits");
-	ColourChoices[1] = wxT("32 bits");
-	Colour = new wxComboBox(page, -1, ColourChoices[0], wxDefaultPosition, wxDefaultSize, 2, ColourChoices, wxCB_READONLY);
+	ColourChoices[1] = wxT("24 bits");
+	ColourChoices[2] = wxT("32 bits");
+	Colour = new wxComboBox(page, -1, ColourChoices[0], wxDefaultPosition, wxDefaultSize, 3, ColourChoices, wxCB_READONLY);
 	vsizer->Add(Colour, 0, wxALL, 4);
 	vsizer->AddSpacer(1);
 	CheckBoxWindowedMode = new wxCheckBox(page, -1, wxT("Run in Windowed Mode"));
