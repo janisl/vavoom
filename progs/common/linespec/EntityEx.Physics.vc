@@ -147,11 +147,20 @@ bool Physics(float DeltaTime)
 		else
 		{
 			//	Floating bobbing motion for monsters.
-			Origin.z -= Level.Game.FloatBobOffsets[
-				ftoi(FloatBobPhase * 35.0) & 63];
+			EntityEx onmo = EntityEx(CheckOnmobj());
+			if (((onmo && onmo.TestMobjZ()) ||
+				!onmo) && TestMobjZ())
+			{
+				Origin.z -= Level.Game.FloatBobOffsets[
+					ftoi(FloatBobPhase * 35.0) & 63];
+			}
 			FloatBobPhase += DeltaTime;
-			Origin.z += Level.Game.FloatBobOffsets[
-				ftoi(FloatBobPhase * 35.0) & 63];
+			if (((onmo && onmo.TestMobjZ()) ||
+				!onmo) && TestMobjZ())
+			{
+				Origin.z += Level.Game.FloatBobOffsets[
+					ftoi(FloatBobPhase * 35.0) & 63];
+			}
 		}
 	}
 
@@ -507,7 +516,7 @@ final void ZMovement(float DeltaTime, float OldFloorZ)
 			}
 		}
 
-	CheckFakeFloorTriggers(OldZ);
+		CheckFakeFloorTriggers(OldZ);
 	}
 }
 
@@ -617,13 +626,12 @@ final void HitMobj(Entity Other, float ptryx, float ptryy)
 		{
 			//  Bounce against walls and non-killable objects
 			if ((bBounceOnActors || EntityEx(Other).bReflective ||
-				(!Other.bIsPlayer && !EntityEx(Other).bMonster) /* || EntityEx(Other).IsSentient()*/) /* ||
-				EntityEx(Other).bBounceOnAllActors*/)
+				(!Other.bIsPlayer && !EntityEx(Other).bMonster)  || !EntityEx(Other).IsSentient()) ||
+				EntityEx(Other).bBounceOnAllActors)
 			{
 				angle = AngleMod360(atan2(Origin.y - Other.Origin.y,
 					Origin.x - Other.Origin.x) + (Random() * 16.0 - 8.0));
-				speed = Length(Velocity);
-				speed = speed * WallBounceFactor;
+				speed = Length(Velocity) * WallBounceFactor;
 				Angles.yaw = angle;
 				Velocity.x = speed * cos(angle);
 				Velocity.y = speed * sin(angle);
@@ -900,6 +908,11 @@ void FloorBounceMissile()
 		Velocity = (Velocity - 2.0 * vdot * Floor->normal) * BounceFactor;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
 	}
+	else
+	{
+		Velocity = (Velocity - 2.0 * vdot * Floor->normal);
+		Angles.yaw = atan2(Velocity.y, Velocity.x);
+	}
 
 	if (!bNoBounceSound && (BounceSound || SightSound))
 	{
@@ -953,8 +966,16 @@ final void CeilingBounceMissile()
 	}
 
 	// Reverse momentum here for ceiling bounce
-	Velocity = (Velocity - 2.0 * vdot * Ceiling->normal) * BounceFactor;
-	Angles.yaw = atan2(Velocity.y, Velocity.x);
+	if (!bMBFBounce)
+	{
+		Velocity = (Velocity - 2.0 * vdot * Ceiling->normal) * BounceFactor;
+		Angles.yaw = atan2(Velocity.y, Velocity.x);
+	}
+	else
+	{
+		Velocity = (Velocity - 2.0 * vdot * Ceiling->normal);
+		Angles.yaw = atan2(Velocity.y, Velocity.x);
+	}
 
 	if (!bNoBounceSound && (BounceSound || SightSound))
 	{

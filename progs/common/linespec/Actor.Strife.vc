@@ -636,9 +636,12 @@ final void A_InquisitorDecide()
 
 final void A_InquisitorCheckJump()
 {
+	EntityEx onmo = EntityEx(CheckOnmobj());
+	
 	if (Origin.z != Target.Origin.z)
 	{
-		if (Origin.z < Target.Origin.z)
+		if (Origin.z < Target.Origin.z && (((onmo && onmo.TestMobjZ()) ||
+			!onmo) && TestMobjZ()))
 		{
 			A_FaceTarget();
 			if (Origin.z + Height + 64.0 < CeilingZ)
@@ -651,7 +654,8 @@ final void A_InquisitorCheckJump()
 				Origin.z = FloorZ;
 			}
 		}
-		else if(Origin.z != FloorZ && fabs(Velocity.z) < -21.0)
+		else if(Origin.z != FloorZ && fabs(Velocity.z) < -21.0 && (((onmo && onmo.TestMobjZ()) ||
+			!onmo) && TestMobjZ()))
 		{
 			//fly when he is falling
 			A_FaceTarget();
@@ -709,24 +713,45 @@ final void A_InquisitorJump()
 {
 	float an;
 	float dist;
+	TVec OldOrg;
 
 	if (!Target)
 		return;
 
-	PlaySound('inquisitor/jump', CHAN_BODY);
+	EntityEx onmo = EntityEx(CheckOnmobj());
+
 	A_FaceTarget();
+	// Increase origin, then check for possibility
+	// of getting stuck, if we can get stuck, reset
+	// origin value...
+	OldOrg = Origin;
 	Origin.z += 64.0;
-	Velocity.x += 6.0 * 35.0 * cos(Angles.yaw);
-	Velocity.y += 6.0 * 35.0 * sin(Angles.yaw);
-	dist = DistTo2(Target);
-	dist /= 6.0 * 35.0;
-	if (dist < 1.0)
+	if (((onmo && onmo.TestMobjZ()) ||
+		!onmo) && TestMobjZ())
 	{
-		dist = 1.0;
+		// The way is free, so continue along...
+		PlaySound('inquisitor/jump', CHAN_BODY);
+		Velocity.x += 6.0 * 35.0 * cos(Angles.yaw);
+		Velocity.y += 6.0 * 35.0 * sin(Angles.yaw);
+		dist = DistTo2(Target);
+		dist /= 6.0 * 35.0;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = (Target.Origin.z - Origin.z) / dist;
+		ReactionCount = 60;
+		bNoGravity = true;
+		return;
 	}
-	Velocity.z = (Target.Origin.z - Origin.z) / dist;
-	ReactionCount = 60;
-	bNoGravity = true;
+	else
+	{
+		// Something is in the way, reset the Origin value...
+		Origin = OldOrg;
+		ReactionCount = 0;
+		bNoGravity = false;
+		return;
+	}
 }
 
 //==========================================================================
@@ -738,14 +763,35 @@ final void A_InquisitorJump()
 final void A_InquisitorCheckLand()
 {
 	ReactionCount--;
-	if (Velocity.x == 0.0 && Velocity.y == 0.0 || Origin.z <= FloorZ ||
-		fabs(Velocity.x) > 6.0 * 35.0 && fabs(Velocity.y) > 6.0 * 35.0 ||
-		ReactionCount < 0 || Origin.z >= Target.Origin.z + Height / 6.0)
+	EntityEx onmo = EntityEx(CheckOnmobj());
+
+	if (((onmo && onmo.TestMobjZ()) ||
+		!onmo) && TestMobjZ())
 	{
-		SetState(GetStatePlus(SeeState, 1));
-		ReactionCount = 0;
-		bNoGravity = false;
-		return;
+		if (Velocity.x == 0.0 && Velocity.y == 0.0 || Origin.z <= FloorZ ||
+			fabs(Velocity.x) > 6.0 * 35.0 && fabs(Velocity.y) > 6.0 * 35.0 ||
+			ReactionCount < 0 || Origin.z >= Target.Origin.z + Height / 6.0)
+		{
+			SetState(GetStatePlus(SeeState, 1));
+			ReactionCount = 0;
+			bNoGravity = false;
+			return;
+		}
+	}
+	else
+	{
+		float dist;
+
+		A_FaceTarget();
+		Velocity.x += 6.0 * 35.0 * cos(Angles.yaw);
+		Velocity.y += 6.0 * 35.0 * sin(Angles.yaw);
+		dist = DistTo2(Target);
+		dist /= 6.0 * 35.0;
+		if (dist < 1.0)
+		{
+			dist = 1.0;
+		}
+		Velocity.z = (Target.Origin.z - Origin.z) / dist;
 	}
 	PlaySound('inquisitor/jump', CHAN_BODY);
 }

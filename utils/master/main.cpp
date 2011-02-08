@@ -263,7 +263,9 @@ int main(int argc, const char** argv)
 #ifdef _WIN32
 			Sleep(1);
 #else
-			usleep(1);
+//			usleep(1);
+			static const struct timespec sleepTime = {0, 28500000};
+			nanosleep(&sleepTime, NULL);
 #endif
 		}
 

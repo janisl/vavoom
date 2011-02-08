@@ -748,17 +748,25 @@ final bool StepMove()
 		// open any specials
 		if (bFloat && tmtrace.bFloatOk)
 		{
+			float savedz = Origin.z;
+
 			// must adjust height
 			if (Origin.z < tmtrace.FloorZ)
 			{
-				Origin.z += FloatSpeed * Level.Game.frametime;
+				Origin.z += FloatSpeed * 2.0 * Level.Game.frametime;
 			}
 			else
 			{
-				Origin.z -= FloatSpeed * Level.Game.frametime;
+				Origin.z -= FloatSpeed * 2.0 * Level.Game.frametime;
 			}
-			bInFloat = true;
-			return true;
+
+			// Check to make sure there's nothing in the way of the float
+			if (TestMobjZ())
+			{
+				bInFloat = true;
+				return true;
+			}
+			Origin.z = savedz;
 		}
 		if (bCanJump && !bFloat && tmtrace.bFloatOk && 
 			(Origin.z <= FloorZ || bOnMobj) && !JumpTime)

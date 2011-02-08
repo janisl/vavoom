@@ -59,6 +59,7 @@ weapons/wandhit					gldhit
 //  Crossbow
 weapons/bowshoot				bowsht
 weapons/bowhit					hrnhit
+$limit weapons/bowhit 0
 
 //  Blaster
 weapons/blastershoot			blssht
@@ -88,6 +89,7 @@ weapons/macebounce				bounce
 weapons/maceexplode				phohit
 weapons/macestop				pstop
 $limit weapons/maceshoot 0
+$limit weapons/maceexplode 0
 
 //==========================================================================
 //

@@ -1177,14 +1177,23 @@ final void A_FiredChase()
 		Threshold--;
 
 	// Float up and down
-	Origin.z += Level.Game.FloatBobOffsets[Special1];
+	EntityEx onmo = EntityEx(CheckOnmobj());
+	if (((onmo && onmo.TestMobjZ()) ||
+		!onmo) && TestMobjZ())
+	{
+		Origin.z += Level.Game.FloatBobOffsets[Special1];
+	}
 	Special1 = (Special1 + 2) & 63;
 
 
 	// Insure it stays above certain height
-	if (Origin.z < FloorZ + 64.0)
+	if (((onmo && onmo.TestMobjZ()) ||
+		!onmo) && TestMobjZ())
 	{
-		Origin.z += 2.0;
+		if (Origin.z < FloorZ + 64.0)
+		{
+			Origin.z += 2.0;
+		}
 	}
 
 	if (!Target || !Target.bShootable)
@@ -1392,9 +1401,18 @@ final void A_IceGuyAttack()
 
 final void A_BishopChase()
 {
-	Origin.z -= Level.Game.FloatBobOffsets[Special2] / 2.0;
+	EntityEx onmo = EntityEx(CheckOnmobj());
+	if (((onmo && onmo.TestMobjZ()) ||
+		!onmo) && TestMobjZ())
+	{
+		Origin.z -= Level.Game.FloatBobOffsets[Special2] / 2.0;
+	}
 	Special2 = (Special2 + 4) & 63;
-	Origin.z += Level.Game.FloatBobOffsets[Special2] / 2.0;
+	if (((onmo && onmo.TestMobjZ()) ||
+		!onmo) && TestMobjZ())
+	{
+		Origin.z += Level.Game.FloatBobOffsets[Special2] / 2.0;
+	}
 }
 
 //==========================================================================
@@ -1867,7 +1885,12 @@ final void A_WraithFX4()
 
 final void A_WraithChase()
 {
-	Origin.z += Level.Game.FloatBobOffsets[Special1];
+	EntityEx onmo = EntityEx(CheckOnmobj());
+	if (((onmo && onmo.TestMobjZ()) ||
+		!onmo) && TestMobjZ())
+	{
+		Origin.z += Level.Game.FloatBobOffsets[Special1];
+	}
 	Special1 = (Special1 + 2) & 63;
 //  if (actor->FloorClip > 0)
 //  {

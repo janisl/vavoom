@@ -187,7 +187,9 @@ double Sys_Time()
 
 void Sys_Sleep()
 {
-	usleep(1);
+//	usleep(1);
+	static const struct timespec sleepTime = {0, 28500000};
+	nanosleep(&sleepTime, NULL);
 }
 
 //==========================================================================

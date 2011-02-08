@@ -1721,6 +1721,7 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 {
 	guard(VEntity::BounceWall);
 	TVec SlideOrg;
+
 	if (Velocity.x > 0.0)
 	{
 		SlideOrg.x = Origin.x + Radius;
@@ -1741,6 +1742,7 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 	TVec SlideDir = Velocity * host_frametime;
 	line_t* BestSlideLine = NULL;
 	intercept_t* in;
+
 	for (VPathTraverse It(this, &in, SlideOrg.x, SlideOrg.y, SlideOrg.x +
 		SlideDir.x, SlideOrg.y + SlideDir.y, PT_ADDLINES); It.GetNext(); )
 	{
@@ -1748,14 +1750,15 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 		{
 			Host_Error("PTR_BounceTraverse: not a line?");
 		}
-
 		line_t* li = in->line;
+		TVec hit_point = SlideOrg + in->frac * SlideDir;
+
 		if (li->flags & ML_TWOSIDED)
 		{
-			TVec hit_point = SlideOrg + in->frac * SlideDir;
 			// set openrange, opentop, openbottom
 			opening_t* open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);
 			open = SV_FindOpening(open, Origin.z, Origin.z + Height);
+
 			if (open && open->range >= Height &&	// fits
 				Origin.z + Height <= open->top &&
 				Origin.z >= open->bottom)	// mobj is not too high
@@ -1774,12 +1777,26 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 		BestSlideLine = li;
 		break;	// don't bother going farther
 	}
+
 	if (BestSlideLine)
 	{
-//		Velocity.x *= bouncefactor;
-//		Velocity.y *= bouncefactor;
-//		Velocity.z *= bouncefactor;
-		Velocity = ClipVelocity(Velocity * bouncefactor, BestSlideLine->normal, overbounce * bouncefactor);
+		float	angle;
+		float	speed;
+
+		angle = AngleMod(atan2((BestSlideLine->normal.y * 2.0) - SlideDir.y,
+			(BestSlideLine->normal.x * 2.0) - SlideDir.x) + (Random() * 16.0 - 8.0));
+		speed = Length(Velocity) * bouncefactor;
+		Angles.yaw = angle;
+
+		if (!(BestSlideLine->flags & ML_TWOSIDED) && BestSlideLine->PointOnSide2(Origin) == 2)
+		{
+			Origin.x += Radius * cos(angle);
+			Origin.y += Radius * sin(angle);
+		}
+		Velocity.x = speed * cos(angle);
+		Velocity.y = speed * sin(angle);
+
+		Velocity = ClipVelocity(Velocity, BestSlideLine->normal, overbounce);
 	}
 	unguard;
 }
