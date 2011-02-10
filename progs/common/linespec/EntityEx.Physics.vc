@@ -147,19 +147,22 @@ bool Physics(float DeltaTime)
 		else
 		{
 			//	Floating bobbing motion for monsters.
-			EntityEx onmo = EntityEx(CheckOnmobj());
-			if (((onmo && onmo.TestMobjZ()) ||
-				!onmo) && TestMobjZ())
+			float savedz = Origin.z;
+
+			Origin.z -= Level.Game.FloatBobOffsets[
+				ftoi(FloatBobPhase * 35.0) & 63];
+			if (!TestMobjZ())
 			{
-				Origin.z -= Level.Game.FloatBobOffsets[
-					ftoi(FloatBobPhase * 35.0) & 63];
+				Origin.z = savedz;
 			}
 			FloatBobPhase += DeltaTime;
-			if (((onmo && onmo.TestMobjZ()) ||
-				!onmo) && TestMobjZ())
+
+			savedz = Origin.z;
+			Origin.z += Level.Game.FloatBobOffsets[
+				ftoi(FloatBobPhase * 35.0) & 63];
+			if (!TestMobjZ())
 			{
-				Origin.z += Level.Game.FloatBobOffsets[
-					ftoi(FloatBobPhase * 35.0) & 63];
+				Origin.z = savedz;
 			}
 		}
 	}
@@ -624,6 +627,13 @@ final void HitMobj(Entity Other, float ptryx, float ptryy)
 		if (bBounceOnActors || bBounceOnAllActors ||
 			BounceType == BOUNCE_Doom || BounceType == BOUNCE_Hexen)
 		{
+			//	If number of bounces is limited.
+			if (BounceCount > 0 && --BounceCount <= 0)
+			{
+				ExplodeMissile(none);
+				return;
+			}
+
 			//  Bounce against walls and non-killable objects
 			if ((bBounceOnActors || EntityEx(Other).bReflective ||
 				(!Other.bIsPlayer && !EntityEx(Other).bMonster)  || !EntityEx(Other).IsSentient()) ||
@@ -897,20 +907,21 @@ void FloorBounceMissile()
 	if (bBounceLikeHeretic || BounceType == BOUNCE_Heretic &&
 		!bMBFBounce)
 	{
-		Velocity -= 2.0 * vdot * Floor->normal;
+		Velocity -= 2.0 * (vdot * Floor->normal);
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
 		SetState(FindState('Death'));
 		return;
 	}
 
-	if (!bMBFBounce)
+	if (bMBFBounce)
 	{
-		Velocity = (Velocity - 2.0 * vdot * Floor->normal) * BounceFactor;
+		Velocity = Velocity - (2.0 * (vdot * Floor->normal));
+		Velocity.z = Velocity.z * BounceFactor;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
 	}
 	else
 	{
-		Velocity = (Velocity - 2.0 * vdot * Floor->normal);
+		Velocity = (Velocity - (2.0 * (vdot * Floor->normal))) * BounceFactor;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
 	}
 
@@ -930,7 +941,7 @@ void FloorBounceMissile()
 
 	if (bBounceAutoOff || BounceType == BOUNCE_Doom)
 	{
-		if (!bNoGravity && Velocity.z < 3.0 * 35.0)
+		if (!bNoGravity && Velocity.z < (3.0 * 35.0))
 		{
 			BounceType = BOUNCE_None;
 		}
@@ -959,27 +970,45 @@ final void CeilingBounceMissile()
 	if (bBounceLikeHeretic || BounceType == BOUNCE_Heretic &&
 		!bMBFBounce)
 	{
-		Velocity -= 2.0 * vdot * Ceiling->normal;
+		Velocity -= 2.0 * (vdot * Ceiling->normal);
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
 		SetState(FindState('Death'));
 		return;
 	}
 
 	// Reverse momentum here for ceiling bounce
-	if (!bMBFBounce)
+	if (bMBFBounce)
 	{
-		Velocity = (Velocity - 2.0 * vdot * Ceiling->normal) * BounceFactor;
+		Velocity = Velocity - (2.0 * (vdot * Ceiling->normal));
+		Velocity.z = Velocity.z * BounceFactor;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
 	}
 	else
 	{
-		Velocity = (Velocity - 2.0 * vdot * Ceiling->normal);
+		Velocity = (Velocity - (2.0 * (vdot * Ceiling->normal))) * BounceFactor;
 		Angles.yaw = atan2(Velocity.y, Velocity.x);
 	}
 
 	if (!bNoBounceSound && (BounceSound || SightSound))
 	{
 		PlaySound(BounceSound ? BounceSound : SightSound, CHAN_VOICE);
+	}
+
+	if (bMBFBounce)
+	{
+		if (Velocity.z < (Mass * Gravity / 64.0))
+		{
+			// Bring it to rest below a certain speed
+			Velocity.z = 0.0;
+		}
+	}
+
+	if (bBounceAutoOff || BounceType == BOUNCE_Doom)
+	{
+		if (!bNoGravity && Velocity.z < (3.0 * 35.0))
+		{
+			BounceType = BOUNCE_None;
+		}
 	}
 }
 

@@ -539,6 +539,25 @@ final bool HeightClip()
 		// walking monsters rise and fall with the floor
 		if ((Origin.z - FloorZ < 9.0) || bNoGravity || !XLevel.bExtended)
 		{
+			EntityEx onmo = EntityEx(CheckOnmobj());
+
+			// Do we have something over us?
+			if (onmo)
+			{
+				// Adjust height for the thing over us...
+				onmo.Origin.z += FloorZ - Origin.z;
+
+				// don't adjust a floating monster unless forced to...
+				if (onmo.Origin.z + onmo.Height > CeilingZ)
+				{
+					onmo.Origin.z = CeilingZ - onmo.Height;
+				}
+				if (CeilingZ - (FloorZ + Height) < onmo.Height)
+				{
+					// Things don't fit, stop...
+					return false;
+				}
+			}
 			Origin.z = FloorZ;
 		}
 	}
@@ -546,13 +565,26 @@ final bool HeightClip()
 	{
 		// don't adjust a floating monster unless forced to
 		if (Origin.z + Height > CeilingZ)
+		{
 			Origin.z = CeilingZ - Height;
+		}
 	}
 
 	CheckFakeFloorTriggers(OldZ);
 
 	if (CeilingZ - FloorZ < Height)
-		return false;
+	{
+		if (bIceCorpse && bSolid)
+		{
+			Actor(self).A_FreezeDeathChunks();
+			return true;
+		}
+		else
+		{
+			// Doesn't fit, stop...
+			return false;
+		}
+	}
 
 	return true;
 }

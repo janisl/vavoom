@@ -429,6 +429,7 @@ final void A_FreeTargMobj()
 	bCountKill = false;
 	bMonster = false;
 	bSkullFly = false;
+	bIceCorpse = false;
 	bNoGravity = true;
 	bDropOff = true;
 	bCorpse = true;

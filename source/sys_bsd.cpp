@@ -35,6 +35,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <time.h>
 #include "gamedefs.h"
 #include "svnrev.h"
 

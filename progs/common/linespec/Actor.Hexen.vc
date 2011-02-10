@@ -525,9 +525,22 @@ final void A_KSpiritWeave()
 	newX += cos(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
 	newY += sin(angle) * Level.Game.FloatBobOffsets[WeaveXY] * 4.0;
 	TryMove(vector(newX, newY, Origin.z), false);
+	float savedz = Origin.z;
 	Origin.z -= Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
+	// Check to make sure there's nothing in the way of the float
+	if (!TestMobjZ())
+	{
+		Origin.z = savedz;
+	}
+
 	WeaveZ = (WeaveZ + (P_Random() % 5)) & 63;
-	Origin.z += Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
+	savedz = Origin.z;
+	// Check to make sure there's nothing in the way of the float
+	if (TestMobjZ())
+	{
+		Origin.z += Level.Game.FloatBobOffsets[WeaveZ] * 2.0;
+	}
+
 	Special2 = (WeaveXY << 16) | (WeaveZ & 0xffff);
 }
 
@@ -758,7 +771,12 @@ final void A_BatMove()
 		PlaySound('BatScream', CHAN_VOICE);
 
 	// Handle Z movement
+	float savedz = Origin.z;
 	Origin.z = Target.Origin.z + 2.0 * Level.Game.FloatBobOffsets[Args[0]];
+	if (!TestMobjZ())
+	{
+		Origin.z = savedz;
+	}
 	Args[0] = (Args[0] + 3) & 63;
 }
 
@@ -897,7 +915,12 @@ final void A_FogMove()
 
 	if ((Args[3] % 4) == 0)
 	{
+		float savedz = Origin.z;
 		Origin.z += Level.Game.FloatBobOffsets[Special2] / 2.0;
+		if (!TestMobjZ())
+		{
+			Origin.z = savedz;
+		}
 		Special2 = (Special2 + 1) & 63;
 	}
 
@@ -1177,22 +1200,23 @@ final void A_FiredChase()
 		Threshold--;
 
 	// Float up and down
-	EntityEx onmo = EntityEx(CheckOnmobj());
-	if (((onmo && onmo.TestMobjZ()) ||
-		!onmo) && TestMobjZ())
+	float savedz = Origin.z;
+	Origin.z += Level.Game.FloatBobOffsets[Special1];
+	if (!TestMobjZ())
 	{
-		Origin.z += Level.Game.FloatBobOffsets[Special1];
+		Origin.z = savedz;
 	}
 	Special1 = (Special1 + 2) & 63;
 
 
 	// Insure it stays above certain height
-	if (((onmo && onmo.TestMobjZ()) ||
-		!onmo) && TestMobjZ())
+	if (Origin.z < FloorZ + 64.0)
 	{
-		if (Origin.z < FloorZ + 64.0)
+		savedz = Origin.z;
+		Origin.z += 2.0;
+		if (!TestMobjZ())
 		{
-			Origin.z += 2.0;
+			Origin.z = savedz;
 		}
 	}
 
@@ -1401,17 +1425,19 @@ final void A_IceGuyAttack()
 
 final void A_BishopChase()
 {
-	EntityEx onmo = EntityEx(CheckOnmobj());
-	if (((onmo && onmo.TestMobjZ()) ||
-		!onmo) && TestMobjZ())
+	float savedz = Origin.z;
+
+	Origin.z -= Level.Game.FloatBobOffsets[Special2] / 2.0;
+	if (!TestMobjZ())
 	{
-		Origin.z -= Level.Game.FloatBobOffsets[Special2] / 2.0;
+		Origin.z = savedz;
 	}
 	Special2 = (Special2 + 4) & 63;
-	if (((onmo && onmo.TestMobjZ()) ||
-		!onmo) && TestMobjZ())
+	savedz = Origin.z;
+	Origin.z += Level.Game.FloatBobOffsets[Special2] / 2.0;
+	if (!TestMobjZ())
 	{
-		Origin.z += Level.Game.FloatBobOffsets[Special2] / 2.0;
+		Origin.z = savedz;
 	}
 }
 
@@ -1885,11 +1911,12 @@ final void A_WraithFX4()
 
 final void A_WraithChase()
 {
-	EntityEx onmo = EntityEx(CheckOnmobj());
-	if (((onmo && onmo.TestMobjZ()) ||
-		!onmo) && TestMobjZ())
+	float savedz = Origin.z;
+
+	Origin.z += Level.Game.FloatBobOffsets[Special1];
+	if (!TestMobjZ())
 	{
-		Origin.z += Level.Game.FloatBobOffsets[Special1];
+		Origin.z = savedz;
 	}
 	Special1 = (Special1 + 2) & 63;
 //  if (actor->FloorClip > 0)

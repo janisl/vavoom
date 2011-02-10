@@ -6316,6 +6316,16 @@ final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 		return;
 	}
 
+	if (po->bCrush)
+	{
+		if (EntityEx(Other).bIceCorpse)
+		{
+			// Crush Ice corpses
+			Actor(Other).A_FreezeDeathChunks();
+			return;
+		}
+	}
+
 	pe = PolyobjThinker(po->SpecialData);
 	if (pe)
 	{
@@ -6342,6 +6352,7 @@ final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 		testPos = Other.Origin + force * thrustDir * Game.frametime;
 		if (po->bHurtOnTouch || !Other.CheckPosition(testPos))
 		{
+			// Damage other type of actors
 			EntityEx(Other).Damage(none, none, 3, 'Crush');
 		}
 	}

@@ -1781,21 +1781,20 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 	if (BestSlideLine)
 	{
 		float	angle;
+		float	lineang;
 		float	speed;
 
-		angle = AngleMod(atan2((BestSlideLine->normal.y * 2.0) - SlideDir.y,
-			(BestSlideLine->normal.x * 2.0) - SlideDir.x) + (Random() * 16.0 - 8.0));
+		lineang = AngleMod180(atan2(BestSlideLine->normal.y, BestSlideLine->normal.x));
+		if (BestSlideLine->PointOnSide(Origin) == 1)
+		{
+			lineang += 180.0;
+		}
+
+		angle = AngleMod180(atan2((lineang * 2.0) - SlideDir.y, (lineang * 2.0) - SlideDir.x));
 		speed = Length(Velocity) * bouncefactor;
 		Angles.yaw = angle;
-
-		if (!(BestSlideLine->flags & ML_TWOSIDED) && BestSlideLine->PointOnSide2(Origin) == 2)
-		{
-			Origin.x += Radius * cos(angle);
-			Origin.y += Radius * sin(angle);
-		}
 		Velocity.x = speed * cos(angle);
 		Velocity.y = speed * sin(angle);
-
 		Velocity = ClipVelocity(Velocity, BestSlideLine->normal, overbounce);
 	}
 	unguard;
