@@ -4391,3 +4391,27 @@
 ******************************************************************************
                             VERSION 1.33
 ******************************************************************************
+
+07.02.2011
+  Firebrand removed limits on some more Heretic sounds.
+  Firebrand added various checks for avoiding floating monsters with bobbing
+ motions to get stuck inside other  enemies momentarily.
+  Firebrand fixed the Strife's Inquisitor could get stuck in other actors
+ when jumping.
+  Firebrand doubled the speed at which floating monsters go up when "sliding"
+ along walls vertically to make it more consistent to original behaviour.
+  Firebrand fixed some problems with MBF bounce flags physics in floors and ceilings.
+  Firebrand tweaked the way wall bounce physics work.
+  Firebrand applied patch supplied by Blzut3 to fix performance of dedicated and
+ master server on Linux.
+10.02.2011
+  Firebrand made some more tweaks to the wall bouncing code.
+  Firebrand added missing include files to the previous linux dedicated server and
+ master server patch.
+  Firebrand changed the checks for Hexen's floating monsters with bobbing motions.
+  Firebrand added a way to handle the case of actors on top of other actors when they
+ stand in moving platforms or floors.
+  Firebrand fixed actor bounces wouldn't check or change BounceCount.
+  Firebrand made sliding polyobject doors to crush ice corpses.
+  Firebrand made normal doom doors to crush ice corpses.
+  
