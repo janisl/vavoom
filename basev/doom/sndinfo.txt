@@ -123,6 +123,7 @@ imp/shotx						dsfirxpl
 imp/pain						dspopain
 imp/death1						dsbgdth1
 imp/death2						dsbgdth2
+$limit imp/active 6
 
 //  Demon
 demon/sight						dssgtsit
@@ -130,6 +131,7 @@ demon/active					dsdmact
 demon/melee						dssgtatk
 demon/pain						dsdmpain
 demon/death						dssgtdth
+$limit demon/melee 4
 
 //  Spectre
 spectre/sight					dssgtsit

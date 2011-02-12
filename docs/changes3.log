@@ -4414,4 +4414,9 @@
   Firebrand fixed actor bounces wouldn't check or change BounceCount.
   Firebrand made sliding polyobject doors to crush ice corpses.
   Firebrand made normal doom doors to crush ice corpses.
-  
+11.02.2011
+  Firebrand fixed the problem that made the player don't enter it's pain state when walking on
+ lava or nukage pools.
+  Firebrand adjusted Z Velocity for Fighter's flechettes, since the old value was a bit too high.
+  Firebrand added some checks inside of StepMove method for better handling of certain conditions that
+ could cause monsters to get stuck inside of each other when falling down.

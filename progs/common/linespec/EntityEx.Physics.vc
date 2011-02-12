@@ -1427,6 +1427,7 @@ final void ApplyFriction()
 	if (Origin.z <= FloorZ)
 	{
 		dot = DotProduct(Velocity, Floor->normal);
+
 		if (dot < 0.0)
 		{
 			TVec Vel;

@@ -268,7 +268,7 @@ $limit world/amb7 1
 $limit world/amb8 1
 $limit world/amb9 1
 $limit world/amb10 1
-$limit world/amb11 1
+$limit world/amb11 0
 
 //	Sparks
 world/spark1					spark1

@@ -111,6 +111,7 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			// Invulnerable during charge attack
 			return;
 		}
+		bSkullFly = false;
 		Velocity = vector(0.0, 0.0, 0.0);
 		if (Health > 0)
 		{
@@ -350,12 +351,12 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		}
 	}
 
-	if (!bNoPain && (((Random() < PChance) && !bSkullFly && (inflictor && !inflictor.bPainless)) ||
-		(inflictor && inflictor.bForcePain)))
+	if (!bNoPain && ((Random() < PChance) && !bSkullFly))
 	{
 		if (inflictor && inflictor.bLightning)
 		{
-			if (P_Random() < 96)
+			if (P_Random() < 96 && (!inflictor.bPainless ||
+			    inflictor.bForcePain))
 			{
 				bJustHit = true;	// fight back!
 				SetState(FindState('Pain', DmgType, false));
@@ -374,7 +375,11 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 		else
 		{
 			bJustHit = true;	// fight back!
-			SetState(FindState('Pain', DmgType, false));
+			if (!inflictor || (inflictor && (!inflictor.bPainless ||
+			    inflictor.bForcePain)))
+			{
+				SetState(FindState('Pain', DmgType, false));
+			}
 			if (inflictor && inflictor.bHowlVictims)
 			{
 				if (HowlSound && bMonster && P_Random() < 128 &&

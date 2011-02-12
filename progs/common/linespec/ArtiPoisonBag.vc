@@ -66,13 +66,14 @@ bool Use(bool Pickup)
 		{
 			bomb.Angles.yaw = AngleMod360(Owner.Angles.yaw +
 				(Random() * 2.0 - 1.0) * 45.0 / 8.0);
-			bomb.Velocity.z =
-				(4.0 + 173.0 * -tan(Owner.Angles.pitch) / 16.0) * 35.0;
-			bomb.Origin.z += 173.0 * -tan(Owner.Angles.pitch) / 16.0;
 			bomb.Velocity.x += bomb.Speed * cos(bomb.Angles.yaw);
 			bomb.Velocity.y += bomb.Speed * sin(bomb.Angles.yaw);
+			bomb.Velocity.z +=
+				(bomb.Speed * -tan(Owner.Angles.pitch) / 48.0) * 35.0;
+			bomb.Origin.z += 173.0 * -tan(Owner.Angles.pitch) / 16.0;
 			bomb.Velocity.x += Owner.Velocity.x / 2.0;
 			bomb.Velocity.y += Owner.Velocity.y / 2.0;
+			bomb.Velocity.z += Owner.Velocity.z / 2.0;
 			bomb.Target = EntityEx(Owner);
 			bomb.StateTime -= Random() * 0.1;
 			bomb.CheckMissileSpawn();

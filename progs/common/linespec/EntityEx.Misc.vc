@@ -542,7 +542,7 @@ final bool HeightClip()
 			EntityEx onmo = EntityEx(CheckOnmobj());
 
 			// Do we have something over us?
-			if (onmo)
+			if (bSolid && onmo && onmo.bSolid)
 			{
 				// Adjust height for the thing over us...
 				onmo.Origin.z += FloorZ - Origin.z;

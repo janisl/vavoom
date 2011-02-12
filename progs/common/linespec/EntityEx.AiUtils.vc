@@ -853,7 +853,7 @@ final bool StepMove()
 		bInFloat = false;
 	}
 
-	if (!bFloat && !bNoGravity)
+	if (!bFloat && !bNoGravity && !bDropOff && !bOnMobj)
 	{
 		if (Origin.z > FloorZ)
 		{
