@@ -238,12 +238,12 @@ $MAP    58              Cryptr
 $MAP    59              Simonr
 $MAP    60              Crucibr
 
-$MAP    33              Grover
-$MAP    34              Fortr
-$MAP    35              Swampr
-$MAP    36              Wobabyr
-$MAP    37              Blechr
-$MAP    38              Falconr
+//$MAP    33              Grover
+//$MAP    34              Fortr
+//$MAP    35              Swampr
+//$MAP    36              Wobabyr
+//$MAP    37              Blechr
+//$MAP    38              Falconr
 
 $MAP    0               hexen
 $MAP    0               hub

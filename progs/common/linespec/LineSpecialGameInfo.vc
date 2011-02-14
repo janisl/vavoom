@@ -132,6 +132,9 @@ void Init()
 	CreateCvar('damage_thrust', "1", CVAR_ARCHIVE);
 	CreateCvar('autoaim', "1", CVAR_ARCHIVE);
 	CreateCvar('monster_dropoff', "0", CVAR_ARCHIVE);
+	// This one is only used in Hexen for now, but it could come in
+	// handy for other games if needed
+	CreateCvar('alternate_monster_attacks', "0", CVAR_ARCHIVE);
 }
 
 //==========================================================================

@@ -1498,7 +1498,7 @@ final void A_BishopSpawnBlur()
 	{
 		Velocity.x = 0.0;
 		Velocity.y = 0.0;
-		if (P_Random() > 96)
+		if (P_Random() > 96 || (GetCvar('alternate_monster_attacks') && !CanSee(Target)))
 		{
 			SetState(SeeState);
 		}
@@ -1729,7 +1729,7 @@ final void A_SerpentChooseAttack()
 {
 	if (MissileState)
 	{
-		if (!Target || CheckMeleeRange())
+		if (!Target || (GetCvar('alternate_monster_attacks') && !CanSee(Target)) || CheckMeleeRange())
 		{
 			return;
 		}

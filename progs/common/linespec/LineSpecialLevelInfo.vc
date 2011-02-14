@@ -6316,16 +6316,6 @@ final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 		return;
 	}
 
-	if (po->bCrush)
-	{
-		if (EntityEx(Other).bIceCorpse)
-		{
-			// Crush Ice corpses
-			Actor(Other).A_FreezeDeathChunks();
-			return;
-		}
-	}
-
 	pe = PolyobjThinker(po->SpecialData);
 	if (pe)
 	{
@@ -6344,7 +6334,7 @@ final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 		force = 1.0;
 	}
 
-	Other.Velocity += force * thrustDir;
+	Other.Velocity += (force * thrustDir) * 35.0;
 	if (po->bCrush)
 	{
 		TVec testPos;
@@ -6354,6 +6344,64 @@ final void PolyThrustMobj(Entity Other, TVec thrustDir, polyobj_t* po)
 		{
 			// Damage other type of actors
 			EntityEx(Other).Damage(none, none, 3, 'Crush');
+		}
+
+		//	Crunch Ice Corpses
+		if (EntityEx(Other).bIceCorpse)
+		{
+			// Crush Ice corpses
+			Actor(Other).A_FreezeDeathChunks();
+			return;
+		}
+
+		//	Crunch bodies to giblets
+		if (EntityEx(Other).bCorpse && !EntityEx(Other).bDontGib && Other.Health <= 0)
+		{
+			bool CanDestroy = false;
+			if (!EntityEx(Other).bNoBlood)
+			{
+				class c = FindClass('RealGibs');
+				
+				if (c)
+				{
+					if (!FindClassState(GetClassReplacement(c), 'Spawn') ||
+						!AreStateSpritesPresent(FindClassState(GetClassReplacement(c), 'Spawn')))
+					{
+						c = none;
+					}
+				}
+				
+				if (c)
+				{
+					Actor Gib = Spawn(RealGibs);
+					Gib.RenderStyle = EntityEx(Other).RenderStyle;
+					Gib.Alpha = EntityEx(Other).Alpha;
+					Gib.Height = 0.0;
+					Gib.Radius = 0.0;
+					if (EntityEx(Other).BloodTranslation && !Gib.bDontTranslate)
+					{
+						Gib.Translation = EntityEx(Other).BloodTranslation;
+					}
+					Gib.PlaySound('misc/fallingsplat', CHAN_BODY);
+					CanDestroy = true;
+				}
+				else
+				{
+					EntityEx(Other).bDontGib = true;
+				}
+			}
+			if (Other.bIsPlayer)
+			{
+				Other.bColideWithWorld = false;
+				Other.bColideWithThings = false;
+				EntityEx(Other).bDontGib = true;
+				EntityEx(Other).bInvisible = true;
+			}
+			else
+			{
+				if (CanDestroy)
+					Other.Destroy();
+			}
 		}
 	}
 }

@@ -822,13 +822,6 @@ final bool HitCeiling()
 		SectorAction(Sector->ActionList).TriggerAction(self,
 			SectorAction::SECSPAC_HitCeiling);
 	}
-
-	vdot = DotProduct(Velocity, Ceiling->normal);
-	if (vdot < 0.0)
-	{
-		TVec Vel = vdot * Ceiling->normal;
-		Velocity.z -= Vel.z;
-	}
 	Origin.z = CeilingZ - Height;
 
 	if (bMissile && (bColideWithWorld ||
@@ -867,6 +860,14 @@ final bool HitCeiling()
 		// the skull slammed into something
 		Velocity.z = -Velocity.z;
 	}
+	vdot = DotProduct(Velocity, Ceiling->normal);
+
+	if (vdot < 0.0)
+	{
+		TVec Vel = vdot * Ceiling->normal;
+		Velocity.z -= Vel.z;
+	}
+
 	return true;
 }
 

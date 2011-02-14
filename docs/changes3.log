@@ -4420,3 +4420,18 @@
   Firebrand adjusted Z Velocity for Fighter's flechettes, since the old value was a bit too high.
   Firebrand added some checks inside of StepMove method for better handling of certain conditions that
  could cause monsters to get stuck inside of each other when falling down.
+13.02.2011
+  Firebrand commented out Hexen Deathking's music assigments inside the Hexen's SNDINFO lump that were
+ overlapping with the original ones, this isn't much trouble, these maps were deathmatch only in Deathkings
+ so people won't care what music files are player where.
+  Firebrand added B0rsuk's patch provided for changing Hexen's Bishops and Stalker boss's behaviout of shooting
+ even when the player wasn't around, it was added as a gameplay compatibility option that it's turned off by
+ default.
+  Firebrand fixed the logic of the HitCeiling method, since it was modifying the origin of objects and this was
+ affecting bouncing objects.
+  Firebrand fixing how the Mobj thrust done by polyobjects was being calculated, since the effects weren't
+ correct sometimes making monsters remain stuck with rotating polyobjects, he also fixed the logic of the
+ function for crushing corpses and ice corpses.
+  Firebrand removed the one sound per mobj limit from GetChannel, since it was making the sounds for the
+ Heretic's Gauntlet weapon to be cut off when replayed, it also made the game reproduce sounds way better.
+  Firebrand fixed the option's text of the gameplay options screen to fit on screen for all the games.

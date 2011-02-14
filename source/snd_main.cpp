@@ -528,7 +528,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 	else if (!SoundDevice->Sound3D)
 	{
 		float vol = SoundCurve[dist] / 127.0 * volume;
-		float sep = DotProduct(origin - cl->ViewOrg, ListenerRight) /
+		float sep = DotProduct(origin - (cl ? cl->ViewOrg : TVec(0.0, 0.0, 0.0)), ListenerRight) /
 			MaxSoundDist;
 		if (swap_stereo)
 		{
@@ -609,7 +609,7 @@ int VAudio::GetChannel(int sound_id, int origin_id, int channel, int priority)
 	}
 
 	//	Mobjs can have only one sound
-	if (origin_id && channel)
+/*	if (origin_id && channel)
     {
 		for (i = 0; i < NumChannels; i++)
 		{
@@ -621,7 +621,7 @@ int VAudio::GetChannel(int sound_id, int origin_id, int channel, int priority)
 				return i;
 			}
 		}
-	}
+	}*/
 
 	//	Look for a free channel
 	for (i = 0; i < NumChannels; i++)
@@ -806,9 +806,10 @@ void VAudio::StopSequence(int origin_id)
 void VAudio::UpdateActiveSequences(float DeltaTime)
 {
 	guard(VAudio::UpdateActiveSequences);
-	if (!ActiveSequences || GGameInfo->IsPaused())
+	if (!ActiveSequences || GGameInfo->IsPaused() || !cl)
 	{
 		//	No sequences currently playing/game is paused
+		//  or there's no player in the map
 		return;
 	}
 	for (VSoundSeqNode* node = SequenceListHead; node; node = node->Next)
