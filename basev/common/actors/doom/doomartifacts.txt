@@ -52,6 +52,7 @@ actor BlurSphere : PowerupGiver 2024
 	Inventory.PickupMessage "$gotinvis"
 	Inventory.MaxAmount 0
 	Powerup.Type Invisibility
+	+VisibilityPulse
 	+CountItem
 	+Inventory.BigPowerup
 	+Inventory.AutoActivate

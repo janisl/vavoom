@@ -128,7 +128,7 @@ void VAdvancedRenderLevel::QueueWorldSurface(surface_t* surf)
 
 //==========================================================================
 //
-//	VRenderLevelShared::DrawSurfaces
+//	VRenderLevelShared::QueueSimpleSurf
 //
 //==========================================================================
 

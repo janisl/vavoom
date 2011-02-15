@@ -4435,3 +4435,9 @@
   Firebrand removed the one sound per mobj limit from GetChannel, since it was making the sounds for the
  Heretic's Gauntlet weapon to be cut off when replayed, it also made the game reproduce sounds way better.
   Firebrand fixed the option's text of the gameplay options screen to fit on screen for all the games.
+14.02.2011
+  Firebrand fixed the bPulseVisibility flag logic, since it didn't worked correctly.
+  Firebrand restored the PulseVisibility flag to Doom's BlurSphere.
+  Firebrand made actors with Crash state to Crash only on Solid objects, since this could trigger the effect
+ indefinitely under specific conditions.
+  Firebrand enabled drawing of light shadows for player model.

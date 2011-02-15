@@ -7437,6 +7437,7 @@ final int P_Massacre()
 		{
 			mo.bNonShootable = false;
 			mo.bInvulnerable = false;
+			mo.bDormant = false;
 			mo.bShootable = true;
 			mo.Damage(none, none, 10000);
 			count++;

@@ -853,6 +853,11 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox)
 
 	node_t* bsp = &Level->Nodes[bspnum];
 
+	/*if (bsp->VisFrame != r_visframecount)
+	{
+		return;
+	}*/
+
 	// Decide which side the light is on.
 	float Dist = DotProduct(CurrLightPos, bsp->normal) - bsp->dist;
 	if (Dist >= CurrLightRadius)

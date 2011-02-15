@@ -1606,7 +1606,7 @@ void Tick(float deltaTime)
 		else
 		{
 			Alpha -= 0.75 * deltaTime;
-			if (Alpha < 0.25)
+			if (Alpha <= 0.25)
 			{
 				Alpha = 0.25;
 				VisDir = 1;

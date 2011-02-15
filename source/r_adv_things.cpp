@@ -441,11 +441,12 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 	{
 		return;
 	}
-	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
+	// Draw camera actor for shadow pass
+/*	if (mobj == ViewEnt && (!r_chasecam || ViewEnt != cl->MO))
 	{
 		//	Don't draw camera actor.
 		return;
-	}
+	}*/
 	if ((mobj->EntityFlags & VEntity::EF_NoSector) ||
 		(mobj->EntityFlags & VEntity::EF_Invisible))
 	{
