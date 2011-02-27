@@ -240,6 +240,10 @@ void UseInventory(string Inv)
 {
 }
 
+bool CheckDoubleFiringSpeed()
+{
+}
+
 void Cheat_God()
 {
 }
@@ -277,6 +281,10 @@ void Cheat_NoTarget()
 }
 
 void Cheat_Anubis()
+{
+}
+
+void Cheat_Freeze()
 {
 }
 

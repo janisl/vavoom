@@ -318,6 +318,11 @@ class VBasePlayer : public VGameObject
 		P_PASS_STR(Inv);
 		EV_RET_VOID(NAME_UseInventory);
 	}
+	bool eventCheckDoubleFiringSpeed()
+	{
+		P_PASS_SELF;
+		EV_RET_BOOL(NAME_CheckDoubleFiringSpeed);
+	}
 
 	//	Cheats.
 	void eventCheat_God()
@@ -369,6 +374,11 @@ class VBasePlayer : public VGameObject
 	{
 		P_PASS_SELF;
 		EV_RET_VOID(NAME_Cheat_Anubis);
+	}
+	void eventCheat_Freeze()
+	{
+		P_PASS_SELF;
+		EV_RET_VOID(NAME_Cheat_Freeze);
 	}
 
 	//	Server to client events.

@@ -916,7 +916,6 @@ void VRenderLevelShared::RenderPlayerView()
 	AnimateSky(host_frametime);
 
 	UpdateParticles(host_frametime);
-
 	PushDlights();
 
 	//	Update camera textures that were visible in last frame.

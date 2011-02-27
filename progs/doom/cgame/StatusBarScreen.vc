@@ -811,7 +811,8 @@ final void UpdateFaceWidget(float FrameTime)
 	if (sb_face_priority < 6)
 	{
 		// rapid firing
-		if (cl.bAttackDown && !cl.bFrozen && !cl.bTotallyFrozen)
+		if (cl.bAttackDown && !cl.bFrozen && !cl.bTotallyFrozen ||
+			(cl.Level.bFrozen && !(cl.Cheats & PlayerEx::CF_TIMEFREEZE)))
 		{
 			if (sb_face_lastattackdown == -1.0)
 			{

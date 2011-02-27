@@ -112,7 +112,8 @@ final void SetOrigin2(TVec origin)
 //==========================================================================
 
 final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
-	bool DamageSource, optional name BombDmgType, optional bool DoDamage)
+	bool DamageSource, optional name BombDmgType, optional bool DoDamage,
+	optional int damagedistance)
 {
 	EntityEx	Other;
 	float		dist;
@@ -165,9 +166,28 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 
 		if (Other.CanSee(self))
 		{
+			float dist2;
+			
 			// OK to damage, target is in direct path
-			damage = ftoi(itof(BombDamage) * RDFactor *
-				(BombDistance - dist) / BombDistance);
+			if (!specified_damagedistance)
+			{
+				dist2 = dist;
+			}
+			else
+			{
+				dist2 = dist - itof(damagedistance);
+				
+				if (dist2 <= 0.0)
+				{
+					dist2 = 0.0;
+				}
+				else if (dist2 >= dist)
+				{
+					dist2 = dist;
+				}
+			}
+			damage = ftoi(((itof(BombDamage) * RDFactor *
+				(BombDistance - dist2)) / BombDistance));
 			if (DoDamage)
 			{
 				Other.Damage(self, Source, damage, BombDmgType);
@@ -180,7 +200,7 @@ final void RadiusAttack(EntityEx Source, int BombDamage, float BombDistance,
 			if (!Other.bIceCorpse && (!DoDamage || !bNoDamageThrust))
 			{
 				float Thrust = itof(damage) * 0.5;
-				float VelZ = (Other.Origin.z + Other.Height * 0.5 -
+				float VelZ = ((Other.Origin.z + (Other.Height * 0.5)) -
 					Origin.z) * Thrust;
 				if (Source != Other)
 				{
@@ -1584,6 +1604,12 @@ void NoBlockingSet()
 void Tick(float deltaTime)
 {
 	Inventory		Item;
+
+	if (Level.bFrozen && ((!bIsPlayer && !bNoTimeFreeze) ||
+		(bIsPlayer && !(PlayerEx(Player).Cheats & PlayerEx::CF_TIMEFREEZE))))
+	{
+		return;
+	}
 
 	//	Handle powerup effects.
 	for (Item = Inventory; Item && Item.Owner == self; Item = Item.Inventory)

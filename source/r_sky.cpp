@@ -530,11 +530,14 @@ void VRenderLevelShared::AnimateSky(float frametime)
 	guard(VRenderLevelShared::AnimateSky);
 	InitSky();
 
-	//	Update sky column offsets
-	for (int i = 0; i < BaseSky.NumSkySurfs; i++)
+	if (!(Level->LevelInfo->LevelInfoFlags2 & VLevelInfo::LIF2_Frozen))
 	{
-		BaseSky.sky[i].columnOffset1 += BaseSky.sky[i].scrollDelta1 * frametime;
-		BaseSky.sky[i].columnOffset2 += BaseSky.sky[i].scrollDelta2 * frametime;
+		//	Update sky column offsets
+		for (int i = 0; i < BaseSky.NumSkySurfs; i++)
+		{
+			BaseSky.sky[i].columnOffset1 += BaseSky.sky[i].scrollDelta1 * frametime;
+			BaseSky.sky[i].columnOffset2 += BaseSky.sky[i].scrollDelta2 * frametime;
+		}
 	}
 	unguard;
 }

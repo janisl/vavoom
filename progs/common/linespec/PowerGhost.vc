@@ -61,4 +61,6 @@ void GetViewEntRenderParams(out float OutAlpha, out int OutRenderStyle)
 
 defaultproperties
 {
+	bGhost = true;
+	EffectTime = 60.0;
 }

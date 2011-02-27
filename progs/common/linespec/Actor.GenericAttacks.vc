@@ -481,11 +481,19 @@ final void A_MonsterRail()
 //
 //==========================================================================
 
-final void DoExplode(int damage, float distance, bool damageSelf)
+final void DoExplode(int damage, float distance, bool damageSelf,
+					 optional int dmgdistance)
 {
 	int			i;
 
-	RadiusAttack(Target, damage, distance, damageSelf, DamageType);
+	if (specified_dmgdistance && dmgdistance > 0)
+	{
+		RadiusAttack(Target, damage, distance, damageSelf, DamageType, dmgdistance);
+	}
+	else
+	{
+		RadiusAttack(Target, damage, distance, damageSelf, DamageType);
+	}
 	if (Origin.z <= FloorZ + distance)
 	{
 		HitFloorType();
@@ -589,7 +597,8 @@ final void A_ExplodeParms()
 //==========================================================================
 
 final void decorate_A_Explode(optional int damage, optional int distance,
-	optional bool damageSelf, optional bool Alert)
+	optional bool damageSelf, optional bool Alert, optional int dmgdistance,
+	optional int nails, optional int naildamage)
 {
 	if (specified_damage)
 	{
@@ -621,7 +630,31 @@ final void decorate_A_Explode(optional int damage, optional int distance,
 		}
 	}
 
-	DoExplode(damage, itof(distance), damageSelf);
+	// NailBomb effect, from SMMU but not from its source code: instead it was
+	// implemented and generalized from the documentation at
+	// http://www.doomworld.com/eternity/engine/codeptrs.html
+	if (specified_nails && nails > 0)
+	{
+		int i;
+		TAVec Ang;
+		for (i = 0; i < nails; i++)
+		{
+			Ang.yaw = AngleMod360(itof(i * (360 / nails)));
+			// Comparing the results of a test wad with Eternity, it seems
+			// A_NailBomb does not aim
+			//AimLineAttack (self, Ang, MISSILERANGE), 
+			LineAttack (Ang, MISSILERANGE, 0, naildamage, 'None', BulletPuff);
+		}
+	}
+
+	if (specified_dmgdistance && dmgdistance > 0)
+	{
+		DoExplode(damage, itof(distance), damageSelf, dmgdistance);
+	}
+	else
+	{
+		DoExplode(damage, itof(distance), damageSelf);
+	}
 	CheckSplash(itof(distance));
 	if (Alert && Target && Target.bIsPlayer)
 	{
@@ -977,6 +1010,28 @@ final void A_Blast(int BlastFlags, float Strength, float Radius, float Speed,
 			continue;
 		}
 		BlastActor(mo, Actor(Owner), Speed, BlastEffect);
+	}
+}
+
+//==========================================================================
+//
+//  A_MonsterRefire
+//
+//==========================================================================
+
+final void A_MonsterRefire(int prob, state jump)
+{
+	// keep firing unless target got out of sight
+	A_FaceTarget();
+
+	if (P_Random() < prob)
+	{
+		return;
+	}
+
+	if (!Target || Target.Health <= 0 || !CanSee(Target))
+	{
+		DoJump(jump);
 	}
 }
 

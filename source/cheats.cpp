@@ -340,3 +340,23 @@ COMMAND(Anubis)
 		Player->eventCheat_Anubis();
 	}
 }
+
+//==========================================================================
+//
+//  Freeze_f
+//
+//==========================================================================
+
+COMMAND(Freeze)
+{
+	if (Source == SRC_Command)
+	{
+		ForwardToServer();
+		return;
+	}
+
+	if (CheatAllowed(Player))
+	{
+		Player->eventCheat_Freeze();
+	}
+}

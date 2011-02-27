@@ -102,5 +102,6 @@ void GetViewEntRenderParams(out float OutAlpha, out int OutRenderStyle)
 
 defaultproperties
 {
+	bShadow = true;
 	EffectTime = 60.0;
 }

@@ -396,6 +396,52 @@ final void A_ClassBossHealth()
 	}
 }
 
+//==========================================================================
+//
+//	A_PreExplode
+//
+//  This method is used to set properties to exploding things
+//  just before exploding. This one can be used in DECORATE now.
+//
+//==========================================================================
+
+void A_PreExplode(int Style, float A)
+{
+	RenderStyle = Style;
+	Alpha = A;
+}
+
+//============================================================================
+//
+//  A_BarrelDestroy
+//
+//  This is only a stub method
+//
+//============================================================================
+
+final void A_BarrelDestroy()
+{
+	// In ZDoom this method is used to preserve barrels because of
+	// deathmatch flags... here the only relevant function for it
+	// would be to make things invisible.
+	RenderStyle = STYLE_None;
+}
+
+//============================================================================
+//
+//  A_PlayerSkinCheck
+//
+//  This is only a stub method
+//
+//============================================================================
+
+final void A_PlayerSkinCheck(state label)
+{
+	// Vavoom doesn't support skins as of now...
+	// but there are some MODs that use this method
+	return;
+}
+
 //**************************************************************************
 //**************************************************************************
 

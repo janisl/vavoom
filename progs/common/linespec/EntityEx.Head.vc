@@ -324,6 +324,7 @@ bool bScreenSeeker;		//  Fails the IsOkayToAttack test if potential target is ou
 bool bBumpSpecial;		//  Actor executes its special when being collided (as the ST flag).
 bool bMBFBounce;		//	Doesn't dies while bouncing speed is higher than 0.
 bool bAvoidsDropOffs;	//	Monster does avoid dropoffs, overrides value of compat_dropoff CVar.
+bool bNoTimeFreeze;		//  Monster isn't affected by Time Freeze powerups.
 
 //  Params
 float			Speed;

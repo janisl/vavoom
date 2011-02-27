@@ -31,10 +31,13 @@ class PlayerEx : BasePlayer
 //
 enum
 {
-	CF_NOCLIP		= 1 << 0,		// No clipping, walk through barriers.
-	CF_GODMODE		= 1 << 1,		// No damage, no health loss.
-	CF_REGENERATION	= 1 << 2,		// Regenerate Health points.
-	CF_FRIGHTENING	= 1 << 3		// Scare monsters away.
+	CF_NOCLIP			= 1 << 0,		// No clipping, walk through barriers.
+	CF_GODMODE			= 1 << 1,		// No damage, no health loss.
+	CF_REGENERATION		= 1 << 2,		// Regenerate Health points.
+	CF_FRIGHTENING		= 1 << 3,		// Scare monsters away.
+	CF_DOUBLEFIRINGSPEED= 1 << 4,		// Player owns a double firing speed artifact
+	CF_HIGHJUMP			= 1 << 5,		// Player owns a high jump artifact
+	CF_TIMEFREEZE		= 1 << 6		// Player owns a time freeze artifact
 };
 
 const float USERANGE		= 64.0;
@@ -336,7 +339,14 @@ final void MovePlayer(float deltaTime)
 
 	if ((Buttons & BT_JUMP) && onground && !JumpTime)
 	{
-		MO.Velocity.z = PlayerPawn(MO).JumpVelZ * 1.1;
+		if (Cheats & CF_HIGHJUMP)
+		{
+			MO.Velocity.z = (PlayerPawn(MO).JumpVelZ * 2.0) * 1.1;
+		}
+		else
+		{
+			MO.Velocity.z = PlayerPawn(MO).JumpVelZ * 1.1;
+		}
 		EntityEx(MO).bOnMobj = false;
 		JumpTime = 0.5;
 	}
@@ -1712,11 +1722,26 @@ void UseInventory(string Inv)
 {
 	Inventory item = EntityEx(MO).FindInventory(class<Inventory>(FindClass(StrToName(Inv))));
 
+	if (bTotallyFrozen || (Level.bFrozen && !(Cheats & CF_TIMEFREEZE)))
+	{ // You can't use items if you're totally frozen
+		return;
+	}
 	if (item)
 	{
 		// Use Inventory item
 		EntityEx(MO).UseInventory(item);
 	}
+}
+
+//==========================================================================
+//
+//  CheckDoubleFiringSpeed
+//
+//==========================================================================
+
+bool CheckDoubleFiringSpeed()
+{
+	return Cheats & CF_DOUBLEFIRINGSPEED;
 }
 
 //==========================================================================
@@ -3044,7 +3069,10 @@ void PlayerTick(float deltaTime)
 {
 	if (bIsBot)
 	{
-		BotTick(deltaTime);
+		if (Level.bFrozen && !(Cheats & CF_TIMEFREEZE))
+		{
+			BotTick(deltaTime);
+		}
 	}
 
 	if ((MO.XLevel.TicTime % (3 * 35) == 0) && Cheats & CF_REGENERATION && Health > 0)
@@ -3064,7 +3092,7 @@ void PlayerTick(float deltaTime)
 	}
 
 	//	You can only press use while totally frozen
-	if (bTotallyFrozen)
+	if (bTotallyFrozen || (Level.bFrozen && !(Cheats & CF_TIMEFREEZE)))
 	{
 		Buttons &= BT_USE;
 		Impulse = 0;
@@ -3774,6 +3802,27 @@ final void Cheat_Anubis()
 	else
 	{
 		cprint("No more ogre armor");
+	}
+}
+
+//==========================================================================
+//
+//  Cheat_Freeze
+//
+//==========================================================================
+
+final void Cheat_Freeze()
+{
+	Cheats ^= CF_TIMEFREEZE;
+	if (Cheats & CF_TIMEFREEZE)
+	{
+		cprint("Freeze mode on");
+		Level.bFrozen = true;
+	}
+	else
+	{
+		cprint("Freeze mode off");
+		Level.bFrozen = false;
 	}
 }
 

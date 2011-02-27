@@ -748,6 +748,7 @@ native static final int GetSoundID(name Name);
 native static final void SetSeqTrans(name Name, int Num, int SeqType);
 native static final name GetSeqTrans(int Num, int SeqType);
 native static final name GetSeqSlot(name Sequence);
+native static final void StopAllSounds();
 
 native static final GameObject::VTerrainInfo* TerrainType(int pic);
 native static final GameObject::VSplashInfo* GetSplashInfo(name Name);

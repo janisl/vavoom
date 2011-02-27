@@ -133,7 +133,8 @@ void VRenderLevelShared::UpdateParticles(float frametime)
 	guard(VRenderLevelShared::UpdateParticles);
 	particle_t		*p, *kill;
 
-	if (GGameInfo->IsPaused())
+	if (GGameInfo->IsPaused() ||
+		(Level->LevelInfo->LevelInfoFlags2 & VLevelInfo::LIF2_Frozen))
 	{
 		return;
 	}

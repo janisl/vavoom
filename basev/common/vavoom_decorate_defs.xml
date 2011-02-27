@@ -172,6 +172,7 @@
 		<flag name="NoDamage" property="bNoDamage" />
 		<flag name="DontRip" property="bDontRip" />
 		<flag name="NoTelefrag" property="bNoTeleFrag" />
+		<flag name="NoTimeFreeze" property="bNoTimeFreeze" />
 		<!-- Appearance and sound -->
 		<flag name="Bright" property="bBright" />
 		<flag name="Invisible" property="bInvisible" />
@@ -344,6 +345,7 @@
 		<flag name="KeepDepleted" property="bKeepDepleted" />
 		<flag name="IgnoreSkill" property="bIgnoreSkill" />
 		<flag name="AdditiveTime" property="bAdditiveTime" />
+		<flag_unsupported name="AlwaysActivate" /> <!-- From SkulTag ? -->
 	</class>
 
 	<class name="Ammo">
@@ -404,6 +406,7 @@
 		<prop_class name="Weapon.SisterWeapon" property="SisterWeaponType" />
 		<prop_name name="Weapon.UpSound" property="UpSound" />
 		<prop_float name="Weapon.YAdjust" property="PSpriteSY" />
+		<prop_int_unsupported name="Weapon.SlotNumber" />
 		<!-- Vavoom specific -->
 		<prop_float name="Weapon.BotCombatDist" property="BotCombatDist" />
 		<prop_int name="Weapon.PlayerModelVersion" property="PlayerModelVersion" />

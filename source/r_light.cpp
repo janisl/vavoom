@@ -742,7 +742,8 @@ void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 void VRenderLevel::PushDlights()
 {
 	guard(VRenderLevel::PushDlights);
-	if (GGameInfo->IsPaused())
+	if (GGameInfo->IsPaused() ||
+		(Level->LevelInfo->LevelInfoFlags2 & VLevelInfo::LIF2_Frozen))
 	{
 		return;
 	}

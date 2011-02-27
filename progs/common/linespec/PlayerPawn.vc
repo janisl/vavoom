@@ -165,7 +165,9 @@ void RemoveInventory(Inventory Item)
 bool UseInventory(Inventory Item)
 {
 	//	Can't use anything while totally frozen
-	if (PlayerEx(Player).bTotallyFrozen)
+	if (PlayerEx(Player).bTotallyFrozen ||
+		(Level.bFrozen &&
+		!(PlayerEx(Player).Cheats & PlayerEx::CF_TIMEFREEZE)))
 	{
 		return false;
 	}

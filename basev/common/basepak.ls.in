@@ -188,9 +188,11 @@ progs/linespec/PolyobjThinker.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/Poly
 progs/linespec/Pottery1.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Pottery1.vc
 progs/linespec/PowerCoupling.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerCoupling.vc
 progs/linespec/PowerDamage.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerDamage.vc
+progs/linespec/PowerDoubleFiringSpeed.vc	@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerDoubleFiringSpeed.vc
 progs/linespec/PowerFlight.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerFlight.vc
 progs/linespec/PowerFrightener.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerFrightener.vc
 progs/linespec/PowerGhost.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerGhost.vc
+progs/linespec/PowerHighJump.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerHighJump.vc
 progs/linespec/PowerInfiniteAmmo.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInfiniteAmmo.vc
 progs/linespec/PowerInvisibility.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInvisibility.vc
 progs/linespec/PowerInvulnerable.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerInvulnerable.vc
@@ -206,6 +208,7 @@ progs/linespec/PowerShadow.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerS
 progs/linespec/PowerSpeed.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerSpeed.vc
 progs/linespec/PowerStrength.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerStrength.vc
 progs/linespec/PowerTargeter.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerTargeter.vc
+progs/linespec/PowerTimeFreeze.vc			@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerTimeFreeze.vc
 progs/linespec/PowerTorch.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerTorch.vc
 progs/linespec/Powerup.vc					@CMAKE_SOURCE_DIR@/progs/common/linespec/Powerup.vc
 progs/linespec/PowerupGiver.vc				@CMAKE_SOURCE_DIR@/progs/common/linespec/PowerupGiver.vc

@@ -443,7 +443,9 @@ void VWadFile::BuildGLNodes(VSearchPath* GlWad)
 		gwaname = GwaDir + "/" + Name.ExtractFileName();
 	}
 	else
+	{
 		gwaname = Name;
+	}
 	gwaname = gwaname.StripExtension() + ".gwa";
 
 	// Build GL nodes

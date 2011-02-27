@@ -182,7 +182,7 @@ final void InitSpawnedItem(EntityEx A, bool TransTransl, bool SetMaster,
 			{
 				//	Make monster friendly.
 				A.bFriendly = true;
-				EntityEx Atk = PlayerEx(Player).Attacker;
+				EntityEx Atk = PlayerEx(Instig.Player).Attacker;
 				if (Atk && !Atk.bFriendly)
 				{
 					//	Make it attack monster who last attacked player.

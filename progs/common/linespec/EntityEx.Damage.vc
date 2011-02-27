@@ -359,7 +359,10 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			    inflictor.bForcePain))
 			{
 				bJustHit = true;	// fight back!
-				SetState(FindState('Pain', DmgType, false));
+				if (FindState('Pain', DmgType, false))
+				{
+					SetState(FindState('Pain', DmgType, false));
+				}
 			}
 			else
 			{
@@ -378,7 +381,10 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 			if (!inflictor || (inflictor && (!inflictor.bPainless ||
 			    inflictor.bForcePain)))
 			{
-				SetState(FindState('Pain', DmgType, false));
+				if (FindState('Pain', DmgType, false))
+				{
+					SetState(FindState('Pain', DmgType, false));
+				}
 			}
 			if (inflictor && inflictor.bHowlVictims)
 			{

@@ -28,5 +28,6 @@ class PowerTargeter : Powerup;
 
 defaultproperties
 {
-	EffectTime = 0.1;
+	EffectTime = 160.0;
+	bHubPower = true;
 }

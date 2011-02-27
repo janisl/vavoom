@@ -538,6 +538,7 @@ int main(int argc,char** argv)
 		printf("\n%s\n", e.message);
 		dprintf("\n\nERROR: %s\n", e.message);
 
+		SDL_Quit();
 		exit(1);
 	}
 	catch (...)

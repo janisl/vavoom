@@ -386,6 +386,12 @@ void VBasePlayer::AdvanceViewStates(float deltaTime)
 			if (St.StateTime != -1.0)
 			{
 				St.StateTime -= deltaTime;
+				if (eventCheckDoubleFiringSpeed())
+				{
+					// [BC] Apply double firing speed.
+					St.StateTime -= deltaTime;
+				}
+
 				if (St.StateTime <= 0.0)
 				{
 					St.StateTime = 0.0;

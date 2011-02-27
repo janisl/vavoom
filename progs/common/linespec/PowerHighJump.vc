@@ -7,7 +7,7 @@
 //**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
 //**       #    ##    ##    #      ####     ####   ##       ##
 //**
-//**    $Id: PowerFlight.vc 3614 2008-05-08 21:23:39Z dj_jl $
+//**    $Id: PowerRegeneration.vc 4319 2010-07-03 18:24:22Z firebrand_kh $
 //**
 //**    Copyright (C) 1999-2006 Jānis Legzdiņš
 //**
@@ -23,7 +23,7 @@
 //**
 //**************************************************************************
 
-class PowerFrightener : Powerup;
+class PowerHighJump : Powerup;
 
 //==========================================================================
 //
@@ -35,7 +35,9 @@ void InitEffect()
 {
 	if (Owner && Owner.Player)
 	{
-		PlayerEx(Owner.Player).Cheats |= PlayerEx::CF_FRIGHTENING;
+		Owner.PlaySound(SightSound, CHAN_VOICE);
+		// Apply effect.
+		PlayerEx(Owner.Player).Cheats |= PlayerEx::CF_HIGHJUMP;
 	}
 }
 
@@ -49,11 +51,12 @@ void EndEffect()
 {
 	if (Owner && Owner.Player)
 	{
-		PlayerEx(Owner.Player).Cheats &= ~PlayerEx::CF_FRIGHTENING;
+		Owner.PlaySound(DeathSound, CHAN_VOICE);
+		// Remove effect.
+		PlayerEx(Owner.Player).Cheats &= ~PlayerEx::CF_HIGHJUMP;
 	}
 }
 
 defaultproperties
 {
-	EffectTime = 60.0;
 }

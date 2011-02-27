@@ -92,3 +92,12 @@ const int BF_AFFECTBOSSES			= 4;
 const int CPF_USEAMMO				= 1;
 const int CPF_DAGGER				= 2;
 const int CPF_PULLIN				= 4;
+
+// Render Style constants
+const int STYLE_None				= 0;	// Do not draw
+const int STYLE_Normal				= 1;	// Normal; just copy the image to the screen
+const int STYLE_Fuzzy				= 2;	// Draw silhouette using "fuzz" effect
+const int STYLE_SoulTrans			= 3;	// Draw translucent with amount in r_transsouls
+const int STYLE_OptFuzzy			= 4;	// Draw as fuzzy or translucent, based on user preference
+const int STYLE_Translucent			= 64;	// Draw translucent
+const int STYLE_Add				= 65;	// Draw additive

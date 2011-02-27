@@ -4441,3 +4441,18 @@
   Firebrand made actors with Crash state to Crash only on Solid objects, since this could trigger the effect
  indefinitely under specific conditions.
   Firebrand enabled drawing of light shadows for player model.
+27.02.2011
+  Firebrand added and implemented time freeze powerup class.
+  Firebrand added and implemented double firing speed powerup class.
+  Firebrand added and implemented high jump powerup class.
+  Firebrand added some more parameters for RadiusAttack method (dmgdistance, nails and naildamage).
+  Firebrand added A_MonsterRefire method, for generalized ReFire action for monsters.
+  Firebrand added some stub methods for allowing DECORATE mods to work correctly.
+  Firebrand fixed a crash in InitSpawnedItem method, caused when the player spawned friendly monsters.
+  Firebrand added some checks for making sure that Pain state exists when forcing pain in monsters.
+  Firebrand made Ceiling bouncing objects to take into account a couple more flags to avoid bouncing on skies.
+  Firebrand fixed durations and flags for most of the powerup classes.
+  Firebrand added a code patch for fixing SDL_Quit method wasn't properly called when exiting with error in
+ Linux.
+  Firebrand made 'altdeath.com' the default master server for looking for Vavoom games on Internet, thanks go to
+ Blzut3 and AlexMax for hosting it and giving information on this.

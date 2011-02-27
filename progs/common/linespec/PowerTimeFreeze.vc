@@ -1,0 +1,141 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: PowerRegeneration.vc 4319 2010-07-03 18:24:22Z firebrand_kh $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class PowerTimeFreezer : Powerup;
+
+//==========================================================================
+//
+//	InitEffect
+//
+//==========================================================================
+
+void InitEffect()
+{
+	if (Owner && Owner.Player)
+	{
+		int i;
+
+		Owner.PlaySound(SightSound, CHAN_VOICE);
+
+		// Give the player and his teammates the power to move when time is frozen.
+		PlayerEx(Owner.Player).Cheats |= PlayerEx::CF_TIMEFREEZE;
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned &&
+				Level.Game.Players[i].MO && EntityEx(Level.Game.Players[i].MO).IsTeammate(EntityEx(Owner)))
+			{
+				PlayerEx(Level.Game.Players[i]).Cheats |= PlayerEx::CF_TIMEFREEZE;
+			}
+		}
+		// When this powerup is in effect, pause the music and stop sounds.
+		CmdBuf_AddText("music pause");
+		StopAllSounds();
+
+		// [RH] The effect ends one tic after the counter hits zero, so make
+		// sure we start at an odd count.
+		EffectTime += itof(!(ftoi(EffectTime) & 1));
+		if (!(ftoi(EffectTime) & 1))
+		{
+			EffectTime += 1.0;
+		}
+		// Make sure the effect starts and ends on an even tic.
+		if (!(ftoi(XLevel.Time) & 1))
+		{
+			Level.bFrozen = true;
+		}
+		else
+		{
+			EffectTime += 1.0;
+		}
+	}
+}
+
+//==========================================================================
+//
+//	DoEffect
+//
+//==========================================================================
+
+void DoEffect()
+{
+	::DoEffect();
+	// [RH] Do not change LEVEL_FROZEN on odd tics, or the Revenant's tracer
+	// will get thrown off.
+	if (ftoi(XLevel.Time) & 1)
+	{
+		
+		return;
+	}
+	// [RH] The "blinking" can't check against EffectTics exactly or it will
+	// never happen, because InitEffect ensures that EffectTics will always
+	// be odd when level.time is even.
+	if (EffectTime > PlayerEx::BLINKTHRESHOLD || (ftoi(4.0 * EffectTime) & 1))
+	{
+		Level.bFrozen = true;
+	}
+	else
+	{
+		Level.bFrozen = false;
+	}
+}
+
+//==========================================================================
+//
+//	EndEffect
+//
+//==========================================================================
+
+void EndEffect()
+{
+	// Allow other actors to move about freely once again.
+	Level.bFrozen = false;
+
+	// Also, turn the music back on.
+	CmdBuf_AddText("music resume");
+
+	// Nothing more to do if there's no owner.
+	if (Owner && Owner.Player)
+	{
+		int i;
+		Owner.PlaySound(DeathSound, CHAN_VOICE);
+
+		PlayerEx(Owner.Player).Cheats &= ~PlayerEx::CF_TIMEFREEZE;
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			if (Level.Game.Players[i] && Level.Game.Players[i].bSpawned &&
+				Level.Game.Players[i].MO && EntityEx(Level.Game.Players[i].MO).IsTeammate(EntityEx(Owner)))
+			{
+				PlayerEx(Level.Game.Players[i]).Cheats &= ~PlayerEx::CF_TIMEFREEZE;
+			}
+		}
+	}
+}
+
+defaultproperties
+{
+	BlendColour = GOLDCOLOUR;
+	EffectTime = 12.0;
+	bHubPower = true;
+}

@@ -21,18 +21,11 @@ actor ExplosiveBarrel 2035
 	Death:
 		BEXP A 5 Bright
 		BEXP B 5 Bright A_Scream
-		BEXP C 5 Bright
+		BEXP C 5 Bright A_PreExplode(STYLE_Translucent, 0.5)
 		BEXP D 10 Bright A_Explode
 		BEXP E 10 Bright
 		Stop
 	}
-
-	//FIXME I had translucent explosions.
-	//void PreExplode()
-	//{
-	//	RenderStyle = STYLE_Translucent;
-	//	Alpha = 0.5;
-	//}
 }
 
 //------------------------------------------------------------------------------

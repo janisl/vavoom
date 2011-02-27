@@ -114,6 +114,7 @@ bool			bLaxMonsterActivation;
 bool			bHaveMonsterActivation;
 bool			bClusterHub;
 readonly bool	bBegunPlay;
+bool			bFrozen;
 
 int				TotalKills;
 int				TotalItems;

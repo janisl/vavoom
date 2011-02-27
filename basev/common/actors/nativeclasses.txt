@@ -52,12 +52,14 @@ class Actor extends Thinker
 	action native A_BulletAttack();
 	action native A_MonsterRail();
 	action native A_Explode(optional eval int damage, optional eval int distance,
-		optional evanot bool hurtsource, optional eval bool alert);
+		optional evalnot bool hurtsource, optional eval bool alert,
+		optional eval int dmgdistance, optional eval int nails, optional eval int naildamage);
 	action native A_RadiusThrust(optional eval int force, optional eval int distance,
 		optional evanot bool affectsource);
 	action native A_Detonate();
 	action native A_ThrowGrenade(class<Actor> itemtype, optional eval float spawnheight,
 		optional eval float xyvel, optional eval float zvel, optional evalnot bool useammo);
+	action native A_MonsterRefire(int prob, state jump);
 
 	//
 	//	Freeze death functions
@@ -163,6 +165,7 @@ class Actor extends Thinker
 	action native A_DeQueueCorpse();
 	action native A_ChangeVelocity(float x, float y, float z, int flags);
   	action native A_ScaleVelocity(float scale);
+	action native A_PreExplode(int RenderStyle, float A);
 
 	//
 	//  Misc. Stuff
@@ -258,9 +261,9 @@ class Actor extends Thinker
 	//	Not documented
 	//
 	action native A_SetGravity(eval float gravity);
-	//action native A_PlayerSkinCheck(state label);
+	action native A_PlayerSkinCheck(state label);
 	action native A_Respawn(optional eval int flags);
-	//action native A_BarrelDestroy();
+	action native A_BarrelDestroy();
 	action native A_Feathers();
 	action native A_ShootGun();
 	action native A_RocketInFlight();

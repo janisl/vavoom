@@ -111,6 +111,7 @@ class VLevelInfo : public VThinker
 		LIF2_HaveMonsterActivation		= 0x00008000,
 		LIF2_ClusterHub					= 0x00010000,
 		LIF2_BegunPlay					= 0x00020000,
+		LIF2_Frozen						= 0x00040000,
 	};
 	vuint32			LevelInfoFlags2;
 

@@ -59,7 +59,5 @@ void EndEffect()
 
 defaultproperties
 {
-	BlendColour = 0;
-	EffectTime = 60.0;
-	bHubPower = true;
+	EffectTime = 120.0;
 }

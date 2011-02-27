@@ -43,7 +43,7 @@ void InitEffect()
 	{
 		//	Remember the identity of the player
 		OwnerPlayer = PlayerEx(Owner.Player);
-		if (EntityEx(Owner).MorphPlayer(PlayerClass, -1.0/*INDEFINITELY*/,
+		if (EntityEx(Owner).MorphPlayer(PlayerClass, -1.0 /* INDEFINITELY */,
 			MorphStyle, MorphFlash, UnmorphFlash, EntityEx(Owner)))
 		{
 			//	Replace the new owner in our owner; safe because we are not

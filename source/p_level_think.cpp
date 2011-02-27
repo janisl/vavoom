@@ -142,7 +142,11 @@ void VLevel::TickWorld(float DeltaTime)
 		}
 	}
 
-	LevelInfo->eventUpdateSpecials();
+	// Don't update specials if the level is frozen
+	if (!(LevelInfo->LevelInfoFlags2 & VLevelInfo::LIF2_Frozen))
+	{
+		LevelInfo->eventUpdateSpecials();
+	}
 
 	for (int i = 0; i < MAXPLAYERS; i++)
 	{

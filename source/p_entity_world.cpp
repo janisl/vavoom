@@ -1780,21 +1780,28 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 
 	if (BestSlideLine)
 	{
-		float	angle;
-		float	lineang;
-		float	speed;
+		TAVec	delta_ang;
+		TAVec	lineang;
+		TVec	delta;
 
-		lineang = AngleMod180(atan2(BestSlideLine->normal.y, BestSlideLine->normal.x));
+		// Convert BesSlideLine normal to an angle
+		VectorAngles(BestSlideLine->normal, lineang);
 		if (BestSlideLine->PointOnSide(Origin) == 1)
 		{
-			lineang += 180.0;
+			lineang.yaw += 180.0;
 		}
 
-		angle = AngleMod180(atan2((lineang * 2.0) - SlideDir.y, (lineang * 2.0) - SlideDir.x));
-		speed = Length(Velocity) * bouncefactor;
-		Angles.yaw = angle;
-		Velocity.x = speed * cos(angle);
-		Velocity.y = speed * sin(angle);
+		// Convert the line angle back to a vector, so that
+		// we can use it to calculate the delta against
+		// the Velocity vector
+		AngleVector(lineang, delta);
+		delta = (delta * 2.0) - Velocity;
+
+		// Finally get the delta angle to use
+		VectorAngles(delta, delta_ang);
+
+		Velocity.x = (Velocity.x * bouncefactor) * cos(delta_ang.yaw);
+		Velocity.y = (Velocity.y * bouncefactor) * sin(delta_ang.yaw);
 		Velocity = ClipVelocity(Velocity, BestSlideLine->normal, overbounce);
 	}
 	unguard;
