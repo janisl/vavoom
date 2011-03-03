@@ -4456,3 +4456,19 @@
  Linux.
   Firebrand made 'altdeath.com' the default master server for looking for Vavoom games on Internet, thanks go to
  Blzut3 and AlexMax for hosting it and giving information on this.
+03.03.2011
+  Firebrand applied code patch file provided by mnk at the forums that adds ModPlug for MOD type music output,
+ but added some more configurable options to it as CVars.
+  Firebrand added CVars for allowing selection of output device to use for playing MIDI, MUS and MOD type music.
+  Firebrand added more configurable options for MikMod.
+  Firebrand updated the common progs MSVC project file to add the new source files.
+  Firebrand fixed a crash inside the AutoUseHealthStrife that had to do with incorrect logic with dynamic arrays.
+  Firebrand improved the layout of the sound options screen, he also added a new screen for setting new MikMod
+ and ModPlug options and a slider for setting the amount of sound channels.
+  Firebrand made layout improvements on the advanced video options, so that it displays correctly on all games.
+  Firebrand added calls to methods to stop all sounds when entering to intermission and text screens.
+  Firebrand fixed an error on the gameplay options screen, which was setting an incorrect CVar when changing
+ the 'monsters can dropoff' option.
+  Firebrand fixed a crash when taking screenshots on Direct3D that had to do with trying to lock a surface that
+ was being used by the renderer, instead a new surface with the exact same contents as the screen should be
+ created and copied to the data pointers that generate screenshots.
