@@ -327,6 +327,7 @@ progs/uibase/MenuScreenEpisode.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/Menu
 progs/uibase/MenuScreenJoinGame.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenJoinGame.vc
 progs/uibase/MenuScreenLoadGame.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenLoadGame.vc
 progs/uibase/MenuScreenMasterList.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenMasterList.vc
+progs/uibase/MenuScreenMODOptions.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenMODOptions.vc
 progs/uibase/MenuScreenMouseOptions.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenMouseOptions.vc
 progs/uibase/MenuScreenSaveGame.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenSaveGame.vc
 progs/uibase/MenuScreenScreenResolution.vc		@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenScreenResolution.vc

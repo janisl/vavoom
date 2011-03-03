@@ -515,11 +515,11 @@ void VMain::OnRun(wxCommandEvent&)
 	// Timidity
 	if (CheckBoxUseTimidity->IsChecked())
 	{
-		CmdLine += wxT(" +s_timidity 1");
+		CmdLine += wxT(" +s_mid_player 1");
 	}
 	else
 	{
-		CmdLine += wxT(" +s_timidity 0");
+		CmdLine += wxT(" +s_mid_player 0");
 	}
 
 	if (PatchFiles->GetValue().Length())

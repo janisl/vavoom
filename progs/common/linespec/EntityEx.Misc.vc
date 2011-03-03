@@ -3145,19 +3145,19 @@ final void AutoUseStrifeHealth(int saveHealth)
 
 	for(inv = Inventory; inv; inv = inv.Inventory)
 	{
-		if (inv.Amount > 0 && ClassIsChildOf(inv.Class, HealthPickup))
+		if (inv && inv.Amount > 0 && ClassIsChildOf(inv.Class, HealthPickup))
 		{
 			int mode = HealthPickup(inv).AutoUseMode;
 
 			if (mode == 3)
 			{
-				Items[Items.Num] = inv;
 				Items.Num = Items.Num + 1;
+				Items[Items.Num - 1] = inv;
 			}
 		}
 	}
 
-	for(i = 0; i < Items.Num - 1; i++)
+	for(i = 0; i < Items.Num; i++)
 	{
 		itemshealth += Items[i].Amount * Items[i].Health;
 	}
@@ -3168,7 +3168,7 @@ final void AutoUseStrifeHealth(int saveHealth)
 		int index = -1;
 
 		// Find the largest item in the list
-		for(i = 0; i < Items.Num - 1; i++)
+		for(i = 0; i < Items.Num; i++)
 		{
 			if (Items[i].Health > maxhealth)
 			{
@@ -3191,6 +3191,13 @@ final void AutoUseStrifeHealth(int saveHealth)
 		}
 		// Using all of this item was not enough so delete it and restart with the next best one
 		Items[index] = none;
+		if (index < Items.Num)
+		{
+			for (i = Items.Num - index; i < Items.Num - 1; i++)
+			{
+				Items[i] = Items[i+1];
+			}
+		}
 		Items.Num = Items.Num - 1;
 	}
 

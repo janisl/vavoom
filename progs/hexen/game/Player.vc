@@ -457,7 +457,7 @@ void Cheat_Morph()
 	}
 	else
 	{
-		Actor(MO).MorphPlayer(PorkFX.default.PlayerClass, 0.0,
+		Actor(MO).MorphPlayer(PorkFX.default.PlayerClass, 40.0,
 			PorkFX.default.MorphStyle, none, none, Actor(MO));
 	}
 	cprint("SQUEAL!!");
@@ -478,6 +478,7 @@ void Cheat_Class()
 	if (MorphTime)
 	{
 		// don't change class if the player is morphed
+		cprint("CAN'T CHANGE CLASS WHILE MORPHED");
 		return;
 	}
 	if (Cmd_CheckParm("fighter"))
@@ -506,14 +507,12 @@ void Cheat_Class()
 	}
 
 	// Remove all weapons
-	for (Item = EntityEx(MO).Inventory; Item; )
+	for (Item = EntityEx(MO).Inventory; Item; Item = Item.Inventory)
 	{
-		Inventory Next = Item.Inventory;
 		if (Weapon(Item) || FourthWeaponHolder(Item))
 		{
 			Item.Destroy();
 		}
-		Item = Next;
 	}
 	BaseClass = pclass;
 //	PostMorphWeapon(HexenDefs::WP_FIRST);

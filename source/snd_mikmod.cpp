@@ -130,6 +130,11 @@ MDRIVER			VMikModAudioCodec::Driver =
 };
 
 static VCvarI	s_mikmod_hqmixer("s_mikmod_hqmixer", "0", CVAR_Archive);
+static VCvarI	s_mikmod_float("s_mikmod_float", "0", CVAR_Archive);
+static VCvarI	s_mikmod_surround("s_mikmod_surround", "0", CVAR_Archive);
+static VCvarI	s_mikmod_interpolation("s_mikmod_interpolation", "0", CVAR_Archive);
+static VCvarI	s_mikmod_reverse_stereo("s_mikmod_reverse_stereo", "0", CVAR_Archive);
+static VCvarI	s_mikmod_lowpass("s_mikmod_lowpass", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -343,6 +348,10 @@ BOOL VMikModAudioCodec::ArchiveReader_Eof(MREADER* rd)
 VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 {
 	guard(VMikModAudioCodec::Create);
+	if (s_mod_player == 0)
+	{
+		return NULL;
+	}
 	if (!MikModInitialised)
 	{
 		//	Register our driver and all the loaders.
@@ -356,7 +365,53 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	md_mixfreq = 44100;
 	md_mode = DMODE_16BITS | DMODE_SOFT_MUSIC | DMODE_STEREO;
 	if (s_mikmod_hqmixer)
+	{
 		md_mode |= DMODE_HQMIXER;
+	}
+	else
+	{
+		md_mode &= ~DMODE_HQMIXER;
+	}
+	if (s_mikmod_float)
+	{
+		md_mode |= DMODE_FLOAT;
+	}
+	else
+	{
+		md_mode &= ~DMODE_FLOAT;
+	}
+	if (s_mikmod_surround)
+	{
+		md_mode |= DMODE_SURROUND;
+	}
+	else
+	{
+		md_mode &= ~DMODE_SURROUND;
+	}
+	if (s_mikmod_interpolation)
+	{
+		md_mode |= DMODE_INTERP;
+	}
+	else
+	{
+		md_mode &= ~DMODE_INTERP;
+	}
+	if (s_mikmod_reverse_stereo)
+	{
+		md_mode |= DMODE_REVERSE;
+	}
+	else
+	{
+		md_mode &= ~DMODE_REVERSE;
+	}
+	if (s_mikmod_lowpass)
+	{
+		md_mode |= DMODE_NOISEREDUCTION;
+	}
+	else
+	{
+		md_mode &= ~DMODE_NOISEREDUCTION;
+	}
 
 	//	Initialise MikMod.
 	if (MikMod_Init((CHAR*)""))

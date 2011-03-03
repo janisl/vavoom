@@ -391,6 +391,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\EntityEx.Morph.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\EntityEx.Physics.vc"
 				>
 			</File>
@@ -400,6 +404,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\FakeInventory.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\FastProjectile.vc"
 				>
 			</File>
 			<File
@@ -783,11 +791,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\PowerDamage.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerDoubleFiringSpeed.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\PowerFlight.vc"
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\PowerFrightener.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\PowerGhost.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerHighJump.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerInfiniteAmmo.vc"
 				>
 			</File>
 			<File
@@ -815,6 +843,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\linespec\PowerMorph.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerProtection.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerRegeneration.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\linespec\PowerScanner.vc"
 				>
 			</File>
@@ -832,6 +872,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\PowerTargeter.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\PowerTimeFreeze.vc"
 				>
 			</File>
 			<File
@@ -884,6 +928,10 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\linespec\RaiseAlarm.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\linespec\RandomSpawner.vc"
 				>
 			</File>
 			<File
@@ -1292,6 +1340,14 @@
 			</File>
 			<File
 				RelativePath="..\progs\common\uibase\MenuScreenLoadGame.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenMasterList.vc"
+				>
+			</File>
+			<File
+				RelativePath="..\progs\common\uibase\MenuScreenMODOptions.vc"
 				>
 			</File>
 			<File

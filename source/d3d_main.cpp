@@ -254,10 +254,10 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 
 	if (avoid_input_lag)
 	{
-		if (SUCCEEDED(RenderDevice->CreateOffscreenPlainSurface(16, 16, D3DFMT_A8R8G8B8,
+		if (SUCCEEDED(RenderDevice->CreateOffscreenPlainSurface(16, 16, BPP == 32 ? D3DFMT_A8R8G8B8 : D3DFMT_A1R5G5B5,
 			D3DPOOL_DEFAULT, &DXBlockSurface[0], 0)))
 		{
-			if (!SUCCEEDED(RenderDevice->CreateOffscreenPlainSurface(16, 16, D3DFMT_A8R8G8B8,
+			if (!SUCCEEDED(RenderDevice->CreateOffscreenPlainSurface(16, 16, BPP == 32 ? D3DFMT_A8R8G8B8 : D3DFMT_A1R5G5B5,
 				D3DPOOL_DEFAULT, &DXBlockSurface[1], 0)))
 			{
 				DXBlockSurface[0]->Release();
@@ -669,11 +669,18 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	//	Allocate buffer
 	void* dst = Z_Malloc(ScreenWidth * ScreenHeight * sizeof(rgb_t));
 
-	LPDIRECT3DSURFACE9 surf;
-	RenderDevice->GetRenderTarget(0, &surf);
+    //  GetRenderTarget method cannot retrieve data from a surface that is 
+	//  contained by a texture resource created with D3DUSAGE_RENDERTARGET
+	//  because such a texture must be assigned to D3DPOOL_DEFAULT memory
+	//  and is therefore not lockable. In this case, use instead
+	//  IDirect3DDevice9::GetRenderTargetData to copy texture data
+	//  from device memory to system memory.
+	IDirect3DSurface9* rend;
+	IDirect3DSurface9* surf;
+	RenderDevice->GetRenderTarget (0, &rend);
 
 	D3DSURFACE_DESC desc;
-	surf->GetDesc(&desc);
+	rend->GetDesc(&desc);
 
 	//	Decode pixel format
 	int scr_rbits;
@@ -708,6 +715,7 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 			scr_pixbytes = 2;
 			break;
 		}
+		case D3DFMT_A1R5G5B5:
 		case D3DFMT_X1R5G5B5:
 		{
 			scr_rbits = 5;
@@ -726,6 +734,8 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 			return NULL;
 		}
 	}
+	RenderDevice->CreateOffscreenPlainSurface(ScreenWidth, ScreenHeight, D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM, &surf, NULL);
+	RenderDevice->GetRenderTargetData(rend, surf);
 
 	D3DLOCKED_RECT lrect;
 	if (FAILED(surf->LockRect(&lrect, NULL, D3DLOCK_READONLY)))
@@ -749,6 +759,7 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 
 	surf->UnlockRect();
 	surf->Release();
+	rend->Release();
 
 	*bpp = 24;
 	*bot2top = false;
@@ -804,6 +815,7 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 			scr_pixbytes = 2;
 			break;
 		}
+		case D3DFMT_A1R5G5B5:
 		case D3DFMT_X1R5G5B5:
 		{
 			scr_rbits = 5;

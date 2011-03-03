@@ -82,7 +82,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/LTCG"
-				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib jpeg.lib zlib.lib libmad.lib libvorbis_static.lib libogg_static.lib libmikmod.lib libFLAC_static.lib libFLAC++_static.lib"
+				AdditionalDependencies="winmm.lib opengl32.lib openal32.lib wsock32.lib libpng.lib jpeg.lib zlib.lib libmad.lib libmikmod.lib libmodplug.lib libvorbis_static.lib libogg_static.lib libFLAC_static.lib libFLAC++_static.lib"
 				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -184,7 +184,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="user32.lib ole32.lib gdi32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpngd.lib libjpeg_d.lib zlibd.lib libmad_d.lib libvorbis_static_d.lib libogg_static_d.lib libmikmod_d.lib libFLAC_static_d.lib libFLAC++_static_d.lib"
+				AdditionalDependencies="user32.lib ole32.lib gdi32.lib winmm.lib opengl32.lib openal32.lib wsock32.lib libpngd.lib libjpeg_d.lib zlibd.lib libmad_d.lib libmikmod_d.lib libvorbis_static_d.lib libogg_static_d.lib libmikmod_d.lib libmodplug_d.lib libFLAC_static_d.lib libFLAC++_static_d.lib"
 				OutputFile="$(OutDir)/vavoom.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -1173,6 +1173,10 @@
 			</File>
 			<File
 				RelativePath="..\source\snd_mikmod.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\snd_modplug.cpp"
 				>
 			</File>
 			<File

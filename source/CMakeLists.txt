@@ -7,6 +7,7 @@ option(WITH_OPENAL "Use OpenAL library" ON)
 option(WITH_VORBIS "Enable Vorbis support" ON)
 option(WITH_LIBMAD "Enable MP3 support" ON)
 option(WITH_MIKMOD "Enable MikMod support" ON)
+option(WITH_MODPLUG "Enable MikMod support" ON)
 option(WITH_FLAC "Enable FLAC support" ON)
 
 option(ENABLE_CLIENT "Build client executable" ON)
@@ -292,6 +293,11 @@ set(MAIN_MP3_SOURCES
 #-- MikMod files --
 set(MAIN_MIKMOD_SOURCES
 	snd_mikmod.cpp
+)
+
+#-- ModPlug files --
+set(MAIN_MODPLUG_SOURCES
+	snd_modplug.cpp
 )
 
 #-- FLAC files --
@@ -761,6 +767,19 @@ if(WITH_MIKMOD)
 		endif(MIKMOD_INCLUDE_DIRS AND MIKMOD_LIBRARIES)
 	endif(LIBMIKMOD_CONFIG_EXECUTABLE)
 endif(WITH_MIKMOD)
+
+if(WITH_MODPLUG)
+	FIND_PACKAGE ( PkgConfig REQUIRED )
+	PKG_CHECK_MODULES ( MODPLUG libmodplug )
+		if(MODPLUG_INCLUDE_DIRS AND MODPLUG_LIBRARIES)
+			message(STATUS "Found MODPLUG: ${MODPLUG_LIBRARIES}")
+			include_directories(${MODPLUG_INCLUDE_DIRS})
+			set(MAIN_SOURCES ${MAIN_SOURCES} ${MAIN_MODPLUG_SOURCES})
+			set(MAIN_LIBS ${MODPLUG_LIBRARIES} ${MAIN_LIBS})
+		else(MODPLUG_INCLUDE_DIRS AND MODPLUG_LIBRARIES)
+			message(STATUS "Could NOT find MODPLUG libraries")
+		endif(MODPLUG_INCLUDE_DIRS AND MODPLUG_LIBRARIES)
+endif(WITH_MODPLUG)
 
 #
 #  **** Check for FLAC ****

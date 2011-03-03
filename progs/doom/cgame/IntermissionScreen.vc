@@ -134,6 +134,7 @@ IntermissionBackground		Background;
 
 void Start()
 {
+	StopAllSounds();
 	ClGame.skipintermission = false;
 	cnt = 0.0;
 	btime = 0.0;

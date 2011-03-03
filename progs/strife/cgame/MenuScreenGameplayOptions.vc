@@ -112,7 +112,7 @@ void CreateChoices()
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Monsters can drop off";
-	Enum.SetInitialValue(GetCvar('compat_dropoff'));
+	Enum.SetInitialValue(GetCvar('monster_dropoff'));
 	Enum.ValueChanging = ChangeDropOff;
 	currentY += Enum.Height;
 

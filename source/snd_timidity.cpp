@@ -75,10 +75,8 @@ ControlMode		VTimidityAudioCodec::MyControlMode =
 };
 
 #if defined(DJGPP) || defined(_WIN32)
-static VCvarI	s_timidity("s_timidity", "0", CVAR_Archive);
 static VCvarS	s_timidity_patches("s_timidity_patches", "\\TIMIDITY", CVAR_Archive);
 #else
-static VCvarI	s_timidity("s_timidity", "1", CVAR_Archive);
 static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_Archive);
 #endif
 static VCvarI	s_timidity_test_dls("s_timidity_test_dls", "0", CVAR_Archive);
@@ -191,10 +189,10 @@ int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, const char *fmt,
 VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 {
 	guard(VTimidityAudioCodec::Create);
-	//	Handle only if enabled.
-	if (!s_timidity)
+	if (s_mid_player != 1)
+	{
 		return NULL;
-
+	}
 	//	Check if it's a MIDI file.
 	char Header[4];
 	InStrm->Seek(0);

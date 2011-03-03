@@ -213,6 +213,14 @@ VCvarI				VAudio::cd_music("use_cd_music", "0", CVAR_Archive);
 VCvarI				VAudio::s_external_music("s_external_music", "1", CVAR_Archive);
 VCvarF				VAudio::eax_distance_unit("eax_distance_unit", "32.0", CVAR_Archive);
 
+//  Public CVars
+#if defined(DJGPP) || defined(_WIN32)
+VCvarI				s_mid_player("s_mid_player", "0", CVAR_Archive);
+#else
+VCvarI				s_mid_player("s_mid_player", "1", CVAR_Archive);
+#endif
+VCvarI				s_mod_player("s_mod_player", "1", CVAR_Archive);
+
 FAudioCodecDesc*	FAudioCodecDesc::List;
 
 static FSoundDeviceDesc*	SoundDeviceList[SNDDRV_MAX];

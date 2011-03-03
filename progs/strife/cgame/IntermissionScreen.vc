@@ -54,6 +54,7 @@ int TextPic;
 
 void Start()
 {
+	StopAllSounds();
 	if (!ClGame.deathmatch && !ClGame.cl.Level.bNoIntermission)
 	{
 		print("Intermission stats are not yet implemented");

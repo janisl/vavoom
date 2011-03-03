@@ -80,6 +80,7 @@ bool showTotals;
 
 void Start()
 {
+	StopAllSounds();
 	IM_InitStats();
 	IM_LoadPics();
 

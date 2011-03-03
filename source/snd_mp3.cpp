@@ -368,7 +368,7 @@ VAudioCodec* VMp3AudioCodec::Create(VStream* InStrm)
 
 //==========================================================================
 //
-//	VMp3SampleLoader::Create
+//	VMp3SampleLoader::Load
 //
 //==========================================================================
 

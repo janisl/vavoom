@@ -497,8 +497,8 @@ bool ChangeD3dSpecularHighlights(Object Sender, int newValue)
 
 defaultproperties
 {
-	Width = 360;
-	Height = 220;
+	Width = 380;
+	Height = 240;
 	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	TitleX = 180;

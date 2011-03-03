@@ -35,32 +35,10 @@ void CreateChoices()
 {
 	MenuChoiceSlider	Slider;
 	MenuChoiceEnum		Enum;
+	MenuTextButton		Btn;
 	int					currentY;
 
 	currentY = ChoicesStartY;
-
-	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetOrigin(ChoicesStartX, currentY);
-	Slider.Text = "Sound volume";
-	Slider.ValueDelta = 0.1;
-	Slider.SetInitialValue(GetCvarF('sfx_volume'));
-	Slider.ValueChanging = ChangeSoundVolume;
-	currentY += Slider.Height;
-
-	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
-	Enum.SetOrigin(ChoicesStartX, currentY);
-	Enum.Text = "Swap stereo";
-	Enum.SetInitialValue(GetCvar('swap_stereo'));
-	Enum.ValueChanging = ChangeSwapStereo;
-	currentY += Enum.Height;
-
-	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
-	Slider.SetOrigin(ChoicesStartX, currentY);
-	Slider.Text = "Music volume";
-	Slider.ValueDelta = 0.1;
-	Slider.SetInitialValue(GetCvarF('music_volume'));
-	Slider.ValueChanging = ChangeMusicVolume;
-	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
@@ -75,6 +53,63 @@ void CreateChoices()
 	Enum.SetInitialValue(GetCvar('s_external_music'));
 	Enum.ValueChanging = ChangeExternamMusic;
 	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "MIDI Output Device";
+	Enum.AddItem("System MIDI Device");
+	Enum.AddItem("Timidity");
+	Enum.AddItem("MODPlug");
+	Enum.SetInitialValue(GetCvar('s_mid_player'));
+	Enum.ValueChanging = ChangeMIDIPlayer;
+	currentY += Enum.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "MOD Music Output Device";
+	Enum.AddItem("MikMod");
+	Enum.AddItem("MODPlug");
+	Enum.SetInitialValue(GetCvar('s_mod_player'));
+	Enum.ValueChanging = ChangeMODPlayer;
+	currentY += Enum.Height;
+
+	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+	Btn.SetOrigin(ChoicesStartX, currentY);
+	Btn.Text = "MOD Output Options";
+	Btn.Activated = ActivateMODOptions;
+	currentY += Btn.Height + 10;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetOrigin(ChoicesStartX, currentY);
+	Slider.Text = "Music volume";
+	Slider.ValueDelta = 0.1;
+	Slider.SetInitialValue(GetCvarF('music_volume'));
+	Slider.ValueChanging = ChangeMusicVolume;
+	currentY += Slider.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetOrigin(ChoicesStartX, currentY);
+	Slider.Text = "Sound volume";
+	Slider.ValueDelta = 0.1;
+	Slider.SetInitialValue(GetCvarF('sfx_volume'));
+	Slider.ValueChanging = ChangeSoundVolume;
+	currentY += Slider.Height;
+
+	Slider = MenuChoiceSlider(NewChild(MenuChoiceSlider));
+	Slider.SetOrigin(ChoicesStartX, currentY);
+	Slider.Text = "Sound Channels";
+	Slider.MinValue = 8.0;
+	Slider.MaxValue = 64.0;
+	Slider.ValueDelta = 8.0;
+	Slider.SetInitialValue(itof(GetCvar('s_channels')));
+	Slider.ValueChanging = ChangeSoundChannels;
+	currentY += Slider.Height;
+
+	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
+	Enum.SetOrigin(ChoicesStartX, currentY);
+	Enum.Text = "Swap stereo";
+	Enum.SetInitialValue(GetCvar('swap_stereo'));
+	Enum.ValueChanging = ChangeSwapStereo;
 }
 
 //==========================================================================
@@ -137,9 +172,57 @@ bool ChangeExternamMusic(Object Sender, int newValue)
 	return true;
 }
 
+//==========================================================================
+//
+//	ChangeMIDIPlayer
+//
+//==========================================================================
+
+bool ChangeMIDIPlayer(Object Sender, int newValue)
+{
+	SetCvar('s_mid_player', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeMODPlayer
+//
+//==========================================================================
+
+bool ChangeMODPlayer(Object Sender, int newValue)
+{
+	SetCvar('s_mod_player', newValue);
+	return true;
+}
+
+//==========================================================================
+//
+//	ChangeSoundChannels
+//
+//==========================================================================
+
+bool ChangeSoundChannels(Object Sender, float newValue)
+{
+	SetCvar('s_channels', ftoi(newValue));
+	return true;
+}
+
+//==========================================================================
+//
+//	ActivateMODOptions
+//
+//==========================================================================
+
+void ActivateMODOptions(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenMODOptions));
+}
+
 defaultproperties
 {
-	ChoicesStartX = 160;
+	Width = 370;
+	ChoicesStartX = 210;
 	ChoicesStartY = 37;
 	SelectorType = MenuSelector_SmallRight;
 	Title = "SOUND SETTINGS";
