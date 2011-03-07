@@ -1,3 +1,4 @@
+add_subdirectory(gme)
 add_subdirectory(timidity)
 
 option(WITH_ALLEGRO "Use Allegro library")
@@ -511,7 +512,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 if(ENABLE_CLIENT)
 
 set(MAIN_SOURCES ${MAIN_COMMON_SOURCES})
-set(MAIN_LIBS glbsp libglvis timidity core ${ZLIB_LIBRARY} ${NET_LIBRARIES})
+set(MAIN_LIBS glbsp libglvis timidity gme core ${ZLIB_LIBRARY} ${NET_LIBRARIES})
 set(MAIN_COMPILE_FLAGS "")
 
 #
@@ -768,6 +769,10 @@ if(WITH_MIKMOD)
 	endif(LIBMIKMOD_CONFIG_EXECUTABLE)
 endif(WITH_MIKMOD)
 
+#
+#  **** Check for ModPlug ****
+#
+
 if(WITH_MODPLUG)
 	FIND_PACKAGE ( PkgConfig REQUIRED )
 	PKG_CHECK_MODULES ( MODPLUG libmodplug )
@@ -809,7 +814,7 @@ if (MAIN_COMPILE_FLAGS)
 	set_target_properties(vavoom PROPERTIES COMPILE_FLAGS ${MAIN_COMPILE_FLAGS})
 endif (MAIN_COMPILE_FLAGS)
 target_link_libraries(vavoom ${MAIN_LIBS})
-add_dependencies(vavoom core timidity glbsp libglvis)
+add_dependencies(vavoom core timidity gme glbsp libglvis)
 
 install(TARGETS vavoom DESTINATION ${BINDIR})
 

@@ -1164,6 +1164,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\snd_gme.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\snd_local.h"
 				>
 			</File>

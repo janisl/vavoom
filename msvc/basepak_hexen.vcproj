@@ -18,7 +18,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool
@@ -38,7 +38,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)\basepak\$(InputName)"
-			IntermediateDirectory="$(ProjectName)_$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="0"
 			>
 			<Tool

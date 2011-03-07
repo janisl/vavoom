@@ -1,0 +1,3 @@
+This library source code has been modified from it's original version to make the 'msec_to_samples' method
+public, so that it can be accessed by Vavoom to determine the number of samples played at any time, the rest
+of the library functions as originally designed.

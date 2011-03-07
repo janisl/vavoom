@@ -1177,7 +1177,8 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	guard(VAudio::PlaySong);
 	static const char* Exts[] = { "ogg", "mp3", "wav", "mid", "mus", "669",
 		"amf", "dsm", "far", "gdm", "imf", "it", "m15", "med", "mod", "mtm",
-		"okt", "s3m", "stm", "stx", "ult", "uni", "xm", "flac", NULL };
+		"okt", "s3m", "stm", "stx", "ult", "uni", "xm", "flac", "ay", "gbs",
+		"gym", "hes", "kss", "nsf", "nsfe", "sap", "spc", "vgm", "vgz", NULL };
 	static const char* ExtraExts[] = { "ogg", "mp3", NULL };
 
 	if (!Song || !Song[0])

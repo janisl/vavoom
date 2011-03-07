@@ -4472,3 +4472,6 @@
   Firebrand fixed a crash when taking screenshots on Direct3D that had to do with trying to lock a surface that
  was being used by the renderer, instead a new surface with the exact same contents as the screen should be
  created and copied to the data pointers that generate screenshots.
+07.03.2011
+  Firebrand added Game Music Emu codec, to play emulation music in various formats (NSF, GBS, AY, HES, GYM, VGM).
+  Firebrand made fixes to the basepak projects to avoid generating too many intermediate directories.
