@@ -117,6 +117,7 @@ Optional:
     * libmad (http://www.underbit.com/products/mad/)
     * mikmod (http://mikmod.raphnet.net/)
     * FLAC (http://flac.sourceforge.net/)
+    * libmodplug (http://modplug-xmms.sourceforge.net/)
 
   And of course the Vavoom sources.
 
@@ -192,10 +193,10 @@ For Windows you need:
       * libmad (http://www.underbit.com/products/mad/)
       * mikmod (http://mikmod.raphnet.net/)
       * FLAC (http://flac.sourceforge.net/)
+      * libmodplug (http://modplug-xmms.sourceforge.net/)
 
   You can also compile with MSVC 2008, you will find the workspace and project
- files in the 'msvc' subdirectory. You will still need MinGW to compile asm
- files.
+ files in the 'msvc' subdirectory.
 
 *****************************************************************************
 4. Starting a net game

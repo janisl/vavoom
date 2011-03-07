@@ -4475,3 +4475,5 @@
 07.03.2011
   Firebrand added Game Music Emu codec, to play emulation music in various formats (NSF, GBS, AY, HES, GYM, VGM).
   Firebrand made fixes to the basepak projects to avoid generating too many intermediate directories.
+  Firebrand fixed compilation errors on Linux.
+  Firebrand updated readme file with locations for the new libraries used by Vavoom.

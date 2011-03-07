@@ -128,7 +128,9 @@ int VModPlugAudioCodec::Decode(short* Data, int NumSamples)
 
 bool VModPlugAudioCodec::Finished()
 {
+	guard(VMikModAudioCodec::Finished);
 	return !playing;
+	unguard;
 }
 
 //==========================================================================

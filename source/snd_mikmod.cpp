@@ -374,11 +374,15 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	}
 	if (s_mikmod_float)
 	{
+#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode |= DMODE_FLOAT;
+#  endif	/* libmikmod-3.2.x */
 	}
 	else
 	{
+#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode &= ~DMODE_FLOAT;
+#  endif	/* libmikmod-3.2.x */
 	}
 	if (s_mikmod_surround)
 	{
@@ -406,11 +410,15 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	}
 	if (s_mikmod_lowpass)
 	{
+#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode |= DMODE_NOISEREDUCTION;
+#  endif	/* libmikmod-3.2.x */
 	}
 	else
 	{
+#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode &= ~DMODE_NOISEREDUCTION;
+#  endif	/* libmikmod-3.2.x */
 	}
 
 	//	Initialise MikMod.

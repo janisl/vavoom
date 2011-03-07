@@ -33,6 +33,7 @@
 #include "network.h"
 #include "sv_local.h"
 #include "cl_local.h"
+#include "snd_local.h"
 #include "drawer.h"
 
 // MACROS ------------------------------------------------------------------
@@ -298,7 +299,9 @@ IMPLEMENT_FUNCTION(VObject, GetSoundID)
 
 IMPLEMENT_FUNCTION(VObject, StopAllSounds)
 {
+#ifdef CLIENT
 	GAudio->StopAllSound();
+#endif
 }
 
 //==========================================================================
@@ -361,7 +364,7 @@ IMPLEMENT_FUNCTION(VObject, TerrainType)
 IMPLEMENT_FUNCTION(VObject, SB_Start)
 {
 #ifdef CLIENT
-//	SB_Start();
+	SB_Start();
 #endif
 }
 
