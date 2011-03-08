@@ -28,6 +28,116 @@ class MenuScreenControls : MenuScreen;
 MenuControlKey Controls[15];
 int NumControls;
 
+// We'll create some arrays here for special controls
+struct alias
+{
+	string alias_name;		// Name of the alias
+	string command;			// Command to type from console
+};
+
+struct bind
+{
+	string bind_key;		// Key to bind this alias to
+	string alias_name;		// Name of the alias
+};
+
+struct menukey
+{
+	string desc;			// Description of the key for menu
+	string alias_name;		// Name of the alias
+};
+
+// Keep dynamic arrays of each of these so that we "build"
+// the special control sections in the menu
+array<alias> aliases_list;
+array<bind> dbinds_list;
+array<bind> binds_list;
+array<menukey> menukeys_list;
+
+string AltTitle;			// Alternate Title for the screen (if any)
+
+//==========================================================================
+//
+//	GenerateArrays
+//
+//  This method generates dynamic arrays of special controls from KEYCONF
+//  scripts
+//
+//==========================================================================
+
+void GenerateArrays()
+{
+	// This method parses KEYCONF special controls to be added to
+	// a special controls screen to display
+	ScriptsParser kc = ScriptsParser(SpawnObject(ScriptsParser));
+
+	kc.OpenLumpName('keyconf');
+	// Lump is present, scan it until we find a 'addkeysection'
+	while (!kc.AtEnd())
+	{
+		// We are only interested in a couple of commands, like
+		// 'addkeysection', 'bind', 'defaultbind' and 'addmenukey'
+		if (kc.Check("weaponsection"))
+		{
+			kc.ExpectString();
+		}
+		if (kc.Check("addslotdefault"))
+		{
+			kc.ExpectNumber();
+			kc.ExpectString();
+		}
+		if (kc.Check("addkeysection"))
+		{
+			// addkeysection "Title" keysection<-(for config file)
+			kc.ExpectString();
+			AltTitle = kc.String;
+			// Ignore the config section
+			// (until we think a way to implement it)
+			kc.ExpectString();
+		}
+		if (kc.Check("alias"))
+		{
+			// Store alias name in the special array
+			aliases_list.Num = aliases_list.Num + 1;
+			kc.ExpectString();
+			aliases_list[aliases_list.Num - 1].alias_name = kc.String;
+			kc.ExpectString();
+			aliases_list[aliases_list.Num - 1].command = kc.String;
+		}
+		if (kc.Check("defaultbind") || kc.Check("bind"))
+		{
+			dbinds_list.Num = dbinds_list.Num + 1;
+			kc.ExpectString();
+			dbinds_list[dbinds_list.Num - 1].bind_key = kc.String;
+			kc.ExpectString();
+			dbinds_list[dbinds_list.Num - 1].alias_name = kc.String;
+		}
+		if (kc.Check("bind"))
+		{
+			binds_list.Num = binds_list.Num + 1;
+			kc.ExpectString();
+			binds_list[binds_list.Num - 1].bind_key = kc.String;
+			kc.ExpectString();
+			binds_list[binds_list.Num - 1].alias_name = kc.String;
+		}
+		if (kc.Check("addmenukey"))
+		{
+			menukeys_list.Num = menukeys_list.Num + 1;
+			kc.ExpectString();
+			menukeys_list[menukeys_list.Num - 1].desc = kc.String;
+			kc.ExpectString();
+			menukeys_list[menukeys_list.Num - 1].alias_name = kc.String;
+		}
+	}
+	kc.Destroy();
+}
+
+//==========================================================================
+//
+//	AddControl
+//
+//==========================================================================
+
 void AddControl(string Text, string CommandOn, string CommandOff)
 {
 	MenuControlKey newCtl;
@@ -40,6 +150,12 @@ void AddControl(string Text, string CommandOn, string CommandOff)
 	Controls[NumControls] = newCtl;
 	NumControls++;
 }
+
+//==========================================================================
+//
+//	CreateControlKeyChoices
+//
+//==========================================================================
 
 void CreateControlKeyChoices()
 {
@@ -61,10 +177,22 @@ void CreateControlKeyChoices()
 	AddControl("Mouse look", "+MouseLook", "-MouseLook");
 }
 
+//==========================================================================
+//
+//	CreateChoices
+//
+//==========================================================================
+
 void CreateChoices()
 {
 	CreateControlKeyChoices();
 }
+
+//==========================================================================
+//
+//	CursorMoved
+//
+//==========================================================================
 
 void CursorMoved()
 {

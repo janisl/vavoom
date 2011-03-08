@@ -69,6 +69,7 @@ import 'linespec';
 #include "MenuScreenAdvancedVideoOptions.vc"
 #include "MenuScreenVideoOptions.vc"
 #include "MenuScreenSoundOptions.vc"
+#include "MenuScreenSpecialControls.vc"
 #include "MenuScreenMODOptions.vc"
 
 #include "ConDlgChoice.vc"

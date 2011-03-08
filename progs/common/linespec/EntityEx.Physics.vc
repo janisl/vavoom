@@ -1106,9 +1106,10 @@ final float GetReflectedAngle(EntityEx Other)
 final void Crash()
 {
 	state CrashState = FindState('Crash');
-	if (CrashState && bCorpse && DamageType != 'Ice')
+	if (CrashState && bCorpse && DamageType != 'Ice' && !bCrashed)
 	{
 		SetState(CrashState);
+		bCrashed = true;
 	}
 }
 

@@ -380,13 +380,13 @@ void SB_DrawMainBar()
 	int sb_manaVial2;
 	int readyweapon;
 
-	SB_DrawBackground();
-	DrawPic(BAR_X + 38, BAR_Y + 1, pic_statbar);
-
-	if (!cl.MO)
+	if (!cl || !cl.MO)
 	{
 		return;
 	}
+
+	SB_DrawBackground();
+	DrawPic(BAR_X + 38, BAR_Y + 1, pic_statbar);
 
 	// Frags / health
 	if (ClGame.deathmatch)
@@ -512,6 +512,10 @@ void SB_DrawKeyBar()
 	int num;
 	Inventory Item;
 
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
 	SB_DrawBackground();
 	DrawPic(BAR_X + 38, BAR_Y + 1, pic_keybar);
 
@@ -563,6 +567,10 @@ void SB_DrawInventoryBar()
 {
 	int i;
 
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
 	SB_DrawBackground();
 	DrawPic(BAR_X + 38, BAR_Y + 1, pic_invbar);
 
@@ -602,6 +610,11 @@ void SB_DrawFullscreenStats()
 	int sb_mana1;
 	int sb_mana2;
 	int readyweapon;
+
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
 
 	//  Health
 	if (cl.Health >= 25)
@@ -819,6 +832,10 @@ void SB_DrawPause()
 
 void SB_Drawer(int sb_view)
 {
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
 	if (sb_view == SB_VIEW_FULLSCREEN)
 	{
 		SB_DrawFullscreenStats();

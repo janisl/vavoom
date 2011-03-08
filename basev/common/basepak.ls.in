@@ -335,6 +335,7 @@ progs/uibase/MenuScreenSinglePlayer.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/
 progs/uibase/MenuScreenSkill.vc					@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenSkill.vc
 progs/uibase/MenuScreenSList.vc					@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenSList.vc
 progs/uibase/MenuScreenSoundOptions.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenSoundOptions.vc
+progs/uibase/MenuScreenSpecialControls.vc		@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenSpecialControls.vc
 progs/uibase/MenuScreenVideoOptions.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuScreenVideoOptions.vc
 progs/uibase/MenuSelector_Big.vc				@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuSelector_Big.vc
 progs/uibase/MenuSelector_SmallLeft.vc			@CMAKE_SOURCE_DIR@/progs/common/uibase/MenuSelector_SmallLeft.vc

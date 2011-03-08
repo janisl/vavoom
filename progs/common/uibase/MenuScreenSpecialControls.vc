@@ -1,0 +1,81 @@
+//**************************************************************************
+//**
+//**    ##   ##    ##    ##   ##   ####     ####   ###     ###
+//**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
+//**     ## ##  ##    ##  ## ##  ##    ## ##    ## ## ## ## ##
+//**     ## ##  ########  ## ##  ##    ## ##    ## ##  ###  ##
+//**      ###   ##    ##   ###    ##  ##   ##  ##  ##       ##
+//**       #    ##    ##    #      ####     ####   ##       ##
+//**
+//**    $Id: MenuScreenControls2.vc 1741 2006-09-26 23:26:48Z dj_jl $
+//**
+//**    Copyright (C) 1999-2006 Jānis Legzdiņš
+//**
+//**    This program is free software; you can redistribute it and/or
+//**  modify it under the terms of the GNU General Public License
+//**  as published by the Free Software Foundation; either version 2
+//**  of the License, or (at your option) any later version.
+//**
+//**    This program is distributed in the hope that it will be useful,
+//**  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//**  GNU General Public License for more details.
+//**
+//**************************************************************************
+
+class MenuScreenSpecialControls : MenuScreenControls;
+
+//==========================================================================
+//
+//	CreateControlKeyChoices
+//
+//==========================================================================
+
+void CreateControlKeyChoices()
+{
+	int i, j;
+
+	// First, generate arrays for using for building controls list
+	GenerateArrays();
+
+	if (menukeys_list.Num > 0)
+	{
+		for (i = 0; i < menukeys_list.Num; i++)
+		{
+			// For each menukey, we must check the alias name
+			// inside of all defaultbinds and binds, to extract
+			// key binds
+			
+			// First look inside of default binds list
+			if (dbinds_list.Num > 0)
+			{
+				for (j = 0; j < dbinds_list.Num; j++)
+				{
+					if (!strcmp(menukeys_list[i].alias_name, dbinds_list[j].alias_name))
+					{
+						// The alias name is the same, so we'll use the bind
+						// for a MenuControlKey
+						AddControl(menukeys_list[i].desc, dbinds_list[j].alias_name, "");
+					}
+				}
+			}
+			// Also look inside of the binds list
+			if (binds_list.Num > 0)
+			{
+				for (j = 0; j < binds_list.Num; j++)
+				{
+					if (!strcmp(menukeys_list[i].alias_name, binds_list[j].alias_name))
+					{
+						// The alias name is the same, so we'll use the bind
+						// for a MenuControlKey
+						AddControl(menukeys_list[i].desc, binds_list[j].alias_name, "");
+					}
+				}
+			}
+		}
+	}
+}
+
+defaultproperties
+{
+}

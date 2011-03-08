@@ -325,6 +325,7 @@ bool bBumpSpecial;		//  Actor executes its special when being collided (as the S
 bool bMBFBounce;		//	Doesn't dies while bouncing speed is higher than 0.
 bool bAvoidsDropOffs;	//	Monster does avoid dropoffs, overrides value of compat_dropoff CVar.
 bool bNoTimeFreeze;		//  Monster isn't affected by Time Freeze powerups.
+bool bCrashed;			//	Means a monster that has crash state hasn't crashed and can execute Crash method.
 
 //  Params
 float			Speed;

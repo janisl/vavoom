@@ -84,7 +84,7 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 	{
 		GCon->Log("Couldn't create Emulator, Out of memory.");
 	}
-	emu->set_gain(2.0);
+	emu->set_gain(4.0);
 	emu->set_sample_rate(SampleRate);
 	gme_set_tempo(emu, 1.0);
 	

@@ -4477,3 +4477,9 @@
   Firebrand made fixes to the basepak projects to avoid generating too many intermediate directories.
   Firebrand fixed compilation errors on Linux.
   Firebrand updated readme file with locations for the new libraries used by Vavoom.
+08.03.2011
+  Firebrand added a new control options screen that shows KEYCONF script generated controls for MODs.
+  Firebrand added a special flag to mark monsters as "crashed" to avoid execution of Crash method infinitely,
+ this was specially noted on sloped surfaces, where monsters that could "crash" did this infinitely.
+  Firebrand fixed a problem with 'addslotdefault' KEYCONF command wouldn't work because it wasn't expecting
+ lowercased class names for it.

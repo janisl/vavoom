@@ -1308,7 +1308,7 @@ void CmdSetSlot(out array<string> Args)
 	{
 		for (i = 2; i < Args.Num; i++)
 		{
-			class<Weapon> Cls = class<Weapon>(FindClass(StrToName(Args[i])));
+			class<Weapon> Cls = class<Weapon>(FindClassLowerCase(StrToName(Args[i])));
 			if (!Cls)
 			{
 				print("%s is not a weapon", Args[i]);

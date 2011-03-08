@@ -59,7 +59,6 @@ void CreateChoices()
 	Enum.Text = "MIDI Output Device";
 	Enum.AddItem("System MIDI Device");
 	Enum.AddItem("Timidity");
-	Enum.AddItem("MODPlug");
 	Enum.SetInitialValue(GetCvar('s_mid_player'));
 	Enum.ValueChanging = ChangeMIDIPlayer;
 	currentY += Enum.Height;

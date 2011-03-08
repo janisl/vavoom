@@ -50,7 +50,6 @@ public:
 	bool Finished();
 	void Restart();
 
-
 	static VAudioCodec* Create(VStream* InStrm);
 };
 
@@ -128,7 +127,7 @@ int VModPlugAudioCodec::Decode(short* Data, int NumSamples)
 
 bool VModPlugAudioCodec::Finished()
 {
-	guard(VMikModAudioCodec::Finished);
+	guard(VModPlugAudioCodec::Finished);
 	return !playing;
 	unguard;
 }
@@ -141,7 +140,7 @@ bool VModPlugAudioCodec::Finished()
 
 void VModPlugAudioCodec::Restart()
 {
-	guard(VMikModAudioCodec::Restart);
+	guard(VModPlugAudioCodec::Restart);
 	ModPlug_Seek(file, 0);
 	playing = true;
 	unguard;
@@ -156,7 +155,7 @@ void VModPlugAudioCodec::Restart()
 VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 {
 	guard(VModPlugAudioCodec::Create);
-	if (s_mod_player != 1 || s_mid_player <= 1)
+	if (s_mod_player != 1)
 	{
 		return NULL;
 	}
