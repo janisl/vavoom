@@ -4483,3 +4483,5 @@
  this was specially noted on sloped surfaces, where monsters that could "crash" did this infinitely.
   Firebrand fixed a problem with 'addslotdefault' KEYCONF command wouldn't work because it wasn't expecting
  lowercased class names for it.
+  Firebrand commented 'check(Level->TIDHash[HashIndex] == this)' inside of p_entity.cpp, he thinks that there's
+ no reason for this line there, he will uncomment it if something breaks up with this change.
