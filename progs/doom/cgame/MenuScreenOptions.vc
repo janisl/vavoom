@@ -35,6 +35,7 @@ void CreateChoices()
 {
 	MenuTextButton		Btn;
 	int					currentY;
+	bool 				keysection = false;
 
 	currentY = ChoicesStartY;
 
@@ -50,6 +51,60 @@ void CreateChoices()
 	Btn.Activated = ActivateControls2;
 	currentY += Btn.Height;
 
+	// Add "Special Controls" for MODs if keyconf lump is present
+	// and it has an "addkeysection" command
+	if (WadLumpPresent('keyconf'))
+	{
+		ScriptsParser kc = ScriptsParser(SpawnObject(ScriptsParser));
+
+		kc.OpenLumpName('keyconf');
+		// Lump is present, scan it until we find a 'addkeysection'
+		while (!kc.AtEnd())
+		{
+			if (kc.Check("weaponsection"))
+			{
+				kc.ExpectString();
+			}
+			if (kc.Check("addslotdefault"))
+			{
+				kc.ExpectNumber();
+				kc.ExpectString();
+			}
+			if (kc.Check("addkeysection"))
+			{
+				kc.ExpectString();
+				kc.ExpectString();
+				found = true;
+			}
+			if (kc.Check("alias"))
+			{
+				kc.ExpectString();
+				kc.ExpectString();
+			}
+			if (kc.Check("defaultbind"))
+			{
+				kc.ExpectString();
+				kc.ExpectString();
+			}
+			if (kc.Check("addmenukey"))
+			{
+				kc.ExpectString();
+				kc.ExpectString();
+			}
+		}
+		kc.Destroy();
+	}
+	if (found)
+	{
+		// Surely a MOD that contains KEYCONF bindings
+		// so we'll show the special controls option
+		Btn = MenuTextButton(NewChild(MenuSmallTextButton));
+		Btn.SetOrigin(ChoicesStartX, currentY);
+		Btn.Text = "Special Controls";
+		Btn.Activated = ActivateSpecialControls;
+		currentY += Btn.Height;
+	}
+		
 	Btn = MenuTextButton(NewChild(MenuSmallTextButton));
 	Btn.SetOrigin(ChoicesStartX, currentY);
 	Btn.Text = "Mouse Options";

@@ -211,13 +211,12 @@ void SB_DrawMainBar()
 	int NumKeys;
 	Inventory Item;
 
-	// draw something in the blank spaces
-	FillRectWithFlat(0, 448, 640, 32, 'f_pave01');
-
-	if (!cl.MO)
+	if (!cl || !cl.MO)
 	{
 		return;
 	}
+	// draw something in the blank spaces
+	FillRectWithFlat(0, 448, 640, 32, 'f_pave01');
 
 	//  background
 	DrawPic(BAR_X + 0, BAR_Y + 168, pic_invback);
@@ -418,6 +417,11 @@ void SB_DrawFullscreenStats()
 	int NumKeys;
 	Inventory Item;
 
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
+
 	// health
 	SB_DrawTallNum(70, 450, cl.Health, 0.7);
 	DrawPic(20, 465, pic_medpack, 0.7);
@@ -589,6 +593,10 @@ void SB_DrawPause()
 
 void SB_Drawer(int sb_view)
 {
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
 	if (sb_view != SB_VIEW_FULLSCREEN)
 	{
 		SB_DrawMainBar();

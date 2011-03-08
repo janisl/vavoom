@@ -254,7 +254,7 @@ void SB_DrawMainBar()
 	int i;
 	int health;
 
-	if (!cl.MO)
+	if (!cl || !cl.MO)
 	{
 		return;
 	}
@@ -392,7 +392,7 @@ void SB_DrawFullscreenStats()
 {
 	int i;
 
-	if (!cl.MO)
+	if (!cl || !cl.MO)
 	{
 		return;
 	}
@@ -555,6 +555,10 @@ void SB_DrawPause()
 
 void SB_Drawer(int sb_view)
 {
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
 	if (sb_view == SB_VIEW_FULLSCREEN)
 	{
 		SB_DrawFullscreenStats();

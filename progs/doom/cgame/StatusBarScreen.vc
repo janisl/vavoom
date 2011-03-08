@@ -349,6 +349,11 @@ void SB_DrawMainBar()
 {
 	int i;
 
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
+
 	// draw something in the blank spaces
 	// check which version of Doom we are playing
 #ifdef DOOM2
@@ -356,11 +361,6 @@ void SB_DrawMainBar()
 #else
 	FillRectWithFlat(0, 448, 640, 32, 'floor7_2');
 #endif
-
-	if (!cl.MO)
-	{
-		return;
-	}
 
 	//  background
 	DrawPic(ST_BGX, ST_BGY, pic_bar);
@@ -526,7 +526,7 @@ void DrawAmmo(int CountX, int CountY, int MaxX, int MaxY,
 
 void SB_DrawFullscreenStats()
 {
-	if (!cl.MO)
+	if (!cl || !cl.MO)
 	{
 		return;
 	}
@@ -648,6 +648,10 @@ void SB_DrawPause()
 
 void SB_Drawer(int sb_view)
 {
+	if (!cl || !cl.MO)
+	{
+		return;
+	}
 	if (sb_view == SB_VIEW_FULLSCREEN)
 	{
 		SB_DrawFullscreenStats();
