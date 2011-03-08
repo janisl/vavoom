@@ -1379,6 +1379,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\progs\common\uibase\MenuScreenSpecialControls.vc"
+				>
+			</File>
+			<File
 				RelativePath="..\progs\common\uibase\MenuScreenVideoOptions.vc"
 				>
 			</File>
