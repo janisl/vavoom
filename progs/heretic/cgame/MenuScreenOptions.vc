@@ -35,6 +35,7 @@ void CreateChoices()
 {
 	MenuTextButton		Btn;
 	int					currentY;
+	bool				found = false;
 
 	currentY = ChoicesStartY;
 
@@ -60,36 +61,13 @@ void CreateChoices()
 		// Lump is present, scan it until we find a 'addkeysection'
 		while (!kc.AtEnd())
 		{
-			if (kc.Check("weaponsection"))
-			{
-				kc.ExpectString();
-			}
-			if (kc.Check("addslotdefault"))
-			{
-				kc.ExpectNumber();
-				kc.ExpectString();
-			}
 			if (kc.Check("addkeysection"))
 			{
 				kc.ExpectString();
 				kc.ExpectString();
 				found = true;
 			}
-			if (kc.Check("alias"))
-			{
-				kc.ExpectString();
-				kc.ExpectString();
-			}
-			if (kc.Check("defaultbind"))
-			{
-				kc.ExpectString();
-				kc.ExpectString();
-			}
-			if (kc.Check("addmenukey"))
-			{
-				kc.ExpectString();
-				kc.ExpectString();
-			}
+			kc.GetString();
 		}
 		kc.Destroy();
 	}
@@ -161,6 +139,17 @@ void ActivateControls(Object Sender)
 void ActivateControls2(Object Sender)
 {
 	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenControls2));
+}
+
+//==========================================================================
+//
+//	ActivateSpecialControls
+//
+//==========================================================================
+
+void ActivateSpecialControls(Object Sender)
+{
+	ClGame.PushMenuScreen(ClGame.SpawnMenu(MenuScreenSpecialControls));
 }
 
 //==========================================================================

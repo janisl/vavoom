@@ -1308,7 +1308,9 @@ void CmdSetSlot(out array<string> Args)
 	{
 		for (i = 2; i < Args.Num; i++)
 		{
-			class<Weapon> Cls = class<Weapon>(FindClassLowerCase(StrToName(Args[i])));
+			// Standarize class name here, since I've found people writing in all types of
+			// mixed cases...
+			class<Weapon> Cls = class<Weapon>(FindClassLowerCase(StrToName(strlwr(Args[i]))));
 			if (!Cls)
 			{
 				print("%s is not a weapon", Args[i]);
@@ -1343,7 +1345,9 @@ void CmdAddSlotDefault(out array<string> Args)
 		return;
 	}
 
-	class<Weapon> Cls = class<Weapon>(FindClass(StrToName(Args[2])));
+	// Standarize class name here, since I've found people writing in all types of
+	// mixed cases...
+	class<Weapon> Cls = class<Weapon>(FindClassLowerCase(StrToName(strlwr(Args[2]))));
 	if (!Cls)
 	{
 		print("%s is not a weapon", Args[2]);

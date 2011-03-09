@@ -4485,3 +4485,12 @@
  lowercased class names for it.
   Firebrand commented 'check(Level->TIDHash[HashIndex] == this)' inside of p_entity.cpp, he thinks that there's
  no reason for this line there, he will uncomment it if something breaks up with this change.
+09.03.2011
+  Firebrand fixed a crash in TestMobjZ method, which was exposed after adding this method for checking for
+ collisions when setting actors Z origin inside of FloatBobbing motion moves (and other cases), the crash
+ happened because we weren't checking if both actors collided with things, so sometimes actors which didn't
+ collide with things (like the player with NoClip cheat), could cause things to cosider them as "being there".
+  Firebrand Standardized how the setslot methods work, they did work if class names were EXACTLY as they
+ should be, but if the names were provided without proper casing, then they wouldn't work, now Vavoom transforms
+ the names to lower case and then looks for the class name when setting weapons to a weapon slot.
+  Firebrand improved the code to "create" a new special controls screen when KEYCONF lumps are used.

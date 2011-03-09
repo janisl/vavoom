@@ -614,6 +614,10 @@ bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 {
 	guardSlow(VEntity::CheckThing);
 	// can't hit thing
+	if (!(Other->EntityFlags & EF_ColideWithThings))
+	{
+		return true;
+	}
 	if (!(Other->EntityFlags & EF_Solid))
 	{
 		return true;
@@ -1008,6 +1012,7 @@ bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 		!(EntityFlags & EF_Missile) ||
 		!(EntityFlags & EF_NoGravity)) &&
 		(Other->EntityFlags & EF_Solid) &&
+		(Other->EntityFlags & EF_ColideWithThings) &&
 		(Other->EntityFlags & EF_ActLikeBridge))
 	{
 		// allow actors to walk on other actors as well as floors
@@ -1913,6 +1918,10 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 		{
 			for (VBlockThingsIterator Other(XLevel, bx, by); Other; ++Other)
 			{
+				if (!(Other->EntityFlags & EF_ColideWithThings))
+				{
+					continue;
+				}
 				if (!(Other->EntityFlags & EF_Solid))
 				{
 					// Can't hit thing

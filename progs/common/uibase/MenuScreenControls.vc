@@ -77,15 +77,6 @@ void GenerateArrays()
 	{
 		// We are only interested in a couple of commands, like
 		// 'addkeysection', 'bind', 'defaultbind' and 'addmenukey'
-		if (kc.Check("weaponsection"))
-		{
-			kc.ExpectString();
-		}
-		if (kc.Check("addslotdefault"))
-		{
-			kc.ExpectNumber();
-			kc.ExpectString();
-		}
 		if (kc.Check("addkeysection"))
 		{
 			// addkeysection "Title" keysection<-(for config file)
@@ -104,7 +95,7 @@ void GenerateArrays()
 			kc.ExpectString();
 			aliases_list[aliases_list.Num - 1].command = kc.String;
 		}
-		if (kc.Check("defaultbind") || kc.Check("bind"))
+		if (kc.Check("defaultbind"))
 		{
 			dbinds_list.Num = dbinds_list.Num + 1;
 			kc.ExpectString();
@@ -128,6 +119,7 @@ void GenerateArrays()
 			kc.ExpectString();
 			menukeys_list[menukeys_list.Num - 1].alias_name = kc.String;
 		}
+		kc.GetString();
 	}
 	kc.Destroy();
 }

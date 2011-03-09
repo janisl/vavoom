@@ -197,11 +197,7 @@ bool Physics(float DeltaTime)
 				}
 				bOnMobj = true;
 				Velocity.z = 0.0;
-				if (onmo.bSolid)
-				{
-					// Only crash on solid objects
-					Crash();
-				}
+				Crash();
 
 				if (onmo.bOnmobjCopyVel)
 				{

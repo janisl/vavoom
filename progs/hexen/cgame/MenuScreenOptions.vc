@@ -61,36 +61,13 @@ void CreateChoices()
 		// Lump is present, scan it until we find a 'addkeysection'
 		while (!kc.AtEnd())
 		{
-			if (kc.Check("weaponsection"))
-			{
-				kc.ExpectString();
-			}
-			if (kc.Check("addslotdefault"))
-			{
-				kc.ExpectNumber();
-				kc.ExpectString();
-			}
 			if (kc.Check("addkeysection"))
 			{
 				kc.ExpectString();
 				kc.ExpectString();
 				found = true;
 			}
-			if (kc.Check("alias"))
-			{
-				kc.ExpectString();
-				kc.ExpectString();
-			}
-			if (kc.Check("defaultbind"))
-			{
-				kc.ExpectString();
-				kc.ExpectString();
-			}
-			if (kc.Check("addmenukey"))
-			{
-				kc.ExpectString();
-				kc.ExpectString();
-			}
+			kc.GetString();
 		}
 		kc.Destroy();
 	}
