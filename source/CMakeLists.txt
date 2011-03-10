@@ -8,7 +8,7 @@ option(WITH_OPENAL "Use OpenAL library" ON)
 option(WITH_VORBIS "Enable Vorbis support" ON)
 option(WITH_LIBMAD "Enable MP3 support" ON)
 option(WITH_MIKMOD "Enable MikMod support" ON)
-option(WITH_MODPLUG "Enable MikMod support" ON)
+option(WITH_MODPLUG "Enable ModPlug support" ON)
 option(WITH_FLAC "Enable FLAC support" ON)
 
 option(ENABLE_CLIENT "Build client executable" ON)
@@ -175,6 +175,7 @@ set(MAIN_COMMON_SOURCES
 	server.h
 	snd_data.cpp
 	snd_local.h
+	snd_gme.cpp
 	snd_main.cpp
 	snd_qmus2mid.cpp
 	snd_reverbs.cpp
