@@ -220,11 +220,6 @@ VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 	{
 	    settings.mResamplingMode = MODPLUG_RESAMPLE_NEAREST;
 	}
-	//  These aren't needed, since according to the modplug docs
-	//  these are used by default as they are set here...
-/*	settings.mFrequency = 44100;
-	settings.mChannels = 2;
-	settings.mBits = 16;*/
 
 	ModPlug_SetSettings(&settings);
 
@@ -236,6 +231,18 @@ VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 	ModPlugFile* file = ModPlug_Load(Data, Size);
 	if (!file)
 	{
+		return NULL;
+	}
+
+	// Check the file type, we don't want to use ModPlug for
+	// MIDI files, so if we have a MIDI file here, we'll
+	// reject the Codec
+	if (ModPlug_GetModuleType(file) == 0x10000 /*MOD_TYPE_MID*/)
+	{
+		// Since we opened the stream, we must do cleanup
+		InStrm->Close();
+		delete InStrm;
+		InStrm = NULL;
 		return NULL;
 	}
 
