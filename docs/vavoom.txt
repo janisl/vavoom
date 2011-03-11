@@ -56,8 +56,9 @@ Vavoom System Requirements:
      - Optional: CD-ROM
      - Windows version: DirectX 9 (http://www.microsoft.com/directx)
 
-*** IMPORTANT! Vavoom requires a floating point processor.
-Systems that do not have an FPU installed will not run Vavoom -- at all.
+*** IMPORTANT! ***
+ Vavoom requires a floating point processor.
+ Systems that do not have an FPU installed will not run Vavoom -- at all.
 
   To play Vavoom you need the main wad file from one of the following games:
      - Doom shareware
@@ -198,11 +199,34 @@ For Windows you need:
   You can also compile with MSVC 2008, you will find the workspace and project
  files in the 'msvc' subdirectory.
 
+==============================================================================
+3.4 Timidity patches
+==============================================================================
+
+ You can get Timidity patches to use with Vavoom from here:
+
+	http://www.doomworld.com/idgames/index.php?id=13928
+
+ or from here:
+
+	http://www.doomworld.com/idgames/index.php?id=12527
+
+ To allow Vavoom to use the patch files, you need to edit the timidity.cfg,
+look for and replace the
+
+	dir d:\doom\misc\patches
+
+line to point to the directory where you unarchived the pack, then move the
+timidity.cfg file to the same directory where Vavoom executable is located.
+
+ Then make sure to enable Timidity playback in the launher or inside the
+sound options menu in-game.
+
 *****************************************************************************
 4. Starting a net game
 *****************************************************************************
 
-  The Vavoom supports only TCP/IP.
+  Vavoom supports only TCP/IP.
 
   The default socket port is 26000. It can be changed in the console with
 the command "port <port>".
@@ -398,6 +422,7 @@ Debugging
         - Tab to complete a command, press it again for the next matching command;
         - Shift + Tab for reverse order;
         - PageUp/PageDown to scroll lines up/down;
+        - Separate multiple commands by separating them with semi-colon ';';
         - Up/Down for the last 16 commands history.
     - CD audio.
     - 3 crosshairs.
@@ -411,9 +436,10 @@ Debugging
     - glBSP plugin.
     - glVIS plugin.
     - Support for Skyboxes
-    - WAV and FLAC sounds, MP3, OGG and mod-style music.
+    - WAV and FLAC sounds, MP3, OGG, mod-style and game emulation music.
     - Possibility of using Timidity for MIDI and MUS playback.
-    - High Resolution textures
+    - High Resolution textures.
+    - Definition of new in-game controls using KEYCONF script.
     - Custom object and weapon definitions using DECORATE script.
     - Stencil shadows.
     - A lots more.
