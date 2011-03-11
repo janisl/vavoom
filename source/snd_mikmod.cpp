@@ -408,18 +408,16 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	{
 		md_mode &= ~DMODE_REVERSE;
 	}
+#ifdef DMODE_NOISEREDUCTION
 	if (s_mikmod_lowpass)
 	{
-#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode |= DMODE_NOISEREDUCTION;
-#  endif	/* libmikmod-3.2.x */
 	}
 	else
 	{
-#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode &= ~DMODE_NOISEREDUCTION;
-#  endif	/* libmikmod-3.2.x */
 	}
+#endif
 
 	//	Initialise MikMod.
 	if (MikMod_Init((CHAR*)""))
