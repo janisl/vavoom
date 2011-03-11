@@ -60,7 +60,7 @@ actor Chicken : MorphedMonster
 	SpawnID 122
 	Health 10
 	Radius 9
-	Height 22
+	Height 25 // 22 FIXME - I can pass "below" static decorations...
 	Mass 40
 	Speed 4
 	PainChance 200

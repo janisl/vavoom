@@ -48,7 +48,7 @@ actor Pig : MorphedMonster
 {
 	Health 25
 	Radius 12
-	Height 22
+	Height 25 //22 FIXME - I can pass "below" static decorations...
 	Mass 60
 	Speed 10
 	PainChance 128
