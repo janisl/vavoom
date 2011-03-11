@@ -181,10 +181,7 @@ final void A_KlaxonBlare()
 	{
 		Target = none;
 		ReactionCount = 60;
-		if (Target == none)
-		{
-			SetState(IdleState);
-		}
+		SetState(IdleState);
 	}
 	if (ReactionCount == 2)
 	{
