@@ -50,12 +50,20 @@ int DoSpecialDamage(EntityEx victim, EntityEx source, int damage)
 {
 	if (victim.bIsPlayer)
 	{
+		if ((PlayerEx(victim.Player).Cheats & PlayerEx::CF_GODMODE) ||
+			victim.bInvulnerable)
+		{
+			return -1;
+		}
 		if (PlayerEx(victim.Player).PoisonCount < 4)
 		{
 			Actor(victim).PoisonDamage(Actor(source), Actor(source),
 				15 + (P_Random() & 15), false);	// Don't play painsound
 			Actor(victim).PoisonPlayer(Actor(source), 50);
-			victim.PlaySound('*poison', CHAN_VOICE);
+			if (!PlayerEx(victim.Player).MorphTime)
+			{
+				victim.PlaySound('*poison', CHAN_VOICE);
+			}
 		}
 		return -1;
 	}
