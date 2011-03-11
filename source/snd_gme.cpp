@@ -28,7 +28,7 @@
 #ifdef _WIN32
 #include "winlocal.h"
 #endif
-#include "gme/src/music_emu.h"
+#include "gme/src/Music_Emu.h"
 
 #include "gamedefs.h"
 #include "snd_local.h"
