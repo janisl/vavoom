@@ -4494,3 +4494,11 @@
  should be, but if the names were provided without proper casing, then they wouldn't work, now Vavoom transforms
  the names to lower case and then looks for the class name when setting weapons to a weapon slot.
   Firebrand improved the code to "create" a new special controls screen when KEYCONF lumps are used.
+11.03.2011
+  Firebrand made ModPlug check the filetype before starting playback, to avoid using it for MIDI playback,
+ since it sounds really bad.
+  Firebrand fixed pig and invulnerable players coughed when poisoned.
+  Firebrand changed the height for Chicken and Pig players and monsters to be higher than the default
+ MaxStepHeight (24), because things could pass and be "stepped up" by monsters and static decorations,
+ this seems to be a problem with Doom's physics code, but he doesn't have the time or desire to investigate
+ this as of now, so this will be fixed later.
