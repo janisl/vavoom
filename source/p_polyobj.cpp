@@ -824,8 +824,8 @@ bool VLevel::PolyCheckMobjBlocking(seg_t* seg, polyobj_t* po)
 		{
 			for (mobj = BlockLinks[j + i]; mobj; mobj = mobj->BlockMapNext)
 			{
-				if ((mobj->EntityFlags & VEntity::EF_Solid) ||
-					(mobj->EntityFlags & VEntity::EF_IsPlayer))
+				if ((mobj->EntityFlags & VEntity::EF_ColideWithWorld) &&
+					(mobj->EntityFlags & VEntity::EF_Solid))
 				{
 					tmbbox[BOXTOP] = mobj->Origin.y + mobj->Radius;
 					tmbbox[BOXBOTTOM] = mobj->Origin.y - mobj->Radius;

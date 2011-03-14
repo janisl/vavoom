@@ -355,8 +355,8 @@ final void Damage(EntityEx inflictor, EntityEx source, int damage,
 	{
 		if (inflictor && inflictor.bLightning)
 		{
-			if (P_Random() < 96 && (!inflictor.bPainless ||
-			    inflictor.bForcePain))
+			if ((P_Random() < 96 && !inflictor.bPainless) ||
+			    inflictor.bForcePain)
 			{
 				bJustHit = true;	// fight back!
 				if (FindState('Pain', DmgType, false))

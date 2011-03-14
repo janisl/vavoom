@@ -133,19 +133,9 @@ void CHolyFindTarget()
 		}
 		if (bScreenSeeker)
 		{
-			if (CanSee(link))
-			{
-				float angle = AngleMod360(atan2(link.Origin.y - Target.Origin.y,
-					link.Origin.x - Target.Origin.x) - Target.Angles.yaw);
-				if (angle <= 226.0 * 360.0 / 256.0 || angle >= 30.0 * 360.0 / 256.0)
-				{
-					continue;
-				}
-			}
-		}
-		else
-		{
-			if (!CanSee(link))
+			float angle = AngleMod360(atan2(link.Origin.y - Target.Origin.y,
+				link.Origin.x - Target.Origin.x) - Target.Angles.yaw);
+			if (angle <= 226.0 * 360.0 / 256.0 || angle >= 30.0 * 360.0 / 256.0)
 			{
 				continue;
 			}

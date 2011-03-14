@@ -614,11 +614,8 @@ bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 {
 	guardSlow(VEntity::CheckThing);
 	// can't hit thing
-	if (!(Other->EntityFlags & EF_ColideWithThings))
-	{
-		return true;
-	}
-	if (!(Other->EntityFlags & EF_Solid))
+	if (!(Other->EntityFlags & EF_ColideWithThings) || 
+		!(Other->EntityFlags & EF_Solid))
 	{
 		return true;
 	}
@@ -912,6 +909,10 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 						}
 						else if (Player && Origin.z + Height - tmtrace.BlockingMobj->Origin.z <= MaxStepHeight)
 						{
+							if (fakedblocker)
+							{
+								thingblocker = fakedblocker;
+							}
 							if (thingblocker)
 							{ // something to step up on, set it as
 							  // the blocker so that we don't step up
@@ -1896,7 +1897,8 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 	int xl, xh, yl, yh, bx, by;
 
 	// Can't hit thing
-	if (!(EntityFlags & EF_ColideWithThings))
+	if (!(EntityFlags & EF_ColideWithThings) ||
+		!(EntityFlags & EF_Solid))
 	{
 		return NULL;
 	}
@@ -1918,11 +1920,8 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 		{
 			for (VBlockThingsIterator Other(XLevel, bx, by); Other; ++Other)
 			{
-				if (!(Other->EntityFlags & EF_ColideWithThings))
-				{
-					continue;
-				}
-				if (!(Other->EntityFlags & EF_Solid))
+				if (!(Other->EntityFlags & EF_ColideWithThings) ||
+					!(Other->EntityFlags & EF_Solid))
 				{
 					// Can't hit thing
 					continue;

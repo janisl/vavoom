@@ -913,6 +913,12 @@ void SV_LoadGame(int slot)
 		CL_SetUpLocalPlayer();
 	}
 #endif
+
+	// Launch waiting scripts
+	if (!deathmatch)
+	{
+		GLevel->Acs->CheckAcsStore();
+	}
 	unguard;
 }
 

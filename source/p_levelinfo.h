@@ -27,7 +27,7 @@ class VLevelInfo : public VThinker
 {
 	DECLARE_CLASS(VLevelInfo, VThinker, 0)
 
-	enum { TID_HASH_SIZE = 64 };
+	enum { TID_HASH_SIZE = 128 };
 
 	VGameInfo*		Game;
 	VWorldInfo*		World;

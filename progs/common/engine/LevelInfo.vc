@@ -27,7 +27,7 @@ class LevelInfo : Thinker
 	native
 	abstract;
 
-const int TID_HASH_SIZE = 64;
+const int TID_HASH_SIZE = 128;
 
 struct MapSpecialAction
 {

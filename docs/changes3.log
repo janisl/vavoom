@@ -4502,3 +4502,17 @@
  MaxStepHeight (24), because things could pass and be "stepped up" by monsters and static decorations,
  this seems to be a problem with Doom's physics code, but he doesn't have the time or desire to investigate
  this as of now, so this will be fixed later.
+  Firebrand fixed that projectiles with bForceDamage that did 0 damage didn't forced actor to enter to their
+ pain state.
+13.03.2011
+  Firebrand doubled TID_HASH_SIZE, since there were maps that could cause assertions because of the old size
+ limit.
+  Firebrand fixed that projectiles with bForcePain didn't make monsters to go into their pain state all the
+ time because of a logic error in the check.
+  Firebrand fixed the logic inside of PolyThrustMobj method to make polyobjects able to crush corpses.
+  Firebrand fixed a problem where platforms which didn't had any Wait time to go up (or down) did so anyways,
+ this fixes the problem with Hexen's MAP31 script where some platforms would go up and immediately go down,
+ which wasn't the expected behavior.
+  Firebrand improved some checks for polyobjects blocked by things.
+  Firebrand fixed a problem where active scripts wouldn't be checked when loading savegames, causing a problem
+ when the player was reborn from a reborn state save, where scripts wouldn't be executed properly.

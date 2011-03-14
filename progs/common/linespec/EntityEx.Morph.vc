@@ -74,10 +74,6 @@ final bool MorphMonster(class<MorphedMonster> MonsterClass, float Duration,
 {
 	int i;
 
-	if (bIsPlayer)
-	{
-		return false;
-	}
 	if (!bMonster)
 	{
 		return false;

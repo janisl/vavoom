@@ -316,7 +316,10 @@ void Tick(float deltaTime)
 			else
 			{
 				Time = Wait;
-				Status = PLAT_Waiting;
+				if (Wait > 0.0)
+				{
+					Status = PLAT_Waiting;
+				}
 				SectorStopSequence(Sector);
 				switch (Type)
 				{
@@ -348,7 +351,10 @@ void Tick(float deltaTime)
 			else
 			{
 				Time = Wait;
-				Status = PLAT_Waiting;
+				if (Wait > 0.0)
+				{
+					Status = PLAT_Waiting;
+				}
 				SectorStopSequence(Sector);
 				switch (Type)
 				{
