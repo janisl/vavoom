@@ -207,6 +207,13 @@ class VLevelInfo : public VThinker
 		P_PASS_PTR(po);
 		EV_RET_VOID(NAME_PolyThrustMobj);
 	}
+	void eventPolyCrushMobj(VEntity* A, polyobj_t* po)
+	{
+		P_PASS_SELF;
+		P_PASS_REF(A);
+		P_PASS_PTR(po);
+		EV_RET_VOID(NAME_PolyCrushMobj);
+	}
 	bool eventTagBusy(int tag)
 	{
 		P_PASS_SELF;

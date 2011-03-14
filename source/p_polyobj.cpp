@@ -846,6 +846,21 @@ bool VLevel::PolyCheckMobjBlocking(seg_t* seg, polyobj_t* po)
 					mobj->Level->eventPolyThrustMobj(mobj, seg->normal, po);
 					blocked = true;
 				}
+				if ((mobj->EntityFlags & VEntity::EF_Corpse))
+				{
+					if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+						tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+						tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+						tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+					{
+						continue;
+					}
+					if (P_BoxOnLineSide(tmbbox, ld) != -1)
+					{
+						continue;
+					}
+					mobj->Level->eventPolyCrushMobj(mobj, po);
+				}
 			}
 		}
 	}
