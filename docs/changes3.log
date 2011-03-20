@@ -4522,3 +4522,8 @@
   Firebrand implemented the patch provided by b0rsuk to fix TeleportOther1 projectile to work on players too.
   Firebrand made player to reset buttons after ending a strife conversation, to avoid a problem where the player
  could kill NPCs when ending conversation screens with the mouse because it triggered the player's weapon fire.
+20.03.2011
+  Firebrand fixed the problem where actors that had low height could make static decorations "step up" on them
+ because of flawed problems in the physics checks done on these cases.
+  Firebrand fixed the checks done for using ice death frames or generic ice death frames if these aren't found
+ inside WAD files.

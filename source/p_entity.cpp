@@ -231,10 +231,7 @@ void VEntity::RemoveFromTIDList()
 	else
 	{
 		int HashIndex = TID & (VLevelInfo::TID_HASH_SIZE - 1);
-		// I've commented this line, I don't find a reason
-		// for this check here, if we find out that it breaks
-		// something, I'll uncomment it again...
-//		check(Level->TIDHash[HashIndex] == this);
+		check(Level->TIDHash[HashIndex] == this);
 		Level->TIDHash[HashIndex] = TIDHashNext;
 	}
 	TID = 0;

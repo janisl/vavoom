@@ -96,7 +96,7 @@ defaultproperties
 {
 	Health = 30;
 	Radius = 16.0;
-	Height = 25.0; // 24.0; FIXME - I can pass "below" static decorations...
+	Height = 24.0;
 	Gravity = 0.125;
 	PainChance = 1.0;
 	ViewHeight = 21.0;

@@ -738,7 +738,14 @@ void Died(EntityEx source, EntityEx inflictor)
 		DeathState = FindState('Death', DamageType, true);
 		if (DamageType == 'Ice' && !bNoIceDeath && (bIsPlayer || bMonster))
 		{
-			DeathState = FindState('GenericFreezeDeath');
+			if (FindState('Death', 'Ice', true))
+			{
+				DeathState = FindState('Death', 'Ice', true);
+			}
+			else
+			{
+				DeathState = FindState('GenericFreezeDeath');
+			}
 		}
 	}
 	if (!DeathState)

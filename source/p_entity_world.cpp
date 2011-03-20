@@ -614,8 +614,11 @@ bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 {
 	guardSlow(VEntity::CheckThing);
 	// can't hit thing
-	if (!(Other->EntityFlags & EF_ColideWithThings) || 
-		!(Other->EntityFlags & EF_Solid))
+	if (!(Other->EntityFlags & EF_ColideWithThings))
+	{
+		return true;
+	}
+	if (!(Other->EntityFlags & EF_Solid))
 	{
 		return true;
 	}
@@ -899,7 +902,8 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 						else if (!tmtrace.BlockingMobj->Player &&
 							!(EntityFlags & VEntity::EF_Float) &&
 							!(EntityFlags & VEntity::EF_Missile) &&
-							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height - Origin.z <= MaxStepHeight)
+							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height - Origin.z + 
+							(tmtrace.BlockingMobj->EntityFlags & VEntity::EF_ActLikeBridge ? 0.0 : Height) <= MaxStepHeight)
 						{
 							if (!thingblocker || tmtrace.BlockingMobj->Origin.z > thingblocker->Origin.z)
 							{
@@ -907,7 +911,8 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 							}
 							tmtrace.BlockingMobj = NULL;
 						}
-						else if (Player && Origin.z + Height - tmtrace.BlockingMobj->Origin.z <= MaxStepHeight)
+						else if (Player && Origin.z + Height - tmtrace.BlockingMobj->Origin.z +
+								 (tmtrace.BlockingMobj->EntityFlags & VEntity::EF_ActLikeBridge ? 0.0 : tmtrace.BlockingMobj->Height) <= MaxStepHeight)
 						{
 							if (fakedblocker)
 							{
@@ -991,6 +996,11 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 {
 	guardSlow(VEntity::CheckRelThing);
+	// can't hit thing
+	if (!(Other->EntityFlags & EF_ColideWithThings))
+	{
+		return true;
+	}
 	// don't clip against self
 	if (Other == this)
 	{
@@ -1013,9 +1023,8 @@ bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 		!(EntityFlags & EF_Missile) ||
 		!(EntityFlags & EF_NoGravity)) &&
 		(Other->EntityFlags & EF_Solid) &&
-		(Other->EntityFlags & EF_ColideWithThings) &&
 		(Other->EntityFlags & EF_ActLikeBridge))
-	{
+ 	{
 		// allow actors to walk on other actors as well as floors
 		if (Other->Origin.z + Other->Height >= tmtrace.FloorZ &&
 			Other->Origin.z + Other->Height <= Origin.z + MaxStepHeight)
@@ -1896,9 +1905,13 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 	guard(VEntity::TestMobjZ);
 	int xl, xh, yl, yh, bx, by;
 
-	// Can't hit thing
-	if (!(EntityFlags & EF_ColideWithThings) ||
-		!(EntityFlags & EF_Solid))
+	// can't hit thing
+	if (!(EntityFlags & EF_ColideWithThings))
+	{
+		return NULL;
+	}
+	// Not Solid
+	if (!(EntityFlags & EF_Solid))
 	{
 		return NULL;
 	}
@@ -1920,10 +1933,14 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 		{
 			for (VBlockThingsIterator Other(XLevel, bx, by); Other; ++Other)
 			{
-				if (!(Other->EntityFlags & EF_ColideWithThings) ||
-					!(Other->EntityFlags & EF_Solid))
+				if (!(Other->EntityFlags & EF_ColideWithThings))
 				{
 					// Can't hit thing
+					continue;
+				}
+				if (!(Other->EntityFlags & EF_Solid))
+				{
+					// Not solid
 					continue;
 				}
 				if (*Other == this)

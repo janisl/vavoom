@@ -348,7 +348,7 @@ BOOL VMikModAudioCodec::ArchiveReader_Eof(MREADER* rd)
 VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 {
 	guard(VMikModAudioCodec::Create);
-	if (s_mod_player == 0)
+	if (s_mod_player != 0)
 	{
 		return NULL;
 	}
@@ -372,18 +372,16 @@ VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 	{
 		md_mode &= ~DMODE_HQMIXER;
 	}
+#ifdef DMODE_FLOAT
 	if (s_mikmod_float)
 	{
-#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode |= DMODE_FLOAT;
-#  endif	/* libmikmod-3.2.x */
 	}
 	else
 	{
-#  if (LIBMIKMOD_VERSION >= 0x030200)
 		md_mode &= ~DMODE_FLOAT;
-#  endif	/* libmikmod-3.2.x */
 	}
+#endif
 	if (s_mikmod_surround)
 	{
 		md_mode |= DMODE_SURROUND;
