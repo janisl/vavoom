@@ -244,8 +244,14 @@ void Tick(float DeltaTime)
 	for (Node = sec->TouchingThingList; Node; Node = Node->SNext)
 	{
 		thing = EntityEx(Node->Thing);
-		if (!thing.bWindThrust || !thing.bColideWithWorld)
+		if (!thing.bColideWithWorld)
+		{
 			continue;
+		}
+		if (!thing.bWindThrust)
+		{
+			continue;
+		}
 		if (Type == PUSHER_Wind)
 		{
 			if (thing.WaterLevel > 2) // underwater

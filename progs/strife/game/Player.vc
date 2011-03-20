@@ -124,6 +124,13 @@ void PlayerImpulse()
 	else if (impulse >= 200 && impulse <= 205)
 	{
 		LineSpecialLevelInfo(Level).ConChoiceImpulse(impulse - 200);
+		// Check if the player is ending a conversation
+		if (impulse == 200)
+		{
+			// Give the player some time to avoid shooting if
+			// ending the conversation with the mouse
+			Buttons = 0;
+		}
 	}
 }
 

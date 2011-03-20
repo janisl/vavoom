@@ -38,7 +38,7 @@ void CreateChoices()
 
 	currentY = ChoicesStartY;
 
-	if (GetCvar('s_mod_player') > 0 || GetCvar('s_mid_player') > 1)
+	if (GetCvar('s_mod_player') == 1)
 	{
 		Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 		Enum.SetOrigin(ChoicesStartX, currentY);

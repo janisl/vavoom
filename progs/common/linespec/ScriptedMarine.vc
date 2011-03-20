@@ -73,7 +73,7 @@ void Tick(float DeltaTime)
 
 	if (Special1f)
 	{
-		if (MissileState == FindState('AtkDShotgun'))
+		if (MissileState == FindState('Missile', 'SSG', true))
 		{
 			//	Super shotgun sounds.
 			int Ticks = ftoi((XLevel.Time - Special1f) * 35.0);
@@ -131,51 +131,51 @@ final void SetWeapon(int WpnNum)
 	{
 	default:
 	case WEAPON_Dummy:
-		MissileState = FindState('AtkDummy');
+		MissileState = FindState('Missile', 'None', true);
 		break;
 
 	case WEAPON_Fist:
-		MeleeState = FindState('AtkFist');
+		MeleeState = FindState('Melee', 'Fist', true);
 		break;
 
 	case WEAPON_BerserkFist:
-		MeleeState = FindState('AtkBerserk');
+		MeleeState = FindState('Melee', 'Berserker', true);
 		break;
 
 	case WEAPON_Chainsaw:
-		MeleeState = FindState('AtkChainsaw');
+		MeleeState = FindState('Melee', 'Chainsaw', true);
 		break;
 
 	case WEAPON_Pistol:
-		MissileState = FindState('AtkPistol');
+		MissileState = FindState('Missile', 'Pistol', true);
 		break;
 
 	case WEAPON_Shotgun:
-		MissileState = FindState('AtkShotgun');
+		MissileState = FindState('Missile', 'Shotgun', true);
 		break;
 
 	case WEAPON_SuperShotgun:
-		MissileState = FindState('AtkDShotgun');
+		MissileState = FindState('Missile', 'SSG', true);
 		break;
 
 	case WEAPON_Chaingun:
-		MissileState = FindState('AtkChaingun');
+		MissileState = FindState('Missile', 'Chaingun', true);
 		break;
 
 	case WEAPON_RocketLauncher:
-		MissileState = FindState('AtkRocket');
+		MissileState = FindState('Missile', 'Rocket', true);
 		break;
 
 	case WEAPON_PlasmaRifle:
-		MissileState = FindState('AtkPlasma');
+		MissileState = FindState('Missile', 'Plasma', true);
 		break;
 
 	case WEAPON_Railgun:
-		MissileState = FindState('AtkRailgun');
+		MissileState = FindState('Missile', 'Railgun', true);
 		break;
 
 	case WEAPON_BFG:
-		MissileState = FindState('AtkBfg');
+		MissileState = FindState('Missile', 'Bfg', true);
 		break;
 	}
 }
@@ -224,7 +224,7 @@ final void A_MarineLook()
 
 final void A_MarineNoise()
 {
-	if (MeleeState == FindState('AtkChainsaw'))
+	if (MeleeState == FindState('Melee', 'Chainsaw', true))
 	{
 		PlaySound('weapons/sawidle', CHAN_WEAPON);
 	}
@@ -570,7 +570,13 @@ final void A_M_FireMissile()
 
 final void A_M_FireRailgun()
 {
-	print("Railgun is not implemented yet");
+	if (!Target)
+	{
+		return;
+	}
+
+	A_MonsterRail();
+	Special1f = XLevel.Time + 50.0 / 35.0;
 }
 
 //===========================================================================
