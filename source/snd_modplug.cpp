@@ -239,10 +239,6 @@ VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 	// reject the Codec
 	if (ModPlug_GetModuleType(file) == 0x10000 /*MOD_TYPE_MID*/)
 	{
-		// Since we opened the stream, we must do cleanup
-		InStrm->Close();
-		delete InStrm;
-		InStrm = NULL;
 		return NULL;
 	}
 
