@@ -386,7 +386,7 @@ public:
 		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, vuint32,
 		vuint32, float, bool, bool, float, bool);
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,
 		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, float, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
@@ -396,7 +396,7 @@ public:
 	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float);
 	void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 

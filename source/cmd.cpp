@@ -130,9 +130,9 @@ void VCommand::Init()
 	//	Add configuration file execution
 	GCmdBuf << "exec startup.vs\n";
 
-	//	Add consloe commands from command line
-	// These are params, that start with + and continues untill the end
-	// or untill next param, that starts with - or +
+	//	Add console commands from command line
+	// These are params, that start with + and continue until the end
+	// or until next param that starts with - or +
 	for (int i = 1; i < GArgs.Count(); i++)
 	{
 		if (in_cmd)

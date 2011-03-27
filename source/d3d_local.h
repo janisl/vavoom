@@ -201,7 +201,7 @@ public:
 	void DrawWorldFogPass();
 	void EndFogPass();
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
 		float, bool);
@@ -212,7 +212,7 @@ public:
 	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float);
 	void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 
 private:
 	bool Reset();

@@ -4190,7 +4190,10 @@ final bool DoThingProjectile(int tid, int TypeID, int AAngle, int ASpeed,
 			newA.Velocity.y = speed * sin(angle) * 35.0;
 			newA.Velocity.z = vspeed * 35.0;
 		}
-		newA.bDropped = true;	// Don't respawn
+		if (newA.bSpecial)
+		{
+			newA.bDropped = true;	// Don't respawn
+		}
 		if (gravity)
 		{
 			newA.bNoGravity = false;
@@ -4269,7 +4272,7 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 			newAct.Origin.z = A.Origin.z - A.FloorZ;
 			newAct.SetOrigin2(newAct.Origin);
 		}
-		if (newAct.TestLocation() == false)
+		if (!newAct.TestLocation())
 		{
 			// Didn't fit
 			//	If it counts as kill, adjust total kills count
@@ -4293,7 +4296,10 @@ final bool EV_ThingSpawn(int Arg1, int Arg2, int Arg3, int Arg4, int Arg5,
 				Spawn(TeleportFog, A.Origin + vector(0.0, 0.0,
 					LineSpecialGameInfo(Game).TeleFogHeight));
 			}
-			newAct.bDropped = true;	// Don't respawn
+			if (newAct.bSpecial)
+			{
+				newAct.bDropped = true;	// Don't respawn
+			}
 			if (newAct.bFloatBob)
 			{
 				newAct.Special1f = newAct.Origin.z - newAct.FloorZ;
@@ -4332,7 +4338,7 @@ final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 	EntityEx NewAct = Spawn(EntClass, Org);
 	bool PrevPassMobj = NewAct.bPassMobj;
 	NewAct.bPassMobj = true;
-	if (NewAct.TestLocation() == false)
+	if (!NewAct.TestLocation())
 	{
 		// Didn't fit
 		//	If it counts as kill, subtract total.
@@ -4352,7 +4358,10 @@ final int AcsSpawnThing(name Name, TVec Org, int Tid, float Angle)
 
 	NewAct.Angles.yaw = Angle;
 	NewAct.SetTID(Tid);
-	NewAct.bDropped = true;	// Don't respawn
+	if (NewAct.bSpecial)
+	{
+		NewAct.bDropped = true;	// Don't respawn
+	}
 	return true;
 }
 
@@ -6479,6 +6488,7 @@ final int ThingCount(int type, name TypeName, int tid, int SectorTag)
 			Count += DoThingCount(RepType, tid, SectorTag);
 		}
 	}
+
 	return Count;
 }
 
@@ -6500,7 +6510,7 @@ final int DoThingCount(class<EntityEx> moType, int tid, int SectorTag)
 		for (Ent = EntityEx(FindMobjFromTID(tid, none)); Ent != none;
 			Ent = EntityEx(FindMobjFromTID(tid, Ent)))
 		{
-			if (Ent.bMonster && Ent.Health <= 0)
+			if (Ent.Health <= 0)
 			{
 				// Don't count dead monsters
 				continue;
@@ -6531,7 +6541,7 @@ final int DoThingCount(class<EntityEx> moType, int tid, int SectorTag)
 				// Doesn't match
 				continue;
 			}
-			if (Ent.bMonster && Ent.Health <= 0)
+			if (Ent.Health <= 0)
 			{
 				// Don't count dead monsters
 				continue;

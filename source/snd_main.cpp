@@ -1269,7 +1269,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	Strm->Serialise(Hdr, 4);
 	if (!memcmp(Hdr, MUSMAGIC, 4))
 	{
-		// convert mus to mid with a wanderfull function
+		// convert mus to mid with a wonderfull function
 		// thanks to S.Bacquet for the source of qmus2mid
 		Strm->Seek(0);
 		VMemoryStream* MidStrm = new VMemoryStream();
@@ -1293,6 +1293,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	VAudioCodec* Codec = NULL;
 	for (FAudioCodecDesc* Desc = FAudioCodecDesc::List; Desc && !Codec; Desc = Desc->Next)
 	{
+//		GCon->Logf(va("Using %s to open the stream", Desc->Description));
 		Codec = Desc->Creator(Strm);
 	}
 

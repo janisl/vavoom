@@ -279,7 +279,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			p_glUniform4fARB(SurfModelFogColourLoc,
 				((Fade >> 16) & 255) / 255.0,
 				((Fade >> 8) & 255) / 255.0,
-				(Fade & 255) / 255.0, 1.0);
+				(Fade & 255) / 255.0, Alpha);
 			p_glUniform1fARB(SurfModelFogDensityLoc, Fade == FADE_LIGHT ? 0.3 : r_fog_density);
 			p_glUniform1fARB(SurfModelFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 			p_glUniform1fARB(SurfModelFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
@@ -297,10 +297,13 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			SetColour((light & 0x00ffffff) | (int(255 * Alpha) << 24));
 		}
 		SetFade(Fade);
-		glEnable(GL_ALPHA_TEST);
-		glShadeModel(GL_SMOOTH);
-		glAlphaFunc(GL_GREATER, 0.0);
+//		glEnable(GL_ALPHA_TEST);
+//		glShadeModel(GL_SMOOTH);
+//		glAlphaFunc(GL_GREATER, 0.0);
 	}
+	glEnable(GL_ALPHA_TEST);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
 	glEnable(GL_BLEND);
 	if (Additive)
 	{
@@ -413,12 +416,12 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		}
 	}
 
-	if (!HaveShaders)
-	{
+//	if (!HaveShaders)
+//	{
 		glShadeModel(GL_FLAT);
 		glAlphaFunc(GL_GREATER, 0.666);
 		glDisable(GL_ALPHA_TEST);
-	}
+//	}
 	glDisable(GL_BLEND);
 	if (Additive)
 	{
@@ -441,7 +444,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
-	VTexture* Skin, vuint32 light, float Inter, bool Interpolate)
+	VTexture* Skin, vuint32 light, float Alpha, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelAmbient);
 	UploadModel(Mdl);
@@ -453,13 +456,22 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	VMatrix4 RotationMatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, RotationMatrix);
 
+	glEnable(GL_ALPHA_TEST);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
+	glEnable(GL_BLEND);
+/*	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	}*/
+
 	p_glUseProgramObjectARB(ShadowsModelAmbientProgram);
 	p_glUniform1iARB(ShadowsModelAmbientTextureLoc, 0);
 	p_glUniform1fARB(ShadowsModelAmbientInterLoc, Inter);
 	p_glUniform4fARB(ShadowsModelAmbientLightLoc,
 		((light >> 16) & 255) / 255.0,
 		((light >> 8) & 255) / 255.0,
-		(light & 255) / 255.0, 1);
+		(light & 255) / 255.0, Alpha);
 	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, Mdl->VertsBuffer);
@@ -479,6 +491,11 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	p_glDisableVertexAttribArrayARB(ShadowsModelAmbientVert2Loc);
 	p_glDisableVertexAttribArrayARB(ShadowsModelAmbientTexCoordLoc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+	glShadeModel(GL_FLAT);
+	glAlphaFunc(GL_GREATER, 0.666);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_BLEND);
 	unguard;
 }
 
@@ -739,7 +756,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 
 void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
-	VTexture* Skin, vuint32 Fade, float Inter, bool Interpolate)
+	VTexture* Skin, vuint32 Fade, float Alpha, float Inter, bool Interpolate)
 {
 	guard(VOpenGLDrawer::DrawAliasModelFog);
 	UploadModel(Mdl);
@@ -751,6 +768,15 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	VMatrix4 RotationMatrix;
 	AliasSetUpTransform(origin, angles, Offset, Scale, RotationMatrix);
 
+	glEnable(GL_ALPHA_TEST);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
+	glEnable(GL_BLEND);
+/*	if (Additive)
+	{
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	}*/
+
 	p_glUseProgramObjectARB(ShadowsModelFogProgram);
 	p_glUniform1iARB(ShadowsModelFogTextureLoc, 0);
 	p_glUniform1fARB(ShadowsModelFogInterLoc, Inter);
@@ -759,7 +785,7 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glUniform4fARB(ShadowsModelFogFogColourLoc,
 		((Fade >> 16) & 255) / 255.0,
 		((Fade >> 8) & 255) / 255.0,
-		(Fade & 255) / 255.0, 1.0);
+		(Fade & 255) / 255.0, Alpha);
 	p_glUniform1fARB(ShadowsModelFogFogDensityLoc, Fade == FADE_LIGHT ? 0.3 : r_fog_density);
 	p_glUniform1fARB(ShadowsModelFogFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 	p_glUniform1fARB(ShadowsModelFogFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
@@ -781,5 +807,10 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glDisableVertexAttribArrayARB(ShadowsModelFogVert2Loc);
 	p_glDisableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+	glShadeModel(GL_FLAT);
+	glAlphaFunc(GL_GREATER, 0.666);
+	glDisable(GL_ALPHA_TEST);
+	glDisable(GL_BLEND);
 	unguard;
 }

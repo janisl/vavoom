@@ -585,7 +585,7 @@ int VOpenALDevice::GetStreamAvailable()
 
 //==========================================================================
 //
-//	VOpenALDevice::SetStreamData
+//	VOpenALDevice::GetStreamBuffer
 //
 //==========================================================================
 
@@ -615,7 +615,10 @@ void VOpenALDevice::SetStreamData(short* Data, int Len)
 	alGetSourcei(StrmSource, AL_SOURCE_STATE, &State);
 	if (State != AL_PLAYING)
 	{
-		alSourcePlay(StrmSource);
+		if (StrmSource)
+		{
+			alSourcePlay(StrmSource);
+		}
 	}
 	unguard;
 }

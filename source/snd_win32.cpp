@@ -114,7 +114,14 @@ static VCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_Archive);
 static VCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_Archive);
 static VCvarF		s3d_min_distance("s3d_min_distance", "64.0", CVAR_Archive);
 static VCvarF		s3d_max_distance("s3d_max_distance", "2024.0", CVAR_Archive);
+static VCvarI		snd_speaker_type("snd_speaker_type", "2", CVAR_Archive);
+static VCvarI		snd_mix_frequency("snd_mix_frequency", "2", CVAR_Archive);
 static VCvarI		eax_environment("eax_environment", "0");
+
+static const DWORD	speaker_type[] = { DSSPEAKER_HEADPHONE, DSSPEAKER_MONO, DSSPEAKER_STEREO, 
+                                       DSSPEAKER_SURROUND, DSSPEAKER_5POINT1_BACK, DSSPEAKER_7POINT1_WIDE };
+
+static const int	frequency[] = { 11025, 22050, 44100, 48000 };
 
 // CODE --------------------------------------------------------------------
 
@@ -170,6 +177,13 @@ bool VDirectSoundDevice::Init()
 	if (result != DS_OK)
 		Sys_Error("Failed to set sound cooperative level\n%s", DS_Error(result));
 
+	//  Set speaker type
+	if (snd_speaker_type > 5)
+	{
+		snd_mix_frequency = 5;
+	}
+	DSound->SetSpeakerConfig(speaker_type[snd_speaker_type]);
+
 	//	Check for 3D sound hardware
 	memset(&caps, 0, sizeof(caps));
 	caps.dwSize = sizeof(caps);
@@ -202,7 +216,11 @@ bool VDirectSoundDevice::Init()
 	wfx.wBitsPerSample	= WORD(caps.dwFlags & DSCAPS_PRIMARY16BIT ? 16 : 8);
 	wfx.nChannels		= caps.dwFlags & DSCAPS_PRIMARYSTEREO ? 2 : 1;
 	//wfx.nSamplesPerSec	= 11025;
-	wfx.nSamplesPerSec	= 44100;
+	if (snd_mix_frequency > 3)
+	{
+		snd_mix_frequency = 3;
+	}
+	wfx.nSamplesPerSec	= frequency[snd_mix_frequency]; //44100;
 	wfx.nBlockAlign		= WORD(wfx.wBitsPerSample / 8 * wfx.nChannels);
 	wfx.nAvgBytesPerSec	= wfx.nSamplesPerSec * wfx.nBlockAlign;
 	wfx.cbSize			= 0;
@@ -227,7 +245,7 @@ bool VDirectSoundDevice::Init()
 		memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
 		pcmwf.wFormatTag      = WAVE_FORMAT_PCM;      
 		pcmwf.nChannels       = 1;
-		pcmwf.nSamplesPerSec  = 44100;
+		pcmwf.nSamplesPerSec  = frequency[snd_mix_frequency]; //44100;
 		pcmwf.wBitsPerSample  = WORD(8);
 		pcmwf.nBlockAlign     = WORD(pcmwf.wBitsPerSample / 8 * pcmwf.nChannels);
 		pcmwf.nAvgBytesPerSec = pcmwf.nSamplesPerSec * pcmwf.nBlockAlign;
@@ -238,7 +256,7 @@ bool VDirectSoundDevice::Init()
 		dsbdesc.dwFlags       = DSBCAPS_CTRLVOLUME | 
 			DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC | 
 			DSBCAPS_CTRL3D | DSBCAPS_LOCHARDWARE;
-		dsbdesc.dwBufferBytes = 44100;
+		dsbdesc.dwBufferBytes = frequency[snd_mix_frequency]; //44100;
 		dsbdesc.lpwfxFormat   = &pcmwf;
 
 		if (SUCCEEDED(DSound->CreateSoundBuffer(&dsbdesc, &tempBuffer, NULL)))
@@ -302,7 +320,7 @@ int VDirectSoundDevice::SetChannels(int InNumChannels)
 	if (!NumBuffers)
 	{
 		GCon->Log(NAME_Init, "No HW channels available");
-		NumBuffers = 8;
+		NumBuffers = InNumChannels; //8;
 	}
 	Buffers = new FBuffer[NumBuffers];
 	memset(Buffers, 0, sizeof(FBuffer) * NumBuffers);
@@ -931,7 +949,7 @@ int VDirectSoundDevice::GetStreamAvailable()
 
 //==========================================================================
 //
-//	VDirectSoundDevice::SetStreamData
+//	VDirectSoundDevice::GetStreamBuffer
 //
 //==========================================================================
 

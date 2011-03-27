@@ -196,7 +196,7 @@ public:
 	virtual void DrawWorldFogPass() = 0;
 	virtual void EndFogPass() = 0;
 	virtual void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool) = 0;
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) = 0;
 	virtual void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
 		float, bool) = 0;
@@ -207,7 +207,7 @@ public:
 	virtual void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float) = 0;
 	virtual void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, bool) = 0;
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) = 0;
 };
 
 //	Drawer types, menu system uses these numbers.

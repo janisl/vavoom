@@ -1091,7 +1091,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 			p_glUniform4fARB(SurfMaskedLightLoc,
 				((surf->Light >> 16) & 255) * lev / 255.0,
 				((surf->Light >> 8) & 255) * lev / 255.0,
-				(surf->Light & 255) * lev / 255.0, 1.0);
+				(surf->Light & 255) * lev / 255.0, Alpha);
 		}
 		if (surf->Fade)
 		{
@@ -1099,7 +1099,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 			p_glUniform4fARB(SurfMaskedFogColourLoc,
 				((surf->Fade >> 16) & 255) / 255.0,
 				((surf->Fade >> 8) & 255) / 255.0,
-				(surf->Fade & 255) / 255.0, 1.0);
+				(surf->Fade & 255) / 255.0, Alpha);
 			p_glUniform1fARB(SurfMaskedFogDensityLoc, surf->Fade == FADE_LIGHT ? 0.3 : r_fog_density);
 			p_glUniform1fARB(SurfMaskedFogStartLoc, surf->Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 			p_glUniform1fARB(SurfMaskedFogEndLoc, surf->Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
@@ -1238,7 +1238,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 			p_glUniform4fARB(SurfMaskedFogColourLoc,
 				((Fade >> 16) & 255) / 255.0,
 				((Fade >> 8) & 255) / 255.0,
-				(Fade & 255) / 255.0, 1.0);
+				(Fade & 255) / 255.0, Alpha);
 			p_glUniform1fARB(SurfMaskedFogDensityLoc, Fade == FADE_LIGHT ? 0.3 : r_fog_density);
 			p_glUniform1fARB(SurfMaskedFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 			p_glUniform1fARB(SurfMaskedFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);

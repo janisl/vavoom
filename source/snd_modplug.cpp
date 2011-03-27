@@ -235,11 +235,33 @@ VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 	}
 
 	// Check the file type, we don't want to use ModPlug for
-	// MIDI files, so if we have a MIDI file here, we'll
-	// reject the Codec
-	if (ModPlug_GetModuleType(file) == 0x10000 /*MOD_TYPE_MID*/)
+	// MIDI files, so if we have a MIDI file or an invalid
+	//  file, we'll reject the Codec
+	if (ModPlug_GetModuleType(file) == 0x00 /*MOD_TYPE_NONE*/ ||
+		ModPlug_GetModuleType(file) == 0x10000 /*MOD_TYPE_MID*/)
 	{
 		return NULL;
+	}
+
+	if (ModPlug_GetModuleType(file) == 0x01 /*MOD_TYPE_MOD*/)
+	{
+		// The file is a MOD file, I've seen problems with some
+		// GME type files being detected as MOD files by ModPlug,
+		// so we have to make sure that it is really a MOD_TYPE
+		// file by checking some of it's internal data here
+
+		// Check Mod Magic
+		byte Hdr[4];
+		InStrm->Seek(0);
+		InStrm->Serialise(Hdr, 4);
+		if (memcmp(Hdr, "M.K.", 4) || memcmp(Hdr, "M!K!", 4) ||
+			memcmp(Hdr, "M&K!", 4) || memcmp(Hdr, "N.T.", 4) ||
+			memcmp(Hdr, "CD81", 4) || memcmp(Hdr, "OKTA", 4))
+		{
+			// Incompatible file
+			file = NULL;
+			return NULL;
+		}
 	}
 
 	//  Set master volume here, we'll set it to the maximum

@@ -94,7 +94,7 @@ static double	last_time;
 
 static VCvarI	respawnparm("RespawnMonsters", "0");	// checkparm of -respawn
 static VCvarI	randomclass("RandomClass", "0");		// checkparm of -randclass
-static VCvarI	fastparm("Fast", "0");				// checkparm of -fast
+static VCvarI	fastparm("Fast", "0");					// checkparm of -fast
 
 static VCvarI	show_time("show_time", "0");
 

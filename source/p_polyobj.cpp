@@ -824,42 +824,44 @@ bool VLevel::PolyCheckMobjBlocking(seg_t* seg, polyobj_t* po)
 		{
 			for (mobj = BlockLinks[j + i]; mobj; mobj = mobj->BlockMapNext)
 			{
-				if ((mobj->EntityFlags & VEntity::EF_ColideWithWorld) &&
-					(mobj->EntityFlags & VEntity::EF_Solid))
+				if (mobj->EntityFlags & VEntity::EF_ColideWithWorld)
 				{
-					tmbbox[BOXTOP] = mobj->Origin.y + mobj->Radius;
-					tmbbox[BOXBOTTOM] = mobj->Origin.y - mobj->Radius;
-					tmbbox[BOXLEFT] = mobj->Origin.x - mobj->Radius;
-					tmbbox[BOXRIGHT] = mobj->Origin.x + mobj->Radius;
+					if (mobj->EntityFlags & VEntity::EF_Solid)
+					{
+						tmbbox[BOXTOP] = mobj->Origin.y + mobj->Radius;
+						tmbbox[BOXBOTTOM] = mobj->Origin.y - mobj->Radius;
+						tmbbox[BOXLEFT] = mobj->Origin.x - mobj->Radius;
+						tmbbox[BOXRIGHT] = mobj->Origin.x + mobj->Radius;
 
-					if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-						tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-						tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-						tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-					{
-						continue;
+						if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+							tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+							tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+							tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+						{
+							continue;
+						}
+						if (P_BoxOnLineSide(tmbbox, ld) != -1)
+						{
+							continue;
+						}
+						mobj->Level->eventPolyThrustMobj(mobj, seg->normal, po);
+						blocked = true;
 					}
-					if (P_BoxOnLineSide(tmbbox, ld) != -1)
+					if (mobj->EntityFlags & VEntity::EF_Corpse)
 					{
-						continue;
+						if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
+							tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
+							tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
+							tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
+						{
+							continue;
+						}
+						if (P_BoxOnLineSide(tmbbox, ld) != -1)
+						{
+							continue;
+						}
+						mobj->Level->eventPolyCrushMobj(mobj, po);
 					}
-					mobj->Level->eventPolyThrustMobj(mobj, seg->normal, po);
-					blocked = true;
-				}
-				if ((mobj->EntityFlags & VEntity::EF_Corpse))
-				{
-					if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT] ||
-						tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT] ||
-						tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM] ||
-						tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP])
-					{
-						continue;
-					}
-					if (P_BoxOnLineSide(tmbbox, ld) != -1)
-					{
-						continue;
-					}
-					mobj->Level->eventPolyCrushMobj(mobj, po);
 				}
 			}
 		}

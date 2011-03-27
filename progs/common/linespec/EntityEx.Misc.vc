@@ -1534,7 +1534,11 @@ final void DropItem(class<EntityEx> type, int amount, float chance)
 		DropZ = Height / 2.0;
 	}
 	A = Spawn(type, Origin + vector(0.0, 0.0, DropZ));
-	A.bDropped = true;	// special versions of items
+	if (A.bSpecial)
+	{
+		A.bDropped = true;	// special versions of items
+	}
+
 	if (Inventory(A))
 	{
 		Inventory Item = Inventory(A);

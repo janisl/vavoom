@@ -3305,15 +3305,27 @@ int VAcs::RunScript(float DeltaTime)
 
 		ACSVM_CASE(PCD_SetThingSpecial)
 			{
-				for (VEntity* Ent = Level->FindMobjFromTID(sp[-7], NULL);
-					Ent; Ent = Level->FindMobjFromTID(sp[-7], Ent))
+				if (sp[-7] != 0)
 				{
-					Ent->Special = sp[-6];
-					Ent->Args[0] = sp[-5];
-					Ent->Args[1] = sp[-4];
-					Ent->Args[2] = sp[-3];
-					Ent->Args[3] = sp[-2];
-					Ent->Args[4] = sp[-1];
+					for (VEntity* Ent = Level->FindMobjFromTID(sp[-7], NULL);
+						Ent; Ent = Level->FindMobjFromTID(sp[-7], Ent))
+					{
+						Ent->Special = sp[-6];
+						Ent->Args[0] = sp[-5];
+						Ent->Args[1] = sp[-4];
+						Ent->Args[2] = sp[-3];
+						Ent->Args[3] = sp[-2];
+						Ent->Args[4] = sp[-1];
+					}
+				}
+				else if (Activator)
+				{
+					Activator->Special = sp[-6];
+					Activator->Args[0] = sp[-5];
+					Activator->Args[1] = sp[-4];
+					Activator->Args[2] = sp[-3];
+					Activator->Args[3] = sp[-2];
+					Activator->Args[4] = sp[-1];
 				}
 				sp -= 7;
 			}

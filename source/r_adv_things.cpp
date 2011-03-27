@@ -132,10 +132,6 @@ void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 	case STYLE_None:
 		return;
 
-	case STYLE_Normal:
-		Alpha = 1.0;
-		break;
-
 	case STYLE_Fuzzy:
 		return;
 
@@ -144,10 +140,10 @@ void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 	}
 	Alpha = MID(0.0, Alpha, 1.0);
 
-	if (Alpha < 1.0)
+/*	if (Alpha < 1.0)
 	{
 		return;
-	}
+	}*/
 
 	//	Setup lighting
 	vuint32 light;
@@ -242,10 +238,6 @@ void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 	case STYLE_None:
 		return;
 
-	case STYLE_Normal:
-		Alpha = 1.0;
-		break;
-
 	case STYLE_Fuzzy:
 		return;
 
@@ -254,10 +246,10 @@ void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 	}
 	Alpha = MID(0.0, Alpha, 1.0);
 
-	if (Alpha < 1.0)
+/*	if (Alpha < 1.0)
 	{
 		return;
-	}
+	}*/
 
 	float TimeFrac = 0;
 	if (mobj->State->Time > 0)
@@ -377,10 +369,6 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 	case STYLE_None:
 		return;
 
-	case STYLE_Normal:
-		Alpha = 1.0;
-		break;
-
 	case STYLE_Fuzzy:
 		return;
 
@@ -389,10 +377,10 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 	}
 	Alpha = MID(0.0, Alpha, 1.0);
 
-	if (Alpha < 1.0)
+/*	if (Alpha < 1.0)
 	{
 		return;
-	}
+	}*/
 
 	float TimeFrac = 0;
 	if (mobj->State->Time > 0)
@@ -478,10 +466,6 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 	{
 	case STYLE_None:
 		return;
-
-	case STYLE_Normal:
-		Alpha = 1.0;
-		break;
 
 	case STYLE_Fuzzy:
 		return;
@@ -578,10 +562,6 @@ void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 	case STYLE_None:
 		return;
 
-	case STYLE_Normal:
-		Alpha = 1.0;
-		break;
-
 	case STYLE_Fuzzy:
 		return;
 
@@ -590,10 +570,10 @@ void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 	}
 	Alpha = MID(0.0, Alpha, 1.0);
 
-	if (Alpha < 1.0)
+/*	if (Alpha < 1.0)
 	{
 		return;
-	}
+	}*/
 	vuint32 Fade = GetFade(SV_PointInRegion(mobj->Sector, mobj->Origin));
 	if (!Fade)
 	{

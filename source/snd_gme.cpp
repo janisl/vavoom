@@ -85,17 +85,17 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 		GCon->Log("Couldn't create Emulator, Out of memory.");
 	}
 	emu->set_gain(4.0);
-	emu->set_sample_rate(SampleRate);
+	emu->set_sample_rate(44100);
 	gme_set_tempo(emu, 1.0);
 	
 	// Load music file into emulator
 	gme_load_data(emu, Data, Size);
 	
 	// Start track (0 is first track)
-	emu->start_track(0);
+	gme_start_track(emu, 0);
 
 	// Set Play length here
-	gme_err_t err = emu->track_info(&info);
+	gme_err_t err = gme_track_info(emu, &info, 0);
 	if (!err && !info.length && !info.loop_length)
 	{
 		// Look for length inside of track info
@@ -118,7 +118,7 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 		length = 150000;
 	}
 	// Fade sound before finishing
-	gme_set_fade(emu, length - 1800);
+	gme_set_fade(emu, length - 2500);
 }
 
 //==========================================================================
@@ -149,9 +149,23 @@ int VGMEAudioCodec::Decode(short* Data, int NumSamples)
 	if (gme_tell(emu) < length)
 	{
 		// Haven't reached end of file, play a bit of data
-		if (!gme_play(emu, NumSamples + 2048, Data))
+
+		// We need to check whether we are using OpenAL or
+		// another sound device, because OpenAL requires a
+		// different buffer size
+		if (GArgs.CheckParm("-openal"))
 		{
-			playing = true;
+			if (!gme_play(emu, (NumSamples + 1024), Data))
+			{
+				playing = true;
+			}
+		}
+		else
+		{
+			if (!gme_play(emu, (NumSamples + 2048), Data))
+			{
+				playing = true;
+			}
 		}
 	}
 	else
@@ -188,7 +202,7 @@ void VGMEAudioCodec::Restart()
 	guard(VMikModAudioCodec::Restart);
 	// If music is looping, restart playback by simply
 	// starting track 0 again and setting playing state
-	emu->start_track(0);
+	gme_start_track(emu, 0);
 	playing = true;
 	unguard;
 }
@@ -203,9 +217,9 @@ VAudioCodec* VGMEAudioCodec::Create(VStream* InStrm)
 {
 	guard(VGMEAudioCodec::Create);
 	// Scan file's header to determine it's a playable type
-	char Header[4];
+	byte Header[4];
 	InStrm->Seek(0);
-	InStrm->Serialise(Header, sizeof Header);
+	InStrm->Serialise(Header, 4);
 	gme_type_t file = gme_identify_extension(gme_identify_header(Header));
 	if (!file)
 	{

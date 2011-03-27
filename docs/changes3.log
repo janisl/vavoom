@@ -4527,3 +4527,17 @@
  because of flawed problems in the physics checks done on these cases.
   Firebrand fixed the checks done for using ice death frames or generic ice death frames if these aren't found
  inside WAD files.
+27.03.2011
+  Firebrand changed that only things marked with bSpecial flag are spawned with bDropped flag in many places of
+ progs source.
+  Firebrand changed the checks inside of DoThingCount to check for health of anything instead of only things with
+ bMonster flag.
+  Firebrand fixed some small issues when rendering models and levels using advanced level renderer in OpenGL.
+  Firebrand fixed the logic of the checks done for crushing bodies with polyobjects.
+  Firebrand fixed a problem with GME Codec with OpenAL sound driver which could crash because it was using a
+ different buffer size than needed.
+  Firebrand added extra checks to ModPlug when opening MOD type files, because he found that some GME type files
+ would be treated as MOD files and played with ModPlug, which would make it produce garbage sound.
+  Firebrand added some CVars to DirectSound driver to select the type of speakers and mixing frequency (which
+ are still experimental).
+  Firebrand made small improvements to parsing of old DECORATE definitions.

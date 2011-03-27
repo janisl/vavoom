@@ -3272,6 +3272,10 @@ static void ParseOldDecStates(VScriptParser* sc, TArray<VState*>& States,
 		if (DurColon >= 0)
 		{
 			Duration = atoi(pFrame);
+			if (Duration < 1 || Duration > 65534)
+			{
+				sc->Error ("Rates must be in the range [0,65534]");
+			}
 			pFrame = *Tokens[TokIdx] + DurColon + 1;
 		}
 
@@ -3300,7 +3304,7 @@ static void ParseOldDecStates(VScriptParser* sc, TArray<VState*>& States,
 					sc->GetLoc());
 				States.Append(State);
 				State->Frame = *pFrame - 'A';
-				State->Time = Duration >= 0 ? float(Duration) / 35.0 : -1.0;
+				State->Time = float(Duration) / 35.0;
 			}
 			pFrame++;
 		}
@@ -3717,7 +3721,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		}
 		else if (sc->Check("Shadow"))
 		{
-			GCon->Logf("Shadow flag is not currently supported");
+			SetClassFieldBool(Class, "bShadow", true);
 		}
 		else if (sc->Check("NoBlood"))
 		{
@@ -3835,14 +3839,14 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 		mobjinfo_t& MI = VClass::GMobjInfos.Alloc();
 		MI.Class = Class;
 		MI.DoomEdNum = DoomEdNum;
-		MI.GameFilter = GameFilter;
+		MI.GameFilter = GameFilter ? GameFilter : GAME_Any;
 	}
 	if (SpawnNum > 0)
 	{
 		mobjinfo_t& SI = VClass::GScriptIds.Alloc();
 		SI.Class = Class;
 		SI.DoomEdNum = SpawnNum;
-		SI.GameFilter = GameFilter;
+		SI.GameFilter = GameFilter ? GameFilter : GAME_Any;
 	}
 
 	//	Set up linked list of states.
@@ -3867,7 +3871,7 @@ static void ParseOldDecoration(VScriptParser* sc, int Type)
 	}
 
 	//	Set up links of spawn states.
-	if (SpawnEnd - SpawnStart == 1)
+	if (States.Num() == 1)
 	{
 		States[SpawnStart]->Time = -1.0;
 	}
