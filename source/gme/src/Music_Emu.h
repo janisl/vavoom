@@ -62,7 +62,9 @@ public:
 	
 	// Disables automatic end-of-track detection and skipping of silence at beginning
 	void ignore_silence( bool disable = true );
-	
+
+	int msec_to_samples( int msec ) const;
+
 // Voices
 
 	// Number of voices used by currently loaded file
@@ -182,7 +184,6 @@ private:
 	int current_track_;
 	
 	void clear_track_vars();
-	int msec_to_samples( int msec ) const;
 	
 	friend Music_Emu* gme_new_emu( gme_type_t, int );
 	friend void gme_effects( Music_Emu const*, gme_effects_t* );
