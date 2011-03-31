@@ -41,7 +41,7 @@ class VGMEAudioCodec : public VAudioCodec
 {
 public:
 	Music_Emu*		emu;
-	track_info_t	info;
+	gme_info_t*		info;
 	long			length;
 	bool			playing;
 
@@ -96,16 +96,16 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 
 	// Set Play length here
 	gme_err_t err = gme_track_info(emu, &info, 0);
-	if (!err && !info.length && !info.loop_length)
+	if (!err && !info->length && !info->loop_length)
 	{
 		// Look for length inside of track info
-		if (info.length > 0)
+		if (info->length > 0)
 		{
-			length = info.length;
+			length = info->length;
 		}
-		if (info.loop_length > 0)
+		if (info->loop_length > 0)
 		{
-			length = info.intro_length + info.loop_length * 2;
+			length = info->intro_length + info->loop_length * 2;
 		}
 		if (!length)
 		{
@@ -146,31 +146,16 @@ int VGMEAudioCodec::Decode(short* Data, int NumSamples)
 {
 	guard(VGMEAudioCodec::Decode);
 	// Are we done yet?
-	if (gme_tell(emu) < length)
+	if (!gme_play(emu, (NumSamples * 2), Data))
 	{
-		// Haven't reached end of file, play a bit of data
-
-		// We need to check whether we are using OpenAL or
-		// another sound device, because OpenAL requires a
-		// different buffer size
-		if (GArgs.CheckParm("-openal"))
+		if (!gme_track_ended(emu))
 		{
-			if (!gme_play(emu, (NumSamples + 1024), Data))
-			{
-				playing = true;
-			}
+			playing = true;
 		}
 		else
 		{
-			if (!gme_play(emu, (NumSamples + 2048), Data))
-			{
-				playing = true;
-			}
+			playing = false;
 		}
-	}
-	else
-	{
-		playing = false;
 	}
 
 	// This function converts current time in msec to
