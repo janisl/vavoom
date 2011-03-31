@@ -109,11 +109,11 @@ IMPLEMENT_SOUND_DEVICE(VDirectSoundDevice, SNDDRV_Default, "Default",
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-static VCvarF		s3d_distance_unit("s3d_distance_unit", "32.0", CVAR_Archive);
-static VCvarF		s3d_doppler_factor("s3d_doppler_factor", "1.0", CVAR_Archive);
-static VCvarF		s3d_rolloff_factor("s3d_rolloff_factor", "1.0", CVAR_Archive);
-static VCvarF		s3d_min_distance("s3d_min_distance", "64.0", CVAR_Archive);
-static VCvarF		s3d_max_distance("s3d_max_distance", "2024.0", CVAR_Archive);
+static VCvarF		snd_3d_distance_unit("snd_3d_distance_unit", "32.0", CVAR_Archive);
+static VCvarF		snd_3d_doppler_factor("snd_3d_doppler_factor", "1.0", CVAR_Archive);
+static VCvarF		snd_3d_rolloff_factor("snd_3d_rolloff_factor", "1.0", CVAR_Archive);
+static VCvarF		snd_3d_min_distance("snd_3d_min_distance", "64.0", CVAR_Archive);
+static VCvarF		snd_3d_max_distance("snd_3d_max_distance", "2024.0", CVAR_Archive);
 static VCvarI		snd_speaker_type("snd_speaker_type", "2", CVAR_Archive);
 static VCvarI		snd_mix_frequency("snd_mix_frequency", "2", CVAR_Archive);
 static VCvarI		eax_environment("eax_environment", "0");
@@ -291,9 +291,9 @@ bool VDirectSoundDevice::Init()
 			tempBuffer->Release();
 		}
 
-		Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_IMMEDIATE);
-		Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_IMMEDIATE);
-		Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_IMMEDIATE);
+		Listener->SetDistanceFactor(1.0 / snd_3d_distance_unit, DS3D_IMMEDIATE);
+		Listener->SetDopplerFactor(snd_3d_doppler_factor, DS3D_IMMEDIATE);
+		Listener->SetRolloffFactor(snd_3d_rolloff_factor, DS3D_IMMEDIATE);
 	}
 	return true;
 	unguard;
@@ -593,8 +593,8 @@ int VDirectSoundDevice::PlaySound(int sound_id, float vol, float sep,
 
 		Buf3D->SetMode(DS3DMODE_HEADRELATIVE, DS3D_IMMEDIATE);
 		Buf3D->SetPosition(0.0, -16.0, 0.0, DS3D_IMMEDIATE);
-		Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
-		Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
+		Buf3D->SetMinDistance(snd_3d_min_distance, DS3D_IMMEDIATE);
+		Buf3D->SetMaxDistance(snd_3d_max_distance, DS3D_IMMEDIATE);
 		Buf3D->Release();
 	}
 	else
@@ -650,8 +650,8 @@ int VDirectSoundDevice::PlaySound3D(int sound_id, const TVec &origin,
 
 	Buf3D->SetPosition(origin.x, origin.z, origin.y, DS3D_IMMEDIATE);
 	Buf3D->SetVelocity(velocity.x, velocity.z, velocity.y, DS3D_IMMEDIATE);
-	Buf3D->SetMinDistance(s3d_min_distance, DS3D_IMMEDIATE);
-	Buf3D->SetMaxDistance(s3d_max_distance, DS3D_IMMEDIATE);
+	Buf3D->SetMinDistance(snd_3d_min_distance, DS3D_IMMEDIATE);
+	Buf3D->SetMaxDistance(snd_3d_max_distance, DS3D_IMMEDIATE);
 	Buf3D->Release();
 
 	result = Buffers[Handle].Buffer->Play(0, 0, Loop ? DSBPLAY_LOOPING : 0);
@@ -785,9 +785,9 @@ void VDirectSoundDevice::UpdateListener(const TVec& org, const TVec& vel,
 	Listener->SetOrientation(fwd.x, fwd.z, fwd.y, up.x, up.z, up.y, DS3D_DEFERRED);
 
 	//	Set factor values.
-	Listener->SetDistanceFactor(1.0 / s3d_distance_unit, DS3D_DEFERRED);
-	Listener->SetDopplerFactor(s3d_doppler_factor, DS3D_DEFERRED);
-	Listener->SetRolloffFactor(s3d_rolloff_factor, DS3D_DEFERRED);
+	Listener->SetDistanceFactor(1.0 / snd_3d_distance_unit, DS3D_DEFERRED);
+	Listener->SetDopplerFactor(snd_3d_doppler_factor, DS3D_DEFERRED);
+	Listener->SetRolloffFactor(snd_3d_rolloff_factor, DS3D_DEFERRED);
 
 	if (SupportEAX)
 	{

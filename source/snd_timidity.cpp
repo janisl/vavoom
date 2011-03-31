@@ -75,13 +75,13 @@ ControlMode		VTimidityAudioCodec::MyControlMode =
 };
 
 #if defined(DJGPP) || defined(_WIN32)
-static VCvarS	s_timidity_patches("s_timidity_patches", "\\TIMIDITY", CVAR_Archive);
+static VCvarS	s_timidity_patches("snd_timidity_patches", "\\TIMIDITY", CVAR_Archive);
 #else
-static VCvarS	s_timidity_patches("s_timidity_patches", "/usr/share/timidity", CVAR_Archive);
+static VCvarS	s_timidity_patches("snd_timidity_patches", "/usr/share/timidity", CVAR_Archive);
 #endif
-static VCvarI	s_timidity_test_dls("s_timidity_test_dls", "0", CVAR_Archive);
-static VCvarI	s_timidity_test_sf2("s_timidity_test_sf2", "0", CVAR_Archive);
-static VCvarI	s_timidity_verbosity("s_timidity_verbosity", "0", CVAR_Archive);
+static VCvarI	s_timidity_test_dls("snd_timidity_test_dls", "0", CVAR_Archive);
+static VCvarI	s_timidity_test_sf2("snd_timidity_test_sf2", "0", CVAR_Archive);
+static VCvarI	s_timidity_verbosity("snd_timidity_verbosity", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -189,7 +189,7 @@ int VTimidityAudioCodec::ctl_msg(int type, int verbosity_level, const char *fmt,
 VAudioCodec* VTimidityAudioCodec::Create(VStream* InStrm)
 {
 	guard(VTimidityAudioCodec::Create);
-	if (s_mid_player != 1)
+	if (snd_mid_player != 1)
 	{
 		return NULL;
 	}

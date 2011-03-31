@@ -100,12 +100,12 @@ public:
 IMPLEMENT_SOUND_DEVICE(VOpenALDevice, SNDDRV_OpenAL, "OpenAL",
 	"OpenAL sound device", "-openal");
 
-VCvarF VOpenALDevice::doppler_factor("al_doppler_factor", "1.0", CVAR_Archive);
-VCvarF VOpenALDevice::doppler_velocity("al_doppler_velocity", "10000.0", CVAR_Archive);
-VCvarF VOpenALDevice::rolloff_factor("al_rolloff_factor", "1.0", CVAR_Archive);
-VCvarF VOpenALDevice::reference_distance("al_reference_distance", "64.0", CVAR_Archive);
-VCvarF VOpenALDevice::max_distance("al_max_distance", "2024.0", CVAR_Archive);
-VCvarI VOpenALDevice::eax_environment("al_eax_environment", "0");
+VCvarF VOpenALDevice::doppler_factor("snd_al_doppler_factor", "1.0", CVAR_Archive);
+VCvarF VOpenALDevice::doppler_velocity("snd_al_doppler_velocity", "10000.0", CVAR_Archive);
+VCvarF VOpenALDevice::rolloff_factor("snd_al_rolloff_factor", "1.0", CVAR_Archive);
+VCvarF VOpenALDevice::reference_distance("snd_al_reference_distance", "64.0", CVAR_Archive);
+VCvarF VOpenALDevice::max_distance("snd_al_max_distance", "2024.0", CVAR_Archive);
+VCvarI VOpenALDevice::eax_environment("snd_al_eax_environment", "0");
 
 //==========================================================================
 //

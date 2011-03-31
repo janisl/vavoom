@@ -67,12 +67,12 @@ public:
 
 IMPLEMENT_AUDIO_CODEC(VModPlugAudioCodec, "ModPlug");
 
-static VCvarI	s_modplug_hqmixer("s_modplug_hqmixer", "0", CVAR_Archive);
-static VCvarI	s_modplug_oversampling("s_modplug_oversampling", "1", CVAR_Archive);
-static VCvarI	s_modplug_noise_reduction("s_modplug_noise_reduction", "0", CVAR_Archive);
-static VCvarI	s_modplug_reverb("s_modplug_reverb", "0", CVAR_Archive);
-static VCvarI	s_modplug_megabass("s_modplug_megabass", "0", CVAR_Archive);
-static VCvarI	s_modplug_surround("s_modplug_surround", "1", CVAR_Archive);
+static VCvarI	s_modplug_hqmixer("snd_modplug_hqmixer", "0", CVAR_Archive);
+static VCvarI	s_modplug_oversampling("snd_modplug_oversampling", "1", CVAR_Archive);
+static VCvarI	s_modplug_noise_reduction("snd_modplug_noise_reduction", "0", CVAR_Archive);
+static VCvarI	s_modplug_reverb("snd_modplug_reverb", "0", CVAR_Archive);
+static VCvarI	s_modplug_megabass("snd_modplug_megabass", "0", CVAR_Archive);
+static VCvarI	s_modplug_surround("snd_modplug_surround", "1", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -155,7 +155,7 @@ void VModPlugAudioCodec::Restart()
 VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 {
 	guard(VModPlugAudioCodec::Create);
-	if (s_mod_player != 1)
+	if (snd_mod_player != 1)
 	{
 		return NULL;
 	}

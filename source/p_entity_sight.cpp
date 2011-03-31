@@ -311,7 +311,7 @@ static bool SightCheckLine(sight_trace_t& Trace, line_t *ld)
 	}
 
 	// try to early out the check
-	if (!ld->backsector || !(ld->flags & ML_TWOSIDED))
+	if (!ld->backsector || !(ld->flags & ML_TWOSIDED) || (ld->flags & ML_BLOCKEVERYTHING))
 	{
 		return false;	// stop checking
 	}

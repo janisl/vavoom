@@ -129,12 +129,12 @@ MDRIVER			VMikModAudioCodec::Driver =
 	VC_VoiceRealVolume
 };
 
-static VCvarI	s_mikmod_hqmixer("s_mikmod_hqmixer", "0", CVAR_Archive);
-static VCvarI	s_mikmod_float("s_mikmod_float", "0", CVAR_Archive);
-static VCvarI	s_mikmod_surround("s_mikmod_surround", "0", CVAR_Archive);
-static VCvarI	s_mikmod_interpolation("s_mikmod_interpolation", "0", CVAR_Archive);
-static VCvarI	s_mikmod_reverse_stereo("s_mikmod_reverse_stereo", "0", CVAR_Archive);
-static VCvarI	s_mikmod_lowpass("s_mikmod_lowpass", "0", CVAR_Archive);
+static VCvarI	s_mikmod_hqmixer("snd_mikmod_hqmixer", "0", CVAR_Archive);
+static VCvarI	s_mikmod_float("snd_mikmod_float", "0", CVAR_Archive);
+static VCvarI	s_mikmod_surround("snd_mikmod_surround", "0", CVAR_Archive);
+static VCvarI	s_mikmod_interpolation("snd_mikmod_interpolation", "0", CVAR_Archive);
+static VCvarI	s_mikmod_reverse_stereo("snd_mikmod_reverse_stereo", "0", CVAR_Archive);
+static VCvarI	s_mikmod_lowpass("snd_mikmod_lowpass", "0", CVAR_Archive);
 
 // CODE --------------------------------------------------------------------
 
@@ -348,7 +348,7 @@ BOOL VMikModAudioCodec::ArchiveReader_Eof(MREADER* rd)
 VAudioCodec* VMikModAudioCodec::Create(VStream* InStrm)
 {
 	guard(VMikModAudioCodec::Create);
-	if (s_mod_player != 0)
+	if (snd_mod_player != 0)
 	{
 		return NULL;
 	}

@@ -4541,3 +4541,10 @@
   Firebrand added some CVars to DirectSound driver to select the type of speakers and mixing frequency (which
  are still experimental).
   Firebrand made small improvements to parsing of old DECORATE definitions.
+28.03.2011
+  Firebrand made lines with ML_BLOCKEVERYTHING flag to block everything as expected, this revision only fixes
+ the game logic, the rendering problem will be fixed in another revision.
+30.03.2011
+  Firebrand updated GME library to version 0.6, which makes sound overall better and adds a couple of fixes.
+  Firebrand fixed GME playback as suggested by Mnk in the forums.
+  Firebrand made all sound CVars to begin with "snd_" for standardization.

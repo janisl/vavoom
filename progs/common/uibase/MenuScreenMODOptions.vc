@@ -38,7 +38,7 @@ void CreateChoices()
 
 	currentY = ChoicesStartY;
 
-	if (GetCvar('s_mod_player') == 1)
+	if (GetCvar('snd_mod_player') == 1)
 	{
 		Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
 		Enum.SetOrigin(ChoicesStartX, currentY);
@@ -47,86 +47,86 @@ void CreateChoices()
 		Enum.AddItem("Linear");
 		Enum.AddItem("Spline");
 		Enum.AddItem("FIR");
-		Enum.SetInitialValue(GetCvar('s_modplug_hqmixer'));
+		Enum.SetInitialValue(GetCvar('snd_modplug_hqmixer'));
 		Enum.ValueChanging = ChangeModplugHQMixer;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "Modplug oversampling";
-		Enum.SetInitialValue(GetCvar('s_modplug_oversampling'));
+		Enum.SetInitialValue(GetCvar('snd_modplug_oversampling'));
 		Enum.ValueChanging = ChangeModplugOversampling;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "Modplug Noise Reduction";
-		Enum.SetInitialValue(GetCvar('s_modplug_noise_reduction'));
+		Enum.SetInitialValue(GetCvar('snd_modplug_noise_reduction'));
 		Enum.ValueChanging = ChangeModplugNoiseReduction;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "Modplug Reverb";
-		Enum.SetInitialValue(GetCvar('s_modplug_reverb'));
+		Enum.SetInitialValue(GetCvar('snd_modplug_reverb'));
 		Enum.ValueChanging = ChangeModplugReverb;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "Modplug Mega Bass";
-		Enum.SetInitialValue(GetCvar('s_modplug_megabass'));
+		Enum.SetInitialValue(GetCvar('snd_modplug_megabass'));
 		Enum.ValueChanging = ChangeModplugMegaBass;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "Modplug Surround";
-		Enum.SetInitialValue(GetCvar('s_modplug_surround'));
+		Enum.SetInitialValue(GetCvar('snd_modplug_surround'));
 		Enum.ValueChanging = ChangeModplugSurround;
 		currentY += Enum.Height + 10;
 	}
-	if (GetCvar('s_mod_player') == 0)
+	if (GetCvar('snd_mod_player') == 0)
 	{
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "MikMod HQ Mixer";
-		Enum.SetInitialValue(GetCvar('s_mikmod_hqmixer'));
+		Enum.SetInitialValue(GetCvar('snd_mikmod_hqmixer'));
 		Enum.ValueChanging = ChangeMikModHQMixer;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "MikMod Float Output";
-		Enum.SetInitialValue(GetCvar('s_mikmod_float'));
+		Enum.SetInitialValue(GetCvar('snd_mikmod_float'));
 		Enum.ValueChanging = ChangeMikModFloatOutput;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "MikMod Surround Sound";
-		Enum.SetInitialValue(GetCvar('s_mikmod_surround'));
+		Enum.SetInitialValue(GetCvar('snd_mikmod_surround'));
 		Enum.ValueChanging = ChangeMikModSurroundSound;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "MikMod Interpolation";
-		Enum.SetInitialValue(GetCvar('s_mikmod_interpolation'));
+		Enum.SetInitialValue(GetCvar('snd_mikmod_interpolation'));
 		Enum.ValueChanging = ChangeMikModInterpolation;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "MikMod Reverse Stereo";
-		Enum.SetInitialValue(GetCvar('s_mikmod_reverse_stereo'));
+		Enum.SetInitialValue(GetCvar('snd_mikmod_reverse_stereo'));
 		Enum.ValueChanging = ChangeMikModReverseStereo;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "MikMod Noise Reduction";
-		Enum.SetInitialValue(GetCvar('s_mikmod_lowpass'));
+		Enum.SetInitialValue(GetCvar('snd_mikmod_lowpass'));
 		Enum.ValueChanging = ChangeMikModLowPass;
 	}
 }
@@ -139,7 +139,7 @@ void CreateChoices()
 
 bool ChangeModplugHQMixer(Object Sender, int newValue)
 {
-	SetCvar('s_modplug_hqmixer', newValue);
+	SetCvar('snd_modplug_hqmixer', newValue);
 	return true;
 }
 
@@ -151,7 +151,7 @@ bool ChangeModplugHQMixer(Object Sender, int newValue)
 
 bool ChangeModplugOversampling(Object Sender, int newValue)
 {
-	SetCvar('s_modplug_oversampling', newValue);
+	SetCvar('snd_modplug_oversampling', newValue);
 	return true;
 }
 
@@ -163,7 +163,7 @@ bool ChangeModplugOversampling(Object Sender, int newValue)
 
 bool ChangeModplugNoiseReduction(Object Sender, int newValue)
 {
-	SetCvar('s_modplug_noise_reduction', newValue);
+	SetCvar('snd_modplug_noise_reduction', newValue);
 	return true;
 }
 
@@ -175,7 +175,7 @@ bool ChangeModplugNoiseReduction(Object Sender, int newValue)
 
 bool ChangeModplugReverb(Object Sender, int newValue)
 {
-	SetCvar('s_modplug_reverb', newValue);
+	SetCvar('snd_modplug_reverb', newValue);
 	return true;
 }
 
@@ -187,7 +187,7 @@ bool ChangeModplugReverb(Object Sender, int newValue)
 
 bool ChangeModplugMegaBass(Object Sender, int newValue)
 {
-	SetCvar('s_modplug_megabass', newValue);
+	SetCvar('snd_modplug_megabass', newValue);
 	return true;
 }
 
@@ -199,7 +199,7 @@ bool ChangeModplugMegaBass(Object Sender, int newValue)
 
 bool ChangeModplugSurround(Object Sender, int newValue)
 {
-	SetCvar('s_modplug_surround', newValue);
+	SetCvar('snd_modplug_surround', newValue);
 	return true;
 }
 
@@ -211,7 +211,7 @@ bool ChangeModplugSurround(Object Sender, int newValue)
 
 bool ChangeMikModHQMixer(Object Sender, int newValue)
 {
-	SetCvar('s_mikmod_hqmixer', newValue);
+	SetCvar('snd_mikmod_hqmixer', newValue);
 	return true;
 }
 
@@ -223,7 +223,7 @@ bool ChangeMikModHQMixer(Object Sender, int newValue)
 
 bool ChangeMikModFloatOutput(Object Sender, int newValue)
 {
-	SetCvar('s_mikmod_float', newValue);
+	SetCvar('snd_mikmod_float', newValue);
 	return true;
 }
 
@@ -235,7 +235,7 @@ bool ChangeMikModFloatOutput(Object Sender, int newValue)
 
 bool ChangeMikModSurroundSound(Object Sender, int newValue)
 {
-	SetCvar('s_mikmod_surround', newValue);
+	SetCvar('snd_mikmod_surround', newValue);
 	return true;
 }
 
@@ -247,7 +247,7 @@ bool ChangeMikModSurroundSound(Object Sender, int newValue)
 
 bool ChangeMikModInterpolation(Object Sender, int newValue)
 {
-	SetCvar('s_mikmod_interpolation', newValue);
+	SetCvar('snd_mikmod_interpolation', newValue);
 	return true;
 }
 
@@ -259,7 +259,7 @@ bool ChangeMikModInterpolation(Object Sender, int newValue)
 
 bool ChangeMikModReverseStereo(Object Sender, int newValue)
 {
-	SetCvar('s_mikmod_reverse_stereo', newValue);
+	SetCvar('snd_mikmod_reverse_stereo', newValue);
 	return true;
 }
 
@@ -271,7 +271,7 @@ bool ChangeMikModReverseStereo(Object Sender, int newValue)
 
 bool ChangeMikModLowPass(Object Sender, int newValue)
 {
-	SetCvar('s_mikmod_lowpass', newValue);
+	SetCvar('snd_mikmod_lowpass', newValue);
 	return true;
 }
 

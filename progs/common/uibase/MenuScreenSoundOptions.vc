@@ -43,14 +43,14 @@ void CreateChoices()
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "CD Music";
-	Enum.SetInitialValue(GetCvar('use_cd_music'));
+	Enum.SetInitialValue(GetCvar('snd_use_cd_music'));
 	Enum.ValueChanging = ChangeCDMusic;
 	currentY += Enum.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "External Music";
-	Enum.SetInitialValue(GetCvar('s_external_music'));
+	Enum.SetInitialValue(GetCvar('snd_external_music'));
 	Enum.ValueChanging = ChangeExternamMusic;
 	currentY += Enum.Height;
 
@@ -59,7 +59,7 @@ void CreateChoices()
 	Enum.Text = "MIDI Output Device";
 	Enum.AddItem("System MIDI Device");
 	Enum.AddItem("Timidity");
-	Enum.SetInitialValue(GetCvar('s_mid_player'));
+	Enum.SetInitialValue(GetCvar('snd_mid_player'));
 	Enum.ValueChanging = ChangeMIDIPlayer;
 	currentY += Enum.Height;
 
@@ -68,7 +68,7 @@ void CreateChoices()
 	Enum.Text = "MOD Music Output Device";
 	Enum.AddItem("MikMod");
 	Enum.AddItem("MODPlug");
-	Enum.SetInitialValue(GetCvar('s_mod_player'));
+	Enum.SetInitialValue(GetCvar('snd_mod_player'));
 	Enum.ValueChanging = ChangeMODPlayer;
 	currentY += Enum.Height;
 
@@ -82,7 +82,7 @@ void CreateChoices()
 	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Music volume";
 	Slider.ValueDelta = 0.1;
-	Slider.SetInitialValue(GetCvarF('music_volume'));
+	Slider.SetInitialValue(GetCvarF('snd_music_volume'));
 	Slider.ValueChanging = ChangeMusicVolume;
 	currentY += Slider.Height;
 
@@ -90,7 +90,7 @@ void CreateChoices()
 	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Sound volume";
 	Slider.ValueDelta = 0.1;
-	Slider.SetInitialValue(GetCvarF('sfx_volume'));
+	Slider.SetInitialValue(GetCvarF('snd_sfx_volume'));
 	Slider.ValueChanging = ChangeSoundVolume;
 	currentY += Slider.Height;
 
@@ -100,14 +100,14 @@ void CreateChoices()
 	Slider.MinValue = 8.0;
 	Slider.MaxValue = 64.0;
 	Slider.ValueDelta = 8.0;
-	Slider.SetInitialValue(itof(GetCvar('s_channels')));
+	Slider.SetInitialValue(itof(GetCvar('snd_channels')));
 	Slider.ValueChanging = ChangeSoundChannels;
 	currentY += Slider.Height;
 
 	Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 	Enum.SetOrigin(ChoicesStartX, currentY);
 	Enum.Text = "Swap stereo";
-	Enum.SetInitialValue(GetCvar('swap_stereo'));
+	Enum.SetInitialValue(GetCvar('snd_swap_stereo'));
 	Enum.ValueChanging = ChangeSwapStereo;
 }
 
@@ -119,7 +119,7 @@ void CreateChoices()
 
 bool ChangeSoundVolume(Object Sender, float newValue)
 {
-	SetCvarF('sfx_volume', newValue);
+	SetCvarF('snd_sfx_volume', newValue);
 	return true;
 }
 
@@ -131,7 +131,7 @@ bool ChangeSoundVolume(Object Sender, float newValue)
 
 bool ChangeSwapStereo(Object Sender, int newValue)
 {
-	SetCvar('swap_stereo', newValue);
+	SetCvar('snd_swap_stereo', newValue);
 	return true;
 }
 
@@ -143,7 +143,7 @@ bool ChangeSwapStereo(Object Sender, int newValue)
 
 bool ChangeMusicVolume(Object Sender, float newValue)
 {
-	SetCvarF('music_volume', newValue);
+	SetCvarF('snd_music_volume', newValue);
 	return true;
 }
 
@@ -155,7 +155,7 @@ bool ChangeMusicVolume(Object Sender, float newValue)
 
 bool ChangeCDMusic(Object Sender, int newValue)
 {
-	SetCvar('use_cd_music', newValue);
+	SetCvar('snd_use_cd_music', newValue);
 	return true;
 }
 
@@ -167,7 +167,7 @@ bool ChangeCDMusic(Object Sender, int newValue)
 
 bool ChangeExternamMusic(Object Sender, int newValue)
 {
-	SetCvar('s_external_music', newValue);
+	SetCvar('snd_external_music', newValue);
 	return true;
 }
 
@@ -179,7 +179,7 @@ bool ChangeExternamMusic(Object Sender, int newValue)
 
 bool ChangeMIDIPlayer(Object Sender, int newValue)
 {
-	SetCvar('s_mid_player', newValue);
+	SetCvar('snd_mid_player', newValue);
 	return true;
 }
 
@@ -191,7 +191,7 @@ bool ChangeMIDIPlayer(Object Sender, int newValue)
 
 bool ChangeMODPlayer(Object Sender, int newValue)
 {
-	SetCvar('s_mod_player', newValue);
+	SetCvar('snd_mod_player', newValue);
 	return true;
 }
 
@@ -203,7 +203,7 @@ bool ChangeMODPlayer(Object Sender, int newValue)
 
 bool ChangeSoundChannels(Object Sender, float newValue)
 {
-	SetCvar('s_channels', ftoi(newValue));
+	SetCvar('snd_channels', ftoi(newValue));
 	return true;
 }
 

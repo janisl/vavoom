@@ -177,8 +177,8 @@ public:
 
 	static VAudioPublic* Create();
 };
-extern VCvarI				s_mid_player;
-extern VCvarI				s_mod_player;
+extern VCvarI				snd_mid_player;
+extern VCvarI				snd_mod_player;
 
 extern VSoundManager*		GSoundManager;
 extern VAudioPublic*		GAudio;

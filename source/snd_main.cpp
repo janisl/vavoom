@@ -163,13 +163,13 @@ private:
 	VCDAudioDevice*		CDAudioDevice;
 
 	//	Console variables
-	static VCvarF		sfx_volume;
-	static VCvarF		music_volume;
-	static VCvarI		swap_stereo;
-	static VCvarI		s_channels;
-	static VCvarI		cd_music;
-	static VCvarI		s_external_music;
-	static VCvarF		eax_distance_unit;
+	static VCvarF		snd_sfx_volume;
+	static VCvarF		snd_music_volume;
+	static VCvarI		snd_swap_stereo;
+	static VCvarI		snd_channels;
+	static VCvarI		snd_cd_music;
+	static VCvarI		snd_external_music;
+	static VCvarF		snd_eax_distance_unit;
 
 	//	Friends
 	friend class TCmdMusic;
@@ -205,21 +205,21 @@ VAudioPublic*		GAudio;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
-VCvarF				VAudio::sfx_volume("sfx_volume", "0.5", CVAR_Archive);
-VCvarF				VAudio::music_volume("music_volume", "0.5", CVAR_Archive);
-VCvarI				VAudio::swap_stereo("swap_stereo", "0", CVAR_Archive);
-VCvarI				VAudio::s_channels("s_channels", "16", CVAR_Archive);
-VCvarI				VAudio::cd_music("use_cd_music", "0", CVAR_Archive);
-VCvarI				VAudio::s_external_music("s_external_music", "1", CVAR_Archive);
-VCvarF				VAudio::eax_distance_unit("eax_distance_unit", "32.0", CVAR_Archive);
+VCvarF				VAudio::snd_sfx_volume("snd_sfx_volume", "0.5", CVAR_Archive);
+VCvarF				VAudio::snd_music_volume("snd_music_volume", "0.5", CVAR_Archive);
+VCvarI				VAudio::snd_swap_stereo("snd_swap_stereo", "0", CVAR_Archive);
+VCvarI				VAudio::snd_channels("snd_channels", "16", CVAR_Archive);
+VCvarI				VAudio::snd_cd_music("snd_use_cd_music", "0", CVAR_Archive);
+VCvarI				VAudio::snd_external_music("snd_external_music", "1", CVAR_Archive);
+VCvarF				VAudio::snd_eax_distance_unit("snd_eax_distance_unit", "32.0", CVAR_Archive);
 
 //  Public CVars
 #if defined(DJGPP) || defined(_WIN32)
-VCvarI				s_mid_player("s_mid_player", "0", CVAR_Archive);
+VCvarI				snd_mid_player("snd_mid_player", "0", CVAR_Archive);
 #else
-VCvarI				s_mid_player("s_mid_player", "1", CVAR_Archive);
+VCvarI				snd_mid_player("snd_mid_player", "1", CVAR_Archive);
 #endif
-VCvarI				s_mod_player("s_mod_player", "1", CVAR_Archive);
+VCvarI				snd_mod_player("snd_mod_player", "1", CVAR_Archive);
 
 FAudioCodecDesc*	FAudioCodecDesc::List;
 
@@ -407,7 +407,7 @@ void VAudio::Init()
 
 	//	Free all channels for use.
 	memset(Channel, 0, sizeof(Channel));
-	NumChannels = SoundDevice ? SoundDevice->SetChannels(s_channels) : 0;
+	NumChannels = SoundDevice ? SoundDevice->SetChannels(snd_channels) : 0;
 	unguard;
 }
 
@@ -538,7 +538,7 @@ void VAudio::PlaySound(int InSoundId, const TVec& origin,
 		float vol = SoundCurve[dist] / 127.0 * volume;
 		float sep = DotProduct(origin - (cl ? cl->ViewOrg : TVec(0.0, 0.0, 0.0)), ListenerRight) /
 			MaxSoundDist;
-		if (swap_stereo)
+		if (snd_swap_stereo)
 		{
 			sep = -sep;
 		}
@@ -896,9 +896,9 @@ void VAudio::UpdateSfx()
 		return;
 	}
 
-	if (sfx_volume != MaxVolume)
+	if (snd_sfx_volume != MaxVolume)
     {
-	    MaxVolume = sfx_volume;
+	    MaxVolume = snd_sfx_volume;
 		if (!MaxVolume)
 		{
 			StopAllSound();
@@ -964,7 +964,7 @@ void VAudio::UpdateSfx()
 			float vol = SoundCurve[dist] / 127.0 * Channel[i].volume;
 			float sep = DotProduct(Channel[i].origin - cl->ViewOrg,
 				ListenerRight) / MaxSoundDist;
-			if (swap_stereo)
+			if (snd_swap_stereo)
 			{
 				sep = -sep;
 			}
@@ -1112,33 +1112,33 @@ void VAudio::UpdateSounds()
 {
 	guard(VAudio::UpdateSounds);
 	//	Check sound volume.
-	if (sfx_volume < 0.0)
+	if (snd_sfx_volume < 0.0)
 	{
-		sfx_volume = 0.0;
+		snd_sfx_volume = 0.0;
 	}
-	if (sfx_volume > 1.0)
+	if (snd_sfx_volume > 1.0)
 	{
-		sfx_volume = 1.0;
+		snd_sfx_volume = 1.0;
 	}
 
 	//	Check music volume.
-	if (music_volume < 0.0)
+	if (snd_music_volume < 0.0)
 	{
-		music_volume = 0.0;
+		snd_music_volume = 0.0;
 	}
-	if (music_volume > 1.0)
+	if (snd_music_volume > 1.0)
 	{
-		music_volume = 1.0;
+		snd_music_volume = 1.0;
 	}
 
 	//	Check for CD music change.
-	if (cd_music && !CDMusic)
+	if (snd_cd_music && !CDMusic)
 	{
 		GCmdBuf << "Music Stop\n";
 		CDMusic = true;
 		StartMusic();
 	}
-	if (!cd_music && CDMusic)
+	if (!snd_cd_music && CDMusic)
 	{
 		GCmdBuf << "CD Stop\n";
 		CDMusic = false;
@@ -1151,12 +1151,12 @@ void VAudio::UpdateSounds()
 	UpdateSfx();
 	if (StreamMusicPlayer)
 	{
-		SoundDevice->SetStreamVolume(music_volume * MusicVolumeFactor);
+		SoundDevice->SetStreamVolume(snd_music_volume * MusicVolumeFactor);
 		StreamMusicPlayer->Tick(host_frametime);
 	}
 	if (MidiDevice)
 	{
-		MidiDevice->SetVolume(music_volume * MusicVolumeFactor);
+		MidiDevice->SetVolume(snd_music_volume * MusicVolumeFactor);
 		MidiDevice->Tick(host_frametime);
 	}
 	if (CDAudioDevice)
@@ -1178,7 +1178,7 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	static const char* Exts[] = { "ogg", "mp3", "wav", "mid", "mus", "669",
 		"amf", "dsm", "far", "gdm", "imf", "it", "m15", "med", "mod", "mtm",
 		"okt", "s3m", "stm", "stx", "ult", "uni", "xm", "flac", "ay", "gbs",
-		"gym", "hes", "kss", "nsf", "nsfe", "sap", "spc", "vgm", "vgz", NULL };
+		"gym", "hes", "kss", "nsf", "nsfe", "sap", "sgc", "spc", "vgm", NULL };
 	static const char* ExtraExts[] = { "ogg", "mp3", NULL };
 
 	if (!Song || !Song[0])
@@ -1200,16 +1200,16 @@ void VAudio::PlaySong(const char* Song, bool Loop)
 	MusicVolumeFactor = GSoundManager->GetMusicVolume(Song);
 	if (StreamMusicPlayer)
 	{
-		SoundDevice->SetStreamVolume(music_volume * MusicVolumeFactor);
+		SoundDevice->SetStreamVolume(snd_music_volume * MusicVolumeFactor);
 	}
 	if (MidiDevice)
 	{
-		MidiDevice->SetVolume(music_volume * MusicVolumeFactor);
+		MidiDevice->SetVolume(snd_music_volume * MusicVolumeFactor);
 	}
 
 	//	Find the song.
 	int Lump = -1;
-	if (s_external_music)
+	if (snd_external_music)
 	{
 		//	Check external music definition file.
 		VStream* XmlStrm = FL_OpenFileRead("extras/music/remap.xml");
@@ -1655,7 +1655,7 @@ float VAudio::CalcDirSize(const TVec &dir)
 	float len = Length(Trace.LineEnd - cl->ViewOrg);
 	GClLevel->TraceLine(Trace, cl->ViewOrg, cl->ViewOrg - dir, SPF_NOBLOCKSIGHT);
 	len += Length(Trace.LineEnd - cl->ViewOrg);
-	len /= eax_distance_unit;
+	len /= snd_eax_distance_unit;
 	if (len > 100)
 		len = 100;
 	if (len < 1)

@@ -94,11 +94,11 @@ IMPLEMENT_SOUND_DEVICE(VSDLSoundDevice, SNDDRV_Default, "Default",
 
 bool							sdl_mixer_initialised;
 
-static VCvarI mix_frequency		("mix_frequency", "44100", CVAR_Archive);
-static VCvarI mix_bits			("mix_bits",      "16",    CVAR_Archive);
-static VCvarI mix_channels		("mix_channels",  "2",     CVAR_Archive);
+static VCvarI mix_frequency		("snd_sdl_mix_frequency", "44100", CVAR_Archive);
+static VCvarI mix_bits			("snd_sdl_mix_bits",      "16",    CVAR_Archive);
+static VCvarI mix_channels		("snd_sdl_mix_channels",  "2",     CVAR_Archive);
 
-static VCvarI mix_chunksize		("mix_chunksize", "4096",  CVAR_Archive);
+static VCvarI mix_chunksize		("snd_sdl_mix_chunksize", "4096",  CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

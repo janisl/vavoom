@@ -102,7 +102,8 @@ final EntityEx AimLineAttack(out TVec OutDir, TAVec angles, float distance)
 
 			li = in->line;
 
-			if (!(li->flags & ML_TWOSIDED))
+			if (!(li->flags & ML_TWOSIDED) ||
+				(li->flags & ML_BLOCKEVERYTHING))
 			{
 				break;	// stop
 			}
@@ -508,8 +509,11 @@ final int LineAttack(TVec Dir, float Distance, int LADamage,
 				{
 					if (open->bottom <= hit_point.z && open->top >= hit_point.z)
 					{
-						// shot continues
-						break;
+						if (!(li->flags & ML_BLOCKEVERYTHING))
+						{
+							// shot continues
+							break;
+						}
 					}
 					open = open->next;
 				}
@@ -858,8 +862,11 @@ final void RailAttack(TVec Dir, float Offset, int RailDamage,
 				{
 					if (open->bottom <= hit_point.z && open->top >= hit_point.z)
 					{
-						// shot continues
-						break;
+						if (!(li->flags & ML_BLOCKEVERYTHING))
+						{
+							// shot continues
+							break;
+						}
 					}
 					open = open->next;
 				}
