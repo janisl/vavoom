@@ -156,11 +156,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Ay_Core.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Ay_Cpu.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\source\gme\src\Ay_Emu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\blargg_common.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\blargg_errors.cpp"
 				>
 			</File>
 			<File
@@ -176,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Downsampler.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Dual_Resampler.cpp"
 				>
 			</File>
@@ -184,7 +200,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\emu2413.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Fir_Resampler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\fmopl.cpp"
 				>
 			</File>
 			<File
@@ -200,6 +224,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Gbs_Core.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Gbs_Cpu.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Gbs_Emu.cpp"
 				>
 			</File>
@@ -212,6 +244,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Gme_Loader.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Gym_Emu.cpp"
 				>
 			</File>
@@ -220,11 +256,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Hes_Apu_Adpcm.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Hes_Core.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Hes_Cpu.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\source\gme\src\Hes_Emu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Kss_Core.cpp"
 				>
 			</File>
 			<File
@@ -260,6 +308,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Nes_Fds_Apu.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Nes_Fme7_Apu.cpp"
 				>
 			</File>
@@ -276,7 +328,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Nes_Vrc7_Apu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Nsf_Core.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Nsf_Cpu.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Nsf_Emu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Nsf_Impl.cpp"
 				>
 			</File>
 			<File
@@ -284,7 +352,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Opl_Apu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Resampler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Rom_Data.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_deltat.c"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_logtbl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_opl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_opltbl.c"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Sap_Apu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sap_Core.cpp"
 				>
 			</File>
 			<File
@@ -296,7 +396,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Sgc_Core.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sgc_Cpu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sgc_Emu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sgc_Impl.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Sms_Apu.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sms_Fm_Apu.cpp"
 				>
 			</File>
 			<File
@@ -316,11 +436,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\SPC_Filter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Track_Filter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Upsampler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Vgm_Core.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Vgm_Emu.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\source\gme\src\Vgm_Emu_Impl.cpp"
+				RelativePath="..\source\gme\src\ym2413.c"
 				>
 			</File>
 			<File
@@ -331,6 +467,14 @@
 				RelativePath="..\source\gme\src\Ym2612_Emu.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\source\gme\src\ymdeltat.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Z80_Cpu.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -339,6 +483,10 @@
 			>
 			<File
 				RelativePath="..\source\gme\src\Ay_Apu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Ay_Core.h"
 				>
 			</File>
 			<File
@@ -362,11 +510,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\blargg_errors.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\blargg_source.h"
 				>
 			</File>
 			<File
 				RelativePath="..\source\gme\src\Blip_Buffer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Blip_Buffer_impl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Blip_Buffer_impl2.h"
 				>
 			</File>
 			<File
@@ -378,6 +538,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\divfix.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Downsampler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Dual_Resampler.h"
 				>
 			</File>
@@ -386,7 +554,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\emu2413.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Fir_Resampler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\fmopl.h"
 				>
 			</File>
 			<File
@@ -402,7 +578,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Gb_Cpu_run.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Gb_Oscs.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Gbs_Core.h"
 				>
 			</File>
 			<File
@@ -418,11 +602,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Gme_Loader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Gym_Emu.h"
 				>
 			</File>
 			<File
 				RelativePath="..\source\gme\src\Hes_Apu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Hes_Apu_Adpcm.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Hes_Core.h"
 				>
 			</File>
 			<File
@@ -434,7 +630,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Hes_Cpu_run.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Hes_Emu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\i_fmpac.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\i_fmunit.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\i_vrc7.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\kmsnddev.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Kss_Core.h"
 				>
 			</File>
 			<File
@@ -474,7 +694,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Nes_Cpu_run.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Nes_Fds_Apu.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Nes_Fme7_Apu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Nes_Mmc5_Apu.h"
 				>
 			</File>
 			<File
@@ -490,7 +722,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Nes_Vrc7_Apu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\nestypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Nsf_Core.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Nsf_Emu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Nsf_Impl.h"
 				>
 			</File>
 			<File
@@ -498,7 +746,39 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Opl_Apu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Resampler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Rom_Data.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_deltat.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_logtbl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_opl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\s_opltbl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Sap_Apu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sap_Core.h"
 				>
 			</File>
 			<File
@@ -514,7 +794,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\Sgc_Core.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sgc_Emu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sgc_Impl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Sms_Apu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Sms_Fm_Apu.h"
 				>
 			</File>
 			<File
@@ -538,11 +834,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\source\gme\src\SPC_Filter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Track_Filter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Upsampler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Vgm_Core.h"
+				>
+			</File>
+			<File
 				RelativePath="..\source\gme\src\Vgm_Emu.h"
 				>
 			</File>
 			<File
-				RelativePath="..\source\gme\src\Vgm_Emu_Impl.h"
+				RelativePath="..\source\gme\src\ym2413.h"
 				>
 			</File>
 			<File
@@ -551,6 +863,18 @@
 			</File>
 			<File
 				RelativePath="..\source\gme\src\Ym2612_Emu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\ymdeltat.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Z80_Cpu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\source\gme\src\Z80_Cpu_run.h"
 				>
 			</File>
 		</Filter>
