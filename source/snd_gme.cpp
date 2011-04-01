@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**	##   ##    ##    ##   ##   ####     ####   ###     ###
 //**	##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -84,9 +84,8 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 	{
 		GCon->Log("Couldn't create Emulator, Out of memory.");
 	}
-	emu->set_gain(4.0);
+//	emu->set_gain(3.0);
 	emu->set_sample_rate(44100);
-	gme_set_tempo(emu, 1.0);
 	
 	// Load music file into emulator
 	gme_load_data(emu, Data, Size);
@@ -130,9 +129,14 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 VGMEAudioCodec::~VGMEAudioCodec()
 {
 	guard(VGMEAudioCodec::~VGMEAudioCodec);
-	// Delete emulator
+	// Delete emulator and track info
 	playing = false;
+
+	gme_free_info( info );
+	info = NULL;
+
 	gme_delete(emu);
+	emu = NULL;
 	unguard;
 }
 
