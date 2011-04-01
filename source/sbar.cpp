@@ -81,7 +81,7 @@ void SB_Init()
 
 void SB_Ticker()
 {
-	if (cls.signon)
+	if (cl && cls.signon && cl->MO)
 	{
 	    GClGame->eventStatusBarUpdateWidgets(host_frametime);
 	}
