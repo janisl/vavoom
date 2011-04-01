@@ -307,7 +307,7 @@ static void gen_sinc( float out [], int out_size, double oversample,
 	
 	// Approximate center by looking at two points to right. Much simpler
 	// and more reliable than trying to calculate it properly.
-	out [0] = out [1] + 0.5 * (out [1] - out [2]);
+	out [0] = (float) (out [1] + 0.5 * (out [1] - out [2]));
 }
 
 // Gain is 1-2800 for beta of 0-10, instead of 1.0 as it should be, but
@@ -354,7 +354,7 @@ void blip_eq_t::generate( float out [], int count ) const
 	
 	gen_sinc( out, count, oversample * cutoff_adj, treble, cutoff );
 	
-	kaiser_window( out, count, kaiser );
+	kaiser_window( out, count, (float)kaiser );
 }
 
 void Blip_Synth_::treble_eq( blip_eq_t const& eq )

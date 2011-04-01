@@ -120,7 +120,7 @@ void Hes_Apu::run_osc( Blip_Synth_Fast& syn, Osc& o, blip_time_t end_time )
 			
 			if ( noise && out0 )
 			{
-				unsigned lfsr = o.lfsr;
+				int lfsr = o.lfsr;
 				do
 				{
 					int new_dac = -(lfsr & 1);

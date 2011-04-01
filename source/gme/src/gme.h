@@ -18,7 +18,7 @@ changed. */
 typedef struct gme_t gme_t;
 
 /* Boolean; false = 0, true = 1 */
-typedef int gme_bool;
+typedef bool gme_bool;
 
 
 /******** Basic operations ********/

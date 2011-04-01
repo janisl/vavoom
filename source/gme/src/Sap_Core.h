@@ -32,7 +32,7 @@ public:
 		int music_addr;
 		int type;
 		int fastplay;
-		bool stereo;
+		int stereo;
 	};
 	blargg_err_t start_track( int track, info_t const& );
 	

@@ -254,7 +254,7 @@ void Ay_Apu::run_until( blip_time_t final_end_time )
 		
 		// noise time
 		blip_time_t ntime = final_end_time;
-		unsigned noise_lfsr = 1;
+		noise_lfsr = 1;
 		if ( !(osc_mode & noise_off) )
 		{
 			ntime = start_time + old_noise_delay;

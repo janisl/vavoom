@@ -54,7 +54,7 @@ public:
 	
 	// True if track ended. Causes are end of source samples, end of fade,
 	// or excessive silence.
-	bool track_ended() const                    { return track_ended_; }
+	bool track_ended() const                    { return (track_ended_ > 0); }
 	
 	// Clears state
 	void stop();

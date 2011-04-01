@@ -17,7 +17,7 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 void Sgc_Core::set_tempo( double t )
 {
-	set_play_period( clock_rate() / (header().rate ? 50 : 60) / t );
+	set_play_period( clock_rate() / (header().rate ? 50 : 60) / int(t) );
 }
 
 blargg_err_t Sgc_Core::load_( Data_Reader& dr )

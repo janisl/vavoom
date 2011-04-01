@@ -112,7 +112,7 @@ struct OPLL
 	e_int16 DB2LIN_TABLE [4 * DB_MUTE];  
 
 	// Liner to Log curve conversion table (for Attack rate).
-	e_uint8 AR_ADJUST_TABLE [1 << EG_BITS];
+	e_uint16 AR_ADJUST_TABLE [1 << EG_BITS];
 
 	// Phase incr table for Attack
 	e_uint32 dphaseARTable [16] [16];

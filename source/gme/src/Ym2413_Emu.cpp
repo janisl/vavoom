@@ -18,7 +18,7 @@ int Ym2413_Emu::set_rate( double sample_rate, double clock_rate )
 		opll = 0;
 	}
 	
-	opll = ym2413_init( clock_rate, sample_rate, 0 );
+	opll = ym2413_init( int(clock_rate), int(sample_rate), 0 );
 	if ( !opll )
 		return 1;
 	

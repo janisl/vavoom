@@ -353,8 +353,8 @@ void gme_set_effects( Music_Emu* gme, gme_effects_t const* in )
 			if ( in )
 			{
 				b->config().enabled  = in->enabled;
-				b->config().echo     = in->echo;
-				b->config().stereo   = in->stereo;
+				b->config().echo     = float(in->echo);
+				b->config().stereo   = float(in->stereo);
 				b->config().surround = in->surround;
 			}
 			b->apply_config();

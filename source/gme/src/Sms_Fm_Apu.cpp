@@ -10,7 +10,7 @@ Sms_Fm_Apu::~Sms_Fm_Apu()
 
 blargg_err_t Sms_Fm_Apu::init( double clock_rate, double sample_rate )
 {
-	period_ = clock_rate / sample_rate + 0.5;
+	period_ = int(clock_rate / sample_rate + 0.5);
 	CHECK_ALLOC( !apu.set_rate( sample_rate, clock_rate ) );
 	
 	set_output( 0 );

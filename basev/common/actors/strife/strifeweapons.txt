@@ -531,7 +531,7 @@ actor FlameThrower : StrifeWeapon 2005
 	states
 	{
 	Ready:
-		FLMT AB 3 A_WeaponReady
+		FLMT AAABBB 1 A_WeaponReady
 		Loop
 	Deselect:
 		FLMT A 1 A_Lower
@@ -600,7 +600,7 @@ actor Mauler : StrifeWeapon 2004
 	states
 	{
 	Ready:
-		MAUL FGHA 6 A_WeaponReady
+		MAUL FFFFFFGGGGGGHHHHHHAAAAA 1 A_WeaponReady
 		Loop
 	Deselect:
 		MAUL A 1 A_Lower
@@ -637,7 +637,7 @@ actor Mauler2 : Mauler
 	states
 	{
 	Ready:
-		MAUL IJKL 7 A_WeaponReady
+		MAUL IIIIIIIJJJJJJJKKKKKKKLLLLLLL 1 A_WeaponReady
 		Loop
 	Deselect:
 		MAUL I 1 A_Lower

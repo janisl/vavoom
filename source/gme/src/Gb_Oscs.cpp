@@ -411,7 +411,7 @@ void Gb_Square::run( blip_time_t time, blip_time_t end_time )
 #if !GB_APU_FAST
 // Quickly runs LFSR for a large number of clocks. For use when noise is generating
 // no sound.
-static unsigned run_lfsr( unsigned s, unsigned mask, int count )
+static unsigned run_lfsr( int s, int mask, int count )
 {
 	bool const optimized = true; // set to false to use only unoptimized loop in middle
 	

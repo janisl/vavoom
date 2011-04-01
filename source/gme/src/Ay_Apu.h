@@ -71,7 +71,7 @@ private:
 	byte        regs [reg_count];
 	
 	blip_time_t noise_delay;
-	unsigned    noise_lfsr;
+	int    noise_lfsr;
 	
 	blip_time_t env_delay;
 	byte const* env_wave;

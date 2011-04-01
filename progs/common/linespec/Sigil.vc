@@ -416,9 +416,12 @@ final void A_FireSigil3() self(Actor)
 	{
 		sigilspread = SpawnPlayerMissileAngle(SpectralLightningBall1,
 			Angles.yaw - 90.0 + itof(i) * (45.0 / 4.0));
-		angle = sigilspread.Angles.yaw;
-		sigilspread.Velocity.x = sigilspread.Speed * cos(angle);
-		sigilspread.Velocity.y = sigilspread.Speed * sin(angle);
+		if (sigilspread)
+		{
+			angle = sigilspread.Angles.yaw;
+			sigilspread.Velocity.x = sigilspread.Speed * cos(angle);
+			sigilspread.Velocity.y = sigilspread.Speed * sin(angle);
+		}
 	}
 }
 

@@ -2295,7 +2295,7 @@ YM2612 * YM2612Init(void *param, int index, long clock, long rate)
 
 	F2612->OPN.ST.param = param;
 	F2612->OPN.P_CH = F2612->CH;
-	F2612->OPN.ST.clock = clock;
+	F2612->OPN.ST.clock = float(clock);
 	F2612->OPN.ST.rate = rate;
 	/* F2612->OPN.ST.irq = 0; */
 	/* F2612->OPN.ST.status = 0; */
