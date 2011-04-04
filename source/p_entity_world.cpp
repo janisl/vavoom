@@ -1312,11 +1312,11 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			if (tmtrace.FloorZ - Origin.z > MaxStepHeight)
 			{
 				// Too big a step up
-				if (EntityFlags & EF_CanJump)
+				if (EntityFlags & EF_CanJump && Health > 0.0)
 				{
 					// Check to make sure there's nothing in the way for the step up
-					if ((tmtrace.BlockingMobj && (tmtrace.BlockingMobj->CheckOnmobj() &&
-						tmtrace.BlockingMobj->CheckOnmobj() == this)) ||
+					if (!Velocity.z || tmtrace.FloorZ - Origin.z > 48.0 ||
+						(tmtrace.BlockingMobj && tmtrace.BlockingMobj->CheckOnmobj()) ||
 						TestMobjZ(TVec(newPos.x, newPos.y, tmtrace.FloorZ)))
 					{
 						PushLine(tmtrace);
