@@ -4548,3 +4548,5 @@
   Firebrand updated GME library to version 0.6, which makes sound overall better and adds a couple of fixes.
   Firebrand fixed GME playback as suggested by Mnk in the forums.
   Firebrand made all sound CVars to begin with "snd_" for standardization.
+04.04.2011
+  Firebrand fixed the checks for determining if a monster should jump or not.
