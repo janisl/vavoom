@@ -785,10 +785,6 @@ final bool HitFloor()
 		}
 	}
 	Origin.z = FloorZ;
-	if (bCanJump)
-	{
-		JumpTime = 0.2;	// delay any jumping for a short time
-	}
 	if (vdot < -0.1)
 	{
 		// Spawn splashes, etc.
@@ -800,6 +796,10 @@ final bool HitFloor()
 //			Velocity = vector(0.0, 0.0, 0.0);
 			Velocity.z = 0.0;
 			return false;
+		}
+		if (bCanJump)
+		{
+			JumpTime = 0.5;	// delay any jumping for a short time
 		}
 		//	Do some special action when hitting the floor.
 		OnHitFloor();

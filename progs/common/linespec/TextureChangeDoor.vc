@@ -85,7 +85,15 @@ void Init(sector_t* InSector, int Arg1, int Arg2, int Arg3, int Arg4,
 	Timer = AnimSpeed;
 
 	Line1->flags |= ML_BLOCKING;
+	if (!(Line1->flags & ML_DONTPEGBOTTOM))
+	{
+		Line1->flags |= ML_DONTPEGBOTTOM;
+	}
 	Line2->flags |= ML_BLOCKING;
+	if (!(Line2->flags & ML_DONTPEGBOTTOM))
+	{
+		Line2->flags |= ML_DONTPEGBOTTOM;
+	}
 
 	Direction = 1;
 	TopWait = itof(Arg3) / 35.0;

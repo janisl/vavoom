@@ -4550,3 +4550,8 @@
   Firebrand made all sound CVars to begin with "snd_" for standardization.
 04.04.2011
   Firebrand fixed the checks for determining if a monster should jump or not.
+06.04.2011
+  Firebrand made quake focus things to limit the intensity of Quakes to avoid problems in player view and thrust
+ of actors.
+  Firebrand fixed for good the polyobject mobj thrust force.
+  Firebrand made TextureChangeDoor to add a ML_NOTBOTPEG flag, so that lines display their texture correctly.

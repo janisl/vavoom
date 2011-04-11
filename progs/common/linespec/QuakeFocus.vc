@@ -49,6 +49,11 @@ final void A_Quake()
 
 	if (QuakeDuration-- > 0)
 	{
+		if (Richters > 256 / 9)
+		{
+			Richters = 256 / 9;
+		}
+
 		for (playnum = 0; playnum < MAXPLAYERS; playnum++)
 		{
 			pl = PlayerEx(Level.Game.Players[playnum]);

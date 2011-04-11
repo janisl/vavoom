@@ -1232,10 +1232,14 @@ void VRenderLevelShared::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 
 			if (linedef->flags & ML_WRAP_MIDTEX)
 			{
-				wv[0].z = midbotz1;
+				wv[0].z = MAX(midbotz1, z_org - texh);
+				wv[1].z = MIN(midtopz1, z_org);
+				wv[2].z = MIN(midtopz2, z_org);
+				wv[3].z = MAX(midbotz2, z_org - texh);
+/*				wv[0].z = midbotz1;
 				wv[1].z = midtopz1;
 				wv[2].z = midtopz2;
-				wv[3].z = midbotz2;
+				wv[3].z = midbotz2;*/
 			}
 			else
 			{
@@ -1755,10 +1759,14 @@ void VRenderLevelShared::UpdateDrawSeg(drawseg_t* dseg, bool ShouldClip)
 
 				if (linedef->flags & ML_WRAP_MIDTEX)
 				{
-					wv[0].z = midbotz1;
+					wv[0].z = MAX(midbotz1, z_org - texh);
+					wv[1].z = MIN(midtopz1, z_org);
+					wv[2].z = MIN(midtopz2, z_org);
+					wv[3].z = MAX(midbotz2, z_org - texh);
+/*					wv[0].z = midbotz1;
 					wv[1].z = midtopz1;
 					wv[2].z = midtopz2;
-					wv[3].z = midbotz2;
+					wv[3].z = midbotz2;*/
 				}
 				else
 				{
