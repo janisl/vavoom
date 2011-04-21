@@ -411,7 +411,7 @@ void VSectorStackPortal::DrawContents()
 
 //==========================================================================
 //
-//	VMirrorPortal::MatchSkyBox
+//	VMirrorPortal::MatchMirror
 //
 //==========================================================================
 

@@ -647,11 +647,11 @@ bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 			return false;
 		}
 		// check if a mobj passed over/under another object
-		if (cptrace.Pos.z >= Other->Origin.z + Other->Height)
+		if (cptrace.Pos.z + 0.00001 >= Other->Origin.z + Other->Height)
 		{
 			return true;
 		}
-		if (cptrace.Pos.z + Height < Other->Origin.z)
+		if (cptrace.Pos.z + Height < Other->Origin.z + 0.00001)
 		{
 			// under thing
 			return true;
@@ -837,7 +837,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	if (newsubsec->sector->SectorFlags && sector_t::SF_HasExtrafloors)
 	{
 		sec_region_t* gap = SV_FindThingGap(newsubsec->sector->botregion,
-			tmtrace.End, tmtrace.End.z, tmtrace.End.z + Height);
+			tmtrace.End, tmtrace.End.z, tmtrace.End.z + (Height ? 1.0 : Height));
 		sec_region_t* reg = gap;
 		while (reg->prev && reg->floor->flags & SPF_NOBLOCKING)
 		{
@@ -902,8 +902,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 						else if (!tmtrace.BlockingMobj->Player &&
 							!(EntityFlags & VEntity::EF_Float) &&
 							!(EntityFlags & VEntity::EF_Missile) &&
-							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height - Origin.z + 
-							(tmtrace.BlockingMobj->EntityFlags & VEntity::EF_ActLikeBridge ? 0.0 : Height) <= MaxStepHeight)
+							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height + 0.00001 - tmtrace.End.z <= MaxStepHeight)
 						{
 							if (!thingblocker || tmtrace.BlockingMobj->Origin.z > thingblocker->Origin.z)
 							{
@@ -911,13 +910,8 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 							}
 							tmtrace.BlockingMobj = NULL;
 						}
-						else if (Player && Origin.z + Height - tmtrace.BlockingMobj->Origin.z +
-								 (tmtrace.BlockingMobj->EntityFlags & VEntity::EF_ActLikeBridge ? 0.0 : tmtrace.BlockingMobj->Height) <= MaxStepHeight)
+						else if (Player && tmtrace.End.z + Height - tmtrace.BlockingMobj->Origin.z + 0.00001 <= MaxStepHeight)
 						{
-							if (fakedblocker)
-							{
-								thingblocker = fakedblocker;
-							}
 							if (thingblocker)
 							{ // something to step up on, set it as
 							  // the blocker so that we don't step up
@@ -938,11 +932,12 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 		}
 	}
 
+	// check lines
+	validcount++;
+
 	float thingdropoffz = tmtrace.FloorZ;
 	tmtrace.FloorZ = tmtrace.DropOffZ;
 	tmtrace.BlockingMobj = NULL;
-	// check lines
-	validcount++;
 
 	if (EntityFlags & EF_ColideWithWorld)
 	{
@@ -972,7 +967,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 		}
 	}
 
-	if (tmtrace.StepThing != NULL)
+	if (tmtrace.StepThing)
 	{
 		tmtrace.DropOffZ = thingdropoffz;
 	}
@@ -1026,8 +1021,8 @@ bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 		(Other->EntityFlags & EF_ActLikeBridge))
  	{
 		// allow actors to walk on other actors as well as floors
-		if (Other->Origin.z + Other->Height >= tmtrace.FloorZ &&
-			Other->Origin.z + Other->Height <= Origin.z + MaxStepHeight)
+		if (Other->Origin.z + Other->Height + 0.00001 > tmtrace.FloorZ &&
+			Other->Origin.z + Other->Height < tmtrace.End.z + MaxStepHeight + 0.00001)
 		{
 			tmtrace.StepThing = Other;
 			tmtrace.FloorZ = Other->Origin.z + Other->Height;
@@ -1049,7 +1044,7 @@ bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 		{
 			return true;	// overhead
 		}
-		if (tmtrace.End.z + Height <= Other->Origin.z + 0.00001)
+		if (tmtrace.End.z + Height < Other->Origin.z + 0.00001)
 		{
 			return true;	// underneath
 		}

@@ -73,8 +73,7 @@ subsector_t* VLevel::PointInSubsector(const TVec &point) const
 	do
 	{
 		const node_t* node = Nodes + nodenum;
-		nodenum = node->children[point.x * node->normal.x +
-			point.y * node->normal.y < node->dist];
+		nodenum = node->children[node->PointOnSide(point)];
 	}
 	while (!(nodenum & NF_SUBSECTOR));
 	return &Subsectors[nodenum & ~NF_SUBSECTOR];

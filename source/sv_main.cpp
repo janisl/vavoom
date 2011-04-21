@@ -614,8 +614,12 @@ COMMAND(TeleportNewMap)
 		if (VStr(GLevelInfo->NextMap).StartsWith("EndGame"))
 		{
 			for (int i = 0; i < svs.max_clients; i++)
+			{
 				if (GGameInfo->Players[i])
+				{
 					GGameInfo->Players[i]->eventClientFinale(*GLevelInfo->NextMap);
+				}
+			}
 			sv.intermission = 2;
 			return;
 		}
@@ -627,6 +631,11 @@ COMMAND(TeleportNewMap)
 	RebornPosition = LeavePosition;
 	GGameInfo->RebornPosition = RebornPosition;
 	mapteleport_issued = true;
+	if (GGameInfo->NetMode == NM_Standalone)
+	{
+		// Copy the base slot to the reborn slot
+		SV_UpdateRebornSlot();
+	}
 	unguard;
 }
 
@@ -951,17 +960,20 @@ COMMAND(Spawn)
 //
 //==========================================================================
 
-void SV_DropClient(VBasePlayer* Player, bool)
+void SV_DropClient(VBasePlayer* Player, bool crash)
 {
 	guard(SV_DropClient);
-	if (GLevel && GLevel->Acs)
+	if (!crash)
 	{
-		GLevel->Acs->StartTypedACScripts(SCRIPT_Disconnect,
-			SV_GetPlayerNum(Player), 0, 0, NULL, true, false);
-	}
-	if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
-	{
-		Player->eventDisconnectClient();
+		if (GLevel && GLevel->Acs)
+		{
+			GLevel->Acs->StartTypedACScripts(SCRIPT_Disconnect,
+				SV_GetPlayerNum(Player), 0, 0, NULL, true, false);
+		}
+		if (Player->PlayerFlags & VBasePlayer::PF_Spawned)
+		{
+			Player->eventDisconnectClient();
+		}
 	}
 	Player->PlayerFlags &= ~VBasePlayer::PF_Active;
 	GGameInfo->Players[SV_GetPlayerNum(Player)] = NULL;

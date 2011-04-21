@@ -1012,7 +1012,6 @@ void VRenderLevelShared::CreateSegParts(drawseg_t* dseg, seg_t *seg)
 	else
 	{
 		// two sided line
-
 		sec_plane_t* back_floor = &seg->backsector->floor;
 		sec_plane_t* back_ceiling = &seg->backsector->ceiling;
 		if (seg->backsector->fakefloors)

@@ -262,8 +262,8 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 	float y2, int flags)
 {
 	guard(VPathTraverse::Init);
-	float x1 = InX1;
-	float y1 = InY1;
+	float		x1 = InX1;
+	float		y1 = InY1;
 	int			xt1;
 	int			yt1;
 	int			xt2;
@@ -373,8 +373,8 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 		}
 		if (partialx == partialy)
 		{
-			xintercept = xt1;
-			yintercept = yt1;
+			xintercept = float(xt1);
+			yintercept = float(yt1);
 		}
 	}
 
@@ -405,17 +405,17 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 		}
 
 		// [RH] Handle corner cases properly instead of pretending they don't exist.
-		if ((int)yintercept == mapy)
+		if (int(yintercept) == mapy)
 		{
 			yintercept += ystep;
 			mapx += mapxstep;
 		}
-		else if ((int)xintercept == mapx)
+		else if (int(xintercept) == mapx)
 		{
 			xintercept += xstep;
 			mapy += mapystep;
 		}
-		else if (((int)yintercept == mapy) && ((int)xintercept == mapx))
+		else if ((int(yintercept) == mapy) && (int(xintercept) == mapx))
 		{
 			// The trace is exiting a block through its corner. Not only does the block
 			// being entered need to be checked (which will happen when this loop

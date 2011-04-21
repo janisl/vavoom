@@ -790,69 +790,72 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 
 	sub = Level->PointInSubsector(p);
 	reg = sub->regions;
-	while (reg->next)
+	if (reg)
 	{
-		d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
-
-		if (d >= 0.0)
+		while (reg->next)
 		{
+			d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
+
+			if (d >= 0.0)
+			{
+				break;
+			}
+
+			reg = reg->next;
+		}
+
+		//	Region's base light
+		l = reg->secregion->params->lightlevel + ExtraLight;
+		if (r_darken)
+		{
+			l = light_remap[MIN(255, (int)l)];
+		}
+		l = MIN(255, l);
+		int SecLightColour = reg->secregion->params->LightColour;
+		lr = ((SecLightColour >> 16) & 255) * l / 255.0;
+		lg = ((SecLightColour >> 8) & 255) * l / 255.0;
+		lb = (SecLightColour & 255) * l / 255.0;
+
+		//	Light from floor's lightmap
+		s = (int)(DotProduct(p, reg->floor->texinfo.saxis) + reg->floor->texinfo.soffs);
+		t = (int)(DotProduct(p, reg->floor->texinfo.taxis) + reg->floor->texinfo.toffs);
+		for (surf = reg->floor->surfs; surf; surf = surf->next)
+		{
+			if (!surf->lightmap)
+			{
+				continue;
+			}
+			if (s < surf->texturemins[0] ||	t < surf->texturemins[1])
+			{
+				continue;
+			}
+
+			ds = s - surf->texturemins[0];
+			dt = t - surf->texturemins[1];
+
+			if (ds > surf->extents[0] || dt > surf->extents[1])
+			{
+				continue;
+			}
+
+			if (surf->lightmap_rgb)
+			{
+				l += surf->lightmap[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
+				rgbtmp = &surf->lightmap_rgb[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
+				lr += rgbtmp->r;
+				lg += rgbtmp->g;
+				lb += rgbtmp->b;
+			}
+			else
+			{
+				ltmp = surf->lightmap[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
+				l += ltmp;
+				lr += ltmp;
+				lg += ltmp;
+				lb += ltmp;
+			}
 			break;
 		}
-
-		reg = reg->next;
-	}
-
-	//	Region's base light
-	l = reg->secregion->params->lightlevel + ExtraLight;
-	if (r_darken)
-	{
-		l = light_remap[MIN(255, (int)l)];
-	}
-	l = MIN(255, l);
-	int SecLightColour = reg->secregion->params->LightColour;
-	lr = ((SecLightColour >> 16) & 255) * l / 255.0;
-	lg = ((SecLightColour >> 8) & 255) * l / 255.0;
-	lb = (SecLightColour & 255) * l / 255.0;
-
-	//	Light from floor's lightmap
-	s = (int)(DotProduct(p, reg->floor->texinfo.saxis) + reg->floor->texinfo.soffs);
-	t = (int)(DotProduct(p, reg->floor->texinfo.taxis) + reg->floor->texinfo.toffs);
-	for (surf = reg->floor->surfs; surf; surf = surf->next)
-	{
-		if (!surf->lightmap)
-		{
-			continue;
-		}
-		if (s < surf->texturemins[0] ||	t < surf->texturemins[1])
-		{
-			continue;
-		}
-
-		ds = s - surf->texturemins[0];
-		dt = t - surf->texturemins[1];
-
-		if (ds > surf->extents[0] || dt > surf->extents[1])
-		{
-			continue;
-		}
-
-		if (surf->lightmap_rgb)
-		{
-			l += surf->lightmap[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
-			rgbtmp = &surf->lightmap_rgb[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
-			lr += rgbtmp->r;
-			lg += rgbtmp->g;
-			lb += rgbtmp->b;
-		}
-		else
-		{
-			ltmp = surf->lightmap[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
-			l += ltmp;
-			lr += ltmp;
-			lg += ltmp;
-			lb += ltmp;
-		}
-		break;
 	}
 
 	//	Add dynamic lights

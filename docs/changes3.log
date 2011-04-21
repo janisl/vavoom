@@ -4555,3 +4555,13 @@
  of actors.
   Firebrand fixed for good the polyobject mobj thrust force.
   Firebrand made TextureChangeDoor to add a ML_NOTBOTPEG flag, so that lines display their texture correctly.
+21.04.2011
+  Firebrand changed the way in which PointInSubsector method determines the node number for a more accurate
+ method.
+  Firebrand improved the calculations in CheckThing method to be similar to the ones done in CheckRelThing, this
+ seems to improve physics in many other checks in-game.
+  Firebrand fixed the calculations done in CheckRelThing method to use tmtrace structure instead of the entity's
+ Origin, since it's more precise this way, this also improves physics checks among the game too.
+  Firebrand changed the RenderBSP methods so that they check for visibility of the node's BBox that are going to
+ be subdivided behind the camera, this had a positive hit in performance with advanced and regular renderers,
+ the game still slows down when rendering complex structures, but the improvement in general is good.

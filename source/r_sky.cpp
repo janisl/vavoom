@@ -71,13 +71,13 @@ static VCvarI		r_skyboxes("r_skyboxes", "1", CVAR_Archive);
 
 //==========================================================================
 //
-//	R_InitSkyBoxes
+//	ParseSkyBoxesScript
 //
 //==========================================================================
 
 static void ParseSkyBoxesScript(VScriptParser* sc)
 {
-	guard(R_InitSkyBoxes);
+	guard(ParseSkyBoxesScript);
 	while (!sc->AtEnd())
 	{
 		skyboxinfo_t& info = skyboxinfo.Alloc();
@@ -110,6 +110,7 @@ static void ParseSkyBoxesScript(VScriptParser* sc)
 
 void R_InitSkyBoxes()
 {
+	guard(R_InitSkyBoxes);
 	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
@@ -125,6 +126,7 @@ void R_InitSkyBoxes()
 		ParseSkyBoxesScript(new VScriptParser("scripts/skyboxes.txt",
 			FL_OpenFileRead("scripts/skyboxes.txt")));
 	}
+	unguard;
 }
 
 //==========================================================================

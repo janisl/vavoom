@@ -747,6 +747,8 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 		RenderSubRegion(region->next);
 	}
 
+	check(r_sub->sector != NULL);
+
 	r_subregion = region;
 	r_region = region->secregion;
 
@@ -847,7 +849,6 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			}
 
 			// generate accept and reject points
-
 			int *pindex = FrustumIndexes[i];
 
 			TVec rejectpt;
@@ -858,8 +859,7 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 
 			float d;
 
-			d = DotProduct(rejectpt, view_clipplanes[i].normal);
-			d -= view_clipplanes[i].dist;
+			d = DotProduct(rejectpt, view_clipplanes[i].normal) - view_clipplanes[i].dist;
 			if (d <= 0)
 			{
 				return;
@@ -871,9 +871,7 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			acceptpt[1] = bbox[pindex[3+1]];
 			acceptpt[2] = bbox[pindex[3+2]];
 
-			d = DotProduct(acceptpt, view_clipplanes[i].normal);
-			d -= view_clipplanes[i].dist;
-
+			d = DotProduct(acceptpt, view_clipplanes[i].normal) - view_clipplanes[i].dist;
 			if (d >= 0)
 			{
 				clipflags ^= view_clipplanes[i].clipflag;	// node is entirely on screen
@@ -886,35 +884,39 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 		return;
 	}
 
+	if (bspnum == -1)
+	{
+		RenderSubsector(0);
+		return;
+	}
+
 	// Found a subsector?
-	if (bspnum & NF_SUBSECTOR)
+	if (!(bspnum & NF_SUBSECTOR))
 	{
-		if (bspnum == -1)
+		node_t* bsp = &Level->Nodes[bspnum];
+
+		if (bsp->VisFrame != r_visframecount)
 		{
-			RenderSubsector(0);
+			return;
 		}
-		else
+
+		// Decide which side the view point is on.
+		int side = bsp->PointOnSide(vieworg);
+
+		// Recursively divide front space (toward the viewer).
+		RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
+
+		// Possibly divide back space (away from the viewer).
+		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
 		{
-			RenderSubsector(bspnum & (~NF_SUBSECTOR));
+			return;
 		}
+
+		RenderBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1], clipflags);
 		return;
 	}
 
-	node_t* bsp = &Level->Nodes[bspnum];
-
-	if (bsp->VisFrame != r_visframecount)
-	{
-		return;
-	}
-
-	// Decide which side the view point is on.
-	int side = bsp->PointOnSide(vieworg);
-
-	// Recursively divide front space.
-	RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
-
-	// Divide back space.
-	RenderBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1], clipflags);
+	RenderSubsector(bspnum & (~NF_SUBSECTOR));
 	unguard;
 }
 
