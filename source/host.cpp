@@ -252,7 +252,7 @@ static bool FilterTime()
 
 	if (!real_time)
 	{
-		if (realtime - oldrealtime < 0.027777f/*1.0 / 36.0*/)
+		if (realtime - oldrealtime < 1.0 / 36.0/*0.027777f*/)
 			return false;		// framerate is too high
 	}
 

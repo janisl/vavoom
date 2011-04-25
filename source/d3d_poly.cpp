@@ -102,6 +102,13 @@ void VDirect3DDrawer::WorldDrawing()
 	{
 		for (surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
+			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+			if (dist <= 0)
+			{
+				//	Viewer is in back side or on plane
+				continue;
+			}
+
 			DoHorizonPolygon(surf);
 		}
 	}
@@ -114,6 +121,13 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
 		for (surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
+			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+			if (dist <= 0)
+			{
+				//	Viewer is in back side or on plane
+				continue;
+			}
+
 			for (i = 0; i < surf->count; i++)
 			{
 				out[i] = MyD3DVertex(surf->verts[i], 0, 0, 0);
@@ -129,6 +143,13 @@ void VDirect3DDrawer::WorldDrawing()
 	{
 		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
+			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+			if (dist <= 0)
+			{
+				//	Viewer is in back side or on plane
+				continue;
+			}
+
 			texinfo_t *tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
 
@@ -191,6 +212,12 @@ void VDirect3DDrawer::WorldDrawing()
 			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
+				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+				if (dist <= 0)
+				{
+					//	Viewer is in back side or on plane
+					continue;
+				}
 				tex = surf->texinfo;
 				SetTexture(tex->Tex, tex->ColourMap);
 				SetFade(surf->Fade);
@@ -244,6 +271,12 @@ void VDirect3DDrawer::WorldDrawing()
 			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
+				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+				if (dist <= 0)
+				{
+					//	Viewer is in back side or on plane
+					continue;
+				}
 				tex = surf->texinfo;
 				SetFade(surf->Fade);
 				for (i = 0; i < surf->count; i++)
@@ -305,6 +338,12 @@ void VDirect3DDrawer::WorldDrawing()
 			for (cache = RendLev->add_chain[lb]; cache; cache = cache->addchain)
 			{
 				surf = cache->surf;
+				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+				if (dist <= 0)
+				{
+					//	Viewer is in back side or on plane
+					continue;
+				}
 				tex = surf->texinfo;
 				for (i = 0; i < surf->count; i++)
 				{
@@ -558,6 +597,13 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 	for (int i = 0; i < surf->count; i++)
 	{
+		float dist = DotProduct(surf->verts[i], vieworg) - surf->plane->dist;
+		if (dist <= 0)
+		{
+			//	Viewer is in back side or on plane
+			continue;
+		}
+
 		out[i] = MyD3DVertex(surf->verts[i], l,
 			(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
 			(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);

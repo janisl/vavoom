@@ -949,7 +949,7 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 
 		if (r_dynamic_clip)
 		{
-			sub = Level->PointInSubsector(*surf->verts);
+			sub = Level->PointInSubsector(impact);
 			vuint8* dyn_facevis = Level->LeafPVS(sub);
 			leafnum = Level->PointInSubsector(DLights[lnum].origin) -
 				Level->Subsectors;

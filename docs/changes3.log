@@ -4565,3 +4565,7 @@
   Firebrand changed the RenderBSP methods so that they check for visibility of the node's BBox that are going to
  be subdivided behind the camera, this had a positive hit in performance with advanced and regular renderers,
  the game still slows down when rendering complex structures, but the improvement in general is good.
+25.04.2011
+  Firebrand continued improving the performance of the renderer by adding checks to avoid rendering of stuff that
+ is not on the camera, this had a substantial improvement in performance even when using the advanced renderer
+ with model shadows.
