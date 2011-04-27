@@ -556,6 +556,12 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	bool Additive)
 {
 	guard(VDirect3DDrawer::DrawMaskedPolygon);
+	float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+	if (dist <= 0)
+	{
+		//	Viewer is in back side or on plane
+		return;
+	}
 	MyD3DVertex	out[256];
 	int			l;
 
@@ -597,13 +603,6 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 	for (int i = 0; i < surf->count; i++)
 	{
-		float dist = DotProduct(surf->verts[i], vieworg) - surf->plane->dist;
-		if (dist <= 0)
-		{
-			//	Viewer is in back side or on plane
-			continue;
-		}
-
 		out[i] = MyD3DVertex(surf->verts[i], l,
 			(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
 			(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);

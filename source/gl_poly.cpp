@@ -123,6 +123,12 @@ void VOpenGLDrawer::WorldDrawing()
 	{
 		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
+			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+			if (dist <= 0)
+			{
+				//	Viewer is in back side or on plane
+				continue;
+			}
 			texinfo_t* tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
 
@@ -653,15 +659,14 @@ void VOpenGLDrawer::BeginLightShadowVolumes()
 void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius)
 {
 	guard(VOpenGLDrawer::RenderSurfaceShadowVolume);
-	float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-	if (dist <= 0)
-	{
-		//	Viewer is in back side or on plane
-		return;
-	}
-
 	int i;
 	TArray<TVec>    v;
+	float dist = DotProduct(LightPos, surf->plane->normal) - surf->plane->dist;
+	if (dist < 0 || dist >= Radius)
+	{
+		//	Light is in back side or on plane or too far away
+		return;
+	}
 	v.SetNum(surf->count);
 
 	for (int i = 0; i < surf->count; i++)
@@ -1153,6 +1158,12 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	bool Additive)
 {
 	guard(VOpenGLDrawer::DrawMaskedPolygon);
+	float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
+	if (dist <= 0)
+	{
+		//	Viewer is in back side or on plane
+		return;
+	}
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex, tex->ColourMap);
 
@@ -1222,12 +1233,6 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		glBegin(GL_POLYGON);
 		for (int i = 0; i < surf->count; i++)
 		{
-			float dist = DotProduct(surf->verts[i], vieworg) - surf->plane->dist;
-			if (dist <= 0)
-			{
-				//	Viewer is in back side or on plane
-				continue;
-			}
 			p_glVertexAttrib2fARB(SurfMaskedTexCoordLoc,
 				(DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
 				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
@@ -1288,12 +1293,6 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		glBegin(GL_POLYGON);
 		for (int i = 0; i < surf->count; i++)
 		{
-			float dist = DotProduct(surf->verts[i], vieworg) - surf->plane->dist;
-			if (dist <= 0)
-			{
-				//	Viewer is in back side or on plane
-				continue;
-			}
 			glTexCoord2f((DotProduct(surf->verts[i], tex->saxis) + tex->soffs) * tex_iw,
 				(DotProduct(surf->verts[i], tex->taxis) + tex->toffs) * tex_ih);
 			glVertex(surf->verts[i]);

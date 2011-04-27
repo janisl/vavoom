@@ -305,11 +305,7 @@ void VAdvancedRenderLevel::BuildLightVis(int bspnum, float* bbox)
 			// Recursively divide front space.
 			BuildLightVis(bsp->children[side], bsp->bbox[side]);
 
-			// Possibly divide back space
-			if (!LightClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
-			{
-				return;
-			}
+			// Divide back space.
 			BuildLightVis(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
 		}
 		return;
@@ -360,12 +356,6 @@ void VAdvancedRenderLevel::DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *tex
 
 	do
 	{
-		float dist = DotProduct(CurrLightPos, surfs->plane->normal) - surfs->plane->dist;
-		if (dist < 0 || dist >= CurrLightRadius)
-		{
-			//	Light is in back side or on plane or too far away
-			continue;
-		}
 		Drawer->RenderSurfaceShadowVolume(surfs, CurrLightPos, CurrLightRadius);
 		surfs = surfs->next;
 	} while (surfs);
@@ -391,17 +381,17 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 		return;
 	}
 
-	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist < 0 || dist >= CurrLightRadius)
-	{
-		//	Light is in back side or on plane or too far away
-		return;
-	}
-
 	float a1 = LightClip.PointToClipAngle(*line->v2);
 	float a2 = LightClip.PointToClipAngle(*line->v1);
 	if (!LightClip.IsRangeVisible(a1, a2))
 	{
+		return;
+	}
+
+	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
+	if (dist < 0 || dist >= CurrLightRadius)
+	{
+		//	Light is in back side or on plane or too far away
 		return;
 	}
 
@@ -448,7 +438,7 @@ void VAdvancedRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity*
 	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
 	if (dist < 0 || dist >= CurrLightRadius)
 	{
-		//	Light is in back side or on plane or too far away
+		//	Light is in back side
 		return;
 	}
 
@@ -488,10 +478,10 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 
 	if (r_sub->poly)
 	{
-		if (!LightClip.ClipCheckSubsector(r_sub))
+/*		if (!LightClip.ClipCheckSubsector(r_sub))
 		{
 			return;
-		}
+		}*/
 		//	Render the polyobj in the subsector first
 		polyCount = r_sub->poly->numsegs;
 		polySeg = r_sub->poly->segs;
@@ -502,10 +492,10 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 		}
 	}
 
-	if (!LightClip.ClipCheckSubsector(r_sub))
+/*	if (!LightClip.ClipCheckSubsector(r_sub))
 	{
 		return;
-	}
+	}*/
 
 	count = r_sub->numlines;
 	drawseg_t *ds = region->lines;
@@ -520,10 +510,10 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 
 	if (region->next && d > 0.0)
 	{
-		if (!LightClip.ClipCheckSubsector(r_sub))
+/*		if (!LightClip.ClipCheckSubsector(r_sub))
 		{
 			return;
-		}
+		}*/
 		RenderShadowSubRegion(region->next);
 	}
 	unguard;
@@ -674,12 +664,6 @@ void VAdvancedRenderLevel::DrawLightSurfaces(surface_t* InSurfs, texinfo_t *texi
 
 	do
 	{
-		float dist = DotProduct(CurrLightPos, surfs->plane->normal) - surfs->plane->dist;
-		if (dist < 0 || dist >= CurrLightRadius)
-		{
-			//	Light is in back side or on plane or too far away
-			continue;
-		}
 		Drawer->DrawSurfaceLight(surfs);
 		surfs = surfs->next;
 	} while (surfs);
@@ -705,17 +689,23 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 		return;
 	}
 
-	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist < 0 || dist >= CurrLightRadius)
-	{
-		//	Light is in back side or on plane or too far away
-		return;
-	}
-
 	float a1 = LightClip.PointToClipAngle(*line->v2);
 	float a2 = LightClip.PointToClipAngle(*line->v1);
 	if (!LightClip.IsRangeVisible(a1, a2))
 	{
+		return;
+	}
+
+/*	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
+	if (dist < 0 || dist >= CurrLightRadius)
+	{
+		//	Light is in back side or on plane or too far away
+		return;
+	}*/
+	float dist = DotProduct(vieworg, line->normal) - line->dist;
+	if (dist <= 0)
+	{
+		//	Viewer is in back side or on plane
 		return;
 	}
 
@@ -766,10 +756,16 @@ void VAdvancedRenderLevel::RenderLightSecSurface(sec_surface_t* ssurf, VEntity* 
 		return;
 	}
 
-	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
+/*	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
 	if (dist < 0 || dist >= CurrLightRadius)
 	{
 		//	Light is in back side or on plane or too far away
+		return;
+	}*/
+	float dist = DotProduct(vieworg, plane.normal) - plane.dist;
+	if (dist <= 0)
+	{
+		// Viewer is in back side or on plane
 		return;
 	}
 
@@ -809,10 +805,10 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 
 	if (r_sub->poly)
 	{
-		if (!LightClip.ClipCheckSubsector(r_sub))
+/*		if (!LightClip.ClipCheckSubsector(r_sub))
 		{
 			return;
-		}
+		}*/
 		//	Render the polyobj in the subsector first
 		polyCount = r_sub->poly->numsegs;
 		polySeg = r_sub->poly->segs;
@@ -841,10 +837,10 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 
 	if (region->next && d > 0.0)
 	{
-		if (!LightClip.ClipCheckSubsector(r_sub))
+/*		if (!LightClip.ClipCheckSubsector(r_sub))
 		{
 			return;
-		}
+		}*/
 		RenderLightSubRegion(region->next);
 	}
 	unguard;
@@ -972,7 +968,6 @@ void VAdvancedRenderLevel::RenderLightShadows(const refdef_t* RD,
 	{
 		return;
 	}
-
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
 
 	//	Clip against frustrum.

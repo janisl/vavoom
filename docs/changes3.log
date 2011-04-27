@@ -4569,3 +4569,5 @@
   Firebrand continued improving the performance of the renderer by adding checks to avoid rendering of stuff that
  is not on the camera, this had a substantial improvement in performance even when using the advanced renderer
  with model shadows.
+26.04.2011
+  Firebrand revised the checks and corrected a few mistakes on them.
