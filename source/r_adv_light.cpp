@@ -478,10 +478,10 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 
 	if (r_sub->poly)
 	{
-/*		if (!LightClip.ClipCheckSubsector(r_sub))
+		if (!LightClip.ClipCheckSubsector(r_sub))
 		{
 			return;
-		}*/
+		}
 		//	Render the polyobj in the subsector first
 		polyCount = r_sub->poly->numsegs;
 		polySeg = r_sub->poly->segs;
@@ -491,11 +491,6 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 			polySeg++;
 		}
 	}
-
-/*	if (!LightClip.ClipCheckSubsector(r_sub))
-	{
-		return;
-	}*/
 
 	count = r_sub->numlines;
 	drawseg_t *ds = region->lines;
@@ -510,10 +505,6 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 
 	if (region->next && d > 0.0)
 	{
-/*		if (!LightClip.ClipCheckSubsector(r_sub))
-		{
-			return;
-		}*/
 		RenderShadowSubRegion(region->next);
 	}
 	unguard;
@@ -696,12 +687,6 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 		return;
 	}
 
-/*	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist < 0 || dist >= CurrLightRadius)
-	{
-		//	Light is in back side or on plane or too far away
-		return;
-	}*/
 	float dist = DotProduct(vieworg, line->normal) - line->dist;
 	if (dist <= 0)
 	{
@@ -756,12 +741,6 @@ void VAdvancedRenderLevel::RenderLightSecSurface(sec_surface_t* ssurf, VEntity* 
 		return;
 	}
 
-/*	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
-	if (dist < 0 || dist >= CurrLightRadius)
-	{
-		//	Light is in back side or on plane or too far away
-		return;
-	}*/
 	float dist = DotProduct(vieworg, plane.normal) - plane.dist;
 	if (dist <= 0)
 	{
@@ -794,10 +773,6 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{
-		if (!LightClip.ClipCheckSubsector(r_sub))
-		{
-			return;
-		}
 		RenderLightSubRegion(region->next);
 	}
 
@@ -805,10 +780,6 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 
 	if (r_sub->poly)
 	{
-/*		if (!LightClip.ClipCheckSubsector(r_sub))
-		{
-			return;
-		}*/
 		//	Render the polyobj in the subsector first
 		polyCount = r_sub->poly->numsegs;
 		polySeg = r_sub->poly->segs;
@@ -817,11 +788,6 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 			RenderLightLine((*polySeg)->drawsegs);
 			polySeg++;
 		}
-	}
-
-	if (!LightClip.ClipCheckSubsector(r_sub))
-	{
-		return;
 	}
 
 	count = r_sub->numlines;
@@ -837,10 +803,6 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 
 	if (region->next && d > 0.0)
 	{
-/*		if (!LightClip.ClipCheckSubsector(r_sub))
-		{
-			return;
-		}*/
 		RenderLightSubRegion(region->next);
 	}
 	unguard;

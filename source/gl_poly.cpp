@@ -89,6 +89,7 @@ void VOpenGLDrawer::WorldDrawing()
 				//	Viewer is in back side or on plane
 				continue;
 			}
+
 			DoHorizonPolygon(surf);
 		}
 	}
@@ -107,6 +108,7 @@ void VOpenGLDrawer::WorldDrawing()
 				//	Viewer is in back side or on plane
 				continue;
 			}
+
 			glBegin(GL_POLYGON);
 			for (i = 0; i < surf->count; i++)
 			{
@@ -129,6 +131,7 @@ void VOpenGLDrawer::WorldDrawing()
 				//	Viewer is in back side or on plane
 				continue;
 			}
+
 			texinfo_t* tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
 
@@ -381,8 +384,8 @@ void VOpenGLDrawer::WorldDrawingShaders()
 				//	Viewer is in back side or on plane
 				continue;
 			}
-			glBegin(GL_POLYGON);
 
+			glBegin(GL_POLYGON);
 			for (int i = 0; i < surf->count; i++)
 			{
 				glVertex(surf->verts[i]);
@@ -783,6 +786,7 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 			//	Viewer is in back side or on plane
 			continue;
 		}
+
 		texinfo_t* tex = surf->texinfo;
 		SetTexture(tex->Tex, tex->ColourMap);
 		glBegin(GL_POLYGON);
@@ -1164,6 +1168,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		//	Viewer is in back side or on plane
 		return;
 	}
+
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex, tex->ColourMap);
 
@@ -1666,12 +1671,6 @@ void VOpenGLDrawer::DrawPortalArea(VPortal* Portal)
 		glBegin(GL_POLYGON);
 		for (int i = 0; i < Surf->count; i++)
 		{
-			float dist = DotProduct(Surf->verts[i], vieworg/*surf->plane->normal*/) - Surf->plane->dist;
-			if (dist <= 0)
-			{
-				//	Viewer is in back side or on plane
-				continue;
-			}
 			glVertex(Surf->verts[i]);
 		}
 		glEnd();

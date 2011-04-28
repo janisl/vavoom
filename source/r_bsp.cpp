@@ -328,6 +328,7 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 				//	Viewer is in back side or on plane
 				continue;
 			}
+
 			Portal->Surfs.Append(surfs);
 			if (IsStack && CheckSkyBoxAlways &&
 				SkyBox->eventSkyBoxGetPlaneAlpha())
@@ -368,6 +369,7 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 			//	Viewer is in back side or on plane
 			continue;
 		}
+
 		surfs->Light = (lLev << 24) | LightParams->LightColour;
 		surfs->Fade = Fade;
 		surfs->dlightframe = r_sub->dlightframe;
@@ -784,11 +786,6 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 		}
 	}
 
-	if (!ViewClip.ClipCheckSubsector(r_sub))
-	{
-		return;
-	}
-
 	count = r_sub->numlines;
 	drawseg_t *ds = region->lines;
 	while (count--)
@@ -802,10 +799,6 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 
 	if (region->next && d > 0.0)
 	{
-		if (!ViewClip.ClipCheckSubsector(r_sub))
-		{
-			return;
-		}
 		RenderSubRegion(region->next);
 	}
 	unguard;
