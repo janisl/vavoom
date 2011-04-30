@@ -29,6 +29,10 @@
 
 // MACROS ------------------------------------------------------------------
 
+#define outv(idx, offs) \
+			p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, offs); \
+			glArrayElement(index ## idx);
+
 // TYPES -------------------------------------------------------------------
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -718,10 +722,6 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 		{
 			int index1 = Mdl->Edges[i].Vert1;
 			int index2 = Mdl->Edges[i].Vert2;
-
-#define outv(idx, offs) \
-			p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, offs); \
-			glArrayElement(index ## idx);
 
 			glBegin(GL_TRIANGLE_STRIP);
 			if (PlaneSides[Mdl->Edges[i].Tri1])
