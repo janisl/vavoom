@@ -4,8 +4,8 @@ add_library( gme STATIC
     s_logtbl.c
     s_opl.c
     s_opltbl.c
-    blarrg_common.cpp
-    blarrg_errors.cpp
+    blargg_common.cpp
+    blargg_errors.cpp
     Resampler.cpp
     Rom_Data.cpp
     Downsampler.cpp
@@ -81,7 +81,7 @@ add_library( gme STATIC
 
     Nes_Vrc6_Apu.cpp
 
-    Nes_Impl.cpp
+    Nsf_Impl.cpp
     Nsf_Core.cpp
     Nsf_Cpu.cpp
     Nsf_Emu.cpp
@@ -104,12 +104,12 @@ add_library( gme STATIC
     Sgc_Emu.cpp
     Sgc_Impl.cpp
     Sms_Fm_Apu.cpp
-    Spc_Filter.cpp
+    SPC_Filter.cpp
     Track_Filter.cpp
     Upsampler.cpp
     Vgm_Core.cpp
     ym2413.c
-    ymdeltat.c
+    ymdeltat.cpp
     Z80_Cpu.cpp
     Spc_Cpu.cpp
 
