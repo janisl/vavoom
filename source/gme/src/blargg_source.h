@@ -44,7 +44,9 @@ static inline void blargg_dprintf_( const char [], ... ) { }
 #undef  dprintf
 #define dprintf (1) ? (void) 0 : blargg_dprintf_
 #else
+#ifdef WINDOWS
 #include <windows.h>
+#endif
 #include <stdarg.h>
 #include <stdio.h>
 static inline void blargg_dprintf_( const char * fmt, ... )
