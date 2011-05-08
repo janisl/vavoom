@@ -4571,3 +4571,8 @@
  with model shadows.
 26.04.2011
   Firebrand revised the checks and corrected a few mistakes on them.
+07.05.2011
+  Firebrand fixed some typos on GME library CMakeList.txt file, which caused compilation on Linux to fail.
+08.05.2011
+  Firebrand applied a patch file provided by inode64 that fixes more compilation errors of GME library under
+Linux.
