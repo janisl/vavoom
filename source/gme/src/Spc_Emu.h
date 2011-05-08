@@ -6,7 +6,7 @@
 
 #include "Music_Emu.h"
 #include "Snes_Spc.h"
-#include "Spc_Filter.h"
+#include "SPC_Filter.h"
 
 #if GME_SPC_FAST_RESAMPLER
 	#include "Upsampler.h"

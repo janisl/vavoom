@@ -1,6 +1,6 @@
 // Game_Music_Emu 0.6-pre. http://www.slack.net/~ant/
 
-#include "SPC_Emu.h"
+#include "Spc_Emu.h"
 
 #include "blargg_endian.h"
 
