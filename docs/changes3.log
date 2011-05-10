@@ -4576,3 +4576,6 @@
 08.05.2011
   Firebrand applied a patch file provided by inode64 that fixes more compilation errors of GME library under
 Linux.
+09.05.2011
+  Firebrand removed duplicated files from trunk and CMakeLists.txt.
+  Firebrand removed use of specific MSVC methods from blargg_source.h file.

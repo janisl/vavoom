@@ -119,8 +119,6 @@ add_library( gme STATIC
 
     Vgm_Emu.cpp
 
-    Vgm_Emu_Impl.cpp
-
     Ym2413_Emu.cpp
 
     Ym2612_Emu.cpp

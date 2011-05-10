@@ -44,7 +44,7 @@ static inline void blargg_dprintf_( const char [], ... ) { }
 #undef  dprintf
 #define dprintf (1) ? (void) 0 : blargg_dprintf_
 #else
-#ifdef WINDOWS
+#ifdef _WIN32
 #include <windows.h>
 #endif
 #include <stdarg.h>
@@ -54,9 +54,11 @@ static inline void blargg_dprintf_( const char * fmt, ... )
 	char error[512];
 	va_list vl;
 	va_start(vl, fmt);
-	vsnprintf_s( error, 511, 511, fmt, vl );
+	vsnprintf( error, 511, fmt, vl );
 	va_end(vl);
+#ifdef _WIN32
 	OutputDebugStringA( error );
+#endif
 }
 #undef  dprintf
 #define dprintf blargg_dprintf_
