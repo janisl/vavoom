@@ -1822,7 +1822,7 @@ void VSoundSeqNode::Update(float DeltaTime)
 		break;
 
 	case SSCMD_DelayOnce:
-		if (!DidDelayOnce & (1 << SequencePtr[2]))
+		if (!(DidDelayOnce & (1 << SequencePtr[2])))
 		{
 			DidDelayOnce |= 1 << SequencePtr[2];
 			DelayTime = SequencePtr[1] / 35.0;

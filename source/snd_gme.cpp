@@ -80,7 +80,7 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 : emu(in_file->new_emu()), playing(false)
 {
 	// Create emulator and set up playback parameters
-	if (!emu)
+	if (emu == NULL)
 	{
 		GCon->Log("Couldn't create Emulator, Out of memory.");
 	}

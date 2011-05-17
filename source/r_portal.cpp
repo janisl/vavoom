@@ -157,7 +157,8 @@ void VPortal::Draw(bool UseStencil)
 	TClipPlane SavedClip = view_clipplanes[4];
 	TClipPlane* SavedClipLink = view_clipplanes[3].next;
 
-	VRenderLevel::trans_sprite_t TransSprites[VRenderLevel::MAX_TRANS_SPRITES];
+	VRenderLevel::trans_sprite_t *TransSprites =
+		(VRenderLevel::trans_sprite_t *)Z_Malloc(sizeof(VRenderLevel::trans_sprite_t) * VRenderLevel::MAX_TRANS_SPRITES);
 
 	if (NeedsDepthBuffer())
 	{
@@ -165,7 +166,7 @@ void VPortal::Draw(bool UseStencil)
 		// be done only for portals that do rendering of view.
 		RLev->BspVis = new vuint8[RLev->VisSize];
 
-		memset(TransSprites, 0, sizeof(TransSprites));
+		memset(TransSprites, 0, sizeof(VRenderLevel::trans_sprite_t) * VRenderLevel::MAX_TRANS_SPRITES);
 		RLev->trans_sprites = TransSprites;
 	}
 
@@ -194,6 +195,8 @@ void VPortal::Draw(bool UseStencil)
 	Drawer->SetupViewOrg();
 
 	Drawer->EndPortal(this, UseStencil);
+
+	Z_Free(TransSprites);
 	unguard;
 }
 

@@ -428,7 +428,7 @@ superblock_t *CreateSegs(void)
       }
     }
     
-    if (line->right)
+    if (line->right != NULL)
     {
       right = CreateOneSeg(line, line->start, line->end, line->right, 0);
       AddSegToSuper(block, right);
@@ -436,12 +436,12 @@ superblock_t *CreateSegs(void)
     else
       PrintWarn("Linedef #%d has no right sidedef!\n", line->index);
 
-    if (line->left)
+    if (line->left != NULL)
     {
       left = CreateOneSeg(line, line->end, line->start, line->left, 1);
       AddSegToSuper(block, left);
       
-      if (right)
+      if (right != NULL)
       {
         // -AJA- Partner segs.  These always maintain a one-to-one
         //       correspondence, so if one of the gets split, the
@@ -463,7 +463,7 @@ superblock_t *CreateSegs(void)
       // handle the 'One-Sided Window' trick
       if (line->window_effect)
       {
-        seg_t *left = NewSeg();
+        left = NewSeg();
 
         left->start   = line->end;
         left->end     = line->start;

@@ -974,7 +974,7 @@ void VRenderLevelShared::RenderBspWorld(const refdef_t* rd, const VViewClipper* 
 
 	if (PortalLevel == 0)
 	{
-		guard(Best sky);
+		guard(VRenderLevelShared::RenderBspWorld::Best sky);
 		//	Draw the most complex sky portal behind the scene first, without
 		// the need to use stencil buffer.
 		VPortal* BestSky = NULL;
@@ -999,7 +999,7 @@ void VRenderLevelShared::RenderBspWorld(const refdef_t* rd, const VViewClipper* 
 		}
 		unguard;
 
-		guard(World surfaces);
+		guard(VRenderLevelShared::RenderBspWorld::World surfaces);
 		for (int i = 0; i < WorldSurfs.Num(); i++)
 		{
 			switch (WorldSurfs[i].Type)

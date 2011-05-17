@@ -248,6 +248,10 @@ static void SetUpLinedefs(VLevel* Level)
 	for (int i = 0; i < Level->NumLines; i++, pSrc++)
 	{
 		linedef_t* Line = NewLinedef();
+		if (Line == NULL)
+		{
+			continue;
+		}
 		Line->start = LookupVertex(pSrc->v1 - Level->Vertexes);
 		Line->end = LookupVertex(pSrc->v2 - Level->Vertexes);
 		Line->start->ref_count++;
@@ -259,17 +263,17 @@ static void SetUpLinedefs(VLevel* Level)
 		Line->two_sided = (Line->flags & LINEFLAG_TWO_SIDED) ? TRUE : FALSE;
 		Line->right = pSrc->sidenum[0] < 0 ? NULL : LookupSidedef(pSrc->sidenum[0]);
 		Line->left = pSrc->sidenum[1] < 0 ? NULL : LookupSidedef(pSrc->sidenum[1]);
-		if (Line->right)
+		if (Line->right != NULL)
 		{
 			Line->right->ref_count++;
 			Line->right->on_special |= (Line->type > 0) ? 1 : 0;
 		}
-		if (Line->left)
+		if (Line->left != NULL)
 		{
 			Line->left->ref_count++;
 			Line->left->on_special |= (Line->type > 0) ? 1 : 0;
 		}
-		Line->self_ref = (Line->left && Line->right &&
+		Line->self_ref = (Line->left != NULL && Line->right != NULL &&
 			(Line->left->sector == Line->right->sector));
 		Line->index = i;
 	}

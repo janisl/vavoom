@@ -118,7 +118,7 @@ void SV_Init()
 
 	ProcessDehackedFiles();
 
-	for (int i = 0; i < VClass::GSpriteNames.Num(); i++)
+	for (i = 0; i < VClass::GSpriteNames.Num(); i++)
 	{
 		R_InstallSprite(*VClass::GSpriteNames[i], i);
 	}
@@ -326,7 +326,7 @@ static void CheckForSkip()
 	}
 	if (skip)
 	{
-		for (int i = 0; i < svs.max_clients; i++)
+		for (i = 0; i < svs.max_clients; i++)
 			if (GGameInfo->Players[i])
 				GGameInfo->Players[i]->eventClientSkipIntermission();
 	}

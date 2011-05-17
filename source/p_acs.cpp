@@ -641,9 +641,9 @@ void VAcsObject::LoadEnhancedObject()
 	{
 		int count = LittleLong(buffer[1]) / 4;
 		buffer += 2;
-		for (int i = 0; i < count; i++, buffer++)
+		for (i = 0; i < count; i++, buffer++)
 		{
-			VAcsInfo* info = FindScript(LittleShort(((word*)buffer)[0]));
+			info = FindScript(LittleShort(((word*)buffer)[0]));
 			if (info)
 			{
 				info->Flags = LittleShort(((word*)buffer)[1]);
@@ -659,7 +659,7 @@ void VAcsObject::LoadEnhancedObject()
 		buffer += 2;
 		for (i = 0; i < count; i++, buffer++)
 		{
-			VAcsInfo* info = FindScript(LittleShort(((word*)buffer)[0]));
+			info = FindScript(LittleShort(((word*)buffer)[0]));
 			if (info)
 			{
 				info->VarCount = LittleShort(((word*)buffer)[1]);
@@ -814,7 +814,7 @@ void VAcsObject::LoadEnhancedObject()
 	buffer = (int*)FindChunk("LOAD");
 	if (buffer)
 	{
-		const char* const parse = (char*)&buffer[2];
+		char* parse = (char*)&buffer[2];
 		for (i = 0; i < LittleLong(buffer[1]); i++)
 		{
 			if (parse[i])
@@ -887,7 +887,7 @@ void VAcsObject::LoadEnhancedObject()
 			buffer = (int*)FindChunk("MIMP");
 			if (buffer)
 			{
-				char* parse = (char*)&buffer[2];
+				parse = (char*)&buffer[2];
 				for (j = 0; j < LittleLong(buffer[1]); j++)
 				{
 					int varNum = LittleLong(*(int*)&parse[j]);
@@ -905,7 +905,7 @@ void VAcsObject::LoadEnhancedObject()
 			if (NumTotalArrays > NumArrays)
 			{
 				buffer = (int*)FindChunk("AIMP");
-				char* parse = (char*)&buffer[3];
+				parse = (char*)&buffer[3];
 				for (j = 0; j < LittleLong(buffer[2]); j++)
 				{
 					int varNum = LittleLong(*(int*)parse);
@@ -1963,7 +1963,9 @@ int VAcs::RunScript(float DeltaTime)
 	{
 		DelayTime -= DeltaTime;
 		if (DelayTime < 0)
+		{
 			DelayTime = 0;
+		}
 		return 1;
 	}
 
@@ -1975,7 +1977,7 @@ int VAcs::RunScript(float DeltaTime)
 
 	VStr PrintStr;
 	vint32 resultValue = 1;
-	vint32 stack[ACS_STACK_DEPTH];
+	vint32 *stack = (vint32 *)Z_Malloc(ACS_STACK_DEPTH);
 	vint32* optstart = NULL;
 	vint32* locals = LocalVars;
 	VAcsFunction* activeFunction = NULL;
@@ -5050,6 +5052,7 @@ int VAcs::RunScript(float DeltaTime)
 			Host_Error("Illegal ACS opcode %d", cmd);
 		}
 	} while  (action == SCRIPT_Continue);
+
 #if USE_COMPUTED_GOTO
 LblFuncStop:
 #endif
@@ -5062,6 +5065,8 @@ LblFuncStop:
 		}
 		DestroyThinker();
 	}
+
+	Z_Free(stack);
 	return resultValue;
 	unguard;
 }

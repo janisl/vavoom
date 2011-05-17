@@ -1089,7 +1089,7 @@ lump_t *CreateGLLump(const char *name)
   gl_level = wad.current_level->lev_info->buddy;
 
   // check if already exists
-  for (cur=gl_level->lev_info->children; cur; cur=cur->next)
+  for (cur=gl_level->lev_info->children; cur != NULL; cur=cur->next)
   {
     if (strcmp(name, cur->name) == 0)
       break;

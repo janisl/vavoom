@@ -1724,16 +1724,16 @@ static void ParseAction(VScriptParser* sc, VClass* Class)
 	//	Find the method. First try with decorate_ prefix, then without.
 	sc->ExpectIdentifier();
 	VMethod* M = Class->FindMethod(va("decorate_%s", *sc->String));
-	if (!M)
+	if (M == NULL)
 	{
 		M = Class->FindMethod(*sc->String);
 	}
-	if (!M)
+	if (M == NULL)
 	{
 		sc->Error(va("Method %s not found in class %s", *sc->String,
 			Class->GetName()));
 	}
-	if (M->ReturnType.Type != TYPE_Void)
+	if (M != NULL && M->ReturnType.Type != TYPE_Void)
 	{
 		sc->Error(va("State action %s doesn't return void", *sc->String));
 	}
@@ -2196,8 +2196,8 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 
 		for (size_t i = 1; i < FramesString.Length(); i++)
 		{
-			char FChar = VStr::ToUpper(FramesString[i]);
-			if (FChar < 'A' || FChar > ']')
+			char FSChar = VStr::ToUpper(FramesString[i]);
+			if (FSChar < 'A' || FSChar > ']')
 			{
 				sc->Error("Frames must be A-Z, [, \\ or ]");
 			}
@@ -2207,7 +2207,7 @@ static bool ParseStates(VScriptParser* sc, VClass* Class,
 				sc->GetLoc());
 			States.Append(s2);
 			s2->SpriteName = State->SpriteName;
-			s2->Frame = (State->Frame & VState::FF_FULLBRIGHT) | (FChar - 'A');
+			s2->Frame = (State->Frame & VState::FF_FULLBRIGHT) | (FSChar - 'A');
 			s2->Time = State->Time;
 			s2->Misc1 = State->Misc1;
 			s2->Misc2 = State->Misc2;
@@ -2238,7 +2238,7 @@ static void ParseParentState(VScriptParser* sc, VClass* Class,
 {
 	guard(ParseParentState);
 	TLocation TmpLoc = sc->GetLoc();
-	VState* State;
+	VState* State = NULL;
 	//	If there's a string token on next line, it gets eaten. Is this a bug?
 	if (sc->GetString() && !sc->Crossed)
 	{
@@ -2322,7 +2322,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	}
 
 	VClass* DupCheck = VClass::FindClassLowerCase(*NameStr.ToLower());
-	if (DupCheck && DupCheck->MemberType == MEMBER_Class)
+	if (DupCheck != NULL && DupCheck->MemberType == MEMBER_Class)
 	{
 		sc->Message(va("Warning: Redeclared class %s", *NameStr));
 	}
@@ -2353,11 +2353,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	if (ParentStr.IsNotEmpty())
 	{
 		ParentClass = VClass::FindClassLowerCase(*ParentStr.ToLower());
-		if (!ParentClass || ParentClass->MemberType != MEMBER_Class)
+		if (ParentClass == NULL || ParentClass->MemberType != MEMBER_Class)
 		{
 			sc->Error(va("Parent class %s not found", *ParentStr));
 		}
-		if (!ParentClass->IsChildOf(ActorClass))
+		if (ParentClass != NULL && !ParentClass->IsChildOf(ActorClass))
 		{
 			sc->Error(va("Parent class %s is not an actor class", *ParentStr));
 		}
@@ -2389,11 +2389,11 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 	{
 		sc->ExpectString();
 		ReplaceeClass = VClass::FindClassLowerCase(*sc->String.ToLower());
-		if (!ReplaceeClass || ReplaceeClass->MemberType != MEMBER_Class)
+		if (ReplaceeClass == NULL || ReplaceeClass->MemberType != MEMBER_Class)
 		{
 			sc->Error(va("Replaced class %s not found", *sc->String));
 		}
-		if (!ReplaceeClass->IsChildOf(ActorClass))
+		if (ReplaceeClass != NULL && !ReplaceeClass->IsChildOf(ActorClass))
 		{
 			sc->Error(va("Replaced class %s is not an actor class", *sc->String));
 		}
@@ -2627,7 +2627,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 						//	Check pain chances array for replacements.
 						TArray<VPainChanceInfo>& PainChances = GetClassPainChances(Class);
 						VPainChanceInfo* PC = NULL;
-						for (int i = 0; i < PainChances.Num(); i++)
+						for (i = 0; i < PainChances.Num(); i++)
 						{
 							if (PainChances[i].DamageType == DamageType)
 							{
@@ -2652,7 +2652,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					if (!sc->CheckFloat())
 					{
 						sc->ExpectString();
-						VName DamageType = !sc->String.ICmp("Normal") ? NAME_None :
+						DamageType = !sc->String.ICmp("Normal") ? NAME_None :
 							VName(*sc->String);
 						sc->Expect(",");
 						sc->ExpectFloat();
@@ -2661,7 +2661,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					//	Check damage factors array for replacements.
 					TArray<VDamageFactor> DamageFactors = GetClassDamageFactors(Class);
 					VDamageFactor* DF = NULL;
-					for (int i = 0; i < DamageFactors.Num(); i++)
+					for (i = 0; i < DamageFactors.Num(); i++)
 					{
 						if (DamageFactors[i].DamageType == DamageType)
 						{
@@ -2896,13 +2896,13 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					}
 					break;
 				case PROP_ClearFlags:
-					for (int j = 0; j < FlagList.Num(); j++)
+					for (j = 0; j < FlagList.Num(); j++)
 					{
 						if (FlagList[j].Class != ActorClass)
 						{
 							continue;
 						}
-						for (int i = 0; i < FlagList[j].Flags.Num(); i++)
+						for (i = 0; i < FlagList[j].Flags.Num(); i++)
 						{
 							VFlagDef& F = FlagList[j].Flags[i];
 							switch (F.Type)
@@ -2981,7 +2981,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 					break;
 				}
 				case PROP_Args:
-					for (int i = 0; i < 5; i++)
+					for (i = 0; i < 5; i++)
 					{
 						sc->ExpectNumber();
 						P.Field->SetInt(DefObj, sc->Number, i);

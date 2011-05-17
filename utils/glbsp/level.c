@@ -255,7 +255,7 @@ void GetVertices(void)
   PrintDebug("GetVertices: num = %d\n", count);
 # endif
 
-  if (!lump || count == 0)
+  if (lump == NULL || count == 0)
     FatalError("Couldn't find any Vertices");
 
   raw = (raw_vertex_t *) lump->data;
@@ -287,7 +287,7 @@ void GetSectors(void)
   if (lump)
     count = lump->length / sizeof(raw_sector_t);
 
-  if (!lump || count == 0)
+  if (lump == NULL || count == 0)
     FatalError("Couldn't find any Sectors");
 
   DisplayTicker();
@@ -420,7 +420,7 @@ void GetSidedefs(void)
   if (lump)
     count = lump->length / sizeof(raw_sidedef_t);
 
-  if (!lump || count == 0)
+  if (lump == NULL || count == 0)
     FatalError("Couldn't find any Sidedefs");
 
   DisplayTicker();
@@ -517,19 +517,19 @@ void GetLinedefs(void)
     line->right = SafeLookupSidedef(UINT16(raw->sidedef1));
     line->left  = SafeLookupSidedef(UINT16(raw->sidedef2));
 
-    if (line->right)
+    if (line->right != NULL)
     {
       line->right->ref_count++;
       line->right->on_special |= (line->type > 0) ? 1 : 0;
     }
 
-    if (line->left)
+    if (line->left != NULL)
     {
       line->left->ref_count++;
       line->left->on_special |= (line->type > 0) ? 1 : 0;
     }
 
-    line->self_ref = (line->left && line->right &&
+    line->self_ref = (line->left != NULL && line->right != NULL &&
         (line->left->sector == line->right->sector));
 
     line->index = i;
@@ -593,7 +593,7 @@ void GetLinedefsHexen(void)
     line->left  = SafeLookupSidedef(UINT16(raw->sidedef2));
 
     // -JL- Added missing sidedef handling that caused all sidedefs to be pruned
-    if (line->right)
+    if (line->right != NULL)
     {
       line->right->ref_count++;
       line->right->on_special |= (line->type > 0) ? 1 : 0;
@@ -605,7 +605,7 @@ void GetLinedefsHexen(void)
       line->left->on_special |= (line->type > 0) ? 1 : 0;
     }
 
-    line->self_ref = (line->left && line->right &&
+    line->self_ref = (line->left != NULL && line->right != NULL &&
         (line->left->sector == line->right->sector));
 
     line->index = i;
@@ -1673,13 +1673,13 @@ void PutGLChecksum(void)
 
   lump = FindLevelLump("VERTEXES");
 
-  if (lump && lump->length > 0)
-    Adler32_AddBlock(&crc, lump->data, lump->length);
+  if (lump != NULL && lump->length > 0)
+    Adler32_AddBlock(&crc, (const uint8_g*)lump->data, lump->length);
 
   lump = FindLevelLump("LINEDEFS");
 
-  if (lump && lump->length > 0)
-    Adler32_AddBlock(&crc, lump->data, lump->length);
+  if (lump != NULL && lump->length > 0)
+    Adler32_AddBlock(&crc, (const uint8_g*)lump->data, lump->length);
 
   Adler32_Finish(&crc);
 

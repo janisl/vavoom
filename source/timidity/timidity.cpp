@@ -65,7 +65,7 @@ static int read_config_file(const char* name)
 		else if (*w[0] == '#')
 			continue;
 
-		while (w[words] && *w[words] != '#' && (words < MAXWORDS))
+		while (w[words] != NULL && *w[words] != '#' && (words < MAXWORDS))
 			w[++words]=strtok(0," \t\n\r\240");
 
 		/*

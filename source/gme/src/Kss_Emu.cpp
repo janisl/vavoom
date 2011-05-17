@@ -246,20 +246,20 @@ blargg_err_t Kss_Emu::load_( Data_Reader& in )
 			check( !core.msx.scc );
 			CHECK_ALLOC( core.msx.scc = BLARGG_NEW Scc_Apu );
 
-			int const osc_count = Ay_Apu::osc_count + Scc_Apu::osc_count;
-			static const char* const names [osc_count] = {
+			int const osc_count2 = Ay_Apu::osc_count + Scc_Apu::osc_count;
+			static const char* const names2 [osc_count2] = {
 				"Square 1", "Square 2", "Square 3",
 				"Wave 1", "Wave 2", "Wave 3", "Wave 4", "Wave 5"
 			};
-			set_voice_names( names );
+			set_voice_names( names2 );
 
-			static int const types [osc_count] = {
+			static int const types2 [osc_count2] = {
 				wave_type+1, wave_type+3, wave_type+2,
 				wave_type+0, wave_type+4, wave_type+5, wave_type+6, wave_type+7,
 			};
-			set_voice_types( types );
+			set_voice_types( types2 );
 
-			set_voice_count( osc_count );
+			set_voice_count( osc_count2 );
 		}
 	}
 

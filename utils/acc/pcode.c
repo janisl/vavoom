@@ -683,8 +683,6 @@ static void CloseNew(void)
 	STR_WriteListChunk(STRLIST_PICS, MAKE4CC('P','I','C','S'), NO);
 	if(MapVariablesInit)
 	{
-		int j;
-
 		for(i = 0; i < pa_MapVarCount; ++i)
 		{
 			if(MapVariables[i].initializer != 0)
@@ -799,8 +797,6 @@ static void CloseNew(void)
 
 	if(NumArrays)
 	{
-		int count;
-
 		// Arrays defined here
 		for(count = 0, i = 0; i < pa_MapVarCount; ++i)
 		{
@@ -825,8 +821,6 @@ static void CloseNew(void)
 			{
 				if(ArrayInits[i])
 				{
-					int j;
-
 					PC_Append("AINI", 4);
 					PC_AppendInt(ArraySizes[i]*4+4);
 					PC_AppendInt((U_INT)i);

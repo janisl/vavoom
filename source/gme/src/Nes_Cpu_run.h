@@ -1035,7 +1035,7 @@ imm##op:
 		static unsigned char const illop_lens [8] = {
 			0x40, 0x40, 0x40, 0x80, 0x40, 0x40, 0x80, 0xA0
 		};
-		int opcode = instr [-1];
+		opcode = instr [-1];
 		int len = illop_lens [opcode >> 2 & 7] >> (opcode << 1 & 6) & 3;
 		if ( opcode == 0x9C )
 			len = 2;

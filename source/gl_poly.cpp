@@ -672,7 +672,7 @@ void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, f
 	}
 	v.SetNum(surf->count);
 
-	for (int i = 0; i < surf->count; i++)
+	for (i = 0; i < surf->count; i++)
 	{
 		v[i] = Normalise(surf->verts[i] - LightPos);
 		v[i] *= M_INFINITY;
@@ -1669,9 +1669,9 @@ void VOpenGLDrawer::DrawPortalArea(VPortal* Portal)
 	{
 		const surface_t* Surf = Portal->Surfs[i];
 		glBegin(GL_POLYGON);
-		for (int i = 0; i < Surf->count; i++)
+		for (int j = 0; j < Surf->count; j++)
 		{
-			glVertex(Surf->verts[i]);
+			glVertex(Surf->verts[j]);
 		}
 		glEnd();
 	}

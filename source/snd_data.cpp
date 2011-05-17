@@ -172,7 +172,7 @@ void VSoundManager::Init()
 
 	//	Load script SNDSEQ
 	memset(SeqTrans, -1, sizeof(SeqTrans));
-	for (int Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
+	for (Lump = W_IterateNS(-1, WADNS_Global); Lump >= 0;
 		Lump = W_IterateNS(Lump, WADNS_Global))
 	{
 		if (W_LumpName(Lump) == NAME_sndseq)

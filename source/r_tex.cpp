@@ -1831,7 +1831,7 @@ void R_AnimateSurfaces()
 		}
 		else
 		{
-			for (int i = 0; i < ad.NumFrames; i++)
+			for (i = 0; i < ad.NumFrames; i++)
 			{
 				GTextureManager[ad.Index + i]->TextureTranslation =
 					ad.Index + (ad.CurrentFrame + i) % ad.NumFrames;

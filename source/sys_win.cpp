@@ -645,7 +645,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 			VStr::Length(Host_GetCoreDump()) + 4];
 		sprintf(tmp_msg, "%s\n\n%s", e.message, Host_GetCoreDump());
 		MessageBox(hwnd, tmp_msg, "Error", MB_OK);
-		delete tmp_msg;
+		delete[] tmp_msg;
 		tmp_msg = NULL;
 
 		SendMessage(hwnd, WM_CLOSE, 0, 0);
@@ -662,7 +662,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 		tmp_msg = new char[VStr::Length(Host_GetCoreDump()) + 32];
 		sprintf(tmp_msg, "Received external exception\n\n%s", Host_GetCoreDump());
 		MessageBox(hwnd, tmp_msg, "Error", MB_OK);
-		delete tmp_msg;
+		delete[] tmp_msg;
 		tmp_msg = NULL;
 
 //		throw;

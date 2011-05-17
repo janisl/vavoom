@@ -358,7 +358,7 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 	int		w, h;
 	vuint8*	image;
 	int		level;
-	vuint8	stackbuf[256 * 128 * 4];
+	vuint8*	stackbuf = (vuint8 *)Z_Malloc(256 * 128 * 4);
 
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
@@ -408,5 +408,6 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 	{
 		Z_Free(image);
 	}
+	Z_Free(stackbuf);
 	unguard;
 }

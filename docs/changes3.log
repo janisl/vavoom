@@ -4579,3 +4579,17 @@ Linux.
 09.05.2011
   Firebrand removed duplicated files from trunk and CMakeLists.txt.
   Firebrand removed use of specific MSVC methods from blargg_source.h file.
+10.05.2011
+  Firebrand improved rendering of fake floors.
+11.05.2011
+  Firebrand fixed some compilation errors in common.h and enabled using typedefs for vint types.
+  Firebrand added a HAVE_STDINT_H define in blargg_common.h, to allow the use of stdint.h file when compiling.
+12.05.2011
+  Firebrand fixed a crash when Direct3D renderer updated camera textures.
+  Firebrand ran the code analysis tool from MSVC on Vavoom project and fixed some warnings, which seem to
+ improve performance.
+13.05.2011
+  Firebrand continues fixing some more warnings from the code analysis tool.
+16.05.2011
+  Firebrand fixed the remaining warnings from the code analysis tool.
+  Firebrand made the engine use srand method to seed a value to further randomize the random number generator.

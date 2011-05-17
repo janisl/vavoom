@@ -105,6 +105,7 @@ we strip it out unless BLARGG_LEGACY is true. */
 	#define BLARGG_DEPRECATED(      text )
 #endif
 
+#define HAVE_STDINT_H
 /* BOOST::int8_t, BOOST::int32_t, etc.
 I used BOOST since I originally was going to allow use of the boost library
 for prividing the definitions. If I'm defining them, they must be scoped or
@@ -124,13 +125,8 @@ global scope already. */
 		typedef unsigned short   uint16_t;
 		typedef int               int32_t;
 		typedef unsigned int     uint32_t;
-#ifdef _MSC_VER 
 	    typedef __int64           int64_t;
 		typedef unsigned __int64 uint64_t;
-#else
-        typedef long long int int64_t;
-        typedef unsigned long long int uint64_t;
-#endif 
 	};
 #endif
 

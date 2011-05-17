@@ -73,13 +73,13 @@ VEmitContext::VEmitContext(VMemberBase* Member)
 	SelfClass = (VClass*)CM;
 
 	VMemberBase* PM = Member;
-	while (PM && PM->MemberType != MEMBER_Package)
+	while (PM != NULL && PM->MemberType != MEMBER_Package)
 	{
 		PM = PM->Outer;
 	}
 	Package = (VPackage*)PM;
 
-	if (Member->MemberType == MEMBER_Method)
+	if (Member != NULL && Member->MemberType == MEMBER_Method)
 	{
 		CurrentFunc = (VMethod*)Member;
 		CurrentFunc->Instructions.Clear();

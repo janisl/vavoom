@@ -583,7 +583,7 @@ VField* VClass::FindField(VName Name, TLocation l, VClass* SelfClass)
 {
 	guard(VClass::FindField);
 	VField* F = FindField(Name);
-	if (F && (F->Flags & FIELD_Private) && this != SelfClass)
+	if (F != NULL && (F->Flags & FIELD_Private) && this != SelfClass)
 	{
 		ParseError(l, "Field %s is private", *F->Name);
 	}
@@ -1335,14 +1335,17 @@ void VClass::SetStateLabel(const TArray<VName>& Names, VState* State)
 				break;
 			}
 		}
-		if (!Lbl)
+		if (Lbl == NULL)
 		{
 			Lbl = &List->Alloc();
 			Lbl->Name = Names[ni];
 		}
 		List = &Lbl->SubLabels;
 	}
-	Lbl->State = State;
+	if (Lbl != NULL)
+	{
+		Lbl->State = State;
+	}
 	unguard;
 }
 

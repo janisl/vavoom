@@ -507,7 +507,7 @@ static bool AM_clearMarks()
 {
 	int	i;
 
-	for (i = AM_NUMMARKPOINTS; i >= 0; i--)
+	for (i = AM_NUMMARKPOINTS - 1; i >= 0; i--)
 		markpoints[i].x = -1.0; // means empty
 	markpointnum = 0;
 	return marknums[0] != -1;

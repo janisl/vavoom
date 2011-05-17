@@ -237,7 +237,7 @@ void VRootWidget::MouseMoveEvent(int NewX, int NewY)
 	float ScaledNewX = MouseX * SizeScaleX;
 	float ScaledNewY = MouseY * SizeScaleY;
 	VWidget* OldFocus = GetWidgetAt(ScaledOldX, ScaledOldY);
-	for (VWidget* W = OldFocus; W; W = W->ParentWidget)
+	for (VWidget* W = OldFocus; W != NULL; W = W->ParentWidget)
 	{
 		if (W->OnMouseMove(
 			(int)((ScaledOldX - W->ClipRect.OriginX) / W->ClipRect.ScaleX),
@@ -249,7 +249,7 @@ void VRootWidget::MouseMoveEvent(int NewX, int NewY)
 		}
 	}
 	VWidget* NewFocus = GetWidgetAt(ScaledNewX, ScaledNewY);
-	if (OldFocus != NewFocus)
+	if (OldFocus != NULL && OldFocus != NewFocus)
 	{
 		OldFocus->WidgetFlags &= ~(WF_LMouseDown | WF_MMouseDown |
 			WF_RMouseDown);

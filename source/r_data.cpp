@@ -1650,6 +1650,12 @@ static void ParseGZDoomEffectDefs(VScriptParser* sc,
 		}
 		else if (sc->Check("skybox"))
 		{
+			sc->GetString();
+			sc->Expect("{");
+			while (!sc->Check("}"))
+			{
+				sc->GetString();
+			}
 			sc->Message("Skybox parsing isn't implemented yet.");
 		}
 		else if (sc->Check("brightmap"))

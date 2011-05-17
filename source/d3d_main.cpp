@@ -260,8 +260,11 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 			if (!SUCCEEDED(RenderDevice->CreateOffscreenPlainSurface(16, 16, BPP == 32 ? D3DFMT_A8R8G8B8 : D3DFMT_A1R5G5B5,
 				D3DPOOL_DEFAULT, &DXBlockSurface[1], 0)))
 			{
-				DXBlockSurface[0]->Release();
-				DXBlockSurface[0] = NULL;
+				if (DXBlockSurface[0] != NULL)
+				{
+					DXBlockSurface[0]->Release();
+					DXBlockSurface[0] = NULL;
+				}
 			}
 		}
 	}
@@ -776,11 +779,20 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 {
 	guard(VDirect3DDrawer::ReadBackScreen);
-	LPDIRECT3DSURFACE9 surf;
-	RenderDevice->GetRenderTarget(0, &surf);
+    //  GetRenderTarget method cannot retrieve data from a surface that is 
+	//  contained by a texture resource created with D3DUSAGE_RENDERTARGET
+	//  because such a texture must be assigned to D3DPOOL_DEFAULT memory
+	//  and is therefore not lockable. In this case, use instead
+	//  IDirect3DDevice9::GetRenderTargetData to copy texture data
+	//  from device memory to system memory.
+	IDirect3DSurface9* rend;
+	IDirect3DSurface9* surf;
+	RenderDevice->GetRenderTarget (0, &rend);
+//	LPDIRECT3DSURFACE9 surf;
+//	RenderDevice->GetRenderTarget(0, &surf);
 
 	D3DSURFACE_DESC desc;
-	surf->GetDesc(&desc);
+	rend->GetDesc(&desc);
 
 	//	Decode pixel format
 	int scr_rbits;
@@ -833,6 +845,8 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 			return;
 		}
 	}
+	RenderDevice->CreateOffscreenPlainSurface(ScreenWidth, ScreenHeight, D3DFMT_X8R8G8B8, D3DPOOL_SYSTEMMEM, &surf, NULL);
+	RenderDevice->GetRenderTargetData(rend, surf);
 
 	D3DLOCKED_RECT lrect;
 	if (FAILED(surf->LockRect(&lrect, NULL, D3DLOCK_READONLY)))
@@ -857,6 +871,7 @@ void VDirect3DDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 
 	surf->UnlockRect();
 	surf->Release();
+	rend->Release();
 	unguard;
 }
 

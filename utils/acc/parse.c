@@ -1884,7 +1884,7 @@ static void ProcessInternFunc(symbolNode_t *sym)
 						}
 						else
 						{
-							symbolNode_t *sym = DemandSymbol (tk_String);
+							sym = DemandSymbol (tk_String);
 							PC_AppendCmd (PCD_PUSHNUMBER);
 							switch (sym->type)
 							{
@@ -3873,7 +3873,7 @@ static void ParseArrayIndices(symbolNode_t *sym, int requiredIndices)
 	// if there were unspecified indices, multiply the offset by their sizes [JB]
 	if(requiredIndices < sym->info.array.ndim - 1)
 	{
-		int i, mult = 1;
+		int mult = 1;
 		for(i = 0; i < sym->info.array.ndim - requiredIndices - 1; ++i)
 		{
 			mult *= sym->info.array.dimensions[sym->info.array.ndim - 2 - i];
@@ -4018,18 +4018,18 @@ static symbolNode_t *SpeculateSymbol(char *name, boolean hasReturn)
 	sym = SY_Find(name);
 	if(sym == NULL)
 	{
-		char name[MAX_IDENTIFIER_LENGTH];
+		char v_name[MAX_IDENTIFIER_LENGTH];
 
-		strcpy (name, tk_String);
+		strcpy (v_name, tk_String);
 		TK_NextToken();
 		if(tk_Token == TK_LPAREN)
 		{ // Looks like a function call
-			sym = SpeculateFunction(name, hasReturn);
+			sym = SpeculateFunction(v_name, hasReturn);
 			TK_Undo();
 		}
 		else
 		{
-			ERR_Exit(ERR_UNKNOWN_IDENTIFIER, YES, name);
+			ERR_Exit(ERR_UNKNOWN_IDENTIFIER, YES, v_name);
 		}
 	}
 	return sym;

@@ -186,7 +186,7 @@ void VThinkerChannel::Update()
 	{
 		Thinker->ThinkerFlags |= VThinker::TF_NetInitial;
 	}
-	if (Ent && Ent->GetTopOwner() == Connection->Owner->MO)
+	if (Ent != NULL && Ent->GetTopOwner() == Connection->Owner->MO)
 	{
 		Thinker->ThinkerFlags |= VThinker::TF_NetOwner;
 	}

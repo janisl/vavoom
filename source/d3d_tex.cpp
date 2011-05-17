@@ -377,7 +377,7 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const r
 	guard(VDirect3DDrawer::UploadTexture);
 	int						w, h;
 	vuint8					*image;
-	vuint8					stackbuf[256 * 128 * 4];
+	vuint8					*stackbuf = (vuint8 *)Z_Malloc(256 * 128 * 4);
 	LPDIRECT3DTEXTURE9		surf;
 	UINT					level;
 
@@ -433,6 +433,7 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const r
 	{
 		Z_Free(image);
 	}
+	Z_Free(stackbuf);
 	return surf;
 	unguard;
 }

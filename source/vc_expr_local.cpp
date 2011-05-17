@@ -120,7 +120,7 @@ void VLocalDecl::Declare(VEmitContext& ec)
 		}
 
 		e.TypeExpr = e.TypeExpr->ResolveAsType(ec);
-		if (!e.TypeExpr)
+		if (e.TypeExpr == NULL)
 		{
 			continue;
 		}

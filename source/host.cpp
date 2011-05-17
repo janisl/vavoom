@@ -30,6 +30,7 @@
 #include "cl_local.h"
 #include "ui.h"
 #include "svnrev.h"
+#include <time.h>
 
 // MACROS ------------------------------------------------------------------
 
@@ -134,6 +135,10 @@ void Host_Init()
 #else
 	OpenDebugFile("basev/debug.txt");
 #endif
+
+   // Seed the random-number generator with the current time so that
+   // the numbers will be different every time we run.
+   srand((unsigned)time(NULL));
 
 	// init subsystems
 
@@ -377,10 +382,10 @@ void Host_Frame()
 		if (GGameInfo->NetMode != NM_None &&
 			GGameInfo->NetMode != NM_Client)
 		{
-clock(host_cycles[0]);
+clock_cycle(host_cycles[0]);
 			//	Server operations
 			ServerFrame(host_frametics);
-unclock(host_cycles[0]);
+unclock_cycle(host_cycles[0]);
 		}
 #endif
 

@@ -525,6 +525,13 @@ void VRenderLevelShared::UpdateSecSurface(sec_surface_t *ssurf,
 		return;
 	}
 
+	float dist = DotProduct(vieworg, plane->normal) - plane->dist;
+	if (dist <= 0)
+	{
+		//	Viewer is in back side or on plane
+		return;
+	}
+
 	if (plane != RealPlane)
 	{
 		//	Check for sky changes.
@@ -1366,6 +1373,13 @@ void VRenderLevelShared::UpdateDrawSeg(drawseg_t* dseg, bool ShouldClip)
 		return;
 	}
 
+	float dist = DotProduct(vieworg, seg->normal) - seg->dist;
+	if (dist <= 0)
+	{
+		//	Viewer is in back side or on plane
+		return;
+	}
+
 	side_t* sidedef = seg->sidedef;
 	line_t* linedef = seg->linedef;
 
@@ -2197,6 +2211,11 @@ void VAdvancedRenderLevel::UpdateSubsector(int num, float *bbox)
 		return;
 	}
 
+	if (!ViewClip.ClipCheckSubsector(r_sub))
+	{
+		return;
+	}
+
 	bbox[2] = r_sub->sector->floor.minz;
 	if (IsSky(&r_sub->sector->ceiling))
 	{
@@ -2207,7 +2226,9 @@ void VAdvancedRenderLevel::UpdateSubsector(int num, float *bbox)
 		bbox[5] = r_sub->sector->ceiling.maxz;
 	}
 
-	UpdateSubRegion(r_sub->regions, false);
+	UpdateSubRegion(r_sub->regions, true);
+
+	ViewClip.ClipAddSubsectorSegs(r_sub);
 	unguard;
 }
 
@@ -2230,34 +2251,37 @@ void VRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 		return;
 	}
 
+	if (bspnum == -1)
+	{
+		UpdateSubsector(0, bbox);
+		return;
+	}
+
 	// Found a subsector?
-	if (bspnum & NF_SUBSECTOR)
+	if (!(bspnum & NF_SUBSECTOR))
 	{
-		if (bspnum == -1)
+		node_t* bsp = &Level->Nodes[bspnum];
+
+		if (bsp->VisFrame != r_visframecount)
 		{
-			UpdateSubsector(0, bbox);
+			return;
 		}
-		else
+
+		// Decide which side the view point is on.
+		int side = bsp->PointOnSide(vieworg);
+
+		UpdateBSPNode(bsp->children[side], bsp->bbox[side]);
+		bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
+		bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
+		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
 		{
-			UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
+			return;
 		}
+		UpdateBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
 		return;
 	}
 
-	node_t* bsp = &Level->Nodes[bspnum];
-
-	if (bsp->VisFrame != r_visframecount)
-	{
-		return;
-	}
-
-	// Decide which side the view point is on.
-	int side = bsp->PointOnSide(vieworg);
-
-	UpdateBSPNode(bsp->children[side], bsp->bbox[side]);
-	UpdateBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
-	bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
-	bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
+	UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
 	unguard;
 }
 
@@ -2270,29 +2294,42 @@ void VRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 void VAdvancedRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 {
 	guard(VAdvancedRenderLevel::UpdateBSPNode);
-	// Found a subsector?
-	if (bspnum & NF_SUBSECTOR)
+	if (ViewClip.ClipIsFull())
 	{
-		if (bspnum == -1)
-		{
-			UpdateSubsector(0, bbox);
-		}
-		else
-		{
-			UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
-		}
 		return;
 	}
 
-	node_t* bsp = &Level->Nodes[bspnum];
+	if (!ViewClip.ClipIsBBoxVisible(bbox))
+	{
+		return;
+	}
 
-	// Decide which side the view point is on.
-	int side = bsp->PointOnSide(vieworg);
+	if (bspnum == -1)
+	{
+		UpdateSubsector(0, bbox);
+		return;
+	}
 
-	UpdateBSPNode(bsp->children[side], bsp->bbox[side]);
-	UpdateBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
-	bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
-	bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
+	// Found a subsector?
+	if (!(bspnum & NF_SUBSECTOR))
+	{
+		node_t* bsp = &Level->Nodes[bspnum];
+
+		// Decide which side the view point is on.
+		int side = bsp->PointOnSide(vieworg);
+
+		UpdateBSPNode(bsp->children[side], bsp->bbox[side]);
+		bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
+		bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
+		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
+		{
+			return;
+		}
+		UpdateBSPNode(bsp->children[side ^ 1], bsp->bbox[side ^ 1]);
+		return;
+	}
+
+	UpdateSubsector(bspnum & (~NF_SUBSECTOR), bbox);
 	unguard;
 }
 
@@ -2316,12 +2353,12 @@ bool VRenderLevelShared::CopyPlaneIfValid(sec_plane_t* dest,
 	}
 	else if (opp->normal != -dest->normal)
 	{
-		if (source->dist > dest->dist)
+		if (source->dist < dest->dist)
 		{
 			copy = true;
 		}
 	}
-	else if (source->dist > dest->dist && source->dist < -opp->dist)
+	else if (source->dist < dest->dist && source->dist > -opp->dist)
 	{
 		copy = true;
 	}
@@ -2361,7 +2398,7 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 		//(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg));
 		(s && vieworg.z <= s->floor.GetPointZ(vieworg));
 	bool doorunderwater = false;
-	int diffTex = !!(s->SectorFlags & sector_t::SF_ClipFakePlanes);
+	int diffTex = !!(s && s->SectorFlags & sector_t::SF_ClipFakePlanes);
 
 	// Replace sector being drawn with a copy to be hacked
 	fakefloor_t* ff = sec->fakefloors;
@@ -2376,7 +2413,7 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 		{
 			ff->floorplane.pic = s->floor.pic;
 		}
-		else if (s->SectorFlags & sector_t::SF_FakeFloorOnly)
+		else if (s && s->SectorFlags & sector_t::SF_FakeFloorOnly)
 		{
 			if (underwater)
 			{
@@ -2404,11 +2441,14 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 	}
 	else
 	{
-		ff->floorplane.normal = s->floor.normal;
-		ff->floorplane.dist = s->floor.dist;
+		if (s)
+		{
+			ff->floorplane.normal = s->floor.normal;
+			ff->floorplane.dist = s->floor.dist;
+		}
 	}
 
-	if (!(s->SectorFlags & sector_t::SF_FakeFloorOnly))
+	if (s && !(s->SectorFlags & sector_t::SF_FakeFloorOnly))
 	{
 		if (diffTex)
 		{
@@ -2429,24 +2469,32 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 //	float orgflorz = sec->floor.GetPointZ(viewx, viewy);
 	float orgceilz = sec->ceiling.GetPointZ(vieworg);
 
-#if 0//1
+#if 1
 	// [RH] Allow viewing underwater areas through doors/windows that
 	// are underwater but not in a water sector themselves.
 	// Only works if you cannot see the top surface of any deep water
 	// sectors at the same time.
-	if (back && !r_fakingunderwater && curline->frontsector->heightsec == NULL)
+	if (s)
 	{
-		if (rw_frontcz1 <= s->floorplane.ZatPoint (curline->v1->x, curline->v1->y) &&
-			rw_frontcz2 <= s->floorplane.ZatPoint (curline->v2->x, curline->v2->y))
+		for (int i = 0; i < sec->linecount; i++)
 		{
-			// Check that the window is actually visible
-			for (int z = WallSX1; z < WallSX2; ++z)
+			float rw_frontcz1 = sec->ceiling.GetPointZ (sec->lines[i]->v1->x, sec->lines[i]->v1->y);
+			float rw_frontcz2 = sec->ceiling.GetPointZ (sec->lines[i]->v2->x, sec->lines[i]->v2->y);
+
+			if (/*back && !r_fakingunderwater &&*/ !s->lines[i]->frontsector->heightsec)
 			{
-				if (floorclip[z] > ceilingclip[z])
+				if (rw_frontcz1 <= s->floor.GetPointZ (sec->lines[i]->v1->x, sec->lines[i]->v1->y) &&
+					rw_frontcz2 <= s->floor.GetPointZ (sec->lines[i]->v2->x, sec->lines[i]->v2->y))
 				{
-					doorunderwater = true;
-					r_fakingunderwater = true;
-					break;
+					// Check that the window is actually visible
+/*					for (int z = WallSX1; z < WallSX2; ++z)
+					{
+						if (floorclip[z] > ceilingclip[z])*/
+						bool val = (heightsec && ((vieworg.z <= heightsec/*s*/->floor.GetPointZ(sec->lines[i]->v1->x, sec->lines[i]->v1->y) &&
+							vieworg.z <= heightsec/*s*/->floor.GetPointZ(sec->lines[i]->v2->x, sec->lines[i]->v2->y))));
+
+						doorunderwater &= val;
+//					}
 				}
 			}
 		}
@@ -2458,13 +2506,13 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 		ff->floorplane.normal = sec->floor.normal;
 		ff->floorplane.dist = sec->floor.dist;
 		ff->ceilplane.normal = -s->floor.normal;
-		ff->ceilplane.dist = -s->floor.dist/* + 1*/;
+		ff->ceilplane.dist = -s->floor.dist/* - -s->floor.normal.z*/;
 //		ff->ColourMap = s->ColourMap;
 		ff->params.Fade = s->params.Fade;
 	}
 
 	// killough 11/98: prevent sudden light changes from non-water sectors:
-	if ((underwater/* && !back*/) || doorunderwater)
+	if ((underwater /*&& !back*/) || doorunderwater)
 	{
 		// head-below-floor hack
 		ff->floorplane.pic			= diffTex ? sec->floor.pic : s->floor.pic;
@@ -2477,11 +2525,11 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 		ff->floorplane.BaseYOffs	= s->floor.BaseYOffs;
 
 		ff->ceilplane.normal		= -s->floor.normal;
-		ff->ceilplane.dist			= -s->floor.dist/* + 1*/;
+		ff->ceilplane.dist			= -s->floor.dist/* - -s->floor.normal.z*/;
 		if (s->ceiling.pic == skyflatnum)
 		{
 			ff->floorplane.normal	= -ff->ceilplane.normal;
-			ff->floorplane.dist		= -ff->ceilplane.dist/* + 1*/;
+			ff->floorplane.dist		= -ff->ceilplane.dist/* - ff->ceilplane.normal.z*/;
 			ff->ceilplane.pic		= ff->floorplane.pic;
 			ff->ceilplane.xoffs		= ff->floorplane.xoffs;
 			ff->ceilplane.yoffs		= ff->floorplane.yoffs;
@@ -2519,25 +2567,24 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 			}*/
 		}
 	}
-	else if (heightsec && orgceilz > refceilz &&
-		!(s->SectorFlags & sector_t::SF_FakeFloorOnly) &&
-		vieworg.z >= heightsec->ceiling.GetPointZ(vieworg))
+	else if ((heightsec && vieworg.z >= heightsec->ceiling.GetPointZ(vieworg)) &&
+			 orgceilz > refceilz &&	!(s->SectorFlags & sector_t::SF_FakeFloorOnly))
 	{
 		// Above-ceiling hack
-		ff->ceilplane.normal	= s->ceiling.normal;
-		ff->ceilplane.dist		= s->ceiling.dist;
-		ff->floorplane.normal	= -s->ceiling.normal;
-		ff->floorplane.dist		= -s->ceiling.dist/* + 1*/;
-		ff->params.Fade 		= s->params.Fade;
-//		ff->params.ColourMap	= s->params.ColourMap;
+		ff->ceilplane.normal		= s->ceiling.normal;
+		ff->ceilplane.dist			= s->ceiling.dist;
+		ff->floorplane.normal		= -s->ceiling.normal;
+		ff->floorplane.dist			= -s->ceiling.dist/* - s->ceiling.normal.z*/;
+		ff->params.Fade 			= s->params.Fade;
+//		ff->params.ColourMap		= s->params.ColourMap;
 
-		ff->ceilplane.pic = diffTex ? sec->ceiling.pic : s->ceiling.pic;
-		ff->floorplane.pic									= s->ceiling.pic;
-		ff->floorplane.xoffs	= ff->ceilplane.xoffs		= s->ceiling.xoffs;
-		ff->floorplane.yoffs	= ff->ceilplane.yoffs		= s->ceiling.yoffs;
-		ff->floorplane.XScale	= ff->ceilplane.XScale		= s->ceiling.XScale;
-		ff->floorplane.YScale	= ff->ceilplane.YScale		= s->ceiling.YScale;
-		ff->floorplane.Angle	= ff->ceilplane.Angle		= s->ceiling.Angle;
+		ff->ceilplane.pic			= diffTex ? sec->ceiling.pic : s->ceiling.pic;
+		ff->floorplane.pic										= s->ceiling.pic;
+		ff->floorplane.xoffs		= ff->ceilplane.xoffs		= s->ceiling.xoffs;
+		ff->floorplane.yoffs		= ff->ceilplane.yoffs		= s->ceiling.yoffs;
+		ff->floorplane.XScale		= ff->ceilplane.XScale		= s->ceiling.XScale;
+		ff->floorplane.YScale		= ff->ceilplane.YScale		= s->ceiling.YScale;
+		ff->floorplane.Angle		= ff->ceilplane.Angle		= s->ceiling.Angle;
 		ff->floorplane.BaseAngle	= ff->ceilplane.BaseAngle	= s->ceiling.BaseAngle;
 		ff->floorplane.BaseYOffs	= ff->ceilplane.BaseYOffs	= s->ceiling.BaseYOffs;
 
@@ -2612,10 +2659,19 @@ void VRenderLevel::UpdateWorld(const refdef_t* rd, const VViewClipper* Range)
 //
 //==========================================================================
 
-void VAdvancedRenderLevel::UpdateWorld()
+void VAdvancedRenderLevel::UpdateWorld(const refdef_t* rd, const VViewClipper* Range)
 {
 	guard(VAdvancedRenderLevel::UpdateWorld);
 	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
+
+	ViewClip.ClearClipNodes(vieworg, Level);
+	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
+		rd->fovx, rd->fovy);
+	if (Range)
+	{
+		//	Range contains a valid range, so we must clip away holes in it.
+		ViewClip.ClipToRanges(*Range);
+	}
 
 	//	Update fake sectors.
 	for (int i = 0; i < Level->NumSectors; i++)

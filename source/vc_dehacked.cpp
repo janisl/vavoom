@@ -1962,12 +1962,12 @@ void ProcessDehackedFiles()
 		sc->ExpectString();
 		VStr MethodName = sc->String;
 		VClass* Class = VClass::FindClass(*ClassName);
-		if (!Class)
+		if (Class == NULL)
 		{
 			sc->Error("No such class");
 		}
 		VMethod* Method = Class->FindMethod(*MethodName);
-		if (!Method)
+		if (Method == NULL)
 		{
 			sc->Error(va("No such method %s", *MethodName));
 		}
@@ -2070,13 +2070,13 @@ void ProcessDehackedFiles()
 		{
 			GCon->Logf("Processing dehacked patch %s", GArgs[p]);
 
-			VStream* Strm = FL_OpenSysFileRead(GArgs[p]);
-			if (!Strm)
+			VStream* AStrm = FL_OpenSysFileRead(GArgs[p]);
+			if (!AStrm)
 			{
 				GCon->Logf("No such file");
 				continue;
 			}
-			LoadDehackedFile(Strm);
+			LoadDehackedFile(AStrm);
 		}
 	}
 	if (LumpNum >= 0)

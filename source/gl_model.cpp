@@ -687,7 +687,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 		(void*)NextFrameDesc->VertsOffset);
 	p_glEnableVertexAttribArrayARB(ShadowsModelShadowVert2Loc);
 
-	float Offset = M_INFINITY;
+	float Shadow_Offset = M_INFINITY;
 
 	glBegin(GL_TRIANGLES);
 	p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, 0);
@@ -701,7 +701,7 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 		}
 	}
 
-	p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, Offset);
+	p_glVertexAttrib1fARB(ShadowsModelShadowOffsetLoc, Shadow_Offset);
 	for (int i = 0; i < Mdl->Tris.Num(); i++)
 	{
 		if (PlaneSides[i])
@@ -727,16 +727,16 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 			if (PlaneSides[Mdl->Edges[i].Tri1])
 			{
 				outv(1, 0);
-				outv(1, Offset);
+				outv(1, Shadow_Offset);
 				outv(2, 0);
-				outv(2, Offset);
+				outv(2, Shadow_Offset);
 			}
 			else
 			{
 				outv(2, 0);
-				outv(2, Offset);
+				outv(2, Shadow_Offset);
 				outv(1, 0);
-				outv(1, Offset);
+				outv(1, Shadow_Offset);
 			}
 			glEnd();
 		}

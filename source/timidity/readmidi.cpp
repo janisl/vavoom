@@ -197,6 +197,9 @@ static MidiEventList* read_midi_event(MidiSong* song)
 
 			case 3: /* Control change */
 				midi_read(song, &b, 1);
+				// Clamp parameters to 127
+				b = MIN(b, 0x7F);
+
 				b &= 0x7F;
 				{
 					int control = 255;
@@ -300,7 +303,7 @@ static MidiEventList* read_midi_event(MidiSong* song)
 				break;
 
 			case 4: /* Program change */
-				a &= 0x7f;
+				a &= 0x7F;
 				MIDIEVENT(song->at, ME_PROGRAM, lastchan, a, 0);
 
 			case 5: /* Channel pressure - NOT IMPLEMENTED */
@@ -335,7 +338,7 @@ static int read_track(MidiSong* song, int append)
 	char tmp[4];
 
 	meep = song->evlist;
-	if (append && meep)
+	if (append && meep != NULL)
 	{
 		/* find the last event in the list */
 		for (; meep->next; meep=meep->next)
@@ -372,7 +375,7 @@ static int read_track(MidiSong* song, int append)
 		}
 
 		next = meep->next;
-		while (next && (next->event.time < new_ev->event.time))
+		while (next != NULL && (next->event.time < new_ev->event.time))
 		{
 			meep = next;
 			next = meep->next;

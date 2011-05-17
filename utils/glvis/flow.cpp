@@ -214,7 +214,7 @@ winding_t *TVisBuilder::ClipWinding(winding_t *in, TPlane *split)
 		FreeWinding(in);
 		return NULL;
 	}
-	if (dists[0] >= -ON_EPSILON && dists[1] >= -ON_EPSILON)
+	else if (dists[0] >= -ON_EPSILON && dists[1] >= -ON_EPSILON)
 	{
 		return in;
 	}
@@ -282,7 +282,7 @@ winding_t *TVisBuilder::ClipToSeperators(winding_t *source, winding_t *pass,
 	// check all combinations
 	for (i = 0; i < 2; i++)
 	{
-		// fing a vertex of pass that makes a plane that puts all of the
+		// find a vertex of pass that makes a plane that puts all of the
 		// vertexes of pass on the front side and all of the vertexes of
 		// source on the back side
 		for (j = 0; j < 2; j++)
@@ -651,10 +651,22 @@ void TVisBuilder::LeafFlow(int leafnum)
 	for (i = 0; i < leaf->numportals; i++)
 	{
 		p = leaf->portals[i];
+		if (p == NULL)
+		{
+			continue;
+		}
 		if (p->status != stat_done)
+		{
 			throw GLVisError("portal %d not done", (int)(p - portals));
+		}
 		for (j = 0; j < rowbytes; j++)
+		{
+			if (p->visbits[j] == NULL)
+			{
+				continue;
+			}
 			outbuffer[j] |= p->visbits[j];
+		}
 		delete[] p->visbits;
 		p->visbits = NULL;
 	}

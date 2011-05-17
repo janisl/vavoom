@@ -101,31 +101,34 @@ bool VLevel::CheckPlanes(linetrace_t& Trace, sector_t* Sec) const
 	guard(VLevel::CheckPlanes);
 	sec_region_t* StartReg = SV_PointInRegion(Sec, Trace.LineStart);
 
-	for (sec_region_t* Reg = StartReg; Reg; Reg = Reg->next)
+	if (StartReg != NULL)
 	{
-		if (!CheckPlane(Trace, Reg->floor))
+		for (sec_region_t* Reg = StartReg; Reg != NULL; Reg = Reg->next)
 		{
-			//	Hit floor
-			return false;
+			if (!CheckPlane(Trace, Reg->floor))
+			{
+				//	Hit floor
+				return false;
+			}
+			if (!CheckPlane(Trace, Reg->ceiling))
+			{
+				//	Hit ceiling
+				return false;
+			}
 		}
-		if (!CheckPlane(Trace, Reg->ceiling))
-		{
-			//	Hit ceiling
-			return false;
-		}
-	}
 
-	for (sec_region_t* Reg = StartReg->prev; Reg; Reg = Reg->prev)
-	{
-		if (!CheckPlane(Trace, Reg->floor))
+		for (sec_region_t* Reg = StartReg->prev; Reg != NULL; Reg = Reg->prev)
 		{
-			//	Hit floor
-			return false;
-		}
-		if (!CheckPlane(Trace, Reg->ceiling))
-		{
-			//	Hit ceiling
-			return false;
+			if (!CheckPlane(Trace, Reg->floor))
+			{
+				//	Hit floor
+				return false;
+			}
+			if (!CheckPlane(Trace, Reg->ceiling))
+			{
+				//	Hit ceiling
+				return false;
+			}
 		}
 	}
 
@@ -298,34 +301,40 @@ bool VLevel::CrossSubsector(linetrace_t& Trace, int num) const
 bool VLevel::CrossBSPNode(linetrace_t& Trace, int BspNum) const
 {
 	guard(VLevel::CrossBSPNode);
-	if (BspNum & NF_SUBSECTOR)
+	if (BspNum == -1)
 	{
-		if (BspNum == -1)
-			return CrossSubsector(Trace, 0);
-		else
-			return CrossSubsector(Trace, BspNum & (~NF_SUBSECTOR));
+		return CrossSubsector(Trace, 0);
 	}
 
-	node_t* Bsp = &Nodes[BspNum];
-	
-	// decide which side the start point is on
-	int Side = Bsp->PointOnSide2(Trace.Start);
-	if (Side == 2)
-		Side = 0;	// an "on" should cross both sides
-
-	// cross the starting side
-	if (!CrossBSPNode(Trace, Bsp->children[Side]))
-		return false;
-	
-	// the partition plane is crossed here
-	if (Side == Bsp->PointOnSide2(Trace.End))
+	if (!(BspNum & NF_SUBSECTOR))
 	{
-		// the line doesn't touch the other side
-		return true;
+		node_t* Bsp = &Nodes[BspNum];
+	
+		// decide which side the start point is on
+		int Side = Bsp->PointOnSide2(Trace.Start);
+		if (Side == 2)
+		{
+			Side = 0;	// an "on" should cross both sides
+		}
+
+		// cross the starting side
+		if (!CrossBSPNode(Trace, Bsp->children[Side]))
+		{
+			return false;
+		}
+	
+		// the partition plane is crossed here
+		if (Side == Bsp->PointOnSide2(Trace.End))
+		{
+			// the line doesn't touch the other side
+			return true;
+		}
+
+		// cross the ending side		
+		return CrossBSPNode(Trace, Bsp->children[Side ^ 1]);
 	}
 
-	// cross the ending side		
-	return CrossBSPNode(Trace, Bsp->children[Side ^ 1]);
+	return CrossSubsector(Trace, BspNum & (~NF_SUBSECTOR));
 	unguard;
 }
 

@@ -54,9 +54,9 @@ Sap_Apu_Impl::Sap_Apu_Impl()
 	gen_poly( POLY_MASK(  4, 1, 0 ), sizeof poly4,  poly4  );
 	gen_poly( POLY_MASK(  9, 5, 0 ), sizeof poly9,  poly9  );
 	gen_poly( POLY_MASK( 17, 5, 0 ), sizeof poly17, poly17 );
-	
-	if ( 0 ) // comment out to recauculate poly5 constant
-	{
+
+// comment out to recauculate poly5 constant
+#if	0
 		byte poly5 [4];
 		gen_poly( POLY_MASK(  5, 2, 0 ), sizeof poly5,  poly5  );
 		unsigned n = poly5 [3] * 0x1000000 + poly5 [2] * 0x10000 + 
@@ -65,7 +65,7 @@ Sap_Apu_Impl::Sap_Apu_Impl()
 		for ( int i = 1; i < poly5_len; i++ )
 			rev |= (n >> i & 1) << (poly5_len - i);
 		dprintf( "poly5: 0x%08lX\n", rev );
-	}
+#endif
 }
 
 void Sap_Apu::set_output( Blip_Buffer* b )

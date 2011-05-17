@@ -543,7 +543,7 @@ private:
 	surface_t* SubdivideSeg(surface_t*, const TVec&, const TVec*);
 	void UpdateSubsector(int, float*);
 	void UpdateBSPNode(int, float*);
-	void UpdateWorld();
+	void UpdateWorld(const refdef_t*, const VViewClipper*);
 
 	//	Light methods
 	void PushDlights();

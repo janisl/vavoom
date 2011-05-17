@@ -119,7 +119,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Sectors
 	//
-	guard(Sectors);
+	guard(VLevel::Serialise::Sectors);
 	for (i = 0, sec = Sectors; i < NumSectors; i++, sec++)
 	{
 		Strm << sec->floor.dist
@@ -186,7 +186,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Lines
 	//
-	guard(Lines);
+	guard(VLevel::Serialise::Lines);
 	for (i = 0, li = Lines; i < NumLines; i++, li++)
 	{
 		Strm << li->flags
@@ -228,7 +228,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Polyobjs
 	//
-	guard(Polyobjs);
+	guard(VLevel::Serialise::Polyobjs);
 	for (i = 0; i < NumPolyObjs; i++)
 	{
 		if (Strm.IsLoading())
@@ -256,7 +256,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Static lights
 	//
-	guard(StaticLights);
+	guard(VLevel::Serialise::StaticLights);
 	Strm << STRM_INDEX(NumStaticLights);
 	if (Strm.IsLoading())
 	{
@@ -270,7 +270,7 @@ void VLevel::Serialise(VStream& Strm)
 			StaticLights = new rep_light_t[NumStaticLights];
 		}
 	}
-	for (int i = 0; i < NumStaticLights; i++)
+	for (i = 0; i < NumStaticLights; i++)
 	{
 		Strm << StaticLights[i].Origin
 			<< StaticLights[i].Radius
@@ -281,14 +281,14 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	ACS
 	//
-	guard(ACS);
+	guard(VLevel::Serialise::ACS);
 	Acs->Serialise(Strm);
 	unguard;
 
 	//
 	//	Camera textures
 	//
-	guard(CameraTextures);
+	guard(VLevel::Serialise::CameraTextures);
 	int NumCamTex = CameraTextures.Num();
 	Strm << STRM_INDEX(NumCamTex);
 	if (Strm.IsLoading())
@@ -306,7 +306,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Translation tables
 	//
-	guard(Translations);
+	guard(VLevel::Serialise::Translations);
 	int NumTrans = Translations.Num();
 	Strm << STRM_INDEX(NumTrans);
 	if (Strm.IsLoading())
@@ -338,7 +338,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Body queue translation tables
 	//
-	guard(BoduQueueTranslations);
+	guard(VLevel::Serialise::BodyQueueTranslations);
 	int NumTrans = BodyQueueTrans.Num();
 	Strm << STRM_INDEX(NumTrans);
 	if (Strm.IsLoading())
@@ -370,7 +370,7 @@ void VLevel::Serialise(VStream& Strm)
 	//
 	//	Zones
 	//
-	guard(Zones);
+	guard(VLevel::Serialise::Zones);
 	for (i = 0; i < NumZones; i++)
 	{
 		Strm << STRM_INDEX(Zones[i]);

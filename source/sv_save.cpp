@@ -427,7 +427,7 @@ void VSaveSlot::SaveToSlot(int Slot)
 	*Strm << STRM_INDEX(NumMaps);
 	for (int i = 0; i < Maps.Num(); i++)
 	{
-		VStr TmpName(Maps[i]->Name);
+		TmpName = VStr(Maps[i]->Name);
 		vint32 DataLen = Maps[i]->Data.Num();
 		*Strm << TmpName
 			<< Maps[i]->DecompressedSize
@@ -608,7 +608,7 @@ static void ArchiveThinkers(VSaveWriterStream* Saver, bool SavingPlayers)
 	for (TThinkerIterator<VThinker> Th(GLevel); Th; ++Th)
 	{
 		VEntity *mobj = Cast<VEntity>(*Th);
-		if (mobj && mobj->EntityFlags & VEntity::EF_IsPlayer && !SavingPlayers)
+		if (mobj != NULL && mobj->EntityFlags & VEntity::EF_IsPlayer && !SavingPlayers)
 		{
 			// Skipping player mobjs
 			continue;
@@ -999,7 +999,7 @@ void SV_MapTeleport(VName mapname)
 	for (VThinker* Th = GLevel->ThinkerHead; Th; Th = Th->Next)
 	{
 		VEntity *vent = Cast<VEntity>(Th);
-		if (vent && (//(vent->EntityFlags & VEntity::EF_IsPlayer) ||
+		if (vent != NULL && (//(vent->EntityFlags & VEntity::EF_IsPlayer) ||
 			(vent->Owner && (vent->Owner->EntityFlags & VEntity::EF_IsPlayer))))
 		{
 			TravelObjs.Append(vent);

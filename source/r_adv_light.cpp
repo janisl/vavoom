@@ -579,11 +579,6 @@ void VAdvancedRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox)
 	{
 		node_t* bsp = &Level->Nodes[bspnum];
 
-		/*if (bsp->VisFrame != r_visframecount)
-		{
-			return;
-		}*/
-
 		// Decide which side the light is on.
 		float Dist = DotProduct(CurrLightPos, bsp->normal) - bsp->dist;
 		if (Dist >= CurrLightRadius)
@@ -773,6 +768,10 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{
+		if (!LightClip.ClipCheckSubsector(r_sub))
+		{
+			return;
+		}
 		RenderLightSubRegion(region->next);
 	}
 
@@ -780,6 +779,10 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 
 	if (r_sub->poly)
 	{
+		if (!LightClip.ClipCheckSubsector(r_sub))
+		{
+			return;
+		}
 		//	Render the polyobj in the subsector first
 		polyCount = r_sub->poly->numsegs;
 		polySeg = r_sub->poly->segs;
@@ -876,11 +879,6 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox)
 	if (!(bspnum & NF_SUBSECTOR))
 	{
 		node_t* bsp = &Level->Nodes[bspnum];
-
-		/*if (bsp->VisFrame != r_visframecount)
-		{
-			return;
-		}*/
 
 		// Decide which side the light is on.
 		float Dist = DotProduct(CurrLightPos, bsp->normal) - bsp->dist;

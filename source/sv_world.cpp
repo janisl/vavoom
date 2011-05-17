@@ -255,11 +255,11 @@ sec_region_t *SV_FindThingGap(sec_region_t* InGaps, const TVec &point, float z1,
 	float nofit_mindist = 200000.0;
 
 	// check for trivial gaps...
-	if (!gaps)
+	if (gaps == NULL)
 	{
 		return NULL;
 	}
-	if (!gaps->next)
+	if (gaps->next == NULL)
 	{
 		return gaps;
 	}
@@ -268,15 +268,19 @@ sec_region_t *SV_FindThingGap(sec_region_t* InGaps, const TVec &point, float z1,
 	sec_plane_t *ceil = NULL;
 
 	// There are 2 or more gaps. Now it gets interesting :-)
-	while (gaps)
+	while (gaps != NULL)
 	{
 		float	f;
 		float	c;
 
-		if (!gaps->floor->flags)
+		if (gaps->floor->flags == 0)
+		{
 			floor = gaps->floor;
-		if (!gaps->ceiling->flags)
+		}
+		if (gaps->ceiling->flags == 0)
+		{
 			ceil = gaps->ceiling;
+		}
 		if (gaps->ceiling->flags)
 		{
 			gaps = gaps->next;
@@ -314,9 +318,13 @@ sec_region_t *SV_FindThingGap(sec_region_t* InGaps, const TVec &point, float z1,
 	}
 
 	if (fit_num == 1)
+	{
 		return fit_last;
+	}
 	if (fit_num > 1)
+	{
 		return fit_closest;
+	}
 	return nofit_closest;
 	unguard;
 }
@@ -448,7 +456,7 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 	check(sector);
 	if (sector->heightsec &&
 		(sector->heightsec->SectorFlags & sector_t::SF_UnderWater) &&
-		p.z < sector->heightsec->floor.GetPointZ(p))
+		p.z <= sector->heightsec->floor.GetPointZ(p))
 	{
 		return 9;
 	}

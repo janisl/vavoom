@@ -272,6 +272,8 @@ namespace LibTimidity
 
 #define sine(x)		(sin((2*PI/1024.0) * (x)))
 
+#define MIN(x, y)		((x) <= (y) ? (x) : (y))
+
 #define OUTPUT_RATE		44100
 
 /* In percent. */

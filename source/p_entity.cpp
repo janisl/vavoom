@@ -386,7 +386,7 @@ bool VEntity::HasSpecialStates(VName StateName)
 {
 	guard(VEntity::HasSpecialStates);
 	VStateLabel* Lbl = GetClass()->FindStateLabel(StateName);
-	return Lbl && Lbl->SubLabels.Num() > 0;
+	return Lbl != NULL && Lbl->SubLabels.Num() > 0;
 	unguard;
 }
 

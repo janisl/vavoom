@@ -140,31 +140,34 @@ static bool SightCheckPlanes(sight_trace_t& Trace, sector_t* Sec)
 
 	sec_region_t* StartReg = SV_PointInRegion(Sec, Trace.LineStart);
 
-	for (sec_region_t* Reg = StartReg; Reg; Reg = Reg->next)
+	if (StartReg != NULL)
 	{
-		if (!SightCheckPlane(Trace, Reg->floor))
+		for (sec_region_t* Reg = StartReg; Reg; Reg = Reg->next)
 		{
-			//	Hit floor
-			return false;
+			if (!SightCheckPlane(Trace, Reg->floor))
+			{
+				//	Hit floor
+				return false;
+			}
+			if (!SightCheckPlane(Trace, Reg->ceiling))
+			{
+				//	Hit ceiling
+				return false;
+			}
 		}
-		if (!SightCheckPlane(Trace, Reg->ceiling))
-		{
-			//	Hit ceiling
-			return false;
-		}
-	}
 
-	for (sec_region_t* Reg = StartReg->prev; Reg; Reg = Reg->prev)
-	{
-		if (!SightCheckPlane(Trace, Reg->floor))
+		for (sec_region_t* Reg = StartReg->prev; Reg != NULL; Reg = Reg->prev)
 		{
-			//	Hit floor
-			return false;
-		}
-		if (!SightCheckPlane(Trace, Reg->ceiling))
-		{
-			//	Hit ceiling
-			return false;
+			if (!SightCheckPlane(Trace, Reg->floor))
+			{
+				//	Hit floor
+				return false;
+			}
+			if (!SightCheckPlane(Trace, Reg->ceiling))
+			{
+				//	Hit ceiling
+				return false;
+			}
 		}
 	}
 

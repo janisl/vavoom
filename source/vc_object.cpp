@@ -99,7 +99,7 @@ VObject::~VObject()
 
 //==========================================================================
 //
-//	VObject::StaticInit
+//	VObject::operator new
 //
 //==========================================================================
 
@@ -115,7 +115,7 @@ void* VObject::operator new(size_t)
 
 //==========================================================================
 //
-//	VObject::StaticInit
+//	VObject::operator new
 //
 //==========================================================================
 
@@ -131,7 +131,7 @@ void* VObject::operator new(size_t, const char*, int)
 
 //==========================================================================
 //
-//	VObject::StaticInit
+//	VObject::operator delete
 //
 //==========================================================================
 
@@ -142,7 +142,7 @@ void VObject::operator delete(void* Object)
 
 //==========================================================================
 //
-//	VObject::StaticInit
+//	VObject::operator delete
 //
 //==========================================================================
 
@@ -204,7 +204,7 @@ VObject* VObject::StaticSpawnObject(VClass* AClass)
 
 	//	Find native class.
 	VClass* NativeClass = AClass;
-	while (NativeClass && !(NativeClass->ObjectFlags & CLASSOF_Native))
+	while (NativeClass != NULL && !(NativeClass->ObjectFlags & CLASSOF_Native))
 	{
 		NativeClass = NativeClass->GetSuperClass();
 	}
@@ -1115,7 +1115,7 @@ public:
 		{
 			VObject* Check = VObject::GetIndexObject(Index);
 			Index++;
-			if (Check && !(Check->GetFlags() & _OF_DelayedDestroy) &&
+			if (Check != NULL && !(Check->GetFlags() & _OF_DelayedDestroy) &&
 				Check->IsA(BaseClass))
 			{
 				*Out = Check;
@@ -1273,11 +1273,11 @@ IMPLEMENT_FUNCTION(VObject, Clock)
 	if (Idx < 0)
 		host_cycles[-Idx]++;
 	else
-		clock(host_cycles[Idx]);
+		clock_cycle(host_cycles[Idx]);
 }
 
 IMPLEMENT_FUNCTION(VObject, Unclock)
 {
 	P_GET_INT(Idx);
-	unclock(host_cycles[Idx]);
+	unclock_cycle(host_cycles[Idx]);
 }

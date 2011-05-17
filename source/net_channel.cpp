@@ -305,7 +305,7 @@ void VChannel::SendRpc(VMethod* Func, VObject* Owner)
 	Msg.WriteInt(Func->NetIndex, Owner->GetClass()->NumNetFields);
 
 	//	Serialise arguments
-	guard(SerialiseArguments);
+	guard(VChannel::SendRpc::SerialiseArguments);
 	VStack* Param = pr_stackPtr - Func->ParamsSize + 1;	//	Skip self
 	for (int i = 0; i < Func->NumParams; i++)
 	{

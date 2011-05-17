@@ -220,7 +220,9 @@ void VRenderLevel::CalcFaceVectors(surface_t *surf)
 
 	// calculate texorg on the texture plane
 	for (i = 0; i < 3; i++)
+	{
 		texorg[i] = -tex->soffs * textoworld[0][i] - tex->toffs * textoworld[1][i];
+	}
 
 	// project back to the face plane
 	dist = DotProduct(texorg, surf->plane->normal) - surf->plane->dist - 1;
@@ -359,7 +361,9 @@ void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 
 	// Check potential visibility
 	if (!(facevis[light->leafnum >> 3] & (1 << (light->leafnum & 7))))
+	{
 		return;
+	}
 
 	// Check bounding box
 	if (light->origin.x + light->radius < smins.x ||
@@ -376,7 +380,9 @@ void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 	
 	// don't bother with lights behind the surface
 	if (dist <= -0.1)
+	{
 		return;
+	}
 		
 	// don't bother with light too far away
 	if (dist > light->radius)
@@ -409,7 +415,9 @@ void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 	{
 		dist = CastRay(light->origin, *spt, squaredist);
 		if (dist < 0)
+		{
 			continue;	// light doesn't reach
+		}
 
 		incoming = Normalise(light->origin - *spt);
 		angle = DotProduct(incoming, surf->plane->normal);
@@ -418,7 +426,9 @@ void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 		add = light->radius - dist;
 		add *= angle;
 		if (add < 0)
+		{
 			continue;
+		}
 		lightmap[c] += add;
 		lightmapr[c] += add * rmul;
 		lightmapg[c] += add * gmul;
@@ -427,7 +437,9 @@ void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 		{
 			light_hit = true;
 			if (light->colour != 0xffffffff)
+			{
 				is_coloured = true;
+			}
 		}
 	}
 	unguard;
@@ -507,11 +519,17 @@ void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 					total *= 0.25;
 				}
 				else
+				{
 					total = lightmapr[i];
+				}
 				if (total > 255)
+				{
 					total = 255;
+				}
 				if (total < 0)
+				{
 					Sys_Error("light < 0");
+				}
 				surf->lightmap_rgb[i].r = byte(total);
 
 				if (r_extrasamples)
@@ -524,11 +542,17 @@ void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 					total *= 0.25;
 				}
 				else
+				{
 					total = lightmapg[i];
+				}
 				if (total > 255)
+				{
 					total = 255;
+				}
 				if (total < 0)
+				{
 					Sys_Error("light < 0");
+				}
 				surf->lightmap_rgb[i].g = byte(total);
 
 				if (r_extrasamples)
@@ -541,11 +565,17 @@ void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 					total *= 0.25;
 				}
 				else
+				{
 					total = lightmapb[i];
+				}
 				if (total > 255)
+				{
 					total = 255;
+				}
 				if (total < 0)
+				{
 					Sys_Error("light < 0");
+				}
 				surf->lightmap_rgb[i].b = byte(total);
 			}
 		}
@@ -581,11 +611,17 @@ void VRenderLevel::LightFace(surface_t *surf, subsector_t *leaf)
 				total *= 0.25;
 			}
 			else
+			{
 				total = lightmap[i];
+			}
 			if (total > 255)
+			{
 				total = 255;
+			}
 			if (total < 0)
+			{
 				Sys_Error("light < 0");
+			}
 			surf->lightmap[i] = byte(total);
 		}
 	}
@@ -668,11 +704,15 @@ void VRenderLevelShared::DecayLights(float time)
 	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
 		if (dl->die < Level->Time || !dl->radius)
+		{
 			continue;
+		}
 
 		dl->radius -= time * dl->decay;
 		if (dl->radius < 0)
+		{
 			dl->radius = 0;
+		}
 	}
 	unguard;
 }
@@ -693,9 +733,13 @@ void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 		int num;
 
 		if (bspnum == -1)
+		{
 		    num = 0;
+		}
 		else
+		{
 		    num = bspnum & (~NF_SUBSECTOR);
+		}
 		subsector_t *ss = &Level->Subsectors[num];
 
 		if (r_dynamic_clip)
@@ -706,7 +750,9 @@ void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 
 			// Check potential visibility
 			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
+			{
 				return;
+			}
 		}
 
 		if (ss->dlightframe != r_dlightframecount)
@@ -758,7 +804,9 @@ void VRenderLevel::PushDlights()
 	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
 		if (l->die < Level->Time || !l->radius)
+		{
 			continue;
+		}
 		MarkLights(l, 1 << i, Level->NumNodes - 1);
 	}
 	unguard;
@@ -864,7 +912,9 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 		for (i = 0; i < MAX_DLIGHTS; i++)
 		{
 			if (!(sub->dlightbits & (1 << i)))
+			{
 				continue;
+			}
 			if (r_dynamic_clip)
 			{
 				vuint8* dyn_facevis = Level->LeafPVS(sub);
@@ -873,7 +923,9 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 
 				// Check potential visibility
 				if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
+				{
 						continue;
+				}
 			}
 
 			add = (DLights[i].radius - DLights[i].minlight) - Length(p - DLights[i].origin);
@@ -889,13 +941,21 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 	}
 
 	if (l > 255)
+	{
 		l = 255;
+	}
 	if (lr > 255)
+	{
 		lr = 255;
+	}
 	if (lg > 255)
+	{
 		lg = 255;
+	}
 	if (lb > 255)
+	{
 		lb = 255;
+	}
 
 	return ((int)l << 24) | ((int)lr << 16) | ((int)lg << 8) | ((int)lb);
 	unguard;
@@ -928,7 +988,9 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 	for (lnum = 0; lnum < MAX_DLIGHTS; lnum++)
 	{
 		if (!(surf->dlightbits & (1<<lnum)))
+		{
 			continue;		// not lit by this light
+		}
 
 		rad = DLights[lnum].radius;
 		dist = DotProduct(DLights[lnum].origin, surf->plane->normal) -
@@ -936,13 +998,17 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 		if (r_dynamic_clip)
 		{
 			if (dist <= -0.1)
+			{
 				continue;
+			}
 		}
 		
 		rad -= fabs(dist);
 		minlight = DLights[lnum].minlight;
 		if (rad < minlight)
+		{
 			continue;
+		}
 		minlight = rad - minlight;
 
 		impact = DLights[lnum].origin - surf->plane->normal * dist;
@@ -956,7 +1022,9 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 
 			// Check potential visibility
 			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
+			{
 				continue;
+			}
 		}
 
 		rmul = (DLights[lnum].colour >> 16) & 0xff;
@@ -973,16 +1041,24 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 		{
 			td = (int)local.y - t * 16;
 			if (td < 0)
+			{
 				td = -td;
+			}
 			for (s = 0; s < smax; s++)
 			{
 				sd = (int)local.x - s * 16;
 				if (sd < 0)
+				{
 					sd = -sd;
+				}
 				if (sd > td)
+				{
 					dist = sd + (td >> 1);
+				}
 				else
+				{
 					dist = td + (sd >> 1);
+				}
 
 				if (dist < minlight)
 				{
@@ -992,7 +1068,9 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 					blocklightsg[i] += (vuint32)((rad - dist) * gmul);
 					blocklightsb[i] += (vuint32)((rad - dist) * bmul);
 					if (DLights[lnum].colour != 0xffffffff)
+					{
 						is_coloured = true;
+					}
 				}
 			}
 		}
@@ -1033,7 +1111,9 @@ bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 	int tG = ((surf->Light >> 8) & 255) * t / 255;
 	int tB = (surf->Light & 255) * t / 255;
 	if (tR != tG || tR != tB)
+	{
 		is_coloured = true;
+	}
 	for (i = 0; i < size; i++)
 	{
 		blocklights[i] = t;
@@ -1062,11 +1142,17 @@ bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 			if (!r_static_add)
 			{
 				if (blocklightsr[i] > 0xffff)
+				{
 					blocklightsr[i] = 0xffff;
+				}
 				if (blocklightsg[i] > 0xffff)
+				{
 					blocklightsg[i] = 0xffff;
+				}
 				if (blocklightsb[i] > 0xffff)
+				{
 					blocklightsb[i] = 0xffff;
+				}
 			}
 		}
 	}
@@ -1082,18 +1168,26 @@ bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 			if (!r_static_add)
 			{
 				if (blocklightsr[i] > 0xffff)
+				{
 					blocklightsr[i] = 0xffff;
+				}
 				if (blocklightsg[i] > 0xffff)
+				{
 					blocklightsg[i] = 0xffff;
+				}
 				if (blocklightsb[i] > 0xffff)
+				{
 					blocklightsb[i] = 0xffff;
+				}
 			}
 		}
 	}
 
 	// add all the dynamic lights
 	if (surf->dlightframe == r_dlightframecount)
+	{
 		AddDynamicLights(surf);
+	}
 
 	//  Calc additive light. This must be done before lightmap procesing
 	// because it will clamp all lights
@@ -1106,7 +1200,9 @@ bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 			{
 				t = int(r_specular * t);
 				if (t > 0xffff)
+				{
 					t = 0xffff;
+				}
 				blockaddlightsr[i] = t;
 				r_light_add = true;
 			}
@@ -1116,7 +1212,9 @@ bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 			{
 				t = int(r_specular * t);
 				if (t > 0xffff)
+				{
 					t = 0xffff;
+				}
 				blockaddlightsg[i] = t;
 				r_light_add = true;
 			}
@@ -1126,7 +1224,9 @@ bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 			{
 				t = int(r_specular * t);
 				if (t > 0xffff)
+				{
 					t = 0xffff;
+				}
 				blockaddlightsb[i] = t;
 				r_light_add = true;
 			}
@@ -1139,22 +1239,30 @@ bool VRenderLevel::BuildLightMap(surface_t *surf, int shift)
 	{
 		t = (255 * 256 - (int)blocklights[i]) >> shift;
 		if (t < minlight)
+		{
 			t = minlight;
+		}
 		blocklights[i] = t;
 
 		t = (255 * 256 - (int)blocklightsr[i]) >> shift;
 		if (t < minlight)
+		{
 			t = minlight;
+		}
 		blocklightsr[i] = t;
 
 		t = (255 * 256 - (int)blocklightsg[i]) >> shift;
 		if (t < minlight)
+		{
 			t = minlight;
+		}
 		blocklightsg[i] = t;
 
 		t = (255 * 256 - (int)blocklightsb[i]) >> shift;
 		if (t < minlight)
+		{
 			t = minlight;
+		}
 		blocklightsb[i] = t;
 	}
 
@@ -1497,9 +1605,13 @@ void VRenderLevel::CacheSurface(surface_t *surface)
 	}
 
 	if (surface->dlightframe == r_dlightframecount)
+	{
 		cache->dlight = 1;
+	}
 	else
+	{
 		cache->dlight = 0;
+	}
 	cache->Light = surface->Light;
 
 	// calculate the lightings

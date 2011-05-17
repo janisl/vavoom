@@ -921,7 +921,7 @@ bool VDatagramDriver::QueryMaster(VNetLanDriver* Drv, bool xmit)
 		}
 		// send the query request
 		VBitStreamWriter MsgOut(256 << 3);
-		vuint8 TmpByte = MCREQ_LIST;
+		TmpByte = MCREQ_LIST;
 		MsgOut << TmpByte;
 		Drv->Write(Drv->MasterQuerySocket, MsgOut.GetData(),
 			MsgOut.GetNumBytes(), &sendaddr);

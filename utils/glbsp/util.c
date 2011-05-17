@@ -140,8 +140,8 @@ char *UtilFormat(const char *str, ...)
 
     buf_size *= 2;
 
-    buf = realloc(buf, buf_size);
-    if (!buf)
+    buf = (char *)realloc(buf, buf_size);
+    if (buf == NULL)
       FatalError("Out of memory (formatting string)");
 
     va_start(args, str);

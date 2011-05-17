@@ -98,7 +98,7 @@ void TIWadFile::Open(const char* filename)
 		lump_p->size = LittleLong(fi_p->size);
 	}
 	
-	delete fileinfo;
+	delete[] fileinfo;
 	fileinfo = NULL;
 }
 

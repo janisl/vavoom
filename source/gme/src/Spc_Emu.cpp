@@ -169,7 +169,7 @@ static void get_spc_xid6( byte const begin [], int size, track_info_t* out )
 
 	if ( track > 255 && track < ( ( 100 << 8 ) - 1 ) )
 	{
-		char* p = &copyright [3];
+		p = &copyright [3];
 		*p = 0;
 		if ( track & 255 ) *--p = char (track & 255);
 		track >>= 8;

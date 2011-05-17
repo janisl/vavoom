@@ -211,19 +211,19 @@ static void ParseTerrainScript(VScriptParser* sc)
 				{
 					sc->ExpectNumber();
 					SInfo->ChunkXVelMul = sc->Number < 0 ? 0.0 :
-						(1 << sc->Number) / 256.0;
+						float((1 << sc->Number) / 256);
 				}
 				else if (sc->Check("chunkyvelshift"))
 				{
 					sc->ExpectNumber();
 					SInfo->ChunkYVelMul = sc->Number < 0 ? 0.0 :
-						(1 << sc->Number) / 256.0;
+						float((1 << sc->Number) / 256);
 				}
 				else if (sc->Check("chunkzvelshift"))
 				{
 					sc->ExpectNumber();
 					SInfo->ChunkZVelMul = sc->Number < 0 ? 0.0 :
-						(1 << sc->Number) / 256.0;
+						float((1 << sc->Number) / 256);
 				}
 				else if (sc->Check("chunkbasezvel"))
 				{

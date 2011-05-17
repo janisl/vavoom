@@ -123,7 +123,7 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 	}
 
 	//	Clean up parameters
-	guard(CleanUp);
+	guard(VBasePlayer::ExecuteNetMethod::CleanUp);
 	VStack* Param = pr_stackPtr - Func->ParamsSize + 1;	//	Skip self
 	for (int i = 0; i < Func->NumParams; i++)
 	{
@@ -159,7 +159,7 @@ bool VBasePlayer::ExecuteNetMethod(VMethod* Func)
 	unguard;
 
 	//	Push null return value
-	guard(RetVal);
+	guard(VBasePlayer::ExecuteNetMethod::RetVal);
 	switch (Func->ReturnType.Type)
 	{
 	case TYPE_Void:

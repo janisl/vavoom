@@ -1041,9 +1041,9 @@ void VDirect3DDrawer::DrawPortalArea(VPortal* Portal)
 	for (int i = 0; i < Portal->Surfs.Num(); i++)
 	{
 		const surface_t* Surf = Portal->Surfs[i];
-		for (int i = 0; i < Surf->count; i++)
+		for (int j = 0; j < Surf->count; j++)
 		{
-			out[i] = MyD3DVertex(Surf->verts[i], 0, 0, 0);
+			out[j] = MyD3DVertex(Surf->verts[j], 0, 0, 0);
 		}
 	    RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, Surf->count - 2,
             out, sizeof(MyD3DVertex));

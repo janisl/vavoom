@@ -144,12 +144,12 @@ void VObjectMapChannel::Update()
 			{
 				return;
 			}
-			int Cnt = 0;
+			int Cnt_msg = 0;
 			for (VMessageOut* M = OutMsg; M; M = M->Next)
 			{
-				Cnt++;
+				Cnt_msg++;
 			}
-			if (Cnt >= 10)
+			if (Cnt_msg >= 10)
 			{
 				return;
 			}
@@ -168,12 +168,12 @@ void VObjectMapChannel::Update()
 		if (Msg.GetNumBytes() + 4 > OUT_MESSAGE_SIZE / 8)
 		{
 			SendMessage(&Msg);
-			int Cnt = 0;
+			int Cnt_msg = 0;
 			for (VMessageOut* M = OutMsg; M; M = M->Next)
 			{
-				Cnt++;
+				Cnt_msg++;
 			}
-			if (Cnt >= 10)
+			if (Cnt_msg >= 10)
 			{
 				return;
 			}

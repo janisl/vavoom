@@ -201,7 +201,7 @@ VExpression* VCastOrInvocation::DoResolve(VEmitContext& ec)
 			return e->Resolve(ec);
 		}
 		VField* field = ec.SelfClass->FindField(Name, Loc, ec.SelfClass);
-		if (field && field->Type.Type == TYPE_Delegate)
+		if (field != NULL && field->Type.Type == TYPE_Delegate)
 		{
 			VExpression* e = new VInvocation(NULL, field->Func, field,
 				false, false, Loc, NumArgs, Args);
@@ -522,16 +522,16 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 	bool ArgsOk = true;
 	for (int i = 0; i < NumArgs; i++)
 	{
-		if (Args[i])
+		if (Args[i] != NULL)
 		{
 			Args[i] = Args[i]->Resolve(ec);
-			if (!Args[i])
+			if (Args[i] == NULL)
 			{
 				ArgsOk = false;
 			}
 		}
 	}
-	if (!ArgsOk)
+	if (ArgsOk == NULL)
 	{
 		delete this;
 		return NULL;
@@ -541,9 +541,13 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 
 	Type  = Func->ReturnType;
 	if (Type.Type == TYPE_Byte || Type.Type == TYPE_Bool)
+	{
 		Type = VFieldType(TYPE_Int);
+	}
 	if (Func->Flags & FUNC_Spawner)
+	{
 		Type.Class = Args[0]->Type.Class;
+	}
 	return this;
 	unguard;
 }
@@ -740,7 +744,7 @@ void VInvocation::CheckParams(VEmitContext& ec)
 					if (!Args[i]->Type.Equals(Func->ParamTypes[i]))
 					{
 						//FIXME This should be error.
-						if (!Func->ParamFlags[NumArgs] & FPARM_Optional)
+						if (!(Func->ParamFlags[NumArgs] & FPARM_Optional))
 						{
 							Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
 							//ParseError(Args[i]->Loc, "Out parameter types must be equal");
@@ -750,7 +754,7 @@ void VInvocation::CheckParams(VEmitContext& ec)
 				}
 				else
 				{
-					if (!Func->ParamFlags[NumArgs] & FPARM_Optional)
+					if (!(Func->ParamFlags[NumArgs] & FPARM_Optional))
 					{
 						Args[i]->Type.CheckMatch(Args[i]->Loc, Func->ParamTypes[i]);
 					}

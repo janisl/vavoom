@@ -1427,7 +1427,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	VStream* Strm = new VZipStreamReader(DataStrm);
 
 	//	Read extra vertex data
-	guard(Vertexes);
+	guard(VLevel::LoadCompressedGLNodes::Vertexes);
 	vuint32 OrgVerts;
 	vuint32 NewVerts;
 	*Strm << OrgVerts << NewVerts;
@@ -1461,7 +1461,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	unguard;
 
 	//	Load subsectors
-	guard(Subsectors);
+	guard(VLevel::LoadCompressedGLNodes::Subsectors);
 	NumSubsectors = Streamer<vuint32>(*Strm);
 	Subsectors = new subsector_t[NumSubsectors];
 	memset(Subsectors, 0, sizeof(subsector_t) * NumSubsectors);
@@ -1478,7 +1478,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	unguard;
 
 	//	Load segs
-	guard(Segs);
+	guard(VLevel::LoadCompressedGLNodes::Segs);
 	NumSegs = Streamer<vuint32>(*Strm);
 	Segs = new seg_t[NumSegs];
 	memset(Segs, 0, sizeof(seg_t) * NumSegs);
@@ -1538,7 +1538,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	unguard;
 
 	//	Load nodes.
-	guard(Nodes);
+	guard(VLevel::LoadCompressedGLNodes::Nodes);
 	NumNodes = Streamer<vuint32>(*Strm);
 	Nodes = new node_t[NumNodes];
 	memset(Nodes, 0, sizeof(node_t) * NumNodes);
@@ -1569,7 +1569,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	unguard;
 
 	//	Set v2 of the segs.
-	guard(Set up seg v2);
+	guard(VLevel::LoadCompressedGLNodes::Set up seg v2);
 	subsector_t* Sub = Subsectors;
 	for (int i = 0; i < NumSubsectors; i++, Sub++)
 	{
@@ -1582,7 +1582,7 @@ void VLevel::LoadCompressedGLNodes(int Lump)
 	}
 	unguard;
 
-	guard(Calc segs);
+	guard(VLevel::LoadCompressedGLNodes::Calc segs);
 	seg_t* li = Segs;
 	for (int i = 0; i < NumSegs; i++, li++)
 	{

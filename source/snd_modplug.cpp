@@ -250,13 +250,17 @@ VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 		// so we have to make sure that it is really a MOD_TYPE
 		// file by checking some of it's internal data here
 
-		// Check Mod Magic
 		byte Hdr[4];
 		InStrm->Seek(0);
 		InStrm->Serialise(Hdr, 4);
-		if (memcmp(Hdr, "M.K.", 4) || memcmp(Hdr, "M!K!", 4) ||
-			memcmp(Hdr, "M&K!", 4) || memcmp(Hdr, "N.T.", 4) ||
-			memcmp(Hdr, "CD81", 4) || memcmp(Hdr, "OKTA", 4))
+
+		// Ignore files that aren't MOD_TYPE files
+		if (memcmp(Hdr, "ZXAY", 4) || memcmp(Hdr, "GBS ", 4) ||
+			memcmp(Hdr, "GYMX", 4) || memcmp(Hdr, "HESM", 4) ||
+			memcmp(Hdr, "KSCC", 4) || memcmp(Hdr, "KSSX", 4) ||
+			memcmp(Hdr, "NESM", 4) || memcmp(Hdr, "NSFE", 4) ||
+			memcmp(Hdr, "SAP ", 4) || memcmp(Hdr, "SGC ", 4) ||
+			memcmp(Hdr, "SNES", 4) || memcmp(Hdr, "Vgm ", 4))
 		{
 			// Incompatible file
 			file = NULL;

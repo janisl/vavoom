@@ -274,7 +274,7 @@ fail:
 
 		if (panning == -1)
 		{
-			sp->panning = (SmplHdr.Panning * 8 + 4) & 0x7f;
+			sp->panning = (SmplHdr.Panning * 8 + 4) & 0x7F;
 		}
 		else
 		{
@@ -400,11 +400,11 @@ fail:
 
 		if (!(sp->modes & MODES_16BIT)) /* convert to 16-bit data */
 		{
-			int32 i = sp->data_length;
+			int32 k = sp->data_length;
 			uint8 *cp = (uint8*)(sp->data);
 			uint16 *tmp,*newdta;
 			tmp = newdta = (uint16*)safe_malloc(sp->data_length * 2);
-			while (i--)
+			while (k--)
 				*tmp++ = (uint16)(*cp++) << 8;
 			cp = (uint8*)(sp->data);
 			sp->data = (sample_t*)newdta;
@@ -430,9 +430,9 @@ fail:
 
 		if (sp->modes & MODES_UNSIGNED) /* convert to signed data */
 		{
-			int32 i = sp->data_length / 2;
+			int32 k = sp->data_length / 2;
 			int16* tmp = (int16*)sp->data;
-			while (i--)
+			while (k--)
 				*tmp++ ^= 0x8000;
 		}
 
@@ -462,10 +462,10 @@ fail:
 			/* Try to determine a volume scaling factor for the sample.
 				This is a very crude adjustment, but things sound more
 				balanced with it. Still, this should be a runtime option. */
-			int32 i = sp->data_length / 2;
+			int32 k = sp->data_length / 2;
 			int16 maxamp = 0, a;
 			int16* tmp = (int16*)sp->data;
-			while (i--)
+			while (k--)
 			{
 				a = *tmp++;
 				if (a < 0)

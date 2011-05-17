@@ -103,6 +103,7 @@ void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 	{
 		return;
 	}
+
 	if (!mobj->State)
 	{
 		return;
@@ -159,18 +160,22 @@ void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 
 	//	Setup lighting
 	vuint32 light;
-	if (RendStyle == STYLE_Fuzzy)
-	{
-		light = 0;
-	}
-	else if ((mobj->State->Frame & VState::FF_FULLBRIGHT) ||
+	if ((mobj->State->Frame & VState::FF_FULLBRIGHT) ||
 		(mobj->EntityFlags & (VEntity::EF_FullBright | VEntity::EF_Bright)))
 	{
 		light = 0xffffffff;
 	}
 	else
 	{
-		light = LightPointAmbient(mobj->Origin);
+		if (!r_model_light)
+		{
+			// Use old way of lighting
+			light = LightPoint(mobj->Origin);
+		}
+		else
+		{
+			light = LightPointAmbient(mobj->Origin);
+		}
 	}
 
 	float TimeFrac = 0;
@@ -225,6 +230,7 @@ void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 	{
 		return;
 	}
+
 	if (!mobj->State)
 	{
 		return;
@@ -274,10 +280,10 @@ void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 	}
 	Alpha = MID(0.0, Alpha, 1.0);
 
-/*	if (Alpha < 1.0)
+	if (Alpha < 1.0 && RendStyle == STYLE_Fuzzy)
 	{
 		return;
-	}*/
+	}
 
 	float TimeFrac = 0;
 	if (mobj->State->Time > 0)
@@ -363,17 +369,8 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 	{
 		return;
 	}
+
 	if (!mobj->State)
-	{
-		return;
-	}
-
-	if (!IsTouchedByLight(mobj))
-	{
-		return;
-	}
-
-	if (!LightClip.ClipCheckSubsector(mobj->SubSector))
 	{
 		return;
 	}
@@ -385,6 +382,12 @@ void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 		return;
 	}
 
+	if (!IsTouchedByLight(mobj))
+	{
+		return;
+	}
+
+	// Use advanced lighting style
 	int RendStyle = mobj->RenderStyle;
 	float Alpha = mobj->Alpha;
 	bool Additive = false;
@@ -480,17 +483,8 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 	{
 		return;
 	}
+
 	if (!mobj->State)
-	{
-		return;
-	}
-
-	if (!IsTouchedByLight(mobj))
-	{
-		return;
-	}
-
-	if (!LightClip.ClipCheckSubsector(mobj->SubSector))
 	{
 		return;
 	}
@@ -498,6 +492,11 @@ void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
+
+	if (!IsTouchedByLight(mobj))
 	{
 		return;
 	}
@@ -596,6 +595,7 @@ void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 	{
 		return;
 	}
+
 	if (!mobj->State)
 	{
 		return;
@@ -604,6 +604,12 @@ void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 	//	Skip things in subsectors that are not visible.
 	int SubIdx = mobj->SubSector - Level->Subsectors;
 	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+	{
+		return;
+	}
+
+	vuint32 Fade = GetFade(SV_PointInRegion(mobj->Sector, mobj->Origin));
+	if (!Fade)
 	{
 		return;
 	}
@@ -649,11 +655,6 @@ void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 	{
 		return;
 	}*/
-	vuint32 Fade = GetFade(SV_PointInRegion(mobj->Sector, mobj->Origin));
-	if (!Fade)
-	{
-		return;
-	}
 
 	float TimeFrac = 0;
 	if (mobj->State->Time > 0)

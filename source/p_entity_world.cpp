@@ -479,6 +479,15 @@ bool VEntity::CheckWater()
 					WaterLevel = 3;
 				}
 			}
+			else
+			{
+				point.z = Origin.z + Height * 0.75;
+				cont = SV_PointContents(Sector, point);
+				if (cont > 0)
+				{
+					WaterLevel = 3;
+				}
+			}
 		}
 	}
 	return WaterLevel > 1;
@@ -517,6 +526,7 @@ bool VEntity::CheckPosition(TVec Pos)
 	sec_region_t *gap;
 	sec_region_t *reg;
 	cptrace_t cptrace;
+	bool good = true;
 
 	cptrace.Pos = Pos;
 
@@ -591,12 +601,14 @@ bool VEntity::CheckPosition(TVec Pos)
 				line_t*		ld;
 				for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 				{
-					if (!CheckLine(cptrace, ld))
-					{
-						return false;
-					}
+					good &= CheckLine(cptrace, ld);
 				}
 			}
+		}
+
+		if (!good)
+		{
+			return false;
 		}
 	}
 
@@ -819,6 +831,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	subsector_t *newsubsec;
 	VEntity* thingblocker;
 	VEntity* fakedblocker;
+	bool good = true;
 
 	tmtrace.End = Pos;
 
@@ -834,7 +847,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	// that contains the point.
 	// Any contacted lines the step closer together
 	// will adjust them.
-	if (newsubsec->sector->SectorFlags && sector_t::SF_HasExtrafloors)
+	if (newsubsec->sector->SectorFlags & sector_t::SF_HasExtrafloors)
 	{
 		sec_region_t* gap = SV_FindThingGap(newsubsec->sector->botregion,
 			tmtrace.End, tmtrace.End.z, tmtrace.End.z + (Height ? 1.0 : Height));
@@ -953,12 +966,14 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 				line_t*		ld;
 				for (VBlockLinesIterator It(XLevel, bx, by, &ld); It.GetNext(); )
 				{
-					if (!CheckRelLine(tmtrace, ld))
-					{
-						return false;
-					}
+					good &= CheckRelLine(tmtrace, ld);
 				}
 			}
+		}
+
+		if (!good)
+		{
+			return false;
 		}
 
 		if (tmtrace.CeilingZ - tmtrace.FloorZ < Height)
@@ -1769,7 +1784,7 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 			opening_t* open = SV_LineOpenings(li, hit_point, SPF_NOBLOCKING);
 			open = SV_FindOpening(open, Origin.z, Origin.z + Height);
 
-			if (open && open->range >= Height &&	// fits
+			if (open != NULL && open->range >= Height &&	// fits
 				Origin.z + Height <= open->top &&
 				Origin.z >= open->bottom)	// mobj is not too high
 			{

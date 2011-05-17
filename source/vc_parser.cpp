@@ -1855,8 +1855,8 @@ void VParser::ParseStates(VClass* InClass)
 
 		for (size_t i = 1; i < VStr::Length(*FramesString); i++)
 		{
-			char FChar = VStr::ToUpper((*FramesString)[i]);
-			if (FChar < 'A' || FChar > ']')
+			char FSChar = VStr::ToUpper((*FramesString)[i]);
+			if (FSChar < 'A' || FSChar > ']')
 			{
 				ParseError(Lex.Location, "Frames must be A-Z, [, \\ or ]");
 			}
@@ -1866,7 +1866,7 @@ void VParser::ParseStates(VClass* InClass)
 			VState* s2 = new VState(StateName, InClass, TmpLoc);
 			InClass->AddState(s2);
 			s2->SpriteName = s->SpriteName;
-			s2->Frame = (s->Frame & VState::FF_FULLBRIGHT) | (FChar - 'A');
+			s2->Frame = (s->Frame & VState::FF_FULLBRIGHT) | (FSChar - 'A');
 			s2->Time = s->Time;
 			s2->Misc1 = s->Misc1;
 			s2->Misc2 = s->Misc2;

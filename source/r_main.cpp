@@ -315,14 +315,20 @@ VRenderLevelShared::~VRenderLevelShared()
 
 	for (int i = 0; i < Level->NumSubsectors; i++)
 	{
-		for (subregion_t* r = Level->Subsectors[i].regions; r; r = r->next)
+		for (subregion_t* r = Level->Subsectors[i].regions; r != NULL; r = r->next)
 		{
-			FreeSurfaces(r->floor->surfs);
-			delete r->floor;
-			r->floor = NULL;
-			FreeSurfaces(r->ceil->surfs);
-			delete r->ceil;
-			r->ceil = NULL;
+			if (r->floor != NULL)
+			{
+				FreeSurfaces(r->floor->surfs);
+				delete r->floor;
+				r->floor = NULL;
+			}
+			if (r->ceil != NULL)
+			{
+				FreeSurfaces(r->ceil->surfs);
+				delete r->ceil;
+				r->ceil = NULL;
+			}
 		}
 	}
 
@@ -837,7 +843,7 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 
 	MarkLeaves();
 
-	UpdateWorld();
+	UpdateWorld(RD, Range);
 
 	RenderWorld(RD, Range);
 	RenderMobjsAmbient();

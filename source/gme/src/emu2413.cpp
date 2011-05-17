@@ -151,7 +151,7 @@ static void maketables ( OPLL* opll )
 	// Table for AR to LogCurve.
 	{
 		ASSIGN( opll->AR_ADJUST_TABLE[0], (1 << EG_BITS) );
-		for (int i = 1; i < 128; i++)
+		for (i = 1; i < 128; i++)
 			ASSIGN( opll->AR_ADJUST_TABLE[i],
 					(e_uint16) ((double) (1 << EG_BITS) - 1 - (1 << EG_BITS) * log ((double)i) / log (128.)) );
 	}
@@ -713,7 +713,7 @@ void VRC7_writeReg( OPLL* opll, int addr, e_uint32 data )
 		for (ch = 0; ch < 6; ch++)
 		{
 			int flag = (opll->HiFreq [ch]) & 0x10;
-			OPLL_SLOT* slot = MOD( opll, ch );
+			slot = MOD( opll, ch );
 			slot [         0].slot_on_flag = flag;
 			slot [CAR_OFFSET].slot_on_flag = flag;
 		}

@@ -1301,12 +1301,12 @@ void Spc_Dsp::copy_state( unsigned char** io, copy_func_t copy )
 		voice_t* v = &m.voices [i];
 		
 		// BRR buffer
-		int i;
-		for ( i = 0; i < brr_buf_size; i++ )
+		int j;
+		for ( j = 0; j < brr_buf_size; j++ )
 		{
-			int s = v->buf [i];
+			int s = v->buf [j];
 			SPC_COPY(  int16_t, s );
-			v->buf [i] = v->buf [i + brr_buf_size] = s;
+			v->buf [j] = v->buf [j + brr_buf_size] = s;
 		}
 		
 		SPC_COPY( uint16_t, v->interp_pos );

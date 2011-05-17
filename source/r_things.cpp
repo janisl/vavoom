@@ -554,6 +554,7 @@ void VRenderLevelShared::RenderThing(VEntity* mobj, ERenderPass Pass)
 	{
 		return;
 	}
+
 	if (!mobj->State)
 	{
 		return;
