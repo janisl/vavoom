@@ -743,6 +743,7 @@ void *VDirect3DDrawer::ReadScreen(int *bpp, bool *bot2top)
 	D3DLOCKED_RECT lrect;
 	if (FAILED(surf->LockRect(&lrect, NULL, D3DLOCK_READONLY)))
 	{
+		Z_Free(dst);
 		Sys_Error("ReadScreen: Failed to lock screen");
 	}
 

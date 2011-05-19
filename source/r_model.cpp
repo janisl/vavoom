@@ -798,6 +798,7 @@ static mmdl_t* Mod_Extradata(VMeshModel* mod)
 
 	if (LittleLong(*(vuint32*)mod->Data) != IDPOLY2HEADER)
 	{
+		Z_Free(mod->Data);
 		Sys_Error("model %s is not a md2 model", *mod->Name);
 	}
 
@@ -1035,11 +1036,9 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		case RPASS_Normal:
 			break;
 
-		case RPASS_Ambient:
 		case RPASS_ShadowVolumes:
 		case RPASS_Light:
 		case RPASS_Textures:
-		case RPASS_Fog:
 			if (Md2Alpha < 1.0 || SubMdl.NoShadow)
 			{
 				continue;

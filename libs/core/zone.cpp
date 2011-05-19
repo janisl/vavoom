@@ -38,6 +38,8 @@
 #define SMALLID				0x22
 #define LARGEID				0x33
 
+//#define ZONE_DEBUG
+
 // TYPES -------------------------------------------------------------------
 
 enum

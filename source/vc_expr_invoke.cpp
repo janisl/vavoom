@@ -531,7 +531,7 @@ VExpression* VInvocation::DoResolve(VEmitContext& ec)
 			}
 		}
 	}
-	if (ArgsOk == NULL)
+	if (ArgsOk == false)
 	{
 		delete this;
 		return NULL;

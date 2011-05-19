@@ -229,6 +229,7 @@ VAudioCodec* VModPlugAudioCodec::Create(VStream* InStrm)
 	InStrm->Seek(0);
 	InStrm->Serialise(Data, Size);
 	ModPlugFile* file = ModPlug_Load(Data, Size);
+	Z_Free(Data);
 	if (!file)
 	{
 		return NULL;

@@ -537,6 +537,7 @@ static void LoadTGA(const char *filename)
 
 
 	Z_Free(hdr);
+	Z_Free(ImgData);
 }
 
 //==========================================================================
@@ -579,6 +580,7 @@ void ConvertImageTo32Bit()
 		Z_Free(ImgData);
 		ImgData = (vuint8*)NewData;
 		ImgBPP = 32;
+		Z_Free(NewData);
 	}
 }
 

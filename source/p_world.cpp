@@ -415,7 +415,7 @@ void VPathTraverse::Init(VThinker* Self, float InX1, float InY1, float x2,
 			xintercept += xstep;
 			mapy += mapystep;
 		}
-		else if ((int(yintercept) == mapy) && (int(xintercept) == mapx))
+		else if ((int(fabs(yintercept)) == mapy) && (int(fabs(xintercept)) == mapx))
 		{
 			// The trace is exiting a block through its corner. Not only does the block
 			// being entered need to be checked (which will happen when this loop
@@ -522,7 +522,7 @@ bool VPathTraverse::AddLineIntercepts(VThinker* Self, int mapx, int mapy,
 void VPathTraverse::AddThingIntercepts(VThinker* Self, int mapx, int mapy)
 {
 	guard(VPathTraverse::AddThingIntercepts);
-	for (VBlockThingsIterator It(Self->XLevel, mapx, mapy); It; ++It)
+	for (VBlockThingsIterator It(Self->XLevel, mapx, mapy); Self && It; ++It)
 	{
 		float dot = DotProduct(It->Origin, trace_plane.normal) -
 			trace_plane.dist;

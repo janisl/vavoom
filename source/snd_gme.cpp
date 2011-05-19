@@ -91,10 +91,14 @@ VGMEAudioCodec::VGMEAudioCodec(void* Data, int Size, gme_type_t in_file)
 	gme_load_data(emu, Data, Size);
 	
 	// Start track (0 is first track)
-	gme_start_track(emu, 0);
+	gme_err_t err = gme_start_track(emu, 0);
+	if (err)
+	{
+		Z_Free(Data);
+	}
 
 	// Set Play length here
-	gme_err_t err = gme_track_info(emu, &info, 0);
+	err = gme_track_info(emu, &info, 0);
 	if (!err && !info->length && !info->loop_length)
 	{
 		// Look for length inside of track info
@@ -132,7 +136,7 @@ VGMEAudioCodec::~VGMEAudioCodec()
 	// Delete emulator and track info
 	playing = false;
 
-	gme_free_info( info );
+	gme_free_info(info);
 	info = NULL;
 
 	gme_delete(emu);
@@ -160,6 +164,10 @@ int VGMEAudioCodec::Decode(short* Data, int NumSamples)
 		{
 			playing = false;
 		}
+	}
+	else
+	{
+		Z_Free(Data);
 	}
 
 	// This function converts current time in msec to

@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 	}
 	catch (VException& e)
 	{
-		FatalError(e.What());
+		FatalError("%s", e.What());
 	}
 	return 0;
 }

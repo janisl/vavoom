@@ -990,7 +990,7 @@ void VOpenGLDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 	glReadBuffer(GL_BACK);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glReadPixels(0, ScreenHeight - Height, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, Dest);
-	rgba_t* Temp = new rgba_t[Width];
+	rgba_t* Temp = (rgba_t *)Z_Malloc(sizeof(rgba_t) * Width);//new rgba_t[Width];
 	for (int i = 0; i < Height / 2; i++)
 	{
 		memcpy(Temp, Dest + i * Width, Width * sizeof(rgba_t));

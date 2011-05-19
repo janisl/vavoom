@@ -268,6 +268,7 @@ int LoadFile(const char *name, void **bufferptr)
 
 	if (count != length)
 	{
+		Z_Free(buffer);
 		Error("Couldn't read file \"%s\".", name);
 	}
 

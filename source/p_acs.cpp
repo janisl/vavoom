@@ -1977,7 +1977,7 @@ int VAcs::RunScript(float DeltaTime)
 
 	VStr PrintStr;
 	vint32 resultValue = 1;
-	vint32 *stack = (vint32 *)Z_Malloc(ACS_STACK_DEPTH);
+	vint32 *stack = (vint32 *)Z_Calloc(ACS_STACK_DEPTH);
 	vint32* optstart = NULL;
 	vint32* locals = LocalVars;
 	VAcsFunction* activeFunction = NULL;

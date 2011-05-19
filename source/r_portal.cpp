@@ -158,7 +158,7 @@ void VPortal::Draw(bool UseStencil)
 	TClipPlane* SavedClipLink = view_clipplanes[3].next;
 
 	VRenderLevel::trans_sprite_t *TransSprites =
-		(VRenderLevel::trans_sprite_t *)Z_Malloc(sizeof(VRenderLevel::trans_sprite_t) * VRenderLevel::MAX_TRANS_SPRITES);
+		(VRenderLevel::trans_sprite_t *)Z_Calloc(sizeof(VRenderLevel::trans_sprite_t) * VRenderLevel::MAX_TRANS_SPRITES);
 
 	if (NeedsDepthBuffer())
 	{

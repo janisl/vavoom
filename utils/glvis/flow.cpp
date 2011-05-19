@@ -661,7 +661,7 @@ void TVisBuilder::LeafFlow(int leafnum)
 		}
 		for (j = 0; j < rowbytes; j++)
 		{
-			if (p->visbits[j] == NULL)
+			if (p->visbits[j] == 0)
 			{
 				continue;
 			}

@@ -4593,3 +4593,7 @@ Linux.
 16.05.2011
   Firebrand fixed the remaining warnings from the code analysis tool.
   Firebrand made the engine use srand method to seed a value to further randomize the random number generator.
+19.05.2011
+  Firebrand fixed a few GCC warnings that were reported on the forum.
+  Firebrand fixed a few possible memory leaks in some parts of the code.
+  Firebrand fixed the drawing of translucent model ambient, light and fog passes in advanced OpenGL renderer.
