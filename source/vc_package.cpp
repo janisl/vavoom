@@ -690,7 +690,7 @@ void VPackage::WriteObject(const VStr& name)
 
 	//	Print statistics.
 	dprintf("            count   size\n");
-	dprintf("Header     %6d %6ld\n", 1, sizeof(progs));
+	dprintf("Header     %6d %6ld\n", 1, (long int)sizeof(progs));
 	dprintf("Names      %6d %6d\n", Writer.Names.Num(), progs.ofs_strings - progs.ofs_names);
 	dprintf("Strings    %6d %6d\n", StringInfo.Num(), Strings.Num());
 	dprintf("Builtins   %6d\n", NumBuiltins);
@@ -711,8 +711,6 @@ void VPackage::WriteObject(const VStr& name)
 		Writer << ((int*)&progs)[i];
 	}
 
-	fclose(f);
-
 #ifdef OPCODE_STATS
 	dprintf("\n-----------------------------------------------\n\n");
 	for (i = 0; i < NUM_OPCODES; i++)
@@ -721,6 +719,8 @@ void VPackage::WriteObject(const VStr& name)
 	}
 	dprintf("%d opcodes\n", NUM_OPCODES);
 #endif
+
+	fclose(f);
 	unguard;
 }
 
