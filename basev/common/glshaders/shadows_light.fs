@@ -7,6 +7,9 @@ varying vec3		Normal;
 varying float		Dist;
 varying vec3		VertToLight;
 
+uniform sampler2D	Texture;
+varying vec2		TextureCoordinate;
+
 void main()
 {
 	float DistToLight = length(VertToLight);
@@ -26,5 +29,7 @@ void main()
 	//}
 	Add = clamp(Add / 255.0, 0.0, 1.0);
 
-	gl_FragColor = vec4(LightColour.r, LightColour.g, LightColour.b, Add);
+	vec4 TexColour = texture2D(Texture, TextureCoordinate);
+
+	gl_FragColor = vec4(LightColour.rgb, Add * TexColour.a);
 }

@@ -147,7 +147,7 @@ interface, I override operator new to use malloc. */
 
 	#define BLARGG_DISABLE_NOTHROW \
 		void* operator new ( size_t s ) BLARGG_THROWS_NOTHING { return malloc( s ); }\
-		void operator delete( void* p ) BLARGG_THROWS_NOTHING { free( p ); }
+		void operator delete( void* p ) BLARGG_THROWS_NOTHING { free( p ); p = NULL; }
 
 	#define BLARGG_NEW new
 #else

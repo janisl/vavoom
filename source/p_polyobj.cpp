@@ -92,7 +92,8 @@ void VLevel::SpawnPolyobj(float x, float y, int tag, bool crush, bool hurt)
 			*(PolyObjs[index].segs) = &Segs[i]; // insert the first seg
 			//	Set sector's line count to 0 to force it not to be
 			// rendered even if we do a no-clip into it.
-			Segs[i].frontsector->linecount = 0;
+			// -- FB -- I'm disabling this behavior
+//			Segs[i].frontsector->linecount = 0;
 			IterFindPolySegs(*Segs[i].v2, PolyObjs[index].segs + 1,
 				PolySegCount, PolyStart);
 			if (crush)
@@ -147,7 +148,8 @@ void VLevel::SpawnPolyobj(float x, float y, int tag, bool crush, bool hurt)
 						polySegList[psIndex] = &Segs[i];
 						//	Set sector's line count to 0 to force it not to be
 						// rendered even if we do a no-clip into it.
-						Segs[i].frontsector->linecount = 0;
+						// -- FB -- I'm disabling this behavior
+//						Segs[i].frontsector->linecount = 0;
 						PolyObjs[index].numsegs++;
 						psIndex++;
 						check(psIndex <= PO_MAXPOLYSEGS);
@@ -245,7 +247,8 @@ void VLevel::IterFindPolySegs(const TVec& From, seg_t** segList,
 				*segList++ = &Segs[i];
 				//	Set sector's line count to 0 to force it not to be
 				// rendered even if we do a no-clip into it.
-				Segs[i].frontsector->linecount = 0;
+				// -- FB -- I'm disabling this behavior
+//				Segs[i].frontsector->linecount = 0;
 			}
 			IterFindPolySegs(*Segs[i].v2, segList, PolySegCount, PolyStart);
 			return;

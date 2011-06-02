@@ -758,10 +758,6 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{
-		if (!ViewClip.ClipCheckSubsector(r_sub))
-		{
-			return;
-		}
 		RenderSubRegion(region->next);
 	}
 
@@ -772,10 +768,6 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 
 	if (r_sub->poly)
 	{
-		if (!ViewClip.ClipCheckSubsector(r_sub))
-		{
-			return;
-		}
 		//	Render the polyobj in the subsector first
 		polyCount = r_sub->poly->numsegs;
 		polySeg = r_sub->poly->segs;

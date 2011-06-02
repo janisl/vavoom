@@ -57,13 +57,15 @@ extern void PrintRIFF(RIFF_Chunk *chunk, int level);
 
 static RIFF_Chunk *AllocRIFFChunk()
 {
-	RIFF_Chunk *chunk = (RIFF_Chunk *)malloc(sizeof(*chunk));
+	RIFF_Chunk *chunk = (RIFF_Chunk *)safe_malloc(sizeof(*chunk));
+
 	if (!chunk)
 	{
 		__Sound_SetError(ERR_OUT_OF_MEMORY);
 		return NULL;
 	}
 	memset(chunk, 0, sizeof(*chunk));
+
 	return chunk;
 }
 
@@ -73,6 +75,7 @@ static void FreeRIFFChunk(RIFF_Chunk *chunk)
 	{
 		FreeRIFFChunk(chunk->child);
 	}
+
 	if (chunk->next)
 	{
 		FreeRIFFChunk(chunk->next);
@@ -83,29 +86,39 @@ static void FreeRIFFChunk(RIFF_Chunk *chunk)
 
 static int ChunkHasSubType(uint32 magic)
 {
-	static uint32 chunk_list[] = {
+	static uint32 chunk_list[] =
+	{
 		RIFF, LIST
 	};
 	int i;
-	for ( i = 0; i < sizeof(chunk_list) / sizeof(chunk_list[0]); ++i ) {
-		if ( magic == chunk_list[i] ) {
+
+	for (i = 0; i < sizeof(chunk_list) / sizeof(chunk_list[0]); ++i)
+	{
+		if (magic == chunk_list[i])
+		{
 			return 1;
 		}
 	}
+
 	return 0;
 }
 
 static int ChunkHasSubChunks(uint32 magic)
 {
-	static uint32 chunk_list[] = {
+	static uint32 chunk_list[] =
+	{
 		RIFF, LIST
 	};
 	int i;
-	for ( i = 0; i < sizeof(chunk_list) / sizeof(chunk_list[0]); ++i ) {
-		if ( magic == chunk_list[i] ) {
+
+	for (i = 0; i < sizeof(chunk_list) / sizeof(chunk_list[0]); ++i)
+	{
+		if (magic == chunk_list[i])
+		{
 			return 1;
 		}
 	}
+
 	return 0;
 }
 
@@ -114,50 +127,53 @@ static void LoadSubChunks(RIFF_Chunk *chunk, uint8 *data, uint32 left)
 	uint8 *subchunkData;
 	uint32 subchunkDataLen;
 
-	while ( left > 8 ) {
+	while (left > 8)
+	{
 		RIFF_Chunk *child = AllocRIFFChunk();
 		RIFF_Chunk *next, *prev = NULL;
-		for ( next = chunk->child; next; next = next->next ) {
+
+		for (next = chunk->child; next; next = next->next)
+		{
 			prev = next;
 		}
-		if ( prev ) {
+
+		if (prev)
+		{
 			prev->next = child;
-		} else {
+		}
+		else
+		{
 			chunk->child = child;
 		}
-			
-		child->magic = (data[0] <<  0) |
-						(data[1] <<  8) |
-						(data[2] << 16) |
-						(data[3] << 24);
+		child->magic = (data[0] <<  0) | (data[1] <<  8) |
+						(data[2] << 16) | (data[3] << 24);
 		data += 4;
 		left -= 4;
-		child->length = (data[0] <<  0) |
-						(data[1] <<  8) |
-						(data[2] << 16) |
-						(data[3] << 24);
+		child->length = (data[0] <<  0) | (data[1] <<  8) |
+						(data[2] << 16) | (data[3] << 24);
 		data += 4;
 		left -= 4;
 		child->data = data;
 
-		if ( child->length > left ) {
+		if (child->length > left)
+		{
 			child->length = left;
 		}
-
 		subchunkData = child->data;
 		subchunkDataLen = child->length;
-		if ( ChunkHasSubType(child->magic) && subchunkDataLen >= 4 ) {
-			child->subtype = (subchunkData[0] <<  0) |
-						(subchunkData[1] <<  8) |
-						(subchunkData[2] << 16) |
-						(subchunkData[3] << 24);
+
+		if (ChunkHasSubType(child->magic) && subchunkDataLen >= 4)
+		{
+			child->subtype = (subchunkData[0] <<  0) | (subchunkData[1] <<  8) |
+						(subchunkData[2] << 16) | (subchunkData[3] << 24);
 			subchunkData += 4;
 			subchunkDataLen -= 4;
 		}
-		if ( ChunkHasSubChunks(child->magic) ) {
+
+		if (ChunkHasSubChunks(child->magic))
+		{
 			LoadSubChunks(child, subchunkData, subchunkDataLen);
 		}
-
 		data += (child->length + 1) & ~1;
 		left -= (child->length + 1) & ~1;
 	}
@@ -177,35 +193,47 @@ RIFF_Chunk *LoadRIFF(FILE* src)
 	fread(&chunk->length, 4, 1, src);
 	chunk->magic = LE_LONG(chunk->magic);
 	chunk->length = LE_LONG(chunk->length);
-	if ( chunk->magic != RIFF ) {
+
+	if (chunk->magic != RIFF)
+	{
 		__Sound_SetError("Not a RIFF file");
 		FreeRIFFChunk(chunk);
+
 		return NULL;
 	}
-	chunk->data = (uint8 *)malloc(chunk->length);
-	if ( chunk->data == NULL ) {
+	chunk->data = (uint8 *)safe_malloc(chunk->length);
+
+	if (chunk->data == NULL)
+	{
 		__Sound_SetError(ERR_OUT_OF_MEMORY);
 		FreeRIFFChunk(chunk);
+
 		return NULL;
 	}
-	if ( fread(chunk->data, chunk->length, 1, src) != 1 ) {
+
+	if (fread(chunk->data, chunk->length, 1, src) != 1)
+	{
 		__Sound_SetError(ERR_IO_ERROR);
 		FreeRIFF(chunk);
+
 		return NULL;
 	}
 	subchunkData = chunk->data;
 	subchunkDataLen = chunk->length;
-	if ( ChunkHasSubType(chunk->magic) && subchunkDataLen >= 4 ) {
-		chunk->subtype = (subchunkData[0] <<  0) |
-					(subchunkData[1] <<  8) |
-					(subchunkData[2] << 16) |
-					(subchunkData[3] << 24);
+
+	if (ChunkHasSubType(chunk->magic) && subchunkDataLen >= 4)
+	{
+		chunk->subtype = (subchunkData[0] <<  0) | (subchunkData[1] <<  8) |
+					(subchunkData[2] << 16) | (subchunkData[3] << 24);
 		subchunkData += 4;
 		subchunkDataLen -= 4;
 	}
-	if ( ChunkHasSubChunks(chunk->magic) ) {
+
+	if (ChunkHasSubChunks(chunk->magic))
+	{
 		LoadSubChunks(chunk, subchunkData, subchunkDataLen);
 	}
+
 	return chunk;
 }
 
@@ -327,7 +355,8 @@ extern void FreeDLS(DLS_Data *chunk);
 
 static void FreeRegions(DLS_Instrument *instrument)
 {
-	if ( instrument->regions ) {
+	if (instrument->regions)
+	{
 		free(instrument->regions);
 		instrument->regions = NULL;
 	}
@@ -336,18 +365,24 @@ static void FreeRegions(DLS_Instrument *instrument)
 static void AllocRegions(DLS_Instrument *instrument)
 {
 	int datalen = (instrument->header->cRegions * sizeof(DLS_Region));
+
 	FreeRegions(instrument);
-	instrument->regions = (DLS_Region *)malloc(datalen);
-	if ( instrument->regions ) {
+	instrument->regions = (DLS_Region *)safe_malloc(datalen);
+
+	if (instrument->regions)
+	{
 		memset(instrument->regions, 0, datalen);
 	}
 }
 
 static void FreeInstruments(DLS_Data *data)
 {
-	if ( data->instruments ) {
+	if (data->instruments)
+	{
 		uint32 i;
-		for ( i = 0; i < data->cInstruments; ++i ) {
+
+		for (i = 0; i < data->cInstruments; ++i)
+		{
 			FreeRegions(&data->instruments[i]);
 		}
 		free(data->instruments);
@@ -358,16 +393,19 @@ static void FreeInstruments(DLS_Data *data)
 static void AllocInstruments(DLS_Data *data)
 {
 	int datalen = (data->cInstruments * sizeof(DLS_Instrument));
+
 	FreeInstruments(data);
-	data->instruments = (DLS_Instrument *)malloc(datalen);
-	if ( data->instruments ) {
+	data->instruments = (DLS_Instrument *)safe_malloc(datalen);
+	if (data->instruments)
+	{
 		memset(data->instruments, 0, datalen);
 	}
 }
 
 static void FreeWaveList(DLS_Data *data)
 {
-	if ( data->waveList ) {
+	if (data->waveList)
+	{
 		free(data->waveList);
 		data->waveList = NULL;
 	}
@@ -376,9 +414,11 @@ static void FreeWaveList(DLS_Data *data)
 static void AllocWaveList(DLS_Data *data)
 {
 	int datalen = (data->ptbl->cCues * sizeof(DLS_Wave));
+
 	FreeWaveList(data);
-	data->waveList = (DLS_Wave *)malloc(datalen);
-	if ( data->waveList ) {
+	data->waveList = (DLS_Wave *)safe_malloc(datalen);
+	if (data->waveList)
+	{
 		memset(data->waveList, 0, datalen);
 	}
 }
@@ -435,7 +475,9 @@ static void Parse_wsmp(DLS_Data *data, RIFF_Chunk *chunk, WSMPL **wsmp_ptr, WLOO
 	loop = (WLOOP *)((uint8 *)chunk->data + wsmp->cbSize);
 	*wsmp_ptr = wsmp;
 	*wsmp_loop_ptr = loop;
-	for ( i = 0; i < wsmp->cSampleLoops; ++i ) {
+
+	for (i = 0; i < wsmp->cSampleLoops; ++i)
+	{
 		loop->cbSize = LE_LONG(loop->cbSize);
 		loop->ulType = LE_LONG(loop->ulType);
 		loop->ulStart = LE_LONG(loop->ulStart);
@@ -454,7 +496,9 @@ static void Parse_art(DLS_Data *data, RIFF_Chunk *chunk, CONNECTIONLIST **art_pt
 	artList = (CONNECTION *)((uint8 *)chunk->data + art->cbSize);
 	*art_ptr = art;
 	*artList_ptr = artList;
-	for ( i = 0; i < art->cConnections; ++i ) {
+
+	for (i = 0; i < art->cConnections; ++i)
+	{
 		artList->usSource = LE_SHORT(artList->usSource);
 		artList->usControl = LE_SHORT(artList->usControl);
 		artList->usDestination = LE_SHORT(artList->usDestination);
@@ -467,22 +511,30 @@ static void Parse_art(DLS_Data *data, RIFF_Chunk *chunk, CONNECTIONLIST **art_pt
 static void Parse_lart(DLS_Data *data, RIFF_Chunk *chunk, CONNECTIONLIST **conn_ptr, CONNECTION **connList_ptr)
 {
 	/* FIXME: This only supports one set of connections */
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_ART1:
 			case FOURCC_ART2:
+			{
 				Parse_art(data, chunk, conn_ptr, connList_ptr);
 				return;
+			}
 		}
 	}
 }
 
 static void Parse_rgn(DLS_Data *data, RIFF_Chunk *chunk, DLS_Region *region)
 {
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_RGNH:
 				Parse_rgnh(data, chunk, region);
 				break;
@@ -503,12 +555,17 @@ static void Parse_rgn(DLS_Data *data, RIFF_Chunk *chunk, DLS_Region *region)
 static void Parse_lrgn(DLS_Data *data, RIFF_Chunk *chunk, DLS_Instrument *instrument)
 {
 	uint32 region = 0;
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_RGN:
 			case FOURCC_RGN2:
-				if ( region < instrument->header->cRegions ) {
+				if (region < instrument->header->cRegions)
+				{
 					Parse_rgn(data, chunk, &instrument->regions[region++]);
 				}
 				break;
@@ -518,9 +575,12 @@ static void Parse_lrgn(DLS_Data *data, RIFF_Chunk *chunk, DLS_Instrument *instru
 
 static void Parse_INFO_INS(DLS_Data *data, RIFF_Chunk *chunk, DLS_Instrument *instrument)
 {
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_INAM: /* Name */
 				instrument->name = (const char*)chunk->data;
 				break;
@@ -530,9 +590,12 @@ static void Parse_INFO_INS(DLS_Data *data, RIFF_Chunk *chunk, DLS_Instrument *in
 
 static void Parse_ins(DLS_Data *data, RIFF_Chunk *chunk, DLS_Instrument *instrument)
 {
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_INSH:
 				Parse_insh(data, chunk, instrument);
 				break;
@@ -553,11 +616,16 @@ static void Parse_ins(DLS_Data *data, RIFF_Chunk *chunk, DLS_Instrument *instrum
 static void Parse_lins(DLS_Data *data, RIFF_Chunk *chunk)
 {
 	uint32 instrument = 0;
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_INS:
-				if ( instrument < data->cInstruments ) {
+				if (instrument < data->cInstruments)
+				{
 					Parse_ins(data, chunk, &data->instruments[instrument++]);
 				}
 				break;
@@ -573,7 +641,9 @@ static void Parse_ptbl(DLS_Data *data, RIFF_Chunk *chunk)
 	ptbl->cCues = LE_LONG(ptbl->cCues);
 	data->ptbl = ptbl;
 	data->ptblList = (POOLCUE *)((uint8 *)chunk->data + ptbl->cbSize);
-	for ( i = 0; i < ptbl->cCues; ++i ) {
+
+	for (i = 0; i < ptbl->cCues; ++i)
+	{
 		data->ptblList[i].ulOffset = LE_LONG(data->ptblList[i].ulOffset);
 	}
 	AllocWaveList(data);
@@ -599,9 +669,12 @@ static void Parse_data(DLS_Data *data, RIFF_Chunk *chunk, DLS_Wave *wave)
 
 static void Parse_wave(DLS_Data *data, RIFF_Chunk *chunk, DLS_Wave *wave)
 {
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_FMT:
 				Parse_fmt(data, chunk, wave);
 				break;
@@ -618,11 +691,16 @@ static void Parse_wave(DLS_Data *data, RIFF_Chunk *chunk, DLS_Wave *wave)
 static void Parse_wvpl(DLS_Data *data, RIFF_Chunk *chunk)
 {
 	uint32 wave = 0;
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_wave:
-				if ( wave < data->ptbl->cCues ) {
+				if (wave < data->ptbl->cCues)
+				{
 					Parse_wave(data, chunk, &data->waveList[wave++]);
 				}
 				break;
@@ -632,9 +710,12 @@ static void Parse_wvpl(DLS_Data *data, RIFF_Chunk *chunk)
 
 static void Parse_INFO_DLS(DLS_Data *data, RIFF_Chunk *chunk)
 {
-	for ( chunk = chunk->child; chunk; chunk = chunk->next ) {
+	for (chunk = chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_IARL: /* Archival Location */
 				break;
 			case FOURCC_IART: /* Artist */
@@ -680,22 +761,28 @@ static void Parse_INFO_DLS(DLS_Data *data, RIFF_Chunk *chunk)
 DLS_Data *LoadDLS(FILE *src)
 {
 	RIFF_Chunk *chunk;
-	DLS_Data *data = (DLS_Data *)malloc(sizeof(*data));
-	if ( !data ) {
+	DLS_Data *data = (DLS_Data *)safe_malloc(sizeof(*data));
+
+	if (!data)
+	{
 		__Sound_SetError(ERR_OUT_OF_MEMORY);
 		return NULL;
 	}
 	memset(data, 0, sizeof(*data));
-
 	data->chunk = LoadRIFF(src);
-	if ( !data->chunk ) {
+
+	if (!data->chunk)
+	{
 		FreeDLS(data);
 		return NULL;
 	}
 
-	for ( chunk = data->chunk->child; chunk; chunk = chunk->next ) {
+	for (chunk = data->chunk->child; chunk; chunk = chunk->next)
+	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
-		switch(magic) {
+
+		switch(magic)
+		{
 			case FOURCC_COLH:
 				Parse_colh(data, chunk);
 				break;
@@ -713,12 +800,14 @@ DLS_Data *LoadDLS(FILE *src)
 				break;
 		}
 	}
+
 	return data;
 }
 
 void FreeDLS(DLS_Data *data)
 {
-	if ( data->chunk ) {
+	if (data->chunk)
+	{
 		FreeRIFF(data->chunk);
 	}
 	FreeInstruments(data);
@@ -734,9 +823,11 @@ void FreeDLS(DLS_Data *data)
 DLS_Data *Timidity_LoadDLS(FILE *src)
 {
 	DLS_Data *patches = LoadDLS(src);
-	//  if (!patches) {
-	//    SNDDBG(("%s", SDL_GetError()));
-	//  }
+	//if (!patches)
+	//{
+	//	SNDDBG(("%s", SDL_GetError()));
+	//}
+
 	return patches;
 }
 
@@ -745,17 +836,31 @@ void Timidity_FreeDLS(DLS_Data *patches)
 	FreeDLS(patches);
 }
 
+static double RelativeGainToLinear(int centibels)
+{
+	// v = 10^(cb/(200*65536)) * V
+	return 100.0 * pow(10.0, (double)(centibels / 65536) / 200.0);
+}
+
 /* convert timecents to sec */
 static double to_msec(int timecent)
 {
-	if (timecent == 0x80000000 || timecent == 0)
+	if (timecent == 0x80000000)
+	{
 		return 0.0;
+	}
+
 	return 1000.0 * pow(2.0, (double)(timecent / 65536) / 1200.0);
 }
 
 /* convert decipercent to {0..1} */
 static double to_normalized_percent(int decipercent)
 {
+	if (decipercent < 0)
+	{
+		return 0;
+	}
+
 	return ((double)(decipercent / 65536)) / 1000.0;
 }
 
@@ -773,11 +878,17 @@ static int32 calc_rate(int diff, int sample_rate, double msec)
 	double rate;
 
 	if(msec < 6)
+	{
 		msec = 6;
+	}
+
 	if(diff == 0)
+	{
 		diff = 255;
+	}
 	diff <<= (7+15);
 	rate = ((double)diff / CONTROLS_PER_SECOND) * 1000.0 / msec;
+
 	return (int32)rate;
 }
 
@@ -785,9 +896,11 @@ static int load_connection(ULONG cConnections, CONNECTION *artList, USHORT desti
 {
 	ULONG i;
 	int value = 0;
+
 	for (i = 0; i < cConnections; ++i)
 	{
 		CONNECTION *conn = &artList[i];
+
 		if(conn->usDestination == destination)
 		{
 			// The formula for the destination is:
@@ -797,9 +910,29 @@ static int load_connection(ULONG cConnections, CONNECTION *artList, USHORT desti
 			if (conn->usSource == CONN_SRC_NONE &&
 				conn->usControl == CONN_SRC_NONE &&
 				conn->usTransform == CONN_TRN_NONE)
+			{
+				if (destination == CONN_DST_EG1_ATTACKTIME)
+				{
+					if (conn->lScale > 78743200)
+					{
+						conn->lScale -= 78743200; // maximum velocity
+					}
+				}
+
+				if (destination == CONN_DST_EG1_SUSTAINLEVEL)
+				{
+					conn->lScale /= (1000*512);
+				}
+
+				if (destination == CONN_DST_PAN)
+				{
+					conn->lScale /= (65536000/128);
+				}
 				value += conn->lScale;
+			}
 		}
 	}
+
 	return value;
 }
 
@@ -819,18 +952,20 @@ static void load_region_dls(DLS_Data *patches, Sample *sample, DLS_Instrument *i
 	sample->data_length = wave->length / 2;
 	sample->data = (sample_t *)safe_malloc(wave->length);
 	memcpy(sample->data, wave->data, wave->length);
+
 	if (rgn->wsmp->cSampleLoops)
 	{
 		sample->modes |= (MODES_LOOPING|MODES_SUSTAIN);
-		sample->loop_start = rgn->wsmp_loop->ulStart / 2;
-		sample->loop_end = sample->loop_start + (rgn->wsmp_loop->ulLength / 2);
+		sample->loop_start = rgn->wsmp_loop->ulStart/* / 2*/;
+		sample->loop_end = sample->loop_start + (rgn->wsmp_loop->ulLength/* / 2*/);
 	}
-	sample->volume = 1.0f;
+	sample->volume = (float)(1.0 - to_normalized_percent(RelativeGainToLinear(rgn->wsmp->lAttenuation)));
 
 	if (sample->modes & MODES_SUSTAIN)
 	{
 		int value;
-		double attack, hold, decay, release; int sustain;
+		double attack, hold, decay, release;
+		int sustain;
 		CONNECTIONLIST *art = NULL;
 		CONNECTION *artList = NULL;
 
@@ -847,20 +982,63 @@ static void load_region_dls(DLS_Data *patches, Sample *sample, DLS_Instrument *i
 
 		value = load_connection(art->cConnections, artList, CONN_DST_EG1_ATTACKTIME);
 		attack = to_msec(value);
+		if (attack < 0)
+		{
+			attack = 0;
+		}
+		if (attack >= 20)
+		{
+			attack = attack / 20;
+		}
+
 		value = load_connection(art->cConnections, artList, CONN_DST_EG1_HOLDTIME);
 		hold = to_msec(value);
+		if (hold >= 20)
+		{
+			hold = hold / 20;
+		}
+
 		value = load_connection(art->cConnections, artList, CONN_DST_EG1_DECAYTIME);
 		decay = to_msec(value);
+		if (decay >= 20)
+		{
+			decay = decay / 20;
+		}
+
 		value = load_connection(art->cConnections, artList, CONN_DST_EG1_RELEASETIME);
 		release = to_msec(value);
-		value = load_connection(art->cConnections, artList, CONN_DST_EG1_SUSTAINLEVEL);
-		sustain = (int)((1.0 - to_normalized_percent(value)) * 250.0);
-		value = load_connection(art->cConnections, artList, CONN_DST_PAN);
-		sample->panning = (int)((0.5 + to_normalized_percent(value)) * 127.0);
+		if (release >= 20)
+		{
+			release = release / 20;
+		}
 
-	/*
-	printf("%d, Rate=%d LV=%d HV=%d Low=%d Hi=%d Root=%d Pan=%d Attack=%f Hold=%f Sustain=%d Decay=%f Release=%f\n", index, sample->sample_rate, rgn->header->RangeVelocity.usLow, rgn->header->RangeVelocity.usHigh, sample->low_freq, sample->high_freq, sample->root_freq, sample->panning, attack, hold, sustain, decay, release);
-	*/
+		value = load_connection(art->cConnections, artList, CONN_DST_EG1_SUSTAINLEVEL) * 2;
+		sustain = (int)((1.0 - to_normalized_percent(value)) * 250.0);
+		if (sustain < 0)
+		{
+			sustain = 0;
+		}
+		if (sustain > 255)
+		{
+			sustain = 250;
+		}
+
+		value = load_connection(art->cConnections, artList, CONN_DST_PAN) / 2;
+		sample->panning = (int)((0.5 + to_normalized_percent(value)) * 127.0);
+		if (sample->panning < 0)
+		{
+			sample->panning = 0;
+		}
+		if (sample->panning > 128)
+		{
+			sample->panning = 127;
+		}
+
+		//ctl->cmsg(CMSG_INFO, VERB_NORMAL, 
+		//	"%d, Rate=%d LV=%d HV=%d Low=%d Hi=%d Root=%d Pan=%d Attack=%f Hold=%f Sustain=%d Decay=%f Release=%f\n", index, sample->sample_rate, rgn->header->RangeVelocity.usLow, rgn->header->RangeVelocity.usHigh, sample->low_freq, sample->high_freq, sample->root_freq, sample->panning, attack, hold, sustain, decay, release);
+		/*
+		printf("%d, Rate=%d LV=%d HV=%d Low=%d Hi=%d Root=%d Pan=%d Attack=%f Hold=%f Sustain=%d Decay=%f Release=%f\n", index, sample->sample_rate, rgn->header->RangeVelocity.usLow, rgn->header->RangeVelocity.usHigh, sample->low_freq, sample->high_freq, sample->root_freq, sample->panning, attack, hold, sustain, decay, release);
+		*/
 
 		sample->envelope_offset[ATTACK] = to_offset(255);
 		sample->envelope_rate[ATTACK] = calc_rate(255, sample->sample_rate, attack);
@@ -895,39 +1073,49 @@ Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrume
 	DLS_Instrument *dls_ins;
 
 	if (!song->patches)
+	{
 		return(NULL);
+	}
 
 	if (!drum)
 	{
 		for (i = 0; i < song->patches->cInstruments; ++i)
 		{
 			dls_ins = &song->patches->instruments[i];
+
 			if (!(dls_ins->header->Locale.ulBank & 0x80000000) &&
 				((dls_ins->header->Locale.ulBank >> 8) & 0xFF) == bank &&
 				dls_ins->header->Locale.ulInstrument == instrument)
+			{
 				break;
+			}
 		}
+
 		if (i == song->patches->cInstruments && !bank)
 		{
 			for (i = 0; i < song->patches->cInstruments; ++i)
 			{
 				dls_ins = &song->patches->instruments[i];
+
 				if (!(dls_ins->header->Locale.ulBank & 0x80000000) &&
 					dls_ins->header->Locale.ulInstrument == instrument)
+				{
 					break;
+				}
 			}
 		}
+
 		if (i == song->patches->cInstruments)
 		{
 			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't find melodic instrument %d in bank %d\n", instrument, bank);
 			return(NULL);
 		}
-
 		inst = (Instrument *)safe_malloc(sizeof(*inst));
 		inst->type = INST_DLS;
 		inst->samples = dls_ins->header->cRegions;
 		inst->sample = (Sample *)safe_malloc(inst->samples * sizeof(*inst->sample));
 		memset(inst->sample, 0, inst->samples * sizeof(*inst->sample));
+
 		for (i = 0; i < dls_ins->header->cRegions; ++i)
 		{
 			load_region_dls(song->patches, &inst->sample[i], dls_ins, i);
@@ -938,27 +1126,35 @@ Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrume
 		for (i = 0; i < song->patches->cInstruments; ++i)
 		{
 			dls_ins = &song->patches->instruments[i];
+
 			if ((dls_ins->header->Locale.ulBank & 0x80000000) &&
 				dls_ins->header->Locale.ulInstrument == bank)
+			{
 				break;
+			}
 		}
+
 		if (i == song->patches->cInstruments && !bank)
 		{
 			for (i = 0; i < song->patches->cInstruments; ++i)
 			{
 				dls_ins = &song->patches->instruments[i];
+
 				if ((dls_ins->header->Locale.ulBank & 0x80000000) &&
 					dls_ins->header->Locale.ulInstrument == 0)
+				{
 					break;
+				}
 			}
 		}
+
 		if (i == song->patches->cInstruments)
 		{
 			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't find drum instrument %d\n", bank);
 			return(NULL);
 		}
-
 		int drum_reg = -1;
+
 		for (i = 0; i < dls_ins->header->cRegions; i++)
 		{
 			if (dls_ins->regions[i].header->RangeKey.usLow == instrument)
@@ -967,6 +1163,7 @@ Instrument* load_instrument_dls(MidiSong *song, int drum, int bank, int instrume
 				break;
 			}
 		}
+
 		if (drum_reg == -1)
 		{
 			ctl->cmsg(CMSG_ERROR, VERB_NORMAL, "Couldn't find drum note %d\n", instrument);

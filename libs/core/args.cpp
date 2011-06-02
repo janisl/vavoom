@@ -95,7 +95,7 @@ void VArgs::FindResponseFile()
 		fseek(handle, 0, SEEK_END);
 		int size = ftell(handle);
 		fseek(handle, 0, SEEK_SET);
-		char *file = (char*)malloc(size + 1);
+		char *file = (char*)Z_Malloc(size + 1);
 		fread(file, size, 1, handle);
 		fclose(handle);
 		file[size] = 0;
@@ -103,7 +103,7 @@ void VArgs::FindResponseFile()
 		//	Keep all other cmdline args
 		char** oldargv = Argv;
 
-		Argv = (char**)malloc(sizeof(char*) * MAXARGVS);
+		Argv = (char**)Z_Malloc(sizeof(char*) * MAXARGVS);
 		memset(Argv, 0, sizeof(char*) * MAXARGVS);
 
 		//	Keep args before response file

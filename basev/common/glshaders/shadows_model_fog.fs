@@ -9,10 +9,12 @@ uniform float		FogEnd;
 
 varying vec2		TextureCoordinate;
 
+uniform float		InAlpha;
+
 void main()
 {
 	vec4 FinalColour = texture2D(Texture, TextureCoordinate);
-	if (FinalColour.a <= 0.0)
+	if (FinalColour.a <= 0.333)
 	{
 		discard;
 	}
@@ -30,8 +32,8 @@ void main()
 	}
 	else
 	{
-		FogFactor = (FogEnd - z) / (FogEnd - FogStart);
+		FogFactor = ((FogEnd - z) / (FogEnd - FogStart));
 	}
-	FogFactor = clamp(1.0 - FogFactor, 0.0, 1.0);
-	gl_FragColor = vec4(FogColour.xyz, FogFactor);
+	FogFactor = clamp(1.0 - FogFactor, 0.0, 1.0) * InAlpha;
+	gl_FragColor = vec4(FogColour.rgb, FogFactor * FinalColour.a);
 }

@@ -289,7 +289,7 @@ void VDirect3DDrawer::InitResolution()
 	RenderDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESSEQUAL);
 	
 	RenderDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 85);
 
 	RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -934,7 +934,7 @@ void VDirect3DDrawer::BeginShadowVolumesPass() {}
 void VDirect3DDrawer::BeginLightShadowVolumes() {}
 void VDirect3DDrawer::RenderSurfaceShadowVolume(surface_t*, TVec&, float) {}
 void VDirect3DDrawer::BeginLightPass(TVec&, float, vuint32) {}
-void VDirect3DDrawer::DrawSurfaceLight(surface_t*) {}
+void VDirect3DDrawer::DrawSurfaceLight(surface_t*, TVec&, float) {}
 void VDirect3DDrawer::DrawWorldTexturesPass() {}
 void VDirect3DDrawer::DrawWorldFogPass() {}
 void VDirect3DDrawer::EndFogPass() {}
@@ -942,7 +942,7 @@ void VDirect3DDrawer::DrawAliasModelAmbient(const TVec&, const TAVec&, const TVe
 	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) {}
 void VDirect3DDrawer::DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 	const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-	float, bool) {}
+	float, float, bool) {}
 void VDirect3DDrawer::BeginModelsLightPass(TVec&, float, vuint32) {}
 void VDirect3DDrawer::DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 	const TVec&, VMeshModel*, int, int, VTexture*, float, bool) {}

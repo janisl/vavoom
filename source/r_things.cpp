@@ -351,17 +351,19 @@ void VRenderLevelShared::RenderSprite(VEntity* thing, vuint32 light,
 	{
 		// choose a different rotation based on player view
 		//FIXME must use sprforward here?
-		float ang = matan(thing->Origin.y - vieworg.y,
-			thing->Origin.x - vieworg.x);
+		float ang = matan(sprorigin.y - vieworg.y,
+			sprorigin.x - vieworg.x);
 		if (sprframe->lump[0] == sprframe->lump[1])
 		{
 			ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 2.0);
 		}
 		else
 		{
+			ang = matan(sprforward.y + viewforward.y,
+				sprforward.x + viewforward.x);
 			ang = AngleMod(ang - thing->Angles.yaw + 180.0 + 45.0 / 4.0);
 		}
-		vuint32 rot = (vuint32)(ang * 16 / 360.0) & 15;
+		vuint32 rot = (vuint32)(ang * 16.0 / 360.0) & 15;
 		lump = sprframe->lump[rot];
 		flip = sprframe->flip[rot];
 	}

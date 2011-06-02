@@ -92,7 +92,7 @@ char *UtilStrDup(const char *str)
   char *result;
   int len = (int)strlen(str);
 
-  result = UtilCalloc(len+1);
+  result = (char *)UtilCalloc(len+1);
 
   if (len > 0)
     memcpy(result, str, len);
@@ -115,7 +115,7 @@ char *UtilStrNDup(const char *str, int size)
   for (len=0; len < size && str[len]; len++)
   { }
 
-  result = UtilCalloc(len+1);
+  result = (char *)UtilCalloc(len+1);
 
   if (len > 0)
     memcpy(result, str, len);

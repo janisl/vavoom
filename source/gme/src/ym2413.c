@@ -1894,6 +1894,7 @@ static YM2413 *OPLLCreate(int clock, int rate, int type)
 static void OPLLDestroy(YM2413 *chip)
 {
 	free(chip);
+	chip = NULL;
 }
 
 /* Option handlers */

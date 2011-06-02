@@ -612,7 +612,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 28);
 	}
 	if (Additive)
 	{
@@ -625,7 +625,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 85);
 	}
 	if (Additive)
 	{
@@ -660,23 +660,23 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	}
 	SetFade(Fade);
 
+	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 0);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 28);
 	}
 	if (Additive)
 	{
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ONE);
 	}
-	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 
 	RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, out, sizeof(MyD3DVertex));
 
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 85);
 	}
 	if (Additive)
 	{
@@ -882,7 +882,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	{
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
-	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 85);
 	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
 	RenderDevice->SetTransform(D3DTS_WORLD, &IdentityMatrix);
@@ -956,7 +956,7 @@ void VDirect3DDrawer::EndParticles()
 	guard(VDirect3DDrawer::EndParticles);
 	RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 170);
+	RenderDevice->SetRenderState(D3DRS_ALPHAREF, 85);
 	unguard;
 }
 

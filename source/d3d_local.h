@@ -196,7 +196,7 @@ public:
 	void BeginLightShadowVolumes();
 	void RenderSurfaceShadowVolume(surface_t*, TVec&, float);
 	void BeginLightPass(TVec&, float, vuint32);
-	void DrawSurfaceLight(surface_t*);
+	void DrawSurfaceLight(surface_t*, TVec&, float);
 	void DrawWorldTexturesPass();
 	void DrawWorldFogPass();
 	void EndFogPass();
@@ -204,7 +204,7 @@ public:
 		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-		float, bool);
+		float, float, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, float, bool);

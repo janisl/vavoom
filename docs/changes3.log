@@ -4596,4 +4596,12 @@ Linux.
 19.05.2011
   Firebrand fixed a few GCC warnings that were reported on the forum.
   Firebrand fixed a few possible memory leaks in some parts of the code.
-  Firebrand fixed the drawing of translucent model ambient, light and fog passes in advanced OpenGL renderer.
+  Firebrand fixed the drawing of translucent model ambient, light and fog passes in advanced OpenGL renderer,
+ the problem was due to the shaders not taking into account an actor alpha value to apply it to the model.
+26.05.2011
+  Firebrand added some checks to the clipper to properly clip away segs behind closed doors and elevator/plats.
+27.05.2011
+  Firebrand fixed a problem reported on the forums, where the renderer would mark polyobject segs on the
+ frontsectors linecount to 0 to skip rendering them, this made some maps to crash when entering such sectors.
+01.06.2011
+  Firebrand began improving how Timidity uses DLS files, since they sounded crappy, this isn't finished yet.

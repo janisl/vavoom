@@ -2290,6 +2290,7 @@ YM2612 * YM2612Init(void *param, int index, long clock, long rate)
 	if( !init_tables() )
 	{
 		free( F2612 );
+		F2612 = NULL;
 		return NULL;
 	}
 
@@ -2324,6 +2325,7 @@ void YM2612Shutdown(YM2612 *F2612)
 {
 	FMCloseTable();
 	free(F2612);
+	F2612 = NULL;
 }
 
 /* reset one of chip */

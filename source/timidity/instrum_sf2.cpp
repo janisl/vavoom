@@ -172,6 +172,7 @@ void Timidity_FreeSf2(Sf2Data* font)
 	{
 		FreeRIFF(font->Riff);
 	}
+
 	free(font);
 	font = NULL;
 }
@@ -206,11 +207,12 @@ static void ReadInfo(Sf2Data* font, RIFF_Chunk* list)
 	for (RIFF_Chunk* chunk = list->child; chunk; chunk = chunk->next)
 	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
+
 		switch(magic)
 		{
-		case FOURCC_ifil:
-			ReadIfil(font, chunk);
-			break;
+			case FOURCC_ifil:
+				ReadIfil(font, chunk);
+				break;
 		}
 	}
 }
@@ -228,12 +230,12 @@ static void ReadSmpl(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 2
 	if (chunk->length % 2)
 	{
 		throw ErrBadFile();
 	}
-
 	font->SampleData = (int16*)chunk->data;
 	font->SampleDataSize = chunk->length;
 }
@@ -249,11 +251,12 @@ static void ReadSdta(Sf2Data* font, RIFF_Chunk* list)
 	for (RIFF_Chunk* chunk = list->child; chunk; chunk = chunk->next)
 	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
+
 		switch(magic)
 		{
-		case FOURCC_smpl:
-			ReadSmpl(font, chunk);
-			break;
+			case FOURCC_smpl:
+				ReadSmpl(font, chunk);
+				break;
 		}
 	}
 }
@@ -271,20 +274,22 @@ static void ReadPhdr(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 38
 	if (chunk->length % 38)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least 1 record and a terminal record
 	if (chunk->length < 2 * 38)
 	{
 		throw ErrBadFile();
 	}
-
 	font->PresetHeaders = (SFPresetHeader*)chunk->data;
 	font->NumPresetHeaders = chunk->length / sizeof(SFPresetHeader);
 	int LastBagIndex = 0;
+
 	for (int i = 0; i < font->NumPresetHeaders; i++)
 	{
 		SFPresetHeader* Hdr = &font->PresetHeaders[i];
@@ -317,21 +322,23 @@ static void ReadPbag(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 4
 	if (chunk->length % 4)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least 1 record and a terminal record
 	if (chunk->length < 2 * 4)
 	{
 		throw ErrBadFile();
 	}
-
 	font->PresetBags = (SFBag*)chunk->data;
 	font->NumPresetBags = chunk->length / sizeof(SFBag);
 	int LastGenIndex = 0;
 	int LastModIndex = 0;
+
 	for (int i = 0; i < font->NumPresetBags; i++)
 	{
 		SFBag* Bag = &font->PresetBags[i];
@@ -361,19 +368,21 @@ static void ReadPmod(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 10
 	if (chunk->length % 10)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least a terminal record
 	if (chunk->length < 10)
 	{
 		throw ErrBadFile();
 	}
-
 	font->PresetModulators = (SFMod*)chunk->data;
 	font->NumPresetModulators = chunk->length / sizeof(SFMod);
+
 	for (int i = 0; i < font->NumPresetModulators; i++)
 	{
 		SFMod* Mod = &font->PresetModulators[i];
@@ -398,29 +407,36 @@ static void ReadPgen(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 4
 	if (chunk->length % 4)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least 1 record and a terminal record
 	if (chunk->length < 2 * 4)
 	{
 		throw ErrBadFile();
 	}
-
 	font->PresetGenerators = (SFGen*)chunk->data;
 	font->NumPresetGenerators = chunk->length / sizeof(SFGen);
+
 	for (int i = 0; i < font->NumPresetGenerators; i++)
 	{
 		SFGen* Gen = &font->PresetGenerators[i];
 		Gen->Oper = LE_SHORT(Gen->Oper);
+
 		if (Gen->Oper != SFGEN_KeyRange && Gen->Oper != SFGEN_VelRange)
+		{
 			Gen->Amount = LE_SHORT(Gen->Amount);
+		}
 
 		//  Map invalid operator values to an unused generator.
 		if (Gen->Oper >= SFGEN_EndOper)
+		{
 			Gen->Oper = SFGEN_Reserved1;
+		}
 	}
 }
 
@@ -437,20 +453,22 @@ static void ReadInst(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 22
 	if (chunk->length % 22)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least 1 record and a terminal record
 	if (chunk->length < 2 * 22)
 	{
 		throw ErrBadFile();
 	}
-
 	font->InstrumentHeaders = (SFInst*)chunk->data;
 	font->NumInstrumentHeaders = chunk->length / sizeof(SFInst);
 	int LastBagIndex = 0;
+
 	for (int i = 0; i < font->NumInstrumentHeaders; i++)
 	{
 		SFInst* Hdr = &font->InstrumentHeaders[i];
@@ -478,21 +496,23 @@ static void ReadIbag(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 4
 	if (chunk->length % 4)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least 1 record and a terminal record
 	if (chunk->length < 2 * 4)
 	{
 		throw ErrBadFile();
 	}
-
 	font->InstrumentBags = (SFBag*)chunk->data;
 	font->NumInstrumentBags = chunk->length / sizeof(SFBag);
 	int LastGenIndex = 0;
 	int LastModIndex = 0;
+
 	for (int i = 0; i < font->NumInstrumentBags; i++)
 	{
 		SFBag* Bag = &font->InstrumentBags[i];
@@ -522,19 +542,21 @@ static void ReadImod(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 10
 	if (chunk->length % 10)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least a terminal record
 	if (chunk->length < 10)
 	{
 		throw ErrBadFile();
 	}
-
 	font->InstrumentModulators = (SFMod*)chunk->data;
 	font->NumInstrumentModulators = chunk->length / sizeof(SFMod);
+
 	for (int i = 0; i < font->NumInstrumentModulators; i++)
 	{
 		SFMod* Mod = &font->InstrumentModulators[i];
@@ -559,29 +581,36 @@ static void ReadIgen(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 4
 	if (chunk->length % 4)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least 1 record and a terminal record
 	if (chunk->length < 2 * 4)
 	{
 		throw ErrBadFile();
 	}
-
 	font->InstrumentGenerators = (SFGen*)chunk->data;
 	font->NumInstrumentGenerators = chunk->length / sizeof(SFGen);
+
 	for (int i = 0; i < font->NumInstrumentGenerators; i++)
 	{
 		SFGen* Gen = &font->InstrumentGenerators[i];
 		Gen->Oper = LE_SHORT(Gen->Oper);
+
 		if (Gen->Oper != SFGEN_KeyRange && Gen->Oper != SFGEN_VelRange)
+		{
 			Gen->Amount = LE_SHORT(Gen->Amount);
+		}
 
 		//  Map invalid operator values to an unused generator.
 		if (Gen->Oper >= SFGEN_EndOper)
+		{
 			Gen->Oper = SFGEN_Reserved1;
+		}
 	}
 }
 
@@ -598,19 +627,21 @@ static void ReadShdr(Sf2Data* font, RIFF_Chunk* chunk)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify length is a multiple of 46
 	if (chunk->length % 46)
 	{
 		throw ErrBadFile();
 	}
+
 	//  Verify that it contains at least 1 record and a terminal record
 	if (chunk->length < 2 * 46)
 	{
 		throw ErrBadFile();
 	}
-
 	font->SampleHeaders = (SFSample*)chunk->data;
 	font->NumSampleHeaders = chunk->length / sizeof(SFSample);
+
 	for (int i = 0; i < font->NumSampleHeaders; i++)
 	{
 		SFSample* Spl = &font->SampleHeaders[i];
@@ -635,35 +666,36 @@ static void ReadPdta(Sf2Data* font, RIFF_Chunk* list)
 	for (RIFF_Chunk* chunk = list->child; chunk; chunk = chunk->next)
 	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
+
 		switch(magic)
 		{
-		case FOURCC_phdr:
-			ReadPhdr(font, chunk);
-			break;
-		case FOURCC_pbag:
-			ReadPbag(font, chunk);
-			break;
-		case FOURCC_pmod:
-			ReadPmod(font, chunk);
-			break;
-		case FOURCC_pgen:
-			ReadPgen(font, chunk);
-			break;
-		case FOURCC_inst:
-			ReadInst(font, chunk);
-			break;
-		case FOURCC_ibag:
-			ReadIbag(font, chunk);
-			break;
-		case FOURCC_imod:
-			ReadImod(font, chunk);
-			break;
-		case FOURCC_igen:
-			ReadIgen(font, chunk);
-			break;
-		case FOURCC_shdr:
-			ReadShdr(font, chunk);
-			break;
+			case FOURCC_phdr:
+				ReadPhdr(font, chunk);
+				break;
+			case FOURCC_pbag:
+				ReadPbag(font, chunk);
+				break;
+			case FOURCC_pmod:
+				ReadPmod(font, chunk);
+				break;
+			case FOURCC_pgen:
+				ReadPgen(font, chunk);
+				break;
+			case FOURCC_inst:
+				ReadInst(font, chunk);
+				break;
+			case FOURCC_ibag:
+				ReadIbag(font, chunk);
+				break;
+			case FOURCC_imod:
+				ReadImod(font, chunk);
+				break;
+			case FOURCC_igen:
+				ReadIgen(font, chunk);
+				break;
+			case FOURCC_shdr:
+				ReadShdr(font, chunk);
+				break;
 		}
 	}
 }
@@ -684,17 +716,18 @@ static void LoadSf2Data(Sf2Data* font)
 	for (RIFF_Chunk* chunk = font->Riff->child; chunk; chunk = chunk->next)
 	{
 		uint32 magic = (chunk->magic == FOURCC_LIST) ? chunk->subtype : chunk->magic;
+
 		switch(magic)
 		{
-		case FOURCC_INFO:
-			ReadInfo(font, chunk);
-			break;
-		case FOURCC_sdta:
-			ReadSdta(font, chunk);
-			break;
-		case FOURCC_pdta:
-			ReadPdta(font, chunk);
-			break;
+			case FOURCC_INFO:
+				ReadInfo(font, chunk);
+				break;
+			case FOURCC_sdta:
+				ReadSdta(font, chunk);
+				break;
+			case FOURCC_pdta:
+				ReadPdta(font, chunk);
+				break;
 		}
 	}
 
@@ -756,23 +789,28 @@ static void LoadSf2Data(Sf2Data* font)
 		int end = Spl->End;
 		int startloop = Spl->Startloop;
 		int endloop = Spl->Endloop;
+
 		if (startloop < start)
 		{
 			Spl->SampleType |= SFSAMPLE_Bad;
 		}
+
 		if (endloop < startloop)
 		{
 			Spl->SampleType |= SFSAMPLE_Bad;
 		}
+
 		if (end < endloop)
 		{
 			Spl->SampleType |= SFSAMPLE_Bad;
 		}
+
 		if (end > font->SampleDataSize / 2)
 		{
 			Spl->SampleType |= SFSAMPLE_Bad;
 		}
 	}
+
 	for (int i = 0; i < font->NumSampleHeaders - 1; i++)
 	{
 		for (int j = i + 1; j < font->NumSampleHeaders - 1; j++)
@@ -796,20 +834,22 @@ static void LoadSf2Data(Sf2Data* font)
 Sf2Data* Timidity_LoadSF2(const char* FileName)
 {
 	FILE* f = open_file(FileName, 1, OF_NORMAL);
+
 	if (!f)
 	{
 		return NULL;
 	}
 	RIFF_Chunk* Riff = LoadRIFF(f);
 	close_file(f);
+
 	if (!Riff)
 	{
 		return NULL;
 	}
-
 	Sf2Data* font = (Sf2Data*)safe_malloc(sizeof(Sf2Data));
 	memset(font, 0, sizeof(Sf2Data));
 	font->Riff = Riff;
+
 	try
 	{
 		LoadSf2Data(font);
@@ -819,6 +859,7 @@ Sf2Data* Timidity_LoadSF2(const char* FileName)
 		Timidity_FreeSf2(font);
 		return NULL;
 	}
+
 	return font;
 }
 
@@ -842,6 +883,7 @@ static int FindPreset(Sf2Data* font, int Bank, int Instr)
 			return i;
 		}
 	}
+
 	return -1;
 }
 
@@ -873,6 +915,7 @@ static double to_msec(int timecent)
 	{
 		return 0.0;
 	}
+
 	return 1000.0 * pow(2.0, (double)(timecent) / 1200.0);
 }
 
@@ -906,12 +949,14 @@ static int32 calc_rate(int diff, int sample_rate, double msec)
 	{
 		msec = 6;
 	}
+
 	if (diff == 0)
 	{
 		diff = 255;
 	}
 	diff <<= (7+15);
 	rate = ((double)diff / CONTROLS_PER_SECOND) * 1000.0 / msec;
+
 	return (int32)rate;
 }
 
@@ -929,6 +974,7 @@ static double to_normalized_percent(int decipercent)
 	{
 		return 0;
 	}
+
 	return ((double)decipercent) / 1000.0;
 }
 
@@ -949,32 +995,37 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 	{
 		return NULL;
 	}
-
 	int PresetBagFrom = font->PresetHeaders[PresetIndex].BagNdx;
 	int PresetBagTo = font->PresetHeaders[PresetIndex + 1].BagNdx;
-
 	int NumSamples = 0;
+
 	for (int PBagIdx = PresetBagFrom; PBagIdx < PresetBagTo; PBagIdx++)
 	{
 		int PresetGenFrom = font->PresetBags[PBagIdx].GenNdx;
 		int PresetGenTo = font->PresetBags[PBagIdx + 1].GenNdx;
+
 		for (int PGenIdx = PresetGenFrom; PGenIdx < PresetGenTo; PGenIdx++)
 		{
 			SFGen* PresetGen = &(font->PresetGenerators[PGenIdx]);
+
 			if (PresetGen->Oper == SFGEN_Instrument)
 			{
 				int InstrBagFrom = font->InstrumentHeaders[PresetGen->Amount].BagNdx;
 				int InstrBagTo = font->InstrumentHeaders[PresetGen->Amount + 1].BagNdx;
+
 				for (int IBagIdx = InstrBagFrom; IBagIdx < InstrBagTo; IBagIdx++)
 				{
 					int InstrGenFrom = font->InstrumentBags[IBagIdx].GenNdx;
 					int InstrGenTo = font->InstrumentBags[IBagIdx + 1].GenNdx;
+
 					for (int IGenIdx = InstrGenFrom; IGenIdx < InstrGenTo; IGenIdx++)
 					{
 						SFGen* InstrGen = &font->InstrumentGenerators[IGenIdx];
+
 						if (InstrGen->Oper == SFGEN_SampleId)
 						{
 							SFSample* SampleHdr = &font->SampleHeaders[InstrGen->Amount];
+
 							if ((SampleHdr->SampleType & SFSAMPLE_Bad) ||
 								(SampleHdr->SampleType & SFSAMPLE_RomSample))
 							{
@@ -987,11 +1038,11 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 			}
 		}
 	}
+
 	if (Drum)
 	{
 		NumSamples = 1;
 	}
-
 	Instrument* ip = (Instrument*)safe_malloc(sizeof(Instrument));
 	ip->type = INST_SF2;
 	ip->samples = NumSamples;
@@ -1003,6 +1054,7 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 	bool IsDefaultPresetZone = true;
 
 	int SampleIdx = 0;
+
 	for (int PBagIdx = PresetBagFrom; PBagIdx < PresetBagTo; PBagIdx++)
 	{
 		int presKeyLo = 0;
@@ -1014,9 +1066,11 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 
 		int PresetGenFrom = font->PresetBags[PBagIdx].GenNdx;
 		int PresetGenTo = font->PresetBags[PBagIdx + 1].GenNdx;
+
 		for (int PGenIdx = PresetGenFrom; PGenIdx < PresetGenTo; PGenIdx++)
 		{
 			SFGen* PresetGen = &font->PresetGenerators[PGenIdx];
+
 			if (PresetGen->Oper == SFGEN_KeyRange)
 			{
 				presKeyLo = PresetGen->Range.Lo;
@@ -1030,6 +1084,7 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 			else if (PresetGen->Oper == SFGEN_Instrument)
 			{
 				int16 InstrDefaultGenData[SFGEN_EndOper];
+
 				for (int i = 0; i < SFGEN_EndOper; i++)
 				{
 					InstrDefaultGenData[i] = GenInfos[i].Default;
@@ -1038,6 +1093,7 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 
 				int InstrBagFrom = font->InstrumentHeaders[PresetGen->Amount].BagNdx;
 				int InstrBagTo = font->InstrumentHeaders[PresetGen->Amount + 1].BagNdx;
+
 				for (int IBagIdx = InstrBagFrom; IBagIdx < InstrBagTo; IBagIdx++)
 				{
 					int keyLo = 0;
@@ -1049,6 +1105,7 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 
 					int InstrGenFrom = font->InstrumentBags[IBagIdx].GenNdx;
 					int InstrGenTo = font->InstrumentBags[IBagIdx + 1].GenNdx;
+
 					for (int IGenIdx = InstrGenFrom; IGenIdx < InstrGenTo; IGenIdx++)
 					{
 						SFGen* InstrGen = &font->InstrumentGenerators[IGenIdx];
@@ -1069,6 +1126,7 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 						else if (InstrGen->Oper == SFGEN_SampleId)
 						{
 							SFSample* SampleHdr = &font->SampleHeaders[InstrGen->Amount];
+
 							if ((SampleHdr->SampleType & SFSAMPLE_Bad) ||
 								(SampleHdr->SampleType & SFSAMPLE_RomSample))
 							{
@@ -1092,6 +1150,7 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 								SampleHdr->Endloop;
 
 							int OrigKey;
+
 							if (InstrGenData[SFGEN_OverridingRootKey] >= 0 &&
 								InstrGenData[SFGEN_OverridingRootKey] < 128)
 							{
@@ -1105,7 +1164,6 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 							{
 								OrigKey = 60; 
 							}
-
 							AddGenerators(InstrGenData, PresetGenData);
 
 							Sample *sp = &ip->sample[SampleIdx++];
@@ -1136,6 +1194,7 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 							sp->data = (int16*)safe_malloc(sp->data_length * 2);
 							int16* Src = font->SampleData + Start;
 							int16* Dst = sp->data;
+
 							for (int i = 0; i < sp->data_length; i++)
 							{
 								*Dst = LE_SHORT(*Src);
@@ -1174,7 +1233,6 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 							{
 								return ip;
 							}
-
 							IsDefaultInstrZone = false;
 						}
 						else
@@ -1219,8 +1277,8 @@ Instrument* load_instrument_sf2(MidiSong* song, int Bank, int Instr, bool Drum)
 	{ 
 		return NULL; 
 	}
-
 	int PresetIndex; 
+
 	if (Drum)
 	{
 		PresetIndex = FindPreset(song->sf2_font, 128, 0);
@@ -1233,10 +1291,12 @@ Instrument* load_instrument_sf2(MidiSong* song, int Bank, int Instr, bool Drum)
 			PresetIndex = FindPreset(song->sf2_font, 0, Instr);
 		}
 	}
+
 	if (PresetIndex < 0)
 	{
 		return NULL; 
 	}
+
 	return LoadPreset(song->sf2_font, PresetIndex, Drum, Instr);
 }
 

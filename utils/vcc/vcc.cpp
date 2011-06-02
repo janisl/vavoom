@@ -385,7 +385,7 @@ void* Malloc(size_t size)
 		return NULL;
 	}
 
-	void *ptr = malloc(size);
+	void *ptr = Z_Malloc(size);
 	if (!ptr)
 	{
 		FatalError("Couldn't alloc %d bytes", (int)size);
@@ -404,7 +404,7 @@ void Free(void* ptr)
 {
 	if (ptr)
 	{
-		free(ptr);
+		Z_Free(ptr);
 		ptr = NULL;
 	}
 }

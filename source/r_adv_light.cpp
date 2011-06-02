@@ -349,6 +349,7 @@ void VAdvancedRenderLevel::DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *tex
 	{
 		return;
 	}
+
 	if (texinfo->Alpha < 1.0)
 	{
 		return;
@@ -388,12 +389,12 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 		return;
 	}
 
-	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist < 0 || dist >= CurrLightRadius)
+/*	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
+	if (dist < 0.0 || dist > CurrLightRadius)
 	{
-		//	Light is in back side or on plane or too far away
+		//	Light is in back side or too far away
 		return;
-	}
+	}*/
 
 	line_t *linedef = line->linedef;
 	side_t *sidedef = line->sidedef;
@@ -435,12 +436,12 @@ void VAdvancedRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity*
 		return;
 	}
 
-	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
-	if (dist < 0 || dist >= CurrLightRadius)
+/*	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
+	if (dist < 0.0 || dist > CurrLightRadius)
 	{
-		//	Light is in back side
+		//	Light is in back side or too far away
 		return;
-	}
+	}*/
 
 	DrawShadowSurfaces(ssurf->surfs, &ssurf->texinfo, true);
 	unguard;
@@ -632,6 +633,7 @@ void VAdvancedRenderLevel::DrawLightSurfaces(surface_t* InSurfs, texinfo_t *texi
 	{
 		return;
 	}
+
 	if (texinfo->Alpha < 1.0)
 	{
 		return;
@@ -650,7 +652,7 @@ void VAdvancedRenderLevel::DrawLightSurfaces(surface_t* InSurfs, texinfo_t *texi
 
 	do
 	{
-		Drawer->DrawSurfaceLight(surfs);
+		Drawer->DrawSurfaceLight(surfs, CurrLightPos, CurrLightRadius);
 		surfs = surfs->next;
 	} while (surfs);
 	unguard;
@@ -682,8 +684,14 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 		return;
 	}
 
+/*	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
+	if (dist < 0.0 || dist > CurrLightRadius)
+	{
+		//	Light is in back side or too far away
+		return;
+	}*/
 	float dist = DotProduct(vieworg, line->normal) - line->dist;
-	if (dist <= 0)
+	if (dist <= 0.0)
 	{
 		//	Viewer is in back side or on plane
 		return;
@@ -736,10 +744,16 @@ void VAdvancedRenderLevel::RenderLightSecSurface(sec_surface_t* ssurf, VEntity* 
 		return;
 	}
 
-	float dist = DotProduct(vieworg, plane.normal) - plane.dist;
-	if (dist <= 0)
+/*	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
+	if (dist < 0.0 || dist > CurrLightRadius)
 	{
-		// Viewer is in back side or on plane
+		//	Light is in back side or too far away
+		return;
+	}*/
+	float dist = DotProduct(vieworg, plane.normal) - plane.dist;
+	if (dist <= 0.0)
+	{
+		//	Viewer is in back side or on plane
 		return;
 	}
 
@@ -764,7 +778,7 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 	seg_t**			polySeg;
 	float			d;
 
-	d = DotProduct(vieworg, region->floor->secplane->normal) -
+	d = DotProduct(CurrLightPos, region->floor->secplane->normal) -
 		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{

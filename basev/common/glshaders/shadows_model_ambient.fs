@@ -5,6 +5,8 @@ uniform vec4		Light;
 
 varying vec2		TextureCoordinate;
 
+uniform float		InAlpha;
+
 void main()
 {
 	vec4 TexColour = texture2D(Texture, TextureCoordinate);
@@ -12,5 +14,6 @@ void main()
 	{
 		discard;
 	}
-	gl_FragColor = Light;
+
+	gl_FragColor = vec4(Light.rgb, InAlpha * TexColour.a);
 }

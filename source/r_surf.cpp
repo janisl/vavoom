@@ -245,7 +245,7 @@ void VRenderLevel::InitSurfs(surface_t* ASurfs, texinfo_t *texinfo,
 //==========================================================================
 
 void VAdvancedRenderLevel::InitSurfs(surface_t* surfs, texinfo_t *texinfo,
-	TPlane *plane, subsector_t*)
+	TPlane *plane, subsector_t* sub)
 {
 	guard(VAdvancedRenderLevel::InitSurfs);
 	//	It's always one surface.
@@ -481,7 +481,7 @@ sec_surface_t* VRenderLevelShared::CreateSecSurface(subsector_t* sub,
 
 	surf->count = sub->numlines;
 	seg_t *line = &Level->Segs[sub->firstline];
-	int vlindex = (splane->normal.z < 0);
+	bool vlindex = (splane->normal.z < 0);
 	for (int i = 0; i < surf->count; i++)
 	{
 		TVec &v = *line[vlindex ? surf->count - i - 1 : i].v1;
@@ -522,13 +522,6 @@ void VRenderLevelShared::UpdateSecSurface(sec_surface_t *ssurf,
 
 	if (!plane->pic)
 	{
-		return;
-	}
-
-	float dist = DotProduct(vieworg, plane->normal) - plane->dist;
-	if (dist <= 0)
-	{
-		//	Viewer is in back side or on plane
 		return;
 	}
 
@@ -607,7 +600,7 @@ void VRenderLevelShared::UpdateSecSurface(sec_surface_t *ssurf,
 				(sub->numlines - 1) * sizeof(TVec));
 			surf->count = sub->numlines;
 			seg_t* line = &Level->Segs[sub->firstline];
-			int vlindex = (plane->normal.z < 0);
+			bool vlindex = (plane->normal.z < 0);
 			for (int i = 0; i < surf->count; i++)
 			{
 				TVec &v = *line[vlindex ? surf->count - i - 1 : i].v1;
@@ -1373,16 +1366,6 @@ void VRenderLevelShared::UpdateDrawSeg(drawseg_t* dseg, bool ShouldClip)
 		return;
 	}
 
-	float dist = DotProduct(vieworg, seg->normal) - seg->dist;
-	if (dist <= 0)
-	{
-		//	Viewer is in back side or on plane
-		return;
-	}
-
-	side_t* sidedef = seg->sidedef;
-	line_t* linedef = seg->linedef;
-
 	if (ShouldClip)
 	{
 		float a1 = ViewClip.PointToClipAngle(*seg->v2);
@@ -1392,6 +1375,9 @@ void VRenderLevelShared::UpdateDrawSeg(drawseg_t* dseg, bool ShouldClip)
 			return;
 		}
 	}
+
+	side_t* sidedef = seg->sidedef;
+	line_t* linedef = seg->linedef;
 
 	if (!seg->backsector)
 	{
@@ -2398,7 +2384,7 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 		//(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg));
 		(s && vieworg.z <= s->floor.GetPointZ(vieworg));
 	bool doorunderwater = false;
-	int diffTex = !!(s && s->SectorFlags & sector_t::SF_ClipFakePlanes);
+	bool diffTex = !!(s && s->SectorFlags & sector_t::SF_ClipFakePlanes);
 
 	// Replace sector being drawn with a copy to be hacked
 	fakefloor_t* ff = sec->fakefloors;
@@ -2490,10 +2476,10 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 /*					for (int z = WallSX1; z < WallSX2; ++z)
 					{
 						if (floorclip[z] > ceilingclip[z])*/
-						bool val = (heightsec && ((vieworg.z <= heightsec/*s*/->floor.GetPointZ(sec->lines[i]->v1->x, sec->lines[i]->v1->y) &&
-							vieworg.z <= heightsec/*s*/->floor.GetPointZ(sec->lines[i]->v2->x, sec->lines[i]->v2->y))));
+						bool val = (heightsec && ((vieworg.z <= heightsec->floor.GetPointZ(sec->lines[i]->v1->x, sec->lines[i]->v1->y) &&
+							vieworg.z <= heightsec->floor.GetPointZ(sec->lines[i]->v2->x, sec->lines[i]->v2->y))));
 
-						doorunderwater &= val;
+//						doorunderwater &= val;
 //					}
 				}
 			}
@@ -2501,7 +2487,9 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 	}
 #endif
 
-	if (underwater || doorunderwater)
+	if (underwater || doorunderwater /*||
+		(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg))*/
+	   )
 	{
 		ff->floorplane.normal = sec->floor.normal;
 		ff->floorplane.dist = sec->floor.dist;
@@ -2512,7 +2500,9 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 	}
 
 	// killough 11/98: prevent sudden light changes from non-water sectors:
-	if ((underwater /*&& !back*/) || doorunderwater)
+	if ((underwater /*&& !back*/) || doorunderwater ||
+		(heightsec && vieworg.z <= heightsec->floor.GetPointZ(vieworg))
+		)
 	{
 		// head-below-floor hack
 		ff->floorplane.pic			= diffTex ? sec->floor.pic : s->floor.pic;
@@ -2567,7 +2557,8 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 			}*/
 		}
 	}
-	else if ((heightsec && vieworg.z >= heightsec->ceiling.GetPointZ(vieworg)) &&
+	else if (((s && vieworg.z > s->floor.GetPointZ(vieworg)) ||
+			 (heightsec && vieworg.z > heightsec->ceiling.GetPointZ(vieworg))) &&
 			 orgceilz > refceilz &&	!(s->SectorFlags & sector_t::SF_FakeFloorOnly))
 	{
 		// Above-ceiling hack

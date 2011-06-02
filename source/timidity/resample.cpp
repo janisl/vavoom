@@ -40,9 +40,7 @@ namespace LibTimidity
 
 static sample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 {
-
 	/* Play sample until end, then free the voice. */
-
 	INTERPVARS;
 	Voice* vp = &song->voice[v];
 	sample_t* dest = song->resample_buffer;
@@ -56,8 +54,9 @@ static sample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 	int32 i;
 
 	if (incr < 0)
+	{
 		incr = -incr; /* In case we're coming out of a bidir loop */
-
+	}
 	/* Precalc how many times we should go through the loop.
 		NOTE: Assumes that incr > 0 and that ofs <= le */
 	i = (le - ofs) / incr + 1;
@@ -68,7 +67,9 @@ static sample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 		count = 0;
 	}
 	else
+	{
 		count -= i;
+	}
 
 	while (i--) 
 	{
@@ -82,16 +83,14 @@ static sample_t* rs_plain(MidiSong* song, int v, int32* countptr)
 		vp->status = VOICE_FREE;
 		*countptr -= count + 1;
 	}
-
 	vp->sample_offset = ofs; /* Update offset */
+
 	return song->resample_buffer;
 }
 
 static sample_t* rs_loop(MidiSong* song, Voice* vp, int32 count)
 {
-
 	/* Play sample until end-of-loop, skip back and continue. */
-
 	INTERPVARS;
 	int32 
 		ofs = vp->sample_offset, 
@@ -106,25 +105,31 @@ static sample_t* rs_loop(MidiSong* song, Voice* vp, int32 count)
 	while (count)
 	{
 		if (ofs >= le)
+		{
 			/* NOTE: Assumes that ll > incr and that incr > 0. */
 			ofs -= ll;
+		}
 		/* Precalc how many times we should go through the loop */
 		i = (le - ofs) / incr + 1;
+
 		if (i > count) 
 		{
 			i = count;
 			count = 0;
 		}
 		else
+		{
 			count -= i;
+		}
+
 		while (i--)
 		{
 			RESAMPLATION;
 			ofs += incr;
 		}
 	}
-
 	vp->sample_offset = ofs; /* Update offset */
+
 	return song->resample_buffer;
 }
 
@@ -143,8 +148,8 @@ static sample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 		le2 = le << 1, 
 		ls2 = ls << 1,
 		i;
-	/* Play normally until inside the loop region */
 
+	/* Play normally until inside the loop region */
 	if (ofs <= ls)
 	{
 		/* NOTE: Assumes that incr > 0, which is NOT always the case
@@ -157,7 +162,10 @@ static sample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 			count = 0;
 		}
 		else
+		{
 			count -= i;
+		}
+
 		while (i--)
 		{
 			RESAMPLATION;
@@ -166,23 +174,27 @@ static sample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 	}
 
 	/* Then do the bidirectional looping */
-
 	while(count)
 	{
 		/* Precalc how many times we should go through the loop */
 		i = ((incr > 0 ? le : ls) - ofs) / incr + 1;
+
 		if (i > count)
 		{
 			i = count;
 			count = 0;
 		}
 		else
+		{
 			count -= i;
+		}
+
 		while (i--)
 		{
 			RESAMPLATION;
 			ofs += incr;
 		}
+
 		if (ofs>=le)
 		{
 			/* fold the overshoot back in */
@@ -195,9 +207,9 @@ static sample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 			incr *= -1;
 		}
 	}
-
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
+
 	return song->resample_buffer;
 }
 
@@ -207,11 +219,17 @@ static sample_t* rs_bidir(MidiSong* song, Voice* vp, int32 count)
 static int vib_phase_to_inc_ptr(int phase)
 {
 	if (phase < VIBRATO_SAMPLE_INCREMENTS / 2)
+	{
 		return VIBRATO_SAMPLE_INCREMENTS / 2 - 1 - phase;
+	}
 	else if (phase >= 3 * VIBRATO_SAMPLE_INCREMENTS / 2)
+	{
 		return 5 * VIBRATO_SAMPLE_INCREMENTS / 2 - 1 - phase;
+	}
 	else
+	{
 		return phase - VIBRATO_SAMPLE_INCREMENTS / 2;
+	}
 }
 
 static int32 update_vibrato(Voice* vp, int sign)
@@ -221,27 +239,34 @@ static int32 update_vibrato(Voice* vp, int sign)
 	double a;
 
 	if (vp->vibrato_phase++ >= 2 * VIBRATO_SAMPLE_INCREMENTS - 1)
+	{
 		vp->vibrato_phase = 0;
+	}
 	phase = vib_phase_to_inc_ptr(vp->vibrato_phase);
 
 	if (vp->vibrato_sample_increment[phase])
 	{
 		if (sign)
+		{
 			return -vp->vibrato_sample_increment[phase];
+		}
 		else
+		{
 			return vp->vibrato_sample_increment[phase];
+		}
 	}
-
 	/* Need to compute this sample increment. */
-
 	depth = vp->sample->vibrato_depth << 7;
 
 	if (vp->vibrato_sweep)
 	{
 		/* Need to update sweep */
 		vp->vibrato_sweep_position += vp->vibrato_sweep;
+
 		if (vp->vibrato_sweep_position >= (1<<SWEEP_SHIFT))
+		{
 			vp->vibrato_sweep = 0;
+		}
 		else
 		{
 			/* Adjust depth */
@@ -249,7 +274,6 @@ static int32 update_vibrato(Voice* vp, int sign)
 			depth >>= SWEEP_SHIFT;
 		}
 	}
-
 	a = FSCALE(((double)(vp->sample->sample_rate) *
 		(double)(vp->frequency)) /
 		((double)(vp->sample->root_freq) *
@@ -266,23 +290,27 @@ static int32 update_vibrato(Voice* vp, int sign)
 		a /= bend_fine[(pb >> 5) & 0xFF] * bend_coarse[pb >> 13];
 	}
 	else
+	{
 		a *= bend_fine[(pb >> 5) & 0xFF] * bend_coarse[pb >> 13];
+	}
 
 	/* If the sweep's over, we can store the newly computed sample_increment */
 	if (!vp->vibrato_sweep)
+	{
 		vp->vibrato_sample_increment[phase] = (int32)a;
+	}
 
 	if (sign)
+	{
 		a = -a; /* need to preserve the loop direction */
+	}
 
 	return (int32) a;
 }
 
 static sample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
 {
-
 	/* Play sample until end, then free the voice. */
-
 	INTERPVARS;
 	Voice* vp = &song->voice[v];
 	sample_t* dest = song->resample_buffer;
@@ -296,9 +324,10 @@ static sample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
 		cc = vp->vibrato_control_counter;
 
 	/* This has never been tested */
-
 	if (incr < 0)
+	{
 		incr = -incr; /* In case we're coming out of a bidir loop */
+	}
 
 	while (count--)
 	{
@@ -309,6 +338,7 @@ static sample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
 		}
 		RESAMPLATION;
 		ofs += incr;
+
 		if (ofs >= le)
 		{
 			FINALINTERP;
@@ -317,18 +347,16 @@ static sample_t* rs_vib_plain(MidiSong* song, int v, int32* countptr)
 			break;
 		}
 	}
-
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
+
 	return song->resample_buffer;
 }
 
 static sample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
 {
-
 	/* Play sample until end-of-loop, skip back and continue. */
-
 	INTERPVARS;
 	int32 
 		ofs=vp->sample_offset, 
@@ -346,25 +374,35 @@ static sample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
 	{
 		/* Hopefully the loop is longer than an increment */
 		if (ofs >= le)
+		{
 			ofs -= ll;
+		}
 		/* Precalc how many times to go through the loop, taking
 		the vibrato control ratio into account this time. */
 		i = (le - ofs) / incr + 1;
+
 		if (i > count)
+		{
 			i = count;
+		}
+
 		if (i > cc)
 		{
 			i = cc;
 			vibflag = 1;
 		}
 		else
+		{
 			cc -= i;
+		}
 		count -= i;
+
 		while (i--)
 		{
 			RESAMPLATION;
 			ofs += incr;
 		}
+
 		if (vibflag)
 		{
 			cc = vp->vibrato_control_ratio;
@@ -372,10 +410,10 @@ static sample_t* rs_vib_loop(MidiSong* song, Voice* vp, int32 count)
 			vibflag = 0;
 		}
 	}
-
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
+
 	return song->resample_buffer;
 }
 
@@ -401,21 +439,29 @@ static sample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 	while (count && (ofs <= ls))
 	{
 		i = (ls - ofs) / incr + 1;
+
 		if (i > count)
+		{
 			i = count;
+		}
+
 		if (i > cc)
 		{
 			i = cc;
 			vibflag = 1;
 		}
 		else
+		{
 			cc -= i;
+		}
 		count -= i;
+
 		while (i--)
 		{
 			RESAMPLATION;
 			ofs += incr;
 		}
+
 		if (vibflag)
 		{
 			cc = vp->vibrato_control_ratio;
@@ -425,32 +471,40 @@ static sample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 	}
 
 	/* Then do the bidirectional looping */
-
 	while (count)
 	{
 		/* Precalc how many times we should go through the loop */
 		i = ((incr > 0 ? le : ls) - ofs) / incr + 1;
+
 		if (i > count)
+		{
 			i = count;
+		}
+
 		if (i > cc)
 		{
 			i = cc;
 			vibflag = 1;
 		}
 		else
+		{
 			cc -= i;
+		}
 		count -= i;
+
 		while (i--)
 		{
 			RESAMPLATION;
 			ofs += incr;
 		}
+
 		if (vibflag)
 		{
 			cc = vp->vibrato_control_ratio;
 			incr = update_vibrato(vp, (incr < 0));
 			vibflag = 0;
 		}
+
 		if (ofs >= le)
 		{
 			/* fold the overshoot back in */
@@ -463,10 +517,10 @@ static sample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 			incr *= -1;
 		}
 	}
-
 	vp->vibrato_control_counter = cc;
 	vp->sample_increment = incr;
 	vp->sample_offset = ofs; /* Update offset */
+
 	return song->resample_buffer;
 }
 
@@ -482,6 +536,7 @@ sample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 			we're out of data. */
 		ofs = vp->sample_offset >> FRACTION_BITS; /* Kind of silly to use
 							FRACTION_BITS here... */
+
 		if (*countptr >= (vp->sample->data_length >> FRACTION_BITS) - ofs)
 		{
 			/* Note finished. Free the voice. */
@@ -491,11 +546,12 @@ sample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 			*countptr = (vp->sample->data_length >> FRACTION_BITS) - ofs;
 		}
 		else
+		{
 			vp->sample_offset += *countptr << FRACTION_BITS;
+		}
 
 		return vp->sample->data + ofs;
 	}
-
 	/* Need to resample. Use the proper function. */
 	modes = vp->sample->modes;
 
@@ -506,12 +562,18 @@ sample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 			(vp->status == VOICE_ON || vp->status == VOICE_SUSTAINED)))
 		{
 			if (modes & MODES_PINGPONG)
+			{
 				return rs_vib_bidir(song, vp, *countptr);
+			}
 			else
+			{
 				return rs_vib_loop(song, vp, *countptr);
+			}
 		}
 		else
+		{
 			return rs_vib_plain(song, v, countptr);
+		}
 	}
 	else
 	{
@@ -520,12 +582,18 @@ sample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 			(vp->status == VOICE_ON || vp->status == VOICE_SUSTAINED)))
 		{
 			if (modes & MODES_PINGPONG)
+			{
 				return rs_bidir(song, vp, *countptr);
+			}
 			else
+			{
 				return rs_loop(song, vp, *countptr);
+			}
 		}
 		else
+		{
 			return rs_plain(song, v, countptr);
+		}
 	}
 }
 
@@ -553,7 +621,9 @@ void pre_resample(Sample* sp)
 	ofs = incr = (sp->data_length - (1 << FRACTION_BITS)) / count;
 
 	if (--count)
+	{
 		*dest++ = src[0];
+	}
 
 	/* Since we're pre-processing and this doesn't have to be done in
 		real-time, we go ahead and do the full sliding cubic interpolation. */
@@ -580,7 +650,9 @@ void pre_resample(Sample* sp)
 		RESAMPLATION;
 	}
 	else
+	{
 		*dest++ = src[ofs >> FRACTION_BITS];
+	}
 
 	sp->data_length = newlen;
 	sp->loop_start = (int32)(sp->loop_start / a);

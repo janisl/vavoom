@@ -35,6 +35,6 @@ void main()
 //	}
 	Add = clamp(Add / 255.0, 0.0, 1.0);
 
-	gl_FragColor = vec4(LightColour.r, LightColour.g, LightColour.b, Add);
+	gl_FragColor = vec4(LightColour.r, LightColour.g, LightColour.b, Add * TexColour.a);
 //	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

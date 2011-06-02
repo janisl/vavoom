@@ -62,7 +62,7 @@ static void *GLVisMalloc(size_t size)
 		size = 4;
 	}
 	size = (size + 3) & ~3;
-	void *ptr = malloc(size);
+	void *ptr = Z_Malloc(size);
 	if (!ptr)
 	{
 		throw GLVisError("Couldn't alloc %d bytes", size);
@@ -79,7 +79,7 @@ static void *GLVisMalloc(size_t size)
 
 static void GLVisFree(void *ptr)
 {
-	free(ptr);
+	Z_Free(ptr);
 	ptr = NULL;
 }
 

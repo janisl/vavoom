@@ -2029,6 +2029,7 @@ static void OPLDestroy(FM_OPL *OPL)
 {
 	//OPL_UnLockTable();
 	free(OPL);
+	OPL = NULL;
 }
 
 /* Optional handlers */

@@ -587,6 +587,7 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 	}
 
 	p_glUseProgramObjectARB(ShadowsAmbientProgram);
+	p_glUniform1iARB(ShadowsAmbientTextureLoc, 0);
 	for (surface_t* surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
 		float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
@@ -595,6 +596,14 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 			//	Viewer is in back side or on plane
 			continue;
 		}
+		texinfo_t* tex = surf->texinfo;
+		SetTexture(tex->Tex, tex->ColourMap);
+		p_glUniform3fvARB(ShadowsAmbientSAxisLoc, 1, &tex->saxis.x);
+		p_glUniform1fARB(ShadowsAmbientSOffsLoc, tex->soffs);
+		p_glUniform1fARB(ShadowsAmbientTexIWLoc, tex_iw);
+		p_glUniform3fvARB(ShadowsAmbientTAxisLoc, 1, &tex->taxis.x);
+		p_glUniform1fARB(ShadowsAmbientTOffsLoc, tex->toffs);
+		p_glUniform1fARB(ShadowsAmbientTexIHLoc, tex_ih);
 
 		float lev = float(surf->Light >> 24) / 255.0;
 		p_glUniform4fARB(ShadowsAmbientLightLoc,
@@ -740,15 +749,25 @@ void VOpenGLDrawer::BeginLightPass(TVec& LightPos, float Radius, vuint32 Colour)
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf)
+void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf, TVec& LightPos, float Radius)
 {
 	guard(VOpenGLDrawer::DrawSurfaceLight);
-	float dist = DotProduct(vieworg, Surf->plane->normal) - Surf->plane->dist;
-	if (dist <= 0)
+	float dist = DotProduct(LightPos, Surf->plane->normal) - Surf->plane->dist;
+	if (dist < 0 || dist >= Radius)
 	{
-		//	Viewer is in back side or on plane
+		//	Light is in back side or on plane or too far away
 		return;
 	}
+	p_glUniform1iARB(ShadowsAmbientTextureLoc, 0);
+	texinfo_t* tex = Surf->texinfo;
+	SetTexture(tex->Tex, tex->ColourMap);
+	p_glUniform3fvARB(ShadowsAmbientSAxisLoc, 1, &tex->saxis.x);
+	p_glUniform1fARB(ShadowsAmbientSOffsLoc, tex->soffs);
+	p_glUniform1fARB(ShadowsAmbientTexIWLoc, tex_iw);
+	p_glUniform3fvARB(ShadowsAmbientTAxisLoc, 1, &tex->taxis.x);
+	p_glUniform1fARB(ShadowsAmbientTOffsLoc, tex->toffs);
+	p_glUniform1fARB(ShadowsAmbientTexIHLoc, tex_ih);
+
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < Surf->count; i++)
 	{
@@ -1223,12 +1242,12 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.0);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.111);
 			glEnable(GL_BLEND);
 		}
 		else
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.66);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.333);
 		}
 		if (Additive)
 		{
@@ -1259,7 +1278,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		glEnable(GL_ALPHA_TEST);
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			glAlphaFunc(GL_GREATER, 0.0);
+			glAlphaFunc(GL_GREATER, 0.111);
 			glEnable(GL_BLEND);
 		}
 		if (Additive)
@@ -1306,7 +1325,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			glAlphaFunc(GL_GREATER, 0.666);
+			glAlphaFunc(GL_GREATER, 0.333);
 			glDisable(GL_BLEND);
 		}
 		if (Additive)
@@ -1362,12 +1381,12 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.0);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.111);
 			glEnable(GL_BLEND);
 		}
 		else
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.66);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.333);
 		}
 		if (Additive)
 		{
@@ -1416,7 +1435,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 		glEnable(GL_ALPHA_TEST);
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			glAlphaFunc(GL_GREATER, 0.0);
+			glAlphaFunc(GL_GREATER, 0.111);
 			glEnable(GL_BLEND);
 		}
 		if (Additive)
@@ -1454,7 +1473,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			glAlphaFunc(GL_GREATER, 0.666);
+			glAlphaFunc(GL_GREATER, 0.333);
 			glDisable(GL_BLEND);
 		}
 		if (Additive)
@@ -1564,7 +1583,7 @@ void VOpenGLDrawer::EndParticles()
 	if (!HaveShaders)
 	{
 		glDisable(GL_ALPHA_TEST);
-		glAlphaFunc(GL_GREATER, 0.666);
+		glAlphaFunc(GL_GREATER, 0.333);
 		if (pointparmsable)
 		{
 			glDisable(GL_POINT_SMOOTH);

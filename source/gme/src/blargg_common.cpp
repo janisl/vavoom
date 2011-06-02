@@ -32,6 +32,7 @@ void blargg_vector_::clear()
 	begin_  = NULL;
 	size_   = 0;
 	free( p );
+	p = NULL;
 }
 
 blargg_err_t blargg_vector_::resize_( size_t n, size_t elem_size )

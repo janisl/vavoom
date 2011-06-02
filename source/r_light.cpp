@@ -675,6 +675,7 @@ dlight_t* VRenderLevelShared::AllocDlight(VThinker* Owner)
 
 	int bestnum = 0;
 	float bestdist = 0.0;
+	dl = DLights;
 	for (i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
 		float dist = Length(dl->origin - cl->ViewOrg);

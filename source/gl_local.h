@@ -372,7 +372,7 @@ public:
 	void BeginLightShadowVolumes();
 	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius);
 	void BeginLightPass(TVec&, float, vuint32);
-	void DrawSurfaceLight(surface_t*);
+	void DrawSurfaceLight(surface_t*, TVec&, float);
 	void DrawWorldTexturesPass();
 	void DrawWorldFogPass();
 	void EndFogPass();
@@ -388,7 +388,7 @@ public:
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,
-		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, float, bool);
+		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, float, float, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, float, bool);
@@ -555,6 +555,13 @@ protected:
 
 	GLhandleARB				ShadowsAmbientProgram;
 	GLint					ShadowsAmbientLightLoc;
+	GLint					ShadowsAmbientSAxisLoc;
+	GLint					ShadowsAmbientTAxisLoc;
+	GLint					ShadowsAmbientSOffsLoc;
+	GLint					ShadowsAmbientTOffsLoc;
+	GLint					ShadowsAmbientTexIWLoc;
+	GLint					ShadowsAmbientTexIHLoc;
+	GLint					ShadowsAmbientTextureLoc;
 
 	GLhandleARB				ShadowsLightProgram;
 	GLint					ShadowsLightLightPosLoc;
@@ -562,6 +569,13 @@ protected:
 	GLint					ShadowsLightLightColourLoc;
 	GLint					ShadowsLightSurfNormalLoc;
 	GLint					ShadowsLightSurfDistLoc;
+	GLint					ShadowsLightSAxisLoc;
+	GLint					ShadowsLightTAxisLoc;
+	GLint					ShadowsLightSOffsLoc;
+	GLint					ShadowsLightTOffsLoc;
+	GLint					ShadowsLightTexIWLoc;
+	GLint					ShadowsLightTexIHLoc;
+	GLint					ShadowsLightTextureLoc;
 
 	GLhandleARB				ShadowsTextureProgram;
 	GLint					ShadowsTextureTexCoordLoc;
@@ -574,10 +588,12 @@ protected:
 	GLint					ShadowsModelAmbientModelToWorldMatLoc;
 	GLint					ShadowsModelAmbientVert2Loc;
 	GLint					ShadowsModelAmbientTexCoordLoc;
+	GLint					ShadowsModelAmbientAlphaLoc;
 
 	GLhandleARB				ShadowsModelTexturesProgram;
 	GLint					ShadowsModelTexturesInterLoc;
 	GLint					ShadowsModelTexturesTextureLoc;
+	GLint					ShadowsModelTexturesAlphaLoc;
 	GLint					ShadowsModelTexturesModelToWorldMatLoc;
 	GLint					ShadowsModelTexturesVert2Loc;
 	GLint					ShadowsModelTexturesTexCoordLoc;
@@ -620,6 +636,7 @@ protected:
 	GLint					ShadowsModelFogFogEndLoc;
 	GLint					ShadowsModelFogVert2Loc;
 	GLint					ShadowsModelFogTexCoordLoc;
+	GLint					ShadowsModelFogAlphaLoc;
 
 	//
 	//	Console variables

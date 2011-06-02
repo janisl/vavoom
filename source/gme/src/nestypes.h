@@ -32,7 +32,8 @@ typedef char            Char;
 #define XSLEEP(n)       ((void)0)
 #define XMALLOC(s)      malloc(s)
 #define XREALLOC(p,s)   realloc(p,s)
-#define XFREE(p)        free(p)
+#define XFREE(p)        free(p);\
+						p = NULL;
 #define XMEMCPY(d,s,n)  memcpy(d,s,n)
 #define XMEMSET(d,c,n)  memset(d,c,n)
 

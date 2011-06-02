@@ -29,7 +29,6 @@
 
 namespace LibTimidity
 {
-
 char				current_filename[1024];
 
 /* The paths in this list will be tried whenever we're reading a file */
@@ -63,17 +62,19 @@ FILE* open_file(const char* name, int decompress, int noise_mode)
 		return 0;
 	}
 #endif
-
 	PathList* plp = pathlist;
+
 	if (name[0] != PATH_SEP)
 	{
 		while (plp)  /* Try along the path then */
 		{
 			*current_filename = 0;
 			int l = strlen(plp->path);
+
 			if (l)
 			{
 				strcpy(current_filename, plp->path);
+
 				if (current_filename[l - 1] != PATH_SEP)
 				{
 					strcat(current_filename, PATH_STRING);
@@ -82,6 +83,7 @@ FILE* open_file(const char* name, int decompress, int noise_mode)
 			strcat(current_filename, name);
 			ctl->cmsg(CMSG_INFO, VERB_DEBUG, "Trying to open %s", current_filename);
 			fp = fopen(current_filename, "rb");
+
 			if (fp)
 			{
 				return fp;
@@ -124,12 +126,17 @@ void skip(FILE* fp, size_t len)
 void* safe_malloc(size_t count)
 {
 	void* p;
-	if ((p = malloc(count)))
-		return p;
-	else
-		ctl->cmsg(CMSG_FATAL, VERB_NORMAL, "Sorry. Couldn't malloc %d bytes.", count);
 
+	if ((p = malloc(count)))
+	{
+		return p;
+	}
+	else
+	{
+		ctl->cmsg(CMSG_FATAL, VERB_NORMAL, "Sorry. Couldn't malloc %d bytes.", count);
+	}
 	exit(10);
+
 	return NULL;
 }
 
@@ -146,6 +153,7 @@ void add_to_pathlist(const char* s)
 void free_pathlist()
 {
 	PathList* plp = pathlist;
+
 	while (plp)
 	{
 		if (plp->path)

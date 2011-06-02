@@ -27,7 +27,6 @@
 
 namespace LibTimidity
 {
-
 #if (defined(WIN32) || defined(_WIN32)) && !defined(__WIN32__)
 #define __WIN32__
 #endif
@@ -86,7 +85,6 @@ namespace LibTimidity
 #undef BIG_ENDIAN
 #define BIG_ENDIAN 1
 #endif
-
 }
 
 /* Byte order, defined in <machine/endian.h> for FreeBSD and DEC OSF/1 */
@@ -123,7 +121,6 @@ namespace LibTimidity
 
 namespace LibTimidity
 {
-
 /* Win32 on Intel machines */
 #ifdef __WIN32__
 #  define LITTLE_ENDIAN

@@ -420,7 +420,7 @@ void VOpenGLDrawer::InitResolution()
 	GenerateTextures();
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glAlphaFunc(GL_GREATER, 0.666);
+	glAlphaFunc(GL_GREATER, 0.333);
 	glShadeModel(GL_FLAT);
 
 	glDepthFunc(GL_LEQUAL);
@@ -551,6 +551,13 @@ void VOpenGLDrawer::InitResolution()
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_ambient.fs");
 		ShadowsAmbientProgram = CreateProgram(VertexShader, FragmentShader);
 		ShadowsAmbientLightLoc = p_glGetUniformLocationARB(ShadowsAmbientProgram, "Light");
+		ShadowsAmbientSAxisLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "SAxis");
+		ShadowsAmbientTAxisLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TAxis");
+		ShadowsAmbientSOffsLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "SOffs");
+		ShadowsAmbientTOffsLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TOffs");
+		ShadowsAmbientTexIWLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIW");
+		ShadowsAmbientTexIHLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIH");
+		ShadowsAmbientTextureLoc = p_glGetUniformLocationARB(ShadowsAmbientProgram, "Texture");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_light.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_light.fs");
@@ -560,6 +567,13 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsLightLightColourLoc = p_glGetUniformLocationARB(ShadowsLightProgram, "LightColour");
 		ShadowsLightSurfNormalLoc = p_glGetAttribLocationARB(ShadowsLightProgram, "SurfNormal");
 		ShadowsLightSurfDistLoc = p_glGetAttribLocationARB(ShadowsLightProgram, "SurfDist");
+		ShadowsLightSAxisLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "SAxis");
+		ShadowsLightTAxisLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TAxis");
+		ShadowsLightSOffsLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "SOffs");
+		ShadowsLightTOffsLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TOffs");
+		ShadowsLightTexIWLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIW");
+		ShadowsLightTexIHLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIH");
+		ShadowsLightTextureLoc = p_glGetUniformLocationARB(ShadowsAmbientProgram, "Texture");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_texture.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_texture.fs");
@@ -576,6 +590,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelAmbientModelToWorldMatLoc = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "ModelToWorldMat");
 		ShadowsModelAmbientVert2Loc = p_glGetAttribLocationARB(ShadowsModelAmbientProgram, "Vert2");
 		ShadowsModelAmbientTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelAmbientProgram, "TexCoord");
+		ShadowsModelAmbientAlphaLoc = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "InAlpha");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_model_textures.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_model_textures.fs");
@@ -585,6 +600,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelTexturesModelToWorldMatLoc = p_glGetUniformLocationARB(ShadowsModelTexturesProgram, "ModelToWorldMat");
 		ShadowsModelTexturesVert2Loc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "Vert2");
 		ShadowsModelTexturesTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "TexCoord");
+		ShadowsModelTexturesAlphaLoc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "InAlpha");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_model_light.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_model_light.fs");
@@ -632,6 +648,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelFogFogEndLoc = p_glGetUniformLocationARB(ShadowsModelFogProgram, "FogEnd");
 		ShadowsModelFogVert2Loc = p_glGetAttribLocationARB(ShadowsModelFogProgram, "Vert2");
 		ShadowsModelFogTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelFogProgram, "TexCoord");
+		ShadowsModelFogAlphaLoc = p_glGetUniformLocationARB(ShadowsModelFogProgram, "InAlpha");
 	}
 	unguard;
 }

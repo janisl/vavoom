@@ -585,9 +585,9 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 	for (int i = 0; i < Sub->numlines; i++)
 	{
 		seg_t* line = &Level->Segs[Sub->firstline + i];
-		if (line->backsector || !line->linedef)
+		if (!line->linedef)
 		{
-			//	Miniseg or two-sided line.
+			//	Miniseg.
 			continue;
 		}
 
@@ -596,6 +596,85 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 		{
 			//	Viewer is in back side or on plane
 			continue;
+		}
+
+		// 2-sided line, determine if it can be skipped
+		if (line->backsector)
+		{
+			//
+			// Check for doors
+			//
+
+			// A line without top texture isn't a door
+			if (line->sidedef->TopTexture != -1)
+			{
+				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+				float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+				if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
+					(frontcz2 > backfz2 || frontcz1 > backfz2))
+				{
+					// It's an opened door
+					continue;
+				}
+			}
+
+			//
+			// Check for elevators/plats
+			//
+
+			// A line without bottom texture isn't an elevator/plat
+			if (line->sidedef->BottomTexture != -1)
+			{
+				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+				float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+				if ((frontcz2 > backfz2 || frontcz1 > backfz1) &&
+					(backcz2 > frontfz2 || backcz1 > frontfz1))
+				{
+					// It's a lowered elevator/plat
+					continue;
+				}
+			}
+
+			//
+			// Check for polyobjs
+			//
+
+			// A line without mid texture isn't a polyobj door
+			if (line->sidedef->MidTexture != -1)
+			{
+				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+				float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+				float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+				if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
+					(frontcz2 > backfz2 || frontcz1 > backfz2))
+				{
+					// It's an opened polyobj door
+					continue;
+				}
+			}
 		}
 
 		TVec v1 = *line->v1;
@@ -628,9 +707,9 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 		for (int polyCount = Sub->poly->numsegs; polyCount--; polySeg++)
 		{
 			seg_t* line = *polySeg;
-			if (line->backsector || !line->linedef)
+			if (!line->linedef)
 			{
-				//	Miniseg or two-sided line.
+				//	Miniseg.
 				continue;
 			}
 
@@ -639,6 +718,85 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 			{
 				//	Viewer is in back side or on plane
 				continue;
+			}
+
+			// 2-sided line, determine if it can be skipped
+			if (line->backsector)
+			{
+				//
+				// Check for doors
+				//
+
+				// A line without top texture isn't a door
+				if (line->sidedef->TopTexture != -1)
+				{
+					float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+					float frontfz1 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float frontfz2 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+					float backcz1 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float backcz2 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+					float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+					if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
+						(frontcz2 > backfz2 || frontcz1 > backfz2))
+					{
+						// It's an opened door
+						continue;
+					}
+				}
+
+				//
+				// Check for elevators/plats
+				//
+
+				// A line without bottom texture isn't an elevator/plat
+				if (line->sidedef->BottomTexture != -1)
+				{
+					float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+					float frontfz1 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float frontfz2 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+					float backcz1 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float backcz2 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+					float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+					if ((frontcz2 > backfz2 || frontcz1 > backfz1) &&
+						(backcz2 > frontfz2 || backcz1 > frontfz1))
+					{
+						// It's a lowered elevator
+						continue;
+					}
+				}
+
+				//
+				// Check for polyobjs
+				//
+
+				// A line without mid texture isn't a polyobj door
+				if (line->sidedef->MidTexture != -1)
+				{
+					float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+					float frontfz1 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float frontfz2 = line->linedef->frontsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+					float backcz1 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float backcz2 = line->linedef->backsector->ceiling.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+					float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
+					float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
+
+					if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
+						(frontcz2 > backfz2 || frontcz1 > backfz2))
+					{
+						// It's an opened polyobj door
+						continue;
+					}
+				}
 			}
 
 			TVec v1 = *line->v1;

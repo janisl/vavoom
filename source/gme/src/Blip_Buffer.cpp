@@ -48,6 +48,7 @@ Blip_Buffer::Blip_Buffer()
 Blip_Buffer::~Blip_Buffer()
 {
 	free( buffer_ );
+	buffer_ = NULL;
 }
 
 void Blip_Buffer::clear()

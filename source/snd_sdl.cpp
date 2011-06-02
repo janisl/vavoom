@@ -303,7 +303,7 @@ Mix_Chunk* VSDLSoundDevice::LoadSound(int sound_id)
 	//	Run the audio converter.
 	if (SDL_ConvertAudio(&cvt) < 0)
 	{
-		free(cvt.buf);
+		Z_Ffree(cvt.buf);
 		cvt.buf = NULL;
 		return NULL;
 	}

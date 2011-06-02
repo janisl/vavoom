@@ -30,7 +30,6 @@
 
 namespace LibTimidity
 {
-
 #include "gf1.h"
 
 #ifdef FAST_DECAY
@@ -38,7 +37,6 @@ int fast_decay=1;
 #else
 int fast_decay=0;
 #endif
-
 
 static void free_instrument(Instrument* ip)
 {
@@ -50,6 +48,7 @@ static void free_instrument(Instrument* ip)
 	for (int i = 0; i < ip->samples; i++)
 	{
 		Sample* sp = &(ip->sample[i]);
+
 		if (sp->data)
 		{
 			free(sp->data);
@@ -65,6 +64,7 @@ static void free_instrument(Instrument* ip)
 static void free_bank(MidiSong* song, int dr, int b)
 {
 	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
+
 	for (int i = 0; i < 128; i++)
 	{
 		if (bank->instrument[i])
@@ -76,6 +76,7 @@ static void free_bank(MidiSong* song, int dr, int b)
 				bank->instrument[i] = NULL;
 			}
 		}
+
 		if (bank->tone[i].name)
 		{
 			free(bank->tone[i].name);
@@ -110,6 +111,7 @@ static int32 convert_tremolo_sweep(uint8 sweep)
 	{
 		return 0;
 	}
+
 	return (SWEEP_TUNING << SWEEP_SHIFT) / (CONTROLS_PER_SECOND * sweep);
 }
 
@@ -119,6 +121,7 @@ static int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
 	{
 		return 0;
 	}
+
 	return (int32) (FSCALE((double) (vib_control_ratio) * SWEEP_TUNING, SWEEP_SHIFT) /
 		(double)(OUTPUT_RATE * sweep));
 
@@ -147,6 +150,7 @@ static void reverse_data(int16* sp, int32 ls, int32 le)
 	sp += ls;
 	le -= ls;
 	le /= 2;
+
 	while (le--)
 	{
 		int16 s = *sp;
@@ -175,12 +179,15 @@ static Instrument* load_instrument(const char *name, int percussion,
 	int i,j,noluck=0;
 
 	if (!name)
+	{
 		return 0;
+	}
 
 	/* Open patch file */
 	if ((fp=open_file(name, 1, OF_NORMAL)) == NULL)
 	{
 		noluck = 1;
+
 		if (strlen(name) + strlen(".pat") < 1024)
 		{
 			char path[1024];
@@ -259,7 +266,6 @@ fail:
 			free_instrument(ip);
 			return 0;
 		}
-
 		Sample* sp = &ip->sample[i];
 
 		sp->data_length = LE_LONG(SmplHdr.DataLength);
@@ -319,14 +325,17 @@ fail:
 				sp->vibrato_sweep_increment, sp->vibrato_control_ratio,
 				sp->vibrato_depth);
 		}
-
 		sp->modes = SmplHdr.Modes;
 
 		/* Mark this as a fixed-pitch instrument if such a deed is desired. */
 		if (note_to_use != -1)
+		{
 			sp->note_to_use = (uint8)(note_to_use);
+		}
 		else
+		{
 			sp->note_to_use = 0;
+		}
 
 		/* seashore.pat in the Midia patch set has no Sustain. I don't
 			understand why, and fixing it by adding the Sustain flag to
@@ -334,7 +343,9 @@ fail:
 			anyway. */
 
 		if (sp->modes & MODES_LOOPING) 
+		{
 			sp->modes |= MODES_SUSTAIN;
+		}
 
 		/* Strip any loops and envelopes we're permitted to */
 		if ((strip_loop==1) &&
@@ -391,12 +402,13 @@ fail:
 			sp->envelope_offset[j] =
 				convert_envelope_offset(SmplHdr.EnvelopeOffset[j]);
 		}
-
 		/* Then read the sample data */
 		sp->data = (sample_t*)safe_malloc(sp->data_length);
 
 		if (1 != fread(sp->data, sp->data_length, 1, fp))
+		{
 			goto fail;
+		}
 
 		if (!(sp->modes & MODES_16BIT)) /* convert to 16-bit data */
 		{
@@ -405,7 +417,9 @@ fail:
 			uint16 *tmp,*newdta;
 			tmp = newdta = (uint16*)safe_malloc(sp->data_length * 2);
 			while (k--)
+			{
 				*tmp++ = (uint16)(*cp++) << 8;
+			}
 			cp = (uint8*)(sp->data);
 			sp->data = (sample_t*)newdta;
 			free(cp);
@@ -440,9 +454,9 @@ fail:
 		if (sp->modes & MODES_REVERSE)
 		{
 			int32 t;
+
 			/* The GUS apparently plays reverse loops by reversing the
 				whole sample. We do the same because the GUS does not SUCK. */
-
 			ctl->cmsg(CMSG_WARNING, VERB_NORMAL, "Reverse loop in %s", name);
 			reverse_data((int16*)sp->data, 0, sp->data_length / 2);
 
@@ -455,7 +469,9 @@ fail:
 		}
 
 		if (amp != -1)
+		{
 			sp->volume = (float)((amp) / 100.0);
+		}
 		else
 		{
 #ifdef ADJUST_SAMPLE_VOLUMES
@@ -465,13 +481,18 @@ fail:
 			int32 k = sp->data_length / 2;
 			int16 maxamp = 0, a;
 			int16* tmp = (int16*)sp->data;
+
 			while (k--)
 			{
 				a = *tmp++;
 				if (a < 0)
+				{
 					a = -a;
+				}
 				if (a > maxamp)
+				{
 					maxamp = a;
+				}
 			}
 			sp->volume=(float)(32768.0 / maxamp);
 			ctl->cmsg(CMSG_INFO, VERB_DEBUG, " * volume comp: %f", sp->volume);
@@ -479,7 +500,6 @@ fail:
 			sp->volume = 1.0;
 #endif
 		}
-
 		sp->data_length /= 2; /* These are in bytes. Convert into samples. */
 
 		sp->loop_start /= 2;
@@ -500,7 +520,9 @@ fail:
 		/* If this instrument will always be played on the same note,
 		and it's not looped, we can resample it now. */
 		if (sp->note_to_use && !(sp->modes & MODES_LOOPING))
+		{
 			pre_resample(sp);
+		}
 
 		if (strip_tail == 1)
 		{
@@ -509,9 +531,8 @@ fail:
 			sp->data_length = sp->loop_end;
 		}
 	}
-
-
 	close_file(fp);
+
 	return ip;
 }
 
@@ -519,6 +540,7 @@ static int fill_bank(MidiSong* song, int dr, int b)
 {
 	int i, errors = 0;
 	ToneBank* bank = ((dr) ? song->drumset[b] : song->tonebank[b]);
+
 	if (!bank)
 	{
 		ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -531,21 +553,25 @@ static int fill_bank(MidiSong* song, int dr, int b)
 		if (bank->instrument[i] == MAGIC_LOAD_INSTRUMENT)
 		{
 			bank->instrument[i] = load_instrument_sf2(song, b, i, dr ? true : false);
+
 			if (bank->instrument[i])
 			{
 				continue;
 			}
 			bank->instrument[i] = load_instrument_dls(song, dr, b, i);
+
 			if (bank->instrument[i])
 			{
 				continue;
 			}
+
 			if (!(bank->tone[i].name))
 			{
 				ctl->cmsg(CMSG_WARNING, (b != 0) ? VERB_VERBOSE : VERB_NORMAL,
 					"No instrument mapped to %s %d, program %d%s",
 					(dr)? "drum set" : "tone bank", b, i, 
 					(b != 0) ? "" : " - this instrument will not be heard");
+
 				if (b != 0)
 				{
 					/* Mark the corresponding instrument in the default
@@ -553,12 +579,16 @@ static int fill_bank(MidiSong* song, int dr, int b)
 					if (!dr)
 					{
 						if (!(song->tonebank[0]->instrument[i]))
+						{
 							song->tonebank[0]->instrument[i] = MAGIC_LOAD_INSTRUMENT;
+						}
 					}
 					else
 					{
 						if (!(song->drumset[0]->instrument[i]))
+						{
 							song->drumset[0]->instrument[i] = MAGIC_LOAD_INSTRUMENT;
+						}
 					}
 				}
 				bank->instrument[i] = 0;
@@ -588,41 +618,58 @@ static int fill_bank(MidiSong* song, int dr, int b)
 			}
 		}
 	}
+
 	return errors;
 }
 
 int load_missing_instruments(MidiSong* song)
 {
 	int i = 128, errors = 0;
+
 	while (i--)
 	{
 		if (song->tonebank[i])
+		{
 			errors += fill_bank(song, 0, i);
+		}
+
 		if (song->drumset[i])
+		{
 			errors += fill_bank(song, 1, i);
+		}
 	}
+
 	return errors;
 }
 
 void free_instruments(MidiSong* song)
 {
 	int i = 128;
+
 	while(i--)
 	{
 		if (song->tonebank[i])
+		{
 			free_bank(song, 0, i);
+		}
 		if (song->drumset[i])
+		{
 			free_bank(song, 1, i);
+		}
 	}
 }
 
 int set_default_instrument(MidiSong* song, const char* name)
 {
 	Instrument* ip;
+
 	if (!(ip = load_instrument(name, 0, -1, -1, -1, 0, 0, 0)))
+	{
 		return -1;
+	}
 	song->default_instrument = ip;
 	song->default_program = SPECIAL_PROGRAM;
+
 	return 0;
 }
 

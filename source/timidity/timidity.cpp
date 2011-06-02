@@ -25,7 +25,6 @@
 
 namespace LibTimidity
 {
-
 char				def_instr_name[256] = "";
 ToneBank*			master_tonebank[128];
 ToneBank*			master_drumset[128];
@@ -50,23 +49,33 @@ static int read_config_file(const char* name)
 	}
 
 	if (!(fp = open_file(name, 1, OF_VERBOSE)))
+	{
 		return -1;
+	}
 
 	while (fgets(tmp, sizeof(tmp), fp))
 	{
 		line++;
 		w[words=0] = strtok(tmp, " \t\n\r\240");
 		if (!w[0])
+		{
 			continue;
+		}
 
 		/* Originally the TiMidity++ extensions were prefixed like this */
 		if (strcmp(w[0], "#extension") == 0)
+		{
 			words = -1;
+		}
 		else if (*w[0] == '#')
+		{
 			continue;
+		}
 
 		while (w[words] != NULL && *w[words] != '#' && (words < MAXWORDS))
+		{
 			w[++words]=strtok(0," \t\n\r\240");
+		}
 
 		/*
 		* TiMidity++ adds a number of extensions to the config file format.
@@ -76,13 +85,11 @@ static int read_config_file(const char* name)
 		* Unfortunately the documentation for these extensions is often quite
 		* vague, gramatically strange or completely absent.
 		*/
-		if (
-				!strcmp(w[0], "comm")      /* "comm" program second        */
-			|| !strcmp(w[0], "HTTPproxy") /* "HTTPproxy" hostname:port    */
-			|| !strcmp(w[0], "FTPproxy")  /* "FTPproxy" hostname:port     */
-			|| !strcmp(w[0], "mailaddr")  /* "mailaddr" your-mail-address */
-			|| !strcmp(w[0], "opt")       /* "opt" timidity-options       */
-			)
+		if (	!strcmp(w[0], "comm")      /* "comm" program second        */
+			||  !strcmp(w[0], "HTTPproxy") /* "HTTPproxy" hostname:port    */
+			||  !strcmp(w[0], "FTPproxy")  /* "FTPproxy" hostname:port     */
+			||  !strcmp(w[0], "mailaddr")  /* "mailaddr" your-mail-address */
+			||  !strcmp(w[0], "opt")       /* "opt" timidity-options       */)
 		{
 			/*
 			* + "comm" sets some kind of comment -- the documentation is too
@@ -164,9 +171,7 @@ static int read_config_file(const char* name)
 			*/
 			ctl->cmsg(CMSG_ERROR, VERB_NORMAL,"FIXME: Implement \"map\" in TiMidity config.\n");
 		}
-
-			/* Standard TiMidity config */
-
+		/* Standard TiMidity config */
 		else if (!strcmp(w[0], "dir"))
 		{
 			if (words < 2)
@@ -176,7 +181,9 @@ static int read_config_file(const char* name)
 				return -2;
 			}
 			for (i = 1; i < words; i++)
+			{
 				add_to_pathlist(w[i]);
+			}
 		}
 		else if (!strcmp(w[0], "source"))
 		{
@@ -215,6 +222,7 @@ static int read_config_file(const char* name)
 				return -2;
 			}
 			i = atoi(w[1]);
+
 			if (i < 0 || i > 127)
 			{
 				ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -222,6 +230,7 @@ static int read_config_file(const char* name)
 					name, line);
 				return -2;
 			}
+
 			if (!master_drumset[i])
 			{
 				master_drumset[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
@@ -241,6 +250,7 @@ static int read_config_file(const char* name)
 				return -2;
 			}
 			i = atoi(w[1]);
+
 			if (i < 0 || i > 127)
 			{
 				ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -248,6 +258,7 @@ static int read_config_file(const char* name)
 					name, line);
 				return -2;
 			}
+
 			if (!master_tonebank[i])
 			{
 				master_tonebank[i] = (ToneBank*)safe_malloc(sizeof(ToneBank));
@@ -266,6 +277,7 @@ static int read_config_file(const char* name)
 				return -2;
 			}
 			i = atoi(w[0]);
+
 			if (i < 0 || i > 127)
 			{
 				ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
@@ -273,6 +285,7 @@ static int read_config_file(const char* name)
 					name, line);
 				return -2;
 			}
+
 			if (!bank)
 			{
 				ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -281,6 +294,7 @@ static int read_config_file(const char* name)
 					name, line);
 				return -2;
 			}
+
 			if (bank->tone[i].name)
 			{
 				free(bank->tone[i].name);
@@ -300,9 +314,11 @@ static int read_config_file(const char* name)
 					return -2;
 				}
 				*cp++ = 0;
+
 				if (!strcmp(w[j], "amp"))
 				{
 					k = atoi(cp);
+
 					if ((k < 0 || k > MAX_AMPLIFICATION) || (*cp < '0' || *cp > '9'))
 					{
 						ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -315,6 +331,7 @@ static int read_config_file(const char* name)
 				else if (!strcmp(w[j], "note"))
 				{
 					k = atoi(cp);
+
 					if ((k < 0 || k > 127) || (*cp < '0' || *cp > '9'))
 					{
 						ctl->cmsg(CMSG_ERROR, VERB_NORMAL, 
@@ -327,13 +344,22 @@ static int read_config_file(const char* name)
 				else if (!strcmp(w[j], "pan"))
 				{
 					if (!strcmp(cp, "center"))
+					{
 						k = 64;
+					}
 					else if (!strcmp(cp, "left"))
+					{
 						k = 0;
+					}
 					else if (!strcmp(cp, "right"))
+					{
 						k = 127;
+					}
 					else
+					{
 						k = ((atoi(cp) + 100) * 100) / 157;
+					}
+
 					if ((k < 0 || k > 127) ||
 						(k==0 && *cp!='-' && (*cp < '0' || *cp > '9')))
 					{
@@ -348,9 +374,13 @@ static int read_config_file(const char* name)
 				else if (!strcmp(w[j], "keep"))
 				{
 					if (!strcmp(cp, "env"))
+					{
 						bank->tone[i].strip_envelope = 0;
+					}
 					else if (!strcmp(cp, "loop"))
+					{
 						bank->tone[i].strip_loop = 0;
+					}
 					else
 					{
 						ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
@@ -361,11 +391,17 @@ static int read_config_file(const char* name)
 				else if (!strcmp(w[j], "strip"))
 				{
 					if (!strcmp(cp, "env"))
+					{
 						bank->tone[i].strip_envelope = 1;
+					}
 					else if (!strcmp(cp, "loop"))
+					{
 						bank->tone[i].strip_loop = 1;
+					}
 					else if (!strcmp(cp, "tail"))
+					{
 						bank->tone[i].strip_tail = 1;
+					}
 					else
 					{
 						ctl->cmsg(CMSG_ERROR, VERB_NORMAL,
@@ -390,6 +426,7 @@ static int read_config_file(const char* name)
 		return -2;
 	}
 	close_file(fp);
+
 	return 0;
 }
 

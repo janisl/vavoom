@@ -1038,8 +1038,23 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 
 		case RPASS_ShadowVolumes:
 		case RPASS_Light:
-		case RPASS_Textures:
 			if (Md2Alpha < 1.0 || SubMdl.NoShadow)
+			{
+				continue;
+			}
+			break;
+
+		case RPASS_Textures:
+		case RPASS_Ambient:
+			if (Md2Alpha <= 0.333 || SubMdl.NoShadow)
+			{
+				continue;
+			}
+			break;
+
+
+		case RPASS_Fog:
+			if (Md2Alpha <= 0.666 || SubMdl.NoShadow)
 			{
 				continue;
 			}
@@ -1125,7 +1140,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		case RPASS_Textures:
 			Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Trans, ColourMap, smooth_inter, Interpolate);
+				Trans, ColourMap, Md2Alpha, smooth_inter, Interpolate);
 			break;
 
 		case RPASS_Fog:
