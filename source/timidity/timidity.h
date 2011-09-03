@@ -45,8 +45,8 @@ namespace LibTimidity
 /* Default sampling rate, default polyphony, and maximum polyphony.
    All but the last can be overridden from the command line. */
 //#define DEFAULT_VOICES	32
-#define DEFAULT_VOICES	256
-#define MAX_VOICES		256
+#define DEFAULT_VOICES	300
+#define MAX_VOICES		300
 
 /* 1000 here will give a control ratio of 22:1 with 22 kHz output.
    Higher CONTROLS_PER_SECOND values allow more accurate rendering
