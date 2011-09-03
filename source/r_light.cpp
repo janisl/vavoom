@@ -727,8 +727,6 @@ void VRenderLevelShared::DecayLights(float time)
 void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 {
 	guard(VRenderLevel::MarkLights);
-	int leafnum;
-
     if (bspnum & NF_SUBSECTOR)
     {
 		int num;
@@ -746,7 +744,7 @@ void VRenderLevel::MarkLights(dlight_t *light, int bit, int bspnum)
 		if (r_dynamic_clip)
 		{
 			vuint8* dyn_facevis = Level->LeafPVS(ss);
-			leafnum = Level->PointInSubsector(light->origin) -
+			int leafnum = Level->PointInSubsector(light->origin) -
 				Level->Subsectors;
 
 			// Check potential visibility
@@ -824,13 +822,9 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 	guard(VRenderLevel::LightPoint);
 	subsector_t		*sub;
 	subregion_t		*reg;
-	float			l, lr, lg, lb, d, add;
-	int				i, s, t, ds, dt;
+	float			l, lr, lg, lb;
 	surface_t		*surf;
-	int				ltmp;
 	rgb_t			*rgbtmp;
-	int				leafnum;
-
 
 	if (FixedLight)
 	{
@@ -843,7 +837,7 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 	{
 		while (reg->next)
 		{
-			d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
+			float d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
 
 			if (d >= 0.0)
 			{
@@ -866,8 +860,9 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 		lb = (SecLightColour & 255) * l / 255.0;
 
 		//	Light from floor's lightmap
-		s = (int)(DotProduct(p, reg->floor->texinfo.saxis) + reg->floor->texinfo.soffs);
-		t = (int)(DotProduct(p, reg->floor->texinfo.taxis) + reg->floor->texinfo.toffs);
+		int s = (int)(DotProduct(p, reg->floor->texinfo.saxis) + reg->floor->texinfo.soffs);
+		int t = (int)(DotProduct(p, reg->floor->texinfo.taxis) + reg->floor->texinfo.toffs);
+		int ds, dt;
 		for (surf = reg->floor->surfs; surf; surf = surf->next)
 		{
 			if (!surf->lightmap)
@@ -897,7 +892,7 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 			}
 			else
 			{
-				ltmp = surf->lightmap[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
+				int ltmp = surf->lightmap[(ds >> 4) + (dt >> 4) * ((surf->extents[0] >> 4) + 1)];
 				l += ltmp;
 				lr += ltmp;
 				lg += ltmp;
@@ -910,7 +905,7 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 	//	Add dynamic lights
 	if (sub->dlightframe == r_dlightframecount)
 	{
-		for (i = 0; i < MAX_DLIGHTS; i++)
+		for (int i = 0; i < MAX_DLIGHTS; i++)
 		{
 			if (!(sub->dlightbits & (1 << i)))
 			{
@@ -919,17 +914,17 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 			if (r_dynamic_clip)
 			{
 				vuint8* dyn_facevis = Level->LeafPVS(sub);
-				leafnum = Level->PointInSubsector(DLights[i].origin) -
+				int leafnum = Level->PointInSubsector(DLights[i].origin) -
 					Level->Subsectors;
 
 				// Check potential visibility
 				if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
 				{
-						continue;
+					continue;
 				}
 			}
 
-			add = (DLights[i].radius - DLights[i].minlight) - Length(p - DLights[i].origin);
+			float add = (DLights[i].radius - DLights[i].minlight) - Length(p - DLights[i].origin);
 	
 			if (add > 0)
 			{

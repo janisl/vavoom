@@ -137,7 +137,8 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 
 	//	Create window
 	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows",
-		Windowed ? WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS : WS_POPUP,
+		Windowed ? (WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX) |
+		WS_CLIPCHILDREN | WS_CLIPSIBLINGS : WS_POPUP,
 		0, 0, 2, 2, hwnd, NULL, hInst, NULL);
 	if (!RenderWindow)
 	{

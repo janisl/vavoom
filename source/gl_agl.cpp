@@ -91,14 +91,12 @@ bool VAllegroOpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	int Width = AWidth;
 	int Height = AHeight;
 	int BPP = ABPP;
-	bool default_mode = false;
 	if (!Width || !Height)
 	{
 		//	Set defaults
 		Width = 640;
 		Height = 480;
 		BPP = 16;
-		default_mode = true;
 	}
 
 	if (BPP == 15)

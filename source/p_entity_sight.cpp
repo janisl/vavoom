@@ -594,9 +594,7 @@ static bool SightPathTraverse2(sight_trace_t& Trace, VThinker* Self,
 bool VEntity::CanSee(VEntity* Other)
 {
 	guard(VEntity::CanSee);
-	int				s1;
 	int				s2;
-	int				pnum;
 #ifdef USE_BSP
 	linetrace_t		Trace;
 #else
@@ -624,6 +622,8 @@ bool VEntity::CanSee(VEntity* Other)
 
 	if (XLevel->RejectMatrix)
 	{
+		int				s1;
+		int				pnum;
 		//	Determine subsector entries in REJECT table.
 		//	We must do this because REJECT can have some special effects like
 		// "safe sectors"

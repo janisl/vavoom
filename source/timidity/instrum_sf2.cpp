@@ -941,7 +941,7 @@ static int32 to_offset(int offset)
 //
 //==========================================================================
 
-static int32 calc_rate(int diff, int sample_rate, double msec)
+static int32 calc_rate(MidiSong* song, int diff, int sample_rate, double msec)
 {
 	double rate;
 
@@ -955,7 +955,7 @@ static int32 calc_rate(int diff, int sample_rate, double msec)
 		diff = 255;
 	}
 	diff <<= (7+15);
-	rate = ((double)diff / CONTROLS_PER_SECOND) * 1000.0 / msec;
+	rate = ((double)diff / OUTPUT_RATE) * song->control_ratio * 1000.0 / msec;
 
 	return (int32)rate;
 }
@@ -970,11 +970,6 @@ static int32 calc_rate(int diff, int sample_rate, double msec)
 
 static double to_normalized_percent(int decipercent)
 {
-	if (decipercent < 0)
-	{
-		return 0;
-	}
-
 	return ((double)decipercent) / 1000.0;
 }
 
@@ -984,7 +979,7 @@ static double to_normalized_percent(int decipercent)
 //
 //==========================================================================
 
-static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int DrumNote)
+static Instrument* LoadPreset(MidiSong* song, Sf2Data* font, int PresetIndex, bool Drum, int DrumNote)
 {
 	if (font == NULL)
 	{
@@ -1212,16 +1207,16 @@ static Instrument* LoadPreset(Sf2Data* font, int PresetIndex, bool Drum, int Dru
 							int sustain = (int)((1.0 - to_normalized_percent(InstrGenData[SFGEN_SustainVolEnv])) * 250.0);
 
 							sp->envelope_offset[ATTACK] = to_offset(255);
-							sp->envelope_rate[ATTACK] = calc_rate(255, sp->sample_rate, attack);
+							sp->envelope_rate[ATTACK] = calc_rate(song, 255, sp->sample_rate, attack);
 
 							sp->envelope_offset[HOLD] = to_offset(250);
-							sp->envelope_rate[HOLD] = calc_rate(5, sp->sample_rate, hold);
+							sp->envelope_rate[HOLD] = calc_rate(song, 5, sp->sample_rate, hold);
 
 							sp->envelope_offset[DECAY] = to_offset(sustain);
-							sp->envelope_rate[DECAY] = calc_rate(255 - sustain, sp->sample_rate, decay);
+							sp->envelope_rate[DECAY] = calc_rate(song, 255 - sustain, sp->sample_rate, decay);
 
 							sp->envelope_offset[RELEASE] = to_offset(0);
-							sp->envelope_rate[RELEASE] = calc_rate(5 + sustain, sp->sample_rate, release);
+							sp->envelope_rate[RELEASE] = calc_rate(song, 5 + sustain, sp->sample_rate, release);
 
 							sp->envelope_offset[RELEASEB] = to_offset(0);
 							sp->envelope_rate[RELEASEB] = to_offset(1);
@@ -1297,7 +1292,7 @@ Instrument* load_instrument_sf2(MidiSong* song, int Bank, int Instr, bool Drum)
 		return NULL; 
 	}
 
-	return LoadPreset(song->sf2_font, PresetIndex, Drum, Instr);
+	return LoadPreset(song, song->sf2_font, PresetIndex, Drum, Instr);
 }
 
 }

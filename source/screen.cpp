@@ -278,11 +278,9 @@ COMMAND(ScreenShot)
 static void DrawFPS()
 {
 	guard(DrawFPS);
-	double		time;
-
 	if (draw_fps)
 	{
-		time = Sys_Time();
+		double time = Sys_Time();
 		fps_frames++;
 
 		if (time - fps_start > 1.0)

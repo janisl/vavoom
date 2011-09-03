@@ -673,10 +673,15 @@ void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, f
 	guard(VOpenGLDrawer::RenderSurfaceShadowVolume);
 	int i;
 	TArray<TVec>    v;
-	float dist = DotProduct(LightPos, surf->plane->normal) - surf->plane->dist;
-	if (dist < 0 || dist >= Radius)
+	if (surf->plane->PointOnSide(LightPos))
 	{
-		//	Light is in back side or on plane or too far away
+		//	Light is in back side or on plane
+		return;
+	}
+	float dist = DotProduct(LightPos, surf->plane->normal) - surf->plane->dist;
+	if (dist >= Radius)
+	{
+		//	Light is too far away
 		return;
 	}
 	v.SetNum(surf->count);
@@ -752,10 +757,15 @@ void VOpenGLDrawer::BeginLightPass(TVec& LightPos, float Radius, vuint32 Colour)
 void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf, TVec& LightPos, float Radius)
 {
 	guard(VOpenGLDrawer::DrawSurfaceLight);
-	float dist = DotProduct(LightPos, Surf->plane->normal) - Surf->plane->dist;
-	if (dist < 0 || dist >= Radius)
+	if (Surf->plane->PointOnSide(LightPos))
 	{
-		//	Light is in back side or on plane or too far away
+		//	Light is in back side or on plane
+		return;
+	}
+	float dist = DotProduct(LightPos, Surf->plane->normal) - Surf->plane->dist;
+	if (dist >= Radius)
+	{
+		//	Light is too far away
 		return;
 	}
 	p_glUniform1iARB(ShadowsAmbientTextureLoc, 0);

@@ -562,9 +562,35 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub)
 			//	Viewer is in back side or on plane
 			continue;
 		}
+		// Clip sectors that are behind rendered segs
+		TVec v1 = *line->v1;
+		TVec v2 = *line->v2;
+		TVec r1 = Origin - v1;
+		TVec r2 = Origin - v2;
+		TVec cp1 = CrossProduct(r1, r2);
+		TVec cp2 = CrossProduct(r2, r1);
+		TVec p1 = Normalise(cp1);
+		TVec p2 = Normalise(cp2);
+		float D1 = DotProduct(p1, Origin);
+		float D2 = DotProduct(p2, Origin);
 
-		if (IsRangeVisible(PointToClipAngle(*line->v2),
-			PointToClipAngle(*line->v1)))
+		// There might be a better method of doing this, but
+		// this one works for now...
+		if (D1 <= 0 && D2 <= 0)
+		{
+			continue;
+		}
+		if (D1 > 0 && D2 < 0)
+		{
+			v2 += ((v2 - v1) * D1 / (D1 - D2)) / 100.0;
+		}
+		else if (D2 > 0 && D1 < 0)
+		{
+			v1 += ((v1 - v2) * D2 / (D2 - D1)) / 100.0;
+		}
+
+		if (IsRangeVisible(PointToClipAngle(v2),
+			PointToClipAngle(v1)))
 		{
 			return true;
 		}
@@ -618,8 +644,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 				float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
 				float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
 
-				if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
-					(frontcz2 > backfz2 || frontcz1 > backfz2))
+				if ((backcz2 > frontfz2 || backcz2 > frontfz1 || backcz1 > frontfz1 || backcz1 > frontfz2) &&
+					(frontcz2 > backfz2 || frontcz2 > backfz1 || frontcz1 > backfz2 || frontcz1 > backfz2))
 				{
 					// It's an opened door
 					continue;
@@ -643,8 +669,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 				float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
 				float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
 
-				if ((frontcz2 > backfz2 || frontcz1 > backfz1) &&
-					(backcz2 > frontfz2 || backcz1 > frontfz1))
+				if ((backcz2 > frontfz2 || backcz2 > frontfz1 || backcz1 > frontfz1 || backcz1 > frontfz2) &&
+					(frontcz2 > backfz2 || frontcz2 > backfz1 || frontcz1 > backfz2 || frontcz1 > backfz2))
 				{
 					// It's a lowered elevator/plat
 					continue;
@@ -668,8 +694,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 				float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
 				float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
 
-				if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
-					(frontcz2 > backfz2 || frontcz1 > backfz2))
+				if ((backcz2 > frontfz2 || backcz2 > frontfz1 || backcz1 > frontfz1 || backcz1 > frontfz2) &&
+					(frontcz2 > backfz2 || frontcz2 > backfz1 || frontcz1 > backfz2 || frontcz1 > backfz2))
 				{
 					// It's an opened polyobj door
 					continue;
@@ -740,8 +766,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 					float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
 					float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
 
-					if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
-						(frontcz2 > backfz2 || frontcz1 > backfz2))
+					if ((backcz2 > frontfz2 || backcz2 > frontfz1 || backcz1 > frontfz1 || backcz1 > frontfz2) &&
+						(frontcz2 > backfz2 || frontcz2 > backfz1 || frontcz1 > backfz2 || frontcz1 > backfz2))
 					{
 						// It's an opened door
 						continue;
@@ -765,8 +791,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 					float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
 					float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
 
-					if ((frontcz2 > backfz2 || frontcz1 > backfz1) &&
-						(backcz2 > frontfz2 || backcz1 > frontfz1))
+					if ((backcz2 > frontfz2 || backcz2 > frontfz1 || backcz1 > frontfz1 || backcz1 > frontfz2) &&
+						(frontcz2 > backfz2 || frontcz2 > backfz1 || frontcz1 > backfz2 || frontcz1 > backfz2))
 					{
 						// It's a lowered elevator
 						continue;
@@ -790,8 +816,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, TPlane* Mirror)
 					float backfz1 = line->linedef->backsector->floor.GetPointZ(line->linedef->v1->x, line->linedef->v1->y);
 					float backfz2 = line->linedef->backsector->floor.GetPointZ(line->linedef->v2->x, line->linedef->v2->y);
 
-					if ((backcz2 > frontfz2 || backcz1 > frontfz1) &&
-						(frontcz2 > backfz2 || frontcz1 > backfz2))
+					if ((backcz2 > frontfz2 || backcz2 > frontfz1 || backcz1 > frontfz1 || backcz1 > frontfz2) &&
+						(frontcz2 > backfz2 || frontcz2 > backfz1 || frontcz1 > backfz2 || frontcz1 > backfz2))
 					{
 						// It's an opened polyobj door
 						continue;

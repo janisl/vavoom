@@ -219,7 +219,7 @@ class TPlane
 	//	Returns side 0 (front) or 1 (back).
 	int PointOnSide(const TVec& point) const
 	{
-		return DotProduct(point, normal) - dist < 0;
+		return DotProduct(point, normal) - dist <= 0;
 	}
 
 	//	Returns side 0 (front), 1 (back), or 2 (on).

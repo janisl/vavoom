@@ -844,7 +844,6 @@ bool VDirectSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 	HRESULT					result;
 	DSBUFFERDESC			dsbdesc;
 	WAVEFORMATEX			pcmwf;
-	int						i;
 
 	// Set up wave format structure.
 	memset(&pcmwf, 0, sizeof(WAVEFORMATEX));
@@ -869,7 +868,7 @@ bool VDirectSoundDevice::OpenStream(int Rate, int Bits, int Channels)
 		int		best = -1;
 		double	least_time = 999999999.0;
 
-		for (i = 0; i < NumBuffers; i++)
+		for (int i = 0; i < NumBuffers; i++)
 		{
 			if (Buffers[i].SoundID && !Buffers[i].Playing &&
 				Buffers[i].FreeTime < least_time)

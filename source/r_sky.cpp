@@ -181,7 +181,7 @@ void VSky::InitOldSky(int Sky1Texture, int Sky2Texture, float Sky1ScrollDelta,
 		skyheight = 256;
 	}
 	float skytop;
-	float skybot;
+//	float skybot;
 	int j;
 
 	if (skyheight <= 128)
@@ -192,7 +192,7 @@ void VSky::InitOldSky(int Sky1Texture, int Sky2Texture, float Sky1ScrollDelta,
 	{
 		skytop = 190;
 	}
-	skybot = skytop - skyheight;
+//	skybot = skytop - skyheight;
 	int skyh = (int)skytop;
 
 	for (j = 0; j < VDIVS; j++)
@@ -331,7 +331,7 @@ void VSky::InitSkyBox(VName Name1, VName Name2)
 			Host_Error("No such skybox %s", *Name2);
 		}
 	}
-	skyboxinfo_t& s2info = skyboxinfo[num];
+//	skyboxinfo_t& s2info = skyboxinfo[num];
 
 	memset(sky, 0, sizeof(sky));
 

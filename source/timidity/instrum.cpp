@@ -86,14 +86,14 @@ static void free_bank(MidiSong* song, int dr, int b)
 }
 
 
-static int32 convert_envelope_rate(uint8 rate)
+static int32 convert_envelope_rate(MidiSong* song, uint8 rate)
 {
 	int32 r = 3 - ((rate >> 6) & 0x3);
 	r *= 3;
 	r = (int32)(rate & 0x3f) << r; /* 6.9 fixed point */
 
 	/* 15.15 fixed point. */
-	return ((r * 44100) / CONTROLS_PER_SECOND) << ((fast_decay) ? 10 : 9);
+	return ((r * 44100) / song->control_ratio) << ((fast_decay) ? 10 : 9);
 }
 
 static int32 convert_envelope_offset(uint8 offset)
@@ -105,14 +105,14 @@ static int32 convert_envelope_offset(uint8 offset)
 	return offset << (7 + 15);
 }
 
-static int32 convert_tremolo_sweep(uint8 sweep)
+static int32 convert_tremolo_sweep(MidiSong* song, uint8 sweep)
 {
 	if (!sweep)
 	{
 		return 0;
 	}
 
-	return (SWEEP_TUNING << SWEEP_SHIFT) / (CONTROLS_PER_SECOND * sweep);
+	return (SWEEP_TUNING << SWEEP_SHIFT) / (song->control_ratio * sweep);
 }
 
 static int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
@@ -131,10 +131,10 @@ static int32 convert_vibrato_sweep(uint8 sweep, int32 vib_control_ratio)
 	(play_mode->rate * sweep); */
 }
 
-static int32 convert_tremolo_rate(uint8 rate)
+static int32 convert_tremolo_rate(MidiSong* song, uint8 rate)
 {
 	return ((SINE_CYCLE_LENGTH * rate) << RATE_SHIFT) /
-		(TREMOLO_RATE_TUNING * CONTROLS_PER_SECOND);
+		(TREMOLO_RATE_TUNING * song->control_ratio);
 }
 
 static int32 convert_vibrato_rate(uint8 rate)
@@ -169,7 +169,7 @@ static void reverse_data(int16* sp, int32 ls, int32 le)
    undefined.
 
    TODO: do reverse loops right */
-static Instrument* load_instrument(const char *name, int percussion,
+static Instrument* load_instrument(MidiSong* song, const char *name, int percussion,
 	int panning, int amp, int note_to_use,
 	int strip_loop, int strip_envelope,
 	int strip_tail)
@@ -296,9 +296,9 @@ fail:
 		else
 		{
 			sp->tremolo_sweep_increment =
-				convert_tremolo_sweep(SmplHdr.TremoloSweep);
+				convert_tremolo_sweep(song, SmplHdr.TremoloSweep);
 			sp->tremolo_phase_increment =
-				convert_tremolo_rate(SmplHdr.TremoloRate);
+				convert_tremolo_rate(song, SmplHdr.TremoloRate);
 			sp->tremolo_depth = SmplHdr.TremoloDepth;
 			ctl->cmsg(CMSG_INFO, VERB_DEBUG,
 				" * tremolo: sweep %d, phase %d, depth %d",
@@ -398,7 +398,7 @@ fail:
 		for (j = 0; j < 6; j++)
 		{
 			sp->envelope_rate[j] =
-				convert_envelope_rate(SmplHdr.EnvelopeRate[j]);
+				convert_envelope_rate(song, SmplHdr.EnvelopeRate[j]);
 			sp->envelope_offset[j] =
 				convert_envelope_offset(SmplHdr.EnvelopeOffset[j]);
 		}
@@ -595,7 +595,7 @@ static int fill_bank(MidiSong* song, int dr, int b)
 				errors++;
 			}
 			else if (!(bank->instrument[i] =
-				load_instrument(bank->tone[i].name, 
+				load_instrument(song, bank->tone[i].name, 
 					(dr) ? 1 : 0,
 					bank->tone[i].pan,
 					bank->tone[i].amp,
@@ -663,7 +663,7 @@ int set_default_instrument(MidiSong* song, const char* name)
 {
 	Instrument* ip;
 
-	if (!(ip = load_instrument(name, 0, -1, -1, -1, 0, 0, 0)))
+	if (!(ip = load_instrument(song, name, 0, -1, -1, -1, 0, 0, 0)))
 	{
 		return -1;
 	}

@@ -645,11 +645,12 @@ surface_t* VRenderLevelShared::NewWSurf()
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
-		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * 32 + sizeof(void*));
+		MaxDrawSegs += MaxDrawSegs ? MaxDrawSegs * 2 : 32;
+		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * MaxDrawSegs + sizeof(void*));
 		*(void**)tmp = AllocatedWSurfBlocks;
 		AllocatedWSurfBlocks = tmp;
 		tmp += sizeof(void*);
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < MaxDrawSegs; i++)
 		{
 			((surface_t*)tmp)->next = free_wsurfs;
 			free_wsurfs = (surface_t*)tmp;
@@ -2090,7 +2091,6 @@ void VRenderLevelShared::UpdateSubRegion(subregion_t* region, bool ClipSegs)
 {
 	guard(VRenderLevelShared::UpdateSubRegion);
 	int				count;
-	int 			polyCount;
 	seg_t**			polySeg;
 
 	r_floor = region->floorplane;
@@ -2121,7 +2121,7 @@ void VRenderLevelShared::UpdateSubRegion(subregion_t* region, bool ClipSegs)
 	if (r_sub->poly)
 	{
 		//	Update the polyobj
-		polyCount = r_sub->poly->numsegs;
+		int polyCount = r_sub->poly->numsegs;
 		polySeg = r_sub->poly->segs;
 		while (polyCount--)
 		{
@@ -2451,7 +2451,7 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 	}
 
 //	float refflorz = s->floor.GetPointZ(viewx, viewy);
-	float refceilz = s->ceiling.GetPointZ(vieworg);
+	float refceilz = s ? s->ceiling.GetPointZ(vieworg) : NULL;
 //	float orgflorz = sec->floor.GetPointZ(viewx, viewy);
 	float orgceilz = sec->ceiling.GetPointZ(vieworg);
 
@@ -2475,12 +2475,12 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 					// Check that the window is actually visible
 /*					for (int z = WallSX1; z < WallSX2; ++z)
 					{
-						if (floorclip[z] > ceilingclip[z])*/
+						if (floorclip[z] > ceilingclip[z])
 						bool val = (heightsec && ((vieworg.z <= heightsec->floor.GetPointZ(sec->lines[i]->v1->x, sec->lines[i]->v1->y) &&
 							vieworg.z <= heightsec->floor.GetPointZ(sec->lines[i]->v2->x, sec->lines[i]->v2->y))));
 
-//						doorunderwater &= val;
-//					}
+						doorunderwater &= val;
+					}*/
 				}
 			}
 		}

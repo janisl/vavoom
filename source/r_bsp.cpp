@@ -871,9 +871,7 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			rejectpt[1] = bbox[pindex[1]];
 			rejectpt[2] = bbox[pindex[2]];
 
-			float d;
-
-			d = DotProduct(rejectpt, view_clipplanes[i].normal) - view_clipplanes[i].dist;
+			float d = DotProduct(rejectpt, view_clipplanes[i].normal) - view_clipplanes[i].dist;
 			if (d <= 0)
 			{
 				return;

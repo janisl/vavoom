@@ -370,7 +370,7 @@ int VTextureManager::FindTextureByLumpNum(int LumpNum)
 
 //==========================================================================
 //
-//	VTextureManager::TextureHeight
+//	VTextureManager::GetTextureName
 //
 //==========================================================================
 
@@ -382,6 +382,19 @@ VName VTextureManager::GetTextureName(int TexNum)
 		return NAME_None;
 	}
 	return Textures[TexNum]->Name;
+	unguard;
+}
+
+//==========================================================================
+//
+//	VTextureManager::TextureWidth
+//
+//==========================================================================
+
+float VTextureManager::TextureWidth(int TexNum)
+{
+	guard(VTextureManager::TextureWidth);
+	return Textures[TexNum]->GetWidth() / Textures[TexNum]->SScale;
 	unguard;
 }
 

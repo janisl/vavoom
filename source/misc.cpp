@@ -569,7 +569,7 @@ void M_HsvToRgb(float h, float s, float v, float& r, float& g, float& b)
 		break;
 	case 1:
 		r = q;
-		b = v;
+		g = v;
 		b = p;
 		break;
 	case 2:

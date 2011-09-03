@@ -111,7 +111,6 @@ void VLevel::Serialise(VStream& Strm)
 {
 	guard(VLevel::Serialise);
 	int i;
-	int j;
 	sector_t* sec;
 	line_t* li;
 	side_t* si;
@@ -199,7 +198,7 @@ void VLevel::Serialise(VStream& Strm)
 			<< li->arg5
 			<< li->LineTag
 			<< li->alpha;
-		for (j = 0; j < 2; j++)
+		for (int j = 0; j < 2; j++)
 		{
 			if (li->sidenum[j] == -1)
 			{

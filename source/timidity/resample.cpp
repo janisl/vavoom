@@ -526,7 +526,6 @@ static sample_t* rs_vib_bidir(MidiSong* song, Voice* vp, int32 count)
 
 sample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 {
-	int32 ofs;
 	uint8 modes;
 	Voice* vp = &song->voice[v];
 
@@ -534,7 +533,7 @@ sample_t* resample_voice(MidiSong* song, int v, int32* countptr)
 	{
 		/* Pre-resampled data -- just update the offset and check if
 			we're out of data. */
-		ofs = vp->sample_offset >> FRACTION_BITS; /* Kind of silly to use
+		int32 ofs = vp->sample_offset >> FRACTION_BITS; /* Kind of silly to use
 							FRACTION_BITS here... */
 
 		if (*countptr >= (vp->sample->data_length >> FRACTION_BITS) - ofs)

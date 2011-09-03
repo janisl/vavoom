@@ -109,16 +109,15 @@ VWinSockDriver::VWinSockDriver()
 int VWinSockDriver::Init()
 {
 	guard(VWinSockDriver::Init);
-	int		i;
 	char	buff[MAXHOSTNAMELEN];
 	char	*p;
-	int		r;
 
 	if (GArgs.CheckParm("-noudp"))
 		return -1;
 
 	if (winsock_initialised == 0)
 	{
+		int		r;
 		//MAKEWORD(2, 2)
 		r = WSAStartup(MAKEWORD(1, 1), &winsockdata);
 
@@ -150,6 +149,7 @@ int VWinSockDriver::Init()
 		// if it is a real name, strip off the domain; we only want the host
 		if (*p)
 		{
+			int i;
 			for (i = 0; i < 15; i++)
 				if (buff[i] == '.')
 					break;

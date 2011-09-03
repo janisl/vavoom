@@ -819,6 +819,10 @@ void VInvocation::CheckDecorateParams(VEmitContext& ec)
 	{
 		max_params = Func->NumParams;
 	}
+	if (NumArgs > max_params)
+	{
+		ParseError(Loc, "Incorrect number of arguments, need %d, got %d.", max_params, NumArgs);
+	}
 
 	for (int i = 0; i < NumArgs; i++)
 	{

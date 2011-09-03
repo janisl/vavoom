@@ -269,6 +269,7 @@ public:
 		bool bCheckAny = false);
 	int FindTextureByLumpNum(int);
 	VName GetTextureName(int TexNum);
+	float TextureWidth(int TexNum);
 	float TextureHeight(int TexNum);
 	int TextureAnimation(int InTex);
 	void SetFrontSkyLayer(int tex);

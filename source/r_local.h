@@ -346,6 +346,7 @@ protected:
 	sec_plane_t		sky_plane;
 	float			skyheight;
 	surface_t*		free_wsurfs;
+	vint32			MaxDrawSegs;
 	void*			AllocatedWSurfBlocks;
 	subregion_t*	AllocatedSubRegions;
 	drawseg_t*		AllocatedDrawSegs;

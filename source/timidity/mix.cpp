@@ -71,12 +71,12 @@ int recompute_envelope(MidiSong* song, int v)
 
 void apply_envelope_to_amp(MidiSong* song, int v)
 {
-	float lamp = song->voice[v].left_amp, ramp;
-	int32 la, ra;
+	float lamp = song->voice[v].left_amp;
+	int32 la;
 
 	if (song->voice[v].panned == PANNED_MYSTERY)
 	{
-		ramp = song->voice[v].right_amp;
+		float ramp = song->voice[v].right_amp;
 
 		if (song->voice[v].tremolo_phase_increment)
 		{
@@ -93,7 +93,7 @@ void apply_envelope_to_amp(MidiSong* song, int v)
 		}
 
 		la = (int32)FSCALE(lamp,AMP_BITS);
-		ra = (int32)FSCALE(ramp,AMP_BITS);
+		int32 ra = (int32)FSCALE(ramp,AMP_BITS);
 
 		if (la > MAX_AMP_VALUE)
 		{
@@ -412,7 +412,7 @@ static void mix_single(MidiSong* song, sample_t* sp, int32* lp, int v, int count
 static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 {
 	/* should be final_volume_t, but uint8 gives trouble. */
-	int32 left, right, li, ri;
+	int32 left, li;
 
 	sample_t s = 0; /* silly warning about uninitialised s */
 
@@ -431,8 +431,8 @@ static void ramp_out(MidiSong* song, sample_t* sp, int32* lp, int v, int32 c)
 
 	if (song->voice[v].panned == PANNED_MYSTERY)
 	{
-		right=song->voice[v].right_mix;
-		ri = -(right / c);
+		int32 right=song->voice[v].right_mix;
+		int32 ri = -(right / c);
 
 		while (c--)
 		{

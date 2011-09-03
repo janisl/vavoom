@@ -118,7 +118,7 @@ public:
 	}
 };
 
-inline vuint32 GetTypeHash(const VName N)
+inline vuint32 GetTypeHash(const VName& N)
 {
 	return N.GetIndex();
 }

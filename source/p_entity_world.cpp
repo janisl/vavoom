@@ -830,7 +830,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	int by;
 	subsector_t *newsubsec;
 	VEntity* thingblocker;
-	VEntity* fakedblocker;
+//	VEntity* fakedblocker;
 	bool good = true;
 
 	tmtrace.End = Pos;
@@ -883,7 +883,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 	tmtrace.BlockingMobj = NULL;
 	tmtrace.StepThing = NULL;
 	thingblocker = NULL;
-	fakedblocker = NULL;
+//	fakedblocker = NULL;
 
 	// Check things first, possibly picking things up.
 	// The bounding box is extended by MAXRADIUS
@@ -932,7 +932,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 							}
 							// nothing is blocking, but this object potentially could
 							// if there is something else to step on
-							fakedblocker = tmtrace.BlockingMobj;
+							//fakedblocker = tmtrace.BlockingMobj;
 							tmtrace.BlockingMobj = NULL;
 						}
 						else
@@ -1237,8 +1237,6 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 	guard(VEntity::TryMove);
 	bool check;
 	TVec oldorg;
-	int side;
-	int oldside;
 	line_t *ld;
 	sector_t* OldSec = Sector;
 
@@ -1436,6 +1434,9 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 	{
 		while (tmtrace.SpecHit.Num() > 0)
 		{
+			int side;
+			int oldside;
+
 			// see if the line was crossed
 			ld = tmtrace.SpecHit[tmtrace.SpecHit.Num() - 1];
 			tmtrace.SpecHit.SetNum(tmtrace.SpecHit.Num() - 1, false);
@@ -1841,8 +1842,6 @@ void VEntity::BounceWall(float overbounce, float bouncefactor)
 void VEntity::UpdateVelocity()
 {
 	guard(VEntity::UpdateVelocity);
-	float startvelz, sinkspeed;
-
 /*	if (Origin.z <= FloorZ && !Velocity.x && !Velocity.y &&
 		!Velocity.z && !bCountKill && !(EntityFlags & EF_IsPlayer))
 	{
@@ -1863,6 +1862,8 @@ void VEntity::UpdateVelocity()
 		}
 		else if (!(EntityFlags & EF_IsPlayer) || Health <= 0)
 		{
+			float startvelz, sinkspeed;
+
 			// Water Gravity
 			Velocity.z -= Gravity * Level->Gravity * Sector->Gravity / 10.0 *
 				host_frametime;

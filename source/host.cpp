@@ -255,10 +255,19 @@ static bool FilterTime()
 
 	realtime += time;
 
-	if (!real_time)
+	if (real_time)
 	{
-		if (realtime - oldrealtime < 1.0 / 36.0/*0.027777f*/)
+		if (realtime - oldrealtime < 1.0 / 90.0)
+		{
 			return false;		// framerate is too high
+		}
+	}
+	else
+	{
+		if (realtime - oldrealtime < 1.0 / 35.0)
+		{
+			return false;		// framerate is too high
+		}
 	}
 
 	host_frametime = realtime - oldrealtime;
@@ -270,9 +279,13 @@ static bool FilterTime()
 	else
 	{	// don't allow really long or short frames
 		if (host_frametime > 0.1)
+		{
 			host_frametime = 0.1;
+		}
 		if (host_frametime < 0.001)
+		{
 			host_frametime = 0.001;
+		}
 	}
 	
 	int			thistime;
@@ -281,9 +294,13 @@ static bool FilterTime()
 	thistime = (int)(realtime * TICRATE);
 	host_frametics = thistime - lasttime;
 	if (!real_time && host_frametics < 1)
+	{
 		return false;		//	No tics to run
+	}
 	if (host_frametics > 3)
+	{
 		host_frametics = 3;	//	Don't run too slow
+	}
 	oldrealtime = realtime;
 	lasttime = thistime;
 
@@ -403,12 +420,16 @@ unclock_cycle(host_cycles[0]);
 
 		//	Update video
 		if (show_time)
+		{
 			time1 = Sys_Time();
+		}
 
 		SCR_Update();
 
 		if (show_time)
+		{
 			time2 = Sys_Time();
+		}
 
 		if (cls.signon)
 		{

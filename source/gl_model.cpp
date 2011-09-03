@@ -673,7 +673,8 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 	TPlane* P = PlanesFrame->Planes;
 	for (int i = 0; i < Mdl->Tris.Num(); i++, P++)
 	{
-		PlaneSides[i] = DotProduct(LocalLightPos, P->normal) - P->dist > 0.1;
+		// Planes facing to the light
+		PlaneSides[i] = DotProduct(LocalLightPos, P->normal) - P->dist > 0.0;
 	}
 
 	p_glUniform1fARB(ShadowsModelShadowInterLoc, Inter);

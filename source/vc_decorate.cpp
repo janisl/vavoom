@@ -2367,7 +2367,7 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 		sc->GetLoc());
 	DecPkg->ParsedClasses.Append(Class);
 
-	if (ParentClass)
+	if (Class)
 	{
 		//	Copy class fixups of the parent class.
 		for (int i = 0; i < ClassFixups.Num(); i++)

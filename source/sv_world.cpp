@@ -510,7 +510,6 @@ int SV_PointContents(const sector_t *sector, const TVec &p)
 bool VLevel::ChangeSector(sector_t* sector, int crunch)
 {
 	guard(VLevel::ChangeSector);
-	int i;
 	sector_t* sec2;
 	sec_region_t* reg;
 	msecnode_t* n;
@@ -562,7 +561,7 @@ bool VLevel::ChangeSector(sector_t* sector, int crunch)
 
 	if (sector->SectorFlags & sector_t::SF_ExtrafloorSource)
 	{
-		for (i = 0; i < NumSectors; i++)
+		for (int i = 0; i < NumSectors; i++)
 		{
 			sec2 = &Sectors[i];
 			if (sec2->SectorFlags & sector_t::SF_HasExtrafloors && sec2 != sector)

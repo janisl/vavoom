@@ -74,7 +74,7 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	guard(VAdvancedRenderLevel::LightPoint);
 	subsector_t		*sub;
 	subregion_t		*reg;
-	float			l, lr, lg, lb, d, add;
+	float			l, lr, lg, lb, add;
 	int				i;
 	int				leafnum;
 	linetrace_t		Trace;
@@ -91,7 +91,7 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	{
 		while (reg->next)
 		{
-			d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
+			float d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
 
 			if (d >= 0.0)
 			{
@@ -193,7 +193,7 @@ vuint32 VAdvancedRenderLevel::LightPointAmbient(const TVec &p)
 	guard(VAdvancedRenderLevel::LightPointAmbient);
 	subsector_t		*sub;
 	subregion_t		*reg;
-	float			l, lr, lg, lb, d;
+	float			l, lr, lg, lb;
 	linetrace_t		Trace;
 
 	if (FixedLight)
@@ -205,7 +205,7 @@ vuint32 VAdvancedRenderLevel::LightPointAmbient(const TVec &p)
 	reg = sub->regions;
 	while (reg->next)
 	{
-		d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
+		float d = DotProduct(p, reg->floor->secplane->normal) - reg->floor->secplane->dist;
 
 		if (d >= 0.0)
 		{
@@ -300,7 +300,7 @@ void VAdvancedRenderLevel::BuildLightVis(int bspnum, float* bbox)
 		}
 		else
 		{
-			int side = Dist < 0;
+			int side = bsp->PointOnSide(CurrLightPos);//Dist < 0;
 
 			// Recursively divide front space.
 			BuildLightVis(bsp->children[side], bsp->bbox[side]);
@@ -389,12 +389,12 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 		return;
 	}
 
-/*	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist < 0.0 || dist > CurrLightRadius)
+	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
+	if (dist <= 0.0 || dist > CurrLightRadius)
 	{
 		//	Light is in back side or too far away
 		return;
-	}*/
+	}
 
 	line_t *linedef = line->linedef;
 	side_t *sidedef = line->sidedef;
@@ -436,12 +436,12 @@ void VAdvancedRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity*
 		return;
 	}
 
-/*	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
-	if (dist < 0.0 || dist > CurrLightRadius)
+	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
+	if (dist <= 0.0)
 	{
 		//	Light is in back side or too far away
 		return;
-	}*/
+	}
 
 	DrawShadowSurfaces(ssurf->surfs, &ssurf->texinfo, true);
 	unguard;
@@ -594,7 +594,7 @@ void VAdvancedRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox)
 		}
 		else
 		{
-			int side = Dist < 0;
+			int side = bsp->PointOnSide(CurrLightPos);//Dist < 0;
 
 			// Recursively divide front space.
 			RenderShadowBSPNode(bsp->children[side], bsp->bbox[side]);
@@ -684,16 +684,10 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 		return;
 	}
 
-/*	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist < 0.0 || dist > CurrLightRadius)
-	{
-		//	Light is in back side or too far away
-		return;
-	}*/
-	float dist = DotProduct(vieworg, line->normal) - line->dist;
+	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
 	if (dist <= 0.0)
 	{
-		//	Viewer is in back side or on plane
+		//	Light is in back side or on plane
 		return;
 	}
 
@@ -744,16 +738,10 @@ void VAdvancedRenderLevel::RenderLightSecSurface(sec_surface_t* ssurf, VEntity* 
 		return;
 	}
 
-/*	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
-	if (dist < 0.0 || dist > CurrLightRadius)
-	{
-		//	Light is in back side or too far away
-		return;
-	}*/
-	float dist = DotProduct(vieworg, plane.normal) - plane.dist;
+	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
 	if (dist <= 0.0)
 	{
-		//	Viewer is in back side or on plane
+		//	Light is in back side or on plane
 		return;
 	}
 
@@ -908,7 +896,7 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox)
 		}
 		else
 		{
-			int side = Dist < 0;
+			int side = bsp->PointOnSide(CurrLightPos);//Dist < 0;
 
 			// Recursively divide front space.
 			RenderLightBSPNode(bsp->children[side], bsp->bbox[side]);

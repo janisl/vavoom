@@ -188,8 +188,9 @@ bool VDirect3DDrawer::SetResolution(int Width, int Height, int BPP,
 		WindowRect.right = Width;
 		WindowRect.top = 0;
 		WindowRect.bottom = Height;
-		AdjustWindowRectEx(&WindowRect, WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
-			FALSE, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
+		AdjustWindowRectEx(&WindowRect, (WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX) |
+			WS_CLIPCHILDREN | WS_CLIPSIBLINGS, FALSE, WS_EX_APPWINDOW |
+			WS_EX_WINDOWEDGE);
 		SetWindowPos(hwnd, HWND_TOP, 0, 0, WindowRect.right - WindowRect.left,
 			WindowRect.bottom - WindowRect.top, SWP_NOMOVE);
 	}
@@ -589,7 +590,6 @@ void VDirect3DDrawer::Update()
 {
 	guard(VDirect3DDrawer::Update);
 	D3DLOCKED_RECT lr;
-	volatile int dummy;
 
 	// End the scene.
 	RenderDevice->EndScene();
@@ -600,7 +600,6 @@ void VDirect3DDrawer::Update()
 		dblock ^= 1;
 		if(!FAILED((DXBlockSurface[dblock]->LockRect(&lr, 0, D3DLOCK_READONLY))))
 		{
-			dummy = *(int*)lr.pBits;
 			DXBlockSurface[dblock]->UnlockRect();
 		}
 	}
