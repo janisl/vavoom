@@ -1017,6 +1017,11 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 	dst->SectorFlags |= sector_t::SF_HasExtrafloors;
 	float floorz = src->floor.GetPointZ(dst->soundorg);
 	float ceilz = src->ceiling.GetPointZ(dst->soundorg);
+	// Swap planes for 3d floors like those of GZDoom
+	if (floorz < ceilz)
+	{
+		SwapPlanes(src);
+	}
 	for (inregion = dst->botregion; inregion; inregion = inregion->next)
 	{
 		float infloorz = inregion->floor->GetPointZ(dst->soundorg);

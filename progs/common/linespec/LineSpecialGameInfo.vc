@@ -989,64 +989,6 @@ void SpawnWorld(Level InLevel)
 		}
 	}
 
-	//	Spawn slopes.
-	SetSlopes(InLevel);
-	for (i = 0; i < InLevel.NumThings; i++)
-	{
-		mthing = &InLevel.Things[i];
-		switch (mthing->type)
-		{
-		case FLOOR_SLOPE_TYPE:
-			MakeSlope(InLevel, mthing, false);
-			mthing->type = 0;
-			break;
-		case CEILING_SLOPE_TYPE:
-			MakeSlope(InLevel, mthing, true);
-			mthing->type = 0;
-			break;
-		case SLOPE_FLOOR_POINT_LINE_TYPE:
-			SlopeLineToPoint(InLevel, mthing, false);
-			mthing->type = 0;
-			break;
-		case SLOPE_CEILING_POINT_LINE_TYPE:
-			SlopeLineToPoint(InLevel, mthing, true);
-			mthing->type = 0;
-			break;
-		case SET_FLOOR_SLOPE_TYPE:
-			SetSlope(InLevel, mthing, false);
-			mthing->type = 0;
-			break;
-		case SET_CEILING_SLOPE_TYPE:
-			SetSlope(InLevel, mthing, true);
-			mthing->type = 0;
-			break;
-		}
-	}
-	MakeVertexFloorHeights(InLevel);
-	MakeVertexCeilingHeights(InLevel);
-	CleanVertexHeights(InLevel);
-	for (i = 0; i < InLevel.NumThings; i++)
-	{
-		mthing = &InLevel.Things[i];
-		if (mthing->type == COPY_FLOOR_PLANE_TYPE ||
-			mthing->type == COPY_CEILING_PLANE_TYPE)
-		{
-			CopyPlane(InLevel, mthing, mthing->type & 1);
-			mthing->type = 0;
-		}
-	}
-
-	//	Initialise initial friction values.
-	for (i = 0; i < InLevel.NumSectors; i++)
-	{
-		InLevel.Sectors[i].Friction = EntityEx::FRICTION_NORMAL;
-		//	Handle Sky2 sector special.
-		if (InLevel.Sectors[i].special == SECSPEC_Sky2)
-		{
-			InLevel.Sectors[i].Sky = SKY_FROM_SIDE;
-		}
-	}
-
 	//	Set up 3D floors, transfers of light, etc.
 	for (i = 0; i < InLevel.NumLines; i++)
 	{
@@ -1104,6 +1046,64 @@ void SpawnWorld(Level InLevel)
 			StaticInit(InLevel, line);
 			line->special = 0;
 			break;
+		}
+	}
+
+	//	Spawn slopes.
+	SetSlopes(InLevel);
+	for (i = 0; i < InLevel.NumThings; i++)
+	{
+		mthing = &InLevel.Things[i];
+		switch (mthing->type)
+		{
+		case FLOOR_SLOPE_TYPE:
+			MakeSlope(InLevel, mthing, false);
+			mthing->type = 0;
+			break;
+		case CEILING_SLOPE_TYPE:
+			MakeSlope(InLevel, mthing, true);
+			mthing->type = 0;
+			break;
+		case SLOPE_FLOOR_POINT_LINE_TYPE:
+			SlopeLineToPoint(InLevel, mthing, false);
+			mthing->type = 0;
+			break;
+		case SLOPE_CEILING_POINT_LINE_TYPE:
+			SlopeLineToPoint(InLevel, mthing, true);
+			mthing->type = 0;
+			break;
+		case SET_FLOOR_SLOPE_TYPE:
+			SetSlope(InLevel, mthing, false);
+			mthing->type = 0;
+			break;
+		case SET_CEILING_SLOPE_TYPE:
+			SetSlope(InLevel, mthing, true);
+			mthing->type = 0;
+			break;
+		}
+	}
+	MakeVertexFloorHeights(InLevel);
+	MakeVertexCeilingHeights(InLevel);
+	CleanVertexHeights(InLevel);
+	for (i = 0; i < InLevel.NumThings; i++)
+	{
+		mthing = &InLevel.Things[i];
+		if (mthing->type == COPY_FLOOR_PLANE_TYPE ||
+			mthing->type == COPY_CEILING_PLANE_TYPE)
+		{
+			CopyPlane(InLevel, mthing, mthing->type & 1);
+			mthing->type = 0;
+		}
+	}
+
+	//	Initialise initial friction values.
+	for (i = 0; i < InLevel.NumSectors; i++)
+	{
+		InLevel.Sectors[i].Friction = EntityEx::FRICTION_NORMAL;
+		//	Handle Sky2 sector special.
+		if (InLevel.Sectors[i].special == SECSPEC_Sky2)
+		{
+			InLevel.Sectors[i].Sky = SKY_FROM_SIDE;
 		}
 	}
 
