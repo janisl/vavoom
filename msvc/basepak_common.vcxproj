@@ -1,0 +1,734 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug64|Win32">
+      <Configuration>Debug64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug64|x64">
+      <Configuration>Debug64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release x64|Win32">
+      <Configuration>Release x64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release x64|x64">
+      <Configuration>Release x64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|Win32">
+      <Configuration>Release64</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release64|x64">
+      <Configuration>Release64</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EE79378F-9689-40B8-99F4-B0E5872A6337}</ProjectGuid>
+    <RootNamespace>progs_common_engine</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(ProjectDir)$(ProjectName)_$(Configuration)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'" />
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">basepak.pk3</NMakeOutput>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug64|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(SolutionDir)\basepak\$(ProjectName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(Configuration)\</IntDir>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)
+</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(SolutionDir)$(Configuration)\vlumpy.exe ..\basev\common\basepak.ls 
+if exist $(OutDir) goto end
+goto no 
+:no 
+md $(OutDir)
+goto end 
+:end 
+move basepak.pk3 $(OutDir)</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">del $(OutDir)\basepak.pk3</NMakeCleanCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release64|x64'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'" />
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">basepak.pk3</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">basepak.pk3</NMakeOutput>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">C:\Libraries\FMOD Programmers API Win32\api\inc;C:\Libraries\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Libraries\wxWidgets-2.8.11\include;C:\Libraries\wxWidgets-2.8.12\include\msvc;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Libraries\FMOD Programmers API Win32\api\inc;C:\Libraries\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Libraries\wxWidgets-2.8.11\include;C:\Libraries\wxWidgets-2.8.12\include\msvc;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">C:\Libraries\FMOD Programmers API Win32\api\inc;C:\Libraries\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Libraries\wxWidgets-2.8.11\include;C:\Libraries\wxWidgets-2.8.12\include\msvc;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">C:\Libraries\FMOD Programmers API Win32\api\inc;C:\Libraries\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Libraries\wxWidgets-2.8.11\include;C:\Libraries\wxWidgets-2.8.12\include\msvc;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">C:\Libraries\FMOD Programmers API Win32\api\inc;C:\Libraries\include;C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;C:\Libraries\wxWidgets-2.8.11\include;C:\Libraries\wxWidgets-2.8.12\include\msvc;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="..\progs\common\engine\ActorDisplayWindow.vc" />
+    <None Include="..\progs\common\engine\BasePlayer.vc" />
+    <None Include="..\progs\common\engine\classes.vc" />
+    <None Include="..\progs\common\engine\ClientGameBase.vc" />
+    <None Include="..\progs\common\engine\Entity.vc" />
+    <None Include="..\progs\common\engine\GameInfo.vc" />
+    <None Include="..\progs\common\engine\GameObject.vc" />
+    <None Include="..\progs\common\engine\Level.vc" />
+    <None Include="..\progs\common\engine\LevelInfo.vc" />
+    <None Include="..\progs\common\engine\Object.vc" />
+    <None Include="..\progs\common\engine\PlayerReplicationInfo.vc" />
+    <None Include="..\progs\common\engine\RootWidget.vc" />
+    <None Include="..\progs\common\engine\ScriptsParser.vc" />
+    <None Include="..\progs\common\engine\Thinker.vc" />
+    <None Include="..\progs\common\engine\Widget.vc" />
+    <None Include="..\progs\common\engine\WorldInfo.vc" />
+    <None Include="..\progs\common\linespec\Actor.DoomAttack.vc" />
+    <None Include="..\progs\common\linespec\Actor.DoomSpecific.vc" />
+    <None Include="..\progs\common\linespec\Actor.FlagsAndAppearance.vc" />
+    <None Include="..\progs\common\linespec\Actor.FreezeDeath.vc" />
+    <None Include="..\progs\common\linespec\Actor.GenericAttacks.vc" />
+    <None Include="..\progs\common\linespec\Actor.Heretic.vc" />
+    <None Include="..\progs\common\linespec\Actor.Hexen.vc" />
+    <None Include="..\progs\common\linespec\Actor.HexenWeapons.vc" />
+    <None Include="..\progs\common\linespec\Actor.Inventory.vc" />
+    <None Include="..\progs\common\linespec\Actor.Misc.vc" />
+    <None Include="..\progs\common\linespec\Actor.MissileMovement.vc" />
+    <None Include="..\progs\common\linespec\Actor.MonsterAi.vc" />
+    <None Include="..\progs\common\linespec\Actor.Sound.vc" />
+    <None Include="..\progs\common\linespec\Actor.Spawn.vc" />
+    <None Include="..\progs\common\linespec\Actor.Special.vc" />
+    <None Include="..\progs\common\linespec\Actor.StateJump.vc" />
+    <None Include="..\progs\common\linespec\Actor.States.vc" />
+    <None Include="..\progs\common\linespec\Actor.Strife.vc" />
+    <None Include="..\progs\common\linespec\ActorMover.vc" />
+    <None Include="..\progs\common\linespec\AimingCamera.vc" />
+    <None Include="..\progs\common\linespec\AmbientSound.vc" />
+    <None Include="..\progs\common\linespec\Ammo.vc" />
+    <None Include="..\progs\common\linespec\AmmoFillup.vc" />
+    <None Include="..\progs\common\linespec\Armor.vc" />
+    <None Include="..\progs\common\linespec\ArtiBlastRadius.vc" />
+    <None Include="..\progs\common\linespec\ArtiBoostArmor.vc" />
+    <None Include="..\progs\common\linespec\ArtiDarkServant.vc" />
+    <None Include="..\progs\common\linespec\ArtiHealingRadius.vc" />
+    <None Include="..\progs\common\linespec\ArtiPoisonBag.vc" />
+    <None Include="..\progs\common\linespec\ArtiTeleport.vc" />
+    <None Include="..\progs\common\linespec\ArtiTeleportOther.vc" />
+    <None Include="..\progs\common\linespec\ArtiTimeBomb.vc" />
+    <None Include="..\progs\common\linespec\ArtiTomeOfPower.vc" />
+    <None Include="..\progs\common\linespec\BackpackItem.vc" />
+    <None Include="..\progs\common\linespec\BasicArmor.vc" />
+    <None Include="..\progs\common\linespec\BasicArmorBonus.vc" />
+    <None Include="..\progs\common\linespec\BasicArmorPickup.vc" />
+    <None Include="..\progs\common\linespec\BlasterFX1.vc" />
+    <None Include="..\progs\common\linespec\BossSpot.vc" />
+    <None Include="..\progs\common\linespec\BrainState.vc" />
+    <None Include="..\progs\common\linespec\Bridge.vc" />
+    <None Include="..\progs\common\linespec\BridgeBall.vc" />
+    <None Include="..\progs\common\linespec\CeilingMover.vc" />
+    <None Include="..\progs\common\linespec\CeilingWaggle.vc" />
+    <None Include="..\progs\common\linespec\CFlameMissile.vc" />
+    <None Include="..\progs\common\linespec\ChickenPlayer.vc" />
+    <None Include="..\progs\common\linespec\classes.vc" />
+    <None Include="..\progs\common\linespec\ClericWeapon.vc" />
+    <None Include="..\progs\common\linespec\ClericWeaponPiece.vc" />
+    <None Include="..\progs\common\linespec\CloseDoor222.vc" />
+    <None Include="..\progs\common\linespec\Coin.vc" />
+    <None Include="..\progs\common\linespec\CustomInventory.vc" />
+    <None Include="..\progs\common\linespec\CWeapWraithverge.vc" />
+    <None Include="..\progs\common\linespec\DegninOre.vc" />
+    <None Include="..\progs\common\linespec\DoomBuilderCamera.vc" />
+    <None Include="..\progs\common\linespec\DummyStrifeItem.vc" />
+    <None Include="..\progs\common\linespec\DynamicLight.vc" />
+    <None Include="..\progs\common\linespec\Elevator.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.AiUtils.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.Damage.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.Defaults.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.Head.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.Inventory.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.LineAttack.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.Misc.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.Morph.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.Physics.vc" />
+    <None Include="..\progs\common\linespec\EntityEx.SpawnMissile.vc" />
+    <None Include="..\progs\common\linespec\FakeInventory.vc" />
+    <None Include="..\progs\common\linespec\FastProjectile.vc" />
+    <None Include="..\progs\common\linespec\FighterWeapon.vc" />
+    <None Include="..\progs\common\linespec\FighterWeaponPiece.vc" />
+    <None Include="..\progs\common\linespec\FireFlicker.vc" />
+    <None Include="..\progs\common\linespec\FlashFader.vc" />
+    <None Include="..\progs\common\linespec\FloorMover.vc" />
+    <None Include="..\progs\common\linespec\FloorWaggle.vc" />
+    <None Include="..\progs\common\linespec\ForceFieldGuard.vc" />
+    <None Include="..\progs\common\linespec\FourthWeaponHolder.vc" />
+    <None Include="..\progs\common\linespec\FourthWeaponPiece.vc" />
+    <None Include="..\progs\common\linespec\FrostMissile.vc" />
+    <None Include="..\progs\common\linespec\FSwordMissile.vc" />
+    <None Include="..\progs\common\linespec\FWeapAxe.vc" />
+    <None Include="..\progs\common\linespec\GlassShard.vc" />
+    <None Include="..\progs\common\linespec\GlowingLight.vc" />
+    <None Include="..\progs\common\linespec\HateTarget.vc" />
+    <None Include="..\progs\common\linespec\Health.vc" />
+    <None Include="..\progs\common\linespec\HealthFillup.vc" />
+    <None Include="..\progs\common\linespec\HealthPickup.vc" />
+    <None Include="..\progs\common\linespec\HealthTraining.vc" />
+    <None Include="..\progs\common\linespec\Heresiarch.vc" />
+    <None Include="..\progs\common\linespec\HereticWeapon.vc" />
+    <None Include="..\progs\common\linespec\HexenArmor.vc" />
+    <None Include="..\progs\common\linespec\HexenWeapon.vc" />
+    <None Include="..\progs\common\linespec\HolySpirit.vc" />
+    <None Include="..\progs\common\linespec\HornRodFX2.vc" />
+    <None Include="..\progs\common\linespec\IceChunk.vc" />
+    <None Include="..\progs\common\linespec\IceChunkHead.vc" />
+    <None Include="..\progs\common\linespec\InterpolationPoint.vc" />
+    <None Include="..\progs\common\linespec\InterpolationSpecial.vc" />
+    <None Include="..\progs\common\linespec\Inventory.vc" />
+    <None Include="..\progs\common\linespec\InvisibleBridge.vc" />
+    <None Include="..\progs\common\linespec\InvisibleBridge16.vc" />
+    <None Include="..\progs\common\linespec\InvisibleBridge32.vc" />
+    <None Include="..\progs\common\linespec\InvisibleBridge8.vc" />
+    <None Include="..\progs\common\linespec\Key.vc" />
+    <None Include="..\progs\common\linespec\LightEffect.vc" />
+    <None Include="..\progs\common\linespec\LightFlash.vc" />
+    <None Include="..\progs\common\linespec\Lighting.vc" />
+    <None Include="..\progs\common\linespec\Lightning.vc" />
+    <None Include="..\progs\common\linespec\LightningThinker.vc" />
+    <None Include="..\progs\common\linespec\LightningZap.vc" />
+    <None Include="..\progs\common\linespec\LineSpecialClientGame.vc" />
+    <None Include="..\progs\common\linespec\LineSpecialGameInfo.vc" />
+    <None Include="..\progs\common\linespec\LineSpecialLevelInfo.vc" />
+    <None Include="..\progs\common\linespec\LookAtCamera.vc" />
+    <None Include="..\progs\common\linespec\LoreShot.vc" />
+    <None Include="..\progs\common\linespec\LowerStackLookOnly.vc" />
+    <None Include="..\progs\common\linespec\Mace.vc" />
+    <None Include="..\progs\common\linespec\MaceFX4.vc" />
+    <None Include="..\progs\common\linespec\Macil1.vc" />
+    <None Include="..\progs\common\linespec\MageStaffFX2.vc" />
+    <None Include="..\progs\common\linespec\MageWandMissile.vc" />
+    <None Include="..\progs\common\linespec\MageWeapon.vc" />
+    <None Include="..\progs\common\linespec\MageWeaponPiece.vc" />
+    <None Include="..\progs\common\linespec\MapRevealer.vc" />
+    <None Include="..\progs\common\linespec\Meat.vc" />
+    <None Include="..\progs\common\linespec\Minotaur.vc" />
+    <None Include="..\progs\common\linespec\MinotaurFriend.vc" />
+    <None Include="..\progs\common\linespec\MorphedMonster.vc" />
+    <None Include="..\progs\common\linespec\MorphProjectile.vc" />
+    <None Include="..\progs\common\linespec\MWeapBloodscourge.vc" />
+    <None Include="..\progs\common\linespec\OpenDoor222.vc" />
+    <None Include="..\progs\common\linespec\OpenDoor224.vc" />
+    <None Include="..\progs\common\linespec\Oracle.vc" />
+    <None Include="..\progs\common\linespec\ParticleFountain.vc" />
+    <None Include="..\progs\common\linespec\PathFollower.vc" />
+    <None Include="..\progs\common\linespec\PatrolSpecial.vc" />
+    <None Include="..\progs\common\linespec\PhasedLight.vc" />
+    <None Include="..\progs\common\linespec\PhoenixFX1.vc" />
+    <None Include="..\progs\common\linespec\PhoenixFX2.vc" />
+    <None Include="..\progs\common\linespec\PhoenixRod.vc" />
+    <None Include="..\progs\common\linespec\PhoenixRodPowered.vc" />
+    <None Include="..\progs\common\linespec\PhosphorousFire.vc" />
+    <None Include="..\progs\common\linespec\PickupFlash.vc" />
+    <None Include="..\progs\common\linespec\PigPlayer.vc" />
+    <None Include="..\progs\common\linespec\Pillar.vc" />
+    <None Include="..\progs\common\linespec\PlaneWatcher.vc" />
+    <None Include="..\progs\common\linespec\Platform.vc" />
+    <None Include="..\progs\common\linespec\PlayerChunk.vc" />
+    <None Include="..\progs\common\linespec\PlayerEx.vc" />
+    <None Include="..\progs\common\linespec\PlayerPawn.vc" />
+    <None Include="..\progs\common\linespec\PointLight.vc" />
+    <None Include="..\progs\common\linespec\PointLightFlicker.vc" />
+    <None Include="..\progs\common\linespec\PointLightFlickerRandom.vc" />
+    <None Include="..\progs\common\linespec\PointLightPulse.vc" />
+    <None Include="..\progs\common\linespec\PointPuller.vc" />
+    <None Include="..\progs\common\linespec\PointPusher.vc" />
+    <None Include="..\progs\common\linespec\PoisonBolt.vc" />
+    <None Include="..\progs\common\linespec\PoisonCloud.vc" />
+    <None Include="..\progs\common\linespec\PolyobjDoor.vc" />
+    <None Include="..\progs\common\linespec\PolyobjMover.vc" />
+    <None Include="..\progs\common\linespec\PolyobjRotator.vc" />
+    <None Include="..\progs\common\linespec\PolyobjThinker.vc" />
+    <None Include="..\progs\common\linespec\Pottery1.vc" />
+    <None Include="..\progs\common\linespec\PowerCoupling.vc" />
+    <None Include="..\progs\common\linespec\PowerDamage.vc" />
+    <None Include="..\progs\common\linespec\PowerDoubleFiringSpeed.vc" />
+    <None Include="..\progs\common\linespec\PowerFlight.vc" />
+    <None Include="..\progs\common\linespec\PowerFrightener.vc" />
+    <None Include="..\progs\common\linespec\PowerGhost.vc" />
+    <None Include="..\progs\common\linespec\PowerHighJump.vc" />
+    <None Include="..\progs\common\linespec\PowerInfiniteAmmo.vc" />
+    <None Include="..\progs\common\linespec\PowerInvisibility.vc" />
+    <None Include="..\progs\common\linespec\PowerInvulnerable.vc" />
+    <None Include="..\progs\common\linespec\PowerIronFeet.vc" />
+    <None Include="..\progs\common\linespec\PowerLightAmp.vc" />
+    <None Include="..\progs\common\linespec\PowerMask.vc" />
+    <None Include="..\progs\common\linespec\PowerMinotaur.vc" />
+    <None Include="..\progs\common\linespec\PowerMorph.vc" />
+    <None Include="..\progs\common\linespec\PowerProtection.vc" />
+    <None Include="..\progs\common\linespec\PowerRegeneration.vc" />
+    <None Include="..\progs\common\linespec\PowerScanner.vc" />
+    <None Include="..\progs\common\linespec\PowerShadow.vc" />
+    <None Include="..\progs\common\linespec\PowerSpeed.vc" />
+    <None Include="..\progs\common\linespec\PowerStrength.vc" />
+    <None Include="..\progs\common\linespec\PowerTargeter.vc" />
+    <None Include="..\progs\common\linespec\PowerTimeFreeze.vc" />
+    <None Include="..\progs\common\linespec\PowerTorch.vc" />
+    <None Include="..\progs\common\linespec\Powerup.vc" />
+    <None Include="..\progs\common\linespec\PowerupGiver.vc" />
+    <None Include="..\progs\common\linespec\PowerWeaponLevel2.vc" />
+    <None Include="..\progs\common\linespec\PrisonPass.vc" />
+    <None Include="..\progs\common\linespec\Pusher.vc" />
+    <None Include="..\progs\common\linespec\PuzzleItem.vc" />
+    <None Include="..\progs\common\linespec\QuakeFocus.vc" />
+    <None Include="..\progs\common\linespec\RainPillar.vc" />
+    <None Include="..\progs\common\linespec\RainPlayer2.vc" />
+    <None Include="..\progs\common\linespec\RainPlayer3.vc" />
+    <None Include="..\progs\common\linespec\RainPlayer4.vc" />
+    <None Include="..\progs\common\linespec\RaiseAlarm.vc" />
+    <None Include="..\progs\common\linespec\RandomSpawner.vc" />
+    <None Include="..\progs\common\linespec\Ripper.vc" />
+    <None Include="..\progs\common\linespec\Scanner.vc" />
+    <None Include="..\progs\common\linespec\ScriptedMarine.vc" />
+    <None Include="..\progs\common\linespec\Scroller.vc" />
+    <None Include="..\progs\common\linespec\SecActEnter.vc" />
+    <None Include="..\progs\common\linespec\SecActExit.vc" />
+    <None Include="..\progs\common\linespec\SecActEyesAboveC.vc" />
+    <None Include="..\progs\common\linespec\SecActEyesBelowC.vc" />
+    <None Include="..\progs\common\linespec\SecActEyesDive.vc" />
+    <None Include="..\progs\common\linespec\SecActEyesSurface.vc" />
+    <None Include="..\progs\common\linespec\SecActHitCeiling.vc" />
+    <None Include="..\progs\common\linespec\SecActHitFakeFloor.vc" />
+    <None Include="..\progs\common\linespec\SecActHitFloor.vc" />
+    <None Include="..\progs\common\linespec\SecActUse.vc" />
+    <None Include="..\progs\common\linespec\SecActUseWall.vc" />
+    <None Include="..\progs\common\linespec\SecretTrigger.vc" />
+    <None Include="..\progs\common\linespec\SectorAction.vc" />
+    <None Include="..\progs\common\linespec\SectorMover.vc" />
+    <None Include="..\progs\common\linespec\SectorPointLight.vc" />
+    <None Include="..\progs\common\linespec\SectorSilencer.vc" />
+    <None Include="..\progs\common\linespec\SectorThinker.vc" />
+    <None Include="..\progs\common\linespec\SecurityCamera.vc" />
+    <None Include="..\progs\common\linespec\Sigil.vc" />
+    <None Include="..\progs\common\linespec\SkyPicker.vc" />
+    <None Include="..\progs\common\linespec\SkyViewpoint.vc" />
+    <None Include="..\progs\common\linespec\SlideshowStarter.vc" />
+    <None Include="..\progs\common\linespec\SorcBall.vc" />
+    <None Include="..\progs\common\linespec\SorcBall1.vc" />
+    <None Include="..\progs\common\linespec\SorcBall2.vc" />
+    <None Include="..\progs\common\linespec\SorcBall3.vc" />
+    <None Include="..\progs\common\linespec\Sorcerer2.vc" />
+    <None Include="..\progs\common\linespec\SoundEnvironment.vc" />
+    <None Include="..\progs\common\linespec\SoundSequence.vc" />
+    <None Include="..\progs\common\linespec\SoundSequenceSlot.vc" />
+    <None Include="..\progs\common\linespec\Spark.vc" />
+    <None Include="..\progs\common\linespec\SpecialSpot.vc" />
+    <None Include="..\progs\common\linespec\SpectralMonster.vc" />
+    <None Include="..\progs\common\linespec\StackPoint.vc" />
+    <None Include="..\progs\common\linespec\StairStepMover.vc" />
+    <None Include="..\progs\common\linespec\StaticLightSource.vc" />
+    <None Include="..\progs\common\linespec\StaticRGBLightSource.vc" />
+    <None Include="..\progs\common\linespec\Strobe.vc" />
+    <None Include="..\progs\common\linespec\SwitchableDecoration.vc" />
+    <None Include="..\progs\common\linespec\SwitchingDecoration.vc" />
+    <None Include="..\progs\common\linespec\TeleportDest.vc" />
+    <None Include="..\progs\common\linespec\TeleportDest2.vc" />
+    <None Include="..\progs\common\linespec\TeleportDest3.vc" />
+    <None Include="..\progs\common\linespec\TeleporterBeacon.vc" />
+    <None Include="..\progs\common\linespec\TeleportFog.vc" />
+    <None Include="..\progs\common\linespec\TelOtherFX1.vc" />
+    <None Include="..\progs\common\linespec\TextureChangeDoor.vc" />
+    <None Include="..\progs\common\linespec\ThrustFloorDown.vc" />
+    <None Include="..\progs\common\linespec\UpgradeAccuracy.vc" />
+    <None Include="..\progs\common\linespec\UpgradeStamina.vc" />
+    <None Include="..\progs\common\linespec\UpperStackLookOnly.vc" />
+    <None Include="..\progs\common\linespec\VerticalDoor.vc" />
+    <None Include="..\progs\common\linespec\WallLightTransfer.vc" />
+    <None Include="..\progs\common\linespec\WaterZone.vc" />
+    <None Include="..\progs\common\linespec\Weapon.vc" />
+    <None Include="..\progs\common\linespec\WeaponGiver.vc" />
+    <None Include="..\progs\common\linespec\WeaponHolder.vc" />
+    <None Include="..\progs\common\linespec\WeaponPiece.vc" />
+    <None Include="..\progs\common\linespec\Whirlwind.vc" />
+    <None Include="..\progs\common\linespec\WorldInfoEx.vc" />
+    <None Include="..\progs\common\linespec\ZBell.vc" />
+    <None Include="..\progs\common\linespec\ZBridge.vc" />
+    <None Include="..\progs\common\linespec\ZCorpseLynchedNoHeart.vc" />
+    <None Include="..\progs\common\uibase\classes.vc" />
+    <None Include="..\progs\common\uibase\ClientGameShared.vc" />
+    <None Include="..\progs\common\uibase\ConDialog.vc" />
+    <None Include="..\progs\common\uibase\ConDlgChoice.vc" />
+    <None Include="..\progs\common\uibase\FinaleBackground.vc" />
+    <None Include="..\progs\common\uibase\FinaleScreen.vc" />
+    <None Include="..\progs\common\uibase\HUDMessage.vc" />
+    <None Include="..\progs\common\uibase\HUDMessageFadeInOut.vc" />
+    <None Include="..\progs\common\uibase\HUDMessageFadeOut.vc" />
+    <None Include="..\progs\common\uibase\HUDMessageTypeOnFadeOut.vc" />
+    <None Include="..\progs\common\uibase\IntermissionBackground.vc" />
+    <None Include="..\progs\common\uibase\MenuBigTextButton.vc" />
+    <None Include="..\progs\common\uibase\MenuChoice.vc" />
+    <None Include="..\progs\common\uibase\MenuChoice_BackButton.vc" />
+    <None Include="..\progs\common\uibase\MenuChoice_LoadSlot.vc" />
+    <None Include="..\progs\common\uibase\MenuChoice_OnOff.vc" />
+    <None Include="..\progs\common\uibase\MenuChoice_SaveSlot.vc" />
+    <None Include="..\progs\common\uibase\MenuChoiceEnum.vc" />
+    <None Include="..\progs\common\uibase\MenuChoiceEpisode.vc" />
+    <None Include="..\progs\common\uibase\MenuChoicePClass.vc" />
+    <None Include="..\progs\common\uibase\MenuChoiceSkill.vc" />
+    <None Include="..\progs\common\uibase\MenuChoiceSlider.vc" />
+    <None Include="..\progs\common\uibase\MenuChoiceSlot.vc" />
+    <None Include="..\progs\common\uibase\MenuControlKey.vc" />
+    <None Include="..\progs\common\uibase\MenuInputLine.vc" />
+    <None Include="..\progs\common\uibase\MenuModel.vc" />
+    <None Include="..\progs\common\uibase\MenuSaveSlot.vc" />
+    <None Include="..\progs\common\uibase\MenuScreen.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenAdvancedVideoOptions.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenClass.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenControls.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenEpisode.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenJoinGame.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenLoadGame.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenMasterList.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenMODOptions.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenMouseOptions.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenSaveGame.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenScreenResolution.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenSinglePlayer.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenSkill.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenSList.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenSoundOptions.vc" />
+    <None Include="..\progs\common\uibase\MenuScreenVideoOptions.vc" />
+    <None Include="..\progs\common\uibase\MenuSelector_Big.vc" />
+    <None Include="..\progs\common\uibase\MenuSelector_SmallLeft.vc" />
+    <None Include="..\progs\common\uibase\MenuSelector_SmallRight.vc" />
+    <None Include="..\progs\common\uibase\MenuSList.vc" />
+    <None Include="..\progs\common\uibase\MenuSmallTextButton.vc" />
+    <None Include="..\progs\common\uibase\MenuSpriteAnim.vc" />
+    <None Include="..\progs\common\uibase\MenuStaticAnim.vc" />
+    <None Include="..\progs\common\uibase\MenuStaticBitmap.vc" />
+    <None Include="..\progs\common\uibase\MenuTextButton.vc" />
+    <None Include="..\progs\common\uibase\MenuTitleText.vc" />
+    <None Include="..\progs\common\uibase\StatusBarShared.vc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="vlumpy.vcxproj">
+      <Project>{f65ac2b2-1632-4584-bda1-dac149fc9bdd}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
