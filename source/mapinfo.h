@@ -202,7 +202,7 @@ struct VSkillDef
 void InitMapInfo();
 void ShutdownMapInfo();
 const mapInfo_t& P_GetMapInfo(VName);
-const char* P_GetMapName(int);
+const VStr P_GetMapName(int);
 VName P_GetMapLumpName(int);
 VName P_TranslateMap(int);
 VName P_GetMapNameByLevelNum(int);
