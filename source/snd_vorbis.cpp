@@ -402,7 +402,7 @@ void VVorbisSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 	TArray<short> Data;
 	do
 	{
-		short *Buf = (short *)Z_Malloc(16 * 2048);
+		short Buf[16 * 2048];
 		int SamplesDecoded = Codec->Decode(Buf, 16 * 1024);
 		if (SamplesDecoded > 0)
 		{
@@ -413,7 +413,6 @@ void VVorbisSampleLoader::Load(sfxinfo_t& Sfx, VStream& Stream)
 				Data[OldPos + i] = Buf[i * 2];
 			}
 		}
-		Z_Free(Buf);
 	}
 	while (!Codec->Finished());
 	if (!Data.Num())
