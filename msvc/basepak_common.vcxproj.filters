@@ -1,0 +1,1033 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="engine">
+      <UniqueIdentifier>{f237c5c2-fe60-4598-8e72-4f9f0e903a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="linespec">
+      <UniqueIdentifier>{b4249f95-93b7-46f7-84f7-e20ff0ce7fed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="uibase">
+      <UniqueIdentifier>{043d67e3-c954-402f-858b-a8a3317abffc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\progs\common\engine\ActorDisplayWindow.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\BasePlayer.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\classes.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\ClientGameBase.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\Entity.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\GameInfo.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\GameObject.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\Level.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\LevelInfo.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\Object.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\PlayerReplicationInfo.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\RootWidget.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\ScriptsParser.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\Thinker.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\Widget.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\engine\WorldInfo.vc">
+      <Filter>engine</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.DoomAttack.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.DoomSpecific.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.FlagsAndAppearance.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.FreezeDeath.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.GenericAttacks.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Heretic.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Hexen.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.HexenWeapons.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Inventory.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Misc.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.MissileMovement.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.MonsterAi.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Sound.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Spawn.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Special.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.StateJump.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.States.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Actor.Strife.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ActorMover.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\AimingCamera.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\AmbientSound.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Ammo.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\AmmoFillup.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Armor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiBlastRadius.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiBoostArmor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiDarkServant.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiHealingRadius.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiPoisonBag.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiTeleport.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiTeleportOther.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiTimeBomb.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ArtiTomeOfPower.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BackpackItem.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BasicArmor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BasicArmorBonus.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BasicArmorPickup.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BlasterFX1.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BossSpot.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BrainState.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Bridge.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\BridgeBall.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\CeilingMover.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\CeilingWaggle.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\CFlameMissile.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ChickenPlayer.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\classes.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ClericWeapon.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ClericWeaponPiece.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\CloseDoor222.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Coin.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\CustomInventory.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\CWeapWraithverge.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\DegninOre.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\DoomBuilderCamera.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\DummyStrifeItem.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\DynamicLight.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Elevator.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.AiUtils.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.Damage.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.Defaults.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.Head.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.Inventory.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.LineAttack.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.Misc.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.Morph.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.Physics.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\EntityEx.SpawnMissile.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FakeInventory.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FastProjectile.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FighterWeapon.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FighterWeaponPiece.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FireFlicker.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FlashFader.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FloorMover.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FloorWaggle.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ForceFieldGuard.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FourthWeaponHolder.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FourthWeaponPiece.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FrostMissile.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FSwordMissile.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\FWeapAxe.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\GlassShard.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\GlowingLight.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HateTarget.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Health.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HealthFillup.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HealthPickup.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HealthTraining.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Heresiarch.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HereticWeapon.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HexenArmor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HexenWeapon.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HolySpirit.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\HornRodFX2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\IceChunk.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\IceChunkHead.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\InterpolationPoint.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\InterpolationSpecial.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Inventory.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\InvisibleBridge.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\InvisibleBridge16.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\InvisibleBridge32.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\InvisibleBridge8.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Key.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LightEffect.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LightFlash.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Lighting.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Lightning.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LightningThinker.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LightningZap.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LineSpecialClientGame.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LineSpecialGameInfo.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LineSpecialLevelInfo.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LookAtCamera.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LoreShot.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\LowerStackLookOnly.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Mace.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MaceFX4.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Macil1.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MageStaffFX2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MageWandMissile.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MageWeapon.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MageWeaponPiece.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MapRevealer.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Meat.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Minotaur.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MinotaurFriend.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MorphedMonster.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MorphProjectile.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\MWeapBloodscourge.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\OpenDoor222.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\OpenDoor224.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Oracle.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ParticleFountain.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PathFollower.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PatrolSpecial.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PhasedLight.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PhoenixFX1.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PhoenixFX2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PhoenixRod.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PhoenixRodPowered.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PhosphorousFire.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PickupFlash.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PigPlayer.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Pillar.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PlaneWatcher.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Platform.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PlayerChunk.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PlayerEx.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PlayerPawn.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PointLight.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PointLightFlicker.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PointLightFlickerRandom.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PointLightPulse.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PointPuller.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PointPusher.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PoisonBolt.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PoisonCloud.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PolyobjDoor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PolyobjMover.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PolyobjRotator.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PolyobjThinker.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Pottery1.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerCoupling.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerDamage.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerDoubleFiringSpeed.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerFlight.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerFrightener.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerGhost.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerHighJump.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerInfiniteAmmo.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerInvisibility.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerInvulnerable.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerIronFeet.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerLightAmp.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerMask.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerMinotaur.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerMorph.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerProtection.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerRegeneration.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerScanner.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerShadow.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerSpeed.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerStrength.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerTargeter.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerTimeFreeze.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerTorch.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Powerup.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerupGiver.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PowerWeaponLevel2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PrisonPass.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Pusher.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\PuzzleItem.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\QuakeFocus.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\RainPillar.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\RainPlayer2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\RainPlayer3.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\RainPlayer4.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\RaiseAlarm.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\RandomSpawner.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Ripper.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Scanner.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ScriptedMarine.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Scroller.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActEnter.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActExit.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActEyesAboveC.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActEyesBelowC.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActEyesDive.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActEyesSurface.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActHitCeiling.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActHitFakeFloor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActHitFloor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActUse.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecActUseWall.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecretTrigger.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SectorAction.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SectorMover.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SectorPointLight.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SectorSilencer.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SectorThinker.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SecurityCamera.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Sigil.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SkyPicker.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SkyViewpoint.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SlideshowStarter.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SorcBall.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SorcBall1.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SorcBall2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SorcBall3.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Sorcerer2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SoundEnvironment.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SoundSequence.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SoundSequenceSlot.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Spark.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SpecialSpot.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SpectralMonster.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\StackPoint.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\StairStepMover.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\StaticLightSource.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\StaticRGBLightSource.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Strobe.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SwitchableDecoration.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\SwitchingDecoration.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\TeleportDest.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\TeleportDest2.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\TeleportDest3.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\TeleporterBeacon.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\TeleportFog.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\TelOtherFX1.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\TextureChangeDoor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ThrustFloorDown.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\UpgradeAccuracy.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\UpgradeStamina.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\UpperStackLookOnly.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\VerticalDoor.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\WallLightTransfer.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\WaterZone.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Weapon.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\WeaponGiver.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\WeaponHolder.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\WeaponPiece.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\Whirlwind.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\WorldInfoEx.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ZBell.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ZBridge.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\linespec\ZCorpseLynchedNoHeart.vc">
+      <Filter>linespec</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\classes.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\ClientGameShared.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\ConDialog.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\ConDlgChoice.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\FinaleBackground.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\FinaleScreen.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\HUDMessage.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\HUDMessageFadeInOut.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\HUDMessageFadeOut.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\HUDMessageTypeOnFadeOut.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\IntermissionBackground.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuBigTextButton.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoice.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoice_BackButton.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoice_LoadSlot.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoice_OnOff.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoice_SaveSlot.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoiceEnum.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoiceEpisode.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoicePClass.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoiceSkill.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoiceSlider.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuChoiceSlot.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuControlKey.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuInputLine.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuModel.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuSaveSlot.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreen.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenAdvancedVideoOptions.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenClass.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenControls.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenEpisode.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenJoinGame.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenLoadGame.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenMasterList.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenMODOptions.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenMouseOptions.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenSaveGame.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenScreenResolution.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenSinglePlayer.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenSkill.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenSList.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenSoundOptions.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuScreenVideoOptions.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuSelector_Big.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuSelector_SmallLeft.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuSelector_SmallRight.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuSList.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuSmallTextButton.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuSpriteAnim.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuStaticAnim.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuStaticBitmap.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuTextButton.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\MenuTitleText.vc">
+      <Filter>uibase</Filter>
+    </None>
+    <None Include="..\progs\common\uibase\StatusBarShared.vc">
+      <Filter>uibase</Filter>
+    </None>
+  </ItemGroup>
+</Project>

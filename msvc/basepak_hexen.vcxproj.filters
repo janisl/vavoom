@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="cgame">
+      <UniqueIdentifier>{8e488fbe-f08c-4caa-b687-965f66a9ff7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{b7da3484-4570-4e07-b413-b762545fdeef}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\progs\hexen\cgame\classes.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\ClientGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\IntermissionScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenControls2.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenGameplayOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenHelp.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenMain.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenMultiplayer.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenNewNetGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\MenuScreenPlayerSetup.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\StatusBarScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\cgame\TitleScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\hexen\game\BotPlayer.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\hexen\game\classes.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\hexen\game\HexenDefs.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\hexen\game\HexenLevelInfo.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\hexen\game\MainGameInfo.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\hexen\game\Player.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\hexen\game\PlayerSpeed.vc">
+      <Filter>game</Filter>
+    </None>
+  </ItemGroup>
+</Project>

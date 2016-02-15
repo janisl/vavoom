@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="cgame">
+      <UniqueIdentifier>{02791ae3-1c7e-4dbe-9081-e221e9bd74fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{afc1f536-be56-4ef1-a9db-f12b074a1524}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\progs\strife\cgame\classes.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\ClientGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\ConSlideshow1.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\ConSlideshow2.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\IntermissionScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenControls2.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenGameplayOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenHelp.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenMain.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenMultiplayer.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenNewNetGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenPlayerSetup.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\MenuScreenQuit.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\StatusBarScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\cgame\TitleScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\strife\game\classes.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\strife\game\MainGameInfo.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\strife\game\Player.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\strife\game\StrifeLevelInfo.vc">
+      <Filter>game</Filter>
+    </None>
+  </ItemGroup>
+</Project>

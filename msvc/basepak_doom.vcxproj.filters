@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="game">
+      <UniqueIdentifier>{14a59967-a8cf-451c-b9fa-d06a86499b2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="cgame">
+      <UniqueIdentifier>{e351619d-674f-4b89-b1e2-97f2f0ce6855}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\progs\doom\game\BotPlayer.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\doom\game\classes.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\doom\game\DoomLevelInfo.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\doom\game\MainGameInfo.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\doom\game\Player.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\classes.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\ClientGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\IntermissionScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenControls2.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenGameplayOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenHelp.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenMain.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenMultiplayer.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenNewNetGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\MenuScreenPlayerSetup.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\StatusBarScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\doom\cgame\TitleScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="cgame">
+      <UniqueIdentifier>{ca027b68-e591-407d-bba0-430edae21671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{9d58371c-2862-4551-b199-31daec969195}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\progs\heretic\cgame\classes.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\ClientGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\IntermissionScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenControls2.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenGameplayOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenHelp.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenMain.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenMultiplayer.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenNewNetGame.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenOptions.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\MenuScreenPlayerSetup.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\StatusBarScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\cgame\TitleScreen.vc">
+      <Filter>cgame</Filter>
+    </None>
+    <None Include="..\progs\heretic\game\BotPlayer.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\heretic\game\classes.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\heretic\game\HereticLevelInfo.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\heretic\game\MainGameInfo.vc">
+      <Filter>game</Filter>
+    </None>
+    <None Include="..\progs\heretic\game\Player.vc">
+      <Filter>game</Filter>
+    </None>
+  </ItemGroup>
+</Project>
