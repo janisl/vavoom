@@ -3,7 +3,7 @@ pointlight KeyGizmoYellow
 {
 	colour 1 1 0
 	radius 118
-	offset 0 0 68
+	offset 0 0 69
 }
 
 class KeyGizmoYellow
@@ -17,7 +17,7 @@ pointlight KeyGizmoGreen
 {
 	colour 0 1 0
 	radius 118
-	offset 0 0 68
+	offset 0 0 69
 }
 
 class KeyGizmoGreen
@@ -31,7 +31,7 @@ pointlight KeyGizmoBlue
 {
 	colour 0 0 1
 	radius 118
-	offset 0 0 68
+	offset 0 0 69
 }
 
 class KeyGizmoBlue
@@ -73,7 +73,7 @@ pointlight Chandelier
 {
 	colour 1 1 0.5
 	radius 160
-	offset 0 0 52
+	offset 0 0 56
 }
 
 class Chandelier
@@ -87,7 +87,7 @@ pointlight FireBrazier
 {
 	colour 1 1 0
 	radius 160
-	offset 0 0 52
+	offset 0 0 55
 }
 
 class FireBrazier

@@ -72,7 +72,7 @@ pointlight ZChandelier
 {
 	colour 1 1 0.5
 	radius 128
-	offset 0 0 52
+	offset 0 0 56
 }
 
 class ZChandelier
@@ -86,7 +86,7 @@ pointlight BrassTorch
 {
 	colour 1 1 0
 	radius 160
-	offset 0 0 48
+	offset 0 0 55
 }
 
 class BrassTorch
@@ -113,7 +113,7 @@ pointlight ZBlueCandle
 {
 	colour 0.4 0.4 1
 	radius 128
-	offset 0 0 8
+	offset 0 0 10
 }
 
 class ZBlueCandle
@@ -127,7 +127,7 @@ pointlight ZTwinedTorch
 {
 	colour 1 1 0
 	radius 160
-	offset 0 0 64
+	offset 0 0 66
 }
 
 class ZTwinedTorch
@@ -160,7 +160,7 @@ pointlight ZWallTorch
 {
 	colour 1 1 0
 	radius 128
-	offset 0 0 48
+	offset 0 0 38
 }
 
 class ZWallTorch
@@ -224,7 +224,7 @@ pointlight ZFireBull
 {
 	colour 1 1 0
 	radius 170
-	offset 0 0 72
+	offset 0 5 74
 }
 
 class ZFireBull
@@ -257,7 +257,7 @@ pointlight FlameSmall
 {
 	colour 1 1 0
 	radius 128
-	offset 0 0 64
+	offset 0 0 8
 }
 
 class FlameSmall
@@ -277,7 +277,7 @@ pointlight FlameLarge
 {
 	colour 1 1 0
 	radius 128
-	offset 0 0 0
+	offset 0 0 16
 }
 
 class FlameLarge

@@ -3,7 +3,7 @@ pointlight ShortRedTorch
 {
 	colour 1 0 0
 	radius 160
-	offset 0 0 16
+	offset 0 0 35
 }
 
 class ShortRedTorch
@@ -17,7 +17,7 @@ pointlight ShortGreenTorch
 {
 	colour 0 1 0
 	radius 160
-	offset 0 0 16
+	offset 0 0 35
 }
 
 class ShortGreenTorch
@@ -31,7 +31,7 @@ pointlight ShortBlueTorch
 {
 	colour 0 0 1
 	radius 160
-	offset 0 0 16
+	offset 0 0 35
 }
 
 class ShortBlueTorch
@@ -45,7 +45,7 @@ pointlight RedTorch
 {
 	colour 1 0 0
 	radius 160
-	offset 0 0 32
+	offset 0 0 55
 }
 
 class RedTorch
@@ -59,7 +59,7 @@ pointlight GreenTorch
 {
 	colour 0 1 0
 	radius 160
-	offset 0 0 32
+	offset 0 0 55
 }
 
 class GreenTorch
@@ -73,7 +73,7 @@ pointlight BlueTorch
 {
 	colour 0 0 1
 	radius 160
-	offset 0 0 32
+	offset 0 0 55
 }
 
 class BlueTorch
@@ -87,7 +87,7 @@ pointlight Column
 {
 	colour 1 1 1
 	radius 160
-	offset 0 0 32
+	offset 0 0 40
 }
 
 class Column
@@ -129,7 +129,7 @@ pointlight BurningBarrel
 {
 	colour 1 1 0
 	radius 140
-	offset 0 0 24
+	offset 0 0 16
 }
 
 class BurningBarrel
@@ -156,7 +156,7 @@ pointlight HeadCandles
 {
 	colour 1 0.5 0.3
 	radius 140
-	offset 0 0 32
+	offset 0 0 40
 }
 
 class HeadCandles
@@ -170,7 +170,7 @@ pointlight Candelabra
 {
 	colour 1 1 0.5
 	radius 128
-	offset 0 0 32
+	offset 0 0 48
 }
 
 class Candelabra
@@ -184,7 +184,7 @@ pointlight FloatingSkull
 {
 	colour 1 0.5 0.1
 	radius 140
-	offset 0 0 32
+	offset 0 0 40
 }
 
 class FloatingSkull
@@ -198,7 +198,7 @@ pointlight EvilEye
 {
 	colour 1 1 0.5
 	radius 128
-	offset 0 0 32
+	offset 0 0 46
 }
 
 class EvilEye
