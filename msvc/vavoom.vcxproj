@@ -267,15 +267,15 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WINDOWS;MIKMOD_STATIC;MODPLUG_STATIC;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
+      <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <BrowseInformation>
       </BrowseInformation>
@@ -290,6 +290,8 @@
       <EnablePREfast>false</EnablePREfast>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <OpenMPSupport>false</OpenMPSupport>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -308,7 +310,7 @@
       <TerminalServerAware>
       </TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <SetChecksum>true</SetChecksum>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -322,6 +324,8 @@
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
     </Bscmake>
+    <ProjectReference />
+    <ProjectReference />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release64|Win32'">
     <PreBuildEvent>
@@ -407,15 +411,15 @@
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <Optimization>Full</Optimization>
+      <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;_WINDOWS;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=0;FPM_64BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
+      <StringPooling>false</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <BrowseInformation>
       </BrowseInformation>
@@ -423,12 +427,13 @@
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <CallingConvention>Cdecl</CallingConvention>
-      <CompileAs>Default</CompileAs>
+      <CompileAs>CompileAsCpp</CompileAs>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <FloatingPointModel>Fast</FloatingPointModel>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
-      <StructMemberAlignment>Default</StructMemberAlignment>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/Qpar-report:1 /Qvec-report:1 /Gw /MP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -447,7 +452,7 @@
       <TerminalServerAware>
       </TerminalServerAware>
       <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <SetChecksum>true</SetChecksum>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -456,6 +461,7 @@
       <StackReserveSize>
       </StackReserveSize>
       <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -859,19 +865,33 @@
     <ClCompile Include="..\source\fs_zip.cpp" />
     <ClCompile Include="..\source\host.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\infostr.cpp" />
     <ClCompile Include="..\source\language.cpp" />
-    <ClCompile Include="..\source\level.cpp" />
+    <ClCompile Include="..\source\level.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\lockdefs.cpp" />
     <ClCompile Include="..\source\mapinfo.cpp" />
     <ClCompile Include="..\source\maths.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\misc.cpp" />
-    <ClCompile Include="..\source\pr_cmds.cpp" />
-    <ClCompile Include="..\source\pr_exec.cpp" />
-    <ClCompile Include="..\source\sc_man.cpp" />
+    <ClCompile Include="..\source\pr_cmds.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\pr_exec.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\sc_man.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\template.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">true</ExcludedFromBuild>
@@ -884,74 +904,179 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\source\vc_class.cpp" />
-    <ClCompile Include="..\source\vc_constant.cpp" />
-    <ClCompile Include="..\source\vc_decorate.cpp" />
-    <ClCompile Include="..\source\vc_dehacked.cpp" />
-    <ClCompile Include="..\source\vc_emit_context.cpp" />
-    <ClCompile Include="..\source\vc_error.cpp" />
-    <ClCompile Include="..\source\vc_expr_array.cpp" />
-    <ClCompile Include="..\source\vc_expr_assign.cpp" />
-    <ClCompile Include="..\source\vc_expr_base.cpp" />
-    <ClCompile Include="..\source\vc_expr_cast.cpp" />
-    <ClCompile Include="..\source\vc_expr_field.cpp" />
-    <ClCompile Include="..\source\vc_expr_invoke.cpp" />
-    <ClCompile Include="..\source\vc_expr_literal.cpp" />
-    <ClCompile Include="..\source\vc_expr_local.cpp" />
-    <ClCompile Include="..\source\vc_expr_misc.cpp" />
-    <ClCompile Include="..\source\vc_expr_type.cpp" />
-    <ClCompile Include="..\source\vc_expr_unary_binary.cpp" />
-    <ClCompile Include="..\source\vc_field.cpp" />
-    <ClCompile Include="..\source\vc_lexer.cpp" />
-    <ClCompile Include="..\source\vc_location.cpp" />
-    <ClCompile Include="..\source\vc_member.cpp" />
-    <ClCompile Include="..\source\vc_method.cpp" />
-    <ClCompile Include="..\source\vc_modifiers.cpp" />
-    <ClCompile Include="..\source\vc_object.cpp" />
-    <ClCompile Include="..\source\vc_package.cpp" />
-    <ClCompile Include="..\source\vc_parser.cpp" />
-    <ClCompile Include="..\source\vc_property.cpp" />
-    <ClCompile Include="..\source\vc_state.cpp" />
-    <ClCompile Include="..\source\vc_statement.cpp" />
-    <ClCompile Include="..\source\vc_struct.cpp" />
-    <ClCompile Include="..\source\vc_type.cpp" />
+    <ClCompile Include="..\source\vc_class.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_constant.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_decorate.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_dehacked.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_emit_context.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_error.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_array.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_assign.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_base.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_cast.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_field.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_invoke.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_literal.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_local.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_misc.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_type.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_expr_unary_binary.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_field.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_lexer.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_location.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_member.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_method.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_modifiers.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_object.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_package.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_parser.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_property.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_state.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_statement.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_struct.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_type.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\wad.cpp" />
     <ClCompile Include="..\source\zipstream.cpp" />
     <ClCompile Include="..\source\r_adv_light.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_adv_things.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_bsp.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_data.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_light.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_main.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_model.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_particle.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_portal.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_sky.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_surf.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_things.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_agl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -965,18 +1090,23 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_draw.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_main.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_model.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_poly.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_sdl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -990,12 +1120,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_tex.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_win32.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\gl_x.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1009,73 +1142,110 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\d3d_draw.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\d3d_main.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\d3d_poly.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\d3d_tex.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
-    <ClCompile Include="..\source\r_tex_automap.cpp" />
+    <ClCompile Include="..\source\r_tex_automap.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\r_tex_base.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_camera.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_flat.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_imgz.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_jpeg.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_multipatch.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_patch.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_pcx.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_png.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_raw.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_tga.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\r_tex_warp.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\net_channel.cpp" />
     <ClCompile Include="..\source\net_channel_control.cpp" />
-    <ClCompile Include="..\source\net_channel_level.cpp" />
-    <ClCompile Include="..\source\net_channel_object_map.cpp" />
-    <ClCompile Include="..\source\net_channel_player.cpp" />
-    <ClCompile Include="..\source\net_channel_thinker.cpp" />
+    <ClCompile Include="..\source\net_channel_level.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\net_channel_object_map.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\net_channel_player.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\net_channel_thinker.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\net_connection.cpp" />
     <ClCompile Include="..\source\net_context.cpp" />
     <ClCompile Include="..\source\net_datagram.cpp" />
-    <ClCompile Include="..\source\net_demo.cpp" />
+    <ClCompile Include="..\source\net_demo.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\net_loopback.cpp" />
     <ClCompile Include="..\source\net_main.cpp" />
     <ClCompile Include="..\source\net_message.cpp" />
-    <ClCompile Include="..\source\net_object_map.cpp" />
+    <ClCompile Include="..\source\net_object_map.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\net_udp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">true</ExcludedFromBuild>
@@ -1091,6 +1261,7 @@
     <ClCompile Include="..\source\net_winsock.cpp" />
     <ClCompile Include="..\source\snd_al.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_allegro.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1104,6 +1275,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_allegromusic.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1117,6 +1289,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_audiocd_bsd.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1130,6 +1303,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_audiocd_linux.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1143,36 +1317,47 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_audiocd_win32.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_data.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_flac.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_gme.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_main.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_mikmod.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_modplug.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_mp3.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_qmus2mid.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_reverbs.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_sdl.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1186,6 +1371,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_sdlmusic.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -1199,46 +1385,86 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">true</ExcludedFromBuild>
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_streamplayer.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_timidity.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_vorbis.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_wav.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_win32.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\snd_win32music.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Fast</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Fast</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\am_map.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
-    <ClCompile Include="..\source\chat.cpp" />
-    <ClCompile Include="..\source\console.cpp" />
-    <ClCompile Include="..\source\finale.cpp" />
-    <ClCompile Include="..\source\iline.cpp" />
+    <ClCompile Include="..\source\chat.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\console.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\finale.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\iline.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\l_glbsp.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\l_glvis.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
-    <ClCompile Include="..\source\menu.cpp" />
-    <ClCompile Include="..\source\sbar.cpp" />
-    <ClCompile Include="..\source\screen.cpp" />
-    <ClCompile Include="..\source\text.cpp" />
-    <ClCompile Include="..\source\ui_actor.cpp" />
-    <ClCompile Include="..\source\ui_font.cpp" />
-    <ClCompile Include="..\source\ui_root.cpp" />
-    <ClCompile Include="..\source\ui_widget.cpp" />
+    <ClCompile Include="..\source\menu.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\sbar.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\screen.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\text.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\ui_actor.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\ui_font.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\ui_root.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\ui_widget.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\in_alleg.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">true</ExcludedFromBuild>
@@ -1267,76 +1493,106 @@
     <ClCompile Include="..\source\in_win32.cpp" />
     <ClCompile Include="..\source\p_acs.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_clip.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_entity.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_entity_sight.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_entity_world.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_gameinfo.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_gameobject.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_level_think.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_levelinfo.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_nodebuild.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_player.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_player_input.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_playerreplicationinfo.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_polyobj.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_setup.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_setup_udmf.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_switch.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_terrain.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_thinker.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_trace.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_world.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\p_worldinfo.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
-    <ClCompile Include="..\source\cl_main.cpp" />
+    <ClCompile Include="..\source\cl_main.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\sv_main.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
-    <ClCompile Include="..\source\sv_save.cpp" />
-    <ClCompile Include="..\source\sv_world.cpp" />
+    <ClCompile Include="..\source\sv_save.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+    </ClCompile>
+    <ClCompile Include="..\source\sv_world.cpp">
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
+    </ClCompile>
     <ClCompile Include="..\source\sys_bsd.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">true</ExcludedFromBuild>
@@ -1378,6 +1634,7 @@
     </ClCompile>
     <ClCompile Include="..\source\sys_win.cpp">
       <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|Win32'">Strict</FloatingPointModel>
+      <FloatingPointModel Condition="'$(Configuration)|$(Platform)'=='Release x64|x64'">Strict</FloatingPointModel>
     </ClCompile>
     <ClCompile Include="..\source\sys_wind.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
