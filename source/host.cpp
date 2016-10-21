@@ -107,6 +107,21 @@ static VCvarS	Language("language", "en", CVAR_Archive);
 
 //==========================================================================
 //
+//	Host_PrintVersion
+//
+//==========================================================================
+
+void Host_PrintVersion()
+{
+	dprintf("%s\n", "VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
+#ifdef SPECIAL_VERSION_TEXT
+	dprintf("%s\n", SPECIAL_VERSION_TEXT".");
+#endif
+	dprintf("%s\n", "Compiled "__DATE__" "__TIME__".");
+}
+
+//==========================================================================
+//
 //	Host_Init
 //
 //==========================================================================
@@ -134,6 +149,8 @@ void Host_Init()
 #else
 	OpenDebugFile("basev/debug.txt");
 #endif
+	Host_PrintVersion();
+	dprintf("Running Host_Init\n");
 
 	// init subsystems
 
@@ -523,6 +540,9 @@ void Host_Error(const char *error, ...)
 COMMAND(Version)
 {
 	GCon->Log("VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
+#ifdef SPECIAL_VERSION_TEXT
+	GCon->Log(SPECIAL_VERSION_TEXT".");
+#endif
 	GCon->Log("Compiled "__DATE__" "__TIME__".");
 }
 
