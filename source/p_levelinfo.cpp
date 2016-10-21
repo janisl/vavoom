@@ -349,7 +349,7 @@ void VLevelInfo::Completed(int InMap, int InPosition, int SaveAngle)
 		Map = 1;
 		Position = 0;
 	}
-	NextMap = P_GetMapNameByLevelNum(Map);
+	NextMap = P_GetMapLumpNameByLevelNum(Map);
 
 	LeavePosition = Position;
 	completed = true;

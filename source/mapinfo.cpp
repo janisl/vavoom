@@ -1539,6 +1539,29 @@ VStr P_GetMapName(int map)
 
 //==========================================================================
 //
+//	P_GetMapInfoIndexByLevelNum
+//
+//	Returns map info index given a level number
+//
+//==========================================================================
+
+int P_GetMapIndexByLevelNum(int map)
+{
+	guard(P_GetMapNameByLevelNum);
+	for (int i = 0; i < MapInfo.Num(); i++)
+	{
+		if (MapInfo[i].LevelNum == map)
+		{
+			return i;
+		}
+	}
+	// Not found
+	return 0;
+	unguard;
+}
+
+//==========================================================================
+//
 //	P_GetMapLumpName
 //
 //==========================================================================
@@ -1552,7 +1575,7 @@ VName P_GetMapLumpName(int map)
 //
 // P_TranslateMap
 //
-// Returns the actual map number given a warp map number.
+// Returns the map lump name given a warp map number.
 //
 //==========================================================================
 
@@ -1573,13 +1596,13 @@ VName P_TranslateMap(int map)
 
 //==========================================================================
 //
-//	P_GetMapNameByLevelNum
+//	P_GetMapLumpNameByLevelNum
 //
-//	Returns the actual map name given a level number.
+//	Returns the map lump name given a level number.
 //
 //==========================================================================
 
-VName P_GetMapNameByLevelNum(int map)
+VName P_GetMapLumpNameByLevelNum(int map)
 {
 	guard(P_GetMapNameByLevelNum);
 	for (int i = 0; i < MapInfo.Num(); i++)

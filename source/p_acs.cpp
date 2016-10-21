@@ -1506,7 +1506,7 @@ bool VAcsLevel::Start(int Number, int MapNum, int Arg1, int Arg2, int Arg3,
 	guard(VAcsLevel::Start);
 	if (MapNum)
 	{
-		VName Map = P_GetMapNameByLevelNum(MapNum);
+		VName Map = P_GetMapLumpNameByLevelNum(MapNum);
 		if (Map != NAME_None && Map != XLevel->MapName)
 		{
 			// Add to the script store
@@ -1551,7 +1551,7 @@ bool VAcsLevel::Terminate(int Number, int MapNum)
 	guard(VAcsLevel::Terminate);
 	if (MapNum)
 	{
-		VName Map = P_GetMapNameByLevelNum(MapNum);
+		VName Map = P_GetMapLumpNameByLevelNum(MapNum);
 		if (Map != NAME_None && Map != XLevel->MapName)
 		{
 			// Add to the script store
@@ -1588,7 +1588,7 @@ bool VAcsLevel::Suspend(int Number, int MapNum)
 	guard(VAcsLevel::Suspend);
 	if (MapNum)
 	{
-		VName Map = P_GetMapNameByLevelNum(MapNum);
+		VName Map = P_GetMapLumpNameByLevelNum(MapNum);
 		if (Map != NAME_None && Map != XLevel->MapName)
 		{
 			// Add to the script store
