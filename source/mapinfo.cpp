@@ -1532,9 +1532,9 @@ const mapInfo_t& P_GetMapInfo(VName map)
 //
 //==========================================================================
 
-const char* P_GetMapName(int map)
+VStr P_GetMapName(int map)
 {
-	return *MapInfo[QualifyMap(map)].GetName();
+	return MapInfo[QualifyMap(map)].GetName();
 }
 
 //==========================================================================
