@@ -202,10 +202,11 @@ struct VSkillDef
 void InitMapInfo();
 void ShutdownMapInfo();
 const mapInfo_t& P_GetMapInfo(VName);
-const VStr P_GetMapName(int);
+VStr P_GetMapName(int);
 VName P_GetMapLumpName(int);
+int P_GetMapIndexByLevelNum(int);
 VName P_TranslateMap(int);
-VName P_GetMapNameByLevelNum(int);
+VName P_GetMapLumpNameByLevelNum(int);
 void P_PutMapSongLump(int, VName);
 const VClusterDef* P_GetClusterDef(int);
 int P_GetNumEpisodes();
