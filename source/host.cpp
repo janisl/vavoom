@@ -108,6 +108,21 @@ static VCvarS	Language("language", "en", CVAR_Archive);
 
 //==========================================================================
 //
+//	Host_PrintVersion
+//
+//==========================================================================
+
+void Host_PrintVersion()
+{
+	dprintf("%s\n", "VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
+	#ifdef SPECIAL_VERSION_TEXT
+		dprintf("%s\n", SPECIAL_VERSION_TEXT".");
+	#endif
+		dprintf("%s\n", "Compiled " __DATE__" " __TIME__".");
+}
+
+//==========================================================================
+//
 //	Host_Init
 //
 //==========================================================================
@@ -140,7 +155,10 @@ void Host_Init()
    // the numbers will be different every time we run.
    srand((unsigned)time(NULL));
 
-	// init subsystems
+   Host_PrintVersion();
+   dprintf("Running Host_Init\n");
+   
+   // init subsystems
 
 	M_InitByteOrder();
 
@@ -358,9 +376,6 @@ void Host_Frame()
 
 	try
 	{
-		//	Keep the random time dependent
-		rand();
-
 		//	Decide the simulation time
 		if (!FilterTime())
 		{
@@ -549,7 +564,7 @@ void Host_Error(const char *error, ...)
 COMMAND(Version)
 {
 	GCon->Log("VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
-	GCon->Log("Compiled "__DATE__" "__TIME__".");
+	GCon->Log("Compiled " __DATE__ " " __TIME__ ".");
 }
 
 //==========================================================================
