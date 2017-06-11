@@ -138,7 +138,8 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 	//	Create window
 	RenderWindow = CreateWindow("VAVOOM", "VAVOOM for Windows",
 		Windowed ? (WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX) |
-		WS_CLIPCHILDREN | WS_CLIPSIBLINGS : WS_POPUP,
+		WS_CLIPCHILDREN | WS_CLIPSIBLINGS : WS_POPUP | 
+		WS_CLIPCHILDREN | WS_CLIPSIBLINGS,
 		0, 0, 2, 2, hwnd, NULL, hInst, NULL);
 	if (!RenderWindow)
 	{
@@ -271,7 +272,7 @@ bool VWin32OpenGLDrawer::SetResolution(int AWidth, int AHeight, int ABPP,
 		GCon->Log(NAME_Init, "Swap control extension found.");
 		typedef bool (APIENTRY *PFNWGLSWAPINTERVALFARPROC)(int);
 
-		PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT = 0;
+		PFNWGLSWAPINTERVALFARPROC wglSwapIntervalEXT;
 
 		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALFARPROC)GetExtFuncPtr("wglSwapIntervalEXT");
 

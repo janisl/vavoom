@@ -53,6 +53,7 @@ VCvarF VDirect3DDrawer::maxdist("d3d_maxdist", "8192.0", CVAR_Archive);
 VCvarI VDirect3DDrawer::model_lighting("d3d_model_lighting", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::specular_highlights("d3d_specular_highlights", "1", CVAR_Archive);
 VCvarI VDirect3DDrawer::avoid_input_lag("d3d_avoid_input_lag", "1", CVAR_Archive);
+VCvarI VDirect3DDrawer::multisampling_sample("d3d_multisampling_sample", "1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -336,9 +337,9 @@ void VDirect3DDrawer::StartUpdate()
 		}
 		case 2:
 		{
-			magfilter = D3DTEXF_LINEAR;
-			minfilter = D3DTEXF_LINEAR;
-			mipfilter = D3DTEXF_POINT;
+			magfilter = D3DTEXF_POINT;
+			minfilter = D3DTEXF_POINT;
+			mipfilter = D3DTEXF_LINEAR;
 			break;
 		}
 		case 3:
@@ -354,6 +355,12 @@ void VDirect3DDrawer::StartUpdate()
 			minfilter = D3DTEXF_ANISOTROPIC;
 			mipfilter = D3DTEXF_LINEAR;
 			break;
+		}
+		case 5:
+		{
+			magfilter = D3DTEXF_POINT;
+			minfilter = D3DTEXF_ANISOTROPIC;
+			mipfilter = D3DTEXF_LINEAR;
 		}
 		default:
 		{
@@ -931,9 +938,9 @@ bool VDirect3DDrawer::SupportsAdvancedRendering()
 void VDirect3DDrawer::DrawWorldAmbientPass() {}
 void VDirect3DDrawer::BeginShadowVolumesPass() {}
 void VDirect3DDrawer::BeginLightShadowVolumes() {}
-void VDirect3DDrawer::RenderSurfaceShadowVolume(surface_t*, TVec&, float) {}
+void VDirect3DDrawer::RenderSurfaceShadowVolume(surface_t*, TVec&, float, bool) {}
 void VDirect3DDrawer::BeginLightPass(TVec&, float, vuint32) {}
-void VDirect3DDrawer::DrawSurfaceLight(surface_t*, TVec&, float) {}
+void VDirect3DDrawer::DrawSurfaceLight(surface_t*, TVec&, float, bool) {}
 void VDirect3DDrawer::DrawWorldTexturesPass() {}
 void VDirect3DDrawer::DrawWorldFogPass() {}
 void VDirect3DDrawer::EndFogPass() {}
@@ -941,7 +948,7 @@ void VDirect3DDrawer::DrawAliasModelAmbient(const TVec&, const TAVec&, const TVe
 	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) {}
 void VDirect3DDrawer::DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 	const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-	float, float, bool) {}
+	float, float, bool, bool) {}
 void VDirect3DDrawer::BeginModelsLightPass(TVec&, float, vuint32) {}
 void VDirect3DDrawer::DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 	const TVec&, VMeshModel*, int, int, VTexture*, float, bool) {}

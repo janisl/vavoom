@@ -56,6 +56,7 @@ VCvarI VOpenGLDrawer::ext_vertex_buffer_objects("gl_ext_vertex_buffer_objects", 
 VCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_Archive);
 VCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_Archive);
+VCvarI VOpenGLDrawer::multisampling_sample("gl_multisampling_sample", "1", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -574,6 +575,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsLightTexIWLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIW");
 		ShadowsLightTexIHLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIH");
 		ShadowsLightTextureLoc = p_glGetUniformLocationARB(ShadowsAmbientProgram, "Texture");
+		ShadowsLightLightViewOrigin = p_glGetAttribLocationARB(ShadowsModelLightProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_texture.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_texture.fs");
@@ -616,6 +618,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelLightVertNormalLoc = p_glGetAttribLocationARB(ShadowsModelLightProgram, "VertNormal");
 		ShadowsModelLightVert2NormalLoc = p_glGetAttribLocationARB(ShadowsModelLightProgram, "Vert2Normal");
 		ShadowsModelLightTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelLightProgram, "TexCoord");
+		ShadowsModelLightViewOrigin = p_glGetAttribLocationARB(ShadowsModelLightProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_model_shadow.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_model_shadow.fs");
@@ -759,6 +762,20 @@ void VOpenGLDrawer::StartUpdate()
 		{
 			maxfilter = GL_LINEAR;
 			minfilter = GL_LINEAR;
+			mipfilter = GL_LINEAR_MIPMAP_LINEAR;
+			break;
+		}
+		case 4: // BILINEAR
+		{
+			maxfilter = GL_NEAREST;
+			minfilter = GL_LINEAR_MIPMAP_NEAREST;
+			mipfilter = GL_LINEAR_MIPMAP_NEAREST;
+			break;
+		}
+		case 5: // TRILINEAR
+		{
+			maxfilter = GL_NEAREST;
+			minfilter = GL_LINEAR_MIPMAP_LINEAR;
 			mipfilter = GL_LINEAR_MIPMAP_LINEAR;
 			break;
 		}
@@ -943,19 +960,19 @@ void VOpenGLDrawer::EndView()
 		{
 			p_glUseProgramObjectARB(DrawFixedColProgram);
 			p_glUniform4fARB(DrawFixedColColourLoc,
-				(float)((cl->CShift >> 16) & 0xff) / 255.0,
-				(float)((cl->CShift >> 8) & 0xff) / 255.0,
-				(float)(cl->CShift & 0xff) / 255.0,
-				(float)((cl->CShift >> 24) & 0xff) / 255.0);
+				(float)((cl->CShift >> 16) & 255) / 255.0,
+				(float)((cl->CShift >> 8) & 255) / 255.0,
+				(float)(cl->CShift & 255) / 255.0,
+				(float)((cl->CShift >> 24) & 255) / 255.0);
 		}
 		else
 		{
 			glDisable(GL_ALPHA_TEST);
 			glDisable(GL_TEXTURE_2D);
-			glColor4f((float)((cl->CShift >> 16) & 0xff) / 255.0,
-					(float)((cl->CShift >> 8) & 0xff) / 255.0,
-					(float)(cl->CShift & 0xff) / 255.0,
-					(float)((cl->CShift >> 24) & 0xff) / 255.0);
+			glColor4f((float)((cl->CShift >> 16) & 255) / 255.0,
+					(float)((cl->CShift >> 8) & 255) / 255.0,
+					(float)(cl->CShift & 255) / 255.0,
+					(float)((cl->CShift >> 24) & 255) / 255.0);
 		}
 		glEnable(GL_BLEND);
 
@@ -1007,7 +1024,8 @@ void VOpenGLDrawer::ReadBackScreen(int Width, int Height, rgba_t* Dest)
 	glReadBuffer(GL_BACK);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glReadPixels(0, ScreenHeight - Height, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, Dest);
-	rgba_t* Temp = (rgba_t *)Z_Malloc(sizeof(rgba_t) * Width);//new rgba_t[Width];
+	rgba_t* Temp = new rgba_t[Width];
+
 	for (int i = 0; i < Height / 2; i++)
 	{
 		memcpy(Temp, Dest + i * Width, Width * sizeof(rgba_t));
@@ -1040,10 +1058,10 @@ void VOpenGLDrawer::SetFade(vuint32 NewFade)
 		static GLenum fogMode[4] = { GL_LINEAR, GL_LINEAR, GL_EXP, GL_EXP2 };
 		float fogColour[4];
 
-		fogColour[0] = float((NewFade >> 16) & 0xff) / 255.0;
-		fogColour[1] = float((NewFade >> 8) & 0xff) / 255.0;
-		fogColour[2] = float(NewFade & 0xff) / 255.0;
-		fogColour[3] = float((NewFade >> 24) & 0xff) / 255.0;
+		fogColour[0] = float((NewFade >> 16) & 255) / 255.0;
+		fogColour[1] = float((NewFade >> 8) & 255) / 255.0;
+		fogColour[2] = float(NewFade & 255) / 255.0;
+		fogColour[3] = float((NewFade >> 24) & 255) / 255.0;
 		glFogi(GL_FOG_MODE, fogMode[r_fog & 3]);
 		glFogfv(GL_FOG_COLOR, fogColour);
 		if (NewFade == FADE_LIGHT)

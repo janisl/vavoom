@@ -192,8 +192,14 @@ void VCommand::Shutdown()
 	{
 		VAlias* Next = a->Next;
 		delete a;
-		a = NULL;
-		a = Next;
+		if (Next)
+		{
+			a = Next;
+		}
+		else
+		{
+			a = NULL;
+		}
 	}
 	AutoCompleteTable.Clear();
 	Args.Clear();

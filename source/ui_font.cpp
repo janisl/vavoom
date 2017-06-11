@@ -224,8 +224,14 @@ void VFont::StaticShutdown()
 	{
 		VFont* Next = F->Next;
 		delete F;
-		F = NULL;
-		F = Next;
+		if (Next)
+		{
+			F = Next;
+		}
+		else
+		{
+			F = NULL;
+		}
 	}
 	Fonts = NULL;
 	TextColours.Clear();
@@ -297,9 +303,9 @@ void VFont::ParseTextColours()
 				{
 					sc.ExpectString();
 					vuint32 C = M_ParseColour(sc.String);
-					Col.FlatColour.r = (C >> 16) & 0xff;
-					Col.FlatColour.g = (C >> 8) & 0xff;
-					Col.FlatColour.b = C & 0xff;
+					Col.FlatColour.r = (C >> 16) & 255;
+					Col.FlatColour.g = (C >> 8) & 255;
+					Col.FlatColour.b = C & 255;
 					Col.FlatColour.a = 255;
 				}
 				else
@@ -307,17 +313,17 @@ void VFont::ParseTextColours()
 					//	From colour.
 					sc.ExpectString();
 					vuint32 C = M_ParseColour(sc.String);
-					TDef.From.r = (C >> 16) & 0xff;
-					TDef.From.g = (C >> 8) & 0xff;
-					TDef.From.b = C & 0xff;
+					TDef.From.r = (C >> 16) & 255;
+					TDef.From.g = (C >> 8) & 255;
+					TDef.From.b = C & 255;
 					TDef.From.a = 255;
 
 					//	To colour.
 					sc.ExpectString();
 					C = M_ParseColour(sc.String);
-					TDef.To.r = (C >> 16) & 0xff;
-					TDef.To.g = (C >> 8) & 0xff;
-					TDef.To.b = C & 0xff;
+					TDef.To.r = (C >> 16) & 255;
+					TDef.To.g = (C >> 8) & 255;
+					TDef.To.b = C & 255;
 					TDef.To.a = 255;
 
 					if (sc.CheckNumber())
@@ -1403,7 +1409,10 @@ VFon1Font::VFon1Font(VName AName, int LumpNum)
 			// registered in texture manager.
 			GTextureManager.AddTexture(FChar.Textures[j]);
 		}
-		FChar.BaseTex = FChar.Textures[CR_UNTRANSLATED];
+		if (FChar.Textures[CR_UNTRANSLATED])
+		{
+			FChar.BaseTex = FChar.Textures[CR_UNTRANSLATED];
+		}
 
 		//	Skip character data.
 		int Count = SpaceWidth * FontHeight;
@@ -1558,7 +1567,10 @@ VFon2Font::VFon2Font(VName AName, int LumpNum)
 				// registered in texture manager.
 				GTextureManager.AddTexture(FChar.Textures[j]);
 			}
-			FChar.BaseTex = FChar.Textures[CR_UNTRANSLATED];
+			if (FChar.Textures[CR_UNTRANSLATED])
+			{
+				FChar.BaseTex = FChar.Textures[CR_UNTRANSLATED];
+			}
 
 			//	Skip character data.
 			do

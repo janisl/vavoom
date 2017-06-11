@@ -196,7 +196,7 @@ bool VGMEAudioCodec::Finished()
 
 void VGMEAudioCodec::Restart()
 {
-	guard(VMikModAudioCodec::Restart);
+	guard(VGMEAudioCodec::Restart);
 	// If music is looping, restart playback by simply
 	// starting track 0 again and setting playing state
 	gme_start_track(emu, 0);

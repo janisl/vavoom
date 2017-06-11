@@ -83,8 +83,7 @@ void VOpenGLDrawer::WorldDrawing()
 	{
 		for (surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -102,8 +101,7 @@ void VOpenGLDrawer::WorldDrawing()
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		for (surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -125,8 +123,7 @@ void VOpenGLDrawer::WorldDrawing()
 	{
 		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -192,8 +189,7 @@ void VOpenGLDrawer::WorldDrawing()
 			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
-				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-				if (dist <= 0)
+				if (surf->plane->PointOnSide(vieworg))
 				{
 					//	Viewer is in back side or on plane
 					continue;
@@ -252,8 +248,7 @@ void VOpenGLDrawer::WorldDrawing()
 			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
-				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-				if (dist <= 0)
+				if (surf->plane->PointOnSide(vieworg))
 				{
 					//	Viewer is in back side or on plane
 					continue;
@@ -299,8 +294,8 @@ void VOpenGLDrawer::WorldDrawing()
 			}
 
 			glBindTexture(GL_TEXTURE_2D, addmap_id[lb]);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 
 			if (RendLev->add_changed[lb])
 			{
@@ -312,8 +307,7 @@ void VOpenGLDrawer::WorldDrawing()
 			for (cache = RendLev->add_chain[lb]; cache; cache = cache->addchain)
 			{
 				surf = cache->surf;
-				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-				if (dist <= 0)
+				if (surf->plane->PointOnSide(vieworg))
 				{
 					//	Viewer is in back side or on plane
 					continue;
@@ -359,8 +353,7 @@ void VOpenGLDrawer::WorldDrawingShaders()
 	{
 		for (surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -378,8 +371,7 @@ void VOpenGLDrawer::WorldDrawingShaders()
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		for (surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -404,8 +396,7 @@ void VOpenGLDrawer::WorldDrawingShaders()
 
 		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -491,8 +482,7 @@ void VOpenGLDrawer::WorldDrawingShaders()
 		for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 		{
 			surf = cache->surf;
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -552,8 +542,7 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 	{
 		for (surface_t* surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -569,8 +558,7 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		for (surface_t* surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -590,8 +578,7 @@ void VOpenGLDrawer::DrawWorldAmbientPass()
 	p_glUniform1iARB(ShadowsAmbientTextureLoc, 0);
 	for (surface_t* surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
-		float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-		if (dist <= 0)
+		if (surf->plane->PointOnSide(vieworg))
 		{
 			//	Viewer is in back side or on plane
 			continue;
@@ -648,8 +635,8 @@ void VOpenGLDrawer::BeginLightShadowVolumes()
 	//	Set up for shadow volume rendering.
 	glClear(GL_STENCIL_BUFFER_BIT);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	//glEnable(GL_POLYGON_OFFSET_FILL);
-	//glPolygonOffset(0.0f, 10.0f);
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1.0f, 10.0f);
 	glDepthFunc(GL_LESS);
 
 	glDisable(GL_BLEND);
@@ -668,18 +655,13 @@ void VOpenGLDrawer::BeginLightShadowVolumes()
 //
 //==========================================================================
 
-void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius)
+void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius, bool LightCanCross)
 {
 	guard(VOpenGLDrawer::RenderSurfaceShadowVolume);
 	int i;
 	TArray<TVec>    v;
-	if (surf->plane->PointOnSide(LightPos))
-	{
-		//	Light is in back side or on plane
-		return;
-	}
 	float dist = DotProduct(LightPos, surf->plane->normal) - surf->plane->dist;
-	if (dist >= Radius)
+	if ((dist <= 0.0 && !LightCanCross) || dist < -Radius || dist > Radius)
 	{
 		//	Light is too far away
 		return;
@@ -728,9 +710,9 @@ void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, f
 void VOpenGLDrawer::BeginLightPass(TVec& LightPos, float Radius, vuint32 Colour)
 {
 	guard(VOpenGLDrawer::BeginLightPass);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDisable(GL_POLYGON_OFFSET_FILL);
 	glDepthFunc(GL_LEQUAL);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
 	glStencilFunc(GL_EQUAL, 0x0, 0xff);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -754,16 +736,16 @@ void VOpenGLDrawer::BeginLightPass(TVec& LightPos, float Radius, vuint32 Colour)
 //
 //==========================================================================
 
-void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf, TVec& LightPos, float Radius)
+void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf, TVec& LightPos, float Radius, bool LightCanCross)
 {
 	guard(VOpenGLDrawer::DrawSurfaceLight);
-	if (Surf->plane->PointOnSide(LightPos))
+	if (Surf->plane->PointOnSide(vieworg))
 	{
-		//	Light is in back side or on plane
+		//	Viewer is in back side or on plane
 		return;
 	}
 	float dist = DotProduct(LightPos, Surf->plane->normal) - Surf->plane->dist;
-	if (dist >= Radius)
+	if ((dist <= 0.0 && !LightCanCross) || dist < -Radius || dist > Radius)
 	{
 		//	Light is too far away
 		return;
@@ -777,12 +759,13 @@ void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf, TVec& LightPos, float Radi
 	p_glUniform3fvARB(ShadowsAmbientTAxisLoc, 1, &tex->taxis.x);
 	p_glUniform1fARB(ShadowsAmbientTOffsLoc, tex->toffs);
 	p_glUniform1fARB(ShadowsAmbientTexIHLoc, tex_ih);
+	p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &Surf->plane->normal.x);
+	p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &Surf->plane->dist);
+	p_glVertexAttrib3fvARB(ShadowsLightLightViewOrigin, &vieworg.x);
 
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < Surf->count; i++)
 	{
-		p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &Surf->plane->normal.x);
-		p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &Surf->plane->dist);
 		glVertex(Surf->verts[i]);
 	}
 	glEnd();
@@ -809,8 +792,7 @@ void VOpenGLDrawer::DrawWorldTexturesPass()
 
 	for (surface_t* surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
-		float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-		if (dist <= 0)
+		if (surf->plane->PointOnSide(vieworg))
 		{
 			//	Viewer is in back side or on plane
 			continue;
@@ -848,14 +830,14 @@ void VOpenGLDrawer::DrawWorldFogPass()
 
 	for (surface_t* surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 	{
-		float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-		if (dist <= 0)
-		{
-			//	Viewer is in back side or on plane
-			continue;
-		}
 		if (!surf->Fade)
 		{
+			continue;
+		}
+
+		if (surf->plane->PointOnSide(vieworg))
+		{
+			//	Viewer is in back side or on plane
 			continue;
 		}
 
@@ -1191,8 +1173,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	bool Additive)
 {
 	guard(VOpenGLDrawer::DrawMaskedPolygon);
-	float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-	if (dist <= 0)
+	if (surf->plane->PointOnSide(vieworg))
 	{
 		//	Viewer is in back side or on plane
 		return;
@@ -1513,7 +1494,7 @@ void VOpenGLDrawer::StartParticles()
 	else
 	{
 		glEnable(GL_ALPHA_TEST);
-		glAlphaFunc(GL_GREATER, 0.0);
+		glAlphaFunc(GL_GREATER, 0.111);
 		if (pointparmsable)
 		{
 			GLfloat parms[3] = { 0.0, 1.0, 0.0 };
@@ -1571,10 +1552,14 @@ void VOpenGLDrawer::DrawParticle(particle_t *p)
 		}
 		else
 		{
-			glTexCoord2f(0, 0); glVertex(p->org - viewright * p->Size + viewup * p->Size);
-			glTexCoord2f(1, 0); glVertex(p->org + viewright * p->Size + viewup * p->Size);
-			glTexCoord2f(1, 1); glVertex(p->org + viewright * p->Size - viewup * p->Size);
-			glTexCoord2f(0, 1); glVertex(p->org - viewright * p->Size - viewup * p->Size);
+			glTexCoord2f(0, 0);
+			glVertex(p->org - viewright * p->Size + viewup * p->Size);
+			glTexCoord2f(1, 0);
+			glVertex(p->org + viewright * p->Size + viewup * p->Size);
+			glTexCoord2f(1, 1);
+			glVertex(p->org + viewright * p->Size - viewup * p->Size);
+			glTexCoord2f(0, 1);
+			glVertex(p->org - viewright * p->Size - viewup * p->Size);
 		}
 	}
 	unguard;

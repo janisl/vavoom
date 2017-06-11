@@ -559,8 +559,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, PSTR, int iCmdShow)
 
 		//	Create window
 		hwnd = CreateWindowEx(WS_EX_APPWINDOW, "VAVOOM", "VAVOOM for Windows",
-			WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS, 0, 0, 2, 2,
-			NULL, NULL, hInst, NULL);
+			(WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX) | WS_CLIPCHILDREN |
+			 WS_CLIPSIBLINGS, 0, 0, 2, 2, NULL, NULL, hInst, NULL);
 		if (!hwnd)
 		{
 			MessageBox(NULL, "Couldn't create window", "Error", MB_OK);

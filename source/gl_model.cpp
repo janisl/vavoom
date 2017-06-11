@@ -201,7 +201,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
 	vuint32 Fade, float Alpha, bool Additive, bool is_view_model, float Inter,
-	bool Interpolate)
+	bool Interpolate, bool ForceDepthUse)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	if (is_view_model)
@@ -213,9 +213,9 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	//
 	// get lighting information
 	//
-	float shadelightr = ((light >> 16) & 0xff) / 510.0;
-	float shadelightg = ((light >> 8) & 0xff) / 510.0;
-	float shadelightb = (light & 0xff) / 510.0;
+	float shadelightr = ((light >> 16) & 255) / 255.0;
+	float shadelightg = ((light >> 8) & 255) / 255.0;
+	float shadelightb = (light & 255) / 255.0;
 	float* shadedots = r_avertexnormal_dots[((int)(angles.yaw * (SHADEDOT_QUANT / 360.0))) & (SHADEDOT_QUANT - 1)];
 
 	//
@@ -301,10 +301,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			SetColour((light & 0x00ffffff) | (int(255 * Alpha) << 24));
 		}
 		SetFade(Fade);
-		glEnable(GL_ALPHA_TEST);
-		glShadeModel(GL_SMOOTH);
-		glAlphaFunc(GL_GREATER, 0.0);
 	}
+	glEnable(GL_ALPHA_TEST);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
 	glEnable(GL_BLEND);
 	if (Additive)
 	{
@@ -331,8 +331,16 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			(light & 255) / 255.0, Alpha);
 
 		p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+		if (Alpha < 1.0 && !ForceDepthUse)
+		{
+			glDepthMask(GL_FALSE);
+		}
 		p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1,
 			Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+		if (Alpha < 1.0 && !ForceDepthUse)
+		{
+			glDepthMask(GL_TRUE);
+		}
 		p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 		p_glDisableVertexAttribArrayARB(0);
@@ -350,6 +358,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		{
 			// get the vertex count and primitive type
 			int count = *order++;
+			if (Alpha < 1.0 && !ForceDepthUse)
+			{
+				glDepthMask(GL_FALSE);
+			}
 			if (count < 0)
 			{
 				count = -count;
@@ -358,6 +370,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			else
 			{
 				glBegin(GL_TRIANGLE_STRIP);
+			}
+			if (Alpha < 1.0 && !ForceDepthUse)
+			{
+				glDepthMask(GL_TRUE);
 			}
 
 			do
@@ -416,14 +432,10 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			glEnd();
 		}
 	}
-
-	if (!HaveShaders)
-	{
-		glShadeModel(GL_FLAT);
-		glAlphaFunc(GL_GREATER, 0.333);
-		glDisable(GL_ALPHA_TEST);
-	}
 	glDisable(GL_BLEND);
+	glShadeModel(GL_FLAT);
+	glAlphaFunc(GL_GREATER, 0.333);
+	glDisable(GL_ALPHA_TEST);
 	if (Additive)
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -482,15 +494,32 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	{
 		p_glUniform1fARB(ShadowsModelAmbientAlphaLoc, 1.0);
 	}
+	glEnable(GL_ALPHA_TEST);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
+	glEnable(GL_BLEND);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	if (Alpha < 1.0)
+	{
+		glDepthMask(GL_FALSE);
+	}
 	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	if (Alpha < 1.0)
+	{
+		glDepthMask(GL_TRUE);
+	}
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
 	p_glDisableVertexAttribArrayARB(ShadowsModelAmbientVert2Loc);
 	p_glDisableVertexAttribArrayARB(ShadowsModelAmbientTexCoordLoc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+	glDisable(GL_BLEND);
+	glAlphaFunc(GL_GREATER, 0.333);
+	glShadeModel(GL_FLAT);
+	glDisable(GL_ALPHA_TEST);
 	unguard;
 }
 
@@ -503,7 +532,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, float Alpha, float Inter,
-	bool Interpolate)
+	bool Interpolate, bool ForceDepth)
 {
 	guard(VOpenGLDrawer::DrawAliasModelTextures);
 	UploadModel(Mdl);
@@ -531,20 +560,39 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	if (Alpha < 1.0)
 	{
 		p_glUniform1fARB(ShadowsModelTexturesAlphaLoc, Alpha);
+
+		glEnable(GL_ALPHA_TEST);
 	}
 	else
 	{
 		p_glUniform1fARB(ShadowsModelTexturesAlphaLoc, 1.0);
 	}
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	if (Alpha < 1.0 && !ForceDepth)
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
 	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	if (Alpha < 1.0 && !ForceDepth)
+	{
+		glEnable(GL_DEPTH_TEST);
+	}
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
 	p_glDisableVertexAttribArrayARB(ShadowsModelTexturesVert2Loc);
 	p_glDisableVertexAttribArrayARB(ShadowsModelTexturesTexCoordLoc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+	glShadeModel(GL_FLAT);
+	glAlphaFunc(GL_GREATER, 0.333);
+	if (Alpha < 1.0)
+	{
+		glDisable(GL_ALPHA_TEST);
+	}
 	unguard;
 }
 
@@ -618,6 +666,8 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2NormalLoc);
 	p_glVertexAttribPointerARB(ShadowsModelLightTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
+	p_glEnableVertexAttribArrayARB(ShadowsModelLightViewOrigin);
+	p_glUniform3fARB(ShadowsModelLightViewOrigin, (GLfloat)(vieworg.x), (GLfloat)(vieworg.y), (GLfloat)(vieworg.z));
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
 	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
@@ -628,6 +678,7 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glDisableVertexAttribArrayARB(ShadowsModelLightVert2Loc);
 	p_glDisableVertexAttribArrayARB(ShadowsModelLightVert2NormalLoc);
 	p_glDisableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
+	p_glDisableVertexAttribArrayARB(ShadowsModelLightViewOrigin);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 	unguard;
 }
@@ -797,6 +848,9 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	{
 		p_glUniform1fARB(ShadowsModelFogAlphaLoc, 1.0);
 	}
+	glEnable(GL_ALPHA_TEST);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
 	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
@@ -806,5 +860,9 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glDisableVertexAttribArrayARB(ShadowsModelFogVert2Loc);
 	p_glDisableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+
+	glAlphaFunc(GL_GREATER, 0.333);
+	glShadeModel(GL_FLAT);
+	glDisable(GL_ALPHA_TEST);
 	unguard;
 }

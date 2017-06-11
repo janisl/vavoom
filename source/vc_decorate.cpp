@@ -3034,9 +3034,9 @@ static void ParseActor(VScriptParser* sc, TArray<VClassFixup>& ClassFixups)
 							vuint32 Col;
 							sc->ExpectString();
 							Col = M_ParseColour(sc->String);
-							r = (Col >> 16) & 0xff;
-							g = (Col >> 8) & 0xff;
-							b = Col & 0xff;
+							r = (Col >> 16) & 255;
+							g = (Col >> 8) & 255;
+							b = Col & 255;
 						}
 						sc->Check(",");
 						sc->ExpectFloat();

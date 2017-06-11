@@ -89,21 +89,6 @@ struct segpart_t
 	float			RowOffset;
 };
 
-struct drawseg_t
-{
-	seg_t*			seg;
-	drawseg_t*		next;
-
-	segpart_t*		top;
-	segpart_t*		mid;
-	segpart_t*		bot;
-	segpart_t*		topsky;
-	segpart_t*		extra;
-
-	surface_t*		HorizonTop;
-	surface_t*		HorizonBot;
-};
-
 struct sec_surface_t
 {
 	sec_plane_t*	secplane;
@@ -113,18 +98,6 @@ struct sec_surface_t
 	float			YScale;
 	float			Angle;
 	surface_t*		surfs;
-};
-
-struct subregion_t
-{
-	sec_region_t*	secregion;
-	subregion_t*	next;
-	sec_plane_t*	floorplane;
-	sec_plane_t*	ceilplane;
-	sec_surface_t*	floor;
-	sec_surface_t*	ceil;
-	int				count;
-	drawseg_t*		lines;
 };
 
 struct fakefloor_t
@@ -346,7 +319,6 @@ protected:
 	sec_plane_t		sky_plane;
 	float			skyheight;
 	surface_t*		free_wsurfs;
-	vint32			MaxDrawSegs;
 	void*			AllocatedWSurfBlocks;
 	subregion_t*	AllocatedSubRegions;
 	drawseg_t*		AllocatedDrawSegs;
@@ -362,6 +334,8 @@ protected:
 	//	Moved here so that model rendering methods can be merged.
 	TVec			CurrLightPos;
 	float			CurrLightRadius;
+	int             CurrLightsNumber;
+	int             CurrShadowsNumber;
 
 	VRenderLevelShared(VLevel* ALevel);
 	~VRenderLevelShared();
@@ -556,28 +530,29 @@ private:
 
 	void BuildLightVis(int bspnum, float* bbox);
 	void DrawShadowSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-		bool CheckSkyBoxAlways);
+		bool CheckSkyBoxAlways, bool LightCanCross);
 	void RenderShadowLine(drawseg_t* dseg);
 	void RenderShadowSecSurface(sec_surface_t* ssurf, VEntity* SkyBox);
 	void RenderShadowSubRegion(subregion_t* region);
 	void RenderShadowSubsector(int num);
-	void RenderShadowBSPNode(int bspnum, float* bbox);
+	void RenderShadowBSPNode(int bspnum, float* bbox, bool LimitLights);
 	void DrawLightSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
-		VEntity* SkyBox, bool CheckSkyBoxAlways);
+		VEntity* SkyBox, bool CheckSkyBoxAlways, bool LightCanCross);
 	void RenderLightLine(drawseg_t* dseg);
 	void RenderLightSecSurface(sec_surface_t* ssurf, VEntity* SkyBox);
 	void RenderLightSubRegion(subregion_t* region);
 	void RenderLightSubsector(int num);
-	void RenderLightBSPNode(int bspnum, float* bbox);
+	void RenderLightBSPNode(int bspnum, float* bbox, bool LimitLights);
 	void RenderLightShadows(const refdef_t* RD, const VViewClipper* Range,
-		TVec& Pos, float Radius, vuint32 Colour);
+		TVec& Pos, float Radius, vuint32 Colour, bool LimitLights);
 
 	//	Things
+	void ResetMobjsLightCount();
 	void RenderThingAmbient(VEntity*);
 	void RenderMobjsAmbient();
 	void RenderThingTextures(VEntity*);
 	void RenderMobjsTextures();
-	bool IsTouchedByLight(VEntity*);
+	bool IsTouchedByLight(VEntity*, bool);
 	void RenderThingLight(VEntity*);
 	void RenderMobjsLight();
 	void RenderThingShadow(VEntity*);

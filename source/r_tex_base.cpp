@@ -498,7 +498,7 @@ void VTexture::SmoothEdges(vuint8* buffer, int w, int h, vuint8* dataout)
 //==========================================================================
 
 void VTexture::ResampleTexture(int widthin, int heightin,
-	const vuint8* datain, int widthout, int heightout, vuint8* dataout)
+	const vuint8* datain, int widthout, int heightout, vuint8* dataout, int sampling_type)
 {
 	guard(VTexture::ResampleTexture);
 	int i, j, k;
@@ -521,104 +521,108 @@ void VTexture::ResampleTexture(int widthin, int heightin,
 		sy = float(heightin - 1);
 	}
 
-//#define POINT_SAMPLE
-#ifdef POINT_SAMPLE
-	for (i = 0; i < heightout; i++)
+	if (sampling_type == 1)
 	{
-		int ii = int(i * sy);
-		for (j = 0; j < widthout; j++)
-		{
-			int jj = int(j * sx);
-
-			const vuint8* src = datain + (ii * widthin + jj) * 4;
-			vuint8* dst = dataout + (i * widthout + j) * 4;
-
-			for (k = 0; k < 4; k++)
-			{
-				*dst++ = *src++;
-			}
-		}
-	}
-#else
-	if (sx <= 1.0 && sy <= 1.0)
-	{
-		/* magnify both width and height:  use weighted sample of 4 pixels */
-		int i0, i1, j0, j1;
-		float alpha, beta;
-		const vuint8 *src00, *src01, *src10, *src11;
-		float s1, s2;
-		vuint8* dst;
-
+		// Use point sample
 		for (i = 0; i < heightout; i++)
 		{
-			i0 = int(i * sy);
-			i1 = i0 + 1;
-			if (i1 >= heightin) i1 = heightin-1;
-			alpha = i * sy - i0;
+			int ii = int(i * sy);
 			for (j = 0; j < widthout; j++)
 			{
-				j0 = int(j * sx);
-				j1 = j0 + 1;
-				if (j1 >= widthin) j1 = widthin-1;
-				beta = j * sx - j0;
+				int jj = int(j * sx);
 
-				/* compute weighted average of pixels in rect (i0,j0)-(i1,j1) */
-				src00 = datain + (i0 * widthin + j0) * 4;
-				src01 = datain + (i0 * widthin + j1) * 4;
-				src10 = datain + (i1 * widthin + j0) * 4;
-				src11 = datain + (i1 * widthin + j1) * 4;
-
-				dst = dataout + (i * widthout + j) * 4;
+				const vuint8* src = datain + (ii * widthin + jj) * 4;
+				vuint8* dst = dataout + (i * widthout + j) * 4;
 
 				for (k = 0; k < 4; k++)
 				{
-					s1 = *src00++ * (1.0-beta) + *src01++ * beta;
-					s2 = *src10++ * (1.0-beta) + *src11++ * beta;
-					*dst++ = vuint8(s1 * (1.0-alpha) + s2 * alpha);
+					*dst++ = *src++;
 				}
 			}
 		}
 	}
 	else
 	{
-		/* shrink width and/or height:  use an unweighted box filter */
-		int i0, i1;
-		int j0, j1;
-		int ii, jj;
-		int sum;
-		vuint8* dst;
-
-		for (i = 0; i < heightout; i++)
+		// Use weighted sample
+		if (sx <= 1.0 && sy <= 1.0)
 		{
-			i0 = int(i * sy);
-			i1 = i0 + 1;
-			if (i1 >= heightin) i1 = heightin-1;
-			for (j = 0; j < widthout; j++)
+			/* magnify both width and height:  use weighted sample of 4 pixels */
+			int i0, i1, j0, j1;
+			float alpha, beta;
+			const vuint8 *src00, *src01, *src10, *src11;
+			float s1, s2;
+			vuint8* dst;
+
+			for (i = 0; i < heightout; i++)
 			{
-				j0 = int(j * sx);
-				j1 = j0 + 1;
-				if (j1 >= widthin) j1 = widthin-1;
-
-				dst = dataout + (i * widthout + j) * 4;
-
-				/* compute average of pixels in the rectangle (i0,j0)-(i1,j1) */
-				for (k = 0; k < 4; k++)
+				i0 = int(i * sy);
+				i1 = i0 + 1;
+				if (i1 >= heightin) i1 = heightin - 1;
+				alpha = i * sy - i0;
+				for (j = 0; j < widthout; j++)
 				{
-					sum = 0;
-					for (ii = i0; ii <= i1; ii++)
+					j0 = int(j * sx);
+					j1 = j0 + 1;
+					if (j1 >= widthin) j1 = widthin - 1;
+					beta = j * sx - j0;
+
+					/* compute weighted average of pixels in rect (i0,j0)-(i1,j1) */
+					src00 = datain + (i0 * widthin + j0) * 4;
+					src01 = datain + (i0 * widthin + j1) * 4;
+					src10 = datain + (i1 * widthin + j0) * 4;
+					src11 = datain + (i1 * widthin + j1) * 4;
+
+					dst = dataout + (i * widthout + j) * 4;
+
+					for (k = 0; k < 4; k++)
 					{
-						for (jj = j0; jj <= j1; jj++)
-						{
-							sum += *(datain + (ii * widthin + jj) * 4 + k);
-						}
+						s1 = *src00++ * (1.0 - beta) + *src01++ * beta;
+						s2 = *src10++ * (1.0 - beta) + *src11++ * beta;
+						*dst++ = vuint8(s1 * (1.0 - alpha) + s2 * alpha);
 					}
-					sum /= (j1 - j0 + 1) * (i1 - i0 + 1);
-					*dst++ = vuint8(sum);
+				}
+			}
+		}
+		else
+		{
+			/* shrink width and/or height:  use an unweighted box filter */
+			int i0, i1;
+			int j0, j1;
+			int ii, jj;
+			int sum;
+			vuint8* dst;
+
+			for (i = 0; i < heightout; i++)
+			{
+				i0 = int(i * sy);
+				i1 = i0 + 1;
+				if (i1 >= heightin) i1 = heightin - 1;
+				for (j = 0; j < widthout; j++)
+				{
+					j0 = int(j * sx);
+					j1 = j0 + 1;
+					if (j1 >= widthin) j1 = widthin - 1;
+
+					dst = dataout + (i * widthout + j) * 4;
+
+					/* compute average of pixels in the rectangle (i0,j0)-(i1,j1) */
+					for (k = 0; k < 4; k++)
+					{
+						sum = 0;
+						for (ii = i0; ii <= i1; ii++)
+						{
+							for (jj = j0; jj <= j1; jj++)
+							{
+								sum += *(datain + (ii * widthin + jj) * 4 + k);
+							}
+						}
+						sum /= (j1 - j0 + 1) * (i1 - i0 + 1);
+						*dst++ = vuint8(sum);
+					}
 				}
 			}
 		}
 	}
-#endif
 	unguard;
 }
 

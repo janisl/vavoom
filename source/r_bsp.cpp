@@ -322,8 +322,7 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 		}
 		do
 		{
-			float dist = DotProduct(vieworg, surfs->plane->normal) - surfs->plane->dist;
-			if (dist <= 0)
+			if (surfs->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -363,8 +362,7 @@ void VRenderLevelShared::DrawSurfaces(surface_t* InSurfs, texinfo_t *texinfo,
 
 	do
 	{
-		float dist = DotProduct(vieworg, surfs->plane->normal) - surfs->plane->dist;
-		if (dist <= 0)
+		if (surfs->plane->PointOnSide(vieworg))
 		{
 			//	Viewer is in back side or on plane
 			continue;
@@ -596,15 +594,7 @@ void VRenderLevelShared::RenderLine(drawseg_t* dseg)
 		return;
 	}
 
-	float a1 = ViewClip.PointToClipAngle(*line->v2);
-	float a2 = ViewClip.PointToClipAngle(*line->v1);
-	if (!ViewClip.IsRangeVisible(a1, a2))
-	{
-		return;
-	}
-
-	float dist = DotProduct(vieworg, line->normal) - line->dist;
-	if (dist <= 0)
+	if (line->PointOnSide(vieworg))
 	{
 		//	Viewer is in back side or on plane
 		return;
@@ -613,15 +603,36 @@ void VRenderLevelShared::RenderLine(drawseg_t* dseg)
 	if (MirrorClipSegs)
 	{
 		//	Clip away segs that are behind mirror.
-		float Dist1 = DotProduct(*line->v1, view_clipplanes[4].normal) -
-			view_clipplanes[4].dist;
-		float Dist2 = DotProduct(*line->v2, view_clipplanes[4].normal) -
-			view_clipplanes[4].dist;
-		if (Dist1 <= 0 && Dist2 <= 0)
+		if (view_clipplanes[4].PointOnSide(*line->v1) && view_clipplanes[4].PointOnSide(*line->v2))
 		{
 			//	Behind mirror.
 			return;
 		}
+	}
+
+	// Clip sectors that are behind rendered segs
+	TVec v1 = *line->v1;
+	TVec v2 = *line->v2;
+	TVec r1 = vieworg - v1;
+	TVec r2 = vieworg - v2;
+	float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), vieworg);
+	float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), vieworg);
+
+	// There might be a better method of doing this, but
+	// this one works for now...
+	if (D1 > 0.0 && D2 <= 0.0)
+	{
+		v2 += ((v2 - v1) * D1) / (D1 - D2);
+	}
+	else if (D2 > 0.0 && D1 <= 0.0)
+	{
+		v1 += ((v2 - v1) * D1) / (D2 - D1);
+	}
+
+	if (!ViewClip.IsRangeVisible(ViewClip.PointToClipAngle(v2),
+		ViewClip.PointToClipAngle(v1)))
+	{
+		return;
 	}
 
 	line_t *linedef = line->linedef;
@@ -669,7 +680,7 @@ void VRenderLevelShared::RenderLine(drawseg_t* dseg)
 			!!(sidedef->Flags & SDF_ABSLIGHT), false);
 		for (segpart_t *sp = dseg->extra; sp; sp = sp->next)
 		{
-			DrawSurfaces(sp->surfs, &sp->texinfo,r_region->ceiling->SkyBox,
+			DrawSurfaces(sp->surfs, &sp->texinfo, r_region->ceiling->SkyBox,
 				-1, sidedef->Light, !!(sidedef->Flags & SDF_ABSLIGHT), false);
 		}
 	}
@@ -693,8 +704,7 @@ void VRenderLevelShared::RenderSecSurface(sec_surface_t* ssurf,
 		return;
 	}
 
-	float dist = DotProduct(vieworg, plane.normal) - plane.dist;
-	if (dist <= 0)
+	if (plane.PointOnSide(vieworg))
 	{
 		//	Viewer is in back side or on plane
 		return;
@@ -758,6 +768,10 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{
+		if (!ViewClip.ClipCheckRegion(region->next, r_sub))
+		{
+			return;
+		}
 		RenderSubRegion(region->next);
 	}
 
@@ -791,6 +805,10 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 
 	if (region->next && d > 0.0)
 	{
+		if (!ViewClip.ClipCheckRegion(region->next, r_sub))
+		{
+			return;
+		}
 		RenderSubRegion(region->next);
 	}
 	unguard;
@@ -861,6 +879,10 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			{
 				continue;	// don't need to clip against it
 			}
+			if (view_clipplanes[i].PointOnSide(vieworg))
+			{
+				continue;
+			}
 
 			// generate accept and reject points
 			int *pindex = FrustumIndexes[i];
@@ -871,10 +893,9 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			rejectpt[1] = bbox[pindex[1]];
 			rejectpt[2] = bbox[pindex[2]];
 
-			float d = DotProduct(rejectpt, view_clipplanes[i].normal) - view_clipplanes[i].dist;
-			if (d <= 0)
+			if (view_clipplanes[i].PointOnSide(rejectpt))
 			{
-				return;
+				continue;
 			}
 
 			TVec acceptpt;
@@ -883,8 +904,7 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 			acceptpt[1] = bbox[pindex[3+1]];
 			acceptpt[2] = bbox[pindex[3+2]];
 
-			d = DotProduct(acceptpt, view_clipplanes[i].normal) - view_clipplanes[i].dist;
-			if (d >= 0)
+			if (!view_clipplanes[i].PointOnSide(acceptpt))
 			{
 				clipflags ^= view_clipplanes[i].clipflag;	// node is entirely on screen
 			}
@@ -941,7 +961,7 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 void VRenderLevelShared::RenderBspWorld(const refdef_t* rd, const VViewClipper* Range)
 {
 	guard(VRenderLevelShared::RenderBspWorld);
-	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
+	float	dummy_bbox[6] = { -99999, -99999, -99999, 99999, 99999, 99999 };
 
 	SetUpFrustumIndexes();
 	ViewClip.ClearClipNodes(vieworg, Level);

@@ -51,6 +51,7 @@ public:
 	bool ClipIsFull();
 	float PointToClipAngle(const TVec&);
 	bool ClipIsBBoxVisible(float*);
+	bool ClipCheckRegion(subregion_t*, subsector_t*);
 	bool ClipCheckSubsector(subsector_t*);
 	void ClipAddSubsectorSegs(subsector_t*, TPlane* = NULL);
 };

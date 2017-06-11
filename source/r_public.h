@@ -245,7 +245,7 @@ public:
 
 	static void AdjustGamma(rgba_t*, int);
 	static void SmoothEdges(vuint8*, int, int, vuint8*);
-	static void ResampleTexture(int, int, const vuint8*, int, int, vuint8*);
+	static void ResampleTexture(int, int, const vuint8*, int, int, vuint8*, int);
 	static void MipMap(int, int, vuint8*);
 
 protected:

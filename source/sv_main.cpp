@@ -327,8 +327,12 @@ static void CheckForSkip()
 	if (skip)
 	{
 		for (i = 0; i < svs.max_clients; i++)
+		{
 			if (GGameInfo->Players[i])
+			{
 				GGameInfo->Players[i]->eventClientSkipIntermission();
+			}
+		}
 	}
 }
 
@@ -438,11 +442,11 @@ void SV_Ticker()
 	if (!real_time)
 	{
 		// Rounded a little bit up to prevent "slow motion"
-		host_frametime = 0.02857142857142857142857142857143f;//1.0 / 35.0;
+		host_frametime = 0.02857142857142857142857142857143f; //1.0 / 35.0;
 	}
 	else if (split_frame)
 	{
-		while (host_frametime / exec_times > 1.0 / 35.0)
+		while (host_frametime / exec_times > 0.02857142857142857142857142857143f) //1.0 / 35.0)
 		{
 			exec_times++;
 		}

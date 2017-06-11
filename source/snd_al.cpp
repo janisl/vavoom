@@ -183,7 +183,11 @@ bool VOpenALDevice::Init()
 	//	Allocate array for buffers.
 	Buffers = new ALuint[GSoundManager->S_sfx.Num()];
 	memset(Buffers, 0, sizeof(ALuint) * GSoundManager->S_sfx.Num());
-	Sound3D = true;
+	if (GArgs.CheckParm("-3dsound"))
+	{
+		Sound3D = true;
+		GCon->Log(NAME_Init, "3D sound on");
+	}
 	return true;
 	unguard;
 }

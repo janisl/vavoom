@@ -1934,6 +1934,7 @@ VClass* VClass::CreateDerivedClass(VName AName, VMemberBase* AOuter,
 VClass* VClass::GetReplacement()
 {
 	guard(VClass::GetReplacement);
+	check(this);
 	if (!Replacement)
 	{
 		return this;
@@ -1944,7 +1945,7 @@ VClass* VClass::GetReplacement()
 	VClass* Ret = Temp->GetReplacement();
 	Replacement = Temp;
 	return Ret;
-	unguard;
+	unguardf(("(%s)", ((VClass*)this)->GetName()));
 }
 
 //==========================================================================

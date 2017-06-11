@@ -185,7 +185,7 @@ void VRenderLevelShared::DrawParticles()
 		{
 			vuint32 Col = p->colour;
 			rgba_t TmpCol = ColourMaps[ColourMap].GetPalette()[R_LookupRGB(
-				(Col >> 16) & 0xff, (Col >> 8) & 0xff, Col & 0xff)];
+				(Col >> 16) & 255, (Col >> 8) & 255, Col & 255)];
 			p->colour = (Col & 0xff000000) | (TmpCol.r << 16) |
 				(TmpCol.g << 8) | TmpCol.b;
 			Drawer->DrawParticle(p);
