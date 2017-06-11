@@ -172,6 +172,7 @@ VThinker* VLevel::SpawnThinker(VClass* AClass, const TVec& AOrigin,
 	const TAVec& AAngles, mthing_t* mthing, bool AllowReplace)
 {
 	guard(VLevel::SpawnThinker);
+	check(AClass);
 	VClass* Class = AllowReplace ? AClass->GetReplacement() : AClass;
 	VThinker* Ret = (VThinker*)StaticSpawnObject(Class);
 	AddThinker(Ret);
