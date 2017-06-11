@@ -162,7 +162,7 @@ public:
 		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, vuint32,
-		vuint32, float, bool, bool, float, bool);
+		vuint32, float, bool, bool, float, bool, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -194,9 +194,9 @@ public:
 	void DrawWorldAmbientPass();
 	void BeginShadowVolumesPass();
 	void BeginLightShadowVolumes();
-	void RenderSurfaceShadowVolume(surface_t*, TVec&, float);
+	void RenderSurfaceShadowVolume(surface_t*, TVec&, float, bool);
 	void BeginLightPass(TVec&, float, vuint32);
-	void DrawSurfaceLight(surface_t*, TVec&, float);
+	void DrawSurfaceLight(surface_t*, TVec&, float, bool);
 	void DrawWorldTexturesPass();
 	void DrawWorldFogPass();
 	void EndFogPass();
@@ -204,7 +204,7 @@ public:
 		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-		float, float, bool);
+		float, float, bool, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, float, bool);
@@ -297,6 +297,7 @@ private:
 	static VCvarI model_lighting;
 	static VCvarI specular_highlights;
 	static VCvarI avoid_input_lag;
+	static VCvarI multisampling_sample;
 };
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------

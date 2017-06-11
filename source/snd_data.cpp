@@ -881,7 +881,7 @@ bool VSoundManager::IsSoundPresent(VName ClassName, VName GenderName,
 bool VSoundManager::LoadSound(int sound_id)
 {
 	guard(VSoundManager::LoadSound);
-	static const char* Exts[] = { "flac", "wav", "raw", NULL };
+	static const char* Exts[] = { "flac", "wav", "raw", "ogg", "mp3", NULL };
 
 	if (!S_sfx[sound_id].Data)
 	{

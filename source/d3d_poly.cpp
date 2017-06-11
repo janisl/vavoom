@@ -102,8 +102,7 @@ void VDirect3DDrawer::WorldDrawing()
 	{
 		for (surf = RendLev->HorizonPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -121,8 +120,7 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetRenderState(D3DRS_COLORWRITEENABLE, 0);
 		for (surf = RendLev->SkyPortalsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -143,8 +141,7 @@ void VDirect3DDrawer::WorldDrawing()
 	{
 		for (surf = RendLev->SimpleSurfsHead; surf; surf = surf->DrawNext)
 		{
-			float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-			if (dist <= 0)
+			if (surf->plane->PointOnSide(vieworg))
 			{
 				//	Viewer is in back side or on plane
 				continue;
@@ -212,8 +209,7 @@ void VDirect3DDrawer::WorldDrawing()
 			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
-				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-				if (dist <= 0)
+				if (surf->plane->PointOnSide(vieworg))
 				{
 					//	Viewer is in back side or on plane
 					continue;
@@ -271,8 +267,7 @@ void VDirect3DDrawer::WorldDrawing()
 			for (cache = RendLev->light_chain[lb]; cache; cache = cache->chain)
 			{
 				surf = cache->surf;
-				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-				if (dist <= 0)
+				if (surf->plane->PointOnSide(vieworg))
 				{
 					//	Viewer is in back side or on plane
 					continue;
@@ -338,8 +333,7 @@ void VDirect3DDrawer::WorldDrawing()
 			for (cache = RendLev->add_chain[lb]; cache; cache = cache->addchain)
 			{
 				surf = cache->surf;
-				float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-				if (dist <= 0)
+				if (surf->plane->PointOnSide(vieworg))
 				{
 					//	Viewer is in back side or on plane
 					continue;
@@ -556,8 +550,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	bool Additive)
 {
 	guard(VDirect3DDrawer::DrawMaskedPolygon);
-	float dist = DotProduct(vieworg, surf->plane->normal) - surf->plane->dist;
-	if (dist <= 0)
+	if (surf->plane->PointOnSide(vieworg))
 	{
 		//	Viewer is in back side or on plane
 		return;
@@ -696,7 +689,7 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame,
 	int nextframe, VTexture* Skin, VTextureTranslation* Trans, int CMap,
 	vuint32 light, vuint32 Fade, float Alpha, bool Additive,
-	bool is_view_model, float Inter, bool Interpolate)
+	bool is_view_model, float Inter, bool Interpolate, bool ForceDepthUse)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
@@ -917,6 +910,7 @@ void VDirect3DDrawer::StartParticles()
 				pbuf[j][i].a = byte(ptex[j][i] * 255);
 			}
 		}
+		VTexture::SmoothEdges((vuint8 *)pbuf, 8, 8, (vuint8 *)pbuf);
 		particle_texture = CreateSurface(8, 8, 16, false);
 		UploadTextureImage(particle_texture, 0, 8, 8, &pbuf[0][0]);
 	}
@@ -1041,6 +1035,12 @@ void VDirect3DDrawer::DrawPortalArea(VPortal* Portal)
 	for (int i = 0; i < Portal->Surfs.Num(); i++)
 	{
 		const surface_t* Surf = Portal->Surfs[i];
+		if (Surf->plane->PointOnSide(vieworg))
+		{
+			// Viewer is in the back side or on plane
+			continue;
+		}
+
 		for (int j = 0; j < Surf->count; j++)
 		{
 			out[j] = MyD3DVertex(Surf->verts[j], 0, 0, 0);

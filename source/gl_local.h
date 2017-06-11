@@ -370,9 +370,9 @@ public:
 	void DrawWorldAmbientPass();
 	void BeginShadowVolumesPass();
 	void BeginLightShadowVolumes();
-	void RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, float Radius);
+	void RenderSurfaceShadowVolume(surface_t *, TVec&, float, bool);
 	void BeginLightPass(TVec&, float, vuint32);
-	void DrawSurfaceLight(surface_t*, TVec&, float);
+	void DrawSurfaceLight(surface_t*, TVec&, float, bool);
 	void DrawWorldTexturesPass();
 	void DrawWorldFogPass();
 	void EndFogPass();
@@ -384,11 +384,11 @@ public:
 		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, vuint32,
-		vuint32, float, bool, bool, float, bool);
+		vuint32, float, bool, bool, float, bool, bool);
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,
-		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, float, float, bool);
+		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, float, float, bool, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, float, bool);
@@ -576,6 +576,7 @@ protected:
 	GLint					ShadowsLightTexIWLoc;
 	GLint					ShadowsLightTexIHLoc;
 	GLint					ShadowsLightTextureLoc;
+	GLint					ShadowsLightLightViewOrigin;
 
 	GLhandleARB				ShadowsTextureProgram;
 	GLint					ShadowsTextureTexCoordLoc;
@@ -610,6 +611,7 @@ protected:
 	GLint					ShadowsModelLightVertNormalLoc;
 	GLint					ShadowsModelLightVert2NormalLoc;
 	GLint					ShadowsModelLightTexCoordLoc;
+	GLint					ShadowsModelLightViewOrigin;
 
 	GLhandleARB				ShadowsModelShadowProgram;
 	GLint					ShadowsModelShadowInterLoc;
@@ -652,6 +654,7 @@ protected:
 	static VCvarF maxdist;
 	static VCvarI model_lighting;
 	static VCvarI specular_highlights;
+	static VCvarI multisampling_sample;
 
 	//	Extensions
 	bool CheckExtension(const char*);
@@ -802,8 +805,8 @@ protected:
 
 	static void SetColour(vuint32 c)
 	{
-		glColor4ub(byte((c >> 16) & 0xff), byte((c >> 8) & 0xff),
-			byte(c & 0xff), byte(c >> 24));
+		glColor4ub(byte((c >> 16) & 255), byte((c >> 8) & 255),
+			byte(c & 255), byte(c >> 24));
 	}
 };
 

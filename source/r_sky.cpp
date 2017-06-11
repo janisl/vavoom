@@ -138,7 +138,7 @@ void R_InitSkyBoxes()
 static int CheckSkyboxNumForName(VName Name)
 {
 	guard(CheckSkyboxNumForName);
-	for (int num = skyboxinfo.Num() - 1; num >= 0 ; num--)
+	for (int num = skyboxinfo.Num() - 1; num >= 0; num--)
 	{
 		if (skyboxinfo[num].Name == Name)
 		{

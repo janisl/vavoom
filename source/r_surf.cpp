@@ -645,12 +645,11 @@ surface_t* VRenderLevelShared::NewWSurf()
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
-		MaxDrawSegs += MaxDrawSegs ? MaxDrawSegs * 2 : 32;
-		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * MaxDrawSegs + sizeof(void*));
+		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * 32 + sizeof(void*));
 		*(void**)tmp = AllocatedWSurfBlocks;
 		AllocatedWSurfBlocks = tmp;
 		tmp += sizeof(void*);
-		for (int i = 0; i < MaxDrawSegs; i++)
+		for (int i = 0; i < 32; i++)
 		{
 			((surface_t*)tmp)->next = free_wsurfs;
 			free_wsurfs = (surface_t*)tmp;
@@ -855,7 +854,7 @@ surface_t* VRenderLevelShared::CreateWSurfs(TVec* wv, texinfo_t* texinfo,
 	surface_t *surf = NewWSurf();
 	surf->next = NULL;
 	surf->count = 4;
-	memcpy(surf->verts, wv, 4 * sizeof(TVec));
+	memcpy(surf->verts, wv, surf->count * sizeof(TVec));
 
 	if (texinfo->Tex == GTextureManager[skyflatnum])
 	{
@@ -1369,9 +1368,27 @@ void VRenderLevelShared::UpdateDrawSeg(drawseg_t* dseg, bool ShouldClip)
 
 	if (ShouldClip)
 	{
-		float a1 = ViewClip.PointToClipAngle(*seg->v2);
-		float a2 = ViewClip.PointToClipAngle(*seg->v1);
-		if (!ViewClip.IsRangeVisible(a1, a2))
+		// Clip sectors that are behind rendered segs
+		TVec v1 = *seg->v1;
+		TVec v2 = *seg->v2;
+		TVec r1 = vieworg - v1;
+		TVec r2 = vieworg - v2;
+		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), vieworg);
+		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), vieworg);
+
+		// There might be a better method of doing this, but
+		// this one works for now...
+		if (D1 > 0.0 && D2 <= 0.0)
+		{
+			v2 += (v2 - v1) * D1 / (D1 - D2);
+		}
+		else if (D2 > 0.0 && D1 <= 0.0)
+		{
+			v1 += (v1 - v2) * D2 / (D2 - D1);
+		}
+
+		if (!ViewClip.IsRangeVisible(ViewClip.PointToClipAngle(v2),
+			ViewClip.PointToClipAngle(v1)))
 		{
 			return;
 		}
@@ -1975,7 +1992,7 @@ void VRenderLevelShared::CreateWorldSurfaces()
 			//	Skip sectors containing original polyobjs
 			continue;
 		}
-		for (reg = sub->sector->botregion; reg; reg = reg->next)		
+		for (reg = sub->sector->botregion; reg; reg = reg->next)
 		{
 			count++;
 			dscount += sub->numlines;
@@ -2132,6 +2149,13 @@ void VRenderLevelShared::UpdateSubRegion(subregion_t* region, bool ClipSegs)
 
 	if (region->next)
 	{
+		if (ClipSegs)
+		{
+			if (!ViewClip.ClipCheckRegion(region->next, r_sub))
+			{
+				return;
+			}
+		}
 		UpdateSubRegion(region->next, ClipSegs);
 	}
 	unguard;
@@ -2619,7 +2643,7 @@ void VRenderLevelShared::UpdateFakeFlats(sector_t* sec)
 void VRenderLevel::UpdateWorld(const refdef_t* rd, const VViewClipper* Range)
 {
 	guard(VRenderLevel::UpdateWorld);
-	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
+	float	dummy_bbox[6] = { -99999, -99999, -99999, 99999, 99999, 99999 };
 
 	ViewClip.ClearClipNodes(vieworg, Level);
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,
@@ -2653,7 +2677,7 @@ void VRenderLevel::UpdateWorld(const refdef_t* rd, const VViewClipper* Range)
 void VAdvancedRenderLevel::UpdateWorld(const refdef_t* rd, const VViewClipper* Range)
 {
 	guard(VAdvancedRenderLevel::UpdateWorld);
-	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
+	float	dummy_bbox[6] = { -99999, -99999, -99999, 99999, 99999, 99999 };
 
 	ViewClip.ClearClipNodes(vieworg, Level);
 	ViewClip.ClipInitFrustrumRange(viewangles, viewforward, viewright, viewup,

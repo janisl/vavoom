@@ -512,6 +512,10 @@ void VEntity::StartSound(VName Sound, vint32 Channel, float Volume,
 	float Attenuation, bool Loop)
 {
 	guard(VEntity::StartSound);
+	if (!Sector)
+	{
+		return;
+	}
 	if (Sector->SectorFlags & sector_t::SF_Silent)
 	{
 		return;

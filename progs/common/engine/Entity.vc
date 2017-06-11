@@ -219,6 +219,7 @@ byte			SpriteType;				//  How to draw sprite
 name			FixedSpriteName;
 string			FixedModelName;
 byte			ModelVersion;
+int             NumTouchingLights;
 
 byte			RenderStyle;
 float			Alpha;
@@ -333,9 +334,9 @@ replication
 {
 	reliable if (Role == ROLE_Authority)
 		Origin, Angles, FloorClip, State, StateTime, SpriteType,
-		FixedSpriteName, ModelVersion, RenderStyle, Alpha, Translation,
-		ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright, bFixedModel,
-		SoundOriginID, bUseDispState, bBright;
+		FixedSpriteName, ModelVersion, NumTouchingLights, RenderStyle, Alpha,
+		Translation, ScaleX, ScaleY, bFly, bNoSector, bInvisible, bFullBright,
+		bFixedModel, SoundOriginID, bUseDispState, bBright;
 
 	reliable if (Role == ROLE_Authority && bUseDispState)
 		DispState;

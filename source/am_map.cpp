@@ -1702,9 +1702,9 @@ static vuint32 StringToColour(const char *str)
 	int r, g, b;
 	char *p;
 
-	r = strtol(str, &p, 16) & 0xff;
-	g = strtol(p, &p, 16) & 0xff;
-	b = strtol(p, &p, 16) & 0xff;
+	r = strtol(str, &p, 16) & 255;
+	g = strtol(p, &p, 16) & 255;
+	b = strtol(p, &p, 16) & 255;
 	return 0xff000000 | (r << 16) | (g << 8) | b;
 }
 

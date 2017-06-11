@@ -441,7 +441,7 @@ void R_InstallSprite(const char *name, int index)
 
 	maxframe++;
 
-	for (int frame = 0 ; frame < maxframe ; frame++)
+	for (int frame = 0; frame < maxframe; frame++)
 	{
 		switch ((int)sprtemp[frame].rotate)
 		{
@@ -684,9 +684,9 @@ void VTextureTranslation::BuildPlayerTrans(int Start, int End, int Col)
 {
 	guard(VTextureTranslation::BuildPlayerTrans);
 	int Count = End - Start + 1;
-	vuint8 r = (Col >> 16) & 0xff;
-	vuint8 g = (Col >> 8) & 0xff;
-	vuint8 b = Col & 0xff;
+	vuint8 r = (Col >> 16) & 255;
+	vuint8 g = (Col >> 8) & 255;
+	vuint8 b = Col & 255;
 	vuint8 h, s, v;
 	M_RgbToHsv(r, g, b, h, s, v);
 	for (int i = 0; i < Count; i++)
@@ -847,9 +847,9 @@ void VTextureTranslation::MapToColours(int AStart, int AEnd, int AR1, int AG1,
 void VTextureTranslation::BuildBloodTrans(int Col)
 {
 	guard(VTextureTranslation::BuildBloodTrans);
-	vuint8 r = (Col >> 16) & 0xff;
-	vuint8 g = (Col >> 8) & 0xff;
-	vuint8 b = Col & 0xff;
+	vuint8 r = (Col >> 16) & 255;
+	vuint8 g = (Col >> 8) & 255;
+	vuint8 b = Col & 255;
 	//	Don't remap colour 0.
 	for (int i = 1; i < 256; i++)
 	{

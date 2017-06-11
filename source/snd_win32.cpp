@@ -180,7 +180,7 @@ bool VDirectSoundDevice::Init()
 	//  Set speaker type
 	if (snd_speaker_type > 5)
 	{
-		snd_mix_frequency = 5;
+		snd_speaker_type = 5;
 	}
 	DSound->SetSpeakerConfig(speaker_type[snd_speaker_type]);
 

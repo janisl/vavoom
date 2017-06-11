@@ -77,6 +77,8 @@ VCvarI					r_fade_light("r_fade_light", "0", CVAR_Archive);
 VCvarF					r_fade_factor("r_fade_factor", "4.0", CVAR_Archive);
 VCvarF					r_sky_bright_factor("r_sky_bright_factor", "1.0", CVAR_Archive);
 
+extern VCvarF			r_lights_radius;
+
 VDrawer					*Drawer;
 
 refdef_t				refdef;
@@ -849,27 +851,85 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	RenderMobjsAmbient();
 
 	Drawer->BeginShadowVolumesPass();
-	if (!FixedLight && r_dynamic)
-	{
-		dlight_t* l = DLights;
-		for (int i = 0; i < MAX_DLIGHTS; i++, l++)
-		{
-			if (l->die < Level->Time || !l->radius)
-			{
-				continue;
-			}
-			RenderLightShadows(RD, Range, l->origin, l->radius, l->colour);
-		}
-	}
+
+	subsector_t		*sub;
+	int				leafnum;
+	vuint8*         dyn_facevis;
+	linetrace_t		Trace;
+
 	if (!FixedLight && r_static_lights)
 	{
+		CurrLightsNumber = 0;
+		CurrShadowsNumber = 0;
+
 		for (int i = 0; i < Lights.Num(); i++)
 		{
 			if (!Lights[i].radius)
 			{
 				continue;
 			}
-			RenderLightShadows(RD, Range, Lights[i].origin, Lights[i].radius, Lights[i].colour);
+
+			sub = Level->PointInSubsector(Lights[i].origin);
+			dyn_facevis = Level->LeafPVS(sub);
+
+			// Check potential visibility
+			if (!(dyn_facevis[Lights[i].leafnum >> 3] & (1 << (Lights[i].leafnum & 7))))
+			{
+				continue;
+			}
+
+			//	Don't do lights that are too far away.
+			if (((Lights[i].origin - vieworg).Length() > r_lights_radius / 4.0) && !Level->TraceLine(Trace, Lights[i].origin, vieworg, SPF_NOBLOCKSIGHT))
+			{
+				continue;
+			}
+
+			if ((Lights[i].origin - vieworg).Length() > r_lights_radius)
+			{
+				continue;
+			}
+
+			RenderLightShadows(RD, Range, Lights[i].origin, Lights[i].radius, Lights[i].colour, true);
+		}
+	}
+
+	if (!FixedLight && r_dynamic)
+	{
+		dlight_t* l = DLights;
+
+		CurrLightsNumber = 0;
+		CurrShadowsNumber = 0;
+
+		for (int i = 0; i < MAX_DLIGHTS; i++, l++)
+		{
+			if (!l->radius || l->die < Level->Time)
+			{
+				continue;
+			}
+
+			sub = Level->PointInSubsector(l->origin);
+			dyn_facevis = Level->LeafPVS(sub);
+
+			leafnum = Level->PointInSubsector(l->origin) - Level->Subsectors;
+
+			// Check potential visibility
+			if (!(dyn_facevis[leafnum >> 3] & (1 << (leafnum & 7))))
+			{
+				continue;
+			}
+
+			//	Don't do lights that are too far away.
+			if (((l->origin - vieworg).Length() > r_lights_radius / 4.0) && !Level->TraceLine(Trace, l->origin, vieworg, SPF_NOBLOCKSIGHT))
+			{
+				continue;
+			}
+
+			if ((l->origin - vieworg).Length() > r_lights_radius)
+			{
+				continue;
+			}
+
+			RenderLightShadows(RD, Range, l->origin, l->radius, l->colour, true);
 		}
 	}
 
@@ -1186,7 +1246,7 @@ int R_SetMenuPlayerTrans(int Start, int End, int Col)
 
 	if (!Tr)
 	{
-		Tr = new VTextureTranslation;
+		Tr = new VTextureTranslation();
 		PlayerTranslations[MAXPLAYERS] = Tr;
 	}
 	if (Tr->TranslStart != Start || Tr->TranslEnd == End)

@@ -691,7 +691,7 @@ bool VEntity::CanSee(VEntity* Other)
 		return true;
 	}
 
-	//	Check feats
+	//	Check feet
 	Trace.End = Other->Origin;
 	Trace.End.z -= Other->FloorClip;
 #ifdef USE_BSP
