@@ -1,4 +1,4 @@
-//**************************************************************************
+﻿//**************************************************************************
 //**
 //**    ##   ##    ##    ##   ##   ####     ####   ###     ###
 //**    ##   ##  ##  ##  ##   ##  ##  ##   ##  ##  ####   ####
@@ -655,6 +655,7 @@ native static final void LoadBinaryLump(name LumpName, out array<byte> Array);
 native static final bool IsMapPresent(name MapName);
 native static final void Clock(int Idx);
 native static final void Unclock(int Idx);
+native static final int P_GetMapIndexByLevelNum(int map);
 
 //==========================================================================
 //
