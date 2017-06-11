@@ -464,8 +464,14 @@ void VLevel::Destroy()
 			{
 				polyblock_t* Next = pb->next;
 				delete pb;
-				pb = NULL;
-				pb = Next;
+				if (Next)
+				{
+					pb = Next;
+				}
+				else
+				{
+					pb = NULL;
+				}
 			}
 		}
 		delete[] PolyBlockMap;

@@ -492,9 +492,9 @@ bool VPathTraverse::AddLineIntercepts(VThinker* Self, int mapx, int mapy,
 		num = ld->dist - DotProduct(trace_org, ld->normal);
 		frac = num / den;
 
-		if (frac < 0)
+		if (frac < 0 || frac > 1.0)
 		{
-			continue;	// behind source
+			continue;	// behind source or beyond end point
 		}
 
 		// try to early out the check

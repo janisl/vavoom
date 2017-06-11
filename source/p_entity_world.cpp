@@ -321,7 +321,7 @@ void VEntity::UnlinkFromWorld()
 			if (blockx >= 0 && blockx < XLevel->BlockMapWidth &&
 				blocky >= 0 && blocky < XLevel->BlockMapHeight)
 			{
-//				check(XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] == this);
+				check(XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] == this);
 				if (XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] == this)
 				{
 					XLevel->BlockLinks[blocky * XLevel->BlockMapWidth + blockx] =
@@ -625,18 +625,17 @@ bool VEntity::CheckPosition(TVec Pos)
 bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 {
 	guardSlow(VEntity::CheckThing);
+	// don't clip against self
+	if (Other == this)
+	{
+		return true;
+	}
 	// can't hit thing
 	if (!(Other->EntityFlags & EF_ColideWithThings))
 	{
 		return true;
 	}
 	if (!(Other->EntityFlags & EF_Solid))
-	{
-		return true;
-	}
-
-	// don't clip against self
-	if (Other == this)
 	{
 		return true;
 	}
@@ -659,11 +658,11 @@ bool VEntity::CheckThing(cptrace_t& cptrace, VEntity *Other)
 			return false;
 		}
 		// check if a mobj passed over/under another object
-		if (cptrace.Pos.z + 0.00001 >= Other->Origin.z + Other->Height)
+		if (cptrace.Pos.z >= Other->Origin.z + Other->Height)
 		{
 			return true;
 		}
-		if (cptrace.Pos.z + Height < Other->Origin.z + 0.00001)
+		if (cptrace.Pos.z + Height <= Other->Origin.z)
 		{
 			// under thing
 			return true;
@@ -915,7 +914,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 						else if (!tmtrace.BlockingMobj->Player &&
 							!(EntityFlags & VEntity::EF_Float) &&
 							!(EntityFlags & VEntity::EF_Missile) &&
-							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height + 0.00001 - tmtrace.End.z <= MaxStepHeight)
+							tmtrace.BlockingMobj->Origin.z + tmtrace.BlockingMobj->Height - tmtrace.End.z <= MaxStepHeight)
 						{
 							if (!thingblocker || tmtrace.BlockingMobj->Origin.z > thingblocker->Origin.z)
 							{
@@ -923,7 +922,7 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 							}
 							tmtrace.BlockingMobj = NULL;
 						}
-						else if (Player && tmtrace.End.z + Height - tmtrace.BlockingMobj->Origin.z + 0.00001 <= MaxStepHeight)
+						else if (Player && tmtrace.End.z + Height - tmtrace.BlockingMobj->Origin.z <= MaxStepHeight)
 						{
 							if (thingblocker)
 							{ // something to step up on, set it as
@@ -1006,13 +1005,13 @@ bool VEntity::CheckRelPosition(tmtrace_t& tmtrace, TVec Pos)
 bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 {
 	guardSlow(VEntity::CheckRelThing);
-	// can't hit thing
-	if (!(Other->EntityFlags & EF_ColideWithThings))
+	// don't clip against self
+	if (Other == this)
 	{
 		return true;
 	}
-	// don't clip against self
-	if (Other == this)
+	// can't hit thing
+	if (!(Other->EntityFlags & EF_ColideWithThings))
 	{
 		return true;
 	}
@@ -1036,11 +1035,15 @@ bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 		(Other->EntityFlags & EF_ActLikeBridge))
  	{
 		// allow actors to walk on other actors as well as floors
-		if (Other->Origin.z + Other->Height + 0.00001 > tmtrace.FloorZ &&
-			Other->Origin.z + Other->Height < tmtrace.End.z + MaxStepHeight + 0.00001)
+		if (fabs(Other->Origin.x - tmtrace.End.x) < Other->Radius ||
+			fabs(Other->Origin.y - tmtrace.End.y) < Other->Radius)
 		{
-			tmtrace.StepThing = Other;
-			tmtrace.FloorZ = Other->Origin.z + Other->Height;
+			if (Other->Origin.z + Other->Height >= tmtrace.FloorZ &&
+				Other->Origin.z + Other->Height <= tmtrace.End.z + MaxStepHeight)
+			{
+				tmtrace.StepThing = Other;
+				tmtrace.FloorZ = Other->Origin.z + Other->Height;
+			}
 		}
 	}
 	//if (!(tmtrace.Thing->EntityFlags & VEntity::EF_NoPassMobj) || Actor(Other).bSpecial)
@@ -1055,11 +1058,11 @@ bool VEntity::CheckRelThing(tmtrace_t& tmtrace, VEntity *Other)
 			return false;
 		}
 		// check if a mobj passed over/under another object
-		if (tmtrace.End.z + 0.00001 >= Other->Origin.z + Other->Height)
+		if (tmtrace.End.z >= Other->Origin.z + Other->Height)
 		{
 			return true;	// overhead
 		}
-		if (tmtrace.End.z + Height < Other->Origin.z + 0.00001)
+		if (tmtrace.End.z + Height <= Other->Origin.z)
 		{
 			return true;	// underneath
 		}
@@ -1345,6 +1348,15 @@ bool VEntity::TryMove(tmtrace_t& tmtrace, TVec newPos, bool AllowDropOff)
 			}
 			if (Origin.z < tmtrace.FloorZ)
 			{
+				if (EntityFlags & EF_StepMissile)
+				{
+					Origin.z = tmtrace.FloorZ;
+					// If moving down, cancel vertical component of velocity
+					if (Velocity.z < 0)
+					{
+						Velocity.z = 0.0;
+					}
+				}
 				// Check to make sure there's nothing in the way for the step up
 				if (TestMobjZ(TVec(newPos.x, newPos.y, tmtrace.FloorZ)))
 				{
@@ -1944,6 +1956,11 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 		{
 			for (VBlockThingsIterator Other(XLevel, bx, by); Other; ++Other)
 			{
+				if (*Other == this)
+				{
+					// Don't clip against self
+					continue;
+				}
 				if (!(Other->EntityFlags & EF_ColideWithThings))
 				{
 					// Can't hit thing
@@ -1952,11 +1969,6 @@ VEntity* VEntity::TestMobjZ(const TVec& TryOrg)
 				if (!(Other->EntityFlags & EF_Solid))
 				{
 					// Not solid
-					continue;
-				}
-				if (*Other == this)
-				{
-					// Don't clip against self
 					continue;
 				}
 				if (TryOrg.z > Other->Origin.z + Other->Height)
@@ -2193,13 +2205,13 @@ void VEntity::CheckDropOff(float& DeltaX, float& DeltaY)
 						front < Origin.z - MaxDropoffHeight)
 					{
 						// front side dropoff
-						Dir = -line->normal;
+						Dir = line->normal;
 					}
 					else if (front == Origin.z &&
 						back < Origin.z - MaxDropoffHeight)
 					{
 						// back side dropoff
-						Dir = line->normal;
+						Dir = -line->normal;
 					}
 					else
 					{

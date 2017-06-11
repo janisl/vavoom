@@ -58,6 +58,7 @@ struct VScriptSubModel
 	TArray<VName>		Skins;
 	bool				FullBright;
 	bool				NoShadow;
+	bool                UseDepth;
 };
 
 struct VScriptModel
@@ -343,6 +344,14 @@ static void ParseModelScript(VModel* Mdl, VStream& Strm)
 			if (SN->HasAttribute("noshadow"))
 			{
 				Md2.NoShadow = !SN->GetAttribute("noshadow").ICmp("true");
+			}
+
+			//	Force depth test flag.
+			//  For things like monsters with alpha transaparency
+			Md2.UseDepth = false;
+			if (SN->HasAttribute("usedepth"))
+			{
+				Md2.UseDepth = !SN->GetAttribute("usedepth").ICmp("true");
 			}
 
 			//	Process frames.
@@ -1034,10 +1043,10 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		switch (Pass)
 		{
 		case RPASS_Normal:
+		case RPASS_Light:
 			break;
 
 		case RPASS_ShadowVolumes:
-		case RPASS_Light:
 			if (Md2Alpha < 1.0 || SubMdl.NoShadow)
 			{
 				continue;
@@ -1116,7 +1125,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
 				Trans, ColourMap, Md2Light, Fade, Md2Alpha, Additive,
-				IsViewModel, smooth_inter, Interpolate);
+				IsViewModel, smooth_inter, Interpolate, SubMdl.UseDepth);
 			break;
 
 		case RPASS_Ambient:
@@ -1140,7 +1149,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		case RPASS_Textures:
 			Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Trans, ColourMap, Md2Alpha, smooth_inter, Interpolate);
+				Trans, ColourMap, Md2Alpha, smooth_inter, Interpolate, SubMdl.UseDepth);
 			break;
 
 		case RPASS_Fog:

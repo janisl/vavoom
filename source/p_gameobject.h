@@ -39,7 +39,10 @@ struct fakefloor_t;
 struct seg_t;
 struct subsector_t;
 struct node_t;
+struct surface_t;
+struct segpart_t;
 struct drawseg_t;
+struct sec_surface_t;
 struct subregion_t;
 
 class	VThinker;
@@ -76,6 +79,27 @@ enum
 // like some DOOM-alikes ("wt", "WebView") did.
 //
 typedef TVec vertex_t;
+
+//==========================================================================
+//
+//	DrawSeg
+//
+//==========================================================================
+
+struct drawseg_t
+{
+	seg_t*			seg;
+	drawseg_t*		next;
+
+	segpart_t*		top;
+	segpart_t*		mid;
+	segpart_t*		bot;
+	segpart_t*		topsky;
+	segpart_t*		extra;
+
+	surface_t*		HorizonTop;
+	surface_t*		HorizonBot;
+};
 
 //==========================================================================
 //
@@ -496,6 +520,24 @@ struct seg_t : public TPlane
 	int			side;
 
 	drawseg_t	*drawsegs;
+};
+
+//==========================================================================
+//
+//	SubRegion
+//
+//==========================================================================
+
+struct subregion_t
+{
+	sec_region_t*	secregion;
+	subregion_t*	next;
+	sec_plane_t*	floorplane;
+	sec_plane_t*	ceilplane;
+	sec_surface_t*	floor;
+	sec_surface_t*	ceil;
+	int				count;
+	drawseg_t*		lines;
 };
 
 //==========================================================================

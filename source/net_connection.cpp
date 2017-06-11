@@ -167,7 +167,7 @@ void VNetConnection::GetMessages()
 				vuint8 LastByte = Data[Data.Num() - 1];
 				if (LastByte)
 				{
-					//	Find out real length by stepping back untill the trailing bit.
+					//	Find out real length by stepping back until the trailing bit.
 					vuint32 Length = Data.Num() * 8 - 1;
 					for (vuint8 Mask = 0x80; !(LastByte & Mask); Mask >>= 1)
 					{
@@ -614,7 +614,7 @@ void VNetConnection::SendCommand(VStr Str)
 void VNetConnection::SetUpFatPVS()
 {
 	guard(VNetConnection::SetUpFatPVS);
-	float	dummy_bbox[6] = {-99999, -99999, -99999, 99999, 99999, 99999};
+	float	dummy_bbox[6] = { -99999, -99999, -99999, 99999, 99999, 99999 };
 	VLevel*	Level = Context->GetLevel();
 
 	LeafPvs = Level->LeafPVS(Owner->MO->SubSector);

@@ -83,15 +83,27 @@ VChannel::~VChannel()
 	{
 		VMessageIn* Next = Msg->Next;
 		delete Msg;
-		Msg = NULL;
-		Msg = Next;
+		if (Next)
+		{
+			Msg = Next;
+		}
+		else
+		{
+			Msg = NULL;
+		}
 	}
 	for (VMessageOut* Msg = OutMsg; Msg; )
 	{
 		VMessageOut* Next = Msg->Next;
 		delete Msg;
-		Msg = NULL;
-		Msg = Next;
+		if (Next)
+		{
+			Msg = Next;
+		}
+		else
+		{
+			Msg = NULL;
+		}
 	}
 	if (Index != -1 && Connection->Channels[Index] == this)
 	{

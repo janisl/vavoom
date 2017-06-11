@@ -115,10 +115,10 @@ static VCvarS	Language("language", "en", CVAR_Archive);
 void Host_PrintVersion()
 {
 	dprintf("%s\n", "VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
-#ifdef SPECIAL_VERSION_TEXT
-	dprintf("%s\n", SPECIAL_VERSION_TEXT".");
-#endif
-	dprintf("%s\n", "Compiled "__DATE__" "__TIME__".");
+	#ifdef SPECIAL_VERSION_TEXT
+		dprintf("%s\n", SPECIAL_VERSION_TEXT".");
+	#endif
+		dprintf("%s\n", "Compiled " __DATE__" " __TIME__".");
 }
 
 //==========================================================================
@@ -150,14 +150,15 @@ void Host_Init()
 #else
 	OpenDebugFile("basev/debug.txt");
 #endif
-	Host_PrintVersion();
-	dprintf("Running Host_Init\n");
 
    // Seed the random-number generator with the current time so that
    // the numbers will be different every time we run.
    srand((unsigned)time(NULL));
 
-	// init subsystems
+   Host_PrintVersion();
+   dprintf("Running Host_Init\n");
+   
+   // init subsystems
 
 	M_InitByteOrder();
 
@@ -375,9 +376,6 @@ void Host_Frame()
 
 	try
 	{
-		//	Keep the random time dependent
-		rand();
-
 		//	Decide the simulation time
 		if (!FilterTime())
 		{
@@ -566,10 +564,7 @@ void Host_Error(const char *error, ...)
 COMMAND(Version)
 {
 	GCon->Log("VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
-#ifdef SPECIAL_VERSION_TEXT
-	GCon->Log(SPECIAL_VERSION_TEXT".");
-#endif
-	GCon->Log("Compiled "__DATE__" "__TIME__".");
+	GCon->Log("Compiled " __DATE__ " " __TIME__ ".");
 }
 
 //==========================================================================

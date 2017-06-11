@@ -83,7 +83,13 @@ void VOpenGLDrawer::GenerateTextures()
 			pbuf[j][i].a = vuint8(ptex[j][i] * 255);
 		}
 	}
+	VTexture::SmoothEdges((vuint8 *)pbuf, 8, 8, (vuint8 *)pbuf);
 	glBindTexture(GL_TEXTURE_2D, particle_texture);
+	//	Set up texture anisotropic filtering.
+	if (max_anisotropy > 1.0)
+	{
+		glTexParameterf(GL_TEXTURE_2D, GLenum(GL_TEXTURE_MAX_ANISOTROPY_EXT), (GLfloat)(max_anisotropy));
+	}
 	glTexImage2D(GL_TEXTURE_2D, 0, 4, 8, 8, 0, GL_RGBA, GL_UNSIGNED_BYTE, pbuf);
 
 	texturesGenerated = true;
@@ -225,8 +231,8 @@ void VOpenGLDrawer::SetSpriteLump(VTexture* Tex,
 		}
 	}
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	tex_iw = 1.0 / Tex->GetWidth();
 	tex_ih = 1.0 / Tex->GetHeight();
 	unguard;
@@ -340,7 +346,9 @@ void VOpenGLDrawer::UploadTexture8(int Width, int Height, const vuint8* Data,
 	for (int i = 0; i < Width * Height; i++)
 	{
 		if (Data[i])
+		{
 			NewData[i] = Pal[Data[i]];
+		}
 	}
 	UploadTexture(Width, Height, NewData);
 	Z_Free(NewData);
@@ -381,10 +389,10 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 	}
 	if (w != width || h != height)
 	{
-		/* Smooth transparent edges */
-		VTexture::SmoothEdges((vuint8*)data, width, height, (vuint8*)data);
 		/* must rescale image to get "top" mipmap texture image */
-		VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image);
+		VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image, multisampling_sample);
+		/* Smooth transparent edges */
+		VTexture::SmoothEdges(image, w, h, image);
 	}
 	else
 	{

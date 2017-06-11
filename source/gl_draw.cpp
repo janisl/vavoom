@@ -198,8 +198,8 @@ void VOpenGLDrawer::FillRect(float x1, float y1, float x2, float y2,
 	if (HaveShaders)
 	{
 		p_glUseProgramObjectARB(DrawFixedColProgram);
-		p_glUniform4fARB(DrawFixedColColourLoc, ((colour >> 16) & 0xff) / 255.0,
-			((colour >> 8) & 0xff) / 255.0, (colour & 0xff) / 255.0, 1.0);
+		p_glUniform4fARB(DrawFixedColColourLoc, (GLfloat)(((colour >> 16) & 255) / 255.0),
+			(GLfloat)(((colour >> 8) & 255) / 255.0), (GLfloat)((colour & 255) / 255.0), 1.0);
 	}
 	else
 	{

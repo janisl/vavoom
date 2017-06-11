@@ -156,6 +156,7 @@ class VEntity : public VThinker
 	VName			FixedSpriteName;
 	VStr			FixedModelName;
 	vuint8			ModelVersion;
+	int				NumTouchingLights;
 
 	vuint8			RenderStyle;
 	float			Alpha;
@@ -227,7 +228,7 @@ class VEntity : public VThinker
 		EF_Missile				= 0x01000000,	// don't hit same species, explode on block
 		EF_DontOverlap			= 0x02000000,	// Prevent some things from overlapping.
 		EF_UseDispState			= 0x04000000,	// Use DispState for rendering
-		EF_ActLikeBridge		= 0x08000000,	// Always allow obkects to pass.
+		EF_ActLikeBridge		= 0x08000000,	// Always allow objects to pass.
 		EF_NoDropOff			= 0x10000000,	// Can't drop off under any circumstances
 		EF_Bright				= 0x20000000,	// Always render full bright
 		EF_CanJump				= 0x40000000,	// This entity can jump to high places

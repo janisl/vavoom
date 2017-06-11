@@ -408,9 +408,9 @@ void VRenderLevel::SingleLightFace(light_t *light, surface_t *surf)
 	//
 	spt = surfpt;
 	squaredist = light->radius * light->radius;
-	rmul = ((light->colour >> 16) & 0xff) / 255.0;
-	gmul = ((light->colour >> 8) & 0xff) / 255.0;
-	bmul = (light->colour & 0xff) / 255.0;
+	rmul = ((light->colour >> 16) & 255) / 255.0;
+	gmul = ((light->colour >> 8) & 255) / 255.0;
+	bmul = (light->colour & 255) / 255.0;
 	for (c = 0; c < numsurfpt; c++, spt++)
 	{
 		dist = CastRay(light->origin, *spt, squaredist);
@@ -704,7 +704,7 @@ void VRenderLevelShared::DecayLights(float time)
 	dlight_t* dl = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, dl++)
 	{
-		if (dl->die < Level->Time || !dl->radius)
+		if (!dl->radius || dl->die < Level->Time)
 		{
 			continue;
 		}
@@ -802,7 +802,7 @@ void VRenderLevel::PushDlights()
 	dlight_t* l = DLights;
 	for (int i = 0; i < MAX_DLIGHTS; i++, l++)
 	{
-		if (l->die < Level->Time || !l->radius)
+		if (!l->radius || l->die < Level->Time)
 		{
 			continue;
 		}
@@ -929,9 +929,9 @@ vuint32 VRenderLevel::LightPoint(const TVec &p)
 			if (add > 0)
 			{
 				l += add;
-				lr += add * ((DLights[i].colour >> 16) & 0xff) / 255.0;
-				lg += add * ((DLights[i].colour >> 8) & 0xff) / 255.0;
-				lb += add * (DLights[i].colour & 0xff) / 255.0;
+				lr += add * ((DLights[i].colour >> 16) & 255) / 255.0;
+				lg += add * ((DLights[i].colour >> 8) & 255) / 255.0;
+				lb += add * (DLights[i].colour & 255) / 255.0;
 			}
 		}
 	}
@@ -975,7 +975,6 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 	texinfo_t	*tex;
 	subsector_t *sub;
 	int			leafnum;
-
 
 	smax = (surf->extents[0] >> 4) + 1;
 	tmax = (surf->extents[1] >> 4) + 1;
@@ -1023,9 +1022,9 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 			}
 		}
 
-		rmul = (DLights[lnum].colour >> 16) & 0xff;
-		gmul = (DLights[lnum].colour >> 8) & 0xff;
-		bmul = DLights[lnum].colour & 0xff;
+		rmul = (DLights[lnum].colour >> 16) & 255;
+		gmul = (DLights[lnum].colour >> 8) & 255;
+		bmul = DLights[lnum].colour & 255;
 
 		local.x = DotProduct(impact, tex->saxis) + tex->soffs;
 		local.y = DotProduct(impact, tex->taxis) + tex->toffs;

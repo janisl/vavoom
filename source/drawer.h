@@ -157,7 +157,7 @@ public:
 		const TVec&, const TVec&, const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-		vuint32, vuint32, float, bool, bool, float, bool) = 0;
+		vuint32, vuint32, float, bool, bool, float, bool, bool) = 0;
 	virtual bool StartPortal(VPortal*, bool) = 0;
 	virtual void EndPortal(VPortal*, bool) = 0;
 
@@ -189,9 +189,9 @@ public:
 	virtual void DrawWorldAmbientPass() = 0;
 	virtual void BeginShadowVolumesPass() = 0;
 	virtual void BeginLightShadowVolumes() = 0;
-	virtual void RenderSurfaceShadowVolume(surface_t*, TVec&, float) = 0;
+	virtual void RenderSurfaceShadowVolume(surface_t*, TVec&, float, bool) = 0;
 	virtual void BeginLightPass(TVec&, float, vuint32) = 0;
-	virtual void DrawSurfaceLight(surface_t*, TVec&, float) = 0;
+	virtual void DrawSurfaceLight(surface_t*, TVec&, float, bool) = 0;
 	virtual void DrawWorldTexturesPass() = 0;
 	virtual void DrawWorldFogPass() = 0;
 	virtual void EndFogPass() = 0;
@@ -199,7 +199,7 @@ public:
 		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) = 0;
 	virtual void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-		float, float, bool) = 0;
+		float, float, bool, bool) = 0;
 	virtual void BeginModelsLightPass(TVec&, float, vuint32) = 0;
 	virtual void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, float, bool) = 0;
