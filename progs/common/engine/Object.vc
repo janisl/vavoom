@@ -704,6 +704,7 @@ native static final void StopLocalSounds();
 //  Handle shift+key
 native static final string TranslateKey(int c);
 native static final string P_GetMapName(int map);
+native static final int P_GetMapIndexByLevelNum(int map);
 native static final name P_GetMapLumpName(int map);
 native static final name P_TranslateMap(int map);
 native static final int P_GetNumEpisodes();
