@@ -120,6 +120,7 @@ defaultproperties
 	MissileDamage = 1;
 	RenderStyle = STYLE_Translucent;
 	Alpha = 0.666;
+	bStepMissile = true;
 	bMissile = true;
 	bNoBlockmap = true;
 	bNoGravity = true;

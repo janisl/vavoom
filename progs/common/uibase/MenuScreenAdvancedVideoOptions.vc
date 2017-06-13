@@ -157,6 +157,8 @@ void CreateChoices()
 		Enum.AddItem("Linear");
 		Enum.AddItem("Linear Nearest");
 		Enum.AddItem("Linear Linear");
+		Enum.AddItem("Bilinear");
+		Enum.AddItem("Trilinear");
 		Enum.SetInitialValue(GetCvar('gl_tex_linear'));
 		Enum.ValueChanging = ChangeGlTexLinear;
 		currentY += Enum.Height;
@@ -192,6 +194,7 @@ void CreateChoices()
 		Enum.AddItem("Point Linear");
 		Enum.AddItem("Linear Linear");
 		Enum.AddItem("Anisotropic Linear");
+		Enum.AddItem("Point Anisotropic Linear");
 		Enum.SetInitialValue(GetCvar('d3d_tex_linear'));
 		Enum.ValueChanging = ChangeD3dTexFilter;
 		currentY += Enum.Height;

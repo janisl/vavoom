@@ -361,6 +361,7 @@ void VDirect3DDrawer::StartUpdate()
 			magfilter = D3DTEXF_POINT;
 			minfilter = D3DTEXF_ANISOTROPIC;
 			mipfilter = D3DTEXF_LINEAR;
+			break;
 		}
 		default:
 		{
