@@ -41,6 +41,7 @@ void CreateControlKeyChoices()
 	AddControl("Toggle always run", "ToggleAlwaysRun", "");
 	AddControl("Previous weapon", "impulse 17", "");
 	AddControl("Next weapon", "impulse 18", "");
+	AddControl("Toggle Console", "ToggleConsole", "");
 }
 
 defaultproperties
