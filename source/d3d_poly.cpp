@@ -609,7 +609,7 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	if (blend_sprites || Additive || Alpha < 1.0)
 	{
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 28);
+		RenderDevice->SetRenderState(D3DRS_ALPHAREF, 85);
 	}
 	if (Additive)
 	{
@@ -651,6 +651,10 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 	SetSpriteLump(Tex, Translation, CMap);
 
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+
 	int l = ((int)(Alpha * 255) << 24) | (light & 0x00ffffff);
 	for (int i = 0; i < 4; i++)
 	{
@@ -684,6 +688,10 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 	unguard;
 }
 

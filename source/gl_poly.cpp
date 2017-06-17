@@ -1181,6 +1181,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex, tex->ColourMap);
+
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -1235,7 +1236,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.111);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.333);
 			glEnable(GL_BLEND);
 		}
 		else
@@ -1329,7 +1330,6 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	}
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-
 	unguard;
 }
 
@@ -1348,6 +1348,9 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	TVec	texpt;
 
 	SetSpriteLump(Tex, Translation, CMap);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	if (HaveShaders)
 	{
@@ -1478,6 +1481,8 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 		}
 		glDisable(GL_ALPHA_TEST);
 	}
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	unguard;
 }
 

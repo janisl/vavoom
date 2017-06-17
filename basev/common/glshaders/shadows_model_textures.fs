@@ -14,5 +14,5 @@ void main()
 		discard;
 	}
 
-	gl_FragColor = vec4(FinalColour.rgb, smoothstep(0.333, 1.0, InAlpha * FinalColour.a));
+	gl_FragColor = vec4(FinalColour.rgb, smoothstep(0.1, 1.0, InAlpha * FinalColour.a));
 }

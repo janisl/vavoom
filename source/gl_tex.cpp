@@ -185,6 +185,9 @@ void VOpenGLDrawer::PrecacheTexture(VTexture* Tex)
 void VOpenGLDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VOpenGLDrawer::SetTexture);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+
 	SetSpriteLump(Tex, NULL, CMap);
 	unguard;
 }
@@ -231,8 +234,6 @@ void VOpenGLDrawer::SetSpriteLump(VTexture* Tex,
 		}
 	}
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	tex_iw = 1.0 / Tex->GetWidth();
 	tex_ih = 1.0 / Tex->GetHeight();
 	unguard;
@@ -248,6 +249,9 @@ void VOpenGLDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans,
 	int CMap)
 {
 	guard(VOpenGLDrawer::SetPic);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+
 	SetSpriteLump(Tex, Trans, CMap);
 	unguard;
 }
@@ -368,6 +372,9 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 	int		level;
 	vuint8*	stackbuf = (vuint8 *)Z_Malloc(256 * 128 * 4);
 
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
 	{
@@ -411,9 +418,6 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 		glTexImage2D(GL_TEXTURE_2D, level, 4, w, h, 0, GL_RGBA,
 			GL_UNSIGNED_BYTE, image);
 	}
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 
 	if (image != stackbuf)
 	{
