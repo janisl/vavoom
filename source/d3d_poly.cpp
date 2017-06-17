@@ -560,6 +560,10 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex, tex->ColourMap);
+	
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 
 	if (surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount)
@@ -624,6 +628,10 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	{
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
+
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 	unguard;
 }
 

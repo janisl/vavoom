@@ -432,7 +432,7 @@ void VTexture::SmoothEdges(vuint8* buffer, int w, int h, vuint8* dataout)
 	}
 	l1 += 4;
 
-	for(x = 1; x < w - 1; x++, l1 += 4)
+	for (x = 1; x < w - 1; x++, l1 += 4)
 	{
 		if (l1[MSB] == 0 && !CHKPIX(-1) && !CHKPIX(1))
 		{
@@ -445,7 +445,7 @@ void VTexture::SmoothEdges(vuint8* buffer, int w, int h, vuint8* dataout)
 	}
 	l1 += 4;
 
-	for(y = 1; y < h - 1; y++)
+	for (y = 1; y < h - 1; y++)
 	{
 		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(1))
 		{
@@ -453,9 +453,9 @@ void VTexture::SmoothEdges(vuint8* buffer, int w, int h, vuint8* dataout)
 		}
 		l1 += 4;
 
-		for(x = 1; x < w - 1; x++, l1 += 4)
+		for (x = 1; x < w - 1; x++, l1 += 4)
 		{
-			if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1) && !CHKPIX(1))
+			if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1) && !CHKPIX(1) && !CHKPIX(-w - 1) && !CHKPIX(-w + 1) && !CHKPIX(w - 1) && !CHKPIX(w + 1))
 			{
 				CHKPIX(w);
 			}
@@ -472,7 +472,7 @@ void VTexture::SmoothEdges(vuint8* buffer, int w, int h, vuint8* dataout)
 		CHKPIX(1);
 	}
 	l1 += 4;
-	for(x = 1;x < w - 1; x++, l1 += 4)
+	for (x = 1; x < w - 1; x++, l1 += 4)
 	{
 		if (l1[MSB] == 0 && !CHKPIX(-w) && !CHKPIX(-1))
 		{
@@ -557,13 +557,19 @@ void VTexture::ResampleTexture(int widthin, int heightin,
 			{
 				i0 = int(i * sy);
 				i1 = i0 + 1;
-				if (i1 >= heightin) i1 = heightin - 1;
+				if (i1 >= heightin)
+				{
+					i1 = heightin - 1;
+				}
 				alpha = i * sy - i0;
 				for (j = 0; j < widthout; j++)
 				{
 					j0 = int(j * sx);
 					j1 = j0 + 1;
-					if (j1 >= widthin) j1 = widthin - 1;
+					if (j1 >= widthin)
+					{
+						j1 = widthin - 1;
+					}
 					beta = j * sx - j0;
 
 					/* compute weighted average of pixels in rect (i0,j0)-(i1,j1) */
@@ -596,12 +602,18 @@ void VTexture::ResampleTexture(int widthin, int heightin,
 			{
 				i0 = int(i * sy);
 				i1 = i0 + 1;
-				if (i1 >= heightin) i1 = heightin - 1;
+				if (i1 >= heightin)
+				{
+					i1 = heightin - 1;
+				}
 				for (j = 0; j < widthout; j++)
 				{
 					j0 = int(j * sx);
 					j1 = j0 + 1;
-					if (j1 >= widthin) j1 = widthin - 1;
+					if (j1 >= widthin)
+					{
+						j1 = widthin - 1;
+					}
 
 					dst = dataout + (i * widthout + j) * 4;
 

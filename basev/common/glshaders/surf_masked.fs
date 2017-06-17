@@ -15,7 +15,7 @@ varying vec2		TextureCoordinate;
 void main()
 {
 	vec4 FinalColour = texture2D(Texture, TextureCoordinate) * Light;
-	if (FinalColour.a <= AlphaRef)
+	if (FinalColour.a < AlphaRef)
 	{
 		discard;
 	}
@@ -38,7 +38,7 @@ void main()
 			FogFactor = (FogEnd - z) / (FogEnd - FogStart);
 		}
 		FogFactor = clamp(FogFactor, 0.0, 1.0);
-		FinalColour = mix(FogColour, FinalColour, FogFactor);
+		FinalColour = mix(FogColour, FinalColour, smoothstep(AlphaRef, 1.0, FogFactor));
 	}
 
 	gl_FragColor = FinalColour;

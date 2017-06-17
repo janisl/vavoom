@@ -412,6 +412,9 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 			GL_UNSIGNED_BYTE, image);
 	}
 
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+
 	if (image != stackbuf)
 	{
 		Z_Free(image);

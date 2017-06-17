@@ -294,8 +294,8 @@ void VOpenGLDrawer::WorldDrawing()
 			}
 
 			glBindTexture(GL_TEXTURE_2D, addmap_id[lb]);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 			if (RendLev->add_changed[lb])
 			{
@@ -1181,6 +1181,8 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex, tex->ColourMap);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	if (HaveShaders)
 	{
@@ -1325,6 +1327,9 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		}
 		glDisable(GL_ALPHA_TEST);
 	}
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+
 	unguard;
 }
 
@@ -1508,7 +1513,7 @@ void VOpenGLDrawer::StartParticles()
 		{
 			glBindTexture(GL_TEXTURE_2D, particle_texture);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 			glBegin(GL_QUADS);
 		}
 	}
