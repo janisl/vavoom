@@ -56,7 +56,7 @@ VCvarI VOpenGLDrawer::ext_vertex_buffer_objects("gl_ext_vertex_buffer_objects", 
 VCvarF VOpenGLDrawer::maxdist("gl_maxdist", "8192.0", CVAR_Archive);
 VCvarI VOpenGLDrawer::model_lighting("gl_model_lighting", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::specular_highlights("gl_specular_highlights", "1", CVAR_Archive);
-VCvarI VOpenGLDrawer::multisampling_sample("gl_multisampling_sample", "1", CVAR_Archive);
+VCvarI VOpenGLDrawer::multisampling_sample("gl_multisampling_sample", "2", CVAR_Archive);
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 

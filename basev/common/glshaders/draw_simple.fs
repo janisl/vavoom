@@ -8,10 +8,10 @@ varying vec2		TextureCoordinate;
 void main()
 {
 	vec4 FinalColour = texture2D(Texture, TextureCoordinate);
-	if (FinalColour.a < 0.666)
+	if (FinalColour.a < 0.4)
 	{
 		discard;
 	}
-	FinalColour.a *= Alpha;
+	FinalColour.a *= smoothstep(0.4, 1.0, Alpha);
 	gl_FragColor = FinalColour;
 }

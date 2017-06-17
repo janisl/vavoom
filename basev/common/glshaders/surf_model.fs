@@ -1,20 +1,20 @@
 #version 110
 
-uniform sampler2D	Texture;
-uniform bool		FogEnabled;
-uniform int			FogType;
-uniform vec4		FogColour;
-uniform float		FogDensity;
-uniform float		FogStart;
-uniform float		FogEnd;
+uniform sampler2D   Texture;
+uniform bool        FogEnabled;
+uniform int         FogType;
+uniform vec4        FogColour;
+uniform float       FogDensity;
+uniform float       FogStart;
+uniform float       FogEnd;
 
-varying vec4		Light;
-varying vec2		TextureCoordinate;
+varying vec4        Light;
+varying vec2        TextureCoordinate;
 
 void main()
 {
 	vec4 FinalColour = texture2D(Texture, TextureCoordinate) * Light;
-	if (FinalColour.a <= 0.0)
+	if (FinalColour.a < 0.1)
 	{
 		discard;
 	}
@@ -37,7 +37,7 @@ void main()
 			FogFactor = (FogEnd - z) / (FogEnd - FogStart);
 		}
 		FogFactor = clamp(FogFactor, 0.0, 1.0);
-		FinalColour = mix(FogColour, FinalColour, FogFactor);
+		FinalColour = mix(FogColour, FinalColour, smoothstep(0.1, 1.0, FogFactor));
 	}
 
 	gl_FragColor = FinalColour;

@@ -24,5 +24,5 @@ void main()
 		FogFactor = (FogEnd - z) / (FogEnd - FogStart);
 	}
 	FogFactor = clamp(1.0 - FogFactor, 0.0, 1.0);
-	gl_FragColor = vec4(FogColour.xyz, FogFactor);
+	gl_FragColor = vec4(FogColour.rgb, smoothstep(0.1, 1.0, FogFactor));
 }

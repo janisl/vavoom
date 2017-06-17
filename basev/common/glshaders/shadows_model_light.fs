@@ -12,7 +12,7 @@ varying vec2		TextureCoordinate;
 void main()
 {
 	vec4 TexColour = texture2D(Texture, TextureCoordinate);
-	if (TexColour.a <= 0.666)
+	if (TexColour.a <= 0.1)
 	{
 		discard;
 	}
@@ -37,6 +37,6 @@ void main()
 		discard;
 	}
 
-	gl_FragColor = vec4(LightColour.r, LightColour.g, LightColour.b, Add * TexColour.a);
+	gl_FragColor = vec4(LightColour.r, LightColour.g, LightColour.b, smoothstep(0.1, 1.0, Add * TexColour.a));
 //	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

@@ -171,6 +171,10 @@ void VDirect3DDrawer::PrecacheTexture(VTexture* Tex)
 void VDirect3DDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VDirect3DDrawer::SetTexture);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
+
 	SetSpriteLump(Tex, NULL, CMap);
 	if (RenderDevice)
 	{
@@ -239,6 +243,10 @@ void VDirect3DDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans,
 	int CMap)
 {
 	guard(VDirect3DDrawer::SetPic);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
+
 	SetSpriteLump(Tex, Trans, CMap);
 	unguard;
 }
@@ -380,6 +388,10 @@ LPDIRECT3DTEXTURE9 VDirect3DDrawer::UploadTexture(int width, int height, const r
 	vuint8					*stackbuf = (vuint8 *)Z_Malloc(256 * 128 * 4);
 	LPDIRECT3DTEXTURE9		surf;
 	UINT					level;
+
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)

@@ -14,7 +14,7 @@ uniform float		InAlpha;
 void main()
 {
 	vec4 FinalColour = texture2D(Texture, TextureCoordinate);
-	if (FinalColour.a <= 0.333)
+	if (FinalColour.a <= 0.1)
 	{
 		discard;
 	}
@@ -35,5 +35,5 @@ void main()
 		FogFactor = ((FogEnd - z) / (FogEnd - FogStart));
 	}
 	FogFactor = clamp(1.0 - FogFactor, 0.0, 1.0) * InAlpha;
-	gl_FragColor = vec4(FogColour.rgb, FogFactor * FinalColour.a);
+	gl_FragColor = vec4(FogColour.rgb, smoothstep(0.1, 1.0, FogFactor * FinalColour.a));
 }

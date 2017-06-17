@@ -8,7 +8,7 @@ varying vec2		TextureCoordinate;
 void main()
 {
 	vec4 TexColour = texture2D(Texture, TextureCoordinate);
-	if (TexColour.a <= 0.666)
+	if (TexColour.a <= 0.1)
 	{
 		discard;
 	}
