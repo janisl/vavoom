@@ -8,11 +8,19 @@ uniform float		FogStart;
 uniform float		FogEnd;
 
 varying vec2		TextureCoordinate;
+varying vec3		VertToView;
 
 uniform float		InAlpha;
 
 void main()
 {
+	float DistToView = length(VertToView);
+
+	if (DistToView <= 0.0)
+	{
+		discard;
+	}
+
 	vec4 FinalColour = texture2D(Texture, TextureCoordinate);
 	if (FinalColour.a <= 0.1)
 	{

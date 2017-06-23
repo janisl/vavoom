@@ -1,7 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 //#include "resource.h"
-#include "svnrev.h"
+#include "gitrev.h"
 #include "build.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -40,7 +40,7 @@ BEGIN
             VALUE "FileDescription", "Vavoom Engine"
             VALUE "FileVersion", RC_FILEVERSION2
             VALUE "InternalName", "Vavoom"
-            VALUE "LegalCopyright", "Copyright © 1993-1996 id Software, 1999-2009 Jānis Legzdiņš."
+            VALUE "LegalCopyright", "Copyright © 1993-1996 id Software, 1999-2017 Jānis Legzdiņš."
             VALUE "LegalTrademarks", "Doom® is a Registered Trademark of id Software, Inc."
             VALUE "OriginalFilename", "vavoom.exe"
             VALUE "ProductName", "Vavoom: The most Advanced Doom source port."

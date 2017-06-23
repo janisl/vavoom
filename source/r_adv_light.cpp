@@ -416,7 +416,7 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 
     // NOTE: We don't want to filter out shadows that are behind...
 	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist <= 0.0 || dist > CurrLightRadius)
+	if (dist < -CurrLightRadius || dist > CurrLightRadius)
 	{
 		//	Light is too far away
 		return;
@@ -465,7 +465,7 @@ void VAdvancedRenderLevel::RenderShadowSecSurface(sec_surface_t* ssurf, VEntity*
 
 	// NOTE: We don't want to filter out shadows that are behind
 	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
-	if (dist <= 0.0 || dist > CurrLightRadius)
+	if (dist < -CurrLightRadius || dist > CurrLightRadius)
 	{
 		//	Light is too far away
 		return;

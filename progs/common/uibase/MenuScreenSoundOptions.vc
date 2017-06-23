@@ -98,7 +98,7 @@ void CreateChoices()
 	Slider.SetOrigin(ChoicesStartX, currentY);
 	Slider.Text = "Sound Channels";
 	Slider.MinValue = 8.0;
-	Slider.MaxValue = 64.0;
+	Slider.MaxValue = 256.0;
 	Slider.ValueDelta = 8.0;
 	Slider.SetInitialValue(itof(GetCvar('snd_channels')));
 	Slider.ValueChanging = ChangeSoundChannels;

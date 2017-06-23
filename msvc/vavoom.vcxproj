@@ -241,7 +241,7 @@
     <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release64|x64'">F:\Libraries\bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ExecutablePath>E:\Libraries\bin;$(ExecutablePath)</ExecutablePath>
+    <ExecutablePath>E:\Libraries\bin;E:\Libraries\Git\bin;$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug64|Win32'">
     <ExecutablePath>F:\Libraries\bin;$(ExecutablePath)</ExecutablePath>
@@ -254,8 +254,8 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
-      <Message>Checking svnrevision.h...</Message>
-      <Command>"$(OutDir)updaterevision.exe" ../ ../source/svnrev.h</Command>
+      <Message>Checking gitrev.h...</Message>
+      <Command>"$(OutDir)updaterevision.exe" E:\Libraries\Git\bin\ E:\Korax\Vavoom\Source\ E:\Korax\Vavoom\Source\source\gitrev.h</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -668,8 +668,8 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
-      <Message>Checking svnrevision.h...</Message>
-      <Command>"$(OutDir)updaterevision.exe" ../ ../source/svnrev.h</Command>
+      <Message>Checking gitrev.h...</Message>
+      <Command>"$(OutDir)updaterevision.exe" E:\Libraries\Git\bin E:\Korax\Vavoom\Source\ E:\Korax\Vavoom\Source\source\gitrev.h</Command>
     </PreBuildEvent>
     <Midl>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -695,6 +695,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalOptions>/Oy- %(AdditionalOptions)</AdditionalOptions>
       <SDLCheck>false</SDLCheck>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -1768,10 +1769,6 @@
     <ResourceCompile Include="..\source\vavoom.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\utils\updaterevision\updaterevision.vcxproj">
-      <Project>{6077b7d6-349f-4077-b552-3bc302ef5859}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="core.vcxproj">
       <Project>{d509cf19-f957-4f58-8f05-3aa6aa520b2f}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

@@ -208,7 +208,7 @@ VAudioPublic*		GAudio;
 VCvarF				VAudio::snd_sfx_volume("snd_sfx_volume", "0.5", CVAR_Archive);
 VCvarF				VAudio::snd_music_volume("snd_music_volume", "0.5", CVAR_Archive);
 VCvarI				VAudio::snd_swap_stereo("snd_swap_stereo", "0", CVAR_Archive);
-VCvarI				VAudio::snd_channels("snd_channels", "16", CVAR_Archive);
+VCvarI				VAudio::snd_channels("snd_channels", "128", CVAR_Archive);
 VCvarI				VAudio::snd_cd_music("snd_use_cd_music", "0", CVAR_Archive);
 VCvarI				VAudio::snd_external_music("snd_external_music", "1", CVAR_Archive);
 VCvarF				VAudio::snd_eax_distance_unit("snd_eax_distance_unit", "32.0", CVAR_Archive);

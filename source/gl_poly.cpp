@@ -660,6 +660,11 @@ void VOpenGLDrawer::RenderSurfaceShadowVolume(surface_t *surf, TVec& LightPos, f
 	guard(VOpenGLDrawer::RenderSurfaceShadowVolume);
 	int i;
 	TArray<TVec>    v;
+	if (surf->plane->PointOnSide(vieworg) && LightCanCross)
+	{
+		//	Viewer is in back side or on plane
+		return;
+	}
 	float dist = DotProduct(LightPos, surf->plane->normal) - surf->plane->dist;
 	if ((dist <= 0.0 && !LightCanCross) || dist < -Radius || dist > Radius)
 	{
@@ -761,7 +766,7 @@ void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf, TVec& LightPos, float Radi
 	p_glUniform1fARB(ShadowsAmbientTexIHLoc, tex_ih);
 	p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &Surf->plane->normal.x);
 	p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &Surf->plane->dist);
-	p_glVertexAttrib3fvARB(ShadowsLightLightViewOrigin, &vieworg.x);
+	p_glVertexAttrib3fvARB(ShadowsLightViewOrigin, &vieworg.x);
 
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < Surf->count; i++)

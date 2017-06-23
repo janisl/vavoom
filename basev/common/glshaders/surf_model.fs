@@ -10,16 +10,24 @@ uniform float       FogEnd;
 
 varying vec4        Light;
 varying vec2        TextureCoordinate;
+varying vec3		VertToView;
 
 void main()
 {
+	float DistToView = length(VertToView);
+
+	if (DistToView <= 0.0)
+	{
+		discard;
+	}
+
 	vec4 FinalColour = texture2D(Texture, TextureCoordinate) * Light;
 	if (FinalColour.a < 0.1)
 	{
 		discard;
 	}
 
-	if (FogEnabled)
+	if (DistToView > 0.0 && FogEnabled)
 	{
 		float z = gl_FragCoord.z / gl_FragCoord.w;
 		const float LOG2 = 1.442695;
