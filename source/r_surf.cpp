@@ -645,11 +645,11 @@ surface_t* VRenderLevelShared::NewWSurf()
 	if (!free_wsurfs)
 	{
 		//	Allocate some more surfs
-		byte* tmp = (byte*)Z_Malloc(WSURFSIZE * 32 + sizeof(void*));
+		vuint8* tmp = (vuint8*)Z_Malloc(WSURFSIZE * 128 + sizeof(void*));
 		*(void**)tmp = AllocatedWSurfBlocks;
 		AllocatedWSurfBlocks = tmp;
 		tmp += sizeof(void*);
-		for (int i = 0; i < 32; i++)
+		for (int i = 0; i < 128; i++)
 		{
 			((surface_t*)tmp)->next = free_wsurfs;
 			free_wsurfs = (surface_t*)tmp;
@@ -2151,7 +2151,7 @@ void VRenderLevelShared::UpdateSubRegion(subregion_t* region, bool ClipSegs)
 	{
 		if (ClipSegs)
 		{
-			if (!ViewClip.ClipCheckRegion(region->next, r_sub))
+			if (!ViewClip.ClipCheckRegion(region->next, r_sub, false))
 			{
 				return;
 			}
@@ -2183,7 +2183,7 @@ void VRenderLevel::UpdateSubsector(int num, float *bbox)
 		return;
 	}
 
-	if (!ViewClip.ClipCheckSubsector(r_sub))
+	if (!ViewClip.ClipCheckSubsector(r_sub, false))
 	{
 		return;
 	}
@@ -2200,7 +2200,7 @@ void VRenderLevel::UpdateSubsector(int num, float *bbox)
 
 	UpdateSubRegion(r_sub->regions, true);
 
-	ViewClip.ClipAddSubsectorSegs(r_sub);
+	ViewClip.ClipAddSubsectorSegs(r_sub, false);
 	unguard;
 }
 
@@ -2221,7 +2221,7 @@ void VAdvancedRenderLevel::UpdateSubsector(int num, float *bbox)
 		return;
 	}
 
-	if (!ViewClip.ClipCheckSubsector(r_sub))
+	if (!ViewClip.ClipCheckSubsector(r_sub, false))
 	{
 		return;
 	}
@@ -2238,7 +2238,7 @@ void VAdvancedRenderLevel::UpdateSubsector(int num, float *bbox)
 
 	UpdateSubRegion(r_sub->regions, true);
 
-	ViewClip.ClipAddSubsectorSegs(r_sub);
+	ViewClip.ClipAddSubsectorSegs(r_sub, false);
 	unguard;
 }
 
@@ -2256,7 +2256,7 @@ void VRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 		return;
 	}
 
-	if (!ViewClip.ClipIsBBoxVisible(bbox))
+	if (!ViewClip.ClipIsBBoxVisible(bbox, false))
 	{
 		return;
 	}
@@ -2283,7 +2283,7 @@ void VRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 		UpdateBSPNode(bsp->children[side], bsp->bbox[side]);
 		bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
 		bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
-		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
+		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1], false))
 		{
 			return;
 		}
@@ -2309,7 +2309,7 @@ void VAdvancedRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 		return;
 	}
 
-	if (!ViewClip.ClipIsBBoxVisible(bbox))
+	if (!ViewClip.ClipIsBBoxVisible(bbox, false))
 	{
 		return;
 	}
@@ -2331,7 +2331,7 @@ void VAdvancedRenderLevel::UpdateBSPNode(int bspnum, float* bbox)
 		UpdateBSPNode(bsp->children[side], bsp->bbox[side]);
 		bbox[2] = MIN(bsp->bbox[0][2], bsp->bbox[1][2]);
 		bbox[5] = MAX(bsp->bbox[0][5], bsp->bbox[1][5]);
-		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
+		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1], false))
 		{
 			return;
 		}

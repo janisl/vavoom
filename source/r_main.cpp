@@ -857,11 +857,11 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	vuint8*         dyn_facevis;
 	linetrace_t		Trace;
 
+	CurrLightsNumber = 0;
+	CurrShadowsNumber = 0;
+
 	if (!FixedLight && r_static_lights)
 	{
-		CurrLightsNumber = 0;
-		CurrShadowsNumber = 0;
-
 		for (int i = 0; i < Lights.Num(); i++)
 		{
 			if (!Lights[i].radius)
@@ -896,9 +896,6 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	if (!FixedLight && r_dynamic)
 	{
 		dlight_t* l = DLights;
-
-		CurrLightsNumber = 0;
-		CurrShadowsNumber = 0;
 
 		for (int i = 0; i < MAX_DLIGHTS; i++, l++)
 		{

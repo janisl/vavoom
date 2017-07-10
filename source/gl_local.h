@@ -548,6 +548,7 @@ protected:
 	GLint					SurfModelVert2Loc;
 	GLint					SurfModelTexCoordLoc;
 	GLint					SurfModelLightValLoc;
+	GLint					SurfModelViewOrigin;
 
 	GLhandleARB				SurfPartProgram;
 	GLint					SurfPartTexCoordLoc;
@@ -576,7 +577,7 @@ protected:
 	GLint					ShadowsLightTexIWLoc;
 	GLint					ShadowsLightTexIHLoc;
 	GLint					ShadowsLightTextureLoc;
-	GLint					ShadowsLightLightViewOrigin;
+	GLint					ShadowsLightViewOrigin;
 
 	GLhandleARB				ShadowsTextureProgram;
 	GLint					ShadowsTextureTexCoordLoc;
@@ -587,17 +588,25 @@ protected:
 	GLint					ShadowsModelAmbientTextureLoc;
 	GLint					ShadowsModelAmbientLightLoc;
 	GLint					ShadowsModelAmbientModelToWorldMatLoc;
+	GLint					ShadowsModelAmbientNormalToWorldMatLoc;
 	GLint					ShadowsModelAmbientVert2Loc;
+	GLint					ShadowsModelAmbientVertNormalLoc;
+	GLint					ShadowsModelAmbientVert2NormalLoc;
 	GLint					ShadowsModelAmbientTexCoordLoc;
 	GLint					ShadowsModelAmbientAlphaLoc;
+	GLint					ShadowsModelAmbientViewOrigin;
 
 	GLhandleARB				ShadowsModelTexturesProgram;
 	GLint					ShadowsModelTexturesInterLoc;
 	GLint					ShadowsModelTexturesTextureLoc;
 	GLint					ShadowsModelTexturesAlphaLoc;
 	GLint					ShadowsModelTexturesModelToWorldMatLoc;
+	GLint					ShadowsModelTexturesNormalToWorldMatLoc;
 	GLint					ShadowsModelTexturesVert2Loc;
+	GLint					ShadowsModelTexturesVertNormalLoc;
+	GLint					ShadowsModelTexturesVert2NormalLoc;
 	GLint					ShadowsModelTexturesTexCoordLoc;
+	GLint					ShadowsModelTexturesViewOrigin;
 
 	GLhandleARB				ShadowsModelLightProgram;
 	GLint					ShadowsModelLightInterLoc;
@@ -619,6 +628,7 @@ protected:
 	GLint					ShadowsModelShadowModelToWorldMatLoc;
 	GLint					ShadowsModelShadowVert2Loc;
 	GLint					ShadowsModelShadowOffsetLoc;
+	GLint					ShadowsModelShadowViewOrigin;
 
 	GLhandleARB				ShadowsFogProgram;
 	GLint					ShadowsFogFogTypeLoc;
@@ -639,6 +649,7 @@ protected:
 	GLint					ShadowsModelFogVert2Loc;
 	GLint					ShadowsModelFogTexCoordLoc;
 	GLint					ShadowsModelFogAlphaLoc;
+	GLint					ShadowsModelFogViewOrigin;
 
 	//
 	//	Console variables

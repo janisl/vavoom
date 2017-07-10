@@ -29,7 +29,7 @@
 #include "network.h"
 #include "cl_local.h"
 #include "ui.h"
-#include "svnrev.h"
+#include "gitrev.h"
 #include <time.h>
 
 // MACROS ------------------------------------------------------------------
@@ -114,7 +114,7 @@ static VCvarS	Language("language", "en", CVAR_Archive);
 
 void Host_PrintVersion()
 {
-	dprintf("%s\n", "VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
+	dprintf("%s\n", "VAVOOM version " VERSION_TEXT" (r" GIT_DESCRIPTION ").");
 	#ifdef SPECIAL_VERSION_TEXT
 		dprintf("%s\n", SPECIAL_VERSION_TEXT".");
 	#endif
@@ -563,7 +563,7 @@ void Host_Error(const char *error, ...)
 
 COMMAND(Version)
 {
-	GCon->Log("VAVOOM version " VERSION_TEXT" (r" SVN_REVISION_STRING ").");
+	GCon->Log("VAVOOM version " VERSION_TEXT" (r" REVISION GIT_HASH ").");
 	GCon->Log("Compiled " __DATE__ " " __TIME__ ".");
 }
 

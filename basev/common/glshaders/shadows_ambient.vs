@@ -1,21 +1,24 @@
 #version 110
 
-uniform vec3		SAxis;
-uniform vec3		TAxis;
-uniform float		SOffs;
-uniform float		TOffs;
-uniform float		TexIW;
-uniform float		TexIH;
+uniform vec3 SAxis;
+uniform vec3 TAxis;
+uniform float SOffs;
+uniform float TOffs;
+uniform float TexIW;
+uniform float TexIH;
 
-varying vec2		TextureCoordinate;
+varying vec2 TextureCoordinate;
 
-void main()
+void main ()
 {
 	//	Transforming The Vertex
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
 
 	//	Calculate texture coordinates.
-	float s = (dot(gl_Vertex.xyz, SAxis) + SOffs) * TexIW;
-	float t = (dot(gl_Vertex.xyz, TAxis) + TOffs) * TexIH;
-	TextureCoordinate = vec2(s, t);
+	vec2 ts;
+
+	ts.x = ((dot (gl_Vertex.xyz, SAxis) + SOffs) * TexIW);
+	ts.y = ((dot (gl_Vertex.xyz, TAxis) + TOffs) * TexIH);
+
+	TextureCoordinate = ts;
 }
