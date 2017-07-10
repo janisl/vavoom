@@ -50,8 +50,8 @@ public:
 	bool IsRangeVisible(float, float);
 	bool ClipIsFull();
 	float PointToClipAngle(const TVec&);
-	bool ClipIsBBoxVisible(float*);
-	bool ClipCheckRegion(subregion_t*, subsector_t*);
-	bool ClipCheckSubsector(subsector_t*);
-	void ClipAddSubsectorSegs(subsector_t*, TPlane* = NULL);
+	bool ClipIsBBoxVisible(float*, bool, const TVec& = TVec(0, 0, 0), float = 0);
+	bool ClipCheckRegion(subregion_t*, subsector_t*, bool, const TVec& = TVec(0, 0, 0), float = 0);
+	bool ClipCheckSubsector(subsector_t*, bool, const TVec& = TVec(0, 0, 0), float = 0);
+	void ClipAddSubsectorSegs(subsector_t*, bool, TPlane* = NULL, const TVec& = TVec(0, 0, 0), float = 0);
 };

@@ -1,31 +1,30 @@
 #version 110
 
-uniform float		Inter;
-uniform vec3		LightPos;
-uniform mat4		ModelToWorldMat;
+uniform mat4 ModelToWorldMat;
+uniform vec3 LightPos;
+uniform vec3 ViewOrigin;
+uniform float Inter;
 
-attribute vec4		Vert2;
-attribute float		Offset;
-attribute vec3		ViewOrigin;
+attribute vec4 Vert2;
+attribute float Offset;
 
-varying vec3		VertToView;
-varying vec3		VertToLight;
+varying vec3 VertToView;
+varying vec3 VertToLight;
 
-void main()
+void main ()
 {
-	vec4 Vert = mix(gl_Vertex, Vert2, Inter);
-	Vert = Vert * ModelToWorldMat;
+	vec4 Vert_1;
 
-	if (Offset > 0.0)
+	Vert_1 = (mix (gl_Vertex, Vert2, Inter) * ModelToWorldMat);
+	if ((Offset > 0.0))
 	{
-		vec3 Dir = normalize(Vert.xyz - LightPos);
+		Vert_1.xyz = (LightPos + (Offset * normalize(
+			(Vert_1.xyz - LightPos)
+			)));
+		VertToLight = (LightPos - Vert_1.xyz);
+	};
+	gl_Position = (gl_ModelViewProjectionMatrix * Vert_1);
 
-//		Vert += Offset * vec4(Dir, 0.0);
-		Vert.xyz = LightPos + Offset * Dir;
-	}
-
-	gl_Position = gl_ModelViewProjectionMatrix * Vert;
-
-	VertToLight.xyz = LightPos.xyz - Vert.xyz;
-	VertToView.xyz = ViewOrigin.xyz - Vert.xyz;
+	VertToView = (ViewOrigin - Vert_1.xyz);
 }
+

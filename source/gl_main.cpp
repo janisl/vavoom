@@ -541,7 +541,7 @@ void VOpenGLDrawer::InitResolution()
 		SurfModelVert2Loc = p_glGetAttribLocationARB(SurfModelProgram, "Vert2");
 		SurfModelTexCoordLoc = p_glGetAttribLocationARB(SurfModelProgram, "TexCoord");
 		SurfModelLightValLoc = p_glGetAttribLocationARB(SurfModelProgram, "LightVal");
-		SurfModelViewOrigin = p_glGetAttribLocationARB(SurfModelProgram, "ViewOrigin");
+		SurfModelViewOrigin = p_glGetUniformLocationARB(SurfModelProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/surf_part.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/surf_part.fs");
@@ -576,7 +576,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsLightTexIWLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIW");
 		ShadowsLightTexIHLoc = p_glGetUniformLocationARB(SurfSimpleProgram, "TexIH");
 		ShadowsLightTextureLoc = p_glGetUniformLocationARB(ShadowsAmbientProgram, "Texture");
-		ShadowsLightViewOrigin = p_glGetAttribLocationARB(ShadowsLightProgram, "ViewOrigin");
+		ShadowsLightViewOrigin = p_glGetUniformLocationARB(ShadowsLightProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_texture.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_texture.fs");
@@ -591,10 +591,13 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelAmbientTextureLoc = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "Texture");
 		ShadowsModelAmbientLightLoc = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "Light");
 		ShadowsModelAmbientModelToWorldMatLoc = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "ModelToWorldMat");
+		ShadowsModelAmbientNormalToWorldMatLoc = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "NormalToWorldMat");
 		ShadowsModelAmbientVert2Loc = p_glGetAttribLocationARB(ShadowsModelAmbientProgram, "Vert2");
+		ShadowsModelAmbientVertNormalLoc = p_glGetAttribLocationARB(ShadowsModelAmbientProgram, "VertNormal");
+		ShadowsModelAmbientVert2NormalLoc = p_glGetAttribLocationARB(ShadowsModelAmbientProgram, "Vert2Normal");
 		ShadowsModelAmbientTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelAmbientProgram, "TexCoord");
 		ShadowsModelAmbientAlphaLoc = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "InAlpha");
-		ShadowsModelAmbientViewOrigin = p_glGetAttribLocationARB(ShadowsModelAmbientProgram, "ViewOrigin");
+		ShadowsModelAmbientViewOrigin = p_glGetUniformLocationARB(ShadowsModelAmbientProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_model_textures.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_model_textures.fs");
@@ -602,10 +605,13 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelTexturesInterLoc = p_glGetUniformLocationARB(ShadowsModelTexturesProgram, "Inter");
 		ShadowsModelTexturesTextureLoc = p_glGetUniformLocationARB(ShadowsModelTexturesProgram, "Texture");
 		ShadowsModelTexturesModelToWorldMatLoc = p_glGetUniformLocationARB(ShadowsModelTexturesProgram, "ModelToWorldMat");
+		ShadowsModelTexturesNormalToWorldMatLoc = p_glGetUniformLocationARB(ShadowsModelTexturesProgram, "NormalToWorldMat");
 		ShadowsModelTexturesVert2Loc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "Vert2");
 		ShadowsModelTexturesTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "TexCoord");
+		ShadowsModelTexturesVertNormalLoc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "VertNormal");
+		ShadowsModelTexturesVert2NormalLoc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "Vert2Normal");
 		ShadowsModelTexturesAlphaLoc = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "InAlpha");
-		ShadowsModelTexturesViewOrigin = p_glGetAttribLocationARB(ShadowsModelTexturesProgram, "ViewOrigin");
+		ShadowsModelTexturesViewOrigin = p_glGetUniformLocationARB(ShadowsModelTexturesProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_model_light.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_model_light.fs");
@@ -621,7 +627,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelLightVertNormalLoc = p_glGetAttribLocationARB(ShadowsModelLightProgram, "VertNormal");
 		ShadowsModelLightVert2NormalLoc = p_glGetAttribLocationARB(ShadowsModelLightProgram, "Vert2Normal");
 		ShadowsModelLightTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelLightProgram, "TexCoord");
-		ShadowsModelLightViewOrigin = p_glGetAttribLocationARB(ShadowsModelLightProgram, "ViewOrigin");
+		ShadowsModelLightViewOrigin = p_glGetUniformLocationARB(ShadowsModelLightProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_model_shadow.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_model_shadow.fs");
@@ -631,7 +637,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelShadowModelToWorldMatLoc = p_glGetUniformLocationARB(ShadowsModelShadowProgram, "ModelToWorldMat");
 		ShadowsModelShadowVert2Loc = p_glGetAttribLocationARB(ShadowsModelShadowProgram, "Vert2");
 		ShadowsModelShadowOffsetLoc = p_glGetAttribLocationARB(ShadowsModelShadowProgram, "Offset");
-		ShadowsModelShadowViewOrigin = p_glGetAttribLocationARB(ShadowsModelShadowProgram, "ViewOrigin");
+		ShadowsModelShadowViewOrigin = p_glGetUniformLocationARB(ShadowsModelShadowProgram, "ViewOrigin");
 
 		VertexShader = LoadShader(GL_VERTEX_SHADER_ARB, "glshaders/shadows_fog.vs");
 		FragmentShader = LoadShader(GL_FRAGMENT_SHADER_ARB, "glshaders/shadows_fog.fs");
@@ -656,7 +662,7 @@ void VOpenGLDrawer::InitResolution()
 		ShadowsModelFogVert2Loc = p_glGetAttribLocationARB(ShadowsModelFogProgram, "Vert2");
 		ShadowsModelFogTexCoordLoc = p_glGetAttribLocationARB(ShadowsModelFogProgram, "TexCoord");
 		ShadowsModelFogAlphaLoc = p_glGetUniformLocationARB(ShadowsModelFogProgram, "InAlpha");
-		ShadowsModelFogViewOrigin = p_glGetAttribLocationARB(ShadowsModelFogProgram, "ViewOrigin");
+		ShadowsModelFogViewOrigin = p_glGetUniformLocationARB(ShadowsModelFogProgram, "ViewOrigin");
 	}
 	unguard;
 }

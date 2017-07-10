@@ -766,7 +766,7 @@ void VOpenGLDrawer::DrawSurfaceLight(surface_t* Surf, TVec& LightPos, float Radi
 	p_glUniform1fARB(ShadowsAmbientTexIHLoc, tex_ih);
 	p_glVertexAttrib3fvARB(ShadowsLightSurfNormalLoc, &Surf->plane->normal.x);
 	p_glVertexAttrib1fvARB(ShadowsLightSurfDistLoc, &Surf->plane->dist);
-	p_glVertexAttrib3fvARB(ShadowsLightViewOrigin, &vieworg.x);
+	p_glUniform3fARB(ShadowsLightViewOrigin, vieworg.x, vieworg.y, vieworg.z);
 
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < Surf->count; i++)

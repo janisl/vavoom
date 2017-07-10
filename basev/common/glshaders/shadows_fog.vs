@@ -1,7 +1,8 @@
 #version 110
 
-void main()
+void main ()
 {
 	//	Transforming The Vertex
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
 }
+

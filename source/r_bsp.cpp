@@ -768,7 +768,7 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 		region->floor->secplane->dist;
 	if (region->next && d <= 0.0)
 	{
-		if (!ViewClip.ClipCheckRegion(region->next, r_sub))
+		if (!ViewClip.ClipCheckRegion(region->next, r_sub, false))
 		{
 			return;
 		}
@@ -805,7 +805,7 @@ void VRenderLevelShared::RenderSubRegion(subregion_t* region)
 
 	if (region->next && d > 0.0)
 	{
-		if (!ViewClip.ClipCheckRegion(region->next, r_sub))
+		if (!ViewClip.ClipCheckRegion(region->next, r_sub, false))
 		{
 			return;
 		}
@@ -837,7 +837,7 @@ void VRenderLevelShared::RenderSubsector(int num)
 		return;
 	}
 
-	if (!ViewClip.ClipCheckSubsector(Sub))
+	if (!ViewClip.ClipCheckSubsector(Sub, false))
 	{
 		return;
 	}
@@ -848,7 +848,7 @@ void VRenderLevelShared::RenderSubsector(int num)
 
 	//	Add subsector's segs to the clipper. Clipping against mirror
 	// is done only for vertical mirror planes.
-	ViewClip.ClipAddSubsectorSegs(Sub, MirrorClipSegs ? &view_clipplanes[4] :
+	ViewClip.ClipAddSubsectorSegs(Sub, false, MirrorClipSegs ? &view_clipplanes[4] :
 		NULL);
 	unguard;
 }
@@ -911,7 +911,7 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 		}
 	}
 
-	if (!ViewClip.ClipIsBBoxVisible(bbox))
+	if (!ViewClip.ClipIsBBoxVisible(bbox, false))
 	{
 		return;
 	}
@@ -939,7 +939,7 @@ void VRenderLevelShared::RenderBSPNode(int bspnum, float* bbox, int AClipflags)
 		RenderBSPNode(bsp->children[side], bsp->bbox[side], clipflags);
 
 		// Possibly divide back space (away from the viewer).
-		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
+		if (!ViewClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1], false))
 		{
 			return;
 		}

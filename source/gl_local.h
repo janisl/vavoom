@@ -588,7 +588,10 @@ protected:
 	GLint					ShadowsModelAmbientTextureLoc;
 	GLint					ShadowsModelAmbientLightLoc;
 	GLint					ShadowsModelAmbientModelToWorldMatLoc;
+	GLint					ShadowsModelAmbientNormalToWorldMatLoc;
 	GLint					ShadowsModelAmbientVert2Loc;
+	GLint					ShadowsModelAmbientVertNormalLoc;
+	GLint					ShadowsModelAmbientVert2NormalLoc;
 	GLint					ShadowsModelAmbientTexCoordLoc;
 	GLint					ShadowsModelAmbientAlphaLoc;
 	GLint					ShadowsModelAmbientViewOrigin;
@@ -598,7 +601,10 @@ protected:
 	GLint					ShadowsModelTexturesTextureLoc;
 	GLint					ShadowsModelTexturesAlphaLoc;
 	GLint					ShadowsModelTexturesModelToWorldMatLoc;
+	GLint					ShadowsModelTexturesNormalToWorldMatLoc;
 	GLint					ShadowsModelTexturesVert2Loc;
+	GLint					ShadowsModelTexturesVertNormalLoc;
+	GLint					ShadowsModelTexturesVert2NormalLoc;
 	GLint					ShadowsModelTexturesTexCoordLoc;
 	GLint					ShadowsModelTexturesViewOrigin;
 

@@ -1,55 +1,78 @@
 #version 110
 
-uniform sampler2D	Texture;
-uniform vec3		LightColour;
-uniform float		LightRadius;
+uniform sampler2D Texture;
+uniform vec3 LightColour;
+uniform float LightRadius;
 
-varying vec3		Normal;
-varying float		Dist;
-varying vec3		VertToLight;
-varying vec3		VertToView;
-varying vec2		TextureCoordinate;
+varying vec3 Normal;
+varying vec3 VertToLight;
+varying vec3 VertToView;
+varying vec2 TextureCoordinate;
+varying float Dist;
+varying float VDist;
 
-void main()
+void main ()
 {
-	float DistToView = length(VertToView);
-	if (DistToView <= 0.0)
-	{
-		discard;
-	}
-	if (Dist <= 0.0)
-	{
-		discard;
-	}
+	float Add_1;
+	float DistToView;
 
-	float DistToLight = length(VertToLight); //* 100.0;
-	if (DistToLight <= 0.0)
-	{
-		discard;
-	}
-	if (DistToLight > LightRadius)
-	{
-		discard;
-	}
+	DistToView = sqrt(dot (VertToView, VertToView));
 
-	vec4 TexColour = texture2D(Texture, TextureCoordinate);
-	if (TexColour.a < 0.1)
+	if ((DistToView <= 0.0))
 	{
 		discard;
-	}
-
-	vec3 Incoming = normalize(VertToLight);
-	float Angle = dot(Incoming, Normal);
-	Angle = 0.5 + 0.5 * Angle;
-	//float Add = LightRadius - Dist;
-	float Add = LightRadius - DistToLight;
-	Add *= Angle;
-	if (Add <= 0.0)
+	};
+	if ((VDist <= 0.0))
 	{
 		discard;
-	}
-	Add = clamp(Add / 255.0, 0.0, 1.0);
+	};
+	if ((Dist <= 0.0))
+	{
+		discard;
+	};
+	float DistToLight;
 
-	gl_FragColor = vec4(LightColour.rgb, Add * smoothstep(0.1, 1.0, TexColour.a));
+	DistToLight = sqrt(dot (VertToLight, VertToLight)); //* 100.0;
+	if ((DistToLight <= 0.0))
+	{
+		discard;
+	};
+	if ((DistToLight > LightRadius))
+	{
+		discard;
+	};
+	vec4 TexColour;
+
+	TexColour = texture2D (Texture, TextureCoordinate);
+
+	if ((TexColour.w < 0.1))
+	{
+		discard;
+	};
+	//Add_1 = LightRadius - Dist;
+	Add_1 = ((LightRadius - DistToLight) * (0.5 + (0.5 * 
+		dot (normalize(VertToLight), Normal)
+		)));
+
+	if ((Add_1 <= 0.0))
+	{
+		discard;
+	};
+	float ClampAdd;
+
+	ClampAdd = clamp ((Add_1 / 255.0), 0.0, 1.0);
+	Add_1 = ClampAdd;
+
+	float ClampTransp;
+	
+	ClampTransp = clamp (((TexColour.w - 0.1) / 0.9), 0.0, 1.0);
+	vec4 FinalColour;
+
+	FinalColour.xyz = LightColour;
+	FinalColour.w = (ClampAdd * (ClampTransp * (ClampTransp * 
+		(3.0 - (2.0 * ClampTransp))
+		)));
+
+	gl_FragColor = FinalColour;
 //	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

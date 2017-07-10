@@ -258,7 +258,7 @@ void VAdvancedRenderLevel::BuildLightVis(int bspnum, float* bbox)
 		return;
 	}
 
-	if (!LightClip.ClipIsBBoxVisible(bbox))
+	if (!LightClip.ClipIsBBoxVisible(bbox, true, CurrLightPos, CurrLightRadius))
 	{
 		return;
 	}
@@ -273,13 +273,13 @@ void VAdvancedRenderLevel::BuildLightVis(int bspnum, float* bbox)
 			return;
 		}
 
-		if (!LightClip.ClipCheckSubsector(Sub))
+		if (!LightClip.ClipCheckSubsector(Sub, true, CurrLightPos, CurrLightRadius))
 		{
 			return;
 		}
 
 		LightVis[SubNum >> 3] |= 1 << (SubNum & 7);
-		LightClip.ClipAddSubsectorSegs(Sub);
+		LightClip.ClipAddSubsectorSegs(Sub, true, NULL, CurrLightPos, CurrLightRadius);
 		return;
 	}
 
@@ -308,7 +308,7 @@ void VAdvancedRenderLevel::BuildLightVis(int bspnum, float* bbox)
 			BuildLightVis(bsp->children[side], bsp->bbox[side]);
 
 			// Possibly divide back space.
-			if (!LightClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
+			if (!LightClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1], true, CurrLightPos, CurrLightRadius))
 			{
 				return;
 			}
@@ -326,13 +326,13 @@ void VAdvancedRenderLevel::BuildLightVis(int bspnum, float* bbox)
 		return;
 	}
 
-	if (!LightClip.ClipCheckSubsector(Sub))
+	if (!LightClip.ClipCheckSubsector(Sub, true, CurrLightPos, CurrLightRadius))
 	{
 		return;
 	}
 
 	LightVis[SubNum >> 3] |= 1 << (SubNum & 7);
-	LightClip.ClipAddSubsectorSegs(Sub);
+	LightClip.ClipAddSubsectorSegs(Sub, true, NULL, CurrLightPos, CurrLightRadius);
 	unguard;
 }
 
@@ -399,11 +399,11 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 
 	// There might be a better method of doing this, but
 	// this one works for now...
-	if (D1 > 0.0 && D2 < 0.0)
+	if (D1 > CurrLightRadius && D2 <= -CurrLightRadius)
 	{
 		v2 += ((v2 - v1) * D1 / (D1 - D2));
 	}
-	else if (D2 > 0.0 && D1 < 0.0)
+	else if (D2 > CurrLightRadius && D1 <= -CurrLightRadius)
 	{
 		v1 += ((v1 - v2) * D2 / (D2 - D1));
 	}
@@ -494,9 +494,9 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 
 	d = DotProduct(CurrLightPos, region->floor->secplane->normal) -
 		region->floor->secplane->dist;
-	if (region->next /*&& region->floor->secplane->PointOnSide(CurrLightPos)*/ && d > -CurrLightRadius)
+	if (region->next && d <= -CurrLightRadius)
 	{
-		if (!LightClip.ClipCheckRegion(region->next, r_sub))
+		if (!LightClip.ClipCheckRegion(region->next, r_sub, true, CurrLightPos, CurrLightRadius))
 		{
 			return;
 		}
@@ -528,9 +528,9 @@ void VAdvancedRenderLevel::RenderShadowSubRegion(subregion_t* region)
 	RenderShadowSecSurface(region->floor, r_region->floor->SkyBox);
 	RenderShadowSecSurface(region->ceil, r_region->ceiling->SkyBox);
 
-	if (region->next /*&& !region->floor->secplane->PointOnSide(CurrLightPos)*/ && d < CurrLightRadius)
+	if (region->next && d > CurrLightRadius)
 	{
-		if (!LightClip.ClipCheckRegion(region->next, r_sub))
+		if (!LightClip.ClipCheckRegion(region->next, r_sub, true, CurrLightPos, CurrLightRadius))
 		{
 			return;
 		}
@@ -564,7 +564,7 @@ void VAdvancedRenderLevel::RenderShadowSubsector(int num)
 		return;
 	}
 
-	if (!LightClip.ClipCheckSubsector(Sub))
+	if (!LightClip.ClipCheckSubsector(Sub, true, CurrLightPos, CurrLightRadius))
 	{
 		return;
 	}
@@ -573,7 +573,7 @@ void VAdvancedRenderLevel::RenderShadowSubsector(int num)
 
 	//	Add subsector's segs to the clipper. Clipping against mirror
 	// is done only for vertical mirror planes.
-	LightClip.ClipAddSubsectorSegs(Sub);
+	LightClip.ClipAddSubsectorSegs(Sub, true, NULL, CurrLightPos, CurrLightRadius);
 	unguard;
 }
 
@@ -599,7 +599,7 @@ void VAdvancedRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox, bool Lim
 		return;
 	}
 
-	if (!LightClip.ClipIsBBoxVisible(bbox))
+	if (!LightClip.ClipIsBBoxVisible(bbox, true, CurrLightPos, CurrLightRadius))
 	{
 		return;
 	}
@@ -732,11 +732,11 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 
 	// There might be a better method of doing this, but
 	// this one works for now...
-	if (D1 > 0.0 && D2 < 0.0)
+	if (D1 > CurrLightRadius && D2 <= -CurrLightRadius)
 	{
 		v2 += ((v2 - v1) * D1 / (D1 - D2));
 	}
-	else if (D2 > 0.0 && D1 < 0.0)
+	else if (D2 > CurrLightRadius && D1 <= -CurrLightRadius)
 	{
 		v1 += ((v1 - v2) * D2 / (D2 - D1));
 	}
@@ -748,7 +748,7 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 	}
 
 	float dist = DotProduct(CurrLightPos, line->normal) - line->dist;
-	if (dist <= 0.0 || dist > CurrLightRadius)
+	if (dist <= -CurrLightRadius || dist > CurrLightRadius)
 	{
 		//	Light is in back side or on plane
 		return;
@@ -803,7 +803,7 @@ void VAdvancedRenderLevel::RenderLightSecSurface(sec_surface_t* ssurf, VEntity* 
 	}
 
 	float dist = DotProduct(CurrLightPos, plane.normal) - plane.dist;
-	if (dist <= 0.0 || dist > CurrLightRadius)
+	if (dist <= -CurrLightRadius || dist > CurrLightRadius)
 	{
 		//	Light is in back side or on plane
 		return;
@@ -832,9 +832,9 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 
 	d = DotProduct(CurrLightPos, region->floor->secplane->normal) -
 		region->floor->secplane->dist;
-	if (region->next && d <= 0.0)
+	if (region->next && d <= -CurrLightRadius)
 	{
-		if (!LightClip.ClipCheckRegion(region->next, r_sub))
+		if (!LightClip.ClipCheckRegion(region->next, r_sub, true, CurrLightPos, CurrLightRadius))
 		{
 			return;
 		}
@@ -866,9 +866,9 @@ void VAdvancedRenderLevel::RenderLightSubRegion(subregion_t* region)
 	RenderLightSecSurface(region->floor, r_region->floor->SkyBox);
 	RenderLightSecSurface(region->ceil, r_region->ceiling->SkyBox);
 
-	if (region->next && d > 0.0)
+	if (region->next && d > CurrLightRadius)
 	{
-		if (!LightClip.ClipCheckRegion(region->next, r_sub))
+		if (!LightClip.ClipCheckRegion(region->next, r_sub, true, CurrLightPos, CurrLightRadius))
 		{
 			return;
 		}
@@ -901,7 +901,7 @@ void VAdvancedRenderLevel::RenderLightSubsector(int num)
 		return;
 	}
 
-	if (!LightClip.ClipCheckSubsector(Sub))
+	if (!LightClip.ClipCheckSubsector(Sub, true, CurrLightPos, CurrLightRadius))
 	{
 		return;
 	}
@@ -910,7 +910,7 @@ void VAdvancedRenderLevel::RenderLightSubsector(int num)
 
 	//	Add subsector's segs to the clipper. Clipping against mirror
 	// is done only for vertical mirror planes.
-	LightClip.ClipAddSubsectorSegs(Sub);
+	LightClip.ClipAddSubsectorSegs(Sub, true, NULL, CurrLightPos, CurrLightRadius);
 	unguard;
 }
 
@@ -936,7 +936,7 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox, bool Limi
 		return;
 	}
 
-	if (!LightClip.ClipIsBBoxVisible(bbox))
+	if (!LightClip.ClipIsBBoxVisible(bbox, true, CurrLightPos, CurrLightRadius))
 	{
 		return;
 	}
@@ -976,7 +976,7 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox, bool Limi
 			RenderLightBSPNode(bsp->children[side], bsp->bbox[side], false);
 
 			// Possibly divide back space
-			if (!LightClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1]))
+			if (!LightClip.ClipIsBBoxVisible(bsp->bbox[side ^ 1], true, CurrLightPos, CurrLightRadius))
 			{
 				if (LimitLights)
 				{

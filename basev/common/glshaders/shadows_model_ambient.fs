@@ -1,27 +1,65 @@
 #version 110
 
-uniform sampler2D	Texture;
-uniform vec4		Light;
+uniform vec4 Light;
+uniform sampler2D Texture;
+uniform float InAlpha;
 
-varying vec2		TextureCoordinate;
-varying vec3		VertToView;
+varying vec2 TextureCoordinate;
+varying vec3 VertToView;
+varying float Dist;
 
-uniform float		InAlpha;
-
-void main()
+void main ()
 {
-	/*float DistToView = length(VertToView);
+	vec4 FinalColor_1;
+	float DistToView;
 
-	if (DistToView <= 0.0)
+	DistToView = sqrt(dot (VertToView, VertToView));
+
+	if ((DistToView <= 0.0))
 	{
 		discard;
-	}*/
+	};
+	vec4 TexColour;
 
-	vec4 TexColour = texture2D(Texture, TextureCoordinate);
-	if (TexColour.a < 0.1)
+	TexColour = texture2D (Texture, TextureCoordinate);
+
+	if ((TexColour.w < 0.1))
 	{
 		discard;
+	};
+
+	if ((Dist <= 0.0))
+	{
+		float ClampTransp;
+
+		ClampTransp = clamp (((
+			(Light.w * TexColour.w)
+			- 0.1) / 0.9), 0.0, 1.0);
+		vec4 DarkColour;
+
+		DarkColour.xyz = (Light.xyz * 0.85);
+		DarkColour.w = (InAlpha * (ClampTransp * (ClampTransp * 
+			(3.0 - (2.0 * ClampTransp))
+			)));
+
+		FinalColor_1 = DarkColour;
 	}
+	else
+	{
+		float ClampTransp;
 
-	gl_FragColor = vec4(Light.rgb, InAlpha * smoothstep(0.1, 1.0, Light.a * TexColour.a));
+		ClampTransp = clamp (((
+			(Light.w * TexColour.w)
+			- 0.1) / 0.9), 0.0, 1.0);
+		vec4 BrightColour;
+
+		BrightColour.xyz = Light.xyz;
+		BrightColour.w = (InAlpha * (ClampTransp * (ClampTransp * 
+			(3.0 - (2.0 * ClampTransp))
+			)));
+
+		FinalColor_1 = BrightColour;
+  };
+
+  gl_FragColor = FinalColor_1;
 }

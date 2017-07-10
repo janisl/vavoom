@@ -1,45 +1,67 @@
 #version 110
 
-uniform sampler2D	Texture;
-uniform vec4		Light;
-uniform bool		FogEnabled;
-uniform int			FogType;
-uniform vec4		FogColour;
-uniform float		FogDensity;
-uniform float		FogStart;
-uniform float		FogEnd;
-uniform float		AlphaRef;
+uniform sampler2D Texture;
+uniform vec4 Light;
+uniform bool FogEnabled;
+uniform int FogType;
+uniform vec4 FogColour;
+uniform float FogDensity;
+uniform float FogStart;
+uniform float FogEnd;
+uniform float AlphaRef;
 
-varying vec2		TextureCoordinate;
+varying vec2 TextureCoordinate;
 
-void main()
+void main ()
 {
-	vec4 FinalColour = texture2D(Texture, TextureCoordinate) * Light;
-	if (FinalColour.a < AlphaRef)
+	vec4 FinalColour_1;
+	vec4 TexColour;
+
+	TexColour = (texture2D (Texture, TextureCoordinate) * Light);
+	FinalColour_1 = TexColour;
+
+	if ((TexColour.w < AlphaRef))
 	{
 		discard;
-	}
+	};
 
 	if (FogEnabled)
 	{
-		float z = gl_FragCoord.z / gl_FragCoord.w;
-		const float LOG2 = 1.442695;
-		float FogFactor;
-		if (FogType == 3)
+		float FogFactor_3;
+		float z;
+
+		z = (gl_FragCoord.z / gl_FragCoord.w);
+
+		if ((FogType == 3))
 		{
-			FogFactor = exp2(-FogDensity * FogDensity * z * z * LOG2);
-		}
-		else if (FogType == 2)
-		{
-			FogFactor = exp2(-FogDensity * z * LOG2);
+			FogFactor_3 = exp2(((
+				((-(FogDensity) * FogDensity) * z)
+				* z) * 1.442695));
 		}
 		else
 		{
-			FogFactor = (FogEnd - z) / (FogEnd - FogStart);
-		}
-		FogFactor = clamp(FogFactor, 0.0, 1.0);
-		FinalColour = mix(FogColour, FinalColour, smoothstep(AlphaRef, 1.0, FogFactor));
-	}
+			if ((FogType == 2))
+			{
+				FogFactor_3 = exp2(((
+					-(FogDensity)
+					* z) * 1.442695));
+			}
+			else
+			{
+				FogFactor_3 = ((FogEnd - z) / (FogEnd - FogStart));
+			};
+		};
+		float ClampFactor;
 
-	gl_FragColor = FinalColour;
+		ClampFactor = clamp (FogFactor_3, 0.0, 1.0);
+		FogFactor_3 = ClampFactor;
+		float FogFactor;
+
+		FogFactor = clamp (((ClampFactor - AlphaRef) / (1.0 - AlphaRef)), 0.0, 1.0);
+		FinalColour_1 = mix (FogColour, TexColour, (FogFactor * (FogFactor * 
+			(3.0 - (2.0 * FogFactor))
+			)));
+	};
+
+	gl_FragColor = FinalColour_1;
 }

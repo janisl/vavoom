@@ -1,8 +1,8 @@
 #version 110
 
-varying vec4		Colour;
+varying vec4 Colour;
 
-void main()
+void main ()
 {
 	gl_FragColor = Colour;
 }

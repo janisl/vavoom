@@ -652,7 +652,7 @@ void VNetConnection::SetUpPvsNode(int BspNum, float* BBox)
 	{
 		return;
 	}
-	if (!Clipper.ClipIsBBoxVisible(BBox))
+	if (!Clipper.ClipIsBBoxVisible(BBox, false))
 	{
 		return;
 	}
@@ -671,11 +671,11 @@ void VNetConnection::SetUpPvsNode(int BspNum, float* BBox)
 			return;
 		}
 
-		if (!Clipper.ClipCheckSubsector(Sub))
+		if (!Clipper.ClipCheckSubsector(Sub, false))
 		{
 			return;
 		}
-		Clipper.ClipAddSubsectorSegs(Sub);
+		Clipper.ClipAddSubsectorSegs(Sub, false);
 		UpdatePvs[SubNum >> 3] |= 1 << (SubNum & 7);
 		return;
 	}
@@ -692,7 +692,7 @@ void VNetConnection::SetUpPvsNode(int BspNum, float* BBox)
 	SetUpPvsNode(Bsp->children[Side], Bsp->bbox[Side]);
 
 	// Possibly divide back space.
-	if (!Clipper.ClipIsBBoxVisible(Bsp->bbox[Side ^ 1]))
+	if (!Clipper.ClipIsBBoxVisible(Bsp->bbox[Side ^ 1], false))
 	{
 		return;
 	}
@@ -713,11 +713,11 @@ void VNetConnection::SetUpPvsNode(int BspNum, float* BBox)
 		return;
 	}
 
-	if (!Clipper.ClipCheckSubsector(Sub))
+	if (!Clipper.ClipCheckSubsector(Sub, false))
 	{
 		return;
 	}
-	Clipper.ClipAddSubsectorSegs(Sub);
+	Clipper.ClipAddSubsectorSegs(Sub, false);
 	UpdatePvs[SubNum >> 3] |= 1 << (SubNum & 7);
 	unguard;
 }

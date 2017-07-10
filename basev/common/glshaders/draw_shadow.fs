@@ -1,12 +1,23 @@
 #version 110
 
-uniform sampler2D	Texture;
-uniform float		Alpha;
+uniform sampler2D Texture;
+uniform float Alpha;
 
-varying vec2		TextureCoordinate;
+varying vec2 TextureCoordinate;
 
-void main()
+void main ()
 {
-	vec4 TexColour = texture2D(Texture, TextureCoordinate);
-	gl_FragColor = vec4(0.0, 0.0, 0.0, smoothstep(0.1, 1.0, TexColour.a * Alpha));
+	float Transp;
+
+	Transp = clamp (((
+		(texture2D (Texture, TextureCoordinate).w * Alpha)
+		- 0.1) / 0.9), 0.0, 1.0);
+
+	vec4 FinalColour;
+	FinalColour.xyz = vec3(0.0, 0.0, 0.0);
+	FinalColour.w = (Transp * (Transp * (3.0 - 
+		(2.0 * Transp)
+		)));
+
+	gl_FragColor = FinalColour;
 }

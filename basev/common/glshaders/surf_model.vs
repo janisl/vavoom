@@ -1,24 +1,25 @@
 #version 110
 
-uniform float		Inter;
+uniform vec3 ViewOrigin;
+uniform float Inter;
 
-attribute vec4		Vert2;
-attribute vec4		LightVal;
-attribute vec2		TexCoord;
-attribute vec3		ViewOrigin;
+attribute vec4 Vert2;
+attribute vec4 LightVal;
+attribute vec2 TexCoord;
 
-varying vec4		Light;
-varying vec2		TextureCoordinate;
-varying vec3		VertToView;
+varying vec4 Light;
+varying vec3 VertToView;
+varying vec2 TextureCoordinate;
 
-void main()
+void main ()
 {
 	//	Transforming The Vertex
-	vec4 Vert = mix(gl_Vertex, Vert2, Inter);
-	gl_Position = gl_ModelViewProjectionMatrix * Vert;
+	vec4 Vert;
 
-	VertToView.xyz = ViewOrigin.xyz - Vert.xyz;
+	Vert = mix (gl_Vertex, Vert2, Inter);
+	gl_Position = (gl_ModelViewProjectionMatrix * Vert);
 
+	VertToView = (ViewOrigin - Vert.xyz);
 	//	Pass light
 	Light = LightVal;
 

@@ -1,32 +1,46 @@
 #version 110
 
-uniform vec3		SAxis;
-uniform vec3		TAxis;
-uniform float		SOffs;
-uniform float		TOffs;
-uniform float		TexIW;
-uniform float		TexIH;
-uniform float		TexMinS;
-uniform float		TexMinT;
-uniform float		CacheS;
-uniform float		CacheT;
+uniform vec3 SAxis;
+uniform vec3 TAxis;
+uniform float SOffs;
+uniform float TOffs;
+uniform float TexIW;
+uniform float TexIH;
+uniform float TexMinS;
+uniform float TexMinT;
+uniform float CacheS;
+uniform float CacheT;
 
-varying vec2		TextureCoordinate;
-varying vec2		LightmapCoordinate;
+varying vec2 TextureCoordinate;
+varying vec2 LightmapCoordinate;
 
-void main()
+void main ()
 {
-	const float BLOCK_WIDTH = 128.0;
-	const float BLOCK_HEIGHT = 128.0;
+	gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
+	float s;
 
-	//	Transforming The Vertex
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	s = (dot (gl_Vertex.xyz, SAxis) + SOffs);
+	float t;
 
-	//	Calculate texture coordinates.
-	float s = (dot(gl_Vertex.xyz, SAxis) + SOffs);
-	float t = (dot(gl_Vertex.xyz, TAxis) + TOffs);
-	float lights = (s - TexMinS + CacheS * 16.0 + 8.0) / (BLOCK_WIDTH * 16.0);
-	float lightt = (t - TexMinT + CacheT * 16.0 + 8.0) / (BLOCK_HEIGHT * 16.0);
-	TextureCoordinate = vec2(s * TexIW, t * TexIH);
-	LightmapCoordinate = vec2(lights, lightt);
+	t = (dot (gl_Vertex.xyz, TAxis) + TOffs);
+	vec2 st;
+
+	st.x = (s * TexIW);
+	st.y = (t * TexIH);
+
+	TextureCoordinate = st;
+	vec2 lightst;
+
+	lightst.x = (((
+		(s - TexMinS)
+		+ 
+		(CacheS * 16.0)
+		) + 8.0) / 2048.0);
+	lightst.y = (((
+		(t - TexMinT)
+		+ 
+		(CacheT * 16.0)
+		) + 8.0) / 2048.0);
+
+	LightmapCoordinate = lightst;
 }

@@ -1,17 +1,20 @@
 #version 110
 
-uniform vec4		Light;
+uniform vec4 Light;
+uniform sampler2D Texture;
 
-uniform sampler2D	Texture;
-varying vec2		TextureCoordinate;
+varying vec2 TextureCoordinate;
 
-void main()
+void main ()
 {
-	vec4 TexColour = texture2D(Texture, TextureCoordinate);
-	if (TexColour.a <= 0.1)
+	vec4 TexColour;
+
+	TexColour = texture2D (Texture, TextureCoordinate);
+
+	if ((TexColour.w <= 0.1))
 	{
 		discard;
-	}
+	};
 
 	gl_FragColor = Light;
 }
