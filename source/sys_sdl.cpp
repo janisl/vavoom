@@ -33,6 +33,7 @@
 #include <signal.h>
 #include <dirent.h>
 #include <SDL.h>
+#include <execinfo.h>
 
 #include "gamedefs.h"
 
@@ -332,6 +333,14 @@ static void stack_trace()
 	// can we still print entries on the calling stack or have we finished?
 	static bool		continue_stack_trace = true;
 
+	// get void*'s for all entries on the stack
+	void *array[10];
+	size_t size = backtrace(array, 10);
+
+	// print out all the frames to stderr
+	backtrace_symbols_fd(array, size, STDERR_FILENO);
+    
+
 	// clean the stack addresses if necessary
 	for (i = 0; i < MAX_STACK_ADDR; i++)
 	{
@@ -443,6 +452,7 @@ static void signal_handler(int s)
 {
 	// Ignore future instances of this signal.
 	signal(s, SIG_IGN);
+	stack_trace();
 
 	//	Exit with error message
 #ifdef USE_GUARD_SIGNAL_CONTEXT
@@ -533,7 +543,6 @@ int main(int argc,char** argv)
 	catch (VavoomError &e)
 	{
 		Host_Shutdown();
-		stack_trace();
 
 		printf("\n%s\n", e.message);
 		dprintf("\n\nERROR: %s\n", e.message);

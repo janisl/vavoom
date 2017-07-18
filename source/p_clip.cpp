@@ -51,7 +51,9 @@ struct VViewClipper::VClipNode
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+#ifdef CLIENT
 extern VCvarF r_lights_radius;
+#endif
 
 // CODE --------------------------------------------------------------------
 
@@ -573,6 +575,7 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 	float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 	float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
+#ifdef CLIENT
 	if (shadowslight)
 	{
 		TVec rLight1 = CurrLightPos - v1;
@@ -614,6 +617,7 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 		}
 	}
 	else
+#endif
 	{
 		if (D1 < 0.0 && D2 < 0.0)
 		{
@@ -668,6 +672,7 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 		float DLight1;
 		float DLight2;
 
+#ifdef CLIENT
 		if (shadowslight)
 		{
 			rLight1 = CurrLightPos - v1;
@@ -701,6 +706,7 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 			}
 		}
 		else
+#endif
 		{
 			if (D1 <= 0.0 && D2 <= 0.0)
 			{
@@ -865,6 +871,7 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 		float DLight1;
 		float DLight2;
 
+#ifdef CLIENT
 		if (shadowslight)
 		{
 			rLight1 = CurrLightPos - v1;
@@ -895,6 +902,7 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 			}
 		}
 		else
+#endif
 		{
 			if (D1 < 0.0 && D2 < 0.0)
 			{
@@ -1052,6 +1060,7 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
+#ifdef CLIENT
 		if (shadowslight)
 		{
 			TVec rLight1 = CurrLightPos - v1;
@@ -1082,6 +1091,7 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			}
 		}
 		else
+#endif
 		{
 			if (D1 <= 0.0 && D2 <= 0.0)
 			{
@@ -1229,6 +1239,7 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 			float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
+#ifdef CLIENT
 			if (shadowslight)
 			{
 				TVec rLight1 = CurrLightPos - v1;
@@ -1259,6 +1270,7 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 				}
 			}
 			else
+#endif
 			{
 				if (D1 <= 0.0 && D2 <= 0.0)
 				{

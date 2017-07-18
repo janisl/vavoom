@@ -498,7 +498,7 @@ set(SERVER_WIN32_SOURCES
 #---------------------------------------
 
 add_custom_target( revision_check ALL
-	COMMAND updaterevision ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h
+	COMMAND updaterevision /usr/bin ${PROJECT_SOURCE_DIR}/ ${CMAKE_CURRENT_BINARY_DIR}/gitrev.h
 	WORKING_DIRECTORY ${UPDATEREVISION_EXE}
 	DEPENDS updaterevision )
 
