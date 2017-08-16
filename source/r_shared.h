@@ -34,6 +34,8 @@
 
 #include "fmd2defs.h"
 #include "drawer.h"
+#include "avir/avir.h"
+#include "avir/avir_float4_sse.h"
 
 // MACROS ------------------------------------------------------------------
 

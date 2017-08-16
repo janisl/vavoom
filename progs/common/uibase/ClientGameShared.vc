@@ -139,7 +139,7 @@ final void PushMenuScreen(MenuScreen menu)
 		}
 		C_ClearNotify();*/
 		CmdBuf_AddText("HideConsole\n");
-		LocalSound('menu/activate');
+		LocalSound(menu.ActivateSound);
 		GRoot.SetMouse(true);
 	}
 	else
@@ -159,6 +159,7 @@ final void PushMenuScreen(MenuScreen menu)
 
 final void PopMenu()
 {
+	MenuScreen menu = menu_stack[menu_sp - 1];
 	menu_sp--;
 
 	if (menu_sp < 0)
@@ -167,16 +168,22 @@ final void PopMenu()
 	menu_stack[menu_sp].Destroy();
 	if (menu_sp)
 	{
+		if (menu)
+		{
+			LocalSound(menu.DeactivateSound);
+		}
 		CurrentMenuScreen = menu_stack[menu_sp - 1];
 		CurrentMenuScreen.Show();
 		CurrentMenuScreen.Raise();
 		CurrentMenuScreen.SetFocus();
-		LocalSound('menu/backup');
 	}
 	else
 	{
+		if (menu)
+		{
+			LocalSound(menu.ClearMenusSound);
+		}
 		CurrentMenuScreen = none;
-		LocalSound('menu/clear');
 		GRoot.SetMouse(false);
 	}
 }

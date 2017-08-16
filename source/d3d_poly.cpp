@@ -185,6 +185,7 @@ void VDirect3DDrawer::WorldDrawing()
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
 		RenderDevice->SetSamplerState(1, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 		RenderDevice->SetSamplerState(1, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+		RenderDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 
 		for (lb = 0; lb < NUM_BLOCK_SURFS; lb++)
 		{
@@ -287,9 +288,6 @@ void VDirect3DDrawer::WorldDrawing()
 			}
 		}
 
-		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
-		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
-		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -352,9 +350,6 @@ void VDirect3DDrawer::WorldDrawing()
 			}
 		}
 
-		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
-		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
-		RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 		RenderDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 		RenderDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
@@ -628,10 +623,6 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	{
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
-
-	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 	unguard;
 }
 
@@ -651,8 +642,8 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 	SetSpriteLump(Tex, Translation, CMap);
 
-	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
 	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
 	int l = ((int)(Alpha * 255) << 24) | (light & 0x00ffffff);
@@ -688,10 +679,6 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 		RenderDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 	}
 	RenderDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-
-	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 	unguard;
 }
 

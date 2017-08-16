@@ -404,6 +404,7 @@ void VOpenGLDrawer::WorldDrawingShaders()
 
 			texinfo_t* tex = surf->texinfo;
 			SetTexture(tex->Tex, tex->ColourMap);
+
 			p_glUniform3fvARB(SurfSimpleSAxisLoc, 1, &tex->saxis.x);
 			p_glUniform1fARB(SurfSimpleSOffsLoc, tex->soffs);
 			p_glUniform1fARB(SurfSimpleTexIWLoc, tex_iw);
@@ -1333,8 +1334,6 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		}
 		glDisable(GL_ALPHA_TEST);
 	}
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	unguard;
 }
 
@@ -1355,7 +1354,7 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 	SetSpriteLump(Tex, Translation, CMap);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	if (HaveShaders)
 	{
@@ -1486,8 +1485,6 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 		}
 		glDisable(GL_ALPHA_TEST);
 	}
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 	unguard;
 }
 
@@ -1521,9 +1518,9 @@ void VOpenGLDrawer::StartParticles()
 		}
 		else
 		{
-			glBindTexture(GL_TEXTURE_2D, particle_texture);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+			glBindTexture(GL_TEXTURE_2D, particle_texture);
 			glBegin(GL_QUADS);
 		}
 	}

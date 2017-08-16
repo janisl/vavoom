@@ -856,6 +856,7 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 	int				leafnum;
 	vuint8*         dyn_facevis;
 	linetrace_t		Trace;
+	TVec			Delta;
 
 	CurrLightsNumber = 0;
 	CurrShadowsNumber = 0;
@@ -878,13 +879,15 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 				continue;
 			}
 
+			Delta = Lights[i].origin - vieworg;
+			Delta.z = 0;
 			//	Don't do lights that are too far away.
-			if (((Lights[i].origin - vieworg).Length() > r_lights_radius / 4.0) && !Level->TraceLine(Trace, Lights[i].origin, vieworg, SPF_NOBLOCKSIGHT))
+			if ((Delta.Length() > r_lights_radius / 4.0) && !Level->TraceLine(Trace, Lights[i].origin, vieworg, SPF_NOBLOCKSIGHT))
 			{
 				continue;
 			}
 
-			if ((Lights[i].origin - vieworg).Length() > r_lights_radius)
+			if (Delta.Length() > r_lights_radius)
 			{
 				continue;
 			}
@@ -915,13 +918,15 @@ void VAdvancedRenderLevel::RenderScene(const refdef_t* RD, const VViewClipper* R
 				continue;
 			}
 
+			Delta = l->origin - vieworg;
+			Delta.z = 0;
 			//	Don't do lights that are too far away.
-			if (((l->origin - vieworg).Length() > r_lights_radius / 4.0) && !Level->TraceLine(Trace, l->origin, vieworg, SPF_NOBLOCKSIGHT))
+			if ((Delta.Length() > r_lights_radius / 4.0) && !Level->TraceLine(Trace, l->origin, vieworg, SPF_NOBLOCKSIGHT))
 			{
 				continue;
 			}
 
-			if ((l->origin - vieworg).Length() > r_lights_radius)
+			if (Delta.Length() > r_lights_radius)
 			{
 				continue;
 			}
