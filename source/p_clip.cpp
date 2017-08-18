@@ -86,7 +86,6 @@ VViewClipper::~VViewClipper()
 		VClipNode* Next = Node->Next;
 
 		delete Node;
-
 		if (Next)
 		{
 			Node = Next;
@@ -572,6 +571,8 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 	// Clip sectors that are behind rendered segs
 	TVec r1 = Origin - v1;
 	TVec r2 = Origin - v2;
+	r1.z = 0;
+	r2.z = 0;
 	float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 	float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
@@ -580,11 +581,15 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 	{
 		TVec rLight1 = CurrLightPos - v1;
 		TVec rLight2 = CurrLightPos - v2;
+		rLight1.z = 0;
+		rLight2.z = 0;
 		float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
 		float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
 		TVec rView1 = Origin - CurrLightPos;
 		TVec rView2 = Origin - CurrLightPos;
+		rView1.z = 0;
+		rView2.z = 0;
 		float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
 		float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
@@ -665,6 +670,8 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 
 		TVec r1 = Origin - v1;
 		TVec r2 = Origin - v2;
+		r1.z = 0;
+		r2.z = 0;
 		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 		TVec rLight1;
@@ -677,11 +684,15 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 		{
 			rLight1 = CurrLightPos - v1;
 			rLight2 = CurrLightPos - v2;
+			rLight1.z = 0;
+			rLight2.z = 0;
 			DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
 			DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
 			TVec rView1 = Origin - CurrLightPos;
 			TVec rView2 = Origin - CurrLightPos;
+			rView1.z = 0;
+			rView2.z = 0;
 			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
 			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
@@ -863,6 +874,8 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 		TVec v2 = *line->v2;
 		TVec r1 = Origin - v1;
 		TVec r2 = Origin - v2;
+		r1.z = 0;
+		r2.z = 0;
 		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
@@ -876,11 +889,15 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 		{
 			rLight1 = CurrLightPos - v1;
 			rLight2 = CurrLightPos - v2;
+			rLight1.z = 0;
+			rLight2.z = 0;
 			DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
 			DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
 			TVec rView1 = Origin - CurrLightPos;
 			TVec rView2 = Origin - CurrLightPos;
+			rView1.z = 0;
+			rView2.z = 0;
 			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
 			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
@@ -1057,6 +1074,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 
 		TVec r1 = Origin - v1;
 		TVec r2 = Origin - v2;
+		r1.z = 0;
+		r2.z = 0;
 		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
@@ -1065,11 +1084,15 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 		{
 			TVec rLight1 = CurrLightPos - v1;
 			TVec rLight2 = CurrLightPos - v2;
+			rLight1.z = 0;
+			rLight2.z = 0;
 			float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
 			float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
 			TVec rView1 = Origin - CurrLightPos;
 			TVec rView2 = Origin - CurrLightPos;
+			rView1.z = 0;
+			rView2.z = 0;
 			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
 			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
@@ -1236,6 +1259,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 
 			TVec r1 = Origin - v1;
 			TVec r2 = Origin - v2;
+			r1.z = 0;
+			r2.z = 0;
 			float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 			float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
@@ -1244,11 +1269,15 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			{
 				TVec rLight1 = CurrLightPos - v1;
 				TVec rLight2 = CurrLightPos - v2;
+				rLight1.z = 0;
+				rLight2.z = 0;
 				float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
 				float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
 				TVec rView1 = Origin - CurrLightPos;
 				TVec rView2 = Origin - CurrLightPos;
+				rView1.z = 0;
+				rView2.z = 0;
 				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
 				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 

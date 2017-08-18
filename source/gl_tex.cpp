@@ -185,8 +185,17 @@ void VOpenGLDrawer::PrecacheTexture(VTexture* Tex)
 void VOpenGLDrawer::SetTexture(VTexture* Tex, int CMap)
 {
 	guard(VOpenGLDrawer::SetTexture);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	if (Tex->Type == TEXTYPE_WallPatch || Tex->Type == TEXTYPE_Wall ||
+		Tex->Type == TEXTYPE_Flat)
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+	}
+	else
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	}
+	
 
 	SetSpriteLump(Tex, NULL, CMap);
 	unguard;
@@ -249,8 +258,15 @@ void VOpenGLDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans,
 	int CMap)
 {
 	guard(VOpenGLDrawer::SetPic);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
+	if (Tex->Type == TEXTYPE_Skin || Tex->Type == TEXTYPE_FontChar)
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
+	}
+	else
+	{
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minfilter);
+	}
 
 	SetSpriteLump(Tex, Trans, CMap);
 	unguard;
@@ -372,9 +388,6 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 	int		level;
 	vuint8*	stackbuf = (vuint8 *)Z_Malloc(256 * 128 * 4);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, mipfilter);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, maxfilter);
-
 	w = ToPowerOf2(width);
 	if (w > maxTexSize)
 	{
@@ -397,7 +410,10 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 	if (w != width || h != height)
 	{
 		/* must rescale image to get "top" mipmap texture image */
-		VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image, multisampling_sample);
+		//VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image, multisampling_sample);
+		avir::CImageResizerParamsUltra Params;
+		avir::CImageResizer<avir::fpclass_float4> ImageResizer(8, 16, Params);
+		ImageResizer.resizeImage((vuint8*)data, width, height, 0, image, w, h, 4, 0);
 		/* Smooth transparent edges */
 		VTexture::SmoothEdges(image, w, h, image);
 	}

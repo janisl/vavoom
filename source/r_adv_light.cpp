@@ -651,10 +651,10 @@ void VAdvancedRenderLevel::RenderShadowBSPNode(int bspnum, float* bbox, bool Lim
 
 	RenderShadowSubsector(bspnum & (~NF_SUBSECTOR));
 
-	if (LimitLights)
+	/*if (LimitLights)
 	{
 		CurrShadowsNumber += 1;
-	}
+	}*/
 	unguard;
 }
 
@@ -996,10 +996,10 @@ void VAdvancedRenderLevel::RenderLightBSPNode(int bspnum, float* bbox, bool Limi
 
 	RenderLightSubsector(bspnum & (~NF_SUBSECTOR));
 
-	if (LimitLights)
+	/*if (LimitLights)
 	{
 		CurrLightsNumber += 1;
-	}
+	}*/
 	unguard;
 }
 

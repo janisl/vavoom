@@ -759,7 +759,7 @@ void VOpenGLDrawer::StartUpdate()
 		{
 			maxfilter = GL_LINEAR;
 			minfilter = GL_LINEAR;
-			mipfilter = GL_LINEAR;
+			mipfilter = GL_NEAREST;
 			break;
 		}
 		case 2:

@@ -95,14 +95,6 @@ extern VCvarI           r_max_model_shadows;
 void VAdvancedRenderLevel::RenderThingAmbient(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
-	{
-		return;
-	}
-
 	int RendStyle = mobj->RenderStyle;
 	float Alpha = mobj->Alpha;
 	bool Additive = false;
@@ -208,6 +200,13 @@ void VAdvancedRenderLevel::RenderMobjsAmbient()
 			continue;
 		}
 
+		//	Skip things in subsectors that are not visible.
+		int SubIdx = Ent->SubSector - Level->Subsectors;
+		if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+		{
+			continue;
+		}
+
 		RenderThingAmbient(*Ent);
 	}
 	unguard;
@@ -222,14 +221,6 @@ void VAdvancedRenderLevel::RenderMobjsAmbient()
 void VAdvancedRenderLevel::RenderThingTextures(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingAmbient);
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
-	{
-		return;
-	}
-
 	int RendStyle = mobj->RenderStyle;
 	float Alpha = mobj->Alpha;
 	bool Additive = false;
@@ -315,6 +306,13 @@ void VAdvancedRenderLevel::RenderMobjsTextures()
 			continue;
 		}
 
+		//	Skip things in subsectors that are not visible.
+		int SubIdx = Ent->SubSector - Level->Subsectors;
+		if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+		{
+			continue;
+		}
+
 		RenderThingTextures(*Ent);
 	}
 	unguard;
@@ -366,18 +364,6 @@ bool VAdvancedRenderLevel::IsTouchedByLight(VEntity* Ent, bool Count)
 void VAdvancedRenderLevel::RenderThingLight(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingLight);
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(LightBspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
-	{
-		return;
-	}
-
-	if (!IsTouchedByLight(mobj, true))
-	{
-		return;
-	}
-
 	// Use advanced lighting style
 	int RendStyle = mobj->RenderStyle;
 	float Alpha = mobj->Alpha;
@@ -514,6 +500,18 @@ void VAdvancedRenderLevel::RenderMobjsLight()
 			continue;
 		}
 
+		//	Skip things in subsectors that are not visible.
+		int SubIdx = Ent->SubSector - Level->Subsectors;
+		if (!(LightBspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+		{
+			continue;
+		}
+
+		if (!IsTouchedByLight(*Ent, true))
+		{
+			continue;
+		}
+
 		RenderThingLight(*Ent);
 	}
 	unguard;
@@ -528,18 +526,6 @@ void VAdvancedRenderLevel::RenderMobjsLight()
 void VAdvancedRenderLevel::RenderThingShadow(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingShadow);
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
-	{
-		return;
-	}
-
-	if (!IsTouchedByLight(mobj, true))
-	{
-		return;
-	}
-
 	int RendStyle = mobj->RenderStyle;
 	float Alpha = mobj->Alpha;
 	bool Additive = false;
@@ -621,6 +607,18 @@ void VAdvancedRenderLevel::RenderMobjsShadow()
 			continue;
 		}
 
+		//	Skip things in subsectors that are not visible.
+		int SubIdx = Ent->SubSector - Level->Subsectors;
+		if (!(LightVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
+		{
+			continue;
+		}
+
+		if (!IsTouchedByLight(*Ent, true))
+		{
+			continue;
+		}
+
 		RenderThingShadow(*Ent);
 	}
 	unguard;
@@ -635,14 +633,6 @@ void VAdvancedRenderLevel::RenderMobjsShadow()
 void VAdvancedRenderLevel::RenderThingFog(VEntity* mobj)
 {
 	guard(VAdvancedRenderLevel::RenderThingFog);
-
-	//	Skip things in subsectors that are not visible.
-	int SubIdx = mobj->SubSector - Level->Subsectors;
-	if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
-	{
-		return;
-	}
-
 	int RendStyle = mobj->RenderStyle;
 	float Alpha = mobj->Alpha;
 	bool Additive = false;
@@ -726,6 +716,13 @@ void VAdvancedRenderLevel::RenderMobjsFog()
 		}
 
 		if (!Ent->State)
+		{
+			continue;
+		}
+
+		//	Skip things in subsectors that are not visible.
+		int SubIdx = Ent->SubSector - Level->Subsectors;
+		if (!(BspVis[SubIdx >> 3] & (1 << (SubIdx & 7))))
 		{
 			continue;
 		}

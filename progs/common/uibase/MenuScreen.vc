@@ -44,6 +44,10 @@ string					Title;
 int						TitleX;
 int						TitleY;
 
+name					ActivateSound;
+name					DeactivateSound;
+name					ClearMenusSound;
+
 //==========================================================================
 //
 //	CreateMenu
@@ -281,4 +285,8 @@ defaultproperties
 	TitleX = 160;
 	TitleY = 24;
 	Focusable = true;
+
+	ActivateSound = 'menu/activate';
+	DeactivateSound = 'menu/backup';
+	ClearMenusSound = 'menu/clear';
 }

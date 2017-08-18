@@ -982,7 +982,7 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 
 	for (lnum = 0; lnum < MAX_DLIGHTS; lnum++)
 	{
-		if (!(surf->dlightbits & (1<<lnum)))
+		if (!(surf->dlightbits & (1 << lnum)))
 		{
 			continue;		// not lit by this light
 		}
@@ -1058,7 +1058,7 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 				if (dist < minlight)
 				{
 					i = t * smax + s;
-					blocklights[i] += (vuint32)((rad - dist) * 256);
+					blocklights[i] += (vuint32)((rad - dist) * 255.0);
 					blocklightsr[i] += (vuint32)((rad - dist) * rmul);
 					blocklightsg[i] += (vuint32)((rad - dist) * gmul);
 					blocklightsb[i] += (vuint32)((rad - dist) * bmul);

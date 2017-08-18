@@ -3,8 +3,8 @@
 uniform float LightRadius;
 
 varying vec3 VertToView;
-varying vec3 VertToLight;
-varying float Offset;
+//varying vec3 VertToLight;
+//varying float Offs;
 
 void main ()
 {
@@ -16,16 +16,16 @@ void main ()
 		discard;
 	};
 
-	if ((Offset > 0.0))
+	/*if ((Offs > 0.0))
 	{
 		float DistToLight;
 
 		DistToLight = sqrt(dot (VertToLight, VertToLight));
-		if (((DistToLight < -(LightRadius)) || (DistToLight > LightRadius)))
+		if ((DistToLight > LightRadius))
 		{
 			discard;
 		};
-	};
+	};*/
 
 	gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
 }

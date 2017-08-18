@@ -9,7 +9,8 @@ attribute vec4 Vert2;
 attribute float Offset;
 
 varying vec3 VertToView;
-varying vec3 VertToLight;
+//varying vec3 VertToLight;
+//varying float Offs;
 
 void main ()
 {
@@ -21,10 +22,11 @@ void main ()
 		Vert_1.xyz = (LightPos + (Offset * normalize(
 			(Vert_1.xyz - LightPos)
 			)));
-		VertToLight = (LightPos - Vert_1.xyz);
 	};
 	gl_Position = (gl_ModelViewProjectionMatrix * Vert_1);
 
+	//VertToLight = (LightPos - Vert_1.xyz);
 	VertToView = (ViewOrigin - Vert_1.xyz);
+	//Offs = Offset;
 }
 
