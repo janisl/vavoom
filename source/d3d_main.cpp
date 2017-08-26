@@ -47,6 +47,7 @@ IMPLEMENT_DRAWER(VDirect3DDrawer, DRAWER_Direct3D, "Direct3D",
 VCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::tex_linear("d3d_tex_linear", "2", CVAR_Archive);
+VCvarI VDirect3DDrawer::sprite_tex_linear("d3d_sprite_tex_linear", "2", CVAR_Archive);
 VCvarI VDirect3DDrawer::dither("d3d_dither", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::blend_sprites("d3d_blend_sprites", "0", CVAR_Archive);
 VCvarF VDirect3DDrawer::maxdist("d3d_maxdist", "8192.0", CVAR_Archive);

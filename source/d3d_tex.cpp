@@ -178,7 +178,7 @@ void VDirect3DDrawer::SetTexture(VTexture* Tex, int CMap)
 		if (Tex->Type == TEXTYPE_WallPatch || Tex->Type == TEXTYPE_Wall ||
 			Tex->Type == TEXTYPE_Flat)
 		{
-			RenderDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+			RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 		}
 		else
 		{
@@ -258,13 +258,13 @@ void VDirect3DDrawer::SetPic(VTexture* Tex, VTextureTranslation* Trans,
 	{
 		RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, magfilter);
 		RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, minfilter);
-		if (Tex->Type == TEXTYPE_Skin || Tex->Type == TEXTYPE_FontChar)
+		if (Tex->Type == TEXTYPE_Skin /*|| Tex->Type == TEXTYPE_FontChar*/)
 		{
 			RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, mipfilter);
 		}
 		else
 		{
-			RenderDevice->SetSamplerState(1, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+			RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
 		}
 	}
 

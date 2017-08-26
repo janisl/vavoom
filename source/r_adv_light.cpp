@@ -399,11 +399,11 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 
 	// There might be a better method of doing this, but
 	// this one works for now...
-	if (D1 > CurrLightRadius && D2 <= -CurrLightRadius)
+	if (D1 > CurrLightRadius && D2 < -CurrLightRadius)
 	{
 		v2 += ((v2 - v1) * D1 / (D1 - D2));
 	}
-	else if (D2 > CurrLightRadius && D1 <= -CurrLightRadius)
+	else if (D2 > CurrLightRadius && D1 < -CurrLightRadius)
 	{
 		v1 += ((v1 - v2) * D2 / (D2 - D1));
 	}
@@ -732,11 +732,11 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 
 	// There might be a better method of doing this, but
 	// this one works for now...
-	if (D1 > CurrLightRadius && D2 <= -CurrLightRadius)
+	if (D1 > CurrLightRadius && D2 < -CurrLightRadius)
 	{
 		v2 += ((v2 - v1) * D1 / (D1 - D2));
 	}
-	else if (D2 > CurrLightRadius && D1 <= -CurrLightRadius)
+	else if (D2 > CurrLightRadius && D1 < -CurrLightRadius)
 	{
 		v1 += ((v1 - v2) * D2 / (D2 - D1));
 	}

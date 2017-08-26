@@ -86,13 +86,11 @@ VViewClipper::~VViewClipper()
 		VClipNode* Next = Node->Next;
 
 		delete Node;
+		Node = NULL;
+
 		if (Next)
 		{
 			Node = Next;
-		}
-		else
-		{
-			Node = NULL;
 		}
 	}
 	unguard;
@@ -571,8 +569,6 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 	// Clip sectors that are behind rendered segs
 	TVec r1 = Origin - v1;
 	TVec r2 = Origin - v2;
-	r1.z = 0;
-	r2.z = 0;
 	float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 	float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
@@ -581,15 +577,11 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 	{
 		TVec rLight1 = CurrLightPos - v1;
 		TVec rLight2 = CurrLightPos - v2;
-		rLight1.z = 0;
-		rLight2.z = 0;
 		float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
 		float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
 		TVec rView1 = Origin - CurrLightPos;
 		TVec rView2 = Origin - CurrLightPos;
-		rView1.z = 0;
-		rView2.z = 0;
 		float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
 		float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
@@ -612,11 +604,11 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 
 		// There might be a better method of doing this, but
 		// this one works for now...
-		if (DLight1 > 0.0 && DLight2 <= 0.0)
+		if (DLight1 > 0.0 && DLight2 < 0.0)
 		{
 			v2 += (v2 - v1) * D1 / (D1 - D2);
 		}
-		else if (DLight2 > 0.0 && DLight1 <= 0.0)
+		else if (DLight2 > 0.0 && DLight1 < 0.0)
 		{
 			v1 += (v1 - v2) * D2 / (D2 - D1);
 		}
@@ -631,11 +623,11 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 
 		// There might be a better method of doing this, but
 		// this one works for now...
-		if (D1 > 0.0 && D2 <= 0.0)
+		if (D1 > 0.0 && D2 < 0.0)
 		{
 			v2 += (v2 - v1) * D1 / (D1 - D2);
 		}
-		else if (D2 > 0.0 && D1 <= 0.0)
+		else if (D2 > 0.0 && D1 < 0.0)
 		{
 			v1 += (v1 - v2) * D2 / (D2 - D1);
 		}
@@ -667,62 +659,59 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 		// Clip sectors that are behind rendered segs
 		TVec v1 = *ds->seg->v1;
 		TVec v2 = *ds->seg->v2;
-
-		TVec r1 = Origin - v1;
-		TVec r2 = Origin - v2;
-		r1.z = 0;
-		r2.z = 0;
-		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
-		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 		TVec rLight1;
 		TVec rLight2;
 		float DLight1;
 		float DLight2;
+		TVec r1 = Origin - v1;
+		TVec r2 = Origin - v2;
+		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
+		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
+		// Just apply this to sectors without slopes
+		if (!ds->seg->backsector)
+		{
 #ifdef CLIENT
-		if (shadowslight)
-		{
-			rLight1 = CurrLightPos - v1;
-			rLight2 = CurrLightPos - v2;
-			rLight1.z = 0;
-			rLight2.z = 0;
-			DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
-			DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
-
-			TVec rView1 = Origin - CurrLightPos;
-			TVec rView2 = Origin - CurrLightPos;
-			rView1.z = 0;
-			rView2.z = 0;
-			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
-			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-			if (D1 <= 0.0 && D2 <= 0.0 &&
-				DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+			if (shadowslight)
 			{
-				ds++;
-				continue;
-			}
+				rLight1 = CurrLightPos - v1;
+				rLight2 = CurrLightPos - v2;
+				DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+				DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
-			if (D1 > r_lights_radius && D2 > r_lights_radius)
-			{
-				ds++;
-				continue;
-			}
+				TVec rView1 = Origin - CurrLightPos;
+				TVec rView2 = Origin - CurrLightPos;
+				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
-			if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-				DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-			{
-				ds++;
-				continue;
+				if (D1 < 0.0 && D2 < 0.0 &&
+					DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+				{
+					ds++;
+					continue;
+				}
+
+				if (D1 > r_lights_radius && D2 > r_lights_radius)
+				{
+					ds++;
+					continue;
+				}
+
+				if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+					DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+				{
+					ds++;
+					continue;
+				}
 			}
-		}
-		else
+			else
 #endif
-		{
-			if (D1 <= 0.0 && D2 <= 0.0)
 			{
-				ds++;
-				continue;
+				if (D1 < 0.0 && D2 < 0.0)
+				{
+					ds++;
+					continue;
+				}
 			}
 		}
 
@@ -734,79 +723,93 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 			// 2-sided line, determine if it can be skipped
 			if (ds->seg->linedef && ds->seg->linedef->backsector)
 			{
-				//
-				// Check for doors
-				//
-
-				// A line without top texture isn't a door
-				if (ds->seg->sidedef->TopTexture != -1)
+				// Just apply this to sectors without slopes
+				if (ds->seg->frontsector->floor.normal.z == 1.0 && ds->seg->backsector->floor.normal.z == 1.0 &&
+					ds->seg->frontsector->ceiling.normal.z == -1.0 && ds->seg->backsector->ceiling.normal.z == -1.0)
 				{
-					float frontcz1 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v1);
-					float frontcz2 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v2);
-					float frontfz1 = ds->seg->linedef->frontsector->floor.GetPointZ(v1);
-					float frontfz2 = ds->seg->linedef->frontsector->floor.GetPointZ(v2);
+					//
+					// Check for doors
+					//
 
-					float backcz1 = ds->seg->linedef->backsector->ceiling.GetPointZ(v1);
-					float backcz2 = ds->seg->linedef->backsector->ceiling.GetPointZ(v2);
-					float backfz1 = ds->seg->linedef->backsector->floor.GetPointZ(v1);
-					float backfz2 = ds->seg->linedef->backsector->floor.GetPointZ(v2);
-
-					if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
-						(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+					// A line without top texture isn't a door
+					if (ds->seg->sidedef->TopTexture != -1)
 					{
-						// It's a closed door
-						ds++;
-						continue;
+						float frontcz1 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v1);
+						float frontcz2 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v2);
+						float frontfz1 = ds->seg->linedef->frontsector->floor.GetPointZ(v1);
+						float frontfz2 = ds->seg->linedef->frontsector->floor.GetPointZ(v2);
+
+						float backcz1 = ds->seg->linedef->backsector->ceiling.GetPointZ(v1);
+						float backcz2 = ds->seg->linedef->backsector->ceiling.GetPointZ(v2);
+						float backfz1 = ds->seg->linedef->backsector->floor.GetPointZ(v1);
+						float backfz2 = ds->seg->linedef->backsector->floor.GetPointZ(v2);
+
+						if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
+							(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+						{
+							// It's a closed door
+							ds++;
+							continue;
+						}
+					}
+
+					//
+					// Check for elevators/plats
+					//
+
+					// A line without bottom texture isn't an elevator/plat
+					if (ds->seg->sidedef->BottomTexture != -1)
+					{
+						float frontcz1 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v1);
+						float frontcz2 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v2);
+						float frontfz1 = ds->seg->linedef->frontsector->floor.GetPointZ(v1);
+						float frontfz2 = ds->seg->linedef->frontsector->floor.GetPointZ(v2);
+
+						float backcz1 = ds->seg->linedef->backsector->ceiling.GetPointZ(v1);
+						float backcz2 = ds->seg->linedef->backsector->ceiling.GetPointZ(v2);
+						float backfz1 = ds->seg->linedef->backsector->floor.GetPointZ(v1);
+						float backfz2 = ds->seg->linedef->backsector->floor.GetPointZ(v2);
+
+						if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
+							(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+						{
+							// It's an enclosed elevator/plat
+							ds++;
+							continue;
+						}
+					}
+
+					//
+					// Check for polyobjs
+					//
+
+					// A line without mid texture isn't a polyobj door
+					if (ds->seg->sidedef->MidTexture != -1)
+					{
+						float frontcz1 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v1);
+						float frontcz2 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v2);
+						float frontfz1 = ds->seg->linedef->frontsector->floor.GetPointZ(v1);
+						float frontfz2 = ds->seg->linedef->frontsector->floor.GetPointZ(v2);
+
+						float backcz1 = ds->seg->linedef->backsector->ceiling.GetPointZ(v1);
+						float backcz2 = ds->seg->linedef->backsector->ceiling.GetPointZ(v2);
+						float backfz1 = ds->seg->linedef->backsector->floor.GetPointZ(v1);
+						float backfz2 = ds->seg->linedef->backsector->floor.GetPointZ(v2);
+
+						if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
+							(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+						{
+							// It's a closed polyobj door
+							ds++;
+							continue;
+						}
 					}
 				}
-
-				//
-				// Check for elevators/plats
-				//
-
-				// A line without bottom texture isn't an elevator/plat
-				if (ds->seg->sidedef->BottomTexture != -1)
+				else
 				{
-					float frontcz1 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v1);
-					float frontcz2 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v2);
-					float frontfz1 = ds->seg->linedef->frontsector->floor.GetPointZ(v1);
-					float frontfz2 = ds->seg->linedef->frontsector->floor.GetPointZ(v2);
-
-					float backcz1 = ds->seg->linedef->backsector->ceiling.GetPointZ(v1);
-					float backcz2 = ds->seg->linedef->backsector->ceiling.GetPointZ(v2);
-					float backfz1 = ds->seg->linedef->backsector->floor.GetPointZ(v1);
-					float backfz2 = ds->seg->linedef->backsector->floor.GetPointZ(v2);
-
-					if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
-						(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+					if (ds->seg->linedef->backsector->floor.minz <= ds->seg->linedef->frontsector->ceiling.maxz &&
+						ds->seg->linedef->backsector->floor.maxz > ds->seg->linedef->frontsector->ceiling.minz)
 					{
-						// It's an enclosed elevator/plat
-						ds++;
-						continue;
-					}
-				}
-
-				//
-				// Check for polyobjs
-				//
-
-				// A line without mid texture isn't a polyobj door
-				if (ds->seg->sidedef->MidTexture != -1)
-				{
-					float frontcz1 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v1);
-					float frontcz2 = ds->seg->linedef->frontsector->ceiling.GetPointZ(v2);
-					float frontfz1 = ds->seg->linedef->frontsector->floor.GetPointZ(v1);
-					float frontfz2 = ds->seg->linedef->frontsector->floor.GetPointZ(v2);
-
-					float backcz1 = ds->seg->linedef->backsector->ceiling.GetPointZ(v1);
-					float backcz2 = ds->seg->linedef->backsector->ceiling.GetPointZ(v2);
-					float backfz1 = ds->seg->linedef->backsector->floor.GetPointZ(v1);
-					float backfz2 = ds->seg->linedef->backsector->floor.GetPointZ(v2);
-
-					if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
-						(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
-					{
-						// It's a closed polyobj door
 						ds++;
 						continue;
 					}
@@ -814,26 +817,28 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 			}
 		}
 
+#ifdef CLIENT
 		if (shadowslight)
 		{
 			// There might be a better method of doing this, but
 			// this one works for now...
-			if (DLight1 > CurrLightRadius && DLight2 <= -CurrLightRadius)
+			if (DLight1 > CurrLightRadius && DLight2 < -CurrLightRadius)
 			{
 				v2 += (v2 - v1) * DLight1 / (DLight1 - DLight2);
 			}
-			else if (DLight2 > CurrLightRadius && DLight1 <= -CurrLightRadius)
+			else if (DLight2 > CurrLightRadius && DLight1 < -CurrLightRadius)
 			{
 				v1 += (v1 - v2) * DLight2 / (DLight2 - DLight1);
 			}
 		}
 		else
+#endif
 		{
-			if (D1 > 0.0 && D2 <= 0.0)
+			if (D1 > 0.0 && D2 < 0.0)
 			{
 				v2 += (v2 - v1) * D1 / (D1 - D2);
 			}
-			else if (D2 > 0.0 && D1 <= 0.0)
+			else if (D2 > 0.0 && D1 < 0.0)
 			{
 				v1 += (v1 - v2) * D2 / (D2 - D1);
 			}
@@ -872,58 +877,56 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 		// Clip sectors that are behind rendered segs
 		TVec v1 = *line->v1;
 		TVec v2 = *line->v2;
-		TVec r1 = Origin - v1;
-		TVec r2 = Origin - v2;
-		r1.z = 0;
-		r2.z = 0;
-		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
-		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
-
 		TVec rLight1;
 		TVec rLight2;
 		float DLight1;
 		float DLight2;
 
+		TVec r1 = Origin - v1;
+		TVec r2 = Origin - v2;
+		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
+		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
+
+		// Just apply this to sectors without slopes
+		if (line->frontsector && !line->backsector)
+		{
 #ifdef CLIENT
-		if (shadowslight)
-		{
-			rLight1 = CurrLightPos - v1;
-			rLight2 = CurrLightPos - v2;
-			rLight1.z = 0;
-			rLight2.z = 0;
-			DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
-			DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
-
-			TVec rView1 = Origin - CurrLightPos;
-			TVec rView2 = Origin - CurrLightPos;
-			rView1.z = 0;
-			rView2.z = 0;
-			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
-			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-			if (D1 < 0.0 && D2 < 0.0 &&
-				DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+			if (shadowslight)
 			{
-				continue;
-			}
+				rLight1 = CurrLightPos - v1;
+				rLight2 = CurrLightPos - v2;
+				DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+				DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
-			if (D1 > r_lights_radius && D2 > r_lights_radius)
-			{
-				continue;
-			}
+				TVec rView1 = Origin - CurrLightPos;
+				TVec rView2 = Origin - CurrLightPos;
+				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
-			if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-				DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-			{
-				continue;
+				if (D1 < 0.0 && D2 < 0.0 &&
+					DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+				{
+					continue;
+				}
+
+				if (D1 > r_lights_radius && D2 > r_lights_radius)
+				{
+					continue;
+				}
+
+				if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+					DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+				{
+					continue;
+				}
 			}
-		}
-		else
+			else
 #endif
-		{
-			if (D1 < 0.0 && D2 < 0.0)
 			{
-				continue;
+				if (D1 < 0.0 && D2 < 0.0)
+				{
+					continue;
+				}
 			}
 		}
 
@@ -933,77 +936,90 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 			TVec v1 = *line->linedef->v1;
 			TVec v2 = *line->linedef->v2;
 
-			//
-			// Check for doors
-			//
-
-			// A line without top texture isn't a door
-			if (line->sidedef->TopTexture != -1)
+			// Just apply this to sectors without slopes
+			if (line->frontsector->floor.normal.z == 1.0 && line->backsector->floor.normal.z == 1.0 &&
+				line->frontsector->ceiling.normal.z == -1.0 && line->backsector->ceiling.normal.z == -1.0)
 			{
-				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
-				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
-				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
-				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
+				//
+				// Check for doors
+				//
 
-				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
-				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
-				float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
-				float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
-
-				if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
-					(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+				// A line without top texture isn't a door
+				if (line->sidedef->TopTexture != -1)
 				{
-					// It's a closed door
-					continue;
+					float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
+					float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
+					float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
+					float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
+
+					float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
+					float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
+					float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
+					float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
+
+					if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
+						(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+					{
+						// It's a closed door
+						continue;
+					}
+				}
+
+				//
+				// Check for elevators/plats
+				//
+
+				// A line without bottom texture isn't an elevator/plat
+				if (line->sidedef->BottomTexture != -1)
+				{
+					float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
+					float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
+					float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
+					float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
+
+					float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
+					float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
+					float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
+					float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
+
+					if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
+						(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+					{
+						// It's an enclosed elevator/plat
+						continue;
+					}
+				}
+
+				//
+				// Check for polyobjs
+				//
+
+				// A line without mid texture isn't a polyobj door
+				if (line->sidedef->MidTexture != -1)
+				{
+					float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
+					float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
+					float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
+					float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
+
+					float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
+					float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
+					float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
+					float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
+
+					if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
+						(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+					{
+						// It's a closed polyobj door
+						continue;
+					}
 				}
 			}
-
-			//
-			// Check for elevators/plats
-			//
-
-			// A line without bottom texture isn't an elevator/plat
-			if (line->sidedef->BottomTexture != -1)
+			else
 			{
-				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
-				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
-				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
-				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
-
-				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
-				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
-				float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
-				float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
-
-				if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
-					(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
+				if (line->linedef->backsector->floor.minz <= line->linedef->frontsector->ceiling.maxz &&
+					line->linedef->backsector->floor.maxz > line->linedef->frontsector->ceiling.minz)
 				{
-					// It's an enclosed elevator/plat
-					continue;
-				}
-			}
-
-			//
-			// Check for polyobjs
-			//
-
-			// A line without mid texture isn't a polyobj door
-			if (line->sidedef->MidTexture != -1)
-			{
-				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
-				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
-				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
-				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
-
-				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
-				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
-				float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
-				float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
-
-				if ((backcz2 <= frontfz2 && backcz2 <= frontfz1 && backcz1 <= frontfz2 && backcz1 <= frontfz1) &&
-					(frontcz2 <= backfz2 && frontcz2 <= backfz1 && frontcz1 <= backfz2 && frontcz1 <= backfz1))
-				{
-					// It's a closed polyobj door
 					continue;
 				}
 			}
@@ -1017,7 +1033,7 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 			{
 				v2 += (v2 - v1) * DLight1 / (DLight1 - DLight2);
 			}
-			else if (DLight2 > CurrLightRadius && DLight1 <= -CurrLightRadius)
+			else if (DLight2 > CurrLightRadius && DLight1 < -CurrLightRadius)
 			{
 				v1 += (v1 - v2) * DLight2 / (DLight2 - DLight1);
 			}
@@ -1072,53 +1088,51 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 		TVec v1 = *line->v1;
 		TVec v2 = *line->v2;
 
-		TVec r1 = Origin - v1;
-		TVec r2 = Origin - v2;
-		r1.z = 0;
-		r2.z = 0;
-		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
-		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
+		// Just apply this to sectors without slopes
+		if (!line->backsector)
+		{
+			TVec r1 = Origin - v1;
+			TVec r2 = Origin - v2;
+			float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
+			float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
 #ifdef CLIENT
-		if (shadowslight)
-		{
-			TVec rLight1 = CurrLightPos - v1;
-			TVec rLight2 = CurrLightPos - v2;
-			rLight1.z = 0;
-			rLight2.z = 0;
-			float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
-			float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
-
-			TVec rView1 = Origin - CurrLightPos;
-			TVec rView2 = Origin - CurrLightPos;
-			rView1.z = 0;
-			rView2.z = 0;
-			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
-			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-			if (D1 <= 0.0 && D2 <= 0.0 &&
-				DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+			if (shadowslight)
 			{
-				continue;
-			}
+				TVec rLight1 = CurrLightPos - v1;
+				TVec rLight2 = CurrLightPos - v2;
+				float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+				float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
 
-			if (D1 > r_lights_radius && D2 > r_lights_radius)
-			{
-				continue;
-			}
+				TVec rView1 = Origin - CurrLightPos;
+				TVec rView2 = Origin - CurrLightPos;
+				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
 
-			if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-				DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-			{
-				continue;
+				if (D1 < 0.0 && D2 < 0.0 &&
+					DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+				{
+					continue;
+				}
+
+				if (D1 > r_lights_radius && D2 > r_lights_radius)
+				{
+					continue;
+				}
+
+				if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+					DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+				{
+					continue;
+				}
 			}
-		}
-		else
+			else
 #endif
-		{
-			if (D1 <= 0.0 && D2 <= 0.0)
 			{
-				continue;
+				if (D1 < 0.0 && D2 < 0.0)
+				{
+					continue;
+				}
 			}
 		}
 
@@ -1140,179 +1154,10 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			TVec v1 = *line->linedef->v1;
 			TVec v2 = *line->linedef->v2;
 
-			//
-			// Check for doors
-			//
-
-			// A line without top texture isn't a door
-			if (line->sidedef->TopTexture != -1)
+			// Just apply this to sectors without slopes
+			if (line->frontsector->floor.normal.z == 1.0 && line->backsector->floor.normal.z == 1.0 &&
+				line->frontsector->ceiling.normal.z == -1.0 && line->backsector->ceiling.normal.z == -1.0)
 			{
-				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
-				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
-				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
-				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
-
-				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
-				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
-				float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
-				float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
-
-				if ((backcz2 > frontfz2 && backcz2 > frontfz1 && backcz1 > frontfz2 && backcz1 > frontfz1) &&
-					(frontcz2 > backfz2 && frontcz2 > backfz1 && frontcz1 > backfz2 && frontcz1 > backfz1))
-				{
-					// It's an opened door
-					continue;
-				}
-			}
-
-			//
-			// Check for elevators/plats
-			//
-
-			// A line without bottom texture isn't an elevator/plat
-			if (line->sidedef->BottomTexture != -1)
-			{
-				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
-				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
-				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
-				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
-
-				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
-				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
-				float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
-				float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
-
-				if ((backcz2 > frontfz2 && backcz2 > frontfz1 && backcz1 > frontfz2 && backcz1 > frontfz1) &&
-					(frontcz2 > backfz2 && frontcz2 > backfz1 && frontcz1 > backfz2 && frontcz1 > backfz1))
-				{
-					// It's a lowered elevator/plat
-					continue;
-				}
-			}
-
-			//
-			// Check for polyobjs
-			//
-
-			// A line without mid texture isn't a polyobj door
-			if (line->sidedef->MidTexture != -1)
-			{
-				float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
-				float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
-				float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
-				float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
-
-				float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
-				float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
-				float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
-				float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
-
-				if ((backcz2 > frontfz2 && backcz2 > frontfz1 && backcz1 > frontfz2 && backcz1 > frontfz1) &&
-					(frontcz2 > backfz2 && frontcz2 > backfz1 && frontcz1 > backfz2 && frontcz1 > backfz1))
-				{
-					// It's an opened polyobj door
-					continue;
-				}
-			}
-		}
-
-		if (Mirror)
-		{
-			//	Clip seg with mirror plane.
-			float Dist1 = DotProduct(v1, Mirror->normal) - Mirror->dist;
-			float Dist2 = DotProduct(v2, Mirror->normal) - Mirror->dist;
-
-			if (Dist1 > 0.0 && Dist2 < 0.0)
-			{
-				v2 = v1 + (v2 - v1) * Dist1 / (Dist1 - Dist2);
-			}
-			else if (Dist2 > 0.0 && Dist1 < 0.0)
-			{
-				v1 = v2 + (v1 - v2) * Dist2 / (Dist2 - Dist1);
-			}
-		}
-		AddClipRange(PointToClipAngle(v2), PointToClipAngle(v1));
-	}
-
-	if (Sub->poly)
-	{
-		seg_t** polySeg = Sub->poly->segs;
-
-		for (int polyCount = Sub->poly->numsegs; polyCount--; polySeg++)
-		{
-			seg_t* line = *polySeg;
-
-			if (!line->linedef)
-			{
-				//	Miniseg.
-				continue;
-			}
-
-			if (line->PointOnSide(Origin))
-			{
-				//	Viewer is in back side or on plane
-				continue;
-			}
-
-			TVec v1 = *line->v1;
-			TVec v2 = *line->v2;
-
-			TVec r1 = Origin - v1;
-			TVec r2 = Origin - v2;
-			r1.z = 0;
-			r2.z = 0;
-			float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
-			float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
-
-#ifdef CLIENT
-			if (shadowslight)
-			{
-				TVec rLight1 = CurrLightPos - v1;
-				TVec rLight2 = CurrLightPos - v2;
-				rLight1.z = 0;
-				rLight2.z = 0;
-				float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
-				float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
-
-				TVec rView1 = Origin - CurrLightPos;
-				TVec rView2 = Origin - CurrLightPos;
-				rView1.z = 0;
-				rView2.z = 0;
-				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
-				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-				if (D1 <= 0.0 && D2 <= 0.0 &&
-					DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
-				{
-					continue;
-				}
-
-				if (D1 > r_lights_radius && D2 > r_lights_radius)
-				{
-					continue;
-				}
-
-				if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-					DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-				{
-					continue;
-				}
-			}
-			else
-#endif
-			{
-				if (D1 <= 0.0 && D2 <= 0.0)
-				{
-					continue;
-				}
-			}
-
-			// 2-sided line, determine if it can be skipped
-			if (line->backsector)
-			{
-				TVec v1 = *line->linedef->v1;
-				TVec v2 = *line->linedef->v2;
-
 				//
 				// Check for doors
 				//
@@ -1358,7 +1203,7 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 					if ((backcz2 > frontfz2 && backcz2 > frontfz1 && backcz1 > frontfz2 && backcz1 > frontfz1) &&
 						(frontcz2 > backfz2 && frontcz2 > backfz1 && frontcz1 > backfz2 && frontcz1 > backfz1))
 					{
-						// It's a lowered elevator
+						// It's a lowered elevator/plat
 						continue;
 					}
 				}
@@ -1386,6 +1231,198 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 						// It's an opened polyobj door
 						continue;
 					}
+				}
+			}
+			else
+			{
+				continue;
+			}
+		}
+
+		if (Mirror)
+		{
+			//	Clip seg with mirror plane.
+			float Dist1 = DotProduct(v1, Mirror->normal) - Mirror->dist;
+			float Dist2 = DotProduct(v2, Mirror->normal) - Mirror->dist;
+
+			if (Dist1 > 0.0 && Dist2 < 0.0)
+			{
+				v2 = v1 + (v2 - v1) * Dist1 / (Dist1 - Dist2);
+			}
+			else if (Dist2 > 0.0 && Dist1 < 0.0)
+			{
+				v1 = v2 + (v1 - v2) * Dist2 / (Dist2 - Dist1);
+			}
+		}
+		AddClipRange(PointToClipAngle(v2), PointToClipAngle(v1));
+	}
+
+	if (Sub->poly)
+	{
+		seg_t** polySeg = Sub->poly->segs;
+
+		for (int polyCount = Sub->poly->numsegs; polyCount--; polySeg++)
+		{
+			seg_t* line = *polySeg;
+
+			if (!line->linedef)
+			{
+				//	Miniseg.
+				continue;
+			}
+
+			if (line->PointOnSide(Origin))
+			{
+				//	Viewer is in back side or on plane
+				continue;
+			}
+
+			TVec v1 = *line->v1;
+			TVec v2 = *line->v2;
+
+			// Just apply this to sectors without slopes
+			if (!line->backsector)
+			{
+				if (line->frontsector->floor.normal.z == 1.0 && line->frontsector->ceiling.normal.z == -1.0)
+				{
+					TVec r1 = Origin - v1;
+					TVec r2 = Origin - v2;
+					float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
+					float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
+
+#ifdef CLIENT
+					if (shadowslight)
+					{
+						TVec rLight1 = CurrLightPos - v1;
+						TVec rLight2 = CurrLightPos - v2;
+						float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+						float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
+
+						TVec rView1 = Origin - CurrLightPos;
+						TVec rView2 = Origin - CurrLightPos;
+						float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+						float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
+
+						if (D1 < 0.0 && D2 < 0.0 &&
+							DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+						{
+							continue;
+						}
+
+						if (D1 > r_lights_radius && D2 > r_lights_radius)
+						{
+							continue;
+						}
+
+						if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+							DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+						{
+							continue;
+						}
+					}
+					else
+#endif
+					{
+						if (D1 < 0.0 && D2 < 0.0)
+						{
+							continue;
+						}
+					}
+				}
+				/*else
+				{
+					continue;
+				}*/
+			}
+
+			// 2-sided line, determine if it can be skipped
+			if (line->backsector)
+			{
+				TVec v1 = *line->linedef->v1;
+				TVec v2 = *line->linedef->v2;
+
+				// Just apply this to sectors without slopes
+				if (line->frontsector->floor.normal.z == 1.0 && line->backsector->floor.normal.z == 1.0 &&
+					line->frontsector->ceiling.normal.z == -1.0 && line->backsector->ceiling.normal.z == -1.0)
+				{
+					//
+					// Check for doors
+					//
+
+					// A line without top texture isn't a door
+					if (line->sidedef->TopTexture != -1)
+					{
+						float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
+						float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
+						float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
+						float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
+
+						float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
+						float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
+						float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
+						float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
+
+						if ((backcz2 > frontfz2 && backcz2 > frontfz1 && backcz1 > frontfz2 && backcz1 > frontfz1) &&
+							(frontcz2 > backfz2 && frontcz2 > backfz1 && frontcz1 > backfz2 && frontcz1 > backfz1))
+						{
+							// It's an opened door
+							continue;
+						}
+					}
+
+					//
+					// Check for elevators/plats
+					//
+
+					// A line without bottom texture isn't an elevator/plat
+					if (line->sidedef->BottomTexture != -1)
+					{
+						float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
+						float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
+						float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
+						float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
+
+						float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
+						float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
+						float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
+						float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
+
+						if ((backcz2 > frontfz2 && backcz2 > frontfz1 && backcz1 > frontfz2 && backcz1 > frontfz1) &&
+							(frontcz2 > backfz2 && frontcz2 > backfz1 && frontcz1 > backfz2 && frontcz1 > backfz1))
+						{
+							// It's a lowered elevator
+							continue;
+						}
+					}
+
+					//
+					// Check for polyobjs
+					//
+
+					// A line without mid texture isn't a polyobj door
+					if (line->sidedef->MidTexture != -1)
+					{
+						float frontcz1 = line->linedef->frontsector->ceiling.GetPointZ(v1);
+						float frontcz2 = line->linedef->frontsector->ceiling.GetPointZ(v2);
+						float frontfz1 = line->linedef->frontsector->floor.GetPointZ(v1);
+						float frontfz2 = line->linedef->frontsector->floor.GetPointZ(v2);
+
+						float backcz1 = line->linedef->backsector->ceiling.GetPointZ(v1);
+						float backcz2 = line->linedef->backsector->ceiling.GetPointZ(v2);
+						float backfz1 = line->linedef->backsector->floor.GetPointZ(v1);
+						float backfz2 = line->linedef->backsector->floor.GetPointZ(v2);
+
+						if ((backcz2 > frontfz2 && backcz2 > frontfz1 && backcz1 > frontfz2 && backcz1 > frontfz1) &&
+							(frontcz2 > backfz2 && frontcz2 > backfz1 && frontcz1 > backfz2 && frontcz1 > backfz1))
+						{
+							// It's an opened polyobj door
+							continue;
+						}
+					}
+				}
+				else
+				{
+					continue;
 				}
 			}
 

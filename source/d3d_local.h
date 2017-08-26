@@ -275,6 +275,11 @@ private:
 	D3DTEXTUREFILTERTYPE		minfilter;
 	D3DTEXTUREFILTERTYPE		mipfilter;
 
+	//	Sprite Texture filters.
+	D3DTEXTUREFILTERTYPE		spr_magfilter;
+	D3DTEXTUREFILTERTYPE		spr_minfilter;
+	D3DTEXTUREFILTERTYPE		spr_mipfilter;
+
 	//	Textures.
 	LPDIRECT3DTEXTURE9			particle_texture;
     int                         tscount;
@@ -291,6 +296,7 @@ private:
 	static VCvarI device;
 	static VCvarI clear;
 	static VCvarI tex_linear;
+	static VCvarI sprite_tex_linear;
 	static VCvarI dither;
 	static VCvarI blend_sprites;
 	static VCvarF maxdist;

@@ -46,6 +46,7 @@
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 VCvarI VOpenGLDrawer::tex_linear("gl_tex_linear", "2", CVAR_Archive);
+VCvarI VOpenGLDrawer::sprite_tex_linear("gl_sprite_tex_linear", "2", CVAR_Archive);
 VCvarI VOpenGLDrawer::clear("gl_clear", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::blend_sprites("gl_blend_sprites", "0", CVAR_Archive);
 VCvarI VOpenGLDrawer::ext_multitexture("gl_ext_multitexture", "1", CVAR_Archive);

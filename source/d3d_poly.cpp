@@ -482,14 +482,14 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 	if (HaveMultiTexture && Texture2->Type != TEXTYPE_Null)
 	{
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+
+		SetTexture(Texture2, CMap);
+		TexStage = 1;
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_BLENDTEXTUREALPHA);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLORARG2, D3DTA_CURRENT);
 		RenderDevice->SetTextureStageState(1, D3DTSS_TEXCOORDINDEX, 1);
-
 		SetTexture(Texture1, CMap);
-		TexStage = 1;
-		SetTexture(Texture2, CMap);
 		TexStage = 0;
 		for (i = 0; i < surf->count; i++)
 		{
@@ -503,7 +503,9 @@ void VDirect3DDrawer::DrawSkyPolygon(surface_t* surf, bool bIsSkyBox,
 		RenderDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, surf->count - 2, out, sizeof(MyD3DVertex));
 
 		RenderDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+		TexStage = 1;
 		RenderDevice->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
+		TexStage = 0;
 	}
 	else
 	{
@@ -642,9 +644,54 @@ void VDirect3DDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 	SetSpriteLump(Tex, Translation, CMap);
 
-	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+	//	Setup texture filtering
+	switch (sprite_tex_linear)
+	{
+		case 1:
+		{
+			spr_magfilter = D3DTEXF_LINEAR;
+			spr_minfilter = D3DTEXF_LINEAR;
+			spr_mipfilter = D3DTEXF_NONE;
+			break;
+		}
+		case 2:
+		{
+			spr_magfilter = D3DTEXF_POINT;
+			spr_minfilter = D3DTEXF_POINT;
+			spr_mipfilter = D3DTEXF_LINEAR;
+			break;
+		}
+		case 3:
+		{
+			spr_magfilter = D3DTEXF_LINEAR;
+			spr_minfilter = D3DTEXF_LINEAR;
+			spr_mipfilter = D3DTEXF_LINEAR;
+			break;
+		}
+		case 4:
+		{
+			spr_magfilter = D3DTEXF_ANISOTROPIC;
+			spr_minfilter = D3DTEXF_ANISOTROPIC;
+			spr_mipfilter = D3DTEXF_LINEAR;
+			break;
+		}
+		case 5:
+		{
+			spr_magfilter = D3DTEXF_POINT;
+			spr_minfilter = D3DTEXF_ANISOTROPIC;
+			spr_mipfilter = D3DTEXF_LINEAR;
+			break;
+		}
+		default:
+		{
+			spr_magfilter = D3DTEXF_POINT;
+			spr_minfilter = D3DTEXF_POINT;
+			spr_mipfilter = D3DTEXF_NONE;
+		}
+	}
+	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, spr_magfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, spr_minfilter);
+	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, spr_mipfilter);
 
 	int l = ((int)(Alpha * 255) << 24) | (light & 0x00ffffff);
 	for (int i = 0; i < 4; i++)

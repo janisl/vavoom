@@ -1021,18 +1021,25 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 	src = line->frontsector;
 	src->SectorFlags |= sector_t::SF_ExtrafloorSource;
 	dst->SectorFlags |= sector_t::SF_HasExtrafloors;
+
 	float floorz = src->floor.GetPointZ(dst->soundorg);
 	float ceilz = src->ceiling.GetPointZ(dst->soundorg);
+
 	// Swap planes for 3d floors like those of GZDoom
 	if (floorz < ceilz)
 	{
 		SwapPlanes(src);
+		floorz = src->ceiling.GetPointZ(dst->soundorg);
+		ceilz = src->floor.GetPointZ(dst->soundorg);
+		GCon->Logf("Swapped planes for tag: %d, ceilz: %f, floorz: %f", ceilz, floorz);
 	}
+
 	for (inregion = dst->botregion; inregion; inregion = inregion->next)
 	{
 		float infloorz = inregion->floor->GetPointZ(dst->soundorg);
 		float inceilz = inregion->ceiling->GetPointZ(dst->soundorg);
-		if (infloorz <= ceilz && inceilz >= floorz)
+
+		if (infloorz <= floorz && inceilz >= ceilz)
 		{
 			region = new sec_region_t;
 			memset(region, 0, sizeof(*region));
@@ -1041,6 +1048,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 			region->params = &src->params;
 			region->extraline = line;
 			inregion->floor = &src->floor;
+
 			if (inregion->prev)
 			{
 				inregion->prev->next = region;
@@ -1052,6 +1060,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 			region->prev = inregion->prev;
 			region->next = inregion;
 			inregion->prev = region;
+
 			return region;
 		}
 		// Check for sloped floor
@@ -1066,6 +1075,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 				region->params = &src->params;
 				region->extraline = line;
 				inregion->floor = &src->floor;
+
 				if (inregion->prev)
 				{
 					inregion->prev->next = region;
@@ -1077,8 +1087,13 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 				region->prev = inregion->prev;
 				region->next = inregion;
 				inregion->prev = region;
+
 				return region;
 			}
+			/*else
+			{
+				GCon->Logf("tag: %d, floor->maxz: %f, ceiling.minz: %f, ceiling->maxz: %f, floor.minz: %f", line->arg1, inregion->floor->maxz, src->ceiling.minz, inregion->ceiling->maxz, src->floor.minz);
+			}*/
 		}
 		// Check for sloped ceiling
 		else if (inregion->ceiling->normal.z != -1.0)
@@ -1092,6 +1107,7 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 				region->params = &src->params;
 				region->extraline = line;
 				inregion->floor = &src->floor;
+
 				if (inregion->prev)
 				{
 					inregion->prev->next = region;
@@ -1103,11 +1119,21 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 				region->prev = inregion->prev;
 				region->next = inregion;
 				inregion->prev = region;
+
 				return region;
 			}
+			/*else
+			{
+				GCon->Logf("tag: %d, floor->minz: %f, ceiling.maxz: %f, ceiling->minz: %f, floor.maxz: %f", line->arg1, inregion->floor->minz, src->ceiling.maxz, inregion->ceiling->minz, src->floor.maxz);
+			}*/
 		}
+		/*else
+		{
+			GCon->Logf("tag: %d, infloorz: %f, ceilz: %f, inceilz: %f, floorz: %f", line->arg1, infloorz, ceilz, inceilz, floorz);
+		}*/
 	}
 	GCon->Logf("Invalid extra floor, tag %d", dst->tag);
+
 	return NULL;
 	unguard;
 }

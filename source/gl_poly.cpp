@@ -235,8 +235,8 @@ void VOpenGLDrawer::WorldDrawing()
 			}
 
 			glBindTexture(GL_TEXTURE_2D, lmap_id[lb]);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 			if (RendLev->block_changed[lb])
 			{
@@ -294,8 +294,8 @@ void VOpenGLDrawer::WorldDrawing()
 			}
 
 			glBindTexture(GL_TEXTURE_2D, addmap_id[lb]);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 			if (RendLev->add_changed[lb])
 			{
@@ -1353,8 +1353,52 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 	SetSpriteLump(Tex, Translation, CMap);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	switch (sprite_tex_linear)
+	{
+		case 1:
+		{
+			spr_maxfilter = GL_LINEAR;
+			spr_minfilter = GL_LINEAR;
+			spr_mipfilter = GL_NEAREST;
+			break;
+		}
+		case 2:
+		{
+			spr_maxfilter = GL_LINEAR;
+			spr_minfilter = GL_LINEAR;
+			spr_mipfilter = GL_LINEAR_MIPMAP_NEAREST;
+			break;
+		}
+		case 3:
+		{
+			spr_maxfilter = GL_LINEAR;
+			spr_minfilter = GL_LINEAR;
+			spr_mipfilter = GL_LINEAR_MIPMAP_LINEAR;
+			break;
+		}
+		case 4: // BILINEAR
+		{
+			spr_maxfilter = GL_NEAREST;
+			spr_minfilter = GL_LINEAR_MIPMAP_NEAREST;
+			spr_mipfilter = GL_LINEAR_MIPMAP_NEAREST;
+			break;
+		}
+		case 5: // TRILINEAR
+		{
+			spr_maxfilter = GL_NEAREST;
+			spr_minfilter = GL_LINEAR_MIPMAP_LINEAR;
+			spr_mipfilter = GL_LINEAR_MIPMAP_LINEAR;
+			break;
+		}
+		default:
+		{
+			spr_maxfilter = GL_NEAREST;
+			spr_minfilter = GL_NEAREST;
+			spr_mipfilter = GL_NEAREST;
+		}
+	}
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, spr_mipfilter);
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, spr_maxfilter);
 
 	if (HaveShaders)
 	{

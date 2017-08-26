@@ -447,6 +447,10 @@ protected:
 	GLenum					ClampToEdge;
 	GLfloat					max_anisotropy;
 
+	GLenum					spr_maxfilter;
+	GLenum					spr_minfilter;
+	GLenum					spr_mipfilter;
+
 	int						lastgamma;
 	int						CurrentFade;
 
@@ -655,6 +659,7 @@ protected:
 	//	Console variables
 	//
 	static VCvarI tex_linear;
+	static VCvarI sprite_tex_linear;
 	static VCvarI clear;
 	static VCvarI blend_sprites;
 	static VCvarI ext_multitexture;
