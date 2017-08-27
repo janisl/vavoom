@@ -1029,9 +1029,9 @@ sec_region_t *AddExtraFloor(line_t *line, sector_t *dst)
 	if (floorz < ceilz)
 	{
 		SwapPlanes(src);
-		floorz = src->ceiling.GetPointZ(dst->soundorg);
-		ceilz = src->floor.GetPointZ(dst->soundorg);
-		GCon->Logf("Swapped planes for tag: %d, ceilz: %f, floorz: %f", ceilz, floorz);
+		floorz = src->floor.GetPointZ(dst->soundorg);
+		ceilz = src->ceiling.GetPointZ(dst->soundorg);
+		GCon->Logf("Swapped planes for tag: %d, ceilz: %f, floorz: %f", line->arg1, ceilz, floorz);
 	}
 
 	for (inregion = dst->botregion; inregion; inregion = inregion->next)
