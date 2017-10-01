@@ -1157,6 +1157,7 @@ final void A_FiredSpawnRock()
 	if (mo)
 	{
 		mo.Target = self;
+		mo.Translation = Translation;
 		mo.Velocity.x = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.y = (Random() - 0.5) * 4.0 * 35.0;
 		mo.Velocity.z = Random() * 4.0 * 35.0;
@@ -1318,6 +1319,7 @@ final void A_FiredSplotch()
 	A = Spawn(FireDemonSplotch1, Origin);
 	if (A)
 	{
+		A.Translation = Translation;
 		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
@@ -1325,6 +1327,7 @@ final void A_FiredSplotch()
 	A = Spawn(FireDemonSplotch2, Origin);
 	if (A)
 	{
+		A.Translation = Translation;
 		A.Velocity.x = (Random() - 0.5) * 8.0 * 35.0;
 		A.Velocity.y = (Random() - 0.5) * 8.0 * 35.0;
 		A.Velocity.z = (3.0 + Random() * 4.0) * 35.0;
@@ -1510,6 +1513,7 @@ final void A_BishopSpawnBlur()
 	blur = Spawn(BishopBlur, Origin);
 	if (blur)
 	{
+		blur.Translation = Translation;
 		blur.Angles = Angles;
 	}
 }
@@ -1582,6 +1586,7 @@ final void A_BishopPainBlur()
 		(Random() - Random()) * 16.0, (Random() - Random()) * 8.0));
 	if (blur)
 	{
+		blur.Translation = Translation;
 		blur.Angles = Angles;
 	}
 }

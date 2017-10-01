@@ -162,7 +162,7 @@ public:
 		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, vuint32,
-		vuint32, float, bool, bool, float, bool, bool);
+		vuint32, float, bool, bool, float, bool, bool, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -201,18 +201,20 @@ public:
 	void DrawWorldFogPass();
 	void EndFogPass();
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool,
+		bool, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-		float, float, bool, bool);
+		float, float, bool, bool, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, float, float, bool, bool);
 	void BeginModelsShadowsPass(TVec&, float);
 	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float);
 	void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool,
+		bool);
 
 private:
 	bool Reset();

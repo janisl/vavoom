@@ -201,7 +201,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, vuint32 light,
 	vuint32 Fade, float Alpha, bool Additive, bool is_view_model, float Inter,
-	bool Interpolate, bool ForceDepthUse)
+	bool Interpolate, bool ForceDepthUse, bool AllowTransparency)
 {
 	guard(VOpenGLDrawer::DrawAliasModel);
 	if (is_view_model)
@@ -271,11 +271,25 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 	SetPic(Skin, Trans, CMap);
 
+	glEnable(GL_ALPHA_TEST);
+	glShadeModel(GL_SMOOTH);
+	glAlphaFunc(GL_GREATER, 0.0);
+	glEnable(GL_BLEND);
+
 	if (HaveShaders)
 	{
 		p_glUseProgramObjectARB(SurfModelProgram);
 		p_glUniform1iARB(SurfModelTextureLoc, 0);
 		p_glUniform1iARB(SurfModelFogTypeLoc, r_fog & 3);
+
+		if (Alpha < 1.0)
+		{
+			p_glUniform1fARB(ShadowsModelAlphaLoc, Alpha);
+		}
+		else
+		{
+			p_glUniform1fARB(ShadowsModelAlphaLoc, 1.0);
+		}
 
 		if (Fade)
 		{
@@ -292,6 +306,15 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		{
 			p_glUniform1iARB(SurfModelFogEnabledLoc, GL_FALSE);
 		}
+
+		if (AllowTransparency)
+		{
+			p_glUniform1iARB(SurfModelAllowTransparency, GL_TRUE);
+		}
+		else
+		{
+			p_glUniform1iARB(SurfModelAllowTransparency, GL_FALSE);
+		}
 		p_glUniform1fARB(SurfModelInterLoc, Inter);
 	}
 	else
@@ -302,10 +325,7 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 		}
 		SetFade(Fade);
 	}
-	glEnable(GL_ALPHA_TEST);
-	glShadeModel(GL_SMOOTH);
-	glAlphaFunc(GL_GREATER, 0.0);
-	glEnable(GL_BLEND);
+
 	if (Additive)
 	{
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -332,13 +352,13 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 			(light & 255) / 255.0, Alpha);
 
 		p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-		if (Alpha < 1.0 && !ForceDepthUse)
+		if (Alpha < 1.0 && !ForceDepthUse || AllowTransparency)
 		{
 			glDepthMask(GL_FALSE);
 		}
 		p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1,
 			Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
-		if (Alpha < 1.0 && !ForceDepthUse)
+		if (Alpha < 1.0 && !ForceDepthUse || AllowTransparency)
 		{
 			glDepthMask(GL_TRUE);
 		}
@@ -458,7 +478,8 @@ void VOpenGLDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 
 void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
-	VTexture* Skin, vuint32 light, float Alpha, float Inter, bool Interpolate)
+	VTexture* Skin, vuint32 light, float Alpha, float Inter, bool Interpolate,
+	bool ForceDepth, bool AllowTransparency)
 {
 	guard(VOpenGLDrawer::DrawAliasModelAmbient);
 	UploadModel(Mdl);
@@ -488,7 +509,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	p_glUniform4fARB(ShadowsModelAmbientLightLoc,
 		((light >> 16) & 255) / 255.0,
 		((light >> 8) & 255) / 255.0,
-		(light & 255) / 255.0, 1.0);
+		(light & 255) / 255.0, Alpha);
 	p_glUniformMatrix4fvARB(ShadowsModelAmbientModelToWorldMatLoc, 1, GL_FALSE, RotationMatrix[0]);
 	p_glUniformMatrix3fvARB(ShadowsModelAmbientNormalToWorldMatLoc, 1, GL_FALSE, NormalMat[0]);
 
@@ -515,18 +536,21 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 	{
 		p_glUniform1fARB(ShadowsModelAmbientAlphaLoc, 1.0);
 	}
+
+	p_glUniform1iARB(ShadowsModelAmbientAllowTransparency, GL_FALSE);
+
 	glEnable(GL_ALPHA_TEST);
 	glShadeModel(GL_SMOOTH);
 	glAlphaFunc(GL_GREATER, 0.0);
 	glEnable(GL_BLEND);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-	if (Alpha < 1.0)
+	if (Alpha < 1.0 && !ForceDepth)
 	{
 		glDepthMask(GL_FALSE);
 	}
 	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
-	if (Alpha < 1.0)
+	if (Alpha < 1.0 && !ForceDepth)
 	{
 		glDepthMask(GL_TRUE);
 	}
@@ -555,7 +579,7 @@ void VOpenGLDrawer::DrawAliasModelAmbient(const TVec &origin, const TAVec &angle
 void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
 	VTexture* Skin, VTextureTranslation* Trans, int CMap, float Alpha, float Inter,
-	bool Interpolate, bool ForceDepth)
+	bool Interpolate, bool ForceDepth, bool AllowTransparency)
 {
 	guard(VOpenGLDrawer::DrawAliasModelTextures);
 	UploadModel(Mdl);
@@ -604,26 +628,28 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 	if (Alpha < 1.0)
 	{
 		p_glUniform1fARB(ShadowsModelTexturesAlphaLoc, Alpha);
-
-		glEnable(GL_ALPHA_TEST);
 	}
 	else
 	{
 		p_glUniform1fARB(ShadowsModelTexturesAlphaLoc, 1.0);
 	}
+
+	if (AllowTransparency)
+	{
+		p_glUniform1iARB(ShadowsModelTexturesAllowTransparency, GL_TRUE);
+	}
+	else
+	{
+		p_glUniform1iARB(ShadowsModelTexturesAllowTransparency, GL_FALSE);
+	}
+	glEnable(GL_ALPHA_TEST);
 	glShadeModel(GL_SMOOTH);
 	glAlphaFunc(GL_GREATER, 0.0);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
-	if (Alpha < 1.0 && !ForceDepth)
-	{
-		glDisable(GL_DEPTH_TEST);
-	}
+	glDepthMask(GL_FALSE);
 	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
-	if (Alpha < 1.0 && !ForceDepth)
-	{
-		glEnable(GL_DEPTH_TEST);
-	}
+	glDepthMask(GL_TRUE);
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
@@ -635,10 +661,7 @@ void VOpenGLDrawer::DrawAliasModelTextures(const TVec &origin, const TAVec &angl
 
 	glShadeModel(GL_FLAT);
 	glAlphaFunc(GL_GREATER, 0.333);
-	if (Alpha < 1.0)
-	{
-		glDisable(GL_ALPHA_TEST);
-	}
+	glDisable(GL_ALPHA_TEST);
 	unguard;
 }
 
@@ -670,7 +693,7 @@ void VOpenGLDrawer::BeginModelsLightPass(TVec& LightPos, float Radius, vuint32 C
 
 void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
-	VTexture* Skin, float Inter, bool Interpolate)
+	VTexture* Skin, float Alpha, float Inter, bool Interpolate, bool AllowTransparency)
 {
 	guard(VOpenGLDrawer::DrawAliasModelLight);
 	UploadModel(Mdl);
@@ -712,6 +735,24 @@ void VOpenGLDrawer::DrawAliasModelLight(const TVec &origin, const TAVec &angles,
 	p_glEnableVertexAttribArrayARB(ShadowsModelLightVert2NormalLoc);
 	p_glVertexAttribPointerARB(ShadowsModelLightTexCoordLoc, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	p_glEnableVertexAttribArrayARB(ShadowsModelLightTexCoordLoc);
+
+	if (Alpha < 1.0)
+	{
+		p_glUniform1fARB(ShadowsModelAlphaLoc, Alpha);
+	}
+	else
+	{
+		p_glUniform1fARB(ShadowsModelAlphaLoc, 1.0);
+	}
+
+	if (AllowTransparency)
+	{
+		p_glUniform1iARB(ShadowsModelLightAllowTransparency, GL_TRUE);
+	}
+	else
+	{
+		p_glUniform1iARB(ShadowsModelLightAllowTransparency, GL_FALSE);
+	}
 	p_glUniform3fARB(ShadowsModelLightViewOrigin, vieworg.x, vieworg.y, vieworg.z);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
@@ -853,7 +894,8 @@ void VOpenGLDrawer::DrawAliasModelShadow(const TVec &origin, const TAVec &angles
 
 void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame, int nextframe,
-	VTexture* Skin, vuint32 Fade, float Alpha, float Inter, bool Interpolate)
+	VTexture* Skin, vuint32 Fade, float Alpha, float Inter, bool Interpolate,
+	bool AllowTransparency)
 {
 	guard(VOpenGLDrawer::DrawAliasModelFog);
 	UploadModel(Mdl);
@@ -873,7 +915,7 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glUniform4fARB(ShadowsModelFogFogColourLoc,
 		((Fade >> 16) & 255) / 255.0,
 		((Fade >> 8) & 255) / 255.0,
-		(Fade & 255) / 255.0, 1.0);
+		(Fade & 255) / 255.0, Alpha);
 	p_glUniform1fARB(ShadowsModelFogFogDensityLoc, Fade == FADE_LIGHT ? 0.3 : r_fog_density);
 	p_glUniform1fARB(ShadowsModelFogFogStartLoc, Fade == FADE_LIGHT ? 1.0 : r_fog_start);
 	p_glUniform1fARB(ShadowsModelFogFogEndLoc, Fade == FADE_LIGHT ? 1024.0 * r_fade_factor : r_fog_end);
@@ -895,12 +937,24 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	{
 		p_glUniform1fARB(ShadowsModelFogAlphaLoc, 1.0);
 	}
+
+	if (AllowTransparency)
+	{
+		p_glUniform1iARB(ShadowsModelFogAllowTransparency, GL_TRUE);
+	}
+	else
+	{
+		p_glUniform1iARB(ShadowsModelFogAllowTransparency, GL_FALSE);
+	}
 	glEnable(GL_ALPHA_TEST);
 	glShadeModel(GL_SMOOTH);
 	glAlphaFunc(GL_GREATER, 0.0);
+	glEnable(GL_BLEND);
 
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, Mdl->IndexBuffer);
+	glDepthMask(GL_FALSE);
 	p_glDrawRangeElementsEXT(GL_TRIANGLES, 0, Mdl->STVerts.Num() - 1, Mdl->Tris.Num() * 3, GL_UNSIGNED_SHORT, 0);
+	glDepthMask(GL_TRUE);
 	p_glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
 
 	p_glDisableVertexAttribArrayARB(0);
@@ -908,6 +962,7 @@ void VOpenGLDrawer::DrawAliasModelFog(const TVec &origin, const TAVec &angles,
 	p_glDisableVertexAttribArrayARB(ShadowsModelFogTexCoordLoc);
 	p_glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 
+	glDisable(GL_BLEND);
 	glAlphaFunc(GL_GREATER, 0.333);
 	glShadeModel(GL_FLAT);
 	glDisable(GL_ALPHA_TEST);

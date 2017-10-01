@@ -157,7 +157,7 @@ public:
 		const TVec&, const TVec&, const TVec&) = 0;
 	virtual void DrawAliasModel(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-		vuint32, vuint32, float, bool, bool, float, bool, bool) = 0;
+		vuint32, vuint32, float, bool, bool, float, bool, bool, bool) = 0;
 	virtual bool StartPortal(VPortal*, bool) = 0;
 	virtual void EndPortal(VPortal*, bool) = 0;
 
@@ -196,18 +196,20 @@ public:
 	virtual void DrawWorldFogPass() = 0;
 	virtual void EndFogPass() = 0;
 	virtual void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) = 0;
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool,
+		bool, bool) = 0;
 	virtual void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-		float, float, bool, bool) = 0;
+		float, float, bool, bool, bool) = 0;
 	virtual void BeginModelsLightPass(TVec&, float, vuint32) = 0;
 	virtual void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, float, bool) = 0;
+		const TVec&, VMeshModel*, int, int, VTexture*, float, float, bool, bool) = 0;
 	virtual void BeginModelsShadowsPass(TVec&, float) = 0;
 	virtual void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float) = 0;
 	virtual void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) = 0;
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool,
+		bool) = 0;
 };
 
 //	Drawer types, menu system uses these numbers.

@@ -604,11 +604,11 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 
 		// There might be a better method of doing this, but
 		// this one works for now...
-		if (DLight1 > 0.0 && DLight2 < 0.0)
+		if (DLight1 > 0.0 && DLight2 <= 0.0)
 		{
 			v2 += (v2 - v1) * D1 / (D1 - D2);
 		}
-		else if (DLight2 > 0.0 && DLight1 < 0.0)
+		else if (DLight2 > 0.0 && DLight1 <= 0.0)
 		{
 			v1 += (v1 - v2) * D2 / (D2 - D1);
 		}
@@ -623,11 +623,11 @@ bool VViewClipper::ClipIsBBoxVisible(float* BBox, bool shadowslight, const TVec&
 
 		// There might be a better method of doing this, but
 		// this one works for now...
-		if (D1 > 0.0 && D2 < 0.0)
+		if (D1 > 0.0 && D2 <= 0.0)
 		{
 			v2 += (v2 - v1) * D1 / (D1 - D2);
 		}
-		else if (D2 > 0.0 && D1 < 0.0)
+		else if (D2 > 0.0 && D1 <= 0.0)
 		{
 			v1 += (v1 - v2) * D2 / (D2 - D1);
 		}
@@ -656,9 +656,32 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 
 	while (count--)
 	{
-		// Clip sectors that are behind rendered segs
 		TVec v1 = *ds->seg->v1;
 		TVec v2 = *ds->seg->v2;
+
+		if (!ds->seg->linedef)
+		{
+			//	Miniseg.
+			if (!IsRangeVisible(PointToClipAngle(v2),
+				PointToClipAngle(v1)))
+			{
+				ds++;
+				continue;
+			}
+		}
+
+		if (ds->seg->PointOnSide(Origin))
+		{
+			//	Viewer is in back side or on plane
+			if (!IsRangeVisible(PointToClipAngle(v2),
+				PointToClipAngle(v1)))
+			{
+				ds++;
+				continue;
+			}
+		}
+
+		// Clip sectors that are behind rendered segs
 		TVec rLight1;
 		TVec rLight2;
 		float DLight1;
@@ -668,64 +691,95 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
-		// Just apply this to sectors without slopes
-		if (!ds->seg->backsector)
+#ifdef CLIENT
+		if (shadowslight)
+		{
+			rLight1 = CurrLightPos - v1;
+			rLight2 = CurrLightPos - v2;
+			DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+			DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
+
+			TVec rView1 = Origin - CurrLightPos;
+			TVec rView2 = Origin - CurrLightPos;
+			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
+
+			if (D1 <= 0.0 && D2 <= 0.0 &&
+				DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+			{
+				ds++;
+				continue;
+			}
+
+			if (D1 > r_lights_radius && D2 > r_lights_radius)
+			{
+				ds++;
+				continue;
+			}
+
+			if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+				DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+			{
+				ds++;
+				continue;
+			}
+		}
+		else
+#endif
+		{
+			if (D1 <= 0.0 && D2 <= 0.0)
+			{
+				ds++;
+				continue;
+			}
+		}
+
+		if(!ds->seg->backsector)
 		{
 #ifdef CLIENT
 			if (shadowslight)
 			{
-				rLight1 = CurrLightPos - v1;
-				rLight2 = CurrLightPos - v2;
-				DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
-				DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
-
-				TVec rView1 = Origin - CurrLightPos;
-				TVec rView2 = Origin - CurrLightPos;
-				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
-				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-				if (D1 < 0.0 && D2 < 0.0 &&
-					DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+				// There might be a better method of doing this, but
+				// this one works for now...
+				if (DLight1 > CurrLightRadius && DLight2 <= -CurrLightRadius)
 				{
-					ds++;
-					continue;
+					v2 += (v2 - v1) * DLight1 / (DLight1 - DLight2);
 				}
-
-				if (D1 > r_lights_radius && D2 > r_lights_radius)
+				else if (DLight2 > CurrLightRadius && DLight1 <= -CurrLightRadius)
 				{
-					ds++;
-					continue;
-				}
-
-				if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-					DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-				{
-					ds++;
-					continue;
+					v1 += (v1 - v2) * DLight2 / (DLight2 - DLight1);
 				}
 			}
 			else
 #endif
 			{
-				if (D1 < 0.0 && D2 < 0.0)
+				if (D1 > 0.0 && D2 <= 0.0)
 				{
-					ds++;
-					continue;
+					v2 += (v2 - v1) * D1 / (D1 - D2);
+				}
+				else if (D2 > 0.0 && D1 <= 0.0)
+				{
+					v1 += (v1 - v2) * D2 / (D2 - D1);
 				}
 			}
-		}
 
-		if (ds->seg->linedef)
+			if (IsRangeVisible(PointToClipAngle(v2),
+				PointToClipAngle(v1)))
+			{
+				return true;
+			}
+		}
+		else if (ds->seg->linedef && ds->seg->backsector)
 		{
 			TVec v1 = *ds->seg->linedef->v1;
 			TVec v2 = *ds->seg->linedef->v2;
 
 			// 2-sided line, determine if it can be skipped
-			if (ds->seg->linedef && ds->seg->linedef->backsector)
+			if (ds->seg->linedef->backsector)
 			{
 				// Just apply this to sectors without slopes
-				if (ds->seg->frontsector->floor.normal.z == 1.0 && ds->seg->backsector->floor.normal.z == 1.0 &&
-					ds->seg->frontsector->ceiling.normal.z == -1.0 && ds->seg->backsector->ceiling.normal.z == -1.0)
+				if (ds->seg->linedef->frontsector->floor.normal.z == 1.0 && ds->seg->linedef->backsector->floor.normal.z == 1.0 &&
+					ds->seg->linedef->frontsector->ceiling.normal.z == -1.0 && ds->seg->linedef->backsector->ceiling.normal.z == -1.0)
 				{
 					//
 					// Check for doors
@@ -815,39 +869,39 @@ bool VViewClipper::ClipCheckRegion(subregion_t* region, subsector_t* sub, bool s
 					}
 				}
 			}
-		}
 
 #ifdef CLIENT
-		if (shadowslight)
-		{
-			// There might be a better method of doing this, but
-			// this one works for now...
-			if (DLight1 > CurrLightRadius && DLight2 < -CurrLightRadius)
+			if (shadowslight)
 			{
-				v2 += (v2 - v1) * DLight1 / (DLight1 - DLight2);
+				// There might be a better method of doing this, but
+				// this one works for now...
+				if (DLight1 > CurrLightRadius && DLight2 <= -CurrLightRadius)
+				{
+					v2 += (v2 - v1) * DLight1 / (DLight1 - DLight2);
+				}
+				else if (DLight2 > CurrLightRadius && DLight1 <= -CurrLightRadius)
+				{
+					v1 += (v1 - v2) * DLight2 / (DLight2 - DLight1);
+				}
 			}
-			else if (DLight2 > CurrLightRadius && DLight1 < -CurrLightRadius)
-			{
-				v1 += (v1 - v2) * DLight2 / (DLight2 - DLight1);
-			}
-		}
-		else
+			else
 #endif
-		{
-			if (D1 > 0.0 && D2 < 0.0)
 			{
-				v2 += (v2 - v1) * D1 / (D1 - D2);
+				if (D1 > 0.0 && D2 <= 0.0)
+				{
+					v2 += (v2 - v1) * D1 / (D1 - D2);
+				}
+				else if (D2 > 0.0 && D1 <= 0.0)
+				{
+					v1 += (v1 - v2) * D2 / (D2 - D1);
+				}
 			}
-			else if (D2 > 0.0 && D1 < 0.0)
-			{
-				v1 += (v1 - v2) * D2 / (D2 - D1);
-			}
-		}
 
-		if (IsRangeVisible(PointToClipAngle(v2),
-			PointToClipAngle(v1)))
-		{
-			return true;
+			if (IsRangeVisible(PointToClipAngle(v2),
+				PointToClipAngle(v1)))
+			{
+				return true;
+			}
 		}
 		ds++;
 	}
@@ -874,9 +928,30 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 	{
 		seg_t* line = &Level->Segs[Sub->firstline + i];
 
-		// Clip sectors that are behind rendered segs
 		TVec v1 = *line->v1;
 		TVec v2 = *line->v2;
+
+		if (!line->linedef)
+		{
+			//	Miniseg.
+			if (!IsRangeVisible(PointToClipAngle(v2),
+				PointToClipAngle(v1)))
+			{
+				continue;
+			}
+		}
+
+		if (line->PointOnSide(Origin))
+		{
+			//	Viewer is in back side or on plane
+			if (!IsRangeVisible(PointToClipAngle(v2),
+				PointToClipAngle(v1)))
+			{
+				continue;
+			}
+		}
+
+		// Clip sectors that are behind rendered segs
 		TVec rLight1;
 		TVec rLight2;
 		float DLight1;
@@ -887,9 +962,95 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
 		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
-		// Just apply this to sectors without slopes
-		if (line->frontsector && !line->backsector)
+#ifdef CLIENT
+		if (shadowslight)
 		{
+			rLight1 = CurrLightPos - v1;
+			rLight2 = CurrLightPos - v2;
+			DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+			DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
+
+			TVec rView1 = Origin - CurrLightPos;
+			TVec rView2 = Origin - CurrLightPos;
+			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
+
+			if (D1 < 0.0 && D2 < 0.0 &&
+				DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
+			{
+				continue;
+			}
+
+			if (D1 > r_lights_radius && D2 > r_lights_radius)
+			{
+				continue;
+			}
+
+			if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+				DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+			{
+				continue;
+			}
+		}
+		else
+#endif
+		{
+			if (D1 < 0.0 && D2 < 0.0)
+			{
+				continue;
+			}
+		}
+
+		if(!line->backsector)
+		{
+			if (shadowslight)
+			{
+				// There might be a better method of doing this, but
+				// this one works for now...
+				if (DLight1 > CurrLightRadius && DLight2 < -CurrLightRadius)
+				{
+					v2 += (v2 - v1) * DLight1 / (DLight1 - DLight2);
+				}
+				else if (DLight2 > CurrLightRadius && DLight1 < -CurrLightRadius)
+				{
+					v1 += (v1 - v2) * DLight2 / (DLight2 - DLight1);
+				}
+			}
+			else
+			{
+				if (D1 > 0.0 && D2 < 0.0)
+				{
+					v2 += (v2 - v1) * D1 / (D1 - D2);
+				}
+				else if (D2 > 0.0 && D1 < 0.0)
+				{
+					v1 += (v1 - v2) * D2 / (D2 - D1);
+				}
+			}
+
+			if (IsRangeVisible(PointToClipAngle(v2),
+				PointToClipAngle(v1)))
+			{
+				return true;
+			}
+		}
+		else if (line->linedef && line->backsector)
+		{
+			// 2-sided line, determine if it can be skipped
+			TVec v1 = *line->linedef->v1;
+			TVec v2 = *line->linedef->v2;
+
+			// Clip sectors that are behind rendered segs
+			TVec rLight1;
+			TVec rLight2;
+			float DLight1;
+			float DLight2;
+
+			TVec r1 = Origin - v1;
+			TVec r2 = Origin - v2;
+			float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
+			float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
+
 #ifdef CLIENT
 			if (shadowslight)
 			{
@@ -902,39 +1063,8 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 				TVec rView2 = Origin - CurrLightPos;
 				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
 				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-				if (D1 < 0.0 && D2 < 0.0 &&
-					DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
-				{
-					continue;
-				}
-
-				if (D1 > r_lights_radius && D2 > r_lights_radius)
-				{
-					continue;
-				}
-
-				if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-					DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-				{
-					continue;
-				}
 			}
-			else
 #endif
-			{
-				if (D1 < 0.0 && D2 < 0.0)
-				{
-					continue;
-				}
-			}
-		}
-
-		// 2-sided line, determine if it can be skipped
-		if (line->linedef && line->backsector)
-		{
-			TVec v1 = *line->linedef->v1;
-			TVec v2 = *line->linedef->v2;
 
 			// Just apply this to sectors without slopes
 			if (line->frontsector->floor.normal.z == 1.0 && line->backsector->floor.normal.z == 1.0 &&
@@ -1015,44 +1145,7 @@ bool VViewClipper::ClipCheckSubsector(subsector_t* Sub, bool shadowslight, const
 					}
 				}
 			}
-			else
-			{
-				if (line->linedef->backsector->floor.minz <= line->linedef->frontsector->ceiling.maxz &&
-					line->linedef->backsector->floor.maxz > line->linedef->frontsector->ceiling.minz)
-				{
-					continue;
-				}
-			}
-		}
 
-		if (shadowslight)
-		{
-			// There might be a better method of doing this, but
-			// this one works for now...
-			if (DLight1 > CurrLightRadius && DLight2 < -CurrLightRadius)
-			{
-				v2 += (v2 - v1) * DLight1 / (DLight1 - DLight2);
-			}
-			else if (DLight2 > CurrLightRadius && DLight1 < -CurrLightRadius)
-			{
-				v1 += (v1 - v2) * DLight2 / (DLight2 - DLight1);
-			}
-		}
-		else
-		{
-			if (D1 > 0.0 && D2 < 0.0)
-			{
-				v2 += (v2 - v1) * D1 / (D1 - D2);
-			}
-			else if (D2 > 0.0 && D1 < 0.0)
-			{
-				v1 += (v1 - v2) * D2 / (D2 - D1);
-			}
-		}
-
-		if (IsRangeVisible(PointToClipAngle(v2),
-			PointToClipAngle(v1)))
-		{
 			return true;
 		}
 	}
@@ -1073,6 +1166,10 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 	for (int i = 0; i < Sub->numlines; i++)
 	{
 		seg_t* line = &Level->Segs[Sub->firstline + i];
+
+		TVec v1 = *line->v1;
+		TVec v2 = *line->v2;
+
 		if (!line->linedef)
 		{
 			//	Miniseg.
@@ -1085,54 +1182,47 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			continue;
 		}
 
-		TVec v1 = *line->v1;
-		TVec v2 = *line->v2;
-
-		// Just apply this to sectors without slopes
-		if (!line->backsector)
-		{
-			TVec r1 = Origin - v1;
-			TVec r2 = Origin - v2;
-			float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
-			float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
+		TVec r1 = Origin - v1;
+		TVec r2 = Origin - v2;
+		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
+		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
 #ifdef CLIENT
-			if (shadowslight)
+		if (shadowslight)
+		{
+			TVec rLight1 = CurrLightPos - v1;
+			TVec rLight2 = CurrLightPos - v2;
+			float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+			float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
+
+			TVec rView1 = Origin - CurrLightPos;
+			TVec rView2 = Origin - CurrLightPos;
+			float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+			float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
+
+			if (D1 <= 0.0 && D2 <= 0.0 &&
+				DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
 			{
-				TVec rLight1 = CurrLightPos - v1;
-				TVec rLight2 = CurrLightPos - v2;
-				float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
-				float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
-
-				TVec rView1 = Origin - CurrLightPos;
-				TVec rView2 = Origin - CurrLightPos;
-				float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
-				float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-				if (D1 < 0.0 && D2 < 0.0 &&
-					DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
-				{
-					continue;
-				}
-
-				if (D1 > r_lights_radius && D2 > r_lights_radius)
-				{
-					continue;
-				}
-
-				if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-					DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-				{
-					continue;
-				}
+				continue;
 			}
-			else
-#endif
+
+			if (D1 > r_lights_radius && D2 > r_lights_radius)
 			{
-				if (D1 < 0.0 && D2 < 0.0)
-				{
-					continue;
-				}
+				continue;
+			}
+
+			if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+				DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+			{
+				continue;
+			}
+		}
+		else
+#endif
+		{
+			if (D1 <= 0.0 && D2 <= 0.0)
+			{
+				continue;
 			}
 		}
 
@@ -1155,8 +1245,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			TVec v2 = *line->linedef->v2;
 
 			// Just apply this to sectors without slopes
-			if (line->frontsector->floor.normal.z == 1.0 && line->backsector->floor.normal.z == 1.0 &&
-				line->frontsector->ceiling.normal.z == -1.0 && line->backsector->ceiling.normal.z == -1.0)
+			if (line->linedef->frontsector->floor.normal.z == 1.0 && line->linedef->backsector->floor.normal.z == 1.0 &&
+				line->linedef->frontsector->ceiling.normal.z == -1.0 && line->linedef->backsector->ceiling.normal.z == -1.0)
 			{
 				//
 				// Check for doors
@@ -1245,11 +1335,11 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			float Dist1 = DotProduct(v1, Mirror->normal) - Mirror->dist;
 			float Dist2 = DotProduct(v2, Mirror->normal) - Mirror->dist;
 
-			if (Dist1 > 0.0 && Dist2 < 0.0)
+			if (Dist1 > 0.0 && Dist2 <= 0.0)
 			{
 				v2 = v1 + (v2 - v1) * Dist1 / (Dist1 - Dist2);
 			}
-			else if (Dist2 > 0.0 && Dist1 < 0.0)
+			else if (Dist2 > 0.0 && Dist1 <= 0.0)
 			{
 				v1 = v2 + (v1 - v2) * Dist2 / (Dist2 - Dist1);
 			}
@@ -1281,58 +1371,51 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 			TVec v2 = *line->v2;
 
 			// Just apply this to sectors without slopes
-			if (!line->backsector)
+			if (line->frontsector->floor.normal.z == 1.0 && line->frontsector->ceiling.normal.z == -1.0)
 			{
-				if (line->frontsector->floor.normal.z == 1.0 && line->frontsector->ceiling.normal.z == -1.0)
-				{
-					TVec r1 = Origin - v1;
-					TVec r2 = Origin - v2;
-					float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
-					float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
+				TVec r1 = Origin - v1;
+				TVec r2 = Origin - v2;
+				float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), Origin);
+				float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), Origin);
 
 #ifdef CLIENT
-					if (shadowslight)
+				if (shadowslight)
+				{
+					TVec rLight1 = CurrLightPos - v1;
+					TVec rLight2 = CurrLightPos - v2;
+					float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
+					float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
+
+					TVec rView1 = Origin - CurrLightPos;
+					TVec rView2 = Origin - CurrLightPos;
+					float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
+					float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
+
+					if (D1 <= 0.0 && D2 <= 0.0 &&
+						DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
 					{
-						TVec rLight1 = CurrLightPos - v1;
-						TVec rLight2 = CurrLightPos - v2;
-						float DLight1 = DotProduct(Normalise(CrossProduct(rLight1, rLight2)), CurrLightPos);
-						float DLight2 = DotProduct(Normalise(CrossProduct(rLight2, rLight1)), CurrLightPos);
-
-						TVec rView1 = Origin - CurrLightPos;
-						TVec rView2 = Origin - CurrLightPos;
-						float DView1 = DotProduct(Normalise(CrossProduct(rView1, rView2)), Origin);
-						float DView2 = DotProduct(Normalise(CrossProduct(rView2, rView1)), Origin);
-
-						if (D1 < 0.0 && D2 < 0.0 &&
-							DView1 < -CurrLightRadius && DView2 < -CurrLightRadius)
-						{
-							continue;
-						}
-
-						if (D1 > r_lights_radius && D2 > r_lights_radius)
-						{
-							continue;
-						}
-
-						if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
-							DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
-						{
-							continue;
-						}
+						continue;
 					}
-					else
-#endif
+
+					if (D1 > r_lights_radius && D2 > r_lights_radius)
 					{
-						if (D1 < 0.0 && D2 < 0.0)
-						{
-							continue;
-						}
+						continue;
+					}
+
+					if (DLight1 > CurrLightRadius && DLight2 > CurrLightRadius ||
+						DLight1 < -CurrLightRadius && DLight2 < -CurrLightRadius)
+					{
+						continue;
 					}
 				}
-				/*else
+				else
+#endif
 				{
-					continue;
-				}*/
+					if (D1 <= 0.0 && D2 <= 0.0)
+					{
+						continue;
+					}
+				}
 			}
 
 			// 2-sided line, determine if it can be skipped
@@ -1342,8 +1425,8 @@ void VViewClipper::ClipAddSubsectorSegs(subsector_t* Sub, bool shadowslight, TPl
 				TVec v2 = *line->linedef->v2;
 
 				// Just apply this to sectors without slopes
-				if (line->frontsector->floor.normal.z == 1.0 && line->backsector->floor.normal.z == 1.0 &&
-					line->frontsector->ceiling.normal.z == -1.0 && line->backsector->ceiling.normal.z == -1.0)
+				if (line->linedef->frontsector->floor.normal.z == 1.0 && line->linedef->backsector->floor.normal.z == 1.0 &&
+					line->linedef->frontsector->ceiling.normal.z == -1.0 && line->linedef->backsector->ceiling.normal.z == -1.0)
 				{
 					//
 					// Check for doors

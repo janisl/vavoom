@@ -116,7 +116,7 @@ class Actor extends Thinker
 	action native A_SpawnItemEx(class<Actor> itemtype, optional eval float xoffs,
 		optional eval float yoffs, optional eval float zoffs, optional eval float xmom,
 		optional eval float ymom, optional eval float zmom, optional eval float angle,
-		optional eval int flags, optional eval int chance);
+		optional eval int flags, optional eval int chance, optional eval bool ApplyTranslation);
 
 	//
 	//	State jumps

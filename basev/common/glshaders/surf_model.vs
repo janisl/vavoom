@@ -9,20 +9,17 @@ attribute vec2 TexCoord;
 
 varying vec4 Light;
 varying vec3 VertToView;
+varying vec3 VPos;
 varying vec2 TextureCoordinate;
 
 void main ()
 {
-	//	Transforming The Vertex
 	vec4 Vert;
 
 	Vert = mix (gl_Vertex, Vert2, Inter);
 	gl_Position = (gl_ModelViewProjectionMatrix * Vert);
-
 	VertToView = (ViewOrigin - Vert.xyz);
-	//	Pass light
+	VPos = (ViewOrigin - gl_Position.xyz);
 	Light = LightVal;
-
-	//	Pass texture coordinates.
 	TextureCoordinate = TexCoord;
 }

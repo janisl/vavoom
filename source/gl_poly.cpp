@@ -1188,9 +1188,6 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex, tex->ColourMap);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
 	if (HaveShaders)
 	{
 		p_glUseProgramObjectARB(SurfMaskedProgram);
@@ -1247,7 +1244,7 @@ void VOpenGLDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 		}
 		else
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.333);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.555);
 		}
 		if (Additive)
 		{
@@ -1428,12 +1425,12 @@ void VOpenGLDrawer::DrawSpritePolygon(TVec *cv, VTexture* Tex, float Alpha,
 
 		if (blend_sprites || Additive || Alpha < 1.0)
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.111);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.333);
 			glEnable(GL_BLEND);
 		}
 		else
 		{
-			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.333);
+			p_glUniform1fARB(SurfMaskedAlphaRefLoc, 0.555);
 		}
 		if (Additive)
 		{

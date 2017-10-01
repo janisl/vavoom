@@ -14,6 +14,8 @@ attribute vec2 TexCoord;
 varying vec3 Normal;
 varying vec3 VertToLight;
 varying vec3 VertToView;
+varying vec3 VPos;
+varying vec3 VPosL;
 varying vec2 TextureCoordinate;
 varying float PlaneDist;
 varying float Dist;
@@ -21,22 +23,19 @@ varying float VDist;
 
 void main ()
 {
-	//	Transforming The Vertex
-	vec4 Vert_1;
+  vec4 Vert;
+  Vert = (mix (gl_Vertex, Vert2, Inter) * ModelToWorldMat);
+  gl_Position = (gl_ModelViewProjectionMatrix * Vert);
+  Normal = (NormalToWorldMat * mix (VertNormal, Vert2Normal, Inter));
+  float SurfDist;
 
-	Vert_1 = (mix (gl_Vertex, Vert2, Inter) * ModelToWorldMat);
-	gl_Position = (gl_ModelViewProjectionMatrix * Vert_1);
-
-	Normal = (NormalToWorldMat * mix (VertNormal, Vert2Normal, Inter));
-	float SurfDist;
-
-	SurfDist = dot (Normal, Vert_1.xyz);
-	PlaneDist = SurfDist;
-	Dist = (dot (LightPos, Normal) - SurfDist);
-	VDist = (dot (ViewOrigin, Normal) - SurfDist);
-
-	VertToLight = (LightPos - Vert_1.xyz);
-	VertToView = (ViewOrigin - Vert_1.xyz);
-
-	TextureCoordinate = TexCoord;
+  SurfDist = dot (Normal, Vert.xyz);
+  PlaneDist = SurfDist;
+  Dist = (dot (LightPos, Normal) - SurfDist);
+  VDist = (dot (ViewOrigin, Normal) - SurfDist);
+  VertToLight = (LightPos - Vert.xyz);
+  VertToView = (ViewOrigin - Vert.xyz);
+  VPosL = (LightPos - gl_Position.xyz);
+  VPos = (ViewOrigin - gl_Position.xyz);
+  TextureCoordinate = TexCoord;
 }

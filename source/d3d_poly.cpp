@@ -558,10 +558,6 @@ void VDirect3DDrawer::DrawMaskedPolygon(surface_t* surf, float Alpha,
 	texinfo_t* tex = surf->texinfo;
 	SetTexture(tex->Tex, tex->ColourMap);
 	
-	RenderDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	RenderDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-
 	if (surf->lightmap != NULL ||
 		surf->dlightframe == r_dlightframecount)
 	{
@@ -739,7 +735,8 @@ void VDirect3DDrawer::DrawAliasModel(const TVec &origin, const TAVec &angles,
 	const TVec& Offset, const TVec& Scale, VMeshModel* Mdl, int frame,
 	int nextframe, VTexture* Skin, VTextureTranslation* Trans, int CMap,
 	vuint32 light, vuint32 Fade, float Alpha, bool Additive,
-	bool is_view_model, float Inter, bool Interpolate, bool ForceDepthUse)
+	bool is_view_model, float Inter, bool Interpolate, bool ForceDepthUse,
+	bool AllowTransparency)
 {
 	guard(VDirect3DDrawer::DrawAliasModel);
 	mframe_t			*pframedesc;
