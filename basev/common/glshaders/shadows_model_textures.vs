@@ -12,27 +12,24 @@ attribute vec2 TexCoord;
 
 varying vec3 Normal;
 varying vec3 VertToView;
+varying vec3 VPos;
 varying vec2 TextureCoordinate;
 varying float PlaneDist;
 varying float Dist;
 
 void main ()
 {
-	//	Transforming The Vertex
-	vec4 Vert_1;
+	vec4 Vert;
 
-	Vert_1 = (mix (gl_Vertex, Vert2, Inter) * ModelToWorldMat);
-	gl_Position = (gl_ModelViewProjectionMatrix * Vert_1);
-
-	/*Normal = (NormalToWorldMat * mix (VertNormal, Vert2Normal, Inter));
+	Vert = (mix (gl_Vertex, Vert2, Inter) * ModelToWorldMat);
+	gl_Position = (gl_ModelViewProjectionMatrix * Vert);
+	Normal = (NormalToWorldMat * mix (VertNormal, Vert2Normal, Inter));
 	float SurfDist;
 
-	SurfDist = dot (Normal, Vert_1.xyz);
+	SurfDist = dot (Normal, Vert.xyz);
 	PlaneDist = SurfDist;
-	Dist = (dot (ViewOrigin, Normal) - SurfDist);*/
-
-	VertToView = (ViewOrigin - Vert_1.xyz);
-
-	//	Pass texture coordinates.
+	Dist = (dot (ViewOrigin, Normal) - SurfDist);
+	VertToView = (ViewOrigin - Vert.xyz);
+	VPos = (ViewOrigin - gl_Position.xyz);
 	TextureCoordinate = TexCoord;
 }

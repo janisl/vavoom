@@ -151,7 +151,10 @@ final void A_SorcOffense2()
 	if (mo)
 	{
 		Actor(mo).Special2 = 35 * 5 / 2;	// 5 seconds
-		dist = Target.Target.DistTo2(mo);
+		if (Target && Target.Target)
+		{
+			dist = Target.Target.DistTo2(mo);
+		}
 		dist = dist / mo.Speed;
 		if (dist < 1.0)
 			dist = 1.0;

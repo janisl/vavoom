@@ -610,29 +610,64 @@ void VRenderLevelShared::RenderLine(drawseg_t* dseg)
 		}
 	}
 
-	// Clip sectors that are behind rendered segs
-	TVec v1 = *line->v1;
-	TVec v2 = *line->v2;
-	TVec r1 = vieworg - v1;
-	TVec r2 = vieworg - v2;
-	float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), vieworg);
-	float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), vieworg);
+	if (line->backsector)
+	{
+		// Just apply this to sectors without slopes
+		if (line->frontsector->floor.normal.z == 1.0 && line->backsector->floor.normal.z == 1.0 &&
+			line->frontsector->ceiling.normal.z == -1.0 && line->backsector->ceiling.normal.z == -1.0)
+		{
+			// Clip sectors that are behind rendered segs
+			TVec v1 = *line->v1;
+			TVec v2 = *line->v2;
+			TVec r1 = vieworg - v1;
+			TVec r2 = vieworg - v2;
+			float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), vieworg);
+			float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), vieworg);
 
-	// There might be a better method of doing this, but
-	// this one works for now...
-	if (D1 > 0.0 && D2 <= 0.0)
-	{
-		v2 += ((v2 - v1) * D1) / (D1 - D2);
-	}
-	else if (D2 > 0.0 && D1 <= 0.0)
-	{
-		v1 += ((v2 - v1) * D1) / (D2 - D1);
-	}
+			// There might be a better method of doing this, but
+			// this one works for now...
+			if (D1 > 0.0 && D2 < 0.0)
+			{
+				v2 += ((v2 - v1) * D1) / (D1 - D2);
+			}
+			else if (D2 > 0.0 && D1 < 0.0)
+			{
+				v1 += ((v2 - v1) * D1) / (D2 - D1);
+			}
 
-	if (!ViewClip.IsRangeVisible(ViewClip.PointToClipAngle(v2),
-		ViewClip.PointToClipAngle(v1)))
+			if (!ViewClip.IsRangeVisible(ViewClip.PointToClipAngle(v2),
+				ViewClip.PointToClipAngle(v1)))
+			{
+				return;
+			}
+		}
+	}
+	else
 	{
-		return;
+		// Clip sectors that are behind rendered segs
+		TVec v1 = *line->v1;
+		TVec v2 = *line->v2;
+		TVec r1 = vieworg - v1;
+		TVec r2 = vieworg - v2;
+		float D1 = DotProduct(Normalise(CrossProduct(r1, r2)), vieworg);
+		float D2 = DotProduct(Normalise(CrossProduct(r2, r1)), vieworg);
+
+		// There might be a better method of doing this, but
+		// this one works for now...
+		if (D1 > 0.0 && D2 < 0.0)
+		{
+			v2 += ((v2 - v1) * D1) / (D1 - D2);
+		}
+		else if (D2 > 0.0 && D1 < 0.0)
+		{
+			v1 += ((v2 - v1) * D1) / (D2 - D1);
+		}
+
+		if (!ViewClip.IsRangeVisible(ViewClip.PointToClipAngle(v2),
+			ViewClip.PointToClipAngle(v1)))
+		{
+			return;
+		}
 	}
 
 	line_t *linedef = line->linedef;

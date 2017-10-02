@@ -78,7 +78,7 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	guard(VAdvancedRenderLevel::LightPoint);
 	subsector_t		*sub;
 	subregion_t		*reg;
-	float			l = 0.0, lr = 0.0, lg = 0.0, lb = 0.0, add = 0.0;
+	float			l, lr, lg, lb, add;
 	int				leafnum;
 	linetrace_t		Trace;
 
@@ -88,7 +88,6 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	}
 
 	sub = Level->PointInSubsector(p);
-	vuint8* dyn_facevis = Level->LeafPVS(sub);
 	reg = sub->regions;
 	if (reg)
 	{
@@ -120,6 +119,7 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	//	Add static lights
 	if (r_static_lights)
 	{
+		vuint8* dyn_facevis = Level->LeafPVS(sub);
 		for (int i = 0; i < Lights.Num(); i++)
 		{
 			if (!Lights[i].radius)
@@ -147,6 +147,7 @@ vuint32 VAdvancedRenderLevel::LightPoint(const TVec &p)
 	//	Add dynamic lights
 	if (r_dynamic)
 	{
+		vuint8* dyn_facevis = Level->LeafPVS(sub);
 		for (int i = 0; i < MAX_DLIGHTS; i++)
 		{
 			if (!DLights[i].radius || DLights[i].die < Level->Time)
@@ -399,11 +400,11 @@ void VAdvancedRenderLevel::RenderShadowLine(drawseg_t* dseg)
 
 	// There might be a better method of doing this, but
 	// this one works for now...
-	if (D1 > CurrLightRadius && D2 <= -CurrLightRadius)
+	if (D1 > CurrLightRadius && D2 < -CurrLightRadius)
 	{
 		v2 += ((v2 - v1) * D1 / (D1 - D2));
 	}
-	else if (D2 > CurrLightRadius && D1 <= -CurrLightRadius)
+	else if (D2 > CurrLightRadius && D1 < -CurrLightRadius)
 	{
 		v1 += ((v1 - v2) * D2 / (D2 - D1));
 	}
@@ -732,11 +733,11 @@ void VAdvancedRenderLevel::RenderLightLine(drawseg_t* dseg)
 
 	// There might be a better method of doing this, but
 	// this one works for now...
-	if (D1 > CurrLightRadius && D2 <= -CurrLightRadius)
+	if (D1 > CurrLightRadius && D2 < -CurrLightRadius)
 	{
 		v2 += ((v2 - v1) * D1 / (D1 - D2));
 	}
-	else if (D2 > CurrLightRadius && D1 <= -CurrLightRadius)
+	else if (D2 > CurrLightRadius && D1 < -CurrLightRadius)
 	{
 		v1 += ((v1 - v2) * D2 / (D2 - D1));
 	}

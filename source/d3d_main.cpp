@@ -47,6 +47,7 @@ IMPLEMENT_DRAWER(VDirect3DDrawer, DRAWER_Direct3D, "Direct3D",
 VCvarI VDirect3DDrawer::device("d3d_device", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::clear("d3d_clear", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::tex_linear("d3d_tex_linear", "2", CVAR_Archive);
+VCvarI VDirect3DDrawer::sprite_tex_linear("d3d_sprite_tex_linear", "2", CVAR_Archive);
 VCvarI VDirect3DDrawer::dither("d3d_dither", "0", CVAR_Archive);
 VCvarI VDirect3DDrawer::blend_sprites("d3d_blend_sprites", "0", CVAR_Archive);
 VCvarF VDirect3DDrawer::maxdist("d3d_maxdist", "8192.0", CVAR_Archive);
@@ -946,15 +947,17 @@ void VDirect3DDrawer::DrawWorldTexturesPass() {}
 void VDirect3DDrawer::DrawWorldFogPass() {}
 void VDirect3DDrawer::EndFogPass() {}
 void VDirect3DDrawer::DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) {}
+	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool,
+	bool, bool) {}
 void VDirect3DDrawer::DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&,
 	const TVec&, VMeshModel*, int, int, VTexture*, VTextureTranslation*, int,
-	float, float, bool, bool) {}
+	float, float, bool, bool, bool) {}
 void VDirect3DDrawer::BeginModelsLightPass(TVec&, float, vuint32) {}
 void VDirect3DDrawer::DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
-	const TVec&, VMeshModel*, int, int, VTexture*, float, bool) {}
+	const TVec&, VMeshModel*, int, int, VTexture*, float, float, bool, bool) {}
 void VDirect3DDrawer::BeginModelsShadowsPass(TVec&, float) {}
 void VDirect3DDrawer::DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 	const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float) {}
 void VDirect3DDrawer::DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool) {}
+	const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool,
+	bool) {}

@@ -1058,7 +1058,7 @@ void VRenderLevel::AddDynamicLights(surface_t *surf)
 				if (dist < minlight)
 				{
 					i = t * smax + s;
-					blocklights[i] += (vuint32)((rad - dist) * 255.0);
+					blocklights[i] += (vuint32)((rad - dist) * 256.0);
 					blocklightsr[i] += (vuint32)((rad - dist) * rmul);
 					blocklightsg[i] += (vuint32)((rad - dist) * gmul);
 					blocklightsb[i] += (vuint32)((rad - dist) * bmul);

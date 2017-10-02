@@ -257,6 +257,16 @@ final EntityEx SpawnMissile(EntityEx dest, class<EntityEx> type,
 	{
 		A.Velocity.z = 0.0;
 	}
+	// Adjust the trajectory if the missile will go over the target's head.
+	else if (dest && Origin.z >= dest.Origin.z && Origin.z <= dest.Origin.z + dest.Height && A.Origin.z >= dest.Origin.z + dest.Height)
+	{
+		float dist = A.DistTo(dest);
+
+		dir.z += (dest.Origin.z + dest.Height - A.Origin.z) / dist;
+		dir = Normalise(dir);
+
+		A.Velocity.z = dir.z * A.Speed;
+	}
 	VectorAngles(&dir, &A.Angles);
 
 	return A.CheckMissileSpawn() ? A : none;
@@ -296,6 +306,15 @@ final EntityEx SpawnMissileXYZ(TVec org, EntityEx dest, class<EntityEx> type)
 	{
 		A.Velocity.z = 0.0;
 	}
+	// Adjust the trajectory if the missile will go over the target's head.
+	else if (dest && Origin.z >= dest.Origin.z && Origin.z <= dest.Origin.z + dest.Height && A.Origin.z >= dest.Origin.z + dest.Height)
+	{
+		float dist = A.DistTo(dest);
+		dir.z += (dest.Origin.z + dest.Height - A.Origin.z) / dist;
+		dir = Normalise(dir);
+
+		A.Velocity.z = dir.z * A.Speed;
+	}
 	VectorAngles(&dir, &A.Angles);
 	return A.CheckMissileSpawn() ? A : none;
 }
@@ -310,9 +329,12 @@ final EntityEx SpawnMissileZAimed(float z, EntityEx dest, class<EntityEx> type)
 {
 	EntityEx	A;
 	TVec		dir;
+	TVec        org;
 	float		dist;
 
-	A = Spawn(type, Origin + vector(0.0, 0.0, z != ONFLOORZ ? z - FloorClip : z));
+	org = Origin + vector(0.0, 0.0, z != ONFLOORZ ? z - FloorClip : z);
+
+	A = Spawn(type, org);
 
 	A.PlayMissileSpawnSound(self);
 
@@ -333,6 +355,15 @@ final EntityEx SpawnMissileZAimed(float z, EntityEx dest, class<EntityEx> type)
 	if (A.bIgnoreCeilingStep || A.bIgnoreFloorStep)
 	{
 		A.Velocity.z = 0.0;
+	}
+	// Adjust the trajectory if the missile will go over the target's head.
+	else if (dest && Origin.z >= dest.Origin.z && Origin.z <= dest.Origin.z + dest.Height && A.Origin.z >= dest.Origin.z + dest.Height)
+	{
+		float dist2 = A.DistTo(dest);
+		dir.z += (dest.Origin.z + dest.Height - A.Origin.z) / dist2;
+		dir = Normalise(dir);
+
+		A.Velocity.z = dir.z * A.Speed;
 	}
 	VectorAngles(&dir, &A.Angles);
 
@@ -594,6 +625,15 @@ final EntityEx SpawnPlayerMissileEx(class<EntityEx> type, bool RetExploded,
 
 	A.Target = self;
 	A.Velocity = dir * A.Speed;
+	// Adjust the trajectory if the missile will go over the target's head.
+	if (AimTarget && Origin.z >= AimTarget.Origin.z && Origin.z <= AimTarget.Origin.z + AimTarget.Height && A.Origin.z >= AimTarget.Origin.z + AimTarget.Height)
+	{
+		float dist = A.DistTo(AimTarget);
+		dir.z += (AimTarget.Origin.z + AimTarget.Height - A.Origin.z) / dist;
+		dir = Normalise(dir);
+
+		A.Velocity.z = dir.z * A.Speed;
+	}
 	VectorAngles(&dir, &A.Angles);
 
 	return A.CheckMissileSpawn() || RetExploded ? A : none;

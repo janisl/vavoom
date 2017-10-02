@@ -267,7 +267,7 @@ final void A_SpawnItem(class<Actor> ItemType, optional float Distance,
 final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
 	optional float YOffs, optional float ZOffs, optional float XVel,
 	optional float YVel, optional float ZVel, optional float Angle,
-	optional int Flags, optional int Chance)
+	optional int Flags, optional int Chance, optional bool ApplyTranslation)
 {
 	if (!ItemType)
 	{
@@ -309,6 +309,10 @@ final void A_SpawnItemEx(class<Actor> ItemType, optional float XOffs,
 		!!(Flags & 64), !!(Flags & 512), !!(Flags & 1024));
 	if (A)
 	{
+		if (ApplyTranslation)
+		{
+			A.Translation = Translation;
+		}
 		A.Velocity.x = XVel * 35.0;
 		A.Velocity.y = YVel * 35.0;
 		A.Velocity.z = ZVel * 35.0;

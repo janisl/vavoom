@@ -384,19 +384,21 @@ public:
 		const TVec&);
 	void DrawAliasModel(const TVec&, const TAVec&, const TVec&, const TVec&,
 		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, vuint32,
-		vuint32, float, bool, bool, float, bool, bool);
+		vuint32, float, bool, bool, float, bool, bool, bool);
 	void DrawAliasModelAmbient(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool,
+		bool, bool);
 	void DrawAliasModelTextures(const TVec&, const TAVec&, const TVec&, const TVec&,
-		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, float, float, bool, bool);
+		VMeshModel*, int, int, VTexture*, VTextureTranslation*, int, float, float, bool,
+		bool, bool);
 	void BeginModelsLightPass(TVec&, float, vuint32);
 	void DrawAliasModelLight(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, float, float, bool, bool);
 	void BeginModelsShadowsPass(TVec&, float);
 	void DrawAliasModelShadow(const TVec&, const TAVec&, const TVec&,
 		const TVec&, VMeshModel*, int, int, float, bool, const TVec&, float);
 	void DrawAliasModelFog(const TVec&, const TAVec&, const TVec&,
-		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool);
+		const TVec&, VMeshModel*, int, int, VTexture*, vuint32, float, float, bool, bool);
 	bool StartPortal(VPortal*, bool);
 	void EndPortal(VPortal*, bool);
 
@@ -446,6 +448,10 @@ protected:
 	GLenum					mipfilter;
 	GLenum					ClampToEdge;
 	GLfloat					max_anisotropy;
+
+	GLenum					spr_maxfilter;
+	GLenum					spr_minfilter;
+	GLenum					spr_mipfilter;
 
 	int						lastgamma;
 	int						CurrentFade;
@@ -547,8 +553,10 @@ protected:
 	GLint					SurfModelFogEndLoc;
 	GLint					SurfModelVert2Loc;
 	GLint					SurfModelTexCoordLoc;
+	GLint					ShadowsModelAlphaLoc;
 	GLint					SurfModelLightValLoc;
 	GLint					SurfModelViewOrigin;
+	GLint					SurfModelAllowTransparency;
 
 	GLhandleARB				SurfPartProgram;
 	GLint					SurfPartTexCoordLoc;
@@ -577,6 +585,7 @@ protected:
 	GLint					ShadowsLightTexIWLoc;
 	GLint					ShadowsLightTexIHLoc;
 	GLint					ShadowsLightTextureLoc;
+	GLint					ShadowsLightAlphaLoc;
 	GLint					ShadowsLightViewOrigin;
 
 	GLhandleARB				ShadowsTextureProgram;
@@ -595,6 +604,7 @@ protected:
 	GLint					ShadowsModelAmbientTexCoordLoc;
 	GLint					ShadowsModelAmbientAlphaLoc;
 	GLint					ShadowsModelAmbientViewOrigin;
+	GLint					ShadowsModelAmbientAllowTransparency;
 
 	GLhandleARB				ShadowsModelTexturesProgram;
 	GLint					ShadowsModelTexturesInterLoc;
@@ -607,6 +617,7 @@ protected:
 	GLint					ShadowsModelTexturesVert2NormalLoc;
 	GLint					ShadowsModelTexturesTexCoordLoc;
 	GLint					ShadowsModelTexturesViewOrigin;
+	GLint					ShadowsModelTexturesAllowTransparency;
 
 	GLhandleARB				ShadowsModelLightProgram;
 	GLint					ShadowsModelLightInterLoc;
@@ -621,6 +632,7 @@ protected:
 	GLint					ShadowsModelLightVert2NormalLoc;
 	GLint					ShadowsModelLightTexCoordLoc;
 	GLint					ShadowsModelLightViewOrigin;
+	GLint					ShadowsModelLightAllowTransparency;
 
 	GLhandleARB				ShadowsModelShadowProgram;
 	GLint					ShadowsModelShadowInterLoc;
@@ -650,11 +662,13 @@ protected:
 	GLint					ShadowsModelFogTexCoordLoc;
 	GLint					ShadowsModelFogAlphaLoc;
 	GLint					ShadowsModelFogViewOrigin;
+	GLint					ShadowsModelFogAllowTransparency;
 
 	//
 	//	Console variables
 	//
 	static VCvarI tex_linear;
+	static VCvarI sprite_tex_linear;
 	static VCvarI clear;
 	static VCvarI blend_sprites;
 	static VCvarI ext_multitexture;

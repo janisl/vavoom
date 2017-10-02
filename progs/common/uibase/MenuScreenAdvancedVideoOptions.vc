@@ -163,6 +163,19 @@ void CreateChoices()
 		Enum.ValueChanging = ChangeGlTexLinear;
 		currentY += Enum.Height;
 
+		Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Sprites Filter";
+		Enum.AddItem("Nearest");
+		Enum.AddItem("Linear");
+		Enum.AddItem("Linear Nearest");
+		Enum.AddItem("Linear Linear");
+		Enum.AddItem("Bilinear");
+		Enum.AddItem("Trilinear");
+		Enum.SetInitialValue(GetCvar('gl_sprite_tex_linear'));
+		Enum.ValueChanging = ChangeGlSprTexLinear;
+		currentY += Enum.Height;
+
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
 		Enum.SetOrigin(ChoicesStartX, currentY);
 		Enum.Text = "Model Sector Lightning";
@@ -197,6 +210,19 @@ void CreateChoices()
 		Enum.AddItem("Point Anisotropic Linear");
 		Enum.SetInitialValue(GetCvar('d3d_tex_linear'));
 		Enum.ValueChanging = ChangeD3dTexFilter;
+		currentY += Enum.Height;
+
+		Enum = MenuChoiceEnum(NewChild(MenuChoiceEnum));
+		Enum.SetOrigin(ChoicesStartX, currentY);
+		Enum.Text = "Sprites Filter";
+		Enum.AddItem("Point");
+		Enum.AddItem("Linear");
+		Enum.AddItem("Point Linear");
+		Enum.AddItem("Linear Linear");
+		Enum.AddItem("Anisotropic Linear");
+		Enum.AddItem("Point Anisotropic Linear");
+		Enum.SetInitialValue(GetCvar('d3d_sprite_tex_linear'));
+		Enum.ValueChanging = ChangeD3dSprTexFilter;
 		currentY += Enum.Height;
 
 		Enum = MenuChoiceEnum(NewChild(MenuChoice_OnOff));
@@ -416,6 +442,18 @@ bool ChangeGlTexLinear(Object Sender, int newValue)
 
 //==========================================================================
 //
+//	ChangeGlSprTexLinear
+//
+//==========================================================================
+
+bool ChangeGlSprTexLinear(Object Sender, int newValue)
+{
+	SetCvar('gl_sprite_tex_linear', newValue);
+	return true;
+}
+
+//==========================================================================
+//
 //	ChangeGlModelLighting
 //
 //==========================================================================
@@ -464,6 +502,18 @@ bool ChangeD3dTexFilter(Object Sender, int newValue)
 
 //==========================================================================
 //
+//	ChangeD3dSprTexFilter
+//
+//==========================================================================
+
+bool ChangeD3dSprTexFilter(Object Sender, int newValue)
+{
+	SetCvar('d3d_sprite_tex_linear', newValue);
+	return true;
+}
+
+//==========================================================================
+//
 //	ChangeD3dDither
 //
 //==========================================================================
@@ -501,7 +551,7 @@ bool ChangeD3dSpecularHighlights(Object Sender, int newValue)
 defaultproperties
 {
 	Width = 380;
-	Height = 240;
+	Height = 260;
 	ChoicesStartX = 200;
 	ChoicesStartY = 26;
 	TitleX = 180;

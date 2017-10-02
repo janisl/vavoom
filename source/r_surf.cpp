@@ -1378,11 +1378,11 @@ void VRenderLevelShared::UpdateDrawSeg(drawseg_t* dseg, bool ShouldClip)
 
 		// There might be a better method of doing this, but
 		// this one works for now...
-		if (D1 > 0.0 && D2 <= 0.0)
+		if (D1 > 0.0 && D2 < 0.0)
 		{
 			v2 += (v2 - v1) * D1 / (D1 - D2);
 		}
-		else if (D2 > 0.0 && D1 <= 0.0)
+		else if (D2 > 0.0 && D1 < 0.0)
 		{
 			v1 += (v1 - v2) * D2 / (D2 - D1);
 		}

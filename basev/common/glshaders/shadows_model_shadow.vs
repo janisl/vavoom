@@ -9,24 +9,24 @@ attribute vec4 Vert2;
 attribute float Offset;
 
 varying vec3 VertToView;
-//varying vec3 VertToLight;
-//varying float Offs;
+varying vec3 VPosL;
+varying vec3 VPos;
+varying float Offs;
 
 void main ()
 {
-	vec4 Vert_1;
+	vec4 Vert;
+	Vert = (mix (gl_Vertex, Vert2, Inter) * ModelToWorldMat);
 
-	Vert_1 = (mix (gl_Vertex, Vert2, Inter) * ModelToWorldMat);
 	if ((Offset > 0.0))
 	{
-		Vert_1.xyz = (LightPos + (Offset * normalize(
-			(Vert_1.xyz - LightPos)
-			)));
+		Vert.xyz = (LightPos + (Offset * normalize(
+		  (Vert.xyz - LightPos)
+		)));
 	};
-	gl_Position = (gl_ModelViewProjectionMatrix * Vert_1);
-
-	//VertToLight = (LightPos - Vert_1.xyz);
-	VertToView = (ViewOrigin - Vert_1.xyz);
-	//Offs = Offset;
+	gl_Position = (gl_ModelViewProjectionMatrix * Vert);
+	VertToView = (ViewOrigin - Vert.xyz);
+	VPosL = (LightPos - gl_Position.xyz);
+	VPos = (ViewOrigin - gl_Position.xyz);
+	Offs = Offset;
 }
-

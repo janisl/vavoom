@@ -59,6 +59,7 @@ struct VScriptSubModel
 	bool				FullBright;
 	bool				NoShadow;
 	bool                UseDepth;
+	bool                AllowTransparency;
 };
 
 struct VScriptModel
@@ -352,6 +353,14 @@ static void ParseModelScript(VModel* Mdl, VStream& Strm)
 			if (SN->HasAttribute("usedepth"))
 			{
 				Md2.UseDepth = !SN->GetAttribute("usedepth").ICmp("true");
+			}
+
+			//	Allow transparency in skin files.
+			//  For skins that are transparent in solid models (Alpha = 1.0)
+			Md2.AllowTransparency = false;
+			if (SN->HasAttribute("allowtransparency"))
+			{
+				Md2.AllowTransparency = !SN->GetAttribute("allowtransparency").ICmp("true");
 			}
 
 			//	Process frames.
@@ -1043,7 +1052,7 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		switch (Pass)
 		{
 		case RPASS_Normal:
-		case RPASS_Light:
+		case RPASS_Ambient:
 			break;
 
 		case RPASS_ShadowVolumes:
@@ -1054,13 +1063,18 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			break;
 
 		case RPASS_Textures:
-		case RPASS_Ambient:
-			if (Md2Alpha <= 0.333 || SubMdl.NoShadow)
+			if (Md2Alpha <= 0.333)
 			{
 				continue;
 			}
 			break;
 
+		case RPASS_Light:
+			if (Md2Alpha <= 0.333 || SubMdl.NoShadow)
+			{
+				continue;
+			}
+			break;
 
 		case RPASS_Fog:
 			if (Md2Alpha <= 0.666 || SubMdl.NoShadow)
@@ -1125,13 +1139,15 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 			Drawer->DrawAliasModel(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
 				Trans, ColourMap, Md2Light, Fade, Md2Alpha, Additive,
-				IsViewModel, smooth_inter, Interpolate, SubMdl.UseDepth);
+				IsViewModel, smooth_inter, Interpolate, SubMdl.UseDepth,
+				SubMdl.AllowTransparency);
 			break;
 
 		case RPASS_Ambient:
 			Drawer->DrawAliasModelAmbient(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Md2Light, Md2Alpha, smooth_inter, Interpolate);
+				Md2Light, Md2Alpha, smooth_inter, Interpolate, SubMdl.UseDepth,
+				SubMdl.AllowTransparency);
 			break;
 
 		case RPASS_ShadowVolumes:
@@ -1143,19 +1159,20 @@ static void DrawModel(VLevel* Level, const TVec& Org, const TAVec& Angles,
 		case RPASS_Light:
 			Drawer->DrawAliasModelLight(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				smooth_inter, Interpolate);
+				Md2Alpha, smooth_inter, Interpolate, SubMdl.AllowTransparency);
 			break;
 
 		case RPASS_Textures:
 			Drawer->DrawAliasModelTextures(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Trans, ColourMap, Md2Alpha, smooth_inter, Interpolate, SubMdl.UseDepth);
+				Trans, ColourMap, Md2Alpha, smooth_inter, Interpolate, SubMdl.UseDepth,
+				SubMdl.AllowTransparency);
 			break;
 
 		case RPASS_Fog:
 			Drawer->DrawAliasModelFog(Md2Org, Md2Angle, Offset, Scale,
 				SubMdl.Model, Md2Frame, Md2NextFrame, GTextureManager(SkinID),
-				Fade, Md2Alpha, smooth_inter, Interpolate);
+				Fade, Md2Alpha, smooth_inter, Interpolate, SubMdl.AllowTransparency);
 			break;
 		}
 	}
