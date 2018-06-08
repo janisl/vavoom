@@ -133,7 +133,7 @@ IMPLEMENT_APP(VLaunchApp)
 
 VMain::VMain()
 : wxFrame(NULL, wxID_ANY, wxT("Vavoom launcher"), wxDefaultPosition, wxDefaultSize,
-	wxDEFAULT_FRAME_STYLE & ~ (wxRESIZE_BORDER | wxRESIZE_BOX | wxMAXIMIZE_BOX))
+	wxDEFAULT_FRAME_STYLE & ~ (wxRESIZE_BORDER | wxMAXIMIZE_BOX))
 {
 	SetIcon(wxICON(vlaunch));
 
