@@ -279,7 +279,7 @@ public:
  * @return Rounded SIMD value.
  */
 
-inline float4 round( const float4& v )
+/*inline float4 round( const float4& v )
 {
 	unsigned int prevrm = _MM_GET_ROUNDING_MODE();
 	_MM_SET_ROUNDING_MODE( _MM_ROUND_NEAREST );
@@ -290,7 +290,7 @@ inline float4 round( const float4& v )
 	_MM_SET_ROUNDING_MODE( prevrm );
 
 	return( res );
-}
+}*/
 
 /**
  * SIMD function "clamps" (clips) the specified packed values so that they are
@@ -308,7 +308,7 @@ inline float4 clamp( const float4& Value, const float4& minv,
 	return( _mm_min_ps( _mm_max_ps( Value.value, minv.value ), maxv.value ));
 }
 
-template<>
+/*template<>
 struct fpclass_reset< float4 >
 {
 	static void reset()
@@ -324,7 +324,7 @@ struct fpclass_reset< const float4 >
 	{
 		_mm_empty();
 	}
-};
+};*/
 
 typedef fpclass_def< avir :: float4, float > fpclass_float4; ///<
 	///< Class that can be used as the "fpclass" template parameter of the

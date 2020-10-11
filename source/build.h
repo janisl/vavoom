@@ -24,10 +24,10 @@
 //**************************************************************************
 
 #define VERSION_MAJOR	1
-#define VERSION_MINOR	33
+#define VERSION_MINOR	34
 #define VERSION_RELEASE	0
-#define VERSION_TEXT	"1.33 SR1"
-#define SPECIAL_VERSION_TEXT "Special Release for \"Scattered Evil\""
+#define VERSION_TEXT	"1.34"
+#define SPECIAL_VERSION_TEXT ""
 #define REVISION GIT_DESCRIPTION
 
 // The version as seen in the Windows resource
