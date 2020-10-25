@@ -103,6 +103,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gme", "gme.vcxproj", "{142A
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "updaterevision", "updaterevision.vcxproj", "{6077B7D6-349F-4077-B552-3BC302EF5859}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vavoom-dedicated", "vavoom-dedicated.vcxproj", "{45D28600-E993-49D7-97F1-B08D3A490244}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -287,6 +289,14 @@ Global
 		{6077B7D6-349F-4077-B552-3BC302EF5859}.Release|Win32.Build.0 = Release|Win32
 		{6077B7D6-349F-4077-B552-3BC302EF5859}.Release|x64.ActiveCfg = Release|x64
 		{6077B7D6-349F-4077-B552-3BC302EF5859}.Release|x64.Build.0 = Release|x64
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Debug|Win32.ActiveCfg = Debug|Win32
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Debug|Win32.Build.0 = Debug|Win32
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Debug|x64.ActiveCfg = Debug|x64
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Debug|x64.Build.0 = Debug|x64
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Release|Win32.ActiveCfg = Release|Win32
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Release|Win32.Build.0 = Release|Win32
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Release|x64.ActiveCfg = Release|x64
+		{45D28600-E993-49D7-97F1-B08D3A490244}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

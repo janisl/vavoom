@@ -1,0 +1,601 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{45D28600-E993-49D7-97F1-B08D3A490244}</ProjectGuid>
+    <RootNamespace>vavoom</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC60.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)_$(PlatformName)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectName)_$(Configuration)_$(PlatformName)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)_$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)_$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Libraries\FMOD Programmers API Win32\api\inc;E:\Libraries\include;E:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;E:\Libraries\wxWidgets-2.8.11\include;E:\Libraries\wxWidgets-2.8.12\include\msv;E:\Libraries\boost_1_49_0;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\Libraries\FMOD Programmers API Win32\api\inc;F:\Libraries\include64;F:\Libraries\include;F:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;F:\Libraries\wxWidgets-2.8.12\include\msvc;F:\Libraries\boost_1_49_0;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Libraries\FMOD Programmers API Win32\api\lib;E:\Libraries\OpenAL 1.1 SDK\libs\Win32;E:\Libraries\Release;E:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;E:\Libraries\wxWidgets-2.8.12\lib\vc_lib;E:\Libraries\boost_1_49_0\stage\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\Libraries\FMOD Programmers API Win32\api\lib;F:\Libraries\OpenAL 1.1 SDK\libs\Win64;F:\Libraries\Release64;F:\Libraries\Release;F:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x64;F:\Libraries\wxWidgets-2.8.12\lib\vc_lib;F:\Libraries\boost_1_49_0\stage\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Libraries\include;E:\Libraries\OpenAL 1.1 SDK\include;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">E:\Libraries\Debug;E:\Libraries\OpenAL 1.1 SDK\libs\Win32;$(LibraryPath)</LibraryPath>
+    <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">E:\Libraries\bin;$(ExecutablePath)</ExecutablePath>
+    <ExecutablePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">F:\Libraries\bin;$(ExecutablePath)</ExecutablePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ExecutablePath>E:\Libraries\bin;E:\Libraries\Git\bin;$(ExecutablePath)</ExecutablePath>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <PreBuildEvent>
+      <Message>Update gitrev.h</Message>
+      <Command>"$(OutDir)updaterevision.exe" "C:\Program Files\Git\bin" "$(SolutionDir)../" "$(SolutionDir)../source/gitrev.h"</Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Release/vavoom.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>SERVER;NDEBUG;WIN32;_WINDOWS;MIKMOD_STATIC;MODPLUG_STATIC;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>false</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>None</DebugInformationFormat>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Qpar-report:1 /Qvec-report:1 /Gw /MP /Oy- %(AdditionalOptions)</AdditionalOptions>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnablePREfast>false</EnablePREfast>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <OpenMPSupport>false</OpenMPSupport>
+      <SDLCheck>false</SDLCheck>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0000</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>winmm.lib;wsock32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries);</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapExports>false</MapExports>
+      <SubSystem>Console</SubSystem>
+      <TerminalServerAware>
+      </TerminalServerAware>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <SetChecksum>true</SetChecksum>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <StackReserveSize>
+      </StackReserveSize>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+    <ProjectReference />
+    <ProjectReference />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Message>Update gitrev.h</Message>
+      <Command>"$(OutDir)updaterevision.exe" "C:\Program Files\Git\bin" "$(SolutionDir)../" "$(SolutionDir)../source/gitrev.h"</Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TypeLibraryName>.\Release/vavoom.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <PreprocessorDefinitions>SERVER;NDEBUG;WIN32;_WIN32;_WINDOWS;MIKMOD_STATIC;MODPLUG_STATIC;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=0;FPM_64BIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>false</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <CallingConvention>Cdecl</CallingConvention>
+      <CompileAs>CompileAsCpp</CompileAs>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/Qpar-report:1 /Qvec-report:1 /Gw /MP %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0000</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>winmm.lib;wsock32.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)vavoom-dedicated.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateMapFile>false</GenerateMapFile>
+      <MapExports>false</MapExports>
+      <SubSystem>Console</SubSystem>
+      <TerminalServerAware>
+      </TerminalServerAware>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <SetChecksum>true</SetChecksum>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <StackReserveSize>
+      </StackReserveSize>
+      <TargetMachine>MachineX64</TargetMachine>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <PreBuildEvent>
+      <Message>Update gitrev.h</Message>
+      <Command>"$(OutDir)updaterevision.exe" "C:\Program Files\Git\bin" "$(SolutionDir)../" "$(SolutionDir)../source/gitrev.h"</Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TargetEnvironment>Win32</TargetEnvironment>
+      <TypeLibraryName>.\Debug/vavoom.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>SERVER;_DEBUG;WIN32;_WINDOWS;_WIN32;_CRTDBG_MAP_ALLOC;MIKMOD_STATIC;MODPLUG_STATIC;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalOptions>/Oy- %(AdditionalOptions)</AdditionalOptions>
+      <SDLCheck>false</SDLCheck>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0000</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>winmm.lib;opengl32.lib;openal32.lib;wsock32.lib;libpngd.lib;libjpeg_d.lib;zlibd.lib;libmad_d.lib;libmikmod_d.lib;libmodplug_d.lib;libvorbis_static_d.lib;libogg_static_d.lib;libFLAC_static_d.lib;libFLAC++_static_d.lib;win_utf8_io_static_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)vavoom-dedicated.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <LargeAddressAware>true</LargeAddressAware>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Message>Update gitrev.h</Message>
+      <Command>"$(OutDir)updaterevision.exe" "C:\Program Files\Git\bin" "$(SolutionDir)../" "$(SolutionDir)../source/gitrev.h"</Command>
+    </PreBuildEvent>
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>true</MkTypLibCompatible>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <TypeLibraryName>.\Debug/vavoom.tlb</TypeLibraryName>
+      <HeaderFileName>
+      </HeaderFileName>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>SERVER;_DEBUG;WIN32;_WINDOWS;_WIN32;_CRTDBG_MAP_ALLOC;FLAC__NO_DLL;_CRT_SECURE_NO_DEPRECATE;USE_ASM_I386=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <BrowseInformation>
+      </BrowseInformation>
+      <WarningLevel>Level3</WarningLevel>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0000</Culture>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>user32.lib;ole32.lib;gdi32.lib;winmm.lib;opengl32.lib;openal32.lib;wsock32.lib;libpngd.lib;libjpeg_d.lib;zlibd.lib;libmad_d.lib;libmikmod_d.lib;libvorbis_static_d.lib;libogg_static_d.lib;libmikmod_d.lib;libmodplug_d.lib;libFLAC_static_d.lib;libFLAC++_static_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)vavoom-dedicated.exe</OutputFile>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+    </Link>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\cheats.cpp" />
+    <ClCompile Include="..\source\cmd.cpp" />
+    <ClCompile Include="..\source\cvar.cpp" />
+    <ClCompile Include="..\source\debug.cpp" />
+    <ClCompile Include="..\source\files.cpp" />
+    <ClCompile Include="..\source\fs_dir.cpp" />
+    <ClCompile Include="..\source\fs_wad.cpp" />
+    <ClCompile Include="..\source\fs_zip.cpp" />
+    <ClCompile Include="..\source\host.cpp" />
+    <ClCompile Include="..\source\infostr.cpp" />
+    <ClCompile Include="..\source\language.cpp" />
+    <ClCompile Include="..\source\level.cpp" />
+    <ClCompile Include="..\source\lockdefs.cpp" />
+    <ClCompile Include="..\source\mapinfo.cpp" />
+    <ClCompile Include="..\source\maths.cpp" />
+    <ClCompile Include="..\source\misc.cpp" />
+    <ClCompile Include="..\source\pr_cmds.cpp" />
+    <ClCompile Include="..\source\pr_exec.cpp" />
+    <ClCompile Include="..\source\sc_man.cpp" />
+    <ClCompile Include="..\source\template.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\vc_class.cpp" />
+    <ClCompile Include="..\source\vc_constant.cpp" />
+    <ClCompile Include="..\source\vc_decorate.cpp" />
+    <ClCompile Include="..\source\vc_dehacked.cpp" />
+    <ClCompile Include="..\source\vc_emit_context.cpp" />
+    <ClCompile Include="..\source\vc_error.cpp" />
+    <ClCompile Include="..\source\vc_expr_array.cpp" />
+    <ClCompile Include="..\source\vc_expr_assign.cpp" />
+    <ClCompile Include="..\source\vc_expr_base.cpp" />
+    <ClCompile Include="..\source\vc_expr_cast.cpp" />
+    <ClCompile Include="..\source\vc_expr_field.cpp" />
+    <ClCompile Include="..\source\vc_expr_invoke.cpp" />
+    <ClCompile Include="..\source\vc_expr_literal.cpp" />
+    <ClCompile Include="..\source\vc_expr_local.cpp" />
+    <ClCompile Include="..\source\vc_expr_misc.cpp" />
+    <ClCompile Include="..\source\vc_expr_type.cpp" />
+    <ClCompile Include="..\source\vc_expr_unary_binary.cpp" />
+    <ClCompile Include="..\source\vc_field.cpp" />
+    <ClCompile Include="..\source\vc_lexer.cpp" />
+    <ClCompile Include="..\source\vc_location.cpp" />
+    <ClCompile Include="..\source\vc_member.cpp" />
+    <ClCompile Include="..\source\vc_method.cpp" />
+    <ClCompile Include="..\source\vc_modifiers.cpp" />
+    <ClCompile Include="..\source\vc_object.cpp" />
+    <ClCompile Include="..\source\vc_package.cpp" />
+    <ClCompile Include="..\source\vc_parser.cpp" />
+    <ClCompile Include="..\source\vc_property.cpp" />
+    <ClCompile Include="..\source\vc_state.cpp" />
+    <ClCompile Include="..\source\vc_statement.cpp" />
+    <ClCompile Include="..\source\vc_struct.cpp" />
+    <ClCompile Include="..\source\vc_type.cpp" />
+    <ClCompile Include="..\source\wad.cpp" />
+    <ClCompile Include="..\source\zipstream.cpp" />
+    <ClCompile Include="..\source\r_data.cpp" />
+    <ClCompile Include="..\source\r_tex.cpp" />
+    <ClCompile Include="..\source\r_tex_automap.cpp" />
+    <ClCompile Include="..\source\r_tex_base.cpp" />
+    <ClCompile Include="..\source\r_tex_camera.cpp" />
+    <ClCompile Include="..\source\r_tex_flat.cpp" />
+    <ClCompile Include="..\source\r_tex_imgz.cpp" />
+    <ClCompile Include="..\source\r_tex_jpeg.cpp" />
+    <ClCompile Include="..\source\r_tex_multipatch.cpp" />
+    <ClCompile Include="..\source\r_tex_patch.cpp" />
+    <ClCompile Include="..\source\r_tex_pcx.cpp" />
+    <ClCompile Include="..\source\r_tex_png.cpp" />
+    <ClCompile Include="..\source\r_tex_raw.cpp" />
+    <ClCompile Include="..\source\r_tex_tga.cpp" />
+    <ClCompile Include="..\source\r_tex_warp.cpp" />
+    <ClCompile Include="..\source\net_channel.cpp" />
+    <ClCompile Include="..\source\net_channel_control.cpp" />
+    <ClCompile Include="..\source\net_channel_level.cpp" />
+    <ClCompile Include="..\source\net_channel_object_map.cpp" />
+    <ClCompile Include="..\source\net_channel_player.cpp" />
+    <ClCompile Include="..\source\net_channel_thinker.cpp" />
+    <ClCompile Include="..\source\net_connection.cpp" />
+    <ClCompile Include="..\source\net_context.cpp" />
+    <ClCompile Include="..\source\net_datagram.cpp" />
+    <ClCompile Include="..\source\net_demo.cpp" />
+    <ClCompile Include="..\source\net_loopback.cpp" />
+    <ClCompile Include="..\source\net_main.cpp" />
+    <ClCompile Include="..\source\net_message.cpp" />
+    <ClCompile Include="..\source\net_object_map.cpp" />
+    <ClCompile Include="..\source\net_udp.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\source\net_winsock.cpp" />
+    <ClCompile Include="..\source\snd_data.cpp" />
+    <ClCompile Include="..\source\snd_reverbs.cpp" />
+    <ClCompile Include="..\source\p_acs.cpp" />
+    <ClCompile Include="..\source\p_clip.cpp" />
+    <ClCompile Include="..\source\p_entity.cpp" />
+    <ClCompile Include="..\source\p_entity_sight.cpp" />
+    <ClCompile Include="..\source\p_entity_world.cpp" />
+    <ClCompile Include="..\source\p_gameinfo.cpp" />
+    <ClCompile Include="..\source\p_gameobject.cpp" />
+    <ClCompile Include="..\source\p_level_think.cpp" />
+    <ClCompile Include="..\source\p_levelinfo.cpp" />
+    <ClCompile Include="..\source\p_nodebuild.cpp" />
+    <ClCompile Include="..\source\p_player.cpp" />
+    <ClCompile Include="..\source\p_player_input.cpp" />
+    <ClCompile Include="..\source\p_playerreplicationinfo.cpp" />
+    <ClCompile Include="..\source\p_polyobj.cpp" />
+    <ClCompile Include="..\source\p_setup.cpp" />
+    <ClCompile Include="..\source\p_setup_udmf.cpp" />
+    <ClCompile Include="..\source\p_switch.cpp" />
+    <ClCompile Include="..\source\p_terrain.cpp" />
+    <ClCompile Include="..\source\p_thinker.cpp" />
+    <ClCompile Include="..\source\p_trace.cpp" />
+    <ClCompile Include="..\source\p_world.cpp" />
+    <ClCompile Include="..\source\p_worldinfo.cpp" />
+    <ClCompile Include="..\source\sv_main.cpp" />
+    <ClCompile Include="..\source\sv_save.cpp" />
+    <ClCompile Include="..\source\sv_world.cpp" />
+    <ClCompile Include="..\source\sys_wind.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\build.h" />
+    <ClInclude Include="..\source\cmd.h" />
+    <ClInclude Include="..\source\common.h" />
+    <ClInclude Include="..\source\cvar.h" />
+    <ClInclude Include="..\source\debug.h" />
+    <ClInclude Include="..\source\files.h" />
+    <ClInclude Include="..\source\fs_local.h" />
+    <ClInclude Include="..\source\fwaddefs.h" />
+    <ClInclude Include="..\source\gamedefs.h" />
+    <ClInclude Include="..\source\host.h" />
+    <ClInclude Include="..\source\infostr.h" />
+    <ClInclude Include="..\source\language.h" />
+    <ClInclude Include="..\source\level.h" />
+    <ClInclude Include="..\source\lockdefs.h" />
+    <ClInclude Include="..\source\mapinfo.h" />
+    <ClInclude Include="..\source\maths.h" />
+    <ClInclude Include="..\source\misc.h" />
+    <ClInclude Include="..\source\progdefs.h" />
+    <ClInclude Include="..\source\progs.h" />
+    <ClInclude Include="..\source\protocol.h" />
+    <ClInclude Include="..\source\resource.h" />
+    <ClInclude Include="..\source\save.h" />
+    <ClInclude Include="..\source\scripts.h" />
+    <ClInclude Include="..\source\template.h" />
+    <ClInclude Include="..\source\vc_class.h" />
+    <ClInclude Include="..\source\vc_constant.h" />
+    <ClInclude Include="..\source\vc_decorate.h" />
+    <ClInclude Include="..\source\vc_dehacked.h" />
+    <ClInclude Include="..\source\vc_emit_context.h" />
+    <ClInclude Include="..\source\vc_error.h" />
+    <ClInclude Include="..\source\vc_expr_array.h" />
+    <ClInclude Include="..\source\vc_expr_assign.h" />
+    <ClInclude Include="..\source\vc_expr_base.h" />
+    <ClInclude Include="..\source\vc_expr_cast.h" />
+    <ClInclude Include="..\source\vc_expr_field.h" />
+    <ClInclude Include="..\source\vc_expr_invoke.h" />
+    <ClInclude Include="..\source\vc_expr_literal.h" />
+    <ClInclude Include="..\source\vc_expr_local.h" />
+    <ClInclude Include="..\source\vc_expr_misc.h" />
+    <ClInclude Include="..\source\vc_expr_type.h" />
+    <ClInclude Include="..\source\vc_expr_unary_binary.h" />
+    <ClInclude Include="..\source\vc_field.h" />
+    <ClInclude Include="..\source\vc_lexer.h" />
+    <ClInclude Include="..\source\vc_location.h" />
+    <ClInclude Include="..\source\vc_member.h" />
+    <ClInclude Include="..\source\vc_method.h" />
+    <ClInclude Include="..\source\vc_modifiers.h" />
+    <ClInclude Include="..\source\vc_object.h" />
+    <ClInclude Include="..\source\vc_package.h" />
+    <ClInclude Include="..\source\vc_parser.h" />
+    <ClInclude Include="..\source\vc_property.h" />
+    <ClInclude Include="..\source\vc_state.h" />
+    <ClInclude Include="..\source\vc_statement.h" />
+    <ClInclude Include="..\source\vc_struct.h" />
+    <ClInclude Include="..\source\vc_type.h" />
+    <ClInclude Include="..\source\wad.h" />
+    <ClInclude Include="..\source\zipstream.h" />
+    <ClInclude Include="..\source\r_local.h" />
+    <ClInclude Include="..\source\r_public.h" />
+    <ClInclude Include="..\source\r_shared.h" />
+    <ClInclude Include="..\source\r_tex.h" />
+    <ClInclude Include="..\source\net_local.h" />
+    <ClInclude Include="..\source\net_message.h" />
+    <ClInclude Include="..\source\network.h" />
+    <ClInclude Include="..\source\sound.h" />
+    <ClInclude Include="..\source\p_acs.h" />
+    <ClInclude Include="..\source\p_clip.h" />
+    <ClInclude Include="..\source\p_entity.h" />
+    <ClInclude Include="..\source\p_gameinfo.h" />
+    <ClInclude Include="..\source\p_gameobject.h" />
+    <ClInclude Include="..\source\p_levelinfo.h" />
+    <ClInclude Include="..\source\p_player.h" />
+    <ClInclude Include="..\source\p_playerreplicationinfo.h" />
+    <ClInclude Include="..\source\p_thinker.h" />
+    <ClInclude Include="..\source\p_world.h" />
+    <ClInclude Include="..\source\p_worldinfo.h" />
+    <ClInclude Include="..\source\server.h" />
+    <ClInclude Include="..\source\sv_local.h" />
+    <ClInclude Include="..\source\system.h" />
+    <ClInclude Include="..\source\winlocal.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\source\vavoom.ico" />
+    <None Include="..\source\vavoom_2.ico" />
+    <None Include="..\source\vavoom_3.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\source\vavoom.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="core.vcxproj">
+      <Project>{d509cf19-f957-4f58-8f05-3aa6aa520b2f}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="gme.vcxproj">
+      <Project>{142a5d48-ed8d-4c77-a7c2-a983375d4a9b}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="libglbsp.vcxproj">
+      <Project>{3dc4fb0f-24b7-4051-9faa-b2215cf73554}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="libglvis.vcxproj">
+      <Project>{0292d20b-0826-40e7-b713-a9b512505155}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="timidity.vcxproj">
+      <Project>{a5e43684-5bc7-4dee-965b-f2e20c360793}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

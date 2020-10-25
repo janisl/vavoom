@@ -412,10 +412,10 @@ void VOpenGLDrawer::UploadTexture(int width, int height, const rgba_t* data)
 		/* Smooth transparent edges */
 		VTexture::SmoothEdges(image, w, h, image);
 		/* must rescale image to get "top" mipmap texture image */
-		//VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image, multisampling_sample);
-		avir::CImageResizerParamsUltra Params;
+		VTexture::ResampleTexture(width, height, (vuint8*)data, w, h, image, multisampling_sample);
+		/*avir::CImageResizerParamsUltra Params;
 		avir::CImageResizer<avir::fpclass_float4> ImageResizer(8, 16, Params);
-		ImageResizer.resizeImage((vuint8*)data, width, height, 0, image, w, h, 4, 0);
+		ImageResizer.resizeImage((vuint8*)data, width, height, 0, image, w, h, 4, 0);*/
 	}
 	else
 	{
