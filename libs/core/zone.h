@@ -101,12 +101,22 @@ inline void operator delete(void* Ptr)
 	Z_Free(Ptr);
 }
 
+inline void operator delete(void* Ptr, size_t)
+{
+	Z_Free(Ptr);
+}
+
 inline void* operator new[](size_t Size)
 {
 	return Z_Malloc(int(Size));
 }
 
 inline void operator delete[](void* Ptr)
+{
+	Z_Free(Ptr);
+}
+
+inline void operator delete[](void* Ptr, size_t)
 {
 	Z_Free(Ptr);
 }

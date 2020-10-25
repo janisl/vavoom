@@ -27,8 +27,10 @@
 
 #ifdef _WIN32
 #include "winlocal.h"
-#endif
 #include <modplug.h>
+#else
+#include <libmodplug/modplug.h>
+#endif
 
 #include "gamedefs.h"
 #include "snd_local.h"

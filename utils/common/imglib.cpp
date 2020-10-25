@@ -234,12 +234,12 @@ static void LoadTGA(const char *filename)
 		hdr->img_type == 9 || hdr->img_type == 11)
 	{
 		ImgBPP = 8;
-		ImgData = (vuint8*)Z_Malloc(ImgWidth * ImgHeight);
+		ImgData = new vuint8[ImgWidth * ImgHeight];
 	}
 	else
 	{
 		ImgBPP = 32;
-		ImgData = (vuint8*)Z_Malloc(ImgWidth * ImgHeight * 4);
+		ImgData = new vuint8[ImgWidth * ImgHeight * 4];
 	}
 
 	if (hdr->img_type == 1 && hdr->bpp == 8 && hdr->pal_type == 1)
@@ -537,7 +537,6 @@ static void LoadTGA(const char *filename)
 
 
 	Z_Free(hdr);
-	Z_Free(ImgData);
 }
 
 //==========================================================================
@@ -569,7 +568,7 @@ void ConvertImageTo32Bit()
 {
 	if (ImgBPP == 8)
 	{
-		rgba_t *NewData = (rgba_t *)Z_Malloc(ImgWidth * ImgHeight * 4);
+		rgba_t *NewData = (rgba_t *)new vuint8[ImgWidth * ImgHeight * 4];
 		for (int i = 0; i < ImgWidth * ImgHeight; i++)
 		{
 			NewData[i].r = ImgPal[ImgData[i]].r;
@@ -577,10 +576,9 @@ void ConvertImageTo32Bit()
 			NewData[i].b = ImgPal[ImgData[i]].b;
 			NewData[i].a = 255;
 		}
-		Z_Free(ImgData);
+		delete[] ImgData;
 		ImgData = (vuint8*)NewData;
 		ImgBPP = 32;
-		Z_Free(NewData);
 	}
 }
 
@@ -594,7 +592,7 @@ void DestroyImage()
 {
 	if (ImgData)
 	{
-		delete ImgData;
+		delete[] ImgData;
 		ImgData = NULL;
 	}
 }

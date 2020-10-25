@@ -37,7 +37,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include "gamedefs.h"
-#include "svnrev.h"
+#include "gitrev.h"
 
 #ifdef DJGPP
 #include <dpmi.h>
@@ -339,7 +339,7 @@ int main(int argc, char** argv)
 {
 	try
 	{
-		printf("Vavoom dedicated server "VERSION_TEXT" (r" SVN_REVISION_STRING ")\n");
+		printf("Vavoom dedicated server " VERSION_TEXT " (r" GIT_HASH ")\n");
 
 		GArgs.Init(argc, argv);
 
